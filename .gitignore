@@ -1,0 +1,6 @@
+# Packages and Dependencies
+.hermit/
+node_modules/
+
+# Generated Artifacts
+target/

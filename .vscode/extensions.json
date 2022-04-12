@@ -1,0 +1,20 @@
+{
+  "recommendations": [
+    // Please keep this list in-sync with "${workspaceRoot}/.devcontainer/devcontainer.json"
+    //
+    // Language Support
+    "matklad.rust-analyzer",
+    "NomicFoundation.hardhat-solidity",
+    "tamasfe.even-better-toml",
+    "yzhang.markdown-all-in-one",
+    // Formatting/Linting
+    "DavidAnson.vscode-markdownlint",
+    "esbenp.prettier-vscode",
+    "streetsidesoftware.code-spell-checker",
+    "timonwong.shellcheck",
+    // Developer Experience
+    "mhutchie.git-graph",
+    "ms-azuretools.vscode-docker",
+    "vscode-icons-team.vscode-icons"
+  ]
+}
