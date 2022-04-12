@@ -1,0 +1,10 @@
+# Packages and Dependencies
+.hermit/
+node_modules/
+
+# Generated Artifacts
+target/
+Pipfile.lock
+
+# Misc
+.devcontainer/scripts/.p10k-profile.zsh
