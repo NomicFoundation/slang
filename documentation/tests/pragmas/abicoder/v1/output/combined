@@ -1,0 +1,23 @@
+=== "📝 input.sol"
+
+    ```solidity
+    --8<-- "tests/pragmas/abicoder/v1/input.sol"
+    ```
+
+=== "❌ 0.4.10"
+
+    ```bash
+    --8<-- "tests/pragmas/abicoder/v1/output/0.4.10"
+    ```
+
+=== "❌ 0.6.0"
+
+    ```bash
+    --8<-- "tests/pragmas/abicoder/v1/output/0.6.0"
+    ```
+
+=== "✅ 0.7.5"
+
+    ```solidity
+    --8<-- "tests/pragmas/abicoder/v1/output/0.7.5"
+    ```
