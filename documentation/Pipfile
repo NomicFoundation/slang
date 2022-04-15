@@ -1,0 +1,10 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+ghp-import = "==2.0.2"
+mkdocs = "==1.2.3"
+mkdocs-material = "==8.2.5"
+mkdocs-pymdownx-material-extras = "==1.6"
