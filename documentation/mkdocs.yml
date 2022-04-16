@@ -1,0 +1,14 @@
+site_name: Slang
+site_dir: ./target
+
+INHERIT: ./mkdocs.theme.yml
+
+nav:
+  - Home: index.md
+  - Language Reference:
+      - File Structure:
+          - reference/01-file-structure/01-license-specifier.md
+          - reference/01-file-structure/02-pragmas.md
+          - reference/01-file-structure/03-imports.md
+          - reference/01-file-structure/04-comments.md
+          - reference/01-file-structure/05-natspec-format.md
