@@ -1,0 +1,12 @@
+name: deploy
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: ./documentation/scripts/deploy.sh

@@ -1,0 +1,19 @@
+name: check
+on: ["push", "pull_request"]
+
+jobs:
+  check:
+    strategy:
+      matrix:
+        script:
+          [
+            "./documentation/scripts/build.sh",
+            "./tools/linting/scripts/run.sh",
+            "./tools/version-breaks/scripts/check.sh",
+          ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: ./.devcontainer
+        with:
+          entrypoint: ${{ matrix.script }}
