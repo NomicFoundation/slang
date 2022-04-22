@@ -1,0 +1,361 @@
+/* converted on Fri Apr 22, 2022, 17:05 (UTC+02) by antlr_4-to-w3c v0.57 which is Copyright (c) 2011-2022 by Gunther Rademacher <grd@gmx.net> */
+
+_        ::= WS
+           | COMMENT
+           | LINE_COMMENT
+           | AssemblyBlockWS
+           | AssemblyBlockCOMMENT
+           | AssemblyBlockLINE_COMMENT
+           | YulWS
+           | YulCOMMENT
+           | YulLINE_COMMENT
+           | PragmaWS
+           | PragmaCOMMENT
+           | PragmaLINE_COMMENT
+          /* ws: definition */
+
+<?TOKENS?>
+
+ReservedKeywords
+         ::= 'after'
+           | 'alias'
+           | 'apply'
+           | 'auto'
+           | 'byte'
+           | 'case'
+           | 'copyof'
+           | 'default'
+           | 'define'
+           | 'final'
+           | 'implements'
+           | 'in'
+           | 'inline'
+           | 'let'
+           | 'macro'
+           | 'match'
+           | 'mutable'
+           | 'null'
+           | 'of'
+           | 'partial'
+           | 'promise'
+           | 'reference'
+           | 'relocatable'
+           | 'sealed'
+           | 'sizeof'
+           | 'static'
+           | 'supports'
+           | 'switch'
+           | 'typedef'
+           | 'typeof'
+           | 'var'
+           
+Pragma   ::= 'pragma'
+Abstract ::= 'abstract'
+Anonymous
+         ::= 'anonymous'
+Address  ::= 'address'
+As       ::= 'as'
+Assembly ::= 'assembly'
+Bool     ::= 'bool'
+Break    ::= 'break'
+Bytes    ::= 'bytes'
+Calldata ::= 'calldata'
+Catch    ::= 'catch'
+Constant ::= 'constant'
+Constructor
+         ::= 'constructor'
+Continue ::= 'continue'
+Contract ::= 'contract'
+Delete   ::= 'delete'
+Do       ::= 'do'
+Else     ::= 'else'
+Emit     ::= 'emit'
+Enum     ::= 'enum'
+Error    ::= 'error'
+Revert   ::= 'revert'
+Event    ::= 'event'
+External ::= 'external'
+Fallback ::= 'fallback'
+False    ::= 'false'
+Fixed    ::= 'fixed'
+           | 'fixed' [1-9] [0-9]* 'x' [1-9] [0-9]*
+From     ::= 'from'
+FixedBytes
+         ::= 'bytes1'
+           | 'bytes2'
+           | 'bytes3'
+           | 'bytes4'
+           | 'bytes5'
+           | 'bytes6'
+           | 'bytes7'
+           | 'bytes8'
+           | 'bytes9'
+           | 'bytes10'
+           | 'bytes11'
+           | 'bytes12'
+           | 'bytes13'
+           | 'bytes14'
+           | 'bytes15'
+           | 'bytes16'
+           | 'bytes17'
+           | 'bytes18'
+           | 'bytes19'
+           | 'bytes20'
+           | 'bytes21'
+           | 'bytes22'
+           | 'bytes23'
+           | 'bytes24'
+           | 'bytes25'
+           | 'bytes26'
+           | 'bytes27'
+           | 'bytes28'
+           | 'bytes29'
+           | 'bytes30'
+           | 'bytes31'
+           | 'bytes32'
+For      ::= 'for'
+Function ::= 'function'
+Global   ::= 'global'
+Hex      ::= 'hex'
+If       ::= 'if'
+Immutable
+         ::= 'immutable'
+Import   ::= 'import'
+Indexed  ::= 'indexed'
+Interface
+         ::= 'interface'
+Internal ::= 'internal'
+Is       ::= 'is'
+Library  ::= 'library'
+Mapping  ::= 'mapping'
+Memory   ::= 'memory'
+Modifier ::= 'modifier'
+New      ::= 'new'
+NumberUnit
+         ::= 'wei'
+           | 'gwei'
+           | 'ether'
+           | 'seconds'
+           | 'minutes'
+           | 'hours'
+           | 'days'
+           | 'weeks'
+           | 'years'
+Override ::= 'override'
+Payable  ::= 'payable'
+Private  ::= 'private'
+Public   ::= 'public'
+Pure     ::= 'pure'
+Receive  ::= 'receive'
+Return   ::= 'return'
+Returns  ::= 'returns'
+SignedIntegerType
+         ::= 'int'
+           | 'int8'
+           | 'int16'
+           | 'int24'
+           | 'int32'
+           | 'int40'
+           | 'int48'
+           | 'int56'
+           | 'int64'
+           | 'int72'
+           | 'int80'
+           | 'int88'
+           | 'int96'
+           | 'int104'
+           | 'int112'
+           | 'int120'
+           | 'int128'
+           | 'int136'
+           | 'int144'
+           | 'int152'
+           | 'int160'
+           | 'int168'
+           | 'int176'
+           | 'int184'
+           | 'int192'
+           | 'int200'
+           | 'int208'
+           | 'int216'
+           | 'int224'
+           | 'int232'
+           | 'int240'
+           | 'int248'
+           | 'int256'
+Storage  ::= 'storage'
+String   ::= 'string'
+Struct   ::= 'struct'
+True     ::= 'true'
+Try      ::= 'try'
+Type     ::= 'type'
+Ufixed   ::= 'ufixed'
+           | 'ufixed' [1-9] [0-9]+ 'x' [1-9] [0-9]+
+Unchecked
+         ::= 'unchecked'
+UnsignedIntegerType
+         ::= 'uint'
+           | 'uint8'
+           | 'uint16'
+           | 'uint24'
+           | 'uint32'
+           | 'uint40'
+           | 'uint48'
+           | 'uint56'
+           | 'uint64'
+           | 'uint72'
+           | 'uint80'
+           | 'uint88'
+           | 'uint96'
+           | 'uint104'
+           | 'uint112'
+           | 'uint120'
+           | 'uint128'
+           | 'uint136'
+           | 'uint144'
+           | 'uint152'
+           | 'uint160'
+           | 'uint168'
+           | 'uint176'
+           | 'uint184'
+           | 'uint192'
+           | 'uint200'
+           | 'uint208'
+           | 'uint216'
+           | 'uint224'
+           | 'uint232'
+           | 'uint240'
+           | 'uint248'
+           | 'uint256'
+Using    ::= 'using'
+View     ::= 'view'
+Virtual  ::= 'virtual'
+While    ::= 'while'
+LParen   ::= '('
+RParen   ::= ')'
+LBrack   ::= '['
+RBrack   ::= ']'
+LBrace   ::= '{'
+RBrace   ::= '}'
+Colon    ::= ':'
+Semicolon
+         ::= ';'
+Period   ::= '.'
+Conditional
+         ::= '?'
+DoubleArrow
+         ::= '=>'
+RightArrow
+         ::= '->'
+Assign   ::= '='
+AssignBitOr
+         ::= '|='
+AssignBitXor
+         ::= '^='
+AssignBitAnd
+         ::= '&='
+AssignShl
+         ::= '<<='
+AssignSar
+         ::= '>>='
+AssignShr
+         ::= '>>>='
+AssignAdd
+         ::= '+='
+AssignSub
+         ::= '-='
+AssignMul
+         ::= '*='
+AssignDiv
+         ::= '/='
+AssignMod
+         ::= '%='
+Comma    ::= ','
+Or       ::= '||'
+And      ::= '&&'
+BitOr    ::= '|'
+BitXor   ::= '^'
+BitAnd   ::= '&'
+Shl      ::= '<<'
+Sar      ::= '>>'
+Shr      ::= '>>>'
+Add      ::= '+'
+Sub      ::= '-'
+Mul      ::= '*'
+Div      ::= '/'
+Mod      ::= '%'
+Exp      ::= '**'
+Equal    ::= '=='
+NotEqual ::= '!='
+LessThan ::= '<'
+GreaterThan
+         ::= '>'
+LessThanOrEqual
+         ::= '<='
+GreaterThanOrEqual
+         ::= '>='
+Not      ::= '!'
+BitNot   ::= '~'
+Inc      ::= '++'
+Dec      ::= '--'
+DoubleQuote
+         ::= '"'
+SingleQuote
+         ::= "'"
+NonEmptyStringLiteral
+         ::= '"' DoubleQuotedStringCharacter+ '"'
+           | "'" SingleQuotedStringCharacter+ "'"
+EmptyStringLiteral
+         ::= '"' '"'
+           | "'" "'"
+DoubleQuotedStringCharacter
+         ::= DoubleQuotedPrintable
+           | EscapeSequence
+SingleQuotedStringCharacter
+         ::= SingleQuotedPrintable
+           | EscapeSequence
+SingleQuotedPrintable
+         ::= [#x0020-#x0026#x0028-#x005B#x005D-#x007E]
+DoubleQuotedPrintable
+         ::= [#x0020-#x0021#x0023-#x005B#x005D-#x007E]
+EscapeSequence
+         ::= '\' ( ['"\nrt#xa#xd] | 'u' HexCharacter HexCharacter HexCharacter HexCharacter | 'x' HexCharacter HexCharacter )
+
+
+UnicodeStringLiteral
+         ::= 'unicode"' DoubleQuotedUnicodeStringCharacter* '"'
+           | "unicode'" SingleQuotedUnicodeStringCharacter* "'"
+DoubleQuotedUnicodeStringCharacter
+         ::= [^"\#xd#xa]
+           | EscapeSequence
+SingleQuotedUnicodeStringCharacter
+         ::= [^'\#xd#xa]
+           | EscapeSequence
+
+
+HexString
+         ::= 'hex' ( '"' EvenHexDigits? '"' | "'" EvenHexDigits? "'" )
+HexNumber
+         ::= '0' 'x' HexDigits
+HexDigits
+         ::= HexCharacter ( '_'? HexCharacter )*
+EvenHexDigits
+         ::= HexCharacter HexCharacter ( '_'? HexCharacter HexCharacter )*
+HexCharacter
+         ::= [0-9A-Fa-f]
+DecimalNumber
+         ::= ( DecimalDigits | DecimalDigits? '.' DecimalDigits ) ( [eE] '-'? DecimalDigits )?
+DecimalDigits
+         ::= [0-9] ( '_'? [0-9] )*
+
+Identifier
+         ::= IdentifierStart IdentifierPart*
+IdentifierStart
+         ::= [a-zA-Z$_]
+IdentifierPart
+         ::= [a-zA-Z0-9$_]
+
+WS       ::= [ #x9#xd#xa#x000C]+
+COMMENT? ::= '/*' .* '*/'
+LINE_COMMENT
+         ::= '//' [^#xd#xa]*

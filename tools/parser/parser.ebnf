@@ -1,0 +1,532 @@
+IGNORED
+    ::= WS | COMMENT | LINE_COMMENT
+
+sourceUnit
+    ::= ( directive | definition )*
+
+directive
+    ::= pragmaDirective
+      | importDirective
+      | usingDirective
+
+definition
+    ::= contractDefinition
+      | interfaceDefinition
+      | libraryDefinition
+      | functionDefinition
+      | constantDefinition
+      | structDefinition
+      | enumDefinition
+      | userDefinedValueTypeDefinition
+      | errorDefinition
+
+pragmaDirective
+    ::= 'pragma' [^;]+ ';'
+
+importDirective
+    ::= 'import' ( simpleImportDirective | starImportDirective | selectingImportDirective ) ';'
+simpleImportDirective
+    ::= importPath ( 'as' identifier )?
+starImportDirective
+    ::= '*' 'as' identifier 'from' importPath
+selectingImportDirective
+    ::= '{' selectedImport ( ',' selectedImport )* '}' 'from' importPath
+selectedImport
+    ::= identifier ( 'as' identifier )?
+importPath
+    ::= NonEmptyStringLiteral
+
+# Q: is there a semantic difference between first set of alternatives?
+usingDirective
+    ::= 'using' ( identifierPath | '{' identifierPath ( ',' identifierPath )* '}' ) 'for' ( '*' | typeName ) 'global'? ';'
+
+
+contractDefinition
+    ::= 'abstract'? 'contract' identifier inheritanceSpecifierList? '{' contractBodyElement* '}'
+
+interfaceDefinition
+    ::= 'interface' identifier inheritanceSpecifierList? '{' contractBodyElement* '}'
+
+libraryDefinition
+    ::= 'library' identifier '{' contractBodyElement* '}'
+
+functionDefinition
+    ::= 'function' ( identifier | 'fallback' | 'receive' ) '(' parameterList? ')' ( visibilitySpecifier | stateMutabilitySpecifier | modifierInvocation | 'virtual' | overrideSpecifier )* ( 'returns' '(' parameterList ')' )? ( ';' | block )
+
+constantDefinition
+    ::= typeName 'constant' identifier '=' expression ';'
+
+
+structDefinition
+    ::= 'struct' identifier '{' ( typeName identifier ';' )+ '}'
+
+enumDefinition
+    ::= 'enum' identifier '{' identifier ( ',' identifier )* '}'
+
+userDefinedValueTypeDefinition
+    ::= 'type' identifier 'is' elementaryType ';'
+
+
+eventDefinition
+    ::= 'event' identifier '(' ( eventParameter ( ',' eventParameter )* )? ')' 'anonymous'? ';'
+eventParameter
+    ::= typeName 'indexed'? identifier?
+
+
+errorDefinition
+    ::= 'error' identifier '(' ( errorParameter ( ',' errorParameter )* )? ')' ';'
+errorParameter
+    ::= typeName identifier?
+
+
+inheritanceSpecifierList
+    ::= 'is' inheritanceSpecifier ( ',' inheritanceSpecifier )*
+inheritanceSpecifier
+    ::= identifierPath argumentList?
+
+
+contractBodyElement
+    ::= usingDirective
+      | constructorDefinition
+      | functionDefinition
+      | fallbackFunctionDefinition
+      | receiveFunctionDefinition
+      | modifierDefinition
+      | structDefinition
+      | enumDefinition
+      | userDefinedValueTypeDefinition
+      | eventDefinition
+      | errorDefinition
+      | stateVariableDeclaration
+
+constructorDefinition
+    ::= 'constructor' '(' parameterList? ')' ( modifierInvocation | 'payable' | 'internal' | 'public' )* block
+
+fallbackFunctionDefinition
+    ::= 'fallback' '(' parameterList? ')' ( 'external' | stateMutabilitySpecifier | modifierInvocation | 'virtual' | overrideSpecifier )* ( 'returns' '(' parameterList ')' )? ( ';' | block )
+
+receiveFunctionDefinition
+    ::= 'receive' '(' ')' ( 'external' | 'payable' | modifierInvocation | 'virtual' | overrideSpecifier )* ( ';' | block )
+
+modifierDefinition
+    ::= 'modifier' identifier ( '(' parameterList? ')' )? ( 'virtual' | overrideSpecifier )* ( ';' | block )
+
+stateVariableDeclaration
+    ::= typeName ( 'public' | 'private' | 'internal' | 'constant' | overrideSpecifier | 'immutable' )* identifier ( '=' expression )? ';'
+
+
+argumentList
+    ::= '(' ( positionalArgumentList | namedArgumentList )? ')'
+positionalArgumentList
+    ::= expression ( ',' expression )*
+namedArgumentList
+    ::= '{' ( namedArgument ( ',' namedArgument )* )? '}'
+namedArgument
+    ::= identifier ':' expression
+
+identifierPath
+    ::= identifier ( '.' identifier )*
+
+modifierInvocation
+    ::= identifierPath argumentList?
+
+visibilitySpecifier
+    ::= 'internal'
+      | 'external'
+      | 'private'
+      | 'public'
+
+stateMutabilitySpecifier
+    ::= 'pure'
+      | 'view'
+      | 'payable'
+
+parameterList
+    ::= parameterDeclaration ( ',' parameterDeclaration )*
+parameterDeclaration
+    ::= typeName dataLocation? identifier?
+
+overrideSpecifier
+    ::= 'override' ( '(' identifierPath ( ',' identifierPath )* ')' )?
+
+
+#############################################################
+#
+# Types
+#
+#############################################################
+
+typeName
+    ::= ( elementaryType | functionType | mappingType | identifierPath ) ( '[' expression? ']' )*
+
+
+elementaryType
+    ::= 'address' 'payable'?
+      | 'bool'
+      | 'string'
+      | 'bytes'
+      | SignedIntegerType
+      | UnsignedIntegerType
+      | FixedBytes
+      | Fixed
+      | Ufixed
+
+SignedIntegerType
+    ::= 'int'
+      | 'int8' | 'int16' | 'int24' | 'int32' | 'int40' | 'int48' | 'int56' | 'int64'
+      | 'int72' | 'int80' | 'int88' | 'int96' | 'int104' | 'int112' | 'int120' | 'int128'
+      | 'int136' | 'int144' | 'int152' | 'int160' | 'int168' | 'int176' | 'int184' | 'int192'
+      | 'int200' | 'int208' | 'int216' | 'int224' | 'int232' | 'int240' | 'int248' | 'int256'
+
+UnsignedIntegerType
+    ::= 'uint'
+      | 'uint8' | 'uint16' | 'uint24' | 'uint32' | 'uint40' | 'uint48' | 'uint56' | 'uint64'
+      | 'uint72' | 'uint80' | 'uint88' | 'uint96' | 'uint104' | 'uint112' | 'uint120' | 'uint128'
+      | 'uint136' | 'uint144' | 'uint152' | 'uint160' | 'uint168' | 'uint176' | 'uint184' | 'uint192'
+      | 'uint200' | 'uint208' | 'uint216' | 'uint224' | 'uint232' | 'uint240' | 'uint248' | 'uint256'
+
+FixedBytes
+    ::= 'bytes1' | 'bytes2' | 'bytes3' | 'bytes4' | 'bytes5' | 'bytes6' | 'bytes7' | 'bytes8'
+      | 'bytes9' | 'bytes10' | 'bytes11' | 'bytes12' | 'bytes13' | 'bytes14' | 'bytes15' | 'bytes16'
+      | 'bytes17' | 'bytes18' | 'bytes19' | 'bytes20' | 'bytes21' | 'bytes22' | 'bytes23' | 'bytes24'
+      | 'bytes25' | 'bytes26' | 'bytes27' | 'bytes28' | 'bytes29' | 'bytes30' | 'bytes31' | 'bytes32'
+
+Fixed
+    ::= 'fixed' ( [1-9] [0-9]* 'x' [1-9] [0-9]* )?
+
+Ufixed
+    ::=  'ufixed' ( [1-9] [0-9]+ 'x' [1-9] [0-9]+ )?
+
+
+functionType
+    ::= 'function' '(' parameterList? ')' ( visibilitySpecifier | stateMutabilitySpecifier )* ( 'returns' '(' parameterList ')' )?
+
+
+mappingType
+    ::= 'mapping' '(' mappingKeyType DoubleArrow typeName ')'
+mappingKeyType
+    ::= elementaryType | identifierPath
+
+
+
+dataLocation
+    ::= 'memory'
+      | 'storage'
+      | 'calldata'
+
+expression
+    ::= expression expressionRHS
+      | 'payable' argumentList
+      | 'type' '(' typeName ')'
+      |  unaryPrefixOp expression
+      | 'new' typeName
+      | tupleExpression
+      | inlineArrayExpression
+      | identifier
+      | literal
+      | elementaryType
+
+expressionRHS
+    ::= '[' expression? ( ':' expression? )? ']'
+      | '.' ( identifier | 'address' )
+      | namedArgumentList
+      | argumentList
+      | unarySuffixOp
+      | binaryOp expression
+      | '?' expression ':' expression
+      | assignOp expression 
+
+unaryPrefixOp
+    ::= '++' | '--' | '!' | '~' | 'delete' | '-'
+
+unarySuffixOp
+    ::= '++' | '--'
+
+binaryOp
+    := '**' | '*' | '/' | '%' | '+' | '-' | '<<' | '>>>' | '>>' | '&' | '^' | '|' | '<' | '>' | '<=' | '>=' | '==' | '!=' | '&&' | '||'
+
+assignOp
+    ::= '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%='
+
+tupleExpression
+    ::= '(' expression? ( ',' expression? )* ')'
+
+inlineArrayExpression
+    ::= '[' expression ( ',' expression )* ']'
+
+identifier
+    ::= Identifier
+      | 'from'
+      | 'error'
+      | 'revert'
+      | 'global'
+
+literal
+    ::= stringLiteral
+      | numberLiteral
+      | BooleanLiteral
+      | hexStringLiteral
+      | unicodeStringLiteral
+
+stringLiteral
+    ::= ( NonEmptyStringLiteral | EmptyStringLiteral )+
+
+hexStringLiteral
+    ::= HexString+
+
+unicodeStringLiteral
+    ::= UnicodeStringLiteral+
+
+numberLiteral
+    ::= ( DecimalNumber | HexNumber ) NumberUnit?
+
+block
+    ::= '{' ( statement | uncheckedBlock )* '}'
+
+uncheckedBlock
+    ::= 'unchecked' block
+
+statement
+    ::= block
+      | simpleStatement
+      | ifStatement
+      | forStatement
+      | whileStatement
+      | doWhileStatement
+      | continueStatement
+      | breakStatement
+      | tryStatement
+      | returnStatement
+      | emitStatement
+      | revertStatement
+      | assemblyStatement
+
+simpleStatement
+    ::= variableDeclarationStatement
+      | expressionStatement
+
+ifStatement
+    ::= 'if' '(' expression ')' statement ( 'else' statement )?
+
+forStatement
+    ::= 'for' '(' ( simpleStatement | ';' ) ( expressionStatement | ';' ) expression? ')' statement
+
+whileStatement
+    ::= 'while' '(' expression ')' statement
+
+doWhileStatement
+    ::= 'do' statement 'while' '(' expression ')' ';'
+
+continueStatement
+    ::= 'continue' ';'
+
+breakStatement
+    ::= 'break' ';'
+
+tryStatement
+    ::= 'try' expression ( 'returns' '(' parameterList ')' )? block catchClause+
+
+catchClause
+    ::= 'catch' ( identifier? '(' parameterList ')' )? block
+
+returnStatement
+    ::= 'return' expression? ';'
+
+emitStatement
+    ::= 'emit' expression argumentList ';'
+
+revertStatement
+    ::= 'revert' expression argumentList ';'
+
+
+
+variableDeclarationList
+    ::= variableDeclaration ( ',' variableDeclaration )*
+
+variableDeclarationTuple
+    ::= '(' ','* variableDeclaration ( ',' variableDeclaration? )* ')'
+
+variableDeclarationStatement
+    ::= ( variableDeclaration ( '=' expression )? | variableDeclarationTuple '=' expression ) ';'
+
+variableDeclaration
+    ::= typeName dataLocation? identifier
+
+
+expressionStatement
+    ::= expression ';'
+
+assemblyStatement
+    ::= 'assembly' AssemblyDialect? assemblyFlags? yulBlock
+AssemblyDialect
+    ::= '"evmasm"'
+assemblyFlags
+    ::= '(' AssemblyFlagString ( ',' AssemblyFlagString )* ')'
+AssemblyFlagString
+    ::= '"' DoubleQuotedStringCharacter+ '"'
+
+yulStatement
+    ::= yulBlock
+      | yulVariableDeclaration
+      | yulAssignment
+      | yulFunctionCall
+      | yulIfStatement
+      | yulForStatement
+      | yulSwitchStatement
+      | 'leave'
+      | 'break'
+      | 'continue'
+      | yulFunctionDefinition
+
+yulBlock
+    ::= '{' yulStatement* '}'
+
+yulVariableDeclaration
+    ::= 'let' YulIdentifier ( ':=' yulExpression | ( ',' YulIdentifier )* ( ':=' yulFunctionCall )? )?
+
+yulAssignment
+    ::= yulPath ( ':=' yulExpression | ( ',' yulPath )+ ':=' yulFunctionCall )
+
+yulFunctionCall
+    ::= ( YulIdentifier | YulEVMBuiltin ) '(' ( yulExpression ( ',' yulExpression )* )? ')'
+
+yulIfStatement
+    ::= 'if' yulExpression yulBlock
+
+yulForStatement
+    ::= 'for' yulBlock yulExpression yulBlock yulBlock
+
+yulSwitchStatement
+    ::= 'switch' yulExpression ( yulSwitchCase+ ( 'default' yulBlock )? | 'default' yulBlock )
+yulSwitchCase
+    ::= 'case' yulLiteral yulBlock
+
+yulFunctionDefinition
+    ::= 'function' YulIdentifier '(' ( YulIdentifier ( ',' YulIdentifier )* )? ')' ( '->' YulIdentifier ( ',' YulIdentifier )* )? yulBlock
+
+yulPath
+    ::= YulIdentifier ( '.' ( YulIdentifier | YulEVMBuiltin ) )*
+
+yulLiteral
+     ::= YulDecimalNumberLiteral
+       | StringLiteral
+       | YulHexLiteral
+       | BooleanLiteral
+       | YulHexStringLiteral
+
+yulExpression
+         ::= yulPath
+           | yulFunctionCall
+           | yulLiteral
+
+<?TOKENS?>
+
+WS
+    ::= ( ' ' | #x0009 | #x000d | #x000a | #x000C )+
+
+COMMENT
+    ::= '/*' .* '*/'
+
+LINE_COMMENT
+    ::= '//' [^#x000d#x000a]*
+
+HexString
+         ::= 'hex' ( '"' EvenHexDigits? '"' | "'" EvenHexDigits? "'" )
+HexNumber
+         ::= '0' 'x' HexDigits
+HexDigits
+         ::= HexCharacter ( '_'? HexCharacter )*
+EvenHexDigits
+         ::= HexCharacter HexCharacter ( '_'? HexCharacter HexCharacter )*
+HexCharacter
+         ::= [0-9A-Fa-f]
+
+DecimalNumber
+         ::= ( DecimalDigits | DecimalDigits? '.' DecimalDigits ) ( [eE] '-'? DecimalDigits )?
+DecimalDigits
+         ::= [0-9] ( '_'? [0-9] )*
+
+Identifier
+         ::= IdentifierStart IdentifierPart*
+IdentifierStart
+         ::= [a-zA-Z$_]
+IdentifierPart
+         ::= [a-zA-Z0-9$_]
+
+NonEmptyStringLiteral
+    ::= '"' DoubleQuotedStringCharacter+ '"'
+      | "'" SingleQuotedStringCharacter+ "'"
+
+EmptyStringLiteral
+    ::= '""' | "''"
+
+DoubleQuotedStringCharacter
+    ::= DoubleQuotedPrintable | EscapeSequence
+
+SingleQuotedStringCharacter
+    ::= SingleQuotedPrintable | EscapeSequence
+
+SingleQuotedPrintable
+    ::= [#x0020-#x007E] - ['\]
+
+DoubleQuotedPrintable
+    ::= [#x0020-#x007E] - ["\]
+
+EscapeSequence
+    ::= [\] ( AsciiEscape | HexByteEscape | UnicodeEscape )
+
+AsciiEscape
+    ::= [nrt#x000a#x000d'"\]
+
+UnicodeEscape
+    ::= 'u' HexCharacter HexCharacter HexCharacter HexCharacter
+
+HexByteEscape
+    ::= 'x' HexCharacter HexCharacter
+
+YulDecimalNumberLiteral
+    ::= '0'
+      | [1-9] [0-9]*
+
+YulHexLiteral
+    ::= '0' 'x' [0-9a-fA-F]+
+
+YulHexStringLiteral
+    ::= HexString
+
+BooleanLiteral
+    ::= 'true' | 'false'
+
+IdentifierName
+    ::= IdentifierStart IdentifierPart*
+
+IdentifierStart
+    ::= [a-zA-Z$_]
+
+IdentifierPart
+    ::= [a-zA-Z0-9$_]
+
+YulIdentifier
+    ::= IdentifierName - YulReservedWord
+
+YulReservedWord
+    ::= YulKeyword
+      | YulEVMBuildFunctionName
+      | BooleanLiteral
+
+YulKeyword
+    ::= 'break' | 'case' | 'continue' | 'default' | | 'for' | 'function' | 'if'
+      | 'leave' | 'let' | 'switch' | 'hex'
+
+YulEVMBuiltinFunctionName
+    ::= 'stop' | 'add' | 'sub' | 'mul' | 'div' | 'sdiv' | 'mod' | 'smod' | 'exp' | 'not'
+      | 'lt' | 'gt' | 'slt' | 'sgt' | 'eq' | 'iszero' | 'and' | 'or' | 'xor' | 'byte'
+      | 'shl' | 'shr' | 'sar' | 'addmod' | 'mulmod' | 'signextend' | 'keccak256'
+      | 'pop' | 'mload' | 'mstore' | 'mstore8' | 'sload' | 'sstore' | 'msize' | 'gas'
+      | 'address' | 'balance' | 'selfbalance' | 'caller' | 'callvalue' | 'calldataload'
+      | 'calldatasize' | 'calldatacopy' | 'extcodesize' | 'extcodecopy' | 'returndatasize'
+      | 'returndatacopy' | 'extcodehash' | 'create' | 'create2' | 'call' | 'callcode'
+      | 'delegatecall' | 'staticcall' | 'return' | 'revert' | 'selfdestruct' | 'invalid'
+      | 'log0' | 'log1' | 'log2' | 'log3' | 'log4' | 'chainid' | 'origin' | 'gasprice'
+      | 'blockhash' | 'coinbase' | 'timestamp' | 'number' | 'difficulty' | 'gaslimit'
+      | 'basefee';
