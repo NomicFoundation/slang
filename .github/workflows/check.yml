@@ -1,8 +1,8 @@
 name: check
 on:
   push:
-    branches:
-      - main
+    branches-ignore:
+      - parser
   pull_request:
 
 jobs:
