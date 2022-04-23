@@ -1,5 +1,7 @@
 # Solidity 0.8.13 Grammar
 
+This is using [W3C EBNF](https://www.w3.org/TR/REC-xml/#sec-notation)
+
 ```ebnf
 IGNORED
     ::= WS | COMMENT | LINE_COMMENT
