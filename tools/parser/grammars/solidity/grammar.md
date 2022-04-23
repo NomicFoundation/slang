@@ -6,7 +6,7 @@ This is using [W3C EBNF](https://www.w3.org/TR/REC-xml/#sec-notation)
 IGNORED
     ::= WS | COMMENT | LINE_COMMENT
 
-# TODO: specify natspec sublanguage here
+/* TODO: specify natspec sublanguage here */
 ```
 
 ```ebnf
@@ -34,7 +34,7 @@ definition
 pragmaDirective
     ::= 'pragma' [^;]+ ';'
 
-# TODO: specify pragma sublanguage here
+/* TODO: specify pragma sublanguage here */
 ```
 
 ```ebnf
@@ -58,7 +58,7 @@ importPath
 ```
 
 ```ebnf
-# Q: is there a semantic difference between first set of alternatives?
+/* Q: is there a semantic difference between first set of alternatives? */
 usingDirective
     ::= 'using' ( identifierPath | '{' identifierPath ( ',' identifierPath )* '}' ) 'for' ( '*' | typeName ) 'global'? ';'
 ```
@@ -410,7 +410,7 @@ expressionStatement
 assemblyStatement
     ::= 'assembly' '"evmasm"'? assemblyFlags? yulBlock
 
-# Constraint: strings are non-empty
+/* Constraint: strings are non-empty */
 assemblyFlags
     ::= '(' DoubleQuotedStringLiteral ( ',' DoubleQuotedStringLiteral )* ')'
 ```
@@ -457,10 +457,10 @@ DecimalNumber
     ::= ( DecimalInteger | DecimalFloat ) DecimalExponent?
 DecimalInteger
     ::= SequenceOfPossiblySeparatedDecimalDigits
-# Q: Is this bad practice to reuse the concept of integer?
+/* Q: Is this bad practice to reuse the concept of integer? */
 DecimalFloat
     ::= DecimalInteger? '.' DecimalInteger
-# Q: Is this bad practice to reuse the concept of integer?
+/* Q: Is this bad practice to reuse the concept of integer? */
 DecimalExponent
     ::=  [eE] '-'? DecimalInteger
 SequenceOfPossiblySeparatedDecimalDigits
@@ -492,25 +492,17 @@ HexCharacter
 
 ```ebnf
 AsciiStringLiteral
-    ::= '"' DoubleQuotedStringCharacter+ '"'
-      | "'" SingleQuotedStringCharacter+ "'"
-SingleQuotedASCIIStringCharacter
-    ::= [#x0020-#x007E] - ['\] | EscapeSequence
-DoubleQuotedAsciiStringCharacter
-    ::= [#x0020-#x007E] - ["\] | EscapeSequece
+    ::= '"' ( [#x20-#x7E] - ["\] | EscapeSequece )* '"'
+      | "'" ( [#x20-#x7E] - ['\] | EscapeSequence )* "'"
 
 UnicodeStringLiteral
-    ::= 'unicode"' DoubleQuotedUnicodeStringCharacter* '"'
-      | "unicode'" SingleQuotedUnicodeStringCharacter* "'"
-SingleQuotedUnicodeStringCharacter
-    ::= [^'\#xd#xa] | EscapeSequence
-DoubleQuotedUnicodeStringCharacter
-    ::= [^"\#xd#xa] | EscapeSequence
+    ::= 'unicode"' ( [^"\#x000D#x000A] | EscapeSequence )* '"'
+      | "unicode'" ( [^'\#x000D#x000A] | EscapeSequence )* "'"
 
 EscapeSequence
     ::= '\' ( AsciiEscape | HexByteEscape | UnicodeEscape )
 AsciiEscape
-    ::= [nrt#x000a#x000d'"\]
+    ::= [nrt#x000A#x000D'"\]
 HexByteEscape
     ::= 'x' HexCharacter HexCharacter
 UnicodeEscape
