@@ -1,6 +1,13 @@
+# Solidity 0.8.13 Grammar
+
+```ebnf
 IGNORED
     ::= WS | COMMENT | LINE_COMMENT
 
+# TODO: specify natspec sublanguage here
+```
+
+```ebnf
 sourceUnit
     ::= ( directive | definition )*
 
@@ -19,44 +26,74 @@ definition
       | enumDefinition
       | userDefinedValueTypeDefinition
       | errorDefinition
+```
 
+```ebnf
 pragmaDirective
     ::= 'pragma' [^;]+ ';'
 
+# TODO: specify pragma sublanguage here
+```
+
+```ebnf
 importDirective
     ::= 'import' ( simpleImportDirective | starImportDirective | selectingImportDirective ) ';'
+
 simpleImportDirective
     ::= importPath ( 'as' identifier )?
+
 starImportDirective
     ::= '*' 'as' identifier 'from' importPath
+
 selectingImportDirective
     ::= '{' selectedImport ( ',' selectedImport )* '}' 'from' importPath
+
 selectedImport
     ::= identifier ( 'as' identifier )?
+
 importPath
     ::= NonEmptyStringLiteral
+```
 
+```ebnf
 # Q: is there a semantic difference between first set of alternatives?
 usingDirective
     ::= 'using' ( identifierPath | '{' identifierPath ( ',' identifierPath )* '}' ) 'for' ( '*' | typeName ) 'global'? ';'
+```
 
-
+```ebnf
 contractDefinition
     ::= 'abstract'? 'contract' identifier inheritanceSpecifierList? '{' contractBodyElement* '}'
 
 interfaceDefinition
     ::= 'interface' identifier inheritanceSpecifierList? '{' contractBodyElement* '}'
 
+inheritanceSpecifierList
+    ::= 'is' inheritanceSpecifier ( ',' inheritanceSpecifier )*
+
+inheritanceSpecifier
+    ::= identifierPath argumentList?
+```
+
+```ebnf
 libraryDefinition
     ::= 'library' identifier '{' contractBodyElement* '}'
+```
 
+```ebnf
 functionDefinition
-    ::= 'function' ( identifier | 'fallback' | 'receive' ) '(' parameterList? ')' ( visibilitySpecifier | stateMutabilitySpecifier | modifierInvocation | 'virtual' | overrideSpecifier )* ( 'returns' '(' parameterList ')' )? ( ';' | block )
+    ::= 'function' ( identifier | 'fallback' | 'receive' ) parameterList functionAttribute* ( 'returns' nonEmptyParameterList )? ( ';' | block )
 
+functionAttribute
+    ::= visibilitySpecifier | stateMutabilitySpecifier | modifierInvocation | 'virtual' | overrideSpecifier
+```
+
+```ebnf
 constantDefinition
     ::= typeName 'constant' identifier '=' expression ';'
+```
 
-
+```ebnf
 structDefinition
     ::= 'struct' identifier '{' ( typeName identifier ';' )+ '}'
 
@@ -65,26 +102,25 @@ enumDefinition
 
 userDefinedValueTypeDefinition
     ::= 'type' identifier 'is' elementaryType ';'
+```
 
-
+```ebnf
 eventDefinition
     ::= 'event' identifier '(' ( eventParameter ( ',' eventParameter )* )? ')' 'anonymous'? ';'
+
 eventParameter
     ::= typeName 'indexed'? identifier?
+```
 
-
+```ebnf
 errorDefinition
     ::= 'error' identifier '(' ( errorParameter ( ',' errorParameter )* )? ')' ';'
+
 errorParameter
     ::= typeName identifier?
+```
 
-
-inheritanceSpecifierList
-    ::= 'is' inheritanceSpecifier ( ',' inheritanceSpecifier )*
-inheritanceSpecifier
-    ::= identifierPath argumentList?
-
-
+```ebnf
 contractBodyElement
     ::= usingDirective
       | constructorDefinition
@@ -100,20 +136,29 @@ contractBodyElement
       | stateVariableDeclaration
 
 constructorDefinition
-    ::= 'constructor' '(' parameterList? ')' ( modifierInvocation | 'payable' | 'internal' | 'public' )* block
+    ::= 'constructor' parameterList constructorAttribute* block
+constructorAttribute
+    ::= modifierInvocation | 'payable' | 'internal' | 'public'
 
 fallbackFunctionDefinition
-    ::= 'fallback' '(' parameterList? ')' ( 'external' | stateMutabilitySpecifier | modifierInvocation | 'virtual' | overrideSpecifier )* ( 'returns' '(' parameterList ')' )? ( ';' | block )
+    ::= 'fallback' parameterList fallbackFunctionAttribute* ( 'returns' nonEmptyParameterList )? ( ';' | block )
+fallbackFunctionAttribute
+    ::= 'external' | stateMutabilitySpecifier | modifierInvocation | 'virtual' | overrideSpecifier
 
 receiveFunctionDefinition
-    ::= 'receive' '(' ')' ( 'external' | 'payable' | modifierInvocation | 'virtual' | overrideSpecifier )* ( ';' | block )
+    ::= 'receive' '(' ')' receiveFunctionAttribute* ( ';' | block )
+receiveFunctionAttribute
+    ::= 'external' | 'payable' | modifierInvocation | 'virtual' | overrideSpecifier
 
 modifierDefinition
-    ::= 'modifier' identifier ( '(' parameterList? ')' )? ( 'virtual' | overrideSpecifier )* ( ';' | block )
+    ::= 'modifier' identifier parameterList? methodAttribute* ( ';' | block )
+methodAttribute
+    ::= 'virtual' | overrideSpecifier
 
 stateVariableDeclaration
-    ::= typeName ( 'public' | 'private' | 'internal' | 'constant' | overrideSpecifier | 'immutable' )* identifier ( '=' expression )? ';'
-
+    ::= typeName stateVariableAttribute* identifier ( '=' expression )? ';'
+stateVariableAttribute
+    ::= 'public' | 'private' | 'internal' | 'constant' | overrideSpecifier | 'immutable'
 
 argumentList
     ::= '(' ( positionalArgumentList | namedArgumentList )? ')'
@@ -124,11 +169,15 @@ namedArgumentList
 namedArgument
     ::= identifier ':' expression
 
-identifierPath
-    ::= identifier ( '.' identifier )*
-
 modifierInvocation
     ::= identifierPath argumentList?
+
+parameterList
+    ::= '(' ( parameterDeclaration ( ',' parameterDeclaration )* )? ')'
+nonEmptyParameterList
+    ::= '(' parameterDeclaration ( ',' parameterDeclaration )* ')'
+parameterDeclaration
+    ::= typeName dataLocation? identifier?
 
 visibilitySpecifier
     ::= 'internal'
@@ -141,24 +190,16 @@ stateMutabilitySpecifier
       | 'view'
       | 'payable'
 
-parameterList
-    ::= parameterDeclaration ( ',' parameterDeclaration )*
-parameterDeclaration
-    ::= typeName dataLocation? identifier?
-
 overrideSpecifier
     ::= 'override' ( '(' identifierPath ( ',' identifierPath )* ')' )?
 
+identifierPath
+    ::= identifier ( '.' identifier )*
+```
 
-#############################################################
-#
-# Types
-#
-#############################################################
-
+```ebnf
 typeName
     ::= ( elementaryType | functionType | mappingType | identifierPath ) ( '[' expression? ']' )*
-
 
 elementaryType
     ::= 'address' 'payable'?
@@ -197,17 +238,13 @@ Fixed
 Ufixed
     ::=  'ufixed' ( [1-9] [0-9]+ 'x' [1-9] [0-9]+ )?
 
-
 functionType
-    ::= 'function' '(' parameterList? ')' ( visibilitySpecifier | stateMutabilitySpecifier )* ( 'returns' '(' parameterList ')' )?
-
+    ::= 'function' parameterList ( visibilitySpecifier | stateMutabilitySpecifier )* ( 'returns' nonEmptyParameterList )?
 
 mappingType
     ::= 'mapping' '(' mappingKeyType DoubleArrow typeName ')'
 mappingKeyType
     ::= elementaryType | identifierPath
-
-
 
 dataLocation
     ::= 'memory'
@@ -234,7 +271,7 @@ expressionRHS
       | unarySuffixOp
       | binaryOp expression
       | '?' expression ':' expression
-      | assignOp expression 
+      | assignOp expression
 
 unaryPrefixOp
     ::= '++' | '--' | '!' | '~' | 'delete' | '-'
@@ -254,30 +291,44 @@ tupleExpression
 inlineArrayExpression
     ::= '[' expression ( ',' expression )* ']'
 
+reservedWord
+    ::= keyword
+      | reservedKeyword
+      | NumberUnit
+      | BooleanLiteral
+
+keyword
+    ::= 'pragma' | 'abstract' | 'anonymous' | 'address' | 'as' | 'assembly' | 'bool' | 'break' | 'bytes' | 'calldata'
+      | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum'
+      | 'event' | 'external' | 'fallback' | 'false' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import'
+      | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override'
+      | 'payable' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct'
+      | 'true' | 'try' | 'type' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while'
+      | SignedIntegerType | UnsignedIntegerType | FixedBytes | 'fixed' | 'ufixed'
+
+reservedKeyword
+    ::= 'after' | 'alias' | 'apply' | 'auto' | 'byte' | 'case' | 'copyof' | 'default' | 'define' | 'final'
+      | 'implements' | 'in' | 'inline' | 'let' | 'macro' | 'match' | 'mutable' | 'null' | 'of'
+      | 'partial' | 'promise' | 'reference' | 'relocatable' | 'sealed' | 'sizeof' | 'static'
+      | 'supports' | 'switch' | 'typedef' | 'typeof' | 'var'
+
 identifier
-    ::= Identifier
-      | 'from'
-      | 'error'
-      | 'revert'
-      | 'global'
+    ::= IdentifierName - reservedWord
 
 literal
-    ::= stringLiteral
-      | numberLiteral
-      | BooleanLiteral
-      | hexStringLiteral
+    ::= asciiStringLiteral
       | unicodeStringLiteral
+      | numericLiteral
+      | hexStringLiteral
+      | BooleanLiteral
 
-stringLiteral
-    ::= ( NonEmptyStringLiteral | EmptyStringLiteral )+
-
-hexStringLiteral
-    ::= HexString+
+asciiStringLiteral
+    ::= AsciiStringLiteral+
 
 unicodeStringLiteral
     ::= UnicodeStringLiteral+
 
-numberLiteral
+numericLiteral
     ::= ( DecimalNumber | HexNumber ) NumberUnit?
 
 block
@@ -324,10 +375,9 @@ breakStatement
     ::= 'break' ';'
 
 tryStatement
-    ::= 'try' expression ( 'returns' '(' parameterList ')' )? block catchClause+
-
+    ::= 'try' expression ( 'returns' nonEmptyParameterList )? block catchClause+
 catchClause
-    ::= 'catch' ( identifier? '(' parameterList ')' )? block
+    ::= 'catch' ( identifier? nonEmptyParameterList )? block
 
 returnStatement
     ::= 'return' expression? ';'
@@ -337,7 +387,6 @@ emitStatement
 
 revertStatement
     ::= 'revert' expression argumentList ';'
-
 
 
 variableDeclarationList
@@ -357,32 +406,139 @@ expressionStatement
     ::= expression ';'
 
 assemblyStatement
-    ::= 'assembly' AssemblyDialect? assemblyFlags? yulBlock
-AssemblyDialect
-    ::= '"evmasm"'
+    ::= 'assembly' '"evmasm"'? assemblyFlags? yulBlock
+
+# Constraint: strings are non-empty
 assemblyFlags
-    ::= '(' AssemblyFlagString ( ',' AssemblyFlagString )* ')'
-AssemblyFlagString
+    ::= '(' DoubleQuotedStringLiteral ( ',' DoubleQuotedStringLiteral )* ')'
+```
+
+```ebnf
+<?TOKENS?>
+```
+
+## Whitespace and Comments
+
+```ebnf
+WS
+    ::= ( ' ' | #x0009 | #x000d | #x000a | #x000C )+
+
+COMMENT
+    ::= '/*' .* '*/'
+
+LINE_COMMENT
+    ::= '//' [^#x000d#x000a]*
+```
+
+## Raw Identifiers
+
+```ebnf
+IdentifierName
+    ::= IdentifierStart IdentifierPart*
+IdentifierStart
+    ::= [a-zA-Z$_]
+IdentifierPart
+    ::= [a-zA-Z0-9$_]
+```
+
+## Boolean Literals
+
+```ebnf
+BooleanLiteral
+    ::= 'true' | 'false'
+```
+
+## Numeric Literals
+
+```ebnf
+DecimalNumber
+    ::= ( DecimalInteger | DecimalFloat ) DecimalExponent?
+DecimalInteger
+    ::= SequenceOfPossiblySeparatedDecimalDigits
+# Q: Is this bad practice to reuse the concept of integer?
+DecimalFloat
+    ::= DecimalInteger? '.' DecimalInteger
+# Q: Is this bad practice to reuse the concept of integer?
+DecimalExponent
+    ::=  [eE] '-'? DecimalInteger
+SequenceOfPossiblySeparatedDecimalDigits
+    ::= [0-9] ( '_'? [0-9] )*
+
+HexNumber
+    ::= '0' 'x' SequenceOfPossiblySeparatedHexDigits
+SequenceOfPossiblySeparatedHexDigits
+    ::= HexCharacter ( '_'? HexCharacter )*
+```
+
+```ebnf
+NumberUnit
+    ::= 'wei' | 'gwei' | 'ether' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'years'
+```
+
+## Hex String Literals
+
+```ebnf
+HexStringLiteral
+    ::= 'hex' ( '"' SequenceOfPossiblySeparatedPairsOfHexDigits? '"' | "'" SequenceOfPossiblySeparatedPairsOfHexDigits? "'" )
+SequenceOfPossiblySeparatedPairsOfHexDigits
+    ::= HexCharacter HexCharacter ( '_'? HexCharacter HexCharacter )*
+HexCharacter
+    ::= [0-9A-Fa-f]
+```
+
+## String Literals
+
+```ebnf
+AsciiStringLiteral
     ::= '"' DoubleQuotedStringCharacter+ '"'
+      | "'" SingleQuotedStringCharacter+ "'"
+SingleQuotedASCIIStringCharacter
+    ::= [#x0020-#x007E] - ['\] | EscapeSequence
+DoubleQuotedAsciiStringCharacter
+    ::= [#x0020-#x007E] - ["\] | EscapeSequece
+
+UnicodeStringLiteral
+    ::= 'unicode"' DoubleQuotedUnicodeStringCharacter* '"'
+      | "unicode'" SingleQuotedUnicodeStringCharacter* "'"
+SingleQuotedUnicodeStringCharacter
+    ::= [^'\#xd#xa] | EscapeSequence
+DoubleQuotedUnicodeStringCharacter
+    ::= [^"\#xd#xa] | EscapeSequence
+
+EscapeSequence
+    ::= '\' ( AsciiEscape | HexByteEscape | UnicodeEscape )
+AsciiEscape
+    ::= [nrt#x000a#x000d'"\]
+HexByteEscape
+    ::= 'x' HexCharacter HexCharacter
+UnicodeEscape
+    ::= 'u' HexCharacter HexCharacter HexCharacter HexCharacter
+```
+
+## Yul
+
+```ebnf
+yulBlock
+    ::= '{' yulStatement* '}'
 
 yulStatement
     ::= yulBlock
       | yulVariableDeclaration
+      | yulFunctionDefinition
       | yulAssignment
       | yulFunctionCall
       | yulIfStatement
       | yulForStatement
       | yulSwitchStatement
-      | 'leave'
-      | 'break'
-      | 'continue'
-      | yulFunctionDefinition
-
-yulBlock
-    ::= '{' yulStatement* '}'
+      | yulLeaveStatement
+      | yulBreakStatement
+      | yulContinueStatement
 
 yulVariableDeclaration
     ::= 'let' YulIdentifier ( ':=' yulExpression | ( ',' YulIdentifier )* ( ':=' yulFunctionCall )? )?
+
+yulFunctionDefinition
+    ::= 'function' YulIdentifier '(' ( YulIdentifier ( ',' YulIdentifier )* )? ')' ( '->' YulIdentifier ( ',' YulIdentifier )* )? yulBlock
 
 yulAssignment
     ::= yulPath ( ':=' yulExpression | ( ',' yulPath )+ ':=' yulFunctionCall )
@@ -393,6 +549,15 @@ yulFunctionCall
 yulIfStatement
     ::= 'if' yulExpression yulBlock
 
+yulLeaveStatement
+    ::= 'leave'
+
+yulBreakStatement
+    ::= 'break'
+
+yulContinueStatement
+    ::= 'continue'
+
 yulForStatement
     ::= 'for' yulBlock yulExpression yulBlock yulBlock
 
@@ -401,88 +566,19 @@ yulSwitchStatement
 yulSwitchCase
     ::= 'case' yulLiteral yulBlock
 
-yulFunctionDefinition
-    ::= 'function' YulIdentifier '(' ( YulIdentifier ( ',' YulIdentifier )* )? ')' ( '->' YulIdentifier ( ',' YulIdentifier )* )? yulBlock
-
+yulExpression
+         ::= yulPath
+           | yulFunctionCall
+           | yulLiteral
 yulPath
     ::= YulIdentifier ( '.' ( YulIdentifier | YulEVMBuiltin ) )*
 
 yulLiteral
      ::= YulDecimalNumberLiteral
-       | StringLiteral
        | YulHexLiteral
+       | StringLiteral
        | BooleanLiteral
-       | YulHexStringLiteral
-
-yulExpression
-         ::= yulPath
-           | yulFunctionCall
-           | yulLiteral
-
-<?TOKENS?>
-
-WS
-    ::= ( ' ' | #x0009 | #x000d | #x000a | #x000C )+
-
-COMMENT
-    ::= '/*' .* '*/'
-
-LINE_COMMENT
-    ::= '//' [^#x000d#x000a]*
-
-HexString
-         ::= 'hex' ( '"' EvenHexDigits? '"' | "'" EvenHexDigits? "'" )
-HexNumber
-         ::= '0' 'x' HexDigits
-HexDigits
-         ::= HexCharacter ( '_'? HexCharacter )*
-EvenHexDigits
-         ::= HexCharacter HexCharacter ( '_'? HexCharacter HexCharacter )*
-HexCharacter
-         ::= [0-9A-Fa-f]
-
-DecimalNumber
-         ::= ( DecimalDigits | DecimalDigits? '.' DecimalDigits ) ( [eE] '-'? DecimalDigits )?
-DecimalDigits
-         ::= [0-9] ( '_'? [0-9] )*
-
-Identifier
-         ::= IdentifierStart IdentifierPart*
-IdentifierStart
-         ::= [a-zA-Z$_]
-IdentifierPart
-         ::= [a-zA-Z0-9$_]
-
-NonEmptyStringLiteral
-    ::= '"' DoubleQuotedStringCharacter+ '"'
-      | "'" SingleQuotedStringCharacter+ "'"
-
-EmptyStringLiteral
-    ::= '""' | "''"
-
-DoubleQuotedStringCharacter
-    ::= DoubleQuotedPrintable | EscapeSequence
-
-SingleQuotedStringCharacter
-    ::= SingleQuotedPrintable | EscapeSequence
-
-SingleQuotedPrintable
-    ::= [#x0020-#x007E] - ['\]
-
-DoubleQuotedPrintable
-    ::= [#x0020-#x007E] - ["\]
-
-EscapeSequence
-    ::= [\] ( AsciiEscape | HexByteEscape | UnicodeEscape )
-
-AsciiEscape
-    ::= [nrt#x000a#x000d'"\]
-
-UnicodeEscape
-    ::= 'u' HexCharacter HexCharacter HexCharacter HexCharacter
-
-HexByteEscape
-    ::= 'x' HexCharacter HexCharacter
+       | HexStringLiteral
 
 YulDecimalNumberLiteral
     ::= '0'
@@ -490,21 +586,6 @@ YulDecimalNumberLiteral
 
 YulHexLiteral
     ::= '0' 'x' [0-9a-fA-F]+
-
-YulHexStringLiteral
-    ::= HexString
-
-BooleanLiteral
-    ::= 'true' | 'false'
-
-IdentifierName
-    ::= IdentifierStart IdentifierPart*
-
-IdentifierStart
-    ::= [a-zA-Z$_]
-
-IdentifierPart
-    ::= [a-zA-Z0-9$_]
 
 YulIdentifier
     ::= IdentifierName - YulReservedWord
@@ -530,3 +611,4 @@ YulEVMBuiltinFunctionName
       | 'log0' | 'log1' | 'log2' | 'log3' | 'log4' | 'chainid' | 'origin' | 'gasprice'
       | 'blockhash' | 'coinbase' | 'timestamp' | 'number' | 'difficulty' | 'gaslimit'
       | 'basefee';
+```
