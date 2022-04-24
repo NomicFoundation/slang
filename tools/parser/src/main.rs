@@ -10,8 +10,8 @@ fn main() {
     let src = fs::read_to_string(env::args().nth(1).expect("Expected file argument"))
         .expect("Failed to read file");
 
-    let (json, errs) = parser().parse_recovery(src.trim());
-    println!("{:#?}", json);
+    let (rules, errs) = parser().parse_recovery(src.trim());
+    println!("{:#?}", rules);
     errs.into_iter().for_each(|e| {
         let msg = if let chumsky::error::SimpleReason::Custom(msg) = e.reason() {
             msg.clone()

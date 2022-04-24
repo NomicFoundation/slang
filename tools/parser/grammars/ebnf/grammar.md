@@ -5,37 +5,34 @@ This grammar describes W3C EBNF, using [W3C EBNF](https://www.w3.org/TR/REC-xml/
 The valid locations for whitespace and comments are explicitly specified, rather than being ambient.
 
 ```ebnf
-grammar ::= ( rule | S )*
+grammar ::= ( S? production )* S?
 
-rule ::= identifier S? '::=' S? expression
+production ::= Identifier S? '::=' S? choice
 
-expression ::= optional
+choice ::= sequenceOrDifference ( S? '|' S? sequenceOrDifference )*
 
-optional ::= sequence '?'?
+sequenceOrDifference ::= item ( ( S? '-' S? item ) | ( S? item )* )?
 
-sequence ::= alternate (S? alternate)*
+item ::= primary ( '+' | '*' | '?')?
 
-alternate ::= exclusion ( S? '|' S? exclusion )*
+primary ::= set | '$' | '.' | CharCode | String | Identifier | '(' S? choice S? ')'
 
-exclusion ::= repeat ( S? '-' S? repeat )?
+set ::= '[' '^'? ( SetChar ( '-' SetChar )? )* ']'
 
-repeat ::= term ( '+' | '*' )?
+SetChar ::= CharCode | [^#x09#x0A#x0D#x23#x5D] /* TAB or LF or CR or '#' or ']' */
 
-term ::= hex_character | string | identifier | set | '(' S? expression S? ')'
+CharCode ::= '#x' [0-9a-fA-Z]+
 
-hex_character ::= '#x' [0-9a-fA-Z]+
+String ::= "'" [^']* "'" | '"' [^"]* '"'
 
-string ::= ' [^']* ' | " [^"]* "
-
-identifier ::= [a-zA-Z$_] [a-zA-Z$_0-9]*
-
-set ::= '[' '^'? ( setchar ( '-' setchar )? )* ']'
-
-setchar := hex_character | [^#x23#x5D] /* # or ] */
-
-COMMENT
-    ::= '/*' ( [^*] | '*' [^/] )* '*/'
+Identifier ::= [_a-zA-Z] [_a-zA-Z0-9]*
 
 S
-    ::= ( ' ' | 0x09 | 0x0A | 0x0D | COMMENT )+
+    ::= ( Whitespace | Comment )*
+
+Comment
+    ::= '/*' ( [^*] | '*'+ [^*/] )* '*'+ '/'
+
+Whitespace
+    ::= #x09 | #x0A | #x0D | #x20
 ```

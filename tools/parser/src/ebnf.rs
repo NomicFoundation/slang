@@ -1,104 +1,120 @@
-//! This is a parser for JSON.
-//! Run it with the following command:
-//! cargo run --example json -- examples/sample.json
-
 use chumsky::prelude::*;
 use std::collections::HashMap;
 
 #[derive(Clone, Debug)]
-pub enum Json {
-    Invalid,
-    Null,
-    Bool(bool),
-    Str(String),
-    Num(f64),
-    Array(Vec<Json>),
-    Object(HashMap<String, Json>),
+pub enum Expression {
+    Repeat(OccuranceCount, Box<Expression>),
+    Alternate(Vec<Expression>),
+    Sequence(Vec<Expression>),
+    Exclusion(Box<Expression>, Box<Expression>),
+    Chars(String),
+    Identifier(String),
+    Set(bool, Vec<SetElement>),
 }
 
-pub fn parser() -> impl Parser<char, Json, Error = Simple<char>> {
-    recursive(|value| {
-        let frac = just('.').chain(text::digits(10));
+#[derive(Clone, Debug)]
+pub enum OccuranceCount {
+    ZeroOrOne,
+    ZeroOrMore,
+    OneOrMore,
+}
 
-        let exp = just('e')
-            .or(just('E'))
-            .chain(just('+').or(just('-')).or_not())
-            .chain(text::digits(10));
+#[derive(Clone, Debug)]
+pub enum SetElement {
+    Char(char),
+    Range(char, char),
+}
 
-        let number = just('-')
-            .or_not()
-            .chain(text::int(10))
-            .chain(frac.or_not().flatten())
-            .chain::<char, _, _>(exp.or_not().flatten())
-            .collect::<String>()
-            .from_str()
-            .unwrapped()
-            .labelled("number");
+pub fn parser() -> impl Parser<char, HashMap<String, Expression>, Error = Simple<char>> {
+    let whitespace = choice((just('\x09'), just('\x0A'), just('\x0D'), just('\x20'))).ignored();
 
-        let escape = just('\\').ignore_then(
-            just('\\')
-                .or(just('/'))
-                .or(just('"'))
-                .or(just('b').to('\x08'))
-                .or(just('f').to('\x0C'))
-                .or(just('n').to('\n'))
-                .or(just('r').to('\r'))
-                .or(just('t').to('\t'))
-                .or(just('u').ignore_then(
-                    filter(|c: &char| c.is_digit(16))
-                        .repeated()
-                        .exactly(4)
-                        .collect::<String>()
-                        .validate(|digits, span, emit| {
-                            char::from_u32(u32::from_str_radix(&digits, 16).unwrap())
-                                .unwrap_or_else(|| {
-                                    emit(Simple::custom(span, "invalid unicode character"));
-                                    '\u{FFFD}' // unicode replacement character
-                                })
-                        }),
-                )),
-        );
+    let comment = just("/*").then(take_until(just("*/"))).ignored();
 
-        let string = just('"')
-            .ignore_then(filter(|c| *c != '\\' && *c != '"').or(escape).repeated())
-            .then_ignore(just('"'))
-            .collect::<String>()
-            .labelled("string");
+    let s = whitespace.or(comment).repeated().ignored();
 
-        let array = value
+    let identifier = text::ident();
+
+    let string = none_of("'")
+        .repeated()
+        .padded_by(just('\''))
+        .or(none_of("\"").repeated().padded_by(just('"')))
+        .collect::<String>()
+        .map(Expression::Chars);
+
+    let char_code = just("#x")
+        .ignore_then(filter(char::is_ascii_hexdigit).repeated())
+        .collect::<String>()
+        .map(|digits| digits.parse::<u32>().unwrap())
+        .map(|code| char::from_u32(code).ok_or(()))
+        .unwrapped();
+
+    let set_char = char_code.or(none_of("\x09\x0A\x0D#]")); /* TAB or LF or CR or '#' or ']' */
+
+    let set = just('^')
+        .or_not()
+        .then(
+            set_char
+                .clone()
+                .then(just('-').ignore_then(set_char).or_not())
+                .repeated(),
+        )
+        .delimited_by(just('['), just(']'))
+        .map(|(neg, chars)| {
+            Expression::Set(
+                neg.is_some(),
+                chars
+                    .into_iter()
+                    .map(|(c1, c2)| {
+                        if let Some(c2) = c2 {
+                            SetElement::Range(c1, c2)
+                        } else {
+                            SetElement::Char(c1)
+                        }
+                    })
+                    .collect(),
+            )
+        });
+
+    let expression = recursive(|expression: Recursive<char, Expression, Simple<char>>| {
+        let term = set
+            .or(string)
+            .or(identifier.map(Expression::Identifier))
+            .or(expression.padded_by(s).delimited_by(just('('), just(')')));
+
+        let repeat = term.then(one_of("*+?").or_not()).map(|(h, t)| match t {
+            Some('?') => Expression::Repeat(OccuranceCount::ZeroOrOne, Box::new(h)),
+            Some('*') => Expression::Repeat(OccuranceCount::ZeroOrMore, Box::new(h)),
+            Some('+') => Expression::Repeat(OccuranceCount::OneOrMore, Box::new(h)),
+            _ => h,
+        });
+
+        let exclusion = repeat
             .clone()
-            .chain(just(',').ignore_then(value.clone()).repeated())
-            .or_not()
-            .flatten()
-            .delimited_by(just('['), just(']'))
-            .map(Json::Array)
-            .labelled("array");
+            .then(just('-').padded_by(s).ignore_then(repeat).or_not())
+            .map(|(r1, r2)| {
+                if let Some(r2) = r2 {
+                    Expression::Exclusion(Box::new(r1), Box::new(r2))
+                } else {
+                    r1
+                }
+            });
 
-        let member = string.then_ignore(just(':').padded()).then(value);
-        let object = member
-            .clone()
-            .chain(just(',').padded().ignore_then(member).repeated())
-            .or_not()
-            .flatten()
-            .padded()
-            .delimited_by(just('{'), just('}'))
-            .collect::<HashMap<String, Json>>()
-            .map(Json::Object)
-            .labelled("object");
+        let alternate = exclusion
+            .separated_by(just('|').padded_by(s))
+            .map(Expression::Alternate);
 
-        just("null")
-            .to(Json::Null)
-            .labelled("null")
-            .or(just("true").to(Json::Bool(true)).labelled("true"))
-            .or(just("false").to(Json::Bool(false)).labelled("false"))
-            .or(number.map(Json::Num))
-            .or(string.map(Json::Str))
-            .or(array)
-            .or(object)
-            .recover_with(nested_delimiters('{', '}', [('[', ']')], |_| Json::Invalid))
-            .recover_with(nested_delimiters('[', ']', [('{', '}')], |_| Json::Invalid))
-            .recover_with(skip_then_retry_until(['}', ']']))
-            .padded()
-    })
-    .then_ignore(end().recover_with(skip_then_retry_until([])))
+        alternate.separated_by(s).map(Expression::Sequence)
+    });
+
+    let rule = identifier.then(just("::=").padded_by(s).ignore_then(expression));
+
+    let grammar = rule.separated_by(s).padded_by(s).map(|rules| {
+        let mut map = HashMap::new();
+        for (i, r) in rules {
+            map.insert(i, r);
+        }
+        map
+    });
+
+    grammar.then_ignore(end().recover_with(skip_then_retry_until([])))
 }
