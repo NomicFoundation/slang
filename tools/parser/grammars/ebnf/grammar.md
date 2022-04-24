@@ -2,6 +2,8 @@
 
 This grammar describes W3C EBNF, using [W3C EBNF](https://www.w3.org/TR/REC-xml/#sec-notation)
 
+The valid locations for whitespace and comments are explicitly specified, rather than being ambient.
+
 ```ebnf
 grammar ::= ( rule | S )*
 
