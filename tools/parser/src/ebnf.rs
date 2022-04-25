@@ -1,5 +1,11 @@
 use chumsky::prelude::*;
-use std::collections::HashMap;
+
+#[derive(Clone, Debug)]
+#[allow(dead_code)]
+pub struct Production {
+    name: String,
+    expr: Expression,
+}
 
 #[derive(Clone, Debug)]
 pub enum Expression {
@@ -27,7 +33,7 @@ pub enum SetElement {
     Range(char, char),
 }
 
-pub fn parser() -> impl Parser<char, HashMap<String, Expression>, Error = Simple<char>> {
+pub fn parser() -> impl Parser<char, Vec<Production>, Error = Simple<char>> {
     let whitespace = choice((just('\x09'), just('\x0A'), just('\x0D'), just('\x20'))).ignored();
 
     let comment = just("/*").then(take_until(just("*/"))).ignored();
@@ -126,19 +132,11 @@ pub fn parser() -> impl Parser<char, HashMap<String, Expression>, Error = Simple
             })
     });
 
-    let production = identifier.then(just("::=").padded_by(s).ignore_then(expression));
+    let production = identifier
+        .then(just("::=").padded_by(s).ignore_then(expression))
+        .map(|(name, expr)| Production { name, expr });
 
-    let grammar = s
-        .ignore_then(production)
-        .repeated()
-        .then_ignore(s)
-        .map(|rules| {
-            let mut map = HashMap::new();
-            for (i, r) in rules {
-                map.insert(i, r);
-            }
-            map
-        });
+    let grammar = s.ignore_then(production).repeated().then_ignore(s);
 
     grammar.then_ignore(end().recover_with(skip_then_retry_until([])))
 }
