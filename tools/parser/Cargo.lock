@@ -87,7 +87,6 @@ dependencies = [
  "anyhow",
  "ariadne",
  "chumsky",
- "proc-macro2",
  "quote",
 ]
 

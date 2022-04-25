@@ -4,8 +4,7 @@ use std::{
 };
 
 use anyhow::Result;
-use proc_macro2::Ident;
-use quote::quote;
+use quote::{format_ident, quote};
 
 use super::ebnf_impl::*;
 
@@ -13,7 +12,7 @@ pub fn generate(productions: Vec<Production>) {
     let rules = productions
         .iter()
         .map(|p| {
-            let name = Ident::new(p.name.as_str(), proc_macro2::Span::call_site());
+            let name = format_ident!("{}", p.name);
             quote!(
                 let #name = choice((
                     none_of("'").repeated().padded_by(just('\'')),
