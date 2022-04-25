@@ -3,15 +3,20 @@ use chumsky::prelude::*;
 use std::{env, fs};
 
 mod ebnf;
+mod ebnf_impl;
+mod generator;
 
 use ebnf::parser;
+use generator::generate;
 
 fn main() {
     let src = fs::read_to_string(env::args().nth(1).expect("Expected file argument"))
         .expect("Failed to read file");
 
-    let (rules, errs) = parser().parse_recovery(src.trim());
-    println!("{:#?}", rules);
+    let (productions, errs) = parser().parse_recovery(src.clone());
+    if let Some(productions) = productions {
+        generate(productions)
+    }
     errs.into_iter().for_each(|e| {
         let msg = if let chumsky::error::SimpleReason::Custom(msg) = e.reason() {
             msg.clone()
