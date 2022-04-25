@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "test": "yarn extract ; cargo run -- ./grammar.ebnf ; rm grammar.ebnf",
+    "extract": "cat grammars/ebnf/grammar.md | codedown ebnf > grammar.ebnf"
+  },
+  "devDependencies": {
+    "codedown": "^2.2.0"
+  }
+}

@@ -3,6 +3,8 @@ use std::collections::HashMap;
 
 #[derive(Clone, Debug)]
 pub enum Expression {
+    End,
+    Any,
     Repeat(OccuranceCount, Box<Expression>),
     Alternate(Vec<Expression>),
     Sequence(Vec<Expression>),
@@ -44,11 +46,11 @@ pub fn parser() -> impl Parser<char, HashMap<String, Expression>, Error = Simple
     let char_code = just("#x")
         .ignore_then(filter(char::is_ascii_hexdigit).repeated())
         .collect::<String>()
-        .map(|digits| digits.parse::<u32>().unwrap())
+        .map(|digits| u32::from_str_radix(digits.as_str(), 16).unwrap())
         .map(|code| char::from_u32(code).ok_or(()))
         .unwrapped();
 
-    let set_char = char_code.or(none_of("\x09\x0A\x0D#]")); /* TAB or LF or CR or '#' or ']' */
+    let set_char = char_code.or(none_of("\x09\x0A\x0D\x23\x5D")); /* TAB or LF or CR or '#' or ']' */
 
     let set = just('^')
         .or_not()
@@ -76,45 +78,67 @@ pub fn parser() -> impl Parser<char, HashMap<String, Expression>, Error = Simple
         });
 
     let expression = recursive(|expression: Recursive<char, Expression, Simple<char>>| {
-        let term = set
+        let primary = set
+            .or(just('$').to(Expression::End))
+            .or(just('.').to(Expression::Any))
+            .or(char_code.map(|c: char| Expression::Chars(c.to_string())))
             .or(string)
-            .or(identifier.map(Expression::Identifier))
+            .or(identifier
+                .then_ignore(s.then(none_of(':')).rewind())
+                .map(Expression::Identifier))
             .or(expression.padded_by(s).delimited_by(just('('), just(')')));
 
-        let repeat = term.then(one_of("*+?").or_not()).map(|(h, t)| match t {
+        let item = primary.then(one_of("+*?").or_not()).map(|(h, t)| match t {
             Some('?') => Expression::Repeat(OccuranceCount::ZeroOrOne, Box::new(h)),
             Some('*') => Expression::Repeat(OccuranceCount::ZeroOrMore, Box::new(h)),
             Some('+') => Expression::Repeat(OccuranceCount::OneOrMore, Box::new(h)),
             _ => h,
         });
 
-        let exclusion = repeat
+        let difference = item
             .clone()
-            .then(just('-').padded_by(s).ignore_then(repeat).or_not())
-            .map(|(r1, r2)| {
-                if let Some(r2) = r2 {
-                    Expression::Exclusion(Box::new(r1), Box::new(r2))
+            .then(just('-').padded_by(s).ignore_then(item).or_not())
+            .map(|(item1, item2)| {
+                if let Some(item2) = item2 {
+                    Expression::Exclusion(Box::new(item1), Box::new(item2))
                 } else {
-                    r1
+                    item1
                 }
             });
 
-        let alternate = exclusion
+        let sequence = difference.separated_by(s).map(|mut diffs| {
+            if diffs.len() == 1 {
+                diffs.pop().unwrap()
+            } else {
+                Expression::Sequence(diffs)
+            }
+        });
+
+        /*let choice = */
+        sequence
             .separated_by(just('|').padded_by(s))
-            .map(Expression::Alternate);
-
-        alternate.separated_by(s).map(Expression::Sequence)
+            .map(|mut seqs| {
+                if seqs.len() == 1 {
+                    seqs.pop().unwrap()
+                } else {
+                    Expression::Alternate(seqs)
+                }
+            })
     });
 
-    let rule = identifier.then(just("::=").padded_by(s).ignore_then(expression));
+    let production = identifier.then(just("::=").padded_by(s).ignore_then(expression));
 
-    let grammar = rule.separated_by(s).padded_by(s).map(|rules| {
-        let mut map = HashMap::new();
-        for (i, r) in rules {
-            map.insert(i, r);
-        }
-        map
-    });
+    let grammar = s
+        .ignore_then(production)
+        .repeated()
+        .then_ignore(s)
+        .map(|rules| {
+            let mut map = HashMap::new();
+            for (i, r) in rules {
+                map.insert(i, r);
+            }
+            map
+        });
 
     grammar.then_ignore(end().recover_with(skip_then_retry_until([])))
 }

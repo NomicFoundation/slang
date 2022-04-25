@@ -5,17 +5,19 @@ This grammar describes W3C EBNF, using [W3C EBNF](https://www.w3.org/TR/REC-xml/
 The valid locations for whitespace and comments are explicitly specified, rather than being ambient.
 
 ```ebnf
-grammar ::= ( S? production )* S?
+grammar ::= ( S production )* S
 
-production ::= Identifier S? '::=' S? choice
+production ::= Identifier S '::=' S choice
 
-choice ::= sequenceOrDifference ( S? '|' S? sequenceOrDifference )*
+choice ::= sequence ( S '|' S sequence )*
 
-sequenceOrDifference ::= item ( ( S? '-' S? item ) | ( S? item )* )?
+sequence ::= difference ( S difference )*
+
+difference ::= item ( S '-' S item )?
 
 item ::= primary ( '+' | '*' | '?')?
 
-primary ::= set | '$' | '.' | CharCode | String | Identifier | '(' S? choice S? ')'
+primary ::= set | '$' | '.' | CharCode | String | Identifier | '(' S choice S ')'
 
 set ::= '[' '^'? ( SetChar ( '-' SetChar )? )* ']'
 
@@ -27,12 +29,9 @@ String ::= "'" [^']* "'" | '"' [^"]* '"'
 
 Identifier ::= [_a-zA-Z] [_a-zA-Z0-9]*
 
-S
-    ::= ( Whitespace | Comment )*
+S ::= ( Whitespace | Comment )*
 
-Comment
-    ::= '/*' ( [^*] | '*'+ [^*/] )* '*'+ '/'
+Comment ::= '/*' ( [^*] | '*'+ [^*/] )* '*'+ '/'
 
-Whitespace
-    ::= #x09 | #x0A | #x0D | #x20
+Whitespace ::= #x09 | #x0A | #x0D | #x20
 ```
