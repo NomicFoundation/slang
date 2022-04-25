@@ -4,21 +4,55 @@ use std::{
 };
 
 use anyhow::Result;
+use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
 use super::ebnf_impl::*;
 
+fn generate_expression(expression: &Expression) -> TokenStream {
+    match expression {
+        Expression::End => quote!(todo()),
+        Expression::Any => quote!(todo()),
+        Expression::Repeat(RepeatCount::ZeroOrOne, expr) => {
+            let expr = generate_expression(expr);
+            quote!( #expr.or_not())
+        }
+        Expression::Repeat(RepeatCount::ZeroOrMore, expr) => {
+            let expr = generate_expression(expr);
+            quote!( #expr.repeated())
+        }
+        Expression::Repeat(RepeatCount::OneOrMore, expr) => {
+            let expr = generate_expression(expr);
+            quote!( #expr.repeated().at_least(1))
+        }
+        Expression::Choice(choices) => {
+            let choices = choices.iter().map(generate_expression).collect::<Vec<_>>();
+            quote!(choice((#(#choices),*)))
+        }
+        Expression::Sequence(exprs) => {
+            let mut exprs = exprs.iter().map(generate_expression).collect::<Vec<_>>();
+            let first = exprs.remove(0);
+            quote!(#first #(.then(#exprs))*)
+        }
+        Expression::Difference(_, _) => quote!(todo()),
+        Expression::Chars(chars) => quote!(just(#chars)),
+        Expression::Identifier(ident) => {
+            let id = format_ident!("{}", ident);
+            quote!(#id)
+        }
+        Expression::CharSet(negated, elements) => quote!(just("CharSet")),
+    }
+}
+
 pub fn generate(productions: Vec<Production>) {
     let rules = productions
         .iter()
+        .rev()
         .map(|p| {
             let name = format_ident!("{}", p.name);
+            let expression = generate_expression(&p.expr);
             quote!(
-                let #name = choice((
-                    none_of("'").repeated().padded_by(just('\'')),
-                    none_of("\"").repeated().padded_by(just('"')),
-                ))
-                .ignored();
+                let #name = #expression.ignored();
             )
         })
         .collect::<Vec<_>>();
