@@ -23,7 +23,7 @@ set ::= '[' '^'? ( SetChar ( '-' SetChar )? )* ']'
 
 SetChar ::= CharCode | [^#x09#x0A#x0D#x23#x5D] /* TAB or LF or CR or '#' or ']' */
 
-CharCode ::= '#x' [0-9a-fA-Z]+
+CharCode ::= '#x' [0-9a-fA-F]+
 
 String ::= "'" [^']* "'" | '"' [^"]* '"'
 

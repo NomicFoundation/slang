@@ -40,7 +40,22 @@ fn generate_expression(expression: &Expression) -> TokenStream {
             let id = format_ident!("{}", ident);
             quote!(#id)
         }
-        Expression::CharSet(negated, elements) => quote!(just("CharSet")),
+        Expression::CharSet(negated, elements) => {
+            let chars = elements.iter().map(|element| match element {
+                CharSetElement::Char(c) => quote!( c == #c ),
+                CharSetElement::Range('a', 'z') => quote!(c.is_ascii_lowercase()),
+                CharSetElement::Range('A', 'Z') => quote!(c.is_ascii_uppercase()),
+                CharSetElement::Range('0', '9') => quote!(c.is_ascii_digit()),
+                CharSetElement::Range(from, to) => {
+                    quote!( (#from.as_u32() <= c.as_u32() && c.as_u32() <= #to.as_u32()) )
+                }
+            });
+            if *negated {
+                quote!(filter(|c| !(#(#chars)||*)))
+            } else {
+                quote!(filter(|c| #(#chars)||*))
+            }
+        }
     }
 }
 
@@ -51,7 +66,9 @@ pub fn generate(productions: Vec<Production>) {
         .map(|p| {
             let name = format_ident!("{}", p.name);
             let expression = generate_expression(&p.expr);
+            // let doc = format!("Production: {}", "blah ::= foo | bar*");
             quote!(
+                // #[doc = #doc]
                 let #name = #expression.ignored();
             )
         })
