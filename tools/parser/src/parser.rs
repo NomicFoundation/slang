@@ -1,8 +1,8 @@
 use chumsky::prelude::*;
 
-use super::ebnf_impl::*;
+use super::tree_builder::*;
 
-pub fn parser() -> impl Parser<char, Vec<Production>, Error = Simple<char>> {
+pub fn create_parser() -> impl Parser<char, Vec<Production>, Error = Simple<char>> {
     let whitespace = one_of("\x09\x0A\x0D\x20").ignored();
 
     let comment = just("/*").then(take_until(just("*/"))).ignored();

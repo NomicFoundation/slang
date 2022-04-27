@@ -1,21 +1,36 @@
 use ariadne::{Color, Fmt, Label, Report, ReportKind, Source};
 use chumsky::prelude::*;
-use std::{env, fs};
+use std::{fs, path::PathBuf};
+use yaml_rust::YamlLoader;
 
-mod ebnf;
-mod ebnf_impl;
 mod generator;
+mod parser;
+mod tree_builder;
 
-use ebnf::parser;
 use generator::generate;
+use parser::create_parser;
+
+use clap::Parser as ClapParser;
+
+#[derive(ClapParser, Debug)]
+#[clap(author, version, about, long_about = None)]
+struct Args {
+    pub grammar_file: PathBuf,
+    pub annotations_file: PathBuf,
+}
 
 fn main() {
-    let src = fs::read_to_string(env::args().nth(1).expect("Expected file argument"))
-        .expect("Failed to read file");
+    let args = Args::parse();
 
-    let (productions, errs) = parser().parse_recovery(src.clone());
+    let ebnf_src = fs::read_to_string(args.grammar_file).expect("Failed to read file");
+
+    let (productions, errs) = create_parser().parse_recovery(ebnf_src.clone());
     if let Some(productions) = productions {
-        generate(productions)
+        let yaml_src = fs::read_to_string(args.annotations_file).expect("Failed to read file");
+        let annotations =
+            &YamlLoader::load_from_str(&yaml_src).expect("Failed to parse annotations")[0];
+        println!("{:#?}", annotations);
+        generate(productions, annotations)
     }
     errs.into_iter().for_each(|e| {
         let msg = if let chumsky::error::SimpleReason::Custom(msg) = e.reason() {
@@ -77,6 +92,6 @@ fn main() {
             chumsky::error::SimpleReason::Custom(_) => report,
         };
 
-        report.finish().print(Source::from(&src)).unwrap();
+        report.finish().print(Source::from(&ebnf_src)).unwrap();
     });
 }

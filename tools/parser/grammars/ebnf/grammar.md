@@ -17,11 +17,11 @@ difference ::= item ( S '-' S item )?
 
 item ::= primary ( '?' | '*' | '+' )?
 
-primary ::= set | '$' | '.' | CharCode | String | Identifier | '(' S choice S ')'
+primary ::= charSet | '$' | '.' | CharCode | String | Identifier | '(' S choice S ')'
 
-set ::= '[' '^'? ( SetChar ( '-' SetChar )? )* ']'
+charSet ::= '[' '^'? ( CharSetChar ( '-' CharSetChar )? )* ']'
 
-SetChar ::= CharCode | [^#x09#x0A#x0D#x23#x5D] /* TAB or LF or CR or '#' or ']' */
+CharSetChar ::= CharCode | [^#x09#x0A#x0D#x23#x5D] /* TAB or LF or CR or '#' or ']' */
 
 CharCode ::= '#x' [0-9a-fA-F]+
 
@@ -37,30 +37,26 @@ Whitespace ::= #x09 | #x0A | #x0D | #x20
 ```
 
 ```yml
-production:
-  pattern:
-    padded_by: 1
-choice:
-  pattern:
-    padded_by: 1.0
-    separated_by: 0
-sequence:
-  pattern:
-    separated_by: 0
-difference:
-  pattern:
-    padded_by: 1.0
+grammar:
+  map:
 primary:
-  pattern:
-    padded_by: 6.1
-    delimited_by: 6.0
-set:
-  pattern:
-    padded_by: 0
+  map:
+  1:
+    to: Expression::End
+  2:
+    to: Expression:Any
+  5:
+    lookahead: S [^:]
+CharSetChar:
+  map:
+CharCode:
+  unwrap:
+Identifier:
+  map:
 S:
-  ignored:
+  ignore: true
 Comment:
-  ignored:
-whitespace:
-  ignored:
+  ignore: true
+Whitespace:
+  ignore: true
 ```

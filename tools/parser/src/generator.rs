@@ -8,10 +8,11 @@ use anyhow::Result;
 use convert_case::{Case, Casing};
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
+use yaml_rust::Yaml;
 
-use super::ebnf_impl::*;
+use super::tree_builder::*;
 
-pub fn generate(productions: Vec<Production>) {
+pub fn generate(productions: Vec<Production>, annotations: &Yaml) {
     let productions = productions
         .into_iter()
         .map(|p| Production {
@@ -26,8 +27,28 @@ pub fn generate(productions: Vec<Production>) {
         .map(|p| {
             let id = Expression::ident_for_name(&p.name);
             let expression = p.expr.generate_expression();
+            let mut suffixes = vec![];
+            let ignored = annotations[p.name.as_str()]["ignore"]
+                .as_bool()
+                .unwrap_or(false);
+
+            if ignored {
+                suffixes.push(quote!(.ignored()));
+            } else {
+                let map = &annotations[p.name.as_str()]["map"];
+                if map.is_badvalue() {
+                    let id = format_ident!("map_{}", p.name.to_case(Case::Snake));
+                    suffixes.push(quote!(.map(#id)));
+                    // TODO: allow map key to be a string with a custom map name
+                }
+                let unwrap = &annotations[p.name.as_str()]["unwrap"];
+                if !unwrap.is_badvalue() {
+                    suffixes.push(quote!(.unwrapped()));
+                }
+            }
+
             quote!(
-                let #id = #expression.ignored();
+                let #id = #expression #(#suffixes)*;
             )
         })
         .collect::<Vec<_>>();
@@ -180,7 +201,7 @@ impl Expression {
         }
 
         fn convert_to_delimited_by(exprs: &mut Vec<Expression>) {
-            // TODO: convert to a from-each-end narrowing search
+            // TODO: convert to a from-each-end narrowing search?
             fn match_delimiters(exprs: &[Expression]) -> Option<(char, char)> {
                 match (&exprs[0], &exprs[exprs.len() - 1]) {
                     (Expression::Chars(open), Expression::Chars(close))
@@ -209,33 +230,33 @@ impl Expression {
 
         fn convert_to_separated_by(exprs: &mut Vec<Expression>) {
             // TODO: find a better way to pattern match on the tree
+            fn matches_pattern(exprs: &[Expression], i: usize) -> bool {
+                let first = &exprs[i];
+                let second = &exprs[i + 1];
+                if let Expression::Repeat(inner, RepeatCount::ZeroOrMore) = second {
+                    if let Expression::Sequence(inner_exprs) = inner.as_ref() {
+                        return inner_exprs.len() == 2 && &inner_exprs[1] == first;
+                    }
+                }
+                false
+            }
+
+            fn transform_pattern(first: Expression, second: Expression) -> Expression {
+                if let Expression::Repeat(x, RepeatCount::ZeroOrMore) = second {
+                    if let Expression::Sequence(mut inner) = *x {
+                        let separator = inner.remove(0);
+                        return Expression::SeparatedBy(Box::new(first), Box::new(separator));
+                    }
+                }
+                unreachable!("Pattern already detected")
+            }
+
             let mut i = 0;
             while i + 1 < exprs.len() {
-                let found_match = {
-                    let first = &exprs[i];
-                    let second = &exprs[i + 1];
-                    if let Expression::Repeat(x, RepeatCount::ZeroOrMore) = second {
-                        if let Expression::Sequence(inner) = x.as_ref() {
-                            inner.len() == 2 && &inner[1] == first
-                        } else {
-                            false
-                        }
-                    } else {
-                        false
-                    }
-                };
-                if found_match {
+                if matches_pattern(exprs, i) {
                     let second = exprs.remove(i + 1);
                     let first = exprs.remove(i);
-                    if let Expression::Repeat(x, RepeatCount::ZeroOrMore) = second {
-                        if let Expression::Sequence(mut inner) = *x {
-                            let separator = inner.remove(0);
-                            exprs.insert(
-                                i,
-                                Expression::SeparatedBy(Box::new(first), Box::new(separator)),
-                            );
-                        }
-                    }
+                    exprs.insert(i, transform_pattern(first, second));
                 }
                 i += 1
             }
