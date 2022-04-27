@@ -1,3 +1,5 @@
+pub type TreeType = Vec<Production>;
+
 #[derive(Clone, Debug)]
 #[allow(dead_code)]
 pub struct Production {

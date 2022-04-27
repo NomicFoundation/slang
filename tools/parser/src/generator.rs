@@ -12,7 +12,7 @@ use yaml_rust::Yaml;
 
 use super::tree_builder::*;
 
-pub fn generate(productions: Vec<Production>, annotations: &Yaml) {
+pub fn generate(productions: TreeType, annotations: &Yaml) {
     let productions = productions
         .into_iter()
         .map(|p| Production {
@@ -21,27 +21,31 @@ pub fn generate(productions: Vec<Production>, annotations: &Yaml) {
         })
         .collect::<Vec<_>>();
 
+    let productions_annotations = &annotations["productions"];
+
     let rules = productions
         .iter()
         .rev()
         .map(|p| {
             let id = Expression::ident_for_name(&p.name);
-            let expression = p.expr.generate_expression();
+            let expression = p
+                .expr
+                .generate_expression(p.name.clone(), productions_annotations);
             let mut suffixes = vec![];
-            let ignored = annotations[p.name.as_str()]["ignore"]
+            let ignored = productions_annotations[p.name.as_str()]["ignore"]
                 .as_bool()
                 .unwrap_or(false);
 
             if ignored {
                 suffixes.push(quote!(.ignored()));
             } else {
-                let map = &annotations[p.name.as_str()]["map"];
+                let map = &productions_annotations[p.name.as_str()]["map"];
                 if map.is_badvalue() {
                     let id = format_ident!("map_{}", p.name.to_case(Case::Snake));
                     suffixes.push(quote!(.map(#id)));
                     // TODO: allow map key to be a string with a custom map name
                 }
-                let unwrap = &annotations[p.name.as_str()]["unwrap"];
+                let unwrap = &productions_annotations[p.name.as_str()]["unwrap"];
                 if !unwrap.is_badvalue() {
                     suffixes.push(quote!(.unwrapped()));
                 }
@@ -61,10 +65,12 @@ pub fn generate(productions: Vec<Production>, annotations: &Yaml) {
     });
 
     let root = Expression::ident_for_name(&productions[0].name);
+    // let mapping_use = format_ident!("{}", annotations["mapping"]["use"].as_str().unwrap());
     let src = quote!(
     use chumsky::prelude::*;
+    use super::tree_builder::*;
 
-    pub fn parser() -> impl Parser<char, (), Error = Simple<char>> {
+    pub fn create_parser() -> impl Parser<char, TreeType, Error = Simple<char>> {
         #(#rules)*
         #root.then_ignore(end().recover_with(skip_then_retry_until([])))
     });
@@ -100,65 +106,75 @@ static DELIMITERS: [(char, char); 5] =
     [('[', ']'), ('(', ')'), ('{', '}'), ('\'', '\''), ('"', '"')];
 
 impl Expression {
-    fn generate_expression(&self) -> TokenStream {
+    fn generate_expression(&self, config_path: String, config: &Yaml) -> TokenStream {
+        let mut suffixes = vec![];
+        if let Some(name) = config[config_path.as_str()]["map"].as_str() {
+            let id = format_ident!("{}", name);
+            suffixes.push(quote!( .map(#id) ))
+        }
         match self {
             Expression::End => quote!(todo()),
             Expression::Any => quote!(todo()),
             Expression::Repeat(expr, RepeatCount::ZeroOrOne) => {
-                let expr = expr.generate_expression();
-                quote!( #expr.or_not() )
+                let expr = expr.generate_expression(config_path, config);
+                quote!( #expr.or_not() #(#suffixes)* )
             }
             Expression::Repeat(expr, RepeatCount::ZeroOrMore) => {
-                let expr = expr.generate_expression();
-                quote!( #expr.repeated() )
+                let expr = expr.generate_expression(config_path, config);
+                quote!( #expr.repeated() #(#suffixes)* )
             }
             Expression::Repeat(expr, RepeatCount::OneOrMore) => {
-                let expr = expr.generate_expression();
-                quote!( #expr.repeated().at_least(1) )
+                let expr = expr.generate_expression(config_path, config);
+                quote!( #expr.repeated().at_least(1) #(#suffixes)* )
             }
             Expression::Choice(choices) => {
                 let choices = choices
                     .iter()
-                    .map(|e| e.generate_expression())
+                    .enumerate()
+                    .map(|(i, e)| e.generate_expression(format!("{}/{}", config_path, i), config))
                     .collect::<Vec<_>>();
-                quote!( choice((#(#choices),*)) )
+                quote!( choice((#(#choices),*)) #(#suffixes)* )
             }
             Expression::Sequence(exprs) => {
                 let mut exprs = exprs
                     .iter()
-                    .map(|e| e.generate_expression())
+                    .enumerate()
+                    .map(|(i, e)| e.generate_expression(format!("{}/{}", config_path, i), config))
                     .collect::<Vec<_>>();
                 let first = exprs.remove(0);
-                quote!( #first #(.then(#exprs))* )
+                quote!( #first #(.then(#exprs))* #(#suffixes)* )
             }
             Expression::DelimitedBy(expr, open, close) => {
-                let expr = expr.generate_expression();
-                quote!( #expr.delimited_by(just(#open), just(#close)) )
+                let expr = expr.generate_expression(config_path, config);
+                quote!( #expr.delimited_by(just(#open), just(#close)) #(#suffixes)* )
             }
             Expression::PaddedBy(expr, padding) => {
-                let expr = expr.generate_expression();
-                let padding = padding.generate_expression();
-                quote!( #expr.padded_by(#padding) )
+                let expr = expr.generate_expression(config_path.clone(), config);
+                let padding = padding.generate_expression(config_path, config);
+                quote!( #expr.padded_by(#padding) #(#suffixes)* )
             }
             Expression::SeparatedBy(expr, separator) => {
-                let expr = expr.generate_expression();
-                let padding = separator.generate_expression();
-                quote!( #expr.separated_by(#padding) )
+                let expr = expr.generate_expression(config_path.clone(), config);
+                let padding = separator.generate_expression(config_path, config);
+                quote!( #expr.separated_by(#padding) #(#suffixes)* )
             }
             Expression::Difference(_, _) => quote!(todo()),
             Expression::Chars(chars) => {
                 if chars.len() == 1 {
                     let c = chars.chars().next().unwrap();
-                    quote!( just(#c) )
+                    quote!( just(#c) #(#suffixes)* )
                 } else {
-                    quote!( just(#chars) )
+                    quote!( just(#chars) #(#suffixes)* )
                 }
             }
             Expression::Identifier(name) => {
                 let id = Self::ident_for_name(name);
-                quote!( #id )
+                quote!( #id #(#suffixes)* )
             }
-            Expression::CharSet(elements, negated) => Self::generate_char_set(elements, *negated),
+            Expression::CharSet(elements, negated) => {
+                let fragment = Self::generate_char_set(elements, *negated);
+                quote!( #fragment #(#suffixes)* )
+            }
         }
     }
 

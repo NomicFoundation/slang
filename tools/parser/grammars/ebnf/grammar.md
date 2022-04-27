@@ -37,26 +37,32 @@ Whitespace ::= #x09 | #x0A | #x0D | #x20
 ```
 
 ```yml
-grammar:
-  map:
-primary:
-  map:
-  1:
-    to: Expression::End
-  2:
-    to: Expression:Any
-  5:
+mapping:
+  use: super::tree_builder
+productions:
+  grammar:
+    map:
+  primary:
+    map:
+  primary/1:
+    map: to_eof
+  primary/2:
+    map: to_any
+  primary/3:
+    map: map_char_code_in_primary
+  primary/5:
     lookahead: S [^:]
-CharSetChar:
-  map:
-CharCode:
-  unwrap:
-Identifier:
-  map:
-S:
-  ignore: true
-Comment:
-  ignore: true
-Whitespace:
-  ignore: true
+    map: map_identifier_in_primary
+  CharSetChar:
+    map:
+  CharCode:
+    unwrap:
+  Identifier:
+    map:
+  S:
+    ignore: true
+  Comment:
+    ignore: true
+  Whitespace:
+    ignore: true
 ```

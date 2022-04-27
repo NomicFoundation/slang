@@ -29,7 +29,7 @@ fn main() {
         let yaml_src = fs::read_to_string(args.annotations_file).expect("Failed to read file");
         let annotations =
             &YamlLoader::load_from_str(&yaml_src).expect("Failed to parse annotations")[0];
-        println!("{:#?}", annotations);
+        // println!("{:#?}", annotations);
         generate(productions, annotations)
     }
     errs.into_iter().for_each(|e| {
