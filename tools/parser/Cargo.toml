@@ -9,5 +9,6 @@ edition = "2021"
 anyhow = "1.0.57"
 ariadne = "0.1.5"
 chumsky = { path = "chumsky" }
+convert_case = "0.5.0"
 proc-macro2 = "1.0.37"
 quote = "1.0.18"

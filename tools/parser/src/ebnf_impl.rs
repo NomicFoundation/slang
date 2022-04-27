@@ -5,27 +5,31 @@ pub struct Production {
     pub expr: Expression,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
+#[allow(dead_code)]
 pub enum Expression {
     End,
     Any,
-    Repeat(RepeatCount, Box<Expression>),
+    Repeat(Box<Expression>, RepeatCount),
     Choice(Vec<Expression>),
     Sequence(Vec<Expression>),
+    DelimitedBy(Box<Expression>, char, char),
+    PaddedBy(Box<Expression>, Box<Expression>),
+    SeparatedBy(Box<Expression>, Box<Expression>),
     Difference(Box<Expression>, Box<Expression>),
     Chars(String),
     Identifier(String),
-    CharSet(bool, Vec<CharSetElement>),
+    CharSet(Vec<CharSetElement>, bool),
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum RepeatCount {
     ZeroOrOne,
     ZeroOrMore,
     OneOrMore,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum CharSetElement {
     Char(char),
     Range(char, char),
@@ -33,7 +37,6 @@ pub enum CharSetElement {
 
 pub fn map_char_set((neg, chars): (Option<char>, Vec<(char, Option<char>)>)) -> Expression {
     Expression::CharSet(
-        neg.is_some(),
         chars
             .into_iter()
             .map(|(c1, c2)| {
@@ -44,6 +47,7 @@ pub fn map_char_set((neg, chars): (Option<char>, Vec<(char, Option<char>)>)) -> 
                 }
             })
             .collect(),
+        neg.is_some(),
     )
 }
 
@@ -81,9 +85,9 @@ pub fn map_difference((item1, item2): (Expression, Option<Expression>)) -> Expre
 
 pub fn map_item((h, t): (Expression, Option<char>)) -> Expression {
     match t {
-        Some('?') => Expression::Repeat(RepeatCount::ZeroOrOne, Box::new(h)),
-        Some('*') => Expression::Repeat(RepeatCount::ZeroOrMore, Box::new(h)),
-        Some('+') => Expression::Repeat(RepeatCount::OneOrMore, Box::new(h)),
+        Some('?') => Expression::Repeat(Box::new(h), RepeatCount::ZeroOrOne),
+        Some('*') => Expression::Repeat(Box::new(h), RepeatCount::ZeroOrMore),
+        Some('+') => Expression::Repeat(Box::new(h), RepeatCount::OneOrMore),
         _ => h,
     }
 }

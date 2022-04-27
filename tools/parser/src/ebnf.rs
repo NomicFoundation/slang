@@ -7,7 +7,7 @@ pub fn parser() -> impl Parser<char, Vec<Production>, Error = Simple<char>> {
 
     let comment = just("/*").then(take_until(just("*/"))).ignored();
 
-    let s = whitespace.or(comment).repeated().ignored();
+    let s = choice((whitespace, comment)).repeated().ignored();
 
     let identifier = text::ident();
 

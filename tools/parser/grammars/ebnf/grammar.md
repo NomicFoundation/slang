@@ -15,7 +15,7 @@ sequence ::= difference ( S difference )*
 
 difference ::= item ( S '-' S item )?
 
-item ::= primary ( '+' | '*' | '?')?
+item ::= primary ( '?' | '*' | '+' )?
 
 primary ::= set | '$' | '.' | CharCode | String | Identifier | '(' S choice S ')'
 
@@ -34,4 +34,33 @@ S ::= ( Whitespace | Comment )*
 Comment ::= '/*' ( [^*] | '*'+ [^*/] )* '*'+ '/'
 
 Whitespace ::= #x09 | #x0A | #x0D | #x20
+```
+
+```yml
+production:
+  pattern:
+    padded_by: 1
+choice:
+  pattern:
+    padded_by: 1.0
+    separated_by: 0
+sequence:
+  pattern:
+    separated_by: 0
+difference:
+  pattern:
+    padded_by: 1.0
+primary:
+  pattern:
+    padded_by: 6.1
+    delimited_by: 6.0
+set:
+  pattern:
+    padded_by: 0
+S:
+  ignored:
+Comment:
+  ignored:
+whitespace:
+  ignored:
 ```
