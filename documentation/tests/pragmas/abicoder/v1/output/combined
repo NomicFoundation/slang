@@ -4,20 +4,14 @@
     --8<-- "tests/pragmas/abicoder/v1/input.sol"
     ```
 
-=== "❌ 0.4.10"
+=== "❌ 0.4.13"
 
-    ```bash
-    --8<-- "tests/pragmas/abicoder/v1/output/0.4.10"
-    ```
-
-=== "❌ 0.6.0"
-
-    ```bash
-    --8<-- "tests/pragmas/abicoder/v1/output/0.6.0"
+    ```log
+    --8<-- "tests/pragmas/abicoder/v1/output/0.4.13"
     ```
 
 === "✅ 0.7.5"
 
-    ```solidity
+    ```json
     --8<-- "tests/pragmas/abicoder/v1/output/0.7.5"
     ```

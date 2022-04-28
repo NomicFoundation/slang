@@ -1,6 +1,0 @@
-Error: Unknown pragma "abicoder"
- --> input.sol:4:1:
-  |
-4 | pragma abicoder v2;
-  | ^^^^^^^^^^^^^^^^^^^
-

@@ -5,7 +5,7 @@ use crate::{
 use reqwest::Url;
 use semver::Version;
 use serde::Deserialize;
-use std::{env, fs, path::PathBuf, time::Duration};
+use std::{collections::HashSet, env, fs, path::PathBuf, time::Duration};
 
 #[derive(Deserialize)]
 struct MirrorResponse {
@@ -25,7 +25,17 @@ pub fn fetch_builds(binaries_dir: &PathBuf) -> Vec<BuildInfo> {
     }
 
     println!("Fetching list of available builds...");
-    let builds = fetch_response(binaries_dir);
+
+    let excluded = HashSet::from([
+        "0.4.10", // have not standardized on JSON API yet
+        "0.4.11", // have not standardized on JSON API yet
+        "0.4.12", // have not standardized on error types yet
+    ]);
+
+    let builds = fetch_response(binaries_dir)
+        .into_iter()
+        .filter(|b| !excluded.contains(b.version.to_string().as_str()))
+        .collect::<Vec<_>>();
 
     let versions = builds
         .iter()
