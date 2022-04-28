@@ -14,13 +14,6 @@
       "nodeType": "PragmaDirective"
     },
     {
-      "literals": [
-        "abicoder",
-        "v1"
-      ],
-      "nodeType": "PragmaDirective"
-    },
-    {
       "name": "Test",
       "nodeType": "ContractDefinition",
       "nodes": []

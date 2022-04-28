@@ -4,14 +4,26 @@
     --8<-- "tests/pragmas/experimental/smt-checker/input.sol"
     ```
 
-=== "❌ 0.4.10"
+=== "❌ 0.4.13"
 
-    ```bash
-    --8<-- "tests/pragmas/experimental/smt-checker/output/0.4.10"
+    ```log
+    --8<-- "tests/pragmas/experimental/smt-checker/output/0.4.13"
     ```
 
-=== "✅ 0.4.16"
+=== "⚠️ 0.4.16"
 
-    ```solidity
+    ```log
     --8<-- "tests/pragmas/experimental/smt-checker/output/0.4.16"
+    ```
+
+=== "✅ 0.4.21"
+
+    ```json
+    --8<-- "tests/pragmas/experimental/smt-checker/output/0.4.21"
+    ```
+
+=== "⚠️ 0.8.4"
+
+    ```log
+    --8<-- "tests/pragmas/experimental/smt-checker/output/0.8.4"
     ```

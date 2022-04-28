@@ -15,8 +15,8 @@
     },
     {
       "literals": [
-        "abicoder",
-        "v1"
+        "experimental",
+        "SMTChecker"
       ],
       "nodeType": "PragmaDirective"
     },

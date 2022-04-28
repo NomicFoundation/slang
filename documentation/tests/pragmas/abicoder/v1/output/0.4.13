@@ -1,0 +1,3 @@
+input.sol:4:1: SyntaxError: Unknown pragma "abicoder"
+pragma abicoder v1;
+^-----------------^

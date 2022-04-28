@@ -31,7 +31,7 @@ pragma abicoder v1;
 pragma abicoder v2;
 ```
 
-!!! info "Supported since v0.7.5"
+!!! danger "Breaking Changes"
 
     --8<-- "tests/pragmas/abicoder/v1/output/combined"
     ---
@@ -51,7 +51,7 @@ Please see `pragma abicoder v2` above.
 pragma experimental ABIEncoderV2;
 ```
 
-!!! info "Supported since v0.4.16"
+!!! danger "Breaking Changes"
 
     --8<-- "tests/pragmas/experimental/abi-encoder-v2/output/combined"
 
@@ -66,6 +66,6 @@ analysis may not be fully sound.
 pragma experimental SMTChecker;
 ```
 
-!!! info "Supported since v0.4.16"
+!!! danger "Breaking Changes"
 
     --8<-- "tests/pragmas/experimental/smt-checker/output/combined"

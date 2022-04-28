@@ -1,4 +1,4 @@
-use crate::{builds::BuildInfo, solc_ouput::fetch_ast_json, utils::with_progress};
+use crate::{api::analyze_test, builds::BuildInfo, utils::with_progress};
 use std::{
     path::{Path, PathBuf},
     sync::Arc,
@@ -33,54 +33,55 @@ pub fn collect_tests(tests_dir: PathBuf) -> Vec<PathBuf> {
     return tests;
 }
 
-pub fn run_test(tests_dir: &PathBuf, test: &PathBuf, builds: &Vec<BuildInfo>) {
+pub fn execute_test(tests_dir: &PathBuf, test: &PathBuf, builds: &Vec<BuildInfo>) {
     let test_name = test.strip_prefix(&tests_dir).unwrap();
 
     let inputs = builds
         .iter()
         .map(|build| (Arc::new(test), build))
-        .collect::<Vec<(Arc<&PathBuf>, &BuildInfo)>>();
+        .collect::<Vec<_>>();
 
     let mut outputs = with_progress(
         test_name.to_path_buf().to_str().unwrap(),
         &inputs,
-        move |(test, build)| fetch_ast_json(test, build),
+        move |(test, build)| analyze_test(test, build),
     );
 
-    outputs.sort_by_key(|output| output.version.to_string());
+    outputs.sort_by(|a, b| a.version.cmp(&b.version));
 
-    let mut previous_contents = &String::from("");
+    let mut previous_contents = String::from("");
     let test_output_dir = prepare_test_output_dir(test);
 
     let combined_file_path = test_output_dir.join("combined");
     let mut combined = vec![create_combined_header(
-        "📝",
+        &"📝".to_string(),
         "input.sol",
         "solidity",
         &test_name,
     )];
 
     outputs.iter().for_each(|output| {
-        if output.contents.ne(previous_contents) {
+        if output.contents.ne(&previous_contents) {
             let version = output.version.to_string();
             let output_path = test_output_dir.join(&version);
             std::fs::write(&output_path, &output.contents).unwrap();
 
-            let relative_output_path = output_path.strip_prefix(&tests_dir).unwrap();
-            combined.push(if output.success {
-                create_combined_header("✅", &version, "solidity", relative_output_path)
-            } else {
-                create_combined_header("❌", &version, "bash", relative_output_path)
-            });
+            let snippet_path = &output_path.strip_prefix(&tests_dir).unwrap();
+            combined.push(create_combined_header(
+                &output.icon,
+                &version,
+                &output.language,
+                snippet_path,
+            ));
 
-            previous_contents = &output.contents;
+            previous_contents = output.contents.to_string();
         }
     });
 
     std::fs::write(&combined_file_path, combined.join("\n")).unwrap();
 }
 
-fn create_combined_header(icon: &str, title: &str, language: &str, file: &Path) -> String {
+fn create_combined_header(icon: &String, title: &str, language: &str, file: &Path) -> String {
     return format!(
         "=== \"{} {}\"\n\n    ```{}\n    --8<-- {:?}\n    ```\n",
         icon, title, language, file
