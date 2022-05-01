@@ -1,45 +1,61 @@
-pub type TreeType = Vec<Production>;
+use std::{collections::HashMap, rc::Rc};
 
-#[derive(Clone, Debug)]
-#[allow(dead_code)]
-pub struct Production {
-    pub name: String,
-    pub expr: Expression,
-}
+pub type GrammarParserResultType = HashMap<String, ExpressionRef>;
+pub type ExpressionParserResultType = ExpressionRef;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 #[allow(dead_code)]
 pub enum Expression {
-    End,
-    Any,
-    Repeat(Box<Expression>, RepeatCount),
-    Choice(Vec<Expression>),
-    Sequence(Vec<Expression>),
-    DelimitedBy(Box<Expression>, char, char),
-    PaddedBy(Box<Expression>, Box<Expression>),
-    SeparatedBy(Box<Expression>, Box<Expression>),
-    Difference(Box<Expression>, Box<Expression>),
-    Chars(String),
-    Identifier(String),
-    CharSet(Vec<CharSetElement>, bool),
+    End {},
+    Any {},
+    Repeat {
+        expr: ExpressionRef,
+        count: RepeatCount,
+    },
+    Choice {
+        exprs: Vec<ExpressionRef>,
+    },
+    Sequence {
+        exprs: Vec<ExpressionRef>,
+    },
+    Difference {
+        minuend: ExpressionRef,
+        subtrahend: ExpressionRef,
+    },
+    Chars {
+        string: String,
+    },
+    Identifier {
+        name: String,
+    },
+    CharSet {
+        elements: Vec<CharSetElement>,
+        negated: bool,
+    },
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Copy)]
 pub enum RepeatCount {
     ZeroOrOne,
     ZeroOrMore,
     OneOrMore,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Copy)]
 pub enum CharSetElement {
     Char(char),
     Range(char, char),
 }
 
-pub fn map_char_set((neg, chars): (Option<char>, Vec<(char, Option<char>)>)) -> Expression {
-    Expression::CharSet(
-        chars
+pub type ExpressionRef = Rc<Expression>;
+
+pub fn map_grammar(productions: Vec<(String, ExpressionRef)>) -> GrammarParserResultType {
+    productions.into_iter().collect()
+}
+
+pub fn map_char_set((neg, chars): (Option<char>, Vec<(char, Option<char>)>)) -> ExpressionRef {
+    Rc::new(Expression::CharSet {
+        elements: chars
             .into_iter()
             .map(|(c1, c2)| {
                 if let Some(c2) = c2 {
@@ -49,57 +65,69 @@ pub fn map_char_set((neg, chars): (Option<char>, Vec<(char, Option<char>)>)) -> 
                 }
             })
             .collect(),
-        neg.is_some(),
-    )
+        negated: neg.is_some(),
+    })
 }
 
-pub fn map_string(chars: Vec<char>) -> Expression {
-    Expression::Chars(chars.iter().collect::<String>())
+pub fn map_string(chars: Vec<char>) -> ExpressionRef {
+    Rc::new(Expression::Chars {
+        string: chars.iter().collect::<String>(),
+    })
 }
 
-pub fn map_production((name, expr): (String, Expression)) -> Production {
-    Production { name, expr }
-}
-
-pub fn map_sequence(mut diffs: Vec<Expression>) -> Expression {
+pub fn map_sequence(mut diffs: Vec<ExpressionRef>) -> ExpressionRef {
     if diffs.len() == 1 {
         diffs.pop().unwrap()
     } else {
-        Expression::Sequence(diffs)
+        Rc::new(Expression::Sequence { exprs: diffs })
     }
 }
 
-pub fn map_choice(mut seqs: Vec<Expression>) -> Expression {
+pub fn map_choice(mut seqs: Vec<ExpressionRef>) -> ExpressionRef {
     if seqs.len() == 1 {
         seqs.pop().unwrap()
     } else {
-        Expression::Choice(seqs)
+        Rc::new(Expression::Choice { exprs: seqs })
     }
 }
 
-pub fn map_difference((item1, item2): (Expression, Option<Expression>)) -> Expression {
+pub fn map_difference((item1, item2): (ExpressionRef, Option<ExpressionRef>)) -> ExpressionRef {
     if let Some(item2) = item2 {
-        Expression::Difference(Box::new(item1), Box::new(item2))
+        Rc::new(Expression::Difference {
+            minuend: item1,
+            subtrahend: item2,
+        })
     } else {
         item1
     }
 }
 
-pub fn map_item((h, t): (Expression, Option<char>)) -> Expression {
+pub fn map_item((h, t): (ExpressionRef, Option<char>)) -> ExpressionRef {
     match t {
-        Some('?') => Expression::Repeat(Box::new(h), RepeatCount::ZeroOrOne),
-        Some('*') => Expression::Repeat(Box::new(h), RepeatCount::ZeroOrMore),
-        Some('+') => Expression::Repeat(Box::new(h), RepeatCount::OneOrMore),
+        Some('?') => Rc::new(Expression::Repeat {
+            expr: h,
+            count: RepeatCount::ZeroOrOne,
+        }),
+        Some('*') => Rc::new(Expression::Repeat {
+            expr: h,
+            count: RepeatCount::ZeroOrMore,
+        }),
+        Some('+') => Rc::new(Expression::Repeat {
+            expr: h,
+            count: RepeatCount::OneOrMore,
+        }),
         _ => h,
     }
 }
 
-pub fn map_identifier_in_primary(s: String) -> Expression {
-    Expression::Identifier(s)
+pub fn map_identifier_in_primary(s: String) -> ExpressionRef {
+    Rc::new(Expression::Identifier { name: s })
 }
 
-pub fn map_char_code_in_primary(c: char) -> Expression {
-    Expression::Chars(c.to_string())
+pub fn map_char_code_in_primary(c: char) -> ExpressionRef {
+    Rc::new(Expression::Chars {
+        string: c.to_string(),
+    })
 }
 
 pub fn map_char_code(digits: Vec<char>) -> Result<char, ()> {

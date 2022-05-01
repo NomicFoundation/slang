@@ -7,9 +7,9 @@ The valid locations for whitespace and comments are explicitly specified, rather
 ```ebnf
 grammar ::= ( S production )* S
 
-production ::= Identifier S '::=' S choice
+production ::= Identifier S '::=' S expression
 
-choice ::= sequence ( S '|' S sequence )*
+expression ::= sequence ( S '|' S sequence )*
 
 sequence ::= difference ( S difference )*
 
@@ -17,7 +17,7 @@ difference ::= item ( S '-' S item )?
 
 item ::= primary ( '?' | '*' | '+' )?
 
-primary ::= charSet | '$' | '.' | CharCode | String | Identifier | '(' S choice S ')'
+primary ::= charSet | '$' | '.' | CharCode | String | Identifier | '(' S expression S ')'
 
 charSet ::= '[' '^'? ( CharSetChar ( '-' CharSetChar )? )* ']'
 
@@ -33,16 +33,23 @@ S ::= ( Whitespace | Comment )*
 
 Comment ::= '/*' ( [^*] | '*'+ [^*/] )* '*'+ '/'
 
-Whitespace ::= #x09 | #x0A | #x0D | #x20
+Whitespace ::= ( #x09 | #x0A | #x0D | #x20 )*
 ```
 
 ```yml
+parsers: [grammar, expression]
 productions:
-  primary/1: { to: Expression::EOF }
-  primary/2: { to: Expression::Any }
-  primary/3: { map }
-  primary/5: { map, lookahead: "S [^:]" }
-  CharCode: { unwrap: true }
-ignore: [S, Comment, Whitespace]
-no_map: [grammar, primary, CharSetChar, Identifier]
+  grammar: { nomap }
+  primary:
+    nomap:
+    "$": { map: eof_in_primary }
+    2: { map: any_in_primary }
+    CharCode: { map: char_code_in_primary }
+    r#Identifier: { map: identifier_in_primary, lookahead: "S [^:]" }
+  CharCode: { unwrap }
+  CharSetChar: { nomap }
+  Identifier: { nomap }
+  S: { ignore }
+  Comment: { ignore }
+  Whitespace: { ignore }
 ```
