@@ -64,12 +64,20 @@ pub fn generate(
 
     let mut ordered_productions = ordering.keys().cloned().collect::<Vec<String>>();
     ordered_productions.sort_by(|a, b| (&ordering[a]).cmp(&ordering[b]));
+    let ignorable_productions = ordered_productions
+        .iter()
+        .filter(|name| !config[name.as_str()]["ignore"].is_badvalue())
+        .cloned()
+        .collect();
     for name in ordered_productions {
         let config = &config[name.as_str()];
         let id = format_ident!("{}_parser", name.to_case(Case::Snake));
-        let expr = productions[&name].generate(config);
-        let suffixes =
-            generate_expression_suffixes(config, Some(name.to_case(Case::Snake).to_owned()));
+        let expr = productions[&name].generate(&ignorable_productions, config);
+        let suffixes = generate_expression_suffixes(
+            &ignorable_productions,
+            config,
+            Some(name.to_case(Case::Snake).to_owned()),
+        );
         if backlinked.contains(&name) {
             decls.push(quote!( #id.define(#expr #(#suffixes)*); ));
         } else {
@@ -81,12 +89,12 @@ pub fn generate(
 
     let root_id = format_ident!("{}_parser", root.to_case(Case::Snake));
     let function_name = format_ident!("create_{}_parser", root.to_case(Case::Snake));
-    // let result_type_name = format_ident!("{}ParserResultType", root.to_case(Case::UpperCamel));
+    let result_type_name = format_ident!("{}ParserResultType", root.to_case(Case::UpperCamel));
     let src = quote!(
         use chumsky::prelude::*;
-        // use super::generated_tree_builder::*;
+        use super::generated_tree_builder::*;
 
-        pub fn #function_name() -> impl Parser<char, (), Error = Simple<char>> {
+        pub fn #function_name() -> impl Parser<char, #result_type_name, Error = Simple<char>> {
             #(#decls)*
             #root_id.then_ignore(end().recover_with(skip_then_retry_until([])))
         }
@@ -95,23 +103,27 @@ pub fn generate(
     rustfmt(src.to_string())
 }
 
-fn generate_expression_suffixes(pa: &Yaml, default_map: Option<String>) -> Vec<TokenStream> {
+fn generate_expression_suffixes(
+    ignorable_productions: &HashSet<String>,
+    config: &Yaml,
+    default_map: Option<String>,
+) -> Vec<TokenStream> {
     let mut suffixes = vec![];
 
-    if let Some(source) = pa["lookahead"].as_str() {
+    if let Some(source) = config["lookahead"].as_str() {
         let (expr, errs) = crate::parser::create_expression_parser().parse_recovery(source);
         if let Some(expr) = expr {
-            let lookahead = expr.generate(&Yaml::BadValue);
+            let lookahead = expr.generate(ignorable_productions, &Yaml::BadValue);
             suffixes.push(quote!( .then_ignore(#lookahead.rewind()) ))
         }
         print_errors(errs, source);
     }
 
-    if !pa["ignore"].is_badvalue() {
+    if !config["ignore"].is_badvalue() {
         suffixes.push(quote!( .ignored() ))
     } else {
-        if pa["nomap"].is_badvalue() {
-            if let Some(map) = pa["map"].as_str() {
+        if config["nomap"].is_badvalue() {
+            if let Some(map) = config["map"].as_str() {
                 let id = format_ident!("map_{}", map);
                 suffixes.push(quote!( .map(#id) ))
             } else if let Some(map) = default_map {
@@ -119,7 +131,7 @@ fn generate_expression_suffixes(pa: &Yaml, default_map: Option<String>) -> Vec<T
                 suffixes.push(quote!( .map(#id) ))
             }
         }
-        if !pa["unwrap"].is_badvalue() {
+        if !config["unwrap"].is_badvalue() {
             suffixes.push(quote!( .unwrapped() ))
         }
     }
@@ -127,7 +139,15 @@ fn generate_expression_suffixes(pa: &Yaml, default_map: Option<String>) -> Vec<T
 }
 
 impl Expression {
-    fn generate(&self, config: &Yaml) -> TokenStream {
+    fn is_ignorable_in_sequence(&self, ignorable_productions: &HashSet<String>) -> bool {
+        match self {
+            Expression::Chars { .. } => true,
+            Expression::Identifier { name } => ignorable_productions.contains(name),
+            _ => false,
+        }
+    }
+
+    fn generate(&self, ignorable_productions: &HashSet<String>, config: &Yaml) -> TokenStream {
         match self {
             Expression::End {} => quote!(todo()),
             Expression::Any {} => quote!(todo()),
@@ -135,21 +155,21 @@ impl Expression {
                 expr,
                 count: RepeatCount::ZeroOrOne,
             } => {
-                let expr = expr.generate(&config[0]);
+                let expr = expr.generate(ignorable_productions, &config[0]);
                 quote!( #expr.or_not() )
             }
             Expression::Repeat {
                 expr,
                 count: RepeatCount::ZeroOrMore,
             } => {
-                let expr = expr.generate(&config[0]);
+                let expr = expr.generate(ignorable_productions, &config[0]);
                 quote!( #expr.repeated() )
             }
             Expression::Repeat {
                 expr,
                 count: RepeatCount::OneOrMore,
             } => {
-                let expr = expr.generate(&config[0]);
+                let expr = expr.generate(ignorable_productions, &config[0]);
                 quote!( #expr.repeated().at_least(1) )
             }
             Expression::Choice { exprs } => {
@@ -158,26 +178,44 @@ impl Expression {
                     .enumerate()
                     .map(|(i, e)| {
                         let local_config = get_subconfig(config, i, e);
-                        let e = e.generate(local_config);
-                        let suffixes = generate_expression_suffixes(local_config, None);
+                        let e = e.generate(ignorable_productions, local_config);
+                        let suffixes =
+                            generate_expression_suffixes(ignorable_productions, local_config, None);
                         quote!( #e #(#suffixes)* )
                     })
                     .collect::<Vec<_>>();
                 quote!( choice((#(#choices),*)) )
             }
             Expression::Sequence { exprs } => {
-                let mut exprs = exprs
+                let mut seen_unignorable_content = false;
+                let exprs = exprs
                     .iter()
                     .enumerate()
                     .map(|(i, e)| {
                         let local_config = get_subconfig(config, i, e);
-                        let e = e.generate(local_config);
-                        let suffixes = generate_expression_suffixes(local_config, None);
-                        quote!( #e #(#suffixes)* )
+                        let expr = e.generate(ignorable_productions, local_config);
+                        let suffixes =
+                            generate_expression_suffixes(ignorable_productions, local_config, None);
+                        if i > 0 {
+                            if !seen_unignorable_content
+                                && exprs[i - 1].is_ignorable_in_sequence(ignorable_productions)
+                            {
+                                quote!( .ignore_then(#expr #(#suffixes)*) )
+                            } else if e.is_ignorable_in_sequence(ignorable_productions) {
+                                seen_unignorable_content = true;
+                                quote!( .then_ignore(#expr #(#suffixes)*) )
+                            } else {
+                                seen_unignorable_content = true;
+                                quote!( .then(#expr #(#suffixes)*) )
+                            }
+                        } else {
+                            seen_unignorable_content =
+                                !e.is_ignorable_in_sequence(ignorable_productions);
+                            quote!( #expr #(#suffixes)* )
+                        }
                     })
                     .collect::<Vec<_>>();
-                let first = exprs.remove(0);
-                quote!( #first #(.then(#exprs))* )
+                quote!( #(#exprs)* )
             }
             Expression::Difference { .. } => quote!(todo()),
             Expression::Chars { string } => {
