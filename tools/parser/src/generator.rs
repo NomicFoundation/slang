@@ -81,12 +81,12 @@ pub fn generate(
 
     let root_id = format_ident!("{}_parser", root.to_case(Case::Snake));
     let function_name = format_ident!("create_{}_parser", root.to_case(Case::Snake));
-    let result_type_name = format_ident!("{}ParserResultType", root.to_case(Case::UpperCamel));
+    // let result_type_name = format_ident!("{}ParserResultType", root.to_case(Case::UpperCamel));
     let src = quote!(
         use chumsky::prelude::*;
-        use super::tree_builder::*;
+        // use super::generated_tree_builder::*;
 
-        pub fn #function_name() -> impl Parser<char, #result_type_name, Error = Simple<char>> {
+        pub fn #function_name() -> impl Parser<char, (), Error = Simple<char>> {
             #(#decls)*
             #root_id.then_ignore(end().recover_with(skip_then_retry_until([])))
         }
@@ -237,7 +237,7 @@ fn generate_char_set(elements: &[CharSetElement], negated: bool) -> TokenStream 
     if chars.len() == elements.len() {
         if negated && chars.len() == 1 {
             let c = chars[0];
-            quote!( filter(|c| c != #c) )
+            quote!( filter(|&c: &char| c != #c) )
         } else {
             let string = chars.into_iter().collect::<String>();
             if negated {
@@ -316,9 +316,9 @@ fn generate_char_set(elements: &[CharSetElement], negated: bool) -> TokenStream 
         }
 
         if negated {
-            quote!( filter(|c| !(#(#chars)||*)) )
+            quote!( filter(|&c: &char| !(#(#chars)||*)) )
         } else {
-            quote!( filter(|c| #(#chars)||*) )
+            quote!( filter(|&c: &char| #(#chars)||*) )
         }
     }
 }

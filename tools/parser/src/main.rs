@@ -8,6 +8,9 @@ mod parser;
 mod tree_builder;
 mod util;
 
+mod generated_parser;
+mod generated_tree_builder;
+
 use generator::generate;
 
 use clap::Parser as ClapParser;

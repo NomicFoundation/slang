@@ -39,17 +39,34 @@ Whitespace ::= ( #x09 | #x0A | #x0D | #x20 )*
 ```yml
 parsers: [grammar, expression]
 productions:
-  grammar: { nomap }
+  production: { ignore }
+  expression: { ignore }
+  sequence: { ignore }
+  difference: { ignore }
+  item: { ignore }
+  charSet: { ignore }
+  String: { ignore }
+  grammar: { nomap, ignore }
   primary:
+    ignore:
     nomap:
-    "$": { map: eof_in_primary }
-    2: { map: any_in_primary }
-    CharCode: { map: char_code_in_primary }
-    r#Identifier: { map: identifier_in_primary, lookahead: "S [^:]" }
-  CharCode: { unwrap }
-  CharSetChar: { nomap }
-  Identifier: { nomap }
+    "$": { map: eof_in_primary, ignore }
+    2: { map: any_in_primary, ignore }
+    CharCode: { map: char_code_in_primary, ignore }
+    r#Identifier: { map: identifier_in_primary, lookahead: "S [^:]", ignore }
+    6: { ignore }
+  CharCode: { unwrap, ignore }
+  CharSetChar:
+    nomap:
+    ignore:
+    1: { ignore }
+  Identifier: { nomap, ignore }
   S: { ignore }
-  Comment: { ignore }
+  Comment:
+    ignore:
+    1:
+      0:
+        0: { ignore }
+        1: { ignore }
   Whitespace: { ignore }
 ```
