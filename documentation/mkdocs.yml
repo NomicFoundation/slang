@@ -1,6 +1,10 @@
 site_name: Slang
 site_dir: ./target
 
+repo_url: https://github.com/NomicFoundation/slang
+repo_name: NomicFoundation/slang
+edit_uri: blob/main/documentation/docs/
+
 nav:
   - Home: index.md
   - Language Reference:
