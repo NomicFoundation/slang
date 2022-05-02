@@ -54,14 +54,20 @@ theme:
     - search.suggest
     - toc.integrate
     - toc.follow
+  font:
+    text: Nunito
+    code: Roboto Mono
   palette:
-    - scheme: default
-      media: "(prefers-color-scheme: light)"
-      toggle:
-        icon: material/toggle-switch-off-outline
-        name: Switch to dark mode
-    - scheme: slate
+    - scheme: override-dark
       media: "(prefers-color-scheme: dark)"
       toggle:
-        icon: material/toggle-switch
+        icon: material/brightness-7
         name: Switch to light mode
+    - scheme: override-light
+      media: "(prefers-color-scheme: light)"
+      toggle:
+        icon: material/brightness-4
+        name: Switch to dark mode
+
+extra_css:
+  - ./assets/stylesheets/colors.css
