@@ -10,6 +10,11 @@ When omitted, the compiler produces a warning to add one. The compiler does not 
 
 If you do not want to specify a license or if the source code is not open-source, please use the special value `UNLICENSED`. Note that `UNLICENSED` (no usage allowed, not present in SPDX license list) is different from `UNLICENSE` (grants all rights to everyone).
 
+!!! danger "Breaking Changes"
+
+    Starting from `v0.8.8`, multiple license specifiers will result in a parse error:
+    --8<-- "reference/01-file-structure/01-license-specifier/tests/multiple/output/combined"
+
 !!! todo
 
     The exact format of this specifier is [documented in the SPDX spec](https://spdx.github.io/spdx-spec/using-SPDX-short-identifiers-in-source-files/#e2-format-for-spdx-license-identifier){target=\_blank}, but we should document [how exactly it is parsed by the compiler](https://github.com/ethereum/solidity/blob/145186f68c3ac44e3d6f261112b97325139b1911/libsolidity/parsing/Parser.cpp#L2116-L2125){target=\_blank}, and how multiple licenses are extracted and inserted into metadata.
