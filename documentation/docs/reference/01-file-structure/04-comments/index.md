@@ -34,4 +34,4 @@ Additionally, there is another type of comment called a NatSpec comment. They ar
 contract MyContract {}
 ```
 
-Please see the [NatSpec Format](./05-natspec-format.md) section for further information.
+Please see the [NatSpec Format](../05-natspec-format/index.md) section for further information.

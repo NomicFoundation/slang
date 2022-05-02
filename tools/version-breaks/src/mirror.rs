@@ -42,7 +42,13 @@ pub fn fetch_builds(binaries_dir: &PathBuf) -> Vec<BuildInfo> {
         .map(|b| b.version.to_string())
         .collect::<Vec<String>>();
 
-    println!("Found {} builds:\n\n{:?}\n", builds.len(), versions);
+    println!(
+        "Found {} builds, downloading to: {:?}\n\n{:?}\n",
+        builds.len(),
+        binaries_dir,
+        versions
+    );
+
     with_progress("Binaries", &builds, |build| download_build(build));
 
     return builds;

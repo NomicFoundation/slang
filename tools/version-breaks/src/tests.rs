@@ -6,11 +6,10 @@ use std::{
 
 pub fn collect_tests(tests_dir: PathBuf) -> Vec<PathBuf> {
     let mut tests = Vec::<PathBuf>::new();
-    let mut ongoing = vec![tests_dir.join("tests")];
+    let mut ongoing = vec![tests_dir];
 
     while ongoing.len() > 0 {
         let current = ongoing.pop().unwrap();
-
         let possible_test = current.join("input.sol");
         if possible_test.exists() {
             tests.push(possible_test);

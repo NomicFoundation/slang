@@ -39,7 +39,7 @@ pub fn analyze_test(test: &PathBuf, build: &BuildInfo) -> ApiResult {
     }
 
     let stdout = String::from_utf8(output.stdout).unwrap();
-    let full_output: StandardOutput = serde_json::from_str(&stdout).unwrap();
+    let full_output: StandardOutput = serde_json::from_str(&stdout).expect(&stdout);
 
     match full_output.errors {
         None => {
