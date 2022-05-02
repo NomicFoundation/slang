@@ -11,7 +11,9 @@ pub fn create_grammar_parser() -> impl Parser<char, GrammarParserResultType, Err
 
     let s = choice((whitespace, comment)).repeated().ignored();
 
-    let identifier = text::ident();
+    let identifier = filter(|&c: &char| c == '_' || c.is_ascii_alphabetic())
+        .chain(filter(|&c: &char| c == '_' || c.is_ascii_alphanumeric()).repeated())
+        .map(map_identifier);
 
     let string = choice((
         none_of("'").repeated().padded_by(just('\'')),
@@ -68,7 +70,7 @@ pub fn create_grammar_parser() -> impl Parser<char, GrammarParserResultType, Err
     expression_parser.define(
         sequence
             .separated_by(just('|').padded_by(s))
-            .map(map_choice),
+            .map(map_expression),
     );
 
     let production = identifier.then(just("::=").padded_by(s).ignore_then(expression_parser));
@@ -147,7 +149,7 @@ pub fn create_expression_parser(
     expression_parser.define(
         sequence
             .separated_by(just('|').padded_by(s))
-            .map(map_choice),
+            .map(map_expression),
     );
 
     expression_parser.then_ignore(end().recover_with(skip_then_retry_until([])))

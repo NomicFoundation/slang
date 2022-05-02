@@ -1,21 +1,44 @@
 use std::collections::{BTreeMap, HashSet};
 
-use anyhow::Result;
 use chumsky::Parser;
 use convert_case::{Case, Casing};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 use yaml_rust::Yaml;
 
-use crate::util::{print_errors, rustfmt};
+use crate::util::print_errors;
 
 use super::tree_builder::*;
 
-pub fn generate(
-    productions: GrammarParserResultType,
+use super::generated_parser::create_expression_parser;
+// use super::parser::create_expression_parser;
+
+pub fn generate_all_parsers(productions: &GrammarParserResultType, config: &Yaml) -> TokenStream {
+    let mut parsers: Vec<TokenStream> = vec![];
+
+    if let Some(roots) = config["parsers"].as_vec() {
+        for i in roots {
+            parsers.push(generate_parser(
+                &productions,
+                i.as_str().unwrap().to_owned(),
+                &config["productions"],
+            ))
+        }
+    }
+
+    quote!(
+        use chumsky::prelude::*;
+        use super::tree_builder::*;
+
+        #(#parsers)*
+    )
+}
+
+pub fn generate_parser(
+    productions: &GrammarParserResultType,
     root: String,
     config: &Yaml,
-) -> Result<String> {
+) -> TokenStream {
     // DFS search for a topological ordering, with backlinks ignored
 
     fn visit(
@@ -90,17 +113,12 @@ pub fn generate(
     let root_id = format_ident!("{}_parser", root.to_case(Case::Snake));
     let function_name = format_ident!("create_{}_parser", root.to_case(Case::Snake));
     let result_type_name = format_ident!("{}ParserResultType", root.to_case(Case::UpperCamel));
-    let src = quote!(
-        use chumsky::prelude::*;
-        use super::generated_tree_builder::*;
-
+    quote!(
         pub fn #function_name() -> impl Parser<char, #result_type_name, Error = Simple<char>> {
             #(#decls)*
             #root_id.then_ignore(end().recover_with(skip_then_retry_until([])))
         }
-    );
-
-    rustfmt(src.to_string())
+    )
 }
 
 fn generate_expression_suffixes(
@@ -111,7 +129,7 @@ fn generate_expression_suffixes(
     let mut suffixes = vec![];
 
     if let Some(source) = config["lookahead"].as_str() {
-        let (expr, errs) = crate::parser::create_expression_parser().parse_recovery(source);
+        let (expr, errs) = create_expression_parser().parse_recovery(source);
         if let Some(expr) = expr {
             let lookahead = expr.generate(ignorable_productions, &Yaml::BadValue);
             suffixes.push(quote!( .then_ignore(#lookahead.rewind()) ))
@@ -188,6 +206,7 @@ impl Expression {
             }
             Expression::Sequence { exprs } => {
                 let mut seen_unignorable_content = false;
+                let chain = !config["chain"].is_badvalue();
                 let exprs = exprs
                     .iter()
                     .enumerate()
@@ -206,7 +225,11 @@ impl Expression {
                                 quote!( .then_ignore(#expr #(#suffixes)*) )
                             } else {
                                 seen_unignorable_content = true;
-                                quote!( .then(#expr #(#suffixes)*) )
+                                if chain {
+                                    quote!( .chain(#expr #(#suffixes)*) )
+                                } else {
+                                    quote!( .then(#expr #(#suffixes)*) )
+                                }
                             }
                         } else {
                             seen_unignorable_content =

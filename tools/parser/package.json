@@ -1,7 +1,7 @@
 {
   "scripts": {
     "test": "yarn extract:ebnf ; yarn extract:yml ; cargo run -- ./grammar.ebnf ./grammar.yml; rm grammar.ebnf grammar.yml",
-    "gen": "yarn extract:ebnf ; yarn extract:yml ; cargo run -- ./grammar.ebnf ./grammar.yml > src/generated_parser.rs; rm grammar.ebnf grammar.yml",
+    "gen": "yarn extract:ebnf ; yarn extract:yml ; (cargo run -- ./grammar.ebnf ./grammar.yml > tmp.rs && mv tmp.rs src/generated_parser.rs); rm grammar.ebnf grammar.yml",
     "extract:ebnf": "cat grammars/ebnf/grammar.md | codedown ebnf > grammar.ebnf",
     "extract:yml": "cat grammars/ebnf/grammar.md | codedown yml > grammar.yml"
   },

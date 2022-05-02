@@ -53,6 +53,14 @@ pub fn map_grammar(productions: Vec<(String, ExpressionRef)>) -> GrammarParserRe
     productions.into_iter().collect()
 }
 
+pub fn map_to_eof(_: char) -> ExpressionRef {
+    Rc::new(Expression::End {})
+}
+
+pub fn map_to_any(_: char) -> ExpressionRef {
+    Rc::new(Expression::Any {})
+}
+
 pub fn map_char_set((neg, chars): (Option<char>, Vec<(char, Option<char>)>)) -> ExpressionRef {
     Rc::new(Expression::CharSet {
         elements: chars
@@ -75,6 +83,10 @@ pub fn map_string(chars: Vec<char>) -> ExpressionRef {
     })
 }
 
+pub fn map_identifier(chars: Vec<char>) -> String {
+    chars.iter().collect()
+}
+
 pub fn map_sequence(mut diffs: Vec<ExpressionRef>) -> ExpressionRef {
     if diffs.len() == 1 {
         diffs.pop().unwrap()
@@ -83,7 +95,7 @@ pub fn map_sequence(mut diffs: Vec<ExpressionRef>) -> ExpressionRef {
     }
 }
 
-pub fn map_choice(mut seqs: Vec<ExpressionRef>) -> ExpressionRef {
+pub fn map_expression(mut seqs: Vec<ExpressionRef>) -> ExpressionRef {
     if seqs.len() == 1 {
         seqs.pop().unwrap()
     } else {
@@ -120,8 +132,8 @@ pub fn map_item((h, t): (ExpressionRef, Option<char>)) -> ExpressionRef {
     }
 }
 
-pub fn map_identifier_in_primary(s: String) -> ExpressionRef {
-    Rc::new(Expression::Identifier { name: s })
+pub fn map_identifier_in_primary(name: String) -> ExpressionRef {
+    Rc::new(Expression::Identifier { name })
 }
 
 pub fn map_char_code_in_primary(c: char) -> ExpressionRef {

@@ -33,28 +33,28 @@ S ::= ( Whitespace | Comment )*
 
 Comment ::= '/*' ( [^*] | '*'+ [^*/] )* '*'+ '/'
 
-Whitespace ::= ( #x09 | #x0A | #x0D | #x20 )*
+Whitespace ::= ( #x09 | #x0A | #x0D | #x20 )+
 ```
 
 ```yml
 parsers: [grammar, expression]
 productions:
-  grammar: { nomap }
+  production: { nomap }
+  expression: { chain }
+  sequence: { chain }
   primary:
     nomap:
     "$": { map: to_eof }
     ".": { map: to_any }
     CharCode: { map: char_code_in_primary }
     r#Identifier: { map: identifier_in_primary, lookahead: "S [^:]" }
-  CharCode: { unwrap }
   CharSetChar: { nomap }
-  Identifier: { nomap }
+  CharCode: { unwrap }
+  Identifier: { chain }
   S: { ignore }
   Comment:
     ignore:
-    1:
-      0:
-        0: { ignore }
-        1: { ignore }
+    # TODO: inherit ignore attribute into alternate branches
+    1: { 0: { 0: { ignore }, 1: { ignore } } }
   Whitespace: { ignore }
 ```
