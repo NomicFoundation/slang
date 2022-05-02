@@ -34,7 +34,6 @@ RUN apt-get install --assume-yes \
   "git=1:2.32.0-1ubuntu1" \
   "zsh=5.8-6ubuntu0.1"
 RUN curl -fsSL "https://github.com/cashapp/hermit/releases/download/v0.18.3/install.sh" | bash
-RUN git clone "https://github.com/romkatv/powerlevel10k.git" "$HOME/.p10k" --single-branch --branch "v1.16.1" --depth 1
 
 # Rust
 
