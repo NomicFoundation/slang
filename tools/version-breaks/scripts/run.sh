@@ -11,5 +11,5 @@ REPO_ROOT=$(realpath "$PROJECT_DIR/../..")
 (
   printf "\n\n🚀 Testing Version Breaks 🚀\n\n\n"
   cd "$PROJECT_DIR"
-  cargo run -- --tests-dir "$REPO_ROOT/documentation"
+  cargo run -- --tests-dir "$REPO_ROOT/documentation/docs"
 )
