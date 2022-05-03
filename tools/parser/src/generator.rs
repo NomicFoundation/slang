@@ -1,30 +1,22 @@
 use std::collections::{BTreeMap, HashSet};
 
-use chumsky::Parser;
 use convert_case::{Case, Casing};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
-use yaml_rust::Yaml;
 
-use crate::util::print_errors;
+use crate::config::{Configuration, ExpressionConfig};
+use crate::tree_builder::*;
+// use crate::parser::create_expression_parser;
 
-use super::tree_builder::*;
-
-use super::generated_parser::create_expression_parser;
-// use super::parser::create_expression_parser;
-
-pub fn generate_all_parsers(productions: &GrammarParserResultType, config: &Yaml) -> TokenStream {
-    let mut parsers: Vec<TokenStream> = vec![];
-
-    if let Some(roots) = config["parsers"].as_vec() {
-        for i in roots {
-            parsers.push(generate_parser(
-                &productions,
-                i.as_str().unwrap().to_owned(),
-                &config["productions"],
-            ))
-        }
-    }
+pub fn generate_all_parsers(
+    productions: &GrammarParserResultType,
+    config: &Configuration,
+) -> TokenStream {
+    let parsers = config
+        .parsers()
+        .iter()
+        .map(|name| generate_parser(productions, name, config))
+        .collect::<Vec<_>>();
 
     quote!(
         use chumsky::prelude::*;
@@ -36,8 +28,8 @@ pub fn generate_all_parsers(productions: &GrammarParserResultType, config: &Yaml
 
 pub fn generate_parser(
     productions: &GrammarParserResultType,
-    root: String,
-    config: &Yaml,
+    root: &String,
+    config: &Configuration,
 ) -> TokenStream {
     // DFS search for a topological ordering, with backlinks ignored
 
@@ -87,18 +79,13 @@ pub fn generate_parser(
 
     let mut ordered_productions = ordering.keys().cloned().collect::<Vec<String>>();
     ordered_productions.sort_by(|a, b| (&ordering[a]).cmp(&ordering[b]));
-    let ignorable_productions = ordered_productions
-        .iter()
-        .filter(|name| !config[name.as_str()]["ignore"].is_badvalue())
-        .cloned()
-        .collect();
     for name in ordered_productions {
-        let config = &config[name.as_str()];
+        let local_config = config.production(&name);
         let id = format_ident!("{}_parser", name.to_case(Case::Snake));
-        let expr = productions[&name].generate(&ignorable_productions, config);
+        let expr = productions[&name].generate(config, local_config);
         let suffixes = generate_expression_suffixes(
-            &ignorable_productions,
             config,
+            local_config,
             Some(name.to_case(Case::Snake).to_owned()),
         );
         if backlinked.contains(&name) {
@@ -122,26 +109,22 @@ pub fn generate_parser(
 }
 
 fn generate_expression_suffixes(
-    ignorable_productions: &HashSet<String>,
-    config: &Yaml,
+    global_config: &Configuration,
+    config: Option<&ExpressionConfig>,
     default_map: Option<String>,
 ) -> Vec<TokenStream> {
     let mut suffixes = vec![];
 
-    if let Some(source) = config["lookahead"].as_str() {
-        let (expr, errs) = create_expression_parser().parse_recovery(source);
-        if let Some(expr) = expr {
-            let lookahead = expr.generate(ignorable_productions, &Yaml::BadValue);
-            suffixes.push(quote!( .then_ignore(#lookahead.rewind()) ))
-        }
-        print_errors(errs, source);
+    if let Some(expr) = config.map_or(None, |c| c.lookahead.clone()) {
+        let lookahead = expr.generate(global_config, None);
+        suffixes.push(quote!( .then_ignore(#lookahead.rewind()) ))
     }
 
-    if !config["ignore"].is_badvalue() {
+    if config.map_or(false, |c| c.ignore) {
         suffixes.push(quote!( .ignored() ))
     } else {
-        if config["nomap"].is_badvalue() {
-            if let Some(map) = config["map"].as_str() {
+        if !config.map_or(false, |c| c.nomap) {
+            if let Some(map) = config.map_or(None, |c| c.map.clone()) {
                 let id = format_ident!("map_{}", map);
                 suffixes.push(quote!( .map(#id) ))
             } else if let Some(map) = default_map {
@@ -149,7 +132,7 @@ fn generate_expression_suffixes(
                 suffixes.push(quote!( .map(#id) ))
             }
         }
-        if !config["unwrap"].is_badvalue() {
+        if config.map_or(false, |c| c.unwrap) {
             suffixes.push(quote!( .unwrapped() ))
         }
     }
@@ -157,15 +140,21 @@ fn generate_expression_suffixes(
 }
 
 impl Expression {
-    fn is_ignorable_in_sequence(&self, ignorable_productions: &HashSet<String>) -> bool {
+    fn is_ignorable_in_sequence(&self, global_config: &Configuration) -> bool {
         match self {
             Expression::Chars { .. } => true,
-            Expression::Identifier { name } => ignorable_productions.contains(name),
+            Expression::Identifier { name } => {
+                global_config.production(name).map_or(false, |c| c.ignore)
+            }
             _ => false,
         }
     }
 
-    fn generate(&self, ignorable_productions: &HashSet<String>, config: &Yaml) -> TokenStream {
+    fn generate(
+        &self,
+        global_config: &Configuration,
+        config: Option<&ExpressionConfig>,
+    ) -> TokenStream {
         match self {
             Expression::End {} => quote!(todo()),
             Expression::Any {} => quote!(todo()),
@@ -173,21 +162,21 @@ impl Expression {
                 expr,
                 count: RepeatCount::ZeroOrOne,
             } => {
-                let expr = expr.generate(ignorable_productions, &config[0]);
+                let expr = expr.generate(global_config, config.and_then(|c| c.get(0, None)));
                 quote!( #expr.or_not() )
             }
             Expression::Repeat {
                 expr,
                 count: RepeatCount::ZeroOrMore,
             } => {
-                let expr = expr.generate(ignorable_productions, &config[0]);
+                let expr = expr.generate(global_config, config.and_then(|c| c.get(0, None)));
                 quote!( #expr.repeated() )
             }
             Expression::Repeat {
                 expr,
                 count: RepeatCount::OneOrMore,
             } => {
-                let expr = expr.generate(ignorable_productions, &config[0]);
+                let expr = expr.generate(global_config, config.and_then(|c| c.get(0, None)));
                 quote!( #expr.repeated().at_least(1) )
             }
             Expression::Choice { exprs } => {
@@ -195,10 +184,10 @@ impl Expression {
                     .iter()
                     .enumerate()
                     .map(|(i, e)| {
-                        let local_config = get_subconfig(config, i, e);
-                        let e = e.generate(ignorable_productions, local_config);
+                        let local_config = config.and_then(|c| c.get(i, None));
+                        let e = e.generate(global_config, local_config);
                         let suffixes =
-                            generate_expression_suffixes(ignorable_productions, local_config, None);
+                            generate_expression_suffixes(global_config, local_config, None);
                         quote!( #e #(#suffixes)* )
                     })
                     .collect::<Vec<_>>();
@@ -206,21 +195,21 @@ impl Expression {
             }
             Expression::Sequence { exprs } => {
                 let mut seen_unignorable_content = false;
-                let chain = !config["chain"].is_badvalue();
+                let chain = config.map_or(false, |c| c.chain);
                 let exprs = exprs
                     .iter()
                     .enumerate()
                     .map(|(i, e)| {
-                        let local_config = get_subconfig(config, i, e);
-                        let expr = e.generate(ignorable_productions, local_config);
+                        let local_config = config.and_then(|c| c.get(i, None));
+                        let expr = e.generate(global_config, local_config);
                         let suffixes =
-                            generate_expression_suffixes(ignorable_productions, local_config, None);
+                            generate_expression_suffixes(global_config, local_config, None);
                         if i > 0 {
                             if !seen_unignorable_content
-                                && exprs[i - 1].is_ignorable_in_sequence(ignorable_productions)
+                                && exprs[i - 1].is_ignorable_in_sequence(global_config)
                             {
                                 quote!( .ignore_then(#expr #(#suffixes)*) )
-                            } else if e.is_ignorable_in_sequence(ignorable_productions) {
+                            } else if e.is_ignorable_in_sequence(global_config) {
                                 seen_unignorable_content = true;
                                 quote!( .then_ignore(#expr #(#suffixes)*) )
                             } else {
@@ -232,8 +221,7 @@ impl Expression {
                                 }
                             }
                         } else {
-                            seen_unignorable_content =
-                                !e.is_ignorable_in_sequence(ignorable_productions);
+                            seen_unignorable_content = !e.is_ignorable_in_sequence(global_config);
                             quote!( #expr #(#suffixes)* )
                         }
                     })
@@ -382,21 +370,4 @@ fn generate_char_set(elements: &[CharSetElement], negated: bool) -> TokenStream 
             quote!( filter(|&c: &char| #(#chars)||*) )
         }
     }
-}
-
-fn get_subconfig<'a>(config: &'a Yaml, index: usize, expr: &ExpressionRef) -> &'a Yaml {
-    let mut local_config = &config[index];
-    if local_config.is_badvalue() {
-        match &**expr {
-            Expression::Identifier { name } => {
-                local_config = &config[name.as_str()];
-                if local_config.is_badvalue() {
-                    local_config = &config[format!("r#{}", name).as_str()]
-                }
-            }
-            Expression::Chars { string } => local_config = &config[string.as_str()],
-            _ => (),
-        }
-    };
-    local_config
 }

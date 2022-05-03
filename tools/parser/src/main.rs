@@ -1,8 +1,10 @@
 use chumsky::prelude::*;
+use config::Configuration;
 use std::{fs, path::PathBuf};
 use util::{print_errors, rustfmt};
 use yaml_rust::YamlLoader;
 
+mod config;
 mod generator;
 mod tree_builder;
 mod util;
@@ -34,10 +36,11 @@ fn main() {
     if let Some(productions) = productions {
         let yaml_src = fs::read_to_string(args.annotations_file).expect("Failed to read file");
         let annotations =
-            &YamlLoader::load_from_str(&yaml_src).expect("Failed to parse annotations")[0];
+            YamlLoader::load_from_str(&yaml_src).expect("Failed to parse annotations");
+        let configuration = Configuration::from(annotations);
         println!(
             "{}",
-            rustfmt(generate_all_parsers(&productions, &annotations).to_string()).unwrap()
+            rustfmt(generate_all_parsers(&productions, &configuration).to_string()).unwrap()
         )
     }
 

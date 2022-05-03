@@ -2,7 +2,7 @@ use std::rc::Rc;
 
 use chumsky::prelude::*;
 
-use super::tree_builder::*;
+use crate::tree_builder::*;
 
 pub fn create_grammar_parser() -> impl Parser<char, GrammarParserResultType, Error = Simple<char>> {
     let whitespace = one_of("\x09\x0A\x0D\x20").ignored();
