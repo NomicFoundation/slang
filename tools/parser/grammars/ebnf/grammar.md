@@ -52,9 +52,6 @@ productions:
   CharCode: { unwrap }
   Identifier: { chain }
   S: { ignore }
-  Comment:
-    ignore:
-    # TODO: inherit ignore attribute into alternate branches
-    1: { 0: { 0: { ignore }, 1: { ignore } } }
+  Comment: { ignore }
   Whitespace: { ignore }
 ```

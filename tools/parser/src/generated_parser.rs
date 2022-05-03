@@ -12,19 +12,22 @@ pub fn create_expression_parser(
         .map(map_char_code)
         .unwrapped();
     let comment_parser = just("/*")
+        .ignored()
         .ignore_then(
             choice((
                 filter(|&c: &char| c != '*').ignored(),
                 just('*')
                     .repeated()
                     .at_least(1)
-                    .then(none_of("*/"))
+                    .ignored()
+                    .then(none_of("*/").ignored())
                     .ignored(),
             ))
-            .repeated(),
+            .repeated()
+            .ignored(),
         )
-        .then(just('*').repeated().at_least(1))
-        .then_ignore(just('/'))
+        .then(just('*').repeated().at_least(1).ignored())
+        .then_ignore(just('/').ignored())
         .ignored();
     let identifier_parser = filter(|&c: &char| c == '_' || c.is_ascii_alphabetic())
         .chain(filter(|&c: &char| c == '_' || c.is_ascii_alphanumeric()).repeated())
@@ -38,14 +41,22 @@ pub fn create_expression_parser(
             .then_ignore(just('"')),
     ))
     .map(map_string);
-    let whitespace_parser = choice((just('\t'), just('\n'), just('\r'), just(' ')))
-        .repeated()
-        .at_least(1)
-        .ignored();
+    let whitespace_parser = choice((
+        just('\t').ignored(),
+        just('\n').ignored(),
+        just('\r').ignored(),
+        just(' ').ignored(),
+    ))
+    .repeated()
+    .at_least(1)
+    .ignored();
     let char_set_char_parser = choice((char_code_parser.clone(), none_of("\t\n\r#]")));
-    let s_parser = choice((whitespace_parser.clone(), comment_parser.clone()))
-        .repeated()
-        .ignored();
+    let s_parser = choice((
+        whitespace_parser.clone().ignored(),
+        comment_parser.clone().ignored(),
+    ))
+    .repeated()
+    .ignored();
     let char_set_parser = just('[')
         .ignore_then(just('^').or_not())
         .then(
@@ -127,19 +138,22 @@ pub fn create_grammar_parser() -> impl Parser<char, GrammarParserResultType, Err
         .map(map_char_code)
         .unwrapped();
     let comment_parser = just("/*")
+        .ignored()
         .ignore_then(
             choice((
                 filter(|&c: &char| c != '*').ignored(),
                 just('*')
                     .repeated()
                     .at_least(1)
-                    .then(none_of("*/"))
+                    .ignored()
+                    .then(none_of("*/").ignored())
                     .ignored(),
             ))
-            .repeated(),
+            .repeated()
+            .ignored(),
         )
-        .then(just('*').repeated().at_least(1))
-        .then_ignore(just('/'))
+        .then(just('*').repeated().at_least(1).ignored())
+        .then_ignore(just('/').ignored())
         .ignored();
     let identifier_parser = filter(|&c: &char| c == '_' || c.is_ascii_alphabetic())
         .chain(filter(|&c: &char| c == '_' || c.is_ascii_alphanumeric()).repeated())
@@ -153,14 +167,22 @@ pub fn create_grammar_parser() -> impl Parser<char, GrammarParserResultType, Err
             .then_ignore(just('"')),
     ))
     .map(map_string);
-    let whitespace_parser = choice((just('\t'), just('\n'), just('\r'), just(' ')))
-        .repeated()
-        .at_least(1)
-        .ignored();
+    let whitespace_parser = choice((
+        just('\t').ignored(),
+        just('\n').ignored(),
+        just('\r').ignored(),
+        just(' ').ignored(),
+    ))
+    .repeated()
+    .at_least(1)
+    .ignored();
     let char_set_char_parser = choice((char_code_parser.clone(), none_of("\t\n\r#]")));
-    let s_parser = choice((whitespace_parser.clone(), comment_parser.clone()))
-        .repeated()
-        .ignored();
+    let s_parser = choice((
+        whitespace_parser.clone().ignored(),
+        comment_parser.clone().ignored(),
+    ))
+    .repeated()
+    .ignored();
     let char_set_parser = just('[')
         .ignore_then(just('^').or_not())
         .then(

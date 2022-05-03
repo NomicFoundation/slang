@@ -33,34 +33,34 @@ fn generate_parser(
 ) -> TokenStream {
     // DFS search for a topological ordering, with backlinks ignored
 
-    fn visit(
+    fn visit_production(
         productions: &GrammarParserResultType,
         name: &String,
-        seen: &mut BTreeMap<String, usize>,
+        ordering: &mut BTreeMap<String, usize>,
     ) -> usize {
         let mut order = 0;
-        seen.insert(name.clone(), 0);
+        ordering.insert(name.clone(), 0);
         for child in productions[name].referenced_identifiers(&mut Default::default()) {
-            let child_order = if let Some(child_order) = seen.get(&child) {
+            let child_order = if let Some(child_order) = ordering.get(&child) {
                 *child_order
             } else {
-                visit(productions, &child, seen)
+                visit_production(productions, &child, ordering)
             };
             if child_order > order {
                 order = child_order;
             }
         }
         order += 1;
-        seen.insert(name.clone(), order);
+        ordering.insert(name.clone(), order);
         order
     }
 
     let mut ordering = BTreeMap::new();
-    visit(&productions, &root, &mut ordering);
+    visit_production(&productions, &root, &mut ordering);
 
     let mut decls = vec![];
 
-    // Detect and declare each recursively-referenced production
+    // Detect and declare each backlinked (recursively-referenced) production
 
     let mut backlinked = HashSet::new();
     for (name, order) in &ordering {
@@ -80,14 +80,11 @@ fn generate_parser(
     let mut ordered_productions = ordering.keys().cloned().collect::<Vec<String>>();
     ordered_productions.sort_by(|a, b| (&ordering[a]).cmp(&ordering[b]));
     for name in ordered_productions {
-        let local_config = config.production(&name);
+        let config = config.production(&name);
         let id = format_ident!("{}_parser", name.to_case(Case::Snake));
-        let expr = productions[&name].generate(config, local_config);
-        let suffixes = generate_expression_suffixes(
-            config,
-            local_config,
-            Some(name.to_case(Case::Snake).to_owned()),
-        );
+        let expr = productions[&name].generate(&config);
+        let suffixes =
+            generate_expression_suffixes(&config, Some(name.to_case(Case::Snake).to_owned()));
         if backlinked.contains(&name) {
             decls.push(quote!( #id.define(#expr #(#suffixes)*); ));
         } else {
@@ -109,22 +106,22 @@ fn generate_parser(
 }
 
 fn generate_expression_suffixes(
-    global_config: &Configuration,
-    config: Option<&ExpressionConfig>,
+    config: &ExpressionConfig,
     default_map: Option<String>,
 ) -> Vec<TokenStream> {
     let mut suffixes = vec![];
 
-    if let Some(expr) = config.map_or(None, |c| c.lookahead.clone()) {
-        let lookahead = expr.generate(global_config, None);
+    if let Some(expr) = config.lookahead() {
+        let config = config.empty();
+        let lookahead = expr.generate(&config);
         suffixes.push(quote!( .then_ignore(#lookahead.rewind()) ))
     }
 
-    if config.map_or(false, |c| c.ignore) {
+    if config.ignore() {
         suffixes.push(quote!( .ignored() ))
     } else {
-        if !config.map_or(false, |c| c.nomap) {
-            if let Some(map) = config.map_or(None, |c| c.map.clone()) {
+        if !config.nomap() {
+            if let Some(map) = config.map() {
                 let id = format_ident!("map_{}", map);
                 suffixes.push(quote!( .map(#id) ))
             } else if let Some(map) = default_map {
@@ -132,20 +129,19 @@ fn generate_expression_suffixes(
                 suffixes.push(quote!( .map(#id) ))
             }
         }
-        if config.map_or(false, |c| c.unwrap) {
+        if config.unwrap() {
             suffixes.push(quote!( .unwrapped() ))
         }
     }
+
     suffixes
 }
 
 impl Expression {
-    fn is_ignorable_in_sequence(&self, global_config: &Configuration) -> bool {
+    fn is_ignorable_in_sequence(&self, config: &ExpressionConfig) -> bool {
         match self {
             Expression::Chars { .. } => true,
-            Expression::Identifier { name } => {
-                global_config.production(name).map_or(false, |c| c.ignore)
-            }
+            Expression::Identifier { name } => config.production(name).ignore(),
             _ => false,
         }
     }
@@ -158,11 +154,7 @@ impl Expression {
         }
     }
 
-    fn generate(
-        &self,
-        global_config: &Configuration,
-        config: Option<&ExpressionConfig>,
-    ) -> TokenStream {
+    fn generate(&self, config: &ExpressionConfig) -> TokenStream {
         match self {
             Expression::End {} => quote!(todo()),
             Expression::Any {} => quote!(todo()),
@@ -170,21 +162,24 @@ impl Expression {
                 expr,
                 count: RepeatCount::ZeroOrOne,
             } => {
-                let expr = expr.generate(global_config, config.and_then(|c| c.get(0, None)));
+                let config = config.get(0, None);
+                let expr = expr.generate(&config);
                 quote!( #expr.or_not() )
             }
             Expression::Repeat {
                 expr,
                 count: RepeatCount::ZeroOrMore,
             } => {
-                let expr = expr.generate(global_config, config.and_then(|c| c.get(0, None)));
+                let config = config.get(0, None);
+                let expr = expr.generate(&config);
                 quote!( #expr.repeated() )
             }
             Expression::Repeat {
                 expr,
                 count: RepeatCount::OneOrMore,
             } => {
-                let expr = expr.generate(global_config, config.and_then(|c| c.get(0, None)));
+                let config = config.get(0, None);
+                let expr = expr.generate(&config);
                 quote!( #expr.repeated().at_least(1) )
             }
             Expression::Choice { exprs } => {
@@ -192,10 +187,9 @@ impl Expression {
                     .iter()
                     .enumerate()
                     .map(|(i, e)| {
-                        let local_config = config.and_then(|c| c.get(i, e.config_key()));
-                        let e = e.generate(global_config, local_config);
-                        let suffixes =
-                            generate_expression_suffixes(global_config, local_config, None);
+                        let config = config.get(i, e.config_key());
+                        let e = e.generate(&config);
+                        let suffixes = generate_expression_suffixes(&config, None);
                         quote!( #e #(#suffixes)* )
                     })
                     .collect::<Vec<_>>();
@@ -203,21 +197,20 @@ impl Expression {
             }
             Expression::Sequence { exprs } => {
                 let mut seen_unignorable_content = false;
-                let chain = config.map_or(false, |c| c.chain);
+                let chain = config.chain();
                 let exprs = exprs
                     .iter()
                     .enumerate()
                     .map(|(i, e)| {
-                        let local_config = config.and_then(|c| c.get(i, e.config_key()));
-                        let expr = e.generate(global_config, local_config);
-                        let suffixes =
-                            generate_expression_suffixes(global_config, local_config, None);
+                        let config = config.get(i, e.config_key());
+                        let expr = e.generate(&config);
+                        let suffixes = generate_expression_suffixes(&config, None);
                         if i > 0 {
                             if !seen_unignorable_content
-                                && exprs[i - 1].is_ignorable_in_sequence(global_config)
+                                && exprs[i - 1].is_ignorable_in_sequence(&config)
                             {
                                 quote!( .ignore_then(#expr #(#suffixes)*) )
-                            } else if e.is_ignorable_in_sequence(global_config) {
+                            } else if e.is_ignorable_in_sequence(&config) {
                                 seen_unignorable_content = true;
                                 quote!( .then_ignore(#expr #(#suffixes)*) )
                             } else {
@@ -229,7 +222,7 @@ impl Expression {
                                 }
                             }
                         } else {
-                            seen_unignorable_content = !e.is_ignorable_in_sequence(global_config);
+                            seen_unignorable_content = !e.is_ignorable_in_sequence(&config);
                             quote!( #expr #(#suffixes)* )
                         }
                     })

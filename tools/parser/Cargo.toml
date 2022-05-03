@@ -11,6 +11,7 @@ ariadne = "0.1.5"
 chumsky = "0.8.0"
 clap = { version = "3.1.12", features = ["derive"] }
 convert_case = "0.5.0"
+either = "1.6.1"
 proc-macro2 = "1.0.37"
 quote = "1.0.18"
 yaml-rust = "0.4.5"
