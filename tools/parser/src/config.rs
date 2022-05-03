@@ -1,14 +1,18 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeSet, HashMap};
 
 use chumsky::Parser;
 use yaml_rust::Yaml;
 
 use crate::{
-    generated_parser::create_expression_parser, tree_builder::ExpressionRef, util::print_errors,
+    generated_parser::create_expression_parser,
+    // parser::create_expression_parser,
+    tree_builder::ExpressionRef,
+    util::print_errors,
 };
 
 pub struct Configuration {
-    parsers: HashSet<String>,
+    // BTreeSet to ensure repeatability when regenerating
+    parsers: BTreeSet<String>,
     productions: HashMap<String, ExpressionConfig>,
 }
 
@@ -35,7 +39,7 @@ impl Configuration {
         result
     }
 
-    pub fn parsers(&self) -> &HashSet<String> {
+    pub fn parsers(&self) -> &BTreeSet<String> {
         &self.parsers
     }
 

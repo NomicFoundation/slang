@@ -31,12 +31,13 @@ fn main() {
 
     let ebnf_src = fs::read_to_string(args.grammar_file).expect("Failed to read file");
 
-    let (productions, errs) = create_grammar_parser().parse_recovery(ebnf_src.as_str());
+    let (ebnf, errs) = create_grammar_parser().parse_recovery(ebnf_src.as_str());
 
-    if let Some(productions) = productions {
-        let yaml_src = fs::read_to_string(args.annotations_file).expect("Failed to read file");
+    if let Some(productions) = ebnf {
+        let annotations_src =
+            fs::read_to_string(args.annotations_file).expect("Failed to read file");
         let annotations =
-            YamlLoader::load_from_str(&yaml_src).expect("Failed to parse annotations");
+            YamlLoader::load_from_str(&annotations_src).expect("Failed to parse annotations");
         let configuration = Configuration::from(annotations);
         println!(
             "{}",

@@ -26,7 +26,7 @@ pub fn generate_all_parsers(
     )
 }
 
-pub fn generate_parser(
+fn generate_parser(
     productions: &GrammarParserResultType,
     root: &String,
     config: &Configuration,
@@ -150,6 +150,14 @@ impl Expression {
         }
     }
 
+    fn config_key(&self) -> Option<&String> {
+        match self {
+            Expression::Chars { string } => Some(&string),
+            Expression::Identifier { name } => Some(&name),
+            _ => None,
+        }
+    }
+
     fn generate(
         &self,
         global_config: &Configuration,
@@ -184,7 +192,7 @@ impl Expression {
                     .iter()
                     .enumerate()
                     .map(|(i, e)| {
-                        let local_config = config.and_then(|c| c.get(i, None));
+                        let local_config = config.and_then(|c| c.get(i, e.config_key()));
                         let e = e.generate(global_config, local_config);
                         let suffixes =
                             generate_expression_suffixes(global_config, local_config, None);
@@ -200,7 +208,7 @@ impl Expression {
                     .iter()
                     .enumerate()
                     .map(|(i, e)| {
-                        let local_config = config.and_then(|c| c.get(i, None));
+                        let local_config = config.and_then(|c| c.get(i, e.config_key()));
                         let expr = e.generate(global_config, local_config);
                         let suffixes =
                             generate_expression_suffixes(global_config, local_config, None);
