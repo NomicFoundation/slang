@@ -1,0 +1,29 @@
+{
+  "nodeType": "SourceUnit",
+  "nodes": [
+    {
+      "literals": [
+        "solidity",
+        ">",
+        "0.0",
+        ".0",
+        "<",
+        "9.9",
+        ".9"
+      ],
+      "nodeType": "PragmaDirective"
+    },
+    {
+      "literals": [
+        "experimental",
+        "ABIEncoderV2"
+      ],
+      "nodeType": "PragmaDirective"
+    },
+    {
+      "name": "Test",
+      "nodeType": "ContractDefinition",
+      "nodes": []
+    }
+  ]
+}

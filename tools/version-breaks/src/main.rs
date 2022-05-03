@@ -1,9 +1,10 @@
 use clap::Parser;
 use std::path::PathBuf;
 
+mod api;
+mod ast;
 mod builds;
 mod mirror;
-mod solc_ouput;
 mod tests;
 mod utils;
 
@@ -25,5 +26,5 @@ fn main() {
 
     tests
         .iter()
-        .for_each(|test| tests::run_test(&tests_dir, test, &builds));
+        .for_each(|test| tests::execute_test(&tests_dir, test, &builds));
 }
