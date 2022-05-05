@@ -8,9 +8,14 @@ pub type ExpressionParserResultType = ExpressionRef;
 pub enum Expression {
     End {},
     Any {},
-    Repeat {
+    Repeated {
         expr: ExpressionRef,
-        count: RepeatCount,
+    },
+    Optional {
+        expr: ExpressionRef,
+    },
+    Negation {
+        expr: ExpressionRef,
     },
     Choice {
         exprs: Vec<ExpressionRef>,
@@ -28,23 +33,10 @@ pub enum Expression {
     Identifier {
         name: String,
     },
-    CharSet {
-        elements: Vec<CharSetElement>,
-        negated: bool,
+    CharRange {
+        start: char,
+        end: char,
     },
-}
-
-#[derive(Clone, Debug, PartialEq, Eq, Copy)]
-pub enum RepeatCount {
-    ZeroOrOne,
-    ZeroOrMore,
-    OneOrMore,
-}
-
-#[derive(Clone, Debug, PartialEq, Eq, Copy)]
-pub enum CharSetElement {
-    Char(char),
-    Range(char, char),
 }
 
 pub type ExpressionRef = Rc<Expression>;
@@ -53,28 +45,12 @@ pub fn map_grammar(productions: Vec<(String, ExpressionRef)>) -> GrammarParserRe
     productions.into_iter().collect()
 }
 
-pub fn map_to_eof(_: char) -> ExpressionRef {
+pub fn map_eof(_: char) -> ExpressionRef {
     Rc::new(Expression::End {})
 }
 
-pub fn map_to_any(_: char) -> ExpressionRef {
+pub fn map_any(_: char) -> ExpressionRef {
     Rc::new(Expression::Any {})
-}
-
-pub fn map_char_set((neg, chars): (Option<char>, Vec<(char, Option<char>)>)) -> ExpressionRef {
-    Rc::new(Expression::CharSet {
-        elements: chars
-            .into_iter()
-            .map(|(c1, c2)| {
-                if let Some(c2) = c2 {
-                    CharSetElement::Range(c1, c2)
-                } else {
-                    CharSetElement::Char(c1)
-                }
-            })
-            .collect(),
-        negated: neg.is_some(),
-    })
 }
 
 pub fn map_string(chars: Vec<char>) -> ExpressionRef {
@@ -83,15 +59,8 @@ pub fn map_string(chars: Vec<char>) -> ExpressionRef {
     })
 }
 
-// pub fn map_char(chars: Vec<char>) -> char {
-//     chars[0]
-// }
-
 pub fn map_char_range((start, end): (char, char)) -> ExpressionRef {
-    Rc::new(Expression::CharSet {
-        elements: vec![CharSetElement::Range(start, end)],
-        negated: false,
-    })
+    Rc::new(Expression::CharRange { start, end })
 }
 
 pub fn map_identifier(chars: Vec<char>) -> String {
@@ -125,40 +94,27 @@ pub fn map_difference((item1, item2): (ExpressionRef, Option<ExpressionRef>)) ->
     }
 }
 
-pub fn map_item((h, t): (ExpressionRef, Option<char>)) -> ExpressionRef {
-    match t {
-        Some('?') => Rc::new(Expression::Repeat {
-            expr: h,
-            count: RepeatCount::ZeroOrOne,
-        }),
-        Some('*') => Rc::new(Expression::Repeat {
-            expr: h,
-            count: RepeatCount::ZeroOrMore,
-        }),
-        Some('+') => Rc::new(Expression::Repeat {
-            expr: h,
-            count: RepeatCount::OneOrMore,
-        }),
-        _ => h,
+pub fn map_negation((negation, expr): (Option<()>, ExpressionRef)) -> ExpressionRef {
+    if negation.is_some() {
+        Rc::new(Expression::Negation { expr })
+    } else {
+        expr
     }
 }
 
-pub fn map_identifier_in_primary(name: String) -> ExpressionRef {
-    Rc::new(Expression::Identifier { name })
+pub fn map_optional(expr: ExpressionRef) -> ExpressionRef {
+    Rc::new(Expression::Optional { expr })
 }
 
-// pub fn map_char_code_in_primary(c: char) -> ExpressionRef {
-//     Rc::new(Expression::Chars {
-//         string: c.to_string(),
-//     })
-// }
+pub fn map_repeated(expr: ExpressionRef) -> ExpressionRef {
+    Rc::new(Expression::Repeated { expr })
+}
+
+pub fn map_production_reference(name: String) -> ExpressionRef {
+    Rc::new(Expression::Identifier { name })
+}
 
 pub fn map_hex_digits_to_char(digits: Vec<char>) -> Result<char, ()> {
     let digits = digits.iter().collect::<String>();
     char::from_u32(u32::from_str_radix(digits.as_str(), 16).unwrap()).ok_or(())
 }
-
-// pub fn map_char_code(digits: Vec<char>) -> Result<char, ()> {
-//     let digits = digits.iter().collect::<String>();
-//     char::from_u32(u32::from_str_radix(digits.as_str(), 16).unwrap()).ok_or(())
-// }

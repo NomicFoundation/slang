@@ -6,7 +6,12 @@ use quote::{format_ident, quote};
 
 use crate::config::{Configuration, ExpressionConfig};
 use crate::tree_builder::*;
-// use crate::parser::create_expression_parser;
+
+#[derive(Clone, Debug, PartialEq, Eq, Copy)]
+pub enum CharSetElement {
+    Char(char),
+    Range(char, char),
+}
 
 pub fn generate_all_parsers(
     productions: &GrammarParserResultType,
@@ -103,7 +108,7 @@ fn generate_parser(
     quote!(
         pub fn #function_name() -> impl Parser<char, #result_type_name, Error = Simple<char>> {
             #(#decls)*
-            #root_id.then_ignore(end().recover_with(skip_then_retry_until([])))
+            #root_id.recover_with(skip_then_retry_until([]))
         }
     )
 }
@@ -161,29 +166,21 @@ impl Expression {
         match self {
             Expression::End {} => quote!(end()),
             Expression::Any {} => quote!(todo()),
-            Expression::Repeat {
-                expr,
-                count: RepeatCount::ZeroOrOne,
-            } => {
+            Expression::Optional { expr } => {
                 let config = config.get(0, None);
                 let expr = expr.generate(&config);
                 quote!( #expr.or_not() )
             }
-            Expression::Repeat {
-                expr,
-                count: RepeatCount::ZeroOrMore,
-            } => {
+            Expression::Negation { expr } => {
+                if let Some(char_set_elements) = expr.as_char_set_elements() {
+                    return generate_char_set(&char_set_elements, true);
+                }
+                quote!(todo())
+            }
+            Expression::Repeated { expr } => {
                 let config = config.get(0, None);
                 let expr = expr.generate(&config);
                 quote!( #expr.repeated() )
-            }
-            Expression::Repeat {
-                expr,
-                count: RepeatCount::OneOrMore,
-            } => {
-                let config = config.get(0, None);
-                let expr = expr.generate(&config);
-                quote!( #expr.repeated().at_least(1) )
             }
             Expression::Choice { exprs } => {
                 let choices = exprs
@@ -232,7 +229,17 @@ impl Expression {
                     .collect::<Vec<_>>();
                 quote!( #(#exprs)* )
             }
-            Expression::Difference { .. } => quote!(todo()),
+            Expression::Difference {
+                minuend,
+                subtrahend,
+            } => {
+                if minuend.is_any() {
+                    if let Some(char_set_elements) = subtrahend.as_char_set_elements() {
+                        return generate_char_set(&char_set_elements, true);
+                    }
+                }
+                quote!(todo())
+            }
             Expression::Chars { string } => {
                 if string.len() == 1 {
                     let c = string.chars().next().unwrap();
@@ -245,8 +252,8 @@ impl Expression {
                 let id = format_ident!("{}_parser", name.to_case(Case::Snake));
                 quote!( #id.clone() )
             }
-            Expression::CharSet { elements, negated } => {
-                let fragment = generate_char_set(elements, *negated);
+            Expression::CharRange { start, end } => {
+                let fragment = generate_char_set(&vec![CharSetElement::Range(*start, *end)], false);
                 quote!( #fragment )
             }
         }
@@ -259,7 +266,7 @@ impl Expression {
                     p.referenced_identifiers(accum);
                 });
             }
-            Expression::Repeat { expr, .. } => {
+            Expression::Optional { expr } | Expression::Repeated { expr } => {
                 expr.referenced_identifiers(accum);
             }
             Expression::Difference {
@@ -276,6 +283,37 @@ impl Expression {
         };
 
         accum.clone()
+    }
+
+    fn is_any(&self) -> bool {
+        match self {
+            Expression::Any {} => true,
+            _ => false,
+        }
+    }
+
+    fn as_char_set_elements(&self) -> Option<Vec<CharSetElement>> {
+        match self {
+            Expression::Choice { exprs } => {
+                let elements = exprs
+                    .iter()
+                    .map(|e| e.as_char_set_elements())
+                    .collect::<Vec<_>>();
+                if elements.iter().all(|e| e.is_some()) {
+                    Some(elements.into_iter().map(|e| e.unwrap()).flatten().collect())
+                } else {
+                    None
+                }
+            }
+            Expression::Chars { string } => {
+                if string.len() == 1 {
+                    Some(vec![CharSetElement::Char(string.chars().next().unwrap())])
+                } else {
+                    None
+                }
+            }
+            _ => None,
+        }
     }
 }
 

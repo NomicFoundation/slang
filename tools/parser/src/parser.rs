@@ -3,24 +3,26 @@ use chumsky::prelude::*;
 pub fn create_expression_parser(
 ) -> impl Parser<char, ExpressionParserResultType, Error = Simple<char>> {
     let mut expression_parser = Recursive::declare();
+    let any_parser = just('.').map(map_any);
     let comment_parser = just("/*")
         .ignored()
         .ignore_then(
             choice((
                 filter(|&c: &char| c != '*').ignored(),
                 just('*')
-                    .repeated()
-                    .at_least(1)
                     .ignored()
+                    .ignore_then(just('*').repeated().ignored())
                     .then(none_of("*/").ignored())
                     .ignored(),
             ))
             .repeated()
             .ignored(),
         )
-        .then(just('*').repeated().at_least(1).ignored())
+        .then_ignore(just('*').ignored())
+        .then(just('*').repeated().ignored())
         .then_ignore(just('/').ignored())
         .ignored();
+    let eof_parser = just('$').map(map_eof);
     let hex_digit_parser = choice((
         filter(|&c: &char| c.is_ascii_digit()),
         filter(|&c: &char| ('a' <= c && c <= 'f')),
@@ -37,17 +39,7 @@ pub fn create_expression_parser(
         just('\r').ignored(),
         just(' ').ignored(),
     ))
-    .repeated()
-    .at_least(1)
     .ignored();
-    let char_code_parser = just("#x").ignore_then(
-        hex_digit_parser
-            .clone()
-            .repeated()
-            .at_least(1)
-            .map(map_hex_digits_to_char)
-            .unwrapped(),
-    );
     let identifier_follow_parser = choice((
         identifier_start_parser.clone(),
         filter(|&c: &char| c.is_ascii_digit()),
@@ -61,15 +53,16 @@ pub fn create_expression_parser(
     let string_char_parser = choice((
         none_of("'\\"),
         just('\\').ignore_then(choice((
-            one_of("'\\"),
+            just('\''),
+            just('\\'),
             just("u{")
-                .ignore_then(hex_digit_parser.clone().repeated().at_least(1))
+                .ignore_then(hex_digit_parser.clone())
+                .chain(hex_digit_parser.clone().repeated())
                 .then_ignore(just('}'))
                 .map(map_hex_digits_to_char)
                 .unwrapped(),
         ))),
     ));
-    let char_set_char_parser = choice((char_code_parser.clone(), none_of("\t\n\r#]")));
     let identifier_parser = identifier_start_parser
         .clone()
         .chain(identifier_follow_parser.clone().repeated())
@@ -81,46 +74,52 @@ pub fn create_expression_parser(
         .ignore_then(string_char_parser.clone().repeated())
         .then_ignore(just('\''))
         .map(map_string);
+    let grouped_parser = just('(')
+        .ignore_then(s_parser.clone())
+        .ignore_then(expression_parser.clone())
+        .then_ignore(s_parser.clone())
+        .then_ignore(just(')'));
+    let optional_parser = just('[')
+        .ignore_then(s_parser.clone())
+        .ignore_then(expression_parser.clone())
+        .then_ignore(s_parser.clone())
+        .then_ignore(just(']'))
+        .map(map_optional);
+    let repeated_parser = just('{')
+        .ignore_then(s_parser.clone())
+        .ignore_then(expression_parser.clone())
+        .then_ignore(s_parser.clone())
+        .then_ignore(just('}'))
+        .map(map_repeated);
     let char_range_parser = single_char_string_parser
         .clone()
         .then_ignore(just("…"))
         .then(single_char_string_parser.clone())
         .map(map_char_range);
-    let char_set_parser = just('[')
-        .ignore_then(just('^').or_not())
-        .then(
-            char_set_char_parser
-                .clone()
-                .then(just('-').ignore_then(char_set_char_parser.clone()).or_not())
-                .repeated(),
-        )
-        .then_ignore(just(']'))
-        .map(map_char_set);
+    let production_reference_parser = identifier_parser.clone().map(map_production_reference);
     let primary_parser = choice((
+        eof_parser.clone(),
+        any_parser.clone(),
         char_range_parser.clone(),
-        char_set_parser.clone(),
-        just('$').map(map_to_eof),
-        just('.').map(map_to_any),
         string_parser.clone(),
-        identifier_parser.clone().map(map_identifier_in_primary),
-        just('(')
-            .ignore_then(s_parser.clone())
-            .ignore_then(expression_parser.clone())
-            .then_ignore(s_parser.clone())
-            .then_ignore(just(')')),
+        production_reference_parser.clone(),
+        grouped_parser.clone(),
+        optional_parser.clone(),
+        repeated_parser.clone(),
     ));
-    let item_parser = primary_parser
-        .clone()
-        .then(choice((just('?'), just('*'), just('+'))).or_not())
-        .map(map_item);
-    let difference_parser = item_parser
+    let negation_parser = just("¬")
+        .ignore_then(s_parser.clone())
+        .or_not()
+        .then(primary_parser.clone())
+        .map(map_negation);
+    let difference_parser = negation_parser
         .clone()
         .then(
             s_parser
                 .clone()
                 .ignore_then(just('-'))
                 .ignore_then(s_parser.clone())
-                .ignore_then(item_parser.clone())
+                .ignore_then(negation_parser.clone())
                 .or_not(),
         )
         .map(map_difference);
@@ -146,28 +145,30 @@ pub fn create_expression_parser(
             )
             .map(map_expression),
     );
-    expression_parser.then_ignore(end().recover_with(skip_then_retry_until([])))
+    expression_parser.recover_with(skip_then_retry_until([]))
 }
 pub fn create_grammar_parser() -> impl Parser<char, GrammarParserResultType, Error = Simple<char>> {
     let mut expression_parser = Recursive::declare();
+    let any_parser = just('.').map(map_any);
     let comment_parser = just("/*")
         .ignored()
         .ignore_then(
             choice((
                 filter(|&c: &char| c != '*').ignored(),
                 just('*')
-                    .repeated()
-                    .at_least(1)
                     .ignored()
+                    .ignore_then(just('*').repeated().ignored())
                     .then(none_of("*/").ignored())
                     .ignored(),
             ))
             .repeated()
             .ignored(),
         )
-        .then(just('*').repeated().at_least(1).ignored())
+        .then_ignore(just('*').ignored())
+        .then(just('*').repeated().ignored())
         .then_ignore(just('/').ignored())
         .ignored();
+    let eof_parser = just('$').map(map_eof);
     let hex_digit_parser = choice((
         filter(|&c: &char| c.is_ascii_digit()),
         filter(|&c: &char| ('a' <= c && c <= 'f')),
@@ -184,17 +185,7 @@ pub fn create_grammar_parser() -> impl Parser<char, GrammarParserResultType, Err
         just('\r').ignored(),
         just(' ').ignored(),
     ))
-    .repeated()
-    .at_least(1)
     .ignored();
-    let char_code_parser = just("#x").ignore_then(
-        hex_digit_parser
-            .clone()
-            .repeated()
-            .at_least(1)
-            .map(map_hex_digits_to_char)
-            .unwrapped(),
-    );
     let identifier_follow_parser = choice((
         identifier_start_parser.clone(),
         filter(|&c: &char| c.is_ascii_digit()),
@@ -208,15 +199,16 @@ pub fn create_grammar_parser() -> impl Parser<char, GrammarParserResultType, Err
     let string_char_parser = choice((
         none_of("'\\"),
         just('\\').ignore_then(choice((
-            one_of("'\\"),
+            just('\''),
+            just('\\'),
             just("u{")
-                .ignore_then(hex_digit_parser.clone().repeated().at_least(1))
+                .ignore_then(hex_digit_parser.clone())
+                .chain(hex_digit_parser.clone().repeated())
                 .then_ignore(just('}'))
                 .map(map_hex_digits_to_char)
                 .unwrapped(),
         ))),
     ));
-    let char_set_char_parser = choice((char_code_parser.clone(), none_of("\t\n\r#]")));
     let identifier_parser = identifier_start_parser
         .clone()
         .chain(identifier_follow_parser.clone().repeated())
@@ -228,46 +220,52 @@ pub fn create_grammar_parser() -> impl Parser<char, GrammarParserResultType, Err
         .ignore_then(string_char_parser.clone().repeated())
         .then_ignore(just('\''))
         .map(map_string);
+    let grouped_parser = just('(')
+        .ignore_then(s_parser.clone())
+        .ignore_then(expression_parser.clone())
+        .then_ignore(s_parser.clone())
+        .then_ignore(just(')'));
+    let optional_parser = just('[')
+        .ignore_then(s_parser.clone())
+        .ignore_then(expression_parser.clone())
+        .then_ignore(s_parser.clone())
+        .then_ignore(just(']'))
+        .map(map_optional);
+    let repeated_parser = just('{')
+        .ignore_then(s_parser.clone())
+        .ignore_then(expression_parser.clone())
+        .then_ignore(s_parser.clone())
+        .then_ignore(just('}'))
+        .map(map_repeated);
     let char_range_parser = single_char_string_parser
         .clone()
         .then_ignore(just("…"))
         .then(single_char_string_parser.clone())
         .map(map_char_range);
-    let char_set_parser = just('[')
-        .ignore_then(just('^').or_not())
-        .then(
-            char_set_char_parser
-                .clone()
-                .then(just('-').ignore_then(char_set_char_parser.clone()).or_not())
-                .repeated(),
-        )
-        .then_ignore(just(']'))
-        .map(map_char_set);
+    let production_reference_parser = identifier_parser.clone().map(map_production_reference);
     let primary_parser = choice((
+        eof_parser.clone(),
+        any_parser.clone(),
         char_range_parser.clone(),
-        char_set_parser.clone(),
-        just('$').map(map_to_eof),
-        just('.').map(map_to_any),
         string_parser.clone(),
-        identifier_parser.clone().map(map_identifier_in_primary),
-        just('(')
-            .ignore_then(s_parser.clone())
-            .ignore_then(expression_parser.clone())
-            .then_ignore(s_parser.clone())
-            .then_ignore(just(')')),
+        production_reference_parser.clone(),
+        grouped_parser.clone(),
+        optional_parser.clone(),
+        repeated_parser.clone(),
     ));
-    let item_parser = primary_parser
-        .clone()
-        .then(choice((just('?'), just('*'), just('+'))).or_not())
-        .map(map_item);
-    let difference_parser = item_parser
+    let negation_parser = just("¬")
+        .ignore_then(s_parser.clone())
+        .or_not()
+        .then(primary_parser.clone())
+        .map(map_negation);
+    let difference_parser = negation_parser
         .clone()
         .then(
             s_parser
                 .clone()
                 .ignore_then(just('-'))
                 .ignore_then(s_parser.clone())
-                .ignore_then(item_parser.clone())
+                .ignore_then(negation_parser.clone())
                 .or_not(),
         )
         .map(map_difference);
@@ -308,5 +306,6 @@ pub fn create_grammar_parser() -> impl Parser<char, GrammarParserResultType, Err
         .then_ignore(s_parser.clone())
         .then_ignore(end())
         .map(map_grammar);
-    grammar_parser.then_ignore(end().recover_with(skip_then_retry_until([])))
+    grammar_parser.recover_with(skip_then_retry_until([]))
 }
+
