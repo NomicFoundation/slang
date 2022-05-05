@@ -40,6 +40,9 @@ fn generate_parser(
     ) -> usize {
         let mut order = 0;
         ordering.insert(name.clone(), 0);
+        if None == productions.get(name) {
+            println!("Couldn't find production: {}", name);
+        }
         for child in productions[name].referenced_identifiers(&mut Default::default()) {
             let child_order = if let Some(child_order) = ordering.get(&child) {
                 *child_order
@@ -140,7 +143,7 @@ fn generate_expression_suffixes(
 impl Expression {
     fn is_ignorable_in_sequence(&self, config: &ExpressionConfig) -> bool {
         match self {
-            Expression::Chars { .. } => true,
+            Expression::End { .. } | Expression::Chars { .. } => true,
             Expression::Identifier { name } => config.production(name).ignore(),
             _ => false,
         }
@@ -156,7 +159,7 @@ impl Expression {
 
     fn generate(&self, config: &ExpressionConfig) -> TokenStream {
         match self {
-            Expression::End {} => quote!(todo()),
+            Expression::End {} => quote!(end()),
             Expression::Any {} => quote!(todo()),
             Expression::Repeat {
                 expr,

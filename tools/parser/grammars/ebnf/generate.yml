@@ -1,0 +1,22 @@
+parsers: [grammar, expression]
+productions:
+  production: { nomap }
+  expression: { chain }
+  sequence: { chain }
+  primary:
+    nomap:
+    "$": { map: to_eof }
+    ".": { map: to_any }
+    CharCode: { map: char_code_in_primary }
+    Identifier: { map: identifier_in_primary }
+  CharSetChar: { nomap }
+  HexDigit: { nomap }
+  CharCode: { nomap, 1: { map: hex_digits_to_char, unwrap } }
+  StringChar: { nomap, 1: { 1: { 2: { map: hex_digits_to_char, unwrap } } } }
+  SingleCharString: { nomap }
+  Identifier: { chain }
+  IdentifierStart: { nomap }
+  IdentifierFollow: { nomap }
+  S: { ignore }
+  Comment: { ignore }
+  Whitespace: { ignore }

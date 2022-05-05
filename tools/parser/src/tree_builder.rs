@@ -83,6 +83,17 @@ pub fn map_string(chars: Vec<char>) -> ExpressionRef {
     })
 }
 
+// pub fn map_char(chars: Vec<char>) -> char {
+//     chars[0]
+// }
+
+pub fn map_char_range((start, end): (char, char)) -> ExpressionRef {
+    Rc::new(Expression::CharSet {
+        elements: vec![CharSetElement::Range(start, end)],
+        negated: false,
+    })
+}
+
 pub fn map_identifier(chars: Vec<char>) -> String {
     chars.iter().collect()
 }
@@ -136,13 +147,18 @@ pub fn map_identifier_in_primary(name: String) -> ExpressionRef {
     Rc::new(Expression::Identifier { name })
 }
 
-pub fn map_char_code_in_primary(c: char) -> ExpressionRef {
-    Rc::new(Expression::Chars {
-        string: c.to_string(),
-    })
-}
+// pub fn map_char_code_in_primary(c: char) -> ExpressionRef {
+//     Rc::new(Expression::Chars {
+//         string: c.to_string(),
+//     })
+// }
 
-pub fn map_char_code(digits: Vec<char>) -> Result<char, ()> {
+pub fn map_hex_digits_to_char(digits: Vec<char>) -> Result<char, ()> {
     let digits = digits.iter().collect::<String>();
     char::from_u32(u32::from_str_radix(digits.as_str(), 16).unwrap()).ok_or(())
 }
+
+// pub fn map_char_code(digits: Vec<char>) -> Result<char, ()> {
+//     let digits = digits.iter().collect::<String>();
+//     char::from_u32(u32::from_str_radix(digits.as_str(), 16).unwrap()).ok_or(())
+// }

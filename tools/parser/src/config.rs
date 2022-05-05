@@ -4,12 +4,7 @@ use chumsky::Parser;
 use either::Either;
 use yaml_rust::Yaml;
 
-use crate::{
-    generated_parser::create_expression_parser,
-    // parser::create_expression_parser,
-    tree_builder::ExpressionRef,
-    util::print_errors,
-};
+use crate::{parser::create_expression_parser, tree_builder::ExpressionRef, util::print_errors};
 
 pub struct Configuration {
     // BTreeSet to ensure repeatability when regenerating

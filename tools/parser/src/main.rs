@@ -6,16 +6,12 @@ use yaml_rust::YamlLoader;
 
 mod config;
 mod generator;
+mod parser;
 mod tree_builder;
 mod util;
 
-mod generated_parser;
-use generated_parser::create_grammar_parser;
-
-// mod parser;
-// use parser::create_grammar_parser;
-
 use generator::generate_all_parsers;
+use parser::create_grammar_parser;
 
 use clap::Parser as ClapParser;
 
@@ -33,6 +29,8 @@ fn main() {
 
     let (ebnf, errs) = create_grammar_parser().parse_recovery(ebnf_src.as_str());
 
+    print_errors(errs, &ebnf_src);
+
     if let Some(productions) = ebnf {
         let annotations_src =
             fs::read_to_string(args.annotations_file).expect("Failed to read file");
@@ -44,6 +42,4 @@ fn main() {
             rustfmt(generate_all_parsers(&productions, &configuration).to_string()).unwrap()
         )
     }
-
-    print_errors(errs, &ebnf_src);
 }
