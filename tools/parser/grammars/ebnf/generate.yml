@@ -5,9 +5,7 @@ productions:
   sequence: { chain }
   primary: { nomap }
   grouped: { nomap }
-  CharSetChar: { nomap }
   HexDigit: { nomap }
-  CharCode: { nomap, 1: { map: hex_digits_to_char, unwrap } }
   StringChar: { nomap, 1: { 1: { 2: { chain, map: hex_digits_to_char, unwrap } } } }
   SingleCharString: { nomap }
   Identifier: { chain }

@@ -1,0 +1,164 @@
+---
+PRODUCTION:
+  name: grammar
+  sequence:
+    - repeated: [S, production]
+    - S
+    - EOF
+  chumsky: map
+---
+PRODUCTION:
+  name: production
+  sequence: [Identifier, S, "=", S, expression, S, ";"]
+---
+PRODUCTION:
+  name: expression
+  sequence:
+    - sequence
+    - repeated: [S, "|", S, sequence]
+  chumsky: { chain, map }
+---
+PRODUCTION:
+  name: sequence
+  sequence:
+    - difference
+    - repeated: [S, difference]
+  chumsky: { chain, map }
+---
+PRODUCTION:
+  name: difference
+  sequence:
+    - negation
+    - optional: [S, "-", S, negation]
+  chumsky: { map }
+---
+PRODUCTION:
+  name: negation
+  sequence:
+    - optional: ["¬", S]
+    - primary
+  chumsky: { map }
+---
+PRODUCTION:
+  name: primary
+  alternatives:
+    - EOF
+    - Any
+    - CharRange
+    - String
+    - productionReference
+    - grouped
+    - optional
+    - repeated
+---
+PRODUCTION:
+  name: productionReference
+  is: Identifier
+---
+PRODUCTION:
+  name: grouped
+  sequence: ["(", S, expression, S, ")"]
+---
+PRODUCTION:
+  name: optional
+  sequence: ["[", S, expression, S, "]"]
+  chumsky: { map }
+---
+PRODUCTION:
+  name: repeated
+  sequence: ["{", S, expression, S, "}"]
+  chumsky: { map }
+---
+PRODUCTION:
+  name: EOF
+  is: "$"
+  chumsky: { map }
+---
+PRODUCTION:
+  name: Any
+  is: "."
+  chumsky: { map }
+---
+PRODUCTION:
+  name: String
+  sequence:
+    - "'"
+    - repeated: StringChar
+    - "'"
+  chumsky: { map }
+---
+PRODUCTION:
+  name: StringChar
+  alternatives:
+    - not: { alternatives: ["'", "\\"] }
+    - sequence:
+        - "\\"
+        - alternatives:
+            - "'"
+            - "\\"
+            - sequence:
+                - "u{"
+                - HexDigit
+                - repeated: HexDigit
+                - "}"
+              chumsky: { chain, map: hex_digits_to_char }
+---
+PRODUCTION:
+  name: CharRange
+  sequence: [SingleCharString, "…", SingleCharString]
+  chumsky: { map }
+---
+PRODUCTION:
+  name: SingleCharString
+  sequence: ["'", StringChar, "'"]
+---
+PRODUCTION:
+  name: HexDigit
+  alternatives:
+    - range: ["0", "9"]
+    - range: ["a", "f"]
+    - range: ["A", "F"]
+---
+PRODUCTION:
+  name: Identifier
+  sequence:
+    - IdentifierStart
+    - repeated: IdentifierFollow
+  chumsky: chain
+---
+PRODUCTION:
+  name: IdentifierStart
+  alternatives:
+    - "_"
+    - range: ["a", "z"]
+    - range: ["A", "Z"]
+---
+PRODUCTION:
+  name: IdentifierFollow
+  alternatives:
+    - IdentifierStart
+    - range: ["0", "9"]
+---
+PRODUCTION:
+  name: S
+  repeated:
+    alternatives: [Whitespace, Comment]
+---
+PRODUCTION:
+  name: Comment
+  sequence:
+    - "/*"
+    - repeated:
+        alternatives:
+          - not: "*"
+          - sequence:
+              - "*"
+              - repeated: "*"
+              - not: { alternatives: ["*", "/"] }
+    - "*"
+    - repeated: "*"
+    - "/"
+---
+PRODUCTION:
+  name: Whitespace
+  alternatives: ["\t", "\n", "\r", " "]

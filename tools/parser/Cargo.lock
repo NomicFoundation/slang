@@ -219,6 +219,7 @@ dependencies = [
  "clap",
  "convert_case",
  "either",
+ "indexmap",
  "proc-macro2",
  "quote",
  "yaml-rust",

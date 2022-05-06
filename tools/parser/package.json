@@ -1,7 +1,6 @@
 {
   "scripts": {
     "test": "yarn extract:ebnf ; cargo run -- ./grammar.ebnf grammars/ebnf/generate.yml; rm grammar.ebnf",
-    "gen": "yarn extract:ebnf ; (cargo run -- ./grammar.ebnf grammars/ebnf/generate.yml > tmp.rs && mv tmp.rs src/parser.rs); rm grammar.ebnf",
     "extract:ebnf": "cat grammars/ebnf/grammar.md | codedown ebnf > grammar.ebnf"
   },
   "devDependencies": {

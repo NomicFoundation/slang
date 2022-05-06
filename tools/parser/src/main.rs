@@ -4,13 +4,13 @@ use std::{fs, path::PathBuf};
 use util::{print_errors, rustfmt};
 use yaml_rust::YamlLoader;
 
+mod chumsky_generator;
 mod config;
-mod generator;
 mod parser;
 mod tree_builder;
 mod util;
+mod yaml_generator;
 
-use generator::generate_all_parsers;
 use parser::create_grammar_parser;
 
 use clap::Parser as ClapParser;
@@ -37,9 +37,13 @@ fn main() {
         let annotations =
             YamlLoader::load_from_str(&annotations_src).expect("Failed to parse annotations");
         let configuration = Configuration::from(annotations);
-        println!(
-            "{}",
-            rustfmt(generate_all_parsers(&productions, &configuration).to_string()).unwrap()
-        )
+        // println!(
+        //     "{}",
+        //     rustfmt(
+        //         chumsky_generator::generate_all_parsers(&productions, &configuration).to_string()
+        //     )
+        //     .unwrap()
+        // );
+        yaml_generator::generate(&productions, &configuration);
     }
 }

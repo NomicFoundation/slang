@@ -1,6 +1,8 @@
 use std::{collections::HashMap, rc::Rc};
 
-pub type GrammarParserResultType = HashMap<String, ExpressionRef>;
+use indexmap::IndexMap;
+
+pub type GrammarParserResultType = IndexMap<String, ExpressionRef>;
 pub type ExpressionParserResultType = ExpressionRef;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
