@@ -6,7 +6,7 @@ cSpell:ignore inheritdoc
 cSpell:ignore NatSpec
 -->
 
-Solidity contracts can use a special form of comments to provide rich documentation for functions, return variables and more. This special form is named the Ethereum Natural Language Specification Format (NatSpec). It was inspired by [Doxygen](https://en.wikipedia.org/wiki/Doxygen){target=\_blank}, and while it uses Doxygen-style comments and tags, there is no intention to keep strict compatibility with Doxygen.
+Solidity contracts can use a special form of comments to provide rich documentation for functions, return variables and more. This special form is named the Ethereum Natural Language Specification Format (NatSpec). It was inspired by [Doxygen](https://en.wikipedia.org/wiki/Doxygen), and while it uses Doxygen-style comments and tags, there is no intention to keep strict compatibility with Doxygen.
 
 It is recommended that Solidity contracts are fully annotated using NatSpec for all public interfaces (everything in the ABI). It is used in:
 
@@ -63,7 +63,7 @@ Custom tags start with `@custom:` and must be followed by one or more lowercase 
 
 The Solidity compiler will pass through NatSpec documentation from your Solidity source code to the JSON output as described in this guide. The consumer of this JSON output may present this to the end-user directly or it may apply some pre-processing.
 
-Specifying these dynamic expressions is outside the scope of the Solidity documentation. However, you can find one useful example in the [RadSpec Project](https://github.com/aragon/radspec){target=\_blank}, where it evaluates references to function inputs to its values. For example, this line:
+Specifying these dynamic expressions is outside the scope of the Solidity documentation. However, you can find one useful example in the [RadSpec Project](https://github.com/aragon/radspec), where it evaluates references to function inputs to its values. For example, this line:
 
 ```solidity
 /// @notice This function will multiply `a` by 7

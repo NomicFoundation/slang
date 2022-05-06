@@ -1,0 +1,35 @@
+{
+  "nodeType": "SourceUnit",
+  "nodes": [
+    {
+      "literals": [
+        "solidity",
+        ">",
+        "0.0",
+        ".0",
+        "<",
+        "9.9",
+        ".9"
+      ],
+      "nodeType": "PragmaDirective"
+    },
+    {
+      "name": "MyContract",
+      "nodeType": "ContractDefinition",
+      "nodes": [
+        {
+          "name": "v",
+          "nodeType": "VariableDeclaration",
+          "typeName": {
+            "name": "string",
+            "nodeType": "ElementaryTypeName"
+          },
+          "value": {
+            "nodeType": "Literal",
+            "value": "\u000b"
+          }
+        }
+      ]
+    }
+  ]
+}

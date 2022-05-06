@@ -1,0 +1,31 @@
+{
+  "nodeType": "SourceUnit",
+  "nodes": [
+    {
+      "literals": [
+        "solidity",
+        ">",
+        "0.0",
+        ".0",
+        "<",
+        "9.9",
+        ".9"
+      ],
+      "nodeType": "PragmaDirective"
+    },
+    {
+      "name": "MyContract",
+      "nodeType": "ContractDefinition",
+      "nodes": [
+        {
+          "name": "value",
+          "nodeType": "VariableDeclaration",
+          "typeName": {
+            "name": "byte",
+            "nodeType": "ElementaryTypeName"
+          }
+        }
+      ]
+    }
+  ]
+}

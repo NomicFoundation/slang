@@ -1,0 +1,5 @@
+ParserError: Function, variable, struct or modifier declaration expected.
+ --> input.sol:5:3:
+  |
+5 |   byte value;
+  |   ^^^^
