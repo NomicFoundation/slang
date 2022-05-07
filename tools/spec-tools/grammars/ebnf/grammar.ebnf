@@ -1,10 +1,3 @@
-# W3C EBNF Grammar
-
-This grammar describes the Nomic form of EBNF.
-
-Valid locations for whitespace and comments are explicitly specified, rather than being ambient.
-
-```ebnf
 grammar = { S production } S $ ;
 
 production = Identifier S '=' S expression S ';' ;
@@ -35,10 +28,9 @@ SingleCharString = '\'' StringChar '\'' ;
 HexDigit = '0'…'9' | 'a'…'f' | 'A'…'F' ;
 
 Identifier = IdentifierStart { IdentifierFollow } ;
-IdentifierStart = '_' | 'a'…'z' | 'A'…'Z' ;
+IdentifierStart = '\_' | 'a'…'z' | 'A'…'Z' ;
 IdentifierFollow = IdentifierStart | '0'…'9' ;
 
 S = { Whitespace | Comment } ;
-Comment = '/*' { ¬'*' | '*' { '*' } ¬( '*' | '/' ) } '*' { '*' } '/' ;
+Comment = '/_' { ¬'_' | '_' { '_' } ¬( '_' | '/' ) } '_' { '\*' } '/' ;
 Whitespace = '\u{09}' | '\u{0A}' | '\u{0D}' | '\u{20}' ;
-```

@@ -1,11 +1,21 @@
+use std::collections::{BTreeSet, HashMap};
+
 use std::collections::{BTreeMap, HashSet};
 
 use convert_case::{Case, Casing};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
-use crate::config::{Configuration, ExpressionConfig};
-use crate::tree_builder::*;
+use either::Either;
+use yaml_rust::Yaml;
+
+use crate::model::*;
+
+pub struct Configuration {
+    // BTreeSet to ensure repeatability when regenerating
+    parsers: BTreeSet<String>,
+    productions: HashMap<String, ConfigData>,
+}
 
 #[derive(Clone, Debug, PartialEq, Eq, Copy)]
 pub enum CharSetElement {
@@ -13,10 +23,7 @@ pub enum CharSetElement {
     Range(char, char),
 }
 
-pub fn generate_all_parsers(
-    productions: &GrammarParserResultType,
-    config: &Configuration,
-) -> TokenStream {
+pub fn generate_all_parsers(productions: &Grammar, config: &Configuration) -> TokenStream {
     let parsers = config
         .parsers()
         .iter()
@@ -31,15 +38,11 @@ pub fn generate_all_parsers(
     )
 }
 
-fn generate_parser(
-    productions: &GrammarParserResultType,
-    root: &String,
-    config: &Configuration,
-) -> TokenStream {
+fn generate_parser(productions: &Grammar, root: &String, config: &Configuration) -> TokenStream {
     // DFS search for a topological ordering, with backlinks ignored
 
     fn visit_production(
-        productions: &GrammarParserResultType,
+        productions: &Grammar,
         name: &String,
         ordering: &mut BTreeMap<String, usize>,
     ) -> usize {
@@ -410,6 +413,169 @@ fn generate_char_set(elements: &[CharSetElement], negated: bool) -> TokenStream 
             quote!( filter(|&c: &char| !(#(#chars)||*)) )
         } else {
             quote!( filter(|&c: &char| #(#chars)||*) )
+        }
+    }
+}
+
+impl Configuration {
+    fn from(annotations: Vec<Yaml>) -> Self {
+        let mut result = Self {
+            parsers: Default::default(),
+            productions: Default::default(),
+        };
+
+        for a in annotations {
+            for p in a["parsers"].as_vec().unwrap() {
+                result.parsers.insert(p.as_str().unwrap().to_owned());
+            }
+            for (name, a) in a["productions"].as_hash().unwrap() {
+                let config = result
+                    .productions
+                    .entry(name.as_str().unwrap().to_owned())
+                    .or_default();
+                config.update_from(a);
+            }
+        }
+
+        result
+    }
+
+    fn parsers(&self) -> &BTreeSet<String> {
+        &self.parsers
+    }
+
+    fn production<'a>(&'a self, name: &String) -> ExpressionConfig<'a> {
+        ExpressionConfig::from_root(self, self.productions.get(name))
+    }
+}
+
+struct ExpressionConfig<'a> {
+    parent: Either<&'a ExpressionConfig<'a>, &'a Configuration>,
+    data: Option<&'a ConfigData>,
+}
+
+impl<'a> ExpressionConfig<'a> {
+    fn from_root(parent: &'a Configuration, data: Option<&'a ConfigData>) -> Self {
+        Self {
+            parent: Either::Right(parent),
+            data,
+        }
+    }
+
+    fn from_child(parent: &'a ExpressionConfig, data: Option<&'a ConfigData>) -> Self {
+        Self {
+            parent: Either::Left(parent),
+            data,
+        }
+    }
+
+    fn empty(&'a self) -> ExpressionConfig<'a> {
+        match self.parent {
+            Either::Left(parent) => parent.empty(),
+            Either::Right(configuration) => Self::from_root(configuration, None),
+        }
+    }
+
+    fn production(&'a self, name: &String) -> ExpressionConfig<'a> {
+        match self.parent {
+            Either::Left(parent) => parent.production(name),
+            Either::Right(configuration) => {
+                Self::from_root(configuration, configuration.productions.get(name))
+            }
+        }
+    }
+
+    fn get(&'a self, index: usize, name: Option<&String>) -> ExpressionConfig<'a> {
+        Self::from_child(
+            self,
+            self.data.and_then(|d| {
+                d.children
+                    .get(&index.to_string())
+                    .or_else(|| name.map(|n| d.children.get(n)).flatten())
+            }),
+        )
+    }
+
+    fn ignore(&self) -> bool {
+        self.data.map(|d| d.ignore).unwrap_or(false) || {
+            match self.parent {
+                Either::Left(parent) => parent.ignore(),
+                Either::Right(_) => false,
+            }
+        }
+    }
+
+    fn nomap(&self) -> bool {
+        self.data.map(|d| d.nomap).unwrap_or(false)
+    }
+
+    fn unwrap(&self) -> bool {
+        self.data.map(|d| d.unwrap).unwrap_or(false)
+    }
+
+    fn chain(&self) -> bool {
+        self.data.map(|d| d.chain).unwrap_or(false)
+    }
+
+    fn map(&self) -> Option<String> {
+        self.data.map(|d| d.map.clone()).flatten()
+    }
+
+    fn lookahead(&self) -> Option<ExpressionRef> {
+        self.data.map(|d| d.lookahead.clone()).flatten()
+    }
+}
+
+struct ConfigData {
+    ignore: bool,
+    nomap: bool,
+    map: Option<String>,
+    unwrap: bool,
+    chain: bool,
+    lookahead: Option<ExpressionRef>,
+
+    children: HashMap<String, ConfigData>,
+}
+
+impl ConfigData {
+    fn update_from(&mut self, annotations: &Yaml) {
+        for (name, a) in annotations.as_hash().unwrap() {
+            if let Some(name) = name
+                .as_str()
+                .map(|s| s.to_owned())
+                .or_else(|| name.as_i64().map(|i| i.to_string()))
+            {
+                match name.as_str() {
+                    "ignore" => self.ignore = true,
+                    "nomap" => self.nomap = true,
+                    "unwrap" => self.unwrap = true,
+                    "chain" => self.chain = true,
+                    "map" => self.map = Some(a.as_str().unwrap().to_owned()),
+                    _ => {
+                        let name = if name.starts_with("r#") {
+                            name[2..].to_owned()
+                        } else {
+                            name
+                        };
+                        let config = self.children.entry(name).or_default();
+                        config.update_from(a);
+                    }
+                }
+            }
+        }
+    }
+}
+
+impl Default for ConfigData {
+    fn default() -> Self {
+        Self {
+            ignore: false,
+            nomap: false,
+            map: None,
+            unwrap: false,
+            chain: false,
+            lookahead: None,
+            children: Default::default(),
         }
     }
 }

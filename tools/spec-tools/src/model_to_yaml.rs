@@ -1,7 +1,6 @@
-use crate::config::Configuration;
-use crate::tree_builder::*;
+use crate::model::*;
 
-pub fn generate(productions: &GrammarParserResultType, config: &Configuration) {
+pub fn generate(productions: &Grammar) {
     for (name, expr) in productions {
         println!("---");
         println!("PRODUCTION:");
