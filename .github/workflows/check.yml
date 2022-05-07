@@ -20,4 +20,6 @@ jobs:
       - uses: actions/checkout@v2
       - uses: ./.devcontainer
         with:
-          entrypoint: ${{ matrix.script }}
+          entrypoint: ./.devcontainer/scripts/.entrypoint.sh
+        env:
+          SLANG_BUILD_SCRIPT: ${{ matrix.script }}

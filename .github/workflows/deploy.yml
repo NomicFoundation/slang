@@ -9,4 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: ./documentation/scripts/deploy.sh
+      - run: ./.devcontainer/scripts/.entrypoint.sh
+        env:
+          SLANG_BUILD_SCRIPT: ./documentation/scripts/deploy.sh
