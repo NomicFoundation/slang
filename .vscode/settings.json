@@ -1,23 +1,16 @@
 {
   // Rust
-  "rust-analyzer.linkedProjects": [
-    "./tools/version-breaks/Cargo.toml",
-    "./tools/spec_tools/Cargo.toml"
-  ],
+  "rust-analyzer.linkedProjects": ["./tools/version-breaks/Cargo.toml", "./tools/spec_tools/Cargo.toml"],
   // Editing
   "editor.formatOnSave": true,
-  "editor.rulers": [
-    120
-  ],
+  "editor.rulers": [120],
   "files.eol": "\n",
   // Terminal
   "terminal.integrated.defaultProfile.linux": "devcontainer-zsh",
   "terminal.integrated.profiles.linux": {
     "devcontainer-zsh": {
       "path": "/bin/zsh",
-      "args": [
-        "-l"
-      ]
+      "args": ["-l"]
     }
   }
 }
