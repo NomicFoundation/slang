@@ -1,15 +1,8 @@
-# Solidity 0.8.13 Grammar
-
-This is using [W3C EBNF](https://www.w3.org/TR/REC-xml/#sec-notation)
-
-```ebnf
 IGNORED
     ::= WS | COMMENT | LINE_COMMENT
 
 /* TODO: specify natspec sublanguage here */
-```
 
-```ebnf
 sourceUnit
     ::= ( directive | definition )*
 
@@ -28,16 +21,12 @@ definition
       | enumDefinition
       | userDefinedValueTypeDefinition
       | errorDefinition
-```
 
-```ebnf
 pragmaDirective
     ::= 'pragma' [^;]+ ';'
 
 /* TODO: specify pragma sublanguage here */
-```
 
-```ebnf
 importDirective
     ::= 'import' ( simpleImportDirective | starImportDirective | selectingImportDirective ) ';'
 
@@ -55,15 +44,11 @@ selectedImport
 
 importPath
     ::= NonEmptyStringLiteral
-```
 
-```ebnf
 /* Q: is there a semantic difference between first set of alternatives? */
 usingDirective
     ::= 'using' ( identifierPath | '{' identifierPath ( ',' identifierPath )* '}' ) 'for' ( '*' | typeName ) 'global'? ';'
-```
 
-```ebnf
 contractDefinition
     ::= 'abstract'? 'contract' identifier inheritanceSpecifierList? '{' contractBodyElement* '}'
 
@@ -75,27 +60,19 @@ inheritanceSpecifierList
 
 inheritanceSpecifier
     ::= identifierPath argumentList?
-```
 
-```ebnf
 libraryDefinition
     ::= 'library' identifier '{' contractBodyElement* '}'
-```
 
-```ebnf
 functionDefinition
     ::= 'function' ( identifier | 'fallback' | 'receive' ) parameterList functionAttribute* ( 'returns' nonEmptyParameterList )? ( ';' | block )
 
 functionAttribute
     ::= visibilitySpecifier | stateMutabilitySpecifier | modifierInvocation | 'virtual' | overrideSpecifier
-```
 
-```ebnf
 constantDefinition
     ::= typeName 'constant' identifier '=' expression ';'
-```
 
-```ebnf
 structDefinition
     ::= 'struct' identifier '{' ( typeName identifier ';' )+ '}'
 
@@ -104,25 +81,19 @@ enumDefinition
 
 userDefinedValueTypeDefinition
     ::= 'type' identifier 'is' elementaryType ';'
-```
 
-```ebnf
 eventDefinition
     ::= 'event' identifier '(' ( eventParameter ( ',' eventParameter )* )? ')' 'anonymous'? ';'
 
 eventParameter
     ::= typeName 'indexed'? identifier?
-```
 
-```ebnf
 errorDefinition
     ::= 'error' identifier '(' ( errorParameter ( ',' errorParameter )* )? ')' ';'
 
 errorParameter
     ::= typeName identifier?
-```
 
-```ebnf
 contractBodyElement
     ::= usingDirective
       | constructorDefinition
@@ -197,9 +168,7 @@ overrideSpecifier
 
 identifierPath
     ::= identifier ( '.' identifier )*
-```
 
-```ebnf
 typeName
     ::= ( elementaryType | functionType | mappingType | identifierPath ) ( '[' expression? ']' )*
 
@@ -413,15 +382,7 @@ assemblyStatement
 /* Constraint: strings are non-empty */
 assemblyFlags
     ::= '(' DoubleQuotedStringLiteral ( ',' DoubleQuotedStringLiteral )* ')'
-```
 
-```ebnf
-<?TOKENS?>
-```
-
-## Whitespace and Comments
-
-```ebnf
 WS
     ::= ( ' ' | #x0009 | #x000d | #x000a | #x000C )+
 
@@ -430,29 +391,17 @@ COMMENT
 
 LINE_COMMENT
     ::= '//' [^#x000d#x000a]*
-```
 
-## Raw Identifiers
-
-```ebnf
 IdentifierName
     ::= IdentifierStart IdentifierPart*
 IdentifierStart
     ::= [a-zA-Z$_]
 IdentifierPart
     ::= [a-zA-Z0-9$_]
-```
 
-## Boolean Literals
-
-```ebnf
 BooleanLiteral
     ::= 'true' | 'false'
-```
 
-## Numeric Literals
-
-```ebnf
 DecimalNumber
     ::= ( DecimalInteger | DecimalFloat ) DecimalExponent?
 DecimalInteger
@@ -470,27 +419,17 @@ HexNumber
     ::= '0' 'x' SequenceOfPossiblySeparatedHexDigits
 SequenceOfPossiblySeparatedHexDigits
     ::= HexCharacter ( '_'? HexCharacter )*
-```
 
-```ebnf
 NumberUnit
     ::= 'wei' | 'gwei' | 'ether' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'years'
-```
 
-## Hex String Literals
-
-```ebnf
 HexStringLiteral
     ::= 'hex' ( '"' SequenceOfPossiblySeparatedPairsOfHexDigits? '"' | "'" SequenceOfPossiblySeparatedPairsOfHexDigits? "'" )
 SequenceOfPossiblySeparatedPairsOfHexDigits
     ::= HexCharacter HexCharacter ( '_'? HexCharacter HexCharacter )*
 HexCharacter
     ::= [0-9A-Fa-f]
-```
 
-## String Literals
-
-```ebnf
 AsciiStringLiteral
     ::= '"' ( [#x20-#x7E] - ["\] | EscapeSequece )* '"'
       | "'" ( [#x20-#x7E] - ['\] | EscapeSequence )* "'"
@@ -507,11 +446,7 @@ HexByteEscape
     ::= 'x' HexCharacter HexCharacter
 UnicodeEscape
     ::= 'u' HexCharacter HexCharacter HexCharacter HexCharacter
-```
 
-## Yul
-
-```ebnf
 yulBlock
     ::= '{' yulStatement* '}'
 
@@ -605,4 +540,3 @@ YulEVMBuiltinFunctionName
       | 'log0' | 'log1' | 'log2' | 'log3' | 'log4' | 'chainid' | 'origin' | 'gasprice'
       | 'blockhash' | 'coinbase' | 'timestamp' | 'number' | 'difficulty' | 'gaslimit'
       | 'basefee';
-```
