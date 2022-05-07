@@ -210,22 +210,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8e22443d1643a904602595ba1cd8f7d896afe56d26712531c5ff73a15b2fbf64"
 
 [[package]]
-name = "parser"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "ariadne",
- "chumsky",
- "clap",
- "convert_case",
- "either",
- "indexmap",
- "proc-macro2",
- "quote",
- "yaml-rust",
-]
-
-[[package]]
 name = "proc-macro-error"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -271,6 +255,22 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a1feb54ed693b93a84e14094943b84b7c4eae204c512b7ccb95ab0c66d278ad1"
 dependencies = [
  "proc-macro2",
+]
+
+[[package]]
+name = "spec_tools"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "ariadne",
+ "chumsky",
+ "clap",
+ "convert_case",
+ "either",
+ "indexmap",
+ "proc-macro2",
+ "quote",
+ "yaml-rust",
 ]
 
 [[package]]

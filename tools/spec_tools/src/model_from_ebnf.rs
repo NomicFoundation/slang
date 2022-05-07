@@ -171,72 +171,100 @@ fn map_grammar(productions: Vec<(String, ExpressionRef)>) -> Grammar {
 }
 
 fn map_eof(_: char) -> ExpressionRef {
-    Rc::new(Expression::End {})
+    Rc::new(Expression::End {
+        config: Default::default(),
+    })
 }
 
 fn map_any(_: char) -> ExpressionRef {
-    Rc::new(Expression::Any {})
+    Rc::new(Expression::Any {
+        config: Default::default(),
+    })
 }
 
 fn map_string(chars: Vec<char>) -> ExpressionRef {
     Rc::new(Expression::Chars {
         string: chars.iter().collect::<String>(),
+        config: Default::default(),
     })
 }
 
 fn map_char_range((start, end): (char, char)) -> ExpressionRef {
-    Rc::new(Expression::CharRange { start, end })
+    Rc::new(Expression::CharRange {
+        start,
+        end,
+        config: Default::default(),
+    })
 }
 
 fn map_identifier(chars: Vec<char>) -> String {
     chars.iter().collect()
 }
 
-fn map_sequence(mut diffs: Vec<ExpressionRef>) -> ExpressionRef {
-    if diffs.len() == 1 {
-        diffs.pop().unwrap()
+fn map_sequence(mut exprs: Vec<ExpressionRef>) -> ExpressionRef {
+    if exprs.len() == 1 {
+        exprs.pop().unwrap()
     } else {
-        Rc::new(Expression::Sequence { exprs: diffs })
+        Rc::new(Expression::Sequence {
+            exprs,
+            config: Default::default(),
+        })
     }
 }
 
-fn map_expression(mut seqs: Vec<ExpressionRef>) -> ExpressionRef {
-    if seqs.len() == 1 {
-        seqs.pop().unwrap()
+fn map_expression(mut exprs: Vec<ExpressionRef>) -> ExpressionRef {
+    if exprs.len() == 1 {
+        exprs.pop().unwrap()
     } else {
-        Rc::new(Expression::Choice { exprs: seqs })
+        Rc::new(Expression::Choice {
+            exprs,
+            config: Default::default(),
+        })
     }
 }
 
-fn map_difference((item1, item2): (ExpressionRef, Option<ExpressionRef>)) -> ExpressionRef {
-    if let Some(item2) = item2 {
+fn map_difference((minuend, subtrahend): (ExpressionRef, Option<ExpressionRef>)) -> ExpressionRef {
+    if let Some(subtrahend) = subtrahend {
         Rc::new(Expression::Difference {
-            minuend: item1,
-            subtrahend: item2,
+            minuend,
+            subtrahend,
+            config: Default::default(),
         })
     } else {
-        item1
+        minuend
     }
 }
 
 fn map_negation((negation, expr): (Option<()>, ExpressionRef)) -> ExpressionRef {
     if negation.is_some() {
-        Rc::new(Expression::Negation { expr })
+        Rc::new(Expression::Negation {
+            expr,
+            config: Default::default(),
+        })
     } else {
         expr
     }
 }
 
 fn map_optional(expr: ExpressionRef) -> ExpressionRef {
-    Rc::new(Expression::Optional { expr })
+    Rc::new(Expression::Optional {
+        expr,
+        config: Default::default(),
+    })
 }
 
 fn map_repeated(expr: ExpressionRef) -> ExpressionRef {
-    Rc::new(Expression::Repeated { expr })
+    Rc::new(Expression::Repeated {
+        expr,
+        config: Default::default(),
+    })
 }
 
 fn map_production_reference(name: String) -> ExpressionRef {
-    Rc::new(Expression::Identifier { name })
+    Rc::new(Expression::Identifier {
+        name,
+        config: Default::default(),
+    })
 }
 
 fn map_hex_digits_to_char(digits: Vec<char>) -> Result<char, ()> {

@@ -1,9 +1,9 @@
 use std::{fs, path::PathBuf};
 
 use chumsky::Parser;
-use parser::ebnf_parser::create_grammar_parser;
-use parser::model_to_yaml;
-use parser::util::print_errors;
+use spec_tools::model_from_ebnf::create_grammar_parser;
+use spec_tools::model_to_yaml;
+use spec_tools::util::print_errors;
 
 use clap::Parser as ClapParser;
 

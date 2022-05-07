@@ -5,33 +5,33 @@ pub fn generate(productions: &Grammar) {
         println!("---");
         println!("PRODUCTION:");
         print!("  {}:", name);
-        expr.generate_yaml();
+        expr.generate_ebnf();
         println!()
     }
 }
 
 impl Expression {
-    fn generate_yaml(&self) {
+    fn generate_ebnf(&self) {
         match self {
-            Expression::End {} => print!(" EOF"),
-            Expression::Any {} => print!(" ANY"),
-            Expression::Repeated { expr } => {
+            Expression::End { .. } => print!(" EOF"),
+            Expression::Any { .. } => print!(" ANY"),
+            Expression::Repeated { expr, .. } => {
                 print!(" {{ repeated:");
-                expr.generate_yaml();
+                expr.generate_ebnf();
                 print!(" }}");
             }
-            Expression::Optional { expr } => {
+            Expression::Optional { expr, .. } => {
                 print!(" {{ optional:");
-                expr.generate_yaml();
+                expr.generate_ebnf();
                 print!(" }}");
             }
-            Expression::Negation { expr } => {
+            Expression::Negation { expr, .. } => {
                 print!(" {{ not:");
-                expr.generate_yaml();
+                expr.generate_ebnf();
                 print!(" }}");
             }
 
-            Expression::Choice { exprs } => {
+            Expression::Choice { exprs, .. } => {
                 print!(" {{ alternatives: [");
                 let mut first = true;
                 for expr in exprs {
@@ -40,12 +40,12 @@ impl Expression {
                     } else {
                         print!(",");
                     }
-                    expr.generate_yaml();
+                    expr.generate_ebnf();
                 }
                 print!(" ] }}");
             }
 
-            Expression::Sequence { exprs } => {
+            Expression::Sequence { exprs, .. } => {
                 print!(" {{ sequence: [");
                 let mut first = true;
                 for expr in exprs {
@@ -54,7 +54,7 @@ impl Expression {
                     } else {
                         print!(",");
                     }
-                    expr.generate_yaml();
+                    expr.generate_ebnf();
                 }
                 print!(" ] }}");
             }
@@ -62,22 +62,23 @@ impl Expression {
             Expression::Difference {
                 minuend,
                 subtrahend,
+                ..
             } => {
                 print!(" {{ minuend:");
-                minuend.generate_yaml();
+                minuend.generate_ebnf();
                 print!(", subtrahend:");
-                subtrahend.generate_yaml();
+                subtrahend.generate_ebnf();
                 print!(" }}");
             }
-            Expression::Chars { string } => {
+            Expression::Chars { string, .. } => {
                 print!(" {:?}", string);
             }
 
-            Expression::Identifier { name } => {
+            Expression::Identifier { name, .. } => {
                 print!(" {}", name);
             }
 
-            Expression::CharRange { start, end } => {
+            Expression::CharRange { start, end, .. } => {
                 print!(" {{ range: [{:?}, {:?}] }}", start, end);
             }
         }

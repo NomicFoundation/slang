@@ -1,3 +1,0 @@
-[submodule "tools/parser/chumsky"]
-	path = tools/parser/chumsky
-	url = https://github.com/NomicFoundation/chumsky.git

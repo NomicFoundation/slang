@@ -1,21 +1,10 @@
-use std::collections::{BTreeSet, HashMap};
-
 use std::collections::{BTreeMap, HashSet};
 
 use convert_case::{Case, Casing};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
-use either::Either;
-use yaml_rust::Yaml;
-
 use crate::model::*;
-
-pub struct Configuration {
-    // BTreeSet to ensure repeatability when regenerating
-    parsers: BTreeSet<String>,
-    productions: HashMap<String, ConfigData>,
-}
 
 #[derive(Clone, Debug, PartialEq, Eq, Copy)]
 pub enum CharSetElement {
@@ -23,22 +12,9 @@ pub enum CharSetElement {
     Range(char, char),
 }
 
-pub fn generate_all_parsers(productions: &Grammar, config: &Configuration) -> TokenStream {
-    let parsers = config
-        .parsers()
-        .iter()
-        .map(|name| generate_parser(productions, name, config))
-        .collect::<Vec<_>>();
+fn generate(productions: &Grammar) -> TokenStream {
+    let root = productions.keys().next().unwrap();
 
-    quote!(
-        use chumsky::prelude::*;
-        use super::tree_builder::*;
-
-        #(#parsers)*
-    )
-}
-
-fn generate_parser(productions: &Grammar, root: &String, config: &Configuration) -> TokenStream {
     // DFS search for a topological ordering, with backlinks ignored
 
     fn visit_production(
@@ -67,7 +43,7 @@ fn generate_parser(productions: &Grammar, root: &String, config: &Configuration)
     }
 
     let mut ordering = BTreeMap::new();
-    visit_production(&productions, &root, &mut ordering);
+    visit_production(&productions, root, &mut ordering);
 
     let mut decls = vec![];
 
@@ -91,11 +67,10 @@ fn generate_parser(productions: &Grammar, root: &String, config: &Configuration)
     let mut ordered_productions = ordering.keys().cloned().collect::<Vec<String>>();
     ordered_productions.sort_by(|a, b| (&ordering[a]).cmp(&ordering[b]));
     for name in ordered_productions {
-        let config = config.production(&name);
         let id = format_ident!("{}_parser", name.to_case(Case::Snake));
-        let expr = productions[&name].generate(&config);
-        let suffixes =
-            generate_expression_suffixes(&config, Some(name.to_case(Case::Snake).to_owned()));
+        let e = &productions[&name];
+        let expr = e.generate();
+        let suffixes = e.generate_expression_suffixes(Some(name.to_case(Case::Snake).to_owned()));
         if backlinked.contains(&name) {
             decls.push(quote!( #id.define(#expr #(#suffixes)*); ));
         } else {
@@ -116,104 +91,108 @@ fn generate_parser(productions: &Grammar, root: &String, config: &Configuration)
     )
 }
 
-fn generate_expression_suffixes(
-    config: &ExpressionConfig,
-    default_map: Option<String>,
-) -> Vec<TokenStream> {
-    let mut suffixes = vec![];
+impl Expression {
+    fn generate_expression_suffixes(&self, default_map: Option<String>) -> Vec<TokenStream> {
+        let config = match self {
+            Expression::End { config }
+            | Expression::Any { config }
+            | Expression::Repeated { config, .. }
+            | Expression::Optional { config, .. }
+            | Expression::Negation { config, .. }
+            | Expression::Choice { config, .. }
+            | Expression::Sequence { config, .. }
+            | Expression::Difference { config, .. }
+            | Expression::Chars { config, .. }
+            | Expression::Identifier { config, .. }
+            | Expression::CharRange { config, .. } => config,
+        };
 
-    if let Some(expr) = config.lookahead() {
-        let config = config.empty();
-        let lookahead = expr.generate(&config);
-        suffixes.push(quote!( .then_ignore(#lookahead.rewind()) ))
-    }
+        let mut suffixes = vec![];
 
-    if config.ignore() {
-        suffixes.push(quote!( .ignored() ))
-    } else {
-        if !config.nomap() {
-            if let Some(map) = config.map() {
-                let id = format_ident!("map_{}", map);
-                suffixes.push(quote!( .map(#id) ))
-            } else if let Some(map) = default_map {
-                let id = format_ident!("map_{}", map);
-                suffixes.push(quote!( .map(#id) ))
+        if let Some(expr) = &config.lookahead {
+            let lookahead = expr.generate();
+            suffixes.push(quote!( .then_ignore(#lookahead.rewind()) ))
+        }
+
+        if config.ignore {
+            suffixes.push(quote!( .ignored() ))
+        } else {
+            if !config.nomap {
+                if let Some(map) = &config.map {
+                    let id = format_ident!("map_{}", map);
+                    suffixes.push(quote!( .map(#id) ))
+                } else if let Some(map) = default_map {
+                    let id = format_ident!("map_{}", map);
+                    suffixes.push(quote!( .map(#id) ))
+                }
+            }
+            if config.unwrap {
+                suffixes.push(quote!( .unwrapped() ))
             }
         }
-        if config.unwrap() {
-            suffixes.push(quote!( .unwrapped() ))
-        }
+
+        suffixes
     }
 
-    suffixes
-}
-
-impl Expression {
-    fn is_ignorable_in_sequence(&self, config: &ExpressionConfig) -> bool {
+    fn is_ignorable_in_sequence(&self) -> bool {
         match self {
             Expression::End { .. } | Expression::Chars { .. } => true,
-            Expression::Identifier { name } => config.production(name).ignore(),
+            // Expression::Identifier { name, .. } => config.production(name).ignore(),
             _ => false,
         }
     }
 
     fn config_key(&self) -> Option<&String> {
         match self {
-            Expression::Chars { string } => Some(&string),
-            Expression::Identifier { name } => Some(&name),
+            Expression::Chars { string, .. } => Some(&string),
+            Expression::Identifier { name, .. } => Some(&name),
             _ => None,
         }
     }
 
-    fn generate(&self, config: &ExpressionConfig) -> TokenStream {
+    fn generate(&self) -> TokenStream {
         match self {
-            Expression::End {} => quote!(end()),
-            Expression::Any {} => quote!(todo()),
-            Expression::Optional { expr } => {
-                let config = config.get(0, None);
-                let expr = expr.generate(&config);
+            Expression::End { .. } => quote!(end()),
+            Expression::Any { .. } => quote!(todo()),
+            Expression::Optional { expr, .. } => {
+                let expr = expr.generate();
                 quote!( #expr.or_not() )
             }
-            Expression::Negation { expr } => {
+            Expression::Negation { expr, .. } => {
                 if let Some(char_set_elements) = expr.as_char_set_elements() {
                     return generate_char_set(&char_set_elements, true);
                 }
                 quote!(todo())
             }
-            Expression::Repeated { expr } => {
-                let config = config.get(0, None);
-                let expr = expr.generate(&config);
+            Expression::Repeated { expr, .. } => {
+                let expr = expr.generate();
                 quote!( #expr.repeated() )
             }
-            Expression::Choice { exprs } => {
+            Expression::Choice { exprs, .. } => {
                 let choices = exprs
                     .iter()
-                    .enumerate()
-                    .map(|(i, e)| {
-                        let config = config.get(i, e.config_key());
-                        let e = e.generate(&config);
-                        let suffixes = generate_expression_suffixes(&config, None);
-                        quote!( #e #(#suffixes)* )
+                    .map(|e| {
+                        let expr = e.generate();
+                        let suffixes = e.generate_expression_suffixes(None);
+                        quote!( #expr #(#suffixes)* )
                     })
                     .collect::<Vec<_>>();
                 quote!( choice((#(#choices),*)) )
             }
-            Expression::Sequence { exprs } => {
+            Expression::Sequence { exprs, config } => {
                 let mut seen_unignorable_content = false;
-                let chain = config.chain();
+                let chain = config.chain;
                 let exprs = exprs
                     .iter()
                     .enumerate()
                     .map(|(i, e)| {
-                        let config = config.get(i, e.config_key());
-                        let expr = e.generate(&config);
-                        let suffixes = generate_expression_suffixes(&config, None);
+                        let expr = e.generate();
+                        let suffixes = e.generate_expression_suffixes(None);
                         if i > 0 {
-                            if !seen_unignorable_content
-                                && exprs[i - 1].is_ignorable_in_sequence(&config)
+                            if !seen_unignorable_content && exprs[i - 1].is_ignorable_in_sequence()
                             {
                                 quote!( .ignore_then(#expr #(#suffixes)*) )
-                            } else if e.is_ignorable_in_sequence(&config) {
+                            } else if e.is_ignorable_in_sequence() {
                                 seen_unignorable_content = true;
                                 quote!( .then_ignore(#expr #(#suffixes)*) )
                             } else {
@@ -225,7 +204,7 @@ impl Expression {
                                 }
                             }
                         } else {
-                            seen_unignorable_content = !e.is_ignorable_in_sequence(&config);
+                            seen_unignorable_content = !e.is_ignorable_in_sequence();
                             quote!( #expr #(#suffixes)* )
                         }
                     })
@@ -235,6 +214,7 @@ impl Expression {
             Expression::Difference {
                 minuend,
                 subtrahend,
+                ..
             } => {
                 if minuend.is_any() {
                     if let Some(char_set_elements) = subtrahend.as_char_set_elements() {
@@ -243,7 +223,7 @@ impl Expression {
                 }
                 quote!(todo())
             }
-            Expression::Chars { string } => {
+            Expression::Chars { string, .. } => {
                 if string.len() == 1 {
                     let c = string.chars().next().unwrap();
                     quote!( just(#c) )
@@ -251,11 +231,11 @@ impl Expression {
                     quote!( just(#string) )
                 }
             }
-            Expression::Identifier { name } => {
+            Expression::Identifier { name, .. } => {
                 let id = format_ident!("{}_parser", name.to_case(Case::Snake));
                 quote!( #id.clone() )
             }
-            Expression::CharRange { start, end } => {
+            Expression::CharRange { start, end, .. } => {
                 let fragment = generate_char_set(&vec![CharSetElement::Range(*start, *end)], false);
                 quote!( #fragment )
             }
@@ -264,22 +244,23 @@ impl Expression {
 
     fn referenced_identifiers(&self, accum: &mut HashSet<String>) -> HashSet<String> {
         match self {
-            Expression::Choice { exprs } | Expression::Sequence { exprs } => {
+            Expression::Choice { exprs, .. } | Expression::Sequence { exprs, .. } => {
                 exprs.iter().for_each(|p| {
                     p.referenced_identifiers(accum);
                 });
             }
-            Expression::Optional { expr } | Expression::Repeated { expr } => {
+            Expression::Optional { expr, .. } | Expression::Repeated { expr, .. } => {
                 expr.referenced_identifiers(accum);
             }
             Expression::Difference {
                 minuend,
                 subtrahend,
+                ..
             } => {
                 minuend.referenced_identifiers(accum);
                 subtrahend.referenced_identifiers(accum);
             }
-            Expression::Identifier { name } => {
+            Expression::Identifier { name, .. } => {
                 accum.insert(name.clone());
             }
             _ => (),
@@ -290,14 +271,14 @@ impl Expression {
 
     fn is_any(&self) -> bool {
         match self {
-            Expression::Any {} => true,
+            Expression::Any { .. } => true,
             _ => false,
         }
     }
 
     fn as_char_set_elements(&self) -> Option<Vec<CharSetElement>> {
         match self {
-            Expression::Choice { exprs } => {
+            Expression::Choice { exprs, .. } => {
                 let elements = exprs
                     .iter()
                     .map(|e| e.as_char_set_elements())
@@ -308,7 +289,7 @@ impl Expression {
                     None
                 }
             }
-            Expression::Chars { string } => {
+            Expression::Chars { string, .. } => {
                 if string.len() == 1 {
                     Some(vec![CharSetElement::Char(string.chars().next().unwrap())])
                 } else {
@@ -413,169 +394,6 @@ fn generate_char_set(elements: &[CharSetElement], negated: bool) -> TokenStream 
             quote!( filter(|&c: &char| !(#(#chars)||*)) )
         } else {
             quote!( filter(|&c: &char| #(#chars)||*) )
-        }
-    }
-}
-
-impl Configuration {
-    fn from(annotations: Vec<Yaml>) -> Self {
-        let mut result = Self {
-            parsers: Default::default(),
-            productions: Default::default(),
-        };
-
-        for a in annotations {
-            for p in a["parsers"].as_vec().unwrap() {
-                result.parsers.insert(p.as_str().unwrap().to_owned());
-            }
-            for (name, a) in a["productions"].as_hash().unwrap() {
-                let config = result
-                    .productions
-                    .entry(name.as_str().unwrap().to_owned())
-                    .or_default();
-                config.update_from(a);
-            }
-        }
-
-        result
-    }
-
-    fn parsers(&self) -> &BTreeSet<String> {
-        &self.parsers
-    }
-
-    fn production<'a>(&'a self, name: &String) -> ExpressionConfig<'a> {
-        ExpressionConfig::from_root(self, self.productions.get(name))
-    }
-}
-
-struct ExpressionConfig<'a> {
-    parent: Either<&'a ExpressionConfig<'a>, &'a Configuration>,
-    data: Option<&'a ConfigData>,
-}
-
-impl<'a> ExpressionConfig<'a> {
-    fn from_root(parent: &'a Configuration, data: Option<&'a ConfigData>) -> Self {
-        Self {
-            parent: Either::Right(parent),
-            data,
-        }
-    }
-
-    fn from_child(parent: &'a ExpressionConfig, data: Option<&'a ConfigData>) -> Self {
-        Self {
-            parent: Either::Left(parent),
-            data,
-        }
-    }
-
-    fn empty(&'a self) -> ExpressionConfig<'a> {
-        match self.parent {
-            Either::Left(parent) => parent.empty(),
-            Either::Right(configuration) => Self::from_root(configuration, None),
-        }
-    }
-
-    fn production(&'a self, name: &String) -> ExpressionConfig<'a> {
-        match self.parent {
-            Either::Left(parent) => parent.production(name),
-            Either::Right(configuration) => {
-                Self::from_root(configuration, configuration.productions.get(name))
-            }
-        }
-    }
-
-    fn get(&'a self, index: usize, name: Option<&String>) -> ExpressionConfig<'a> {
-        Self::from_child(
-            self,
-            self.data.and_then(|d| {
-                d.children
-                    .get(&index.to_string())
-                    .or_else(|| name.map(|n| d.children.get(n)).flatten())
-            }),
-        )
-    }
-
-    fn ignore(&self) -> bool {
-        self.data.map(|d| d.ignore).unwrap_or(false) || {
-            match self.parent {
-                Either::Left(parent) => parent.ignore(),
-                Either::Right(_) => false,
-            }
-        }
-    }
-
-    fn nomap(&self) -> bool {
-        self.data.map(|d| d.nomap).unwrap_or(false)
-    }
-
-    fn unwrap(&self) -> bool {
-        self.data.map(|d| d.unwrap).unwrap_or(false)
-    }
-
-    fn chain(&self) -> bool {
-        self.data.map(|d| d.chain).unwrap_or(false)
-    }
-
-    fn map(&self) -> Option<String> {
-        self.data.map(|d| d.map.clone()).flatten()
-    }
-
-    fn lookahead(&self) -> Option<ExpressionRef> {
-        self.data.map(|d| d.lookahead.clone()).flatten()
-    }
-}
-
-struct ConfigData {
-    ignore: bool,
-    nomap: bool,
-    map: Option<String>,
-    unwrap: bool,
-    chain: bool,
-    lookahead: Option<ExpressionRef>,
-
-    children: HashMap<String, ConfigData>,
-}
-
-impl ConfigData {
-    fn update_from(&mut self, annotations: &Yaml) {
-        for (name, a) in annotations.as_hash().unwrap() {
-            if let Some(name) = name
-                .as_str()
-                .map(|s| s.to_owned())
-                .or_else(|| name.as_i64().map(|i| i.to_string()))
-            {
-                match name.as_str() {
-                    "ignore" => self.ignore = true,
-                    "nomap" => self.nomap = true,
-                    "unwrap" => self.unwrap = true,
-                    "chain" => self.chain = true,
-                    "map" => self.map = Some(a.as_str().unwrap().to_owned()),
-                    _ => {
-                        let name = if name.starts_with("r#") {
-                            name[2..].to_owned()
-                        } else {
-                            name
-                        };
-                        let config = self.children.entry(name).or_default();
-                        config.update_from(a);
-                    }
-                }
-            }
-        }
-    }
-}
-
-impl Default for ConfigData {
-    fn default() -> Self {
-        Self {
-            ignore: false,
-            nomap: false,
-            map: None,
-            unwrap: false,
-            chain: false,
-            lookahead: None,
-            children: Default::default(),
         }
     }
 }

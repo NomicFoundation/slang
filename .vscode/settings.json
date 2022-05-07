@@ -1,8 +1,8 @@
 {
   // Rust
   "rust-analyzer.linkedProjects": [
-    //"./tools/version-breaks/Cargo.toml",
-    "tools/parser/Cargo.toml"
+    "./tools/version-breaks/Cargo.toml",
+    "./tools/spec_tools/Cargo.toml"
   ],
   // Editing
   "editor.formatOnSave": true,
