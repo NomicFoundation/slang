@@ -40,3 +40,20 @@ RUN apt-get install --assume-yes \
   "build-essential=12.*" \
   "pkg-config=0.*" \
   "libssl-dev=1.*"
+
+# SWI-Prolog
+
+# RUN apt-get install --assume-yes \
+#   # build-essential \
+#   # pkg-config \
+#   "cmake=3.*" \
+#   "libncurses-dev=6.*" \
+#   "libreadline-dev=8.*" \
+#   "libedit-dev=3.*" \
+#   "libgoogle-perftools-dev=2.*" \
+#   "libgmp-dev=2:6.*" \
+#   "zlib1g-dev=1:1.*" \
+#   "libarchive-dev=3.*" \
+#   "libossp-uuid-dev=1.*" \
+#   "libpcre2-dev=10.*" \
+#   "libyaml-dev=0.*"
