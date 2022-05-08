@@ -13,7 +13,11 @@ platform darwin {
   source = "https://github.com/indygreg/python-build-standalone/releases/download/${release_date}/cpython-${version}+${release_date}-${xarch}-apple-darwin-pgo+lto-full.tar.zst"
 }
 
-platform linux {
+platform linux arm64 {
+  source = "https://github.com/indygreg/python-build-standalone/releases/download/${release_date}/cpython-${version}+${release_date}-${xarch}-unknown-linux-gnu-lto-full.tar.zst"
+}
+
+platform linux amd64 {
   source = "https://github.com/indygreg/python-build-standalone/releases/download/${release_date}/cpython-${version}+${release_date}-${xarch}-unknown-linux-gnu-pgo+lto-full.tar.zst"
 }
 
@@ -45,6 +49,4 @@ version "3.10.4" {
   vars = {
     release_date: "20220502",
   }
-  // arm64 has no pgo version and I can't get the arch discriminator to work
-  source = "https://github.com/indygreg/python-build-standalone/releases/download/${release_date}/cpython-${version}+${release_date}-${xarch}-unknown-linux-gnu-lto-full.tar.zst"
 }
