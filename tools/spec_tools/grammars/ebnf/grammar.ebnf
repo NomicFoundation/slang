@@ -28,9 +28,9 @@ SingleCharString = '\'' StringChar '\'' ;
 HexDigit = '0'…'9' | 'a'…'f' | 'A'…'F' ;
 
 Identifier = IdentifierStart { IdentifierFollow } ;
-IdentifierStart = '\_' | 'a'…'z' | 'A'…'Z' ;
+IdentifierStart = '_' | 'a'…'z' | 'A'…'Z' ;
 IdentifierFollow = IdentifierStart | '0'…'9' ;
 
 S = { Whitespace | Comment } ;
-Comment = '/_' { ¬'_' | '_' { '_' } ¬( '_' | '/' ) } '_' { '\*' } '/' ;
+Comment = '/*' { ¬'*' | '*' { '*' } ¬( '*' | '/' ) } '*' { '*' } '/' ;
 Whitespace = '\u{09}' | '\u{0A}' | '\u{0D}' | '\u{20}' ;

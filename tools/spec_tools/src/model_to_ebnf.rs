@@ -2,61 +2,53 @@ use crate::model::*;
 
 pub fn generate(productions: &Grammar) {
     for (name, expr) in productions {
-        println!("---");
-        println!("PRODUCTION:");
-        print!("  {}:", name);
+        print!("{} =", name);
         expr.generate_ebnf();
-        println!()
+        println!(" ;")
     }
 }
 
 impl Expression {
     fn generate_ebnf(&self) {
         match self {
-            Expression::End { .. } => print!(" EOF"),
-            Expression::Any { .. } => print!(" ANY"),
+            Expression::End { .. } => print!(" $"),
+
+            Expression::Any { .. } => print!(" ."),
+
             Expression::Repeated { expr, .. } => {
-                print!(" {{ repeated:");
+                print!(" {{");
                 expr.generate_ebnf();
                 print!(" }}");
             }
+
             Expression::Optional { expr, .. } => {
-                print!(" {{ optional:");
+                print!(" [");
                 expr.generate_ebnf();
-                print!(" }}");
+                print!(" ]");
             }
+
             Expression::Negation { expr, .. } => {
-                print!(" {{ not:");
+                print!(" ¬");
                 expr.generate_ebnf();
-                print!(" }}");
             }
 
             Expression::Choice { exprs, .. } => {
-                print!(" {{ alternatives: [");
+                print!(" ");
                 let mut first = true;
                 for expr in exprs {
                     if first {
                         first = false;
                     } else {
-                        print!(",");
+                        print!(" |");
                     }
                     expr.generate_ebnf();
                 }
-                print!(" ] }}");
             }
 
             Expression::Sequence { exprs, .. } => {
-                print!(" {{ sequence: [");
-                let mut first = true;
                 for expr in exprs {
-                    if first {
-                        first = false;
-                    } else {
-                        print!(",");
-                    }
                     expr.generate_ebnf();
                 }
-                print!(" ] }}");
             }
 
             Expression::Difference {
@@ -64,11 +56,9 @@ impl Expression {
                 subtrahend,
                 ..
             } => {
-                print!(" {{ minuend:");
                 minuend.generate_ebnf();
-                print!(", subtrahend:");
+                print!(" -");
                 subtrahend.generate_ebnf();
-                print!(" }}");
             }
             Expression::Chars { string, .. } => {
                 print!(" {:?}", string);
@@ -79,7 +69,7 @@ impl Expression {
             }
 
             Expression::CharRange { start, end, .. } => {
-                print!(" {{ range: [{:?}, {:?}] }}", start, end);
+                print!(" {:?} … {:?}", start, end);
             }
         }
     }
