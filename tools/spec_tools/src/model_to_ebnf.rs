@@ -49,7 +49,7 @@ impl Expression {
 
             Expression::Repeated { expr, .. } => {
                 print!(" {{");
-                self.generate_ebnf_subexpression(expr);
+                expr.generate_ebnf();
                 print!(" }}");
             }
 
@@ -97,13 +97,33 @@ impl Expression {
             }
 
             Expression::Chars { string, .. } => {
-                // TODO: encode properly
-                print!(" {:?}", string);
+                print!(" '");
+                for c in string.chars() {
+                    if c == '\'' || c == '\\' {
+                        print!("\\{}", c)
+                    } else if c.is_ascii_graphic() || c == '¬' || c == '…' {
+                        print!("{}", c)
+                    } else {
+                        print!("{}", c.escape_unicode().to_string())
+                    }
+                }
+                print!("'");
             }
 
             Expression::CharRange { start, end, .. } => {
-                // TODO: encode properly
-                print!(" {:?} … {:?}", start, end);
+                print!(" '");
+                if start.is_ascii_graphic() || *start == '¬' || *start == '…' {
+                    print!("{}", start)
+                } else {
+                    print!("{}", start.escape_unicode().to_string())
+                }
+                print!("' … '");
+                if end.is_ascii_graphic() || *end == '¬' || *end == '…' {
+                    print!("{}", end)
+                } else {
+                    print!("{}", end.escape_unicode().to_string())
+                }
+                print!("'");
             }
         }
     }
