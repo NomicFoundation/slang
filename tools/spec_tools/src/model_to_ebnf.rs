@@ -2,32 +2,32 @@ use crate::model::*;
 
 pub fn generate(productions: &Grammar) {
     let mut first = true;
-    for (name, expr) in productions {
+    for p in productions {
         if first {
             first = false;
         } else {
             println!();
         }
-        print!("{} =", name);
-        expr.generate_ebnf();
+        print!("{} =", p.name);
+        p.expr.generate_ebnf();
         println!(" ;")
     }
 }
 
 impl Expression {
     fn precedence_ebnf(&self) -> u8 {
-        match self {
-            Expression::End { .. } => 0,
-            Expression::Any { .. } => 0,
-            Expression::Repeated { .. } => 0,
-            Expression::Optional { .. } => 0,
-            Expression::Negation { .. } => 1,
-            Expression::Choice { .. } => 4,
-            Expression::Sequence { .. } => 3,
-            Expression::Difference { .. } => 2,
-            Expression::Chars { .. } => 0,
-            Expression::Identifier { .. } => 0,
-            Expression::CharRange { .. } => 0,
+        match self.ebnf {
+            EBNF::End { .. } => 0,
+            EBNF::Any { .. } => 0,
+            EBNF::Repeated { .. } => 0,
+            EBNF::Optional { .. } => 0,
+            EBNF::Negation { .. } => 1,
+            EBNF::Choice { .. } => 4,
+            EBNF::Sequence { .. } => 3,
+            EBNF::Difference { .. } => 2,
+            EBNF::Chars { .. } => 0,
+            EBNF::Identifier { .. } => 0,
+            EBNF::CharRange { .. } => 0,
         }
     }
 
@@ -42,29 +42,29 @@ impl Expression {
     }
 
     fn generate_ebnf(&self) {
-        match self {
-            Expression::End { .. } => print!(" $"),
+        match &self.ebnf {
+            EBNF::End { .. } => print!(" $"),
 
-            Expression::Any { .. } => print!(" ."),
+            EBNF::Any { .. } => print!(" ."),
 
-            Expression::Repeated { expr, .. } => {
+            EBNF::Repeated { expr, .. } => {
                 print!(" {{");
                 expr.generate_ebnf();
                 print!(" }}");
             }
 
-            Expression::Optional { expr, .. } => {
+            EBNF::Optional { expr, .. } => {
                 print!(" [");
                 expr.generate_ebnf();
                 print!(" ]");
             }
 
-            Expression::Negation { expr, .. } => {
+            EBNF::Negation { expr, .. } => {
                 print!(" ¬");
                 self.generate_ebnf_subexpression(expr);
             }
 
-            Expression::Choice { exprs, .. } => {
+            EBNF::Choice { exprs, .. } => {
                 let mut first = true;
                 for expr in exprs {
                     if first {
@@ -76,13 +76,13 @@ impl Expression {
                 }
             }
 
-            Expression::Sequence { exprs, .. } => {
+            EBNF::Sequence { exprs, .. } => {
                 for expr in exprs {
                     self.generate_ebnf_subexpression(expr);
                 }
             }
 
-            Expression::Difference {
+            EBNF::Difference {
                 minuend,
                 subtrahend,
                 ..
@@ -92,11 +92,11 @@ impl Expression {
                 self.generate_ebnf_subexpression(subtrahend);
             }
 
-            Expression::Identifier { name, .. } => {
+            EBNF::Identifier { name, .. } => {
                 print!(" {}", name);
             }
 
-            Expression::Chars { string, .. } => {
+            EBNF::Chars { string, .. } => {
                 print!(" '");
                 for c in string.chars() {
                     if c == '\'' || c == '\\' {
@@ -110,7 +110,7 @@ impl Expression {
                 print!("'");
             }
 
-            Expression::CharRange { start, end, .. } => {
+            EBNF::CharRange { start, end, .. } => {
                 print!(" '");
                 if start.is_ascii_graphic() || *start == '¬' || *start == '…' {
                     print!("{}", start)

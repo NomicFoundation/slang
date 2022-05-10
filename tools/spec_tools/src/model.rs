@@ -1,53 +1,68 @@
 use std::rc::Rc;
 
-use indexmap::IndexMap;
+use serde::Serialize;
 
-pub type Grammar = IndexMap<String, ExpressionRef>;
+pub type Grammar = Vec<Production>;
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct Production {
+    pub name: String,
+    pub expr: ExpressionRef,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[serde(deny_unknown_fields)]
+pub struct Expression {
+    #[serde(default)]
+    #[serde(skip_serializing_if = "ChumskyConfig::is_default")]
+    pub config: ChumskyConfig,
+    // #[serde(flatten)]
+    pub ebnf: EBNF,
+}
+
+impl Expression {
+    pub fn ref_from_ebnf(ebnf: EBNF) -> ExpressionRef {
+        Rc::new(Self {
+            config: Default::default(),
+            ebnf,
+        })
+    }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 #[allow(dead_code)]
-pub enum Expression {
-    End {
-        config: ChumskyConfig,
-    },
-    Any {
-        config: ChumskyConfig,
-    },
+#[serde(rename_all = "snake_case")]
+#[serde(deny_unknown_fields)]
+pub enum EBNF {
+    End,
+    Any,
     Repeated {
-        config: ChumskyConfig,
         expr: ExpressionRef,
     },
     Optional {
-        config: ChumskyConfig,
         expr: ExpressionRef,
     },
     Negation {
-        config: ChumskyConfig,
         expr: ExpressionRef,
     },
     Choice {
-        config: ChumskyConfig,
         exprs: Vec<ExpressionRef>,
     },
     Sequence {
-        config: ChumskyConfig,
         exprs: Vec<ExpressionRef>,
     },
     Difference {
-        config: ChumskyConfig,
         minuend: ExpressionRef,
         subtrahend: ExpressionRef,
     },
     Chars {
-        config: ChumskyConfig,
         string: String,
     },
     Identifier {
-        config: ChumskyConfig,
         name: String,
     },
     CharRange {
-        config: ChumskyConfig,
         start: char,
         end: char,
     },
@@ -55,14 +70,37 @@ pub enum Expression {
 
 pub type ExpressionRef = Rc<Expression>;
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub struct ChumskyConfig {
+    #[serde(default)]
+    #[serde(skip_serializing_if = "std::ops::Not::not")]
     pub ignore: bool,
+    #[serde(default)]
+    #[serde(skip_serializing_if = "std::ops::Not::not")]
     pub nomap: bool,
+    #[serde(default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub map: Option<String>,
+    #[serde(default)]
+    #[serde(skip_serializing_if = "std::ops::Not::not")]
     pub unwrap: bool,
+    #[serde(default)]
+    #[serde(skip_serializing_if = "std::ops::Not::not")]
     pub chain: bool,
+    #[serde(default)]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub lookahead: Option<ExpressionRef>,
+}
+
+impl ChumskyConfig {
+    pub fn is_default(&self) -> bool {
+        !self.ignore
+            && !self.nomap
+            && self.map.is_none()
+            && !self.unwrap
+            && !self.chain
+            && self.lookahead.is_none()
+    }
 }
 
 impl Default for ChumskyConfig {

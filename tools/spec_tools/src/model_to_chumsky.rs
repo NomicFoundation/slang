@@ -1,4 +1,4 @@
-use std::collections::{BTreeMap, HashSet};
+use std::collections::{BTreeMap, HashMap, HashSet};
 
 use convert_case::{Case, Casing};
 use proc_macro2::TokenStream;
@@ -13,25 +13,30 @@ pub enum CharSetElement {
 }
 
 fn generate(productions: &Grammar) -> TokenStream {
-    let root = productions.keys().next().unwrap();
+    let root = productions[0].name.clone();
+
+    let productions_by_name = productions
+        .iter()
+        .map(|p| (p.name.clone(), p.expr.clone()))
+        .collect::<HashMap<_, _>>();
 
     // DFS search for a topological ordering, with backlinks ignored
 
     fn visit_production(
-        productions: &Grammar,
+        productions_by_name: &HashMap<String, ExpressionRef>,
         name: &String,
         ordering: &mut BTreeMap<String, usize>,
     ) -> usize {
         let mut order = 0;
         ordering.insert(name.clone(), 0);
-        if None == productions.get(name) {
+        if None == productions_by_name.get(name) {
             println!("Couldn't find production: {}", name);
         }
-        for child in productions[name].referenced_identifiers(&mut Default::default()) {
+        for child in productions_by_name[name].referenced_identifiers(&mut Default::default()) {
             let child_order = if let Some(child_order) = ordering.get(&child) {
                 *child_order
             } else {
-                visit_production(productions, &child, ordering)
+                visit_production(productions_by_name, &child, ordering)
             };
             if child_order > order {
                 order = child_order;
@@ -43,7 +48,7 @@ fn generate(productions: &Grammar) -> TokenStream {
     }
 
     let mut ordering = BTreeMap::new();
-    visit_production(&productions, root, &mut ordering);
+    visit_production(&productions_by_name, &root, &mut ordering);
 
     let mut decls = vec![];
 
@@ -51,7 +56,7 @@ fn generate(productions: &Grammar) -> TokenStream {
 
     let mut backlinked = HashSet::new();
     for (name, order) in &ordering {
-        for child in productions[name].referenced_identifiers(&mut Default::default()) {
+        for child in productions_by_name[name].referenced_identifiers(&mut Default::default()) {
             if ordering[&child] >= *order {
                 backlinked.insert(child.clone());
             }
@@ -68,7 +73,7 @@ fn generate(productions: &Grammar) -> TokenStream {
     ordered_productions.sort_by(|a, b| (&ordering[a]).cmp(&ordering[b]));
     for name in ordered_productions {
         let id = format_ident!("{}_parser", name.to_case(Case::Snake));
-        let e = &productions[&name];
+        let e = &productions_by_name[&name];
         let expr = e.generate();
         let suffixes = e.generate_expression_suffixes(Some(name.to_case(Case::Snake).to_owned()));
         if backlinked.contains(&name) {
@@ -93,32 +98,18 @@ fn generate(productions: &Grammar) -> TokenStream {
 
 impl Expression {
     fn generate_expression_suffixes(&self, default_map: Option<String>) -> Vec<TokenStream> {
-        let config = match self {
-            Expression::End { config }
-            | Expression::Any { config }
-            | Expression::Repeated { config, .. }
-            | Expression::Optional { config, .. }
-            | Expression::Negation { config, .. }
-            | Expression::Choice { config, .. }
-            | Expression::Sequence { config, .. }
-            | Expression::Difference { config, .. }
-            | Expression::Chars { config, .. }
-            | Expression::Identifier { config, .. }
-            | Expression::CharRange { config, .. } => config,
-        };
-
         let mut suffixes = vec![];
 
-        if let Some(expr) = &config.lookahead {
+        if let Some(expr) = &self.config.lookahead {
             let lookahead = expr.generate();
             suffixes.push(quote!( .then_ignore(#lookahead.rewind()) ))
         }
 
-        if config.ignore {
+        if self.config.ignore {
             suffixes.push(quote!( .ignored() ))
         } else {
-            if !config.nomap {
-                if let Some(map) = &config.map {
+            if !self.config.nomap {
+                if let Some(map) = &self.config.map {
                     let id = format_ident!("map_{}", map);
                     suffixes.push(quote!( .map(#id) ))
                 } else if let Some(map) = default_map {
@@ -126,7 +117,7 @@ impl Expression {
                     suffixes.push(quote!( .map(#id) ))
                 }
             }
-            if config.unwrap {
+            if self.config.unwrap {
                 suffixes.push(quote!( .unwrapped() ))
             }
         }
@@ -135,40 +126,32 @@ impl Expression {
     }
 
     fn is_ignorable_in_sequence(&self) -> bool {
-        match self {
-            Expression::End { .. } | Expression::Chars { .. } => true,
+        match &self.ebnf {
+            EBNF::End { .. } | EBNF::Chars { .. } => true,
             // Expression::Identifier { name, .. } => config.production(name).ignore(),
             _ => false,
         }
     }
 
-    fn config_key(&self) -> Option<&String> {
-        match self {
-            Expression::Chars { string, .. } => Some(&string),
-            Expression::Identifier { name, .. } => Some(&name),
-            _ => None,
-        }
-    }
-
     fn generate(&self) -> TokenStream {
-        match self {
-            Expression::End { .. } => quote!(end()),
-            Expression::Any { .. } => quote!(todo()),
-            Expression::Optional { expr, .. } => {
+        match &self.ebnf {
+            EBNF::End => quote!(end()),
+            EBNF::Any => quote!(todo()),
+            EBNF::Optional { expr } => {
                 let expr = expr.generate();
                 quote!( #expr.or_not() )
             }
-            Expression::Negation { expr, .. } => {
+            EBNF::Negation { expr, .. } => {
                 if let Some(char_set_elements) = expr.as_char_set_elements() {
                     return generate_char_set(&char_set_elements, true);
                 }
                 quote!(todo())
             }
-            Expression::Repeated { expr, .. } => {
+            EBNF::Repeated { expr } => {
                 let expr = expr.generate();
                 quote!( #expr.repeated() )
             }
-            Expression::Choice { exprs, .. } => {
+            EBNF::Choice { exprs } => {
                 let choices = exprs
                     .iter()
                     .map(|e| {
@@ -179,9 +162,9 @@ impl Expression {
                     .collect::<Vec<_>>();
                 quote!( choice((#(#choices),*)) )
             }
-            Expression::Sequence { exprs, config } => {
+            EBNF::Sequence { exprs } => {
                 let mut seen_unignorable_content = false;
-                let chain = config.chain;
+                let chain = self.config.chain;
                 let exprs = exprs
                     .iter()
                     .enumerate()
@@ -211,10 +194,9 @@ impl Expression {
                     .collect::<Vec<_>>();
                 quote!( #(#exprs)* )
             }
-            Expression::Difference {
+            EBNF::Difference {
                 minuend,
                 subtrahend,
-                ..
             } => {
                 if minuend.is_any() {
                     if let Some(char_set_elements) = subtrahend.as_char_set_elements() {
@@ -223,7 +205,7 @@ impl Expression {
                 }
                 quote!(todo())
             }
-            Expression::Chars { string, .. } => {
+            EBNF::Chars { string } => {
                 if string.len() == 1 {
                     let c = string.chars().next().unwrap();
                     quote!( just(#c) )
@@ -231,11 +213,11 @@ impl Expression {
                     quote!( just(#string) )
                 }
             }
-            Expression::Identifier { name, .. } => {
+            EBNF::Identifier { name } => {
                 let id = format_ident!("{}_parser", name.to_case(Case::Snake));
                 quote!( #id.clone() )
             }
-            Expression::CharRange { start, end, .. } => {
+            EBNF::CharRange { start, end } => {
                 let fragment = generate_char_set(&vec![CharSetElement::Range(*start, *end)], false);
                 quote!( #fragment )
             }
@@ -243,16 +225,16 @@ impl Expression {
     }
 
     fn referenced_identifiers(&self, accum: &mut HashSet<String>) -> HashSet<String> {
-        match self {
-            Expression::Choice { exprs, .. } | Expression::Sequence { exprs, .. } => {
+        match &self.ebnf {
+            EBNF::Choice { exprs, .. } | EBNF::Sequence { exprs, .. } => {
                 exprs.iter().for_each(|p| {
                     p.referenced_identifiers(accum);
                 });
             }
-            Expression::Optional { expr, .. } | Expression::Repeated { expr, .. } => {
+            EBNF::Optional { expr, .. } | EBNF::Repeated { expr, .. } => {
                 expr.referenced_identifiers(accum);
             }
-            Expression::Difference {
+            EBNF::Difference {
                 minuend,
                 subtrahend,
                 ..
@@ -260,7 +242,7 @@ impl Expression {
                 minuend.referenced_identifiers(accum);
                 subtrahend.referenced_identifiers(accum);
             }
-            Expression::Identifier { name, .. } => {
+            EBNF::Identifier { name, .. } => {
                 accum.insert(name.clone());
             }
             _ => (),
@@ -270,15 +252,15 @@ impl Expression {
     }
 
     fn is_any(&self) -> bool {
-        match self {
-            Expression::Any { .. } => true,
+        match &self.ebnf {
+            EBNF::Any => true,
             _ => false,
         }
     }
 
     fn as_char_set_elements(&self) -> Option<Vec<CharSetElement>> {
-        match self {
-            Expression::Choice { exprs, .. } => {
+        match &self.ebnf {
+            EBNF::Choice { exprs } => {
                 let elements = exprs
                     .iter()
                     .map(|e| e.as_char_set_elements())
@@ -289,7 +271,7 @@ impl Expression {
                     None
                 }
             }
-            Expression::Chars { string, .. } => {
+            EBNF::Chars { string } => {
                 if string.len() == 1 {
                     Some(vec![CharSetElement::Char(string.chars().next().unwrap())])
                 } else {

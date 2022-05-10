@@ -1,5 +1,3 @@
-use std::rc::Rc;
-
 use chumsky::prelude::*;
 
 use crate::model::*;
@@ -157,116 +155,101 @@ pub fn create_grammar_parser() -> impl Parser<char, Grammar, Error = Simple<char
         .then_ignore(s_parser.clone())
         .then(expression_parser.clone())
         .then_ignore(s_parser.clone())
-        .then_ignore(just(';'));
+        .then_ignore(just(';'))
+        .map(map_production);
     let grammar_parser = s_parser
         .clone()
         .ignore_then(production_parser.clone())
         .repeated()
         .then_ignore(s_parser.clone())
-        .then_ignore(end())
-        .map(map_grammar);
+        .then_ignore(end());
     grammar_parser.recover_with(skip_then_retry_until([]))
 }
 
-fn map_grammar(productions: Vec<(String, ExpressionRef)>) -> Grammar {
-    productions.into_iter().collect()
+fn map_production((name, ebnf): (String, EBNF)) -> Production {
+    Production {
+        name,
+        expr: Expression::ref_from_ebnf(ebnf),
+    }
 }
 
-fn map_eof(_: char) -> ExpressionRef {
-    Rc::new(Expression::End {
-        config: Default::default(),
-    })
+fn map_eof(_: char) -> EBNF {
+    EBNF::End
 }
 
-fn map_any(_: char) -> ExpressionRef {
-    Rc::new(Expression::Any {
-        config: Default::default(),
-    })
+fn map_any(_: char) -> EBNF {
+    EBNF::Any
 }
 
-fn map_string(chars: Vec<char>) -> ExpressionRef {
-    Rc::new(Expression::Chars {
+fn map_string(chars: Vec<char>) -> EBNF {
+    EBNF::Chars {
         string: chars.iter().collect::<String>(),
-        config: Default::default(),
-    })
+    }
 }
 
-fn map_char_range((start, end): (char, char)) -> ExpressionRef {
-    Rc::new(Expression::CharRange {
-        start,
-        end,
-        config: Default::default(),
-    })
+fn map_char_range((start, end): (char, char)) -> EBNF {
+    EBNF::CharRange { start, end }
 }
 
 fn map_identifier(chars: Vec<char>) -> String {
     chars.iter().collect()
 }
 
-fn map_sequence(mut exprs: Vec<ExpressionRef>) -> ExpressionRef {
-    if exprs.len() == 1 {
-        exprs.pop().unwrap()
+fn map_sequence(mut ebnfs: Vec<EBNF>) -> EBNF {
+    if ebnfs.len() == 1 {
+        ebnfs.pop().unwrap()
     } else {
-        Rc::new(Expression::Sequence {
-            exprs,
-            config: Default::default(),
-        })
+        EBNF::Sequence {
+            exprs: ebnfs.into_iter().map(Expression::ref_from_ebnf).collect(),
+        }
     }
 }
 
-fn map_expression(mut exprs: Vec<ExpressionRef>) -> ExpressionRef {
-    if exprs.len() == 1 {
-        exprs.pop().unwrap()
+fn map_expression(mut ebnfs: Vec<EBNF>) -> EBNF {
+    if ebnfs.len() == 1 {
+        ebnfs.pop().unwrap()
     } else {
-        Rc::new(Expression::Choice {
-            exprs,
-            config: Default::default(),
-        })
+        EBNF::Choice {
+            exprs: ebnfs.into_iter().map(Expression::ref_from_ebnf).collect(),
+        }
     }
 }
 
-fn map_difference((minuend, subtrahend): (ExpressionRef, Option<ExpressionRef>)) -> ExpressionRef {
+fn map_difference((minuend, subtrahend): (EBNF, Option<EBNF>)) -> EBNF {
     if let Some(subtrahend) = subtrahend {
-        Rc::new(Expression::Difference {
-            minuend,
-            subtrahend,
-            config: Default::default(),
-        })
+        EBNF::Difference {
+            minuend: Expression::ref_from_ebnf(minuend),
+            subtrahend: Expression::ref_from_ebnf(subtrahend),
+        }
     } else {
         minuend
     }
 }
 
-fn map_negation((negation, expr): (Option<()>, ExpressionRef)) -> ExpressionRef {
+fn map_negation((negation, ebnf): (Option<()>, EBNF)) -> EBNF {
     if negation.is_some() {
-        Rc::new(Expression::Negation {
-            expr,
-            config: Default::default(),
-        })
+        EBNF::Negation {
+            expr: Expression::ref_from_ebnf(ebnf),
+        }
     } else {
-        expr
+        ebnf
     }
 }
 
-fn map_optional(expr: ExpressionRef) -> ExpressionRef {
-    Rc::new(Expression::Optional {
-        expr,
-        config: Default::default(),
-    })
+fn map_optional(ebnf: EBNF) -> EBNF {
+    EBNF::Optional {
+        expr: Expression::ref_from_ebnf(ebnf),
+    }
 }
 
-fn map_repeated(expr: ExpressionRef) -> ExpressionRef {
-    Rc::new(Expression::Repeated {
-        expr,
-        config: Default::default(),
-    })
+fn map_repeated(ebnf: EBNF) -> EBNF {
+    EBNF::Repeated {
+        expr: Expression::ref_from_ebnf(ebnf),
+    }
 }
 
-fn map_production_reference(name: String) -> ExpressionRef {
-    Rc::new(Expression::Identifier {
-        name,
-        config: Default::default(),
-    })
+fn map_production_reference(name: String) -> EBNF {
+    EBNF::Identifier { name }
 }
 
 fn map_hex_digits_to_char(digits: Vec<char>) -> Result<char, ()> {
