@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/topic.schema.json
+
+- name: ExponentiationExpression
+  title: "Exponentiation"
+  versions:
+    0.0.0:
+      sequence:
+        - reference: BaseExpression
+        - reference: ExponentiationOperator
+        - reference: NextOperatorInPrecedence
+    0.8.0:
+      sequence:
+        - reference: NextOperatorInPrecedence
+        - reference: ExponentiationOperator
+        - reference: BaseExpression

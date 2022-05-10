@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-06/schema",
+  "$ref": "#/$defs/Manifest",
+  "$defs": {
+    "Manifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "sections"],
+      "properties": {
+        "title": { "type": "string" },
+        "sections": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/Section" }
+        }
+      }
+    },
+    "Section": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "topics"],
+      "properties": {
+        "title": { "type": "string" },
+        "topics": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/Topic" }
+        }
+      }
+    },
+    "Topic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["title", "definition"],
+      "properties": {
+        "title": { "type": "string" },
+        "definition": { "type": "string" }
+      }
+    }
+  }
+}

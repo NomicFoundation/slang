@@ -3,8 +3,10 @@
     // Please keep this list in-sync with "${workspaceRoot}/.devcontainer/devcontainer.json"
     //
     // Language Support
+    "igochkov.vscode-ebnf",
     "matklad.rust-analyzer",
     "NomicFoundation.hardhat-solidity",
+    "redhat.vscode-yaml",
     "tamasfe.even-better-toml",
     "yzhang.markdown-all-in-one",
     // Formatting/Linting
