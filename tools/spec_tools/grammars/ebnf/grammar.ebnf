@@ -22,7 +22,7 @@ Any = '.' ;
 String = '\'' { StringChar } '\'' ;
 StringChar = ¬( '\'' | '\\' ) | '\\' ( '\'' | '\\' | 'u{' HexDigit { HexDigit } '}' ) ;
 
-CharRange = SingleCharString '…' SingleCharString ;
+CharRange = SingleCharString S '…' S SingleCharString ;
 SingleCharString = '\'' StringChar '\'' ;
 
 HexDigit = '0'…'9' | 'a'…'f' | 'A'…'F' ;

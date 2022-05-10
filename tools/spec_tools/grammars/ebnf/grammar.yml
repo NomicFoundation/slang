@@ -105,7 +105,7 @@ PRODUCTION:
 ---
 PRODUCTION:
   name: CharRange
-  sequence: [SingleCharString, "…", SingleCharString]
+  sequence: [SingleCharString, S, "…", S, SingleCharString]
   chumsky: { map }
 ---
 PRODUCTION:

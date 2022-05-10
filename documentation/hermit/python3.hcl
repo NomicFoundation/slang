@@ -13,12 +13,13 @@ platform darwin {
   source = "https://github.com/indygreg/python-build-standalone/releases/download/${release_date}/cpython-${version}+${release_date}-${xarch}-apple-darwin-pgo+lto-full.tar.zst"
 }
 
-platform linux arm64 {
-  source = "https://github.com/indygreg/python-build-standalone/releases/download/${release_date}/cpython-${version}+${release_date}-${xarch}-unknown-linux-gnu-lto-full.tar.zst"
-}
-
 platform linux amd64 {
   source = "https://github.com/indygreg/python-build-standalone/releases/download/${release_date}/cpython-${version}+${release_date}-${xarch}-unknown-linux-gnu-pgo+lto-full.tar.zst"
+}
+
+// arm64 builds are cross-compiled and don't support pgo
+platform linux arm64 {
+  source = "https://github.com/indygreg/python-build-standalone/releases/download/${release_date}/cpython-${version}+${release_date}-${xarch}-unknown-linux-gnu-lto-full.tar.zst"
 }
 
 // Older releases had a slightly different URL template and no arm64 builds on Mac.

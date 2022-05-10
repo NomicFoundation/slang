@@ -117,7 +117,7 @@ impl Expression {
                 } else {
                     print!("{}", start.escape_unicode().to_string())
                 }
-                print!("' … '");
+                print!("'…'");
                 if end.is_ascii_graphic() || *end == '¬' || *end == '…' {
                     print!("{}", end)
                 } else {

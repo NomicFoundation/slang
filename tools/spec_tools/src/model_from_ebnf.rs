@@ -96,7 +96,9 @@ pub fn create_grammar_parser() -> impl Parser<char, Grammar, Error = Simple<char
         .map(map_repeated);
     let char_range_parser = single_char_string_parser
         .clone()
+        .then_ignore(s_parser.clone())
         .then_ignore(just("…"))
+        .then_ignore(s_parser.clone())
         .then(single_char_string_parser.clone())
         .map(map_char_range);
     let production_reference_parser = identifier_parser.clone().map(map_production_reference);
