@@ -1,6 +1,6 @@
 {
   // Rust
-  "rust-analyzer.linkedProjects": ["tools/version-breaks/Cargo.toml"],
+  "rust-analyzer.linkedProjects": ["tools/syntax-schema/Cargo.toml", "tools/version-breaks/Cargo.toml"],
   // Editing
   "editor.formatOnSave": true,
   "editor.rulers": [120],

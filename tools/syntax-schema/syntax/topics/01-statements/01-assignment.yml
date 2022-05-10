@@ -1,0 +1,43 @@
+# yaml-language-server: $schema=../../schema/topic.schema.json
+
+- name: Block
+  title: "Block of Statements"
+  oneOrMore:
+    reference: AssignmentStatement
+
+- name: AssignmentStatement
+  title: "Assignment of a value to a variable"
+  sequence:
+    - reference: Identifier
+    - reference: EqualOperator
+    - reference: LiteralExpression
+    - optional:
+        reference: SemiColon
+
+- name: RawIdentifier
+  sequence:
+    - range: { from: "a", to: "z" }
+    - zeroOrMore:
+        alternation:
+          - terminal: "_"
+          - range: { from: "a", to: "z" }
+          - range: { from: "A", to: "Z" }
+
+- name: Identifier
+  difference: { minuend: "RawIdentifier", subtrahend: "KnownKeyword" }
+
+- name: EqualOperator
+  title: "Equal Operator (=)"
+  terminal: "="
+
+- name: SemiColon
+  title: "Semicolon (;)"
+  terminal: ";"
+
+- name: StringLiteral
+  title: "String Value"
+  sequence:
+    - terminal: '"'
+    - zeroOrMore:
+        not: '"'
+    - terminal: '"'
