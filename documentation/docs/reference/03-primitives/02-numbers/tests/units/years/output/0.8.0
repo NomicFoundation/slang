@@ -1,0 +1,5 @@
+TypeError: Using "years" as a unit denomination is deprecated.
+ --> input.sol:5:19:
+  |
+5 |   uint256 value = 1 years;
+  |                   ^^^^^^^

@@ -1,0 +1,29 @@
+=== "📝 input.sol"
+
+    ```solidity
+    --8<-- "reference/03-primitives/02-numbers/tests/units/years/input.sol"
+    ```
+
+=== "✅ 0.4.13"
+
+    ```json
+    --8<-- "reference/03-primitives/02-numbers/tests/units/years/output/0.4.13"
+    ```
+
+=== "⚠️ 0.4.24"
+
+    ```log
+    --8<-- "reference/03-primitives/02-numbers/tests/units/years/output/0.4.24"
+    ```
+
+=== "❌ 0.5.0"
+
+    ```log
+    --8<-- "reference/03-primitives/02-numbers/tests/units/years/output/0.5.0"
+    ```
+
+=== "❌ 0.8.0"
+
+    ```log
+    --8<-- "reference/03-primitives/02-numbers/tests/units/years/output/0.8.0"
+    ```

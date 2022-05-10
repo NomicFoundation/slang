@@ -1,3 +1,7 @@
+/*
+ * Define light/dark theme:
+ */
+
 [data-md-color-scheme="override-light"] {
   --md-default-fg-color: #111111;
   --md-default-bg-color: #eeeeee;
@@ -25,4 +29,18 @@
   --md-default-bg-color--light: hsl(from var(--md-default-bg-color) h s calc(l + 5%));
   --md-default-bg-color--lighter: hsl(from var(--md-default-bg-color) h s calc(l + 10%));
   --md-default-bg-color--lightest: hsl(from var(--md-default-bg-color) h s calc(l + 15%));
+}
+
+/*
+ * Change left navigation bar spacing to highlight sections:
+ */
+
+label[class="md-nav__link"] {
+  margin-top: 2.5em;
+  margin-bottom: 1em;
+}
+
+a[class="md-nav__link"] {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
 }

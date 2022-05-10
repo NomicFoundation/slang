@@ -1,0 +1,5 @@
+ParserError: Invalid escape sequence.
+ --> input.sol:5:14:
+  |
+5 |   string b = "\b";
+  |              ^^^

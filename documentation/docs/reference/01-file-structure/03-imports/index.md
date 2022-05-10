@@ -40,4 +40,4 @@ In order to be able to support reproducible builds on all platforms, the Solidit
 
 - Using the `solc` binary CLI, you can pass disk file system paths to be used.
 - Using the `solc` JSON API, you can pass the explicit file contents to be parsed.
-- Using other tools like the [Remix IDE](https://remix-ide.readthedocs.io/en/latest/import.html){target=\_blank} you can import files from HTTP, IPFS and Swarm URLs or refer directly to packages in NPM registry.
+- Using other tools like the [Remix IDE](https://remix-ide.readthedocs.io/en/latest/import.html) you can import files from HTTP, IPFS and Swarm URLs or refer directly to packages in NPM registry.
