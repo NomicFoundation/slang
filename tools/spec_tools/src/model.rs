@@ -24,7 +24,7 @@ pub struct Production {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Expression {
-    pub config: ChumskyConfig,
+    pub config: ExpressionConfig,
     pub ebnf: EBNF,
 }
 
@@ -34,9 +34,6 @@ impl Serialize for Expression {
         S: Serializer,
     {
         let mut state = serializer.serialize_map(None)?;
-        if !self.config.is_default() {
-            state.serialize_entry("config", &self.config)?;
-        };
         match &self.ebnf {
             // These two are ugly - serde has no way of emitting a map entry with
             // no value, which is valid in YAML. So these end up as e.g. `end: ~`
@@ -54,6 +51,9 @@ impl Serialize for Expression {
             EBNF::Difference(difference) => state.serialize_entry("difference", &difference),
             EBNF::Range(range) => state.serialize_entry("range", &range),
         }?;
+        if !self.config.is_default() {
+            state.serialize_entry("config", &self.config)?;
+        };
         state.end()
     }
 }
@@ -204,7 +204,7 @@ pub type ExpressionRef = Rc<Expression>;
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub struct ChumskyConfig {
+pub struct ExpressionConfig {
     #[serde(default)]
     #[serde(skip_serializing_if = "std::ops::Not::not")]
     pub ignore: bool,
@@ -225,7 +225,7 @@ pub struct ChumskyConfig {
     pub lookahead: Option<ExpressionRef>,
 }
 
-impl ChumskyConfig {
+impl ExpressionConfig {
     pub fn is_default(&self) -> bool {
         !self.ignore
             && !self.nomap
@@ -236,7 +236,7 @@ impl ChumskyConfig {
     }
 }
 
-impl Default for ChumskyConfig {
+impl Default for ExpressionConfig {
     fn default() -> Self {
         Self {
             ignore: false,

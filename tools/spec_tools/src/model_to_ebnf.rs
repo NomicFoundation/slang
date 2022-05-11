@@ -1,19 +1,25 @@
+use std::fmt::Write;
+
 use crate::model::*;
 
-pub fn generate(productions: &Grammar) {
+pub fn generate(productions: &Grammar) -> Result<String, std::fmt::Error> {
+    let mut w = String::new();
+
     let mut first = true;
     for p in productions {
         if first {
             first = false;
         } else {
-            println!();
+            writeln!(w)?;
         }
         if let Some(expr) = &p.expr {
-            print!("{} =", p.name);
-            expr.generate_ebnf();
+            write!(&mut w, "{} =", p.name)?;
+            expr.generate_ebnf(&mut w)?;
         }
-        println!(" ;")
+        writeln!(&mut w, " ;")?;
     }
+
+    Ok(w)
 }
 
 impl Expression {
@@ -33,44 +39,50 @@ impl Expression {
         }
     }
 
-    fn generate_ebnf_subexpression(&self, expr: &ExpressionRef) {
+    fn generate_ebnf_subexpression<T: Write>(
+        &self,
+        w: &mut T,
+        expr: &ExpressionRef,
+    ) -> std::fmt::Result {
         if self.precedence_ebnf() < expr.precedence_ebnf() {
-            print!(" (");
-            expr.generate_ebnf();
-            print!(" )")
+            write!(w, " (")?;
+            expr.generate_ebnf(w)?;
+            write!(w, " )")?;
         } else {
-            expr.generate_ebnf();
+            expr.generate_ebnf(w)?;
         }
+
+        Ok(())
     }
 
-    fn generate_ebnf(&self) {
+    fn generate_ebnf<T: Write>(&self, w: &mut T) -> std::fmt::Result {
         match &self.ebnf {
-            EBNF::End => print!(" $"),
+            EBNF::End => write!(w, " $")?,
 
-            EBNF::Any => print!(" ."),
+            EBNF::Any => write!(w, " .")?,
 
             EBNF::ZeroOrMore(expr) => {
-                print!(" {{");
-                expr.generate_ebnf();
-                print!(" }}");
+                write!(w, " {{")?;
+                expr.generate_ebnf(w)?;
+                write!(w, " }}")?;
             }
 
             EBNF::OneOrMore(expr) => {
-                expr.generate_ebnf();
-                print!(" {{");
-                expr.generate_ebnf();
-                print!(" }}");
+                expr.generate_ebnf(w)?;
+                write!(w, " {{")?;
+                expr.generate_ebnf(w)?;
+                write!(w, " }}")?;
             }
 
             EBNF::Optional(expr) => {
-                print!(" [");
-                expr.generate_ebnf();
-                print!(" ]");
+                write!(w, " [")?;
+                expr.generate_ebnf(w)?;
+                write!(w, " ]")?;
             }
 
             EBNF::Not(expr) => {
-                print!(" ¬");
-                self.generate_ebnf_subexpression(expr);
+                write!(w, " ¬")?;
+                self.generate_ebnf_subexpression(w, expr)?;
             }
 
             EBNF::Choice(exprs) => {
@@ -79,60 +91,62 @@ impl Expression {
                     if first {
                         first = false;
                     } else {
-                        print!(" |");
+                        write!(w, " |")?;
                     }
-                    self.generate_ebnf_subexpression(expr);
+                    self.generate_ebnf_subexpression(w, expr)?;
                 }
             }
 
             EBNF::Sequence(exprs) => {
                 for expr in exprs {
-                    self.generate_ebnf_subexpression(expr);
+                    self.generate_ebnf_subexpression(w, expr)?;
                 }
             }
 
             EBNF::Reference(name) => {
-                print!(" {}", name);
+                write!(w, " {}", name)?;
             }
 
             EBNF::Terminal(string) => {
-                print!(" '");
+                write!(w, " '")?;
                 for c in string.chars() {
                     if c == '\'' || c == '\\' {
-                        print!("\\{}", c)
+                        write!(w, "\\{}", c)?;
                     } else if c.is_ascii_graphic() || c == '¬' || c == '…' {
-                        print!("{}", c)
+                        write!(w, "{}", c)?;
                     } else {
-                        print!("{}", c.escape_unicode().to_string())
+                        write!(w, "{}", c.escape_unicode().to_string())?;
                     }
                 }
-                print!("'");
+                write!(w, "'")?;
             }
 
             EBNF::Difference(EBNFDifference {
                 minuend,
                 subtrahend,
             }) => {
-                self.generate_ebnf_subexpression(minuend);
-                print!(" -");
-                self.generate_ebnf_subexpression(subtrahend);
+                self.generate_ebnf_subexpression(w, minuend)?;
+                write!(w, " -")?;
+                self.generate_ebnf_subexpression(w, subtrahend)?;
             }
 
             EBNF::Range(EBNFRange { from, to }) => {
-                print!(" '");
+                write!(w, " '")?;
                 if from.is_ascii_graphic() || *from == '¬' || *from == '…' {
-                    print!("{}", from)
+                    write!(w, "{}", from)?
                 } else {
-                    print!("{}", from.escape_unicode().to_string())
+                    write!(w, "{}", from.escape_unicode().to_string())?
                 }
-                print!("'…'");
+                write!(w, "'…'")?;
                 if to.is_ascii_graphic() || *to == '¬' || *to == '…' {
-                    print!("{}", to)
+                    write!(w, "{}", to)?
                 } else {
-                    print!("{}", to.escape_unicode().to_string())
+                    write!(w, "{}", to.escape_unicode().to_string())?
                 }
-                print!("'");
+                write!(w, "'")?;
             }
         }
+
+        Ok(())
     }
 }

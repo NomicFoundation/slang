@@ -1,164 +1,181 @@
 ---
-PRODUCTION:
-  name: grammar
+- name: grammar
   sequence:
-    - repeated: [S, production]
-    - S
-    - EOF
-  chumsky: map
----
-PRODUCTION:
-  name: production
-  sequence: [Identifier, S, "=", S, expression, S, ";"]
----
-PRODUCTION:
-  name: expression
+    - zeroOrMore:
+        sequence:
+          - reference: S
+          - reference: production
+    - reference: S
+    - end: ~
+- name: production
   sequence:
-    - sequence
-    - repeated: [S, "|", S, sequence]
-  chumsky: { chain, map }
----
-PRODUCTION:
-  name: sequence
+    - reference: Identifier
+    - reference: S
+    - terminal: "="
+    - reference: S
+    - reference: expression
+    - reference: S
+    - terminal: ;
+- name: expression
   sequence:
-    - difference
-    - repeated: [S, difference]
-  chumsky: { chain, map }
----
-PRODUCTION:
-  name: difference
+    - reference: sequence
+    - zeroOrMore:
+        sequence:
+          - reference: S
+          - terminal: "|"
+          - reference: S
+          - reference: sequence
+- name: sequence
   sequence:
-    - negation
-    - optional: [S, "-", S, negation]
-  chumsky: { map }
----
-PRODUCTION:
-  name: negation
+    - reference: difference
+    - zeroOrMore:
+        sequence:
+          - reference: S
+          - reference: difference
+- name: difference
   sequence:
-    - optional: ["¬", S]
-    - primary
-  chumsky: { map }
----
-PRODUCTION:
-  name: primary
-  alternatives:
-    - EOF
-    - Any
-    - CharRange
-    - String
-    - productionReference
-    - grouped
-    - optional
-    - repeated
----
-PRODUCTION:
-  name: productionReference
-  is: Identifier
----
-PRODUCTION:
-  name: grouped
-  sequence: ["(", S, expression, S, ")"]
----
-PRODUCTION:
-  name: optional
-  sequence: ["[", S, expression, S, "]"]
-  chumsky: { map }
----
-PRODUCTION:
-  name: repeated
-  sequence: ["{", S, expression, S, "}"]
-  chumsky: { map }
----
-PRODUCTION:
-  name: EOF
-  is: "$"
-  chumsky: { map }
----
-PRODUCTION:
-  name: Any
-  is: "."
-  chumsky: { map }
----
-PRODUCTION:
-  name: String
+    - reference: negation
+    - optional:
+        sequence:
+          - reference: S
+          - terminal: "-"
+          - reference: S
+          - reference: negation
+- name: negation
   sequence:
-    - "'"
-    - repeated: StringChar
-    - "'"
-  chumsky: { map }
----
-PRODUCTION:
-  name: StringChar
-  alternatives:
-    - not: { alternatives: ["'", "\\"] }
+    - optional:
+        sequence:
+          - terminal: ¬
+          - reference: S
+    - reference: primary
+- name: primary
+  choice:
+    - reference: EOF
+    - reference: Any
+    - reference: CharRange
+    - reference: String
+    - reference: productionReference
+    - reference: grouped
+    - reference: optional
+    - reference: repeated
+- name: productionReference
+  reference: Identifier
+- name: grouped
+  sequence:
+    - terminal: (
+    - reference: S
+    - reference: expression
+    - reference: S
+    - terminal: )
+- name: optional
+  sequence:
+    - terminal: "["
+    - reference: S
+    - reference: expression
+    - reference: S
+    - terminal: "]"
+- name: repeated
+  sequence:
+    - terminal: "{"
+    - reference: S
+    - reference: expression
+    - reference: S
+    - terminal: "}"
+- name: EOF
+  terminal: $
+- name: Any
+  terminal: "."
+- name: String
+  sequence:
+    - terminal: "'"
+    - zeroOrMore:
+        reference: StringChar
+    - terminal: "'"
+- name: StringChar
+  choice:
+    - not:
+        choice:
+          - terminal: "'"
+          - terminal: "\\"
     - sequence:
-        - "\\"
-        - alternatives:
-            - "'"
-            - "\\"
+        - terminal: "\\"
+        - choice:
+            - terminal: "'"
+            - terminal: "\\"
             - sequence:
-                - "u{"
-                - HexDigit
-                - repeated: HexDigit
-                - "}"
-              chumsky: { chain, map: hex_digits_to_char }
----
-PRODUCTION:
-  name: CharRange
-  sequence: [SingleCharString, S, "…", S, SingleCharString]
-  chumsky: { map }
----
-PRODUCTION:
-  name: SingleCharString
-  sequence: ["'", StringChar, "'"]
----
-PRODUCTION:
-  name: HexDigit
-  alternatives:
-    - range: ["0", "9"]
-    - range: ["a", "f"]
-    - range: ["A", "F"]
----
-PRODUCTION:
-  name: Identifier
+                - terminal: "u{"
+                - oneOrMore:
+                    reference: HexDigit
+                - terminal: "}"
+- name: CharRange
   sequence:
-    - IdentifierStart
-    - repeated: IdentifierFollow
-  chumsky: chain
----
-PRODUCTION:
-  name: IdentifierStart
-  alternatives:
-    - "_"
-    - range: ["a", "z"]
-    - range: ["A", "Z"]
----
-PRODUCTION:
-  name: IdentifierFollow
-  alternatives:
-    - IdentifierStart
-    - range: ["0", "9"]
----
-PRODUCTION:
-  name: S
-  repeated:
-    alternatives: [Whitespace, Comment]
----
-PRODUCTION:
-  name: Comment
+    - reference: SingleCharString
+    - reference: S
+    - terminal: …
+    - reference: S
+    - reference: SingleCharString
+- name: SingleCharString
   sequence:
-    - "/*"
-    - repeated:
-        alternatives:
-          - not: "*"
+    - terminal: "'"
+    - reference: StringChar
+    - terminal: "'"
+- name: HexDigit
+  choice:
+    - range:
+        from: "0"
+        to: "9"
+    - range:
+        from: a
+        to: f
+    - range:
+        from: A
+        to: F
+- name: Identifier
+  sequence:
+    - reference: IdentifierStart
+    - zeroOrMore:
+        reference: IdentifierFollow
+- name: IdentifierStart
+  choice:
+    - terminal: _
+    - range:
+        from: a
+        to: z
+    - range:
+        from: A
+        to: Z
+- name: IdentifierFollow
+  choice:
+    - reference: IdentifierStart
+    - range:
+        from: "0"
+        to: "9"
+- name: S
+  zeroOrMore:
+    choice:
+      - reference: Whitespace
+      - reference: Comment
+  config: { ignore: true }
+- name: Comment
+  sequence:
+    - terminal: /*
+    - zeroOrMore:
+        choice:
+          - not:
+              terminal: "*"
           - sequence:
-              - "*"
-              - repeated: "*"
-              - not: { alternatives: ["*", "/"] }
-    - "*"
-    - repeated: "*"
-    - "/"
----
-PRODUCTION:
-  name: Whitespace
-  alternatives: ["\t", "\n", "\r", " "]
+              - oneOrMore:
+                  terminal: "*"
+              - not:
+                  choice:
+                    - terminal: "*"
+                    - terminal: /
+    - oneOrMore:
+        terminal: "*"
+    - terminal: /
+- name: Whitespace
+  choice:
+    - terminal: "\t"
+    - terminal: "\n"
+    - terminal: "\r"
+    - terminal: " "
