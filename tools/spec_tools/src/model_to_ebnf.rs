@@ -8,8 +8,10 @@ pub fn generate(productions: &Grammar) {
         } else {
             println!();
         }
-        print!("{} =", p.name);
-        p.expr.generate_ebnf();
+        if let Some(expr) = &p.expr {
+            print!("{} =", p.name);
+            expr.generate_ebnf();
+        }
         println!(" ;")
     }
 }
@@ -17,17 +19,17 @@ pub fn generate(productions: &Grammar) {
 impl Expression {
     fn precedence_ebnf(&self) -> u8 {
         match self.ebnf {
-            EBNF::End { .. } => 0,
-            EBNF::Any { .. } => 0,
-            EBNF::Repeated { .. } => 0,
-            EBNF::Optional { .. } => 0,
-            EBNF::Negation { .. } => 1,
-            EBNF::Choice { .. } => 4,
-            EBNF::Sequence { .. } => 3,
+            EBNF::End
+            | EBNF::Any
+            | EBNF::ZeroOrMore(..)
+            | EBNF::Optional(..)
+            | EBNF::Terminal(..)
+            | EBNF::Reference(..)
+            | EBNF::Range { .. } => 0,
+            EBNF::Not(..) => 1,
             EBNF::Difference { .. } => 2,
-            EBNF::Chars { .. } => 0,
-            EBNF::Identifier { .. } => 0,
-            EBNF::CharRange { .. } => 0,
+            EBNF::Sequence(..) | EBNF::OneOrMore(..) => 3,
+            EBNF::Choice(..) => 4,
         }
     }
 
@@ -43,28 +45,35 @@ impl Expression {
 
     fn generate_ebnf(&self) {
         match &self.ebnf {
-            EBNF::End { .. } => print!(" $"),
+            EBNF::End => print!(" $"),
 
-            EBNF::Any { .. } => print!(" ."),
+            EBNF::Any => print!(" ."),
 
-            EBNF::Repeated { expr, .. } => {
+            EBNF::ZeroOrMore(expr) => {
                 print!(" {{");
                 expr.generate_ebnf();
                 print!(" }}");
             }
 
-            EBNF::Optional { expr, .. } => {
+            EBNF::OneOrMore(expr) => {
+                expr.generate_ebnf();
+                print!(" {{");
+                expr.generate_ebnf();
+                print!(" }}");
+            }
+
+            EBNF::Optional(expr) => {
                 print!(" [");
                 expr.generate_ebnf();
                 print!(" ]");
             }
 
-            EBNF::Negation { expr, .. } => {
+            EBNF::Not(expr) => {
                 print!(" ¬");
                 self.generate_ebnf_subexpression(expr);
             }
 
-            EBNF::Choice { exprs, .. } => {
+            EBNF::Choice(exprs) => {
                 let mut first = true;
                 for expr in exprs {
                     if first {
@@ -76,27 +85,17 @@ impl Expression {
                 }
             }
 
-            EBNF::Sequence { exprs, .. } => {
+            EBNF::Sequence(exprs) => {
                 for expr in exprs {
                     self.generate_ebnf_subexpression(expr);
                 }
             }
 
-            EBNF::Difference {
-                minuend,
-                subtrahend,
-                ..
-            } => {
-                self.generate_ebnf_subexpression(minuend);
-                print!(" -");
-                self.generate_ebnf_subexpression(subtrahend);
-            }
-
-            EBNF::Identifier { name, .. } => {
+            EBNF::Reference(name) => {
                 print!(" {}", name);
             }
 
-            EBNF::Chars { string, .. } => {
+            EBNF::Terminal(string) => {
                 print!(" '");
                 for c in string.chars() {
                     if c == '\'' || c == '\\' {
@@ -110,18 +109,27 @@ impl Expression {
                 print!("'");
             }
 
-            EBNF::CharRange { start, end, .. } => {
+            EBNF::Difference(EBNFDifference {
+                minuend,
+                subtrahend,
+            }) => {
+                self.generate_ebnf_subexpression(minuend);
+                print!(" -");
+                self.generate_ebnf_subexpression(subtrahend);
+            }
+
+            EBNF::Range(EBNFRange { from, to }) => {
                 print!(" '");
-                if start.is_ascii_graphic() || *start == '¬' || *start == '…' {
-                    print!("{}", start)
+                if from.is_ascii_graphic() || *from == '¬' || *from == '…' {
+                    print!("{}", from)
                 } else {
-                    print!("{}", start.escape_unicode().to_string())
+                    print!("{}", from.escape_unicode().to_string())
                 }
                 print!("'…'");
-                if end.is_ascii_graphic() || *end == '¬' || *end == '…' {
-                    print!("{}", end)
+                if to.is_ascii_graphic() || *to == '¬' || *to == '…' {
+                    print!("{}", to)
                 } else {
-                    print!("{}", end.escape_unicode().to_string())
+                    print!("{}", to.escape_unicode().to_string())
                 }
                 print!("'");
             }

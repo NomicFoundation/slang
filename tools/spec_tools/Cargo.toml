@@ -15,6 +15,7 @@ either = "1.6.1"
 indexmap = { version = "1.8.1", features = ["serde"] }
 proc-macro2 = "1.0.37"
 quote = "1.0.18"
+semver = { version = "1.0.9", features = ["serde"] }
 serde = { version = "1.0.137", features = ["derive", "rc"] }
 serde_yaml = "0.8.24"
 yaml-rust = "0.4.5"

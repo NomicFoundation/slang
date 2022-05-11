@@ -12,12 +12,13 @@ pub enum CharSetElement {
     Range(char, char),
 }
 
-fn generate(productions: &Grammar) -> TokenStream {
+pub fn generate(productions: &Grammar) -> TokenStream {
     let root = productions[0].name.clone();
 
     let productions_by_name = productions
         .iter()
-        .map(|p| (p.name.clone(), p.expr.clone()))
+        .filter(|p| p.expr.is_some())
+        .map(|p| (p.name.clone(), p.expr.clone().unwrap()))
         .collect::<HashMap<_, _>>();
 
     // DFS search for a topological ordering, with backlinks ignored
@@ -127,7 +128,7 @@ impl Expression {
 
     fn is_ignorable_in_sequence(&self) -> bool {
         match &self.ebnf {
-            EBNF::End { .. } | EBNF::Chars { .. } => true,
+            EBNF::End { .. } | EBNF::Terminal { .. } => true,
             // Expression::Identifier { name, .. } => config.production(name).ignore(),
             _ => false,
         }
@@ -137,21 +138,25 @@ impl Expression {
         match &self.ebnf {
             EBNF::End => quote!(end()),
             EBNF::Any => quote!(todo()),
-            EBNF::Optional { expr } => {
+            EBNF::Optional(expr) => {
                 let expr = expr.generate();
                 quote!( #expr.or_not() )
             }
-            EBNF::Negation { expr, .. } => {
+            EBNF::Not(expr) => {
                 if let Some(char_set_elements) = expr.as_char_set_elements() {
                     return generate_char_set(&char_set_elements, true);
                 }
                 quote!(todo())
             }
-            EBNF::Repeated { expr } => {
+            EBNF::ZeroOrMore(expr) => {
                 let expr = expr.generate();
                 quote!( #expr.repeated() )
             }
-            EBNF::Choice { exprs } => {
+            EBNF::OneOrMore(expr) => {
+                let expr = expr.generate();
+                quote!( #expr.repeated().at_least(1) )
+            }
+            EBNF::Choice(exprs) => {
                 let choices = exprs
                     .iter()
                     .map(|e| {
@@ -162,7 +167,7 @@ impl Expression {
                     .collect::<Vec<_>>();
                 quote!( choice((#(#choices),*)) )
             }
-            EBNF::Sequence { exprs } => {
+            EBNF::Sequence(exprs) => {
                 let mut seen_unignorable_content = false;
                 let chain = self.config.chain;
                 let exprs = exprs
@@ -194,18 +199,7 @@ impl Expression {
                     .collect::<Vec<_>>();
                 quote!( #(#exprs)* )
             }
-            EBNF::Difference {
-                minuend,
-                subtrahend,
-            } => {
-                if minuend.is_any() {
-                    if let Some(char_set_elements) = subtrahend.as_char_set_elements() {
-                        return generate_char_set(&char_set_elements, true);
-                    }
-                }
-                quote!(todo())
-            }
-            EBNF::Chars { string } => {
+            EBNF::Terminal(string) => {
                 if string.len() == 1 {
                     let c = string.chars().next().unwrap();
                     quote!( just(#c) )
@@ -213,12 +207,23 @@ impl Expression {
                     quote!( just(#string) )
                 }
             }
-            EBNF::Identifier { name } => {
+            EBNF::Reference(name) => {
                 let id = format_ident!("{}_parser", name.to_case(Case::Snake));
                 quote!( #id.clone() )
             }
-            EBNF::CharRange { start, end } => {
-                let fragment = generate_char_set(&vec![CharSetElement::Range(*start, *end)], false);
+            EBNF::Difference(EBNFDifference {
+                minuend,
+                subtrahend,
+            }) => {
+                if minuend.is_any() {
+                    if let Some(char_set_elements) = subtrahend.as_char_set_elements() {
+                        return generate_char_set(&char_set_elements, true);
+                    }
+                }
+                quote!(todo())
+            }
+            EBNF::Range(EBNFRange { from, to }) => {
+                let fragment = generate_char_set(&vec![CharSetElement::Range(*from, *to)], false);
                 quote!( #fragment )
             }
         }
@@ -226,23 +231,22 @@ impl Expression {
 
     fn referenced_identifiers(&self, accum: &mut HashSet<String>) -> HashSet<String> {
         match &self.ebnf {
-            EBNF::Choice { exprs, .. } | EBNF::Sequence { exprs, .. } => {
+            EBNF::Choice(exprs) | EBNF::Sequence(exprs) => {
                 exprs.iter().for_each(|p| {
                     p.referenced_identifiers(accum);
                 });
             }
-            EBNF::Optional { expr, .. } | EBNF::Repeated { expr, .. } => {
+            EBNF::Optional(expr) | EBNF::ZeroOrMore(expr) => {
                 expr.referenced_identifiers(accum);
             }
-            EBNF::Difference {
+            EBNF::Difference(EBNFDifference {
                 minuend,
                 subtrahend,
-                ..
-            } => {
+            }) => {
                 minuend.referenced_identifiers(accum);
                 subtrahend.referenced_identifiers(accum);
             }
-            EBNF::Identifier { name, .. } => {
+            EBNF::Reference(name) => {
                 accum.insert(name.clone());
             }
             _ => (),
@@ -260,7 +264,7 @@ impl Expression {
 
     fn as_char_set_elements(&self) -> Option<Vec<CharSetElement>> {
         match &self.ebnf {
-            EBNF::Choice { exprs } => {
+            EBNF::Choice(exprs) => {
                 let elements = exprs
                     .iter()
                     .map(|e| e.as_char_set_elements())
@@ -271,7 +275,7 @@ impl Expression {
                     None
                 }
             }
-            EBNF::Chars { string } => {
+            EBNF::Terminal(string) => {
                 if string.len() == 1 {
                     Some(vec![CharSetElement::Char(string.chars().next().unwrap())])
                 } else {

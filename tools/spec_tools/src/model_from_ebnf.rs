@@ -169,7 +169,8 @@ pub fn create_grammar_parser() -> impl Parser<char, Grammar, Error = Simple<char
 fn map_production((name, ebnf): (String, EBNF)) -> Production {
     Production {
         name,
-        expr: Expression::ref_from_ebnf(ebnf),
+        expr: Some(Expression::ref_from_ebnf(ebnf)),
+        versions: Default::default(),
     }
 }
 
@@ -182,13 +183,14 @@ fn map_any(_: char) -> EBNF {
 }
 
 fn map_string(chars: Vec<char>) -> EBNF {
-    EBNF::Chars {
-        string: chars.iter().collect::<String>(),
-    }
+    EBNF::Terminal(chars.iter().collect::<String>())
 }
 
 fn map_char_range((start, end): (char, char)) -> EBNF {
-    EBNF::CharRange { start, end }
+    EBNF::Range(EBNFRange {
+        from: start,
+        to: end,
+    })
 }
 
 fn map_identifier(chars: Vec<char>) -> String {
@@ -199,9 +201,7 @@ fn map_sequence(mut ebnfs: Vec<EBNF>) -> EBNF {
     if ebnfs.len() == 1 {
         ebnfs.pop().unwrap()
     } else {
-        EBNF::Sequence {
-            exprs: ebnfs.into_iter().map(Expression::ref_from_ebnf).collect(),
-        }
+        EBNF::Sequence(ebnfs.into_iter().map(Expression::ref_from_ebnf).collect())
     }
 }
 
@@ -209,18 +209,16 @@ fn map_expression(mut ebnfs: Vec<EBNF>) -> EBNF {
     if ebnfs.len() == 1 {
         ebnfs.pop().unwrap()
     } else {
-        EBNF::Choice {
-            exprs: ebnfs.into_iter().map(Expression::ref_from_ebnf).collect(),
-        }
+        EBNF::Choice(ebnfs.into_iter().map(Expression::ref_from_ebnf).collect())
     }
 }
 
 fn map_difference((minuend, subtrahend): (EBNF, Option<EBNF>)) -> EBNF {
     if let Some(subtrahend) = subtrahend {
-        EBNF::Difference {
+        EBNF::Difference(EBNFDifference {
             minuend: Expression::ref_from_ebnf(minuend),
             subtrahend: Expression::ref_from_ebnf(subtrahend),
-        }
+        })
     } else {
         minuend
     }
@@ -228,28 +226,22 @@ fn map_difference((minuend, subtrahend): (EBNF, Option<EBNF>)) -> EBNF {
 
 fn map_negation((negation, ebnf): (Option<()>, EBNF)) -> EBNF {
     if negation.is_some() {
-        EBNF::Negation {
-            expr: Expression::ref_from_ebnf(ebnf),
-        }
+        EBNF::Not(Expression::ref_from_ebnf(ebnf))
     } else {
         ebnf
     }
 }
 
 fn map_optional(ebnf: EBNF) -> EBNF {
-    EBNF::Optional {
-        expr: Expression::ref_from_ebnf(ebnf),
-    }
+    EBNF::Optional(Expression::ref_from_ebnf(ebnf))
 }
 
 fn map_repeated(ebnf: EBNF) -> EBNF {
-    EBNF::Repeated {
-        expr: Expression::ref_from_ebnf(ebnf),
-    }
+    EBNF::ZeroOrMore(Expression::ref_from_ebnf(ebnf))
 }
 
 fn map_production_reference(name: String) -> EBNF {
-    EBNF::Identifier { name }
+    EBNF::Reference(name)
 }
 
 fn map_hex_digits_to_char(digits: Vec<char>) -> Result<char, ()> {
