@@ -1,0 +1,10 @@
+[package]
+name = "syntax-generator"
+version = "0.0.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "3.1.6", features = ["derive"] }
+semver = "1.0.7"
+serde = { version = "1.0.136", features = ["derive"] }
+serde_yaml = "0.8.24"
