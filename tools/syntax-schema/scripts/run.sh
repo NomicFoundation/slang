@@ -12,7 +12,7 @@ PROJECT_DIR=$(dirname "$THIS_DIR")
   cargo run -- \
     --manifest-path "$PROJECT_DIR/syntax/ebnf/manifest.yml" \
     --ebnf-output "$PROJECT_DIR/syntax/ebnf/grammar.ebnf" \
-    --parser-output "TODO/path/to/compiler/crate/that/has/parser"
+    --parser-output "$PROJECT_DIR/syntax/ebnf/parser.rs"
 )
 
 (
@@ -20,5 +20,5 @@ PROJECT_DIR=$(dirname "$THIS_DIR")
   cargo run -- \
     --manifest-path "$PROJECT_DIR/syntax/solidity/manifest.yml" \
     --ebnf-output "$PROJECT_DIR/syntax/solidity/grammar.ebnf" \
-    --parser-output "TODO/path/to/compiler/crate/that/has/parser"
+    --parser-output "$PROJECT_DIR/syntax/solidity/parser.rs"
 )
