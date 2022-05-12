@@ -10,7 +10,15 @@ PROJECT_DIR=$(dirname "$THIS_DIR")
 (
   cd "$PROJECT_DIR"
   cargo run -- \
-    --manifest-path "$PROJECT_DIR/syntax/manifest.yml" \
-    --ebnf-output "$PROJECT_DIR/syntax/grammar.ebnf" \
+    --manifest-path "$PROJECT_DIR/syntax/ebnf/manifest.yml" \
+    --ebnf-output "$PROJECT_DIR/syntax/ebnf/grammar.ebnf" \
+    --parser-output "TODO/path/to/compiler/crate/that/has/parser"
+)
+
+(
+  cd "$PROJECT_DIR"
+  cargo run -- \
+    --manifest-path "$PROJECT_DIR/syntax/solidity/manifest.yml" \
+    --ebnf-output "$PROJECT_DIR/syntax/solidity/grammar.ebnf" \
     --parser-output "TODO/path/to/compiler/crate/that/has/parser"
 )
