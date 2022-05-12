@@ -18,13 +18,15 @@
   sequence:
     - range: { from: "a", to: "z" }
     - zeroOrMore:
-        alternation:
+        choice:
           - terminal: "_"
           - range: { from: "a", to: "z" }
           - range: { from: "A", to: "Z" }
 
 - name: Identifier
-  difference: { minuend: "RawIdentifier", subtrahend: "KnownKeyword" }
+  difference:
+    minuend: { reference: RawIdentifier }
+    subtrahend: { reference: KnownKeyword }
 
 - name: EqualOperator
   title: "Equal Operator (=)"
@@ -39,5 +41,5 @@
   sequence:
     - terminal: '"'
     - zeroOrMore:
-        not: '"'
+        not: { terminal: '"' }
     - terminal: '"'
