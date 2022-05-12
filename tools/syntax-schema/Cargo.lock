@@ -637,7 +637,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "syntax-generator"
+name = "syntax_generator"
 version = "0.0.0"
 dependencies = [
  "ariadne",

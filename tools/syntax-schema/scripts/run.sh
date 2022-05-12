@@ -9,16 +9,48 @@ PROJECT_DIR=$(dirname "$THIS_DIR")
 
 (
   cd "$PROJECT_DIR"
-  cargo run -- \
+
+  cargo run --bin ebnf_to_grammar -- \
+    --ebnf-path "$PROJECT_DIR/syntax/ebnf/original_grammar.ebnf" \
+    --grammar-output "$PROJECT_DIR/syntax/ebnf/original_grammar.yml"
+)
+
+(
+  cd "$PROJECT_DIR"
+
+  cargo run --bin manifest_to_ebnf -- \
     --manifest-path "$PROJECT_DIR/syntax/ebnf/manifest.yml" \
-    --ebnf-output "$PROJECT_DIR/syntax/ebnf/grammar.ebnf" \
+    --ebnf-output "$PROJECT_DIR/syntax/ebnf/grammar.ebnf"
+)
+
+(
+  cd "$PROJECT_DIR"
+
+  cargo run --bin manifest_to_parser -- \
+    --manifest-path "$PROJECT_DIR/syntax/ebnf/manifest.yml" \
     --parser-output "$PROJECT_DIR/syntax/ebnf/parser.rs"
 )
 
 (
   cd "$PROJECT_DIR"
-  cargo run -- \
+
+  cargo run --bin ebnf_to_grammar -- \
+    --ebnf-path "$PROJECT_DIR/syntax/solidity/original_grammar.ebnf" \
+    --grammar-output "$PROJECT_DIR/syntax/solidity/original_grammar.yml"
+)
+
+(
+  cd "$PROJECT_DIR"
+
+  cargo run --bin manifest_to_ebnf -- \
     --manifest-path "$PROJECT_DIR/syntax/solidity/manifest.yml" \
-    --ebnf-output "$PROJECT_DIR/syntax/solidity/grammar.ebnf" \
+    --ebnf-output "$PROJECT_DIR/syntax/solidity/grammar.ebnf"
+)
+
+(
+  cd "$PROJECT_DIR"
+
+  cargo run --bin manifest_to_parser -- \
+    --manifest-path "$PROJECT_DIR/syntax/solidity/manifest.yml" \
     --parser-output "$PROJECT_DIR/syntax/solidity/parser.rs"
 )

@@ -1,9 +1,8 @@
-use clap::Parser;
 use std::path::PathBuf;
 
-mod generators;
-mod schema;
-mod validation;
+use clap::Parser;
+
+use syntax_generator::{generators, schema, validation};
 
 #[derive(Parser, Debug)]
 struct ProgramArgs {
@@ -11,14 +10,10 @@ struct ProgramArgs {
     manifest_path: String,
 
     #[clap(long)]
-    ebnf_output: String,
-
-    #[clap(long)]
     parser_output: String,
 }
 
 fn main() {
-    println!();
     let args = ProgramArgs::parse();
 
     println!(" => Loading Manifest");
@@ -27,9 +22,6 @@ fn main() {
     println!(" => Validating Grammar");
     validation::validate(&grammar);
 
-    println!(" => Generating: EBNF");
-    generators::ebnf::generate(&grammar, &PathBuf::from(args.ebnf_output));
-
-    println!(" => Generating: Parser");
+    println!(" => Generating Parser");
     generators::parser::generate(&grammar, &PathBuf::from(args.parser_output));
 }

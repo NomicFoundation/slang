@@ -78,8 +78,6 @@ pub fn generate(grammar: &Grammar, _output_path: &PathBuf) {
     let mut ordering = BTreeMap::new();
     visit_production(&productions_by_name, &root, &mut ordering);
 
-    println!("{:#?}", ordering);
-
     let mut decls = vec![];
 
     // Detect and declare each backlinked (recursively-referenced) production
