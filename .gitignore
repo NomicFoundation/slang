@@ -4,3 +4,8 @@ node_modules/
 
 # Generated Artifacts
 target/
+
+tools/syntax-schema/syntax/ebnf/grammar.ebnf
+tools/syntax-schema/syntax/ebnf/parser.rs
+tools/syntax-schema/syntax/solidity/grammar.ebnf
+tools/syntax-schema/syntax/solidity/parser.rs
