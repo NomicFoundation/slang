@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use clap::Parser;
 
-use syntax_generator::{generators, schema, validation};
+use syntax_schema::{generators, schema, validation};
 
 #[derive(Parser, Debug)]
 struct ProgramArgs {
