@@ -1,18 +1,17 @@
-IGNORED
-    ::= WS | COMMENT | LINE_COMMENT
+S = { WS | COMMENT | LINE_COMMENT } ;
 
 /* TODO: specify natspec sublanguage here */
 
 sourceUnit
-    ::= ( directive | definition )*
+    = { directive | definition } $ ;
 
 directive
-    ::= pragmaDirective
+    = pragmaDirective
       | importDirective
-      | usingDirective
+      | usingDirective ;
 
 definition
-    ::= contractDefinition
+    = contractDefinition
       | interfaceDefinition
       | libraryDefinition
       | functionDefinition
@@ -20,82 +19,82 @@ definition
       | structDefinition
       | enumDefinition
       | userDefinedValueTypeDefinition
-      | errorDefinition
+      | errorDefinition ;
 
 pragmaDirective
-    ::= 'pragma' [^;]+ ';'
+    = 'pragma' ¬ ';' { ¬ ';' } ';' ;
 
 /* TODO: specify pragma sublanguage here */
 
 importDirective
-    ::= 'import' ( simpleImportDirective | starImportDirective | selectingImportDirective ) ';'
+    = 'import' ( simpleImportDirective | starImportDirective | selectingImportDirective ) ';' ;
 
 simpleImportDirective
-    ::= importPath ( 'as' identifier )?
+    = importPath { 'as' identifier } ;
 
 starImportDirective
-    ::= '*' 'as' identifier 'from' importPath
+    = '*' 'as' identifier 'from' importPath ;
 
 selectingImportDirective
-    ::= '{' selectedImport ( ',' selectedImport )* '}' 'from' importPath
+    = '{' selectedImport { ',' selectedImport } '}' 'from' importPath ;
 
 selectedImport
-    ::= identifier ( 'as' identifier )?
+    = identifier [ 'as' identifier ] ;
 
 importPath
-    ::= NonEmptyStringLiteral
+    = NonEmptyStringLiteral ;
 
 /* Q: is there a semantic difference between first set of alternatives? */
 usingDirective
-    ::= 'using' ( identifierPath | '{' identifierPath ( ',' identifierPath )* '}' ) 'for' ( '*' | typeName ) 'global'? ';'
+    = 'using' ( identifierPath | '{' identifierPath { ',' identifierPath } '}' ) 'for' ( '*' | typeName ) [ 'global' ] ';' ;
 
 contractDefinition
-    ::= 'abstract'? 'contract' identifier inheritanceSpecifierList? '{' contractBodyElement* '}'
+    = [ 'abstract' ] 'contract' identifier [ inheritanceSpecifierList ] '{' { contractBodyElement } '}' ;
 
 interfaceDefinition
-    ::= 'interface' identifier inheritanceSpecifierList? '{' contractBodyElement* '}'
+    = 'interface' identifier [ inheritanceSpecifierList ] '{' { contractBodyElement } '}' ;
 
 inheritanceSpecifierList
-    ::= 'is' inheritanceSpecifier ( ',' inheritanceSpecifier )*
+    = 'is' inheritanceSpecifier { ',' inheritanceSpecifier } ;
 
 inheritanceSpecifier
-    ::= identifierPath argumentList?
+    = identifierPath [ argumentList ] ;
 
 libraryDefinition
-    ::= 'library' identifier '{' contractBodyElement* '}'
+    = 'library' identifier '{' { contractBodyElement } '}' ;
 
 functionDefinition
-    ::= 'function' ( identifier | 'fallback' | 'receive' ) parameterList functionAttribute* ( 'returns' nonEmptyParameterList )? ( ';' | block )
+    = 'function' ( identifier | 'fallback' | 'receive' ) parameterList { functionAttribute } [ 'returns' nonEmptyParameterList ] ( ';' | block ) ;
 
 functionAttribute
-    ::= visibilitySpecifier | stateMutabilitySpecifier | modifierInvocation | 'virtual' | overrideSpecifier
+    = visibilitySpecifier | stateMutabilitySpecifier | modifierInvocation | 'virtual' | overrideSpecifier ;
 
 constantDefinition
-    ::= typeName 'constant' identifier '=' expression ';'
+    = typeName 'constant' identifier '=' expression ';' ;
 
 structDefinition
-    ::= 'struct' identifier '{' ( typeName identifier ';' )+ '}'
+    = 'struct' identifier '{' typeName idenfitier ';' { typeName identifier ';' } '}' ;
 
 enumDefinition
-    ::= 'enum' identifier '{' identifier ( ',' identifier )* '}'
+    = 'enum' identifier '{' identifier { ',' identifier } '}' ;
 
 userDefinedValueTypeDefinition
-    ::= 'type' identifier 'is' elementaryType ';'
+    = 'type' identifier 'is' elementaryType ';' ;
 
 eventDefinition
-    ::= 'event' identifier '(' ( eventParameter ( ',' eventParameter )* )? ')' 'anonymous'? ';'
+    = 'event' identifier '(' [ eventParameter { ',' eventParameter } ] ')' [ 'anonymous' ] ';' ;
 
 eventParameter
-    ::= typeName 'indexed'? identifier?
+    = typeName [ 'indexed' ] [ identifier ] ;
 
 errorDefinition
-    ::= 'error' identifier '(' ( errorParameter ( ',' errorParameter )* )? ')' ';'
+    = 'error' identifier '(' [ errorParameter { ',' errorParameter } ] ')' ';' ;
 
 errorParameter
-    ::= typeName identifier?
+    = typeName [ identifier ] ;
 
 contractBodyElement
-    ::= usingDirective
+    = usingDirective
       | constructorDefinition
       | functionDefinition
       | fallbackFunctionDefinition
@@ -106,74 +105,74 @@ contractBodyElement
       | userDefinedValueTypeDefinition
       | eventDefinition
       | errorDefinition
-      | stateVariableDeclaration
+      | stateVariableDeclaration ;
 
 constructorDefinition
-    ::= 'constructor' parameterList constructorAttribute* block
+    = 'constructor' parameterList { constructorAttribute } block ;
 constructorAttribute
-    ::= modifierInvocation | 'payable' | 'internal' | 'public'
+    = modifierInvocation | 'payable' | 'internal' | 'public' ;
 
 fallbackFunctionDefinition
-    ::= 'fallback' parameterList fallbackFunctionAttribute* ( 'returns' nonEmptyParameterList )? ( ';' | block )
+    = 'fallback' parameterList { fallbackFunctionAttribute } [ 'returns' nonEmptyParameterList ] ( ';' | block ) ;
 fallbackFunctionAttribute
-    ::= 'external' | stateMutabilitySpecifier | modifierInvocation | 'virtual' | overrideSpecifier
+    = 'external' | stateMutabilitySpecifier | modifierInvocation | 'virtual' | overrideSpecifier ;
 
 receiveFunctionDefinition
-    ::= 'receive' '(' ')' receiveFunctionAttribute* ( ';' | block )
+    = 'receive' '(' ')' { receiveFunctionAttribute } ( ';' | block ) ;
 receiveFunctionAttribute
-    ::= 'external' | 'payable' | modifierInvocation | 'virtual' | overrideSpecifier
+    = 'external' | 'payable' | modifierInvocation | 'virtual' | overrideSpecifier ;
 
 modifierDefinition
-    ::= 'modifier' identifier parameterList? methodAttribute* ( ';' | block )
+    = 'modifier' identifier [ parameterList ] { methodAttribute } ( ';' | block ) ;
 methodAttribute
-    ::= 'virtual' | overrideSpecifier
+    = 'virtual' | overrideSpecifier ;
 
 stateVariableDeclaration
-    ::= typeName stateVariableAttribute* identifier ( '=' expression )? ';'
+    = typeName { stateVariableAttribute } identifier [ '=' expression ] ';' ;
 stateVariableAttribute
-    ::= 'public' | 'private' | 'internal' | 'constant' | overrideSpecifier | 'immutable'
+    = 'public' | 'private' | 'internal' | 'constant' | overrideSpecifier | 'immutable' ;
 
 argumentList
-    ::= '(' ( positionalArgumentList | namedArgumentList )? ')'
+    = '(' [ positionalArgumentList | namedArgumentList ] ')' ;
 positionalArgumentList
-    ::= expression ( ',' expression )*
+    = expression { ',' expression } ;
 namedArgumentList
-    ::= '{' ( namedArgument ( ',' namedArgument )* )? '}'
+    = '{' [ namedArgument { ',' namedArgument } ] '}' ;
 namedArgument
-    ::= identifier ':' expression
+    = identifier ':' expression ;
 
 modifierInvocation
-    ::= identifierPath argumentList?
+    = identifierPath [ argumentList ] ;
 
 parameterList
-    ::= '(' ( parameterDeclaration ( ',' parameterDeclaration )* )? ')'
+    = '(' [ parameterDeclaration { ',' parameterDeclaration } ] ')' ;
 nonEmptyParameterList
-    ::= '(' parameterDeclaration ( ',' parameterDeclaration )* ')'
+    = '(' parameterDeclaration { ',' parameterDeclaration } ')' ;
 parameterDeclaration
-    ::= typeName dataLocation? identifier?
+    = typeName [ dataLocation ] [ identifier ] ;
 
 visibilitySpecifier
-    ::= 'internal'
+    = 'internal'
       | 'external'
       | 'private'
-      | 'public'
+      | 'public' ;
 
 stateMutabilitySpecifier
-    ::= 'pure'
+    = 'pure'
       | 'view'
-      | 'payable'
+      | 'payable' ;
 
 overrideSpecifier
-    ::= 'override' ( '(' identifierPath ( ',' identifierPath )* ')' )?
+    = 'override' ['(' identifierPath { ',' identifierPath } ')'] ;
 
 identifierPath
-    ::= identifier ( '.' identifier )*
+    = identifier { '.' identifier } ;
 
 typeName
-    ::= ( elementaryType | functionType | mappingType | identifierPath ) ( '[' expression? ']' )*
+    = ( elementaryType | functionType | mappingType | identifierPath ) { '[' [ expression ] ']' } ;
 
 elementaryType
-    ::= 'address' 'payable'?
+    = 'address' [ 'payable' ]
       | 'bool'
       | 'string'
       | 'bytes'
@@ -181,135 +180,168 @@ elementaryType
       | UnsignedIntegerType
       | FixedBytes
       | Fixed
-      | Ufixed
+      | Ufixed ;
 
 SignedIntegerType
-    ::= 'int'
+    = 'int'
       | 'int8' | 'int16' | 'int24' | 'int32' | 'int40' | 'int48' | 'int56' | 'int64'
       | 'int72' | 'int80' | 'int88' | 'int96' | 'int104' | 'int112' | 'int120' | 'int128'
       | 'int136' | 'int144' | 'int152' | 'int160' | 'int168' | 'int176' | 'int184' | 'int192'
-      | 'int200' | 'int208' | 'int216' | 'int224' | 'int232' | 'int240' | 'int248' | 'int256'
+      | 'int200' | 'int208' | 'int216' | 'int224' | 'int232' | 'int240' | 'int248' | 'int256' ;
 
 UnsignedIntegerType
-    ::= 'uint'
+    = 'uint'
       | 'uint8' | 'uint16' | 'uint24' | 'uint32' | 'uint40' | 'uint48' | 'uint56' | 'uint64'
       | 'uint72' | 'uint80' | 'uint88' | 'uint96' | 'uint104' | 'uint112' | 'uint120' | 'uint128'
       | 'uint136' | 'uint144' | 'uint152' | 'uint160' | 'uint168' | 'uint176' | 'uint184' | 'uint192'
-      | 'uint200' | 'uint208' | 'uint216' | 'uint224' | 'uint232' | 'uint240' | 'uint248' | 'uint256'
+      | 'uint200' | 'uint208' | 'uint216' | 'uint224' | 'uint232' | 'uint240' | 'uint248' | 'uint256' ;
 
 FixedBytes
-    ::= 'bytes1' | 'bytes2' | 'bytes3' | 'bytes4' | 'bytes5' | 'bytes6' | 'bytes7' | 'bytes8'
+    = 'bytes1' | 'bytes2' | 'bytes3' | 'bytes4' | 'bytes5' | 'bytes6' | 'bytes7' | 'bytes8'
       | 'bytes9' | 'bytes10' | 'bytes11' | 'bytes12' | 'bytes13' | 'bytes14' | 'bytes15' | 'bytes16'
       | 'bytes17' | 'bytes18' | 'bytes19' | 'bytes20' | 'bytes21' | 'bytes22' | 'bytes23' | 'bytes24'
-      | 'bytes25' | 'bytes26' | 'bytes27' | 'bytes28' | 'bytes29' | 'bytes30' | 'bytes31' | 'bytes32'
+      | 'bytes25' | 'bytes26' | 'bytes27' | 'bytes28' | 'bytes29' | 'bytes30' | 'bytes31' | 'bytes32' ;
 
 Fixed
-    ::= 'fixed' ( [1-9] [0-9]* 'x' [1-9] [0-9]* )?
+    = 'fixed' [ '1'…'9' { '0'…'9' } 'x' '1'…'9' { '0'…'9' } ] ;
 
 Ufixed
-    ::=  'ufixed' ( [1-9] [0-9]+ 'x' [1-9] [0-9]+ )?
+    = 'ufixed' [ '1'…'9' { '0'…'9' } 'x' '1'…'9' { '0'…'9' } ] ;
 
 functionType
-    ::= 'function' parameterList ( visibilitySpecifier | stateMutabilitySpecifier )* ( 'returns' nonEmptyParameterList )?
+    = 'function' parameterList { visibilitySpecifier | stateMutabilitySpecifier } [ 'returns' nonEmptyParameterList ] ;
 
 mappingType
-    ::= 'mapping' '(' mappingKeyType DoubleArrow typeName ')'
+    = 'mapping' '(' mappingKeyType DoubleArrow typeName ')' ;
 mappingKeyType
-    ::= elementaryType | identifierPath
+    = elementaryType | identifierPath ;
 
 dataLocation
-    ::= 'memory'
+    = 'memory'
       | 'storage'
-      | 'calldata'
+      | 'calldata' ;
+
+# expression:
+# 	expression LBrack index=expression? RBrack # IndexAccess
+# 	| expression LBrack start=expression? Colon end=expression? RBrack # IndexRangeAccess
+# 	| expression Period (identifier | Address) # MemberAccess
+# 	| expression LBrace (namedArgument (Comma namedArgument)*)? RBrace # FunctionCallOptions
+# 	| expression callArgumentList # FunctionCall
+# 	| Payable callArgumentList # PayableConversion
+# 	| Type LParen typeName RParen # MetaType
+# 	| (Inc | Dec | Not | BitNot | Delete | Sub) expression # UnaryPrefixOperation
+# 	| expression (Inc | Dec) # UnarySuffixOperation
+# 	|<assoc=right> expression Exp expression # ExpOperation
+# 	| expression (Mul | Div | Mod) expression # MulDivModOperation
+# 	| expression (Add | Sub) expression # AddSubOperation
+# 	| expression (Shl | Sar | Shr) expression # ShiftOperation
+# 	| expression BitAnd expression # BitAndOperation
+# 	| expression BitXor expression # BitXorOperation
+# 	| expression BitOr expression # BitOrOperation
+# 	| expression (LessThan | GreaterThan | LessThanOrEqual | GreaterThanOrEqual) expression # OrderComparison
+# 	| expression (Equal | NotEqual) expression # EqualityComparison
+# 	| expression And expression # AndOperation
+# 	| expression Or expression # OrOperation
+# 	|<assoc=right> expression Conditional expression Colon expression # Conditional
+# 	|<assoc=right> expression assignOp expression # Assignment
+# 	| New typeName # NewExpression
+# 	| tupleExpression # Tuple
+# 	| inlineArrayExpression # InlineArray
+#  	| (
+# 		identifier
+# 		| literal
+# 		| elementaryTypeName[false]
+# 	  ) # PrimaryExpression
 
 expression
-    ::= expression expressionRHS
+    = expression expressionRHS
       | 'payable' argumentList
       | 'type' '(' typeName ')'
-      |  unaryPrefixOp expression
+      | unaryPrefixOp expression
+      | expression unarySuffixOp
       | 'new' typeName
       | tupleExpression
       | inlineArrayExpression
       | identifier
       | literal
-      | elementaryType
+      | elementaryType ;
 
 expressionRHS
-    ::= '[' expression? ( ':' expression? )? ']'
+    = '[' [ expression ] [ ':' [ expression ] ] ']'
       | '.' ( identifier | 'address' )
       | namedArgumentList
       | argumentList
       | unarySuffixOp
       | binaryOp expression
       | '?' expression ':' expression
-      | assignOp expression
+      | assignOp expression ;
 
 unaryPrefixOp
-    ::= '++' | '--' | '!' | '~' | 'delete' | '-'
+    = '++' | '--' | '!' | '~' | 'delete' | '-' ;
 
 unarySuffixOp
-    ::= '++' | '--'
+    = '++' | '--' ;
 
 binaryOp
-    := '**' | '*' | '/' | '%' | '+' | '-' | '<<' | '>>>' | '>>' | '&' | '^' | '|' | '<' | '>' | '<=' | '>=' | '==' | '!=' | '&&' | '||'
+    = '**' | '*' | '/' | '%' | '+' | '-' | '<<' | '>>>' | '>>' | '&' | '^' | '|' | '<' | '>' | '<=' | '>=' | '==' | '!=' | '&&' | '||' ;
 
 assignOp
-    ::= '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%='
+    = '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ;
 
 tupleExpression
-    ::= '(' expression? ( ',' expression? )* ')'
+    = '(' [ expression ] { ',' [ expression ] } ')' ;
 
 inlineArrayExpression
-    ::= '[' expression ( ',' expression )* ']'
+    = '[' expression { ',' expression } ']' ;
 
 reservedWord
-    ::= keyword
+    = keyword
       | reservedKeyword
       | NumberUnit
-      | BooleanLiteral
+      | BooleanLiteral ;
 
 keyword
-    ::= 'pragma' | 'abstract' | 'anonymous' | 'address' | 'as' | 'assembly' | 'bool' | 'break' | 'bytes' | 'calldata'
+    = 'pragma' | 'abstract' | 'anonymous' | 'address' | 'as' | 'assembly' | 'bool' | 'break' | 'bytes' | 'calldata'
       | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum'
       | 'event' | 'external' | 'fallback' | 'false' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import'
       | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override'
       | 'payable' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct'
       | 'true' | 'try' | 'type' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while'
-      | SignedIntegerType | UnsignedIntegerType | FixedBytes | 'fixed' | 'ufixed'
+      | SignedIntegerType | UnsignedIntegerType | FixedBytes | 'fixed' | 'ufixed' ;
 
 reservedKeyword
-    ::= 'after' | 'alias' | 'apply' | 'auto' | 'byte' | 'case' | 'copyof' | 'default' | 'define' | 'final'
+    = 'after' | 'alias' | 'apply' | 'auto' | 'byte' | 'case' | 'copyof' | 'default' | 'define' | 'final'
       | 'implements' | 'in' | 'inline' | 'let' | 'macro' | 'match' | 'mutable' | 'null' | 'of'
       | 'partial' | 'promise' | 'reference' | 'relocatable' | 'sealed' | 'sizeof' | 'static'
-      | 'supports' | 'switch' | 'typedef' | 'typeof' | 'var'
+      | 'supports' | 'switch' | 'typedef' | 'typeof' | 'var' ;
 
 identifier
-    ::= IdentifierName - reservedWord
+    = IdentifierName - reservedWord ;
 
 literal
-    ::= asciiStringLiteral
+    = asciiStringLiteral
       | unicodeStringLiteral
       | numericLiteral
       | hexStringLiteral
-      | BooleanLiteral
+      | BooleanLiteral ;
 
 asciiStringLiteral
-    ::= AsciiStringLiteral+
+    = AsciiStringLiteral { AsciiStringLiteral } ;
 
 unicodeStringLiteral
-    ::= UnicodeStringLiteral+
+    = UnicodeStringLIteral { UnicodeStringLiteral } ;
 
 numericLiteral
-    ::= ( DecimalNumber | HexNumber ) NumberUnit?
+    = ( DecimalNumber | HexNumber ) [ NumberUnit ] ;
 
 block
-    ::= '{' ( statement | uncheckedBlock )* '}'
+    = '{' { statement | uncheckedBlock } '}' ;
 
 uncheckedBlock
-    ::= 'unchecked' block
+    = 'unchecked' block ;
 
 statement
-    ::= block
+    = block
       | simpleStatement
       | ifStatement
       | forStatement
@@ -321,137 +353,138 @@ statement
       | returnStatement
       | emitStatement
       | revertStatement
-      | assemblyStatement
+      | assemblyStatement ;
 
 simpleStatement
-    ::= variableDeclarationStatement
-      | expressionStatement
+    = variableDeclarationStatement
+      | expressionStatement ;
 
 ifStatement
-    ::= 'if' '(' expression ')' statement ( 'else' statement )?
+    = 'if' '(' expression ')' statement [ 'else' statement ] ;
 
 forStatement
-    ::= 'for' '(' ( simpleStatement | ';' ) ( expressionStatement | ';' ) expression? ')' statement
+    = 'for' '(' ( simpleStatement | ';' ) ( expressionStatement | ';' ) [ expression ] ')' statement ;
 
 whileStatement
-    ::= 'while' '(' expression ')' statement
+    = 'while' '(' expression ')' statement ;
 
 doWhileStatement
-    ::= 'do' statement 'while' '(' expression ')' ';'
+    = 'do' statement 'while' '(' expression ')' ';' ;
 
 continueStatement
-    ::= 'continue' ';'
+    = 'continue' ';' ;
 
 breakStatement
-    ::= 'break' ';'
+    = 'break' ';' ;
 
 tryStatement
-    ::= 'try' expression ( 'returns' nonEmptyParameterList )? block catchClause+
+    = 'try' expression [ 'returns' nonEmptyParameterList ] block catchClause { catchClause } ;
 catchClause
-    ::= 'catch' ( identifier? nonEmptyParameterList )? block
+    = 'catch' [ [ identifier ] nonEmptyParameterList ] block ;
 
 returnStatement
-    ::= 'return' expression? ';'
+    = 'return' [ expression ] ';' ;
 
 emitStatement
-    ::= 'emit' expression argumentList ';'
+    = 'emit' expression argumentList ';' ;
 
 revertStatement
-    ::= 'revert' expression argumentList ';'
+    = 'revert' expression argumentList ';' ;
 
 
 variableDeclarationList
-    ::= variableDeclaration ( ',' variableDeclaration )*
+    = variableDeclaration { ',' variableDeclaration } ;
 
 variableDeclarationTuple
-    ::= '(' ','* variableDeclaration ( ',' variableDeclaration? )* ')'
+    = '(' { ',' } variableDeclaration { ',' [ variableDeclaration ] } ')' ;
 
 variableDeclarationStatement
-    ::= ( variableDeclaration ( '=' expression )? | variableDeclarationTuple '=' expression ) ';'
+    = ( variableDeclaration [ '=' expression ] | variableDeclarationTuple '=' expression ) ';' ;
 
 variableDeclaration
-    ::= typeName dataLocation? identifier
+    = typeName [ dataLocation ] identifier ;
 
 
 expressionStatement
-    ::= expression ';'
+    = expression ';' ;
 
 assemblyStatement
-    ::= 'assembly' '"evmasm"'? assemblyFlags? yulBlock
+    = 'assembly' [ '"evmasm"' ] [ assemblyFlags ] yulBlock ;
 
 /* Constraint: strings are non-empty */
 assemblyFlags
-    ::= '(' DoubleQuotedStringLiteral ( ',' DoubleQuotedStringLiteral )* ')'
+    = '(' DoubleQuotedStringLiteral { ',' DoubleQuotedStringLiteral } ')' ;
 
 WS
-    ::= ( ' ' | #x0009 | #x000d | #x000a | #x000C )+
+    = '\u{20}' | '\u{9}' | '\u{D}' | '\u{A}' | '\u{C}' ;
 
 COMMENT
-    ::= '/*' .* '*/'
+    /* TODO: make this realistically parsable */
+    = '/*' { . } '*/' ;
 
 LINE_COMMENT
-    ::= '//' [^#x000d#x000a]*
+    = '//' { ¬( '\u{A}' | '\u{D}' ) } ;
 
 IdentifierName
-    ::= IdentifierStart IdentifierPart*
+    = IdentifierStart { IdentifierPart } ;
 IdentifierStart
-    ::= [a-zA-Z$_]
+    = '_' | '$' | 'a'…'z' | 'A'…'Z' ;
 IdentifierPart
-    ::= [a-zA-Z0-9$_]
+    = IdentifierStart | '0'…'9' ;
 
 BooleanLiteral
-    ::= 'true' | 'false'
+    = 'true' | 'false' ;
 
 DecimalNumber
-    ::= ( DecimalInteger | DecimalFloat ) DecimalExponent?
+    = ( DecimalInteger | DecimalFloat ) [ DecimalExponent ] ;
 DecimalInteger
-    ::= SequenceOfPossiblySeparatedDecimalDigits
+    = SequenceOfPossiblySeparatedDecimalDigits ;
 /* Q: Is this bad practice to reuse the concept of integer? */
 DecimalFloat
-    ::= DecimalInteger? '.' DecimalInteger
+    = [ DecimalInteger ] '.' DecimalInteger ;
 /* Q: Is this bad practice to reuse the concept of integer? */
 DecimalExponent
-    ::=  [eE] '-'? DecimalInteger
+    =  ( 'e' | 'E' ) [ '-' ] DecimalInteger ;
 SequenceOfPossiblySeparatedDecimalDigits
-    ::= [0-9] ( '_'? [0-9] )*
+    = '0'…'9' { [ '_' ] '0'…'9' } ;
 
 HexNumber
-    ::= '0' 'x' SequenceOfPossiblySeparatedHexDigits
+    = '0' 'x' SequenceOfPossiblySeparatedHexDigits ;
 SequenceOfPossiblySeparatedHexDigits
-    ::= HexCharacter ( '_'? HexCharacter )*
+    = HexCharacter { [ '_' ] HexCharacter } ;
 
 NumberUnit
-    ::= 'wei' | 'gwei' | 'ether' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'years'
+    = 'wei' | 'gwei' | 'ether' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'years' ;
 
 HexStringLiteral
-    ::= 'hex' ( '"' SequenceOfPossiblySeparatedPairsOfHexDigits? '"' | "'" SequenceOfPossiblySeparatedPairsOfHexDigits? "'" )
+    = 'hex' ( '"' [ SequenceOfPossiblySeparatedPairsOfHexDigits ] '"' | '\'' [ SequenceOfPossiblySeparatedPairsOfHexDigits ] '\'' ) ;
 SequenceOfPossiblySeparatedPairsOfHexDigits
-    ::= HexCharacter HexCharacter ( '_'? HexCharacter HexCharacter )*
+    = HexCharacter HexCharacter { [ '_' ] HexCharacter HexCharacter } ;
 HexCharacter
-    ::= [0-9A-Fa-f]
+    = '0'…'9' | 'a'…'f' | 'A'…'F' ;
 
 AsciiStringLiteral
-    ::= '"' ( [#x20-#x7E] - ["\] | EscapeSequece )* '"'
-      | "'" ( [#x20-#x7E] - ['\] | EscapeSequence )* "'"
+    = '"' { ( '\u{20}'…'\u{7E}' - ( '"' | '\\' ) ) | EscapeSequece } '"'
+      | '\'' { ( '\u{20}'…'\u{7E}' - ( '\'' | '\\' ) ) | EscapeSequence } '\'' ;
 
 UnicodeStringLiteral
-    ::= 'unicode"' ( [^"\#x000D#x000A] | EscapeSequence )* '"'
-      | "unicode'" ( [^'\#x000D#x000A] | EscapeSequence )* "'"
+    = 'unicode"' { ¬ ( '"' | '\\' | '\u{A}' | '\u{D}' ) | EscapeSequence } '"'
+      | 'unicode\'' { ¬ ( '\'' | '\\' | '\u{A}' | '\u{D}' ) | EscapeSequence } '\'' ;
 
 EscapeSequence
-    ::= '\' ( AsciiEscape | HexByteEscape | UnicodeEscape )
+    = '\\' ( AsciiEscape | HexByteEscape | UnicodeEscape ) ;
 AsciiEscape
-    ::= [nrt#x000A#x000D'"\]
+    = 'n' | 'r' | 't' | '\'' | '"' | '\\' | '\u{A}' | '\u{D}' ;
 HexByteEscape
-    ::= 'x' HexCharacter HexCharacter
+    = 'x' HexCharacter HexCharacter ;
 UnicodeEscape
-    ::= 'u' HexCharacter HexCharacter HexCharacter HexCharacter
+    = 'u' HexCharacter HexCharacter HexCharacter HexCharacter ;
 
 yulBlock
-    ::= '{' yulStatement* '}'
+    = '{' { yulStatement } '}' ;
 
 yulStatement
-    ::= yulBlock
+    = yulBlock
       | yulVariableDeclaration
       | yulFunctionDefinition
       | yulAssignment
@@ -461,75 +494,74 @@ yulStatement
       | yulSwitchStatement
       | yulLeaveStatement
       | yulBreakStatement
-      | yulContinueStatement
+      | yulContinueStatement ;
 
 yulVariableDeclaration
-    ::= 'let' YulIdentifier ( ':=' yulExpression | ( ',' YulIdentifier )* ( ':=' yulFunctionCall )? )?
+    = 'let' YulIdentifier [ ':=' yulExpression | [ ',' YulIdentifier ] [ ':=' yulFunctionCall ] ] ;
 
 yulFunctionDefinition
-    ::= 'function' YulIdentifier '(' ( YulIdentifier ( ',' YulIdentifier )* )? ')' ( '->' YulIdentifier ( ',' YulIdentifier )* )? yulBlock
+    = 'function' YulIdentifier '(' [ YulIdentifier { ',' YulIdentifier } ] ')' [ '->' YulIdentifier { ',' YulIdentifier } ] yulBlock ;
 
 yulAssignment
-    ::= yulPath ( ':=' yulExpression | ( ',' yulPath )+ ':=' yulFunctionCall )
+    = yulPath ( ':=' yulExpression | ',' yulPath { ',' yulPath } ':=' yulFunctionCall ) ;
 
 yulFunctionCall
-    ::= ( YulIdentifier | YulEVMBuiltin ) '(' ( yulExpression ( ',' yulExpression )* )? ')'
+    = ( YulIdentifier | YulEVMBuiltin ) '(' [ yulExpression { ',' yulExpression } ] ')' ;
 
 yulIfStatement
-    ::= 'if' yulExpression yulBlock
+    = 'if' yulExpression yulBlock ;
 
 yulLeaveStatement
-    ::= 'leave'
+    = 'leave' ;
 
 yulBreakStatement
-    ::= 'break'
+    = 'break' ;
 
 yulContinueStatement
-    ::= 'continue'
+    = 'continue' ;
 
 yulForStatement
-    ::= 'for' yulBlock yulExpression yulBlock yulBlock
+    = 'for' yulBlock yulExpression yulBlock yulBlock ;
 
 yulSwitchStatement
-    ::= 'switch' yulExpression ( yulSwitchCase+ ( 'default' yulBlock )? | 'default' yulBlock )
+    = 'switch' yulExpression ( yulSwitchCase { yulSwitchCase } [ 'default' yulBlock ] | 'default' yulBlock ) ;
 yulSwitchCase
-    ::= 'case' yulLiteral yulBlock
+    = 'case' yulLiteral yulBlock ;
 
 yulExpression
-         ::= yulPath
+         = yulPath
            | yulFunctionCall
-           | yulLiteral
+           | yulLiteral ;
 yulPath
-    ::= YulIdentifier ( '.' ( YulIdentifier | YulEVMBuiltin ) )*
+    = YulIdentifier { '.' ( YulIdentifier | YulEVMBuiltin ) } ;
 
 yulLiteral
-     ::= YulDecimalNumberLiteral
+     = YulDecimalNumberLiteral
        | YulHexLiteral
        | StringLiteral
        | BooleanLiteral
-       | HexStringLiteral
+       | HexStringLiteral ;
 
 YulDecimalNumberLiteral
-    ::= '0'
-      | [1-9] [0-9]*
+    = '0' | '1'…'9' { '0'…'9' } ;
 
 YulHexLiteral
-    ::= '0' 'x' [0-9a-fA-F]+
+    = '0x' ( '0'…'9' | 'a'…'f' | 'A'…'F' ) { '0'…'9' | 'a'…'f' | 'A'…'F' } ;
 
 YulIdentifier
-    ::= IdentifierName - YulReservedWord
+    = IdentifierName - YulReservedWord ;
 
 YulReservedWord
-    ::= YulKeyword
+    = YulKeyword
       | YulEVMBuildFunctionName
-      | BooleanLiteral
+      | BooleanLiteral ;
 
 YulKeyword
-    ::= 'break' | 'case' | 'continue' | 'default' | | 'for' | 'function' | 'if'
-      | 'leave' | 'let' | 'switch' | 'hex'
+    = 'break' | 'case' | 'continue' | 'default' | 'for' | 'function' | 'if'
+      | 'leave' | 'let' | 'switch' | 'hex' ;
 
 YulEVMBuiltinFunctionName
-    ::= 'stop' | 'add' | 'sub' | 'mul' | 'div' | 'sdiv' | 'mod' | 'smod' | 'exp' | 'not'
+    = 'stop' | 'add' | 'sub' | 'mul' | 'div' | 'sdiv' | 'mod' | 'smod' | 'exp' | 'not'
       | 'lt' | 'gt' | 'slt' | 'sgt' | 'eq' | 'iszero' | 'and' | 'or' | 'xor' | 'byte'
       | 'shl' | 'shr' | 'sar' | 'addmod' | 'mulmod' | 'signextend' | 'keccak256'
       | 'pop' | 'mload' | 'mstore' | 'mstore8' | 'sload' | 'sstore' | 'msize' | 'gas'
@@ -539,4 +571,4 @@ YulEVMBuiltinFunctionName
       | 'delegatecall' | 'staticcall' | 'return' | 'revert' | 'selfdestruct' | 'invalid'
       | 'log0' | 'log1' | 'log2' | 'log3' | 'log4' | 'chainid' | 'origin' | 'gasprice'
       | 'blockhash' | 'coinbase' | 'timestamp' | 'number' | 'difficulty' | 'gaslimit'
-      | 'basefee';
+      | 'basefee' ;
