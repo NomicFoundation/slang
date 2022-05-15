@@ -4,8 +4,8 @@ use std::path::PathBuf;
 
 use crate::schema::*;
 
-pub fn generate(grammar: &Grammar, _output_path: &PathBuf) {
-    let mut w = File::create(_output_path).expect("Unable to create file");
+pub fn generate(grammar: &Grammar, output_path: &PathBuf) {
+    let mut w = File::create(output_path).expect("Unable to create file");
 
     let mut first = true;
     for p in grammar.productions.iter().flat_map(|(_, p)| p) {
