@@ -272,11 +272,21 @@ fn map_negation((negation, ebnf): (Option<()>, EBNF)) -> EBNF {
 }
 
 fn map_optional(ebnf: EBNF) -> EBNF {
-    EBNF::Optional(ref_from_ebnf(ebnf))
+    EBNF::Repeat(EBNFRepeat {
+        min: 0,
+        max: Some(1),
+        expr: ref_from_ebnf(ebnf),
+        separator: None,
+    })
 }
 
 fn map_repeated(ebnf: EBNF) -> EBNF {
-    EBNF::ZeroOrMore(ref_from_ebnf(ebnf))
+    EBNF::Repeat(EBNFRepeat {
+        min: 0,
+        max: None,
+        expr: ref_from_ebnf(ebnf),
+        separator: None,
+    })
 }
 
 fn map_production_reference(name: String) -> EBNF {

@@ -167,23 +167,63 @@ impl Expression {
         match &self.ebnf {
             EBNF::End => quote!(end()),
             EBNF::Any => quote!(todo()),
-            EBNF::Optional(expr) => {
-                let expr = expr.generate();
-                quote!( #expr.or_not() )
-            }
             EBNF::Not(expr) => {
                 if let Some(char_set_elements) = expr.as_char_set_elements() {
                     return generate_char_set(&char_set_elements, true);
                 }
                 quote!(todo())
             }
-            EBNF::ZeroOrMore(expr) => {
+            EBNF::Repeat(EBNFRepeat {
+                min: 0,
+                max: None,
+                expr,
+                separator,
+            }) => {
                 let expr = expr.generate();
-                quote!( #expr.repeated() )
+                if let Some(separator) = separator {
+                    let separator = separator.generate();
+                    quote!( #expr.separated_by(#separator) )
+                } else {
+                    quote!( #expr.repeated() )
+                }
             }
-            EBNF::OneOrMore(expr) => {
+            EBNF::Repeat(EBNFRepeat {
+                min,
+                max: None,
+                expr,
+                separator,
+            }) => {
                 let expr = expr.generate();
-                quote!( #expr.repeated().at_least(1) )
+                if let Some(separator) = separator {
+                    let separator = separator.generate();
+                    quote!( #expr.separated_by(#separator).at_least(#min) )
+                } else {
+                    quote!( #expr.repeated().at_least(#min) )
+                }
+            }
+            EBNF::Repeat(EBNFRepeat {
+                min: 0,
+                max: Some(1),
+                expr,
+                ..
+            }) => {
+                let expr = expr.generate();
+                quote!( #expr.or_not() )
+            }
+            EBNF::Repeat(EBNFRepeat {
+                min: 0,
+                max: Some(_max),
+                ..
+            }) => {
+                // TODO: handle max
+                todo!("Handle upper bound on repeat")
+            }
+            EBNF::Repeat(EBNFRepeat {
+                min: _min,
+                max: Some(_max),
+                ..
+            }) => {
+                todo!("Handle upper bound on repeat")
             }
             EBNF::Choice(exprs) => {
                 let choices = exprs
@@ -265,11 +305,16 @@ impl Expression {
                     p.referenced_identifiers(accum);
                 });
             }
-            EBNF::Not(expr)
-            | EBNF::Optional(expr)
-            | EBNF::ZeroOrMore(expr)
-            | EBNF::OneOrMore(expr) => {
+            EBNF::Not(expr) => {
                 expr.referenced_identifiers(accum);
+            }
+            EBNF::Repeat(EBNFRepeat {
+                expr, separator, ..
+            }) => {
+                expr.referenced_identifiers(accum);
+                if let Some(separator) = separator {
+                    separator.referenced_identifiers(accum);
+                }
             }
             EBNF::Difference(EBNFDifference {
                 minuend,

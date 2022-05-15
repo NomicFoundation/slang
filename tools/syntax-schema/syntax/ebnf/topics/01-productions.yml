@@ -2,10 +2,11 @@
 
 - name: grammar
   sequence:
+    - reference: S
     - zeroOrMore:
-        sequence:
-          - reference: S
-          - reference: production
+        reference: production
+        separator:
+          reference: S
     - reference: S
     - end: ~
 - name: production
@@ -18,21 +19,18 @@
     - reference: S
     - terminal: ;
 - name: expression
-  sequence:
-    - reference: sequence
-    - zeroOrMore:
-        sequence:
-          - reference: S
-          - terminal: "|"
-          - reference: S
-          - reference: sequence
+  oneOrMore:
+    reference: sequence
+    separator:
+      sequence:
+        - reference: S
+        - terminal: "|"
+        - reference: S
 - name: sequence
-  sequence:
-    - reference: difference
-    - zeroOrMore:
-        sequence:
-          - reference: S
-          - reference: difference
+  oneOrMore:
+    reference: difference
+    separator:
+      reference: S
 - name: difference
   sequence:
     - reference: negation
@@ -68,6 +66,51 @@
     - reference: expression
     - reference: S
     - terminal: )
+- name: repetitionPrefix
+  sequence:
+    - choice:
+        - sequence:
+            - reference: number
+            - reference: S
+            - optional:
+                sequence:
+                  - terminal: '…'
+                  - reference: S
+                  - optional:
+                      sequence:
+                        - reference: number
+                        - reference: S
+        - sequence:
+            - terminal: '…'
+            - reference: S
+            - optional:
+                sequence:
+                  - reference: number
+                  - reference: S
+    - terminal: '*'
+- name: repetitionSeparator
+  sequence:
+    - terminal: '/'
+    - reference: S
+    - reference: expression
+- name: repeated
+  sequence:
+    - optional:
+        sequence: 
+          - reference: repetitionPrefix
+          - reference: S
+    - terminal: "{"
+    - reference: S
+    - reference: expression
+    - reference: S
+    - optional:
+        sequence:
+          - reference: repetitionSeparator
+          - reference: S
+    - terminal: "}"
+- name: number
+  oneOrMore:
+    range: { from: '0', to: '9'}
 - name: optional
   sequence:
     - terminal: "["
@@ -75,13 +118,6 @@
     - reference: expression
     - reference: S
     - terminal: "]"
-- name: repeated
-  sequence:
-    - terminal: "{"
-    - reference: S
-    - reference: expression
-    - reference: S
-    - terminal: "}"
 - name: EOF
   terminal: $
 - name: Any
@@ -105,7 +141,9 @@
             - terminal: "\\"
             - sequence:
                 - terminal: "u{"
-                - oneOrMore:
+                - repeat:
+                    min: 1
+                    max: 6
                     reference: HexDigit
                 - terminal: "}"
 - name: CharRange

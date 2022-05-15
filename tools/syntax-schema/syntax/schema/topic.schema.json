@@ -31,7 +31,8 @@
         { "$ref": "#/$defs/Reference" },
         { "$ref": "#/$defs/Sequence" },
         { "$ref": "#/$defs/Terminal" },
-        { "$ref": "#/$defs/ZeroOrMore" }
+        { "$ref": "#/$defs/ZeroOrMore" },
+        { "$ref": "#/$defs/Repeat" }
       ]
     },
     "Config": {
@@ -75,7 +76,8 @@
         { "$ref": "#/$defs/Reference" },
         { "$ref": "#/$defs/Sequence" },
         { "$ref": "#/$defs/Terminal" },
-        { "$ref": "#/$defs/ZeroOrMore" }
+        { "$ref": "#/$defs/ZeroOrMore" },
+        { "$ref": "#/$defs/Repeat" }
       ]
     },
     "Any": {
@@ -124,20 +126,6 @@
         "not": { "$ref": "#/$defs/Expression" }
       }
     },
-    "OneOrMore": {
-      "type": "object",
-      "required": ["oneOrMore"],
-      "properties": {
-        "oneOrMore": { "$ref": "#/$defs/Expression" }
-      }
-    },
-    "Optional": {
-      "type": "object",
-      "required": ["optional"],
-      "properties": {
-        "optional": { "$ref": "#/$defs/Expression" }
-      }
-    },
     "Range": {
       "type": "object",
       "required": ["range"],
@@ -177,11 +165,97 @@
         "terminal": { "type": "string", "minLength": 1 }
       }
     },
+    "Optional": {
+      "type": "object",
+      "required": ["optional"],
+      "properties": {
+        "optional": { "$ref": "#/$defs/Expression" }
+      }
+    },
     "ZeroOrMore": {
       "type": "object",
       "required": ["zeroOrMore"],
       "properties": {
-        "zeroOrMore": { "$ref": "#/$defs/Expression" }
+        "zeroOrMore": {
+          "type": "object",
+          "properties": {
+            "config": { "$ref": "#/$defs/Config" },
+            "separator": { "$ref": "#/$defs/Expression" }
+          },
+          "oneOf": [
+            { "$ref": "#/$defs/Any" },
+            { "$ref": "#/$defs/Choice" },
+            { "$ref": "#/$defs/Difference" },
+            { "$ref": "#/$defs/End" },
+            { "$ref": "#/$defs/Not" },
+            { "$ref": "#/$defs/OneOrMore" },
+            { "$ref": "#/$defs/Optional" },
+            { "$ref": "#/$defs/Range" },
+            { "$ref": "#/$defs/Reference" },
+            { "$ref": "#/$defs/Sequence" },
+            { "$ref": "#/$defs/Terminal" },
+            { "$ref": "#/$defs/ZeroOrMore" },
+            { "$ref": "#/$defs/Repeat" }
+          ]
+        }
+      }
+    },
+    "OneOrMore": {
+      "type": "object",
+      "required": ["oneOrMore"],
+      "properties": {
+        "oneOrMore": {
+          "type": "object",
+          "properties": {
+            "config": { "$ref": "#/$defs/Config" },
+            "separator": { "$ref": "#/$defs/Expression" }
+          },
+          "oneOf": [
+            { "$ref": "#/$defs/Any" },
+            { "$ref": "#/$defs/Choice" },
+            { "$ref": "#/$defs/Difference" },
+            { "$ref": "#/$defs/End" },
+            { "$ref": "#/$defs/Not" },
+            { "$ref": "#/$defs/OneOrMore" },
+            { "$ref": "#/$defs/Optional" },
+            { "$ref": "#/$defs/Range" },
+            { "$ref": "#/$defs/Reference" },
+            { "$ref": "#/$defs/Sequence" },
+            { "$ref": "#/$defs/Terminal" },
+            { "$ref": "#/$defs/ZeroOrMore" },
+            { "$ref": "#/$defs/Repeat" }
+          ]
+        }
+      }
+    },
+    "Repeat": {
+      "type": "object",
+      "required": ["repeat"],
+      "properties": {
+        "repeat": {
+          "type": "object",
+          "properties": {
+            "config": { "$ref": "#/$defs/Config" },
+            "min": { "type": "number" },
+            "max": { "type": "number" },
+            "separator": { "$ref": "#/$defs/Expression" }
+          },
+          "oneOf": [
+            { "$ref": "#/$defs/Any" },
+            { "$ref": "#/$defs/Choice" },
+            { "$ref": "#/$defs/Difference" },
+            { "$ref": "#/$defs/End" },
+            { "$ref": "#/$defs/Not" },
+            { "$ref": "#/$defs/OneOrMore" },
+            { "$ref": "#/$defs/Optional" },
+            { "$ref": "#/$defs/Range" },
+            { "$ref": "#/$defs/Reference" },
+            { "$ref": "#/$defs/Sequence" },
+            { "$ref": "#/$defs/Terminal" },
+            { "$ref": "#/$defs/ZeroOrMore" },
+            { "$ref": "#/$defs/Repeat" }
+          ]
+        }
       }
     }
   }

@@ -36,14 +36,13 @@ impl Expression {
         match self.ebnf {
             EBNF::End
             | EBNF::Any
-            | EBNF::ZeroOrMore(..)
-            | EBNF::Optional(..)
+            | EBNF::Repeat(..)
             | EBNF::Terminal(..)
             | EBNF::Reference(..)
             | EBNF::Range { .. } => 0,
             EBNF::Not(..) => 1,
             EBNF::Difference { .. } => 2,
-            EBNF::Sequence(..) | EBNF::OneOrMore(..) => 3,
+            EBNF::Sequence(..) => 3,
             EBNF::Choice(..) => 4,
         }
     }
@@ -59,29 +58,59 @@ impl Expression {
     }
 
     fn generate_ebnf<T: Write>(&self, w: &mut T) {
+        fn write_char<T: Write>(w: &mut T, c: char) {
+            if c == '\'' || c == '\\' {
+                write!(w, "\\{}", c).unwrap();
+            } else if c.is_ascii_graphic() || c == '¬' || c == '…' || c == '∞' {
+                write!(w, "{}", c).unwrap();
+            } else {
+                write!(w, "{}", c.escape_unicode().to_string()).unwrap();
+            }
+        }
+
         match &self.ebnf {
             EBNF::End => write!(w, " $").unwrap(),
 
             EBNF::Any => write!(w, " .").unwrap(),
 
-            EBNF::ZeroOrMore(expr) => {
-                write!(w, " {{").unwrap();
-                expr.generate_ebnf(w);
-                write!(w, " }}").unwrap();
-            }
-
-            EBNF::OneOrMore(expr) => {
-                expr.generate_ebnf(w);
-                write!(w, " {{").unwrap();
-                expr.generate_ebnf(w);
-                write!(w, " }}").unwrap();
-            }
-
-            EBNF::Optional(expr) => {
-                write!(w, " [").unwrap();
-                expr.generate_ebnf(w);
-                write!(w, " ]").unwrap();
-            }
+            EBNF::Repeat(EBNFRepeat {
+                min,
+                max,
+                expr,
+                separator,
+            }) => match (min, max) {
+                (0, None) => {
+                    write!(w, " {{").unwrap();
+                    expr.generate_ebnf(w);
+                    if let Some(separator) = separator {
+                        write!(w, " /").unwrap();
+                        separator.generate_ebnf(w);
+                    }
+                    write!(w, " }}").unwrap();
+                }
+                (0, Some(1)) => {
+                    write!(w, " [").unwrap();
+                    expr.generate_ebnf(w);
+                    write!(w, " ]").unwrap();
+                }
+                _ => {
+                    write!(w, " ").unwrap();
+                    if *min != 0 {
+                        write!(w, "{}", min).unwrap();
+                    }
+                    write!(w, "…").unwrap();
+                    if let Some(max) = max {
+                        write!(w, "{}", max).unwrap();
+                    }
+                    write!(w, "*{{").unwrap();
+                    expr.generate_ebnf(w);
+                    if let Some(separator) = separator {
+                        write!(w, " /").unwrap();
+                        separator.generate_ebnf(w);
+                    }
+                    write!(w, " }}").unwrap();
+                }
+            },
 
             EBNF::Not(expr) => {
                 write!(w, " ¬").unwrap();
@@ -113,13 +142,7 @@ impl Expression {
             EBNF::Terminal(string) => {
                 write!(w, " '").unwrap();
                 for c in string.chars() {
-                    if c == '\'' || c == '\\' {
-                        write!(w, "\\{}", c).unwrap();
-                    } else if c.is_ascii_graphic() || c == '¬' || c == '…' {
-                        write!(w, "{}", c).unwrap();
-                    } else {
-                        write!(w, "{}", c.escape_unicode().to_string()).unwrap();
-                    }
+                    write_char(w, c);
                 }
                 write!(w, "'").unwrap();
             }
@@ -135,17 +158,9 @@ impl Expression {
 
             EBNF::Range(EBNFRange { from, to }) => {
                 write!(w, " '").unwrap();
-                if from.is_ascii_graphic() || *from == '¬' || *from == '…' {
-                    write!(w, "{}", from).unwrap()
-                } else {
-                    write!(w, "{}", from.escape_unicode().to_string()).unwrap()
-                }
+                write_char(w, *from);
                 write!(w, "'…'").unwrap();
-                if to.is_ascii_graphic() || *to == '¬' || *to == '…' {
-                    write!(w, "{}", to).unwrap()
-                } else {
-                    write!(w, "{}", to.escape_unicode().to_string()).unwrap()
-                }
+                write_char(w, *to);
                 write!(w, "'").unwrap();
             }
         }
