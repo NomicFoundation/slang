@@ -11,6 +11,7 @@ convert_case = "0.5.0"
 indexmap = { version = "1.8.1", features = ["serde"] }
 proc-macro2 = "1.0.38"
 quote = "1.0.18"
+rustfmt = "0.10.0"
 semver = { version = "1.0.9", features = ["serde"] }
 serde = { version = "1.0.137", features = ["derive", "rc"] }
 serde_yaml = "0.8.24"
