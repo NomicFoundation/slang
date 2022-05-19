@@ -87,11 +87,16 @@ pub fn create_grammar_parser() -> impl Parser<char, Vec<Production>, Error = Sim
             just('\''),
             just('\\'),
             just("u{")
-                .ignore_then(hex_digit_parser.clone())
-                .chain(hex_digit_parser.clone().repeated())
-                .then_ignore(just('}'))
-                .map(map_hex_digits_to_char)
-                .unwrapped(),
+                .ignore_then(
+                    hex_digit_parser
+                        .clone()
+                        .repeated()
+                        .at_least(1)
+                        .at_most(6)
+                        .map(map_hex_digits_to_char)
+                        .unwrapped(),
+                )
+                .then_ignore(just('}')),
         ))),
     ));
     let raw_identifier_parser = identifier_start_parser

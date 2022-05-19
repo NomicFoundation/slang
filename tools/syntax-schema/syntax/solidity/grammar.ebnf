@@ -1,16 +1,3 @@
-Block = AssignmentStatement { AssignmentStatement } ;
+Block = 1…*{ AssignmentStatement } ;
 
-AssignmentStatement = Identifier EqualOperator LiteralExpression [ SemiColon ] ;
-
-RawIdentifier = 'a'…'z' { '_' | 'a'…'z' | 'A'…'Z' } ;
-
-Identifier = RawIdentifier - KnownKeyword ;
-
-EqualOperator = '=' ;
-
-SemiColon = ';' ;
-
-StringLiteral = '"' { ¬ '"' } '"' ;
-
-/* 0.0.0 */ ExponentiationExpression = BaseExpression ExponentiationOperator NextOperatorInPrecedence
-/* 0.8.0 */ ExponentiationExpression = NextOperatorInPrecedence ExponentiationOperator BaseExpression ;
+AssignmentStatement = Identifier EqualOperator 

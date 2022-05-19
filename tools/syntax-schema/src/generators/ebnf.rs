@@ -153,7 +153,11 @@ impl Expression {
             }
 
             EBNF::Reference(name) => {
-                write!(w, "{} ", grammar.get_production(name).unwrap().ebnf_name()).unwrap();
+                if let Some(production) = grammar.get_production(name) {
+                    write!(w, "{} ", production.ebnf_name()).unwrap();
+                } else {
+                    panic!("Cannot find {} production", name)
+                }
             }
 
             EBNF::Terminal(string) => {

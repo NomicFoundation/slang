@@ -1,6 +1,7 @@
 # yaml-language-server: $schema=../../schema/topic.schema.json
 
 - name: grammar
+  config: { nomap: true }
   sequence:
     - reference: IGNORE
     - zeroOrMore:
@@ -39,6 +40,7 @@
     - reference: primary
 
 - name: primary
+  config: { nomap: true }
   choice:
     - reference: productionReference
     - reference: grouped
@@ -52,6 +54,7 @@
   reference: Identifier
 
 - name: grouped
+  config: { nomap: true }
   sequence:
     - terminal: (
     - reference: expression
@@ -121,6 +124,7 @@
 
 - name: StringChar
   is_token: true
+  config: { nomap: true }
   choice:
     - not:
         choice:
@@ -137,10 +141,12 @@
                     min: 1
                     max: 6
                     reference: HexDigit
+                  config: { map: hex_digits_to_char, unwrap: true }
                 - terminal: "}"
 
 - name: SingleCharString
   is_token: true
+  config: { nomap: true }
   sequence:
     - terminal: "'"
     - reference: StringChar
@@ -148,6 +154,7 @@
 
 - name: HexDigit
   is_token: true
+  config: { nomap: true }
   choice:
     - range:
         from: "0"
@@ -174,9 +181,11 @@
     - reference: IdentifierStart
     - zeroOrMore:
         reference: IdentifierFollow
+  config: { chain: true }
 
 - name: IdentifierStart
   is_token: true
+  config: { nomap: true }
   choice:
     - terminal: _
     - range:
@@ -188,6 +197,7 @@
 
 - name: IdentifierFollow
   is_token: true
+  config: { nomap: true }
   choice:
     - reference: IdentifierStart
     - range:
@@ -196,14 +206,15 @@
 
 - name: IGNORE
   is_token: true
+  config: { ignore: true }
   zeroOrMore:
     choice:
       - reference: Whitespace
       - reference: Comment
-  config: { ignore: true }
 
 - name: Comment
   is_token: true
+  config: { ignore: true }
   sequence:
     - terminal: /*
     - zeroOrMore:
@@ -223,6 +234,7 @@
 
 - name: Whitespace
   is_token: true
+  config: { ignore: true }
   choice:
     - terminal: "\t"
     - terminal: "\n"

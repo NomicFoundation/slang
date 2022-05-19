@@ -1,5 +1,5 @@
 use std::{
-    collections::{BTreeMap, HashMap, HashSet},
+    collections::{BTreeMap, HashSet},
     fs,
     io::Write,
     path::PathBuf,
@@ -18,6 +18,14 @@ pub enum CharSetElement {
     Range(char, char),
 }
 
+impl Production {
+    fn single_expression(&self) -> Option<ExpressionRef> {
+        self.expr
+            .clone()
+            .or_else(|| self.versions.iter().last().map(|(_, e)| e.clone()))
+    }
+}
+
 pub fn generate(grammar: &Grammar, _output_path: &PathBuf) {
     // TODO: Oh, obviously not.
     // We need some config so say what productions to generate
@@ -31,44 +39,32 @@ pub fn generate(grammar: &Grammar, _output_path: &PathBuf) {
         .name
         .clone();
 
-    let productions_by_name = grammar
-        .productions
-        .iter()
-        .flat_map(|(_, p)| p)
-        .filter(|p| p.expr.is_some() || !p.versions.is_empty())
-        .map(|p| {
-            (
-                p.name.clone(),
-                // TODO: work out how we are going to generate
-                // parsers over versions
-                p.expr
-                    .clone()
-                    .unwrap_or_else(|| p.versions.iter().last().unwrap().1.clone()),
-            )
-        })
-        .collect::<HashMap<_, _>>();
-
     // DFS search for a topological ordering, with backlinks ignored
 
     fn visit_production(
-        productions_by_name: &HashMap<String, ExpressionRef>,
+        grammar: &Grammar,
         name: &String,
         ordering: &mut BTreeMap<String, usize>,
     ) -> usize {
         let mut order = 0;
         ordering.insert(name.clone(), 0);
-        if None == productions_by_name.get(name) {
-            println!("Couldn't find production: {}", name);
-        }
-        for child in productions_by_name[name].referenced_identifiers(&mut Default::default()) {
-            let child_order = if let Some(child_order) = ordering.get(&child) {
-                *child_order
+        if let Some(production) = grammar.get_production(name) {
+            if let Some(expr) = production.single_expression() {
+                for child in expr.referenced_identifiers(&mut Default::default()) {
+                    let child_order = if let Some(child_order) = ordering.get(&child) {
+                        *child_order
+                    } else {
+                        visit_production(grammar, &child, ordering)
+                    };
+                    if child_order > order {
+                        order = child_order;
+                    }
+                }
             } else {
-                visit_production(productions_by_name, &child, ordering)
-            };
-            if child_order > order {
-                order = child_order;
+                println!("Production {} has no expression(s)", name);
             }
+        } else {
+            println!("Couldn't find production: {}", name);
         }
         order += 1;
         ordering.insert(name.clone(), order);
@@ -76,7 +72,7 @@ pub fn generate(grammar: &Grammar, _output_path: &PathBuf) {
     }
 
     let mut ordering = BTreeMap::new();
-    visit_production(&productions_by_name, &root, &mut ordering);
+    visit_production(grammar, &root, &mut ordering);
 
     let mut decls = vec![];
 
@@ -84,9 +80,14 @@ pub fn generate(grammar: &Grammar, _output_path: &PathBuf) {
 
     let mut backlinked = HashSet::new();
     for (name, order) in &ordering {
-        for child in productions_by_name[name].referenced_identifiers(&mut Default::default()) {
-            if ordering[&child] >= *order {
-                backlinked.insert(child.clone());
+        if let Some(expr) = grammar
+            .get_production(name)
+            .and_then(|p| p.single_expression())
+        {
+            for child in expr.referenced_identifiers(&mut Default::default()) {
+                if ordering[&child] >= *order {
+                    backlinked.insert(child.clone());
+                }
             }
         }
     }
@@ -101,13 +102,20 @@ pub fn generate(grammar: &Grammar, _output_path: &PathBuf) {
     ordered_productions.sort_by(|a, b| (&ordering[a]).cmp(&ordering[b]));
     for name in ordered_productions {
         let id = format_ident!("{}_parser", name.to_case(Case::Snake));
-        let e = &productions_by_name[&name];
-        let expr = e.generate();
-        let suffixes = e.generate_expression_suffixes(Some(name.to_case(Case::Snake).to_owned()));
-        if backlinked.contains(&name) {
-            decls.push(quote!( #id.define(#expr #(#suffixes)*); ));
-        } else {
-            decls.push(quote!( let #id = #expr #(#suffixes)*; ));
+        if let Some(production) = grammar.get_production(&name) {
+            if let Some(e) = production.single_expression() {
+                let expr = e.generate(grammar, production);
+                let suffixes = e.generate_expression_suffixes(
+                    grammar,
+                    production,
+                    Some(name.to_case(Case::Snake).to_owned()),
+                );
+                if backlinked.contains(&name) {
+                    decls.push(quote!( #id.define(#expr #(#suffixes)*); ));
+                } else {
+                    decls.push(quote!( let #id = #expr #(#suffixes)*; ));
+                }
+            }
         }
     }
 
@@ -127,11 +135,16 @@ pub fn generate(grammar: &Grammar, _output_path: &PathBuf) {
 }
 
 impl Expression {
-    fn generate_expression_suffixes(&self, default_map: Option<String>) -> Vec<TokenStream> {
+    fn generate_expression_suffixes(
+        &self,
+        grammar: &Grammar,
+        production: &Production,
+        default_map: Option<String>,
+    ) -> Vec<TokenStream> {
         let mut suffixes = vec![];
 
         if let Some(expr) = &self.config.lookahead {
-            let lookahead = expr.generate();
+            let lookahead = expr.generate(grammar, production);
             suffixes.push(quote!( .then_ignore(#lookahead.rewind()) ))
         }
 
@@ -155,15 +168,19 @@ impl Expression {
         suffixes
     }
 
-    fn is_ignorable_in_sequence(&self) -> bool {
+    fn is_ignorable_in_sequence(&self, grammar: &Grammar) -> bool {
         match &self.ebnf {
             EBNF::End { .. } | EBNF::Terminal { .. } => true,
-            // Expression::Identifier { name, .. } => config.production(name).ignore(),
+            EBNF::Reference(name) => grammar
+                .get_production(name)
+                .and_then(|p| p.single_expression())
+                .map(|e| e.config.ignore)
+                .unwrap_or_default(),
             _ => false,
         }
     }
 
-    fn generate(&self) -> TokenStream {
+    fn generate(&self, grammar: &Grammar, production: &Production) -> TokenStream {
         match &self.ebnf {
             EBNF::End => quote!(end()),
             EBNF::Not(expr) => {
@@ -174,62 +191,41 @@ impl Expression {
             }
             EBNF::Repeat(EBNFRepeat {
                 min: 0,
-                max: None,
-                expr,
-                separator,
-            }) => {
-                let expr = expr.generate();
-                if let Some(separator) = separator {
-                    let separator = separator.generate();
-                    quote!( #expr.separated_by(#separator) )
-                } else {
-                    quote!( #expr.repeated() )
-                }
-            }
-            EBNF::Repeat(EBNFRepeat {
-                min,
-                max: None,
-                expr,
-                separator,
-            }) => {
-                let expr = expr.generate();
-                if let Some(separator) = separator {
-                    let separator = separator.generate();
-                    quote!( #expr.separated_by(#separator).at_least(#min) )
-                } else {
-                    quote!( #expr.repeated().at_least(#min) )
-                }
-            }
-            EBNF::Repeat(EBNFRepeat {
-                min: 0,
                 max: Some(1),
                 expr,
-                ..
+                separator: None,
             }) => {
-                let expr = expr.generate();
+                let expr = expr.generate(grammar, production);
                 quote!( #expr.or_not() )
             }
             EBNF::Repeat(EBNFRepeat {
-                min: 0,
-                max: Some(_max),
-                ..
+                min,
+                max,
+                expr,
+                separator,
             }) => {
-                // TODO: handle max
-                todo!("Handle upper bound on repeat")
-            }
-            EBNF::Repeat(EBNFRepeat {
-                min: _min,
-                max: Some(_max),
-                ..
-            }) => {
-                todo!("Handle upper bound on repeat")
+                let expr = expr.generate(grammar, production);
+                let separator = separator.clone().map_or_else(
+                    || quote!( .repeated() ),
+                    |s| {
+                        let s = s.generate(grammar, production);
+                        quote!( .separated_by(#s) )
+                    },
+                );
+                let min = if *min == 0 {
+                    quote!()
+                } else {
+                    quote!( .at_least(#min) )
+                };
+                let max = max.map_or_else(|| quote!(), |m| quote!( .at_most(#m) ));
+                quote!( #expr #separator #min #max )
             }
             EBNF::Choice(exprs) => {
                 let choices = exprs
                     .iter()
                     .map(|e| {
-                        let expr = e.generate();
-                        let suffixes = e.generate_expression_suffixes(None);
+                        let expr = e.generate(grammar, production);
+                        let suffixes = e.generate_expression_suffixes(grammar, production, None);
                         quote!( #expr #(#suffixes)* )
                     })
                     .collect::<Vec<_>>();
@@ -242,13 +238,14 @@ impl Expression {
                     .iter()
                     .enumerate()
                     .map(|(i, e)| {
-                        let expr = e.generate();
-                        let suffixes = e.generate_expression_suffixes(None);
+                        let expr = e.generate(grammar, production);
+                        let suffixes = e.generate_expression_suffixes(grammar, production, None);
                         if i > 0 {
-                            if !seen_unignorable_content && exprs[i - 1].is_ignorable_in_sequence()
+                            if !seen_unignorable_content
+                                && exprs[i - 1].is_ignorable_in_sequence(grammar)
                             {
                                 quote!( .ignore_then(#expr #(#suffixes)*) )
-                            } else if e.is_ignorable_in_sequence() {
+                            } else if e.is_ignorable_in_sequence(grammar) {
                                 seen_unignorable_content = true;
                                 quote!( .then_ignore(#expr #(#suffixes)*) )
                             } else {
@@ -260,7 +257,7 @@ impl Expression {
                                 }
                             }
                         } else {
-                            seen_unignorable_content = !e.is_ignorable_in_sequence();
+                            seen_unignorable_content = !e.is_ignorable_in_sequence(grammar);
                             quote!( #expr #(#suffixes)* )
                         }
                     })
