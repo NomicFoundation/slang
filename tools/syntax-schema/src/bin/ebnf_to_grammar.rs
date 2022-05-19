@@ -35,7 +35,6 @@ fn main() {
 
 pub fn create_grammar_parser() -> impl Parser<char, Vec<Production>, Error = Simple<char>> {
     let mut expression_parser = Recursive::declare();
-    let any_parser = just('.').map(map_any);
     let comment_parser = just("/*")
         .ignored()
         .ignore_then(
@@ -95,10 +94,17 @@ pub fn create_grammar_parser() -> impl Parser<char, Vec<Production>, Error = Sim
                 .unwrapped(),
         ))),
     ));
-    let identifier_parser = identifier_start_parser
+    let raw_identifier_parser = identifier_start_parser
         .clone()
         .chain(identifier_follow_parser.clone().repeated())
         .map(map_identifier);
+    let identifier_parser = choice((
+        raw_identifier_parser.map(|i| (i, false)),
+        just('«')
+            .ignore_then(raw_identifier_parser)
+            .then_ignore(just('»'))
+            .map(|i| (i, true)),
+    ));
     let single_char_string_parser = just('\'')
         .ignore_then(string_char_parser.clone())
         .then_ignore(just('\''));
@@ -132,14 +138,13 @@ pub fn create_grammar_parser() -> impl Parser<char, Vec<Production>, Error = Sim
         .map(map_char_range);
     let production_reference_parser = identifier_parser.clone().map(map_production_reference);
     let primary_parser = choice((
-        eof_parser.clone(),
-        any_parser.clone(),
-        char_range_parser.clone(),
-        string_parser.clone(),
         production_reference_parser.clone(),
         grouped_parser.clone(),
         optional_parser.clone(),
         repeated_parser.clone(),
+        char_range_parser.clone(),
+        string_parser.clone(),
+        eof_parser.clone(),
     ));
     let negation_parser = just("¬")
         .ignore_then(s_parser.clone())
@@ -204,9 +209,10 @@ fn ref_from_ebnf(ebnf: EBNF) -> ExpressionRef {
     })
 }
 
-fn map_production((name, ebnf): (String, EBNF)) -> Production {
+fn map_production(((name, is_token), ebnf): ((String, bool), EBNF)) -> Production {
     Production {
         name,
+        is_token,
         title: None,
         expr: Some(ref_from_ebnf(ebnf)),
         versions: Default::default(),
@@ -215,10 +221,6 @@ fn map_production((name, ebnf): (String, EBNF)) -> Production {
 
 fn map_eof(_: char) -> EBNF {
     EBNF::End
-}
-
-fn map_any(_: char) -> EBNF {
-    EBNF::Any
 }
 
 fn map_string(chars: Vec<char>) -> EBNF {
@@ -289,7 +291,7 @@ fn map_repeated(ebnf: EBNF) -> EBNF {
     })
 }
 
-fn map_production_reference(name: String) -> EBNF {
+fn map_production_reference((name, _): (String, bool)) -> EBNF {
     EBNF::Reference(name)
 }
 

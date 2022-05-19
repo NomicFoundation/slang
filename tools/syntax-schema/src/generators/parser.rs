@@ -166,7 +166,6 @@ impl Expression {
     fn generate(&self) -> TokenStream {
         match &self.ebnf {
             EBNF::End => quote!(end()),
-            EBNF::Any => quote!(todo()),
             EBNF::Not(expr) => {
                 if let Some(char_set_elements) = expr.as_char_set_elements() {
                     return generate_char_set(&char_set_elements, true);
@@ -281,14 +280,14 @@ impl Expression {
                 quote!( #id.clone() )
             }
             EBNF::Difference(EBNFDifference {
-                minuend,
-                subtrahend,
+                minuend: _minuend,
+                subtrahend: _subtrahend,
             }) => {
-                if minuend.is_any() {
-                    if let Some(char_set_elements) = subtrahend.as_char_set_elements() {
-                        return generate_char_set(&char_set_elements, true);
-                    }
-                }
+                // if minuend.is_any() {
+                //     if let Some(char_set_elements) = subtrahend.as_char_set_elements() {
+                //         return generate_char_set(&char_set_elements, true);
+                //     }
+                // }
                 quote!(todo())
             }
             EBNF::Range(EBNFRange { from, to }) => {
@@ -326,17 +325,10 @@ impl Expression {
             EBNF::Reference(name) => {
                 accum.insert(name.clone());
             }
-            EBNF::End | EBNF::Any | EBNF::Terminal(_) | EBNF::Range(_) => (),
+            EBNF::End | EBNF::Terminal(_) | EBNF::Range(_) => (),
         };
 
         accum.clone()
-    }
-
-    fn is_any(&self) -> bool {
-        match &self.ebnf {
-            EBNF::Any => true,
-            _ => false,
-        }
     }
 
     fn as_char_set_elements(&self) -> Option<Vec<CharSetElement>> {

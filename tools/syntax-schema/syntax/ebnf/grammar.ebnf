@@ -1,47 +1,53 @@
-grammar = { S production } S $ ;
+grammar = «IGNORE» { production } $ ;
 
-production = Identifier S '=' S expression S ';' ;
+production = «Identifier» '=' expression ';' ;
 
-expression = sequence { S '|' S sequence } ;
+expression = 1…*{ sequence / '|' } ;
 
-sequence = difference { S difference } ;
+sequence = 1…*{ difference } ;
 
-difference = negation [ S '-' S negation ] ;
+difference = negation [ '-' negation ] ;
 
-negation = [ '¬' S ] primary ;
+negation = [ '¬' ] primary ;
 
-primary = EOF | Any | CharRange | String | productionReference | grouped | optional | repeated ;
+primary = productionReference | grouped | optional | repeated | charRange | «EOF» | «String» ;
 
-productionReference = Identifier ;
+productionReference = «Identifier» ;
 
-grouped = '(' S expression S ')' ;
+grouped = '(' expression ')' ;
 
-optional = '[' S expression S ']' ;
+repetitionPrefix = ( «Number» [ '…' [ «Number» ] ] | '…' [ «Number» ] ) '*' ;
 
-repeated = '{' S expression S '}' ;
+repetitionSeparator = '/' expression ;
 
-EOF = '$' ;
+repeated = [ repetitionPrefix ] '{' expression [ repetitionSeparator ] '}' ;
 
-Any = '.' ;
+optional = '[' expression ']' ;
 
-String = '\'' { StringChar } '\'' ;
+charRange = «SingleCharString» '…' «SingleCharString» ;
 
-StringChar = ¬ ( '\'' | '\\' ) | '\\' ( '\'' | '\\' | 'u{' HexDigit { HexDigit } '}' ) ;
+«EOF» = '$' ;
 
-CharRange = SingleCharString S '…' S SingleCharString ;
+«Number» = 1…*{ '0'…'9' } ;
 
-SingleCharString = '\'' StringChar '\'' ;
+«String» = '\'' { «StringChar» } '\'' ;
 
-HexDigit = '0'…'9' | 'a'…'f' | 'A'…'F' ;
+«StringChar» = ¬( '\'' | '\\' ) | '\\' ( '\'' | '\\' | 'u{' 1…6*{ «HexDigit» } '}' ) ;
 
-Identifier = IdentifierStart { IdentifierFollow } ;
+«SingleCharString» = '\'' «StringChar» '\'' ;
 
-IdentifierStart = '_' | 'a'…'z' | 'A'…'Z' ;
+«HexDigit» = '0'…'9' | 'a'…'f' | 'A'…'F' ;
 
-IdentifierFollow = IdentifierStart | '0'…'9' ;
+«Identifier» = '«' «RawIdentifier» '»' | «RawIdentifier» ;
 
-S = { Whitespace | Comment } ;
+«RawIdentifier» = «IdentifierStart» { «IdentifierFollow» } ;
 
-Comment = '/*' { ¬ '*' | '*' { '*' } ¬ ( '*' | '/' ) } '*' { '*' } '/' ;
+«IdentifierStart» = '_' | 'a'…'z' | 'A'…'Z' ;
 
-Whitespace = '\u{9}' | '\u{a}' | '\u{d}' | '\u{20}' ;
+«IdentifierFollow» = «IdentifierStart» | '0'…'9' ;
+
+«IGNORE» = { «Whitespace» | «Comment» } ;
+
+«Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } 1…*{ '*' } '/' ;
+
+«Whitespace» = '\u{9}' | '\u{a}' | '\u{d}' | '\u{20}' ;

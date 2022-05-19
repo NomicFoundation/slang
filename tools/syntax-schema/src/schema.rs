@@ -14,6 +14,17 @@ pub struct Grammar {
     pub productions: IndexMap<String, Vec<Production>>,
 }
 
+impl Grammar {
+    pub fn get_production(&self, name: &str) -> Option<&Production> {
+        for (_, v) in &self.productions {
+            if let p @ Some(_) = v.iter().find(|p| p.name == name) {
+                return p;
+            }
+        }
+        return None;
+    }
+}
+
 #[derive(Deserialize, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct Manifest {
@@ -39,6 +50,8 @@ pub struct Topic {
 #[serde(deny_unknown_fields)]
 pub struct Production {
     pub name: String,
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub is_token: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
 
@@ -68,7 +81,6 @@ impl Serialize for Expression {
             // These two are ugly - serde has no way of emitting a map entry with
             // no value, which is valid in YAML. So these end up as e.g. `end: ~`
             EBNF::End => state.serialize_entry("end", &Value::Null),
-            EBNF::Any => state.serialize_entry("any", &Value::Null),
 
             EBNF::Repeat(EBNFRepeat {
                 min: min @ 0,
@@ -133,7 +145,6 @@ impl<'de> Deserialize<'de> for Expression {
         enum Field {
             Config,
             End,
-            Any,
             ZeroOrMore,
             OneOrMore,
             Repeat,
@@ -170,7 +181,6 @@ impl<'de> Deserialize<'de> for Expression {
                             }
                         }
                         Field::End
-                        | Field::Any
                         | Field::ZeroOrMore
                         | Field::OneOrMore
                         | Field::Repeat
@@ -190,7 +200,6 @@ impl<'de> Deserialize<'de> for Expression {
                     match key {
                         Field::Config => config = Some(map.next_value()?),
                         Field::End => ebnf = Some(EBNF::End),
-                        Field::Any => ebnf = Some(EBNF::Any),
                         Field::ZeroOrMore | Field::OneOrMore | Field::Optional => {
                             #[derive(Deserialize)]
                             #[serde(deny_unknown_fields)]
@@ -231,7 +240,6 @@ impl<'de> Deserialize<'de> for Expression {
         const FIELDS: &'static [&'static str] = &[
             "config",
             "end",
-            "any",
             "zeroOrMore",
             "oneOrMore",
             "repeat",
@@ -278,7 +286,6 @@ pub struct EBNFRepeat {
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum EBNF {
     End,
-    Any,
     Repeat(EBNFRepeat),
     Not(ExpressionRef),
     Choice(Vec<ExpressionRef>),

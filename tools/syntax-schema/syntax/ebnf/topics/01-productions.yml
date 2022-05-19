@@ -2,133 +2,125 @@
 
 - name: grammar
   sequence:
-    - reference: S
+    - reference: IGNORE
     - zeroOrMore:
         reference: production
-        separator:
-          reference: S
-    - reference: S
     - end: ~
+
 - name: production
   sequence:
     - reference: Identifier
-    - reference: S
     - terminal: "="
-    - reference: S
     - reference: expression
-    - reference: S
     - terminal: ;
+
 - name: expression
   oneOrMore:
     reference: sequence
     separator:
-      sequence:
-        - reference: S
-        - terminal: "|"
-        - reference: S
+      terminal: "|"
+
 - name: sequence
   oneOrMore:
     reference: difference
-    separator:
-      reference: S
+
 - name: difference
   sequence:
     - reference: negation
     - optional:
         sequence:
-          - reference: S
           - terminal: "-"
-          - reference: S
           - reference: negation
+
 - name: negation
   sequence:
     - optional:
-        sequence:
-          - terminal: ¬
-          - reference: S
+        terminal: ¬
     - reference: primary
+
 - name: primary
   choice:
-    - reference: EOF
-    - reference: Any
-    - reference: CharRange
-    - reference: String
     - reference: productionReference
     - reference: grouped
     - reference: optional
     - reference: repeated
+    - reference: charRange
+    - reference: EOF
+    - reference: String
+
 - name: productionReference
   reference: Identifier
+
 - name: grouped
   sequence:
     - terminal: (
-    - reference: S
     - reference: expression
-    - reference: S
     - terminal: )
+
 - name: repetitionPrefix
   sequence:
     - choice:
         - sequence:
-            - reference: number
-            - reference: S
+            - reference: Number
             - optional:
                 sequence:
-                  - terminal: '…'
-                  - reference: S
+                  - terminal: "…"
                   - optional:
-                      sequence:
-                        - reference: number
-                        - reference: S
+                      reference: Number
         - sequence:
-            - terminal: '…'
-            - reference: S
+            - terminal: "…"
             - optional:
-                sequence:
-                  - reference: number
-                  - reference: S
-    - terminal: '*'
+                reference: Number
+    - terminal: "*"
+
 - name: repetitionSeparator
   sequence:
-    - terminal: '/'
-    - reference: S
+    - terminal: "/"
     - reference: expression
+
 - name: repeated
   sequence:
     - optional:
-        sequence: 
-          - reference: repetitionPrefix
-          - reference: S
+        reference: repetitionPrefix
     - terminal: "{"
-    - reference: S
     - reference: expression
-    - reference: S
     - optional:
-        sequence:
-          - reference: repetitionSeparator
-          - reference: S
+        reference: repetitionSeparator
     - terminal: "}"
-- name: number
-  oneOrMore:
-    range: { from: '0', to: '9'}
+
 - name: optional
   sequence:
     - terminal: "["
-    - reference: S
     - reference: expression
-    - reference: S
     - terminal: "]"
+
+- name: charRange
+  sequence:
+    - reference: SingleCharString
+    - terminal: …
+    - reference: SingleCharString
+
+# Tokens
+
 - name: EOF
+  is_token: true
   terminal: $
-- name: Any
-  terminal: "."
+
+- name: Number
+  is_token: true
+  oneOrMore:
+    range: { from: "0", to: "9" }
+
 - name: String
+  is_token: true
   sequence:
     - terminal: "'"
     - zeroOrMore:
         reference: StringChar
     - terminal: "'"
+
 - name: StringChar
+  is_token: true
   choice:
     - not:
         choice:
@@ -146,19 +138,16 @@
                     max: 6
                     reference: HexDigit
                 - terminal: "}"
-- name: CharRange
-  sequence:
-    - reference: SingleCharString
-    - reference: S
-    - terminal: …
-    - reference: S
-    - reference: SingleCharString
+
 - name: SingleCharString
+  is_token: true
   sequence:
     - terminal: "'"
     - reference: StringChar
     - terminal: "'"
+
 - name: HexDigit
+  is_token: true
   choice:
     - range:
         from: "0"
@@ -169,12 +158,25 @@
     - range:
         from: A
         to: F
+
 - name: Identifier
+  is_token: true
+  choice:
+    - sequence:
+        - terminal: «
+        - reference: RawIdentifier
+        - terminal: »
+    - reference: RawIdentifier
+
+- name: RawIdentifier
+  is_token: true
   sequence:
     - reference: IdentifierStart
     - zeroOrMore:
         reference: IdentifierFollow
+
 - name: IdentifierStart
+  is_token: true
   choice:
     - terminal: _
     - range:
@@ -183,19 +185,25 @@
     - range:
         from: A
         to: Z
+
 - name: IdentifierFollow
+  is_token: true
   choice:
     - reference: IdentifierStart
     - range:
         from: "0"
         to: "9"
-- name: S
+
+- name: IGNORE
+  is_token: true
   zeroOrMore:
     choice:
       - reference: Whitespace
       - reference: Comment
   config: { ignore: true }
+
 - name: Comment
+  is_token: true
   sequence:
     - terminal: /*
     - zeroOrMore:
@@ -212,7 +220,9 @@
     - oneOrMore:
         terminal: "*"
     - terminal: /
+
 - name: Whitespace
+  is_token: true
   choice:
     - terminal: "\t"
     - terminal: "\n"

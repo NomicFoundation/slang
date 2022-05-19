@@ -20,7 +20,6 @@
       },
       "oneOf": [
         { "$ref": "#/$defs/Versions" },
-        { "$ref": "#/$defs/Any" },
         { "$ref": "#/$defs/Choice" },
         { "$ref": "#/$defs/Difference" },
         { "$ref": "#/$defs/End" },
@@ -65,7 +64,6 @@
         "config": { "$ref": "#/$defs/Config" }
       },
       "oneOf": [
-        { "$ref": "#/$defs/Any" },
         { "$ref": "#/$defs/Choice" },
         { "$ref": "#/$defs/Difference" },
         { "$ref": "#/$defs/End" },
@@ -79,13 +77,6 @@
         { "$ref": "#/$defs/ZeroOrMore" },
         { "$ref": "#/$defs/Repeat" }
       ]
-    },
-    "Any": {
-      "type": "object",
-      "required": ["any"],
-      "properties": {
-        "any": { "type": "null" }
-      }
     },
     "Choice": {
       "type": "object",
@@ -183,7 +174,6 @@
             "separator": { "$ref": "#/$defs/Expression" }
           },
           "oneOf": [
-            { "$ref": "#/$defs/Any" },
             { "$ref": "#/$defs/Choice" },
             { "$ref": "#/$defs/Difference" },
             { "$ref": "#/$defs/End" },
@@ -211,7 +201,6 @@
             "separator": { "$ref": "#/$defs/Expression" }
           },
           "oneOf": [
-            { "$ref": "#/$defs/Any" },
             { "$ref": "#/$defs/Choice" },
             { "$ref": "#/$defs/Difference" },
             { "$ref": "#/$defs/End" },
@@ -241,7 +230,6 @@
             "separator": { "$ref": "#/$defs/Expression" }
           },
           "oneOf": [
-            { "$ref": "#/$defs/Any" },
             { "$ref": "#/$defs/Choice" },
             { "$ref": "#/$defs/Difference" },
             { "$ref": "#/$defs/End" },
