@@ -50,8 +50,10 @@ selectingImportDirective
 selectedImport
     = identifier [ 'as' identifier ] ;
 
+/* Constraint: strings are non-empty */
+/* Q: is this ascii or unicode? */
 importPath
-    = NonEmptyStringLiteral ;
+    = asciiStringLiteral ;
 
 /* Q: is there a semantic difference between first set of alternatives? */
 usingDirective
@@ -216,7 +218,7 @@ expression
     | 'type' '(' typeName ')' /* MetaType */
     | ( '++' | '--' | '!' | '~' | 'delete' | '-' ) expression /* UnaryPrefixOperation */
     | expression ( '++' | '--' ) /* UnarySuffixOperation */
-    | <assoc=right> expression '**' expression /* ExpOperation */
+    | /* assoc=right */ expression '**' expression /* ExpOperation */
     | expression ( '*' | '/' | '%' ) expression /* MulDivModOperation */
     | expression ( '+' | '-' ) expression /* AddSubOperation */
     | expression ( '<<' | '>>' | '>>>' ) expression /* ShiftOperation */
@@ -227,8 +229,8 @@ expression
     | expression ( '==' | '!=' ) expression /* EqualityComparison */
     | expression '&&' expression /* AndOperation */
     | expression '||' expression /* OrOperation */
-    | <assoc=right> expression '?' expression ':' expression /* Conditional */
-    | <assoc=right> expression ( '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ) expression /* Assignment */
+    | /* assoc=right */ expression '?' expression ':' expression /* Conditional */
+    | /* assoc=right */ expression ( '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ) expression /* Assignment */
     | 'new' typeName /* NewExpression */
     | tupleExpression /* Tuple */
     | inlineArrayExpression /* InlineArray */
@@ -249,7 +251,7 @@ literal
     = asciiStringLiteral
     | unicodeStringLiteral
     | numericLiteral
-    | hexStringLiteral
+    | «HexStringLiteral»
     | «BooleanLiteral»
     ;
 
@@ -399,7 +401,7 @@ reservedKeyword
     ;
 
 «UnsignedIntegerType»
-    = 'u' «SignedIntegerType»
+    = 'u' «SignedIntegerType» ;
 
 «FixedBytes»
     = 'bytes'
@@ -415,7 +417,7 @@ reservedKeyword
     = 'fixed' [ '1'…'9' { '0'…'9' } 'x' '1'…'9' { '0'…'9' } ] ;
 
 «Ufixed»
-    = 'u' «Fixed»
+    = 'u' «Fixed» ;
 
 «BooleanLiteral»
     = 'true' | 'false' ;
@@ -454,9 +456,9 @@ reservedKeyword
 «UnicodeStringLiteral»
     = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral» ;
 «SingleQuotedUnicodeStringLiteral»
-    = 'unicode\'' { ¬ ( '\'' | '\\' | '\u{A}' | '\u{D}' ) | «EscapeSequence» } '\'' ;
+    = 'unicode\'' { ¬( '\'' | '\\' | '\u{A}' | '\u{D}' ) | «EscapeSequence» } '\'' ;
 «DoubleQuotedUnicodeStringLiteral»
-    = 'unicode"' { ¬ ( '"' | '\\' | '\u{A}' | '\u{D}' ) | «EscapeSequence» } '"' ;
+    = 'unicode"' { ¬( '"' | '\\' | '\u{A}' | '\u{D}' ) | «EscapeSequence» } '"' ;
 
 «EscapeSequence»
     = '\\' ( «AsciiEscape» | «HexByteEscape» | «UnicodeEscape» ) ;
@@ -493,7 +495,7 @@ yulVariableDeclaration
     = 'let' yulIdentifier [ ':=' yulExpression | [ ',' yulIdentifier ] [ ':=' yulFunctionCall ] ] ;
 
 yulFunctionDefinition
-    = 'function' yulIdentifier '(' { yulIdentifier / ',' } ')' [ '->' 1…*{ yulIdentifier / ',' } yulBlock ;
+    = 'function' yulIdentifier '(' { yulIdentifier / ',' } ')' [ '->' 1…*{ yulIdentifier / ',' } ] yulBlock ;
 
 yulAssignment
     = yulPath ( ':=' yulExpression | 1…*{ ',' yulPath } ':=' yulFunctionCall ) ;
@@ -531,7 +533,7 @@ yulPath
 yulLiteral
      = «YulDecimalNumberLiteral»
      | «YulHexLiteral»
-     | StringLiteral
+     | asciiStringLiteral
      | «BooleanLiteral»
      | «HexStringLiteral»
      ;
