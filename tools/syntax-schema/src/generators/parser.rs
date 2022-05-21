@@ -18,120 +18,136 @@ pub enum CharSetElement {
     Range(char, char),
 }
 
+impl Grammar {
+    pub fn generate_parsers(&self, output_path: &PathBuf) {
+        let mut preludes = vec![];
+        let mut parsers = vec![];
+        self.productions.iter().flat_map(|(_, p)| p).for_each(|p| {
+            if let Some(expr) = p.single_expression() {
+                if let Some(prelude) = expr.config.prelude.clone() {
+                    preludes.push(prelude);
+                    parsers.push(p.generate_parser(self).to_string())
+                }
+            }
+        });
+
+        fs::write(
+            output_path,
+            rustfmt(format!(
+                "use chumsky::{{prelude::*, Parser}};\n\n{}\n\n{}",
+                preludes.join("\n\n"),
+                parsers.join("\n\n")
+            )),
+        )
+        .expect("Unable to write to parser file");
+    }
+}
+
 impl Production {
     fn single_expression(&self) -> Option<ExpressionRef> {
         self.expr
             .clone()
             .or_else(|| self.versions.iter().last().map(|(_, e)| e.clone()))
     }
-}
 
-pub fn generate(grammar: &Grammar, _output_path: &PathBuf) {
-    // TODO: Oh, obviously not.
-    // We need some config so say what productions to generate
-    // parse entry points for.
-    let root = grammar
-        .productions
-        .iter()
-        .flat_map(|(_, p)| p)
-        .next()
-        .unwrap()
-        .name
-        .clone();
+    fn generate_parser(&self, grammar: &Grammar) -> TokenStream {
+        let root = self.name.clone();
 
-    // DFS search for a topological ordering, with backlinks ignored
+        // DFS search for a topological ordering, with backlinks ignored
 
-    fn visit_production(
-        grammar: &Grammar,
-        name: &String,
-        ordering: &mut BTreeMap<String, usize>,
-    ) -> usize {
-        let mut order = 0;
-        ordering.insert(name.clone(), 0);
-        if let Some(production) = grammar.get_production(name) {
-            if let Some(expr) = production.single_expression() {
-                for child in expr.referenced_identifiers(&mut Default::default()) {
-                    let child_order = if let Some(child_order) = ordering.get(&child) {
-                        *child_order
-                    } else {
-                        visit_production(grammar, &child, ordering)
-                    };
-                    if child_order > order {
-                        order = child_order;
+        fn visit_production(
+            grammar: &Grammar,
+            name: &String,
+            ordering: &mut BTreeMap<String, usize>,
+        ) -> usize {
+            let mut order = 0;
+            ordering.insert(name.clone(), 0);
+            if let Some(production) = grammar.get_production(name) {
+                if let Some(expr) = production.single_expression() {
+                    for child in
+                        expr.referenced_identifiers(grammar, production, &mut Default::default())
+                    {
+                        let child_order = if let Some(child_order) = ordering.get(&child) {
+                            *child_order
+                        } else {
+                            visit_production(grammar, &child, ordering)
+                        };
+                        if child_order > order {
+                            order = child_order;
+                        }
                     }
+                } else {
+                    println!("Production {} has no expression(s)", name);
                 }
             } else {
-                println!("Production {} has no expression(s)", name);
+                println!("Couldn't find production: {}", name);
             }
-        } else {
-            println!("Couldn't find production: {}", name);
+            order += 1;
+            ordering.insert(name.clone(), order);
+            order
         }
-        order += 1;
-        ordering.insert(name.clone(), order);
-        order
-    }
 
-    let mut ordering = BTreeMap::new();
-    visit_production(grammar, &root, &mut ordering);
+        let mut ordering = BTreeMap::new();
+        visit_production(grammar, &root, &mut ordering);
 
-    let mut decls = vec![];
+        let mut decls = vec![];
 
-    // Detect and declare each backlinked (recursively-referenced) production
+        // Detect and declare each backlinked (recursively-referenced) production
 
-    let mut backlinked = HashSet::new();
-    for (name, order) in &ordering {
-        if let Some(expr) = grammar
-            .get_production(name)
-            .and_then(|p| p.single_expression())
-        {
-            for child in expr.referenced_identifiers(&mut Default::default()) {
-                if ordering[&child] >= *order {
-                    backlinked.insert(child.clone());
+        let mut backlinked = HashSet::new();
+        for (name, order) in &ordering {
+            if let Some(production) = grammar.get_production(name) {
+                if let Some(expr) = production.single_expression() {
+                    for child in
+                        expr.referenced_identifiers(grammar, production, &mut Default::default())
+                    {
+                        if ordering[&child] >= *order {
+                            backlinked.insert(child.clone());
+                        }
+                    }
                 }
             }
         }
-    }
-    for name in &backlinked {
-        let id = format_ident!("{}_parser", name.to_case(Case::Snake));
-        decls.push(quote!( let mut #id = Recursive::declare(); ));
-    }
+        for name in &backlinked {
+            let id = format_ident!("{}_parser", name.to_case(Case::Snake));
+            decls.push(quote!( let mut #id = Recursive::declare(); ));
+        }
 
-    // Define each production
+        // Define each production
 
-    let mut ordered_productions = ordering.keys().cloned().collect::<Vec<String>>();
-    ordered_productions.sort_by(|a, b| (&ordering[a]).cmp(&ordering[b]));
-    for name in ordered_productions {
-        let id = format_ident!("{}_parser", name.to_case(Case::Snake));
-        if let Some(production) = grammar.get_production(&name) {
-            if let Some(e) = production.single_expression() {
-                let expr = e.generate(grammar, production);
-                let suffixes = e.generate_expression_suffixes(
-                    grammar,
-                    production,
-                    Some(name.to_case(Case::Snake).to_owned()),
-                );
-                if backlinked.contains(&name) {
-                    decls.push(quote!( #id.define(#expr #(#suffixes)*); ));
-                } else {
-                    decls.push(quote!( let #id = #expr #(#suffixes)*; ));
+        let mut ordered_productions = ordering.keys().cloned().collect::<Vec<String>>();
+        ordered_productions.sort_by(|a, b| (&ordering[a]).cmp(&ordering[b]));
+        for name in ordered_productions {
+            let id = format_ident!("{}_parser", name.to_case(Case::Snake));
+            if let Some(production) = grammar.get_production(&name) {
+                if let Some(e) = production.single_expression() {
+                    let expr = e.generate(grammar, production);
+                    let suffixes = e.generate_expression_suffixes(
+                        grammar,
+                        production,
+                        Some(name.to_case(Case::Snake).to_owned()),
+                    );
+                    if backlinked.contains(&name) {
+                        decls.push(quote!( #id.define(#expr #(#suffixes)*); ));
+                    } else {
+                        decls.push(quote!( let #id = #expr #(#suffixes)*; ));
+                    }
                 }
             }
         }
+
+        // Create the parser function
+
+        let root_id = format_ident!("{}_parser", root.to_case(Case::Snake));
+        let function_name = format_ident!("create_{}_parser", root.to_case(Case::Snake));
+        let result_type_name = format_ident!("{}ParserResultType", root.to_case(Case::UpperCamel));
+        quote!(
+            pub fn #function_name() -> impl Parser<char, #result_type_name, Error = Simple<char>> {
+                #(#decls)*
+                #root_id.recover_with(skip_then_retry_until([]))
+            }
+        )
     }
-
-    // Create the parser function
-
-    let root_id = format_ident!("{}_parser", root.to_case(Case::Snake));
-    let function_name = format_ident!("create_{}_parser", root.to_case(Case::Snake));
-    let result_type_name = format_ident!("{}ParserResultType", root.to_case(Case::UpperCamel));
-    let code = quote!(
-        pub fn #function_name() -> impl Parser<char, #result_type_name, Error = Simple<char>> {
-            #(#decls)*
-            #root_id.recover_with(skip_then_retry_until([]))
-        }
-    );
-
-    fs::write(_output_path, rustfmt(code.to_string())).expect("Unable to write to parser file");
 }
 
 impl Expression {
@@ -265,16 +281,31 @@ impl Expression {
                 quote!( #(#exprs)* )
             }
             EBNF::Terminal(string) => {
-                if string.len() == 1 {
-                    let c = string.chars().next().unwrap();
-                    quote!( just(#c) )
+                let ignore = if production.is_token {
+                    quote!()
                 } else {
-                    quote!( just(#string) )
+                    quote!( .then_ignore(ignore_parser.clone()) )
+                };
+                if string.chars().count() == 1 {
+                    let c = string.chars().next().unwrap();
+                    quote!( just(#c) #ignore )
+                } else {
+                    quote!( just(#string) #ignore )
                 }
             }
             EBNF::Reference(name) => {
+                let ignore = if !production.is_token
+                    && grammar
+                        .get_production(name)
+                        .map(|p| p.is_token)
+                        .unwrap_or_default()
+                {
+                    quote!( .then_ignore(ignore_parser.clone()))
+                } else {
+                    quote!()
+                };
                 let id = format_ident!("{}_parser", name.to_case(Case::Snake));
-                quote!( #id.clone() )
+                quote!( #id.clone() #ignore )
             }
             EBNF::Difference(EBNFDifference {
                 minuend: _minuend,
@@ -294,35 +325,53 @@ impl Expression {
         }
     }
 
-    fn referenced_identifiers(&self, accum: &mut HashSet<String>) -> HashSet<String> {
+    fn referenced_identifiers(
+        &self,
+        grammar: &Grammar,
+        production: &Production,
+        accum: &mut HashSet<String>,
+    ) -> HashSet<String> {
         match &self.ebnf {
             EBNF::Choice(exprs) | EBNF::Sequence(exprs) => {
                 exprs.iter().for_each(|p| {
-                    p.referenced_identifiers(accum);
+                    p.referenced_identifiers(grammar, production, accum);
                 });
             }
             EBNF::Not(expr) => {
-                expr.referenced_identifiers(accum);
+                expr.referenced_identifiers(grammar, production, accum);
             }
             EBNF::Repeat(EBNFRepeat {
                 expr, separator, ..
             }) => {
-                expr.referenced_identifiers(accum);
+                expr.referenced_identifiers(grammar, production, accum);
                 if let Some(separator) = separator {
-                    separator.referenced_identifiers(accum);
+                    separator.referenced_identifiers(grammar, production, accum);
                 }
             }
             EBNF::Difference(EBNFDifference {
                 minuend,
                 subtrahend,
             }) => {
-                minuend.referenced_identifiers(accum);
-                subtrahend.referenced_identifiers(accum);
+                minuend.referenced_identifiers(grammar, production, accum);
+                subtrahend.referenced_identifiers(grammar, production, accum);
+            }
+            EBNF::Terminal(_) => {
+                if !production.is_token {
+                    accum.insert("IGNORE".to_owned());
+                }
             }
             EBNF::Reference(name) => {
+                if !production.is_token
+                    && grammar
+                        .get_production(name)
+                        .map(|p| p.is_token)
+                        .unwrap_or_default()
+                {
+                    accum.insert("IGNORE".to_owned());
+                }
                 accum.insert(name.clone());
             }
-            EBNF::End | EBNF::Terminal(_) | EBNF::Range(_) => (),
+            EBNF::End | EBNF::Range(_) => (),
         };
 
         accum.clone()

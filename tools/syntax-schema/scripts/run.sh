@@ -28,7 +28,7 @@ PROJECT_DIR=$(dirname "$THIS_DIR")
 
   cargo run --bin manifest_to_parser -- \
     --manifest-path "$PROJECT_DIR/syntax/ebnf/manifest.yml" \
-    --parser-output "$PROJECT_DIR/syntax/ebnf/parser.rs"
+    --parser-output "$PROJECT_DIR/src/parser.rs"
 )
 
 (

@@ -1,3 +1,24 @@
 Block = 1…*{ AssignmentStatement } ;
 
-AssignmentStatement = Identifier EqualOperator 
+AssignmentStatement = Identifier EqualOperator [ SemiColon ] ;
+
+RawIdentifier = 'a'…'z' { '_' | 'a'…'z' | 'A'…'Z' } ;
+
+Identifier = RawIdentifier - KnownKeyword ;
+
+KnownKeyword = 'known' ;
+
+EqualOperator = '=' ;
+
+SemiColon = ';' ;
+
+StringLiteral = '"' { ¬'"' } '"' ;
+
+/* 0.0.0 */ ExponentiationExpression = «BaseExpression» «ExponentiationOperator» «NextOperatorInPrecedence» 
+/* 0.8.0 */ ExponentiationExpression = «NextOperatorInPrecedence» «ExponentiationOperator» «BaseExpression» ;
+
+«ExponentiationOperator» = '**' ;
+
+«BaseExpression» = 'base' ;
+
+«NextOperatorInPrecedence» = 'next' ;

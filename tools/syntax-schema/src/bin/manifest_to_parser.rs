@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use clap::Parser;
 
-use syntax_schema::{generators, schema, validation};
+use syntax_schema::{schema, validation};
 
 #[derive(Parser, Debug)]
 struct ProgramArgs {
@@ -23,5 +23,5 @@ fn main() {
     validation::validate(&grammar);
 
     println!(" => Generating Parser");
-    generators::parser::generate(&grammar, &PathBuf::from(args.parser_output));
+    grammar.generate_parsers(&PathBuf::from(args.parser_output));
 }

@@ -313,6 +313,8 @@ pub struct ExpressionConfig {
     pub chain: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub lookahead: Option<ExpressionRef>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub prelude: Option<String>,
 }
 
 impl ExpressionConfig {
@@ -335,6 +337,7 @@ impl Default for ExpressionConfig {
             unwrap: false,
             chain: false,
             lookahead: None,
+            prelude: None,
         }
     }
 }

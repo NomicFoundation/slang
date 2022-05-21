@@ -42,7 +42,8 @@
         "unwrap": { "type": "boolean", "default": true },
         "chain": { "type": "boolean", "default": true },
         "map": { "type": "string", "minLength": 1 },
-        "lookahead": { "$ref": "#/$defs/Expression" }
+        "lookahead": { "$ref": "#/$defs/Expression" },
+        "prelude": { "type": "string" }
       }
     },
     "Versions": {

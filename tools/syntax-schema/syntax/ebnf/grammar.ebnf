@@ -16,7 +16,7 @@ productionReference = «Identifier» ;
 
 grouped = '(' expression ')' ;
 
-repetitionPrefix = ( «Number» [ '…' [ «Number» ] ] | '…' [ «Number» ] ) '*' ;
+repetitionPrefix = ( «Number» [ '…' [ «Number» ] ] | '…' «Number» ) '*' ;
 
 repetitionSeparator = '/' expression ;
 
