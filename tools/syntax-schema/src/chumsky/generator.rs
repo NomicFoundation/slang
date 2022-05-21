@@ -325,11 +325,11 @@ impl ChumskyExpression for Expression {
         } else {
             if !self.config.nomap {
                 if let Some(map) = &self.config.map {
-                    let id = format_ident!("map_{}", map);
-                    suffixes.push(quote!( .map(#id) ))
+                    let id = format_ident!("{}", map);
+                    suffixes.push(quote!( .map(builder::#id) ))
                 } else if let Some(map) = default_map {
-                    let id = format_ident!("map_{}", map);
-                    suffixes.push(quote!( .map(#id) ))
+                    let id = format_ident!("{}", map);
+                    suffixes.push(quote!( .map(builder::#id) ))
                 }
             }
             if self.config.unwrap {
