@@ -1,6 +1,6 @@
 use chumsky::{prelude::*, Parser};
 
-use crate::builder::*;
+use super::builder::*;
 use crate::schema::Production;
 pub type GrammarParserResultType = Vec<Production>;
 

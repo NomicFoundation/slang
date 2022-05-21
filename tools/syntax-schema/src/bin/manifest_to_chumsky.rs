@@ -2,26 +2,26 @@ use std::path::PathBuf;
 
 use clap::Parser;
 
-use syntax_schema::{schema, validation};
+use syntax_schema::schema::Grammar;
 
 #[derive(Parser, Debug)]
 struct ProgramArgs {
     #[clap(long)]
-    manifest_path: String,
+    manifest_input: String,
 
     #[clap(long)]
-    parser_output: String,
+    chumsky_output: String,
 }
 
 fn main() {
     let args = ProgramArgs::parse();
 
     println!(" => Loading Manifest");
-    let grammar = schema::load_grammar(&PathBuf::from(args.manifest_path));
+    let grammar = Grammar::from_manifest(&PathBuf::from(args.manifest_input));
 
     println!(" => Validating Grammar");
-    validation::validate(&grammar);
+    grammar.validate();
 
     println!(" => Generating Parser");
-    grammar.generate_parsers(&PathBuf::from(args.parser_output));
+    grammar.generate_chumsky(&PathBuf::from(args.chumsky_output));
 }

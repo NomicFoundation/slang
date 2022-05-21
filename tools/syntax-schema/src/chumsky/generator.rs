@@ -19,14 +19,14 @@ pub enum CharSetElement {
 }
 
 impl Grammar {
-    pub fn generate_parsers(&self, output_path: &PathBuf) {
+    pub fn generate_chumsky(&self, output_path: &PathBuf) {
         let mut preludes = vec![];
         let mut parsers = vec![];
         self.productions.iter().flat_map(|(_, p)| p).for_each(|p| {
             if let Some(expr) = p.single_expression() {
                 if let Some(prelude) = expr.config.prelude.clone() {
                     preludes.push(prelude);
-                    parsers.push(p.generate_parser(self).to_string())
+                    parsers.push(p.generate(self).to_string())
                 }
             }
         });
@@ -43,14 +43,13 @@ impl Grammar {
     }
 }
 
-impl Production {
-    fn single_expression(&self) -> Option<ExpressionRef> {
-        self.expr
-            .clone()
-            .or_else(|| self.versions.iter().last().map(|(_, e)| e.clone()))
-    }
+trait ChumskyProduction {
+    fn generate(&self, grammar: &Grammar) -> TokenStream;
+    fn single_expression(&self) -> Option<ExpressionRef>;
+}
 
-    fn generate_parser(&self, grammar: &Grammar) -> TokenStream {
+impl ChumskyProduction for Production {
+    fn generate(&self, grammar: &Grammar) -> TokenStream {
         let root = self.name.clone();
 
         // DFS search for a topological ordering, with backlinks ignored
@@ -122,7 +121,7 @@ impl Production {
             if let Some(production) = grammar.get_production(&name) {
                 if let Some(e) = production.single_expression() {
                     let expr = e.generate(grammar, production);
-                    let suffixes = e.generate_expression_suffixes(
+                    let suffixes = e.generate_suffixes(
                         grammar,
                         production,
                         Some(name.to_case(Case::Snake).to_owned()),
@@ -148,54 +147,37 @@ impl Production {
             }
         )
     }
+
+    fn single_expression(&self) -> Option<ExpressionRef> {
+        self.expr
+            .clone()
+            .or_else(|| self.versions.iter().last().map(|(_, e)| e.clone()))
+    }
 }
 
-impl Expression {
-    fn generate_expression_suffixes(
+trait ChumskyExpression {
+    fn generate(&self, grammar: &Grammar, production: &Production) -> TokenStream;
+
+    fn generate_suffixes(
         &self,
         grammar: &Grammar,
         production: &Production,
         default_map: Option<String>,
-    ) -> Vec<TokenStream> {
-        let mut suffixes = vec![];
+    ) -> Vec<TokenStream>;
 
-        if let Some(expr) = &self.config.lookahead {
-            let lookahead = expr.generate(grammar, production);
-            suffixes.push(quote!( .then_ignore(#lookahead.rewind()) ))
-        }
+    fn as_char_set_elements(&self) -> Option<Vec<CharSetElement>>;
 
-        if self.config.ignore {
-            suffixes.push(quote!( .ignored() ))
-        } else {
-            if !self.config.nomap {
-                if let Some(map) = &self.config.map {
-                    let id = format_ident!("map_{}", map);
-                    suffixes.push(quote!( .map(#id) ))
-                } else if let Some(map) = default_map {
-                    let id = format_ident!("map_{}", map);
-                    suffixes.push(quote!( .map(#id) ))
-                }
-            }
-            if self.config.unwrap {
-                suffixes.push(quote!( .unwrapped() ))
-            }
-        }
+    fn is_ignorable_in_sequence(&self, grammar: &Grammar) -> bool;
 
-        suffixes
-    }
+    fn referenced_identifiers(
+        &self,
+        grammar: &Grammar,
+        production: &Production,
+        accum: &mut HashSet<String>,
+    ) -> HashSet<String>;
+}
 
-    fn is_ignorable_in_sequence(&self, grammar: &Grammar) -> bool {
-        match &self.ebnf {
-            EBNF::End { .. } | EBNF::Terminal { .. } => true,
-            EBNF::Reference(name) => grammar
-                .get_production(name)
-                .and_then(|p| p.single_expression())
-                .map(|e| e.config.ignore)
-                .unwrap_or_default(),
-            _ => false,
-        }
-    }
-
+impl ChumskyExpression for Expression {
     fn generate(&self, grammar: &Grammar, production: &Production) -> TokenStream {
         match &self.ebnf {
             EBNF::End => quote!(end()),
@@ -241,7 +223,7 @@ impl Expression {
                     .iter()
                     .map(|e| {
                         let expr = e.generate(grammar, production);
-                        let suffixes = e.generate_expression_suffixes(grammar, production, None);
+                        let suffixes = e.generate_suffixes(grammar, production, None);
                         quote!( #expr #(#suffixes)* )
                     })
                     .collect::<Vec<_>>();
@@ -255,7 +237,7 @@ impl Expression {
                     .enumerate()
                     .map(|(i, e)| {
                         let expr = e.generate(grammar, production);
-                        let suffixes = e.generate_expression_suffixes(grammar, production, None);
+                        let suffixes = e.generate_suffixes(grammar, production, None);
                         if i > 0 {
                             if !seen_unignorable_content
                                 && exprs[i - 1].is_ignorable_in_sequence(grammar)
@@ -325,6 +307,75 @@ impl Expression {
         }
     }
 
+    fn generate_suffixes(
+        &self,
+        grammar: &Grammar,
+        production: &Production,
+        default_map: Option<String>,
+    ) -> Vec<TokenStream> {
+        let mut suffixes = vec![];
+
+        if let Some(expr) = &self.config.lookahead {
+            let lookahead = expr.generate(grammar, production);
+            suffixes.push(quote!( .then_ignore(#lookahead.rewind()) ))
+        }
+
+        if self.config.ignore {
+            suffixes.push(quote!( .ignored() ))
+        } else {
+            if !self.config.nomap {
+                if let Some(map) = &self.config.map {
+                    let id = format_ident!("map_{}", map);
+                    suffixes.push(quote!( .map(#id) ))
+                } else if let Some(map) = default_map {
+                    let id = format_ident!("map_{}", map);
+                    suffixes.push(quote!( .map(#id) ))
+                }
+            }
+            if self.config.unwrap {
+                suffixes.push(quote!( .unwrapped() ))
+            }
+        }
+
+        suffixes
+    }
+
+    fn as_char_set_elements(&self) -> Option<Vec<CharSetElement>> {
+        match &self.ebnf {
+            EBNF::Choice(exprs) => {
+                let elements = exprs
+                    .iter()
+                    .map(|e| e.as_char_set_elements())
+                    .collect::<Vec<_>>();
+                if elements.iter().all(|e| e.is_some()) {
+                    Some(elements.into_iter().map(|e| e.unwrap()).flatten().collect())
+                } else {
+                    None
+                }
+            }
+            EBNF::Terminal(string) => {
+                if string.len() == 1 {
+                    Some(vec![CharSetElement::Char(string.chars().next().unwrap())])
+                } else {
+                    None
+                }
+            }
+            _ => None,
+        }
+    }
+
+    fn is_ignorable_in_sequence(&self, grammar: &Grammar) -> bool {
+        match &self.ebnf {
+            EBNF::End { .. } | EBNF::Terminal { .. } => true,
+            EBNF::Reference(name) => grammar
+                .get_production(name)
+                .and_then(|p| p.single_expression())
+                .map(|e| e.config.ignore)
+                .unwrap_or_default(),
+            _ => false,
+        }
+    }
+
     fn referenced_identifiers(
         &self,
         grammar: &Grammar,
@@ -375,30 +426,6 @@ impl Expression {
         };
 
         accum.clone()
-    }
-
-    fn as_char_set_elements(&self) -> Option<Vec<CharSetElement>> {
-        match &self.ebnf {
-            EBNF::Choice(exprs) => {
-                let elements = exprs
-                    .iter()
-                    .map(|e| e.as_char_set_elements())
-                    .collect::<Vec<_>>();
-                if elements.iter().all(|e| e.is_some()) {
-                    Some(elements.into_iter().map(|e| e.unwrap()).flatten().collect())
-                } else {
-                    None
-                }
-            }
-            EBNF::Terminal(string) => {
-                if string.len() == 1 {
-                    Some(vec![CharSetElement::Char(string.chars().next().unwrap())])
-                } else {
-                    None
-                }
-            }
-            _ => None,
-        }
     }
 }
 

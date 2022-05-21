@@ -4,8 +4,41 @@ use std::path::PathBuf;
 
 use crate::schema::*;
 
-impl Production {
-    fn ebnf_name(&self) -> String {
+impl Grammar {
+    pub fn generate_ebnf(&self, output_path: &PathBuf) {
+        let mut w = File::create(output_path).expect("Unable to create file");
+
+        let mut first = true;
+        for p in self.productions.iter().flat_map(|(_, p)| p) {
+            if let Some(expr) = &p.expr {
+                if first {
+                    first = false;
+                } else {
+                    writeln!(w).unwrap();
+                }
+                write!(w, "{} = ", p.print_name()).unwrap();
+                expr.generate(self, &mut w);
+            }
+            for (version, expr) in &p.versions {
+                if first {
+                    first = false;
+                } else {
+                    writeln!(w).unwrap();
+                }
+                write!(w, "/* {} */ {} = ", version, p.print_name()).unwrap();
+                expr.generate(self, &mut w);
+            }
+            writeln!(w, ";").unwrap();
+        }
+    }
+}
+
+trait EBNFProduction {
+    fn print_name(&self) -> String;
+}
+
+impl EBNFProduction for Production {
+    fn print_name(&self) -> String {
         if self.is_token {
             format!("«{}»", self.name)
         } else {
@@ -14,35 +47,16 @@ impl Production {
     }
 }
 
-pub fn generate(grammar: &Grammar, output_path: &PathBuf) {
-    let mut w = File::create(output_path).expect("Unable to create file");
+trait EBNFExpression {
+    fn generate<T: Write>(&self, grammar: &Grammar, w: &mut T);
 
-    let mut first = true;
-    for p in grammar.productions.iter().flat_map(|(_, p)| p) {
-        if let Some(expr) = &p.expr {
-            if first {
-                first = false;
-            } else {
-                writeln!(w).unwrap();
-            }
-            write!(w, "{} = ", p.ebnf_name()).unwrap();
-            expr.generate_ebnf(grammar, &mut w);
-        }
-        for (version, expr) in &p.versions {
-            if first {
-                first = false;
-            } else {
-                writeln!(w).unwrap();
-            }
-            write!(w, "/* {} */ {} = ", version, p.ebnf_name()).unwrap();
-            expr.generate_ebnf(grammar, &mut w);
-        }
-        writeln!(w, ";").unwrap();
-    }
+    fn generate_subexpression<T: Write>(&self, grammar: &Grammar, w: &mut T, expr: &ExpressionRef);
+
+    fn precedence(&self) -> u8;
 }
 
-impl Expression {
-    fn precedence_ebnf(&self) -> u8 {
+impl EBNFExpression for Expression {
+    fn precedence(&self) -> u8 {
         match self.ebnf {
             EBNF::End
             | EBNF::Repeat(..)
@@ -56,22 +70,17 @@ impl Expression {
         }
     }
 
-    fn generate_ebnf_subexpression<T: Write>(
-        &self,
-        grammar: &Grammar,
-        w: &mut T,
-        expr: &ExpressionRef,
-    ) {
-        if self.precedence_ebnf() < expr.precedence_ebnf() {
+    fn generate_subexpression<T: Write>(&self, grammar: &Grammar, w: &mut T, expr: &ExpressionRef) {
+        if self.precedence() < expr.precedence() {
             write!(w, "( ").unwrap();
-            expr.generate_ebnf(grammar, w);
+            expr.generate(grammar, w);
             write!(w, ") ").unwrap();
         } else {
-            expr.generate_ebnf(grammar, w);
+            expr.generate(grammar, w);
         }
     }
 
-    fn generate_ebnf<T: Write>(&self, grammar: &Grammar, w: &mut T) {
+    fn generate<T: Write>(&self, grammar: &Grammar, w: &mut T) {
         fn write_char<T: Write>(w: &mut T, c: char) {
             if c == '\'' || c == '\\' {
                 write!(w, "\\{}", c).unwrap();
@@ -99,16 +108,16 @@ impl Expression {
             }) => match (min, max) {
                 (0, None) => {
                     write!(w, "{{ ").unwrap();
-                    expr.generate_ebnf(grammar, w);
+                    expr.generate(grammar, w);
                     if let Some(separator) = separator {
                         write!(w, "/ ").unwrap();
-                        separator.generate_ebnf(grammar, w);
+                        separator.generate(grammar, w);
                     }
                     write!(w, "}} ").unwrap();
                 }
                 (0, Some(1)) => {
                     write!(w, "[ ").unwrap();
-                    expr.generate_ebnf(grammar, w);
+                    expr.generate(grammar, w);
                     write!(w, "] ").unwrap();
                 }
                 _ => {
@@ -120,10 +129,10 @@ impl Expression {
                         write!(w, "{}", max).unwrap();
                     }
                     write!(w, "*{{ ").unwrap();
-                    expr.generate_ebnf(grammar, w);
+                    expr.generate(grammar, w);
                     if let Some(separator) = separator {
                         write!(w, "/ ").unwrap();
-                        separator.generate_ebnf(grammar, w);
+                        separator.generate(grammar, w);
                     }
                     write!(w, "}} ").unwrap();
                 }
@@ -131,7 +140,7 @@ impl Expression {
 
             EBNF::Not(expr) => {
                 write!(w, "¬").unwrap();
-                self.generate_ebnf_subexpression(grammar, w, expr);
+                self.generate_subexpression(grammar, w, expr);
             }
 
             EBNF::Choice(exprs) => {
@@ -142,19 +151,19 @@ impl Expression {
                     } else {
                         write!(w, "| ").unwrap();
                     }
-                    self.generate_ebnf_subexpression(grammar, w, expr);
+                    self.generate_subexpression(grammar, w, expr);
                 }
             }
 
             EBNF::Sequence(exprs) => {
                 for expr in exprs {
-                    self.generate_ebnf_subexpression(grammar, w, expr);
+                    self.generate_subexpression(grammar, w, expr);
                 }
             }
 
             EBNF::Reference(name) => {
                 if let Some(production) = grammar.get_production(name) {
-                    write!(w, "{} ", production.ebnf_name()).unwrap();
+                    write!(w, "{} ", production.print_name()).unwrap();
                 } else {
                     panic!("Cannot find {} production", name)
                 }
@@ -172,9 +181,9 @@ impl Expression {
                 minuend,
                 subtrahend,
             }) => {
-                self.generate_ebnf_subexpression(grammar, w, minuend);
+                self.generate_subexpression(grammar, w, minuend);
                 write!(w, "- ").unwrap();
-                self.generate_ebnf_subexpression(grammar, w, subtrahend);
+                self.generate_subexpression(grammar, w, subtrahend);
             }
 
             EBNF::Range(EBNFRange { from, to }) => {

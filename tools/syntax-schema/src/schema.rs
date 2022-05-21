@@ -342,28 +342,31 @@ impl Default for ExpressionConfig {
     }
 }
 
-pub fn load_grammar(manifest_path: &PathBuf) -> Grammar {
-    let contents = std::fs::read(manifest_path).unwrap();
-    let manifest_path_str = &manifest_path.to_str().unwrap();
-    let manifest: Manifest = serde_yaml::from_slice(&contents).expect(manifest_path_str);
+impl Grammar {
+    pub fn from_manifest(manifest_path: &PathBuf) -> Self {
+        let contents = std::fs::read(manifest_path).unwrap();
+        let manifest_path_str = &manifest_path.to_str().unwrap();
+        let manifest: Manifest = serde_yaml::from_slice(&contents).expect(manifest_path_str);
 
-    let topics: IndexMap<String, Vec<Production>> = manifest
-        .sections
-        .iter()
-        .flat_map(|section| &section.topics)
-        .map(|topic| {
-            let topic_path = manifest_path.parent().unwrap().join(&topic.definition);
-            let topic_path_str = topic_path.to_str().unwrap();
+        let topics: IndexMap<String, Vec<Production>> = manifest
+            .sections
+            .iter()
+            .flat_map(|section| &section.topics)
+            .map(|topic| {
+                let topic_path = manifest_path.parent().unwrap().join(&topic.definition);
+                let topic_path_str = topic_path.to_str().unwrap();
 
-            let contents = std::fs::read(&topic_path).expect(topic_path_str);
-            let rules: Vec<Production> = serde_yaml::from_slice(&contents).expect(topic_path_str);
+                let contents = std::fs::read(&topic_path).expect(topic_path_str);
+                let rules: Vec<Production> =
+                    serde_yaml::from_slice(&contents).expect(topic_path_str);
 
-            return (topic.definition.clone(), rules);
-        })
-        .collect();
+                return (topic.definition.clone(), rules);
+            })
+            .collect();
 
-    return Grammar {
-        manifest,
-        productions: topics,
-    };
+        return Grammar {
+            manifest,
+            productions: topics,
+        };
+    }
 }
