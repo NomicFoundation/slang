@@ -1,45 +1,54 @@
-S = { WS | COMMENT | LINE_COMMENT } ;
+/*******************************************
+  Noise
+*******************************************/
 
-/* TODO: specify natspec sublanguage here */
+«IGNORE» = { «Whitespace» | «Comment» | «LineComment» } ;
+
+«Whitespace» = '\u{20}' | '\u{9}' | '\u{D}' | '\u{A}' | '\u{C}' ;
+«Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } 1…*{ '*' } '/' ;
+«LineComment» = '//' { ¬( '\u{A}' | '\u{D}' ) } ;
+
+/* TODO: specify natspec sublanguage */
+
+
+/*******************************************
+  Solidity
+*******************************************/
 
 sourceUnit
     = { directive | definition } $ ;
 
 directive
-    = pragmaDirective
-      | importDirective
-      | usingDirective ;
+    = «pragmaDirective»
+    | importDirective
+    | usingDirective ;
 
 definition
     = contractDefinition
-      | interfaceDefinition
-      | libraryDefinition
-      | functionDefinition
-      | constantDefinition
-      | structDefinition
-      | enumDefinition
-      | userDefinedValueTypeDefinition
-      | errorDefinition ;
-
-pragmaDirective
-    = 'pragma' ¬ ';' { ¬ ';' } ';' ;
-
-/* TODO: specify pragma sublanguage here */
+    | interfaceDefinition
+    | libraryDefinition
+    | functionDefinition
+    | constantDefinition
+    | structDefinition
+    | enumDefinition
+    | userDefinedValueTypeDefinition
+    | errorDefinition
+    ;
 
 importDirective
     = 'import' ( simpleImportDirective | starImportDirective | selectingImportDirective ) ';' ;
 
 simpleImportDirective
-    = importPath { 'as' identifier } ;
+    = importPath { 'as' «identifier» } ;
 
 starImportDirective
-    = '*' 'as' identifier 'from' importPath ;
+    = '*' 'as' «identifier» 'from' importPath ;
 
 selectingImportDirective
     = '{' selectedImport { ',' selectedImport } '}' 'from' importPath ;
 
 selectedImport
-    = identifier [ 'as' identifier ] ;
+    = «identifier» [ 'as' «identifier» ] ;
 
 importPath
     = NonEmptyStringLiteral ;
@@ -49,10 +58,10 @@ usingDirective
     = 'using' ( identifierPath | '{' identifierPath { ',' identifierPath } '}' ) 'for' ( '*' | typeName ) [ 'global' ] ';' ;
 
 contractDefinition
-    = [ 'abstract' ] 'contract' identifier [ inheritanceSpecifierList ] '{' { contractBodyElement } '}' ;
+    = [ 'abstract' ] 'contract' «identifier» [ inheritanceSpecifierList ] '{' { contractBodyElement } '}' ;
 
 interfaceDefinition
-    = 'interface' identifier [ inheritanceSpecifierList ] '{' { contractBodyElement } '}' ;
+    = 'interface' «identifier» [ inheritanceSpecifierList ] '{' { contractBodyElement } '}' ;
 
 inheritanceSpecifierList
     = 'is' inheritanceSpecifier { ',' inheritanceSpecifier } ;
@@ -61,51 +70,52 @@ inheritanceSpecifier
     = identifierPath [ argumentList ] ;
 
 libraryDefinition
-    = 'library' identifier '{' { contractBodyElement } '}' ;
+    = 'library' «identifier» '{' { contractBodyElement } '}' ;
 
 functionDefinition
-    = 'function' ( identifier | 'fallback' | 'receive' ) parameterList { functionAttribute } [ 'returns' nonEmptyParameterList ] ( ';' | block ) ;
+    = 'function' ( «identifier» | 'fallback' | 'receive' ) parameterList { functionAttribute } [ 'returns' nonEmptyParameterList ] ( ';' | block ) ;
 
 functionAttribute
     = visibilitySpecifier | stateMutabilitySpecifier | modifierInvocation | 'virtual' | overrideSpecifier ;
 
 constantDefinition
-    = typeName 'constant' identifier '=' expression ';' ;
+    = typeName 'constant' «identifier» '=' expression ';' ;
 
 structDefinition
-    = 'struct' identifier '{' typeName idenfitier ';' { typeName identifier ';' } '}' ;
+    = 'struct' «identifier» '{' typeName idenfitier ';' { typeName «identifier» ';' } '}' ;
 
 enumDefinition
-    = 'enum' identifier '{' identifier { ',' identifier } '}' ;
+    = 'enum' «identifier» '{' «identifier» { ',' «identifier» } '}' ;
 
 userDefinedValueTypeDefinition
-    = 'type' identifier 'is' elementaryType ';' ;
+    = 'type' «identifier» 'is' elementaryType ';' ;
 
 eventDefinition
-    = 'event' identifier '(' [ eventParameter { ',' eventParameter } ] ')' [ 'anonymous' ] ';' ;
+    = 'event' «identifier» '(' [ eventParameter { ',' eventParameter } ] ')' [ 'anonymous' ] ';' ;
 
 eventParameter
-    = typeName [ 'indexed' ] [ identifier ] ;
+    = typeName [ 'indexed' ] [ «identifier» ] ;
 
 errorDefinition
-    = 'error' identifier '(' [ errorParameter { ',' errorParameter } ] ')' ';' ;
+    = 'error' «identifier» '(' [ errorParameter { ',' errorParameter } ] ')' ';' ;
 
 errorParameter
-    = typeName [ identifier ] ;
+    = typeName [ «identifier» ] ;
 
 contractBodyElement
     = usingDirective
-      | constructorDefinition
-      | functionDefinition
-      | fallbackFunctionDefinition
-      | receiveFunctionDefinition
-      | modifierDefinition
-      | structDefinition
-      | enumDefinition
-      | userDefinedValueTypeDefinition
-      | eventDefinition
-      | errorDefinition
-      | stateVariableDeclaration ;
+    | constructorDefinition
+    | functionDefinition
+    | fallbackFunctionDefinition
+    | receiveFunctionDefinition
+    | modifierDefinition
+    | structDefinition
+    | enumDefinition
+    | userDefinedValueTypeDefinition
+    | eventDefinition
+    | errorDefinition
+    | stateVariableDeclaration
+    ;
 
 constructorDefinition
     = 'constructor' parameterList { constructorAttribute } block ;
@@ -123,12 +133,12 @@ receiveFunctionAttribute
     = 'external' | 'payable' | modifierInvocation | 'virtual' | overrideSpecifier ;
 
 modifierDefinition
-    = 'modifier' identifier [ parameterList ] { methodAttribute } ( ';' | block ) ;
+    = 'modifier' «identifier» [ parameterList ] { methodAttribute } ( ';' | block ) ;
 methodAttribute
     = 'virtual' | overrideSpecifier ;
 
 stateVariableDeclaration
-    = typeName { stateVariableAttribute } identifier [ '=' expression ] ';' ;
+    = typeName { stateVariableAttribute } «identifier» [ '=' expression ] ';' ;
 stateVariableAttribute
     = 'public' | 'private' | 'internal' | 'constant' | overrideSpecifier | 'immutable' ;
 
@@ -139,7 +149,7 @@ positionalArgumentList
 namedArgumentList
     = '{' [ namedArgument { ',' namedArgument } ] '}' ;
 namedArgument
-    = identifier ':' expression ;
+    = «identifier» ':' expression ;
 
 modifierInvocation
     = identifierPath [ argumentList ] ;
@@ -149,64 +159,41 @@ parameterList
 nonEmptyParameterList
     = '(' parameterDeclaration { ',' parameterDeclaration } ')' ;
 parameterDeclaration
-    = typeName [ dataLocation ] [ identifier ] ;
+    = typeName [ dataLocation ] [ «identifier» ] ;
 
 visibilitySpecifier
     = 'internal'
-      | 'external'
-      | 'private'
-      | 'public' ;
+    | 'external'
+    | 'private'
+    | 'public'
+    ;
 
 stateMutabilitySpecifier
     = 'pure'
-      | 'view'
-      | 'payable' ;
+    | 'view'
+    | 'payable'
+    ;
 
 overrideSpecifier
     = 'override' ['(' identifierPath { ',' identifierPath } ')'] ;
 
 identifierPath
-    = identifier { '.' identifier } ;
+    = «identifier» { '.' «identifier» } ;
 
 typeName
     = ( elementaryType | functionType | mappingType | identifierPath ) { '[' [ expression ] ']' } ;
 
 elementaryType
     = 'address' [ 'payable' ]
-      | 'bool'
-      | 'string'
-      | 'bytes'
-      | SignedIntegerType
-      | UnsignedIntegerType
-      | FixedBytes
-      | Fixed
-      | Ufixed ;
-
-SignedIntegerType
-    = 'int'
-      | 'int8' | 'int16' | 'int24' | 'int32' | 'int40' | 'int48' | 'int56' | 'int64'
-      | 'int72' | 'int80' | 'int88' | 'int96' | 'int104' | 'int112' | 'int120' | 'int128'
-      | 'int136' | 'int144' | 'int152' | 'int160' | 'int168' | 'int176' | 'int184' | 'int192'
-      | 'int200' | 'int208' | 'int216' | 'int224' | 'int232' | 'int240' | 'int248' | 'int256' ;
-
-UnsignedIntegerType
-    = 'uint'
-      | 'uint8' | 'uint16' | 'uint24' | 'uint32' | 'uint40' | 'uint48' | 'uint56' | 'uint64'
-      | 'uint72' | 'uint80' | 'uint88' | 'uint96' | 'uint104' | 'uint112' | 'uint120' | 'uint128'
-      | 'uint136' | 'uint144' | 'uint152' | 'uint160' | 'uint168' | 'uint176' | 'uint184' | 'uint192'
-      | 'uint200' | 'uint208' | 'uint216' | 'uint224' | 'uint232' | 'uint240' | 'uint248' | 'uint256' ;
-
-FixedBytes
-    = 'bytes1' | 'bytes2' | 'bytes3' | 'bytes4' | 'bytes5' | 'bytes6' | 'bytes7' | 'bytes8'
-      | 'bytes9' | 'bytes10' | 'bytes11' | 'bytes12' | 'bytes13' | 'bytes14' | 'bytes15' | 'bytes16'
-      | 'bytes17' | 'bytes18' | 'bytes19' | 'bytes20' | 'bytes21' | 'bytes22' | 'bytes23' | 'bytes24'
-      | 'bytes25' | 'bytes26' | 'bytes27' | 'bytes28' | 'bytes29' | 'bytes30' | 'bytes31' | 'bytes32' ;
-
-Fixed
-    = 'fixed' [ '1'…'9' { '0'…'9' } 'x' '1'…'9' { '0'…'9' } ] ;
-
-Ufixed
-    = 'ufixed' [ '1'…'9' { '0'…'9' } 'x' '1'…'9' { '0'…'9' } ] ;
+    | 'bool'
+    | 'string'
+    | 'bytes'
+    | «SignedIntegerType»
+    | «UnsignedIntegerType»
+    | «FixedBytes»
+    | «Fixed»
+    | «Ufixed»
+    ;
 
 functionType
     = 'function' parameterList { visibilitySpecifier | stateMutabilitySpecifier } [ 'returns' nonEmptyParameterList ] ;
@@ -218,77 +205,41 @@ mappingKeyType
 
 dataLocation
     = 'memory'
-      | 'storage'
-      | 'calldata' ;
-
-/*
-expression:
-	expression LBrack index=expression? RBrack # IndexAccess
-	| expression LBrack start=expression? Colon end=expression? RBrack # IndexRangeAccess
-	| expression Period (identifier | Address) # MemberAccess
-	| expression LBrace (namedArgument (Comma namedArgument)*)? RBrace # FunctionCallOptions
-	| expression callArgumentList # FunctionCall
-	| Payable callArgumentList # PayableConversion
-	| Type LParen typeName RParen # MetaType
-	| (Inc | Dec | Not | BitNot | Delete | Sub) expression # UnaryPrefixOperation
-	| expression (Inc | Dec) # UnarySuffixOperation
-	|<assoc=right> expression Exp expression # ExpOperation
-	| expression (Mul | Div | Mod) expression # MulDivModOperation
-	| expression (Add | Sub) expression # AddSubOperation
-	| expression (Shl | Sar | Shr) expression # ShiftOperation
-	| expression BitAnd expression # BitAndOperation
-	| expression BitXor expression # BitXorOperation
-	| expression BitOr expression # BitOrOperation
-	| expression (LessThan | GreaterThan | LessThanOrEqual | GreaterThanOrEqual) expression # OrderComparison
-	| expression (Equal | NotEqual) expression # EqualityComparison
-	| expression And expression # AndOperation
-	| expression Or expression # OrOperation
-	|<assoc=right> expression Conditional expression Colon expression # Conditional
-	|<assoc=right> expression assignOp expression # Assignment
-	| New typeName # NewExpression
-	| tupleExpression # Tuple
-	| inlineArrayExpression # InlineArray
- 	| (
-		identifier
-		| literal
-		| elementaryTypeName[false]
-	  ) # PrimaryExpression
-*/
+    | 'storage'
+    | 'calldata'
+    ;
 
 expression
-    = expression expressionRHS
-      | 'payable' argumentList
-      | 'type' '(' typeName ')'
-      | unaryPrefixOp expression
-      | expression unarySuffixOp
-      | 'new' typeName
-      | tupleExpression
-      | inlineArrayExpression
-      | identifier
-      | literal
-      | elementaryType ;
-
-expressionRHS
-    = '[' [ expression ] [ ':' [ expression ] ] ']'
-      | '.' ( identifier | 'address' )
-      | namedArgumentList
-      | argumentList
-      | unarySuffixOp
-      | binaryOp expression
-      | '?' expression ':' expression
-      | assignOp expression ;
-
-unaryPrefixOp
-    = '++' | '--' | '!' | '~' | 'delete' | '-' ;
-
-unarySuffixOp
-    = '++' | '--' ;
-
-binaryOp
-    = '**' | '*' | '/' | '%' | '+' | '-' | '<<' | '>>>' | '>>' | '&' | '^' | '|' | '<' | '>' | '<=' | '>=' | '==' | '!=' | '&&' | '||' ;
-
-assignOp
-    = '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ;
+    = expression '[' [ expression ] [ ':' [ expression ] ] ']' /* IndexAccess/IndexRangeAccess */
+    | expression '.' ( «identifier» | 'address' ) /* MemberAccess */
+    | expression '{' 1…*{ namedArgument / ',' } '}' /* FunctionCallOptions */
+    | expression callArgumentList /* FunctionCall */
+    | 'payable' callArgumentList /* PayableConversion */
+    | 'type' '(' typeName ')' /* MetaType */
+    | ( '++' | '--' | '!' | '~' | 'delete' | '-' ) expression /* UnaryPrefixOperation */
+    | expression ( '++' | '--' ) /* UnarySuffixOperation */
+    | <assoc=right> expression '**' expression /* ExpOperation */
+    | expression ( '*' | '/' | '%' ) expression /* MulDivModOperation */
+    | expression ( '+' | '-' ) expression /* AddSubOperation */
+    | expression ( '<<' | '>>' | '>>>' ) expression /* ShiftOperation */
+    | expression '&' expression /* BitAndOperation */
+    | expression '^' expression /* BitXorOperation */
+    | expression '|' expression /* BitOrOperation */
+    | expression ( '<' | '>' | '<=' | '>=' ) expression /* OrderComparison */
+    | expression ( '==' | '!=' ) expression /* EqualityComparison */
+    | expression '&&' expression /* AndOperation */
+    | expression '||' expression /* OrOperation */
+    | <assoc=right> expression '?' expression ':' expression /* Conditional */
+    | <assoc=right> expression ( '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ) expression /* Assignment */
+    | 'new' typeName /* NewExpression */
+    | tupleExpression /* Tuple */
+    | inlineArrayExpression /* InlineArray */
+    | (
+          «identifier»
+        | literal
+        | elementaryTypeName[false]
+      ) /* PrimaryExpression */
+    ;
 
 tupleExpression
     = '(' [ expression ] { ',' [ expression ] } ')' ;
@@ -296,45 +247,22 @@ tupleExpression
 inlineArrayExpression
     = '[' expression { ',' expression } ']' ;
 
-reservedWord
-    = keyword
-      | reservedKeyword
-      | NumberUnit
-      | BooleanLiteral ;
-
-keyword
-    = 'pragma' | 'abstract' | 'anonymous' | 'address' | 'as' | 'assembly' | 'bool' | 'break' | 'bytes' | 'calldata'
-      | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum'
-      | 'event' | 'external' | 'fallback' | 'false' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import'
-      | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override'
-      | 'payable' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct'
-      | 'true' | 'try' | 'type' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while'
-      | SignedIntegerType | UnsignedIntegerType | FixedBytes | 'fixed' | 'ufixed' ;
-
-reservedKeyword
-    = 'after' | 'alias' | 'apply' | 'auto' | 'byte' | 'case' | 'copyof' | 'default' | 'define' | 'final'
-      | 'implements' | 'in' | 'inline' | 'let' | 'macro' | 'match' | 'mutable' | 'null' | 'of'
-      | 'partial' | 'promise' | 'reference' | 'relocatable' | 'sealed' | 'sizeof' | 'static'
-      | 'supports' | 'switch' | 'typedef' | 'typeof' | 'var' ;
-
-identifier
-    = IdentifierName - reservedWord ;
-
 literal
     = asciiStringLiteral
-      | unicodeStringLiteral
-      | numericLiteral
-      | hexStringLiteral
-      | BooleanLiteral ;
+    | unicodeStringLiteral
+    | numericLiteral
+    | hexStringLiteral
+    | «BooleanLiteral»
+    ;
 
 asciiStringLiteral
-    = AsciiStringLiteral { AsciiStringLiteral } ;
+    = «AsciiStringLiteral» { «AsciiStringLiteral» } ;
 
 unicodeStringLiteral
-    = UnicodeStringLIteral { UnicodeStringLiteral } ;
+    = UnicodeStringLIteral { «UnicodeStringLiteral» } ;
 
 numericLiteral
-    = ( DecimalNumber | HexNumber ) [ NumberUnit ] ;
+    = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
 
 block
     = '{' { statement | uncheckedBlock } '}' ;
@@ -344,22 +272,24 @@ uncheckedBlock
 
 statement
     = block
-      | simpleStatement
-      | ifStatement
-      | forStatement
-      | whileStatement
-      | doWhileStatement
-      | continueStatement
-      | breakStatement
-      | tryStatement
-      | returnStatement
-      | emitStatement
-      | revertStatement
-      | assemblyStatement ;
+    | simpleStatement
+    | ifStatement
+    | forStatement
+    | whileStatement
+    | doWhileStatement
+    | continueStatement
+    | breakStatement
+    | tryStatement
+    | returnStatement
+    | emitStatement
+    | revertStatement
+    | assemblyStatement
+    ;
 
 simpleStatement
     = variableDeclarationStatement
-      | expressionStatement ;
+    | expressionStatement
+    ;
 
 ifStatement
     = 'if' '(' expression ')' statement [ 'else' statement ] ;
@@ -382,7 +312,7 @@ breakStatement
 tryStatement
     = 'try' expression [ 'returns' nonEmptyParameterList ] block catchClause { catchClause } ;
 catchClause
-    = 'catch' [ [ identifier ] nonEmptyParameterList ] block ;
+    = 'catch' [ [ «identifier» ] nonEmptyParameterList ] block ;
 
 returnStatement
     = 'return' [ expression ] ';' ;
@@ -392,7 +322,6 @@ emitStatement
 
 revertStatement
     = 'revert' expression argumentList ';' ;
-
 
 variableDeclarationList
     = variableDeclaration { ',' variableDeclaration } ;
@@ -404,8 +333,7 @@ variableDeclarationStatement
     = ( variableDeclaration [ '=' expression ] | variableDeclarationTuple '=' expression ) ';' ;
 
 variableDeclaration
-    = typeName [ dataLocation ] identifier ;
-
+    = typeName [ dataLocation ] «identifier» ;
 
 expressionStatement
     = expression ';' ;
@@ -417,98 +345,159 @@ assemblyStatement
 assemblyFlags
     = '(' DoubleQuotedStringLiteral { ',' DoubleQuotedStringLiteral } ')' ;
 
-WS
-    = '\u{20}' | '\u{9}' | '\u{D}' | '\u{A}' | '\u{C}' ;
 
-COMMENT
-    /* TODO: make this realistically parsable */
-    = '/*' { ¬'*' } '*/' ;
+/*******************************************
+  Solidity (and Yul) Tokens 
+*******************************************/
 
-LINE_COMMENT
-    = '//' { ¬( '\u{A}' | '\u{D}' ) } ;
+«pragmaDirective»
+    = 'pragma' ¬ ';' { ¬ ';' } ';' ;
 
-IdentifierName
-    = IdentifierStart { IdentifierPart } ;
-IdentifierStart
+/* TODO: specify pragma sublanguage */
+
+
+«identifier»
+    = «RawIdentifier» - «reservedWord» ;
+
+«RawIdentifier»
+    = «IdentifierStart» { «IdentifierPart» } ;
+«IdentifierStart»
     = '_' | '$' | 'a'…'z' | 'A'…'Z' ;
-IdentifierPart
-    = IdentifierStart | '0'…'9' ;
+«IdentifierPart»
+    = «IdentifierStart» | '0'…'9' ;
 
-BooleanLiteral
+«reservedWord»
+    = «keyword»
+    | «reservedKeyword»
+    | «NumberUnit»
+    | «BooleanLiteral»
+    ;
+
+«keyword»
+    = 'pragma' | 'abstract' | 'anonymous' | 'address' | 'as' | 'assembly' | 'bool' | 'break' | 'bytes' | 'calldata'
+    | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum'
+    | 'event' | 'external' | 'fallback' | 'false' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import'
+    | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override'
+    | 'payable' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct'
+    | 'true' | 'try' | 'type' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while'
+    | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytes» | 'fixed' | 'ufixed'
+    ;
+
+«reservedKeyword»
+    = 'after' | 'alias' | 'apply' | 'auto' | 'byte' | 'case' | 'copyof' | 'default' | 'define' | 'final'
+    | 'implements' | 'in' | 'inline' | 'let' | 'macro' | 'match' | 'mutable' | 'null' | 'of'
+    | 'partial' | 'promise' | 'reference' | 'relocatable' | 'sealed' | 'sizeof' | 'static'
+    | 'supports' | 'switch' | 'typedef' | 'typeof' | 'var'
+    ;
+
+«SignedIntegerType»
+    = 'int'
+      (
+          '8' | '16' | '24' | '32' | '40' | '48' | '56' | '64'
+        | '72' | '80' | '88' | '96' | '104' | '112' | '120' | '128'
+        | '136' | '144' | '152' | '160' | '168' | '176' | '184' | '192'
+        | '200' | '208' | '216' | '224' | '232' | '240' | '248' | '256'
+      )
+    ;
+
+«UnsignedIntegerType»
+    = 'u' «SignedIntegerType»
+
+«FixedBytes»
+    = 'bytes'
+      (
+          '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8'
+        | '9' | '10' | '11' | '12' | '13' | '14' | '15' | '16'
+        | '17' | '18' | '19' | '20' | '21' | '22' | '23' | '24'
+        | '25' | '26' | '27' | '28' | '29' | '30' | '31' | '32'
+      )
+    ;
+
+«Fixed»
+    = 'fixed' [ '1'…'9' { '0'…'9' } 'x' '1'…'9' { '0'…'9' } ] ;
+
+«Ufixed»
+    = 'u' «Fixed»
+
+«BooleanLiteral»
     = 'true' | 'false' ;
 
-DecimalNumber
-    = ( DecimalInteger | DecimalFloat ) [ DecimalExponent ] ;
-DecimalInteger
-    = SequenceOfPossiblySeparatedDecimalDigits ;
-/* Q: Is this bad practice to reuse the concept of integer? */
-DecimalFloat
-    = [ DecimalInteger ] '.' DecimalInteger ;
-/* Q: Is this bad practice to reuse the concept of integer? */
-DecimalExponent
-    =  ( 'e' | 'E' ) [ '-' ] DecimalInteger ;
-SequenceOfPossiblySeparatedDecimalDigits
-    = '0'…'9' { [ '_' ] '0'…'9' } ;
+«DecimalNumber»
+    = ( «DecimalInteger» | «DecimalFloat» ) [ «DecimalExponent» ] ;
+«DecimalInteger»
+    = 1…*{ '0'…'9' / [ '_' ] } ;
+«DecimalFloat»
+    = [ «DecimalInteger» ] '.' «DecimalInteger» ;
+«DecimalExponent»
+    =  ( 'e' | 'E' ) [ '-' ] «DecimalInteger» ;
 
-HexNumber
-    = '0' 'x' SequenceOfPossiblySeparatedHexDigits ;
-SequenceOfPossiblySeparatedHexDigits
-    = HexCharacter { [ '_' ] HexCharacter } ;
+«HexNumber»
+    = '0' 'x' 1…*{ «HexCharacter» / [ '_' ] } ;
 
-NumberUnit
-    = 'wei' | 'gwei' | 'ether' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'years' ;
+«NumberUnit»
+    = 'wei' | 'gwei' | 'ether'
+    | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'years'
+    ;
 
-HexStringLiteral
-    = 'hex' ( '"' [ SequenceOfPossiblySeparatedPairsOfHexDigits ] '"' | '\'' [ SequenceOfPossiblySeparatedPairsOfHexDigits ] '\'' ) ;
-SequenceOfPossiblySeparatedPairsOfHexDigits
-    = HexCharacter HexCharacter { [ '_' ] HexCharacter HexCharacter } ;
-HexCharacter
+«HexStringLiteral»
+    = 'hex' ( '"' [ «PossiblySeparatedPairsOfHexDigits» ] '"' | '\'' [ «PossiblySeparatedPairsOfHexDigits» ] '\'' ) ;
+«PossiblySeparatedPairsOfHexDigits»
+    = 1…*{ 2*{ «HexCharacter» } / [ '_' ] } ;
+«HexCharacter»
     = '0'…'9' | 'a'…'f' | 'A'…'F' ;
 
-AsciiStringLiteral
+«AsciiStringLiteral»
     = '"' { ( '\u{20}'…'\u{7E}' - ( '"' | '\\' ) ) | EscapeSequece } '"'
-      | '\'' { ( '\u{20}'…'\u{7E}' - ( '\'' | '\\' ) ) | EscapeSequence } '\'' ;
+    | '\'' { ( '\u{20}'…'\u{7E}' - ( '\'' | '\\' ) ) | «EscapeSequence» } '\''
+    ;
 
-UnicodeStringLiteral
-    = 'unicode"' { ¬ ( '"' | '\\' | '\u{A}' | '\u{D}' ) | EscapeSequence } '"'
-      | 'unicode\'' { ¬ ( '\'' | '\\' | '\u{A}' | '\u{D}' ) | EscapeSequence } '\'' ;
+«UnicodeStringLiteral»
+    = 'unicode"' { ¬ ( '"' | '\\' | '\u{A}' | '\u{D}' ) | «EscapeSequence» } '"'
+    | 'unicode\'' { ¬ ( '\'' | '\\' | '\u{A}' | '\u{D}' ) | «EscapeSequence» } '\''
+    ;
 
-EscapeSequence
-    = '\\' ( AsciiEscape | HexByteEscape | UnicodeEscape ) ;
-AsciiEscape
+«EscapeSequence»
+    = '\\' ( «AsciiEscape» | «HexByteEscape» | «UnicodeEscape» ) ;
+«AsciiEscape»
     = 'n' | 'r' | 't' | '\'' | '"' | '\\' | '\u{A}' | '\u{D}' ;
-HexByteEscape
-    = 'x' HexCharacter HexCharacter ;
-UnicodeEscape
-    = 'u' HexCharacter HexCharacter HexCharacter HexCharacter ;
+«HexByteEscape»
+    = 'x' 2*{ «HexCharacter» } ;
+«UnicodeEscape»
+    = 'u' 4*{ «HexCharacter» } ;
+
+
+/*******************************************
+  YUL
+*******************************************/
 
 yulBlock
     = '{' { yulStatement } '}' ;
 
 yulStatement
     = yulBlock
-      | yulVariableDeclaration
-      | yulFunctionDefinition
-      | yulAssignment
-      | yulFunctionCall
-      | yulIfStatement
-      | yulForStatement
-      | yulSwitchStatement
-      | yulLeaveStatement
-      | yulBreakStatement
-      | yulContinueStatement ;
+    | yulVariableDeclaration
+    | yulFunctionDefinition
+    | yulAssignment
+    | yulFunctionCall
+    | yulIfStatement
+    | yulForStatement
+    | yulSwitchStatement
+    | yulLeaveStatement
+    | yulBreakStatement
+    | yulContinueStatement
+    ;
 
 yulVariableDeclaration
-    = 'let' YulIdentifier [ ':=' yulExpression | [ ',' YulIdentifier ] [ ':=' yulFunctionCall ] ] ;
+    = 'let' «YulIdentifier» [ ':=' yulExpression | [ ',' «YulIdentifier» ] [ ':=' yulFunctionCall ] ] ;
 
 yulFunctionDefinition
-    = 'function' YulIdentifier '(' [ YulIdentifier { ',' YulIdentifier } ] ')' [ '->' YulIdentifier { ',' YulIdentifier } ] yulBlock ;
+    = 'function' «YulIdentifier» '(' [ «YulIdentifier» { ',' «YulIdentifier» } ] ')' [ '->' «YulIdentifier» { ',' «YulIdentifier» } ] yulBlock ;
 
 yulAssignment
     = yulPath ( ':=' yulExpression | ',' yulPath { ',' yulPath } ':=' yulFunctionCall ) ;
 
 yulFunctionCall
-    = ( YulIdentifier | YulEVMBuiltin ) '(' [ yulExpression { ',' yulExpression } ] ')' ;
+    = ( «YulIdentifier» | YulEVMBuiltin ) '(' [ yulExpression { ',' yulExpression } ] ')' ;
 
 yulIfStatement
     = 'if' yulExpression yulBlock ;
@@ -531,46 +520,57 @@ yulSwitchCase
     = 'case' yulLiteral yulBlock ;
 
 yulExpression
-         = yulPath
-           | yulFunctionCall
-           | yulLiteral ;
+    = yulPath
+    | yulFunctionCall
+    | yulLiteral
+    ;
+
 yulPath
-    = YulIdentifier { '.' ( YulIdentifier | YulEVMBuiltin ) } ;
+    = «YulIdentifier» { '.' ( «YulIdentifier» | YulEVMBuiltin ) } ;
 
 yulLiteral
-     = YulDecimalNumberLiteral
-       | YulHexLiteral
-       | StringLiteral
-       | BooleanLiteral
-       | HexStringLiteral ;
+     = «YulDecimalNumberLiteral»
+     | «YulHexLiteral»
+     | StringLiteral
+     | «BooleanLiteral»
+     | «HexStringLiteral»
+     ;
 
-YulDecimalNumberLiteral
+
+/*******************************************
+  YUL-specific Tokens
+*******************************************/
+
+«YulDecimalNumberLiteral»
     = '0' | '1'…'9' { '0'…'9' } ;
 
-YulHexLiteral
+«YulHexLiteral»
     = '0x' ( '0'…'9' | 'a'…'f' | 'A'…'F' ) { '0'…'9' | 'a'…'f' | 'A'…'F' } ;
 
-YulIdentifier
-    = IdentifierName - YulReservedWord ;
+«YulIdentifier»
+    = «RawIdentifier» - «YulReservedWord» ;
 
-YulReservedWord
-    = YulKeyword
-      | YulEVMBuildFunctionName
-      | BooleanLiteral ;
+«YulReservedWord»
+    = «YulKeyword»
+    | «YulEVMBuiltinFunctionName»
+    | «BooleanLiteral»
+    ;
 
-YulKeyword
+«YulKeyword»
     = 'break' | 'case' | 'continue' | 'default' | 'for' | 'function' | 'if'
-      | 'leave' | 'let' | 'switch' | 'hex' ;
+    | 'leave' | 'let' | 'switch' | 'hex'
+    ;
 
-YulEVMBuiltinFunctionName
+«YulEVMBuiltinFunctionName»
     = 'stop' | 'add' | 'sub' | 'mul' | 'div' | 'sdiv' | 'mod' | 'smod' | 'exp' | 'not'
-      | 'lt' | 'gt' | 'slt' | 'sgt' | 'eq' | 'iszero' | 'and' | 'or' | 'xor' | 'byte'
-      | 'shl' | 'shr' | 'sar' | 'addmod' | 'mulmod' | 'signextend' | 'keccak256'
-      | 'pop' | 'mload' | 'mstore' | 'mstore8' | 'sload' | 'sstore' | 'msize' | 'gas'
-      | 'address' | 'balance' | 'selfbalance' | 'caller' | 'callvalue' | 'calldataload'
-      | 'calldatasize' | 'calldatacopy' | 'extcodesize' | 'extcodecopy' | 'returndatasize'
-      | 'returndatacopy' | 'extcodehash' | 'create' | 'create2' | 'call' | 'callcode'
-      | 'delegatecall' | 'staticcall' | 'return' | 'revert' | 'selfdestruct' | 'invalid'
-      | 'log0' | 'log1' | 'log2' | 'log3' | 'log4' | 'chainid' | 'origin' | 'gasprice'
-      | 'blockhash' | 'coinbase' | 'timestamp' | 'number' | 'difficulty' | 'gaslimit'
-      | 'basefee' ;
+    | 'lt' | 'gt' | 'slt' | 'sgt' | 'eq' | 'iszero' | 'and' | 'or' | 'xor' | 'byte'
+    | 'shl' | 'shr' | 'sar' | 'addmod' | 'mulmod' | 'signextend' | 'keccak256'
+    | 'pop' | 'mload' | 'mstore' | 'mstore8' | 'sload' | 'sstore' | 'msize' | 'gas'
+    | 'address' | 'balance' | 'selfbalance' | 'caller' | 'callvalue' | 'calldataload'
+    | 'calldatasize' | 'calldatacopy' | 'extcodesize' | 'extcodecopy' | 'returndatasize'
+    | 'returndatacopy' | 'extcodehash' | 'create' | 'create2' | 'call' | 'callcode'
+    | 'delegatecall' | 'staticcall' | 'return' | 'revert' | 'selfdestruct' | 'invalid'
+    | 'log0' | 'log1' | 'log2' | 'log3' | 'log4' | 'chainid' | 'origin' | 'gasprice'
+    | 'blockhash' | 'coinbase' | 'timestamp' | 'number' | 'difficulty' | 'gaslimit'
+    | 'basefee'
+    ;
