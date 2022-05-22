@@ -16,7 +16,7 @@
 *******************************************/
 
 sourceUnit
-    = { directive | definition } $ ;
+    = «IGNORE» { directive | definition } $ ;
 
 directive
     = «pragmaDirective»
@@ -90,7 +90,7 @@ enumDefinition
     = 'enum' identifier '{' 1…*{ identifier / ',' } '}' ;
 
 userDefinedValueTypeDefinition
-    = 'type' identifier 'is' elementaryType ';' ;
+    = 'type' identifier 'is' elementaryTypeWithPayable ';' ;
 
 eventDefinition
     = 'event' identifier '(' { eventParameter / ',' } ')' [ 'anonymous' ] ';' ;
@@ -183,11 +183,20 @@ identifierPath
     = 1…*{ identifier / '.' } ;
 
 typeName
-    = ( elementaryType | functionType | mappingType | identifierPath ) { '[' [ expression ] ']' } ;
+    = ( elementaryTypeWithPayable | functionType | mappingType | identifierPath ) { '[' [ expression ] ']' } ;
+
+elementaryTypeWithPayable
+    = 'address' [ 'payable' ]
+    | elementaryType
+    ;
+
+elementaryTypeWithoutPayable
+    = 'address'
+    | elementaryType
+    ;
 
 elementaryType
-    = 'address' [ 'payable' ]
-    | 'bool'
+    = 'bool'
     | 'string'
     | 'bytes'
     | «SignedIntegerType»
@@ -201,7 +210,7 @@ functionType
     = 'function' parameterList { visibilitySpecifier | stateMutabilitySpecifier } [ 'returns' nonEmptyParameterList ] ;
 
 mappingType
-    = 'mapping' '(' ( elementaryType | identifierPath ) '=>' typeName ')' ;
+    = 'mapping' '(' ( elementaryTypeWithoutPayable | identifierPath ) '=>' typeName ')' ;
 
 dataLocation
     = 'memory'
@@ -213,8 +222,8 @@ expression
     = expression '[' [ expression ] [ ':' [ expression ] ] ']' /* IndexAccess/IndexRangeAccess */
     | expression '.' ( identifier | 'address' ) /* MemberAccess */
     | expression '{' 1…*{ namedArgument / ',' } '}' /* FunctionCallOptions */
-    | expression callArgumentList /* FunctionCall */
-    | 'payable' callArgumentList /* PayableConversion */
+    | expression argumentList /* FunctionCall */
+    | 'payable' argumentList /* PayableConversion */
     | 'type' '(' typeName ')' /* MetaType */
     | ( '++' | '--' | '!' | '~' | 'delete' | '-' ) expression /* UnaryPrefixOperation */
     | expression ( '++' | '--' ) /* UnarySuffixOperation */
@@ -237,7 +246,7 @@ expression
     | (
           identifier
         | literal
-        | elementaryTypeName[false]
+        | elementaryTypeWithoutPayable
       ) /* PrimaryExpression */
     ;
 
@@ -451,7 +460,7 @@ reservedKeyword
 «SingleQuotedAsciiStringLiteral»
     = '\'' { ( '\u{20}'…'\u{7E}' - ( '\'' | '\\' ) ) | «EscapeSequence» } '\'' ;
 «DoubleQuotedAsciiStringLiteral»
-    = '"' { ( '\u{20}'…'\u{7E}' - ( '"' | '\\' ) ) | EscapeSequece } '"' ;
+    = '"' { ( '\u{20}'…'\u{7E}' - ( '"' | '\\' ) ) | EscapeSequence } '"' ;
 
 «UnicodeStringLiteral»
     = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral» ;

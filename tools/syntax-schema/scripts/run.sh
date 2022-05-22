@@ -7,49 +7,46 @@ PROJECT_DIR=$(dirname "$THIS_DIR")
 # shellcheck source=/dev/null
 [[ "${HERMIT_ENV:-}" == "$PROJECT_DIR" ]] || source "$PROJECT_DIR/bin/activate-hermit"
 
-(
-  cd "$PROJECT_DIR"
 
-  # Do this twice to auto-dogfood the ebnf -> chumsky process
-  # Should be a fixed point
+# EBNF from the intended source manifest
 
-  cargo run --bin manifest_to_chumsky -- \
-    --manifest-input "$PROJECT_DIR/syntax/ebnf/manifest.yml" \
-    --chumsky-output "$PROJECT_DIR/src/ebnf/parser.rs"
+# Do this twice to auto-dogfood the ebnf -> chumsky process
+# Should be a fixed point
 
-  cargo run --bin manifest_to_chumsky -- \
-    --manifest-input "$PROJECT_DIR/syntax/ebnf/manifest.yml" \
-    --chumsky-output "$PROJECT_DIR/src/ebnf/parser.rs"
-)
+cargo run --bin manifest_to_chumsky -- \
+  --manifest-input "$PROJECT_DIR/syntax/ebnf/manifest.yml" \
+  --chumsky-output "$PROJECT_DIR/src/ebnf/parser.rs"
 
-(
-  cd "$PROJECT_DIR"
+cargo run --bin manifest_to_chumsky -- \
+  --manifest-input "$PROJECT_DIR/syntax/ebnf/manifest.yml" \
+  --chumsky-output "$PROJECT_DIR/src/ebnf/parser.rs"
 
-  cargo run --bin manifest_to_ebnf -- \
-    --manifest-input "$PROJECT_DIR/syntax/ebnf/manifest.yml" \
-    --ebnf-output "$PROJECT_DIR/syntax/ebnf/grammar.ebnf"
-)
+cargo run --bin manifest_to_ebnf -- \
+  --manifest-input "$PROJECT_DIR/syntax/ebnf/manifest.yml" \
+  --ebnf-output "$PROJECT_DIR/syntax/ebnf/derived.ebnf"
 
-(
-  cd "$PROJECT_DIR"
 
-  cargo run --bin ebnf_to_yaml -- \
-    --ebnf-input "$PROJECT_DIR/syntax/solidity/original_grammar.ebnf" \
-    --yaml-output "$PROJECT_DIR/syntax/solidity/original_grammar.yml"
-)
+# Solidity from the intended source manifest
 
-(
-  cd "$PROJECT_DIR"
+cargo run --bin manifest_to_ebnf -- \
+  --manifest-input "$PROJECT_DIR/syntax/solidity/manifest.yml" \
+  --ebnf-output "$PROJECT_DIR/syntax/solidity/derived.ebnf"
 
-  cargo run --bin manifest_to_ebnf -- \
-    --manifest-input "$PROJECT_DIR/syntax/solidity/manifest.yml" \
-    --ebnf-output "$PROJECT_DIR/syntax/solidity/grammar.ebnf"
-)
+cargo run --bin manifest_to_chumsky -- \
+  --manifest-input "$PROJECT_DIR/syntax/solidity/manifest.yml" \
+  --chumsky-output "$PROJECT_DIR/syntax/solidity/derived.rs"
 
-(
-  cd "$PROJECT_DIR"
 
-  cargo run --bin manifest_to_chumsky -- \
-    --manifest-input "$PROJECT_DIR/syntax/solidity/manifest.yml" \
-    --chumsky-output "$PROJECT_DIR/syntax/solidity/parser.rs"
-)
+# Solidity from the original antlr grammar
+
+cargo run --bin ebnf_to_yaml -- \
+  --ebnf-input "$PROJECT_DIR/syntax/solidity/original/grammar.ebnf" \
+  --yaml-output "$PROJECT_DIR/syntax/solidity/original/derived.yml"
+
+cargo run --bin manifest_to_ebnf -- \
+  --manifest-input "$PROJECT_DIR/syntax/solidity/original/manifest.yml" \
+  --ebnf-output "$PROJECT_DIR/syntax/solidity/original/derived.ebnf"
+
+cargo run --bin manifest_to_chumsky -- \
+  --manifest-input "$PROJECT_DIR/syntax/solidity/original/manifest.yml" \
+  --chumsky-output "$PROJECT_DIR/syntax/solidity/original/derived.rs"

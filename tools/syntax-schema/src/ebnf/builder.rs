@@ -104,7 +104,7 @@ pub fn hex_digits_to_char(digits: Vec<char>) -> Result<char, ()> {
 }
 
 pub fn repetition_prefix_1((from, to): (usize, Option<Option<usize>>)) -> (usize, Option<usize>) {
-    (from, to.flatten())
+    (from, to.unwrap_or_else(|| Some(from)))
 }
 
 pub fn repetition_prefix_2(to: usize) -> (usize, Option<usize>) {
