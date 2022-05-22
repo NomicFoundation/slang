@@ -7,8 +7,9 @@ PROJECT_DIR=$(dirname "$THIS_DIR")
 # shellcheck source=/dev/null
 [[ "${HERMIT_ENV:-}" == "$PROJECT_DIR" ]] || source "$PROJECT_DIR/bin/activate-hermit"
 
-
+###################################################
 # EBNF from the intended source manifest
+###################################################
 
 # Do this twice to auto-dogfood the ebnf -> chumsky process
 # Should be a fixed point
@@ -25,8 +26,9 @@ cargo run --bin manifest_to_ebnf -- \
   --manifest-input "$PROJECT_DIR/syntax/ebnf/manifest.yml" \
   --ebnf-output "$PROJECT_DIR/syntax/ebnf/derived.ebnf"
 
-
+###################################################
 # Solidity from the intended source manifest
+###################################################
 
 cargo run --bin manifest_to_ebnf -- \
   --manifest-input "$PROJECT_DIR/syntax/solidity/manifest.yml" \
@@ -36,8 +38,9 @@ cargo run --bin manifest_to_chumsky -- \
   --manifest-input "$PROJECT_DIR/syntax/solidity/manifest.yml" \
   --chumsky-output "$PROJECT_DIR/syntax/solidity/derived.rs"
 
-
+###################################################
 # Solidity from the original antlr grammar
+###################################################
 
 cargo run --bin ebnf_to_yaml -- \
   --ebnf-input "$PROJECT_DIR/syntax/solidity/original/grammar.ebnf" \
