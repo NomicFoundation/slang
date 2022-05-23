@@ -44,7 +44,7 @@
 - name: sourceUnit
   config:
     prelude: |
-      use super::builder;
+      // use super::builder;
       pub type SourceUnitParserResultType = ();
   sequence:
     - reference: IGNORE

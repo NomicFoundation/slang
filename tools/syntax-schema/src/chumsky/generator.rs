@@ -242,30 +242,32 @@ impl ChumskyExpression for Expression {
                         }
                     })
                     .collect::<Vec<String>>();
-                let choices: Vec<TokenStream> = if strings.len() == exprs.len()
+                let mut choices: Vec<TokenStream> = if strings.len() == exprs.len()
                     && exprs.iter().all(|e| e.config.is_default())
                     && strings.iter().any(|s| s.chars().count() > 1)
                 {
-                    strings
-                        .chunks(16)
-                        .map(|chunk| {
-                            let subchoices: Vec<TokenStream> =
-                                chunk.iter().map(|s| quote!( just(#s) )).collect();
-                            quote!( choice((#(#subchoices),*)) )
-                        })
-                        .collect()
+                    strings.iter().map(|s| quote!( just(#s) )).collect()
                 } else {
                     exprs
                         .iter()
                         .map(|e| {
                             let expr = e.generate(grammar, production, no_builder);
-                            let suffixes =
+                            let mut suffixes =
                                 e.generate_suffixes(grammar, production, None, no_builder);
+                            if no_builder {
+                                suffixes.push(quote!( .ignored() ))
+                            }
                             quote!( #expr #(#suffixes)* )
                         })
                         .collect()
                 };
-                quote!( choice((#(#choices),*)) )
+                if choices.len() > 16 {
+                    choices = choices
+                        .chunks(16)
+                        .map(|chunk| quote!( choice::<_, Simple<char>>((#(#chunk),*)) ))
+                        .collect();
+                }
+                quote!( choice::<_, Simple<char>>((#(#choices),*)) )
             }
             EBNF::Sequence(exprs) => {
                 let mut seen_unignorable_content = false;
@@ -336,7 +338,7 @@ impl ChumskyExpression for Expression {
                 //         return generate_char_set(&char_set_elements, true);
                 //     }
                 // }
-                quote!(todo())
+                quote!(just("todo()"))
             }
             EBNF::Range(EBNFRange { from, to }) => {
                 let fragment = generate_char_set(&vec![CharSetElement::Range(*from, *to)], false);
@@ -359,12 +361,7 @@ impl ChumskyExpression for Expression {
             suffixes.push(quote!( .then_ignore(#lookahead.rewind()) ))
         }
 
-        if no_builder {
-            if let EBNF::Choice(_) = self.ebnf {
-            } else {
-                suffixes.push(quote!( .ignored() ));
-            }
-        } else if self.config.ignore {
+        if self.config.ignore {
             suffixes.push(quote!( .ignored() ))
         } else {
             if !self.config.nomap {
@@ -372,8 +369,12 @@ impl ChumskyExpression for Expression {
                     let id = format_ident!("{}", map);
                     suffixes.push(quote!( .map(builder::#id) ))
                 } else if let Some(map) = default_map {
-                    let id = format_ident!("{}", map);
-                    suffixes.push(quote!( .map(builder::#id) ))
+                    if no_builder {
+                        suffixes.push(quote!( .ignored() ))
+                    } else {
+                        let id = format_ident!("{}", map);
+                        suffixes.push(quote!( .map(builder::#id) ))
+                    }
                 }
             }
             if self.config.unwrap {
