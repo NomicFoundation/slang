@@ -24,6 +24,7 @@ version "16.1.0" "16.2.0" "16.3.0" "16.4.0" "16.5.0" "16.6.0" "16.6.1" "16.6.2"
   }
 
   linux {
+    arch = "arm64"
     source = "https://nodejs.org/dist/v${version}/node-v${version}-${os}-${arch}.tar.gz"
   }
 
