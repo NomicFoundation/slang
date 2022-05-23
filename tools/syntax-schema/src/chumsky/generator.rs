@@ -128,9 +128,9 @@ impl ChumskyProduction for Production {
                         no_builder,
                     );
                     if backlinked.contains(&name) {
-                        decls.push(quote!( #id.define(#expr #(#suffixes)*); ));
+                        decls.push(quote!( #id.define(#expr #(#suffixes)* .boxed()); ));
                     } else {
-                        decls.push(quote!( let #id = #expr #(#suffixes)*; ));
+                        decls.push(quote!( let #id = #expr #(#suffixes)* .boxed(); ));
                     }
                 }
             }
@@ -227,14 +227,44 @@ impl ChumskyExpression for Expression {
                 quote!( #expr #separator #min #max )
             }
             EBNF::Choice(exprs) => {
-                let choices = exprs
+                // If the choice is between terminals, make sure they are all represented as strings
+                let strings = exprs
                     .iter()
-                    .map(|e| {
-                        let expr = e.generate(grammar, production, no_builder);
-                        let suffixes = e.generate_suffixes(grammar, production, None, false);
-                        quote!( #expr #(#suffixes)* )
+                    .filter_map(|e| {
+                        if let EBNF::Terminal(s) = &e.ebnf {
+                            if e.config.map.is_none() {
+                                Some(s.clone())
+                            } else {
+                                None
+                            }
+                        } else {
+                            None
+                        }
                     })
-                    .collect::<Vec<_>>();
+                    .collect::<Vec<String>>();
+                let choices: Vec<TokenStream> = if strings.len() == exprs.len()
+                    && exprs.iter().all(|e| e.config.is_default())
+                    && strings.iter().any(|s| s.chars().count() > 1)
+                {
+                    strings
+                        .chunks(16)
+                        .map(|chunk| {
+                            let subchoices: Vec<TokenStream> =
+                                chunk.iter().map(|s| quote!( just(#s) )).collect();
+                            quote!( choice((#(#subchoices),*)) )
+                        })
+                        .collect()
+                } else {
+                    exprs
+                        .iter()
+                        .map(|e| {
+                            let expr = e.generate(grammar, production, no_builder);
+                            let suffixes =
+                                e.generate_suffixes(grammar, production, None, no_builder);
+                            quote!( #expr #(#suffixes)* )
+                        })
+                        .collect()
+                };
                 quote!( choice((#(#choices),*)) )
             }
             EBNF::Sequence(exprs) => {
@@ -330,7 +360,10 @@ impl ChumskyExpression for Expression {
         }
 
         if no_builder {
-            suffixes.push(quote!( .ignored().boxed() ))
+            if let EBNF::Choice(_) = self.ebnf {
+            } else {
+                suffixes.push(quote!( .ignored() ));
+            }
         } else if self.config.ignore {
             suffixes.push(quote!( .ignored() ))
         } else {
