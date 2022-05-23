@@ -1,0 +1,1591 @@
+# yaml-language-server: $schema=../../schema/topic.schema.json
+
+- name: IGNORE
+  is_token: true
+  zeroOrMore:
+    choice:
+      - reference: Whitespace
+      - reference: Comment
+      - reference: LineComment
+- name: Whitespace
+  is_token: true
+  choice:
+    - terminal: " "
+    - terminal: "\t"
+    - terminal: "\r"
+    - terminal: "\n"
+- name: Comment
+  is_token: true
+  sequence:
+    - terminal: /*
+    - zeroOrMore:
+        choice:
+          - not:
+              terminal: "*"
+          - sequence:
+              - oneOrMore:
+                  terminal: "*"
+              - not:
+                  choice:
+                    - terminal: "*"
+                    - terminal: /
+    - oneOrMore:
+        terminal: "*"
+    - terminal: /
+- name: LineComment
+  is_token: true
+  sequence:
+    - terminal: //
+    - zeroOrMore:
+        not:
+          choice:
+            - terminal: "\n"
+            - terminal: "\r"
+- name: sourceUnit
+  config:
+    prelude: |
+      use super::builder;
+      pub type SourceUnitParserResultType = ();
+  sequence:
+    - reference: IGNORE
+    - zeroOrMore:
+        choice:
+          - reference: directive
+          - reference: definition
+    - end: ~
+- name: directive
+  choice:
+    - reference: pragmaDirective
+    - reference: importDirective
+    - reference: usingDirective
+- name: definition
+  choice:
+    - reference: contractDefinition
+    - reference: interfaceDefinition
+    - reference: libraryDefinition
+    - reference: functionDefinition
+    - reference: constantDefinition
+    - reference: structDefinition
+    - reference: enumDefinition
+    - reference: userDefinedValueTypeDefinition
+    - reference: errorDefinition
+- name: importDirective
+  sequence:
+    - terminal: import
+    - choice:
+        - reference: simpleImportDirective
+        - reference: starImportDirective
+        - reference: selectingImportDirective
+    - terminal: ;
+- name: simpleImportDirective
+  sequence:
+    - reference: importPath
+    - zeroOrMore:
+        sequence:
+          - terminal: as
+          - reference: identifier
+- name: starImportDirective
+  sequence:
+    - terminal: "*"
+    - terminal: as
+    - reference: identifier
+    - terminal: from
+    - reference: importPath
+- name: selectingImportDirective
+  sequence:
+    - terminal: "{"
+    - oneOrMore:
+        reference: selectedImport
+        separator:
+          terminal: ","
+    - terminal: "}"
+    - terminal: from
+    - reference: importPath
+- name: selectedImport
+  sequence:
+    - reference: identifier
+    - optional:
+        sequence:
+          - terminal: as
+          - reference: identifier
+- name: importPath
+  reference: asciiStringLiteral
+- name: usingDirective
+  sequence:
+    - terminal: using
+    - choice:
+        - reference: identifierPath
+        - sequence:
+            - terminal: "{"
+            - oneOrMore:
+                reference: identifierPath
+                separator:
+                  terminal: ","
+            - terminal: "}"
+    - terminal: for
+    - choice:
+        - terminal: "*"
+        - reference: typeName
+    - optional:
+        terminal: global
+    - terminal: ;
+- name: contractDefinition
+  sequence:
+    - optional:
+        terminal: abstract
+    - terminal: contract
+    - reference: identifier
+    - optional:
+        reference: inheritanceSpecifierList
+    - terminal: "{"
+    - zeroOrMore:
+        reference: contractBodyElement
+    - terminal: "}"
+- name: interfaceDefinition
+  sequence:
+    - terminal: interface
+    - reference: identifier
+    - optional:
+        reference: inheritanceSpecifierList
+    - terminal: "{"
+    - zeroOrMore:
+        reference: contractBodyElement
+    - terminal: "}"
+- name: inheritanceSpecifierList
+  sequence:
+    - terminal: is
+    - oneOrMore:
+        reference: inheritanceSpecifier
+        separator:
+          terminal: ","
+- name: inheritanceSpecifier
+  sequence:
+    - reference: identifierPath
+    - optional:
+        reference: argumentList
+- name: libraryDefinition
+  sequence:
+    - terminal: library
+    - reference: identifier
+    - terminal: "{"
+    - zeroOrMore:
+        reference: contractBodyElement
+    - terminal: "}"
+- name: functionDefinition
+  sequence:
+    - terminal: function
+    - choice:
+        - reference: identifier
+        - terminal: fallback
+        - terminal: receive
+    - reference: parameterList
+    - zeroOrMore:
+        reference: functionAttribute
+    - optional:
+        sequence:
+          - terminal: returns
+          - reference: nonEmptyParameterList
+    - choice:
+        - terminal: ;
+        - reference: block
+- name: functionAttribute
+  choice:
+    - reference: visibilitySpecifier
+    - reference: stateMutabilitySpecifier
+    - reference: modifierInvocation
+    - terminal: virtual
+    - reference: overrideSpecifier
+- name: constantDefinition
+  sequence:
+    - reference: typeName
+    - terminal: constant
+    - reference: identifier
+    - terminal: "="
+    - reference: expression
+    - terminal: ;
+- name: structDefinition
+  sequence:
+    - terminal: struct
+    - reference: identifier
+    - terminal: "{"
+    - oneOrMore:
+        sequence:
+          - reference: typeName
+          - reference: identifier
+          - terminal: ;
+    - terminal: "}"
+- name: enumDefinition
+  sequence:
+    - terminal: enum
+    - reference: identifier
+    - terminal: "{"
+    - oneOrMore:
+        reference: identifier
+        separator:
+          terminal: ","
+    - terminal: "}"
+- name: userDefinedValueTypeDefinition
+  sequence:
+    - terminal: type
+    - reference: identifier
+    - terminal: is
+    - reference: elementaryTypeWithPayable
+    - terminal: ;
+- name: eventDefinition
+  sequence:
+    - terminal: event
+    - reference: identifier
+    - terminal: (
+    - zeroOrMore:
+        reference: eventParameter
+        separator:
+          terminal: ","
+    - terminal: )
+    - optional:
+        terminal: anonymous
+    - terminal: ;
+- name: eventParameter
+  sequence:
+    - reference: typeName
+    - optional:
+        terminal: indexed
+    - optional:
+        reference: identifier
+- name: errorDefinition
+  sequence:
+    - terminal: error
+    - reference: identifier
+    - terminal: (
+    - zeroOrMore:
+        reference: errorParameter
+        separator:
+          terminal: ","
+    - terminal: )
+    - terminal: ;
+- name: errorParameter
+  sequence:
+    - reference: typeName
+    - optional:
+        reference: identifier
+- name: contractBodyElement
+  choice:
+    - reference: usingDirective
+    - reference: constructorDefinition
+    - reference: functionDefinition
+    - reference: fallbackFunctionDefinition
+    - reference: receiveFunctionDefinition
+    - reference: modifierDefinition
+    - reference: structDefinition
+    - reference: enumDefinition
+    - reference: userDefinedValueTypeDefinition
+    - reference: eventDefinition
+    - reference: errorDefinition
+    - reference: stateVariableDeclaration
+- name: constructorDefinition
+  sequence:
+    - terminal: constructor
+    - reference: parameterList
+    - zeroOrMore:
+        reference: constructorAttribute
+    - reference: block
+- name: constructorAttribute
+  choice:
+    - reference: modifierInvocation
+    - terminal: payable
+    - terminal: internal
+    - terminal: public
+- name: fallbackFunctionDefinition
+  sequence:
+    - terminal: fallback
+    - reference: parameterList
+    - zeroOrMore:
+        reference: fallbackFunctionAttribute
+    - optional:
+        sequence:
+          - terminal: returns
+          - reference: nonEmptyParameterList
+    - choice:
+        - terminal: ;
+        - reference: block
+- name: fallbackFunctionAttribute
+  choice:
+    - terminal: external
+    - reference: stateMutabilitySpecifier
+    - reference: modifierInvocation
+    - terminal: virtual
+    - reference: overrideSpecifier
+- name: receiveFunctionDefinition
+  sequence:
+    - terminal: receive
+    - terminal: (
+    - terminal: )
+    - zeroOrMore:
+        reference: receiveFunctionAttribute
+    - choice:
+        - terminal: ;
+        - reference: block
+- name: receiveFunctionAttribute
+  choice:
+    - terminal: external
+    - terminal: payable
+    - reference: modifierInvocation
+    - terminal: virtual
+    - reference: overrideSpecifier
+- name: modifierDefinition
+  sequence:
+    - terminal: modifier
+    - reference: identifier
+    - optional:
+        reference: parameterList
+    - zeroOrMore:
+        reference: methodAttribute
+    - choice:
+        - terminal: ;
+        - reference: block
+- name: methodAttribute
+  choice:
+    - terminal: virtual
+    - reference: overrideSpecifier
+- name: stateVariableDeclaration
+  sequence:
+    - reference: typeName
+    - zeroOrMore:
+        reference: stateVariableAttribute
+    - reference: identifier
+    - optional:
+        sequence:
+          - terminal: "="
+          - reference: expression
+    - terminal: ;
+- name: stateVariableAttribute
+  choice:
+    - terminal: public
+    - terminal: private
+    - terminal: internal
+    - terminal: constant
+    - reference: overrideSpecifier
+    - terminal: immutable
+- name: argumentList
+  sequence:
+    - terminal: (
+    - optional:
+        choice:
+          - reference: positionalArgumentList
+          - reference: namedArgumentList
+    - terminal: )
+- name: positionalArgumentList
+  oneOrMore:
+    reference: expression
+    separator:
+      terminal: ","
+- name: namedArgumentList
+  sequence:
+    - terminal: "{"
+    - zeroOrMore:
+        reference: namedArgument
+        separator:
+          terminal: ","
+    - terminal: "}"
+- name: namedArgument
+  sequence:
+    - reference: identifier
+    - terminal: ":"
+    - reference: expression
+- name: modifierInvocation
+  sequence:
+    - reference: identifierPath
+    - optional:
+        reference: argumentList
+- name: parameterList
+  sequence:
+    - terminal: (
+    - zeroOrMore:
+        reference: parameterDeclaration
+        separator:
+          terminal: ","
+    - terminal: )
+- name: nonEmptyParameterList
+  sequence:
+    - terminal: (
+    - oneOrMore:
+        reference: parameterDeclaration
+        separator:
+          terminal: ","
+    - terminal: )
+- name: parameterDeclaration
+  sequence:
+    - reference: typeName
+    - optional:
+        reference: dataLocation
+    - optional:
+        reference: identifier
+- name: visibilitySpecifier
+  choice:
+    - terminal: internal
+    - terminal: external
+    - terminal: private
+    - terminal: public
+- name: stateMutabilitySpecifier
+  choice:
+    - terminal: pure
+    - terminal: view
+    - terminal: payable
+- name: overrideSpecifier
+  sequence:
+    - terminal: override
+    - optional:
+        sequence:
+          - terminal: (
+          - repeat:
+              min: 1
+              max: 1
+              reference: identifierPath
+              separator:
+                terminal: ","
+          - terminal: )
+- name: identifierPath
+  oneOrMore:
+    reference: identifier
+    separator:
+      terminal: "."
+- name: typeName
+  sequence:
+    - choice:
+        - reference: elementaryTypeWithPayable
+        - reference: functionType
+        - reference: mappingType
+        - reference: identifierPath
+    - zeroOrMore:
+        sequence:
+          - terminal: "["
+          - optional:
+              reference: expression
+          - terminal: "]"
+- name: elementaryTypeWithPayable
+  choice:
+    - sequence:
+        - terminal: address
+        - optional:
+            terminal: payable
+    - reference: elementaryType
+- name: elementaryTypeWithoutPayable
+  choice:
+    - terminal: address
+    - reference: elementaryType
+- name: elementaryType
+  choice:
+    - terminal: bool
+    - terminal: string
+    - terminal: bytes
+    - reference: SignedIntegerType
+    - reference: UnsignedIntegerType
+    - reference: FixedBytes
+    - reference: Fixed
+    - reference: Ufixed
+- name: functionType
+  sequence:
+    - terminal: function
+    - reference: parameterList
+    - zeroOrMore:
+        choice:
+          - reference: visibilitySpecifier
+          - reference: stateMutabilitySpecifier
+    - optional:
+        sequence:
+          - terminal: returns
+          - reference: nonEmptyParameterList
+- name: mappingType
+  sequence:
+    - terminal: mapping
+    - terminal: (
+    - choice:
+        - reference: elementaryTypeWithoutPayable
+        - reference: identifierPath
+    - terminal: "=>"
+    - reference: typeName
+    - terminal: )
+- name: dataLocation
+  choice:
+    - terminal: memory
+    - terminal: storage
+    - terminal: calldata
+- name: expression
+  choice:
+    - sequence:
+        - reference: expression
+        - terminal: "["
+        - optional:
+            reference: expression
+        - optional:
+            sequence:
+              - terminal: ":"
+              - optional:
+                  reference: expression
+        - terminal: "]"
+    - sequence:
+        - reference: expression
+        - terminal: "."
+        - choice:
+            - reference: identifier
+            - terminal: address
+    - sequence:
+        - reference: expression
+        - terminal: "{"
+        - oneOrMore:
+            reference: namedArgument
+            separator:
+              terminal: ","
+        - terminal: "}"
+    - sequence:
+        - reference: expression
+        - reference: argumentList
+    - sequence:
+        - terminal: payable
+        - reference: argumentList
+    - sequence:
+        - terminal: type
+        - terminal: (
+        - reference: typeName
+        - terminal: )
+    - sequence:
+        - choice:
+            - terminal: ++
+            - terminal: "--"
+            - terminal: "!"
+            - terminal: "~"
+            - terminal: delete
+            - terminal: "-"
+        - reference: expression
+    - sequence:
+        - reference: expression
+        - choice:
+            - terminal: ++
+            - terminal: "--"
+    - sequence:
+        - reference: expression
+        - terminal: "**"
+        - reference: expression
+    - sequence:
+        - reference: expression
+        - choice:
+            - terminal: "*"
+            - terminal: /
+            - terminal: "%"
+        - reference: expression
+    - sequence:
+        - reference: expression
+        - choice:
+            - terminal: +
+            - terminal: "-"
+        - reference: expression
+    - sequence:
+        - reference: expression
+        - choice:
+            - terminal: "<<"
+            - terminal: ">>"
+            - terminal: ">>>"
+        - reference: expression
+    - sequence:
+        - reference: expression
+        - terminal: "&"
+        - reference: expression
+    - sequence:
+        - reference: expression
+        - terminal: ^
+        - reference: expression
+    - sequence:
+        - reference: expression
+        - terminal: "|"
+        - reference: expression
+    - sequence:
+        - reference: expression
+        - choice:
+            - terminal: "<"
+            - terminal: ">"
+            - terminal: "<="
+            - terminal: ">="
+        - reference: expression
+    - sequence:
+        - reference: expression
+        - choice:
+            - terminal: "=="
+            - terminal: "!="
+        - reference: expression
+    - sequence:
+        - reference: expression
+        - terminal: "&&"
+        - reference: expression
+    - sequence:
+        - reference: expression
+        - terminal: "||"
+        - reference: expression
+    - sequence:
+        - reference: expression
+        - terminal: "?"
+        - reference: expression
+        - terminal: ":"
+        - reference: expression
+    - sequence:
+        - reference: expression
+        - choice:
+            - terminal: "="
+            - terminal: "|="
+            - terminal: ^=
+            - terminal: "&="
+            - terminal: "<<="
+            - terminal: ">>="
+            - terminal: ">>>="
+            - terminal: +=
+            - terminal: "-="
+            - terminal: "*="
+            - terminal: /=
+            - terminal: "%="
+        - reference: expression
+    - sequence:
+        - terminal: new
+        - reference: typeName
+    - reference: tupleExpression
+    - reference: inlineArrayExpression
+    - choice:
+        - reference: identifier
+        - reference: literal
+        - reference: elementaryTypeWithoutPayable
+- name: tupleExpression
+  sequence:
+    - terminal: (
+    - oneOrMore:
+        optional:
+          reference: expression
+        separator:
+          terminal: ","
+    - terminal: )
+- name: inlineArrayExpression
+  sequence:
+    - terminal: "["
+    - oneOrMore:
+        reference: expression
+        separator:
+          terminal: ","
+    - terminal: "]"
+- name: literal
+  choice:
+    - reference: asciiStringLiteral
+    - reference: unicodeStringLiteral
+    - reference: numericLiteral
+    - reference: HexStringLiteral
+    - reference: BooleanLiteral
+- name: asciiStringLiteral
+  oneOrMore:
+    reference: AsciiStringLiteral
+- name: unicodeStringLiteral
+  oneOrMore:
+    reference: UnicodeStringLiteral
+- name: numericLiteral
+  sequence:
+    - choice:
+        - reference: DecimalNumber
+        - reference: HexNumber
+    - optional:
+        reference: NumberUnit
+- name: block
+  sequence:
+    - terminal: "{"
+    - zeroOrMore:
+        choice:
+          - reference: statement
+          - reference: uncheckedBlock
+    - terminal: "}"
+- name: uncheckedBlock
+  sequence:
+    - terminal: unchecked
+    - reference: block
+- name: statement
+  choice:
+    - reference: block
+    - reference: simpleStatement
+    - reference: ifStatement
+    - reference: forStatement
+    - reference: whileStatement
+    - reference: doWhileStatement
+    - reference: continueStatement
+    - reference: breakStatement
+    - reference: tryStatement
+    - reference: returnStatement
+    - reference: emitStatement
+    - reference: revertStatement
+    - reference: assemblyStatement
+- name: simpleStatement
+  choice:
+    - reference: variableDeclarationStatement
+    - reference: expressionStatement
+- name: ifStatement
+  sequence:
+    - terminal: if
+    - terminal: (
+    - reference: expression
+    - terminal: )
+    - reference: statement
+    - optional:
+        sequence:
+          - terminal: else
+          - reference: statement
+- name: forStatement
+  sequence:
+    - terminal: for
+    - terminal: (
+    - choice:
+        - reference: simpleStatement
+        - terminal: ;
+    - choice:
+        - reference: expressionStatement
+        - terminal: ;
+    - optional:
+        reference: expression
+    - terminal: )
+    - reference: statement
+- name: whileStatement
+  sequence:
+    - terminal: while
+    - terminal: (
+    - reference: expression
+    - terminal: )
+    - reference: statement
+- name: doWhileStatement
+  sequence:
+    - terminal: do
+    - reference: statement
+    - terminal: while
+    - terminal: (
+    - reference: expression
+    - terminal: )
+    - terminal: ;
+- name: continueStatement
+  sequence:
+    - terminal: continue
+    - terminal: ;
+- name: breakStatement
+  sequence:
+    - terminal: break
+    - terminal: ;
+- name: tryStatement
+  sequence:
+    - terminal: try
+    - reference: expression
+    - optional:
+        sequence:
+          - terminal: returns
+          - reference: nonEmptyParameterList
+    - reference: block
+    - reference: catchClause
+    - zeroOrMore:
+        reference: catchClause
+- name: catchClause
+  sequence:
+    - terminal: catch
+    - optional:
+        sequence:
+          - optional:
+              reference: identifier
+          - reference: nonEmptyParameterList
+    - reference: block
+- name: returnStatement
+  sequence:
+    - terminal: return
+    - optional:
+        reference: expression
+    - terminal: ;
+- name: emitStatement
+  sequence:
+    - terminal: emit
+    - reference: expression
+    - reference: argumentList
+    - terminal: ;
+- name: revertStatement
+  sequence:
+    - terminal: revert
+    - reference: expression
+    - reference: argumentList
+    - terminal: ;
+- name: variableDeclarationList
+  oneOrMore:
+    reference: variableDeclaration
+    separator:
+      terminal: ","
+- name: variableDeclarationTuple
+  sequence:
+    - terminal: (
+    - zeroOrMore:
+        terminal: ","
+    - reference: variableDeclaration
+    - zeroOrMore:
+        sequence:
+          - terminal: ","
+          - optional:
+              reference: variableDeclaration
+    - terminal: )
+- name: variableDeclarationStatement
+  sequence:
+    - choice:
+        - sequence:
+            - reference: variableDeclaration
+            - optional:
+                sequence:
+                  - terminal: "="
+                  - reference: expression
+        - sequence:
+            - reference: variableDeclarationTuple
+            - terminal: "="
+            - reference: expression
+    - terminal: ;
+- name: variableDeclaration
+  sequence:
+    - reference: typeName
+    - optional:
+        reference: dataLocation
+    - reference: identifier
+- name: expressionStatement
+  sequence:
+    - reference: expression
+    - terminal: ;
+- name: assemblyStatement
+  sequence:
+    - terminal: assembly
+    - optional:
+        terminal: '"evmasm"'
+    - optional:
+        reference: assemblyFlags
+    - reference: yulBlock
+- name: assemblyFlags
+  sequence:
+    - terminal: (
+    - oneOrMore:
+        reference: DoubleQuotedAsciiStringLiteral
+        separator:
+          terminal: ","
+    - terminal: )
+- name: identifier
+  difference:
+    minuend:
+      reference: RawIdentifier
+    subtrahend:
+      reference: reservedWord
+- name: reservedWord
+  choice:
+    - reference: keyword
+    - reference: reservedKeyword
+    - reference: NumberUnit
+    - reference: BooleanLiteral
+- name: keyword
+  choice:
+    - terminal: pragma
+    - terminal: abstract
+    - terminal: anonymous
+    - terminal: address
+    - terminal: as
+    - terminal: assembly
+    - terminal: bool
+    - terminal: break
+    - terminal: bytes
+    - terminal: calldata
+    - terminal: catch
+    - terminal: constant
+    - terminal: constructor
+    - terminal: continue
+    - terminal: contract
+    - terminal: delete
+    - terminal: do
+    - terminal: else
+    - terminal: emit
+    - terminal: enum
+    - terminal: event
+    - terminal: external
+    - terminal: fallback
+    - terminal: "false"
+    - terminal: for
+    - terminal: function
+    - terminal: hex
+    - terminal: if
+    - terminal: immutable
+    - terminal: import
+    - terminal: indexed
+    - terminal: interface
+    - terminal: internal
+    - terminal: is
+    - terminal: library
+    - terminal: mapping
+    - terminal: memory
+    - terminal: modifier
+    - terminal: new
+    - terminal: override
+    - terminal: payable
+    - terminal: private
+    - terminal: public
+    - terminal: pure
+    - terminal: receive
+    - terminal: return
+    - terminal: returns
+    - terminal: storage
+    - terminal: string
+    - terminal: struct
+    - terminal: "true"
+    - terminal: try
+    - terminal: type
+    - terminal: unchecked
+    - terminal: using
+    - terminal: view
+    - terminal: virtual
+    - terminal: while
+    - reference: SignedIntegerType
+    - reference: UnsignedIntegerType
+    - reference: FixedBytes
+    - terminal: fixed
+    - terminal: ufixed
+- name: reservedKeyword
+  choice:
+    - terminal: after
+    - terminal: alias
+    - terminal: apply
+    - terminal: auto
+    - terminal: byte
+    - terminal: case
+    - terminal: copyof
+    - terminal: default
+    - terminal: define
+    - terminal: final
+    - terminal: implements
+    - terminal: in
+    - terminal: inline
+    - terminal: let
+    - terminal: macro
+    - terminal: match
+    - terminal: mutable
+    - terminal: "null"
+    - terminal: of
+    - terminal: partial
+    - terminal: promise
+    - terminal: reference
+    - terminal: relocatable
+    - terminal: sealed
+    - terminal: sizeof
+    - terminal: static
+    - terminal: supports
+    - terminal: switch
+    - terminal: typedef
+    - terminal: typeof
+    - terminal: var
+- name: pragmaDirective
+  is_token: true
+  sequence:
+    - terminal: pragma
+    - not:
+        terminal: ;
+    - zeroOrMore:
+        not:
+          terminal: ;
+    - terminal: ;
+- name: RawIdentifier
+  is_token: true
+  sequence:
+    - reference: IdentifierStart
+    - zeroOrMore:
+        reference: IdentifierPart
+- name: IdentifierStart
+  is_token: true
+  choice:
+    - terminal: _
+    - terminal: $
+    - range:
+        from: a
+        to: z
+    - range:
+        from: A
+        to: Z
+- name: IdentifierPart
+  is_token: true
+  choice:
+    - reference: IdentifierStart
+    - range:
+        from: "0"
+        to: "9"
+- name: SignedIntegerType
+  is_token: true
+  sequence:
+    - terminal: int
+    - choice:
+        - terminal: "8"
+        - terminal: "16"
+        - terminal: "24"
+        - terminal: "32"
+        - terminal: "40"
+        - terminal: "48"
+        - terminal: "56"
+        - terminal: "64"
+        - terminal: "72"
+        - terminal: "80"
+        - terminal: "88"
+        - terminal: "96"
+        - terminal: "104"
+        - terminal: "112"
+        - terminal: "120"
+        - terminal: "128"
+        - terminal: "136"
+        - terminal: "144"
+        - terminal: "152"
+        - terminal: "160"
+        - terminal: "168"
+        - terminal: "176"
+        - terminal: "184"
+        - terminal: "192"
+        - terminal: "200"
+        - terminal: "208"
+        - terminal: "216"
+        - terminal: "224"
+        - terminal: "232"
+        - terminal: "240"
+        - terminal: "248"
+        - terminal: "256"
+- name: UnsignedIntegerType
+  is_token: true
+  sequence:
+    - terminal: u
+    - reference: SignedIntegerType
+- name: FixedBytes
+  is_token: true
+  sequence:
+    - terminal: bytes
+    - choice:
+        - terminal: "1"
+        - terminal: "2"
+        - terminal: "3"
+        - terminal: "4"
+        - terminal: "5"
+        - terminal: "6"
+        - terminal: "7"
+        - terminal: "8"
+        - terminal: "9"
+        - terminal: "10"
+        - terminal: "11"
+        - terminal: "12"
+        - terminal: "13"
+        - terminal: "14"
+        - terminal: "15"
+        - terminal: "16"
+        - terminal: "17"
+        - terminal: "18"
+        - terminal: "19"
+        - terminal: "20"
+        - terminal: "21"
+        - terminal: "22"
+        - terminal: "23"
+        - terminal: "24"
+        - terminal: "25"
+        - terminal: "26"
+        - terminal: "27"
+        - terminal: "28"
+        - terminal: "29"
+        - terminal: "30"
+        - terminal: "31"
+        - terminal: "32"
+- name: Fixed
+  is_token: true
+  sequence:
+    - terminal: fixed
+    - optional:
+        sequence:
+          - range:
+              from: "1"
+              to: "9"
+          - zeroOrMore:
+              range:
+                from: "0"
+                to: "9"
+          - terminal: x
+          - range:
+              from: "1"
+              to: "9"
+          - zeroOrMore:
+              range:
+                from: "0"
+                to: "9"
+- name: Ufixed
+  is_token: true
+  sequence:
+    - terminal: u
+    - reference: Fixed
+- name: BooleanLiteral
+  is_token: true
+  choice:
+    - terminal: "true"
+    - terminal: "false"
+- name: DecimalNumber
+  is_token: true
+  sequence:
+    - choice:
+        - reference: DecimalInteger
+        - reference: DecimalFloat
+    - optional:
+        reference: DecimalExponent
+- name: DecimalInteger
+  is_token: true
+  oneOrMore:
+    range:
+      from: "0"
+      to: "9"
+    separator:
+      optional:
+        terminal: _
+- name: DecimalFloat
+  is_token: true
+  sequence:
+    - optional:
+        reference: DecimalInteger
+    - terminal: "."
+    - reference: DecimalInteger
+- name: DecimalExponent
+  is_token: true
+  sequence:
+    - choice:
+        - terminal: e
+        - terminal: E
+    - optional:
+        terminal: "-"
+    - reference: DecimalInteger
+- name: HexNumber
+  is_token: true
+  sequence:
+    - terminal: "0"
+    - terminal: x
+    - oneOrMore:
+        reference: HexCharacter
+        separator:
+          optional:
+            terminal: _
+- name: NumberUnit
+  is_token: true
+  choice:
+    - terminal: wei
+    - terminal: gwei
+    - terminal: ether
+    - terminal: seconds
+    - terminal: minutes
+    - terminal: hours
+    - terminal: days
+    - terminal: weeks
+    - terminal: years
+- name: HexStringLiteral
+  is_token: true
+  sequence:
+    - terminal: hex
+    - choice:
+        - sequence:
+            - terminal: '"'
+            - optional:
+                reference: PossiblySeparatedPairsOfHexDigits
+            - terminal: '"'
+        - sequence:
+            - terminal: "'"
+            - optional:
+                reference: PossiblySeparatedPairsOfHexDigits
+            - terminal: "'"
+- name: PossiblySeparatedPairsOfHexDigits
+  is_token: true
+  oneOrMore:
+    repeat:
+      min: 2
+      max: 2
+      reference: HexCharacter
+    separator:
+      optional:
+        terminal: _
+- name: HexCharacter
+  is_token: true
+  choice:
+    - range:
+        from: "0"
+        to: "9"
+    - range:
+        from: a
+        to: f
+    - range:
+        from: A
+        to: F
+- name: AsciiStringLiteral
+  is_token: true
+  choice:
+    - reference: SingleQuotedAsciiStringLiteral
+    - reference: DoubleQuotedAsciiStringLiteral
+- name: SingleQuotedAsciiStringLiteral
+  is_token: true
+  sequence:
+    - terminal: "'"
+    - zeroOrMore:
+        choice:
+          - difference:
+              minuend:
+                range:
+                  from: " "
+                  to: "~"
+              subtrahend:
+                choice:
+                  - terminal: "'"
+                  - terminal: "\\"
+          - reference: EscapeSequence
+    - terminal: "'"
+- name: DoubleQuotedAsciiStringLiteral
+  is_token: true
+  sequence:
+    - terminal: '"'
+    - zeroOrMore:
+        choice:
+          - difference:
+              minuend:
+                range:
+                  from: " "
+                  to: "~"
+              subtrahend:
+                choice:
+                  - terminal: '"'
+                  - terminal: "\\"
+          - reference: EscapeSequence
+    - terminal: '"'
+- name: UnicodeStringLiteral
+  is_token: true
+  choice:
+    - reference: SingleQuotedUnicodeStringLiteral
+    - reference: DoubleQuotedUnicodeStringLiteral
+- name: SingleQuotedUnicodeStringLiteral
+  is_token: true
+  sequence:
+    - terminal: "unicode'"
+    - zeroOrMore:
+        choice:
+          - not:
+              choice:
+                - terminal: "'"
+                - terminal: "\\"
+                - terminal: "\n"
+                - terminal: "\r"
+          - reference: EscapeSequence
+    - terminal: "'"
+- name: DoubleQuotedUnicodeStringLiteral
+  is_token: true
+  sequence:
+    - terminal: 'unicode"'
+    - zeroOrMore:
+        choice:
+          - not:
+              choice:
+                - terminal: '"'
+                - terminal: "\\"
+                - terminal: "\n"
+                - terminal: "\r"
+          - reference: EscapeSequence
+    - terminal: '"'
+- name: EscapeSequence
+  is_token: true
+  sequence:
+    - terminal: "\\"
+    - choice:
+        - reference: AsciiEscape
+        - reference: HexByteEscape
+        - reference: UnicodeEscape
+- name: AsciiEscape
+  is_token: true
+  choice:
+    - terminal: n
+    - terminal: r
+    - terminal: t
+    - terminal: "'"
+    - terminal: '"'
+    - terminal: "\\"
+    - terminal: "\n"
+    - terminal: "\r"
+- name: HexByteEscape
+  is_token: true
+  sequence:
+    - terminal: x
+    - repeat:
+        min: 2
+        max: 2
+        reference: HexCharacter
+- name: UnicodeEscape
+  is_token: true
+  sequence:
+    - terminal: u
+    - repeat:
+        min: 4
+        max: 4
+        reference: HexCharacter
+- name: yulBlock
+  sequence:
+    - terminal: "{"
+    - zeroOrMore:
+        reference: yulStatement
+    - terminal: "}"
+- name: yulStatement
+  choice:
+    - reference: yulBlock
+    - reference: yulVariableDeclaration
+    - reference: yulFunctionDefinition
+    - reference: yulAssignment
+    - reference: yulFunctionCall
+    - reference: yulIfStatement
+    - reference: yulForStatement
+    - reference: yulSwitchStatement
+    - reference: yulLeaveStatement
+    - reference: yulBreakStatement
+    - reference: yulContinueStatement
+- name: yulVariableDeclaration
+  sequence:
+    - terminal: let
+    - reference: yulIdentifier
+    - optional:
+        choice:
+          - sequence:
+              - terminal: ":="
+              - reference: yulExpression
+          - sequence:
+              - optional:
+                  sequence:
+                    - terminal: ","
+                    - reference: yulIdentifier
+              - optional:
+                  sequence:
+                    - terminal: ":="
+                    - reference: yulFunctionCall
+- name: yulFunctionDefinition
+  sequence:
+    - terminal: function
+    - reference: yulIdentifier
+    - terminal: (
+    - zeroOrMore:
+        reference: yulIdentifier
+        separator:
+          terminal: ","
+    - terminal: )
+    - optional:
+        sequence:
+          - terminal: "->"
+          - oneOrMore:
+              reference: yulIdentifier
+              separator:
+                terminal: ","
+    - reference: yulBlock
+- name: yulAssignment
+  sequence:
+    - reference: yulPath
+    - choice:
+        - sequence:
+            - terminal: ":="
+            - reference: yulExpression
+        - sequence:
+            - oneOrMore:
+                sequence:
+                  - terminal: ","
+                  - reference: yulPath
+            - terminal: ":="
+            - reference: yulFunctionCall
+- name: yulFunctionCall
+  sequence:
+    - choice:
+        - reference: yulIdentifier
+        - reference: yulEVMBuiltinFunctionName
+    - terminal: (
+    - zeroOrMore:
+        reference: yulExpression
+        separator:
+          terminal: ","
+    - terminal: )
+- name: yulIfStatement
+  sequence:
+    - terminal: if
+    - reference: yulExpression
+    - reference: yulBlock
+- name: yulLeaveStatement
+  terminal: leave
+- name: yulBreakStatement
+  terminal: break
+- name: yulContinueStatement
+  terminal: continue
+- name: yulForStatement
+  sequence:
+    - terminal: for
+    - reference: yulBlock
+    - reference: yulExpression
+    - reference: yulBlock
+    - reference: yulBlock
+- name: yulSwitchStatement
+  sequence:
+    - terminal: switch
+    - reference: yulExpression
+    - choice:
+        - sequence:
+            - oneOrMore:
+                sequence:
+                  - terminal: case
+                  - reference: yulLiteral
+                  - reference: yulBlock
+            - optional:
+                sequence:
+                  - terminal: default
+                  - reference: yulBlock
+        - sequence:
+            - terminal: default
+            - reference: yulBlock
+- name: yulExpression
+  choice:
+    - reference: yulPath
+    - reference: yulFunctionCall
+    - reference: yulLiteral
+- name: yulPath
+  sequence:
+    - reference: yulIdentifier
+    - zeroOrMore:
+        sequence:
+          - terminal: "."
+          - choice:
+              - reference: yulIdentifier
+              - reference: yulEVMBuiltinFunctionName
+- name: yulLiteral
+  choice:
+    - reference: YulDecimalNumberLiteral
+    - reference: YulHexLiteral
+    - reference: asciiStringLiteral
+    - reference: BooleanLiteral
+    - reference: HexStringLiteral
+- name: yulIdentifier
+  difference:
+    minuend:
+      reference: RawIdentifier
+    subtrahend:
+      reference: yulReservedWord
+- name: yulReservedWord
+  choice:
+    - reference: yulKeyword
+    - reference: yulEVMBuiltinFunctionName
+    - reference: BooleanLiteral
+- name: yulKeyword
+  choice:
+    - terminal: break
+    - terminal: case
+    - terminal: continue
+    - terminal: default
+    - terminal: for
+    - terminal: function
+    - terminal: if
+    - terminal: leave
+    - terminal: let
+    - terminal: switch
+    - terminal: hex
+- name: yulEVMBuiltinFunctionName
+  choice:
+    - terminal: stop
+    - terminal: add
+    - terminal: sub
+    - terminal: mul
+    - terminal: div
+    - terminal: sdiv
+    - terminal: mod
+    - terminal: smod
+    - terminal: exp
+    - terminal: not
+    - terminal: lt
+    - terminal: gt
+    - terminal: slt
+    - terminal: sgt
+    - terminal: eq
+    - terminal: iszero
+    - terminal: and
+    - terminal: or
+    - terminal: xor
+    - terminal: byte
+    - terminal: shl
+    - terminal: shr
+    - terminal: sar
+    - terminal: addmod
+    - terminal: mulmod
+    - terminal: signextend
+    - terminal: keccak256
+    - terminal: pop
+    - terminal: mload
+    - terminal: mstore
+    - terminal: mstore8
+    - terminal: sload
+    - terminal: sstore
+    - terminal: msize
+    - terminal: gas
+    - terminal: address
+    - terminal: balance
+    - terminal: selfbalance
+    - terminal: caller
+    - terminal: callvalue
+    - terminal: calldataload
+    - terminal: calldatasize
+    - terminal: calldatacopy
+    - terminal: extcodesize
+    - terminal: extcodecopy
+    - terminal: returndatasize
+    - terminal: returndatacopy
+    - terminal: extcodehash
+    - terminal: create
+    - terminal: create2
+    - terminal: call
+    - terminal: callcode
+    - terminal: delegatecall
+    - terminal: staticcall
+    - terminal: return
+    - terminal: revert
+    - terminal: selfdestruct
+    - terminal: invalid
+    - terminal: log0
+    - terminal: log1
+    - terminal: log2
+    - terminal: log3
+    - terminal: log4
+    - terminal: chainid
+    - terminal: origin
+    - terminal: gasprice
+    - terminal: blockhash
+    - terminal: coinbase
+    - terminal: timestamp
+    - terminal: number
+    - terminal: difficulty
+    - terminal: gaslimit
+    - terminal: basefee
+- name: YulDecimalNumberLiteral
+  is_token: true
+  choice:
+    - terminal: "0"
+    - sequence:
+        - range:
+            from: "1"
+            to: "9"
+        - zeroOrMore:
+            range:
+              from: "0"
+              to: "9"
+- name: YulHexLiteral
+  is_token: true
+  sequence:
+    - terminal: "0x"
+    - choice:
+        - range:
+            from: "0"
+            to: "9"
+        - range:
+            from: a
+            to: f
+        - range:
+            from: A
+            to: F
+    - zeroOrMore:
+        choice:
+          - range:
+              from: "0"
+              to: "9"
+          - range:
+              from: a
+              to: f
+          - range:
+              from: A
+              to: F

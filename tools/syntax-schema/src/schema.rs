@@ -14,6 +14,17 @@ pub struct Grammar {
     pub productions: IndexMap<String, Vec<Production>>,
 }
 
+impl Grammar {
+    pub fn get_production(&self, name: &str) -> Option<&Production> {
+        for (_, v) in &self.productions {
+            if let p @ Some(_) = v.iter().find(|p| p.name == name) {
+                return p;
+            }
+        }
+        return None;
+    }
+}
+
 #[derive(Deserialize, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct Manifest {
@@ -39,20 +50,18 @@ pub struct Topic {
 #[serde(deny_unknown_fields)]
 pub struct Production {
     pub name: String,
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub is_token: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub title: Option<String>,
 
     // TODO: use Either for the next two fields,
     // but it will require custom ser/de methods.
     // Or, use "0.0.0" and elide on serializing, which
     // is logically consistent.
-    #[serde(flatten)]
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(flatten, default, skip_serializing_if = "Option::is_none")]
     pub expr: Option<ExpressionRef>,
-    #[serde(default)]
-    #[serde(skip_serializing_if = "BTreeMap::is_empty")]
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub versions: BTreeMap<Version, ExpressionRef>,
 }
 
@@ -72,11 +81,45 @@ impl Serialize for Expression {
             // These two are ugly - serde has no way of emitting a map entry with
             // no value, which is valid in YAML. So these end up as e.g. `end: ~`
             EBNF::End => state.serialize_entry("end", &Value::Null),
-            EBNF::Any => state.serialize_entry("any", &Value::Null),
 
-            EBNF::ZeroOrMore(expr) => state.serialize_entry("zeroOrMore", &expr),
-            EBNF::OneOrMore(expr) => state.serialize_entry("oneOrMore", &expr),
-            EBNF::Optional(expr) => state.serialize_entry("optional", &expr),
+            EBNF::Repeat(EBNFRepeat {
+                min: min @ 0,
+                max: max @ None,
+                expr,
+                separator,
+            })
+            | EBNF::Repeat(EBNFRepeat {
+                min: min @ 0,
+                max: max @ Some(1),
+                expr,
+                separator,
+            })
+            | EBNF::Repeat(EBNFRepeat {
+                min: min @ 1,
+                max: max @ None,
+                expr,
+                separator,
+            }) => {
+                #[derive(Serialize)]
+                struct V<'a> {
+                    #[serde(flatten)]
+                    expr: &'a ExpressionRef,
+                    #[serde(skip_serializing_if = "Option::is_none")]
+                    separator: &'a Option<ExpressionRef>,
+                }
+                let v = V { expr, separator };
+                state.serialize_entry(
+                    if *min == 1 {
+                        "oneOrMore"
+                    } else if let Some(1) = max {
+                        "optional"
+                    } else {
+                        "zeroOrMore"
+                    },
+                    &v,
+                )
+            }
+            EBNF::Repeat(repeat) => state.serialize_entry("repeat", &repeat),
             EBNF::Not(expr) => state.serialize_entry("not", &expr),
             EBNF::Choice(exprs) => state.serialize_entry("choice", &exprs),
             EBNF::Sequence(exprs) => state.serialize_entry("sequence", &exprs),
@@ -102,9 +145,9 @@ impl<'de> Deserialize<'de> for Expression {
         enum Field {
             Config,
             End,
-            Any,
             ZeroOrMore,
             OneOrMore,
+            Repeat,
             Optional,
             Not,
             Choice,
@@ -138,9 +181,9 @@ impl<'de> Deserialize<'de> for Expression {
                             }
                         }
                         Field::End
-                        | Field::Any
                         | Field::ZeroOrMore
                         | Field::OneOrMore
+                        | Field::Repeat
                         | Field::Optional
                         | Field::Not
                         | Field::Choice
@@ -157,10 +200,28 @@ impl<'de> Deserialize<'de> for Expression {
                     match key {
                         Field::Config => config = Some(map.next_value()?),
                         Field::End => ebnf = Some(EBNF::End),
-                        Field::Any => ebnf = Some(EBNF::Any),
-                        Field::ZeroOrMore => ebnf = Some(EBNF::ZeroOrMore(map.next_value()?)),
-                        Field::OneOrMore => ebnf = Some(EBNF::OneOrMore(map.next_value()?)),
-                        Field::Optional => ebnf = Some(EBNF::Optional(map.next_value()?)),
+                        Field::ZeroOrMore | Field::OneOrMore | Field::Optional => {
+                            #[derive(Deserialize)]
+                            #[serde(deny_unknown_fields)]
+                            struct V {
+                                #[serde(flatten)]
+                                expr: ExpressionRef,
+                                #[serde(default)]
+                                separator: Option<ExpressionRef>,
+                            }
+                            let v: V = map.next_value()?;
+                            ebnf = Some(EBNF::Repeat(EBNFRepeat {
+                                min: if let Field::OneOrMore = key { 1 } else { 0 },
+                                max: if let Field::Optional = key {
+                                    Some(1)
+                                } else {
+                                    None
+                                },
+                                expr: v.expr,
+                                separator: v.separator,
+                            }))
+                        }
+                        Field::Repeat => ebnf = Some(EBNF::Repeat(map.next_value()?)),
                         Field::Not => ebnf = Some(EBNF::Not(map.next_value()?)),
                         Field::Choice => ebnf = Some(EBNF::Choice(map.next_value()?)),
                         Field::Sequence => ebnf = Some(EBNF::Sequence(map.next_value()?)),
@@ -179,9 +240,9 @@ impl<'de> Deserialize<'de> for Expression {
         const FIELDS: &'static [&'static str] = &[
             "config",
             "end",
-            "any",
             "zeroOrMore",
             "oneOrMore",
+            "repeat",
             "optional",
             "not",
             "choice",
@@ -209,13 +270,23 @@ pub struct EBNFRange {
     pub to: char,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct EBNFRepeat {
+    #[serde(default)] // TODO: skip_serializing_if is_zero
+    pub min: usize,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub max: Option<usize>,
+    #[serde(flatten)]
+    pub expr: ExpressionRef,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub separator: Option<ExpressionRef>,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum EBNF {
     End,
-    Any,
-    ZeroOrMore(ExpressionRef),
-    OneOrMore(ExpressionRef),
-    Optional(ExpressionRef),
+    Repeat(EBNFRepeat),
     Not(ExpressionRef),
     Choice(Vec<ExpressionRef>),
     Sequence(Vec<ExpressionRef>),
@@ -230,24 +301,20 @@ pub type ExpressionRef = Rc<Expression>;
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct ExpressionConfig {
-    #[serde(default)]
-    #[serde(skip_serializing_if = "std::ops::Not::not")]
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub ignore: bool,
-    #[serde(default)]
-    #[serde(skip_serializing_if = "std::ops::Not::not")]
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub nomap: bool,
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub map: Option<String>,
-    #[serde(default)]
-    #[serde(skip_serializing_if = "std::ops::Not::not")]
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub unwrap: bool,
-    #[serde(default)]
-    #[serde(skip_serializing_if = "std::ops::Not::not")]
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub chain: bool,
-    #[serde(default)]
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub lookahead: Option<ExpressionRef>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub prelude: Option<String>,
 }
 
 impl ExpressionConfig {
@@ -270,32 +337,36 @@ impl Default for ExpressionConfig {
             unwrap: false,
             chain: false,
             lookahead: None,
+            prelude: None,
         }
     }
 }
 
-pub fn load_grammar(manifest_path: &PathBuf) -> Grammar {
-    let contents = std::fs::read(manifest_path).unwrap();
-    let manifest_path_str = &manifest_path.to_str().unwrap();
-    let manifest: Manifest = serde_yaml::from_slice(&contents).expect(manifest_path_str);
+impl Grammar {
+    pub fn from_manifest(manifest_path: &PathBuf) -> Self {
+        let contents = std::fs::read(manifest_path).unwrap();
+        let manifest_path_str = &manifest_path.to_str().unwrap();
+        let manifest: Manifest = serde_yaml::from_slice(&contents).expect(manifest_path_str);
 
-    let topics: IndexMap<String, Vec<Production>> = manifest
-        .sections
-        .iter()
-        .flat_map(|section| &section.topics)
-        .map(|topic| {
-            let topic_path = manifest_path.parent().unwrap().join(&topic.definition);
-            let topic_path_str = topic_path.to_str().unwrap();
+        let topics: IndexMap<String, Vec<Production>> = manifest
+            .sections
+            .iter()
+            .flat_map(|section| &section.topics)
+            .map(|topic| {
+                let topic_path = manifest_path.parent().unwrap().join(&topic.definition);
+                let topic_path_str = topic_path.to_str().unwrap();
 
-            let contents = std::fs::read(&topic_path).expect(topic_path_str);
-            let rules: Vec<Production> = serde_yaml::from_slice(&contents).expect(topic_path_str);
+                let contents = std::fs::read(&topic_path).expect(topic_path_str);
+                let rules: Vec<Production> =
+                    serde_yaml::from_slice(&contents).expect(topic_path_str);
 
-            return (topic.definition.clone(), rules);
-        })
-        .collect();
+                return (topic.definition.clone(), rules);
+            })
+            .collect();
 
-    return Grammar {
-        manifest,
-        productions: topics,
-    };
+        return Grammar {
+            manifest,
+            productions: topics,
+        };
+    }
 }

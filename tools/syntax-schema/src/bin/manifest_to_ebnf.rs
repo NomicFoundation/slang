@@ -2,12 +2,12 @@ use std::path::PathBuf;
 
 use clap::Parser;
 
-use syntax_schema::{generators, schema, validation};
+use syntax_schema::schema::Grammar;
 
 #[derive(Parser, Debug)]
 struct ProgramArgs {
     #[clap(long)]
-    manifest_path: String,
+    manifest_input: String,
 
     #[clap(long)]
     ebnf_output: String,
@@ -17,11 +17,11 @@ fn main() {
     let args = ProgramArgs::parse();
 
     println!(" => Loading Manifest");
-    let grammar = schema::load_grammar(&PathBuf::from(args.manifest_path));
+    let grammar = Grammar::from_manifest(&PathBuf::from(args.manifest_input));
 
     println!(" => Validating Grammar");
-    validation::validate(&grammar);
+    grammar.validate();
 
     println!(" => Generating EBNF");
-    generators::ebnf::generate(&grammar, &PathBuf::from(args.ebnf_output));
+    grammar.generate_ebnf(&PathBuf::from(args.ebnf_output));
 }

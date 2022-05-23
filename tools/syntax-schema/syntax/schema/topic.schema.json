@@ -20,7 +20,6 @@
       },
       "oneOf": [
         { "$ref": "#/$defs/Versions" },
-        { "$ref": "#/$defs/Any" },
         { "$ref": "#/$defs/Choice" },
         { "$ref": "#/$defs/Difference" },
         { "$ref": "#/$defs/End" },
@@ -31,7 +30,8 @@
         { "$ref": "#/$defs/Reference" },
         { "$ref": "#/$defs/Sequence" },
         { "$ref": "#/$defs/Terminal" },
-        { "$ref": "#/$defs/ZeroOrMore" }
+        { "$ref": "#/$defs/ZeroOrMore" },
+        { "$ref": "#/$defs/Repeat" }
       ]
     },
     "Config": {
@@ -42,7 +42,8 @@
         "unwrap": { "type": "boolean", "default": true },
         "chain": { "type": "boolean", "default": true },
         "map": { "type": "string", "minLength": 1 },
-        "lookahead": { "$ref": "#/$defs/Expression" }
+        "lookahead": { "$ref": "#/$defs/Expression" },
+        "prelude": { "type": "string" }
       }
     },
     "Versions": {
@@ -64,7 +65,6 @@
         "config": { "$ref": "#/$defs/Config" }
       },
       "oneOf": [
-        { "$ref": "#/$defs/Any" },
         { "$ref": "#/$defs/Choice" },
         { "$ref": "#/$defs/Difference" },
         { "$ref": "#/$defs/End" },
@@ -75,15 +75,9 @@
         { "$ref": "#/$defs/Reference" },
         { "$ref": "#/$defs/Sequence" },
         { "$ref": "#/$defs/Terminal" },
-        { "$ref": "#/$defs/ZeroOrMore" }
+        { "$ref": "#/$defs/ZeroOrMore" },
+        { "$ref": "#/$defs/Repeat" }
       ]
-    },
-    "Any": {
-      "type": "object",
-      "required": ["any"],
-      "properties": {
-        "any": { "type": "null" }
-      }
     },
     "Choice": {
       "type": "object",
@@ -122,20 +116,6 @@
       "required": ["not"],
       "properties": {
         "not": { "$ref": "#/$defs/Expression" }
-      }
-    },
-    "OneOrMore": {
-      "type": "object",
-      "required": ["oneOrMore"],
-      "properties": {
-        "oneOrMore": { "$ref": "#/$defs/Expression" }
-      }
-    },
-    "Optional": {
-      "type": "object",
-      "required": ["optional"],
-      "properties": {
-        "optional": { "$ref": "#/$defs/Expression" }
       }
     },
     "Range": {
@@ -177,11 +157,94 @@
         "terminal": { "type": "string", "minLength": 1 }
       }
     },
+    "Optional": {
+      "type": "object",
+      "required": ["optional"],
+      "properties": {
+        "optional": { "$ref": "#/$defs/Expression" }
+      }
+    },
     "ZeroOrMore": {
       "type": "object",
       "required": ["zeroOrMore"],
       "properties": {
-        "zeroOrMore": { "$ref": "#/$defs/Expression" }
+        "zeroOrMore": {
+          "type": "object",
+          "properties": {
+            "config": { "$ref": "#/$defs/Config" },
+            "separator": { "$ref": "#/$defs/Expression" }
+          },
+          "oneOf": [
+            { "$ref": "#/$defs/Choice" },
+            { "$ref": "#/$defs/Difference" },
+            { "$ref": "#/$defs/End" },
+            { "$ref": "#/$defs/Not" },
+            { "$ref": "#/$defs/OneOrMore" },
+            { "$ref": "#/$defs/Optional" },
+            { "$ref": "#/$defs/Range" },
+            { "$ref": "#/$defs/Reference" },
+            { "$ref": "#/$defs/Sequence" },
+            { "$ref": "#/$defs/Terminal" },
+            { "$ref": "#/$defs/ZeroOrMore" },
+            { "$ref": "#/$defs/Repeat" }
+          ]
+        }
+      }
+    },
+    "OneOrMore": {
+      "type": "object",
+      "required": ["oneOrMore"],
+      "properties": {
+        "oneOrMore": {
+          "type": "object",
+          "properties": {
+            "config": { "$ref": "#/$defs/Config" },
+            "separator": { "$ref": "#/$defs/Expression" }
+          },
+          "oneOf": [
+            { "$ref": "#/$defs/Choice" },
+            { "$ref": "#/$defs/Difference" },
+            { "$ref": "#/$defs/End" },
+            { "$ref": "#/$defs/Not" },
+            { "$ref": "#/$defs/OneOrMore" },
+            { "$ref": "#/$defs/Optional" },
+            { "$ref": "#/$defs/Range" },
+            { "$ref": "#/$defs/Reference" },
+            { "$ref": "#/$defs/Sequence" },
+            { "$ref": "#/$defs/Terminal" },
+            { "$ref": "#/$defs/ZeroOrMore" },
+            { "$ref": "#/$defs/Repeat" }
+          ]
+        }
+      }
+    },
+    "Repeat": {
+      "type": "object",
+      "required": ["repeat"],
+      "properties": {
+        "repeat": {
+          "type": "object",
+          "properties": {
+            "config": { "$ref": "#/$defs/Config" },
+            "min": { "type": "number" },
+            "max": { "type": "number" },
+            "separator": { "$ref": "#/$defs/Expression" }
+          },
+          "oneOf": [
+            { "$ref": "#/$defs/Choice" },
+            { "$ref": "#/$defs/Difference" },
+            { "$ref": "#/$defs/End" },
+            { "$ref": "#/$defs/Not" },
+            { "$ref": "#/$defs/OneOrMore" },
+            { "$ref": "#/$defs/Optional" },
+            { "$ref": "#/$defs/Range" },
+            { "$ref": "#/$defs/Reference" },
+            { "$ref": "#/$defs/Sequence" },
+            { "$ref": "#/$defs/Terminal" },
+            { "$ref": "#/$defs/ZeroOrMore" },
+            { "$ref": "#/$defs/Repeat" }
+          ]
+        }
       }
     }
   }

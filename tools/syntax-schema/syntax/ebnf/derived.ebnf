@@ -1,0 +1,53 @@
+grammar = «IGNORE» { production } $ ;
+
+production = «Identifier» '=' expression ';' ;
+
+expression = 1…*{ sequence / '|' } ;
+
+sequence = 1…*{ difference } ;
+
+difference = negation [ '-' negation ] ;
+
+negation = [ '¬' ] primary ;
+
+primary = productionReference | grouped | optional | repeated | charRange | «EOF» | «String» ;
+
+productionReference = «Identifier» ;
+
+grouped = '(' expression ')' ;
+
+repetitionPrefix = ( «Number» [ '…' [ «Number» ] ] | '…' «Number» ) '*' ;
+
+repetitionSeparator = '/' expression ;
+
+repeated = [ repetitionPrefix ] '{' expression [ repetitionSeparator ] '}' ;
+
+optional = '[' expression ']' ;
+
+charRange = «SingleCharString» '…' «SingleCharString» ;
+
+«EOF» = '$' ;
+
+«Number» = 1…*{ '0'…'9' } ;
+
+«String» = '\'' { «StringChar» } '\'' ;
+
+«StringChar» = ¬( '\'' | '\\' ) | '\\' ( '\'' | '\\' | 'u{' 1…6*{ «HexDigit» } '}' ) ;
+
+«SingleCharString» = '\'' «StringChar» '\'' ;
+
+«HexDigit» = '0'…'9' | 'a'…'f' | 'A'…'F' ;
+
+«Identifier» = '«' «RawIdentifier» '»' | «RawIdentifier» ;
+
+«RawIdentifier» = «IdentifierStart» { «IdentifierFollow» } ;
+
+«IdentifierStart» = '_' | 'a'…'z' | 'A'…'Z' ;
+
+«IdentifierFollow» = «IdentifierStart» | '0'…'9' ;
+
+«IGNORE» = { «Whitespace» | «Comment» } ;
+
+«Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } 1…*{ '*' } '/' ;
+
+«Whitespace» = '\u{9}' | '\u{a}' | '\u{d}' | '\u{20}' ;

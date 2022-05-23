@@ -1,98 +1,138 @@
 # yaml-language-server: $schema=../../schema/topic.schema.json
 
 - name: grammar
+  config:
+    nomap: true
+    prelude: |
+      use super::builder;
+      use crate::schema::Production;
+      pub type GrammarParserResultType = Vec<Production>;
   sequence:
+    - reference: IGNORE
     - zeroOrMore:
-        sequence:
-          - reference: S
-          - reference: production
-    - reference: S
+        reference: production
     - end: ~
+
 - name: production
   sequence:
     - reference: Identifier
-    - reference: S
     - terminal: "="
-    - reference: S
     - reference: expression
-    - reference: S
     - terminal: ;
+
 - name: expression
-  sequence:
-    - reference: sequence
-    - zeroOrMore:
-        sequence:
-          - reference: S
-          - terminal: "|"
-          - reference: S
-          - reference: sequence
+  oneOrMore:
+    reference: sequence
+    separator:
+      terminal: "|"
+
 - name: sequence
-  sequence:
-    - reference: difference
-    - zeroOrMore:
-        sequence:
-          - reference: S
-          - reference: difference
+  oneOrMore:
+    reference: difference
+
 - name: difference
   sequence:
     - reference: negation
     - optional:
         sequence:
-          - reference: S
           - terminal: "-"
-          - reference: S
           - reference: negation
+
 - name: negation
   sequence:
     - optional:
-        sequence:
-          - terminal: ¬
-          - reference: S
+        terminal: ¬
     - reference: primary
+
 - name: primary
+  config: { nomap: true }
   choice:
-    - reference: EOF
-    - reference: Any
-    - reference: CharRange
-    - reference: String
     - reference: productionReference
     - reference: grouped
     - reference: optional
     - reference: repeated
+    - reference: charRange
+    - reference: EOF
+    - reference: String
+
 - name: productionReference
   reference: Identifier
+
 - name: grouped
+  config: { nomap: true }
   sequence:
     - terminal: (
-    - reference: S
     - reference: expression
-    - reference: S
     - terminal: )
+
+- name: repetitionPrefix
+  config: { nomap: true }
+  sequence:
+    - choice:
+        - sequence:
+            - reference: Number
+            - optional:
+                sequence:
+                  - terminal: "…"
+                  - optional:
+                      reference: Number
+          config: { map: repetition_prefix_1 }
+        - sequence:
+            - terminal: "…"
+            - reference: Number
+          config: { map: repetition_prefix_2 }
+    - terminal: "*"
+
+- name: repetitionSeparator
+  config: { nomap: true }
+  sequence:
+    - terminal: "/"
+    - reference: expression
+
+- name: repeated
+  sequence:
+    - optional:
+        reference: repetitionPrefix
+    - terminal: "{"
+    - reference: expression
+    - optional:
+        reference: repetitionSeparator
+    - terminal: "}"
+
 - name: optional
   sequence:
     - terminal: "["
-    - reference: S
     - reference: expression
-    - reference: S
     - terminal: "]"
-- name: repeated
+
+- name: charRange
   sequence:
-    - terminal: "{"
-    - reference: S
-    - reference: expression
-    - reference: S
-    - terminal: "}"
+    - reference: SingleCharString
+    - terminal: …
+    - reference: SingleCharString
+
+# Tokens
+
 - name: EOF
+  is_token: true
   terminal: $
-- name: Any
-  terminal: "."
+
+- name: Number
+  is_token: true
+  oneOrMore:
+    range: { from: "0", to: "9" }
+
 - name: String
+  is_token: true
   sequence:
     - terminal: "'"
     - zeroOrMore:
         reference: StringChar
     - terminal: "'"
+
 - name: StringChar
+  is_token: true
+  config: { nomap: true }
   choice:
     - not:
         choice:
@@ -105,22 +145,24 @@
             - terminal: "\\"
             - sequence:
                 - terminal: "u{"
-                - oneOrMore:
+                - repeat:
+                    min: 1
+                    max: 6
                     reference: HexDigit
+                  config: { map: hex_digits_to_char, unwrap: true }
                 - terminal: "}"
-- name: CharRange
-  sequence:
-    - reference: SingleCharString
-    - reference: S
-    - terminal: …
-    - reference: S
-    - reference: SingleCharString
+
 - name: SingleCharString
+  is_token: true
+  config: { nomap: true }
   sequence:
     - terminal: "'"
     - reference: StringChar
     - terminal: "'"
+
 - name: HexDigit
+  is_token: true
+  config: { nomap: true }
   choice:
     - range:
         from: "0"
@@ -131,12 +173,30 @@
     - range:
         from: A
         to: F
+
 - name: Identifier
+  is_token: true
+  config: { nomap: true }
+  choice:
+    - sequence:
+        - terminal: «
+        - reference: RawIdentifier
+        - terminal: »
+      config: { map: identifier_1 }
+    - reference: RawIdentifier
+      config: { map: identifier_2 }
+
+- name: RawIdentifier
+  config: { chain: true }
+  is_token: true
   sequence:
     - reference: IdentifierStart
     - zeroOrMore:
         reference: IdentifierFollow
+
 - name: IdentifierStart
+  is_token: true
+  config: { nomap: true }
   choice:
     - terminal: _
     - range:
@@ -145,25 +205,34 @@
     - range:
         from: A
         to: Z
+
 - name: IdentifierFollow
+  is_token: true
+  config: { nomap: true }
   choice:
     - reference: IdentifierStart
     - range:
         from: "0"
         to: "9"
-- name: S
+
+- name: IGNORE
+  is_token: true
+  config: { ignore: true }
   zeroOrMore:
     choice:
       - reference: Whitespace
       - reference: Comment
-  config: { ignore: true }
+
 - name: Comment
+  is_token: true
+  config: { ignore: true }
   sequence:
     - terminal: /*
     - zeroOrMore:
         choice:
           - not:
               terminal: "*"
+            config: { ignore: true }
           - sequence:
               - oneOrMore:
                   terminal: "*"
@@ -171,10 +240,14 @@
                   choice:
                     - terminal: "*"
                     - terminal: /
+            config: { ignore: true }
     - oneOrMore:
         terminal: "*"
     - terminal: /
+
 - name: Whitespace
+  is_token: true
+  config: { ignore: true }
   choice:
     - terminal: "\t"
     - terminal: "\n"

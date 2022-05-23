@@ -10,7 +10,7 @@
   sequence:
     - reference: Identifier
     - reference: EqualOperator
-    - reference: LiteralExpression
+    # - reference: LiteralExpression
     - optional:
         reference: SemiColon
 
@@ -27,6 +27,9 @@
   difference:
     minuend: { reference: RawIdentifier }
     subtrahend: { reference: KnownKeyword }
+
+- name: KnownKeyword
+  terminal: "known"
 
 - name: EqualOperator
   title: "Equal Operator (=)"

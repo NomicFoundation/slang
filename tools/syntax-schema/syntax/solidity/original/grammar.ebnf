@@ -1,0 +1,587 @@
+/*******************************************
+  Noise
+*******************************************/
+
+«IGNORE» = { «Whitespace» | «Comment» | «LineComment» } ;
+
+«Whitespace» = '\u{20}' | '\u{9}' | '\u{D}' | '\u{A}' | '\u{C}' ;
+«Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } 1…*{ '*' } '/' ;
+«LineComment» = '//' { ¬( '\u{A}' | '\u{D}' ) } ;
+
+/* TODO: specify natspec sublanguage */
+
+
+/*******************************************
+  Solidity
+*******************************************/
+
+sourceUnit
+    = «IGNORE» { directive | definition } $ ;
+
+directive
+    = «pragmaDirective»
+    | importDirective
+    | usingDirective ;
+
+definition
+    = contractDefinition
+    | interfaceDefinition
+    | libraryDefinition
+    | functionDefinition
+    | constantDefinition
+    | structDefinition
+    | enumDefinition
+    | userDefinedValueTypeDefinition
+    | errorDefinition
+    ;
+
+importDirective
+    = 'import' ( simpleImportDirective | starImportDirective | selectingImportDirective ) ';' ;
+
+simpleImportDirective
+    = importPath { 'as' identifier } ;
+
+starImportDirective
+    = '*' 'as' identifier 'from' importPath ;
+
+selectingImportDirective
+    = '{' 1…*{ selectedImport / ',' } '}' 'from' importPath ;
+
+selectedImport
+    = identifier [ 'as' identifier ] ;
+
+/* Constraint: strings are non-empty */
+/* Q: is this ascii or unicode? */
+importPath
+    = asciiStringLiteral ;
+
+/* Q: is there a semantic difference between first set of alternatives? */
+usingDirective
+    = 'using' ( identifierPath | '{' 1…*{ identifierPath / ',' } '}' ) 'for' ( '*' | typeName ) [ 'global' ] ';' ;
+
+contractDefinition
+    = [ 'abstract' ] 'contract' identifier [ inheritanceSpecifierList ] '{' { contractBodyElement } '}' ;
+
+interfaceDefinition
+    = 'interface' identifier [ inheritanceSpecifierList ] '{' { contractBodyElement } '}' ;
+
+inheritanceSpecifierList
+    = 'is' 1…*{ inheritanceSpecifier / ',' } ;
+
+inheritanceSpecifier
+    = identifierPath [ argumentList ] ;
+
+libraryDefinition
+    = 'library' identifier '{' { contractBodyElement } '}' ;
+
+functionDefinition
+    = 'function' ( identifier | 'fallback' | 'receive' ) parameterList { functionAttribute } [ 'returns' nonEmptyParameterList ] ( ';' | block ) ;
+
+functionAttribute
+    = visibilitySpecifier | stateMutabilitySpecifier | modifierInvocation | 'virtual' | overrideSpecifier ;
+
+constantDefinition
+    = typeName 'constant' identifier '=' expression ';' ;
+
+structDefinition
+    = 'struct' identifier '{' 1…*{ typeName identifier ';' } '}' ;
+
+enumDefinition
+    = 'enum' identifier '{' 1…*{ identifier / ',' } '}' ;
+
+userDefinedValueTypeDefinition
+    = 'type' identifier 'is' elementaryTypeWithPayable ';' ;
+
+eventDefinition
+    = 'event' identifier '(' { eventParameter / ',' } ')' [ 'anonymous' ] ';' ;
+
+eventParameter
+    = typeName [ 'indexed' ] [ identifier ] ;
+
+errorDefinition
+    = 'error' identifier '(' { errorParameter / ',' } ')' ';' ;
+
+errorParameter
+    = typeName [ identifier ] ;
+
+contractBodyElement
+    = usingDirective
+    | constructorDefinition
+    | functionDefinition
+    | fallbackFunctionDefinition
+    | receiveFunctionDefinition
+    | modifierDefinition
+    | structDefinition
+    | enumDefinition
+    | userDefinedValueTypeDefinition
+    | eventDefinition
+    | errorDefinition
+    | stateVariableDeclaration
+    ;
+
+constructorDefinition
+    = 'constructor' parameterList { constructorAttribute } block ;
+constructorAttribute
+    = modifierInvocation | 'payable' | 'internal' | 'public' ;
+
+fallbackFunctionDefinition
+    = 'fallback' parameterList { fallbackFunctionAttribute } [ 'returns' nonEmptyParameterList ] ( ';' | block ) ;
+fallbackFunctionAttribute
+    = 'external' | stateMutabilitySpecifier | modifierInvocation | 'virtual' | overrideSpecifier ;
+
+receiveFunctionDefinition
+    = 'receive' '(' ')' { receiveFunctionAttribute } ( ';' | block ) ;
+receiveFunctionAttribute
+    = 'external' | 'payable' | modifierInvocation | 'virtual' | overrideSpecifier ;
+
+modifierDefinition
+    = 'modifier' identifier [ parameterList ] { methodAttribute } ( ';' | block ) ;
+methodAttribute
+    = 'virtual' | overrideSpecifier ;
+
+stateVariableDeclaration
+    = typeName { stateVariableAttribute } identifier [ '=' expression ] ';' ;
+stateVariableAttribute
+    = 'public' | 'private' | 'internal' | 'constant' | overrideSpecifier | 'immutable' ;
+
+argumentList
+    = '(' [ positionalArgumentList | namedArgumentList ] ')' ;
+positionalArgumentList
+    = 1…*{ expression / ',' } ;
+namedArgumentList
+    = '{' { namedArgument / ',' } '}' ;
+namedArgument
+    = identifier ':' expression ;
+
+modifierInvocation
+    = identifierPath [ argumentList ] ;
+
+parameterList
+    = '('  { parameterDeclaration / ',' } ')' ;
+nonEmptyParameterList
+    = '(' 1…*{ parameterDeclaration / ',' } ')' ;
+parameterDeclaration
+    = typeName [ dataLocation ] [ identifier ] ;
+
+visibilitySpecifier
+    = 'internal'
+    | 'external'
+    | 'private'
+    | 'public'
+    ;
+
+stateMutabilitySpecifier
+    = 'pure'
+    | 'view'
+    | 'payable'
+    ;
+
+overrideSpecifier
+    = 'override' ['(' 1*{ identifierPath / ',' } ')'] ;
+
+identifierPath
+    = 1…*{ identifier / '.' } ;
+
+typeName
+    = ( elementaryTypeWithPayable | functionType | mappingType | identifierPath ) { '[' [ expression ] ']' } ;
+
+elementaryTypeWithPayable
+    = 'address' [ 'payable' ]
+    | elementaryType
+    ;
+
+elementaryTypeWithoutPayable
+    = 'address'
+    | elementaryType
+    ;
+
+elementaryType
+    = 'bool'
+    | 'string'
+    | 'bytes'
+    | «SignedIntegerType»
+    | «UnsignedIntegerType»
+    | «FixedBytes»
+    | «Fixed»
+    | «Ufixed»
+    ;
+
+functionType
+    = 'function' parameterList { visibilitySpecifier | stateMutabilitySpecifier } [ 'returns' nonEmptyParameterList ] ;
+
+mappingType
+    = 'mapping' '(' ( elementaryTypeWithoutPayable | identifierPath ) '=>' typeName ')' ;
+
+dataLocation
+    = 'memory'
+    | 'storage'
+    | 'calldata'
+    ;
+
+expression
+    = expression '[' [ expression ] [ ':' [ expression ] ] ']' /* IndexAccess/IndexRangeAccess */
+    | expression '.' ( identifier | 'address' ) /* MemberAccess */
+    | expression '{' 1…*{ namedArgument / ',' } '}' /* FunctionCallOptions */
+    | expression argumentList /* FunctionCall */
+    | 'payable' argumentList /* PayableConversion */
+    | 'type' '(' typeName ')' /* MetaType */
+    | ( '++' | '--' | '!' | '~' | 'delete' | '-' ) expression /* UnaryPrefixOperation */
+    | expression ( '++' | '--' ) /* UnarySuffixOperation */
+    | /* assoc=right */ expression '**' expression /* ExpOperation */
+    | expression ( '*' | '/' | '%' ) expression /* MulDivModOperation */
+    | expression ( '+' | '-' ) expression /* AddSubOperation */
+    | expression ( '<<' | '>>' | '>>>' ) expression /* ShiftOperation */
+    | expression '&' expression /* BitAndOperation */
+    | expression '^' expression /* BitXorOperation */
+    | expression '|' expression /* BitOrOperation */
+    | expression ( '<' | '>' | '<=' | '>=' ) expression /* OrderComparison */
+    | expression ( '==' | '!=' ) expression /* EqualityComparison */
+    | expression '&&' expression /* AndOperation */
+    | expression '||' expression /* OrOperation */
+    | /* assoc=right */ expression '?' expression ':' expression /* Conditional */
+    | /* assoc=right */ expression ( '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ) expression /* Assignment */
+    | 'new' typeName /* NewExpression */
+    | tupleExpression /* Tuple */
+    | inlineArrayExpression /* InlineArray */
+    | (
+          identifier
+        | literal
+        | elementaryTypeWithoutPayable
+      ) /* PrimaryExpression */
+    ;
+
+tupleExpression
+    = '(' 1…*{ [ expression ] / ',' } ')' ;
+
+inlineArrayExpression
+    = '[' 1…*{ expression / ',' } ']' ;
+
+literal
+    = asciiStringLiteral
+    | unicodeStringLiteral
+    | numericLiteral
+    | «HexStringLiteral»
+    | «BooleanLiteral»
+    ;
+
+asciiStringLiteral
+    = 1…*{ «AsciiStringLiteral» } ;
+
+unicodeStringLiteral
+    = 1…*{ «UnicodeStringLiteral» } ;
+
+numericLiteral
+    = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
+
+block
+    = '{' { statement | uncheckedBlock } '}' ;
+
+uncheckedBlock
+    = 'unchecked' block ;
+
+statement
+    = block
+    | simpleStatement
+    | ifStatement
+    | forStatement
+    | whileStatement
+    | doWhileStatement
+    | continueStatement
+    | breakStatement
+    | tryStatement
+    | returnStatement
+    | emitStatement
+    | revertStatement
+    | assemblyStatement
+    ;
+
+simpleStatement
+    = variableDeclarationStatement
+    | expressionStatement
+    ;
+
+ifStatement
+    = 'if' '(' expression ')' statement [ 'else' statement ] ;
+
+forStatement
+    = 'for' '(' ( simpleStatement | ';' ) ( expressionStatement | ';' ) [ expression ] ')' statement ;
+
+whileStatement
+    = 'while' '(' expression ')' statement ;
+
+doWhileStatement
+    = 'do' statement 'while' '(' expression ')' ';' ;
+
+continueStatement
+    = 'continue' ';' ;
+
+breakStatement
+    = 'break' ';' ;
+
+tryStatement
+    = 'try' expression [ 'returns' nonEmptyParameterList ] block catchClause { catchClause } ;
+catchClause
+    = 'catch' [ [ identifier ] nonEmptyParameterList ] block ;
+
+returnStatement
+    = 'return' [ expression ] ';' ;
+
+emitStatement
+    = 'emit' expression argumentList ';' ;
+
+revertStatement
+    = 'revert' expression argumentList ';' ;
+
+variableDeclarationList
+    = 1…*{ variableDeclaration / ',' } ;
+
+variableDeclarationTuple
+    = '(' { ',' } variableDeclaration { ',' [ variableDeclaration ] } ')' ;
+
+variableDeclarationStatement
+    = ( variableDeclaration [ '=' expression ] | variableDeclarationTuple '=' expression ) ';' ;
+
+variableDeclaration
+    = typeName [ dataLocation ] identifier ;
+
+expressionStatement
+    = expression ';' ;
+
+assemblyStatement
+    = 'assembly' [ '"evmasm"' ] [ assemblyFlags ] yulBlock ;
+
+/* Constraint: strings are non-empty */
+assemblyFlags
+    = '(' 1…*{ «DoubleQuotedAsciiStringLiteral» / ',' } ')' ;
+
+identifier
+    = «RawIdentifier» - reservedWord ;
+
+reservedWord
+    = keyword
+    | reservedKeyword
+    | «NumberUnit»
+    | «BooleanLiteral»
+    ;
+
+keyword
+    = 'pragma' | 'abstract' | 'anonymous' | 'address' | 'as' | 'assembly' | 'bool' | 'break' | 'bytes' | 'calldata'
+    | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum'
+    | 'event' | 'external' | 'fallback' | 'false' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import'
+    | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override'
+    | 'payable' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct'
+    | 'true' | 'try' | 'type' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while'
+    | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytes» | 'fixed' | 'ufixed'
+    ;
+
+reservedKeyword
+    = 'after' | 'alias' | 'apply' | 'auto' | 'byte' | 'case' | 'copyof' | 'default' | 'define' | 'final'
+    | 'implements' | 'in' | 'inline' | 'let' | 'macro' | 'match' | 'mutable' | 'null' | 'of'
+    | 'partial' | 'promise' | 'reference' | 'relocatable' | 'sealed' | 'sizeof' | 'static'
+    | 'supports' | 'switch' | 'typedef' | 'typeof' | 'var'
+    ;
+
+
+/*******************************************
+  Solidity (and Yul) Tokens 
+*******************************************/
+
+«pragmaDirective»
+    = 'pragma' ¬ ';' { ¬ ';' } ';' ;
+
+/* TODO: specify pragma sublanguage */
+
+
+«RawIdentifier»
+    = «IdentifierStart» { «IdentifierPart» } ;
+«IdentifierStart»
+    = '_' | '$' | 'a'…'z' | 'A'…'Z' ;
+«IdentifierPart»
+    = «IdentifierStart» | '0'…'9' ;
+
+«SignedIntegerType»
+    = 'int'
+      (
+          '8' | '16' | '24' | '32' | '40' | '48' | '56' | '64'
+        | '72' | '80' | '88' | '96' | '104' | '112' | '120' | '128'
+        | '136' | '144' | '152' | '160' | '168' | '176' | '184' | '192'
+        | '200' | '208' | '216' | '224' | '232' | '240' | '248' | '256'
+      )
+    ;
+
+«UnsignedIntegerType»
+    = 'u' «SignedIntegerType» ;
+
+«FixedBytes»
+    = 'bytes'
+      (
+          '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8'
+        | '9' | '10' | '11' | '12' | '13' | '14' | '15' | '16'
+        | '17' | '18' | '19' | '20' | '21' | '22' | '23' | '24'
+        | '25' | '26' | '27' | '28' | '29' | '30' | '31' | '32'
+      )
+    ;
+
+«Fixed»
+    = 'fixed' [ '1'…'9' { '0'…'9' } 'x' '1'…'9' { '0'…'9' } ] ;
+
+«Ufixed»
+    = 'u' «Fixed» ;
+
+«BooleanLiteral»
+    = 'true' | 'false' ;
+
+«DecimalNumber»
+    = ( «DecimalInteger» | «DecimalFloat» ) [ «DecimalExponent» ] ;
+«DecimalInteger»
+    = 1…*{ '0'…'9' / [ '_' ] } ;
+«DecimalFloat»
+    = [ «DecimalInteger» ] '.' «DecimalInteger» ;
+«DecimalExponent»
+    =  ( 'e' | 'E' ) [ '-' ] «DecimalInteger» ;
+
+«HexNumber»
+    = '0' 'x' 1…*{ «HexCharacter» / [ '_' ] } ;
+
+«NumberUnit»
+    = 'wei' | 'gwei' | 'ether'
+    | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'years'
+    ;
+
+«HexStringLiteral»
+    = 'hex' ( '"' [ «PossiblySeparatedPairsOfHexDigits» ] '"' | '\'' [ «PossiblySeparatedPairsOfHexDigits» ] '\'' ) ;
+«PossiblySeparatedPairsOfHexDigits»
+    = 1…*{ 2*{ «HexCharacter» } / [ '_' ] } ;
+«HexCharacter»
+    = '0'…'9' | 'a'…'f' | 'A'…'F' ;
+
+«AsciiStringLiteral»
+    = «SingleQuotedAsciiStringLiteral» | «DoubleQuotedAsciiStringLiteral» ;
+«SingleQuotedAsciiStringLiteral»
+    = '\'' { ( '\u{20}'…'\u{7E}' - ( '\'' | '\\' ) ) | «EscapeSequence» } '\'' ;
+«DoubleQuotedAsciiStringLiteral»
+    = '"' { ( '\u{20}'…'\u{7E}' - ( '"' | '\\' ) ) | EscapeSequence } '"' ;
+
+«UnicodeStringLiteral»
+    = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral» ;
+«SingleQuotedUnicodeStringLiteral»
+    = 'unicode\'' { ¬( '\'' | '\\' | '\u{A}' | '\u{D}' ) | «EscapeSequence» } '\'' ;
+«DoubleQuotedUnicodeStringLiteral»
+    = 'unicode"' { ¬( '"' | '\\' | '\u{A}' | '\u{D}' ) | «EscapeSequence» } '"' ;
+
+«EscapeSequence»
+    = '\\' ( «AsciiEscape» | «HexByteEscape» | «UnicodeEscape» ) ;
+«AsciiEscape»
+    = 'n' | 'r' | 't' | '\'' | '"' | '\\' | '\u{A}' | '\u{D}' ;
+«HexByteEscape»
+    = 'x' 2*{ «HexCharacter» } ;
+«UnicodeEscape»
+    = 'u' 4*{ «HexCharacter» } ;
+
+
+/*******************************************
+  YUL
+*******************************************/
+
+yulBlock
+    = '{' { yulStatement } '}' ;
+
+yulStatement
+    = yulBlock
+    | yulVariableDeclaration
+    | yulFunctionDefinition
+    | yulAssignment
+    | yulFunctionCall
+    | yulIfStatement
+    | yulForStatement
+    | yulSwitchStatement
+    | yulLeaveStatement
+    | yulBreakStatement
+    | yulContinueStatement
+    ;
+
+yulVariableDeclaration
+    = 'let' yulIdentifier [ ':=' yulExpression | [ ',' yulIdentifier ] [ ':=' yulFunctionCall ] ] ;
+
+yulFunctionDefinition
+    = 'function' yulIdentifier '(' { yulIdentifier / ',' } ')' [ '->' 1…*{ yulIdentifier / ',' } ] yulBlock ;
+
+yulAssignment
+    = yulPath ( ':=' yulExpression | 1…*{ ',' yulPath } ':=' yulFunctionCall ) ;
+
+yulFunctionCall
+    = ( yulIdentifier | yulEVMBuiltinFunctionName ) '(' { yulExpression / ',' } ')' ;
+
+yulIfStatement
+    = 'if' yulExpression yulBlock ;
+
+yulLeaveStatement
+    = 'leave' ;
+
+yulBreakStatement
+    = 'break' ;
+
+yulContinueStatement
+    = 'continue' ;
+
+yulForStatement
+    = 'for' yulBlock yulExpression yulBlock yulBlock ;
+
+yulSwitchStatement
+    = 'switch' yulExpression ( 1…*{ 'case' yulLiteral yulBlock } [ 'default' yulBlock ] | 'default' yulBlock ) ;
+
+yulExpression
+    = yulPath
+    | yulFunctionCall
+    | yulLiteral
+    ;
+
+yulPath
+    = yulIdentifier { '.' ( yulIdentifier | yulEVMBuiltinFunctionName ) } ;
+
+yulLiteral
+     = «YulDecimalNumberLiteral»
+     | «YulHexLiteral»
+     | asciiStringLiteral
+     | «BooleanLiteral»
+     | «HexStringLiteral»
+     ;
+
+yulIdentifier
+    = «RawIdentifier» - yulReservedWord ;
+
+yulReservedWord
+    = yulKeyword
+    | yulEVMBuiltinFunctionName
+    | «BooleanLiteral»
+    ;
+
+yulKeyword
+    = 'break' | 'case' | 'continue' | 'default' | 'for' | 'function' | 'if'
+    | 'leave' | 'let' | 'switch' | 'hex'
+    ;
+
+yulEVMBuiltinFunctionName
+    = 'stop' | 'add' | 'sub' | 'mul' | 'div' | 'sdiv' | 'mod' | 'smod' | 'exp' | 'not'
+    | 'lt' | 'gt' | 'slt' | 'sgt' | 'eq' | 'iszero' | 'and' | 'or' | 'xor' | 'byte'
+    | 'shl' | 'shr' | 'sar' | 'addmod' | 'mulmod' | 'signextend' | 'keccak256'
+    | 'pop' | 'mload' | 'mstore' | 'mstore8' | 'sload' | 'sstore' | 'msize' | 'gas'
+    | 'address' | 'balance' | 'selfbalance' | 'caller' | 'callvalue' | 'calldataload'
+    | 'calldatasize' | 'calldatacopy' | 'extcodesize' | 'extcodecopy' | 'returndatasize'
+    | 'returndatacopy' | 'extcodehash' | 'create' | 'create2' | 'call' | 'callcode'
+    | 'delegatecall' | 'staticcall' | 'return' | 'revert' | 'selfdestruct' | 'invalid'
+    | 'log0' | 'log1' | 'log2' | 'log3' | 'log4' | 'chainid' | 'origin' | 'gasprice'
+    | 'blockhash' | 'coinbase' | 'timestamp' | 'number' | 'difficulty' | 'gaslimit'
+    | 'basefee'
+    ;
+
+
+/*******************************************
+  YUL-specific Tokens
+*******************************************/
+
+«YulDecimalNumberLiteral»
+    = '0' | '1'…'9' { '0'…'9' } ;
+
+«YulHexLiteral»
+    = '0x' ( '0'…'9' | 'a'…'f' | 'A'…'F' ) { '0'…'9' | 'a'…'f' | 'A'…'F' } ;

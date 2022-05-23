@@ -13,3 +13,15 @@
         - reference: NextOperatorInPrecedence
         - reference: ExponentiationOperator
         - reference: BaseExpression
+
+- name: ExponentiationOperator
+  is_token: true
+  terminal: "**"
+
+- name: BaseExpression
+  is_token: true
+  terminal: "base"
+
+- name: NextOperatorInPrecedence
+  is_token: true
+  terminal: "next"

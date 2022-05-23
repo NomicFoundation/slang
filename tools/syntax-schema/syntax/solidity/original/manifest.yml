@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/manifest.schema.json
+
+title: Solidity Grammar
+
+sections:
+  - title: Original Grammar
+    topics:
+      - title: Productions
+        definition: grammar.yml
