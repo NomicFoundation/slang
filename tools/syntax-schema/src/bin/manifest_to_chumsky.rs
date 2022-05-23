@@ -10,6 +10,9 @@ struct ProgramArgs {
     manifest_input: String,
 
     #[clap(long)]
+    no_builder: bool,
+
+    #[clap(long)]
     chumsky_output: String,
 }
 
