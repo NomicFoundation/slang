@@ -42,10 +42,6 @@ cargo run --bin manifest_to_chumsky -- \
 # Solidity from the original antlr grammar
 ###################################################
 
-cargo run --bin ebnf_to_yaml -- \
-  --ebnf-input "$PROJECT_DIR/syntax/solidity/original/grammar.ebnf" \
-  --yaml-output "$PROJECT_DIR/syntax/solidity/original/derived.yml"
-
 cargo run --bin manifest_to_ebnf -- \
   --manifest-input "$PROJECT_DIR/syntax/solidity/original/manifest.yml" \
   --ebnf-output "$PROJECT_DIR/syntax/solidity/original/derived.ebnf"
