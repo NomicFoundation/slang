@@ -1,5 +1,5 @@
 use std::{
-    collections::{BTreeMap, HashSet},
+    collections::{BTreeMap, BTreeSet},
     fs,
     io::Write,
     path::PathBuf,
@@ -93,7 +93,7 @@ impl ChumskyProduction for Production {
 
         // Detect and declare each backlinked (recursively-referenced) production
 
-        let mut backlinked = HashSet::new();
+        let mut backlinked = BTreeSet::new();
         for (name, order) in &ordering {
             if let Some(production) = grammar.get_production(name) {
                 if let Some(expr) = production.single_expression() {
@@ -176,8 +176,8 @@ trait ChumskyExpression {
         &self,
         grammar: &Grammar,
         production: &Production,
-        accum: &mut HashSet<String>,
-    ) -> HashSet<String>;
+        accum: &mut BTreeSet<String>,
+    ) -> BTreeSet<String>;
 }
 
 impl ChumskyExpression for Expression {
@@ -425,8 +425,8 @@ impl ChumskyExpression for Expression {
         &self,
         grammar: &Grammar,
         production: &Production,
-        accum: &mut HashSet<String>,
-    ) -> HashSet<String> {
+        accum: &mut BTreeSet<String>,
+    ) -> BTreeSet<String> {
         match &self.ebnf {
             EBNF::Choice(exprs) | EBNF::Sequence(exprs) => {
                 exprs.iter().for_each(|p| {
