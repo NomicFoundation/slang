@@ -231,7 +231,7 @@ impl ChumskyExpression for Expression {
                     .iter()
                     .map(|e| {
                         let expr = e.generate(grammar, production, no_builder);
-                        let suffixes = e.generate_suffixes(grammar, production, None, no_builder);
+                        let suffixes = e.generate_suffixes(grammar, production, None, false);
                         quote!( #expr #(#suffixes)* )
                     })
                     .collect::<Vec<_>>();
@@ -329,7 +329,9 @@ impl ChumskyExpression for Expression {
             suffixes.push(quote!( .then_ignore(#lookahead.rewind()) ))
         }
 
-        if no_builder || self.config.ignore {
+        if no_builder {
+            suffixes.push(quote!( .ignored().boxed() ))
+        } else if self.config.ignore {
             suffixes.push(quote!( .ignored() ))
         } else {
             if !self.config.nomap {
