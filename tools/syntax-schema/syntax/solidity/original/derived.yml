@@ -1,3 +1,4 @@
+---
 - name: IGNORE
   is_token: true
   zeroOrMore:
@@ -12,6 +13,7 @@
     - terminal: "\t"
     - terminal: "\r"
     - terminal: "\n"
+    - terminal: 
 - name: Comment
   is_token: true
   sequence:
@@ -845,7 +847,7 @@
   sequence:
     - terminal: assembly
     - optional:
-        terminal: '"evmasm"'
+        terminal: "\"evmasm\""
     - optional:
         reference: assemblyFlags
     - reference: yulBlock
@@ -1172,10 +1174,10 @@
     - terminal: hex
     - choice:
         - sequence:
-            - terminal: '"'
+            - terminal: "\""
             - optional:
                 reference: PossiblySeparatedPairsOfHexDigits
-            - terminal: '"'
+            - terminal: "\""
         - sequence:
             - terminal: "'"
             - optional:
@@ -1228,7 +1230,7 @@
 - name: DoubleQuotedAsciiStringLiteral
   is_token: true
   sequence:
-    - terminal: '"'
+    - terminal: "\""
     - zeroOrMore:
         choice:
           - difference:
@@ -1238,10 +1240,10 @@
                   to: "~"
               subtrahend:
                 choice:
-                  - terminal: '"'
+                  - terminal: "\""
                   - terminal: "\\"
           - reference: EscapeSequence
-    - terminal: '"'
+    - terminal: "\""
 - name: UnicodeStringLiteral
   is_token: true
   choice:
@@ -1264,17 +1266,17 @@
 - name: DoubleQuotedUnicodeStringLiteral
   is_token: true
   sequence:
-    - terminal: 'unicode"'
+    - terminal: "unicode\""
     - zeroOrMore:
         choice:
           - not:
               choice:
-                - terminal: '"'
+                - terminal: "\""
                 - terminal: "\\"
                 - terminal: "\n"
                 - terminal: "\r"
           - reference: EscapeSequence
-    - terminal: '"'
+    - terminal: "\""
 - name: EscapeSequence
   is_token: true
   sequence:
@@ -1290,7 +1292,7 @@
     - terminal: r
     - terminal: t
     - terminal: "'"
-    - terminal: '"'
+    - terminal: "\""
     - terminal: "\\"
     - terminal: "\n"
     - terminal: "\r"

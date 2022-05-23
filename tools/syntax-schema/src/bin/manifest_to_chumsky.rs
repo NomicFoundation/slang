@@ -26,5 +26,5 @@ fn main() {
     grammar.validate();
 
     println!(" => Generating Parser");
-    grammar.generate_chumsky(&PathBuf::from(args.chumsky_output));
+    grammar.generate_chumsky(args.no_builder, &PathBuf::from(args.chumsky_output));
 }

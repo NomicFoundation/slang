@@ -52,4 +52,5 @@ cargo run --bin manifest_to_ebnf -- \
 
 cargo run --bin manifest_to_chumsky -- \
   --manifest-input "$PROJECT_DIR/syntax/solidity/original/manifest.yml" \
+  --no-builder \
   --chumsky-output "$PROJECT_DIR/syntax/solidity/original/derived.rs"
