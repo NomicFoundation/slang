@@ -5,17 +5,25 @@
     "Topic": {
       "type": "array",
       "minItems": 1,
-      "items": { "$ref": "#/$defs/Rule" }
+      "items": { "$ref": "#/$defs/Production" }
     },
-    "Rule": {
+    "Production": {
       "type": "object",
       "properties": {
-        "name": { "type": "string" },
-        "title": { "type": "string" }
+        "name": { "type": "string", "minLength": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "config": {
+          "$ref": "#/$defs/Config",
+          "$comment": "How to model this constraint structurally?",
+          "description": "Not valid with versions:"
+        }
       },
       "oneOf": [
-        { "$ref": "#/$defs/Alternation" },
+        { "$ref": "#/$defs/Versions" },
+        { "$ref": "#/$defs/Any" },
+        { "$ref": "#/$defs/Choice" },
         { "$ref": "#/$defs/Difference" },
+        { "$ref": "#/$defs/End" },
         { "$ref": "#/$defs/Not" },
         { "$ref": "#/$defs/OneOrMore" },
         { "$ref": "#/$defs/Optional" },
@@ -23,18 +31,68 @@
         { "$ref": "#/$defs/Reference" },
         { "$ref": "#/$defs/Sequence" },
         { "$ref": "#/$defs/Terminal" },
-        { "$ref": "#/$defs/Versions" },
         { "$ref": "#/$defs/ZeroOrMore" }
       ]
     },
-    "Alternation": {
+    "Config": {
       "type": "object",
-      "required": ["alternation"],
       "properties": {
-        "alternation": {
+        "ignore": { "type": "boolean", "default": true },
+        "nomap": { "type": "boolean", "default": true },
+        "unwrap": { "type": "boolean", "default": true },
+        "chain": { "type": "boolean", "default": true },
+        "map": { "type": "string", "minLength": 1 },
+        "lookahead": { "$ref": "#/$defs/Expression" }
+      }
+    },
+    "Versions": {
+      "type": "object",
+      "required": ["versions"],
+      "properties": {
+        "versions": {
+          "type": "object",
+          "additionalProperties": false,
+          "patternProperties": {
+            "^[0-9]+\\.[0-9]+\\.[0-9]+$": { "$ref": "#/$defs/Expression" }
+          }
+        }
+      }
+    },
+    "Expression": {
+      "type": "object",
+      "properties": {
+        "config": { "$ref": "#/$defs/Config" }
+      },
+      "oneOf": [
+        { "$ref": "#/$defs/Any" },
+        { "$ref": "#/$defs/Choice" },
+        { "$ref": "#/$defs/Difference" },
+        { "$ref": "#/$defs/End" },
+        { "$ref": "#/$defs/Not" },
+        { "$ref": "#/$defs/OneOrMore" },
+        { "$ref": "#/$defs/Optional" },
+        { "$ref": "#/$defs/Range" },
+        { "$ref": "#/$defs/Reference" },
+        { "$ref": "#/$defs/Sequence" },
+        { "$ref": "#/$defs/Terminal" },
+        { "$ref": "#/$defs/ZeroOrMore" }
+      ]
+    },
+    "Any": {
+      "type": "object",
+      "required": ["any"],
+      "properties": {
+        "any": { "type": "null" }
+      }
+    },
+    "Choice": {
+      "type": "object",
+      "required": ["choice"],
+      "properties": {
+        "choice": {
           "type": "array",
           "minItems": 2,
-          "items": { "$ref": "#/$defs/Rule" }
+          "items": { "$ref": "#/$defs/Expression" }
         }
       }
     },
@@ -46,35 +104,38 @@
           "type": "object",
           "required": ["minuend", "subtrahend"],
           "properties": {
-            "minuend": { "type": "string" },
-            "subtrahend": { "type": "string" }
+            "minuend": { "$ref": "#/$defs/Expression" },
+            "subtrahend": { "$ref": "#/$defs/Expression" }
           }
         }
+      }
+    },
+    "End": {
+      "type": "object",
+      "required": ["end"],
+      "properties": {
+        "end": { "type": "null" }
       }
     },
     "Not": {
       "type": "object",
       "required": ["not"],
       "properties": {
-        "not": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 1
-        }
+        "not": { "$ref": "#/$defs/Expression" }
       }
     },
     "OneOrMore": {
       "type": "object",
       "required": ["oneOrMore"],
       "properties": {
-        "oneOrMore": { "$ref": "#/$defs/Rule" }
+        "oneOrMore": { "$ref": "#/$defs/Expression" }
       }
     },
     "Optional": {
       "type": "object",
       "required": ["optional"],
       "properties": {
-        "optional": { "$ref": "#/$defs/Rule" }
+        "optional": { "$ref": "#/$defs/Expression" }
       }
     },
     "Range": {
@@ -85,8 +146,8 @@
           "type": "object",
           "required": ["from", "to"],
           "properties": {
-            "from": { "type": "string" },
-            "to": { "type": "string" }
+            "from": { "type": "string", "minLength": 1, "maxLength": 1 },
+            "to": { "type": "string", "minLength": 1, "maxLength": 1 }
           }
         }
       }
@@ -95,7 +156,7 @@
       "type": "object",
       "required": ["reference"],
       "properties": {
-        "reference": { "type": "string" }
+        "reference": { "type": "string", "minLength": 1 }
       }
     },
     "Sequence": {
@@ -105,7 +166,7 @@
         "sequence": {
           "type": "array",
           "minItems": 2,
-          "items": { "$ref": "#/$defs/Rule" }
+          "items": { "$ref": "#/$defs/Expression" }
         }
       }
     },
@@ -113,27 +174,14 @@
       "type": "object",
       "required": ["terminal"],
       "properties": {
-        "terminal": { "type": "string" }
-      }
-    },
-    "Versions": {
-      "type": "object",
-      "required": ["versions"],
-      "properties": {
-        "versions": {
-          "type": "object",
-          "additionalProperties": false,
-          "patternProperties": {
-            "^[0-9]+\\.[0-9]+\\.[0-9]+$": { "$ref": "#/$defs/Rule" }
-          }
-        }
+        "terminal": { "type": "string", "minLength": 1 }
       }
     },
     "ZeroOrMore": {
       "type": "object",
       "required": ["zeroOrMore"],
       "properties": {
-        "zeroOrMore": { "$ref": "#/$defs/Rule" }
+        "zeroOrMore": { "$ref": "#/$defs/Expression" }
       }
     }
   }
