@@ -1,0 +1,182 @@
+# yaml-language-server: $schema=../../schema/topic.schema.json
+
+- name: grammar
+  sequence:
+    - zeroOrMore:
+        sequence:
+          - reference: S
+          - reference: production
+    - reference: S
+    - end: ~
+- name: production
+  sequence:
+    - reference: Identifier
+    - reference: S
+    - terminal: "="
+    - reference: S
+    - reference: expression
+    - reference: S
+    - terminal: ;
+- name: expression
+  sequence:
+    - reference: sequence
+    - zeroOrMore:
+        sequence:
+          - reference: S
+          - terminal: "|"
+          - reference: S
+          - reference: sequence
+- name: sequence
+  sequence:
+    - reference: difference
+    - zeroOrMore:
+        sequence:
+          - reference: S
+          - reference: difference
+- name: difference
+  sequence:
+    - reference: negation
+    - optional:
+        sequence:
+          - reference: S
+          - terminal: "-"
+          - reference: S
+          - reference: negation
+- name: negation
+  sequence:
+    - optional:
+        sequence:
+          - terminal: ¬
+          - reference: S
+    - reference: primary
+- name: primary
+  choice:
+    - reference: EOF
+    - reference: Any
+    - reference: CharRange
+    - reference: String
+    - reference: productionReference
+    - reference: grouped
+    - reference: optional
+    - reference: repeated
+- name: productionReference
+  reference: Identifier
+- name: grouped
+  sequence:
+    - terminal: (
+    - reference: S
+    - reference: expression
+    - reference: S
+    - terminal: )
+- name: optional
+  sequence:
+    - terminal: "["
+    - reference: S
+    - reference: expression
+    - reference: S
+    - terminal: "]"
+- name: repeated
+  sequence:
+    - terminal: "{"
+    - reference: S
+    - reference: expression
+    - reference: S
+    - terminal: "}"
+- name: EOF
+  terminal: $
+- name: Any
+  terminal: "."
+- name: String
+  sequence:
+    - terminal: "'"
+    - zeroOrMore:
+        reference: StringChar
+    - terminal: "'"
+- name: StringChar
+  choice:
+    - not:
+        choice:
+          - terminal: "'"
+          - terminal: "\\"
+    - sequence:
+        - terminal: "\\"
+        - choice:
+            - terminal: "'"
+            - terminal: "\\"
+            - sequence:
+                - terminal: "u{"
+                - oneOrMore:
+                    reference: HexDigit
+                - terminal: "}"
+- name: CharRange
+  sequence:
+    - reference: SingleCharString
+    - reference: S
+    - terminal: …
+    - reference: S
+    - reference: SingleCharString
+- name: SingleCharString
+  sequence:
+    - terminal: "'"
+    - reference: StringChar
+    - terminal: "'"
+- name: HexDigit
+  choice:
+    - range:
+        from: "0"
+        to: "9"
+    - range:
+        from: a
+        to: f
+    - range:
+        from: A
+        to: F
+- name: Identifier
+  sequence:
+    - reference: IdentifierStart
+    - zeroOrMore:
+        reference: IdentifierFollow
+- name: IdentifierStart
+  choice:
+    - terminal: _
+    - range:
+        from: a
+        to: z
+    - range:
+        from: A
+        to: Z
+- name: IdentifierFollow
+  choice:
+    - reference: IdentifierStart
+    - range:
+        from: "0"
+        to: "9"
+- name: S
+  zeroOrMore:
+    choice:
+      - reference: Whitespace
+      - reference: Comment
+  config: { ignore: true }
+- name: Comment
+  sequence:
+    - terminal: /*
+    - zeroOrMore:
+        choice:
+          - not:
+              terminal: "*"
+          - sequence:
+              - oneOrMore:
+                  terminal: "*"
+              - not:
+                  choice:
+                    - terminal: "*"
+                    - terminal: /
+    - oneOrMore:
+        terminal: "*"
+    - terminal: /
+- name: Whitespace
+  choice:
+    - terminal: "\t"
+    - terminal: "\n"
+    - terminal: "\r"
+    - terminal: " "

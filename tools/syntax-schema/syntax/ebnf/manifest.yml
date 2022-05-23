@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../schema/manifest.schema.json
+
+title: Nomic Foundation EBNF Grammar
+
+sections:
+  - title: Productions
+    topics:
+      - title: Productions
+        definition: topics/01-productions.yml
