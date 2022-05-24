@@ -325,6 +325,28 @@ pub fn create_source_unit_parser(
         .then(identifier_part_parser.clone().repeated())
         .ignored()
         .boxed();
+    let add_sub_operator_parser = choice::<_, Simple<char>>((
+        just('+').then_ignore(ignore_parser.clone()).ignored(),
+        just('-').then_ignore(ignore_parser.clone()).ignored(),
+    ))
+    .ignored()
+    .boxed();
+    let assignment_operator_parser = choice::<_, Simple<char>>((
+        just("="),
+        just("|="),
+        just("^="),
+        just("&="),
+        just("<<="),
+        just(">>="),
+        just(">>>="),
+        just("+="),
+        just("-="),
+        just("*="),
+        just("/="),
+        just("%="),
+    ))
+    .ignored()
+    .boxed();
     let break_statement_parser = just("break")
         .then_ignore(ignore_parser.clone())
         .ignore_then(just(';').then_ignore(ignore_parser.clone()))
@@ -366,15 +388,7 @@ pub fn create_source_unit_parser(
     ))
     .ignored()
     .boxed();
-    let inline_array_expression_parser = just('[')
-        .then_ignore(ignore_parser.clone())
-        .ignore_then(
-            expression_parser
-                .clone()
-                .separated_by(just(',').then_ignore(ignore_parser.clone()))
-                .at_least(1usize),
-        )
-        .then_ignore(just(']').then_ignore(ignore_parser.clone()))
+    let equality_comparison_operator_parser = choice::<_, Simple<char>>((just("=="), just("!=")))
         .ignored()
         .boxed();
     let keyword_parser = choice::<_, Simple<char>>((
@@ -495,6 +509,17 @@ pub fn create_source_unit_parser(
     ))
     .ignored()
     .boxed();
+    let mul_div_mod_operator_parser = choice::<_, Simple<char>>((
+        just('*').then_ignore(ignore_parser.clone()).ignored(),
+        just('/').then_ignore(ignore_parser.clone()).ignored(),
+        just('%').then_ignore(ignore_parser.clone()).ignored(),
+    ))
+    .ignored()
+    .boxed();
+    let order_comparison_operator_parser =
+        choice::<_, Simple<char>>((just("<"), just(">"), just("<="), just(">=")))
+            .ignored()
+            .boxed();
     let positional_argument_list_parser = expression_parser
         .clone()
         .separated_by(just(',').then_ignore(ignore_parser.clone()))
@@ -540,20 +565,24 @@ pub fn create_source_unit_parser(
     ))
     .ignored()
     .boxed();
+    let shift_operator_parser = choice::<_, Simple<char>>((just("<<"), just(">>"), just(">>>")))
+        .ignored()
+        .boxed();
     let state_mutability_specifier_parser =
         choice::<_, Simple<char>>((just("pure"), just("view"), just("payable")))
             .ignored()
             .boxed();
-    let tuple_expression_parser = just('(')
-        .then_ignore(ignore_parser.clone())
-        .ignore_then(
-            expression_parser
-                .clone()
-                .or_not()
-                .separated_by(just(',').then_ignore(ignore_parser.clone()))
-                .at_least(1usize),
-        )
-        .then_ignore(just(')').then_ignore(ignore_parser.clone()))
+    let unary_prefix_operator_parser = choice::<_, Simple<char>>((
+        just("++"),
+        just("--"),
+        just("!"),
+        just("~"),
+        just("delete"),
+        just("-"),
+    ))
+    .ignored()
+    .boxed();
+    let unary_suffix_operator_parser = choice::<_, Simple<char>>((just("++"), just("--")))
         .ignored()
         .boxed();
     let unchecked_block_parser = just("unchecked")
@@ -1267,183 +1296,6 @@ pub fn create_source_unit_parser(
         .then(identifier_parser.clone().or_not())
         .ignored()
         .boxed();
-    expression_parser.define(
-        choice::<_, Simple<char>>((
-            choice::<_, Simple<char>>((
-                expression_parser
-                    .clone()
-                    .then_ignore(just('[').then_ignore(ignore_parser.clone()))
-                    .then(expression_parser.clone().or_not())
-                    .then(
-                        just(':')
-                            .then_ignore(ignore_parser.clone())
-                            .ignore_then(expression_parser.clone().or_not())
-                            .or_not(),
-                    )
-                    .then_ignore(just(']').then_ignore(ignore_parser.clone()))
-                    .ignored(),
-                expression_parser
-                    .clone()
-                    .then_ignore(just('.').then_ignore(ignore_parser.clone()))
-                    .then(choice::<_, Simple<char>>((
-                        identifier_parser.clone().ignored(),
-                        just("address").then_ignore(ignore_parser.clone()).ignored(),
-                    )))
-                    .ignored(),
-                expression_parser
-                    .clone()
-                    .then_ignore(just('{').then_ignore(ignore_parser.clone()))
-                    .then(
-                        named_argument_parser
-                            .clone()
-                            .separated_by(just(',').then_ignore(ignore_parser.clone()))
-                            .at_least(1usize),
-                    )
-                    .then_ignore(just('}').then_ignore(ignore_parser.clone()))
-                    .ignored(),
-                expression_parser
-                    .clone()
-                    .then(argument_list_parser.clone())
-                    .ignored(),
-                just("payable")
-                    .then_ignore(ignore_parser.clone())
-                    .ignore_then(argument_list_parser.clone())
-                    .ignored(),
-                just("type")
-                    .then_ignore(ignore_parser.clone())
-                    .ignore_then(just('(').then_ignore(ignore_parser.clone()))
-                    .ignore_then(type_name_parser.clone())
-                    .then_ignore(just(')').then_ignore(ignore_parser.clone()))
-                    .ignored(),
-                choice::<_, Simple<char>>((
-                    just("++"),
-                    just("--"),
-                    just("!"),
-                    just("~"),
-                    just("delete"),
-                    just("-"),
-                ))
-                .then(expression_parser.clone())
-                .ignored(),
-                expression_parser
-                    .clone()
-                    .then(choice::<_, Simple<char>>((just("++"), just("--"))))
-                    .ignored(),
-                expression_parser
-                    .clone()
-                    .then_ignore(just("**").then_ignore(ignore_parser.clone()))
-                    .then(expression_parser.clone())
-                    .ignored(),
-                expression_parser
-                    .clone()
-                    .then(choice::<_, Simple<char>>((
-                        just('*').then_ignore(ignore_parser.clone()).ignored(),
-                        just('/').then_ignore(ignore_parser.clone()).ignored(),
-                        just('%').then_ignore(ignore_parser.clone()).ignored(),
-                    )))
-                    .then(expression_parser.clone())
-                    .ignored(),
-                expression_parser
-                    .clone()
-                    .then(choice::<_, Simple<char>>((
-                        just('+').then_ignore(ignore_parser.clone()).ignored(),
-                        just('-').then_ignore(ignore_parser.clone()).ignored(),
-                    )))
-                    .then(expression_parser.clone())
-                    .ignored(),
-                expression_parser
-                    .clone()
-                    .then(choice::<_, Simple<char>>((
-                        just("<<"),
-                        just(">>"),
-                        just(">>>"),
-                    )))
-                    .then(expression_parser.clone())
-                    .ignored(),
-                expression_parser
-                    .clone()
-                    .then_ignore(just('&').then_ignore(ignore_parser.clone()))
-                    .then(expression_parser.clone())
-                    .ignored(),
-                expression_parser
-                    .clone()
-                    .then_ignore(just('^').then_ignore(ignore_parser.clone()))
-                    .then(expression_parser.clone())
-                    .ignored(),
-                expression_parser
-                    .clone()
-                    .then_ignore(just('|').then_ignore(ignore_parser.clone()))
-                    .then(expression_parser.clone())
-                    .ignored(),
-                expression_parser
-                    .clone()
-                    .then(choice::<_, Simple<char>>((
-                        just("<"),
-                        just(">"),
-                        just("<="),
-                        just(">="),
-                    )))
-                    .then(expression_parser.clone())
-                    .ignored(),
-            )),
-            choice::<_, Simple<char>>((
-                expression_parser
-                    .clone()
-                    .then(choice::<_, Simple<char>>((just("=="), just("!="))))
-                    .then(expression_parser.clone())
-                    .ignored(),
-                expression_parser
-                    .clone()
-                    .then_ignore(just("&&").then_ignore(ignore_parser.clone()))
-                    .then(expression_parser.clone())
-                    .ignored(),
-                expression_parser
-                    .clone()
-                    .then_ignore(just("||").then_ignore(ignore_parser.clone()))
-                    .then(expression_parser.clone())
-                    .ignored(),
-                expression_parser
-                    .clone()
-                    .then_ignore(just('?').then_ignore(ignore_parser.clone()))
-                    .then(expression_parser.clone())
-                    .then_ignore(just(':').then_ignore(ignore_parser.clone()))
-                    .then(expression_parser.clone())
-                    .ignored(),
-                expression_parser
-                    .clone()
-                    .then(choice::<_, Simple<char>>((
-                        just("="),
-                        just("|="),
-                        just("^="),
-                        just("&="),
-                        just("<<="),
-                        just(">>="),
-                        just(">>>="),
-                        just("+="),
-                        just("-="),
-                        just("*="),
-                        just("/="),
-                        just("%="),
-                    )))
-                    .then(expression_parser.clone())
-                    .ignored(),
-                just("new")
-                    .then_ignore(ignore_parser.clone())
-                    .ignore_then(type_name_parser.clone())
-                    .ignored(),
-                tuple_expression_parser.clone().ignored(),
-                inline_array_expression_parser.clone().ignored(),
-                choice::<_, Simple<char>>((
-                    identifier_parser.clone().ignored(),
-                    literal_parser.clone().ignored(),
-                    elementary_type_without_payable_parser.clone().ignored(),
-                ))
-                .ignored(),
-            )),
-        ))
-        .ignored()
-        .boxed(),
-    );
     let fallback_function_attribute_parser = choice::<_, Simple<char>>((
         just("external")
             .then_ignore(ignore_parser.clone())
@@ -1474,6 +1326,48 @@ pub fn create_source_unit_parser(
         )
         .ignored()
         .boxed();
+    let primary_expression_parser = choice::<_, Simple<char>>((
+        just("payable")
+            .then_ignore(ignore_parser.clone())
+            .ignore_then(argument_list_parser.clone())
+            .ignored(),
+        just("type")
+            .then_ignore(ignore_parser.clone())
+            .ignore_then(just('(').then_ignore(ignore_parser.clone()))
+            .ignore_then(type_name_parser.clone())
+            .then_ignore(just(')').then_ignore(ignore_parser.clone()))
+            .ignored(),
+        just("new")
+            .then_ignore(ignore_parser.clone())
+            .ignore_then(type_name_parser.clone())
+            .ignored(),
+        just('(')
+            .then_ignore(ignore_parser.clone())
+            .ignore_then(
+                expression_parser
+                    .clone()
+                    .or_not()
+                    .separated_by(just(',').then_ignore(ignore_parser.clone()))
+                    .at_least(1usize),
+            )
+            .then_ignore(just(')').then_ignore(ignore_parser.clone()))
+            .ignored(),
+        just('[')
+            .then_ignore(ignore_parser.clone())
+            .ignore_then(
+                expression_parser
+                    .clone()
+                    .separated_by(just(',').then_ignore(ignore_parser.clone()))
+                    .at_least(1usize),
+            )
+            .then_ignore(just(']').then_ignore(ignore_parser.clone()))
+            .ignored(),
+        identifier_parser.clone().ignored(),
+        literal_parser.clone().ignored(),
+        elementary_type_without_payable_parser.clone().ignored(),
+    ))
+    .ignored()
+    .boxed();
     let receive_function_attribute_parser = choice::<_, Simple<char>>((
         just("external")
             .then_ignore(ignore_parser.clone())
@@ -1545,15 +1439,6 @@ pub fn create_source_unit_parser(
     ))
     .ignored()
     .boxed();
-    let constant_definition_parser = type_name_parser
-        .clone()
-        .then_ignore(just("constant").then_ignore(ignore_parser.clone()))
-        .then(identifier_parser.clone())
-        .then_ignore(just('=').then_ignore(ignore_parser.clone()))
-        .then(expression_parser.clone())
-        .then_ignore(just(';').then_ignore(ignore_parser.clone()))
-        .ignored()
-        .boxed();
     let directive_parser = choice::<_, Simple<char>>((
         pragma_directive_parser
             .clone()
@@ -1564,23 +1449,6 @@ pub fn create_source_unit_parser(
     ))
     .ignored()
     .boxed();
-    let do_while_statement_parser = just("do")
-        .then_ignore(ignore_parser.clone())
-        .ignore_then(statement_parser.clone())
-        .then_ignore(just("while").then_ignore(ignore_parser.clone()))
-        .then_ignore(just('(').then_ignore(ignore_parser.clone()))
-        .then(expression_parser.clone())
-        .then_ignore(just(')').then_ignore(ignore_parser.clone()))
-        .then_ignore(just(';').then_ignore(ignore_parser.clone()))
-        .ignored()
-        .boxed();
-    let emit_statement_parser = just("emit")
-        .then_ignore(ignore_parser.clone())
-        .ignore_then(expression_parser.clone())
-        .then(argument_list_parser.clone())
-        .then_ignore(just(';').then_ignore(ignore_parser.clone()))
-        .ignored()
-        .boxed();
     let error_definition_parser = just("error")
         .then_ignore(ignore_parser.clone())
         .ignore_then(identifier_parser.clone())
@@ -1609,6 +1477,246 @@ pub fn create_source_unit_parser(
                 .then_ignore(ignore_parser.clone())
                 .or_not(),
         )
+        .then_ignore(just(';').then_ignore(ignore_parser.clone()))
+        .ignored()
+        .boxed();
+    let index_access_expression_parser = primary_expression_parser
+        .clone()
+        .then(
+            just('[')
+                .then_ignore(ignore_parser.clone())
+                .ignore_then(expression_parser.clone().or_not())
+                .then(
+                    just(':')
+                        .then_ignore(ignore_parser.clone())
+                        .ignore_then(expression_parser.clone().or_not())
+                        .or_not(),
+                )
+                .then_ignore(just(']').then_ignore(ignore_parser.clone()))
+                .repeated(),
+        )
+        .ignored()
+        .boxed();
+    let variable_declaration_tuple_parser = just('(')
+        .then_ignore(ignore_parser.clone())
+        .ignore_then(just(',').then_ignore(ignore_parser.clone()).repeated())
+        .then(variable_declaration_parser.clone())
+        .then(
+            just(',')
+                .then_ignore(ignore_parser.clone())
+                .ignore_then(variable_declaration_parser.clone().or_not())
+                .repeated(),
+        )
+        .then_ignore(just(')').then_ignore(ignore_parser.clone()))
+        .ignored()
+        .boxed();
+    yul_block_parser.define(
+        just('{')
+            .then_ignore(ignore_parser.clone())
+            .ignore_then(yul_statement_parser.clone().repeated())
+            .then_ignore(just('}').then_ignore(ignore_parser.clone()))
+            .ignored()
+            .boxed(),
+    );
+    let assembly_statement_parser = just("assembly")
+        .then_ignore(ignore_parser.clone())
+        .ignore_then(
+            just("\"evmasm\"")
+                .then_ignore(ignore_parser.clone())
+                .or_not(),
+        )
+        .then(assembly_flags_parser.clone().or_not())
+        .then(yul_block_parser.clone())
+        .ignored()
+        .boxed();
+    let member_access_expression_parser = index_access_expression_parser
+        .clone()
+        .then(
+            just('.')
+                .then_ignore(ignore_parser.clone())
+                .ignore_then(choice::<_, Simple<char>>((
+                    identifier_parser.clone().ignored(),
+                    just("address").then_ignore(ignore_parser.clone()).ignored(),
+                )))
+                .repeated(),
+        )
+        .ignored()
+        .boxed();
+    let function_call_options_expression_parser = member_access_expression_parser
+        .clone()
+        .then(
+            just('{')
+                .then_ignore(ignore_parser.clone())
+                .ignore_then(
+                    named_argument_parser
+                        .clone()
+                        .separated_by(just(',').then_ignore(ignore_parser.clone()))
+                        .at_least(1usize),
+                )
+                .then_ignore(just('}').then_ignore(ignore_parser.clone()))
+                .repeated(),
+        )
+        .ignored()
+        .boxed();
+    let function_call_expression_parser = function_call_options_expression_parser
+        .clone()
+        .then(argument_list_parser.clone().repeated())
+        .ignored()
+        .boxed();
+    let unary_prefix_expression_parser = unary_prefix_operator_parser
+        .clone()
+        .then(function_call_expression_parser.clone())
+        .ignored()
+        .boxed();
+    let unary_suffix_expression_parser = unary_prefix_expression_parser
+        .clone()
+        .then(unary_suffix_operator_parser.clone())
+        .ignored()
+        .boxed();
+    let exp_expression_parser = unary_suffix_expression_parser
+        .clone()
+        .then_ignore(just("**").then_ignore(ignore_parser.clone()))
+        .then(expression_parser.clone())
+        .ignored()
+        .boxed();
+    let mul_div_mod_expression_parser = exp_expression_parser
+        .clone()
+        .then(
+            mul_div_mod_operator_parser
+                .clone()
+                .then(exp_expression_parser.clone())
+                .repeated(),
+        )
+        .ignored()
+        .boxed();
+    let add_sub_expression_parser = mul_div_mod_expression_parser
+        .clone()
+        .then(
+            add_sub_operator_parser
+                .clone()
+                .then(mul_div_mod_expression_parser.clone())
+                .repeated(),
+        )
+        .ignored()
+        .boxed();
+    let shift_expression_parser = add_sub_expression_parser
+        .clone()
+        .then(
+            shift_operator_parser
+                .clone()
+                .then(add_sub_expression_parser.clone())
+                .repeated(),
+        )
+        .ignored()
+        .boxed();
+    let bit_and_expression_parser = shift_expression_parser
+        .clone()
+        .then(
+            just('&')
+                .then_ignore(ignore_parser.clone())
+                .ignore_then(shift_expression_parser.clone())
+                .repeated(),
+        )
+        .ignored()
+        .boxed();
+    let bit_xor_expression_parser = bit_and_expression_parser
+        .clone()
+        .then(
+            just('^')
+                .then_ignore(ignore_parser.clone())
+                .ignore_then(bit_and_expression_parser.clone())
+                .repeated(),
+        )
+        .ignored()
+        .boxed();
+    let bit_or_expression_parser = bit_xor_expression_parser
+        .clone()
+        .then(
+            just('|')
+                .then_ignore(ignore_parser.clone())
+                .ignore_then(bit_xor_expression_parser.clone())
+                .repeated(),
+        )
+        .ignored()
+        .boxed();
+    let order_comparison_expression_parser = bit_or_expression_parser
+        .clone()
+        .then(
+            order_comparison_operator_parser
+                .clone()
+                .then(bit_or_expression_parser.clone())
+                .repeated(),
+        )
+        .ignored()
+        .boxed();
+    let equality_comparison_expression_parser = order_comparison_expression_parser
+        .clone()
+        .then(
+            equality_comparison_operator_parser
+                .clone()
+                .then(order_comparison_expression_parser.clone())
+                .repeated(),
+        )
+        .ignored()
+        .boxed();
+    let and_expression_parser = equality_comparison_expression_parser
+        .clone()
+        .then(
+            just("&&")
+                .then_ignore(ignore_parser.clone())
+                .ignore_then(equality_comparison_expression_parser.clone())
+                .repeated(),
+        )
+        .ignored()
+        .boxed();
+    let or_expression_parser = and_expression_parser
+        .clone()
+        .then(
+            just("||")
+                .then_ignore(ignore_parser.clone())
+                .ignore_then(and_expression_parser.clone())
+                .repeated(),
+        )
+        .ignored()
+        .boxed();
+    let conditional_expression_parser = or_expression_parser
+        .clone()
+        .then_ignore(just('?').then_ignore(ignore_parser.clone()))
+        .then(expression_parser.clone())
+        .then_ignore(just(':').then_ignore(ignore_parser.clone()))
+        .then(expression_parser.clone())
+        .ignored()
+        .boxed();
+    let assignment_expression_parser = conditional_expression_parser
+        .clone()
+        .then(assignment_operator_parser.clone())
+        .then(expression_parser.clone())
+        .ignored()
+        .boxed();
+    expression_parser.define(assignment_expression_parser.clone().ignored().boxed());
+    let constant_definition_parser = type_name_parser
+        .clone()
+        .then_ignore(just("constant").then_ignore(ignore_parser.clone()))
+        .then(identifier_parser.clone())
+        .then_ignore(just('=').then_ignore(ignore_parser.clone()))
+        .then(expression_parser.clone())
+        .then_ignore(just(';').then_ignore(ignore_parser.clone()))
+        .ignored()
+        .boxed();
+    let do_while_statement_parser = just("do")
+        .then_ignore(ignore_parser.clone())
+        .ignore_then(statement_parser.clone())
+        .then_ignore(just("while").then_ignore(ignore_parser.clone()))
+        .then_ignore(just('(').then_ignore(ignore_parser.clone()))
+        .then(expression_parser.clone())
+        .then_ignore(just(')').then_ignore(ignore_parser.clone()))
+        .then_ignore(just(';').then_ignore(ignore_parser.clone()))
+        .ignored()
+        .boxed();
+    let emit_statement_parser = just("emit")
+        .then_ignore(ignore_parser.clone())
+        .ignore_then(expression_parser.clone())
+        .then(argument_list_parser.clone())
         .then_ignore(just(';').then_ignore(ignore_parser.clone()))
         .ignored()
         .boxed();
@@ -1671,46 +1779,6 @@ pub fn create_source_unit_parser(
         .then(catch_clause_parser.clone().repeated())
         .ignored()
         .boxed();
-    let variable_declaration_tuple_parser = just('(')
-        .then_ignore(ignore_parser.clone())
-        .ignore_then(just(',').then_ignore(ignore_parser.clone()).repeated())
-        .then(variable_declaration_parser.clone())
-        .then(
-            just(',')
-                .then_ignore(ignore_parser.clone())
-                .ignore_then(variable_declaration_parser.clone().or_not())
-                .repeated(),
-        )
-        .then_ignore(just(')').then_ignore(ignore_parser.clone()))
-        .ignored()
-        .boxed();
-    let while_statement_parser = just("while")
-        .then_ignore(ignore_parser.clone())
-        .ignore_then(just('(').then_ignore(ignore_parser.clone()))
-        .ignore_then(expression_parser.clone())
-        .then_ignore(just(')').then_ignore(ignore_parser.clone()))
-        .then(statement_parser.clone())
-        .ignored()
-        .boxed();
-    yul_block_parser.define(
-        just('{')
-            .then_ignore(ignore_parser.clone())
-            .ignore_then(yul_statement_parser.clone().repeated())
-            .then_ignore(just('}').then_ignore(ignore_parser.clone()))
-            .ignored()
-            .boxed(),
-    );
-    let assembly_statement_parser = just("assembly")
-        .then_ignore(ignore_parser.clone())
-        .ignore_then(
-            just("\"evmasm\"")
-                .then_ignore(ignore_parser.clone())
-                .or_not(),
-        )
-        .then(assembly_flags_parser.clone().or_not())
-        .then(yul_block_parser.clone())
-        .ignored()
-        .boxed();
     let variable_declaration_statement_parser = choice::<_, Simple<char>>((
         variable_declaration_parser
             .clone()
@@ -1730,6 +1798,14 @@ pub fn create_source_unit_parser(
     .then_ignore(just(';').then_ignore(ignore_parser.clone()))
     .ignored()
     .boxed();
+    let while_statement_parser = just("while")
+        .then_ignore(ignore_parser.clone())
+        .ignore_then(just('(').then_ignore(ignore_parser.clone()))
+        .ignore_then(expression_parser.clone())
+        .then_ignore(just(')').then_ignore(ignore_parser.clone()))
+        .then(statement_parser.clone())
+        .ignored()
+        .boxed();
     let simple_statement_parser = choice::<_, Simple<char>>((
         variable_declaration_statement_parser.clone().ignored(),
         expression_statement_parser.clone().ignored(),

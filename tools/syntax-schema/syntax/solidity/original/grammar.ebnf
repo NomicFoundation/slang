@@ -218,28 +218,57 @@ dataLocation
     | 'calldata'
     ;
 
-expression
-    = expression '[' [ expression ] [ ':' [ expression ] ] ']' /* IndexAccess/IndexRangeAccess */
-    | expression '.' ( identifier | 'address' ) /* MemberAccess */
-    | expression '{' 1…*{ namedArgument / ',' } '}' /* FunctionCallOptions */
-    | expression argumentList /* FunctionCall */
-    | 'payable' argumentList /* PayableConversion */
+expression = assignmentExpression ;
+
+assignmentExpression = conditionalExpression assignmentOperator expression ;
+assignmentOperator =  '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ;
+
+conditionalExpression = orExpression '?' expression ':' expression ;
+
+orExpression = andExpression { '||' andExpression } ;
+
+andExpression = equalityComparisonExpression { '&&' equalityComparisonExpression } ;
+
+equalityComparisonExpression = orderComparisonExpression { equalityComparisonOperator orderComparisonExpression } ;
+equalityComparisonOperator = '==' | '!=' ;
+
+orderComparisonExpression = bitOrExpression { orderComparisonOperator bitOrExpression };
+orderComparisonOperator = '<' | '>' | '<=' | '>=' ;
+
+bitOrExpression = bitXorExpression { '|' bitXorExpression };
+
+bitXorExpression = bitAndExpression { '^' bitAndExpression } ;
+
+bitAndExpression = shiftExpression { '&' shiftExpression } ;
+
+shiftExpression = addSubExpression { shiftOperator addSubExpression } ;
+shiftOperator = '<<' | '>>' | '>>>' ;
+
+addSubExpression = mulDivModExpression { addSubOperator mulDivModExpression } ;
+addSubOperator = '+' | '-' ;
+
+mulDivModExpression = expExpression { mulDivModOperator expExpression } ;
+mulDivModOperator = '*' | '/' | '%' ;
+
+expExpression = unarySuffixExpression '**' expression ;
+
+unarySuffixExpression = unaryPrefixExpression unarySuffixOperator ;
+unarySuffixOperator = '++' | '--' ;
+
+unaryPrefixExpression = unaryPrefixOperator functionCallExpression ;
+unaryPrefixOperator = '++' | '--' | '!' | '~' | 'delete' | '-' ;
+
+functionCallExpression = functionCallOptionsExpression { argumentList } ;
+
+functionCallOptionsExpression = memberAccessExpression { '{' 1…*{ namedArgument / ',' } '}' } ;
+
+memberAccessExpression = indexAccessExpression { '.' ( identifier | 'address' ) } ;
+
+indexAccessExpression = primaryExpression { '[' [ expression ] [ ':' [ expression ] ] ']' } ;
+
+primaryExpression 
+    = 'payable' argumentList /* PayableConversion */
     | 'type' '(' typeName ')' /* MetaType */
-    | ( '++' | '--' | '!' | '~' | 'delete' | '-' ) expression /* UnaryPrefixOperation */
-    | expression ( '++' | '--' ) /* UnarySuffixOperation */
-    | /* assoc=right */ expression '**' expression /* ExpOperation */
-    | expression ( '*' | '/' | '%' ) expression /* MulDivModOperation */
-    | expression ( '+' | '-' ) expression /* AddSubOperation */
-    | expression ( '<<' | '>>' | '>>>' ) expression /* ShiftOperation */
-    | expression '&' expression /* BitAndOperation */
-    | expression '^' expression /* BitXorOperation */
-    | expression '|' expression /* BitOrOperation */
-    | expression ( '<' | '>' | '<=' | '>=' ) expression /* OrderComparison */
-    | expression ( '==' | '!=' ) expression /* EqualityComparison */
-    | expression '&&' expression /* AndOperation */
-    | expression '||' expression /* OrOperation */
-    | /* assoc=right */ expression '?' expression ':' expression /* Conditional */
-    | /* assoc=right */ expression ( '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ) expression /* Assignment */
     | 'new' typeName /* NewExpression */
     | '(' 1…*{ [ expression ] / ',' } ')' /* Tuple */
     | '[' 1…*{ expression / ',' } ']' /* InlineArray */
