@@ -241,20 +241,12 @@ expression
     | /* assoc=right */ expression '?' expression ':' expression /* Conditional */
     | /* assoc=right */ expression ( '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ) expression /* Assignment */
     | 'new' typeName /* NewExpression */
-    | tupleExpression /* Tuple */
-    | inlineArrayExpression /* InlineArray */
-    | (
-          identifier
-        | literal
-        | elementaryTypeWithoutPayable
-      ) /* PrimaryExpression */
+    | '(' 1…*{ [ expression ] / ',' } ')' /* Tuple */
+    | '[' 1…*{ expression / ',' } ']' /* InlineArray */
+    | identifier
+    | literal
+    | elementaryTypeWithoutPayable
     ;
-
-tupleExpression
-    = '(' 1…*{ [ expression ] / ',' } ')' ;
-
-inlineArrayExpression
-    = '[' 1…*{ expression / ',' } ']' ;
 
 literal
     = asciiStringLiteral
