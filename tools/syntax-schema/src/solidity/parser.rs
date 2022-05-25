@@ -22,7 +22,7 @@ pub fn create_source_unit_parser(
         just('\r').ignored(),
     ))
     .ignored();
-    let boolean_literal_parser = choice::<_, Simple<char>>((just("true"), just("false"))).ignored();
+    let boolean_literal_parser = choice::<_, Simple<char>>((just("false"), just("true"))).ignored();
     let comment_parser = just("/*")
         .ignore_then(
             choice::<_, Simple<char>>((
@@ -55,15 +55,6 @@ pub fn create_source_unit_parser(
     let fixed_bytes_parser = just("bytes")
         .ignore_then(choice::<_, Simple<char>>((
             choice::<_, Simple<char>>((
-                just("1"),
-                just("2"),
-                just("3"),
-                just("4"),
-                just("5"),
-                just("6"),
-                just("7"),
-                just("8"),
-                just("9"),
                 just("10"),
                 just("11"),
                 just("12"),
@@ -71,8 +62,6 @@ pub fn create_source_unit_parser(
                 just("14"),
                 just("15"),
                 just("16"),
-            )),
-            choice::<_, Simple<char>>((
                 just("17"),
                 just("18"),
                 just("19"),
@@ -82,6 +71,8 @@ pub fn create_source_unit_parser(
                 just("23"),
                 just("24"),
                 just("25"),
+            )),
+            choice::<_, Simple<char>>((
                 just("26"),
                 just("27"),
                 just("28"),
@@ -89,6 +80,15 @@ pub fn create_source_unit_parser(
                 just("30"),
                 just("31"),
                 just("32"),
+                just("1"),
+                just("2"),
+                just("3"),
+                just("4"),
+                just("5"),
+                just("6"),
+                just("7"),
+                just("8"),
+                just("9"),
             )),
         )))
         .ignored();
@@ -107,38 +107,24 @@ pub fn create_source_unit_parser(
     .ignored();
     let line_comment_parser = just("//").ignore_then(none_of("\n\r").repeated()).ignored();
     let number_unit_parser = choice::<_, Simple<char>>((
-        just("wei"),
-        just("gwei"),
-        just("ether"),
         just("seconds"),
         just("minutes"),
+        just("ether"),
         just("hours"),
-        just("days"),
         just("weeks"),
         just("years"),
+        just("gwei"),
+        just("days"),
+        just("wei"),
     ))
     .ignored();
     let signed_integer_type_parser = just("int")
         .ignore_then(choice::<_, Simple<char>>((
             choice::<_, Simple<char>>((
-                just("8"),
-                just("16"),
-                just("24"),
-                just("32"),
-                just("40"),
-                just("48"),
-                just("56"),
-                just("64"),
-                just("72"),
-                just("80"),
-                just("88"),
-                just("96"),
                 just("104"),
                 just("112"),
                 just("120"),
                 just("128"),
-            )),
-            choice::<_, Simple<char>>((
                 just("136"),
                 just("144"),
                 just("152"),
@@ -151,10 +137,24 @@ pub fn create_source_unit_parser(
                 just("208"),
                 just("216"),
                 just("224"),
+            )),
+            choice::<_, Simple<char>>((
                 just("232"),
                 just("240"),
                 just("248"),
                 just("256"),
+                just("16"),
+                just("24"),
+                just("32"),
+                just("40"),
+                just("48"),
+                just("56"),
+                just("64"),
+                just("72"),
+                just("80"),
+                just("88"),
+                just("96"),
+                just("8"),
             )),
         )))
         .ignored();
@@ -298,18 +298,18 @@ pub fn create_source_unit_parser(
     .ignored()
     .boxed();
     let assignment_operator_parser = choice::<_, Simple<char>>((
-        just("="),
+        just(">>>="),
+        just("<<="),
+        just(">>="),
         just("|="),
         just("^="),
         just("&="),
-        just("<<="),
-        just(">>="),
-        just(">>>="),
         just("+="),
         just("-="),
         just("*="),
         just("/="),
         just("%="),
+        just("="),
     ))
     .ignored()
     .boxed();
@@ -324,7 +324,7 @@ pub fn create_source_unit_parser(
         .ignored()
         .boxed();
     let data_location_parser =
-        choice::<_, Simple<char>>((just("memory"), just("storage"), just("calldata")))
+        choice::<_, Simple<char>>((just("calldata"), just("storage"), just("memory")))
             .ignored()
             .boxed();
     let elementary_type_parser = choice::<_, Simple<char>>((
@@ -483,7 +483,7 @@ pub fn create_source_unit_parser(
     .ignored()
     .boxed();
     let order_comparison_operator_parser =
-        choice::<_, Simple<char>>((just("<"), just(">"), just("<="), just(">=")))
+        choice::<_, Simple<char>>((just("<="), just(">="), just("<"), just(">")))
             .ignored()
             .boxed();
     let positional_argument_list_parser = expression_parser
@@ -494,56 +494,56 @@ pub fn create_source_unit_parser(
         .boxed();
     let reserved_keyword_parser = choice::<_, Simple<char>>((
         choice::<_, Simple<char>>((
-            just("after"),
-            just("alias"),
-            just("apply"),
-            just("auto"),
-            just("byte"),
-            just("case"),
-            just("copyof"),
-            just("default"),
-            just("define"),
-            just("final"),
+            just("relocatable"),
             just("implements"),
-            just("in"),
-            just("inline"),
-            just("let"),
-            just("macro"),
-            just("match"),
-        )),
-        choice::<_, Simple<char>>((
+            just("reference"),
+            just("supports"),
+            just("default"),
             just("mutable"),
-            just("null"),
-            just("of"),
             just("partial"),
             just("promise"),
-            just("reference"),
-            just("relocatable"),
+            just("typedef"),
+            just("copyof"),
+            just("define"),
+            just("inline"),
             just("sealed"),
             just("sizeof"),
             just("static"),
-            just("supports"),
             just("switch"),
-            just("typedef"),
+        )),
+        choice::<_, Simple<char>>((
             just("typeof"),
+            just("after"),
+            just("alias"),
+            just("apply"),
+            just("final"),
+            just("macro"),
+            just("match"),
+            just("auto"),
+            just("byte"),
+            just("case"),
+            just("null"),
+            just("let"),
             just("var"),
+            just("in"),
+            just("of"),
         )),
     ))
     .ignored()
     .boxed();
-    let shift_operator_parser = choice::<_, Simple<char>>((just("<<"), just(">>"), just(">>>")))
+    let shift_operator_parser = choice::<_, Simple<char>>((just(">>>"), just("<<"), just(">>")))
         .ignored()
         .boxed();
     let state_mutability_specifier_parser =
-        choice::<_, Simple<char>>((just("pure"), just("view"), just("payable")))
+        choice::<_, Simple<char>>((just("payable"), just("pure"), just("view")))
             .ignored()
             .boxed();
     let unary_prefix_operator_parser = choice::<_, Simple<char>>((
+        just("delete"),
         just("++"),
         just("--"),
         just("!"),
         just("~"),
-        just("delete"),
         just("-"),
     ))
     .ignored()
@@ -574,103 +574,103 @@ pub fn create_source_unit_parser(
         .boxed();
     let yul_evm_builtin_function_name_parser = choice::<_, Simple<char>>((
         choice::<_, Simple<char>>((
-            just("stop"),
-            just("add"),
-            just("sub"),
-            just("mul"),
-            just("div"),
-            just("sdiv"),
-            just("mod"),
-            just("smod"),
-            just("exp"),
-            just("not"),
-            just("lt"),
-            just("gt"),
-            just("slt"),
-            just("sgt"),
-            just("eq"),
-            just("iszero"),
-        )),
-        choice::<_, Simple<char>>((
-            just("and"),
-            just("or"),
-            just("xor"),
-            just("byte"),
-            just("shl"),
-            just("shr"),
-            just("sar"),
-            just("addmod"),
-            just("mulmod"),
-            just("signextend"),
-            just("keccak256"),
-            just("pop"),
-            just("mload"),
-            just("mstore"),
-            just("mstore8"),
-            just("sload"),
-        )),
-        choice::<_, Simple<char>>((
-            just("sstore"),
-            just("msize"),
-            just("gas"),
-            just("address"),
-            just("balance"),
-            just("selfbalance"),
-            just("caller"),
-            just("callvalue"),
+            just("returndatasize"),
+            just("returndatacopy"),
             just("calldataload"),
             just("calldatasize"),
             just("calldatacopy"),
+            just("delegatecall"),
+            just("selfdestruct"),
+            just("selfbalance"),
             just("extcodesize"),
             just("extcodecopy"),
-            just("returndatasize"),
-            just("returndatacopy"),
             just("extcodehash"),
+            just("signextend"),
+            just("staticcall"),
+            just("difficulty"),
+            just("keccak256"),
+            just("callvalue"),
         )),
         choice::<_, Simple<char>>((
-            just("create"),
-            just("create2"),
-            just("call"),
+            just("blockhash"),
+            just("timestamp"),
             just("callcode"),
-            just("delegatecall"),
-            just("staticcall"),
+            just("gasprice"),
+            just("coinbase"),
+            just("gaslimit"),
+            just("mstore8"),
+            just("address"),
+            just("balance"),
+            just("create2"),
+            just("invalid"),
+            just("chainid"),
+            just("basefee"),
+            just("iszero"),
+            just("addmod"),
+            just("mulmod"),
+        )),
+        choice::<_, Simple<char>>((
+            just("mstore"),
+            just("sstore"),
+            just("caller"),
+            just("create"),
             just("return"),
             just("revert"),
-            just("selfdestruct"),
-            just("invalid"),
+            just("origin"),
+            just("number"),
+            just("mload"),
+            just("sload"),
+            just("msize"),
+            just("stop"),
+            just("sdiv"),
+            just("smod"),
+            just("byte"),
+            just("call"),
+        )),
+        choice::<_, Simple<char>>((
             just("log0"),
             just("log1"),
             just("log2"),
             just("log3"),
             just("log4"),
-            just("chainid"),
+            just("add"),
+            just("sub"),
+            just("mul"),
+            just("div"),
+            just("mod"),
+            just("exp"),
+            just("not"),
+            just("slt"),
+            just("sgt"),
+            just("and"),
+            just("xor"),
         )),
         choice::<_, Simple<char>>((
-            just("origin"),
-            just("gasprice"),
-            just("blockhash"),
-            just("coinbase"),
-            just("timestamp"),
-            just("number"),
-            just("difficulty"),
-            just("gaslimit"),
-            just("basefee"),
+            just("shl"),
+            just("shr"),
+            just("sar"),
+            just("pop"),
+            just("gas"),
+            just("lt"),
+            just("gt"),
+            just("eq"),
+            just("or"),
         )),
     ))
     .ignored()
     .boxed();
     let yul_keyword_parser = choice::<_, Simple<char>>((
-        just("break"),
-        just("case"),
         just("continue"),
-        just("default"),
-        just("for"),
         just("function"),
-        just("if"),
-        just("leave"),
-        just("let"),
+        just("default"),
         just("switch"),
+        just("break"),
+        just("leave"),
+        just("case"),
+        just("for"),
+        just("let"),
         just("hex"),
+        just("if"),
     ))
     .ignored()
     .boxed();
@@ -681,7 +681,10 @@ pub fn create_source_unit_parser(
     let double_quoted_ascii_string_literal_parser = just('"')
         .ignore_then(
             choice::<_, Simple<char>>((
-                just("todo()").ignored(),
+                none_of("\"\\")
+                    .rewind()
+                    .ignore_then(filter(|&c: &char| (' ' <= c && c <= '~')))
+                    .ignored(),
                 escape_sequence_parser.clone().ignored(),
             ))
             .repeated(),
@@ -701,7 +704,10 @@ pub fn create_source_unit_parser(
     let single_quoted_ascii_string_literal_parser = just('\'')
         .ignore_then(
             choice::<_, Simple<char>>((
-                just("todo()").ignored(),
+                none_of("'\\")
+                    .rewind()
+                    .ignore_then(filter(|&c: &char| (' ' <= c && c <= '~')))
+                    .ignored(),
                 escape_sequence_parser.clone().ignored(),
             ))
             .repeated(),

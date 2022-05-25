@@ -202,6 +202,7 @@ impl ChumskyExpression for Expression {
         match &self.ebnf {
             EBNF::End => quote!(end()),
             EBNF::Not(expr) => {
+                // TODO: generalise to more than char sets
                 if let Some(char_set_elements) = expr.as_char_set_elements() {
                     return generate_char_set(&char_set_elements, true);
                 }
@@ -239,8 +240,9 @@ impl ChumskyExpression for Expression {
                 quote!( #expr #separator #min #max )
             }
             EBNF::Choice(exprs) => {
-                // If the choice is between terminals, make sure they are all represented as strings
-                let strings = exprs
+                // If the choice is between terminals, generated them all as strings
+                // TODO: optimize using a prefix-tree search custom predicate
+                let mut strings = exprs
                     .iter()
                     .filter_map(|e| {
                         if let EBNF::Terminal(s) = &e.ebnf {
@@ -254,6 +256,7 @@ impl ChumskyExpression for Expression {
                         }
                     })
                     .collect::<Vec<String>>();
+                strings.sort_by_cached_key(|s| usize::MAX - s.chars().count());
                 let mut choices: Vec<TokenStream> = if strings.len() == exprs.len()
                     && exprs.iter().all(|e| e.config.is_default())
                     && strings.iter().any(|s| s.chars().count() > 1)
@@ -273,6 +276,7 @@ impl ChumskyExpression for Expression {
                         })
                         .collect()
                 };
+                // The choice combinator has a limit on the number of elements in the tuple
                 if choices.len() > 16 {
                     choices = choices
                         .chunks(16)
@@ -342,14 +346,22 @@ impl ChumskyExpression for Expression {
                 quote!( #id.clone() #ignore )
             }
             EBNF::Difference(EBNFDifference {
-                minuend: _minuend,
-                subtrahend: _subtrahend,
+                minuend,
+                subtrahend,
             }) => {
-                // if minuend.is_any() {
-                //     if let Some(char_set_elements) = subtrahend.as_char_set_elements() {
-                //         return generate_char_set(&char_set_elements, true);
-                //     }
-                // }
+                // 1. char set - char set
+                // TODO: this would be better done as a single char set test
+                if let Some(minuend_set) = minuend.as_char_set_elements() {
+                    if let Some(subtrahend_set) = subtrahend.as_char_set_elements() {
+                        let minuend = generate_char_set(&minuend_set, false);
+                        let subtrahend = generate_char_set(&subtrahend_set, true);
+                        return quote!( #subtrahend.rewind().ignore_then(#minuend) );
+                    }
+                }
+
+                // TODO: 2. x - string set // Assume x produces String
+
+                println!("Difference not handled: {:#?} - {:#?}", minuend, subtrahend);
                 quote!(just("todo()"))
             }
             EBNF::Range(EBNFRange { from, to }) => {
@@ -410,6 +422,7 @@ impl ChumskyExpression for Expression {
                     None
                 }
             }
+            EBNF::Range(EBNFRange { from, to }) => Some(vec![CharSetElement::Range(*from, *to)]),
             EBNF::Terminal(string) => {
                 if string.len() == 1 {
                     Some(vec![CharSetElement::Char(string.chars().next().unwrap())])
