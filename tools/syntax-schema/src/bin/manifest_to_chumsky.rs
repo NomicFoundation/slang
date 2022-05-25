@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use clap::Parser;
 
-use syntax_schema::schema::Grammar;
+use syntax_schema::{chumsky::generator::Context, schema::Grammar};
 
 #[derive(Parser, Debug)]
 struct ProgramArgs {
@@ -11,6 +11,9 @@ struct ProgramArgs {
 
     #[clap(long)]
     no_builder: bool,
+
+    #[clap(long)]
+    boxed: bool,
 
     #[clap(long)]
     chumsky_output: String,
@@ -26,5 +29,11 @@ fn main() {
     grammar.validate();
 
     println!(" => Generating Parser");
-    grammar.generate_chumsky(args.no_builder, &PathBuf::from(args.chumsky_output));
+    grammar.generate_chumsky(
+        &Context {
+            no_builder: args.no_builder,
+            boxed: args.boxed,
+        },
+        &PathBuf::from(args.chumsky_output),
+    );
 }
