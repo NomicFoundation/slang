@@ -180,7 +180,7 @@ trait ChumskyExpression {
         context: &Context,
     ) -> Vec<TokenStream>;
 
-    fn as_char_set_elements(&self) -> Option<Vec<CharSetElement>>;
+    fn as_character_predicate(&self, negated: bool) -> Option<TokenStream>;
 
     fn is_ignorable_in_sequence(&self, grammar: &Grammar) -> bool;
 
@@ -203,8 +203,8 @@ impl ChumskyExpression for Expression {
             EBNF::End => quote!(end()),
             EBNF::Not(expr) => {
                 // TODO: generalise to more than char sets
-                if let Some(char_set_elements) = expr.as_char_set_elements() {
-                    return generate_char_set(&char_set_elements, true);
+                if let Some(predicate) = expr.as_character_predicate(true) {
+                    return quote!( filter(|&c: &char| #predicate) );
                 }
                 quote!(todo())
             }
@@ -240,6 +240,16 @@ impl ChumskyExpression for Expression {
                 quote!( #expr #separator #min #max )
             }
             EBNF::Choice(exprs) => {
+                let predicates = exprs
+                    .iter()
+                    .filter_map(|e| e.as_character_predicate(false))
+                    .collect::<Vec<_>>();
+                if predicates.len() == exprs.len() {
+                    return quote!( filter(|&c: &char| #(#predicates)||*) );
+                }
+
+                // TODO: single characters, use predicate
+
                 // If the choice is between terminals, generated them all as strings
                 // TODO: optimize using a prefix-tree search custom predicate
                 let mut strings = exprs
@@ -350,12 +360,9 @@ impl ChumskyExpression for Expression {
                 subtrahend,
             }) => {
                 // 1. char set - char set
-                // TODO: this would be better done as a single char set test
-                if let Some(minuend_set) = minuend.as_char_set_elements() {
-                    if let Some(subtrahend_set) = subtrahend.as_char_set_elements() {
-                        let minuend = generate_char_set(&minuend_set, false);
-                        let subtrahend = generate_char_set(&subtrahend_set, true);
-                        return quote!( #subtrahend.rewind().ignore_then(#minuend) );
+                if let Some(minuend_predicate) = minuend.as_character_predicate(false) {
+                    if let Some(subtrahend_predicate) = subtrahend.as_character_predicate(true) {
+                        return quote!( filter(|&c: &char| #minuend_predicate && #subtrahend_predicate) );
                     }
                 }
 
@@ -364,9 +371,9 @@ impl ChumskyExpression for Expression {
                 println!("Difference not handled: {:#?} - {:#?}", minuend, subtrahend);
                 quote!(just("todo()"))
             }
-            EBNF::Range(EBNFRange { from, to }) => {
-                let fragment = generate_char_set(&vec![CharSetElement::Range(*from, *to)], false);
-                quote!( #fragment )
+            EBNF::Range(_) => {
+                let predicate = self.as_character_predicate(false);
+                quote!( filter(|&c: &char| #predicate ))
             }
         }
     }
@@ -409,23 +416,59 @@ impl ChumskyExpression for Expression {
         suffixes
     }
 
-    fn as_char_set_elements(&self) -> Option<Vec<CharSetElement>> {
+    fn as_character_predicate(&self, negated: bool) -> Option<TokenStream> {
         match &self.ebnf {
             EBNF::Choice(exprs) => {
                 let elements = exprs
                     .iter()
-                    .map(|e| e.as_char_set_elements())
+                    .map(|e| e.as_character_predicate(negated))
                     .collect::<Vec<_>>();
                 if elements.iter().all(|e| e.is_some()) {
-                    Some(elements.into_iter().map(|e| e.unwrap()).flatten().collect())
+                    if negated {
+                        Some(quote!( (#(#elements)&&*) ))
+                    } else {
+                        Some(quote!( (#(#elements)||*) ))
+                    }
                 } else {
                     None
                 }
             }
-            EBNF::Range(EBNFRange { from, to }) => Some(vec![CharSetElement::Range(*from, *to)]),
+            EBNF::Range(EBNFRange { from: 'a', to: 'z' }) => {
+                if negated {
+                    Some(quote!(!c.is_ascii_lowercase()))
+                } else {
+                    Some(quote!(c.is_ascii_lowercase()))
+                }
+            }
+            EBNF::Range(EBNFRange { from: 'A', to: 'Z' }) => {
+                if negated {
+                    Some(quote!(!c.is_ascii_uppercase()))
+                } else {
+                    Some(quote!(c.is_ascii_uppercase()))
+                }
+            }
+            EBNF::Range(EBNFRange { from: '0', to: '9' }) => {
+                if negated {
+                    Some(quote!(!c.is_ascii_digit()))
+                } else {
+                    Some(quote!(c.is_ascii_digit()))
+                }
+            }
+            EBNF::Range(EBNFRange { from, to }) => {
+                if negated {
+                    Some(quote!( (c < #from || #to < c) ))
+                } else {
+                    Some(quote!( (#from <= c && c <= #to) ))
+                }
+            }
             EBNF::Terminal(string) => {
                 if string.len() == 1 {
-                    Some(vec![CharSetElement::Char(string.chars().next().unwrap())])
+                    let c = string.chars().next().unwrap();
+                    if negated {
+                        Some(quote!( c != #c ))
+                    } else {
+                        Some(quote!( c == #c ))
+                    }
                 } else {
                     None
                 }
@@ -496,103 +539,6 @@ impl ChumskyExpression for Expression {
         };
 
         accum.clone()
-    }
-}
-
-fn generate_char_set(elements: &[CharSetElement], negated: bool) -> TokenStream {
-    let chars = elements
-        .iter()
-        .filter_map(|element| match element {
-            CharSetElement::Char(c) => Some(*c),
-            _ => None,
-        })
-        .collect::<Vec<char>>();
-    if chars.len() == elements.len() {
-        if negated && chars.len() == 1 {
-            let c = chars[0];
-            quote!( filter(|&c: &char| c != #c) )
-        } else {
-            let string = chars.into_iter().collect::<String>();
-            if negated {
-                quote!( none_of(#string) )
-            } else {
-                quote!( one_of(#string) )
-            }
-        }
-    } else {
-        fn filter_range(
-            from: char,
-            to: char,
-            elements: &[CharSetElement],
-        ) -> (Vec<CharSetElement>, bool) {
-            let old_len = elements.len();
-            let elements = elements
-                .iter()
-                .filter(|element| ! matches!(element, CharSetElement::Range(f, t) if *f == from && *t == to))
-                .cloned()
-                .collect::<Vec<_>>();
-            let found = elements.len() < old_len;
-            (elements, found)
-        }
-
-        let (elements, mut has_ascii_lowercase) = filter_range('a', 'z', elements);
-        let (elements, mut has_ascii_uppercase) = filter_range('A', 'Z', &elements);
-        let (elements, mut has_ascii_digit) = filter_range('0', '9', &elements);
-        let (elements, mut has_ascii_lowercase_hex) = filter_range('a', 'f', &elements);
-        let (elements, mut has_ascii_uppercase_hex) = filter_range('A', 'F', &elements);
-
-        let mut chars = elements
-            .iter()
-            .map(|element| match element {
-                CharSetElement::Char(c) => quote!( c == #c ),
-                CharSetElement::Range('a', 'z') => quote!(c.is_ascii_lowercase()),
-                CharSetElement::Range('A', 'Z') => quote!(c.is_ascii_uppercase()),
-                CharSetElement::Range('0', '9') => quote!(c.is_ascii_digit()),
-                CharSetElement::Range(from, to) => {
-                    quote!( (#from <= c && c <= #to) )
-                }
-            })
-            .collect::<Vec<_>>();
-
-        if has_ascii_uppercase && has_ascii_lowercase && has_ascii_digit {
-            chars.push(quote!(c.is_ascii_alphanumeric()));
-            has_ascii_uppercase = false;
-            has_ascii_lowercase = false;
-            has_ascii_digit = false;
-        }
-
-        if has_ascii_uppercase && has_ascii_lowercase {
-            chars.push(quote!(c.is_ascii_alphabetic()));
-            has_ascii_uppercase = false;
-            has_ascii_lowercase = false;
-        }
-        if has_ascii_lowercase_hex && has_ascii_uppercase_hex && has_ascii_digit {
-            chars.push(quote!(c.is_ascii_hexdigit()));
-            has_ascii_lowercase_hex = false;
-            has_ascii_uppercase_hex = false;
-            has_ascii_digit = false;
-        }
-        if has_ascii_uppercase {
-            chars.push(quote!(c.is_ascii_uppercase()));
-        }
-        if has_ascii_lowercase {
-            chars.push(quote!(c.is_ascii_lowercase()));
-        }
-        if has_ascii_digit {
-            chars.push(quote!(c.is_ascii_digit()));
-        }
-        if has_ascii_uppercase_hex {
-            chars.push(quote!(('A' <= c && c <= 'F')));
-        }
-        if has_ascii_lowercase_hex {
-            chars.push(quote!(('a' <= c && c <= 'f')));
-        }
-
-        if negated {
-            quote!( filter(|&c: &char| !(#(#chars)||*)) )
-        } else {
-            quote!( filter(|&c: &char| #(#chars)||*) )
-        }
     }
 }
 

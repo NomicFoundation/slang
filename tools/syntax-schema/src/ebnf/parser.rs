@@ -13,7 +13,7 @@ pub fn create_grammar_parser() -> impl Parser<char, GrammarParserResultType, Err
                 just('*')
                     .repeated()
                     .at_least(1usize)
-                    .then(none_of("*/"))
+                    .then(filter(|&c: &char| (c != '*' && c != '/')))
                     .ignored(),
             ))
             .repeated(),
@@ -22,22 +22,16 @@ pub fn create_grammar_parser() -> impl Parser<char, GrammarParserResultType, Err
         .then_ignore(just('/'))
         .ignored();
     let eof_parser = just('$').map(builder::eof);
-    let hex_digit_parser = choice::<_, Simple<char>>((
-        filter(|&c: &char| c.is_ascii_digit()),
-        filter(|&c: &char| ('a' <= c && c <= 'f')),
-        filter(|&c: &char| ('A' <= c && c <= 'F')),
-    ));
-    let identifier_start_parser = choice::<_, Simple<char>>((
-        just('_'),
-        filter(|&c: &char| c.is_ascii_lowercase()),
-        filter(|&c: &char| c.is_ascii_uppercase()),
-    ));
+    let hex_digit_parser =
+        filter(|&c: &char| c.is_ascii_digit() || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F'));
+    let identifier_start_parser =
+        filter(|&c: &char| c == '_' || c.is_ascii_lowercase() || c.is_ascii_uppercase());
     let number_parser = filter(|&c: &char| c.is_ascii_digit())
         .repeated()
         .at_least(1usize)
         .map(builder::number);
     let whitespace_parser =
-        choice::<_, Simple<char>>((just('\t'), just('\n'), just('\r'), just(' '))).ignored();
+        filter(|&c: &char| c == '\t' || c == '\n' || c == '\r' || c == ' ').ignored();
     let ignore_parser =
         choice::<_, Simple<char>>((whitespace_parser.clone(), comment_parser.clone()))
             .repeated()
@@ -47,7 +41,7 @@ pub fn create_grammar_parser() -> impl Parser<char, GrammarParserResultType, Err
         filter(|&c: &char| c.is_ascii_digit()),
     ));
     let string_char_parser = choice::<_, Simple<char>>((
-        none_of("'\\"),
+        filter(|&c: &char| (c != '\'' && c != '\\')),
         just('\\').ignore_then(choice::<_, Simple<char>>((
             just('\''),
             just('\\'),

@@ -11,16 +11,16 @@ pub fn create_source_unit_parser(
     let mut type_name_parser = Recursive::declare();
     let mut yul_block_parser = Recursive::declare();
     let mut yul_expression_parser = Recursive::declare();
-    let ascii_escape_parser = choice::<_, Simple<char>>((
-        just('n').ignored(),
-        just('r').ignored(),
-        just('t').ignored(),
-        just('\'').ignored(),
-        just('"').ignored(),
-        just('\\').ignored(),
-        just('\n').ignored(),
-        just('\r').ignored(),
-    ))
+    let ascii_escape_parser = filter(|&c: &char| {
+        c == 'n'
+            || c == 'r'
+            || c == 't'
+            || c == '\''
+            || c == '"'
+            || c == '\\'
+            || c == '\n'
+            || c == '\r'
+    })
     .ignored();
     let boolean_literal_parser = choice::<_, Simple<char>>((just("false"), just("true"))).ignored();
     let comment_parser = just("/*")
@@ -30,7 +30,7 @@ pub fn create_source_unit_parser(
                 just('*')
                     .repeated()
                     .at_least(1usize)
-                    .then(none_of("*/"))
+                    .then(filter(|&c: &char| (c != '*' && c != '/')))
                     .ignored(),
             ))
             .repeated(),
@@ -92,20 +92,16 @@ pub fn create_source_unit_parser(
             )),
         )))
         .ignored();
-    let hex_character_parser = choice::<_, Simple<char>>((
-        filter(|&c: &char| c.is_ascii_digit()).ignored(),
-        filter(|&c: &char| ('a' <= c && c <= 'f')).ignored(),
-        filter(|&c: &char| ('A' <= c && c <= 'F')).ignored(),
-    ))
+    let hex_character_parser =
+        filter(|&c: &char| c.is_ascii_digit() || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F'))
+            .ignored();
+    let identifier_start_parser = filter(|&c: &char| {
+        c == '_' || c == '$' || c.is_ascii_lowercase() || c.is_ascii_uppercase()
+    })
     .ignored();
-    let identifier_start_parser = choice::<_, Simple<char>>((
-        just('_').ignored(),
-        just('$').ignored(),
-        filter(|&c: &char| c.is_ascii_lowercase()).ignored(),
-        filter(|&c: &char| c.is_ascii_uppercase()).ignored(),
-    ))
-    .ignored();
-    let line_comment_parser = just("//").ignore_then(none_of("\n\r").repeated()).ignored();
+    let line_comment_parser = just("//")
+        .ignore_then(filter(|&c: &char| (c != '\n' && c != '\r')).repeated())
+        .ignored();
     let number_unit_parser = choice::<_, Simple<char>>((
         just("seconds"),
         just("minutes"),
@@ -158,13 +154,8 @@ pub fn create_source_unit_parser(
             )),
         )))
         .ignored();
-    let whitespace_parser = choice::<_, Simple<char>>((
-        just(' ').ignored(),
-        just('\t').ignored(),
-        just('\r').ignored(),
-        just('\n').ignored(),
-    ))
-    .ignored();
+    let whitespace_parser =
+        filter(|&c: &char| c == ' ' || c == '\t' || c == '\r' || c == '\n').ignored();
     let yul_decimal_number_literal_parser = choice::<_, Simple<char>>((
         just('0').ignored(),
         filter(|&c: &char| ('1' <= c && c <= '9'))
@@ -173,17 +164,13 @@ pub fn create_source_unit_parser(
     ))
     .ignored();
     let yul_hex_literal_parser = just("0x")
-        .ignore_then(choice::<_, Simple<char>>((
-            filter(|&c: &char| c.is_ascii_digit()).ignored(),
-            filter(|&c: &char| ('a' <= c && c <= 'f')).ignored(),
-            filter(|&c: &char| ('A' <= c && c <= 'F')).ignored(),
-        )))
+        .ignore_then(filter(|&c: &char| {
+            c.is_ascii_digit() || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
+        }))
         .then(
-            choice::<_, Simple<char>>((
-                filter(|&c: &char| c.is_ascii_digit()).ignored(),
-                filter(|&c: &char| ('a' <= c && c <= 'f')).ignored(),
-                filter(|&c: &char| ('A' <= c && c <= 'F')).ignored(),
-            ))
+            filter(|&c: &char| {
+                c.is_ascii_digit() || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
+            })
             .repeated(),
         )
         .ignored();
@@ -192,11 +179,10 @@ pub fn create_source_unit_parser(
         .then(filter(|&c: &char| c != ';').repeated())
         .then_ignore(just(';'))
         .ignored();
-    let decimal_exponent_parser =
-        choice::<_, Simple<char>>((just('e').ignored(), just('E').ignored()))
-            .then(just('-').or_not())
-            .then(decimal_integer_parser.clone())
-            .ignored();
+    let decimal_exponent_parser = filter(|&c: &char| c == 'e' || c == 'E')
+        .then(just('-').or_not())
+        .then(decimal_integer_parser.clone())
+        .ignored();
     let decimal_float_parser = decimal_integer_parser
         .clone()
         .or_not()
@@ -291,12 +277,7 @@ pub fn create_source_unit_parser(
         .clone()
         .then(identifier_part_parser.clone().repeated())
         .ignored();
-    let add_sub_operator_parser = choice::<_, Simple<char>>((
-        just('+').then_ignore(ignore_parser.clone()).ignored(),
-        just('-').then_ignore(ignore_parser.clone()).ignored(),
-    ))
-    .ignored()
-    .boxed();
+    let add_sub_operator_parser = filter(|&c: &char| c == '+' || c == '-').ignored().boxed();
     let assignment_operator_parser = choice::<_, Simple<char>>((
         just(">>>="),
         just("<<="),
@@ -475,13 +456,9 @@ pub fn create_source_unit_parser(
     ))
     .ignored()
     .boxed();
-    let mul_div_mod_operator_parser = choice::<_, Simple<char>>((
-        just('*').then_ignore(ignore_parser.clone()).ignored(),
-        just('/').then_ignore(ignore_parser.clone()).ignored(),
-        just('%').then_ignore(ignore_parser.clone()).ignored(),
-    ))
-    .ignored()
-    .boxed();
+    let mul_div_mod_operator_parser = filter(|&c: &char| c == '*' || c == '/' || c == '%')
+        .ignored()
+        .boxed();
     let order_comparison_operator_parser =
         choice::<_, Simple<char>>((just("<="), just(">="), just("<"), just(">")))
             .ignored()
@@ -681,10 +658,7 @@ pub fn create_source_unit_parser(
     let double_quoted_ascii_string_literal_parser = just('"')
         .ignore_then(
             choice::<_, Simple<char>>((
-                none_of("\"\\")
-                    .rewind()
-                    .ignore_then(filter(|&c: &char| (' ' <= c && c <= '~')))
-                    .ignored(),
+                filter(|&c: &char| (' ' <= c && c <= '~') && (c != '"' && c != '\\')).ignored(),
                 escape_sequence_parser.clone().ignored(),
             ))
             .repeated(),
@@ -694,7 +668,7 @@ pub fn create_source_unit_parser(
     let double_quoted_unicode_string_literal_parser = just("unicode\"")
         .ignore_then(
             choice::<_, Simple<char>>((
-                none_of("\"\\\n\r").ignored(),
+                filter(|&c: &char| (c != '"' && c != '\\' && c != '\n' && c != '\r')).ignored(),
                 escape_sequence_parser.clone().ignored(),
             ))
             .repeated(),
@@ -704,10 +678,7 @@ pub fn create_source_unit_parser(
     let single_quoted_ascii_string_literal_parser = just('\'')
         .ignore_then(
             choice::<_, Simple<char>>((
-                none_of("'\\")
-                    .rewind()
-                    .ignore_then(filter(|&c: &char| (' ' <= c && c <= '~')))
-                    .ignored(),
+                filter(|&c: &char| (' ' <= c && c <= '~') && (c != '\'' && c != '\\')).ignored(),
                 escape_sequence_parser.clone().ignored(),
             ))
             .repeated(),
@@ -717,7 +688,7 @@ pub fn create_source_unit_parser(
     let single_quoted_unicode_string_literal_parser = just("unicode'")
         .ignore_then(
             choice::<_, Simple<char>>((
-                none_of("'\\\n\r").ignored(),
+                filter(|&c: &char| (c != '\'' && c != '\\' && c != '\n' && c != '\r')).ignored(),
                 escape_sequence_parser.clone().ignored(),
             ))
             .repeated(),
