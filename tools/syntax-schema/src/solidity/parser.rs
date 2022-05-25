@@ -21,11 +21,8 @@ pub fn create_source_unit_parser(
         just('\n').ignored(),
         just('\r').ignored(),
     ))
-    .ignored()
-    .boxed();
-    let boolean_literal_parser = choice::<_, Simple<char>>((just("true"), just("false")))
-        .ignored()
-        .boxed();
+    .ignored();
+    let boolean_literal_parser = choice::<_, Simple<char>>((just("true"), just("false"))).ignored();
     let comment_parser = just("/*")
         .ignore_then(
             choice::<_, Simple<char>>((
@@ -40,13 +37,11 @@ pub fn create_source_unit_parser(
         )
         .then(just('*').repeated().at_least(1usize))
         .then_ignore(just('/'))
-        .ignored()
-        .boxed();
+        .ignored();
     let decimal_integer_parser = filter(|&c: &char| c.is_ascii_digit())
         .separated_by(just('_').or_not())
         .at_least(1usize)
-        .ignored()
-        .boxed();
+        .ignored();
     let fixed_parser = just("fixed")
         .ignore_then(
             filter(|&c: &char| ('1' <= c && c <= '9'))
@@ -56,8 +51,7 @@ pub fn create_source_unit_parser(
                 .then(filter(|&c: &char| c.is_ascii_digit()).repeated())
                 .or_not(),
         )
-        .ignored()
-        .boxed();
+        .ignored();
     let fixed_bytes_parser = just("bytes")
         .ignore_then(choice::<_, Simple<char>>((
             choice::<_, Simple<char>>((
@@ -97,27 +91,21 @@ pub fn create_source_unit_parser(
                 just("32"),
             )),
         )))
-        .ignored()
-        .boxed();
+        .ignored();
     let hex_character_parser = choice::<_, Simple<char>>((
         filter(|&c: &char| c.is_ascii_digit()).ignored(),
         filter(|&c: &char| ('a' <= c && c <= 'f')).ignored(),
         filter(|&c: &char| ('A' <= c && c <= 'F')).ignored(),
     ))
-    .ignored()
-    .boxed();
+    .ignored();
     let identifier_start_parser = choice::<_, Simple<char>>((
         just('_').ignored(),
         just('$').ignored(),
         filter(|&c: &char| c.is_ascii_lowercase()).ignored(),
         filter(|&c: &char| c.is_ascii_uppercase()).ignored(),
     ))
-    .ignored()
-    .boxed();
-    let line_comment_parser = just("//")
-        .ignore_then(none_of("\n\r").repeated())
-        .ignored()
-        .boxed();
+    .ignored();
+    let line_comment_parser = just("//").ignore_then(none_of("\n\r").repeated()).ignored();
     let number_unit_parser = choice::<_, Simple<char>>((
         just("wei"),
         just("gwei"),
@@ -129,8 +117,7 @@ pub fn create_source_unit_parser(
         just("weeks"),
         just("years"),
     ))
-    .ignored()
-    .boxed();
+    .ignored();
     let signed_integer_type_parser = just("int")
         .ignore_then(choice::<_, Simple<char>>((
             choice::<_, Simple<char>>((
@@ -170,24 +157,21 @@ pub fn create_source_unit_parser(
                 just("256"),
             )),
         )))
-        .ignored()
-        .boxed();
+        .ignored();
     let whitespace_parser = choice::<_, Simple<char>>((
         just(' ').ignored(),
         just('\t').ignored(),
         just('\r').ignored(),
         just('\n').ignored(),
     ))
-    .ignored()
-    .boxed();
+    .ignored();
     let yul_decimal_number_literal_parser = choice::<_, Simple<char>>((
         just('0').ignored(),
         filter(|&c: &char| ('1' <= c && c <= '9'))
             .then(filter(|&c: &char| c.is_ascii_digit()).repeated())
             .ignored(),
     ))
-    .ignored()
-    .boxed();
+    .ignored();
     let yul_hex_literal_parser = just("0x")
         .ignore_then(choice::<_, Simple<char>>((
             filter(|&c: &char| c.is_ascii_digit()).ignored(),
@@ -202,27 +186,23 @@ pub fn create_source_unit_parser(
             ))
             .repeated(),
         )
-        .ignored()
-        .boxed();
+        .ignored();
     let pragma_directive_parser = just("pragma")
         .ignore_then(filter(|&c: &char| c != ';'))
         .then(filter(|&c: &char| c != ';').repeated())
         .then_ignore(just(';'))
-        .ignored()
-        .boxed();
+        .ignored();
     let decimal_exponent_parser =
         choice::<_, Simple<char>>((just('e').ignored(), just('E').ignored()))
             .then(just('-').or_not())
             .then(decimal_integer_parser.clone())
-            .ignored()
-            .boxed();
+            .ignored();
     let decimal_float_parser = decimal_integer_parser
         .clone()
         .or_not()
         .then_ignore(just('.'))
         .then(decimal_integer_parser.clone())
-        .ignored()
-        .boxed();
+        .ignored();
     let hex_byte_escape_parser = just('x')
         .ignore_then(
             hex_character_parser
@@ -231,8 +211,7 @@ pub fn create_source_unit_parser(
                 .at_least(2usize)
                 .at_most(2usize),
         )
-        .ignored()
-        .boxed();
+        .ignored();
     let hex_number_parser = just('0')
         .ignore_then(just('x'))
         .ignore_then(
@@ -241,22 +220,19 @@ pub fn create_source_unit_parser(
                 .separated_by(just('_').or_not())
                 .at_least(1usize),
         )
-        .ignored()
-        .boxed();
+        .ignored();
     let ignore_parser = choice::<_, Simple<char>>((
         whitespace_parser.clone().ignored(),
         comment_parser.clone().ignored(),
         line_comment_parser.clone().ignored(),
     ))
     .repeated()
-    .ignored()
-    .boxed();
+    .ignored();
     let identifier_part_parser = choice::<_, Simple<char>>((
         identifier_start_parser.clone().ignored(),
         filter(|&c: &char| c.is_ascii_digit()).ignored(),
     ))
-    .ignored()
-    .boxed();
+    .ignored();
     let possibly_separated_pairs_of_hex_digits_parser = hex_character_parser
         .clone()
         .repeated()
@@ -264,12 +240,8 @@ pub fn create_source_unit_parser(
         .at_most(2usize)
         .separated_by(just('_').or_not())
         .at_least(1usize)
-        .ignored()
-        .boxed();
-    let ufixed_parser = just('u')
-        .ignore_then(fixed_parser.clone())
-        .ignored()
-        .boxed();
+        .ignored();
+    let ufixed_parser = just('u').ignore_then(fixed_parser.clone()).ignored();
     let unicode_escape_parser = just('u')
         .ignore_then(
             hex_character_parser
@@ -278,27 +250,23 @@ pub fn create_source_unit_parser(
                 .at_least(4usize)
                 .at_most(4usize),
         )
-        .ignored()
-        .boxed();
+        .ignored();
     let unsigned_integer_type_parser = just('u')
         .ignore_then(signed_integer_type_parser.clone())
-        .ignored()
-        .boxed();
+        .ignored();
     let decimal_number_parser = choice::<_, Simple<char>>((
         decimal_integer_parser.clone().ignored(),
         decimal_float_parser.clone().ignored(),
     ))
     .then(decimal_exponent_parser.clone().or_not())
-    .ignored()
-    .boxed();
+    .ignored();
     let escape_sequence_parser = just('\\')
         .ignore_then(choice::<_, Simple<char>>((
             ascii_escape_parser.clone().ignored(),
             hex_byte_escape_parser.clone().ignored(),
             unicode_escape_parser.clone().ignored(),
         )))
-        .ignored()
-        .boxed();
+        .ignored();
     let hex_string_literal_parser = just("hex")
         .ignore_then(choice::<_, Simple<char>>((
             just('"')
@@ -318,13 +286,11 @@ pub fn create_source_unit_parser(
                 .then_ignore(just('\''))
                 .ignored(),
         )))
-        .ignored()
-        .boxed();
+        .ignored();
     let raw_identifier_parser = identifier_start_parser
         .clone()
         .then(identifier_part_parser.clone().repeated())
-        .ignored()
-        .boxed();
+        .ignored();
     let add_sub_operator_parser = choice::<_, Simple<char>>((
         just('+').then_ignore(ignore_parser.clone()).ignored(),
         just('-').then_ignore(ignore_parser.clone()).ignored(),
@@ -721,8 +687,7 @@ pub fn create_source_unit_parser(
             .repeated(),
         )
         .then_ignore(just('"'))
-        .ignored()
-        .boxed();
+        .ignored();
     let double_quoted_unicode_string_literal_parser = just("unicode\"")
         .ignore_then(
             choice::<_, Simple<char>>((
@@ -732,8 +697,7 @@ pub fn create_source_unit_parser(
             .repeated(),
         )
         .then_ignore(just('"'))
-        .ignored()
-        .boxed();
+        .ignored();
     let single_quoted_ascii_string_literal_parser = just('\'')
         .ignore_then(
             choice::<_, Simple<char>>((
@@ -743,8 +707,7 @@ pub fn create_source_unit_parser(
             .repeated(),
         )
         .then_ignore(just('\''))
-        .ignored()
-        .boxed();
+        .ignored();
     let single_quoted_unicode_string_literal_parser = just("unicode'")
         .ignore_then(
             choice::<_, Simple<char>>((
@@ -754,8 +717,7 @@ pub fn create_source_unit_parser(
             .repeated(),
         )
         .then_ignore(just('\''))
-        .ignored()
-        .boxed();
+        .ignored();
     let elementary_type_with_payable_parser = choice::<_, Simple<char>>((
         just("address")
             .then_ignore(ignore_parser.clone())
@@ -817,8 +779,7 @@ pub fn create_source_unit_parser(
         single_quoted_ascii_string_literal_parser.clone().ignored(),
         double_quoted_ascii_string_literal_parser.clone().ignored(),
     ))
-    .ignored()
-    .boxed();
+    .ignored();
     let unicode_string_literal_parser = choice::<_, Simple<char>>((
         single_quoted_unicode_string_literal_parser
             .clone()
@@ -827,8 +788,7 @@ pub fn create_source_unit_parser(
             .clone()
             .ignored(),
     ))
-    .ignored()
-    .boxed();
+    .ignored();
     let assembly_flags_parser = just('(')
         .then_ignore(ignore_parser.clone())
         .ignore_then(

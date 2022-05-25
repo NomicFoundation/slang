@@ -132,7 +132,7 @@ impl ChumskyProduction for Production {
                         Some(name.to_case(Case::Snake).to_owned()),
                         context,
                     );
-                    if context.boxed {
+                    if context.boxed && !production.is_token {
                         suffixes.push(quote!( .boxed() ))
                     }
                     if backlinked.contains(&name) {
