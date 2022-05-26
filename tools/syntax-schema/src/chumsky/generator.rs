@@ -19,8 +19,8 @@ pub enum CharSetElement {
 }
 
 pub struct Context {
-    pub no_builder: bool,
-    pub boxed: bool,
+    pub no_default_map: bool,
+    pub box_non_tokens: bool,
 }
 
 impl Grammar {
@@ -39,7 +39,17 @@ impl Grammar {
         fs::write(
             output_path,
             rustfmt(format!(
-                "use chumsky::{{prelude::*, Parser}};\n\n{}\n\n{}",
+                "{}\n{}\n{}",
+                vec![
+                    "use chumsky::{{prelude::*, Parser}};",
+                    "#[allow(unused_imports)]",
+                    "use crate::chumsky::combinators::NomicParser;",
+                    "#[allow(unused_imports)]",
+                    "use super::builder;",
+                    "",
+                    "pub type ErrorType = Simple<char>;"
+                ]
+                .join("\n"),
                 preludes.join("\n\n"),
                 parsers.join("\n\n")
             )),
@@ -132,7 +142,7 @@ impl ChumskyProduction for Production {
                         Some(name.to_case(Case::Snake).to_owned()),
                         context,
                     );
-                    if context.boxed && !production.is_token {
+                    if context.box_non_tokens && !production.is_token {
                         suffixes.push(quote!( .boxed() ))
                     }
                     if backlinked.contains(&name) {
@@ -150,7 +160,7 @@ impl ChumskyProduction for Production {
         let function_name = format_ident!("create_{}_parser", root.to_case(Case::Snake));
         let result_type_name = format_ident!("{}ParserResultType", root.to_case(Case::UpperCamel));
         quote!(
-            pub fn #function_name() -> impl Parser<char, #result_type_name, Error = Simple<char>> {
+            pub fn #function_name() -> impl Parser<char, #result_type_name, Error = ErrorType> {
                 #(#decls)*
                 #root_id.recover_with(skip_then_retry_until([]))
             }
@@ -279,7 +289,7 @@ impl ChumskyExpression for Expression {
                             let expr = e.generate(grammar, production, context);
                             let mut suffixes =
                                 e.generate_suffixes(grammar, production, None, context);
-                            if context.no_builder {
+                            if production.single_expression().unwrap().config.ignore {
                                 suffixes.push(quote!( .ignored() ))
                             }
                             quote!( #expr #(#suffixes)* )
@@ -290,10 +300,10 @@ impl ChumskyExpression for Expression {
                 if choices.len() > 16 {
                     choices = choices
                         .chunks(16)
-                        .map(|chunk| quote!( choice::<_, Simple<char>>((#(#chunk),*)) ))
+                        .map(|chunk| quote!( choice::<_, ErrorType>((#(#chunk),*)) ))
                         .collect();
                 }
-                quote!( choice::<_, Simple<char>>((#(#choices),*)) )
+                quote!( choice::<_, ErrorType>((#(#choices),*)) )
             }
             EBNF::Sequence(exprs) => {
                 let mut seen_unignorable_content = false;
@@ -366,10 +376,10 @@ impl ChumskyExpression for Expression {
                     }
                 }
 
-                // TODO: 2. x - string set // Assume x produces String
-
-                println!("Difference not handled: {:#?} - {:#?}", minuend, subtrahend);
-                quote!(just("todo()"))
+                // 2. x - y assuming x produces Vec<char>
+                let minuend = minuend.generate(grammar, production, context);
+                let subtrahend = subtrahend.generate(grammar, production, context);
+                quote!( #minuend.excluding(#subtrahend) )
             }
             EBNF::Range(_) => {
                 let predicate = self.as_character_predicate(false);
@@ -400,9 +410,7 @@ impl ChumskyExpression for Expression {
                     let id = format_ident!("{}", map);
                     suffixes.push(quote!( .map(builder::#id) ))
                 } else if let Some(map) = default_map {
-                    if context.no_builder {
-                        suffixes.push(quote!( .ignored() ))
-                    } else {
+                    if !context.no_default_map {
                         let id = format_ident!("{}", map);
                         suffixes.push(quote!( .map(builder::#id) ))
                     }

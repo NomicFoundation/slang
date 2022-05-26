@@ -10,10 +10,10 @@ struct ProgramArgs {
     manifest_input: String,
 
     #[clap(long)]
-    no_builder: bool,
+    no_default_map: bool,
 
     #[clap(long)]
-    boxed: bool,
+    box_non_tokens: bool,
 
     #[clap(long)]
     chumsky_output: String,
@@ -31,8 +31,8 @@ fn main() {
     println!(" => Generating Parser");
     grammar.generate_chumsky(
         &Context {
-            no_builder: args.no_builder,
-            boxed: args.boxed,
+            no_default_map: args.no_default_map,
+            box_non_tokens: args.box_non_tokens,
         },
         &PathBuf::from(args.chumsky_output),
     );

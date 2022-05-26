@@ -4,7 +4,6 @@
   config:
     nomap: true
     prelude: |
-      use super::builder;
       use crate::schema::Production;
       pub type GrammarParserResultType = Vec<Production>;
   sequence:

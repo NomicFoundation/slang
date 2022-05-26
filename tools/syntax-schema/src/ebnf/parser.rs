@@ -1,19 +1,24 @@
+#[allow(unused_imports)]
+use super::builder;
+#[allow(unused_imports)]
+use crate::chumsky::combinators::NomicParser;
 use chumsky::{prelude::*, Parser};
 
-use super::builder;
+pub type ErrorType = Simple<char>;
 use crate::schema::Production;
 pub type GrammarParserResultType = Vec<Production>;
 
-pub fn create_grammar_parser() -> impl Parser<char, GrammarParserResultType, Error = Simple<char>> {
+pub fn create_grammar_parser() -> impl Parser<char, GrammarParserResultType, Error = ErrorType> {
     let mut expression_parser = Recursive::declare();
     let comment_parser = just("/*")
         .ignore_then(
-            choice::<_, Simple<char>>((
-                filter(|&c: &char| c != '*').ignored(),
+            choice::<_, ErrorType>((
+                filter(|&c: &char| c != '*').ignored().ignored(),
                 just('*')
                     .repeated()
                     .at_least(1usize)
                     .then(filter(|&c: &char| (c != '*' && c != '/')))
+                    .ignored()
                     .ignored(),
             ))
             .repeated(),
@@ -32,17 +37,19 @@ pub fn create_grammar_parser() -> impl Parser<char, GrammarParserResultType, Err
         .map(builder::number);
     let whitespace_parser =
         filter(|&c: &char| c == '\t' || c == '\n' || c == '\r' || c == ' ').ignored();
-    let ignore_parser =
-        choice::<_, Simple<char>>((whitespace_parser.clone(), comment_parser.clone()))
-            .repeated()
-            .ignored();
-    let identifier_follow_parser = choice::<_, Simple<char>>((
+    let ignore_parser = choice::<_, ErrorType>((
+        whitespace_parser.clone().ignored(),
+        comment_parser.clone().ignored(),
+    ))
+    .repeated()
+    .ignored();
+    let identifier_follow_parser = choice::<_, ErrorType>((
         identifier_start_parser.clone(),
         filter(|&c: &char| c.is_ascii_digit()),
     ));
-    let string_char_parser = choice::<_, Simple<char>>((
+    let string_char_parser = choice::<_, ErrorType>((
         filter(|&c: &char| (c != '\'' && c != '\\')),
-        just('\\').ignore_then(choice::<_, Simple<char>>((
+        just('\\').ignore_then(choice::<_, ErrorType>((
             just('\''),
             just('\\'),
             just("u{")
@@ -78,7 +85,7 @@ pub fn create_grammar_parser() -> impl Parser<char, GrammarParserResultType, Err
         .ignore_then(expression_parser.clone())
         .then_ignore(just(']').then_ignore(ignore_parser.clone()))
         .map(builder::optional);
-    let repetition_prefix_parser = choice::<_, Simple<char>>((
+    let repetition_prefix_parser = choice::<_, ErrorType>((
         number_parser
             .clone()
             .then_ignore(ignore_parser.clone())
@@ -103,7 +110,7 @@ pub fn create_grammar_parser() -> impl Parser<char, GrammarParserResultType, Err
     let repetition_separator_parser = just('/')
         .then_ignore(ignore_parser.clone())
         .ignore_then(expression_parser.clone());
-    let identifier_parser = choice::<_, Simple<char>>((
+    let identifier_parser = choice::<_, ErrorType>((
         just('«')
             .ignore_then(raw_identifier_parser.clone())
             .then_ignore(just('»'))
@@ -132,7 +139,7 @@ pub fn create_grammar_parser() -> impl Parser<char, GrammarParserResultType, Err
         .clone()
         .then_ignore(ignore_parser.clone())
         .map(builder::production_reference);
-    let primary_parser = choice::<_, Simple<char>>((
+    let primary_parser = choice::<_, ErrorType>((
         production_reference_parser.clone(),
         grouped_parser.clone(),
         optional_parser.clone(),
