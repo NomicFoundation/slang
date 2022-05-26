@@ -258,9 +258,7 @@ impl ChumskyExpression for Expression {
                     return quote!( filter(|&c: &char| #(#predicates)||*) );
                 }
 
-                // TODO: single characters, use predicate
-
-                // If the choice is between terminals, generated them all as strings
+                // If the choice is between terminals, generate them all as strings
                 // TODO: optimize using a prefix-tree search custom predicate
                 let mut strings = exprs
                     .iter()
