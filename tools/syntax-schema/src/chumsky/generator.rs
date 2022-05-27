@@ -42,10 +42,6 @@ impl Grammar {
                 "{}\n{}\n{}",
                 vec![
                     "use chumsky::{{prelude::*, Parser}};",
-                    "#[allow(unused_imports)]",
-                    "use crate::chumsky::combinators::NomicParser;",
-                    "#[allow(unused_imports)]",
-                    "use super::builder;",
                     "",
                     "pub type ErrorType = Simple<char>;"
                 ]

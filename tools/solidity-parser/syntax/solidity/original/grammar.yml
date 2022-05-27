@@ -48,6 +48,9 @@
 - name: sourceUnit
   config:
     prelude: |
+      use syntax_schema::chumsky::combinators::NomicParser;
+      use super::builder;
+
       pub type SourceUnitParserResultType = ();
     ignore: true
   sequence:
