@@ -1,4 +1,6 @@
-use std::rc::Rc;
+use std::{collections::BTreeMap, rc::Rc};
+
+use semver::Version;
 
 use crate::schema::*;
 
@@ -14,8 +16,7 @@ pub fn production(((name, is_token), ebnf): ((String, bool), EBNF)) -> Productio
         name,
         is_token,
         title: None,
-        expr: Some(ref_from_ebnf(ebnf)),
-        versions: Default::default(),
+        versions: BTreeMap::from([(Version::parse("0.0.0").unwrap(), ref_from_ebnf(ebnf))]),
     }
 }
 

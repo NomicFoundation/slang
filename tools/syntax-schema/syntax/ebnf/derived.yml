@@ -1,36 +1,24 @@
-# yaml-language-server: $schema=../../schema/topic.schema.json
-
+---
 - name: grammar
-  config:
-    nomap: true
-    prelude: |
-      use super::builder;
-
-      use crate::schema::Production;
-      pub type GrammarParserResultType = Vec<Production>;
   sequence:
     - reference: IGNORE
     - zeroOrMore:
         reference: production
     - end: ~
-
 - name: production
   sequence:
     - reference: Identifier
     - terminal: "="
     - reference: expression
     - terminal: ;
-
 - name: expression
   oneOrMore:
     reference: sequence
     separator:
       terminal: "|"
-
 - name: sequence
   oneOrMore:
     reference: difference
-
 - name: difference
   sequence:
     - reference: negation
@@ -38,15 +26,12 @@
         sequence:
           - terminal: "-"
           - reference: negation
-
 - name: negation
   sequence:
     - optional:
         terminal: ¬
     - reference: primary
-
 - name: primary
-  config: { nomap: true }
   choice:
     - reference: productionReference
     - reference: grouped
@@ -55,41 +40,31 @@
     - reference: charRange
     - reference: EOF
     - reference: String
-
 - name: productionReference
   reference: Identifier
-
 - name: grouped
-  config: { nomap: true }
   sequence:
     - terminal: (
     - reference: expression
     - terminal: )
-
 - name: repetitionPrefix
-  config: { nomap: true }
   sequence:
     - choice:
         - sequence:
             - reference: Number
             - optional:
                 sequence:
-                  - terminal: "…"
+                  - terminal: …
                   - optional:
                       reference: Number
-          config: { map: repetition_prefix_1 }
         - sequence:
-            - terminal: "…"
+            - terminal: …
             - reference: Number
-          config: { map: repetition_prefix_2 }
     - terminal: "*"
-
 - name: repetitionSeparator
-  config: { nomap: true }
   sequence:
-    - terminal: "/"
+    - terminal: /
     - reference: expression
-
 - name: repeated
   sequence:
     - optional:
@@ -99,41 +74,34 @@
     - optional:
         reference: repetitionSeparator
     - terminal: "}"
-
 - name: optional
   sequence:
     - terminal: "["
     - reference: expression
     - terminal: "]"
-
 - name: charRange
   sequence:
     - reference: SingleCharString
     - terminal: …
     - reference: SingleCharString
-
-# Tokens
-
 - name: EOF
-  isToken: true
+  is_token: true
   terminal: $
-
 - name: Number
-  isToken: true
+  is_token: true
   oneOrMore:
-    range: { from: "0", to: "9" }
-
+    range:
+      from: "0"
+      to: "9"
 - name: String
-  isToken: true
+  is_token: true
   sequence:
     - terminal: "'"
     - zeroOrMore:
         reference: StringChar
     - terminal: "'"
-
 - name: StringChar
-  isToken: true
-  config: { nomap: true }
+  is_token: true
   choice:
     - not:
         choice:
@@ -150,20 +118,15 @@
                     min: 1
                     max: 6
                     reference: HexDigit
-                  config: { map: hex_digits_to_char, unwrap: true }
                 - terminal: "}"
-
 - name: SingleCharString
-  isToken: true
-  config: { nomap: true }
+  is_token: true
   sequence:
     - terminal: "'"
     - reference: StringChar
     - terminal: "'"
-
 - name: HexDigit
-  isToken: true
-  config: { nomap: true }
+  is_token: true
   choice:
     - range:
         from: "0"
@@ -174,30 +137,22 @@
     - range:
         from: A
         to: F
-
 - name: Identifier
-  isToken: true
-  config: { nomap: true }
+  is_token: true
   choice:
     - sequence:
         - terminal: «
         - reference: RawIdentifier
         - terminal: »
-      config: { map: identifier_1 }
     - reference: RawIdentifier
-      config: { map: identifier_2 }
-
 - name: RawIdentifier
-  config: { chain: true }
-  isToken: true
+  is_token: true
   sequence:
     - reference: IdentifierStart
     - zeroOrMore:
         reference: IdentifierFollow
-
 - name: IdentifierStart
-  isToken: true
-  config: { nomap: true }
+  is_token: true
   choice:
     - terminal: _
     - range:
@@ -206,34 +161,27 @@
     - range:
         from: A
         to: Z
-
 - name: IdentifierFollow
-  isToken: true
-  config: { nomap: true }
+  is_token: true
   choice:
     - reference: IdentifierStart
     - range:
         from: "0"
         to: "9"
-
 - name: IGNORE
-  isToken: true
-  config: { ignore: true }
+  is_token: true
   zeroOrMore:
     choice:
       - reference: Whitespace
       - reference: Comment
-
 - name: Comment
-  isToken: true
-  config: { ignore: true }
+  is_token: true
   sequence:
     - terminal: /*
     - zeroOrMore:
         choice:
           - not:
               terminal: "*"
-            config: { ignore: true }
           - sequence:
               - oneOrMore:
                   terminal: "*"
@@ -241,14 +189,11 @@
                   choice:
                     - terminal: "*"
                     - terminal: /
-            config: { ignore: true }
     - oneOrMore:
         terminal: "*"
     - terminal: /
-
 - name: Whitespace
-  isToken: true
-  config: { ignore: true }
+  is_token: true
   choice:
     - terminal: "\t"
     - terminal: "\n"

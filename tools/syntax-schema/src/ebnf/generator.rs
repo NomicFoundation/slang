@@ -2,31 +2,35 @@ use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
 
+use semver::Version;
+
 use crate::schema::*;
 
 impl Grammar {
     pub fn generate_ebnf(&self, output_path: &PathBuf) {
         let mut w = File::create(output_path).expect("Unable to create file");
 
+        let zero_version = Version::parse("0.0.0").unwrap();
         let mut first = true;
         for p in self.productions.iter().flat_map(|(_, p)| p) {
-            if let Some(expr) = &p.expr {
+            if p.versions.len() == 1 && p.versions.get(&zero_version).is_some() {
                 if first {
                     first = false;
                 } else {
                     writeln!(w).unwrap();
                 }
                 write!(w, "{} = ", p.print_name()).unwrap();
-                expr.generate(self, &mut w);
-            }
-            for (version, expr) in &p.versions {
-                if first {
-                    first = false;
-                } else {
-                    writeln!(w).unwrap();
+                p.versions[&zero_version].generate(self, &mut w);
+            } else {
+                for (version, expr) in &p.versions {
+                    if first {
+                        first = false;
+                    } else {
+                        writeln!(w).unwrap();
+                    }
+                    write!(w, "/* {} */ {} = ", version, p.print_name()).unwrap();
+                    expr.generate(self, &mut w);
                 }
-                write!(w, "/* {} */ {} = ", version, p.print_name()).unwrap();
-                expr.generate(self, &mut w);
             }
             writeln!(w, ";").unwrap();
         }
