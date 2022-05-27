@@ -10,13 +10,10 @@ PROJECT_DIR=$(dirname "$THIS_DIR")
 cargo install --path ../syntax-schema
 
 ###################################################
-# Solidity from the intended source manifest
+# Solidity from the original antlr grammar
 ###################################################
 
-manifest_to_ebnf \
-  --manifest-input "$PROJECT_DIR/syntax/solidity/manifest.yml" \
-  --ebnf-output "$PROJECT_DIR/syntax/solidity/derived.ebnf"
-
 manifest_to_chumsky \
-  --manifest-input "$PROJECT_DIR/syntax/solidity/manifest.yml" \
-  --chumsky-output "$PROJECT_DIR/syntax/solidity/derived.rs"
+  --manifest-input "$PROJECT_DIR/syntax/solidity/original/manifest.yml" \
+  --no-default-map --box-non-tokens \
+  --chumsky-output "$PROJECT_DIR/src/parser.rs"

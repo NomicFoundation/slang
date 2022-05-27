@@ -1,8 +1,8 @@
 #[allow(unused_imports)]
 use super::builder;
-use chumsky::{prelude::*, Parser};
 #[allow(unused_imports)]
-use syntax_schema::chumsky::combinators::NomicParser;
+use crate::chumsky::combinators::NomicParser;
+use chumsky::{prelude::*, Parser};
 
 pub type ErrorType = Simple<char>;
 pub type SourceUnitParserResultType = ();
