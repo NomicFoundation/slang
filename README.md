@@ -21,7 +21,8 @@ Currently, the repository has the following projects:
 - `./documentation`: used to host the language specification, and any future documentation for the project.
 - `./tools`:
   - `./linting`: A NodeJS environment that runs several linters over the repository, for formatting, style checks, anti-patterns, and even spell-checking!
-  - `./syntax-schema`: A rust utility that generates the Solidity language parser and its specification from a common source of truth.
+  - `./syntax-schema`: A rust utility that generates parsers and specifications from a single source of truth.
+  - `./solidity-parser`: A parser for the solidity language, generated from a single source of truth specification.
   - `./version-breaks`: A rust utility that can test `solc` compiler output for a given compilation, against the full range of released versions, and compare their output.
 
 ## Dev Containers
