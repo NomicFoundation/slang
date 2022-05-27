@@ -8,7 +8,6 @@ use solidity_parser::parser::create_source_unit_parser;
 
 #[derive(ClapParser, Debug)]
 struct ProgramArgs {
-    #[clap(long)]
     solidity_input: String,
 }
 
