@@ -18,16 +18,15 @@ where
         S: 'a + Parser<char, SO, Error = Simple<char>>,
     {
         let subtrahend = subtrahend.then(end());
-        self.try_map(move |s: Vec<char>, span| {
-            let string: String = s.iter().collect();
-            match subtrahend.parse(string.as_str()) {
+        self.try_map(
+            move |s: Vec<char>, span| match subtrahend.parse(s.as_slice()) {
                 Ok(_) => Err(Simple::custom(
                     span,
                     "Matches subtrahend of difference operator",
                 )),
                 Err(_) => Ok(s),
-            }
-        })
+            },
+        )
         .boxed()
     }
 }
