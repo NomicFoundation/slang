@@ -7,6 +7,7 @@ use std::{
 };
 
 use convert_case::{Case, Casing};
+use patricia_tree::{node::Node, PatriciaSet};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
@@ -251,13 +252,37 @@ impl ChumskyExpression for Expression {
                     return quote!( filter(|&c: &char| #predicate) );
                 }
 
-                // If the choice is between terminals, generate them all as strings
-                // TODO: optimize using a prefix-tree search custom predicate
                 let mut choices: Vec<TokenStream> =
                     if let Some(terminals) = self.as_terminal_set(grammar) {
-                        let mut terminals = terminals.iter().collect::<Vec<_>>();
-                        terminals.sort_by_cached_key(|s| usize::MAX - s.chars().count());
-                        terminals.iter().map(|s| quote!( just(#s) )).collect()
+                        fn generate_from_trie(
+                            node: Option<&Node<()>>,
+                            depth: usize,
+                        ) -> Vec<TokenStream> {
+                            let mut result = vec![];
+                            let mut n = node;
+                            while let Some(node) = n {
+                                let label = String::from_utf8_lossy(node.label());
+                                let mut children = generate_from_trie(node.child(), depth + 1);
+                                if node.child().is_some() && node.value().is_some() {
+                                    children.push(quote!(empty()));
+                                }
+                                if children.is_empty() {
+                                    result.push(quote!( just(#label).ignored() ))
+                                } else if children.len() == 1 {
+                                    let child = &children[0];
+                                    result.push(quote!( just(#label).then(#child).ignored() ))
+                                } else {
+                                    result.push(quote!( just(#label).then(choice((
+                                        #(#children),*
+                                    ))).ignored() ))
+                                }
+                                n = node.sibling()
+                            }
+                            result
+                        }
+
+                        let trie: PatriciaSet = terminals.into_iter().collect();
+                        generate_from_trie(trie.as_ref().child(), 0)
                     } else {
                         exprs
                             .iter()
@@ -277,7 +302,13 @@ impl ChumskyExpression for Expression {
                 if choices.len() > 16 {
                     choices = choices
                         .chunks(16)
-                        .map(|chunk| quote!( choice::<_, ErrorType>((#(#chunk),*)) ))
+                        .map(|chunk| {
+                            if chunk.len() == 1 {
+                                chunk[0].clone()
+                            } else {
+                                quote!( choice::<_, ErrorType>((#(#chunk),*)) )
+                            }
+                        })
                         .collect();
                 }
                 quote!( choice::<_, ErrorType>((#(#choices),*)) )
@@ -414,6 +445,11 @@ impl ChumskyExpression for Expression {
         suffixes
     }
 
+    // Returned Option<bool> indicates if the expression is:
+    //   Some(true)  => conjunction
+    //   Some(false) => disjunction
+    //   None        => simple expression
+    // which allows callers to add parens iff required
     fn as_character_predicate(&self, negated: bool) -> Option<(TokenStream, Option<bool>)> {
         match &self.ebnf {
             EBNF::Choice(exprs) => {

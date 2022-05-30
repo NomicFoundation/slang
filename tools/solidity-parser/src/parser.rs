@@ -25,7 +25,8 @@ pub fn create_source_unit_parser(
             || c == '\r'
     })
     .map(builder::to_char);
-    let boolean_literal_parser = choice::<_, ErrorType>((just("false"), just("true"))).ignored();
+    let boolean_literal_parser =
+        choice::<_, ErrorType>((just("false").ignored(), just("true").ignored())).ignored();
     let comment_parser = just("/*")
         .ignore_then(
             choice::<_, ErrorType>((
@@ -33,7 +34,7 @@ pub fn create_source_unit_parser(
                 just('*')
                     .repeated()
                     .at_least(1usize)
-                    .then(filter(|&c: &char| (c != '*' && c != '/')))
+                    .then(filter(|&c: &char| c != '*' && c != '/'))
                     .ignored(),
             ))
             .repeated(),
@@ -46,51 +47,62 @@ pub fn create_source_unit_parser(
         .at_least(1usize)
         .ignored();
     let fixed_bytes_type_parser = just("bytes")
-        .ignore_then(choice::<_, ErrorType>((
+        .ignore_then(
             choice::<_, ErrorType>((
-                just("10"),
-                just("11"),
-                just("12"),
-                just("13"),
-                just("14"),
-                just("15"),
-                just("16"),
-                just("17"),
-                just("18"),
-                just("19"),
-                just("20"),
-                just("21"),
-                just("22"),
-                just("23"),
-                just("24"),
-                just("25"),
-            )),
-            choice::<_, ErrorType>((
-                just("26"),
-                just("27"),
-                just("28"),
-                just("29"),
-                just("30"),
-                just("31"),
-                just("32"),
-                just("1"),
-                just("2"),
-                just("3"),
-                just("4"),
-                just("5"),
-                just("6"),
-                just("7"),
-                just("8"),
-                just("9"),
-            )),
-        )))
+                just("1")
+                    .then(choice((
+                        just("0").ignored(),
+                        just("1").ignored(),
+                        just("2").ignored(),
+                        just("3").ignored(),
+                        just("4").ignored(),
+                        just("5").ignored(),
+                        just("6").ignored(),
+                        just("7").ignored(),
+                        just("8").ignored(),
+                        just("9").ignored(),
+                        empty(),
+                    )))
+                    .ignored(),
+                just("2")
+                    .then(choice((
+                        just("0").ignored(),
+                        just("1").ignored(),
+                        just("2").ignored(),
+                        just("3").ignored(),
+                        just("4").ignored(),
+                        just("5").ignored(),
+                        just("6").ignored(),
+                        just("7").ignored(),
+                        just("8").ignored(),
+                        just("9").ignored(),
+                        empty(),
+                    )))
+                    .ignored(),
+                just("3")
+                    .then(choice((
+                        just("0").ignored(),
+                        just("1").ignored(),
+                        just("2").ignored(),
+                        empty(),
+                    )))
+                    .ignored(),
+                just("4").ignored(),
+                just("5").ignored(),
+                just("6").ignored(),
+                just("7").ignored(),
+                just("8").ignored(),
+                just("9").ignored(),
+            ))
+            .then_ignore(filter(|&c: &char| !c.is_ascii_digit()).rewind()),
+        )
         .map(builder::to_str);
     let fixed_type_parser = just("fixed")
         .ignore_then(
-            filter(|&c: &char| ('1' <= c && c <= '9'))
+            filter(|&c: &char| '1' <= c && c <= '9')
                 .then(filter(|&c: &char| c.is_ascii_digit()).repeated())
                 .then_ignore(just('x'))
-                .then(filter(|&c: &char| ('1' <= c && c <= '9')))
+                .then(filter(|&c: &char| '1' <= c && c <= '9'))
                 .then(filter(|&c: &char| c.is_ascii_digit()).repeated())
                 .or_not(),
         )
@@ -102,103 +114,136 @@ pub fn create_source_unit_parser(
         c == '_' || c == '$' || c.is_ascii_lowercase() || c.is_ascii_uppercase()
     });
     let line_comment_parser = just("//")
-        .ignore_then(filter(|&c: &char| (c != '\n' && c != '\r')).repeated())
+        .ignore_then(filter(|&c: &char| c != '\n' && c != '\r').repeated())
         .ignored();
     let number_unit_parser = choice::<_, ErrorType>((
-        just("seconds"),
-        just("minutes"),
-        just("ether"),
-        just("hours"),
-        just("weeks"),
-        just("years"),
-        just("gwei"),
-        just("days"),
-        just("wei"),
+        just("days").ignored(),
+        just("ether").ignored(),
+        just("gwei").ignored(),
+        just("hours").ignored(),
+        just("minutes").ignored(),
+        just("seconds").ignored(),
+        just("we")
+            .then(choice((just("eks").ignored(), just("i").ignored())))
+            .ignored(),
+        just("years").ignored(),
     ))
     .ignored();
     let reserved_keyword_parser = choice::<_, ErrorType>((
-        choice::<_, ErrorType>((
-            just("relocatable"),
-            just("implements"),
-            just("reference"),
-            just("supports"),
-            just("default"),
-            just("mutable"),
-            just("partial"),
-            just("promise"),
-            just("typedef"),
-            just("copyof"),
-            just("define"),
-            just("inline"),
-            just("sealed"),
-            just("sizeof"),
-            just("static"),
-            just("switch"),
-        )),
-        choice::<_, ErrorType>((
-            just("typeof"),
-            just("after"),
-            just("alias"),
-            just("apply"),
-            just("final"),
-            just("macro"),
-            just("match"),
-            just("auto"),
-            just("byte"),
-            just("case"),
-            just("null"),
-            just("let"),
-            just("var"),
-            just("in"),
-            just("of"),
-        )),
+        just("a")
+            .then(choice((
+                just("fter").ignored(),
+                just("lias").ignored(),
+                just("pply").ignored(),
+                just("uto").ignored(),
+            )))
+            .ignored(),
+        just("byte").ignored(),
+        just("c")
+            .then(choice((just("ase").ignored(), just("opyof").ignored())))
+            .ignored(),
+        just("def")
+            .then(choice((just("ault").ignored(), just("ine").ignored())))
+            .ignored(),
+        just("final").ignored(),
+        just("i")
+            .then(choice((
+                just("mplements").ignored(),
+                just("n")
+                    .then(choice((just("line").ignored(), empty())))
+                    .ignored(),
+            )))
+            .ignored(),
+        just("let").ignored(),
+        just("m")
+            .then(choice((
+                just("a")
+                    .then(choice((just("cro").ignored(), just("tch").ignored())))
+                    .ignored(),
+                just("utable").ignored(),
+            )))
+            .ignored(),
+        just("null").ignored(),
+        just("of").ignored(),
+        just("p")
+            .then(choice((just("artial").ignored(), just("romise").ignored())))
+            .ignored(),
+        just("re")
+            .then(choice((
+                just("ference").ignored(),
+                just("locatable").ignored(),
+            )))
+            .ignored(),
+        just("s")
+            .then(choice((
+                just("ealed").ignored(),
+                just("izeof").ignored(),
+                just("tatic").ignored(),
+                just("upports").ignored(),
+                just("witch").ignored(),
+            )))
+            .ignored(),
+        just("type")
+            .then(choice((just("def").ignored(), just("of").ignored())))
+            .ignored(),
+        just("var").ignored(),
     ))
     .ignored();
     let signed_integer_type_parser = just("int")
-        .ignore_then(choice::<_, ErrorType>((
+        .ignore_then(
             choice::<_, ErrorType>((
-                just("104"),
-                just("112"),
-                just("120"),
-                just("128"),
-                just("136"),
-                just("144"),
-                just("152"),
-                just("160"),
-                just("168"),
-                just("176"),
-                just("184"),
-                just("192"),
-                just("200"),
-                just("208"),
-                just("216"),
-                just("224"),
-            )),
-            choice::<_, ErrorType>((
-                just("232"),
-                just("240"),
-                just("248"),
-                just("256"),
-                just("16"),
-                just("24"),
-                just("32"),
-                just("40"),
-                just("48"),
-                just("56"),
-                just("64"),
-                just("72"),
-                just("80"),
-                just("88"),
-                just("96"),
-                just("8"),
-            )),
-        )))
+                just("1")
+                    .then(choice((
+                        just("04").ignored(),
+                        just("12").ignored(),
+                        just("2")
+                            .then(choice((just("0").ignored(), just("8").ignored())))
+                            .ignored(),
+                        just("36").ignored(),
+                        just("44").ignored(),
+                        just("52").ignored(),
+                        just("6")
+                            .then(choice((just("0").ignored(), just("8").ignored(), empty())))
+                            .ignored(),
+                        just("76").ignored(),
+                        just("84").ignored(),
+                        just("92").ignored(),
+                    )))
+                    .ignored(),
+                just("2")
+                    .then(choice((
+                        just("0")
+                            .then(choice((just("0").ignored(), just("8").ignored())))
+                            .ignored(),
+                        just("16").ignored(),
+                        just("24").ignored(),
+                        just("32").ignored(),
+                        just("4")
+                            .then(choice((just("0").ignored(), just("8").ignored(), empty())))
+                            .ignored(),
+                        just("56").ignored(),
+                    )))
+                    .ignored(),
+                just("32").ignored(),
+                just("4")
+                    .then(choice((just("0").ignored(), just("8").ignored())))
+                    .ignored(),
+                just("56").ignored(),
+                just("64").ignored(),
+                just("72").ignored(),
+                just("8")
+                    .then(choice((just("0").ignored(), just("8").ignored(), empty())))
+                    .ignored(),
+                just("96").ignored(),
+            ))
+            .then_ignore(filter(|&c: &char| !c.is_ascii_digit()).rewind()),
+        )
         .map(builder::to_str);
     let whitespace_parser =
         filter(|&c: &char| c == ' ' || c == '\t' || c == '\r' || c == '\n').ignored();
     let yul_decimal_number_literal_parser = choice::<_, ErrorType>((
         just('0').map(builder::to_str).ignored(),
-        filter(|&c: &char| ('1' <= c && c <= '9'))
+        filter(|&c: &char| '1' <= c && c <= '9')
             .chain(filter(|&c: &char| c.is_ascii_digit()).repeated())
             .map(builder::to_str)
             .ignored(),
@@ -206,88 +251,172 @@ pub fn create_source_unit_parser(
     .ignored();
     let yul_evm_builtin_function_name_parser = choice::<_, ErrorType>((
         choice::<_, ErrorType>((
-            just("returndatasize"),
-            just("returndatacopy"),
-            just("calldataload"),
-            just("calldatasize"),
-            just("calldatacopy"),
-            just("delegatecall"),
-            just("selfdestruct"),
-            just("selfbalance"),
-            just("extcodesize"),
-            just("extcodecopy"),
-            just("extcodehash"),
-            just("signextend"),
-            just("staticcall"),
-            just("difficulty"),
-            just("keccak256"),
-            just("callvalue"),
+            just("a")
+                .then(choice((
+                    just("dd")
+                        .then(choice((
+                            just("mod").ignored(),
+                            just("ress").ignored(),
+                            empty(),
+                        )))
+                        .ignored(),
+                    just("nd").ignored(),
+                )))
+                .ignored(),
+            just("b")
+                .then(choice((
+                    just("a")
+                        .then(choice((just("lance").ignored(), just("sefee").ignored())))
+                        .ignored(),
+                    just("lockhash").ignored(),
+                    just("yte").ignored(),
+                )))
+                .ignored(),
+            just("c")
+                .then(choice((
+                    just("all")
+                        .then(choice((
+                            just("code").ignored(),
+                            just("data")
+                                .then(choice((
+                                    just("copy").ignored(),
+                                    just("load").ignored(),
+                                    just("size").ignored(),
+                                )))
+                                .ignored(),
+                            just("er").ignored(),
+                            just("value").ignored(),
+                            empty(),
+                        )))
+                        .ignored(),
+                    just("hainid").ignored(),
+                    just("oinbase").ignored(),
+                    just("reate")
+                        .then(choice((just("2").ignored(), empty())))
+                        .ignored(),
+                )))
+                .ignored(),
+            just("d")
+                .then(choice((
+                    just("elegatecall").ignored(),
+                    just("i")
+                        .then(choice((just("fficulty").ignored(), just("v").ignored())))
+                        .ignored(),
+                )))
+                .ignored(),
+            just("e")
+                .then(choice((
+                    just("q").ignored(),
+                    just("x")
+                        .then(choice((
+                            just("p").ignored(),
+                            just("tcode")
+                                .then(choice((
+                                    just("copy").ignored(),
+                                    just("hash").ignored(),
+                                    just("size").ignored(),
+                                )))
+                                .ignored(),
+                        )))
+                        .ignored(),
+                )))
+                .ignored(),
+            just("g")
+                .then(choice((
+                    just("as")
+                        .then(choice((
+                            just("limit").ignored(),
+                            just("price").ignored(),
+                            empty(),
+                        )))
+                        .ignored(),
+                    just("t").ignored(),
+                )))
+                .ignored(),
+            just("i")
+                .then(choice((just("nvalid").ignored(), just("szero").ignored())))
+                .ignored(),
+            just("keccak256").ignored(),
+            just("l")
+                .then(choice((
+                    just("og")
+                        .then(choice((
+                            just("0").ignored(),
+                            just("1").ignored(),
+                            just("2").ignored(),
+                            just("3").ignored(),
+                            just("4").ignored(),
+                        )))
+                        .ignored(),
+                    just("t").ignored(),
+                )))
+                .ignored(),
+            just("m")
+                .then(choice((
+                    just("load").ignored(),
+                    just("od").ignored(),
+                    just("s")
+                        .then(choice((
+                            just("ize").ignored(),
+                            just("tore")
+                                .then(choice((just("8").ignored(), empty())))
+                                .ignored(),
+                        )))
+                        .ignored(),
+                    just("ul")
+                        .then(choice((just("mod").ignored(), empty())))
+                        .ignored(),
+                )))
+                .ignored(),
+            just("n")
+                .then(choice((just("ot").ignored(), just("umber").ignored())))
+                .ignored(),
+            just("or")
+                .then(choice((just("igin").ignored(), empty())))
+                .ignored(),
+            just("pop").ignored(),
+            just("re")
+                .then(choice((
+                    just("turn")
+                        .then(choice((
+                            just("data")
+                                .then(choice((just("copy").ignored(), just("size").ignored())))
+                                .ignored(),
+                            empty(),
+                        )))
+                        .ignored(),
+                    just("vert").ignored(),
+                )))
+                .ignored(),
+            just("s")
+                .then(choice((
+                    just("ar").ignored(),
+                    just("div").ignored(),
+                    just("elf")
+                        .then(choice((
+                            just("balance").ignored(),
+                            just("destruct").ignored(),
+                        )))
+                        .ignored(),
+                    just("gt").ignored(),
+                    just("h")
+                        .then(choice((just("l").ignored(), just("r").ignored())))
+                        .ignored(),
+                    just("ignextend").ignored(),
+                    just("l")
+                        .then(choice((just("oad").ignored(), just("t").ignored())))
+                        .ignored(),
+                    just("mod").ignored(),
+                    just("store").ignored(),
+                    just("t")
+                        .then(choice((just("aticcall").ignored(), just("op").ignored())))
+                        .ignored(),
+                    just("ub").ignored(),
+                )))
+                .ignored(),
+            just("timestamp").ignored(),
         )),
-        choice::<_, ErrorType>((
-            just("blockhash"),
-            just("timestamp"),
-            just("callcode"),
-            just("gasprice"),
-            just("coinbase"),
-            just("gaslimit"),
-            just("mstore8"),
-            just("address"),
-            just("balance"),
-            just("create2"),
-            just("invalid"),
-            just("chainid"),
-            just("basefee"),
-            just("iszero"),
-            just("addmod"),
-            just("mulmod"),
-        )),
-        choice::<_, ErrorType>((
-            just("mstore"),
-            just("sstore"),
-            just("caller"),
-            just("create"),
-            just("return"),
-            just("revert"),
-            just("origin"),
-            just("number"),
-            just("mload"),
-            just("sload"),
-            just("msize"),
-            just("stop"),
-            just("sdiv"),
-            just("smod"),
-            just("byte"),
-            just("call"),
-        )),
-        choice::<_, ErrorType>((
-            just("log0"),
-            just("log1"),
-            just("log2"),
-            just("log3"),
-            just("log4"),
-            just("add"),
-            just("sub"),
-            just("mul"),
-            just("div"),
-            just("mod"),
-            just("exp"),
-            just("not"),
-            just("slt"),
-            just("sgt"),
-            just("and"),
-            just("xor"),
-        )),
-        choice::<_, ErrorType>((
-            just("shl"),
-            just("shr"),
-            just("sar"),
-            just("pop"),
-            just("gas"),
-            just("lt"),
-            just("gt"),
-            just("eq"),
-            just("or"),
-        )),
+        just("xor").ignored(),
     ))
     .ignored();
     let yul_hex_literal_parser = just("0x")
@@ -302,17 +431,20 @@ pub fn create_source_unit_parser(
         )
         .ignored();
     let yul_keyword_parser = choice::<_, ErrorType>((
-        just("continue"),
-        just("function"),
-        just("default"),
-        just("switch"),
-        just("break"),
-        just("leave"),
-        just("case"),
-        just("for"),
-        just("let"),
-        just("hex"),
-        just("if"),
+        just("break").ignored(),
+        just("c")
+            .then(choice((just("ase").ignored(), just("ontinue").ignored())))
+            .ignored(),
+        just("default").ignored(),
+        just("f")
+            .then(choice((just("or").ignored(), just("unction").ignored())))
+            .ignored(),
+        just("hex").ignored(),
+        just("if").ignored(),
+        just("le")
+            .then(choice((just("ave").ignored(), just("t").ignored())))
+            .ignored(),
+        just("switch").ignored(),
     ))
     .ignored();
     let pragma_directive_parser = just("pragma")
@@ -331,13 +463,7 @@ pub fn create_source_unit_parser(
         .then_ignore(decimal_integer_parser.clone())
         .ignored();
     let hex_byte_escape_parser = just('x')
-        .ignore_then(
-            hex_character_parser
-                .clone()
-                .repeated()
-                .at_least(2usize)
-                .at_most(2usize),
-        )
+        .ignore_then(hex_character_parser.clone().repeated().exactly(2usize))
         .map(builder::to_char);
     let hex_number_parser = just('0')
         .ignore_then(just('x'))
@@ -362,8 +488,7 @@ pub fn create_source_unit_parser(
     let possibly_separated_pairs_of_hex_digits_parser = hex_character_parser
         .clone()
         .repeated()
-        .at_least(2usize)
-        .at_most(2usize)
+        .exactly(2usize)
         .separated_by(just('_').or_not())
         .at_least(1usize)
         .ignored();
@@ -371,21 +496,212 @@ pub fn create_source_unit_parser(
         .ignore_then(fixed_type_parser.clone())
         .map(builder::to_str);
     let unicode_escape_parser = just('u')
-        .ignore_then(
-            hex_character_parser
-                .clone()
-                .repeated()
-                .at_least(4usize)
-                .at_most(4usize),
-        )
+        .ignore_then(hex_character_parser.clone().repeated().exactly(4usize))
         .map(builder::to_char);
     let unsigned_integer_type_parser = just('u')
         .ignore_then(signed_integer_type_parser.clone())
         .map(builder::to_str);
     let yul_reserved_word_parser = choice::<_, ErrorType>((
-        yul_keyword_parser.clone().ignored(),
-        yul_evm_builtin_function_name_parser.clone().ignored(),
-        boolean_literal_parser.clone().ignored(),
+        choice::<_, ErrorType>((
+            just("a")
+                .then(choice((
+                    just("dd")
+                        .then(choice((
+                            just("mod").ignored(),
+                            just("ress").ignored(),
+                            empty(),
+                        )))
+                        .ignored(),
+                    just("nd").ignored(),
+                )))
+                .ignored(),
+            just("b")
+                .then(choice((
+                    just("a")
+                        .then(choice((just("lance").ignored(), just("sefee").ignored())))
+                        .ignored(),
+                    just("lockhash").ignored(),
+                    just("reak").ignored(),
+                    just("yte").ignored(),
+                )))
+                .ignored(),
+            just("c")
+                .then(choice((
+                    just("a")
+                        .then(choice((
+                            just("ll")
+                                .then(choice((
+                                    just("code").ignored(),
+                                    just("data")
+                                        .then(choice((
+                                            just("copy").ignored(),
+                                            just("load").ignored(),
+                                            just("size").ignored(),
+                                        )))
+                                        .ignored(),
+                                    just("er").ignored(),
+                                    just("value").ignored(),
+                                    empty(),
+                                )))
+                                .ignored(),
+                            just("se").ignored(),
+                        )))
+                        .ignored(),
+                    just("hainid").ignored(),
+                    just("o")
+                        .then(choice((just("inbase").ignored(), just("ntinue").ignored())))
+                        .ignored(),
+                    just("reate")
+                        .then(choice((just("2").ignored(), empty())))
+                        .ignored(),
+                )))
+                .ignored(),
+            just("d")
+                .then(choice((
+                    just("e")
+                        .then(choice((
+                            just("fault").ignored(),
+                            just("legatecall").ignored(),
+                        )))
+                        .ignored(),
+                    just("i")
+                        .then(choice((just("fficulty").ignored(), just("v").ignored())))
+                        .ignored(),
+                )))
+                .ignored(),
+            just("e")
+                .then(choice((
+                    just("q").ignored(),
+                    just("x")
+                        .then(choice((
+                            just("p").ignored(),
+                            just("tcode")
+                                .then(choice((
+                                    just("copy").ignored(),
+                                    just("hash").ignored(),
+                                    just("size").ignored(),
+                                )))
+                                .ignored(),
+                        )))
+                        .ignored(),
+                )))
+                .ignored(),
+            just("f")
+                .then(choice((
+                    just("alse").ignored(),
+                    just("or").ignored(),
+                    just("unction").ignored(),
+                )))
+                .ignored(),
+            just("g")
+                .then(choice((
+                    just("as")
+                        .then(choice((
+                            just("limit").ignored(),
+                            just("price").ignored(),
+                            empty(),
+                        )))
+                        .ignored(),
+                    just("t").ignored(),
+                )))
+                .ignored(),
+            just("hex").ignored(),
+            just("i")
+                .then(choice((
+                    just("f").ignored(),
+                    just("nvalid").ignored(),
+                    just("szero").ignored(),
+                )))
+                .ignored(),
+            just("keccak256").ignored(),
+            just("l")
+                .then(choice((
+                    just("e")
+                        .then(choice((just("ave").ignored(), just("t").ignored())))
+                        .ignored(),
+                    just("og")
+                        .then(choice((
+                            just("0").ignored(),
+                            just("1").ignored(),
+                            just("2").ignored(),
+                            just("3").ignored(),
+                            just("4").ignored(),
+                        )))
+                        .ignored(),
+                    just("t").ignored(),
+                )))
+                .ignored(),
+            just("m")
+                .then(choice((
+                    just("load").ignored(),
+                    just("od").ignored(),
+                    just("s")
+                        .then(choice((
+                            just("ize").ignored(),
+                            just("tore")
+                                .then(choice((just("8").ignored(), empty())))
+                                .ignored(),
+                        )))
+                        .ignored(),
+                    just("ul")
+                        .then(choice((just("mod").ignored(), empty())))
+                        .ignored(),
+                )))
+                .ignored(),
+            just("n")
+                .then(choice((just("ot").ignored(), just("umber").ignored())))
+                .ignored(),
+            just("or")
+                .then(choice((just("igin").ignored(), empty())))
+                .ignored(),
+            just("pop").ignored(),
+            just("re")
+                .then(choice((
+                    just("turn")
+                        .then(choice((
+                            just("data")
+                                .then(choice((just("copy").ignored(), just("size").ignored())))
+                                .ignored(),
+                            empty(),
+                        )))
+                        .ignored(),
+                    just("vert").ignored(),
+                )))
+                .ignored(),
+        )),
+        choice::<_, ErrorType>((
+            just("s")
+                .then(choice((
+                    just("ar").ignored(),
+                    just("div").ignored(),
+                    just("elf")
+                        .then(choice((
+                            just("balance").ignored(),
+                            just("destruct").ignored(),
+                        )))
+                        .ignored(),
+                    just("gt").ignored(),
+                    just("h")
+                        .then(choice((just("l").ignored(), just("r").ignored())))
+                        .ignored(),
+                    just("ignextend").ignored(),
+                    just("l")
+                        .then(choice((just("oad").ignored(), just("t").ignored())))
+                        .ignored(),
+                    just("mod").ignored(),
+                    just("store").ignored(),
+                    just("t")
+                        .then(choice((just("aticcall").ignored(), just("op").ignored())))
+                        .ignored(),
+                    just("ub").ignored(),
+                    just("witch").ignored(),
+                )))
+                .ignored(),
+            just("t")
+                .then(choice((just("imestamp").ignored(), just("rue").ignored())))
+                .ignored(),
+            just("xor").ignored(),
+        )),
     ))
     .ignored();
     let decimal_number_parser = choice::<_, ErrorType>((
@@ -498,18 +814,19 @@ pub fn create_source_unit_parser(
         .chain(identifier_part_parser.clone().repeated());
     let add_sub_operator_parser = filter(|&c: &char| c == '+' || c == '-').ignored().boxed();
     let assignment_operator_parser = choice::<_, ErrorType>((
-        just(">>>="),
-        just("<<="),
-        just(">>="),
-        just("|="),
-        just("^="),
-        just("&="),
-        just("+="),
-        just("-="),
-        just("*="),
-        just("/="),
-        just("%="),
-        just("="),
+        just("%=").ignored(),
+        just("&=").ignored(),
+        just("*=").ignored(),
+        just("+=").ignored(),
+        just("-=").ignored(),
+        just("/=").ignored(),
+        just("<<=").ignored(),
+        just("=").ignored(),
+        just(">>")
+            .then(choice((just("=").ignored(), just(">=").ignored())))
+            .ignored(),
+        just("^=").ignored(),
+        just("|=").ignored(),
     ))
     .ignored()
     .boxed();
@@ -523,10 +840,13 @@ pub fn create_source_unit_parser(
         .ignore_then(just(';').then_ignore(ignore_parser.clone()))
         .ignored()
         .boxed();
-    let data_location_parser =
-        choice::<_, ErrorType>((just("calldata"), just("storage"), just("memory")))
-            .ignored()
-            .boxed();
+    let data_location_parser = choice::<_, ErrorType>((
+        just("calldata").ignored(),
+        just("memory").ignored(),
+        just("storage").ignored(),
+    ))
+    .ignored()
+    .boxed();
     let elementary_type_parser = choice::<_, ErrorType>((
         just("bool").then_ignore(ignore_parser.clone()),
         just("string").then_ignore(ignore_parser.clone()),
@@ -546,50 +866,70 @@ pub fn create_source_unit_parser(
             .then_ignore(ignore_parser.clone()),
     ))
     .boxed();
-    let equality_comparison_operator_parser = choice::<_, ErrorType>((just("=="), just("!=")))
-        .ignored()
-        .boxed();
+    let equality_comparison_operator_parser =
+        choice::<_, ErrorType>((just("!=").ignored(), just("==").ignored()))
+            .ignored()
+            .boxed();
     let mul_div_mod_operator_parser = filter(|&c: &char| c == '*' || c == '/' || c == '%')
         .ignored()
         .boxed();
-    let order_comparison_operator_parser =
-        choice::<_, ErrorType>((just("<="), just(">="), just("<"), just(">")))
-            .ignored()
-            .boxed();
+    let order_comparison_operator_parser = choice::<_, ErrorType>((
+        just("<")
+            .then(choice((just("=").ignored(), empty())))
+            .ignored(),
+        just(">")
+            .then(choice((just("=").ignored(), empty())))
+            .ignored(),
+    ))
+    .ignored()
+    .boxed();
     let positional_argument_list_parser = expression_parser
         .clone()
         .separated_by(just(',').then_ignore(ignore_parser.clone()))
         .at_least(1usize)
         .ignored()
         .boxed();
-    let shift_operator_parser = choice::<_, ErrorType>((just(">>>"), just("<<"), just(">>")))
-        .ignored()
-        .boxed();
-    let state_mutability_specifier_parser =
-        choice::<_, ErrorType>((just("payable"), just("pure"), just("view"))).boxed();
-    let unary_prefix_operator_parser = choice::<_, ErrorType>((
-        just("delete"),
-        just("++"),
-        just("--"),
-        just("!"),
-        just("~"),
-        just("-"),
+    let shift_operator_parser = choice::<_, ErrorType>((
+        just("<<").ignored(),
+        just(">>")
+            .then(choice((just(">").ignored(), empty())))
+            .ignored(),
     ))
     .ignored()
     .boxed();
-    let unary_suffix_operator_parser = choice::<_, ErrorType>((just("++"), just("--")))
-        .ignored()
-        .boxed();
+    let state_mutability_specifier_parser = choice::<_, ErrorType>((
+        just("p")
+            .then(choice((just("ayable").ignored(), just("ure").ignored())))
+            .ignored(),
+        just("view").ignored(),
+    ))
+    .boxed();
+    let unary_prefix_operator_parser = choice::<_, ErrorType>((
+        just("!").ignored(),
+        just("++").ignored(),
+        just("-")
+            .then(choice((just("-").ignored(), empty())))
+            .ignored(),
+        just("delete").ignored(),
+        just("~").ignored(),
+    ))
+    .ignored()
+    .boxed();
+    let unary_suffix_operator_parser =
+        choice::<_, ErrorType>((just("++").ignored(), just("--").ignored()))
+            .ignored()
+            .boxed();
     let unchecked_block_parser = just("unchecked")
         .then_ignore(ignore_parser.clone())
         .ignore_then(block_parser.clone())
         .ignored()
         .boxed();
     let visibility_specifier_parser = choice::<_, ErrorType>((
-        just("internal"),
-        just("external"),
-        just("private"),
-        just("public"),
+        just("external").ignored(),
+        just("internal").ignored(),
+        just("p")
+            .then(choice((just("rivate").ignored(), just("ublic").ignored())))
+            .ignored(),
     ))
     .boxed();
     let yul_break_statement_parser = just("break")
@@ -607,7 +947,7 @@ pub fn create_source_unit_parser(
     let double_quoted_ascii_string_literal_parser = just('"')
         .ignore_then(
             choice::<_, ErrorType>((
-                filter(|&c: &char| (' ' <= c && c <= '~') && (c != '"' && c != '\\')).ignored(),
+                filter(|&c: &char| ' ' <= c && c <= '~' && c != '"' && c != '\\').ignored(),
                 escape_sequence_parser.clone().ignored(),
             ))
             .repeated(),
@@ -617,7 +957,7 @@ pub fn create_source_unit_parser(
     let double_quoted_unicode_string_literal_parser = just("unicode\"")
         .ignore_then(
             choice::<_, ErrorType>((
-                filter(|&c: &char| (c != '"' && c != '\\' && c != '\n' && c != '\r')).ignored(),
+                filter(|&c: &char| c != '"' && c != '\\' && c != '\n' && c != '\r').ignored(),
                 escape_sequence_parser.clone().ignored(),
             ))
             .repeated(),
@@ -634,7 +974,7 @@ pub fn create_source_unit_parser(
     let single_quoted_ascii_string_literal_parser = just('\'')
         .ignore_then(
             choice::<_, ErrorType>((
-                filter(|&c: &char| (' ' <= c && c <= '~') && (c != '\'' && c != '\\')).ignored(),
+                filter(|&c: &char| ' ' <= c && c <= '~' && c != '\'' && c != '\\').ignored(),
                 escape_sequence_parser.clone().ignored(),
             ))
             .repeated(),
@@ -644,7 +984,7 @@ pub fn create_source_unit_parser(
     let single_quoted_unicode_string_literal_parser = just("unicode'")
         .ignore_then(
             choice::<_, ErrorType>((
-                filter(|&c: &char| (c != '\'' && c != '\\' && c != '\n' && c != '\r')).ignored(),
+                filter(|&c: &char| c != '\'' && c != '\\' && c != '\n' && c != '\r').ignored(),
                 escape_sequence_parser.clone().ignored(),
             ))
             .repeated(),
@@ -915,8 +1255,7 @@ pub fn create_source_unit_parser(
                     identifier_path_parser
                         .clone()
                         .separated_by(just(',').then_ignore(ignore_parser.clone()))
-                        .at_least(1usize)
-                        .at_most(1usize),
+                        .exactly(1usize),
                 )
                 .then_ignore(just(')').then_ignore(ignore_parser.clone()))
                 .or_not(),
@@ -984,8 +1323,18 @@ pub fn create_source_unit_parser(
         .ignore_then(parameter_list_parser.clone())
         .ignore_then(
             choice::<_, ErrorType>((
-                visibility_specifier_parser.clone().ignored(),
-                state_mutability_specifier_parser.clone().ignored(),
+                just("external").ignored(),
+                just("internal").ignored(),
+                just("p")
+                    .then(choice((
+                        just("ayable").ignored(),
+                        just("rivate").ignored(),
+                        just("u")
+                            .then(choice((just("blic").ignored(), just("re").ignored())))
+                            .ignored(),
+                    )))
+                    .ignored(),
+                just("view").ignored(),
             ))
             .repeated(),
         )
