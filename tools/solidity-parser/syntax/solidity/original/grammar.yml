@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../syntax-schema/syntax/schema/topic.schema.json
 
 - name: IGNORE
-  is_token: true
+  isToken: true
   config: { ignore: true }
   zeroOrMore:
     choice:
@@ -9,7 +9,7 @@
       - reference: Comment
       - reference: LineComment
 - name: Whitespace
-  is_token: true
+  isToken: true
   config: { ignore: true }
   choice:
     - terminal: " "
@@ -17,7 +17,7 @@
     - terminal: "\r"
     - terminal: "\n"
 - name: Comment
-  is_token: true
+  isToken: true
   config: { ignore: true }
   sequence:
     - terminal: /*
@@ -36,7 +36,7 @@
         terminal: "*"
     - terminal: /
 - name: LineComment
-  is_token: true
+  isToken: true
   config: { ignore: true }
   sequence:
     - terminal: //
@@ -1041,7 +1041,7 @@
     - terminal: )
 - name: Identifier
   config: { ignore: true }
-  is_token: true
+  isToken: true
   difference:
     minuend:
       reference: RawIdentifier
@@ -1049,7 +1049,7 @@
       reference: ReservedWord
 - name: ReservedWord
   config: { ignore: true }
-  is_token: true
+  isToken: true
   choice:
     - reference: Keyword
     - reference: ReservedKeyword
@@ -1057,7 +1057,7 @@
     - reference: BooleanLiteral
 - name: Keyword
   config: { ignore: true }
-  is_token: true
+  isToken: true
   choice:
     - terminal: pragma
     - terminal: abstract
@@ -1124,7 +1124,7 @@
     - terminal: ufixed
 - name: ReservedKeyword
   config: { ignore: true }
-  is_token: true
+  isToken: true
   choice:
     - terminal: after
     - terminal: alias
@@ -1159,7 +1159,7 @@
     - terminal: var
 - name: pragmaDirective
   config: { ignore: true }
-  is_token: true
+  isToken: true
   sequence:
     - terminal: pragma
     - not:
@@ -1169,7 +1169,7 @@
           terminal: ;
     - terminal: ;
 - name: RawIdentifier
-  is_token: true
+  isToken: true
   config:
     chain: true
     nomap: true
@@ -1178,7 +1178,7 @@
     - zeroOrMore:
         reference: IdentifierPart
 - name: IdentifierStart
-  is_token: true
+  isToken: true
   choice:
     - terminal: _
     - terminal: $
@@ -1189,7 +1189,7 @@
         from: A
         to: Z
 - name: IdentifierPart
-  is_token: true
+  isToken: true
   choice:
     - reference: IdentifierStart
     - range:
@@ -1197,7 +1197,7 @@
         to: "9"
 - name: SignedIntegerType
   config: { map: to_str }
-  is_token: true
+  isToken: true
   sequence:
     - terminal: int
     - choice:
@@ -1235,13 +1235,13 @@
         - terminal: "256"
 - name: UnsignedIntegerType
   config: { map: to_str }
-  is_token: true
+  isToken: true
   sequence:
     - terminal: u
     - reference: SignedIntegerType
 - name: FixedBytesType
   config: { map: to_str }
-  is_token: true
+  isToken: true
   sequence:
     - terminal: bytes
     - choice:
@@ -1279,7 +1279,7 @@
         - terminal: "32"
 - name: FixedType
   config: { map: to_str }
-  is_token: true
+  isToken: true
   sequence:
     - terminal: fixed
     - optional:
@@ -1301,19 +1301,19 @@
                 to: "9"
 - name: UfixedType
   config: { map: to_str }
-  is_token: true
+  isToken: true
   sequence:
     - terminal: u
     - reference: FixedType
 - name: BooleanLiteral
   config: { ignore: true }
-  is_token: true
+  isToken: true
   choice:
     - terminal: "true"
     - terminal: "false"
 - name: DecimalNumber
   config: { ignore: true }
-  is_token: true
+  isToken: true
   sequence:
     - choice:
         - reference: DecimalInteger
@@ -1322,7 +1322,7 @@
         reference: DecimalExponent
 - name: DecimalInteger
   config: { ignore: true }
-  is_token: true
+  isToken: true
   oneOrMore:
     range:
       from: "0"
@@ -1332,7 +1332,7 @@
         terminal: _
 - name: DecimalFloat
   config: { ignore: true }
-  is_token: true
+  isToken: true
   sequence:
     - optional:
         reference: DecimalInteger
@@ -1340,7 +1340,7 @@
     - reference: DecimalInteger
 - name: DecimalExponent
   config: { ignore: true }
-  is_token: true
+  isToken: true
   sequence:
     - choice:
         - terminal: e
@@ -1350,7 +1350,7 @@
     - reference: DecimalInteger
 - name: HexNumber
   config: { ignore: true }
-  is_token: true
+  isToken: true
   sequence:
     - terminal: "0"
     - terminal: x
@@ -1361,7 +1361,7 @@
             terminal: _
 - name: NumberUnit
   config: { ignore: true }
-  is_token: true
+  isToken: true
   choice:
     - terminal: wei
     - terminal: gwei
@@ -1374,7 +1374,7 @@
     - terminal: years
 - name: HexStringLiteral
   config: { ignore: true }
-  is_token: true
+  isToken: true
   sequence:
     - terminal: hex
     - choice:
@@ -1390,7 +1390,7 @@
             - terminal: "'"
 - name: PossiblySeparatedPairsOfHexDigits
   config: { ignore: true }
-  is_token: true
+  isToken: true
   oneOrMore:
     repeat:
       min: 2
@@ -1401,7 +1401,7 @@
         terminal: _
 - name: HexCharacter
   config: { ignore: true }
-  is_token: true
+  isToken: true
   choice:
     - range:
         from: "0"
@@ -1414,13 +1414,13 @@
         to: F
 - name: AsciiStringLiteral
   config: { ignore: true }
-  is_token: true
+  isToken: true
   choice:
     - reference: SingleQuotedAsciiStringLiteral
     - reference: DoubleQuotedAsciiStringLiteral
 - name: SingleQuotedAsciiStringLiteral
   config: { ignore: true }
-  is_token: true
+  isToken: true
   sequence:
     - terminal: "'"
     - zeroOrMore:
@@ -1438,7 +1438,7 @@
     - terminal: "'"
 - name: DoubleQuotedAsciiStringLiteral
   config: { ignore: true }
-  is_token: true
+  isToken: true
   sequence:
     - terminal: '"'
     - zeroOrMore:
@@ -1456,13 +1456,13 @@
     - terminal: '"'
 - name: UnicodeStringLiteral
   config: { ignore: true }
-  is_token: true
+  isToken: true
   choice:
     - reference: SingleQuotedUnicodeStringLiteral
     - reference: DoubleQuotedUnicodeStringLiteral
 - name: SingleQuotedUnicodeStringLiteral
   config: { ignore: true }
-  is_token: true
+  isToken: true
   sequence:
     - terminal: "unicode'"
     - zeroOrMore:
@@ -1477,7 +1477,7 @@
     - terminal: "'"
 - name: DoubleQuotedUnicodeStringLiteral
   config: { ignore: true }
-  is_token: true
+  isToken: true
   sequence:
     - terminal: 'unicode"'
     - zeroOrMore:
@@ -1492,7 +1492,7 @@
     - terminal: '"'
 - name: EscapeSequence
   config: { nomap: true }
-  is_token: true
+  isToken: true
   sequence:
     - terminal: "\\"
     - choice:
@@ -1501,7 +1501,7 @@
         - reference: UnicodeEscape
 - name: AsciiEscape
   config: { map: to_char }
-  is_token: true
+  isToken: true
   choice:
     - terminal: n
     - terminal: r
@@ -1513,7 +1513,7 @@
     - terminal: "\r"
 - name: HexByteEscape
   config: { map: to_char }
-  is_token: true
+  isToken: true
   sequence:
     - terminal: x
     - repeat:
@@ -1522,7 +1522,7 @@
         reference: HexCharacter
 - name: UnicodeEscape
   config: { map: to_char }
-  is_token: true
+  isToken: true
   sequence:
     - terminal: u
     - repeat:
@@ -1683,7 +1683,7 @@
     - reference: HexStringLiteral
 - name: YulIdentifier
   config: { ignore: true }
-  is_token: true
+  isToken: true
   difference:
     minuend:
       reference: RawIdentifier
@@ -1691,14 +1691,14 @@
       reference: YulReservedWord
 - name: YulReservedWord
   config: { ignore: true }
-  is_token: true
+  isToken: true
   choice:
     - reference: YulKeyword
     - reference: YulEVMBuiltinFunctionName
     - reference: BooleanLiteral
 - name: YulKeyword
   config: { ignore: true }
-  is_token: true
+  isToken: true
   choice:
     - terminal: break
     - terminal: case
@@ -1713,7 +1713,7 @@
     - terminal: hex
 - name: YulEVMBuiltinFunctionName
   config: { ignore: true }
-  is_token: true
+  isToken: true
   choice:
     - terminal: stop
     - terminal: add
@@ -1790,7 +1790,7 @@
     - terminal: basefee
 - name: YulDecimalNumberLiteral
   config: { ignore: true }
-  is_token: true
+  isToken: true
   choice:
     - terminal: "0"
       config: { map: to_str }
@@ -1805,7 +1805,7 @@
       config: { chain: true, map: to_str }
 - name: YulHexLiteral
   config: { ignore: true }
-  is_token: true
+  isToken: true
   sequence:
     - terminal: "0x"
     - choice:

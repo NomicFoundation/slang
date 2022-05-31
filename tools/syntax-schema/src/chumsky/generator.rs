@@ -164,9 +164,7 @@ impl ChumskyProduction for Production {
     }
 
     fn single_expression(&self) -> Option<ExpressionRef> {
-        self.expr
-            .clone()
-            .or_else(|| self.versions.iter().last().map(|(_, e)| e.clone()))
+        self.versions.iter().last().map(|(_, e)| e.clone())
     }
 }
 
