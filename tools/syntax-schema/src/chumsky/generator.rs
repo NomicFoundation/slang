@@ -25,6 +25,10 @@ pub struct Context {
 }
 
 const DEFAULT_TOKEN_NAMES: &[(char, &str)] = &[
+    ('\t', "TAB"),
+    ('\n', "LF"),
+    ('\r', "CR"),
+    (' ', "SPACE"),
     ('!', "BANG"),
     ('"', "DOUBLE_QUOTE"),
     ('#', "HASH"),
@@ -56,10 +60,10 @@ const DEFAULT_TOKEN_NAMES: &[(char, &str)] = &[
     ('|', "BAR"),
     ('}', "CLOSE_BRACE"),
     ('~', "TILDE"),
-    ('…', "ELLIPSIS"),
     ('«', "OPEN_DOUBLE_ANGLE"),
     ('¬', "NOT"),
     ('»', "CLOSE_DOUBLE_ANGLE"),
+    ('…', "ELLIPSIS"),
 ];
 
 fn default_name_of_character(c: char) -> Option<&'static str> {
@@ -79,9 +83,36 @@ fn default_name_of_terminal(s: &str) -> String {
             .join("_");
     }
 
-    // TODO: escape characters not valid in identifiers
+    let mut result = vec!["KW".to_owned()];
+
+    // Escape characters not valid in identifiers
     // Q: do we need to handle LC/UC distinctions?
-    format!("KW_{}", s.to_case(Case::ScreamingSnake))
+    let mut need_underscore = true;
+    let mut last_was_lowercase = false;
+    for c in s.chars() {
+        if c.is_ascii_alphanumeric() {
+            need_underscore |= last_was_lowercase && c.is_uppercase();
+            if need_underscore {
+                result.push("_".to_owned());
+            }
+            result.push(c.to_uppercase().to_string());
+            last_was_lowercase = c.is_lowercase();
+            need_underscore = false;
+        } else if let Some(name) = default_name_of_character(c) {
+            result.push("_".to_owned());
+            result.push(name.to_owned());
+            need_underscore = true;
+            last_was_lowercase = false;
+        } else {
+            result.push("_".to_owned());
+            // NO, doesn't work, but for now panic is ok
+            result.push(c.escape_unicode().to_string());
+            need_underscore = true;
+            last_was_lowercase = false;
+        }
+    }
+
+    result.join("")
 }
 
 impl Grammar {
@@ -115,9 +146,15 @@ impl Grammar {
         .expect("Unable to write to parser file");
     }
 
-    fn generate_syntax_kinds(&self, _context: &Context) -> TokenStream {
-        let syntax_kinds_first = quote!(L_PAREN);
-        let syntax_kinds_rest = vec![quote!(R_PAREN)];
+    fn generate_syntax_kinds(&self, context: &Context) -> TokenStream {
+        let mut syntax_kinds = BTreeSet::new();
+        for p in self.productions.values().flatten() {
+            p.collect_syntax_kinds(context, &mut syntax_kinds)
+        }
+
+        let mut syntax_kinds = syntax_kinds.iter().map(|s| format_ident!("{}", s));
+        let syntax_kinds_first = syntax_kinds.next().unwrap();
+        let syntax_kinds_rest = syntax_kinds.collect::<Vec<_>>();
 
         quote!(
             use num_traits::{FromPrimitive, ToPrimitive};
@@ -139,6 +176,7 @@ impl Grammar {
 
 trait ChumskyProduction {
     fn generate(&self, grammar: &Grammar, context: &Context) -> TokenStream;
+    fn collect_syntax_kinds(&self, context: &Context, accum: &mut BTreeSet<String>);
     fn single_expression(&self) -> Option<ExpressionRef>;
 }
 
@@ -246,6 +284,13 @@ impl ChumskyProduction for Production {
         )
     }
 
+    fn collect_syntax_kinds(&self, context: &Context, accum: &mut BTreeSet<String>) {
+        accum.insert(format!("P_{}", self.name.to_case(Case::ScreamingSnake)));
+        if let Some(expr) = self.single_expression() {
+            expr.collect_syntax_kinds(context, accum);
+        }
+    }
+
     fn single_expression(&self) -> Option<ExpressionRef> {
         self.versions.iter().last().map(|(_, e)| e.clone())
     }
@@ -270,6 +315,8 @@ trait ChumskyExpression {
     fn as_character_predicate(&self, negated: bool) -> Option<(TokenStream, Option<bool>)>;
 
     fn as_terminal_set(&self, grammar: &Grammar) -> Option<HashSet<String>>;
+
+    fn collect_syntax_kinds(&self, context: &Context, accum: &mut BTreeSet<String>);
 
     fn is_ignorable_in_sequence(&self, grammar: &Grammar) -> bool;
 
@@ -636,6 +683,30 @@ impl ChumskyExpression for Expression {
         } else {
             None
         }
+    }
+
+    fn collect_syntax_kinds(&self, context: &Context, accum: &mut BTreeSet<String>) {
+        match &self.ebnf {
+            EBNF::Repeat(EBNFRepeat { expr, .. }) | EBNF::Not(expr) => {
+                expr.collect_syntax_kinds(context, accum)
+            }
+            EBNF::Choice(exprs) | EBNF::Sequence(exprs) => {
+                for e in exprs {
+                    e.collect_syntax_kinds(context, accum)
+                }
+            }
+            EBNF::Difference(EBNFDifference {
+                minuend,
+                subtrahend,
+            }) => {
+                minuend.collect_syntax_kinds(context, accum);
+                subtrahend.collect_syntax_kinds(context, accum);
+            }
+            EBNF::Terminal(string) => {
+                accum.insert(default_name_of_terminal(string));
+            }
+            EBNF::End | EBNF::Reference(_) | EBNF::Range(_) => {}
+        };
     }
 
     fn is_ignorable_in_sequence(&self, grammar: &Grammar) -> bool {
