@@ -48,5 +48,5 @@ cargo run --bin manifest_to_ebnf -- \
 
 cargo run --bin manifest_to_chumsky -- \
   --manifest-input "$PROJECT_DIR/syntax/solidity/original/manifest.yml" \
-  --no-builder --boxed \
+  --no-default-map --box-non-tokens \
   --chumsky-output "$PROJECT_DIR/src/solidity/parser.rs"

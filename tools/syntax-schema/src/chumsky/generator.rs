@@ -19,8 +19,8 @@ pub enum CharSetElement {
 }
 
 pub struct Context {
-    pub no_builder: bool,
-    pub boxed: bool,
+    pub no_default_map: bool,
+    pub box_non_tokens: bool,
 }
 
 impl Grammar {
@@ -39,7 +39,17 @@ impl Grammar {
         fs::write(
             output_path,
             rustfmt(format!(
-                "use chumsky::{{prelude::*, Parser}};\n\n{}\n\n{}",
+                "{}\n{}\n{}",
+                vec![
+                    "use chumsky::{{prelude::*, Parser}};",
+                    "#[allow(unused_imports)]",
+                    "use crate::chumsky::combinators::NomicParser;",
+                    "#[allow(unused_imports)]",
+                    "use super::builder;",
+                    "",
+                    "pub type ErrorType = Simple<char>;"
+                ]
+                .join("\n"),
                 preludes.join("\n\n"),
                 parsers.join("\n\n")
             )),
@@ -132,7 +142,7 @@ impl ChumskyProduction for Production {
                         Some(name.to_case(Case::Snake).to_owned()),
                         context,
                     );
-                    if context.boxed && !production.is_token {
+                    if context.box_non_tokens && !production.is_token {
                         suffixes.push(quote!( .boxed() ))
                     }
                     if backlinked.contains(&name) {
@@ -150,7 +160,7 @@ impl ChumskyProduction for Production {
         let function_name = format_ident!("create_{}_parser", root.to_case(Case::Snake));
         let result_type_name = format_ident!("{}ParserResultType", root.to_case(Case::UpperCamel));
         quote!(
-            pub fn #function_name() -> impl Parser<char, #result_type_name, Error = Simple<char>> {
+            pub fn #function_name() -> impl Parser<char, #result_type_name, Error = ErrorType> {
                 #(#decls)*
                 #root_id.recover_with(skip_then_retry_until([]))
             }
@@ -180,7 +190,7 @@ trait ChumskyExpression {
         context: &Context,
     ) -> Vec<TokenStream>;
 
-    fn as_char_set_elements(&self) -> Option<Vec<CharSetElement>>;
+    fn as_character_predicate(&self, negated: bool) -> Option<TokenStream>;
 
     fn is_ignorable_in_sequence(&self, grammar: &Grammar) -> bool;
 
@@ -202,8 +212,9 @@ impl ChumskyExpression for Expression {
         match &self.ebnf {
             EBNF::End => quote!(end()),
             EBNF::Not(expr) => {
-                if let Some(char_set_elements) = expr.as_char_set_elements() {
-                    return generate_char_set(&char_set_elements, true);
+                // TODO: generalise to more than char sets
+                if let Some(predicate) = expr.as_character_predicate(true) {
+                    return quote!( filter(|&c: &char| #predicate) );
                 }
                 quote!(todo())
             }
@@ -239,8 +250,17 @@ impl ChumskyExpression for Expression {
                 quote!( #expr #separator #min #max )
             }
             EBNF::Choice(exprs) => {
-                // If the choice is between terminals, make sure they are all represented as strings
-                let strings = exprs
+                let predicates = exprs
+                    .iter()
+                    .filter_map(|e| e.as_character_predicate(false))
+                    .collect::<Vec<_>>();
+                if predicates.len() == exprs.len() {
+                    return quote!( filter(|&c: &char| #(#predicates)||*) );
+                }
+
+                // If the choice is between terminals, generate them all as strings
+                // TODO: optimize using a prefix-tree search custom predicate
+                let mut strings = exprs
                     .iter()
                     .filter_map(|e| {
                         if let EBNF::Terminal(s) = &e.ebnf {
@@ -254,6 +274,7 @@ impl ChumskyExpression for Expression {
                         }
                     })
                     .collect::<Vec<String>>();
+                strings.sort_by_cached_key(|s| usize::MAX - s.chars().count());
                 let mut choices: Vec<TokenStream> = if strings.len() == exprs.len()
                     && exprs.iter().all(|e| e.config.is_default())
                     && strings.iter().any(|s| s.chars().count() > 1)
@@ -266,20 +287,21 @@ impl ChumskyExpression for Expression {
                             let expr = e.generate(grammar, production, context);
                             let mut suffixes =
                                 e.generate_suffixes(grammar, production, None, context);
-                            if context.no_builder {
+                            if production.single_expression().unwrap().config.ignore {
                                 suffixes.push(quote!( .ignored() ))
                             }
                             quote!( #expr #(#suffixes)* )
                         })
                         .collect()
                 };
+                // The choice combinator has a limit on the number of elements in the tuple
                 if choices.len() > 16 {
                     choices = choices
                         .chunks(16)
-                        .map(|chunk| quote!( choice::<_, Simple<char>>((#(#chunk),*)) ))
+                        .map(|chunk| quote!( choice::<_, ErrorType>((#(#chunk),*)) ))
                         .collect();
                 }
-                quote!( choice::<_, Simple<char>>((#(#choices),*)) )
+                quote!( choice::<_, ErrorType>((#(#choices),*)) )
             }
             EBNF::Sequence(exprs) => {
                 let mut seen_unignorable_content = false;
@@ -342,19 +364,24 @@ impl ChumskyExpression for Expression {
                 quote!( #id.clone() #ignore )
             }
             EBNF::Difference(EBNFDifference {
-                minuend: _minuend,
-                subtrahend: _subtrahend,
+                minuend,
+                subtrahend,
             }) => {
-                // if minuend.is_any() {
-                //     if let Some(char_set_elements) = subtrahend.as_char_set_elements() {
-                //         return generate_char_set(&char_set_elements, true);
-                //     }
-                // }
-                quote!(just("todo()"))
+                // 1. char set - char set
+                if let Some(minuend_predicate) = minuend.as_character_predicate(false) {
+                    if let Some(subtrahend_predicate) = subtrahend.as_character_predicate(true) {
+                        return quote!( filter(|&c: &char| #minuend_predicate && #subtrahend_predicate) );
+                    }
+                }
+
+                // 2. x - y assuming x produces Vec<char>
+                let minuend = minuend.generate(grammar, production, context);
+                let subtrahend = subtrahend.generate(grammar, production, context);
+                quote!( #minuend.excluding(#subtrahend) )
             }
-            EBNF::Range(EBNFRange { from, to }) => {
-                let fragment = generate_char_set(&vec![CharSetElement::Range(*from, *to)], false);
-                quote!( #fragment )
+            EBNF::Range(_) => {
+                let predicate = self.as_character_predicate(false);
+                quote!( filter(|&c: &char| #predicate ))
             }
         }
     }
@@ -381,9 +408,7 @@ impl ChumskyExpression for Expression {
                     let id = format_ident!("{}", map);
                     suffixes.push(quote!( .map(builder::#id) ))
                 } else if let Some(map) = default_map {
-                    if context.no_builder {
-                        suffixes.push(quote!( .ignored() ))
-                    } else {
+                    if !context.no_default_map {
                         let id = format_ident!("{}", map);
                         suffixes.push(quote!( .map(builder::#id) ))
                     }
@@ -397,22 +422,59 @@ impl ChumskyExpression for Expression {
         suffixes
     }
 
-    fn as_char_set_elements(&self) -> Option<Vec<CharSetElement>> {
+    fn as_character_predicate(&self, negated: bool) -> Option<TokenStream> {
         match &self.ebnf {
             EBNF::Choice(exprs) => {
                 let elements = exprs
                     .iter()
-                    .map(|e| e.as_char_set_elements())
+                    .map(|e| e.as_character_predicate(negated))
                     .collect::<Vec<_>>();
                 if elements.iter().all(|e| e.is_some()) {
-                    Some(elements.into_iter().map(|e| e.unwrap()).flatten().collect())
+                    if negated {
+                        Some(quote!( (#(#elements)&&*) ))
+                    } else {
+                        Some(quote!( (#(#elements)||*) ))
+                    }
                 } else {
                     None
                 }
             }
+            EBNF::Range(EBNFRange { from: 'a', to: 'z' }) => {
+                if negated {
+                    Some(quote!(!c.is_ascii_lowercase()))
+                } else {
+                    Some(quote!(c.is_ascii_lowercase()))
+                }
+            }
+            EBNF::Range(EBNFRange { from: 'A', to: 'Z' }) => {
+                if negated {
+                    Some(quote!(!c.is_ascii_uppercase()))
+                } else {
+                    Some(quote!(c.is_ascii_uppercase()))
+                }
+            }
+            EBNF::Range(EBNFRange { from: '0', to: '9' }) => {
+                if negated {
+                    Some(quote!(!c.is_ascii_digit()))
+                } else {
+                    Some(quote!(c.is_ascii_digit()))
+                }
+            }
+            EBNF::Range(EBNFRange { from, to }) => {
+                if negated {
+                    Some(quote!( (c < #from || #to < c) ))
+                } else {
+                    Some(quote!( (#from <= c && c <= #to) ))
+                }
+            }
             EBNF::Terminal(string) => {
                 if string.len() == 1 {
-                    Some(vec![CharSetElement::Char(string.chars().next().unwrap())])
+                    let c = string.chars().next().unwrap();
+                    if negated {
+                        Some(quote!( c != #c ))
+                    } else {
+                        Some(quote!( c == #c ))
+                    }
                 } else {
                     None
                 }
@@ -483,103 +545,6 @@ impl ChumskyExpression for Expression {
         };
 
         accum.clone()
-    }
-}
-
-fn generate_char_set(elements: &[CharSetElement], negated: bool) -> TokenStream {
-    let chars = elements
-        .iter()
-        .filter_map(|element| match element {
-            CharSetElement::Char(c) => Some(*c),
-            _ => None,
-        })
-        .collect::<Vec<char>>();
-    if chars.len() == elements.len() {
-        if negated && chars.len() == 1 {
-            let c = chars[0];
-            quote!( filter(|&c: &char| c != #c) )
-        } else {
-            let string = chars.into_iter().collect::<String>();
-            if negated {
-                quote!( none_of(#string) )
-            } else {
-                quote!( one_of(#string) )
-            }
-        }
-    } else {
-        fn filter_range(
-            from: char,
-            to: char,
-            elements: &[CharSetElement],
-        ) -> (Vec<CharSetElement>, bool) {
-            let old_len = elements.len();
-            let elements = elements
-                .iter()
-                .filter(|element| ! matches!(element, CharSetElement::Range(f, t) if *f == from && *t == to))
-                .cloned()
-                .collect::<Vec<_>>();
-            let found = elements.len() < old_len;
-            (elements, found)
-        }
-
-        let (elements, mut has_ascii_lowercase) = filter_range('a', 'z', elements);
-        let (elements, mut has_ascii_uppercase) = filter_range('A', 'Z', &elements);
-        let (elements, mut has_ascii_digit) = filter_range('0', '9', &elements);
-        let (elements, mut has_ascii_lowercase_hex) = filter_range('a', 'f', &elements);
-        let (elements, mut has_ascii_uppercase_hex) = filter_range('A', 'F', &elements);
-
-        let mut chars = elements
-            .iter()
-            .map(|element| match element {
-                CharSetElement::Char(c) => quote!( c == #c ),
-                CharSetElement::Range('a', 'z') => quote!(c.is_ascii_lowercase()),
-                CharSetElement::Range('A', 'Z') => quote!(c.is_ascii_uppercase()),
-                CharSetElement::Range('0', '9') => quote!(c.is_ascii_digit()),
-                CharSetElement::Range(from, to) => {
-                    quote!( (#from <= c && c <= #to) )
-                }
-            })
-            .collect::<Vec<_>>();
-
-        if has_ascii_uppercase && has_ascii_lowercase && has_ascii_digit {
-            chars.push(quote!(c.is_ascii_alphanumeric()));
-            has_ascii_uppercase = false;
-            has_ascii_lowercase = false;
-            has_ascii_digit = false;
-        }
-
-        if has_ascii_uppercase && has_ascii_lowercase {
-            chars.push(quote!(c.is_ascii_alphabetic()));
-            has_ascii_uppercase = false;
-            has_ascii_lowercase = false;
-        }
-        if has_ascii_lowercase_hex && has_ascii_uppercase_hex && has_ascii_digit {
-            chars.push(quote!(c.is_ascii_hexdigit()));
-            has_ascii_lowercase_hex = false;
-            has_ascii_uppercase_hex = false;
-            has_ascii_digit = false;
-        }
-        if has_ascii_uppercase {
-            chars.push(quote!(c.is_ascii_uppercase()));
-        }
-        if has_ascii_lowercase {
-            chars.push(quote!(c.is_ascii_lowercase()));
-        }
-        if has_ascii_digit {
-            chars.push(quote!(c.is_ascii_digit()));
-        }
-        if has_ascii_uppercase_hex {
-            chars.push(quote!(('A' <= c && c <= 'F')));
-        }
-        if has_ascii_lowercase_hex {
-            chars.push(quote!(('a' <= c && c <= 'f')));
-        }
-
-        if negated {
-            quote!( filter(|&c: &char| !(#(#chars)||*)) )
-        } else {
-            quote!( filter(|&c: &char| #(#chars)||*) )
-        }
     }
 }
 
