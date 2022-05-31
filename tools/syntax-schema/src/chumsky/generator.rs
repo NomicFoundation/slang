@@ -24,6 +24,66 @@ pub struct Context {
     pub box_non_tokens: bool,
 }
 
+const DEFAULT_TOKEN_NAMES: &[(char, &str)] = &[
+    ('!', "BANG"),
+    ('"', "DOUBLE_QUOTE"),
+    ('#', "HASH"),
+    ('$', "DOLLAR"),
+    ('%', "PERCENT"),
+    ('&', "AMPERSAND"),
+    ('\'', "QUOTE"),
+    ('(', "OPEN_PAREN"),
+    (')', "CLOSE_PAREN"),
+    ('*', "STAR"),
+    ('+', "PLUS"),
+    (',', "COMMA"),
+    ('-', "MINUS"),
+    ('.', "PERIOD"),
+    ('/', "SLASH"),
+    (':', "COLON"),
+    (';', "SEMICOLON"),
+    ('<', "LESS"),
+    ('=', "EQUAL"),
+    ('>', "GREATER"),
+    ('@', "AT"),
+    ('[', "OPEN_BRACKET"),
+    ('\\', "BACKSLASH"),
+    (']', "CLOSE_BRACKET"),
+    ('^', "CARET"),
+    ('_', "UNDERSCORE"),
+    ('`', "BACKQUOTE"),
+    ('{', "OPEN_BRACE"),
+    ('|', "BAR"),
+    ('}', "CLOSE_BRACE"),
+    ('~', "TILDE"),
+    ('…', "ELLIPSIS"),
+    ('«', "OPEN_DOUBLE_ANGLE"),
+    ('¬', "NOT"),
+    ('»', "CLOSE_DOUBLE_ANGLE"),
+];
+
+fn default_name_of_character(c: char) -> Option<&'static str> {
+    DEFAULT_TOKEN_NAMES
+        .binary_search_by(|probe| probe.0.cmp(&c))
+        .ok()
+        .map(|i| DEFAULT_TOKEN_NAMES[i].1)
+}
+
+fn default_name_of_terminal(s: &str) -> String {
+    let char_names: Vec<Option<&str>> = s.chars().map(default_name_of_character).collect();
+    if !char_names.iter().any(Option::is_none) {
+        return char_names
+            .into_iter()
+            .map(Option::unwrap)
+            .collect::<Vec<_>>()
+            .join("_");
+    }
+
+    // TODO: escape characters not valid in identifiers
+    // Q: do we need to handle LC/UC distinctions?
+    format!("KW_{}", s.to_case(Case::ScreamingSnake))
+}
+
 impl Grammar {
     pub fn generate_chumsky(&self, context: &Context, output_path: &PathBuf) {
         let mut preludes = vec![];
@@ -40,18 +100,40 @@ impl Grammar {
         fs::write(
             output_path,
             rustfmt(format!(
-                "{}\n{}\n{}",
+                "{}\n\n{}\n\n{}\n{}",
                 vec![
                     "use chumsky::{{prelude::*, Parser}};",
                     "",
                     "pub type ErrorType = Simple<char>;"
                 ]
                 .join("\n"),
+                self.generate_syntax_kinds(context).to_string(),
                 preludes.join("\n\n"),
                 parsers.join("\n\n")
             )),
         )
         .expect("Unable to write to parser file");
+    }
+
+    fn generate_syntax_kinds(&self, _context: &Context) -> TokenStream {
+        let syntax_kinds_first = quote!(L_PAREN);
+        let syntax_kinds_rest = vec![quote!(R_PAREN)];
+
+        quote!(
+            use num_traits::{FromPrimitive, ToPrimitive};
+
+            #[derive(
+                Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, num_derive::FromPrimitive, num_derive::ToPrimitive,
+            )]
+            #[allow(non_camel_case_types)]
+            #[repr(u16)]
+            enum SyntaxKind {
+                #syntax_kinds_first = 0,
+                #(#syntax_kinds_rest),*
+            }
+
+            use SyntaxKind::*;
+        )
     }
 }
 

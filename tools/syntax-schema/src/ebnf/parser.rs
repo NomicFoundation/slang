@@ -1,6 +1,28 @@
 use chumsky::{prelude::*, Parser};
 
 pub type ErrorType = Simple<char>;
+
+use num_traits::{FromPrimitive, ToPrimitive};
+#[derive(
+    Debug,
+    Clone,
+    Copy,
+    PartialEq,
+    Eq,
+    PartialOrd,
+    Ord,
+    Hash,
+    num_derive :: FromPrimitive,
+    num_derive :: ToPrimitive,
+)]
+#[allow(non_camel_case_types)]
+#[repr(u16)]
+enum SyntaxKind {
+    L_PAREN = 0,
+    R_PAREN,
+}
+use SyntaxKind::*;
+
 use super::builder;
 
 use crate::schema::Production;
