@@ -1,0 +1,10 @@
+[package]
+name = "solidity_parser"
+version = "0.0.0"
+edition = "2021"
+
+[dependencies]
+ariadne = "0.1.5"
+chumsky = "0.8.0"
+clap = { version = "3.1.6", features = ["derive"] }
+syntax_schema = { path = '../syntax-schema' }

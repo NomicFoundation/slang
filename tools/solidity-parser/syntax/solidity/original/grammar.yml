@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../schema/topic.schema.json
+# yaml-language-server: $schema=../../../../syntax-schema/syntax/schema/topic.schema.json
 
 - name: IGNORE
   is_token: true
@@ -48,6 +48,9 @@
 - name: sourceUnit
   config:
     prelude: |
+      use syntax_schema::chumsky::combinators::NomicParser;
+      use super::builder;
+
       pub type SourceUnitParserResultType = ();
     ignore: true
   sequence:
