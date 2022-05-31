@@ -1,5 +1,5 @@
 use std::{
-    collections::{BTreeMap, BTreeSet},
+    collections::{BTreeMap, BTreeSet, HashSet},
     fs,
     io::Write,
     path::PathBuf,
@@ -7,6 +7,7 @@ use std::{
 };
 
 use convert_case::{Case, Casing};
+use patricia_tree::{node::Node, PatriciaSet};
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
@@ -184,7 +185,9 @@ trait ChumskyExpression {
         context: &Context,
     ) -> Vec<TokenStream>;
 
-    fn as_character_predicate(&self, negated: bool) -> Option<TokenStream>;
+    fn as_character_predicate(&self, negated: bool) -> Option<(TokenStream, Option<bool>)>;
+
+    fn as_terminal_set(&self, grammar: &Grammar) -> Option<HashSet<String>>;
 
     fn is_ignorable_in_sequence(&self, grammar: &Grammar) -> bool;
 
@@ -207,7 +210,7 @@ impl ChumskyExpression for Expression {
             EBNF::End => quote!(end()),
             EBNF::Not(expr) => {
                 // TODO: generalise to more than char sets
-                if let Some(predicate) = expr.as_character_predicate(true) {
+                if let Some((predicate, _)) = expr.as_character_predicate(true) {
                     return quote!( filter(|&c: &char| #predicate) );
                 }
                 quote!(todo())
@@ -235,64 +238,77 @@ impl ChumskyExpression for Expression {
                         quote!( .separated_by(#s) )
                     },
                 );
-                let min = if *min == 0 {
-                    quote!()
-                } else {
-                    quote!( .at_least(#min) )
+                let minmax = match (min, max) {
+                    (0, None) => quote!(),
+                    (x, None) => quote!( .at_least(#x) ),
+                    (0, Some(y)) => quote!( .at_most(#y) ),
+                    (x, Some(y)) if x == y => quote!( .exactly(#x) ),
+                    (x, Some(y)) => quote!( .at_least(#x).at_most(#y) ),
                 };
-                let max = max.map_or_else(|| quote!(), |m| quote!( .at_most(#m) ));
-                quote!( #expr #separator #min #max )
+                quote!( #expr #separator #minmax )
             }
             EBNF::Choice(exprs) => {
-                let predicates = exprs
-                    .iter()
-                    .filter_map(|e| e.as_character_predicate(false))
-                    .collect::<Vec<_>>();
-                if predicates.len() == exprs.len() {
-                    return quote!( filter(|&c: &char| #(#predicates)||*) );
+                if let Some((predicate, _)) = self.as_character_predicate(false) {
+                    return quote!( filter(|&c: &char| #predicate) );
                 }
 
-                // If the choice is between terminals, generate them all as strings
-                // TODO: optimize using a prefix-tree search custom predicate
-                let mut strings = exprs
-                    .iter()
-                    .filter_map(|e| {
-                        if let EBNF::Terminal(s) = &e.ebnf {
-                            if e.config.map.is_none() {
-                                Some(s.clone())
-                            } else {
-                                None
+                let mut choices: Vec<TokenStream> =
+                    if let Some(terminals) = self.as_terminal_set(grammar) {
+                        fn generate_from_trie(
+                            node: Option<&Node<()>>,
+                            depth: usize,
+                        ) -> Vec<TokenStream> {
+                            let mut result = vec![];
+                            let mut n = node;
+                            while let Some(node) = n {
+                                let label = String::from_utf8_lossy(node.label());
+                                let mut children = generate_from_trie(node.child(), depth + 1);
+                                if node.child().is_some() && node.value().is_some() {
+                                    children.push(quote!(empty()));
+                                }
+                                if children.is_empty() {
+                                    result.push(quote!( just(#label).ignored() ))
+                                } else if children.len() == 1 {
+                                    let child = &children[0];
+                                    result.push(quote!( just(#label).then(#child).ignored() ))
+                                } else {
+                                    result.push(quote!( just(#label).then(choice((
+                                        #(#children),*
+                                    ))).ignored() ))
+                                }
+                                n = node.sibling()
                             }
-                        } else {
-                            None
+                            result
                         }
-                    })
-                    .collect::<Vec<String>>();
-                strings.sort_by_cached_key(|s| usize::MAX - s.chars().count());
-                let mut choices: Vec<TokenStream> = if strings.len() == exprs.len()
-                    && exprs.iter().all(|e| e.config.is_default())
-                    && strings.iter().any(|s| s.chars().count() > 1)
-                {
-                    strings.iter().map(|s| quote!( just(#s) )).collect()
-                } else {
-                    exprs
-                        .iter()
-                        .map(|e| {
-                            let expr = e.generate(grammar, production, context);
-                            let mut suffixes =
-                                e.generate_suffixes(grammar, production, None, context);
-                            if production.single_expression().unwrap().config.ignore {
-                                suffixes.push(quote!( .ignored() ))
-                            }
-                            quote!( #expr #(#suffixes)* )
-                        })
-                        .collect()
-                };
+
+                        let trie: PatriciaSet = terminals.into_iter().collect();
+                        generate_from_trie(trie.as_ref().child(), 0)
+                    } else {
+                        exprs
+                            .iter()
+                            .map(|e| {
+                                let expr = e.generate(grammar, production, context);
+                                let mut suffixes =
+                                    e.generate_suffixes(grammar, production, None, context);
+                                if production.single_expression().unwrap().config.ignore {
+                                    suffixes.push(quote!( .ignored() ))
+                                }
+                                quote!( #expr #(#suffixes)* )
+                            })
+                            .collect()
+                    };
+
                 // The choice combinator has a limit on the number of elements in the tuple
                 if choices.len() > 16 {
                     choices = choices
                         .chunks(16)
-                        .map(|chunk| quote!( choice::<_, ErrorType>((#(#chunk),*)) ))
+                        .map(|chunk| {
+                            if chunk.len() == 1 {
+                                chunk[0].clone()
+                            } else {
+                                quote!( choice::<_, ErrorType>((#(#chunk),*)) )
+                            }
+                        })
                         .collect();
                 }
                 quote!( choice::<_, ErrorType>((#(#choices),*)) )
@@ -362,8 +378,18 @@ impl ChumskyExpression for Expression {
                 subtrahend,
             }) => {
                 // 1. char set - char set
-                if let Some(minuend_predicate) = minuend.as_character_predicate(false) {
-                    if let Some(subtrahend_predicate) = subtrahend.as_character_predicate(true) {
+                if let Some((mut minuend_predicate, minuend_conjunction)) =
+                    minuend.as_character_predicate(false)
+                {
+                    if minuend_conjunction == Some(false) {
+                        minuend_predicate = quote!( (#minuend_predicate) )
+                    }
+                    if let Some((mut subtrahend_predicate, subtrahend_conjunction)) =
+                        subtrahend.as_character_predicate(true)
+                    {
+                        if subtrahend_conjunction == Some(false) {
+                            subtrahend_predicate = quote!( (#subtrahend_predicate) )
+                        }
                         return quote!( filter(|&c: &char| #minuend_predicate && #subtrahend_predicate) );
                     }
                 }
@@ -374,8 +400,11 @@ impl ChumskyExpression for Expression {
                 quote!( #minuend.excluding(#subtrahend) )
             }
             EBNF::Range(_) => {
-                let predicate = self.as_character_predicate(false);
-                quote!( filter(|&c: &char| #predicate ))
+                if let Some((predicate, _)) = self.as_character_predicate(false) {
+                    quote!( filter(|&c: &char| #predicate ))
+                } else {
+                    unreachable!("Ranges produce a character predicate")
+                }
             }
         }
     }
@@ -416,7 +445,12 @@ impl ChumskyExpression for Expression {
         suffixes
     }
 
-    fn as_character_predicate(&self, negated: bool) -> Option<TokenStream> {
+    // Returned Option<bool> indicates if the expression is:
+    //   Some(true)  => conjunction
+    //   Some(false) => disjunction
+    //   None        => simple expression
+    // which allows callers to add parens iff required
+    fn as_character_predicate(&self, negated: bool) -> Option<(TokenStream, Option<bool>)> {
         match &self.ebnf {
             EBNF::Choice(exprs) => {
                 let elements = exprs
@@ -424,10 +458,17 @@ impl ChumskyExpression for Expression {
                     .map(|e| e.as_character_predicate(negated))
                     .collect::<Vec<_>>();
                 if elements.iter().all(|e| e.is_some()) {
+                    let elements = elements.into_iter().map(|c| c.unwrap()).map(|(p, c)| {
+                        if c == Some(!negated) {
+                            quote!( (#p) )
+                        } else {
+                            p
+                        }
+                    });
                     if negated {
-                        Some(quote!( (#(#elements)&&*) ))
+                        Some((quote!( #(#elements)&&* ), Some(true)))
                     } else {
-                        Some(quote!( (#(#elements)||*) ))
+                        Some((quote!( #(#elements)||* ), Some(false)))
                     }
                 } else {
                     None
@@ -435,45 +476,83 @@ impl ChumskyExpression for Expression {
             }
             EBNF::Range(EBNFRange { from: 'a', to: 'z' }) => {
                 if negated {
-                    Some(quote!(!c.is_ascii_lowercase()))
+                    Some((quote!(!c.is_ascii_lowercase()), None))
                 } else {
-                    Some(quote!(c.is_ascii_lowercase()))
+                    Some((quote!(c.is_ascii_lowercase()), None))
                 }
             }
             EBNF::Range(EBNFRange { from: 'A', to: 'Z' }) => {
                 if negated {
-                    Some(quote!(!c.is_ascii_uppercase()))
+                    Some((quote!(!c.is_ascii_uppercase()), None))
                 } else {
-                    Some(quote!(c.is_ascii_uppercase()))
+                    Some((quote!(c.is_ascii_uppercase()), None))
                 }
             }
             EBNF::Range(EBNFRange { from: '0', to: '9' }) => {
                 if negated {
-                    Some(quote!(!c.is_ascii_digit()))
+                    Some((quote!(!c.is_ascii_digit()), None))
                 } else {
-                    Some(quote!(c.is_ascii_digit()))
+                    Some((quote!(c.is_ascii_digit()), None))
                 }
             }
             EBNF::Range(EBNFRange { from, to }) => {
                 if negated {
-                    Some(quote!( (c < #from || #to < c) ))
+                    Some((quote!( c < #from || #to < c ), Some(false)))
                 } else {
-                    Some(quote!( (#from <= c && c <= #to) ))
+                    Some((quote!( #from <= c && c <= #to ), Some(true)))
                 }
             }
             EBNF::Terminal(string) => {
                 if string.len() == 1 {
                     let c = string.chars().next().unwrap();
                     if negated {
-                        Some(quote!( c != #c ))
+                        Some((quote!( c != #c ), None))
                     } else {
-                        Some(quote!( c == #c ))
+                        Some((quote!( c == #c ), None))
                     }
                 } else {
                     None
                 }
             }
             _ => None,
+        }
+    }
+
+    fn as_terminal_set(&self, grammar: &Grammar) -> Option<HashSet<String>> {
+        fn collect_terminals(
+            expr: &Expression,
+            grammar: &Grammar,
+            accum: &mut HashSet<String>,
+        ) -> bool {
+            match &expr.ebnf {
+                EBNF::End => false,
+                EBNF::Repeat(_) => false,
+                EBNF::Not(_) => false,
+                EBNF::Choice(exprs) => exprs.iter().all(|e| collect_terminals(e, grammar, accum)),
+                EBNF::Sequence(_) => false,
+                EBNF::Terminal(string) => {
+                    if expr.config.map.is_none() {
+                        accum.insert(string.clone());
+                        true
+                    } else {
+                        false
+                    }
+                }
+                EBNF::Reference(name) => grammar
+                    .get_production(name)
+                    .and_then(|p| p.single_expression())
+                    .map(|e| collect_terminals(&e, grammar, accum))
+                    .unwrap_or(false),
+                EBNF::Difference(_) => false,
+                EBNF::Range(_) => false,
+            }
+        }
+
+        let mut accum = HashSet::new();
+        if collect_terminals(self, grammar, &mut accum) {
+            Some(accum)
+        } else {
+            None
         }
     }
 

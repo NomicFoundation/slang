@@ -1233,6 +1233,9 @@
         - terminal: "240"
         - terminal: "248"
         - terminal: "256"
+      config:
+        # Makes the likely errors clearer?
+        lookahead: { not: { range: { from: "0", to: "9" } } }
 - name: UnsignedIntegerType
   config: { map: to_str }
   isToken: true
@@ -1277,6 +1280,9 @@
         - terminal: "30"
         - terminal: "31"
         - terminal: "32"
+      config:
+        # Makes the likely errors clearer?
+        lookahead: { not: { range: { from: "0", to: "9" } } }
 - name: FixedType
   config: { map: to_str }
   isToken: true

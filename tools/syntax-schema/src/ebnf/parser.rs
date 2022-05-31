@@ -15,7 +15,7 @@ pub fn create_grammar_parser() -> impl Parser<char, GrammarParserResultType, Err
                 just('*')
                     .repeated()
                     .at_least(1usize)
-                    .then(filter(|&c: &char| (c != '*' && c != '/')))
+                    .then(filter(|&c: &char| c != '*' && c != '/'))
                     .ignored()
                     .ignored(),
             ))
@@ -46,7 +46,7 @@ pub fn create_grammar_parser() -> impl Parser<char, GrammarParserResultType, Err
         filter(|&c: &char| c.is_ascii_digit()),
     ));
     let string_char_parser = choice::<_, ErrorType>((
-        filter(|&c: &char| (c != '\'' && c != '\\')),
+        filter(|&c: &char| c != '\'' && c != '\\'),
         just('\\').ignore_then(choice::<_, ErrorType>((
             just('\''),
             just('\\'),
