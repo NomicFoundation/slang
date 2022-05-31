@@ -116,11 +116,63 @@ mappingType = 'mapping' '(' ( elementaryTypeWithoutPayable | identifierPath ) '=
 
 dataLocation = 'memory' | 'storage' | 'calldata' ;
 
-expression = expression '[' [ expression ] [ ':' [ expression ] ] ']' | expression '.' ( identifier | 'address' ) | expression '{' 1…*{ namedArgument / ',' } '}' | expression argumentList | 'payable' argumentList | 'type' '(' typeName ')' | ( '++' | '--' | '!' | '~' | 'delete' | '-' ) expression | expression ( '++' | '--' ) | expression '**' expression | expression ( '*' | '/' | '%' ) expression | expression ( '+' | '-' ) expression | expression ( '<<' | '>>' | '>>>' ) expression | expression '&' expression | expression '^' expression | expression '|' expression | expression ( '<' | '>' | '<=' | '>=' ) expression | expression ( '==' | '!=' ) expression | expression '&&' expression | expression '||' expression | expression '?' expression ':' expression | expression ( '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ) expression | 'new' typeName | tupleExpression | inlineArrayExpression | identifier | literal | elementaryTypeWithoutPayable ;
+expression = assignmentExpression ;
 
-tupleExpression = '(' 1…*{ [ expression ] / ',' } ')' ;
+assignmentExpression = conditionalExpression assignmentOperator expression ;
 
-inlineArrayExpression = '[' 1…*{ expression / ',' } ']' ;
+assignmentOperator = '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ;
+
+conditionalExpression = orExpression '?' expression ':' expression ;
+
+orExpression = andExpression { '||' andExpression } ;
+
+andExpression = equalityComparisonExpression { '&&' equalityComparisonExpression } ;
+
+equalityComparisonExpression = orderComparisonExpression { equalityComparisonOperator orderComparisonExpression } ;
+
+equalityComparisonOperator = '==' | '!=' ;
+
+orderComparisonExpression = bitOrExpression { orderComparisonOperator bitOrExpression } ;
+
+orderComparisonOperator = '<' | '>' | '<=' | '>=' ;
+
+bitOrExpression = bitXorExpression { '|' bitXorExpression } ;
+
+bitXorExpression = bitAndExpression { '^' bitAndExpression } ;
+
+bitAndExpression = shiftExpression { '&' shiftExpression } ;
+
+shiftExpression = addSubExpression { shiftOperator addSubExpression } ;
+
+shiftOperator = '<<' | '>>' | '>>>' ;
+
+addSubExpression = mulDivModExpression { addSubOperator mulDivModExpression } ;
+
+addSubOperator = '+' | '-' ;
+
+mulDivModExpression = expExpression { mulDivModOperator expExpression } ;
+
+mulDivModOperator = '*' | '/' | '%' ;
+
+expExpression = unarySuffixExpression '**' expression ;
+
+unarySuffixExpression = unaryPrefixExpression unarySuffixOperator ;
+
+unarySuffixOperator = '++' | '--' ;
+
+unaryPrefixExpression = unaryPrefixOperator functionCallExpression ;
+
+unaryPrefixOperator = '++' | '--' | '!' | '~' | 'delete' | '-' ;
+
+functionCallExpression = functionCallOptionsExpression { argumentList } ;
+
+functionCallOptionsExpression = memberAccessExpression { '{' 1…*{ namedArgument / ',' } '}' } ;
+
+memberAccessExpression = indexAccessExpression { '.' ( identifier | 'address' ) } ;
+
+indexAccessExpression = primaryExpression { '[' [ expression ] [ ':' [ expression ] ] ']' } ;
+
+primaryExpression = 'payable' argumentList | 'type' '(' typeName ')' | 'new' typeName | '(' 1…*{ [ expression ] / ',' } ')' | '[' 1…*{ expression / ',' } ']' | identifier | literal | elementaryTypeWithoutPayable ;
 
 literal = asciiStringLiteral | unicodeStringLiteral | numericLiteral | «HexStringLiteral» | «BooleanLiteral» ;
 

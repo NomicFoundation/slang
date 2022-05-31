@@ -44,7 +44,7 @@
 - name: sourceUnit
   config:
     prelude: |
-      use super::builder;
+      // use super::builder;
       pub type SourceUnitParserResultType = ();
   sequence:
     - reference: IGNORE
@@ -510,35 +510,193 @@
     - terminal: storage
     - terminal: calldata
 - name: expression
+  reference: assignmentExpression
+- name: assignmentExpression
+  sequence:
+    - reference: conditionalExpression
+    - reference: assignmentOperator
+    - reference: expression
+- name: assignmentOperator
   choice:
-    - sequence:
-        - reference: expression
-        - terminal: "["
-        - optional:
-            reference: expression
-        - optional:
-            sequence:
-              - terminal: ":"
-              - optional:
-                  reference: expression
-        - terminal: "]"
-    - sequence:
-        - reference: expression
-        - terminal: "."
-        - choice:
-            - reference: identifier
-            - terminal: address
-    - sequence:
-        - reference: expression
-        - terminal: "{"
-        - oneOrMore:
-            reference: namedArgument
-            separator:
-              terminal: ","
-        - terminal: "}"
-    - sequence:
-        - reference: expression
-        - reference: argumentList
+    - terminal: "="
+    - terminal: "|="
+    - terminal: ^=
+    - terminal: "&="
+    - terminal: "<<="
+    - terminal: ">>="
+    - terminal: ">>>="
+    - terminal: +=
+    - terminal: "-="
+    - terminal: "*="
+    - terminal: /=
+    - terminal: "%="
+- name: conditionalExpression
+  sequence:
+    - reference: orExpression
+    - terminal: "?"
+    - reference: expression
+    - terminal: ":"
+    - reference: expression
+- name: orExpression
+  sequence:
+    - reference: andExpression
+    - zeroOrMore:
+        sequence:
+          - terminal: "||"
+          - reference: andExpression
+- name: andExpression
+  sequence:
+    - reference: equalityComparisonExpression
+    - zeroOrMore:
+        sequence:
+          - terminal: "&&"
+          - reference: equalityComparisonExpression
+- name: equalityComparisonExpression
+  sequence:
+    - reference: orderComparisonExpression
+    - zeroOrMore:
+        sequence:
+          - reference: equalityComparisonOperator
+          - reference: orderComparisonExpression
+- name: equalityComparisonOperator
+  choice:
+    - terminal: "=="
+    - terminal: "!="
+- name: orderComparisonExpression
+  sequence:
+    - reference: bitOrExpression
+    - zeroOrMore:
+        sequence:
+          - reference: orderComparisonOperator
+          - reference: bitOrExpression
+- name: orderComparisonOperator
+  choice:
+    - terminal: "<"
+    - terminal: ">"
+    - terminal: "<="
+    - terminal: ">="
+- name: bitOrExpression
+  sequence:
+    - reference: bitXorExpression
+    - zeroOrMore:
+        sequence:
+          - terminal: "|"
+          - reference: bitXorExpression
+- name: bitXorExpression
+  sequence:
+    - reference: bitAndExpression
+    - zeroOrMore:
+        sequence:
+          - terminal: ^
+          - reference: bitAndExpression
+- name: bitAndExpression
+  sequence:
+    - reference: shiftExpression
+    - zeroOrMore:
+        sequence:
+          - terminal: "&"
+          - reference: shiftExpression
+- name: shiftExpression
+  sequence:
+    - reference: addSubExpression
+    - zeroOrMore:
+        sequence:
+          - reference: shiftOperator
+          - reference: addSubExpression
+- name: shiftOperator
+  choice:
+    - terminal: "<<"
+    - terminal: ">>"
+    - terminal: ">>>"
+- name: addSubExpression
+  sequence:
+    - reference: mulDivModExpression
+    - zeroOrMore:
+        sequence:
+          - reference: addSubOperator
+          - reference: mulDivModExpression
+- name: addSubOperator
+  choice:
+    - terminal: +
+    - terminal: "-"
+- name: mulDivModExpression
+  sequence:
+    - reference: expExpression
+    - zeroOrMore:
+        sequence:
+          - reference: mulDivModOperator
+          - reference: expExpression
+- name: mulDivModOperator
+  choice:
+    - terminal: "*"
+    - terminal: /
+    - terminal: "%"
+- name: expExpression
+  sequence:
+    - reference: unarySuffixExpression
+    - terminal: "**"
+    - reference: expression
+- name: unarySuffixExpression
+  sequence:
+    - reference: unaryPrefixExpression
+    - reference: unarySuffixOperator
+- name: unarySuffixOperator
+  choice:
+    - terminal: ++
+    - terminal: "--"
+- name: unaryPrefixExpression
+  sequence:
+    - reference: unaryPrefixOperator
+    - reference: functionCallExpression
+- name: unaryPrefixOperator
+  choice:
+    - terminal: ++
+    - terminal: "--"
+    - terminal: "!"
+    - terminal: "~"
+    - terminal: delete
+    - terminal: "-"
+- name: functionCallExpression
+  sequence:
+    - reference: functionCallOptionsExpression
+    - zeroOrMore:
+        reference: argumentList
+- name: functionCallOptionsExpression
+  sequence:
+    - reference: memberAccessExpression
+    - zeroOrMore:
+        sequence:
+          - terminal: "{"
+          - oneOrMore:
+              reference: namedArgument
+              separator:
+                terminal: ","
+          - terminal: "}"
+- name: memberAccessExpression
+  sequence:
+    - reference: indexAccessExpression
+    - zeroOrMore:
+        sequence:
+          - terminal: "."
+          - choice:
+              - reference: identifier
+              - terminal: address
+- name: indexAccessExpression
+  sequence:
+    - reference: primaryExpression
+    - zeroOrMore:
+        sequence:
+          - terminal: "["
+          - optional:
+              reference: expression
+          - optional:
+              sequence:
+                - terminal: ":"
+                - optional:
+                    reference: expression
+          - terminal: "]"
+- name: primaryExpression
+  choice:
     - sequence:
         - terminal: payable
         - reference: argumentList
@@ -548,125 +706,26 @@
         - reference: typeName
         - terminal: )
     - sequence:
-        - choice:
-            - terminal: ++
-            - terminal: "--"
-            - terminal: "!"
-            - terminal: "~"
-            - terminal: delete
-            - terminal: "-"
-        - reference: expression
-    - sequence:
-        - reference: expression
-        - choice:
-            - terminal: ++
-            - terminal: "--"
-    - sequence:
-        - reference: expression
-        - terminal: "**"
-        - reference: expression
-    - sequence:
-        - reference: expression
-        - choice:
-            - terminal: "*"
-            - terminal: /
-            - terminal: "%"
-        - reference: expression
-    - sequence:
-        - reference: expression
-        - choice:
-            - terminal: +
-            - terminal: "-"
-        - reference: expression
-    - sequence:
-        - reference: expression
-        - choice:
-            - terminal: "<<"
-            - terminal: ">>"
-            - terminal: ">>>"
-        - reference: expression
-    - sequence:
-        - reference: expression
-        - terminal: "&"
-        - reference: expression
-    - sequence:
-        - reference: expression
-        - terminal: ^
-        - reference: expression
-    - sequence:
-        - reference: expression
-        - terminal: "|"
-        - reference: expression
-    - sequence:
-        - reference: expression
-        - choice:
-            - terminal: "<"
-            - terminal: ">"
-            - terminal: "<="
-            - terminal: ">="
-        - reference: expression
-    - sequence:
-        - reference: expression
-        - choice:
-            - terminal: "=="
-            - terminal: "!="
-        - reference: expression
-    - sequence:
-        - reference: expression
-        - terminal: "&&"
-        - reference: expression
-    - sequence:
-        - reference: expression
-        - terminal: "||"
-        - reference: expression
-    - sequence:
-        - reference: expression
-        - terminal: "?"
-        - reference: expression
-        - terminal: ":"
-        - reference: expression
-    - sequence:
-        - reference: expression
-        - choice:
-            - terminal: "="
-            - terminal: "|="
-            - terminal: ^=
-            - terminal: "&="
-            - terminal: "<<="
-            - terminal: ">>="
-            - terminal: ">>>="
-            - terminal: +=
-            - terminal: "-="
-            - terminal: "*="
-            - terminal: /=
-            - terminal: "%="
-        - reference: expression
-    - sequence:
         - terminal: new
         - reference: typeName
-    - reference: tupleExpression
-    - reference: inlineArrayExpression
-    - choice:
-        - reference: identifier
-        - reference: literal
-        - reference: elementaryTypeWithoutPayable
-- name: tupleExpression
-  sequence:
-    - terminal: (
-    - oneOrMore:
-        optional:
-          reference: expression
-        separator:
-          terminal: ","
-    - terminal: )
-- name: inlineArrayExpression
-  sequence:
-    - terminal: "["
-    - oneOrMore:
-        reference: expression
-        separator:
-          terminal: ","
-    - terminal: "]"
+    - sequence:
+        - terminal: (
+        - oneOrMore:
+            optional:
+              reference: expression
+            separator:
+              terminal: ","
+        - terminal: )
+    - sequence:
+        - terminal: "["
+        - oneOrMore:
+            reference: expression
+            separator:
+              terminal: ","
+        - terminal: "]"
+    - reference: identifier
+    - reference: literal
+    - reference: elementaryTypeWithoutPayable
 - name: literal
   choice:
     - reference: asciiStringLiteral

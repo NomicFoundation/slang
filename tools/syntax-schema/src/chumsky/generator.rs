@@ -1,5 +1,5 @@
 use std::{
-    collections::{BTreeMap, HashSet},
+    collections::{BTreeMap, BTreeSet},
     fs,
     io::Write,
     path::PathBuf,
@@ -18,15 +18,20 @@ pub enum CharSetElement {
     Range(char, char),
 }
 
+pub struct Context {
+    pub no_builder: bool,
+    pub boxed: bool,
+}
+
 impl Grammar {
-    pub fn generate_chumsky(&self, output_path: &PathBuf) {
+    pub fn generate_chumsky(&self, context: &Context, output_path: &PathBuf) {
         let mut preludes = vec![];
         let mut parsers = vec![];
         self.productions.iter().flat_map(|(_, p)| p).for_each(|p| {
             if let Some(expr) = p.single_expression() {
                 if let Some(prelude) = expr.config.prelude.clone() {
                     preludes.push(prelude);
-                    parsers.push(p.generate(self).to_string())
+                    parsers.push(p.generate(self, context).to_string())
                 }
             }
         });
@@ -44,12 +49,12 @@ impl Grammar {
 }
 
 trait ChumskyProduction {
-    fn generate(&self, grammar: &Grammar) -> TokenStream;
+    fn generate(&self, grammar: &Grammar, context: &Context) -> TokenStream;
     fn single_expression(&self) -> Option<ExpressionRef>;
 }
 
 impl ChumskyProduction for Production {
-    fn generate(&self, grammar: &Grammar) -> TokenStream {
+    fn generate(&self, grammar: &Grammar, context: &Context) -> TokenStream {
         let root = self.name.clone();
 
         // DFS search for a topological ordering, with backlinks ignored
@@ -93,7 +98,7 @@ impl ChumskyProduction for Production {
 
         // Detect and declare each backlinked (recursively-referenced) production
 
-        let mut backlinked = HashSet::new();
+        let mut backlinked = BTreeSet::new();
         for (name, order) in &ordering {
             if let Some(production) = grammar.get_production(name) {
                 if let Some(expr) = production.single_expression() {
@@ -120,12 +125,16 @@ impl ChumskyProduction for Production {
             let id = format_ident!("{}_parser", name.to_case(Case::Snake));
             if let Some(production) = grammar.get_production(&name) {
                 if let Some(e) = production.single_expression() {
-                    let expr = e.generate(grammar, production);
-                    let suffixes = e.generate_suffixes(
+                    let expr = e.generate(grammar, production, context);
+                    let mut suffixes = e.generate_suffixes(
                         grammar,
                         production,
                         Some(name.to_case(Case::Snake).to_owned()),
+                        context,
                     );
+                    if context.boxed && !production.is_token {
+                        suffixes.push(quote!( .boxed() ))
+                    }
                     if backlinked.contains(&name) {
                         decls.push(quote!( #id.define(#expr #(#suffixes)*); ));
                     } else {
@@ -156,13 +165,19 @@ impl ChumskyProduction for Production {
 }
 
 trait ChumskyExpression {
-    fn generate(&self, grammar: &Grammar, production: &Production) -> TokenStream;
+    fn generate(
+        &self,
+        grammar: &Grammar,
+        production: &Production,
+        context: &Context,
+    ) -> TokenStream;
 
     fn generate_suffixes(
         &self,
         grammar: &Grammar,
         production: &Production,
         default_map: Option<String>,
+        context: &Context,
     ) -> Vec<TokenStream>;
 
     fn as_char_set_elements(&self) -> Option<Vec<CharSetElement>>;
@@ -173,12 +188,17 @@ trait ChumskyExpression {
         &self,
         grammar: &Grammar,
         production: &Production,
-        accum: &mut HashSet<String>,
-    ) -> HashSet<String>;
+        accum: &mut BTreeSet<String>,
+    ) -> BTreeSet<String>;
 }
 
 impl ChumskyExpression for Expression {
-    fn generate(&self, grammar: &Grammar, production: &Production) -> TokenStream {
+    fn generate(
+        &self,
+        grammar: &Grammar,
+        production: &Production,
+        context: &Context,
+    ) -> TokenStream {
         match &self.ebnf {
             EBNF::End => quote!(end()),
             EBNF::Not(expr) => {
@@ -193,7 +213,7 @@ impl ChumskyExpression for Expression {
                 expr,
                 separator: None,
             }) => {
-                let expr = expr.generate(grammar, production);
+                let expr = expr.generate(grammar, production, context);
                 quote!( #expr.or_not() )
             }
             EBNF::Repeat(EBNFRepeat {
@@ -202,11 +222,11 @@ impl ChumskyExpression for Expression {
                 expr,
                 separator,
             }) => {
-                let expr = expr.generate(grammar, production);
+                let expr = expr.generate(grammar, production, context);
                 let separator = separator.clone().map_or_else(
                     || quote!( .repeated() ),
                     |s| {
-                        let s = s.generate(grammar, production);
+                        let s = s.generate(grammar, production, context);
                         quote!( .separated_by(#s) )
                     },
                 );
@@ -219,15 +239,47 @@ impl ChumskyExpression for Expression {
                 quote!( #expr #separator #min #max )
             }
             EBNF::Choice(exprs) => {
-                let choices = exprs
+                // If the choice is between terminals, make sure they are all represented as strings
+                let strings = exprs
                     .iter()
-                    .map(|e| {
-                        let expr = e.generate(grammar, production);
-                        let suffixes = e.generate_suffixes(grammar, production, None);
-                        quote!( #expr #(#suffixes)* )
+                    .filter_map(|e| {
+                        if let EBNF::Terminal(s) = &e.ebnf {
+                            if e.config.map.is_none() {
+                                Some(s.clone())
+                            } else {
+                                None
+                            }
+                        } else {
+                            None
+                        }
                     })
-                    .collect::<Vec<_>>();
-                quote!( choice((#(#choices),*)) )
+                    .collect::<Vec<String>>();
+                let mut choices: Vec<TokenStream> = if strings.len() == exprs.len()
+                    && exprs.iter().all(|e| e.config.is_default())
+                    && strings.iter().any(|s| s.chars().count() > 1)
+                {
+                    strings.iter().map(|s| quote!( just(#s) )).collect()
+                } else {
+                    exprs
+                        .iter()
+                        .map(|e| {
+                            let expr = e.generate(grammar, production, context);
+                            let mut suffixes =
+                                e.generate_suffixes(grammar, production, None, context);
+                            if context.no_builder {
+                                suffixes.push(quote!( .ignored() ))
+                            }
+                            quote!( #expr #(#suffixes)* )
+                        })
+                        .collect()
+                };
+                if choices.len() > 16 {
+                    choices = choices
+                        .chunks(16)
+                        .map(|chunk| quote!( choice::<_, Simple<char>>((#(#chunk),*)) ))
+                        .collect();
+                }
+                quote!( choice::<_, Simple<char>>((#(#choices),*)) )
             }
             EBNF::Sequence(exprs) => {
                 let mut seen_unignorable_content = false;
@@ -236,8 +288,8 @@ impl ChumskyExpression for Expression {
                     .iter()
                     .enumerate()
                     .map(|(i, e)| {
-                        let expr = e.generate(grammar, production);
-                        let suffixes = e.generate_suffixes(grammar, production, None);
+                        let expr = e.generate(grammar, production, context);
+                        let suffixes = e.generate_suffixes(grammar, production, None, context);
                         if i > 0 {
                             if !seen_unignorable_content
                                 && exprs[i - 1].is_ignorable_in_sequence(grammar)
@@ -298,7 +350,7 @@ impl ChumskyExpression for Expression {
                 //         return generate_char_set(&char_set_elements, true);
                 //     }
                 // }
-                quote!(todo())
+                quote!(just("todo()"))
             }
             EBNF::Range(EBNFRange { from, to }) => {
                 let fragment = generate_char_set(&vec![CharSetElement::Range(*from, *to)], false);
@@ -312,11 +364,12 @@ impl ChumskyExpression for Expression {
         grammar: &Grammar,
         production: &Production,
         default_map: Option<String>,
+        context: &Context,
     ) -> Vec<TokenStream> {
         let mut suffixes = vec![];
 
         if let Some(expr) = &self.config.lookahead {
-            let lookahead = expr.generate(grammar, production);
+            let lookahead = expr.generate(grammar, production, context);
             suffixes.push(quote!( .then_ignore(#lookahead.rewind()) ))
         }
 
@@ -328,8 +381,12 @@ impl ChumskyExpression for Expression {
                     let id = format_ident!("{}", map);
                     suffixes.push(quote!( .map(builder::#id) ))
                 } else if let Some(map) = default_map {
-                    let id = format_ident!("{}", map);
-                    suffixes.push(quote!( .map(builder::#id) ))
+                    if context.no_builder {
+                        suffixes.push(quote!( .ignored() ))
+                    } else {
+                        let id = format_ident!("{}", map);
+                        suffixes.push(quote!( .map(builder::#id) ))
+                    }
                 }
             }
             if self.config.unwrap {
@@ -380,8 +437,8 @@ impl ChumskyExpression for Expression {
         &self,
         grammar: &Grammar,
         production: &Production,
-        accum: &mut HashSet<String>,
-    ) -> HashSet<String> {
+        accum: &mut BTreeSet<String>,
+    ) -> BTreeSet<String> {
         match &self.ebnf {
             EBNF::Choice(exprs) | EBNF::Sequence(exprs) => {
                 exprs.iter().for_each(|p| {
