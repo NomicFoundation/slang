@@ -1,6 +1,25 @@
-use chumsky::{prelude::*, Parser};
-
+use chumsky::prelude::*;
+use chumsky::Parser;
+use rowan::{GreenNode, GreenToken, NodeOrToken};
 pub type ErrorType = Simple<char>;
+impl From<SyntaxKind> for rowan::SyntaxKind {
+    fn from(kind: SyntaxKind) -> Self {
+        rowan::SyntaxKind(kind.to_u16().unwrap())
+    }
+}
+#[derive(Debug, Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash)]
+enum Lang {}
+impl rowan::Language for Lang {
+    type Kind = SyntaxKind;
+    fn kind_from_raw(raw: rowan::SyntaxKind) -> Self::Kind {
+        Self::Kind::from_u16(raw.0).unwrap()
+    }
+    fn kind_to_raw(kind: Self::Kind) -> rowan::SyntaxKind {
+        rowan::SyntaxKind(kind.to_u16().unwrap())
+    }
+}
+type SyntaxNode = rowan::SyntaxNode<Lang>;
+type Child = NodeOrToken<GreenNode, GreenToken>;
 
 use num_traits::{FromPrimitive, ToPrimitive};
 #[derive(
@@ -18,58 +37,39 @@ use num_traits::{FromPrimitive, ToPrimitive};
 #[allow(non_camel_case_types)]
 #[repr(u16)]
 enum SyntaxKind {
-    BACKSLASH = 0,
-    CLOSE_BRACE,
+    CLOSE_BRACE = 0,
     CLOSE_BRACKET,
-    CLOSE_DOUBLE_ANGLE,
     CLOSE_PAREN,
-    CR,
-    DOLLAR,
     ELLIPSIS,
     EQUAL,
-    KW_U_OPEN_BRACE,
-    LF,
     MINUS,
     NOT,
     OPEN_BRACE,
     OPEN_BRACKET,
-    OPEN_DOUBLE_ANGLE,
     OPEN_PAREN,
     P_CHAR_RANGE,
-    P_COMMENT,
     P_DIFFERENCE,
-    P_EOF,
     P_EXPRESSION,
     P_GRAMMAR,
     P_GROUPED,
-    P_HEX_DIGIT,
-    P_IDENTIFIER,
-    P_IDENTIFIER_FOLLOW,
-    P_IDENTIFIER_START,
-    P_IGNORE,
     P_NEGATION,
-    P_NUMBER,
     P_OPTIONAL,
     P_PRIMARY,
     P_PRODUCTION,
     P_PRODUCTION_REFERENCE,
-    P_RAW_IDENTIFIER,
     P_REPEATED,
     P_REPETITION_PREFIX,
     P_REPETITION_SEPARATOR,
     P_SEQUENCE,
-    P_SINGLE_CHAR_STRING,
-    P_STRING,
-    P_STRING_CHAR,
-    P_WHITESPACE,
-    QUOTE,
     SEMICOLON,
     SLASH,
-    SLASH_STAR,
-    SPACE,
     STAR,
-    TAB,
-    UNDERSCORE,
+    T_EOF,
+    T_IDENTIFIER,
+    T_IGNORE,
+    T_NUMBER,
+    T_SINGLE_CHAR_STRING,
+    T_STRING,
 }
 use SyntaxKind::*;
 

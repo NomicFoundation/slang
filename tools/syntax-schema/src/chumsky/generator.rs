@@ -49,6 +49,7 @@ const DEFAULT_TOKEN_NAMES: &[(char, &str)] = &[
     ('<', "LESS"),
     ('=', "EQUAL"),
     ('>', "GREATER"),
+    ('?', "QUESTION"),
     ('@', "AT"),
     ('[', "OPEN_BRACKET"),
     ('\\', "BACKSLASH"),
@@ -131,14 +132,41 @@ impl Grammar {
         fs::write(
             output_path,
             rustfmt(format!(
-                "{}\n\n{}\n\n{}\n{}",
-                vec![
-                    "use chumsky::{{prelude::*, Parser}};",
-                    "",
-                    "pub type ErrorType = Simple<char>;"
-                ]
-                .join("\n"),
-                self.generate_syntax_kinds(context).to_string(),
+                "{}\n\n{}\n\n{}\n\n{}",
+                quote!(
+                    use chumsky::prelude::*;
+                    use chumsky::Parser;
+                    use rowan::{GreenNode, GreenToken, NodeOrToken};
+
+                    pub type ErrorType = Simple<char>;
+
+                    impl From<SyntaxKind> for rowan::SyntaxKind {
+                        fn from(kind: SyntaxKind) -> Self {
+                            rowan::SyntaxKind(kind.to_u16().unwrap())
+                        }
+                    }
+
+                    #[derive(Debug, Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash)]
+                    enum Lang {}
+
+                    impl rowan::Language for Lang {
+                        type Kind = SyntaxKind;
+
+                        fn kind_from_raw(raw: rowan::SyntaxKind) -> Self::Kind {
+                            Self::Kind::from_u16(raw.0).unwrap()
+                        }
+
+                        fn kind_to_raw(kind: Self::Kind) -> rowan::SyntaxKind {
+                            rowan::SyntaxKind(kind.to_u16().unwrap())
+                        }
+                    }
+
+                    type SyntaxNode = rowan::SyntaxNode<Lang>;
+
+                    type Child = NodeOrToken<GreenNode, GreenToken>;
+                )
+                .to_string(),
+                self.generate_syntax_kinds().to_string(),
                 preludes.join("\n\n"),
                 parsers.join("\n\n")
             )),
@@ -146,10 +174,10 @@ impl Grammar {
         .expect("Unable to write to parser file");
     }
 
-    fn generate_syntax_kinds(&self, context: &Context) -> TokenStream {
+    fn generate_syntax_kinds(&self) -> TokenStream {
         let mut syntax_kinds = BTreeSet::new();
         for p in self.productions.values().flatten() {
-            p.collect_syntax_kinds(context, &mut syntax_kinds)
+            p.collect_syntax_kinds(self, &mut syntax_kinds)
         }
 
         let mut syntax_kinds = syntax_kinds.iter().map(|s| format_ident!("{}", s));
@@ -176,7 +204,7 @@ impl Grammar {
 
 trait ChumskyProduction {
     fn generate(&self, grammar: &Grammar, context: &Context) -> TokenStream;
-    fn collect_syntax_kinds(&self, context: &Context, accum: &mut BTreeSet<String>);
+    fn collect_syntax_kinds(&self, grammar: &Grammar, accum: &mut BTreeSet<String>);
     fn single_expression(&self) -> Option<ExpressionRef>;
 }
 
@@ -284,10 +312,12 @@ impl ChumskyProduction for Production {
         )
     }
 
-    fn collect_syntax_kinds(&self, context: &Context, accum: &mut BTreeSet<String>) {
-        accum.insert(format!("P_{}", self.name.to_case(Case::ScreamingSnake)));
-        if let Some(expr) = self.single_expression() {
-            expr.collect_syntax_kinds(context, accum);
+    fn collect_syntax_kinds(&self, grammar: &Grammar, accum: &mut BTreeSet<String>) {
+        if !self.is_token {
+            accum.insert(format!("P_{}", self.name.to_case(Case::ScreamingSnake)));
+            if let Some(expr) = self.single_expression() {
+                expr.collect_syntax_kinds(grammar, accum);
+            }
         }
     }
 
@@ -316,7 +346,7 @@ trait ChumskyExpression {
 
     fn as_terminal_set(&self, grammar: &Grammar) -> Option<HashSet<String>>;
 
-    fn collect_syntax_kinds(&self, context: &Context, accum: &mut BTreeSet<String>);
+    fn collect_syntax_kinds(&self, grammar: &Grammar, accum: &mut BTreeSet<String>);
 
     fn is_ignorable_in_sequence(&self, grammar: &Grammar) -> bool;
 
@@ -685,27 +715,31 @@ impl ChumskyExpression for Expression {
         }
     }
 
-    fn collect_syntax_kinds(&self, context: &Context, accum: &mut BTreeSet<String>) {
+    fn collect_syntax_kinds(&self, grammar: &Grammar, accum: &mut BTreeSet<String>) {
         match &self.ebnf {
-            EBNF::Repeat(EBNFRepeat { expr, .. }) | EBNF::Not(expr) => {
-                expr.collect_syntax_kinds(context, accum)
-            }
+            EBNF::Repeat(EBNFRepeat { expr, .. }) => expr.collect_syntax_kinds(grammar, accum),
             EBNF::Choice(exprs) | EBNF::Sequence(exprs) => {
                 for e in exprs {
-                    e.collect_syntax_kinds(context, accum)
+                    e.collect_syntax_kinds(grammar, accum)
                 }
             }
-            EBNF::Difference(EBNFDifference {
-                minuend,
-                subtrahend,
-            }) => {
-                minuend.collect_syntax_kinds(context, accum);
-                subtrahend.collect_syntax_kinds(context, accum);
+            EBNF::Difference(EBNFDifference { minuend, .. }) => {
+                minuend.collect_syntax_kinds(grammar, accum);
             }
             EBNF::Terminal(string) => {
                 accum.insert(default_name_of_terminal(string));
             }
-            EBNF::End | EBNF::Reference(_) | EBNF::Range(_) => {}
+            EBNF::Reference(name) => {
+                if let Some(production) = grammar.get_production(name) {
+                    if production.is_token {
+                        accum.insert(format!(
+                            "T_{}",
+                            production.name.to_case(Case::ScreamingSnake)
+                        ));
+                    }
+                }
+            }
+            EBNF::End | EBNF::Not(_) | EBNF::Range(_) => {}
         };
     }
 
