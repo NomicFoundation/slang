@@ -1,4 +1,5 @@
 use std::{
+    cmp::Ordering,
     collections::{BTreeMap, BTreeSet, HashSet},
     fs,
     io::Write,
@@ -179,6 +180,30 @@ impl Grammar {
         for p in self.productions.values().flatten() {
             p.collect_syntax_kinds(self, &mut syntax_kinds)
         }
+
+        // Nice to have sorted as Punctuation < Keywords < Tokens < Productions
+        let mut syntax_kinds: Vec<String> = syntax_kinds.into_iter().collect();
+        syntax_kinds.sort_by(|a, b| {
+            if a.starts_with("P_") && !b.starts_with("P_") {
+                return Ordering::Greater;
+            }
+            if b.starts_with("P_") && !a.starts_with("P_") {
+                return Ordering::Less;
+            }
+            if a.starts_with("KW_") && !b.starts_with("KW_") {
+                return Ordering::Greater;
+            }
+            if b.starts_with("KW_") && !a.starts_with("KW_") {
+                return Ordering::Less;
+            }
+            if a.starts_with("T_") && !b.starts_with("T_") {
+                return Ordering::Greater;
+            }
+            if b.starts_with("T_") && !a.starts_with("T_") {
+                return Ordering::Less;
+            }
+            return a.cmp(b);
+        });
 
         let mut syntax_kinds = syntax_kinds.iter().map(|s| format_ident!("{}", s));
         let syntax_kinds_first = syntax_kinds.next().unwrap();
