@@ -218,7 +218,7 @@
 
 - name: IGNORE
   isToken: true
-  config: { ignore: true }
+  config: { ignore: true, preserveTokenStructure: true }
   zeroOrMore:
     choice:
       - reference: Whitespace

@@ -550,7 +550,7 @@ pub enum EBNF {
 pub type ExpressionRef = Rc<Expression>;
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[serde(deny_unknown_fields, rename_all = "camelCase")]
 pub struct ExpressionConfig {
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub ignore: bool,
@@ -566,16 +566,13 @@ pub struct ExpressionConfig {
     pub lookahead: Option<ExpressionRef>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub prelude: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub preserve_token_structure: Option<bool>,
 }
 
 impl ExpressionConfig {
     pub fn is_default(&self) -> bool {
-        !self.ignore
-            && !self.nomap
-            && self.map.is_none()
-            && !self.unwrap
-            && !self.chain
-            && self.lookahead.is_none()
+        *self == Default::default()
     }
 }
 
@@ -589,6 +586,7 @@ impl Default for ExpressionConfig {
             chain: false,
             lookahead: None,
             prelude: None,
+            preserve_token_structure: None,
         }
     }
 }
