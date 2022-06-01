@@ -1,44 +1,33 @@
 use std::fs::File;
-use std::io::Write;
 use std::path::PathBuf;
 
 use semver::Version;
 
 use crate::schema::*;
 
+use std::fmt::Write;
+
 impl Grammar {
     pub fn generate_ebnf(&self, output_path: &PathBuf) {
         let mut w = File::create(output_path).expect("Unable to create file");
 
-        let zero_version = Version::parse("0.0.0").unwrap();
         let mut first = true;
         for p in self.productions.iter().flat_map(|(_, p)| p) {
-            if p.versions.len() == 1 && p.versions.get(&zero_version).is_some() {
-                if first {
-                    first = false;
-                } else {
-                    writeln!(w).unwrap();
-                }
-                write!(w, "{} = ", p.print_name()).unwrap();
-                p.versions[&zero_version].generate(self, &mut w);
+            use std::io::Write;
+            if first {
+                first = false;
             } else {
-                for (version, expr) in &p.versions {
-                    if first {
-                        first = false;
-                    } else {
-                        writeln!(w).unwrap();
-                    }
-                    write!(w, "/* {} */ {} = ", version, p.print_name()).unwrap();
-                    expr.generate(self, &mut w);
-                }
+                writeln!(w).unwrap();
             }
-            writeln!(w, ";").unwrap();
+            writeln!(w, "{}", p.generate(self).join("\n")).unwrap();
         }
     }
 }
 
-trait EBNFProduction {
+pub(crate) trait EBNFProduction {
     fn print_name(&self) -> String;
+
+    fn generate(&self, grammar: &Grammar) -> Vec<String>;
 }
 
 impl EBNFProduction for Production {
@@ -49,9 +38,32 @@ impl EBNFProduction for Production {
             self.name.clone()
         }
     }
+
+    fn generate(&self, grammar: &Grammar) -> Vec<String> {
+        let zero_version = Version::parse("0.0.0").unwrap();
+
+        if self.versions.len() == 1 && self.versions.get(&zero_version).is_some() {
+            let mut w = String::new();
+            write!(w, "{} = ", self.print_name()).unwrap();
+            self.versions[&zero_version].generate(grammar, &mut w);
+            write!(w, ";").unwrap();
+            vec![w]
+        } else {
+            self.versions
+                .iter()
+                .map(|(version, expr)| {
+                    let mut w = String::new();
+                    write!(w, "/* {} */ {} = ", version, self.print_name()).unwrap();
+                    expr.generate(grammar, &mut w);
+                    write!(w, ";").unwrap();
+                    w
+                })
+                .collect()
+        }
+    }
 }
 
-trait EBNFExpression {
+pub(crate) trait EBNFExpression {
     fn generate<T: Write>(&self, grammar: &Grammar, w: &mut T);
 
     fn generate_subexpression<T: Write>(&self, grammar: &Grammar, w: &mut T, expr: &ExpressionRef);

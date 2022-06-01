@@ -85,23 +85,23 @@
     - terminal: …
     - reference: SingleCharString
 - name: EOF
-  is_token: true
+  isToken: true
   terminal: $
 - name: Number
-  is_token: true
+  isToken: true
   oneOrMore:
     range:
       from: "0"
       to: "9"
 - name: String
-  is_token: true
+  isToken: true
   sequence:
     - terminal: "'"
     - zeroOrMore:
         reference: StringChar
     - terminal: "'"
 - name: StringChar
-  is_token: true
+  isToken: true
   choice:
     - not:
         choice:
@@ -120,13 +120,13 @@
                     reference: HexDigit
                 - terminal: "}"
 - name: SingleCharString
-  is_token: true
+  isToken: true
   sequence:
     - terminal: "'"
     - reference: StringChar
     - terminal: "'"
 - name: HexDigit
-  is_token: true
+  isToken: true
   choice:
     - range:
         from: "0"
@@ -138,7 +138,7 @@
         from: A
         to: F
 - name: Identifier
-  is_token: true
+  isToken: true
   choice:
     - sequence:
         - terminal: «
@@ -146,13 +146,13 @@
         - terminal: »
     - reference: RawIdentifier
 - name: RawIdentifier
-  is_token: true
+  isToken: true
   sequence:
     - reference: IdentifierStart
     - zeroOrMore:
         reference: IdentifierFollow
 - name: IdentifierStart
-  is_token: true
+  isToken: true
   choice:
     - terminal: _
     - range:
@@ -162,20 +162,20 @@
         from: A
         to: Z
 - name: IdentifierFollow
-  is_token: true
+  isToken: true
   choice:
     - reference: IdentifierStart
     - range:
         from: "0"
         to: "9"
 - name: IGNORE
-  is_token: true
+  isToken: true
   zeroOrMore:
     choice:
       - reference: Whitespace
       - reference: Comment
 - name: Comment
-  is_token: true
+  isToken: true
   sequence:
     - terminal: /*
     - zeroOrMore:
@@ -193,7 +193,7 @@
         terminal: "*"
     - terminal: /
 - name: Whitespace
-  is_token: true
+  isToken: true
   choice:
     - terminal: "\t"
     - terminal: "\n"

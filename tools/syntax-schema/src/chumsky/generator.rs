@@ -7,6 +7,7 @@ use std::{
     process::{Command, Stdio},
 };
 
+use crate::ebnf::generator;
 use convert_case::{Case, Casing};
 use patricia_tree::{node::Node, PatriciaSet};
 use proc_macro2::TokenStream;
@@ -125,7 +126,7 @@ impl Grammar {
             if let Some(expr) = p.single_expression() {
                 if let Some(prelude) = expr.config.prelude.clone() {
                     preludes.push(prelude);
-                    parsers.push(p.generate(self, context).to_string())
+                    parsers.push(p.generate(self, context))
                 }
             }
         });
@@ -228,13 +229,13 @@ impl Grammar {
 }
 
 trait ChumskyProduction {
-    fn generate(&self, grammar: &Grammar, context: &Context) -> TokenStream;
+    fn generate(&self, grammar: &Grammar, context: &Context) -> String;
     fn collect_syntax_kinds(&self, grammar: &Grammar, accum: &mut BTreeSet<String>);
     fn single_expression(&self) -> Option<ExpressionRef>;
 }
 
 impl ChumskyProduction for Production {
-    fn generate(&self, grammar: &Grammar, context: &Context) -> TokenStream {
+    fn generate(&self, grammar: &Grammar, context: &Context) -> String {
         let root = self.name.clone();
 
         // DFS search for a topological ordering, with backlinks ignored
@@ -294,7 +295,7 @@ impl ChumskyProduction for Production {
         }
         for name in &backlinked {
             let id = format_ident!("{}_parser", name.to_case(Case::Snake));
-            decls.push(quote!( let mut #id = Recursive::declare(); ));
+            decls.push(quote!( let mut #id = Recursive::declare(); ).to_string());
         }
 
         // Define each production
@@ -315,11 +316,21 @@ impl ChumskyProduction for Production {
                     if context.box_non_tokens && !production.is_token {
                         suffixes.push(quote!( .boxed() ))
                     }
-                    if backlinked.contains(&name) {
-                        decls.push(quote!( #id.define(#expr #(#suffixes)*); ));
+                    let comments: Vec<String> =
+                        <Production as generator::EBNFProduction>::generate(production, grammar)
+                            .iter()
+                            .map(|s| format!("// {}", s))
+                            .collect();
+                    let declaration = if backlinked.contains(&name) {
+                        quote!( #id.define(#expr #(#suffixes)*); )
                     } else {
-                        decls.push(quote!( let #id = #expr #(#suffixes)*; ));
-                    }
+                        quote!( let #id = #expr #(#suffixes)*; )
+                    };
+                    decls.push(format!(
+                        "{}\n{}",
+                        comments.join("\n"),
+                        declaration.to_string()
+                    ))
                 }
             }
         }
@@ -329,18 +340,22 @@ impl ChumskyProduction for Production {
         let root_id = format_ident!("{}_parser", root.to_case(Case::Snake));
         let function_name = format_ident!("create_{}_parser", root.to_case(Case::Snake));
         let result_type_name = format_ident!("{}ParserResultType", root.to_case(Case::UpperCamel));
-        quote!(
-            pub fn #function_name() -> impl Parser<char, #result_type_name, Error = ErrorType> {
-                #(#decls)*
-                #root_id.recover_with(skip_then_retry_until([]))
-            }
+
+        format!("{} {{\n{}\n\n{}\n}}",
+            quote!(pub fn #function_name() -> impl Parser<char, #result_type_name, Error = ErrorType>).to_string(),
+            decls.join("\n\n"),
+            quote!(#root_id.recover_with(skip_then_retry_until([]))).to_string()
         )
     }
 
     fn collect_syntax_kinds(&self, grammar: &Grammar, accum: &mut BTreeSet<String>) {
-        if !self.is_token {
-            accum.insert(format!("P_{}", self.name.to_case(Case::ScreamingSnake)));
-            if let Some(expr) = self.single_expression() {
+        if let Some(expr) = self.single_expression() {
+            if !self.is_token || expr.config.preserve_token_structure.unwrap_or_default() {
+                if self.is_token {
+                    accum.insert(format!("T_{}", self.name.to_case(Case::ScreamingSnake)));
+                } else {
+                    accum.insert(format!("P_{}", self.name.to_case(Case::ScreamingSnake)));
+                }
                 expr.collect_syntax_kinds(grammar, accum);
             }
         }
