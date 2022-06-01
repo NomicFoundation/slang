@@ -18,10 +18,6 @@ cargo run --bin manifest_to_chumsky -- \
   --manifest-input "$PROJECT_DIR/syntax/ebnf/manifest.yml" \
   --chumsky-output "$PROJECT_DIR/src/ebnf/parser.rs"
 
-cargo run --bin manifest_to_chumsky -- \
-  --manifest-input "$PROJECT_DIR/syntax/ebnf/manifest.yml" \
-  --chumsky-output "$PROJECT_DIR/src/ebnf/parser.rs"
-
 cargo run --bin manifest_to_ebnf -- \
   --manifest-input "$PROJECT_DIR/syntax/ebnf/manifest.yml" \
   --ebnf-output "$PROJECT_DIR/syntax/ebnf/derived.ebnf"
