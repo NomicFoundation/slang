@@ -2,7 +2,7 @@ use std::path::PathBuf;
 
 use clap::Parser;
 
-use syntax_schema::{chumsky::generator::Context, schema::Grammar};
+use syntax_schema::{chumsky::grammar::Context, schema::Grammar};
 
 #[derive(Parser, Debug)]
 struct ProgramArgs {

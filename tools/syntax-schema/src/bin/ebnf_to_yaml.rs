@@ -19,9 +19,27 @@ fn main() {
     let args = ProgramArgs::parse();
 
     println!(" => Parsing EBNF");
-    let ebnf_src = fs::read_to_string(args.ebnf_input).expect("Failed to read file");
-    let (productions, errs) = create_grammar_parser().parse_recovery(ebnf_src.as_str());
-    print_errors(errs, &ebnf_src);
+    let src: Vec<char> = fs::read_to_string(args.ebnf_input)
+        .expect("Failed to read file")
+        .chars()
+        .collect();
+    let stream = chumsky::Stream::from_iter(
+        std::ops::Range {
+            start: src.len(),
+            end: src.len(),
+        },
+        src.iter().enumerate().map(|(i, c)| {
+            (
+                *c,
+                std::ops::Range {
+                    start: i,
+                    end: i + 1,
+                },
+            )
+        }),
+    );
+    let (productions, errs) = create_grammar_parser().parse_recovery(stream);
+    print_errors(errs, &src);
 
     println!(" => Generating YAML");
     if let Some(productions) = productions {
@@ -33,10 +51,10 @@ fn main() {
     }
 }
 
-fn print_errors(errs: Vec<Simple<char>>, src: &str) {
+fn print_errors(errs: Vec<Simple<char>>, src: &Vec<char>) {
     errs.into_iter().for_each(|e| {
         let report = generate_report(e);
-        let source = Source::from(src);
+        let source = Source::from(src.iter().collect::<String>());
         report.finish().print(source).unwrap();
     });
 }

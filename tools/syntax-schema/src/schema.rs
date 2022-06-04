@@ -292,7 +292,7 @@ impl<'de> Deserialize<'de> for Production {
     }
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Expression {
     pub config: ExpressionConfig,
     pub ebnf: EBNF,
@@ -507,21 +507,21 @@ impl<'de> Deserialize<'de> for Expression {
     }
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, Hash)]
 #[serde(deny_unknown_fields)]
 pub struct EBNFDifference {
     pub minuend: ExpressionRef,
     pub subtrahend: ExpressionRef,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, Hash)]
 #[serde(deny_unknown_fields)]
 pub struct EBNFRange {
     pub from: char,
     pub to: char,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, Hash)]
 #[serde(deny_unknown_fields)]
 pub struct EBNFRepeat {
     #[serde(default)] // TODO: skip_serializing_if is_zero
@@ -534,7 +534,7 @@ pub struct EBNFRepeat {
     pub separator: Option<ExpressionRef>,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum EBNF {
     End,
     Repeat(EBNFRepeat),
@@ -549,7 +549,7 @@ pub enum EBNF {
 
 pub type ExpressionRef = Rc<Expression>;
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, Hash)]
 #[serde(deny_unknown_fields, rename_all = "camelCase")]
 pub struct ExpressionConfig {
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]

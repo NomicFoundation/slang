@@ -2,6 +2,72 @@ use chumsky::prelude::*;
 use chumsky::Parser;
 pub type ErrorType = Simple<char>;
 
+mod tree {
+    type C = ();
+    type S = usize;
+    pub enum Choice2<T0, T1> {
+        _0(T0),
+        _1(T1),
+    }
+    pub enum Choice3<T0, T1, T2> {
+        _0(T0),
+        _1(T1),
+        _2(T2),
+    }
+    pub enum Choice4<T0, T1, T2, T3> {
+        _0(T0),
+        _1(T1),
+        _2(T2),
+        _3(T3),
+    }
+    pub enum Choice7<T0, T1, T2, T3, T4, T5, T6> {
+        _0(T0),
+        _1(T1),
+        _2(T2),
+        _3(T3),
+        _4(T4),
+        _5(T5),
+        _6(T6),
+    }
+    pub struct Grammar(Ignore, Vec<Production>, C);
+    pub struct Production(Identifier, C, Expression, C);
+    pub struct Expression(Sequence, Vec<(C, Sequence)>);
+    pub type Sequence = Vec<Difference>;
+    pub struct Difference(Negation, Option<(C, Negation)>);
+    pub struct Negation(Option<C>, Primary);
+    pub type Primary =
+        Choice7<ProductionReference, Grouped, Optional, Repeated, CharRange, Eof, String>;
+    pub type ProductionReference = Identifier;
+    pub struct Grouped(C, Expression, C);
+    pub struct RepetitionPrefix(
+        Choice2<(Number, Option<(C, Option<Number>)>), (C, Number)>,
+        C,
+    );
+    pub struct RepetitionSeparator(C, Expression);
+    pub struct Repeated(
+        Option<RepetitionPrefix>,
+        C,
+        Expression,
+        Option<RepetitionSeparator>,
+        C,
+    );
+    pub struct Optional(C, Expression, C);
+    pub struct CharRange(SingleCharString, C, SingleCharString);
+    pub type Eof = C;
+    pub type Number = Vec<C>;
+    pub struct String(C, Vec<StringChar>, C);
+    pub type StringChar = Choice2<Choice2<C, C>, (C, Choice3<C, C, (S, Vec<HexDigit>, C)>)>;
+    pub struct SingleCharString(C, StringChar, C);
+    pub type HexDigit = Choice3<C, C, C>;
+    pub type Identifier = Choice2<(C, RawIdentifier, C), RawIdentifier>;
+    pub struct RawIdentifier(IdentifierStart, Vec<IdentifierFollow>);
+    pub type IdentifierStart = Choice3<C, C, C>;
+    pub type IdentifierFollow = Choice2<IdentifierStart, C>;
+    pub type Ignore = Vec<Choice2<Whitespace, Comment>>;
+    pub struct Comment(S, Vec<Choice2<C, (Vec<C>, Choice2<C, C>)>>, Vec<C>, C);
+    pub type Whitespace = Choice4<C, C, C, C>;
+}
+
 use super::builder;
 
 use crate::schema::Production;
