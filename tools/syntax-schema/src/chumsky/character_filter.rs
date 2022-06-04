@@ -44,6 +44,11 @@ fn cf_conjunction(nodes: Vec<CharacterFilter>) -> CharacterFilter {
 
 impl CharacterFilterNode {
     pub fn to_parser_expression(&self) -> TokenStream {
+        let predicate = self.to_parser_predicate();
+        quote!( filter(|&c: &char| #predicate) )
+    }
+
+    fn to_parser_predicate(&self) -> TokenStream {
         match self {
             CharacterFilterNode::Range {
                 from,
@@ -64,11 +69,11 @@ impl CharacterFilterNode {
                 negated: true,
             } => quote!( c != #char ),
             CharacterFilterNode::Disjunction { nodes } => {
-                let nodes = nodes.iter().map(|n| n.to_parser_expression());
+                let nodes = nodes.iter().map(|n| n.to_parser_predicate());
                 quote! ( #(#nodes)||* )
             }
             CharacterFilterNode::Conjunction { nodes } => {
-                let nodes = nodes.iter().map(|n| n.to_parser_expression());
+                let nodes = nodes.iter().map(|n| n.to_parser_predicate());
                 quote! ( #(#nodes)&&* )
             }
         }

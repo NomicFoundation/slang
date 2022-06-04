@@ -54,6 +54,7 @@ pub fn ct_difference(minuend: CombinatorTree, subtrahend: CombinatorTree) -> Com
     })
 }
 
+#[allow(dead_code)]
 fn ct_lookahead(expr: CombinatorTree, lookahead: CombinatorTree) -> CombinatorTree {
     Box::new(CombinatorTreeNode::Lookahead { expr, lookahead })
 }
@@ -129,7 +130,7 @@ impl CombinatorTreeNode {
                 ..
             } => {
                 let expr = expr.to_parser_expression();
-                quote!( Option<#expr> )
+                quote!( #expr.or_not() )
             }
             CombinatorTreeNode::Repeat {
                 expr,
@@ -175,10 +176,7 @@ impl CombinatorTreeNode {
                 quote!( #name )
             }
             CombinatorTreeNode::TerminalTrie { trie } => trie.to_parser_expression(),
-            CombinatorTreeNode::CharacterFilter { filter } => {
-                let filter = filter.to_parser_expression();
-                quote!( filter(|&c: &char| #filter) )
-            }
+            CombinatorTreeNode::CharacterFilter { filter } => filter.to_parser_expression(),
             CombinatorTreeNode::End => quote!(end()),
         }
     }
