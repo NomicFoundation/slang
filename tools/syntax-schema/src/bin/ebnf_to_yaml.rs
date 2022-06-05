@@ -4,7 +4,7 @@ use ariadne::{Color, Fmt, Label, Report, ReportKind, Source};
 use chumsky::{prelude::*, Parser};
 use clap::Parser as ClapParser;
 
-use syntax_schema::ebnf::parser::create_grammar_parser;
+use syntax_schema::ebnf::parser::*;
 
 #[derive(ClapParser, Debug)]
 struct ProgramArgs {
@@ -38,7 +38,7 @@ fn main() {
             )
         }),
     );
-    let (productions, errs) = create_grammar_parser().parse_recovery(stream);
+    let (productions, errs) = Parsers::new().grammar.parse_recovery(stream);
     print_errors(errs, &src);
 
     println!(" => Generating YAML");

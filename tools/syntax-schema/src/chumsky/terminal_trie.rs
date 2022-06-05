@@ -8,32 +8,38 @@ pub struct TerminalTrie(PatriciaSet);
 
 impl TerminalTrie {
     pub fn to_parser_expression(&self) -> TokenStream {
-        fn generate_from_trie(node: Option<&Node<()>>, depth: usize) -> Vec<TokenStream> {
+        fn generate_from_trie(node: Option<&Node<()>>, length: usize) -> Vec<TokenStream> {
             let mut result = vec![];
             let mut n = node;
             while let Some(node) = n {
                 let label = String::from_utf8_lossy(node.label());
-                let mut children = generate_from_trie(node.child(), depth + 1);
+                let new_length = length + label.chars().count();
+                let mut children = generate_from_trie(node.child(), new_length);
                 if node.child().is_some() && node.value().is_some() {
-                    children.push(quote!(empty()));
+                    children.push(quote!( empty().map(|_| #length) ));
                 }
                 if children.is_empty() {
-                    result.push(quote!( just(#label).ignored() ))
+                    result.push(quote!( just(#label).map(|_| #new_length) ))
                 } else if children.len() == 1 {
                     let child = &children[0];
-                    result.push(quote!( just(#label).then(#child).ignored() ))
+                    result.push(quote!( just(#label).ignore_then(#child) ))
                 } else {
-                    result.push(quote!( just(#label).then(choice((
+                    result.push(quote!( just(#label).ignore_then(choice((
                                         #(#children),*
-                                    ))).ignored() ))
+                                    ))) ))
                 }
                 n = node.sibling()
             }
             result
         }
 
-        let choices = generate_from_trie(self.0.as_ref().child(), 0);
-        quote!( choice::<_, ErrorType>((#(#choices),*)) )
+        let mut choices = generate_from_trie(self.0.as_ref().child(), 0);
+
+        if choices.len() == 1 {
+            choices.pop().unwrap()
+        } else {
+            quote!( choice::<_, ErrorType>((#(#choices),*)) )
+        }
     }
 }
 

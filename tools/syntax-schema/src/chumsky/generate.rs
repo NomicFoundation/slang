@@ -27,12 +27,13 @@ impl Grammar {
             }
         });
 
-        let generated_source = vec![
+        let generated_src = vec![
             quote!(
                 use chumsky::prelude::*;
                 use chumsky::Parser;
 
                 pub type ErrorType = Simple<char>;
+                pub type ParserType<T> = BoxedParser<'static, char, T, ErrorType>;
             )
             .to_string(),
             preludes.join("\n\n"),
@@ -40,9 +41,13 @@ impl Grammar {
         ]
         .join("\n\n");
 
-        let formatted_src = rustfmt(generated_source);
+        // Make it possible to debug the code even when rustfmt dies
+        fs::write(output_path, generated_src.as_str()).expect("Unable to write to parser file");
 
-        fs::write(output_path, formatted_src).expect("Unable to write to parser file");
+        let formatted_src = rustfmt(generated_src);
+        if formatted_src != "" {
+            fs::write(output_path, formatted_src).expect("Unable to write to parser file");
+        }
     }
 
     // Compute a topological ordering, with backlinks ignored
@@ -121,11 +126,14 @@ impl Production {
 
         // Define each production
 
-        let mut decls = vec![];
+        let mut module_definitions = vec![];
+        let mut parser_definitions = vec![];
+        let mut parser_fields = vec![];
+        let mut parser_field_assignments = vec![];
 
         for name in &backlinked {
             let id = format_ident!("{}_parser", name.to_case(Case::Snake));
-            decls.push(quote!( let mut #id = Recursive::declare(); ).to_string());
+            parser_definitions.push(quote!( let mut #id = Recursive::declare(); ).to_string());
         }
 
         let mut ordered_productions = ordering.keys().cloned().collect::<Vec<String>>();
@@ -140,35 +148,56 @@ impl Production {
                     .collect::<Vec<_>>()
                     .join("\n");
 
-                let combinator_tree = production
-                    .expression_to_generate()
-                    .to_combinator_tree(production, grammar);
+                let combinator_tree = production.to_combinator_tree(grammar);
 
-                // let type_expression = combinator_tree.to_type_expression();
-                // let type_comment = format!("// Type: {}", type_expression.to_string());
+                let type_tree = combinator_tree.to_type_tree();
+                let module_name = format_ident!("{}", production.name.to_case(Case::Snake));
+                let type_definitions = type_tree.to_type_definition_code();
+                module_definitions.push(format!(
+                    "mod {} {{\n{}\n{}\n}}",
+                    module_name.to_string(),
+                    ebnf_comment,
+                    type_definitions.to_string(),
+                ));
 
-                let parser_expression = combinator_tree.to_parser_expression();
-
-                let declaration = if backlinked.contains(&name) {
-                    quote!( #id.define(#parser_expression.boxed()); )
+                let parser_expression = combinator_tree.to_parser_combinator_code();
+                let type_tuple_size = type_tree.tuple_size();
+                let type_mapping = if type_tuple_size > 0 {
+                    let members: Vec<_> = (0..type_tuple_size)
+                        .map(|i| {
+                            let ident = format_ident!("_{}", i);
+                            quote!( #ident )
+                        })
+                        .collect();
+                    quote!( .map(|(#(#members),*)| #module_name::N(#(#members),*)) )
                 } else {
-                    quote!( let #id = #parser_expression.boxed(); )
+                    quote!()
                 };
+                let parser_definition = if backlinked.contains(&name) {
+                    quote!( #id.define(#parser_expression #type_mapping); )
+                } else {
+                    quote!( let #id = #parser_expression #type_mapping; )
+                };
+                parser_definitions.push(format!(
+                    "{}\n{}",
+                    ebnf_comment,
+                    parser_definition.to_string()
+                ));
 
-                decls.push(vec![ebnf_comment, declaration.to_string()].join("\n"))
+                let field_name = format_ident!("{}", name.to_case(Case::Snake));
+                parser_fields
+                    .push(quote!( pub #field_name: ParserType<#module_name::N>, ).to_string());
+                parser_field_assignments.push(quote!( #field_name: #id.boxed(), ).to_string())
             }
         }
 
         // Create the parser function
 
-        let root_id = format_ident!("{}_parser", root.to_case(Case::Snake));
-        let function_name = format_ident!("create_{}_parser", root.to_case(Case::Snake));
-        let result_type_name = format_ident!("{}ParserResultType", root.to_case(Case::UpperCamel));
-
-        format!("{} {{\n{}\n\n{}\n}}",
-            quote!(pub fn #function_name() -> impl Parser<char, #result_type_name, Error = ErrorType>).to_string(),
-            decls.join("\n\n"),
-            quote!(#root_id.recover_with(skip_then_retry_until([]))).to_string()
+        format!("{}\n\n#[allow(dead_code)] pub struct Parsers {{ {} }}\n\nimpl Parsers {{\npub fn new() -> Self {{\n{}\n\nSelf {{ {} }}\n}}\n}}",
+            module_definitions.join("\n\n"),
+            parser_fields.join("\n"),
+            parser_definitions.join("\n\n"),
+            parser_field_assignments.join("\n")
         )
     }
 }

@@ -44,8 +44,16 @@ fn cf_conjunction(nodes: Vec<CharacterFilter>) -> CharacterFilter {
 
 impl CharacterFilterNode {
     pub fn to_parser_expression(&self) -> TokenStream {
-        let predicate = self.to_parser_predicate();
-        quote!( filter(|&c: &char| #predicate) )
+        if let CharacterFilterNode::Char {
+            char,
+            negated: false,
+        } = self
+        {
+            quote!(just(#char))
+        } else {
+            let predicate = self.to_parser_predicate();
+            quote!( filter(|&c: &char| #predicate) )
+        }
     }
 
     fn to_parser_predicate(&self) -> TokenStream {
