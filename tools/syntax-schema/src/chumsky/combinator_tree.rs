@@ -2,7 +2,7 @@ use std::cell::Cell;
 
 use convert_case::{Case, Casing};
 use inflector::Inflector;
-// use mset::MultiSet;
+use mset::MultiSet;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
@@ -314,81 +314,86 @@ impl Expression {
                     let index = subtype_index.get();
                     subtype_index.set(index + 1);
                     let name = format!("_C{}", index);
-                    ct_choice(
-                        name,
-                        exprs
-                            .iter()
-                            .enumerate()
-                            .map(|(i, e)| {
-                                let e = e.to_combinator_tree_node(subtype_index, grammar);
-                                let name = e.name().map_or_else(
-                                    || format!("_{}", i),
-                                    |n| n.to_case(Case::UpperCamel),
-                                );
-                                (name, e)
-                            })
-                            .collect(),
-                    )
 
-                    // TODO: check for duplicated names
+                    let mut choices = exprs
+                        .iter()
+                        .enumerate()
+                        .map(|(i, e)| {
+                            let e = e.to_combinator_tree_node(subtype_index, grammar);
+                            let name = e
+                                .name()
+                                .map_or_else(|| format!("_{}", i), |n| n.to_case(Case::UpperCamel));
+                            (name, e)
+                        })
+                        .collect::<Vec<_>>();
 
-                    // let mut pairs = elements
-                    //     .iter()
-                    //     .enumerate()
-                    //     .map(|(i, c)| {
-                    //         let ttn = c.to_type_tree_node();
-                    //         (
-                    //             ttn.name()
-                    //                 .map_or_else(|| format!("_{}", i), |n| n.to_case(Case::Snake)),
-                    //             ttn,
-                    //         )
-                    //     })
-                    //     .collect::<Vec<_>>();
-                    // // Find all the duplicated names, with the count of their occurance
-                    // let mut names = MultiSet::<String>::from_iter(pairs.iter().map(|(n, _)| n.clone()));
-                    // names.retain(|_, count| count > 1);
-                    // // Reverse so that the suffix goes from _0 .. _n when we re-reverse the list
-                    // pairs.reverse();
-                    // let mut pairs: Vec<_> = pairs
-                    //     .into_iter()
-                    //     .map(|(n, t)| {
-                    //         if let Some(count) = names.get(&n) {
-                    //             // Remove the element to decrement the occurance occount
-                    //             names.remove(&n);
-                    //             (format!("{}_{}", n, count - 1), t)
-                    //         } else {
-                    //             (n, t)
-                    //         }
-                    //     })
-                    //     .collect();
-                    // pairs.reverse();
-                    // pairs
+                    // Find all the duplicated names, with the count of their occurance
+                    let mut names =
+                        MultiSet::<String>::from_iter(choices.iter().map(|(n, _)| n.clone()));
+                    names.retain(|_, count| count > 1);
+                    // Reverse so that the suffix goes from _0 .. _n when we re-reverse the list
+                    choices.reverse();
+                    let mut choices: Vec<_> = choices
+                        .into_iter()
+                        .map(|(n, t)| {
+                            if let Some(count) = names.get(&n) {
+                                // Remove the element to decrement the occurance occount
+                                names.remove(&n);
+                                (format!("{}_{}", n, count - 1), t)
+                            } else {
+                                (n, t)
+                            }
+                        })
+                        .collect();
+                    choices.reverse();
+
+                    ct_choice(name, choices)
                 }
                 EBNF::Sequence(exprs) => {
                     let index = subtype_index.get();
                     subtype_index.set(index + 1);
                     let name = format!("_S{}", index);
-                    ct_sequence(
-                        name,
-                        exprs
-                            .iter()
-                            .enumerate()
-                            .map(|(i, e)| {
-                                let e = e.to_combinator_tree_node(subtype_index, grammar);
-                                let name = e.name().map_or_else(
-                                    || format!("_{}", i),
-                                    |n| {
-                                        if n.starts_with('_') {
-                                            n.to_ascii_lowercase()
-                                        } else {
-                                            n.to_case(Case::Snake)
-                                        }
-                                    },
-                                );
-                                (name, e)
-                            })
-                            .collect(),
-                    )
+
+                    let mut members = exprs
+                        .iter()
+                        .enumerate()
+                        .map(|(i, e)| {
+                            let e = e.to_combinator_tree_node(subtype_index, grammar);
+                            let name = e.name().map_or_else(
+                                || format!("_{}", i),
+                                |n| {
+                                    if n.starts_with('_') {
+                                        n.to_ascii_lowercase()
+                                    } else {
+                                        n.to_case(Case::Snake)
+                                    }
+                                },
+                            );
+                            (name, e)
+                        })
+                        .collect::<Vec<_>>();
+
+                    // Find all the duplicated names, with the count of their occurance
+                    let mut names =
+                        MultiSet::<String>::from_iter(members.iter().map(|(n, _)| n.clone()));
+                    names.retain(|_, count| count > 1);
+                    // Reverse so that the suffix goes from _0 .. _n when we re-reverse the list
+                    members.reverse();
+                    let mut members: Vec<_> = members
+                        .into_iter()
+                        .map(|(n, t)| {
+                            if let Some(count) = names.get(&n) {
+                                // Remove the element to decrement the occurance occount
+                                names.remove(&n);
+                                (format!("{}_{}", n, count - 1), t)
+                            } else {
+                                (n, t)
+                            }
+                        })
+                        .collect();
+                    members.reverse();
+
+                    ct_sequence(name, members)
                 }
                 EBNF::Reference(name) => ct_reference(name.clone()),
                 EBNF::Not(_) => unimplemented!("¬ is only supported on characters or sets thereof"),

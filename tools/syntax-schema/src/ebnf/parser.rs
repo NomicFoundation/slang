@@ -2,6 +2,15 @@ use chumsky::prelude::*;
 use chumsky::Parser;
 pub type ErrorType = Simple<char>;
 pub type ParserType<T> = BoxedParser<'static, char, T, ErrorType>;
+fn repetition_mapper<E, S>((e, es): (E, Vec<(S, E)>)) -> (Vec<E>, Vec<S>) {
+    let mut expressions = vec![e];
+    let mut separators = vec![];
+    for (s, e) in es.into_iter() {
+        separators.push(s);
+        expressions.push(e);
+    }
+    (expressions, separators)
+}
 
 // prelude attribute is no longer neccessary
 
@@ -9,10 +18,37 @@ mod comment {
     // «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } 1…*{ '*' } '/' ;
     #[allow(unused_imports)]
     use super::*;
-    pub struct N(pub usize, pub Vec<C0>, pub Vec<char>, pub char);
-    pub enum C0 {
-        _0(char),
-        _1((Vec<char>, char)),
+    pub type N = _S0;
+    pub struct _S0 {
+        pub _0: usize,
+        pub _c2s: Vec<_C2>,
+        pub star_chars: Vec<char>,
+        pub slash_char: char,
+    }
+    impl _S0 {
+        pub fn new(
+            (((_0, _c2s), star_chars), slash_char): (((usize, Vec<_C2>), Vec<char>), char),
+        ) -> Self {
+            Self {
+                _0,
+                _c2s,
+                star_chars,
+                slash_char,
+            }
+        }
+    }
+    pub enum _C2 {
+        StarChar(char),
+        S3(_S3),
+    }
+    pub struct _S3 {
+        pub star_chars: Vec<char>,
+        pub _1: char,
+    }
+    impl _S3 {
+        pub fn new((star_chars, _1): (Vec<char>, char)) -> Self {
+            Self { star_chars, _1 }
+        }
     }
 }
 
@@ -27,31 +63,75 @@ mod grouped {
     // grouped = '(' expression ')' ;
     #[allow(unused_imports)]
     use super::*;
-    pub struct N(pub char, pub expression::N, pub char);
+    pub type N = _S0;
+    pub struct _S0 {
+        pub open_paren_char: char,
+        pub expression: expression::N,
+        pub close_paren_char: char,
+    }
+    impl _S0 {
+        pub fn new(
+            ((open_paren_char, expression), close_paren_char): ((char, expression::N), char),
+        ) -> Self {
+            Self {
+                open_paren_char,
+                expression,
+                close_paren_char,
+            }
+        }
+    }
 }
 
 mod optional {
     // optional = '[' expression ']' ;
     #[allow(unused_imports)]
     use super::*;
-    pub struct N(pub char, pub expression::N, pub char);
+    pub type N = _S0;
+    pub struct _S0 {
+        pub open_bracket_char: char,
+        pub expression: expression::N,
+        pub close_bracket_char: char,
+    }
+    impl _S0 {
+        pub fn new(
+            ((open_bracket_char, expression), close_bracket_char): ((char, expression::N), char),
+        ) -> Self {
+            Self {
+                open_bracket_char,
+                expression,
+                close_bracket_char,
+            }
+        }
+    }
 }
 
 mod repetition_separator {
     // repetitionSeparator = '/' expression ;
     #[allow(unused_imports)]
     use super::*;
-    pub struct N(pub char, pub expression::N);
+    pub type N = _S0;
+    pub struct _S0 {
+        pub slash_char: char,
+        pub expression: expression::N,
+    }
+    impl _S0 {
+        pub fn new((slash_char, expression): (char, expression::N)) -> Self {
+            Self {
+                slash_char,
+                expression,
+            }
+        }
+    }
 }
 
 mod ignore {
     // «IGNORE» = { «Whitespace» | «Comment» } ;
     #[allow(unused_imports)]
     use super::*;
-    pub type N = Vec<C0>;
-    pub enum C0 {
+    pub type N = Vec<_C1>;
+    pub enum _C1 {
         _0(char),
-        _1(comment::N),
+        Comment(comment::N),
     }
 }
 
@@ -94,15 +174,41 @@ mod string_char {
     // «StringChar» = ¬( '\'' | '\\' ) | '\\' ( '\'' | '\\' | 'u{' 1…6*{ «HexDigit» } '}' ) ;
     #[allow(unused_imports)]
     use super::*;
-    pub type N = C0;
-    pub enum C1 {
+    pub type N = _C0;
+    pub enum _C0 {
         _0(char),
-        _1(char),
-        _2((usize, Vec<char>, char)),
+        S1(_S1),
     }
-    pub enum C0 {
-        _0(char),
-        _1((char, C1)),
+    pub struct _S1 {
+        pub backslash_char: char,
+        pub _c2: _C2,
+    }
+    impl _S1 {
+        pub fn new((backslash_char, _c2): (char, _C2)) -> Self {
+            Self {
+                backslash_char,
+                _c2,
+            }
+        }
+    }
+    pub enum _C2 {
+        QuoteChar(char),
+        BackslashChar(char),
+        S3(_S3),
+    }
+    pub struct _S3 {
+        pub _0: usize,
+        pub _1: Vec<char>,
+        pub close_brace_char: char,
+    }
+    impl _S3 {
+        pub fn new(((_0, _1), close_brace_char): ((usize, Vec<char>), char)) -> Self {
+            Self {
+                _0,
+                _1,
+                close_brace_char,
+            }
+        }
     }
 }
 
@@ -110,10 +216,52 @@ mod repetition_prefix {
     // repetitionPrefix = ( «Number» [ '…' [ «Number» ] ] | '…' «Number» ) '*' ;
     #[allow(unused_imports)]
     use super::*;
-    pub struct N(pub C0, pub char);
-    pub enum C0 {
-        _0((number::N, Option<(char, Option<number::N>)>)),
-        _1((char, number::N)),
+    pub type N = _S0;
+    pub struct _S0 {
+        pub _c1: _C1,
+        pub star_char: char,
+    }
+    impl _S0 {
+        pub fn new((_c1, star_char): (_C1, char)) -> Self {
+            Self { _c1, star_char }
+        }
+    }
+    pub enum _C1 {
+        S2(_S2),
+        S6(_S6),
+    }
+    pub struct _S6 {
+        pub ellipsis_char: char,
+        pub number: number::N,
+    }
+    impl _S6 {
+        pub fn new((ellipsis_char, number): (char, number::N)) -> Self {
+            Self {
+                ellipsis_char,
+                number,
+            }
+        }
+    }
+    pub struct _S2 {
+        pub number: number::N,
+        pub _s4: Option<_S4>,
+    }
+    impl _S2 {
+        pub fn new((number, _s4): (number::N, Option<_S4>)) -> Self {
+            Self { number, _s4 }
+        }
+    }
+    pub struct _S4 {
+        pub ellipsis_char: char,
+        pub number: Option<number::N>,
+    }
+    impl _S4 {
+        pub fn new((ellipsis_char, number): (char, Option<number::N>)) -> Self {
+            Self {
+                ellipsis_char,
+                number,
+            }
+        }
     }
 }
 
@@ -121,44 +269,127 @@ mod raw_identifier {
     // «RawIdentifier» = «IdentifierStart» { «IdentifierFollow» } ;
     #[allow(unused_imports)]
     use super::*;
-    pub struct N(pub char, pub Vec<char>);
+    pub type N = _S0;
+    pub struct _S0 {
+        pub _0: char,
+        pub _1: Vec<char>,
+    }
+    impl _S0 {
+        pub fn new((_0, _1): (char, Vec<char>)) -> Self {
+            Self { _0, _1 }
+        }
+    }
 }
 
 mod single_char_string {
     // «SingleCharString» = '\'' «StringChar» '\'' ;
     #[allow(unused_imports)]
     use super::*;
-    pub struct N(pub char, pub string_char::N, pub char);
+    pub type N = _S0;
+    pub struct _S0 {
+        pub quote_char_0: char,
+        pub string_char: string_char::N,
+        pub quote_char_1: char,
+    }
+    impl _S0 {
+        pub fn new(
+            ((quote_char_0, string_char), quote_char_1): ((char, string_char::N), char),
+        ) -> Self {
+            Self {
+                quote_char_0,
+                string_char,
+                quote_char_1,
+            }
+        }
+    }
 }
 
 mod string {
     // «String» = '\'' { «StringChar» } '\'' ;
     #[allow(unused_imports)]
     use super::*;
-    pub struct N(pub char, pub Vec<string_char::N>, pub char);
+    pub type N = _S0;
+    pub struct _S0 {
+        pub quote_char_0: char,
+        pub string_chars: Vec<string_char::N>,
+        pub quote_char_1: char,
+    }
+    impl _S0 {
+        pub fn new(
+            ((quote_char_0, string_chars), quote_char_1): ((char, Vec<string_char::N>), char),
+        ) -> Self {
+            Self {
+                quote_char_0,
+                string_chars,
+                quote_char_1,
+            }
+        }
+    }
 }
 
 mod repeated {
     // repeated = [ repetitionPrefix ] '{' expression [ repetitionSeparator ] '}' ;
     #[allow(unused_imports)]
     use super::*;
-    pub struct N(
-        pub Option<repetition_prefix::N>,
-        pub char,
-        pub expression::N,
-        pub Option<repetition_separator::N>,
-        pub char,
-    );
+    pub type N = _S0;
+    pub struct _S0 {
+        pub repetition_prefix: Option<repetition_prefix::N>,
+        pub open_brace_char: char,
+        pub expression: expression::N,
+        pub repetition_separator: Option<repetition_separator::N>,
+        pub close_brace_char: char,
+    }
+    impl _S0 {
+        pub fn new(
+            (
+                (((repetition_prefix, open_brace_char), expression), repetition_separator),
+                close_brace_char,
+            ): (
+                (
+                    ((Option<repetition_prefix::N>, char), expression::N),
+                    Option<repetition_separator::N>,
+                ),
+                char,
+            ),
+        ) -> Self {
+            Self {
+                repetition_prefix,
+                open_brace_char,
+                expression,
+                repetition_separator,
+                close_brace_char,
+            }
+        }
+    }
 }
 
 mod identifier {
     // «Identifier» = '«' «RawIdentifier» '»' | «RawIdentifier» ;
     #[allow(unused_imports)]
     use super::*;
-    pub type N = C0;
-    pub enum C0 {
-        _0((char, raw_identifier::N, char)),
-        _1(raw_identifier::N),
+    pub type N = _C0;
+    pub enum _C0 {
+        S1(_S1),
+        RawIdentifier(raw_identifier::N),
+    }
+    pub struct _S1 {
+        pub open_double_angle_char: char,
+        pub raw_identifier: raw_identifier::N,
+        pub close_double_angle_char: char,
+    }
+    impl _S1 {
+        pub fn new(
+            ((open_double_angle_char, raw_identifier), close_double_angle_char): (
+                (char, raw_identifier::N),
+                char,
+            ),
+        ) -> Self {
+            Self {
+                open_double_angle_char,
+                raw_identifier,
+                close_double_angle_char,
+            }
+        }
     }
 }
 
@@ -166,11 +397,26 @@ mod char_range {
     // charRange = «SingleCharString» '…' «SingleCharString» ;
     #[allow(unused_imports)]
     use super::*;
-    pub struct N(
-        pub single_char_string::N,
-        pub char,
-        pub single_char_string::N,
-    );
+    pub type N = _S0;
+    pub struct _S0 {
+        pub single_char_string_0: single_char_string::N,
+        pub ellipsis_char: char,
+        pub single_char_string_1: single_char_string::N,
+    }
+    impl _S0 {
+        pub fn new(
+            ((single_char_string_0, ellipsis_char), single_char_string_1): (
+                (single_char_string::N, char),
+                single_char_string::N,
+            ),
+        ) -> Self {
+            Self {
+                single_char_string_0,
+                ellipsis_char,
+                single_char_string_1,
+            }
+        }
+    }
 }
 
 mod production_reference {
@@ -184,15 +430,15 @@ mod primary {
     // primary = productionReference | grouped | optional | repeated | charRange | «EOF» | «String» ;
     #[allow(unused_imports)]
     use super::*;
-    pub type N = C0;
-    pub enum C0 {
-        _0(production_reference::N),
-        _1(grouped::N),
-        _2(optional::N),
-        _3(repeated::N),
-        _4(char_range::N),
-        _5(char),
-        _6(string::N),
+    pub type N = _C0;
+    pub enum _C0 {
+        ProductionReference(production_reference::N),
+        Grouped(grouped::N),
+        Optional(optional::N),
+        Repeated(repeated::N),
+        CharRange(char_range::N),
+        DollarChar(char),
+        String(string::N),
     }
 }
 
@@ -200,14 +446,44 @@ mod negation {
     // negation = [ '¬' ] primary ;
     #[allow(unused_imports)]
     use super::*;
-    pub struct N(pub Option<char>, pub primary::N);
+    pub type N = _S0;
+    pub struct _S0 {
+        pub not_char: Option<char>,
+        pub primary: primary::N,
+    }
+    impl _S0 {
+        pub fn new((not_char, primary): (Option<char>, primary::N)) -> Self {
+            Self { not_char, primary }
+        }
+    }
 }
 
 mod difference {
     // difference = negation [ '-' negation ] ;
     #[allow(unused_imports)]
     use super::*;
-    pub struct N(pub negation::N, pub Option<(char, negation::N)>);
+    pub type N = _S0;
+    pub struct _S0 {
+        pub negation: negation::N,
+        pub _s2: Option<_S2>,
+    }
+    impl _S0 {
+        pub fn new((negation, _s2): (negation::N, Option<_S2>)) -> Self {
+            Self { negation, _s2 }
+        }
+    }
+    pub struct _S2 {
+        pub minus_char: char,
+        pub negation: negation::N,
+    }
+    impl _S2 {
+        pub fn new((minus_char, negation): (char, negation::N)) -> Self {
+            Self {
+                minus_char,
+                negation,
+            }
+        }
+    }
 }
 
 mod sequence {
@@ -221,21 +497,68 @@ mod expression {
     // expression = 1…*{ sequence / '|' } ;
     #[allow(unused_imports)]
     use super::*;
-    pub struct N(pub sequence::N, pub Vec<(char, sequence::N)>);
+    pub type N = _S0;
+    pub struct _S0 {
+        pub sequences: Vec<sequence::N>,
+        pub bar_chars: Vec<char>,
+    }
+    impl _S0 {
+        pub fn new((sequences, bar_chars): (Vec<sequence::N>, Vec<char>)) -> Self {
+            Self {
+                sequences,
+                bar_chars,
+            }
+        }
+    }
 }
 
 mod production {
     // production = «Identifier» '=' expression ';' ;
     #[allow(unused_imports)]
     use super::*;
-    pub struct N(pub identifier::N, pub char, pub expression::N, pub char);
+    pub type N = _S0;
+    pub struct _S0 {
+        pub identifier: identifier::N,
+        pub equal_char: char,
+        pub expression: expression::N,
+        pub semicolon_char: char,
+    }
+    impl _S0 {
+        pub fn new(
+            (((identifier, equal_char), expression), semicolon_char): (
+                ((identifier::N, char), expression::N),
+                char,
+            ),
+        ) -> Self {
+            Self {
+                identifier,
+                equal_char,
+                expression,
+                semicolon_char,
+            }
+        }
+    }
 }
 
 mod grammar {
     // grammar = «IGNORE» { production } $ ;
     #[allow(unused_imports)]
     use super::*;
-    pub struct N(pub ignore::N, pub Vec<production::N>, pub ());
+    pub type N = _S0;
+    pub struct _S0 {
+        pub ignore: ignore::N,
+        pub productions: Vec<production::N>,
+        pub _2: (),
+    }
+    impl _S0 {
+        pub fn new(((ignore, productions), _2): ((ignore::N, Vec<production::N>), ())) -> Self {
+            Self {
+                ignore,
+                productions,
+                _2,
+            }
+        }
+    }
 }
 
 #[allow(dead_code)]
@@ -280,19 +603,19 @@ impl Parsers {
             .map(|_| 2usize)
             .then(
                 choice((
-                    filter(|&c: &char| c != '*').map(comment::C0::_0),
+                    filter(|&c: &char| c != '*').map(comment::_C2::StarChar),
                     just('*')
                         .repeated()
                         .at_least(1usize)
                         .then(filter(|&c: &char| c != '*' && c != '/'))
-                        .map(comment::C0::_1),
+                        .map(comment::_S3::new)
+                        .map(comment::_C2::S3),
                 ))
                 .repeated(),
             )
             .then(just('*').repeated().at_least(1usize))
             .then(just('/'))
-            .map(|(((_0, _1), _2), _3)| (_0, _1, _2, _3))
-            .map(|(_0, _1, _2, _3)| comment::N(_0, _1, _2, _3));
+            .map(comment::_S0::new);
 
         // «Whitespace» = '\u{9}' | '\u{a}' | '\u{d}' | '\u{20}' ;
         let whitespace_parser = filter(|&c: &char| c == '\t' || c == '\n' || c == '\r' || c == ' ');
@@ -301,27 +624,25 @@ impl Parsers {
         let grouped_parser = just('(')
             .then(expression_parser.clone())
             .then(just(')'))
-            .map(|((_0, _1), _2)| (_0, _1, _2))
-            .map(|(_0, _1, _2)| grouped::N(_0, _1, _2));
+            .map(grouped::_S0::new);
 
         // optional = '[' expression ']' ;
         let optional_parser = just('[')
             .then(expression_parser.clone())
             .then(just(']'))
-            .map(|((_0, _1), _2)| (_0, _1, _2))
-            .map(|(_0, _1, _2)| optional::N(_0, _1, _2));
+            .map(optional::_S0::new);
 
         // repetitionSeparator = '/' expression ;
         let repetition_separator_parser = just('/')
             .then(expression_parser.clone())
-            .map(|(_0, _1)| repetition_separator::N(_0, _1));
+            .map(repetition_separator::_S0::new);
 
         // «IGNORE» = { «Whitespace» | «Comment» } ;
         ignore_parser.define(
             choice((
                 filter(|&c: &char| c == '\t' || c == '\n' || c == '\r' || c == ' ')
-                    .map(ignore::C0::_0),
-                comment_parser.clone().map(ignore::C0::_1),
+                    .map(ignore::_C1::_0),
+                comment_parser.clone().map(ignore::_C1::Comment),
             ))
             .repeated(),
         );
@@ -350,11 +671,11 @@ impl Parsers {
 
         // «StringChar» = ¬( '\'' | '\\' ) | '\\' ( '\'' | '\\' | 'u{' 1…6*{ «HexDigit» } '}' ) ;
         let string_char_parser = choice((
-            filter(|&c: &char| c != '\'' && c != '\\').map(string_char::C0::_0),
+            filter(|&c: &char| c != '\'' && c != '\\').map(string_char::_C0::_0),
             just('\\')
                 .then(choice((
-                    just('\'').map(string_char::C1::_0),
-                    just('\\').map(string_char::C1::_1),
+                    just('\'').map(string_char::_C2::QuoteChar),
+                    just('\\').map(string_char::_C2::BackslashChar),
                     just("u{")
                         .map(|_| 2usize)
                         .then(
@@ -368,24 +689,32 @@ impl Parsers {
                             .at_most(6usize),
                         )
                         .then(just('}'))
-                        .map(|((_0, _1), _2)| (_0, _1, _2))
-                        .map(string_char::C1::_2),
+                        .map(string_char::_S3::new)
+                        .map(string_char::_C2::S3),
                 )))
-                .map(string_char::C0::_1),
+                .map(string_char::_S1::new)
+                .map(string_char::_C0::S1),
         ));
 
         // repetitionPrefix = ( «Number» [ '…' [ «Number» ] ] | '…' «Number» ) '*' ;
         let repetition_prefix_parser = choice((
             number_parser
                 .clone()
-                .then(just('…').then(number_parser.clone().or_not()).or_not())
-                .map(repetition_prefix::C0::_0),
+                .then(
+                    just('…')
+                        .then(number_parser.clone().or_not())
+                        .map(repetition_prefix::_S4::new)
+                        .or_not(),
+                )
+                .map(repetition_prefix::_S2::new)
+                .map(repetition_prefix::_C1::S2),
             just('…')
                 .then(number_parser.clone())
-                .map(repetition_prefix::C0::_1),
+                .map(repetition_prefix::_S6::new)
+                .map(repetition_prefix::_C1::S6),
         ))
         .then(just('*'))
-        .map(|(_0, _1)| repetition_prefix::N(_0, _1));
+        .map(repetition_prefix::_S0::new);
 
         // «RawIdentifier» = «IdentifierStart» { «IdentifierFollow» } ;
         let raw_identifier_parser =
@@ -399,21 +728,19 @@ impl Parsers {
                     })
                     .repeated(),
                 )
-                .map(|(_0, _1)| raw_identifier::N(_0, _1));
+                .map(raw_identifier::_S0::new);
 
         // «SingleCharString» = '\'' «StringChar» '\'' ;
         let single_char_string_parser = just('\'')
             .then(string_char_parser.clone())
             .then(just('\''))
-            .map(|((_0, _1), _2)| (_0, _1, _2))
-            .map(|(_0, _1, _2)| single_char_string::N(_0, _1, _2));
+            .map(single_char_string::_S0::new);
 
         // «String» = '\'' { «StringChar» } '\'' ;
         let string_parser = just('\'')
             .then(string_char_parser.clone().repeated())
             .then(just('\''))
-            .map(|((_0, _1), _2)| (_0, _1, _2))
-            .map(|(_0, _1, _2)| string::N(_0, _1, _2));
+            .map(string::_S0::new);
 
         // repeated = [ repetitionPrefix ] '{' expression [ repetitionSeparator ] '}' ;
         let repeated_parser = repetition_prefix_parser
@@ -423,17 +750,18 @@ impl Parsers {
             .then(expression_parser.clone())
             .then(repetition_separator_parser.clone().or_not())
             .then(just('}'))
-            .map(|((((_0, _1), _2), _3), _4)| (_0, _1, _2, _3, _4))
-            .map(|(_0, _1, _2, _3, _4)| repeated::N(_0, _1, _2, _3, _4));
+            .map(repeated::_S0::new);
 
         // «Identifier» = '«' «RawIdentifier» '»' | «RawIdentifier» ;
         let identifier_parser = choice((
             just('«')
                 .then(raw_identifier_parser.clone())
                 .then(just('»'))
-                .map(|((_0, _1), _2)| (_0, _1, _2))
-                .map(identifier::C0::_0),
-            raw_identifier_parser.clone().map(identifier::C0::_1),
+                .map(identifier::_S1::new)
+                .map(identifier::_C0::S1),
+            raw_identifier_parser
+                .clone()
+                .map(identifier::_C0::RawIdentifier),
         ));
 
         // charRange = «SingleCharString» '…' «SingleCharString» ;
@@ -441,34 +769,40 @@ impl Parsers {
             .clone()
             .then(just('…'))
             .then(single_char_string_parser.clone())
-            .map(|((_0, _1), _2)| (_0, _1, _2))
-            .map(|(_0, _1, _2)| char_range::N(_0, _1, _2));
+            .map(char_range::_S0::new);
 
         // productionReference = «Identifier» ;
         let production_reference_parser = identifier_parser.clone();
 
         // primary = productionReference | grouped | optional | repeated | charRange | «EOF» | «String» ;
         let primary_parser = choice((
-            production_reference_parser.clone().map(primary::C0::_0),
-            grouped_parser.clone().map(primary::C0::_1),
-            optional_parser.clone().map(primary::C0::_2),
-            repeated_parser.clone().map(primary::C0::_3),
-            char_range_parser.clone().map(primary::C0::_4),
-            just('$').map(primary::C0::_5),
-            string_parser.clone().map(primary::C0::_6),
+            production_reference_parser
+                .clone()
+                .map(primary::_C0::ProductionReference),
+            grouped_parser.clone().map(primary::_C0::Grouped),
+            optional_parser.clone().map(primary::_C0::Optional),
+            repeated_parser.clone().map(primary::_C0::Repeated),
+            char_range_parser.clone().map(primary::_C0::CharRange),
+            just('$').map(primary::_C0::DollarChar),
+            string_parser.clone().map(primary::_C0::String),
         ));
 
         // negation = [ '¬' ] primary ;
         let negation_parser = just('¬')
             .or_not()
             .then(primary_parser.clone())
-            .map(|(_0, _1)| negation::N(_0, _1));
+            .map(negation::_S0::new);
 
         // difference = negation [ '-' negation ] ;
         let difference_parser = negation_parser
             .clone()
-            .then(just('-').then(negation_parser.clone()).or_not())
-            .map(|(_0, _1)| difference::N(_0, _1));
+            .then(
+                just('-')
+                    .then(negation_parser.clone())
+                    .map(difference::_S2::new)
+                    .or_not(),
+            )
+            .map(difference::_S0::new);
 
         // sequence = 1…*{ difference } ;
         let sequence_parser = difference_parser.clone().repeated().at_least(1usize);
@@ -478,7 +812,8 @@ impl Parsers {
             sequence_parser
                 .clone()
                 .then(just('|').then(sequence_parser.clone()).repeated())
-                .map(|(_0, _1)| expression::N(_0, _1)),
+                .map(repetition_mapper)
+                .map(expression::_S0::new),
         );
 
         // production = «Identifier» '=' expression ';' ;
@@ -487,16 +822,14 @@ impl Parsers {
             .then(just('='))
             .then(expression_parser.clone())
             .then(just(';'))
-            .map(|(((_0, _1), _2), _3)| (_0, _1, _2, _3))
-            .map(|(_0, _1, _2, _3)| production::N(_0, _1, _2, _3));
+            .map(production::_S0::new);
 
         // grammar = «IGNORE» { production } $ ;
         let grammar_parser = ignore_parser
             .clone()
             .then(production_parser.clone().repeated())
             .then(end())
-            .map(|((_0, _1), _2)| (_0, _1, _2))
-            .map(|(_0, _1, _2)| grammar::N(_0, _1, _2));
+            .map(grammar::_S0::new);
 
         Self {
             comment: comment_parser.boxed(),
