@@ -11,6 +11,7 @@ impl Grammar {
         // 1) Making sure there are no orphaned nodes by mistake.
         // 2) Making sure all referenced nodes actually exist in the grammar.
         // 3) Versions specified map to supported language versions.
+        // 4) no duplicate rule names
 
         // .... Any other domain-specific rules we want to add later.
     }

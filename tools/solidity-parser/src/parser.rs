@@ -8,12 +8,10 @@ pub type SourceUnitParserResultType = ();
 
 pub fn create_source_unit_parser(
 ) -> impl Parser<char, SourceUnitParserResultType, Error = ErrorType> {
-    let mut ascii_string_literal_parser = Recursive::declare();
     let mut block_parser = Recursive::declare();
     let mut expression_parser = Recursive::declare();
     let mut statement_parser = Recursive::declare();
     let mut type_name_parser = Recursive::declare();
-    let mut unicode_string_literal_parser = Recursive::declare();
     let mut yul_block_parser = Recursive::declare();
     let mut yul_expression_parser = Recursive::declare();
     let ascii_escape_parser = filter(|&c: &char| {
@@ -27,14 +25,6 @@ pub fn create_source_unit_parser(
             || c == '\r'
     })
     .map(builder::to_char);
-    ascii_string_literal_parser.define(
-        ascii_string_literal_parser
-            .clone()
-            .repeated()
-            .at_least(1usize)
-            .ignored()
-            .boxed(),
-    );
     let boolean_literal_parser =
         choice::<_, ErrorType>((just("false").ignored(), just("true").ignored())).ignored();
     let comment_parser = just("/*")
@@ -254,14 +244,6 @@ pub fn create_source_unit_parser(
             .then_ignore(filter(|&c: &char| !c.is_ascii_digit()).rewind()),
         )
         .map(builder::to_str);
-    unicode_string_literal_parser.define(
-        unicode_string_literal_parser
-            .clone()
-            .repeated()
-            .at_least(1usize)
-            .ignored()
-            .boxed(),
-    );
     let whitespace_parser =
         filter(|&c: &char| c == ' ' || c == '\t' || c == '\r' || c == '\n').ignored();
     let yul_decimal_number_literal_parser = choice::<_, ErrorType>((
@@ -502,7 +484,6 @@ pub fn create_source_unit_parser(
         identifier_start_parser.clone(),
         filter(|&c: &char| c.is_ascii_digit()),
     ));
-    let import_path_parser = ascii_string_literal_parser.clone().ignored().boxed();
     let possibly_separated_pairs_of_hex_digits_parser = hex_character_parser
         .clone()
         .repeated()
@@ -972,6 +953,16 @@ pub fn create_source_unit_parser(
         )
         .then_ignore(just('"'))
         .ignored();
+    let double_quoted_unicode_string_literal_parser = just("unicode\"")
+        .ignore_then(
+            choice::<_, ErrorType>((
+                filter(|&c: &char| c != '"' && c != '\\' && c != '\n' && c != '\r').ignored(),
+                escape_sequence_parser.clone().ignored(),
+            ))
+            .repeated(),
+        )
+        .then_ignore(just('"'))
+        .ignored();
     let elementary_type_with_payable_parser = choice::<_, ErrorType>((
         just("address")
             .then_ignore(ignore_parser.clone())
@@ -1010,31 +1001,35 @@ pub fn create_source_unit_parser(
         boolean_literal_parser.clone().ignored(),
     ))
     .ignored();
+    let single_quoted_ascii_string_literal_parser = just('\'')
+        .ignore_then(
+            choice::<_, ErrorType>((
+                filter(|&c: &char| ' ' <= c && c <= '~' && c != '\'' && c != '\\').ignored(),
+                escape_sequence_parser.clone().ignored(),
+            ))
+            .repeated(),
+        )
+        .then_ignore(just('\''))
+        .ignored();
+    let single_quoted_unicode_string_literal_parser = just("unicode'")
+        .ignore_then(
+            choice::<_, ErrorType>((
+                filter(|&c: &char| c != '\'' && c != '\\' && c != '\n' && c != '\r').ignored(),
+                escape_sequence_parser.clone().ignored(),
+            ))
+            .repeated(),
+        )
+        .then_ignore(just('\''))
+        .ignored();
     let yul_identifier_parser = raw_identifier_parser
         .clone()
         .excluding(yul_reserved_word_parser.clone())
         .ignored();
-    let yul_literal_parser = choice::<_, ErrorType>((
-        yul_decimal_number_literal_parser
-            .clone()
-            .then_ignore(ignore_parser.clone())
-            .ignored(),
-        yul_hex_literal_parser
-            .clone()
-            .then_ignore(ignore_parser.clone())
-            .ignored(),
-        ascii_string_literal_parser.clone().ignored(),
-        boolean_literal_parser
-            .clone()
-            .then_ignore(ignore_parser.clone())
-            .ignored(),
-        hex_string_literal_parser
-            .clone()
-            .then_ignore(ignore_parser.clone())
-            .ignored(),
+    let ascii_string_literal_parser = choice::<_, ErrorType>((
+        single_quoted_ascii_string_literal_parser.clone().ignored(),
+        double_quoted_ascii_string_literal_parser.clone().ignored(),
     ))
-    .ignored()
-    .boxed();
+    .ignored();
     let assembly_flags_parser = just('(')
         .then_ignore(ignore_parser.clone())
         .ignore_then(
@@ -1051,21 +1046,15 @@ pub fn create_source_unit_parser(
         .clone()
         .excluding(reserved_word_parser.clone())
         .ignored();
-    let literal_parser = choice::<_, ErrorType>((
-        ascii_string_literal_parser.clone().ignored(),
-        unicode_string_literal_parser.clone().ignored(),
-        numeric_literal_parser.clone().ignored(),
-        hex_string_literal_parser
+    let unicode_string_literal_parser = choice::<_, ErrorType>((
+        single_quoted_unicode_string_literal_parser
             .clone()
-            .then_ignore(ignore_parser.clone())
             .ignored(),
-        boolean_literal_parser
+        double_quoted_unicode_string_literal_parser
             .clone()
-            .then_ignore(ignore_parser.clone())
             .ignored(),
     ))
-    .ignored()
-    .boxed();
+    .ignored();
     let yul_function_call_parser = choice::<_, ErrorType>((
         yul_identifier_parser
             .clone()
@@ -1156,6 +1145,32 @@ pub fn create_source_unit_parser(
         .at_least(1usize)
         .map(builder::to_str)
         .boxed();
+    let import_path_parser = ascii_string_literal_parser
+        .clone()
+        .then_ignore(ignore_parser.clone())
+        .ignored()
+        .boxed();
+    let literal_parser = choice::<_, ErrorType>((
+        ascii_string_literal_parser
+            .clone()
+            .then_ignore(ignore_parser.clone())
+            .ignored(),
+        unicode_string_literal_parser
+            .clone()
+            .then_ignore(ignore_parser.clone())
+            .ignored(),
+        numeric_literal_parser.clone().ignored(),
+        hex_string_literal_parser
+            .clone()
+            .then_ignore(ignore_parser.clone())
+            .ignored(),
+        boolean_literal_parser
+            .clone()
+            .then_ignore(ignore_parser.clone())
+            .ignored(),
+    ))
+    .ignored()
+    .boxed();
     let named_argument_parser = identifier_parser
         .clone()
         .then_ignore(ignore_parser.clone())
@@ -1185,24 +1200,6 @@ pub fn create_source_unit_parser(
         )
         .ignored()
         .boxed();
-    let simple_import_directive_parser = import_path_parser
-        .clone()
-        .ignore_then(
-            just("as")
-                .then_ignore(ignore_parser.clone())
-                .ignore_then(identifier_parser.clone().then_ignore(ignore_parser.clone()))
-                .repeated(),
-        )
-        .ignored()
-        .boxed();
-    let star_import_directive_parser = just('*')
-        .then_ignore(ignore_parser.clone())
-        .ignore_then(just("as").then_ignore(ignore_parser.clone()))
-        .ignore_then(identifier_parser.clone().then_ignore(ignore_parser.clone()))
-        .ignore_then(just("from").then_ignore(ignore_parser.clone()))
-        .ignore_then(import_path_parser.clone())
-        .ignored()
-        .boxed();
     let user_defined_value_type_definition_parser = just("type")
         .then_ignore(ignore_parser.clone())
         .ignore_then(identifier_parser.clone().then_ignore(ignore_parser.clone()))
@@ -1211,15 +1208,30 @@ pub fn create_source_unit_parser(
         .then_ignore(just(';').then_ignore(ignore_parser.clone()))
         .ignored()
         .boxed();
-    yul_expression_parser.define(
-        choice::<_, ErrorType>((
-            yul_path_parser.clone().ignored(),
-            yul_function_call_parser.clone().ignored(),
-            yul_literal_parser.clone().ignored(),
-        ))
-        .ignored()
-        .boxed(),
-    );
+    let yul_literal_parser = choice::<_, ErrorType>((
+        yul_decimal_number_literal_parser
+            .clone()
+            .then_ignore(ignore_parser.clone())
+            .ignored(),
+        yul_hex_literal_parser
+            .clone()
+            .then_ignore(ignore_parser.clone())
+            .ignored(),
+        ascii_string_literal_parser
+            .clone()
+            .then_ignore(ignore_parser.clone())
+            .ignored(),
+        boolean_literal_parser
+            .clone()
+            .then_ignore(ignore_parser.clone())
+            .ignored(),
+        hex_string_literal_parser
+            .clone()
+            .then_ignore(ignore_parser.clone())
+            .ignored(),
+    ))
+    .ignored()
+    .boxed();
     let mapping_type_parser = just("mapping")
         .then_ignore(ignore_parser.clone())
         .ignore_then(just('(').then_ignore(ignore_parser.clone()))
@@ -1292,6 +1304,118 @@ pub fn create_source_unit_parser(
         .then_ignore(import_path_parser.clone())
         .ignored()
         .boxed();
+    let simple_import_directive_parser = import_path_parser
+        .clone()
+        .ignore_then(
+            just("as")
+                .then_ignore(ignore_parser.clone())
+                .ignore_then(identifier_parser.clone().then_ignore(ignore_parser.clone()))
+                .repeated(),
+        )
+        .ignored()
+        .boxed();
+    let star_import_directive_parser = just('*')
+        .then_ignore(ignore_parser.clone())
+        .ignore_then(just("as").then_ignore(ignore_parser.clone()))
+        .ignore_then(identifier_parser.clone().then_ignore(ignore_parser.clone()))
+        .ignore_then(just("from").then_ignore(ignore_parser.clone()))
+        .ignore_then(import_path_parser.clone())
+        .ignored()
+        .boxed();
+    yul_expression_parser.define(
+        choice::<_, ErrorType>((
+            yul_path_parser.clone().ignored(),
+            yul_function_call_parser.clone().ignored(),
+            yul_literal_parser.clone().ignored(),
+        ))
+        .ignored()
+        .boxed(),
+    );
+    let argument_list_parser = just('(')
+        .then_ignore(ignore_parser.clone())
+        .ignore_then(
+            choice::<_, ErrorType>((
+                positional_argument_list_parser.clone().ignored(),
+                named_argument_list_parser.clone().ignored(),
+            ))
+            .or_not(),
+        )
+        .then_ignore(just(')').then_ignore(ignore_parser.clone()))
+        .ignored()
+        .boxed();
+    let catch_clause_parser = just("catch")
+        .then_ignore(ignore_parser.clone())
+        .ignore_then(
+            identifier_parser
+                .clone()
+                .then_ignore(ignore_parser.clone())
+                .or_not()
+                .then_ignore(non_empty_parameter_list_parser.clone())
+                .or_not(),
+        )
+        .then_ignore(block_parser.clone())
+        .ignored()
+        .boxed();
+    let function_type_parser = just("function")
+        .then_ignore(ignore_parser.clone())
+        .ignore_then(parameter_list_parser.clone())
+        .ignore_then(
+            choice::<_, ErrorType>((
+                just("external").ignored(),
+                just("internal").ignored(),
+                just("p")
+                    .then(choice((
+                        just("ayable").ignored(),
+                        just("rivate").ignored(),
+                        just("u")
+                            .then(choice((just("blic").ignored(), just("re").ignored())))
+                            .ignored(),
+                    )))
+                    .ignored(),
+                just("view").ignored(),
+            ))
+            .repeated(),
+        )
+        .then(
+            just("returns")
+                .then_ignore(ignore_parser.clone())
+                .ignore_then(non_empty_parameter_list_parser.clone())
+                .or_not(),
+        )
+        .ignored()
+        .boxed();
+    let import_directive_parser = just("import")
+        .then_ignore(ignore_parser.clone())
+        .ignore_then(choice::<_, ErrorType>((
+            simple_import_directive_parser.clone().ignored(),
+            star_import_directive_parser.clone().ignored(),
+            selecting_import_directive_parser.clone().ignored(),
+        )))
+        .then_ignore(just(';').then_ignore(ignore_parser.clone()))
+        .ignored()
+        .boxed();
+    let method_attribute_parser = choice::<_, ErrorType>((
+        just("virtual").then_ignore(ignore_parser.clone()).ignored(),
+        override_specifier_parser.clone().ignored(),
+    ))
+    .ignored()
+    .boxed();
+    let state_variable_attribute_parser = choice::<_, ErrorType>((
+        just("public").then_ignore(ignore_parser.clone()).ignored(),
+        just("private").then_ignore(ignore_parser.clone()).ignored(),
+        just("internal")
+            .then_ignore(ignore_parser.clone())
+            .ignored(),
+        just("constant")
+            .then_ignore(ignore_parser.clone())
+            .ignored(),
+        override_specifier_parser.clone().ignored(),
+        just("immutable")
+            .then_ignore(ignore_parser.clone())
+            .ignored(),
+    ))
+    .ignored()
+    .boxed();
     let yul_assignment_parser = yul_path_parser
         .clone()
         .ignore_then(choice::<_, ErrorType>((
@@ -1381,106 +1505,6 @@ pub fn create_source_unit_parser(
         )
         .ignored()
         .boxed();
-    let argument_list_parser = just('(')
-        .then_ignore(ignore_parser.clone())
-        .ignore_then(
-            choice::<_, ErrorType>((
-                positional_argument_list_parser.clone().ignored(),
-                named_argument_list_parser.clone().ignored(),
-            ))
-            .or_not(),
-        )
-        .then_ignore(just(')').then_ignore(ignore_parser.clone()))
-        .ignored()
-        .boxed();
-    let catch_clause_parser = just("catch")
-        .then_ignore(ignore_parser.clone())
-        .ignore_then(
-            identifier_parser
-                .clone()
-                .then_ignore(ignore_parser.clone())
-                .or_not()
-                .then_ignore(non_empty_parameter_list_parser.clone())
-                .or_not(),
-        )
-        .then_ignore(block_parser.clone())
-        .ignored()
-        .boxed();
-    let function_type_parser = just("function")
-        .then_ignore(ignore_parser.clone())
-        .ignore_then(parameter_list_parser.clone())
-        .ignore_then(
-            choice::<_, ErrorType>((
-                just("external").ignored(),
-                just("internal").ignored(),
-                just("p")
-                    .then(choice((
-                        just("ayable").ignored(),
-                        just("rivate").ignored(),
-                        just("u")
-                            .then(choice((just("blic").ignored(), just("re").ignored())))
-                            .ignored(),
-                    )))
-                    .ignored(),
-                just("view").ignored(),
-            ))
-            .repeated(),
-        )
-        .then(
-            just("returns")
-                .then_ignore(ignore_parser.clone())
-                .ignore_then(non_empty_parameter_list_parser.clone())
-                .or_not(),
-        )
-        .ignored()
-        .boxed();
-    let import_directive_parser = just("import")
-        .then_ignore(ignore_parser.clone())
-        .ignore_then(choice::<_, ErrorType>((
-            simple_import_directive_parser.clone().ignored(),
-            star_import_directive_parser.clone().ignored(),
-            selecting_import_directive_parser.clone().ignored(),
-        )))
-        .then_ignore(just(';').then_ignore(ignore_parser.clone()))
-        .ignored()
-        .boxed();
-    let method_attribute_parser = choice::<_, ErrorType>((
-        just("virtual").then_ignore(ignore_parser.clone()).ignored(),
-        override_specifier_parser.clone().ignored(),
-    ))
-    .ignored()
-    .boxed();
-    let state_variable_attribute_parser = choice::<_, ErrorType>((
-        just("public").then_ignore(ignore_parser.clone()).ignored(),
-        just("private").then_ignore(ignore_parser.clone()).ignored(),
-        just("internal")
-            .then_ignore(ignore_parser.clone())
-            .ignored(),
-        just("constant")
-            .then_ignore(ignore_parser.clone())
-            .ignored(),
-        override_specifier_parser.clone().ignored(),
-        just("immutable")
-            .then_ignore(ignore_parser.clone())
-            .ignored(),
-    ))
-    .ignored()
-    .boxed();
-    let yul_statement_parser = choice::<_, ErrorType>((
-        yul_block_parser.clone().ignored(),
-        yul_variable_declaration_parser.clone().ignored(),
-        yul_function_definition_parser.clone().ignored(),
-        yul_assignment_parser.clone().ignored(),
-        yul_function_call_parser.clone().ignored(),
-        yul_if_statement_parser.clone().ignored(),
-        yul_for_statement_parser.clone().ignored(),
-        yul_switch_statement_parser.clone().ignored(),
-        yul_leave_statement_parser.clone().ignored(),
-        yul_break_statement_parser.clone().ignored(),
-        yul_continue_statement_parser.clone().ignored(),
-    ))
-    .ignored()
-    .boxed();
     let inheritance_specifier_parser = identifier_path_parser
         .clone()
         .then(argument_list_parser.clone().or_not())
@@ -1508,25 +1532,21 @@ pub fn create_source_unit_parser(
         .ignored()
         .boxed(),
     );
-    yul_block_parser.define(
-        just('{')
-            .then_ignore(ignore_parser.clone())
-            .ignore_then(yul_statement_parser.clone().repeated())
-            .then_ignore(just('}').then_ignore(ignore_parser.clone()))
-            .ignored()
-            .boxed(),
-    );
-    let assembly_statement_parser = just("assembly")
-        .then_ignore(ignore_parser.clone())
-        .ignore_then(
-            just("\"evmasm\"")
-                .then_ignore(ignore_parser.clone())
-                .or_not(),
-        )
-        .then(assembly_flags_parser.clone().or_not())
-        .then_ignore(yul_block_parser.clone())
-        .ignored()
-        .boxed();
+    let yul_statement_parser = choice::<_, ErrorType>((
+        yul_block_parser.clone().ignored(),
+        yul_variable_declaration_parser.clone().ignored(),
+        yul_function_definition_parser.clone().ignored(),
+        yul_assignment_parser.clone().ignored(),
+        yul_function_call_parser.clone().ignored(),
+        yul_if_statement_parser.clone().ignored(),
+        yul_for_statement_parser.clone().ignored(),
+        yul_switch_statement_parser.clone().ignored(),
+        yul_leave_statement_parser.clone().ignored(),
+        yul_break_statement_parser.clone().ignored(),
+        yul_continue_statement_parser.clone().ignored(),
+    ))
+    .ignored()
+    .boxed();
     let constructor_attribute_parser = choice::<_, ErrorType>((
         modifier_invocation_parser.clone().ignored(),
         just("payable").then_ignore(ignore_parser.clone()).ignored(),
@@ -1687,6 +1707,25 @@ pub fn create_source_unit_parser(
         .clone()
         .ignore_then(data_location_parser.clone().or_not())
         .then_ignore(identifier_parser.clone().then_ignore(ignore_parser.clone()))
+        .ignored()
+        .boxed();
+    yul_block_parser.define(
+        just('{')
+            .then_ignore(ignore_parser.clone())
+            .ignore_then(yul_statement_parser.clone().repeated())
+            .then_ignore(just('}').then_ignore(ignore_parser.clone()))
+            .ignored()
+            .boxed(),
+    );
+    let assembly_statement_parser = just("assembly")
+        .then_ignore(ignore_parser.clone())
+        .ignore_then(
+            just("\"evmasm\"")
+                .then_ignore(ignore_parser.clone())
+                .or_not(),
+        )
+        .then(assembly_flags_parser.clone().or_not())
+        .then_ignore(yul_block_parser.clone())
         .ignored()
         .boxed();
     let directive_parser = choice::<_, ErrorType>((
