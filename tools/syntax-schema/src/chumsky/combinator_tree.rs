@@ -75,7 +75,7 @@ impl CombinatorTreeNodeData {
             CombinatorTreeNodeData::Repeat { expr, .. } => {
                 expr.name().and_then(|n| {
                     if n.starts_with('_') {
-                        None
+                        Some(n.to_ascii_lowercase().to_plural())
                     } else {
                         // Convert to snake and then pluralize to avoid e.g. BARs -> ba_rs later on
                         Some(n.to_case(Case::Snake).to_plural())
@@ -299,7 +299,7 @@ impl Expression {
                 }) => {
                     let index = subtype_index.get();
                     subtype_index.set(index + 1);
-                    let name = format!("S{}", index);
+                    let name = format!("_S{}", index);
                     ct_repeat(
                         name,
                         expr.to_combinator_tree_node(subtype_index, grammar),
@@ -313,7 +313,7 @@ impl Expression {
                 EBNF::Choice(exprs) => {
                     let index = subtype_index.get();
                     subtype_index.set(index + 1);
-                    let name = format!("C{}", index);
+                    let name = format!("_C{}", index);
                     ct_choice(
                         name,
                         exprs
@@ -367,7 +367,7 @@ impl Expression {
                 EBNF::Sequence(exprs) => {
                     let index = subtype_index.get();
                     subtype_index.set(index + 1);
-                    let name = format!("S{}", index);
+                    let name = format!("_S{}", index);
                     ct_sequence(
                         name,
                         exprs
@@ -375,9 +375,16 @@ impl Expression {
                             .enumerate()
                             .map(|(i, e)| {
                                 let e = e.to_combinator_tree_node(subtype_index, grammar);
-                                let name = e
-                                    .name()
-                                    .map_or_else(|| format!("_{}", i), |n| n.to_case(Case::Snake));
+                                let name = e.name().map_or_else(
+                                    || format!("_{}", i),
+                                    |n| {
+                                        if n.starts_with('_') {
+                                            n.to_ascii_lowercase()
+                                        } else {
+                                            n.to_case(Case::Snake)
+                                        }
+                                    },
+                                );
                                 (name, e)
                             })
                             .collect(),
