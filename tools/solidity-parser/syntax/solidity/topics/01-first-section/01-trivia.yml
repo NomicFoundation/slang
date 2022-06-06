@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=../../../../../syntax-schema/syntax/schema/topic.schema.json
+
+- name: IGNORE
+  isToken: true
+  config: { ignore: true }
+  zeroOrMore:
+    choice:
+      - reference: Whitespace
+      - reference: Comment
+      - reference: LineComment
+
+- name: Whitespace
+  isToken: true
+  config: { ignore: true }
+  choice:
+    - terminal: " "
+    - terminal: "\t"
+    - terminal: "\r"
+    - terminal: "\n"
+
+- name: Comment
+  isToken: true
+  config: { ignore: true }
+  sequence:
+    - terminal: /*
+    - zeroOrMore:
+        choice:
+          - not:
+              terminal: "*"
+          - sequence:
+              - oneOrMore:
+                  terminal: "*"
+              - not:
+                  choice:
+                    - terminal: "*"
+                    - terminal: /
+    - oneOrMore:
+        terminal: "*"
+    - terminal: /
+
+- name: LineComment
+  isToken: true
+  config: { ignore: true }
+  sequence:
+    - terminal: //
+    - zeroOrMore:
+        not:
+          choice:
+            - terminal: "\n"
+            - terminal: "\r"
