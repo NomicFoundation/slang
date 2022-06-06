@@ -4,7 +4,7 @@
     //
     // Language Support
     "igochkov.vscode-ebnf",
-    "matklad.rust-analyzer",
+    "rust-lang.rust-analyzer",
     "NomicFoundation.hardhat-solidity",
     "redhat.vscode-yaml",
     "tamasfe.even-better-toml",

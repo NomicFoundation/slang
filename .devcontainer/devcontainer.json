@@ -15,7 +15,7 @@
     // Please keep this list in-sync with "${workspaceRoot}/.vscode/extensions.json"
     //
     // Language Support
-    "matklad.rust-analyzer",
+    "rust-lang.rust-analyzer",
     "NomicFoundation.hardhat-solidity",
     "tamasfe.even-better-toml",
     "yzhang.markdown-all-in-one",
