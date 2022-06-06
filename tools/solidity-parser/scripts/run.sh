@@ -11,10 +11,11 @@ PROJECT_DIR=$(dirname "$THIS_DIR")
 # Solidity from the intended source manifest
 ###################################################
 
-cargo run --manifest-path "../syntax-schema/Cargo.toml" --bin "manifest_to_ebnf" -- \
-  --manifest-input "$PROJECT_DIR/syntax/solidity/manifest.yml" \
+cargo run --manifest-path "$PROJECT_DIR/../syntax-schema/Cargo.toml" --bin "manifest_to_ebnf" -- \
+  --manifest-input "$PROJECT_DIR/syntax/solidity/original/manifest.yml" \
   --ebnf-output "$PROJECT_DIR/syntax/solidity/derived.ebnf"
 
-cargo run --manifest-path "../syntax-schema/Cargo.toml" --bin "manifest_to_chumsky" -- \
-  --manifest-input "$PROJECT_DIR/syntax/solidity/manifest.yml" \
-  --chumsky-output "$PROJECT_DIR/syntax/solidity/derived.rs"
+cargo run --manifest-path "$PROJECT_DIR/../syntax-schema/Cargo.toml" --bin "manifest_to_chumsky" -- \
+  --no-default-map --box-non-tokens \
+  --manifest-input "$PROJECT_DIR/syntax/solidity/original/manifest.yml" \
+  --chumsky-output "$PROJECT_DIR/src/parser.rs"
