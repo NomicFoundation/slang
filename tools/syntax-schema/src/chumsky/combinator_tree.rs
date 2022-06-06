@@ -1,6 +1,8 @@
 use std::cell::Cell;
 
 use convert_case::{Case, Casing};
+use inflector::Inflector;
+// use mset::MultiSet;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
@@ -26,12 +28,14 @@ pub enum CombinatorTreeNodeData {
     },
     Choice {
         name: String,
-        choices: Vec<CombinatorTreeNode>,
+        choices: Vec<(String, CombinatorTreeNode)>,
     },
     Sequence {
-        elements: Vec<CombinatorTreeNode>,
+        name: String,
+        elements: Vec<(String, CombinatorTreeNode)>,
     },
     Repeat {
+        name: String,
         expr: CombinatorTreeNode,
         min: usize,
         max: Option<usize>,
@@ -56,6 +60,37 @@ impl CombinatorTree {
 }
 
 impl CombinatorTreeNodeData {
+    pub fn name(&self) -> Option<String> {
+        match self {
+            CombinatorTreeNodeData::Difference { minuend, .. } => minuend.name(),
+            CombinatorTreeNodeData::Lookahead { expr, .. } => expr.name(),
+            CombinatorTreeNodeData::Choice { name, .. } => Some(name.clone()),
+            CombinatorTreeNodeData::Sequence { name, .. } => Some(name.clone()),
+            CombinatorTreeNodeData::Repeat {
+                expr,
+                min: 0,
+                max: Some(1),
+                ..
+            } => expr.name(),
+            CombinatorTreeNodeData::Repeat { expr, .. } => {
+                expr.name().and_then(|n| {
+                    if n.starts_with('_') {
+                        None
+                    } else {
+                        // Convert to snake and then pluralize to avoid e.g. BARs -> ba_rs later on
+                        Some(n.to_case(Case::Snake).to_plural())
+                    }
+                })
+            }
+            CombinatorTreeNodeData::Reference { name } => Some(name.clone()),
+            CombinatorTreeNodeData::TerminalTrie { .. } => None,
+            CombinatorTreeNodeData::CharacterFilter { filter } => {
+                filter.name().map(|n| format!("{}_char", n))
+            }
+            CombinatorTreeNodeData::End => None,
+        }
+    }
+
     fn to_parser_combinator_code(&self, tree: &CombinatorTree) -> TokenStream {
         match self {
             CombinatorTreeNodeData::Difference {
@@ -72,39 +107,24 @@ impl CombinatorTreeNodeData {
                 quote!( #expr.then_ignore( #lookahead.rewind() ))
             }
             CombinatorTreeNodeData::Choice { choices, name } => {
+                let module_name = format_ident!("{}", tree.module_name.clone());
                 let choice_name = format_ident!("{}", name);
-
-                let choices = choices.iter().enumerate().map(|(i, c)| {
-                    let member = format_ident!("_{}", i);
+                let choices = choices.iter().map(|(n, c)| {
+                    let constructor = format_ident!("{}", n);
                     let expr = c.to_parser_combinator_code(tree);
-                    let module_name = format_ident!("{}", tree.module_name.clone());
-                    quote!( #expr.map(#module_name::#choice_name::#member) )
+                    quote!( #expr.map(#module_name::#choice_name::#constructor) )
                 });
-
                 quote!( choice(( #(#choices),* )) )
             }
-            CombinatorTreeNodeData::Sequence { elements } => {
-                let mut elements = elements.iter().map(|e| e.to_parser_combinator_code(tree));
-
-                let flattener = if elements.len() > 2 {
-                    let nested_fields = (1..elements.len()).map(|i| format_ident!("_{}", i)).fold(
-                        {
-                            let ident = format_ident!("_0");
-                            quote!( #ident )
-                        },
-                        |accum, ident| quote!( (#accum, #ident) ),
-                    );
-                    let flattened_fields = (0..elements.len()).map(|i| format_ident!("_{}", i));
-
-                    quote!(.map(|#nested_fields| (#(#flattened_fields),*)) )
-                } else {
-                    quote!()
-                };
-
+            CombinatorTreeNodeData::Sequence { elements, name } => {
+                let struct_name = format_ident!("{}", name);
+                let mut elements = elements
+                    .iter()
+                    .map(|(_, e)| e.to_parser_combinator_code(tree));
                 let first = elements.next().unwrap();
                 let rest = elements.map(|e| quote!( .then(#e) ));
-
-                quote!( #first #(#rest)* #flattener )
+                let module_name = format_ident!("{}", tree.module_name.clone());
+                quote!( #first #(#rest)* .map(#module_name::#struct_name::new) )
             }
             CombinatorTreeNodeData::Repeat {
                 expr,
@@ -120,6 +140,7 @@ impl CombinatorTreeNodeData {
                 min,
                 max,
                 separator: None,
+                ..
             } => {
                 let expr = expr.to_parser_combinator_code(tree);
 
@@ -132,6 +153,7 @@ impl CombinatorTreeNodeData {
                 }
             }
             CombinatorTreeNodeData::Repeat {
+                name,
                 expr,
                 min,
                 max,
@@ -140,25 +162,35 @@ impl CombinatorTreeNodeData {
                 let expr = expr.to_parser_combinator_code(tree);
                 let separator = separator.to_parser_combinator_code(tree);
 
+                let mapping = {
+                    let module_name = format_ident!("{}", tree.module_name.clone());
+                    let struct_name = format_ident!("{}", name);
+                    quote!( .map(repetition_mapper).map( #module_name::#struct_name::new) )
+                };
+
+                let repetition = quote!(#separator.then(#expr).repeated());
+
                 match (min, max) {
-                    (0, None) => quote!( #expr.then(#separator.then(#expr).repeated()).or_not() ),
+                    (0, None) => {
+                        quote!( #expr.then()#mapping.or_not() )
+                    }
                     (0, Some(max)) => {
-                        quote!( #expr.then(#separator.then(#expr).repeated().at_most(#max - 1)).or_not() )
+                        quote!( #expr.then(#repetition.at_most(#max - 1))#mapping.or_not() )
                     }
                     (1, None) => {
-                        quote!( #expr.then(#separator.then(#expr).repeated()) )
+                        quote!( #expr.then(#repetition)#mapping )
                     }
                     (1, Some(max)) => {
-                        quote!( #expr.then(#separator.then(#expr).repeated().at_most(#max - 1)) )
+                        quote!( #expr.then(#repetition.at_most(#max - 1))#mapping )
                     }
                     (min, None) => {
-                        quote!( #expr.then(#separator.then(#expr).repeated().at_least(#min - 1)) )
+                        quote!( #expr.then(#repetition.at_least(#min - 1))#mapping )
                     }
                     (min, Some(max)) if min == max => {
-                        quote!( #expr.then(#separator.then(#expr).repeated().exactly(#min - 1)) )
+                        quote!( #expr.then(#repetition.exactly(#min - 1))#mapping )
                     }
                     (min, Some(max)) => {
-                        quote!( #expr.then(#separator.then(#expr).repeated().at_least(#min - 1).at_most(#max - 1)) )
+                        quote!( #expr.then(#repetition.at_least(#min - 1).at_most(#max - 1))#mapping )
                     }
                 }
             }
@@ -188,21 +220,23 @@ fn ct_lookahead(expr: CombinatorTreeNode, lookahead: CombinatorTreeNode) -> Comb
     Box::new(CombinatorTreeNodeData::Lookahead { expr, lookahead })
 }
 
-fn ct_choice(name: String, choices: Vec<CombinatorTreeNode>) -> CombinatorTreeNode {
+fn ct_choice(name: String, choices: Vec<(String, CombinatorTreeNode)>) -> CombinatorTreeNode {
     Box::new(CombinatorTreeNodeData::Choice { name, choices })
 }
 
-fn ct_sequence(elements: Vec<CombinatorTreeNode>) -> CombinatorTreeNode {
-    Box::new(CombinatorTreeNodeData::Sequence { elements })
+fn ct_sequence(name: String, elements: Vec<(String, CombinatorTreeNode)>) -> CombinatorTreeNode {
+    Box::new(CombinatorTreeNodeData::Sequence { name, elements })
 }
 
 fn ct_repeat(
+    name: String,
     expr: CombinatorTreeNode,
     min: usize,
     max: Option<usize>,
     separator: Option<CombinatorTreeNode>,
 ) -> CombinatorTreeNode {
     Box::new(CombinatorTreeNodeData::Repeat {
+        name,
         expr,
         min,
         max,
@@ -262,17 +296,21 @@ impl Expression {
                     min,
                     max,
                     separator,
-                }) => ct_repeat(
-                    expr.to_combinator_tree_node(subtype_index, grammar),
-                    *min,
-                    *max,
-                    separator
-                        .clone()
-                        .map(|s| s.to_combinator_tree_node(subtype_index, grammar)),
-                ),
+                }) => {
+                    let index = subtype_index.get();
+                    subtype_index.set(index + 1);
+                    let name = format!("S{}", index);
+                    ct_repeat(
+                        name,
+                        expr.to_combinator_tree_node(subtype_index, grammar),
+                        *min,
+                        *max,
+                        separator
+                            .clone()
+                            .map(|s| s.to_combinator_tree_node(subtype_index, grammar)),
+                    )
+                }
                 EBNF::Choice(exprs) => {
-                    // merge (mixed) TerminalTrie ?
-                    // merge (mixed) CharacterFilter ?
                     let index = subtype_index.get();
                     subtype_index.set(index + 1);
                     let name = format!("C{}", index);
@@ -280,16 +318,71 @@ impl Expression {
                         name,
                         exprs
                             .iter()
-                            .map(|e| e.to_combinator_tree_node(subtype_index, grammar))
+                            .enumerate()
+                            .map(|(i, e)| {
+                                let e = e.to_combinator_tree_node(subtype_index, grammar);
+                                let name = e.name().map_or_else(
+                                    || format!("_{}", i),
+                                    |n| n.to_case(Case::UpperCamel),
+                                );
+                                (name, e)
+                            })
+                            .collect(),
+                    )
+
+                    // TODO: check for duplicated names
+
+                    // let mut pairs = elements
+                    //     .iter()
+                    //     .enumerate()
+                    //     .map(|(i, c)| {
+                    //         let ttn = c.to_type_tree_node();
+                    //         (
+                    //             ttn.name()
+                    //                 .map_or_else(|| format!("_{}", i), |n| n.to_case(Case::Snake)),
+                    //             ttn,
+                    //         )
+                    //     })
+                    //     .collect::<Vec<_>>();
+                    // // Find all the duplicated names, with the count of their occurance
+                    // let mut names = MultiSet::<String>::from_iter(pairs.iter().map(|(n, _)| n.clone()));
+                    // names.retain(|_, count| count > 1);
+                    // // Reverse so that the suffix goes from _0 .. _n when we re-reverse the list
+                    // pairs.reverse();
+                    // let mut pairs: Vec<_> = pairs
+                    //     .into_iter()
+                    //     .map(|(n, t)| {
+                    //         if let Some(count) = names.get(&n) {
+                    //             // Remove the element to decrement the occurance occount
+                    //             names.remove(&n);
+                    //             (format!("{}_{}", n, count - 1), t)
+                    //         } else {
+                    //             (n, t)
+                    //         }
+                    //     })
+                    //     .collect();
+                    // pairs.reverse();
+                    // pairs
+                }
+                EBNF::Sequence(exprs) => {
+                    let index = subtype_index.get();
+                    subtype_index.set(index + 1);
+                    let name = format!("S{}", index);
+                    ct_sequence(
+                        name,
+                        exprs
+                            .iter()
+                            .enumerate()
+                            .map(|(i, e)| {
+                                let e = e.to_combinator_tree_node(subtype_index, grammar);
+                                let name = e
+                                    .name()
+                                    .map_or_else(|| format!("_{}", i), |n| n.to_case(Case::Snake));
+                                (name, e)
+                            })
                             .collect(),
                     )
                 }
-                EBNF::Sequence(exprs) => ct_sequence(
-                    exprs
-                        .iter()
-                        .map(|e| e.to_combinator_tree_node(subtype_index, grammar))
-                        .collect(),
-                ),
                 EBNF::Reference(name) => ct_reference(name.clone()),
                 EBNF::Not(_) => unimplemented!("¬ is only supported on characters or sets thereof"),
                 EBNF::Terminal(_) => {

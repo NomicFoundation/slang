@@ -1,5 +1,6 @@
 use convert_case::{Case, Casing};
-use proc_macro2::TokenStream;
+use inflector::Inflector;
+use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 
 use super::combinator_tree::{CombinatorTree, CombinatorTreeNodeData};
@@ -11,8 +12,8 @@ pub struct TypeTree {
 pub type TypeTreeNode = Box<TypeTreeNodeData>;
 
 pub enum TypeTreeNodeData {
-    Tuple(Vec<TypeTreeNode>),
-    Choice(String, Vec<TypeTreeNode>),
+    Tuple(String, Vec<(String, TypeTreeNode)>),
+    Choice(String, Vec<(String, TypeTreeNode)>),
     Repetition(TypeTreeNode),
     Option(TypeTreeNode),
     Named(String),
@@ -22,127 +23,95 @@ pub enum TypeTreeNodeData {
 }
 
 impl TypeTree {
-    pub fn tuple_size(&self) -> usize {
-        self.root.tuple_size()
-    }
-
     pub fn to_type_definition_code(&self) -> TokenStream {
         let mut subtypes = Vec::new();
-        let node_type = self.root.collect_type_definition_code(true, &mut subtypes);
+        let node_type = self.root.collect_type_definition_code(&mut subtypes);
+        subtypes.reverse();
         quote!(
             #[allow(unused_imports)]
             use super::*;
-            #node_type
+            pub type N = #node_type;
             #(#subtypes)*
         )
     }
 }
 
 impl TypeTreeNodeData {
-    fn tuple_size(&self) -> usize {
-        if let Self::Tuple(members) = self {
-            members.len()
-        } else {
-            0
-        }
-    }
-
-    fn collect_type_definition_code(
-        &self,
-        is_top_level: bool,
-        accum: &mut Vec<TokenStream>,
-    ) -> TokenStream {
+    fn collect_type_definition_code(&self, accum: &mut Vec<TokenStream>) -> TokenStream {
         match self {
-            Self::Tuple(members) => {
-                let elements = members
+            Self::Tuple(name, members) => {
+                let tags: Vec<Ident> = members
                     .iter()
-                    .map(|e| e.collect_type_definition_code(false, accum));
-                if is_top_level {
-                    quote!( pub struct N(#(pub #elements),*); )
-                } else {
-                    quote!( (#(#elements),*) )
-                }
+                    .map(|(n, _)| format_ident!("{}", n))
+                    .collect();
+                let types: Vec<TokenStream> = members
+                    .iter()
+                    .map(|(_, t)| t.collect_type_definition_code(accum))
+                    .collect();
+                let nested_tags: TokenStream = tags
+                    .iter()
+                    .map(|t| quote!(#t))
+                    .reduce(|accum, tag| quote!((#accum, #tag)))
+                    .unwrap();
+                let nested_types: TokenStream = types
+                    .iter()
+                    .cloned()
+                    .reduce(|accum, tipe| quote!((#accum, #tipe)))
+                    .unwrap();
+                let name = format_ident!("{}", name);
+                accum.push(quote!(
+                    pub struct #name { #(pub #tags: #types),* }
+                    impl #name {
+                        pub fn new(#nested_tags: #nested_types) -> Self {
+                            Self { #(#tags),* }
+                        }
+                    }
+                ));
+                quote!( #name )
             }
             Self::Choice(name, choices) => {
-                let mut tags = vec![];
-                for x in choices.iter().enumerate() {
-                    let (i, c): (usize, &TypeTreeNode) = x;
-                    let tag = format_ident!("_{}", i);
-                    let tipe = c.collect_type_definition_code(false, accum);
-                    tags.push(if c.tuple_size() > 0 {
-                        quote!( #tag(#tipe), )
-                    } else {
-                        quote!( #tag(#tipe), )
-                    })
-                }
+                let tags: Vec<Ident> = choices
+                    .iter()
+                    .map(|(n, _)| format_ident!("{}", n))
+                    .collect();
+                let types: Vec<TokenStream> = choices
+                    .iter()
+                    .map(|(_, t)| t.collect_type_definition_code(accum))
+                    .collect();
                 let name = format_ident!("{}", name);
-                accum.push(quote!( pub enum #name { #(#tags)* } ));
-                if is_top_level {
-                    quote! ( pub type N = #name; )
-                } else {
-                    quote!( #name )
-                }
+                accum.push(quote!( pub enum #name { #(#tags(#types)),* } ));
+                quote!( #name )
             }
             Self::Repetition(child) => {
-                let child = child.collect_type_definition_code(false, accum);
-                if is_top_level {
-                    quote!( pub type N = Vec<#child>; )
-                } else {
-                    quote!( Vec<#child> )
-                }
+                let child = child.collect_type_definition_code(accum);
+                quote!( Vec<#child> )
             }
             Self::Option(child) => {
-                let child = child.collect_type_definition_code(false, accum);
-                if is_top_level {
-                    quote!( pub type N = Option<#child>; )
-                } else {
-                    quote!( Option<#child> )
-                }
+                let child = child.collect_type_definition_code(accum);
+                quote!( Option<#child> )
             }
             Self::Named(name) => {
                 let name = format_ident!("{}", name.to_case(Case::Snake));
-                if is_top_level {
-                    quote!( pub type N = #name::N; )
-                } else {
-                    quote!(#name::N)
-                }
+                quote!(#name::N)
             }
             Self::Length => {
-                if is_top_level {
-                    quote!(
-                        pub type N = usize;
-                    )
-                } else {
-                    quote!(usize)
-                }
+                quote!(usize)
             }
             Self::Char => {
-                if is_top_level {
-                    quote!(
-                        pub type N = char;
-                    )
-                } else {
-                    quote!(char)
-                }
+                quote!(char)
             }
             Self::Unit => {
-                if is_top_level {
-                    quote!(
-                        pub type N = ();
-                    )
-                } else {
-                    quote!(())
-                }
+                quote!(())
             }
         }
     }
 }
 
-fn tt_tuple(children: Vec<TypeTreeNode>) -> TypeTreeNode {
-    Box::new(TypeTreeNodeData::Tuple(children))
+fn tt_tuple(name: String, children: Vec<(String, TypeTreeNode)>) -> TypeTreeNode {
+    Box::new(TypeTreeNodeData::Tuple(name, children))
 }
 
-fn tt_choice(name: String, children: Vec<TypeTreeNode>) -> TypeTreeNode {
+fn tt_choice(name: String, children: Vec<(String, TypeTreeNode)>) -> TypeTreeNode {
     Box::new(TypeTreeNodeData::Choice(name, children))
 }
 
@@ -185,11 +154,18 @@ impl CombinatorTreeNodeData {
             Self::Lookahead { expr, .. } => expr.to_type_tree_node(),
             Self::Choice { choices, name } => tt_choice(
                 name.clone(),
-                choices.iter().map(|c| c.to_type_tree_node()).collect(),
+                choices
+                    .iter()
+                    .map(|(n, c)| (n.clone(), c.to_type_tree_node()))
+                    .collect(),
             ),
-            Self::Sequence { elements } => {
-                tt_tuple(elements.iter().map(|e| e.to_type_tree_node()).collect())
-            }
+            Self::Sequence { elements, name } => tt_tuple(
+                name.clone(),
+                elements
+                    .iter()
+                    .map(|(n, c)| (n.clone(), c.to_type_tree_node()))
+                    .collect(),
+            ),
             Self::Repeat {
                 expr,
                 min: 0,
@@ -202,28 +178,37 @@ impl CombinatorTreeNodeData {
                 ..
             } => tt_repetition(expr.to_type_tree_node()),
             Self::Repeat {
+                name,
                 expr,
-                min: 0,
+                min,
                 separator: Some(separator),
                 ..
-            } => tt_option(tt_tuple(vec![
-                expr.to_type_tree_node(),
-                tt_repetition(tt_tuple(vec![
-                    separator.to_type_tree_node(),
-                    expr.to_type_tree_node(),
-                ])),
-            ])),
-            Self::Repeat {
-                expr,
-                separator: Some(separator),
-                ..
-            } => tt_tuple(vec![
-                expr.to_type_tree_node(),
-                tt_repetition(tt_tuple(vec![
-                    separator.to_type_tree_node(),
-                    expr.to_type_tree_node(),
-                ])),
-            ]),
+            } => {
+                let inner = tt_tuple(
+                    format!("{}", name),
+                    vec![
+                        (
+                            expr.name().map_or_else(
+                                || "expressions".to_owned(),
+                                |n| n.to_case(Case::Snake).to_plural(),
+                            ),
+                            tt_repetition(expr.to_type_tree_node()),
+                        ),
+                        (
+                            separator.name().map_or_else(
+                                || "separators".to_owned(),
+                                |n| n.to_case(Case::Snake).to_plural(),
+                            ),
+                            tt_repetition(separator.to_type_tree_node()),
+                        ),
+                    ],
+                );
+                if *min == 0 {
+                    tt_option(inner)
+                } else {
+                    inner
+                }
+            }
             Self::Reference { name } => tt_named(name.clone()),
             Self::TerminalTrie { .. } => tt_length(),
             Self::CharacterFilter { .. } => tt_char(),

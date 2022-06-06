@@ -34,6 +34,16 @@ impl Grammar {
 
                 pub type ErrorType = Simple<char>;
                 pub type ParserType<T> = BoxedParser<'static, char, T, ErrorType>;
+
+                fn repetition_mapper<E, S>((e, es): (E, Vec<(S, E)>)) -> (Vec<E>, Vec<S>) {
+                    let mut expressions = vec![e];
+                    let mut separators = vec![];
+                    for (s, e) in es.into_iter() {
+                        separators.push(s);
+                        expressions.push(e);
+                    }
+                    (expressions, separators)
+                }
             )
             .to_string(),
             preludes.join("\n\n"),
@@ -161,22 +171,10 @@ impl Production {
                 ));
 
                 let parser_expression = combinator_tree.to_parser_combinator_code();
-                let type_tuple_size = type_tree.tuple_size();
-                let type_mapping = if type_tuple_size > 0 {
-                    let members: Vec<_> = (0..type_tuple_size)
-                        .map(|i| {
-                            let ident = format_ident!("_{}", i);
-                            quote!( #ident )
-                        })
-                        .collect();
-                    quote!( .map(|(#(#members),*)| #module_name::N(#(#members),*)) )
-                } else {
-                    quote!()
-                };
                 let parser_definition = if backlinked.contains(&name) {
-                    quote!( #id.define(#parser_expression #type_mapping); )
+                    quote!( #id.define(#parser_expression); )
                 } else {
-                    quote!( let #id = #parser_expression #type_mapping; )
+                    quote!( let #id = #parser_expression; )
                 };
                 parser_definitions.push(format!(
                     "{}\n{}",
