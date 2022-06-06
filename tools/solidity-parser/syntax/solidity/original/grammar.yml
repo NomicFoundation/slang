@@ -825,14 +825,6 @@
     - reference: NumericLiteral
     - reference: HexStringLiteral
     - reference: BooleanLiteral
-- name: AsciiStringLiteral
-  config: { ignore: true }
-  oneOrMore:
-    reference: AsciiStringLiteral
-- name: UnicodeStringLiteral
-  config: { ignore: true }
-  oneOrMore:
-    reference: UnicodeStringLiteral
 - name: NumericLiteral
   config: { ignore: true }
   sequence:

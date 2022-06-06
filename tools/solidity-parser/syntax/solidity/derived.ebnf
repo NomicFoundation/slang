@@ -22,7 +22,7 @@ SelectingImportDirective = '{' 1…*{ SelectedImport / ',' } '}' 'from' ImportPa
 
 SelectedImport = «Identifier» [ 'as' «Identifier» ] ;
 
-ImportPath = AsciiStringLiteral ;
+ImportPath = «AsciiStringLiteral» ;
 
 UsingDirective = 'using' ( IdentifierPath | '{' 1…*{ IdentifierPath / ',' } '}' ) 'for' ( '*' | TypeName ) [ 'global' ] ';' ;
 
@@ -174,11 +174,7 @@ IndexAccessExpression = PrimaryExpression { '[' [ Expression ] [ ':' [ Expressio
 
 PrimaryExpression = 'payable' ArgumentList | 'type' '(' TypeName ')' | 'new' TypeName | '(' 1…*{ [ Expression ] / ',' } ')' | '[' 1…*{ Expression / ',' } ']' | «Identifier» | Literal | ElementaryTypeWithoutPayable ;
 
-Literal = AsciiStringLiteral | UnicodeStringLiteral | NumericLiteral | «HexStringLiteral» | «BooleanLiteral» ;
-
-AsciiStringLiteral = 1…*{ AsciiStringLiteral } ;
-
-UnicodeStringLiteral = 1…*{ UnicodeStringLiteral } ;
+Literal = «AsciiStringLiteral» | «UnicodeStringLiteral» | NumericLiteral | «HexStringLiteral» | «BooleanLiteral» ;
 
 NumericLiteral = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
 
@@ -320,7 +316,7 @@ YulExpression = YulPath | YulFunctionCall | YulLiteral ;
 
 YulPath = «YulIdentifier» { '.' ( «YulIdentifier» | «YulEVMBuiltinFunctionName» ) } ;
 
-YulLiteral = «YulDecimalNumberLiteral» | «YulHexLiteral» | AsciiStringLiteral | «BooleanLiteral» | «HexStringLiteral» ;
+YulLiteral = «YulDecimalNumberLiteral» | «YulHexLiteral» | «AsciiStringLiteral» | «BooleanLiteral» | «HexStringLiteral» ;
 
 «YulIdentifier» = «RawIdentifier» - «YulReservedWord» ;
 
