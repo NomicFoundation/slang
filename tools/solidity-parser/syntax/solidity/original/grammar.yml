@@ -45,7 +45,7 @@
           choice:
             - terminal: "\n"
             - terminal: "\r"
-- name: sourceUnit
+- name: SourceUnit
   config:
     prelude: |
       use syntax_schema::chumsky::combinators::NomicParser;
@@ -57,64 +57,64 @@
     - reference: IGNORE
     - zeroOrMore:
         choice:
-          - reference: directive
-          - reference: definition
+          - reference: Directive
+          - reference: Definition
     - end: ~
-- name: directive
+- name: Directive
   config: { ignore: true }
   choice:
-    - reference: pragmaDirective
-    - reference: importDirective
-    - reference: usingDirective
-- name: definition
+    - reference: PragmaDirective
+    - reference: ImportDirective
+    - reference: UsingDirective
+- name: Definition
   config: { ignore: true }
   choice:
-    - reference: contractDefinition
-    - reference: interfaceDefinition
-    - reference: libraryDefinition
-    - reference: functionDefinition
-    - reference: constantDefinition
-    - reference: structDefinition
-    - reference: enumDefinition
-    - reference: userDefinedValueTypeDefinition
-    - reference: errorDefinition
-- name: importDirective
+    - reference: ContractDefinition
+    - reference: InterfaceDefinition
+    - reference: LibraryDefinition
+    - reference: FunctionDefinition
+    - reference: ConstantDefinition
+    - reference: StructDefinition
+    - reference: EnumDefinition
+    - reference: UserDefinedValueTypeDefinition
+    - reference: ErrorDefinition
+- name: ImportDirective
   config: { ignore: true }
   sequence:
     - terminal: import
     - choice:
-        - reference: simpleImportDirective
-        - reference: starImportDirective
-        - reference: selectingImportDirective
+        - reference: SimpleImportDirective
+        - reference: StarImportDirective
+        - reference: SelectingImportDirective
     - terminal: ;
-- name: simpleImportDirective
+- name: SimpleImportDirective
   config: { ignore: true }
   sequence:
-    - reference: importPath
+    - reference: ImportPath
     - zeroOrMore:
         sequence:
           - terminal: as
           - reference: Identifier
-- name: starImportDirective
+- name: StarImportDirective
   config: { ignore: true }
   sequence:
     - terminal: "*"
     - terminal: as
     - reference: Identifier
     - terminal: from
-    - reference: importPath
-- name: selectingImportDirective
+    - reference: ImportPath
+- name: SelectingImportDirective
   config: { ignore: true }
   sequence:
     - terminal: "{"
     - oneOrMore:
-        reference: selectedImport
+        reference: SelectedImport
         separator:
           terminal: ","
     - terminal: "}"
     - terminal: from
-    - reference: importPath
-- name: selectedImport
+    - reference: ImportPath
+- name: SelectedImport
   config: { ignore: true }
   sequence:
     - reference: Identifier
@@ -122,10 +122,10 @@
         sequence:
           - terminal: as
           - reference: Identifier
-- name: importPath
+- name: ImportPath
   config: { ignore: true }
-  reference: asciiStringLiteral
-- name: usingDirective
+  reference: AsciiStringLiteral
+- name: UsingDirective
   config: { ignore: true }
   sequence:
     - terminal: using
@@ -141,11 +141,11 @@
     - terminal: for
     - choice:
         - terminal: "*"
-        - reference: typeName
+        - reference: TypeName
     - optional:
         terminal: global
     - terminal: ;
-- name: contractDefinition
+- name: ContractDefinition
   config: { ignore: true }
   sequence:
     - optional:
@@ -153,46 +153,46 @@
     - terminal: contract
     - reference: Identifier
     - optional:
-        reference: inheritanceSpecifierList
+        reference: InheritanceSpecifierList
     - terminal: "{"
     - zeroOrMore:
-        reference: contractBodyElement
+        reference: ContractBodyElement
     - terminal: "}"
-- name: interfaceDefinition
+- name: InterfaceDefinition
   config: { ignore: true }
   sequence:
     - terminal: interface
     - reference: Identifier
     - optional:
-        reference: inheritanceSpecifierList
+        reference: InheritanceSpecifierList
     - terminal: "{"
     - zeroOrMore:
-        reference: contractBodyElement
+        reference: ContractBodyElement
     - terminal: "}"
-- name: inheritanceSpecifierList
+- name: InheritanceSpecifierList
   config: { ignore: true }
   sequence:
     - terminal: is
     - oneOrMore:
-        reference: inheritanceSpecifier
+        reference: InheritanceSpecifier
         separator:
           terminal: ","
-- name: inheritanceSpecifier
+- name: InheritanceSpecifier
   config: { ignore: true }
   sequence:
     - reference: IdentifierPath
     - optional:
-        reference: argumentList
-- name: libraryDefinition
+        reference: ArgumentList
+- name: LibraryDefinition
   config: { ignore: true }
   sequence:
     - terminal: library
     - reference: Identifier
     - terminal: "{"
     - zeroOrMore:
-        reference: contractBodyElement
+        reference: ContractBodyElement
     - terminal: "}"
-- name: functionDefinition
+- name: FunctionDefinition
   config: { ignore: true }
   sequence:
     - terminal: function
@@ -200,34 +200,34 @@
         - reference: Identifier
         - terminal: fallback
         - terminal: receive
-    - reference: parameterList
+    - reference: ParameterList
     - zeroOrMore:
-        reference: functionAttribute
+        reference: FunctionAttribute
     - optional:
         sequence:
           - terminal: returns
-          - reference: nonEmptyParameterList
+          - reference: NonEmptyParameterList
     - choice:
         - terminal: ;
-        - reference: block
-- name: functionAttribute
+        - reference: Block
+- name: FunctionAttribute
   config: { ignore: true }
   choice:
-    - reference: visibilitySpecifier
-    - reference: stateMutabilitySpecifier
-    - reference: modifierInvocation
+    - reference: VisibilitySpecifier
+    - reference: StateMutabilitySpecifier
+    - reference: ModifierInvocation
     - terminal: virtual
-    - reference: overrideSpecifier
-- name: constantDefinition
+    - reference: OverrideSpecifier
+- name: ConstantDefinition
   config: { ignore: true }
   sequence:
-    - reference: typeName
+    - reference: TypeName
     - terminal: constant
     - reference: Identifier
     - terminal: "="
-    - reference: expression
+    - reference: Expression
     - terminal: ;
-- name: structDefinition
+- name: StructDefinition
   config: { ignore: true }
   sequence:
     - terminal: struct
@@ -235,11 +235,11 @@
     - terminal: "{"
     - oneOrMore:
         sequence:
-          - reference: typeName
+          - reference: TypeName
           - reference: Identifier
           - terminal: ;
     - terminal: "}"
-- name: enumDefinition
+- name: EnumDefinition
   config: { ignore: true }
   sequence:
     - terminal: enum
@@ -250,239 +250,239 @@
         separator:
           terminal: ","
     - terminal: "}"
-- name: userDefinedValueTypeDefinition
+- name: UserDefinedValueTypeDefinition
   config: { ignore: true }
   sequence:
     - terminal: type
     - reference: Identifier
     - terminal: is
-    - reference: elementaryTypeWithPayable
+    - reference: ElementaryTypeWithPayable
     - terminal: ;
-- name: eventDefinition
+- name: EventDefinition
   config: { ignore: true }
   sequence:
     - terminal: event
     - reference: Identifier
     - terminal: (
     - zeroOrMore:
-        reference: eventParameter
+        reference: EventParameter
         separator:
           terminal: ","
     - terminal: )
     - optional:
         terminal: anonymous
     - terminal: ;
-- name: eventParameter
+- name: EventParameter
   config: { ignore: true }
   sequence:
-    - reference: typeName
+    - reference: TypeName
     - optional:
         terminal: indexed
     - optional:
         reference: Identifier
-- name: errorDefinition
+- name: ErrorDefinition
   config: { ignore: true }
   sequence:
     - terminal: error
     - reference: Identifier
     - terminal: (
     - zeroOrMore:
-        reference: errorParameter
+        reference: ErrorParameter
         separator:
           terminal: ","
     - terminal: )
     - terminal: ;
-- name: errorParameter
+- name: ErrorParameter
   config: { ignore: true }
   sequence:
-    - reference: typeName
+    - reference: TypeName
     - optional:
         reference: Identifier
-- name: contractBodyElement
+- name: ContractBodyElement
   config: { ignore: true }
   choice:
-    - reference: usingDirective
-    - reference: constructorDefinition
-    - reference: functionDefinition
-    - reference: fallbackFunctionDefinition
-    - reference: receiveFunctionDefinition
-    - reference: modifierDefinition
-    - reference: structDefinition
-    - reference: enumDefinition
-    - reference: userDefinedValueTypeDefinition
-    - reference: eventDefinition
-    - reference: errorDefinition
-    - reference: stateVariableDeclaration
-- name: constructorDefinition
+    - reference: UsingDirective
+    - reference: ConstructorDefinition
+    - reference: FunctionDefinition
+    - reference: FallbackFunctionDefinition
+    - reference: ReceiveFunctionDefinition
+    - reference: ModifierDefinition
+    - reference: StructDefinition
+    - reference: EnumDefinition
+    - reference: UserDefinedValueTypeDefinition
+    - reference: EventDefinition
+    - reference: ErrorDefinition
+    - reference: StateVariableDeclaration
+- name: ConstructorDefinition
   config: { ignore: true }
   sequence:
     - terminal: constructor
-    - reference: parameterList
+    - reference: ParameterList
     - zeroOrMore:
-        reference: constructorAttribute
-    - reference: block
-- name: constructorAttribute
+        reference: ConstructorAttribute
+    - reference: Block
+- name: ConstructorAttribute
   config: { ignore: true }
   choice:
-    - reference: modifierInvocation
+    - reference: ModifierInvocation
     - terminal: payable
     - terminal: internal
     - terminal: public
-- name: fallbackFunctionDefinition
+- name: FallbackFunctionDefinition
   config: { ignore: true }
   sequence:
     - terminal: fallback
-    - reference: parameterList
+    - reference: ParameterList
     - zeroOrMore:
-        reference: fallbackFunctionAttribute
+        reference: FallbackFunctionAttribute
     - optional:
         sequence:
           - terminal: returns
-          - reference: nonEmptyParameterList
+          - reference: NonEmptyParameterList
     - choice:
         - terminal: ;
-        - reference: block
-- name: fallbackFunctionAttribute
+        - reference: Block
+- name: FallbackFunctionAttribute
   config: { ignore: true }
   choice:
     - terminal: external
-    - reference: stateMutabilitySpecifier
-    - reference: modifierInvocation
+    - reference: StateMutabilitySpecifier
+    - reference: ModifierInvocation
     - terminal: virtual
-    - reference: overrideSpecifier
-- name: receiveFunctionDefinition
+    - reference: OverrideSpecifier
+- name: ReceiveFunctionDefinition
   config: { ignore: true }
   sequence:
     - terminal: receive
     - terminal: (
     - terminal: )
     - zeroOrMore:
-        reference: receiveFunctionAttribute
+        reference: ReceiveFunctionAttribute
     - choice:
         - terminal: ;
-        - reference: block
-- name: receiveFunctionAttribute
+        - reference: Block
+- name: ReceiveFunctionAttribute
   config: { ignore: true }
   choice:
     - terminal: external
     - terminal: payable
-    - reference: modifierInvocation
+    - reference: ModifierInvocation
     - terminal: virtual
-    - reference: overrideSpecifier
-- name: modifierDefinition
+    - reference: OverrideSpecifier
+- name: ModifierDefinition
   config: { ignore: true }
   sequence:
     - terminal: modifier
     - reference: Identifier
     - optional:
-        reference: parameterList
+        reference: ParameterList
     - zeroOrMore:
-        reference: methodAttribute
+        reference: MethodAttribute
     - choice:
         - terminal: ;
-        - reference: block
-- name: methodAttribute
+        - reference: Block
+- name: MethodAttribute
   config: { ignore: true }
   choice:
     - terminal: virtual
-    - reference: overrideSpecifier
-- name: stateVariableDeclaration
+    - reference: OverrideSpecifier
+- name: StateVariableDeclaration
   config: { ignore: true }
   sequence:
-    - reference: typeName
+    - reference: TypeName
     - zeroOrMore:
-        reference: stateVariableAttribute
+        reference: StateVariableAttribute
     - reference: Identifier
     - optional:
         sequence:
           - terminal: "="
-          - reference: expression
+          - reference: Expression
     - terminal: ;
-- name: stateVariableAttribute
+- name: StateVariableAttribute
   config: { ignore: true }
   choice:
     - terminal: public
     - terminal: private
     - terminal: internal
     - terminal: constant
-    - reference: overrideSpecifier
+    - reference: OverrideSpecifier
     - terminal: immutable
-- name: argumentList
+- name: ArgumentList
   config: { ignore: true }
   sequence:
     - terminal: (
     - optional:
         choice:
-          - reference: positionalArgumentList
-          - reference: namedArgumentList
+          - reference: PositionalArgumentList
+          - reference: NamedArgumentList
     - terminal: )
-- name: positionalArgumentList
+- name: PositionalArgumentList
   config: { ignore: true }
   oneOrMore:
-    reference: expression
+    reference: Expression
     separator:
       terminal: ","
-- name: namedArgumentList
+- name: NamedArgumentList
   config: { ignore: true }
   sequence:
     - terminal: "{"
     - zeroOrMore:
-        reference: namedArgument
+        reference: NamedArgument
         separator:
           terminal: ","
     - terminal: "}"
-- name: namedArgument
+- name: NamedArgument
   config: { ignore: true }
   sequence:
     - reference: Identifier
     - terminal: ":"
-    - reference: expression
-- name: modifierInvocation
+    - reference: Expression
+- name: ModifierInvocation
   config: { map: to_str }
   sequence:
     - reference: IdentifierPath
     - optional:
-        reference: argumentList
-- name: parameterList
+        reference: ArgumentList
+- name: ParameterList
   config: { ignore: true }
   sequence:
     - terminal: (
     - zeroOrMore:
-        reference: parameterDeclaration
+        reference: ParameterDeclaration
         separator:
           terminal: ","
     - terminal: )
-- name: nonEmptyParameterList
+- name: NonEmptyParameterList
   config: { ignore: true }
   sequence:
     - terminal: (
     - oneOrMore:
-        reference: parameterDeclaration
+        reference: ParameterDeclaration
         separator:
           terminal: ","
     - terminal: )
-- name: parameterDeclaration
+- name: ParameterDeclaration
   config: { ignore: true }
   sequence:
-    - reference: typeName
+    - reference: TypeName
     - optional:
-        reference: dataLocation
+        reference: DataLocation
     - optional:
         reference: Identifier
-- name: visibilitySpecifier
+- name: VisibilitySpecifier
   config: { nomap: true }
   choice:
     - terminal: internal
     - terminal: external
     - terminal: private
     - terminal: public
-- name: stateMutabilitySpecifier
+- name: StateMutabilitySpecifier
   config: { nomap: true }
   choice:
     - terminal: pure
     - terminal: view
     - terminal: payable
-- name: overrideSpecifier
+- name: OverrideSpecifier
   config: { map: to_str }
   sequence:
     - terminal: override
@@ -502,21 +502,21 @@
     reference: Identifier
     separator:
       terminal: "."
-- name: typeName
+- name: TypeName
   config: { ignore: true }
   sequence:
     - choice:
-        - reference: elementaryTypeWithPayable
-        - reference: functionType
-        - reference: mappingType
+        - reference: ElementaryTypeWithPayable
+        - reference: FunctionType
+        - reference: MappingType
         - reference: IdentifierPath
     - zeroOrMore:
         sequence:
           - terminal: "["
           - optional:
-              reference: expression
+              reference: Expression
           - terminal: "]"
-- name: elementaryTypeWithPayable
+- name: ElementaryTypeWithPayable
   config: { nomap: true }
   choice:
     - sequence:
@@ -524,13 +524,13 @@
         - optional:
             terminal: payable
       config: { map: to_str }
-    - reference: elementaryType
-- name: elementaryTypeWithoutPayable
+    - reference: ElementaryType
+- name: ElementaryTypeWithoutPayable
   config: { nomap: true }
   choice:
     - terminal: address
-    - reference: elementaryType
-- name: elementaryType
+    - reference: ElementaryType
+- name: ElementaryType
   config: { nomap: true }
   choice:
     - terminal: bool
@@ -541,46 +541,46 @@
     - reference: FixedBytesType
     - reference: FixedType
     - reference: UfixedType
-- name: functionType
+- name: FunctionType
   config: { ignore: true }
   sequence:
     - terminal: function
-    - reference: parameterList
+    - reference: ParameterList
     - zeroOrMore:
         choice:
-          - reference: visibilitySpecifier
-          - reference: stateMutabilitySpecifier
+          - reference: VisibilitySpecifier
+          - reference: StateMutabilitySpecifier
     - optional:
         sequence:
           - terminal: returns
-          - reference: nonEmptyParameterList
-- name: mappingType
+          - reference: NonEmptyParameterList
+- name: MappingType
   config: { ignore: true }
   sequence:
     - terminal: mapping
     - terminal: (
     - choice:
-        - reference: elementaryTypeWithoutPayable
+        - reference: ElementaryTypeWithoutPayable
         - reference: IdentifierPath
     - terminal: "=>"
-    - reference: typeName
+    - reference: TypeName
     - terminal: )
-- name: dataLocation
+- name: DataLocation
   config: { ignore: true }
   choice:
     - terminal: memory
     - terminal: storage
     - terminal: calldata
-- name: expression
+- name: Expression
   config: { ignore: true }
-  reference: assignmentExpression
-- name: assignmentExpression
+  reference: AssignmentExpression
+- name: AssignmentExpression
   config: { ignore: true }
   sequence:
-    - reference: conditionalExpression
-    - reference: assignmentOperator
-    - reference: expression
-- name: assignmentOperator
+    - reference: ConditionalExpression
+    - reference: AssignmentOperator
+    - reference: Expression
+- name: AssignmentOperator
   config: { ignore: true }
   choice:
     - terminal: "="
@@ -595,145 +595,145 @@
     - terminal: "*="
     - terminal: /=
     - terminal: "%="
-- name: conditionalExpression
+- name: ConditionalExpression
   config: { ignore: true }
   sequence:
-    - reference: orExpression
+    - reference: OrExpression
     - terminal: "?"
-    - reference: expression
+    - reference: Expression
     - terminal: ":"
-    - reference: expression
-- name: orExpression
+    - reference: Expression
+- name: OrExpression
   config: { ignore: true }
   sequence:
-    - reference: andExpression
+    - reference: AndExpression
     - zeroOrMore:
         sequence:
           - terminal: "||"
-          - reference: andExpression
-- name: andExpression
+          - reference: AndExpression
+- name: AndExpression
   config: { ignore: true }
   sequence:
-    - reference: equalityComparisonExpression
+    - reference: EqualityComparisonExpression
     - zeroOrMore:
         sequence:
           - terminal: "&&"
-          - reference: equalityComparisonExpression
-- name: equalityComparisonExpression
+          - reference: EqualityComparisonExpression
+- name: EqualityComparisonExpression
   config: { ignore: true }
   sequence:
-    - reference: orderComparisonExpression
+    - reference: OrderComparisonExpression
     - zeroOrMore:
         sequence:
-          - reference: equalityComparisonOperator
-          - reference: orderComparisonExpression
-- name: equalityComparisonOperator
+          - reference: EqualityComparisonOperator
+          - reference: OrderComparisonExpression
+- name: EqualityComparisonOperator
   config: { ignore: true }
   choice:
     - terminal: "=="
     - terminal: "!="
-- name: orderComparisonExpression
+- name: OrderComparisonExpression
   config: { ignore: true }
   sequence:
-    - reference: bitOrExpression
+    - reference: BitOrExpression
     - zeroOrMore:
         sequence:
-          - reference: orderComparisonOperator
-          - reference: bitOrExpression
-- name: orderComparisonOperator
+          - reference: OrderComparisonOperator
+          - reference: BitOrExpression
+- name: OrderComparisonOperator
   config: { ignore: true }
   choice:
     - terminal: "<"
     - terminal: ">"
     - terminal: "<="
     - terminal: ">="
-- name: bitOrExpression
+- name: BitOrExpression
   config: { ignore: true }
   sequence:
-    - reference: bitXorExpression
+    - reference: BitXOrExpression
     - zeroOrMore:
         sequence:
           - terminal: "|"
-          - reference: bitXorExpression
-- name: bitXorExpression
+          - reference: BitXOrExpression
+- name: BitXOrExpression
   config: { ignore: true }
   sequence:
-    - reference: bitAndExpression
+    - reference: BitAndExpression
     - zeroOrMore:
         sequence:
           - terminal: ^
-          - reference: bitAndExpression
-- name: bitAndExpression
+          - reference: BitAndExpression
+- name: BitAndExpression
   config: { ignore: true }
   sequence:
-    - reference: shiftExpression
+    - reference: ShiftExpression
     - zeroOrMore:
         sequence:
           - terminal: "&"
-          - reference: shiftExpression
-- name: shiftExpression
+          - reference: ShiftExpression
+- name: ShiftExpression
   config: { ignore: true }
   sequence:
-    - reference: addSubExpression
+    - reference: AddSubExpression
     - zeroOrMore:
         sequence:
-          - reference: shiftOperator
-          - reference: addSubExpression
-- name: shiftOperator
+          - reference: ShiftOperator
+          - reference: AddSubExpression
+- name: ShiftOperator
   config: { ignore: true }
   choice:
     - terminal: "<<"
     - terminal: ">>"
     - terminal: ">>>"
-- name: addSubExpression
+- name: AddSubExpression
   config: { ignore: true }
   sequence:
-    - reference: mulDivModExpression
+    - reference: MulDivModExpression
     - zeroOrMore:
         sequence:
-          - reference: addSubOperator
-          - reference: mulDivModExpression
-- name: addSubOperator
+          - reference: AddSubOperator
+          - reference: MulDivModExpression
+- name: AddSubOperator
   config: { ignore: true }
   choice:
     - terminal: +
     - terminal: "-"
-- name: mulDivModExpression
+- name: MulDivModExpression
   config: { ignore: true }
   sequence:
-    - reference: expExpression
+    - reference: ExpExpression
     - zeroOrMore:
         sequence:
-          - reference: mulDivModOperator
-          - reference: expExpression
-- name: mulDivModOperator
+          - reference: MulDivModOperator
+          - reference: ExpExpression
+- name: MulDivModOperator
   config: { ignore: true }
   choice:
     - terminal: "*"
     - terminal: /
     - terminal: "%"
-- name: expExpression
+- name: ExpExpression
   config: { ignore: true }
   sequence:
-    - reference: unarySuffixExpression
+    - reference: UnarySuffixExpression
     - terminal: "**"
-    - reference: expression
-- name: unarySuffixExpression
+    - reference: Expression
+- name: UnarySuffixExpression
   config: { ignore: true }
   sequence:
-    - reference: unaryPrefixExpression
-    - reference: unarySuffixOperator
-- name: unarySuffixOperator
+    - reference: UnaryPrefixExpression
+    - reference: UnarySuffixOperator
+- name: UnarySuffixOperator
   config: { ignore: true }
   choice:
     - terminal: ++
     - terminal: "--"
-- name: unaryPrefixExpression
+- name: UnaryPrefixExpression
   config: { ignore: true }
   sequence:
-    - reference: unaryPrefixOperator
-    - reference: functionCallExpression
-- name: unaryPrefixOperator
+    - reference: UnaryPrefixOperator
+    - reference: FunctionCallExpression
+- name: UnaryPrefixOperator
   config: { ignore: true }
   choice:
     - terminal: ++
@@ -742,98 +742,98 @@
     - terminal: "~"
     - terminal: delete
     - terminal: "-"
-- name: functionCallExpression
+- name: FunctionCallExpression
   config: { ignore: true }
   sequence:
-    - reference: functionCallOptionsExpression
+    - reference: FunctionCallOptionsExpression
     - zeroOrMore:
-        reference: argumentList
-- name: functionCallOptionsExpression
+        reference: ArgumentList
+- name: FunctionCallOptionsExpression
   config: { ignore: true }
   sequence:
-    - reference: memberAccessExpression
+    - reference: MemberAccessExpression
     - zeroOrMore:
         sequence:
           - terminal: "{"
           - oneOrMore:
-              reference: namedArgument
+              reference: NamedArgument
               separator:
                 terminal: ","
           - terminal: "}"
-- name: memberAccessExpression
+- name: MemberAccessExpression
   config: { ignore: true }
   sequence:
-    - reference: indexAccessExpression
+    - reference: IndexAccessExpression
     - zeroOrMore:
         sequence:
           - terminal: "."
           - choice:
               - reference: Identifier
               - terminal: address
-- name: indexAccessExpression
+- name: IndexAccessExpression
   config: { ignore: true }
   sequence:
-    - reference: primaryExpression
+    - reference: PrimaryExpression
     - zeroOrMore:
         sequence:
           - terminal: "["
           - optional:
-              reference: expression
+              reference: Expression
           - optional:
               sequence:
                 - terminal: ":"
                 - optional:
-                    reference: expression
+                    reference: Expression
           - terminal: "]"
-- name: primaryExpression
+- name: PrimaryExpression
   config: { ignore: true }
   choice:
     - sequence:
         - terminal: payable
-        - reference: argumentList
+        - reference: ArgumentList
     - sequence:
         - terminal: type
         - terminal: (
-        - reference: typeName
+        - reference: TypeName
         - terminal: )
     - sequence:
         - terminal: new
-        - reference: typeName
+        - reference: TypeName
     - sequence:
         - terminal: (
         - oneOrMore:
             optional:
-              reference: expression
+              reference: Expression
             separator:
               terminal: ","
         - terminal: )
     - sequence:
         - terminal: "["
         - oneOrMore:
-            reference: expression
+            reference: Expression
             separator:
               terminal: ","
         - terminal: "]"
     - reference: Identifier
-    - reference: literal
-    - reference: elementaryTypeWithoutPayable
-- name: literal
+    - reference: Literal
+    - reference: ElementaryTypeWithoutPayable
+- name: Literal
   config: { ignore: true }
   choice:
-    - reference: asciiStringLiteral
-    - reference: unicodeStringLiteral
-    - reference: numericLiteral
+    - reference: AsciiStringLiteral
+    - reference: UnicodeStringLiteral
+    - reference: NumericLiteral
     - reference: HexStringLiteral
     - reference: BooleanLiteral
-- name: asciiStringLiteral
+- name: AsciiStringLiteral
   config: { ignore: true }
   oneOrMore:
     reference: AsciiStringLiteral
-- name: unicodeStringLiteral
+- name: UnicodeStringLiteral
   config: { ignore: true }
   oneOrMore:
     reference: UnicodeStringLiteral
-- name: numericLiteral
+- name: NumericLiteral
   config: { ignore: true }
   sequence:
     - choice:
@@ -841,110 +841,110 @@
         - reference: HexNumber
     - optional:
         reference: NumberUnit
-- name: block
+- name: Block
   config: { ignore: true }
   sequence:
     - terminal: "{"
     - zeroOrMore:
         choice:
-          - reference: statement
-          - reference: uncheckedBlock
+          - reference: Statement
+          - reference: UncheckedBlock
     - terminal: "}"
-- name: uncheckedBlock
+- name: UncheckedBlock
   config: { ignore: true }
   sequence:
     - terminal: unchecked
-    - reference: block
-- name: statement
+    - reference: Block
+- name: Statement
   config: { ignore: true }
   choice:
-    - reference: block
-    - reference: simpleStatement
-    - reference: ifStatement
-    - reference: forStatement
-    - reference: whileStatement
-    - reference: doWhileStatement
-    - reference: continueStatement
-    - reference: breakStatement
-    - reference: tryStatement
-    - reference: returnStatement
-    - reference: emitStatement
-    - reference: revertStatement
-    - reference: assemblyStatement
-- name: simpleStatement
+    - reference: Block
+    - reference: SimpleStatement
+    - reference: IfStatement
+    - reference: ForStatement
+    - reference: WhileStatement
+    - reference: DoWhileStatement
+    - reference: ContinueStatement
+    - reference: BreakStatement
+    - reference: TryStatement
+    - reference: ReturnStatement
+    - reference: EmitStatement
+    - reference: RevertStatement
+    - reference: AssemblyStatement
+- name: SimpleStatement
   config: { ignore: true }
   choice:
-    - reference: variableDeclarationStatement
-    - reference: expressionStatement
-- name: ifStatement
+    - reference: VariableDeclarationStatement
+    - reference: ExpressionStatement
+- name: IfStatement
   config: { ignore: true }
   sequence:
     - terminal: if
     - terminal: (
-    - reference: expression
+    - reference: Expression
     - terminal: )
-    - reference: statement
+    - reference: Statement
     - optional:
         sequence:
           - terminal: else
-          - reference: statement
-- name: forStatement
+          - reference: Statement
+- name: ForStatement
   config: { ignore: true }
   sequence:
     - terminal: for
     - terminal: (
     - choice:
-        - reference: simpleStatement
+        - reference: SimpleStatement
         - terminal: ;
     - choice:
-        - reference: expressionStatement
+        - reference: ExpressionStatement
         - terminal: ;
     - optional:
-        reference: expression
+        reference: Expression
     - terminal: )
-    - reference: statement
-- name: whileStatement
+    - reference: Statement
+- name: WhileStatement
   config: { ignore: true }
   sequence:
     - terminal: while
     - terminal: (
-    - reference: expression
+    - reference: Expression
     - terminal: )
-    - reference: statement
-- name: doWhileStatement
+    - reference: Statement
+- name: DoWhileStatement
   config: { ignore: true }
   sequence:
     - terminal: do
-    - reference: statement
+    - reference: Statement
     - terminal: while
     - terminal: (
-    - reference: expression
+    - reference: Expression
     - terminal: )
     - terminal: ;
-- name: continueStatement
+- name: ContinueStatement
   config: { ignore: true }
   sequence:
     - terminal: continue
     - terminal: ;
-- name: breakStatement
+- name: BreakStatement
   config: { ignore: true }
   sequence:
     - terminal: break
     - terminal: ;
-- name: tryStatement
+- name: TryStatement
   config: { ignore: true }
   sequence:
     - terminal: try
-    - reference: expression
+    - reference: Expression
     - optional:
         sequence:
           - terminal: returns
-          - reference: nonEmptyParameterList
-    - reference: block
-    - reference: catchClause
+          - reference: NonEmptyParameterList
+    - reference: Block
+    - reference: CatchClause
     - zeroOrMore:
-        reference: catchClause
-- name: catchClause
+        reference: CatchClause
+- name: CatchClause
   config: { ignore: true }
   sequence:
     - terminal: catch
@@ -952,85 +952,85 @@
         sequence:
           - optional:
               reference: Identifier
-          - reference: nonEmptyParameterList
-    - reference: block
-- name: returnStatement
+          - reference: NonEmptyParameterList
+    - reference: Block
+- name: ReturnStatement
   config: { ignore: true }
   sequence:
     - terminal: return
     - optional:
-        reference: expression
+        reference: Expression
     - terminal: ;
-- name: emitStatement
+- name: EmitStatement
   config: { ignore: true }
   sequence:
     - terminal: emit
-    - reference: expression
-    - reference: argumentList
+    - reference: Expression
+    - reference: ArgumentList
     - terminal: ;
-- name: revertStatement
+- name: RevertStatement
   config: { ignore: true }
   sequence:
     - terminal: revert
-    - reference: expression
-    - reference: argumentList
+    - reference: Expression
+    - reference: ArgumentList
     - terminal: ;
-- name: variableDeclarationList
+- name: VariableDeclarationList
   config: { ignore: true }
   oneOrMore:
-    reference: variableDeclaration
+    reference: VariableDeclaration
     separator:
       terminal: ","
-- name: variableDeclarationTuple
+- name: VariableDeclarationTuple
   config: { ignore: true }
   sequence:
     - terminal: (
     - zeroOrMore:
         terminal: ","
-    - reference: variableDeclaration
+    - reference: VariableDeclaration
     - zeroOrMore:
         sequence:
           - terminal: ","
           - optional:
-              reference: variableDeclaration
+              reference: VariableDeclaration
     - terminal: )
-- name: variableDeclarationStatement
+- name: VariableDeclarationStatement
   config: { ignore: true }
   sequence:
     - choice:
         - sequence:
-            - reference: variableDeclaration
+            - reference: VariableDeclaration
             - optional:
                 sequence:
                   - terminal: "="
-                  - reference: expression
+                  - reference: Expression
         - sequence:
-            - reference: variableDeclarationTuple
+            - reference: VariableDeclarationTuple
             - terminal: "="
-            - reference: expression
+            - reference: Expression
     - terminal: ;
-- name: variableDeclaration
+- name: VariableDeclaration
   config: { ignore: true }
   sequence:
-    - reference: typeName
+    - reference: TypeName
     - optional:
-        reference: dataLocation
+        reference: DataLocation
     - reference: Identifier
-- name: expressionStatement
+- name: ExpressionStatement
   config: { ignore: true }
   sequence:
-    - reference: expression
+    - reference: Expression
     - terminal: ;
-- name: assemblyStatement
+- name: AssemblyStatement
   config: { ignore: true }
   sequence:
     - terminal: assembly
     - optional:
         terminal: '"evmasm"'
     - optional:
-        reference: assemblyFlags
-    - reference: yulBlock
-- name: assemblyFlags
+        reference: AssemblyFlags
+    - reference: YulBlock
+- name: AssemblyFlags
   config: { ignore: true }
   sequence:
     - terminal: (
@@ -1157,7 +1157,7 @@
     - terminal: typedef
     - terminal: typeof
     - terminal: var
-- name: pragmaDirective
+- name: PragmaDirective
   config: { ignore: true }
   isToken: true
   sequence:
@@ -1535,28 +1535,28 @@
         min: 4
         max: 4
         reference: HexCharacter
-- name: yulBlock
+- name: YulBlock
   config: { ignore: true }
   sequence:
     - terminal: "{"
     - zeroOrMore:
-        reference: yulStatement
+        reference: YulStatement
     - terminal: "}"
-- name: yulStatement
+- name: YulStatement
   config: { ignore: true }
   choice:
-    - reference: yulBlock
-    - reference: yulVariableDeclaration
-    - reference: yulFunctionDefinition
-    - reference: yulAssignment
-    - reference: yulFunctionCall
-    - reference: yulIfStatement
-    - reference: yulForStatement
-    - reference: yulSwitchStatement
-    - reference: yulLeaveStatement
-    - reference: yulBreakStatement
-    - reference: yulContinueStatement
-- name: yulVariableDeclaration
+    - reference: YulBlock
+    - reference: YulVariableDeclaration
+    - reference: YulFunctionDefinition
+    - reference: YulAssignment
+    - reference: YulFunctionCall
+    - reference: YulIfStatement
+    - reference: YulForStatement
+    - reference: YulSwitchStatement
+    - reference: YulLeaveStatement
+    - reference: YulBreakStatement
+    - reference: YulContinueStatement
+- name: YulVariableDeclaration
   config: { ignore: true }
   sequence:
     - terminal: let
@@ -1565,7 +1565,7 @@
         choice:
           - sequence:
               - terminal: ":="
-              - reference: yulExpression
+              - reference: YulExpression
           - sequence:
               - optional:
                   sequence:
@@ -1574,8 +1574,8 @@
               - optional:
                   sequence:
                     - terminal: ":="
-                    - reference: yulFunctionCall
-- name: yulFunctionDefinition
+                    - reference: YulFunctionCall
+- name: YulFunctionDefinition
   config: { ignore: true }
   sequence:
     - terminal: function
@@ -1593,23 +1593,23 @@
               reference: YulIdentifier
               separator:
                 terminal: ","
-    - reference: yulBlock
-- name: yulAssignment
+    - reference: YulBlock
+- name: YulAssignment
   config: { ignore: true }
   sequence:
-    - reference: yulPath
+    - reference: YulPath
     - choice:
         - sequence:
             - terminal: ":="
-            - reference: yulExpression
+            - reference: YulExpression
         - sequence:
             - oneOrMore:
                 sequence:
                   - terminal: ","
-                  - reference: yulPath
+                  - reference: YulPath
             - terminal: ":="
-            - reference: yulFunctionCall
-- name: yulFunctionCall
+            - reference: YulFunctionCall
+- name: YulFunctionCall
   config: { ignore: true }
   sequence:
     - choice:
@@ -1617,59 +1617,59 @@
         - reference: YulEVMBuiltinFunctionName
     - terminal: (
     - zeroOrMore:
-        reference: yulExpression
+        reference: YulExpression
         separator:
           terminal: ","
     - terminal: )
-- name: yulIfStatement
+- name: YulIfStatement
   config: { ignore: true }
   sequence:
     - terminal: if
-    - reference: yulExpression
-    - reference: yulBlock
-- name: yulLeaveStatement
+    - reference: YulExpression
+    - reference: YulBlock
+- name: YulLeaveStatement
   config: { ignore: true }
   terminal: leave
-- name: yulBreakStatement
+- name: YulBreakStatement
   config: { ignore: true }
   terminal: break
-- name: yulContinueStatement
+- name: YulContinueStatement
   config: { ignore: true }
   terminal: continue
-- name: yulForStatement
+- name: YulForStatement
   config: { ignore: true }
   sequence:
     - terminal: for
-    - reference: yulBlock
-    - reference: yulExpression
-    - reference: yulBlock
-    - reference: yulBlock
-- name: yulSwitchStatement
+    - reference: YulBlock
+    - reference: YulExpression
+    - reference: YulBlock
+    - reference: YulBlock
+- name: YulSwitchStatement
   config: { ignore: true }
   sequence:
     - terminal: switch
-    - reference: yulExpression
+    - reference: YulExpression
     - choice:
         - sequence:
             - oneOrMore:
                 sequence:
                   - terminal: case
-                  - reference: yulLiteral
-                  - reference: yulBlock
+                  - reference: YulLiteral
+                  - reference: YulBlock
             - optional:
                 sequence:
                   - terminal: default
-                  - reference: yulBlock
+                  - reference: YulBlock
         - sequence:
             - terminal: default
-            - reference: yulBlock
-- name: yulExpression
+            - reference: YulBlock
+- name: YulExpression
   config: { ignore: true }
   choice:
-    - reference: yulPath
-    - reference: yulFunctionCall
-    - reference: yulLiteral
-- name: yulPath
+    - reference: YulPath
+    - reference: YulFunctionCall
+    - reference: YulLiteral
+- name: YulPath
   config: { ignore: true }
   sequence:
     - reference: YulIdentifier
@@ -1679,12 +1679,12 @@
           - choice:
               - reference: YulIdentifier
               - reference: YulEVMBuiltinFunctionName
-- name: yulLiteral
+- name: YulLiteral
   config: { ignore: true }
   choice:
     - reference: YulDecimalNumberLiteral
     - reference: YulHexLiteral
-    - reference: asciiStringLiteral
+    - reference: AsciiStringLiteral
     - reference: BooleanLiteral
     - reference: HexStringLiteral
 - name: YulIdentifier
@@ -1787,7 +1787,7 @@
     - terminal: chainid
     - terminal: origin
     - terminal: gasprice
-    - terminal: blockhash
+    - terminal: Blockhash
     - terminal: coinbase
     - terminal: timestamp
     - terminal: number
