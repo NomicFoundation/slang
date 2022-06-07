@@ -3,12 +3,8 @@
     // Please keep this list in-sync with "${workspaceRoot}/.devcontainer/devcontainer.json"
     //
     // Language Support
-<<<<<<< HEAD
     "igochkov.vscode-ebnf",
     "rust-lang.rust-analyzer",
-=======
-    "matklad.rust-analyzer",
->>>>>>> 09e2ee9 (First pass generating v2)
     "NomicFoundation.hardhat-solidity",
     "redhat.vscode-yaml",
     "tamasfe.even-better-toml",
