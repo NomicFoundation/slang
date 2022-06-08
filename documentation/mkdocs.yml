@@ -7,6 +7,7 @@ edit_uri: blob/main/documentation/docs/
 
 nav:
   - Home: index.md
+  - Grammar: grammar.md
   - Language Reference:
       - 1. File Structure:
           - 1.1. License Specifier: reference/01-file-structure/01-license-specifier/index.md
@@ -66,7 +67,6 @@ theme:
     - navigation.instant
     - navigation.sections
     - navigation.tabs
-    - navigation.tracking
     - navigation.top
     - search.highlight
     - search.suggest
@@ -89,3 +89,6 @@ theme:
 
 extra_css:
   - ./assets/stylesheets/overrides.css
+
+extra_javascript:
+  - ./assets/scripts/overrides.js

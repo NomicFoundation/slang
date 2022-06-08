@@ -298,6 +298,20 @@ pub struct Expression {
 }
 
 impl Expression {
+    pub fn precedence(&self) -> u8 {
+        match self.ebnf {
+            EBNF::End
+            | EBNF::Repeat(..)
+            | EBNF::Terminal(..)
+            | EBNF::Reference(..)
+            | EBNF::Range { .. } => 0,
+            EBNF::Not(..) => 1,
+            EBNF::Difference { .. } => 2,
+            EBNF::Sequence(..) => 3,
+            EBNF::Choice(..) => 4,
+        }
+    }
+
     fn serialize_in_map<S: Serializer>(&self, state: &mut S::SerializeMap) -> Result<(), S::Error> {
         match &self.ebnf {
             // Ugly - serde has no way of emitting a map entry with

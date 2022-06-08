@@ -20,7 +20,8 @@
 
 :root {
   --md-primary-fg-color: #0056b1;
-  --md-accent-fg-color: #003874;
+  --md-accent-fg-color: #003f83;
+  --md-code-hl-color: #4287ff26;
 
   --md-default-fg-color--light: hsl(from var(--md-default-fg-color) h s calc(l + 5%));
   --md-default-fg-color--lighter: hsl(from var(--md-default-fg-color) h s calc(l + 10%));
@@ -43,4 +44,12 @@ label[class="md-nav__link"] {
 a[class="md-nav__link"] {
   margin-top: 0.5em;
   margin-bottom: 0.5em;
+}
+
+/*
+ * Smooth scrolling for anchor links:
+ */
+
+html {
+  scroll-behavior: smooth;
 }
