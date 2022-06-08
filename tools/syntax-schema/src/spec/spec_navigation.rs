@@ -9,5 +9,42 @@ impl Grammar {
 
         writeln!(w, "nav:").unwrap();
         writeln!(w, "  - Grammar: grammar.md").unwrap();
+        writeln!(w, "  - Specification:").unwrap();
+
+        self.manifest
+            .sections
+            .iter()
+            .enumerate()
+            .for_each(|(section_index, section)| {
+                writeln!(w, "      - {}. {}:", section_index + 1, section.title).unwrap();
+                section
+                    .topics
+                    .iter()
+                    .enumerate()
+                    .for_each(|(topic_index, topic)| {
+                        writeln!(
+                            w,
+                            "          - {}.{}. {}: specification/{}/index.md",
+                            section_index + 1,
+                            topic_index + 1,
+                            topic.title,
+                            self.generate_topic_slug(section_index, topic_index)
+                        )
+                        .unwrap();
+                    });
+            });
+    }
+
+    pub fn generate_topic_slug(&self, section_index: usize, topic_index: usize) -> String {
+        let section = self.manifest.sections.get(section_index).unwrap();
+        let topic = section.topics.get(topic_index).unwrap();
+
+        return format!(
+            "{:0>2}-{}/{:0>2}-{}",
+            section_index + 1,
+            section.title.to_ascii_lowercase().replace(" ", "-"),
+            topic_index + 1,
+            topic.title.to_ascii_lowercase().replace(" ", "-"),
+        );
     }
 }

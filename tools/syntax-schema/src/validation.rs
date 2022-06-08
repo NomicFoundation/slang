@@ -12,6 +12,7 @@ impl Grammar {
         // 2) Making sure all referenced nodes actually exist in the grammar.
         // 3) Versions specified map to supported language versions.
         // 4) no duplicate rule names
+        // 5) `topic.notes` and `topic.definition` point to the correct respective folders, and their sub-paths match.
 
         // .... Any other domain-specific rules we want to add later.
     }

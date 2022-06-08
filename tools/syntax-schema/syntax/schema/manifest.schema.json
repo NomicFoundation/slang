@@ -31,9 +31,10 @@
     "Topic": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["title", "definition"],
+      "required": ["title"],
       "properties": {
         "title": { "type": "string" },
+        "notes": { "type": "string" },
         "definition": { "type": "string" }
       }
     }

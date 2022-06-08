@@ -1,5 +1,6 @@
 - first-section:
     - trivia:
+        notes: specification-notes/01-first-section/01-trivia/index.md
         productions:
           - IGNORE
           - Whitespace
@@ -17,6 +18,8 @@
           - SelectedImport
           - ImportPath
           - UsingDirective
+    - nat-spec-comments:
+        notes: specification-notes/01-first-section/03-natspec/index.md
 
 - todo-section:
     - todo-topic:

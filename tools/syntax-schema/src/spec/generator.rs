@@ -3,10 +3,11 @@ use crate::schema::{
 };
 use itertools::Itertools;
 use semver::Version;
-use std::io::Write;
+use std::{collections::HashMap, io::Write};
 
 pub struct SpecGeneratorContext<'a> {
     pub grammar: &'a Grammar,
+    pub productions_location: HashMap<String, String>,
 }
 
 pub fn write_production<T: Write>(
@@ -126,12 +127,14 @@ fn write_expression<T: Write>(w: &mut T, expr: &Expression, context: &SpecGenera
 
         EBNF::Reference(name) => {
             let referenced = context.grammar.get_production(name).expect(name);
+            let location = context.productions_location.get(name).expect(name);
 
             write_token(
                 w,
                 TokenKind::keyword,
                 &format!(
-                    "<a href=\"#{}\">{}</a>",
+                    "<a href=\"{}#{}\">{}</a>",
+                    location,
                     get_production_hash_link(name),
                     get_production_name(referenced)
                 ),

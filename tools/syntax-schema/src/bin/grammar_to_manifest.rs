@@ -21,7 +21,8 @@ struct ProgramArgs {
 
 #[derive(Deserialize)]
 struct TopicMetadata {
-    pub productions: Vec<String>,
+    pub notes: Option<String>,
+    pub productions: Option<Vec<String>>,
 }
 
 type SectionsList = Vec<HashMap<String, Vec<HashMap<String, TopicMetadata>>>>;
@@ -51,7 +52,7 @@ fn validate_split(sections: &SectionsList, grammar_file: &PathBuf) {
                         topic
                             .productions
                             .iter()
-                            .map(|production| production.clone())
+                            .flat_map(|production| production.clone())
                     })
                 })
             })
@@ -129,23 +130,40 @@ fn generate_manifest(sections: &SectionsList, output_folder: &PathBuf, grammar_f
                         topic_map.iter().for_each(|(topic_id, topic)| {
                             let topic_title = generate_title(&topic_id);
 
-                            let topic_relative_path = format!(
-                                "{:0>2}-{}/{:0>2}-{}.yml",
-                                section_index + 1,
-                                section_id,
-                                topic_index + 1,
-                                topic_id
-                            );
-
                             writeln!(&w, "      - title: {}", topic_title).unwrap();
-                            writeln!(&w, "        definition: topics/{}", topic_relative_path)
-                                .unwrap();
 
-                            generate_topic(
-                                &topics_dir.join(topic_relative_path),
-                                &topic.productions,
-                                grammar_file,
-                            );
+                            match &topic.notes {
+                                None => {}
+                                Some(notes) => {
+                                    writeln!(&w, "        notes: {}", notes).unwrap();
+                                }
+                            }
+
+                            match &topic.productions {
+                                None => {}
+                                Some(productions) => {
+                                    let topic_relative_path = format!(
+                                        "{:0>2}-{}/{:0>2}-{}.yml",
+                                        section_index + 1,
+                                        section_id,
+                                        topic_index + 1,
+                                        topic_id
+                                    );
+
+                                    writeln!(
+                                        &w,
+                                        "        definition: topics/{}",
+                                        topic_relative_path
+                                    )
+                                    .unwrap();
+
+                                    generate_topic(
+                                        &topics_dir.join(topic_relative_path),
+                                        productions,
+                                        grammar_file,
+                                    );
+                                }
+                            }
                         });
                     });
             });
