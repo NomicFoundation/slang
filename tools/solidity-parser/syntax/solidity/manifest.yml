@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../../syntax-schema/syntax/schema/manifest.schema.json
+
+title: Solidity Grammar
+
+sections:
+  - title: First Section
+    topics:
+      - title: Trivia
+        definition: topics/01-first-section/01-trivia.yml
+      - title: Solidity File
+        definition: topics/01-first-section/02-solidity-file.yml
+  - title: Todo Section
+    topics:
+      - title: Todo Topic
+        definition: topics/02-todo-section/01-todo-topic.yml

@@ -1,0 +1,111 @@
+# yaml-language-server: $schema=../../../../../syntax-schema/syntax/schema/topic.schema.json
+
+- name: SourceUnit
+  config:
+    prelude: |
+      use syntax_schema::chumsky::combinators::NomicParser;
+      use super::builder;
+
+      pub type SourceUnitParserResultType = ();
+    ignore: true
+  sequence:
+    - reference: IGNORE
+    - zeroOrMore:
+        choice:
+          - reference: Directive
+          - reference: Definition
+    - end: ~
+
+- name: Directive
+  config: { ignore: true }
+  choice:
+    - reference: PragmaDirective
+    - reference: ImportDirective
+    - reference: UsingDirective
+
+- name: Definition
+  config: { ignore: true }
+  choice:
+    - reference: ContractDefinition
+    - reference: InterfaceDefinition
+    - reference: LibraryDefinition
+    - reference: FunctionDefinition
+    - reference: ConstantDefinition
+    - reference: StructDefinition
+    - reference: EnumDefinition
+    - reference: UserDefinedValueTypeDefinition
+    - reference: ErrorDefinition
+
+- name: ImportDirective
+  config: { ignore: true }
+  sequence:
+    - terminal: import
+    - choice:
+        - reference: SimpleImportDirective
+        - reference: StarImportDirective
+        - reference: SelectingImportDirective
+    - terminal: ;
+
+- name: SimpleImportDirective
+  config: { ignore: true }
+  sequence:
+    - reference: ImportPath
+    - zeroOrMore:
+        sequence:
+          - terminal: as
+          - reference: Identifier
+
+- name: StarImportDirective
+  config: { ignore: true }
+  sequence:
+    - terminal: "*"
+    - terminal: as
+    - reference: Identifier
+    - terminal: from
+    - reference: ImportPath
+
+- name: SelectingImportDirective
+  config: { ignore: true }
+  sequence:
+    - terminal: "{"
+    - oneOrMore:
+        reference: SelectedImport
+        separator:
+          terminal: ","
+    - terminal: "}"
+    - terminal: from
+    - reference: ImportPath
+
+- name: SelectedImport
+  config: { ignore: true }
+  sequence:
+    - reference: Identifier
+    - optional:
+        sequence:
+          - terminal: as
+          - reference: Identifier
+
+- name: ImportPath
+  config: { ignore: true }
+  reference: AsciiStringLiteral
+
+- name: UsingDirective
+  config: { ignore: true }
+  sequence:
+    - terminal: using
+    - choice:
+        - reference: IdentifierPath
+        - sequence:
+            - terminal: "{"
+            - oneOrMore:
+                reference: IdentifierPath
+                separator:
+                  terminal: ","
+            - terminal: "}"
+    - terminal: for
+    - choice:
+        - terminal: "*"
+        - reference: TypeName
+    - optional:
+        terminal: global
+    - terminal: ;
