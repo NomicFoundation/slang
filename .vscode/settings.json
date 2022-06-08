@@ -1,6 +1,8 @@
 {
   // Rust
   "rust-analyzer.linkedProjects": ["tools/syntax-schema/Cargo.toml", "tools/version-breaks/Cargo.toml"],
+  // YAML
+  "yaml.customTags": ["!ENV"],
   // Editing
   "editor.formatOnSave": true,
   "editor.rulers": [120],
