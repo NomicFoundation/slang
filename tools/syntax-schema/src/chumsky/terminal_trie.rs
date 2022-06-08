@@ -4,9 +4,21 @@ use quote::quote;
 
 use crate::schema::*;
 
+use super::named_string::NamedString;
+
 pub struct TerminalTrie(PatriciaSet);
 
 impl TerminalTrie {
+    pub fn slang_name(&self) -> Option<String> {
+        if self.0.len() == 1 {
+            let node = self.0.as_ref().child().unwrap();
+            let name = String::from_utf8_lossy(node.label()).to_string();
+            Some(name.slang_name())
+        } else {
+            None
+        }
+    }
+
     pub fn to_parser_expression(&self) -> TokenStream {
         fn generate_from_trie(node: Option<&Node<()>>, length: usize) -> Vec<TokenStream> {
             let mut result = vec![];
@@ -56,13 +68,8 @@ impl Expression {
     fn collect_terminals(&self, grammar: &Grammar, accum: &mut PatriciaSet) -> bool {
         match &self.ebnf {
             EBNF::Terminal(string) => {
-                // TODO: maybe this test is no longer applicable?
-                if self.config.map.is_none() {
-                    accum.insert(string.clone());
-                    true
-                } else {
-                    false
-                }
+                accum.insert(string.clone());
+                true
             }
             EBNF::Choice(exprs) => exprs.iter().all(|e| e.collect_terminals(grammar, accum)),
             EBNF::Reference(name) => grammar

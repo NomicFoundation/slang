@@ -45,9 +45,11 @@ pub enum CombinatorTreeNodeData {
         name: String,
     },
     TerminalTrie {
+        name: Option<String>,
         trie: TerminalTrie,
     },
     CharacterFilter {
+        name: Option<String>,
         filter: CharacterFilter,
     },
     End,
@@ -83,11 +85,9 @@ impl CombinatorTreeNodeData {
                 })
             }
             CombinatorTreeNodeData::Reference { name } => Some(name.clone()),
-            CombinatorTreeNodeData::TerminalTrie { .. } => None,
-            CombinatorTreeNodeData::CharacterFilter { filter } => {
-                filter.name().map(|n| format!("{}_char", n))
-            }
-            CombinatorTreeNodeData::End => None,
+            CombinatorTreeNodeData::TerminalTrie { name, .. } => name.clone(),
+            CombinatorTreeNodeData::CharacterFilter { name, .. } => name.clone(),
+            CombinatorTreeNodeData::End => Some("end_marker".to_owned()),
         }
     }
 
@@ -198,8 +198,8 @@ impl CombinatorTreeNodeData {
                 let name = format_ident!("{}_parser", name.to_case(Case::Snake));
                 quote!( #name.clone() )
             }
-            CombinatorTreeNodeData::TerminalTrie { trie } => trie.to_parser_expression(),
-            CombinatorTreeNodeData::CharacterFilter { filter } => filter.to_parser_expression(),
+            CombinatorTreeNodeData::TerminalTrie { trie, .. } => trie.to_parser_expression(),
+            CombinatorTreeNodeData::CharacterFilter { filter, .. } => filter.to_parser_expression(),
             CombinatorTreeNodeData::End => quote!(end()),
         }
     }
@@ -248,12 +248,12 @@ fn ct_reference(name: String) -> CombinatorTreeNode {
     Box::new(CombinatorTreeNodeData::Reference { name })
 }
 
-fn ct_terminal_trie(trie: TerminalTrie) -> CombinatorTreeNode {
-    Box::new(CombinatorTreeNodeData::TerminalTrie { trie })
+fn ct_terminal_trie(name: Option<String>, trie: TerminalTrie) -> CombinatorTreeNode {
+    Box::new(CombinatorTreeNodeData::TerminalTrie { name, trie })
 }
 
-fn ct_character_filter(filter: CharacterFilter) -> CombinatorTreeNode {
-    Box::new(CombinatorTreeNodeData::CharacterFilter { filter })
+fn ct_character_filter(name: Option<String>, filter: CharacterFilter) -> CombinatorTreeNode {
+    Box::new(CombinatorTreeNodeData::CharacterFilter { name, filter })
 }
 
 fn ct_end() -> CombinatorTreeNode {
@@ -278,9 +278,15 @@ impl Expression {
         grammar: &Grammar,
     ) -> CombinatorTreeNode {
         if let Some(filter) = self.to_character_filter(grammar) {
-            return ct_character_filter(filter);
+            let name = self.config.name.clone().or_else(|| filter.slang_name());
+            return ct_character_filter(name, filter);
         } else if let Some(terminal_trie) = self.to_terminal_trie(grammar) {
-            return ct_terminal_trie(terminal_trie);
+            let name = self
+                .config
+                .name
+                .clone()
+                .or_else(|| terminal_trie.slang_name());
+            return ct_terminal_trie(name, terminal_trie);
         } else {
             match &self.ebnf {
                 EBNF::End => ct_end(),
@@ -297,9 +303,11 @@ impl Expression {
                     max,
                     separator,
                 }) => {
-                    let index = subtype_index.get();
-                    subtype_index.set(index + 1);
-                    let name = format!("_S{}", index);
+                    let name = self.config.name.clone().unwrap_or_else(|| {
+                        let index = subtype_index.get();
+                        subtype_index.set(index + 1);
+                        format!("_S{}", index)
+                    });
                     ct_repeat(
                         name,
                         expr.to_combinator_tree_node(subtype_index, grammar),
@@ -311,9 +319,11 @@ impl Expression {
                     )
                 }
                 EBNF::Choice(exprs) => {
-                    let index = subtype_index.get();
-                    subtype_index.set(index + 1);
-                    let name = format!("_C{}", index);
+                    let name = self.config.name.clone().unwrap_or_else(|| {
+                        let index = subtype_index.get();
+                        subtype_index.set(index + 1);
+                        format!("_C{}", index)
+                    });
 
                     let mut choices = exprs
                         .iter()
@@ -350,9 +360,11 @@ impl Expression {
                     ct_choice(name, choices)
                 }
                 EBNF::Sequence(exprs) => {
-                    let index = subtype_index.get();
-                    subtype_index.set(index + 1);
-                    let name = format!("_S{}", index);
+                    let name = self.config.name.clone().unwrap_or_else(|| {
+                        let index = subtype_index.get();
+                        subtype_index.set(index + 1);
+                        format!("_S{}", index)
+                    });
 
                     let mut members = exprs
                         .iter()

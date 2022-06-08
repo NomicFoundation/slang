@@ -12,29 +12,34 @@ fn repetition_mapper<E, S>((e, es): (E, Vec<(S, E)>)) -> (Vec<E>, Vec<S>) {
     (expressions, separators)
 }
 
-// prelude attribute is no longer neccessary
-
 mod comment {
-    // «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } 1…*{ '*' } '/' ;
+    // «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
     #[allow(unused_imports)]
     use super::*;
     pub type N = _S0;
     pub struct _S0 {
-        pub _0: usize,
-        pub _c2s: Vec<_C2>,
-        pub star_chars: Vec<char>,
-        pub slash_char: char,
+        pub slash_char_star_char: usize,
+        pub content: Content,
+        pub star_char_slash_char: usize,
     }
     impl _S0 {
         pub fn new(
-            (((_0, _c2s), star_chars), slash_char): (((usize, Vec<_C2>), Vec<char>), char),
+            ((slash_char_star_char, content), star_char_slash_char): ((usize, Content), usize),
         ) -> Self {
             Self {
-                _0,
-                _c2s,
-                star_chars,
-                slash_char,
+                slash_char_star_char,
+                content,
+                star_char_slash_char,
             }
+        }
+    }
+    pub struct Content {
+        pub _c2s: Vec<_C2>,
+        pub star_chars: Vec<char>,
+    }
+    impl Content {
+        pub fn new((_c2s, star_chars): (Vec<_C2>, Vec<char>)) -> Self {
+            Self { _c2s, star_chars }
         }
     }
     pub enum _C2 {
@@ -53,10 +58,10 @@ mod comment {
 }
 
 mod whitespace {
-    // «Whitespace» = '\u{9}' | '\u{a}' | '\u{d}' | '\u{20}' ;
+    // «Whitespace» = 1…*{ '\u{9}' | '\u{a}' | '\u{d}' | '\u{20}' } ;
     #[allow(unused_imports)]
     use super::*;
-    pub type N = char;
+    pub type N = Vec<char>;
 }
 
 mod grouped {
@@ -130,7 +135,7 @@ mod ignore {
     use super::*;
     pub type N = Vec<_C1>;
     pub enum _C1 {
-        _0(char),
+        Whitespace(whitespace::N),
         Comment(comment::N),
     }
 }
@@ -176,35 +181,39 @@ mod string_char {
     use super::*;
     pub type N = _C0;
     pub enum _C0 {
-        _0(char),
-        S1(_S1),
+        NotQuoteOrBackslash(char),
+        Escape(Escape),
     }
-    pub struct _S1 {
+    pub struct Escape {
         pub backslash_char: char,
-        pub _c2: _C2,
+        pub quote_or_backslash_or_hex_escape: QuoteOrBackslashOrHexEscape,
     }
-    impl _S1 {
-        pub fn new((backslash_char, _c2): (char, _C2)) -> Self {
+    impl Escape {
+        pub fn new(
+            (backslash_char, quote_or_backslash_or_hex_escape): (char, QuoteOrBackslashOrHexEscape),
+        ) -> Self {
             Self {
                 backslash_char,
-                _c2,
+                quote_or_backslash_or_hex_escape,
             }
         }
     }
-    pub enum _C2 {
+    pub enum QuoteOrBackslashOrHexEscape {
         QuoteChar(char),
         BackslashChar(char),
-        S3(_S3),
+        S1(_S1),
     }
-    pub struct _S3 {
-        pub _0: usize,
+    pub struct _S1 {
+        pub u_open_brace_char: usize,
         pub _1: Vec<char>,
         pub close_brace_char: char,
     }
-    impl _S3 {
-        pub fn new(((_0, _1), close_brace_char): ((usize, Vec<char>), char)) -> Self {
+    impl _S1 {
+        pub fn new(
+            ((u_open_brace_char, _1), close_brace_char): ((usize, Vec<char>), char),
+        ) -> Self {
             Self {
-                _0,
+                u_open_brace_char,
                 _1,
                 close_brace_char,
             }
@@ -548,14 +557,16 @@ mod grammar {
     pub struct _S0 {
         pub ignore: ignore::N,
         pub productions: Vec<production::N>,
-        pub _2: (),
+        pub end_marker: (),
     }
     impl _S0 {
-        pub fn new(((ignore, productions), _2): ((ignore::N, Vec<production::N>), ())) -> Self {
+        pub fn new(
+            ((ignore, productions), end_marker): ((ignore::N, Vec<production::N>), ()),
+        ) -> Self {
             Self {
                 ignore,
                 productions,
-                _2,
+                end_marker,
             }
         }
     }
@@ -598,7 +609,7 @@ impl Parsers {
 
         let mut expression_parser = Recursive::declare();
 
-        // «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } 1…*{ '*' } '/' ;
+        // «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
         let comment_parser = just("/*")
             .map(|_| 2usize)
             .then(
@@ -611,14 +622,17 @@ impl Parsers {
                         .map(comment::_S3::new)
                         .map(comment::_C2::S3),
                 ))
-                .repeated(),
+                .repeated()
+                .then(just('*').repeated())
+                .map(comment::Content::new),
             )
-            .then(just('*').repeated().at_least(1usize))
-            .then(just('/'))
+            .then(just("*/").map(|_| 2usize))
             .map(comment::_S0::new);
 
-        // «Whitespace» = '\u{9}' | '\u{a}' | '\u{d}' | '\u{20}' ;
-        let whitespace_parser = filter(|&c: &char| c == '\t' || c == '\n' || c == '\r' || c == ' ');
+        // «Whitespace» = 1…*{ '\u{9}' | '\u{a}' | '\u{d}' | '\u{20}' } ;
+        let whitespace_parser = filter(|&c: &char| c == '\t' || c == '\n' || c == '\r' || c == ' ')
+            .repeated()
+            .at_least(1usize);
 
         // grouped = '(' expression ')' ;
         let grouped_parser = just('(')
@@ -640,8 +654,7 @@ impl Parsers {
         // «IGNORE» = { «Whitespace» | «Comment» } ;
         ignore_parser.define(
             choice((
-                filter(|&c: &char| c == '\t' || c == '\n' || c == '\r' || c == ' ')
-                    .map(ignore::_C1::_0),
+                whitespace_parser.clone().map(ignore::_C1::Whitespace),
                 comment_parser.clone().map(ignore::_C1::Comment),
             ))
             .repeated(),
@@ -671,11 +684,11 @@ impl Parsers {
 
         // «StringChar» = ¬( '\'' | '\\' ) | '\\' ( '\'' | '\\' | 'u{' 1…6*{ «HexDigit» } '}' ) ;
         let string_char_parser = choice((
-            filter(|&c: &char| c != '\'' && c != '\\').map(string_char::_C0::_0),
+            filter(|&c: &char| c != '\'' && c != '\\').map(string_char::_C0::NotQuoteOrBackslash),
             just('\\')
                 .then(choice((
-                    just('\'').map(string_char::_C2::QuoteChar),
-                    just('\\').map(string_char::_C2::BackslashChar),
+                    just('\'').map(string_char::QuoteOrBackslashOrHexEscape::QuoteChar),
+                    just('\\').map(string_char::QuoteOrBackslashOrHexEscape::BackslashChar),
                     just("u{")
                         .map(|_| 2usize)
                         .then(
@@ -689,11 +702,11 @@ impl Parsers {
                             .at_most(6usize),
                         )
                         .then(just('}'))
-                        .map(string_char::_S3::new)
-                        .map(string_char::_C2::S3),
+                        .map(string_char::_S1::new)
+                        .map(string_char::QuoteOrBackslashOrHexEscape::S1),
                 )))
-                .map(string_char::_S1::new)
-                .map(string_char::_C0::S1),
+                .map(string_char::Escape::new)
+                .map(string_char::_C0::Escape),
         ));
 
         // repetitionPrefix = ( «Number» [ '…' [ «Number» ] ] | '…' «Number» ) '*' ;

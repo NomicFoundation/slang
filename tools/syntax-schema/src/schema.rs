@@ -552,22 +552,12 @@ pub type ExpressionRef = Rc<Expression>;
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, Hash)]
 #[serde(deny_unknown_fields, rename_all = "camelCase")]
 pub struct ExpressionConfig {
-    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
-    pub ignore: bool,
-    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
-    pub nomap: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub map: Option<String>,
-    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
-    pub unwrap: bool,
-    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
-    pub chain: bool,
+    pub name: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub lookahead: Option<ExpressionRef>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub prelude: Option<String>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub preserve_token_structure: Option<bool>,
 }
 
 impl ExpressionConfig {
@@ -579,14 +569,9 @@ impl ExpressionConfig {
 impl Default for ExpressionConfig {
     fn default() -> Self {
         Self {
-            ignore: false,
-            nomap: false,
-            map: None,
-            unwrap: false,
-            chain: false,
+            name: None,
             lookahead: None,
             prelude: None,
-            preserve_token_structure: None,
         }
     }
 }

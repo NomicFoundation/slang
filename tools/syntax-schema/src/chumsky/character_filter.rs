@@ -3,6 +3,8 @@ use quote::quote;
 
 use crate::schema::*;
 
+use super::named_character::NamedCharacter;
+
 pub enum CharacterFilterNode {
     Range { from: char, to: char, negated: bool },
     Char { char: char, negated: bool },
@@ -43,12 +45,9 @@ fn cf_conjunction(nodes: Vec<CharacterFilter>) -> CharacterFilter {
 }
 
 impl CharacterFilterNode {
-    pub fn name(&self) -> Option<String> {
+    pub fn slang_name(&self) -> Option<String> {
         if let Self::Char { char, .. } = self {
-            DEFAULT_TOKEN_NAMES
-                .binary_search_by(|probe| probe.0.cmp(char))
-                .ok()
-                .map(|i| DEFAULT_TOKEN_NAMES[i].1.to_owned())
+            char.slang_name()
         } else {
             None
         }
@@ -148,46 +147,3 @@ impl Expression {
         }
     }
 }
-
-const DEFAULT_TOKEN_NAMES: &[(char, &str)] = &[
-    ('\t', "TAB"),
-    ('\n', "LF"),
-    ('\r', "CR"),
-    (' ', "SPACE"),
-    ('!', "BANG"),
-    ('"', "DOUBLE_QUOTE"),
-    ('#', "HASH"),
-    ('$', "DOLLAR"),
-    ('%', "PERCENT"),
-    ('&', "AMPERSAND"),
-    ('\'', "QUOTE"),
-    ('(', "OPEN_PAREN"),
-    (')', "CLOSE_PAREN"),
-    ('*', "STAR"),
-    ('+', "PLUS"),
-    (',', "COMMA"),
-    ('-', "MINUS"),
-    ('.', "PERIOD"),
-    ('/', "SLASH"),
-    (':', "COLON"),
-    (';', "SEMICOLON"),
-    ('<', "LESS"),
-    ('=', "EQUAL"),
-    ('>', "GREATER"),
-    ('?', "QUESTION"),
-    ('@', "AT"),
-    ('[', "OPEN_BRACKET"),
-    ('\\', "BACKSLASH"),
-    (']', "CLOSE_BRACKET"),
-    ('^', "CARET"),
-    ('_', "UNDERSCORE"),
-    ('`', "BACKQUOTE"),
-    ('{', "OPEN_BRACE"),
-    ('|', "BAR"),
-    ('}', "CLOSE_BRACE"),
-    ('~', "TILDE"),
-    ('«', "OPEN_DOUBLE_ANGLE"),
-    ('¬', "NOT"),
-    ('»', "CLOSE_DOUBLE_ANGLE"),
-    ('…', "ELLIPSIS"),
-];
