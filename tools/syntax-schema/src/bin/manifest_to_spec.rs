@@ -22,9 +22,14 @@ fn main() {
     println!(" => Validating Grammar");
     grammar.validate();
 
+    println!(" => Generating Spec Navigation");
+    grammar.generate_spec_navigation(
+        &PathBuf::from(&args.documentation_folder).join("mkdocs.specification.yml"),
+    );
+
     println!(" => Generating Grammar Spec");
     grammar.generate_grammar_spec(
-        &PathBuf::from(args.documentation_folder)
+        &PathBuf::from(&args.documentation_folder)
             .join("docs")
             .join("grammar.md"),
     );
