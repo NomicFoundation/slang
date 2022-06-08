@@ -55,25 +55,9 @@ trait EBNFExpression {
     fn generate<T: Write>(&self, grammar: &Grammar, w: &mut T);
 
     fn generate_subexpression<T: Write>(&self, grammar: &Grammar, w: &mut T, expr: &ExpressionRef);
-
-    fn precedence(&self) -> u8;
 }
 
 impl EBNFExpression for Expression {
-    fn precedence(&self) -> u8 {
-        match self.ebnf {
-            EBNF::End
-            | EBNF::Repeat(..)
-            | EBNF::Terminal(..)
-            | EBNF::Reference(..)
-            | EBNF::Range { .. } => 0,
-            EBNF::Not(..) => 1,
-            EBNF::Difference { .. } => 2,
-            EBNF::Sequence(..) => 3,
-            EBNF::Choice(..) => 4,
-        }
-    }
-
     fn generate_subexpression<T: Write>(&self, grammar: &Grammar, w: &mut T, expr: &ExpressionRef) {
         if self.precedence() < expr.precedence() {
             write!(w, "( ").unwrap();
