@@ -178,6 +178,7 @@ impl Production {
                 } else {
                     quote!( let #parser_name = #parser_expression )
                 };
+                // TODO: Move to strings so this can be inserted
                 // parser_implementations.push(ebnf_comment.clone());
                 parser_implementations.push(parser_implementation);
 

@@ -836,6 +836,165 @@ impl Parsers {
             )))
             .map(|v| Box::new(hex_string_literal::_S0::new(v)));
         let keyword_parser = choice((
+            just("pragma")
+                .map(|_| 6usize)
+                .map(|v| Box::new(keyword::_C0::Pragma(v))),
+            just("abstract")
+                .map(|_| 8usize)
+                .map(|v| Box::new(keyword::_C0::Abstract(v))),
+            just("anonymous")
+                .map(|_| 9usize)
+                .map(|v| Box::new(keyword::_C0::Anonymous(v))),
+            just("address")
+                .map(|_| 7usize)
+                .map(|v| Box::new(keyword::_C0::Address(v))),
+            just("as")
+                .map(|_| 2usize)
+                .map(|v| Box::new(keyword::_C0::As(v))),
+            just("assembly")
+                .map(|_| 8usize)
+                .map(|v| Box::new(keyword::_C0::Assembly(v))),
+            just("bool")
+                .map(|_| 4usize)
+                .map(|v| Box::new(keyword::_C0::Bool(v))),
+            just("break")
+                .map(|_| 5usize)
+                .map(|v| Box::new(keyword::_C0::Break(v))),
+            just("bytes")
+                .map(|_| 5usize)
+                .map(|v| Box::new(keyword::_C0::Bytes(v))),
+            just("calldata")
+                .map(|_| 8usize)
+                .map(|v| Box::new(keyword::_C0::Calldata(v))),
+            just("catch")
+                .map(|_| 5usize)
+                .map(|v| Box::new(keyword::_C0::Catch(v))),
+            just("constant")
+                .map(|_| 8usize)
+                .map(|v| Box::new(keyword::_C0::Constant(v))),
+            just("constructor")
+                .map(|_| 11usize)
+                .map(|v| Box::new(keyword::_C0::Constructor(v))),
+            just("continue")
+                .map(|_| 8usize)
+                .map(|v| Box::new(keyword::_C0::Continue(v))),
+            just("contract")
+                .map(|_| 8usize)
+                .map(|v| Box::new(keyword::_C0::Contract(v))),
+            just("delete")
+                .map(|_| 6usize)
+                .map(|v| Box::new(keyword::_C0::Delete(v))),
+            just("do")
+                .map(|_| 2usize)
+                .map(|v| Box::new(keyword::_C0::Do(v))),
+            just("else")
+                .map(|_| 4usize)
+                .map(|v| Box::new(keyword::_C0::Else(v))),
+            just("emit")
+                .map(|_| 4usize)
+                .map(|v| Box::new(keyword::_C0::Emit(v))),
+            just("enum")
+                .map(|_| 4usize)
+                .map(|v| Box::new(keyword::_C0::Enum(v))),
+            just("event")
+                .map(|_| 5usize)
+                .map(|v| Box::new(keyword::_C0::Event(v))),
+            just("external")
+                .map(|_| 8usize)
+                .map(|v| Box::new(keyword::_C0::External(v))),
+            just("fallback")
+                .map(|_| 8usize)
+                .map(|v| Box::new(keyword::_C0::Fallback(v))),
+            just("false")
+                .map(|_| 5usize)
+                .map(|v| Box::new(keyword::_C0::False(v))),
+            just("for")
+                .map(|_| 3usize)
+                .map(|v| Box::new(keyword::_C0::For(v))),
+            just("function")
+                .map(|_| 8usize)
+                .map(|v| Box::new(keyword::_C0::Function(v))),
+            just("hex")
+                .map(|_| 3usize)
+                .map(|v| Box::new(keyword::_C0::Hex(v))),
+            just("if")
+                .map(|_| 2usize)
+                .map(|v| Box::new(keyword::_C0::If(v))),
+            just("immutable")
+                .map(|_| 9usize)
+                .map(|v| Box::new(keyword::_C0::Immutable(v))),
+            just("import")
+                .map(|_| 6usize)
+                .map(|v| Box::new(keyword::_C0::Import(v))),
+            just("indexed")
+                .map(|_| 7usize)
+                .map(|v| Box::new(keyword::_C0::Indexed(v))),
+            just("interface")
+                .map(|_| 9usize)
+                .map(|v| Box::new(keyword::_C0::Interface(v))),
+            just("internal")
+                .map(|_| 8usize)
+                .map(|v| Box::new(keyword::_C0::Internal(v))),
+            just("is")
+                .map(|_| 2usize)
+                .map(|v| Box::new(keyword::_C0::Is(v))),
+            just("library")
+                .map(|_| 7usize)
+                .map(|v| Box::new(keyword::_C0::Library(v))),
+            just("mapping")
+                .map(|_| 7usize)
+                .map(|v| Box::new(keyword::_C0::Mapping(v))),
+            just("memory")
+                .map(|_| 6usize)
+                .map(|v| Box::new(keyword::_C0::Memory(v))),
+            just("modifier")
+                .map(|_| 8usize)
+                .map(|v| Box::new(keyword::_C0::Modifier(v))),
+            just("new")
+                .map(|_| 3usize)
+                .map(|v| Box::new(keyword::_C0::New(v))),
+            just("override")
+                .map(|_| 8usize)
+                .map(|v| Box::new(keyword::_C0::Override(v))),
+            just("payable")
+                .map(|_| 7usize)
+                .map(|v| Box::new(keyword::_C0::Payable(v))),
+            just("private")
+                .map(|_| 7usize)
+                .map(|v| Box::new(keyword::_C0::Private(v))),
+            just("public")
+                .map(|_| 6usize)
+                .map(|v| Box::new(keyword::_C0::Public(v))),
+            just("pure")
+                .map(|_| 4usize)
+                .map(|v| Box::new(keyword::_C0::Pure(v))),
+            just("receive")
+                .map(|_| 7usize)
+                .map(|v| Box::new(keyword::_C0::Receive(v))),
+            just("return")
+                .map(|_| 6usize)
+                .map(|v| Box::new(keyword::_C0::Return(v))),
+            just("returns")
+                .map(|_| 7usize)
+                .map(|v| Box::new(keyword::_C0::Returns(v))),
+            just("storage")
+                .map(|_| 7usize)
+                .map(|v| Box::new(keyword::_C0::Storage(v))),
+            just("string")
+                .map(|_| 6usize)
+                .map(|v| Box::new(keyword::_C0::String(v))),
+            just("struct")
+                .map(|_| 6usize)
+                .map(|v| Box::new(keyword::_C0::Struct(v))),
+            just("true")
+                .map(|_| 4usize)
+                .map(|v| Box::new(keyword::_C0::True(v))),
+            just("try")
+                .map(|_| 3usize)
+                .map(|v| Box::new(keyword::_C0::Try(v))),
+            just("type")
+                .map(|_| 4usize)
+                .map(|v| Box::new(keyword::_C0::Type(v))),
             just("unchecked")
                 .map(|_| 9usize)
                 .map(|v| Box::new(keyword::_C0::Unchecked(v))),
@@ -1406,7 +1565,7 @@ impl Parsers {
         .then(
             yul_expression_parser
                 .clone()
-                .then()
+                .then(just(',').then(yul_expression_parser.clone()).repeated())
                 .map(repetition_mapper)
                 .map(|v| Box::new(yul_function_call::_S2::new(v)))
                 .or_not(),
@@ -1420,7 +1579,7 @@ impl Parsers {
             .then(
                 yul_identifier_parser
                     .clone()
-                    .then()
+                    .then(just(',').then(yul_identifier_parser.clone()).repeated())
                     .map(repetition_mapper)
                     .map(|v| Box::new(yul_function_definition::_S1::new(v)))
                     .or_not(),
@@ -1698,7 +1857,7 @@ impl Parsers {
             .then(
                 named_argument_parser
                     .clone()
-                    .then()
+                    .then(just(',').then(named_argument_parser.clone()).repeated())
                     .map(repetition_mapper)
                     .map(|v| Box::new(named_argument_list::_S1::new(v)))
                     .or_not(),
@@ -1744,7 +1903,11 @@ impl Parsers {
             .then(
                 parameter_declaration_parser
                     .clone()
-                    .then()
+                    .then(
+                        just(',')
+                            .then(parameter_declaration_parser.clone())
+                            .repeated(),
+                    )
                     .map(repetition_mapper)
                     .map(|v| Box::new(parameter_list::_S1::new(v)))
                     .or_not(),
@@ -2282,7 +2445,7 @@ impl Parsers {
             .then(
                 error_parameter_parser
                     .clone()
-                    .then()
+                    .then(just(',').then(error_parameter_parser.clone()).repeated())
                     .map(repetition_mapper)
                     .map(|v| Box::new(error_definition::_S1::new(v)))
                     .or_not(),
@@ -2297,7 +2460,7 @@ impl Parsers {
             .then(
                 event_parameter_parser
                     .clone()
-                    .then()
+                    .then(just(',').then(event_parameter_parser.clone()).repeated())
                     .map(repetition_mapper)
                     .map(|v| Box::new(event_definition::_S1::new(v)))
                     .or_not(),

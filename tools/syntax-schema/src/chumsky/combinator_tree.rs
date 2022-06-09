@@ -163,7 +163,7 @@ impl CombinatorTreeNodeData {
 
                 match (min, max) {
                     (0, None) => {
-                        quote!( #expr.then()#mapping.or_not() )
+                        quote!( #expr.then(#repetition)#mapping.or_not() )
                     }
                     (0, Some(max)) => {
                         quote!( #expr.then(#repetition.at_most(#max - 1))#mapping.or_not() )
