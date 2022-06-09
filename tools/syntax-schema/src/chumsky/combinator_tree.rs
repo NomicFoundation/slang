@@ -1,18 +1,18 @@
 use std::cell::Cell;
 
-use convert_case::{Case, Casing};
-use inflector::Inflector;
 use mset::MultiSet;
 use proc_macro2::TokenStream;
-use quote::{format_ident, quote};
+use quote::quote;
 
 use crate::schema::*;
 
-use super::{character_filter::CharacterFilter, terminal_trie::TerminalTrie};
+use super::{
+    character_filter::CharacterFilter, slang_name::SlangName, terminal_trie::TerminalTrie,
+};
 
 pub struct CombinatorTree {
     pub root: CombinatorTreeNode,
-    pub module_name: String,
+    pub module_name: SlangName,
 }
 
 type CombinatorTreeNode = Box<CombinatorTreeNodeData>;
@@ -27,29 +27,29 @@ pub enum CombinatorTreeNodeData {
         lookahead: CombinatorTreeNode,
     },
     Choice {
-        name: String,
-        choices: Vec<(String, CombinatorTreeNode)>,
+        name: SlangName,
+        choices: Vec<(SlangName, CombinatorTreeNode)>,
     },
     Sequence {
-        name: String,
-        elements: Vec<(String, CombinatorTreeNode)>,
+        name: SlangName,
+        elements: Vec<(SlangName, CombinatorTreeNode)>,
     },
     Repeat {
-        name: String,
+        name: SlangName,
         expr: CombinatorTreeNode,
         min: usize,
         max: Option<usize>,
         separator: Option<CombinatorTreeNode>,
     },
     Reference {
-        name: String,
+        name: SlangName,
     },
     TerminalTrie {
-        name: Option<String>,
+        name: Option<SlangName>,
         trie: TerminalTrie,
     },
     CharacterFilter {
-        name: Option<String>,
+        name: Option<SlangName>,
         filter: CharacterFilter,
     },
     End,
@@ -62,7 +62,7 @@ impl CombinatorTree {
 }
 
 impl CombinatorTreeNodeData {
-    pub fn name(&self) -> Option<String> {
+    pub fn name(&self) -> Option<SlangName> {
         match self {
             CombinatorTreeNodeData::Difference { minuend, .. } => minuend.name(),
             CombinatorTreeNodeData::Lookahead { expr, .. } => expr.name(),
@@ -74,20 +74,11 @@ impl CombinatorTreeNodeData {
                 max: Some(1),
                 ..
             } => expr.name(),
-            CombinatorTreeNodeData::Repeat { expr, .. } => {
-                expr.name().and_then(|n| {
-                    if n.starts_with('_') {
-                        Some(n.to_ascii_lowercase().to_plural())
-                    } else {
-                        // Convert to snake and then pluralize to avoid e.g. BARs -> ba_rs later on
-                        Some(n.to_case(Case::Snake).to_plural())
-                    }
-                })
-            }
+            CombinatorTreeNodeData::Repeat { expr, .. } => expr.name().map(|n| n.plural()),
             CombinatorTreeNodeData::Reference { name } => Some(name.clone()),
             CombinatorTreeNodeData::TerminalTrie { name, .. } => name.clone(),
             CombinatorTreeNodeData::CharacterFilter { name, .. } => name.clone(),
-            CombinatorTreeNodeData::End => Some("end_marker".to_owned()),
+            CombinatorTreeNodeData::End => Some(SlangName::from_string("end_marker")),
         }
     }
 
@@ -107,24 +98,24 @@ impl CombinatorTreeNodeData {
                 quote!( #expr.then_ignore( #lookahead.rewind() ))
             }
             CombinatorTreeNodeData::Choice { choices, name } => {
-                let module_name = format_ident!("{}", tree.module_name.clone());
-                let choice_name = format_ident!("{}", name);
+                let module_name = tree.module_name.to_module_name_ident();
+                let choice_name = name.to_type_name_ident();
                 let choices = choices.iter().map(|(n, c)| {
-                    let constructor = format_ident!("{}", n);
+                    let constructor = n.to_enum_tag_ident();
                     let expr = c.to_parser_combinator_code(tree);
-                    quote!( #expr.map(#module_name::#choice_name::#constructor) )
+                    quote!( #expr.map(|v| Box::new(#module_name::#choice_name::#constructor(v))) )
                 });
                 quote!( choice(( #(#choices),* )) )
             }
             CombinatorTreeNodeData::Sequence { elements, name } => {
-                let struct_name = format_ident!("{}", name);
+                let struct_name = name.to_type_name_ident();
                 let mut elements = elements
                     .iter()
                     .map(|(_, e)| e.to_parser_combinator_code(tree));
                 let first = elements.next().unwrap();
                 let rest = elements.map(|e| quote!( .then(#e) ));
-                let module_name = format_ident!("{}", tree.module_name.clone());
-                quote!( #first #(#rest)* .map(#module_name::#struct_name::new) )
+                let module_name = tree.module_name.to_module_name_ident();
+                quote!( #first #(#rest)* .map(|v| Box::new(#module_name::#struct_name::new(v))) )
             }
             CombinatorTreeNodeData::Repeat {
                 expr,
@@ -163,9 +154,9 @@ impl CombinatorTreeNodeData {
                 let separator = separator.to_parser_combinator_code(tree);
 
                 let mapping = {
-                    let module_name = format_ident!("{}", tree.module_name.clone());
-                    let struct_name = format_ident!("{}", name);
-                    quote!( .map(repetition_mapper).map( #module_name::#struct_name::new) )
+                    let module_name = tree.module_name.to_module_name_ident();
+                    let struct_name = name.to_type_name_ident();
+                    quote!( .map(repetition_mapper).map(|v| Box::new(#module_name::#struct_name::new(v))) )
                 };
 
                 let repetition = quote!(#separator.then(#expr).repeated());
@@ -195,7 +186,7 @@ impl CombinatorTreeNodeData {
                 }
             }
             CombinatorTreeNodeData::Reference { name } => {
-                let name = format_ident!("{}_parser", name.to_case(Case::Snake));
+                let name = name.to_parser_name_ident();
                 quote!( #name.clone() )
             }
             CombinatorTreeNodeData::TerminalTrie { trie, .. } => trie.to_parser_expression(),
@@ -220,16 +211,19 @@ fn ct_lookahead(expr: CombinatorTreeNode, lookahead: CombinatorTreeNode) -> Comb
     Box::new(CombinatorTreeNodeData::Lookahead { expr, lookahead })
 }
 
-fn ct_choice(name: String, choices: Vec<(String, CombinatorTreeNode)>) -> CombinatorTreeNode {
+fn ct_choice(name: SlangName, choices: Vec<(SlangName, CombinatorTreeNode)>) -> CombinatorTreeNode {
     Box::new(CombinatorTreeNodeData::Choice { name, choices })
 }
 
-fn ct_sequence(name: String, elements: Vec<(String, CombinatorTreeNode)>) -> CombinatorTreeNode {
+fn ct_sequence(
+    name: SlangName,
+    elements: Vec<(SlangName, CombinatorTreeNode)>,
+) -> CombinatorTreeNode {
     Box::new(CombinatorTreeNodeData::Sequence { name, elements })
 }
 
 fn ct_repeat(
-    name: String,
+    name: SlangName,
     expr: CombinatorTreeNode,
     min: usize,
     max: Option<usize>,
@@ -244,15 +238,15 @@ fn ct_repeat(
     })
 }
 
-fn ct_reference(name: String) -> CombinatorTreeNode {
+fn ct_reference(name: SlangName) -> CombinatorTreeNode {
     Box::new(CombinatorTreeNodeData::Reference { name })
 }
 
-fn ct_terminal_trie(name: Option<String>, trie: TerminalTrie) -> CombinatorTreeNode {
+fn ct_terminal_trie(name: Option<SlangName>, trie: TerminalTrie) -> CombinatorTreeNode {
     Box::new(CombinatorTreeNodeData::TerminalTrie { name, trie })
 }
 
-fn ct_character_filter(name: Option<String>, filter: CharacterFilter) -> CombinatorTreeNode {
+fn ct_character_filter(name: Option<SlangName>, filter: CharacterFilter) -> CombinatorTreeNode {
     Box::new(CombinatorTreeNodeData::CharacterFilter { name, filter })
 }
 
@@ -266,7 +260,7 @@ impl Production {
             root: self
                 .expression_to_generate()
                 .to_combinator_tree_node(&mut Cell::new(0), grammar),
-            module_name: self.name.to_case(Case::Snake),
+            module_name: SlangName::from_string(&self.name),
         }
     }
 }
@@ -278,13 +272,19 @@ impl Expression {
         grammar: &Grammar,
     ) -> CombinatorTreeNode {
         if let Some(filter) = self.to_character_filter(grammar) {
-            let name = self.config.name.clone().or_else(|| filter.slang_name());
+            let name = self
+                .config
+                .name
+                .as_ref()
+                .map(|s| SlangName::from_string(s))
+                .or_else(|| filter.slang_name());
             return ct_character_filter(name, filter);
         } else if let Some(terminal_trie) = self.to_terminal_trie(grammar) {
             let name = self
                 .config
                 .name
-                .clone()
+                .as_ref()
+                .map(|s| SlangName::from_string(s))
                 .or_else(|| terminal_trie.slang_name());
             return ct_terminal_trie(name, terminal_trie);
         } else {
@@ -303,11 +303,16 @@ impl Expression {
                     max,
                     separator,
                 }) => {
-                    let name = self.config.name.clone().unwrap_or_else(|| {
-                        let index = subtype_index.get();
-                        subtype_index.set(index + 1);
-                        format!("_S{}", index)
-                    });
+                    let name = self
+                        .config
+                        .name
+                        .as_ref()
+                        .map(|s| SlangName::from_string(s))
+                        .unwrap_or_else(|| {
+                            let index = subtype_index.get();
+                            subtype_index.set(index + 1);
+                            SlangName::from_prefix_and_index("_S", index)
+                        });
                     ct_repeat(
                         name,
                         expr.to_combinator_tree_node(subtype_index, grammar),
@@ -319,11 +324,18 @@ impl Expression {
                     )
                 }
                 EBNF::Choice(exprs) => {
-                    let name = self.config.name.clone().unwrap_or_else(|| {
-                        let index = subtype_index.get();
-                        subtype_index.set(index + 1);
-                        format!("_C{}", index)
-                    });
+                    let name = self
+                        .config
+                        .name
+                        .as_ref()
+                        .map(|s| SlangName::from_string(s))
+                        .unwrap_or_else(|| {
+                            let index = subtype_index.get();
+                            subtype_index.set(index + 1);
+                            SlangName::from_prefix_and_index("_C", index)
+                        });
+
+                    // TODO: Merge potential terminal_trie and character_filter elements.
 
                     let mut choices = exprs
                         .iter()
@@ -332,14 +344,14 @@ impl Expression {
                             let e = e.to_combinator_tree_node(subtype_index, grammar);
                             let name = e
                                 .name()
-                                .map_or_else(|| format!("_{}", i), |n| n.to_case(Case::UpperCamel));
+                                .unwrap_or_else(|| SlangName::from_prefix_and_index("_", i));
                             (name, e)
                         })
                         .collect::<Vec<_>>();
 
                     // Find all the duplicated names, with the count of their occurance
                     let mut names =
-                        MultiSet::<String>::from_iter(choices.iter().map(|(n, _)| n.clone()));
+                        MultiSet::<SlangName>::from_iter(choices.iter().map(|(n, _)| n.clone()));
                     names.retain(|_, count| count > 1);
                     // Reverse so that the suffix goes from _0 .. _n when we re-reverse the list
                     choices.reverse();
@@ -349,7 +361,7 @@ impl Expression {
                             if let Some(count) = names.get(&n) {
                                 // Remove the element to decrement the occurance occount
                                 names.remove(&n);
-                                (format!("{}_{}", n, count - 1), t)
+                                (n.with_disambiguating_suffix(count - 1), t)
                             } else {
                                 (n, t)
                             }
@@ -360,34 +372,32 @@ impl Expression {
                     ct_choice(name, choices)
                 }
                 EBNF::Sequence(exprs) => {
-                    let name = self.config.name.clone().unwrap_or_else(|| {
-                        let index = subtype_index.get();
-                        subtype_index.set(index + 1);
-                        format!("_S{}", index)
-                    });
+                    let name = self
+                        .config
+                        .name
+                        .as_ref()
+                        .map(|s| SlangName::from_string(s))
+                        .unwrap_or_else(|| {
+                            let index = subtype_index.get();
+                            subtype_index.set(index + 1);
+                            SlangName::from_prefix_and_index("_S", index)
+                        });
 
                     let mut members = exprs
                         .iter()
                         .enumerate()
                         .map(|(i, e)| {
                             let e = e.to_combinator_tree_node(subtype_index, grammar);
-                            let name = e.name().map_or_else(
-                                || format!("_{}", i),
-                                |n| {
-                                    if n.starts_with('_') {
-                                        n.to_ascii_lowercase()
-                                    } else {
-                                        n.to_case(Case::Snake)
-                                    }
-                                },
-                            );
+                            let name = e
+                                .name()
+                                .unwrap_or_else(|| SlangName::from_prefix_and_index("_", i));
                             (name, e)
                         })
                         .collect::<Vec<_>>();
 
                     // Find all the duplicated names, with the count of their occurance
                     let mut names =
-                        MultiSet::<String>::from_iter(members.iter().map(|(n, _)| n.clone()));
+                        MultiSet::<SlangName>::from_iter(members.iter().map(|(n, _)| n.clone()));
                     names.retain(|_, count| count > 1);
                     // Reverse so that the suffix goes from _0 .. _n when we re-reverse the list
                     members.reverse();
@@ -397,7 +407,7 @@ impl Expression {
                             if let Some(count) = names.get(&n) {
                                 // Remove the element to decrement the occurance occount
                                 names.remove(&n);
-                                (format!("{}_{}", n, count - 1), t)
+                                (n.with_disambiguating_suffix(count - 1), t)
                             } else {
                                 (n, t)
                             }
@@ -407,7 +417,7 @@ impl Expression {
 
                     ct_sequence(name, members)
                 }
-                EBNF::Reference(name) => ct_reference(name.clone()),
+                EBNF::Reference(name) => ct_reference(SlangName::from_string(name)),
                 EBNF::Not(_) => unimplemented!("¬ is only supported on characters or sets thereof"),
                 EBNF::Terminal(_) => {
                     unreachable!("Terminals are either character filters or terminal tries")

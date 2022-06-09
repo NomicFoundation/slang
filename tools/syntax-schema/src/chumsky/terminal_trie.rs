@@ -4,16 +4,16 @@ use quote::quote;
 
 use crate::schema::*;
 
-use super::named_string::NamedString;
+use super::slang_name::SlangName;
 
 pub struct TerminalTrie(PatriciaSet);
 
 impl TerminalTrie {
-    pub fn slang_name(&self) -> Option<String> {
+    pub fn slang_name(&self) -> Option<SlangName> {
         if self.0.len() == 1 {
             let node = self.0.as_ref().child().unwrap();
             let name = String::from_utf8_lossy(node.label()).to_string();
-            Some(name.slang_name())
+            Some(SlangName::from_terminal(&name))
         } else {
             None
         }
@@ -28,7 +28,7 @@ impl TerminalTrie {
                 let new_length = length + label.chars().count();
                 let mut children = generate_from_trie(node.child(), new_length);
                 if node.child().is_some() && node.value().is_some() {
-                    children.push(quote!( empty().map(|_| #length) ));
+                    children.push(quote!( empty().map(|_| #new_length) ));
                 }
                 if children.is_empty() {
                     result.push(quote!( just(#label).map(|_| #new_length) ))
@@ -76,12 +76,10 @@ impl Expression {
                 .get_production(name)
                 .map(|p| p.expression_to_generate().collect_terminals(grammar, accum))
                 .unwrap_or(false),
-            EBNF::End
-            | EBNF::Repeat(_)
-            | EBNF::Not(_)
-            | EBNF::Sequence(_)
-            | EBNF::Difference(_)
-            | EBNF::Range(_) => false,
+            EBNF::Sequence(_) => false, // TODO: special case this
+            EBNF::End | EBNF::Repeat(_) | EBNF::Not(_) | EBNF::Difference(_) | EBNF::Range(_) => {
+                false
+            }
         }
     }
 }

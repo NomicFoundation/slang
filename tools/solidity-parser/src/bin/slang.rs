@@ -4,7 +4,7 @@ use ariadne::{Color, Fmt, Label, Report, ReportKind, Source};
 use chumsky::{prelude::*, Parser};
 use clap::Parser as ClapParser;
 
-use solidity_parser::parser::create_source_unit_parser;
+use solidity_parser::parser_interface::Parsers;
 
 #[derive(ClapParser, Debug)]
 struct ProgramArgs {
@@ -16,7 +16,7 @@ fn main() {
 
     println!(" => Parsing Solidity");
     let solidity_src = fs::read_to_string(args.solidity_input).expect("Failed to read file");
-    let (_parse_tree, errs) = create_source_unit_parser().parse_recovery(solidity_src.as_str());
+    let (_parse_tree, errs) = Parsers.source_unit.parse_recovery(solidity_src.as_str());
     print_errors(errs, &solidity_src);
 }
 

@@ -16,7 +16,7 @@ PROJECT_DIR=$(dirname "$THIS_DIR")
 
 cargo run --bin manifest_to_chumsky -- \
   --manifest-input "$PROJECT_DIR/syntax/ebnf/manifest.yml" \
-  --chumsky-output "$PROJECT_DIR/src/ebnf/parser.rs"
+  --chumsky-output "$PROJECT_DIR/src/ebnf/"
 
 cargo run --bin manifest_to_ebnf -- \
   --manifest-input "$PROJECT_DIR/syntax/ebnf/manifest.yml" \

@@ -4,7 +4,7 @@ use ariadne::{Color, Fmt, Label, Report, ReportKind, Source};
 use chumsky::{prelude::*, Parser};
 use clap::Parser as ClapParser;
 
-use syntax_schema::ebnf::parser::*;
+use syntax_schema::ebnf::parser_interface::Parsers;
 
 #[derive(ClapParser, Debug)]
 struct ProgramArgs {
@@ -38,17 +38,18 @@ fn main() {
             )
         }),
     );
-    let (productions, errs) = Parsers::new().grammar.parse_recovery(stream);
+    let (_productions, errs) = Parsers::new().grammar.parse_recovery(stream);
     print_errors(errs, &src);
 
     println!(" => Generating YAML");
-    if let Some(productions) = productions {
-        fs::write(
-            args.yaml_output,
-            serde_yaml::to_string(&productions).expect("Failed to write model"),
-        )
-        .unwrap();
-    }
+    todo!("Process EBNF Parse Tree");
+    // if let Some(productions) = productions {
+    //     fs::write(
+    //         args.yaml_output,
+    //         serde_yaml::to_string(&productions).expect("Failed to write model"),
+    //     )
+    //     .unwrap();
+    // }
 }
 
 fn print_errors(errs: Vec<Simple<char>>, src: &Vec<char>) {
