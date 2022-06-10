@@ -164,7 +164,7 @@ pub mod ignore {
     use super::*;
     pub type N = Vec<Box<ignore::_C1>>;
     pub enum _C1 {
-        _0(char),
+        _0(usize),
         Comment(comment::N),
         LineComment(line_comment::N),
     }
@@ -270,7 +270,7 @@ pub mod yul_decimal_number_literal {
     use super::*;
     pub type N = Box<yul_decimal_number_literal::_C0>;
     pub enum _C0 {
-        ZeroChar(char),
+        Zero(usize),
         _S1(Box<yul_decimal_number_literal::_S1>),
     }
     pub struct _S1 {
@@ -420,9 +420,7 @@ pub mod elementary_type {
     use super::*;
     pub type N = Box<elementary_type::_C0>;
     pub enum _C0 {
-        Bool(usize),
-        String(usize),
-        Bytes(usize),
+        _0(usize),
         SignedIntegerType(signed_integer_type::N),
         UnsignedIntegerType(unsigned_integer_type::N),
         FixedBytesType(fixed_bytes_type::N),
@@ -440,7 +438,7 @@ pub mod escape_sequence {
         pub _c1: Box<escape_sequence::_C1>,
     }
     pub enum _C1 {
-        _0(char),
+        _0(usize),
         HexByteEscape(hex_byte_escape::N),
         UnicodeEscape(unicode_escape::N),
     }
@@ -477,69 +475,11 @@ pub mod keyword {
     use super::*;
     pub type N = Box<keyword::_C0>;
     pub enum _C0 {
-        Pragma(usize),
-        Abstract(usize),
-        Anonymous(usize),
-        Address(usize),
-        As(usize),
-        Assembly(usize),
-        Bool(usize),
-        Break(usize),
-        Bytes(usize),
-        Calldata(usize),
-        Catch(usize),
-        Constant(usize),
-        Constructor(usize),
-        Continue(usize),
-        Contract(usize),
-        Delete(usize),
-        Do(usize),
-        Else(usize),
-        Emit(usize),
-        Enum(usize),
-        Event(usize),
-        External(usize),
-        Fallback(usize),
-        False(usize),
-        For(usize),
-        Function(usize),
-        Hex(usize),
-        If(usize),
-        Immutable(usize),
-        Import(usize),
-        Indexed(usize),
-        Interface(usize),
-        Internal(usize),
-        Is(usize),
-        Library(usize),
-        Mapping(usize),
-        Memory(usize),
-        Modifier(usize),
-        New(usize),
-        Override(usize),
-        Payable(usize),
-        Private(usize),
-        Public(usize),
-        Pure(usize),
-        Receive(usize),
-        Return(usize),
-        Returns(usize),
-        Storage(usize),
-        String(usize),
-        Struct(usize),
-        True(usize),
-        Try(usize),
-        Type(usize),
-        Unchecked(usize),
-        Using(usize),
-        View(usize),
-        Virtual(usize),
-        While(usize),
+        _0(usize),
         SignedIntegerType(signed_integer_type::N),
         UnsignedIntegerType(unsigned_integer_type::N),
         FixedBytesType(fixed_bytes_type::N),
-        Fixed(usize),
-        Ufixed(usize),
+        _4(usize),
     }
 }
 #[doc = "«RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;"]
@@ -628,8 +568,6 @@ pub mod reserved_word {
     pub enum _C0 {
         Keyword(keyword::N),
         _1(usize),
-        _2(usize),
-        _3(usize),
     }
 }
 #[doc = "«SingleQuotedAsciiStringLiteral» = '\\'' { '\\u{20}'…'~' - ( '\\'' | '\\\\' ) | «EscapeSequence» } '\\'' ;"]
@@ -1097,10 +1035,7 @@ pub mod state_variable_attribute {
     use super::*;
     pub type N = Box<state_variable_attribute::_C0>;
     pub enum _C0 {
-        Public(usize),
-        Private(usize),
-        Internal(usize),
-        Constant(usize),
+        _0(usize),
         OverrideSpecifier(override_specifier::N),
         Immutable(usize),
     }
@@ -1274,9 +1209,7 @@ pub mod yul_statement {
         YulIfStatement(yul_if_statement::N),
         YulForStatement(yul_for_statement::N),
         YulSwitchStatement(yul_switch_statement::N),
-        Leave(usize),
-        Break(usize),
-        Continue(usize),
+        _8(usize),
     }
 }
 #[doc = "ConstructorAttribute = ModifierInvocation | 'payable' | 'internal' | 'public' ;"]
@@ -1286,9 +1219,7 @@ pub mod constructor_attribute {
     pub type N = Box<constructor_attribute::_C0>;
     pub enum _C0 {
         ModifierInvocation(modifier_invocation::N),
-        Payable(usize),
-        Internal(usize),
-        Public(usize),
+        _1(usize),
     }
 }
 #[doc = "ErrorParameter = TypeName [ «Identifier» ] ;"]
@@ -1318,8 +1249,7 @@ pub mod fallback_function_attribute {
     use super::*;
     pub type N = Box<fallback_function_attribute::_C0>;
     pub enum _C0 {
-        External(usize),
-        _1(usize),
+        _0(usize),
         ModifierInvocation(modifier_invocation::N),
         Virtual(usize),
         OverrideSpecifier(override_specifier::N),
@@ -1332,7 +1262,6 @@ pub mod function_attribute {
     pub type N = Box<function_attribute::_C0>;
     pub enum _C0 {
         _0(usize),
-        _1(usize),
         ModifierInvocation(modifier_invocation::N),
         Virtual(usize),
         OverrideSpecifier(override_specifier::N),
@@ -1406,8 +1335,7 @@ pub mod receive_function_attribute {
     use super::*;
     pub type N = Box<receive_function_attribute::_C0>;
     pub enum _C0 {
-        External(usize),
-        Payable(usize),
+        _0(usize),
         ModifierInvocation(modifier_invocation::N),
         Virtual(usize),
         OverrideSpecifier(override_specifier::N),
@@ -1445,7 +1373,7 @@ pub mod using_directive {
         pub semicolon_char: char,
     }
     pub enum _C4 {
-        StarChar(char),
+        Star(usize),
         TypeName(type_name::N),
     }
     pub enum _C1 {
@@ -2022,11 +1950,11 @@ pub mod for_statement {
     }
     pub enum _C2 {
         ExpressionStatement(expression_statement::N),
-        SemicolonChar(char),
+        Semicolon(usize),
     }
     pub enum _C1 {
         SimpleStatement(simple_statement::N),
-        SemicolonChar(char),
+        Semicolon(usize),
     }
 }
 #[doc = "Statement = Block | SimpleStatement | IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | TryStatement | ReturnStatement | EmitStatement | RevertStatement | AssemblyStatement ;"]
@@ -2090,7 +2018,7 @@ pub mod fallback_function_definition {
         pub _c4: Box<fallback_function_definition::_C4>,
     }
     pub enum _C4 {
-        SemicolonChar(char),
+        Semicolon(usize),
         Block(block::N),
     }
     pub struct _S3 {
@@ -2112,7 +2040,7 @@ pub mod function_definition {
         pub _c5: Box<function_definition::_C5>,
     }
     pub enum _C5 {
-        SemicolonChar(char),
+        Semicolon(usize),
         Block(block::N),
     }
     pub struct _S4 {
@@ -2121,8 +2049,7 @@ pub mod function_definition {
     }
     pub enum _C1 {
         Identifier(identifier::N),
-        Fallback(usize),
-        Receive(usize),
+        _1(usize),
     }
 }
 #[doc = "ModifierDefinition = 'modifier' «Identifier» [ ParameterList ] { MethodAttribute } ( ';' | Block ) ;"]
@@ -2138,7 +2065,7 @@ pub mod modifier_definition {
         pub _c3: Box<modifier_definition::_C3>,
     }
     pub enum _C3 {
-        SemicolonChar(char),
+        Semicolon(usize),
         Block(block::N),
     }
 }
@@ -2155,7 +2082,7 @@ pub mod receive_function_definition {
         pub _c2: Box<receive_function_definition::_C2>,
     }
     pub enum _C2 {
-        SemicolonChar(char),
+        Semicolon(usize),
         Block(block::N),
     }
 }

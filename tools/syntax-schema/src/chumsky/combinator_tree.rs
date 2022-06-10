@@ -337,17 +337,40 @@ impl Expression {
 
                     // TODO: Merge potential terminal_trie and character_filter elements.
 
-                    let mut choices = exprs
-                        .iter()
-                        .enumerate()
-                        .map(|(i, e)| {
-                            let e = e.to_combinator_tree_node(subtype_index, grammar);
-                            let name = e
-                                .name()
-                                .unwrap_or_else(|| SlangName::from_prefix_and_index("_", i));
-                            (name, e)
-                        })
-                        .collect::<Vec<_>>();
+                    let mut choices: Vec<(SlangName, CombinatorTreeNode)> = vec![];
+                    {
+                        let mut current_terminal_tree: Option<TerminalTrie> = None;
+                        for e in exprs {
+                            if let Some(tt) = e.to_terminal_trie(grammar) {
+                                if let Some(ctt) = current_terminal_tree.as_mut() {
+                                    ctt.merge_with(tt)
+                                } else {
+                                    current_terminal_tree = Some(tt)
+                                }
+                            } else {
+                                if let Some(ctt) = current_terminal_tree {
+                                    let name = ctt.slang_name().unwrap_or_else(|| {
+                                        SlangName::from_prefix_and_index("_", choices.len())
+                                    });
+                                    choices.push((name, ct_terminal_trie(ctt.slang_name(), ctt)));
+                                    current_terminal_tree = None
+                                };
+                                choices.push({
+                                    let e = e.to_combinator_tree_node(subtype_index, grammar);
+                                    let name = e.name().unwrap_or_else(|| {
+                                        SlangName::from_prefix_and_index("_", choices.len())
+                                    });
+                                    (name, e)
+                                })
+                            }
+                        }
+                        if let Some(ctt) = current_terminal_tree {
+                            let name = ctt.slang_name().unwrap_or_else(|| {
+                                SlangName::from_prefix_and_index("_", choices.len())
+                            });
+                            choices.push((name, ct_terminal_trie(ctt.slang_name(), ctt)));
+                        };
+                    }
 
                     // Find all the duplicated names, with the count of their occurance
                     let mut names =

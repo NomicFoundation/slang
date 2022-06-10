@@ -31,12 +31,12 @@ impl TerminalTrie {
                     children.push(quote!( empty().map(|_| #new_length) ));
                 }
                 if children.is_empty() {
-                    result.push(quote!( just(#label).map(|_| #new_length) ))
+                    result.push(quote!( terminal(#label).map(|_| #new_length) ))
                 } else if children.len() == 1 {
                     let child = &children[0];
-                    result.push(quote!( just(#label).ignore_then(#child) ))
+                    result.push(quote!( terminal(#label).ignore_then(#child) ))
                 } else {
-                    result.push(quote!( just(#label).ignore_then(choice((
+                    result.push(quote!( terminal(#label).ignore_then(choice((
                                         #(#children),*
                                     ))) ))
                 }
@@ -52,6 +52,12 @@ impl TerminalTrie {
         } else {
             quote!( choice::<_, ErrorType>((#(#choices),*)) )
         }
+    }
+
+    pub fn merge_with(&mut self, other: Self) {
+        other.0.into_iter().for_each(|k| {
+            self.0.insert(k);
+        });
     }
 }
 

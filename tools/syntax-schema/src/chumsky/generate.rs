@@ -174,9 +174,9 @@ impl Production {
                 parser_names.push(parser_name.clone());
                 let parser_expression = combinator_tree.to_parser_combinator_code();
                 let parser_implementation = if backlinked.contains(&name) {
-                    quote!( #parser_name.define(#parser_expression) )
+                    quote!( #parser_name.define(#parser_expression.boxed()) )
                 } else {
-                    quote!( let #parser_name = #parser_expression )
+                    quote!( let #parser_name = #parser_expression.boxed() )
                 };
                 // TODO: Move to strings so this can be inserted
                 // parser_implementations.push(ebnf_comment.clone());
@@ -199,8 +199,11 @@ impl Production {
         let parser_implementation = quote!(
             use chumsky::Parser;
             use chumsky::prelude::*;
+            use chumsky::primitive::Just;
+            #[allow(unused_imports)]
             use syntax_schema::chumsky::combinators::*;
 
+            #[allow(dead_code)]
             fn repetition_mapper<E, S>((e, es): (E, Vec<(S, E)>)) -> (Vec<E>, Vec<S>) {
                 let mut expressions = vec![e];
                 let mut separators = vec![];
@@ -209,6 +212,12 @@ impl Production {
                     expressions.push(e);
                 }
                 (expressions, separators)
+            }
+
+            #[allow(dead_code)]
+            #[inline]
+            fn terminal(str: &str) -> Just<char, &str, ErrorType> {
+                just(str)
             }
 
             impl Parsers {
