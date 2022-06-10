@@ -33,4 +33,11 @@ fn main() {
             .join("docs")
             .join("grammar.md"),
     );
+
+    println!(" => Generating Full Spec");
+    grammar.generate_full_spec(
+        &PathBuf::from(&args.documentation_folder)
+            .join("docs")
+            .join("specification"),
+    );
 }

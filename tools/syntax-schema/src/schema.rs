@@ -43,7 +43,8 @@ pub struct Section {
 #[serde(deny_unknown_fields)]
 pub struct Topic {
     pub title: String,
-    pub definition: String,
+    pub notes: Option<String>,
+    pub definition: Option<String>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -602,15 +603,18 @@ impl Grammar {
             .sections
             .iter()
             .flat_map(|section| &section.topics)
-            .map(|topic| {
-                let topic_path = manifest_path.parent().unwrap().join(&topic.definition);
-                let topic_path_str = topic_path.to_str().unwrap();
+            .filter_map(|topic| match &topic.definition {
+                None => None,
+                Some(definition) => {
+                    let topic_path = manifest_path.parent().unwrap().join(definition);
+                    let topic_path_str = topic_path.to_str().unwrap();
 
-                let contents = std::fs::read(&topic_path).expect(topic_path_str);
-                let rules: Vec<Production> =
-                    serde_yaml::from_slice(&contents).expect(topic_path_str);
+                    let contents = std::fs::read(&topic_path).expect(topic_path_str);
+                    let rules: Vec<Production> =
+                        serde_yaml::from_slice(&contents).expect(topic_path_str);
 
-                return (topic.definition.clone(), rules);
+                    return Some((definition.clone(), rules));
+                }
             })
             .collect();
 
