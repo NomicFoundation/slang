@@ -146,7 +146,8 @@ impl Production {
         for name in &backlinked {
             let parser_name = SlangName::from_string(name).to_parser_name_ident();
             // parser_implementations.push("// Forward Reference");
-            parser_implementations.push(quote!( let mut #parser_name = Recursive::declare() ));
+            parser_implementations
+                .push(quote!( let mut #parser_name = Recursive::declare(); ).to_string());
         }
 
         let mut ordered_productions = ordering.keys().cloned().collect::<Vec<String>>();
@@ -154,33 +155,48 @@ impl Production {
         for name in ordered_productions {
             if let Some(production) = grammar.get_production(&name) {
                 let slang_name = SlangName::from_string(&name);
-                let ebnf_comment = {
-                    let text = production.generate_ebnf(grammar).join("\n");
-                    quote!( #[doc = #text])
-                };
+                let ebnf_comment = production
+                    .generate_ebnf(grammar)
+                    .iter()
+                    .map(|s| format!("// {}", s))
+                    .collect::<Vec<_>>()
+                    .join("\n");
+                let ebnf_doc_comment = production
+                    .generate_ebnf(grammar)
+                    .iter()
+                    .map(|s| format!("/// {}", s))
+                    .collect::<Vec<_>>()
+                    .join("\n");
 
                 let module_name = slang_name.to_module_name_ident();
                 module_names.push(module_name.clone());
 
                 let combinator_tree = production.to_combinator_tree(grammar);
                 let type_tree = combinator_tree.to_type_tree();
-                let (type_definitions, type_implementations) =
+                let (tree_interface, tree_implementation) =
                     type_tree.to_type_definition_code(&module_name);
-                tree_interfaces.push(ebnf_comment.clone());
-                tree_interfaces.push(type_definitions);
-                tree_implementations.push(type_implementations);
+                tree_interfaces.push(format!(
+                    "{}\n{}",
+                    ebnf_doc_comment,
+                    tree_interface.to_string()
+                ));
+                tree_implementations.push(tree_implementation);
 
                 let parser_name = slang_name.to_parser_name_ident();
                 parser_names.push(parser_name.clone());
                 let parser_expression = combinator_tree.to_parser_combinator_code();
                 let parser_implementation = if backlinked.contains(&name) {
-                    quote!( #parser_name.define(#parser_expression.boxed()) )
+                    quote!( #parser_name.define(#parser_expression.boxed()); )
                 } else {
-                    quote!( let #parser_name = #parser_expression.boxed() )
+                    quote!( let #parser_name = #parser_expression.boxed(); )
                 };
                 // TODO: Move to strings so this can be inserted
                 // parser_implementations.push(ebnf_comment.clone());
-                parser_implementations.push(parser_implementation);
+                parser_implementations.push(format!(
+                    "{}\n{}",
+                    ebnf_comment,
+                    parser_implementation.to_string()
+                ));
 
                 parsers_field_names.push(slang_name.to_field_name_ident());
             }
@@ -196,45 +212,51 @@ impl Production {
             pub struct Parsers { #(pub #parsers_field_names: ParserType<#module_names::N>),* }
         );
 
-        let parser_implementation = quote!(
-            use chumsky::Parser;
-            use chumsky::prelude::*;
-            use chumsky::primitive::Just;
-            #[allow(unused_imports)]
-            use syntax_schema::chumsky::combinators::*;
+        let parser_implementation = {
+            vec![
+                quote!(
+                    use chumsky::Parser;
+                    use chumsky::prelude::*;
+                    use chumsky::primitive::Just;
+                    #[allow(unused_imports)]
+                    use syntax_schema::chumsky::combinators::*;
 
-            #[allow(dead_code)]
-            fn repetition_mapper<E, S>((e, es): (E, Vec<(S, E)>)) -> (Vec<E>, Vec<S>) {
-                let mut expressions = vec![e];
-                let mut separators = vec![];
-                for (s, e) in es.into_iter() {
-                    separators.push(s);
-                    expressions.push(e);
-                }
-                (expressions, separators)
-            }
+                    #[allow(dead_code)]
+                    fn repetition_mapper<E, S>((e, es): (E, Vec<(S, E)>)) -> (Vec<E>, Vec<S>) {
+                        let mut expressions = vec![e];
+                        let mut separators = vec![];
+                        for (s, e) in es.into_iter() {
+                            separators.push(s);
+                            expressions.push(e);
+                        }
+                        (expressions, separators)
+                    }
 
-            #[allow(dead_code)]
-            #[inline]
-            fn terminal(str: &str) -> Just<char, &str, ErrorType> {
-                just(str)
-            }
+                    #[allow(dead_code)]
+                    #[inline]
+                    fn terminal(str: &str) -> Just<char, &str, ErrorType> {
+                        just(str)
+                    }
 
-            impl Parsers {
-                pub fn new() -> Self {
-                    #(#parser_implementations;)*
+                    use super::parser_interface::*;
+                    use super::tree_interface::*;
+                )
+                .to_string(),
+                "impl Parsers { pub fn new() -> Self {".to_owned(),
+                parser_implementations.join("\n\n"),
+                quote!(
                     Self {
                         #(#parsers_field_names: #parser_names.boxed()),*
                     }
-                }
-            }
-        );
+                )
+                .to_string(),
+                "}}".to_owned(),
+            ]
+            .join("\n\n")
+        };
 
         GeneratedOutput {
-            tree_interface: quote!(
-                #(#tree_interfaces)*
-            )
-            .to_string(),
+            tree_interface: tree_interfaces.join("\n\n"),
             parser_interface: quote!(
                 use super::tree_interface::*;
                 #parser_interface
@@ -245,12 +267,7 @@ impl Production {
                 #(#tree_implementations)*
             )
             .to_string(),
-            parser_implementation: quote!(
-                use super::parser_interface::*;
-                use super::tree_interface::*;
-                #parser_implementation
-            )
-            .to_string(),
+            parser_implementation: parser_implementation,
         }
     }
 }

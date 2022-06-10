@@ -1,16 +1,18 @@
-#[doc = "AddSubOperator = '+' | '-' ;"]
+/// AddSubOperator = '+' | '-' ;
 pub mod add_sub_operator {
     #[allow(unused_imports)]
     use super::*;
     pub type N = char;
 }
-#[doc = "AssignmentOperator = '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ;"]
+
+/// AssignmentOperator = '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ;
 pub mod assignment_operator {
     #[allow(unused_imports)]
     use super::*;
     pub type N = usize;
 }
-#[doc = "BreakStatement = 'break' ';' ;"]
+
+/// BreakStatement = 'break' ';' ;
 pub mod break_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -20,7 +22,8 @@ pub mod break_statement {
         pub semicolon_char: char,
     }
 }
-#[doc = "«Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } 1…*{ '*' } '/' ;"]
+
+/// «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } 1…*{ '*' } '/' ;
 pub mod comment {
     #[allow(unused_imports)]
     use super::*;
@@ -40,7 +43,8 @@ pub mod comment {
         pub _1: char,
     }
 }
-#[doc = "ContinueStatement = 'continue' ';' ;"]
+
+/// ContinueStatement = 'continue' ';' ;
 pub mod continue_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -50,19 +54,22 @@ pub mod continue_statement {
         pub semicolon_char: char,
     }
 }
-#[doc = "DataLocation = 'memory' | 'storage' | 'calldata' ;"]
+
+/// DataLocation = 'memory' | 'storage' | 'calldata' ;
 pub mod data_location {
     #[allow(unused_imports)]
     use super::*;
     pub type N = usize;
 }
-#[doc = "EqualityComparisonOperator = '==' | '!=' ;"]
+
+/// EqualityComparisonOperator = '==' | '!=' ;
 pub mod equality_comparison_operator {
     #[allow(unused_imports)]
     use super::*;
     pub type N = usize;
 }
-#[doc = "«LineComment» = '//' { ¬( '\\u{a}' | '\\u{d}' ) } ;"]
+
+/// «LineComment» = '//' { ¬( '\u{a}' | '\u{d}' ) } ;
 pub mod line_comment {
     #[allow(unused_imports)]
     use super::*;
@@ -72,19 +79,22 @@ pub mod line_comment {
         pub _1: Vec<char>,
     }
 }
-#[doc = "MulDivModOperator = '*' | '/' | '%' ;"]
+
+/// MulDivModOperator = '*' | '/' | '%' ;
 pub mod mul_div_mod_operator {
     #[allow(unused_imports)]
     use super::*;
     pub type N = char;
 }
-#[doc = "OrderComparisonOperator = '<' | '>' | '<=' | '>=' ;"]
+
+/// OrderComparisonOperator = '<' | '>' | '<=' | '>=' ;
 pub mod order_comparison_operator {
     #[allow(unused_imports)]
     use super::*;
     pub type N = usize;
 }
-#[doc = "PositionalArgumentList = 1…*{ Expression / ',' } ;"]
+
+/// PositionalArgumentList = 1…*{ Expression / ',' } ;
 pub mod positional_argument_list {
     #[allow(unused_imports)]
     use super::*;
@@ -94,31 +104,36 @@ pub mod positional_argument_list {
         pub comma_chars: Vec<char>,
     }
 }
-#[doc = "ShiftOperator = '<<' | '>>' | '>>>' ;"]
+
+/// ShiftOperator = '<<' | '>>' | '>>>' ;
 pub mod shift_operator {
     #[allow(unused_imports)]
     use super::*;
     pub type N = usize;
 }
-#[doc = "StateMutabilitySpecifier = 'pure' | 'view' | 'payable' ;"]
+
+/// StateMutabilitySpecifier = 'pure' | 'view' | 'payable' ;
 pub mod state_mutability_specifier {
     #[allow(unused_imports)]
     use super::*;
     pub type N = usize;
 }
-#[doc = "UnaryPrefixOperator = '++' | '--' | '!' | '~' | 'delete' | '-' ;"]
+
+/// UnaryPrefixOperator = '++' | '--' | '!' | '~' | 'delete' | '-' ;
 pub mod unary_prefix_operator {
     #[allow(unused_imports)]
     use super::*;
     pub type N = usize;
 }
-#[doc = "UnarySuffixOperator = '++' | '--' ;"]
+
+/// UnarySuffixOperator = '++' | '--' ;
 pub mod unary_suffix_operator {
     #[allow(unused_imports)]
     use super::*;
     pub type N = usize;
 }
-#[doc = "UncheckedBlock = 'unchecked' Block ;"]
+
+/// UncheckedBlock = 'unchecked' Block ;
 pub mod unchecked_block {
     #[allow(unused_imports)]
     use super::*;
@@ -128,37 +143,43 @@ pub mod unchecked_block {
         pub block: block::N,
     }
 }
-#[doc = "VisibilitySpecifier = 'internal' | 'external' | 'private' | 'public' ;"]
+
+/// VisibilitySpecifier = 'internal' | 'external' | 'private' | 'public' ;
 pub mod visibility_specifier {
     #[allow(unused_imports)]
     use super::*;
     pub type N = usize;
 }
-#[doc = "«Whitespace» = '\\u{20}' | '\\u{9}' | '\\u{d}' | '\\u{a}' ;"]
+
+/// «Whitespace» = '\u{20}' | '\u{9}' | '\u{d}' | '\u{a}' ;
 pub mod whitespace {
     #[allow(unused_imports)]
     use super::*;
     pub type N = char;
 }
-#[doc = "YulBreakStatement = 'break' ;"]
+
+/// YulBreakStatement = 'break' ;
 pub mod yul_break_statement {
     #[allow(unused_imports)]
     use super::*;
     pub type N = usize;
 }
-#[doc = "YulContinueStatement = 'continue' ;"]
+
+/// YulContinueStatement = 'continue' ;
 pub mod yul_continue_statement {
     #[allow(unused_imports)]
     use super::*;
     pub type N = usize;
 }
-#[doc = "YulLeaveStatement = 'leave' ;"]
+
+/// YulLeaveStatement = 'leave' ;
 pub mod yul_leave_statement {
     #[allow(unused_imports)]
     use super::*;
     pub type N = usize;
 }
-#[doc = "«IGNORE» = { «Whitespace» | «Comment» | «LineComment» } ;"]
+
+/// «IGNORE» = { «Whitespace» | «Comment» | «LineComment» } ;
 pub mod ignore {
     #[allow(unused_imports)]
     use super::*;
@@ -169,19 +190,22 @@ pub mod ignore {
         LineComment(line_comment::N),
     }
 }
-#[doc = "«AsciiEscape» = 'n' | 'r' | 't' | '\\'' | '\"' | '\\\\' | '\\u{a}' | '\\u{d}' ;"]
+
+/// «AsciiEscape» = 'n' | 'r' | 't' | '\'' | '"' | '\\' | '\u{a}' | '\u{d}' ;
 pub mod ascii_escape {
     #[allow(unused_imports)]
     use super::*;
     pub type N = char;
 }
-#[doc = "«BooleanLiteral» = 'true' | 'false' ;"]
+
+/// «BooleanLiteral» = 'true' | 'false' ;
 pub mod boolean_literal {
     #[allow(unused_imports)]
     use super::*;
     pub type N = usize;
 }
-#[doc = "«DecimalInteger» = 1…*{ '0'…'9' / [ '_' ] } ;"]
+
+/// «DecimalInteger» = 1…*{ '0'…'9' / [ '_' ] } ;
 pub mod decimal_integer {
     #[allow(unused_imports)]
     use super::*;
@@ -191,7 +215,8 @@ pub mod decimal_integer {
         pub underscore_chars: Vec<Option<char>>,
     }
 }
-#[doc = "«FixedBytesType» = 'bytes' ( '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15' | '16' | '17' | '18' | '19' | '20' | '21' | '22' | '23' | '24' | '25' | '26' | '27' | '28' | '29' | '30' | '31' | '32' ) ;"]
+
+/// «FixedBytesType» = 'bytes' ( '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15' | '16' | '17' | '18' | '19' | '20' | '21' | '22' | '23' | '24' | '25' | '26' | '27' | '28' | '29' | '30' | '31' | '32' ) ;
 pub mod fixed_bytes_type {
     #[allow(unused_imports)]
     use super::*;
@@ -201,7 +226,8 @@ pub mod fixed_bytes_type {
         pub _1: usize,
     }
 }
-#[doc = "«FixedType» = 'fixed' [ '1'…'9' { '0'…'9' } 'x' '1'…'9' { '0'…'9' } ] ;"]
+
+/// «FixedType» = 'fixed' [ '1'…'9' { '0'…'9' } 'x' '1'…'9' { '0'…'9' } ] ;
 pub mod fixed_type {
     #[allow(unused_imports)]
     use super::*;
@@ -218,25 +244,29 @@ pub mod fixed_type {
         pub _4: Vec<char>,
     }
 }
-#[doc = "«HexCharacter» = '0'…'9' | 'a'…'f' | 'A'…'F' ;"]
+
+/// «HexCharacter» = '0'…'9' | 'a'…'f' | 'A'…'F' ;
 pub mod hex_character {
     #[allow(unused_imports)]
     use super::*;
     pub type N = char;
 }
-#[doc = "«IdentifierStart» = '_' | '$' | 'a'…'z' | 'A'…'Z' ;"]
+
+/// «IdentifierStart» = '_' | '$' | 'a'…'z' | 'A'…'Z' ;
 pub mod identifier_start {
     #[allow(unused_imports)]
     use super::*;
     pub type N = char;
 }
-#[doc = "«NumberUnit» = 'wei' | 'gwei' | 'ether' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'years' ;"]
+
+/// «NumberUnit» = 'wei' | 'gwei' | 'ether' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'years' ;
 pub mod number_unit {
     #[allow(unused_imports)]
     use super::*;
     pub type N = usize;
 }
-#[doc = "«PragmaDirective» = 'pragma' ¬';' { ¬';' } ';' ;"]
+
+/// «PragmaDirective» = 'pragma' ¬';' { ¬';' } ';' ;
 pub mod pragma_directive {
     #[allow(unused_imports)]
     use super::*;
@@ -248,13 +278,15 @@ pub mod pragma_directive {
         pub semicolon_char_1: char,
     }
 }
-#[doc = "«ReservedKeyword» = 'after' | 'alias' | 'apply' | 'auto' | 'byte' | 'case' | 'copyof' | 'default' | 'define' | 'final' | 'implements' | 'in' | 'inline' | 'let' | 'macro' | 'match' | 'mutable' | 'null' | 'of' | 'partial' | 'promise' | 'reference' | 'relocatable' | 'sealed' | 'sizeof' | 'static' | 'supports' | 'switch' | 'typedef' | 'typeof' | 'var' ;"]
+
+/// «ReservedKeyword» = 'after' | 'alias' | 'apply' | 'auto' | 'byte' | 'case' | 'copyof' | 'default' | 'define' | 'final' | 'implements' | 'in' | 'inline' | 'let' | 'macro' | 'match' | 'mutable' | 'null' | 'of' | 'partial' | 'promise' | 'reference' | 'relocatable' | 'sealed' | 'sizeof' | 'static' | 'supports' | 'switch' | 'typedef' | 'typeof' | 'var' ;
 pub mod reserved_keyword {
     #[allow(unused_imports)]
     use super::*;
     pub type N = usize;
 }
-#[doc = "«SignedIntegerType» = 'int' ( '8' | '16' | '24' | '32' | '40' | '48' | '56' | '64' | '72' | '80' | '88' | '96' | '104' | '112' | '120' | '128' | '136' | '144' | '152' | '160' | '168' | '176' | '184' | '192' | '200' | '208' | '216' | '224' | '232' | '240' | '248' | '256' ) ;"]
+
+/// «SignedIntegerType» = 'int' ( '8' | '16' | '24' | '32' | '40' | '48' | '56' | '64' | '72' | '80' | '88' | '96' | '104' | '112' | '120' | '128' | '136' | '144' | '152' | '160' | '168' | '176' | '184' | '192' | '200' | '208' | '216' | '224' | '232' | '240' | '248' | '256' ) ;
 pub mod signed_integer_type {
     #[allow(unused_imports)]
     use super::*;
@@ -264,7 +296,8 @@ pub mod signed_integer_type {
         pub _1: usize,
     }
 }
-#[doc = "«YulDecimalNumberLiteral» = '0' | '1'…'9' { '0'…'9' } ;"]
+
+/// «YulDecimalNumberLiteral» = '0' | '1'…'9' { '0'…'9' } ;
 pub mod yul_decimal_number_literal {
     #[allow(unused_imports)]
     use super::*;
@@ -278,13 +311,15 @@ pub mod yul_decimal_number_literal {
         pub _1: Vec<char>,
     }
 }
-#[doc = "«YulEVMBuiltinFunctionName» = 'stop' | 'add' | 'sub' | 'mul' | 'div' | 'sdiv' | 'mod' | 'smod' | 'exp' | 'not' | 'lt' | 'gt' | 'slt' | 'sgt' | 'eq' | 'iszero' | 'and' | 'or' | 'xor' | 'byte' | 'shl' | 'shr' | 'sar' | 'addmod' | 'mulmod' | 'signextend' | 'keccak256' | 'pop' | 'mload' | 'mstore' | 'mstore8' | 'sload' | 'sstore' | 'msize' | 'gas' | 'address' | 'balance' | 'selfbalance' | 'caller' | 'callvalue' | 'calldataload' | 'calldatasize' | 'calldatacopy' | 'extcodesize' | 'extcodecopy' | 'returndatasize' | 'returndatacopy' | 'extcodehash' | 'create' | 'create2' | 'call' | 'callcode' | 'delegatecall' | 'staticcall' | 'return' | 'revert' | 'selfdestruct' | 'invalid' | 'log0' | 'log1' | 'log2' | 'log3' | 'log4' | 'chainid' | 'origin' | 'gasprice' | 'Blockhash' | 'coinbase' | 'timestamp' | 'number' | 'difficulty' | 'gaslimit' | 'basefee' ;"]
+
+/// «YulEVMBuiltinFunctionName» = 'stop' | 'add' | 'sub' | 'mul' | 'div' | 'sdiv' | 'mod' | 'smod' | 'exp' | 'not' | 'lt' | 'gt' | 'slt' | 'sgt' | 'eq' | 'iszero' | 'and' | 'or' | 'xor' | 'byte' | 'shl' | 'shr' | 'sar' | 'addmod' | 'mulmod' | 'signextend' | 'keccak256' | 'pop' | 'mload' | 'mstore' | 'mstore8' | 'sload' | 'sstore' | 'msize' | 'gas' | 'address' | 'balance' | 'selfbalance' | 'caller' | 'callvalue' | 'calldataload' | 'calldatasize' | 'calldatacopy' | 'extcodesize' | 'extcodecopy' | 'returndatasize' | 'returndatacopy' | 'extcodehash' | 'create' | 'create2' | 'call' | 'callcode' | 'delegatecall' | 'staticcall' | 'return' | 'revert' | 'selfdestruct' | 'invalid' | 'log0' | 'log1' | 'log2' | 'log3' | 'log4' | 'chainid' | 'origin' | 'gasprice' | 'Blockhash' | 'coinbase' | 'timestamp' | 'number' | 'difficulty' | 'gaslimit' | 'basefee' ;
 pub mod yul_evm_builtin_function_name {
     #[allow(unused_imports)]
     use super::*;
     pub type N = usize;
 }
-#[doc = "«YulHexLiteral» = '0x' ( '0'…'9' | 'a'…'f' | 'A'…'F' ) { '0'…'9' | 'a'…'f' | 'A'…'F' } ;"]
+
+/// «YulHexLiteral» = '0x' ( '0'…'9' | 'a'…'f' | 'A'…'F' ) { '0'…'9' | 'a'…'f' | 'A'…'F' } ;
 pub mod yul_hex_literal {
     #[allow(unused_imports)]
     use super::*;
@@ -295,13 +330,15 @@ pub mod yul_hex_literal {
         pub _2: Vec<char>,
     }
 }
-#[doc = "«YulKeyword» = 'break' | 'case' | 'continue' | 'default' | 'for' | 'function' | 'if' | 'leave' | 'let' | 'switch' | 'hex' ;"]
+
+/// «YulKeyword» = 'break' | 'case' | 'continue' | 'default' | 'for' | 'function' | 'if' | 'leave' | 'let' | 'switch' | 'hex' ;
 pub mod yul_keyword {
     #[allow(unused_imports)]
     use super::*;
     pub type N = usize;
 }
-#[doc = "«DecimalExponent» = ( 'e' | 'E' ) [ '-' ] «DecimalInteger» ;"]
+
+/// «DecimalExponent» = ( 'e' | 'E' ) [ '-' ] «DecimalInteger» ;
 pub mod decimal_exponent {
     #[allow(unused_imports)]
     use super::*;
@@ -312,7 +349,8 @@ pub mod decimal_exponent {
         pub decimal_integer: decimal_integer::N,
     }
 }
-#[doc = "«DecimalFloat» = [ «DecimalInteger» ] '.' «DecimalInteger» ;"]
+
+/// «DecimalFloat» = [ «DecimalInteger» ] '.' «DecimalInteger» ;
 pub mod decimal_float {
     #[allow(unused_imports)]
     use super::*;
@@ -323,7 +361,8 @@ pub mod decimal_float {
         pub decimal_integer_1: decimal_integer::N,
     }
 }
-#[doc = "«HexByteEscape» = 'x' 2…2*{ «HexCharacter» } ;"]
+
+/// «HexByteEscape» = 'x' 2…2*{ «HexCharacter» } ;
 pub mod hex_byte_escape {
     #[allow(unused_imports)]
     use super::*;
@@ -333,7 +372,8 @@ pub mod hex_byte_escape {
         pub _1: Vec<char>,
     }
 }
-#[doc = "«HexNumber» = '0' 'x' 1…*{ «HexCharacter» / [ '_' ] } ;"]
+
+/// «HexNumber» = '0' 'x' 1…*{ «HexCharacter» / [ '_' ] } ;
 pub mod hex_number {
     #[allow(unused_imports)]
     use super::*;
@@ -348,13 +388,15 @@ pub mod hex_number {
         pub underscore_chars: Vec<Option<char>>,
     }
 }
-#[doc = "«IdentifierPart» = «IdentifierStart» | '0'…'9' ;"]
+
+/// «IdentifierPart» = «IdentifierStart» | '0'…'9' ;
 pub mod identifier_part {
     #[allow(unused_imports)]
     use super::*;
     pub type N = char;
 }
-#[doc = "«PossiblySeparatedPairsOfHexDigits» = 1…*{ 2…2*{ «HexCharacter» } / [ '_' ] } ;"]
+
+/// «PossiblySeparatedPairsOfHexDigits» = 1…*{ 2…2*{ «HexCharacter» } / [ '_' ] } ;
 pub mod possibly_separated_pairs_of_hex_digits {
     #[allow(unused_imports)]
     use super::*;
@@ -364,7 +406,8 @@ pub mod possibly_separated_pairs_of_hex_digits {
         pub underscore_chars: Vec<Option<char>>,
     }
 }
-#[doc = "«UfixedType» = 'u' «FixedType» ;"]
+
+/// «UfixedType» = 'u' «FixedType» ;
 pub mod ufixed_type {
     #[allow(unused_imports)]
     use super::*;
@@ -374,7 +417,8 @@ pub mod ufixed_type {
         pub fixed_type: fixed_type::N,
     }
 }
-#[doc = "«UnicodeEscape» = 'u' 4…4*{ «HexCharacter» } ;"]
+
+/// «UnicodeEscape» = 'u' 4…4*{ «HexCharacter» } ;
 pub mod unicode_escape {
     #[allow(unused_imports)]
     use super::*;
@@ -384,7 +428,8 @@ pub mod unicode_escape {
         pub _1: Vec<char>,
     }
 }
-#[doc = "«UnsignedIntegerType» = 'u' «SignedIntegerType» ;"]
+
+/// «UnsignedIntegerType» = 'u' «SignedIntegerType» ;
 pub mod unsigned_integer_type {
     #[allow(unused_imports)]
     use super::*;
@@ -394,13 +439,15 @@ pub mod unsigned_integer_type {
         pub signed_integer_type: signed_integer_type::N,
     }
 }
-#[doc = "«YulReservedWord» = «YulKeyword» | «YulEVMBuiltinFunctionName» | «BooleanLiteral» ;"]
+
+/// «YulReservedWord» = «YulKeyword» | «YulEVMBuiltinFunctionName» | «BooleanLiteral» ;
 pub mod yul_reserved_word {
     #[allow(unused_imports)]
     use super::*;
     pub type N = usize;
 }
-#[doc = "«DecimalNumber» = ( «DecimalInteger» | «DecimalFloat» ) [ «DecimalExponent» ] ;"]
+
+/// «DecimalNumber» = ( «DecimalInteger» | «DecimalFloat» ) [ «DecimalExponent» ] ;
 pub mod decimal_number {
     #[allow(unused_imports)]
     use super::*;
@@ -414,7 +461,8 @@ pub mod decimal_number {
         DecimalFloat(decimal_float::N),
     }
 }
-#[doc = "ElementaryType = 'bool' | 'string' | 'bytes' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | «FixedType» | «UfixedType» ;"]
+
+/// ElementaryType = 'bool' | 'string' | 'bytes' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | «FixedType» | «UfixedType» ;
 pub mod elementary_type {
     #[allow(unused_imports)]
     use super::*;
@@ -428,7 +476,8 @@ pub mod elementary_type {
         UfixedType(ufixed_type::N),
     }
 }
-#[doc = "«EscapeSequence» = '\\\\' ( «AsciiEscape» | «HexByteEscape» | «UnicodeEscape» ) ;"]
+
+/// «EscapeSequence» = '\\' ( «AsciiEscape» | «HexByteEscape» | «UnicodeEscape» ) ;
 pub mod escape_sequence {
     #[allow(unused_imports)]
     use super::*;
@@ -443,7 +492,8 @@ pub mod escape_sequence {
         UnicodeEscape(unicode_escape::N),
     }
 }
-#[doc = "«HexStringLiteral» = 'hex' ( '\"' [ «PossiblySeparatedPairsOfHexDigits» ] '\"' | '\\'' [ «PossiblySeparatedPairsOfHexDigits» ] '\\'' ) ;"]
+
+/// «HexStringLiteral» = 'hex' ( '"' [ «PossiblySeparatedPairsOfHexDigits» ] '"' | '\'' [ «PossiblySeparatedPairsOfHexDigits» ] '\'' ) ;
 pub mod hex_string_literal {
     #[allow(unused_imports)]
     use super::*;
@@ -469,7 +519,8 @@ pub mod hex_string_literal {
         pub double_quote_char_1: char,
     }
 }
-#[doc = "«Keyword» = 'pragma' | 'abstract' | 'anonymous' | 'address' | 'as' | 'assembly' | 'bool' | 'break' | 'bytes' | 'calldata' | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum' | 'event' | 'external' | 'fallback' | 'false' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import' | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override' | 'payable' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct' | 'true' | 'try' | 'type' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | 'fixed' | 'ufixed' ;"]
+
+/// «Keyword» = 'pragma' | 'abstract' | 'anonymous' | 'address' | 'as' | 'assembly' | 'bool' | 'break' | 'bytes' | 'calldata' | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum' | 'event' | 'external' | 'fallback' | 'false' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import' | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override' | 'payable' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct' | 'true' | 'try' | 'type' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | 'fixed' | 'ufixed' ;
 pub mod keyword {
     #[allow(unused_imports)]
     use super::*;
@@ -482,7 +533,8 @@ pub mod keyword {
         _4(usize),
     }
 }
-#[doc = "«RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;"]
+
+/// «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;
 pub mod raw_identifier {
     #[allow(unused_imports)]
     use super::*;
@@ -492,7 +544,8 @@ pub mod raw_identifier {
         pub _1: Vec<char>,
     }
 }
-#[doc = "«DoubleQuotedAsciiStringLiteral» = '\"' { '\\u{20}'…'~' - ( '\"' | '\\\\' ) | «EscapeSequence» } '\"' ;"]
+
+/// «DoubleQuotedAsciiStringLiteral» = '"' { '\u{20}'…'~' - ( '"' | '\\' ) | «EscapeSequence» } '"' ;
 pub mod double_quoted_ascii_string_literal {
     #[allow(unused_imports)]
     use super::*;
@@ -507,7 +560,8 @@ pub mod double_quoted_ascii_string_literal {
         EscapeSequence(escape_sequence::N),
     }
 }
-#[doc = "«DoubleQuotedUnicodeStringLiteral» = 'unicode\"' { ¬( '\"' | '\\\\' | '\\u{a}' | '\\u{d}' ) | «EscapeSequence» } '\"' ;"]
+
+/// «DoubleQuotedUnicodeStringLiteral» = 'unicode"' { ¬( '"' | '\\' | '\u{a}' | '\u{d}' ) | «EscapeSequence» } '"' ;
 pub mod double_quoted_unicode_string_literal {
     #[allow(unused_imports)]
     use super::*;
@@ -522,7 +576,8 @@ pub mod double_quoted_unicode_string_literal {
         EscapeSequence(escape_sequence::N),
     }
 }
-#[doc = "ElementaryTypeWithPayable = 'address' [ 'payable' ] | ElementaryType ;"]
+
+/// ElementaryTypeWithPayable = 'address' [ 'payable' ] | ElementaryType ;
 pub mod elementary_type_with_payable {
     #[allow(unused_imports)]
     use super::*;
@@ -536,7 +591,8 @@ pub mod elementary_type_with_payable {
         pub payable: Option<usize>,
     }
 }
-#[doc = "ElementaryTypeWithoutPayable = 'address' | ElementaryType ;"]
+
+/// ElementaryTypeWithoutPayable = 'address' | ElementaryType ;
 pub mod elementary_type_without_payable {
     #[allow(unused_imports)]
     use super::*;
@@ -546,7 +602,8 @@ pub mod elementary_type_without_payable {
         ElementaryType(elementary_type::N),
     }
 }
-#[doc = "NumericLiteral = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;"]
+
+/// NumericLiteral = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
 pub mod numeric_literal {
     #[allow(unused_imports)]
     use super::*;
@@ -560,7 +617,8 @@ pub mod numeric_literal {
         HexNumber(hex_number::N),
     }
 }
-#[doc = "«ReservedWord» = «Keyword» | «ReservedKeyword» | «NumberUnit» | «BooleanLiteral» ;"]
+
+/// «ReservedWord» = «Keyword» | «ReservedKeyword» | «NumberUnit» | «BooleanLiteral» ;
 pub mod reserved_word {
     #[allow(unused_imports)]
     use super::*;
@@ -570,7 +628,8 @@ pub mod reserved_word {
         _1(usize),
     }
 }
-#[doc = "«SingleQuotedAsciiStringLiteral» = '\\'' { '\\u{20}'…'~' - ( '\\'' | '\\\\' ) | «EscapeSequence» } '\\'' ;"]
+
+/// «SingleQuotedAsciiStringLiteral» = '\'' { '\u{20}'…'~' - ( '\'' | '\\' ) | «EscapeSequence» } '\'' ;
 pub mod single_quoted_ascii_string_literal {
     #[allow(unused_imports)]
     use super::*;
@@ -585,7 +644,8 @@ pub mod single_quoted_ascii_string_literal {
         EscapeSequence(escape_sequence::N),
     }
 }
-#[doc = "«SingleQuotedUnicodeStringLiteral» = 'unicode\\'' { ¬( '\\'' | '\\\\' | '\\u{a}' | '\\u{d}' ) | «EscapeSequence» } '\\'' ;"]
+
+/// «SingleQuotedUnicodeStringLiteral» = 'unicode\'' { ¬( '\'' | '\\' | '\u{a}' | '\u{d}' ) | «EscapeSequence» } '\'' ;
 pub mod single_quoted_unicode_string_literal {
     #[allow(unused_imports)]
     use super::*;
@@ -600,13 +660,15 @@ pub mod single_quoted_unicode_string_literal {
         EscapeSequence(escape_sequence::N),
     }
 }
-#[doc = "«YulIdentifier» = «RawIdentifier» - «YulReservedWord» ;"]
+
+/// «YulIdentifier» = «RawIdentifier» - «YulReservedWord» ;
 pub mod yul_identifier {
     #[allow(unused_imports)]
     use super::*;
     pub type N = raw_identifier::N;
 }
-#[doc = "«AsciiStringLiteral» = «SingleQuotedAsciiStringLiteral» | «DoubleQuotedAsciiStringLiteral» ;"]
+
+/// «AsciiStringLiteral» = «SingleQuotedAsciiStringLiteral» | «DoubleQuotedAsciiStringLiteral» ;
 pub mod ascii_string_literal {
     #[allow(unused_imports)]
     use super::*;
@@ -616,7 +678,8 @@ pub mod ascii_string_literal {
         DoubleQuotedAsciiStringLiteral(double_quoted_ascii_string_literal::N),
     }
 }
-#[doc = "AssemblyFlags = '(' 1…*{ «DoubleQuotedAsciiStringLiteral» / ',' } ')' ;"]
+
+/// AssemblyFlags = '(' 1…*{ «DoubleQuotedAsciiStringLiteral» / ',' } ')' ;
 pub mod assembly_flags {
     #[allow(unused_imports)]
     use super::*;
@@ -631,13 +694,15 @@ pub mod assembly_flags {
         pub comma_chars: Vec<char>,
     }
 }
-#[doc = "«Identifier» = «RawIdentifier» - «ReservedWord» ;"]
+
+/// «Identifier» = «RawIdentifier» - «ReservedWord» ;
 pub mod identifier {
     #[allow(unused_imports)]
     use super::*;
     pub type N = raw_identifier::N;
 }
-#[doc = "«UnicodeStringLiteral» = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral» ;"]
+
+/// «UnicodeStringLiteral» = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral» ;
 pub mod unicode_string_literal {
     #[allow(unused_imports)]
     use super::*;
@@ -647,7 +712,8 @@ pub mod unicode_string_literal {
         DoubleQuotedUnicodeStringLiteral(double_quoted_unicode_string_literal::N),
     }
 }
-#[doc = "YulFunctionCall = ( «YulIdentifier» | «YulEVMBuiltinFunctionName» ) '(' { YulExpression / ',' } ')' ;"]
+
+/// YulFunctionCall = ( «YulIdentifier» | «YulEVMBuiltinFunctionName» ) '(' { YulExpression / ',' } ')' ;
 pub mod yul_function_call {
     #[allow(unused_imports)]
     use super::*;
@@ -667,7 +733,8 @@ pub mod yul_function_call {
         _1(usize),
     }
 }
-#[doc = "YulFunctionDefinition = 'function' «YulIdentifier» '(' { «YulIdentifier» / ',' } ')' [ '->' 1…*{ «YulIdentifier» / ',' } ] YulBlock ;"]
+
+/// YulFunctionDefinition = 'function' «YulIdentifier» '(' { «YulIdentifier» / ',' } ')' [ '->' 1…*{ «YulIdentifier» / ',' } ] YulBlock ;
 pub mod yul_function_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -694,7 +761,8 @@ pub mod yul_function_definition {
         pub comma_chars: Vec<char>,
     }
 }
-#[doc = "YulPath = «YulIdentifier» { '.' ( «YulIdentifier» | «YulEVMBuiltinFunctionName» ) } ;"]
+
+/// YulPath = «YulIdentifier» { '.' ( «YulIdentifier» | «YulEVMBuiltinFunctionName» ) } ;
 pub mod yul_path {
     #[allow(unused_imports)]
     use super::*;
@@ -712,7 +780,8 @@ pub mod yul_path {
         _1(usize),
     }
 }
-#[doc = "EnumDefinition = 'enum' «Identifier» '{' 1…*{ «Identifier» / ',' } '}' ;"]
+
+/// EnumDefinition = 'enum' «Identifier» '{' 1…*{ «Identifier» / ',' } '}' ;
 pub mod enum_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -729,7 +798,8 @@ pub mod enum_definition {
         pub comma_chars: Vec<char>,
     }
 }
-#[doc = "IdentifierPath = 1…*{ «Identifier» / '.' } ;"]
+
+/// IdentifierPath = 1…*{ «Identifier» / '.' } ;
 pub mod identifier_path {
     #[allow(unused_imports)]
     use super::*;
@@ -739,13 +809,15 @@ pub mod identifier_path {
         pub period_chars: Vec<char>,
     }
 }
-#[doc = "ImportPath = «AsciiStringLiteral» ;"]
+
+/// ImportPath = «AsciiStringLiteral» ;
 pub mod import_path {
     #[allow(unused_imports)]
     use super::*;
     pub type N = ascii_string_literal::N;
 }
-#[doc = "Literal = «AsciiStringLiteral» | «UnicodeStringLiteral» | NumericLiteral | «HexStringLiteral» | «BooleanLiteral» ;"]
+
+/// Literal = «AsciiStringLiteral» | «UnicodeStringLiteral» | NumericLiteral | «HexStringLiteral» | «BooleanLiteral» ;
 pub mod literal {
     #[allow(unused_imports)]
     use super::*;
@@ -758,7 +830,8 @@ pub mod literal {
         _4(usize),
     }
 }
-#[doc = "NamedArgument = «Identifier» ':' Expression ;"]
+
+/// NamedArgument = «Identifier» ':' Expression ;
 pub mod named_argument {
     #[allow(unused_imports)]
     use super::*;
@@ -769,7 +842,8 @@ pub mod named_argument {
         pub expression: expression::N,
     }
 }
-#[doc = "ParameterDeclaration = TypeName [ DataLocation ] [ «Identifier» ] ;"]
+
+/// ParameterDeclaration = TypeName [ DataLocation ] [ «Identifier» ] ;
 pub mod parameter_declaration {
     #[allow(unused_imports)]
     use super::*;
@@ -780,7 +854,8 @@ pub mod parameter_declaration {
         pub identifier: Option<identifier::N>,
     }
 }
-#[doc = "SelectedImport = «Identifier» [ 'as' «Identifier» ] ;"]
+
+/// SelectedImport = «Identifier» [ 'as' «Identifier» ] ;
 pub mod selected_import {
     #[allow(unused_imports)]
     use super::*;
@@ -794,7 +869,8 @@ pub mod selected_import {
         pub identifier: identifier::N,
     }
 }
-#[doc = "UserDefinedValueTypeDefinition = 'type' «Identifier» 'is' ElementaryTypeWithPayable ';' ;"]
+
+/// UserDefinedValueTypeDefinition = 'type' «Identifier» 'is' ElementaryTypeWithPayable ';' ;
 pub mod user_defined_value_type_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -807,7 +883,8 @@ pub mod user_defined_value_type_definition {
         pub semicolon_char: char,
     }
 }
-#[doc = "YulLiteral = «YulDecimalNumberLiteral» | «YulHexLiteral» | «AsciiStringLiteral» | «BooleanLiteral» | «HexStringLiteral» ;"]
+
+/// YulLiteral = «YulDecimalNumberLiteral» | «YulHexLiteral» | «AsciiStringLiteral» | «BooleanLiteral» | «HexStringLiteral» ;
 pub mod yul_literal {
     #[allow(unused_imports)]
     use super::*;
@@ -820,7 +897,8 @@ pub mod yul_literal {
         HexStringLiteral(hex_string_literal::N),
     }
 }
-#[doc = "MappingType = 'mapping' '(' ( ElementaryTypeWithoutPayable | IdentifierPath ) '=>' TypeName ')' ;"]
+
+/// MappingType = 'mapping' '(' ( ElementaryTypeWithoutPayable | IdentifierPath ) '=>' TypeName ')' ;
 pub mod mapping_type {
     #[allow(unused_imports)]
     use super::*;
@@ -838,7 +916,8 @@ pub mod mapping_type {
         IdentifierPath(identifier_path::N),
     }
 }
-#[doc = "NamedArgumentList = '{' { NamedArgument / ',' } '}' ;"]
+
+/// NamedArgumentList = '{' { NamedArgument / ',' } '}' ;
 pub mod named_argument_list {
     #[allow(unused_imports)]
     use super::*;
@@ -853,7 +932,8 @@ pub mod named_argument_list {
         pub comma_chars: Vec<char>,
     }
 }
-#[doc = "NonEmptyParameterList = '(' 1…*{ ParameterDeclaration / ',' } ')' ;"]
+
+/// NonEmptyParameterList = '(' 1…*{ ParameterDeclaration / ',' } ')' ;
 pub mod non_empty_parameter_list {
     #[allow(unused_imports)]
     use super::*;
@@ -868,7 +948,8 @@ pub mod non_empty_parameter_list {
         pub comma_chars: Vec<char>,
     }
 }
-#[doc = "OverrideSpecifier = 'override' [ '(' 1…1*{ IdentifierPath / ',' } ')' ] ;"]
+
+/// OverrideSpecifier = 'override' [ '(' 1…1*{ IdentifierPath / ',' } ')' ] ;
 pub mod override_specifier {
     #[allow(unused_imports)]
     use super::*;
@@ -887,7 +968,8 @@ pub mod override_specifier {
         pub comma_chars: Vec<char>,
     }
 }
-#[doc = "ParameterList = '(' { ParameterDeclaration / ',' } ')' ;"]
+
+/// ParameterList = '(' { ParameterDeclaration / ',' } ')' ;
 pub mod parameter_list {
     #[allow(unused_imports)]
     use super::*;
@@ -902,7 +984,8 @@ pub mod parameter_list {
         pub comma_chars: Vec<char>,
     }
 }
-#[doc = "SelectingImportDirective = '{' 1…*{ SelectedImport / ',' } '}' 'from' ImportPath ;"]
+
+/// SelectingImportDirective = '{' 1…*{ SelectedImport / ',' } '}' 'from' ImportPath ;
 pub mod selecting_import_directive {
     #[allow(unused_imports)]
     use super::*;
@@ -919,7 +1002,8 @@ pub mod selecting_import_directive {
         pub comma_chars: Vec<char>,
     }
 }
-#[doc = "SimpleImportDirective = ImportPath { 'as' «Identifier» } ;"]
+
+/// SimpleImportDirective = ImportPath { 'as' «Identifier» } ;
 pub mod simple_import_directive {
     #[allow(unused_imports)]
     use super::*;
@@ -933,7 +1017,8 @@ pub mod simple_import_directive {
         pub identifier: identifier::N,
     }
 }
-#[doc = "StarImportDirective = '*' 'as' «Identifier» 'from' ImportPath ;"]
+
+/// StarImportDirective = '*' 'as' «Identifier» 'from' ImportPath ;
 pub mod star_import_directive {
     #[allow(unused_imports)]
     use super::*;
@@ -946,7 +1031,8 @@ pub mod star_import_directive {
         pub import_path: import_path::N,
     }
 }
-#[doc = "YulExpression = YulPath | YulFunctionCall | YulLiteral ;"]
+
+/// YulExpression = YulPath | YulFunctionCall | YulLiteral ;
 pub mod yul_expression {
     #[allow(unused_imports)]
     use super::*;
@@ -957,7 +1043,8 @@ pub mod yul_expression {
         YulLiteral(yul_literal::N),
     }
 }
-#[doc = "ArgumentList = '(' [ PositionalArgumentList | NamedArgumentList ] ')' ;"]
+
+/// ArgumentList = '(' [ PositionalArgumentList | NamedArgumentList ] ')' ;
 pub mod argument_list {
     #[allow(unused_imports)]
     use super::*;
@@ -972,7 +1059,8 @@ pub mod argument_list {
         NamedArgumentList(named_argument_list::N),
     }
 }
-#[doc = "CatchClause = 'catch' [ [ «Identifier» ] NonEmptyParameterList ] Block ;"]
+
+/// CatchClause = 'catch' [ [ «Identifier» ] NonEmptyParameterList ] Block ;
 pub mod catch_clause {
     #[allow(unused_imports)]
     use super::*;
@@ -987,7 +1075,8 @@ pub mod catch_clause {
         pub non_empty_parameter_list: non_empty_parameter_list::N,
     }
 }
-#[doc = "FunctionType = 'function' ParameterList { VisibilitySpecifier | StateMutabilitySpecifier } [ 'returns' NonEmptyParameterList ] ;"]
+
+/// FunctionType = 'function' ParameterList { VisibilitySpecifier | StateMutabilitySpecifier } [ 'returns' NonEmptyParameterList ] ;
 pub mod function_type {
     #[allow(unused_imports)]
     use super::*;
@@ -1003,7 +1092,8 @@ pub mod function_type {
         pub non_empty_parameter_list: non_empty_parameter_list::N,
     }
 }
-#[doc = "ImportDirective = 'import' ( SimpleImportDirective | StarImportDirective | SelectingImportDirective ) ';' ;"]
+
+/// ImportDirective = 'import' ( SimpleImportDirective | StarImportDirective | SelectingImportDirective ) ';' ;
 pub mod import_directive {
     #[allow(unused_imports)]
     use super::*;
@@ -1019,7 +1109,8 @@ pub mod import_directive {
         SelectingImportDirective(selecting_import_directive::N),
     }
 }
-#[doc = "MethodAttribute = 'virtual' | OverrideSpecifier ;"]
+
+/// MethodAttribute = 'virtual' | OverrideSpecifier ;
 pub mod method_attribute {
     #[allow(unused_imports)]
     use super::*;
@@ -1029,7 +1120,8 @@ pub mod method_attribute {
         OverrideSpecifier(override_specifier::N),
     }
 }
-#[doc = "StateVariableAttribute = 'public' | 'private' | 'internal' | 'constant' | OverrideSpecifier | 'immutable' ;"]
+
+/// StateVariableAttribute = 'public' | 'private' | 'internal' | 'constant' | OverrideSpecifier | 'immutable' ;
 pub mod state_variable_attribute {
     #[allow(unused_imports)]
     use super::*;
@@ -1040,7 +1132,8 @@ pub mod state_variable_attribute {
         Immutable(usize),
     }
 }
-#[doc = "YulAssignment = YulPath ( ':=' YulExpression | 1…*{ ',' YulPath } ':=' YulFunctionCall ) ;"]
+
+/// YulAssignment = YulPath ( ':=' YulExpression | 1…*{ ',' YulPath } ':=' YulFunctionCall ) ;
 pub mod yul_assignment {
     #[allow(unused_imports)]
     use super::*;
@@ -1067,7 +1160,8 @@ pub mod yul_assignment {
         pub yul_expression: yul_expression::N,
     }
 }
-#[doc = "YulForStatement = 'for' YulBlock YulExpression YulBlock YulBlock ;"]
+
+/// YulForStatement = 'for' YulBlock YulExpression YulBlock YulBlock ;
 pub mod yul_for_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1080,7 +1174,8 @@ pub mod yul_for_statement {
         pub yul_block_2: yul_block::N,
     }
 }
-#[doc = "YulIfStatement = 'if' YulExpression YulBlock ;"]
+
+/// YulIfStatement = 'if' YulExpression YulBlock ;
 pub mod yul_if_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1091,7 +1186,8 @@ pub mod yul_if_statement {
         pub yul_block: yul_block::N,
     }
 }
-#[doc = "YulSwitchStatement = 'switch' YulExpression ( 1…*{ 'case' YulLiteral YulBlock } [ 'default' YulBlock ] | 'default' YulBlock ) ;"]
+
+/// YulSwitchStatement = 'switch' YulExpression ( 1…*{ 'case' YulLiteral YulBlock } [ 'default' YulBlock ] | 'default' YulBlock ) ;
 pub mod yul_switch_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1123,7 +1219,8 @@ pub mod yul_switch_statement {
         pub yul_block: yul_block::N,
     }
 }
-#[doc = "YulVariableDeclaration = 'let' «YulIdentifier» [ ':=' YulExpression | [ ',' «YulIdentifier» ] [ ':=' YulFunctionCall ] ] ;"]
+
+/// YulVariableDeclaration = 'let' «YulIdentifier» [ ':=' YulExpression | [ ',' «YulIdentifier» ] [ ':=' YulFunctionCall ] ] ;
 pub mod yul_variable_declaration {
     #[allow(unused_imports)]
     use super::*;
@@ -1154,7 +1251,8 @@ pub mod yul_variable_declaration {
         pub yul_expression: yul_expression::N,
     }
 }
-#[doc = "InheritanceSpecifier = IdentifierPath [ ArgumentList ] ;"]
+
+/// InheritanceSpecifier = IdentifierPath [ ArgumentList ] ;
 pub mod inheritance_specifier {
     #[allow(unused_imports)]
     use super::*;
@@ -1164,7 +1262,8 @@ pub mod inheritance_specifier {
         pub argument_list: Option<argument_list::N>,
     }
 }
-#[doc = "ModifierInvocation = IdentifierPath [ ArgumentList ] ;"]
+
+/// ModifierInvocation = IdentifierPath [ ArgumentList ] ;
 pub mod modifier_invocation {
     #[allow(unused_imports)]
     use super::*;
@@ -1174,7 +1273,8 @@ pub mod modifier_invocation {
         pub argument_list: Option<argument_list::N>,
     }
 }
-#[doc = "TypeName = ( ElementaryTypeWithPayable | FunctionType | MappingType | IdentifierPath ) { '[' [ Expression ] ']' } ;"]
+
+/// TypeName = ( ElementaryTypeWithPayable | FunctionType | MappingType | IdentifierPath ) { '[' [ Expression ] ']' } ;
 pub mod type_name {
     #[allow(unused_imports)]
     use super::*;
@@ -1195,7 +1295,8 @@ pub mod type_name {
         IdentifierPath(identifier_path::N),
     }
 }
-#[doc = "YulStatement = YulBlock | YulVariableDeclaration | YulFunctionDefinition | YulAssignment | YulFunctionCall | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement ;"]
+
+/// YulStatement = YulBlock | YulVariableDeclaration | YulFunctionDefinition | YulAssignment | YulFunctionCall | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement ;
 pub mod yul_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1212,7 +1313,8 @@ pub mod yul_statement {
         _8(usize),
     }
 }
-#[doc = "ConstructorAttribute = ModifierInvocation | 'payable' | 'internal' | 'public' ;"]
+
+/// ConstructorAttribute = ModifierInvocation | 'payable' | 'internal' | 'public' ;
 pub mod constructor_attribute {
     #[allow(unused_imports)]
     use super::*;
@@ -1222,7 +1324,8 @@ pub mod constructor_attribute {
         _1(usize),
     }
 }
-#[doc = "ErrorParameter = TypeName [ «Identifier» ] ;"]
+
+/// ErrorParameter = TypeName [ «Identifier» ] ;
 pub mod error_parameter {
     #[allow(unused_imports)]
     use super::*;
@@ -1232,7 +1335,8 @@ pub mod error_parameter {
         pub identifier: Option<identifier::N>,
     }
 }
-#[doc = "EventParameter = TypeName [ 'indexed' ] [ «Identifier» ] ;"]
+
+/// EventParameter = TypeName [ 'indexed' ] [ «Identifier» ] ;
 pub mod event_parameter {
     #[allow(unused_imports)]
     use super::*;
@@ -1243,7 +1347,8 @@ pub mod event_parameter {
         pub identifier: Option<identifier::N>,
     }
 }
-#[doc = "FallbackFunctionAttribute = 'external' | StateMutabilitySpecifier | ModifierInvocation | 'virtual' | OverrideSpecifier ;"]
+
+/// FallbackFunctionAttribute = 'external' | StateMutabilitySpecifier | ModifierInvocation | 'virtual' | OverrideSpecifier ;
 pub mod fallback_function_attribute {
     #[allow(unused_imports)]
     use super::*;
@@ -1255,7 +1360,8 @@ pub mod fallback_function_attribute {
         OverrideSpecifier(override_specifier::N),
     }
 }
-#[doc = "FunctionAttribute = VisibilitySpecifier | StateMutabilitySpecifier | ModifierInvocation | 'virtual' | OverrideSpecifier ;"]
+
+/// FunctionAttribute = VisibilitySpecifier | StateMutabilitySpecifier | ModifierInvocation | 'virtual' | OverrideSpecifier ;
 pub mod function_attribute {
     #[allow(unused_imports)]
     use super::*;
@@ -1267,7 +1373,8 @@ pub mod function_attribute {
         OverrideSpecifier(override_specifier::N),
     }
 }
-#[doc = "InheritanceSpecifierList = 'is' 1…*{ InheritanceSpecifier / ',' } ;"]
+
+/// InheritanceSpecifierList = 'is' 1…*{ InheritanceSpecifier / ',' } ;
 pub mod inheritance_specifier_list {
     #[allow(unused_imports)]
     use super::*;
@@ -1281,7 +1388,8 @@ pub mod inheritance_specifier_list {
         pub comma_chars: Vec<char>,
     }
 }
-#[doc = "PrimaryExpression = 'payable' ArgumentList | 'type' '(' TypeName ')' | 'new' TypeName | '(' 1…*{ [ Expression ] / ',' } ')' | '[' 1…*{ Expression / ',' } ']' | «Identifier» | Literal | ElementaryTypeWithoutPayable ;"]
+
+/// PrimaryExpression = 'payable' ArgumentList | 'type' '(' TypeName ')' | 'new' TypeName | '(' 1…*{ [ Expression ] / ',' } ')' | '[' 1…*{ Expression / ',' } ']' | «Identifier» | Literal | ElementaryTypeWithoutPayable ;
 pub mod primary_expression {
     #[allow(unused_imports)]
     use super::*;
@@ -1329,7 +1437,8 @@ pub mod primary_expression {
         pub argument_list: argument_list::N,
     }
 }
-#[doc = "ReceiveFunctionAttribute = 'external' | 'payable' | ModifierInvocation | 'virtual' | OverrideSpecifier ;"]
+
+/// ReceiveFunctionAttribute = 'external' | 'payable' | ModifierInvocation | 'virtual' | OverrideSpecifier ;
 pub mod receive_function_attribute {
     #[allow(unused_imports)]
     use super::*;
@@ -1341,7 +1450,8 @@ pub mod receive_function_attribute {
         OverrideSpecifier(override_specifier::N),
     }
 }
-#[doc = "StructDefinition = 'struct' «Identifier» '{' 1…*{ TypeName «Identifier» ';' } '}' ;"]
+
+/// StructDefinition = 'struct' «Identifier» '{' 1…*{ TypeName «Identifier» ';' } '}' ;
 pub mod struct_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -1359,7 +1469,8 @@ pub mod struct_definition {
         pub semicolon_char: char,
     }
 }
-#[doc = "UsingDirective = 'using' ( IdentifierPath | '{' 1…*{ IdentifierPath / ',' } '}' ) 'for' ( '*' | TypeName ) [ 'global' ] ';' ;"]
+
+/// UsingDirective = 'using' ( IdentifierPath | '{' 1…*{ IdentifierPath / ',' } '}' ) 'for' ( '*' | TypeName ) [ 'global' ] ';' ;
 pub mod using_directive {
     #[allow(unused_imports)]
     use super::*;
@@ -1390,7 +1501,8 @@ pub mod using_directive {
         pub comma_chars: Vec<char>,
     }
 }
-#[doc = "VariableDeclaration = TypeName [ DataLocation ] «Identifier» ;"]
+
+/// VariableDeclaration = TypeName [ DataLocation ] «Identifier» ;
 pub mod variable_declaration {
     #[allow(unused_imports)]
     use super::*;
@@ -1401,7 +1513,8 @@ pub mod variable_declaration {
         pub identifier: identifier::N,
     }
 }
-#[doc = "YulBlock = '{' { YulStatement } '}' ;"]
+
+/// YulBlock = '{' { YulStatement } '}' ;
 pub mod yul_block {
     #[allow(unused_imports)]
     use super::*;
@@ -1412,7 +1525,8 @@ pub mod yul_block {
         pub close_brace_char: char,
     }
 }
-#[doc = "AssemblyStatement = 'assembly' [ '\"evmasm\"' ] [ AssemblyFlags ] YulBlock ;"]
+
+/// AssemblyStatement = 'assembly' [ '"evmasm"' ] [ AssemblyFlags ] YulBlock ;
 pub mod assembly_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1424,7 +1538,8 @@ pub mod assembly_statement {
         pub yul_block: yul_block::N,
     }
 }
-#[doc = "Directive = «PragmaDirective» | ImportDirective | UsingDirective ;"]
+
+/// Directive = «PragmaDirective» | ImportDirective | UsingDirective ;
 pub mod directive {
     #[allow(unused_imports)]
     use super::*;
@@ -1435,7 +1550,8 @@ pub mod directive {
         UsingDirective(using_directive::N),
     }
 }
-#[doc = "ErrorDefinition = 'error' «Identifier» '(' { ErrorParameter / ',' } ')' ';' ;"]
+
+/// ErrorDefinition = 'error' «Identifier» '(' { ErrorParameter / ',' } ')' ';' ;
 pub mod error_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -1453,7 +1569,8 @@ pub mod error_definition {
         pub comma_chars: Vec<char>,
     }
 }
-#[doc = "EventDefinition = 'event' «Identifier» '(' { EventParameter / ',' } ')' [ 'anonymous' ] ';' ;"]
+
+/// EventDefinition = 'event' «Identifier» '(' { EventParameter / ',' } ')' [ 'anonymous' ] ';' ;
 pub mod event_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -1472,7 +1589,8 @@ pub mod event_definition {
         pub comma_chars: Vec<char>,
     }
 }
-#[doc = "IndexAccessExpression = PrimaryExpression { '[' [ Expression ] [ ':' [ Expression ] ] ']' } ;"]
+
+/// IndexAccessExpression = PrimaryExpression { '[' [ Expression ] [ ':' [ Expression ] ] ']' } ;
 pub mod index_access_expression {
     #[allow(unused_imports)]
     use super::*;
@@ -1492,7 +1610,8 @@ pub mod index_access_expression {
         pub expression: Option<expression::N>,
     }
 }
-#[doc = "VariableDeclarationTuple = '(' { ',' } VariableDeclaration { ',' [ VariableDeclaration ] } ')' ;"]
+
+/// VariableDeclarationTuple = '(' { ',' } VariableDeclaration { ',' [ VariableDeclaration ] } ')' ;
 pub mod variable_declaration_tuple {
     #[allow(unused_imports)]
     use super::*;
@@ -1509,7 +1628,8 @@ pub mod variable_declaration_tuple {
         pub variable_declaration: Option<variable_declaration::N>,
     }
 }
-#[doc = "MemberAccessExpression = IndexAccessExpression { '.' ( «Identifier» | 'address' ) } ;"]
+
+/// MemberAccessExpression = IndexAccessExpression { '.' ( «Identifier» | 'address' ) } ;
 pub mod member_access_expression {
     #[allow(unused_imports)]
     use super::*;
@@ -1527,7 +1647,8 @@ pub mod member_access_expression {
         Address(usize),
     }
 }
-#[doc = "FunctionCallOptionsExpression = MemberAccessExpression { '{' 1…*{ NamedArgument / ',' } '}' } ;"]
+
+/// FunctionCallOptionsExpression = MemberAccessExpression { '{' 1…*{ NamedArgument / ',' } '}' } ;
 pub mod function_call_options_expression {
     #[allow(unused_imports)]
     use super::*;
@@ -1546,7 +1667,8 @@ pub mod function_call_options_expression {
         pub comma_chars: Vec<char>,
     }
 }
-#[doc = "FunctionCallExpression = FunctionCallOptionsExpression { ArgumentList } ;"]
+
+/// FunctionCallExpression = FunctionCallOptionsExpression { ArgumentList } ;
 pub mod function_call_expression {
     #[allow(unused_imports)]
     use super::*;
@@ -1556,7 +1678,8 @@ pub mod function_call_expression {
         pub argument_lists: Vec<argument_list::N>,
     }
 }
-#[doc = "UnaryPrefixExpression = UnaryPrefixOperator FunctionCallExpression ;"]
+
+/// UnaryPrefixExpression = UnaryPrefixOperator FunctionCallExpression ;
 pub mod unary_prefix_expression {
     #[allow(unused_imports)]
     use super::*;
@@ -1566,7 +1689,8 @@ pub mod unary_prefix_expression {
         pub function_call_expression: function_call_expression::N,
     }
 }
-#[doc = "UnarySuffixExpression = UnaryPrefixExpression UnarySuffixOperator ;"]
+
+/// UnarySuffixExpression = UnaryPrefixExpression UnarySuffixOperator ;
 pub mod unary_suffix_expression {
     #[allow(unused_imports)]
     use super::*;
@@ -1576,7 +1700,8 @@ pub mod unary_suffix_expression {
         pub _1: usize,
     }
 }
-#[doc = "ExpExpression = UnarySuffixExpression '**' Expression ;"]
+
+/// ExpExpression = UnarySuffixExpression '**' Expression ;
 pub mod exp_expression {
     #[allow(unused_imports)]
     use super::*;
@@ -1587,7 +1712,8 @@ pub mod exp_expression {
         pub expression: expression::N,
     }
 }
-#[doc = "MulDivModExpression = ExpExpression { MulDivModOperator ExpExpression } ;"]
+
+/// MulDivModExpression = ExpExpression { MulDivModOperator ExpExpression } ;
 pub mod mul_div_mod_expression {
     #[allow(unused_imports)]
     use super::*;
@@ -1601,7 +1727,8 @@ pub mod mul_div_mod_expression {
         pub exp_expression: exp_expression::N,
     }
 }
-#[doc = "AddSubExpression = MulDivModExpression { AddSubOperator MulDivModExpression } ;"]
+
+/// AddSubExpression = MulDivModExpression { AddSubOperator MulDivModExpression } ;
 pub mod add_sub_expression {
     #[allow(unused_imports)]
     use super::*;
@@ -1615,7 +1742,8 @@ pub mod add_sub_expression {
         pub mul_div_mod_expression: mul_div_mod_expression::N,
     }
 }
-#[doc = "ShiftExpression = AddSubExpression { ShiftOperator AddSubExpression } ;"]
+
+/// ShiftExpression = AddSubExpression { ShiftOperator AddSubExpression } ;
 pub mod shift_expression {
     #[allow(unused_imports)]
     use super::*;
@@ -1629,7 +1757,8 @@ pub mod shift_expression {
         pub add_sub_expression: add_sub_expression::N,
     }
 }
-#[doc = "BitAndExpression = ShiftExpression { '&' ShiftExpression } ;"]
+
+/// BitAndExpression = ShiftExpression { '&' ShiftExpression } ;
 pub mod bit_and_expression {
     #[allow(unused_imports)]
     use super::*;
@@ -1643,7 +1772,8 @@ pub mod bit_and_expression {
         pub shift_expression: shift_expression::N,
     }
 }
-#[doc = "BitXOrExpression = BitAndExpression { '^' BitAndExpression } ;"]
+
+/// BitXOrExpression = BitAndExpression { '^' BitAndExpression } ;
 pub mod bit_x_or_expression {
     #[allow(unused_imports)]
     use super::*;
@@ -1657,7 +1787,8 @@ pub mod bit_x_or_expression {
         pub bit_and_expression: bit_and_expression::N,
     }
 }
-#[doc = "BitOrExpression = BitXOrExpression { '|' BitXOrExpression } ;"]
+
+/// BitOrExpression = BitXOrExpression { '|' BitXOrExpression } ;
 pub mod bit_or_expression {
     #[allow(unused_imports)]
     use super::*;
@@ -1671,7 +1802,8 @@ pub mod bit_or_expression {
         pub bit_x_or_expression: bit_x_or_expression::N,
     }
 }
-#[doc = "OrderComparisonExpression = BitOrExpression { OrderComparisonOperator BitOrExpression } ;"]
+
+/// OrderComparisonExpression = BitOrExpression { OrderComparisonOperator BitOrExpression } ;
 pub mod order_comparison_expression {
     #[allow(unused_imports)]
     use super::*;
@@ -1685,7 +1817,8 @@ pub mod order_comparison_expression {
         pub bit_or_expression: bit_or_expression::N,
     }
 }
-#[doc = "EqualityComparisonExpression = OrderComparisonExpression { EqualityComparisonOperator OrderComparisonExpression } ;"]
+
+/// EqualityComparisonExpression = OrderComparisonExpression { EqualityComparisonOperator OrderComparisonExpression } ;
 pub mod equality_comparison_expression {
     #[allow(unused_imports)]
     use super::*;
@@ -1699,7 +1832,8 @@ pub mod equality_comparison_expression {
         pub order_comparison_expression: order_comparison_expression::N,
     }
 }
-#[doc = "AndExpression = EqualityComparisonExpression { '&&' EqualityComparisonExpression } ;"]
+
+/// AndExpression = EqualityComparisonExpression { '&&' EqualityComparisonExpression } ;
 pub mod and_expression {
     #[allow(unused_imports)]
     use super::*;
@@ -1713,7 +1847,8 @@ pub mod and_expression {
         pub equality_comparison_expression: equality_comparison_expression::N,
     }
 }
-#[doc = "OrExpression = AndExpression { '||' AndExpression } ;"]
+
+/// OrExpression = AndExpression { '||' AndExpression } ;
 pub mod or_expression {
     #[allow(unused_imports)]
     use super::*;
@@ -1727,7 +1862,8 @@ pub mod or_expression {
         pub and_expression: and_expression::N,
     }
 }
-#[doc = "ConditionalExpression = OrExpression '?' Expression ':' Expression ;"]
+
+/// ConditionalExpression = OrExpression '?' Expression ':' Expression ;
 pub mod conditional_expression {
     #[allow(unused_imports)]
     use super::*;
@@ -1740,7 +1876,8 @@ pub mod conditional_expression {
         pub expression_1: expression::N,
     }
 }
-#[doc = "AssignmentExpression = ConditionalExpression AssignmentOperator Expression ;"]
+
+/// AssignmentExpression = ConditionalExpression AssignmentOperator Expression ;
 pub mod assignment_expression {
     #[allow(unused_imports)]
     use super::*;
@@ -1751,13 +1888,15 @@ pub mod assignment_expression {
         pub expression: expression::N,
     }
 }
-#[doc = "Expression = AssignmentExpression ;"]
+
+/// Expression = AssignmentExpression ;
 pub mod expression {
     #[allow(unused_imports)]
     use super::*;
     pub type N = assignment_expression::N;
 }
-#[doc = "ConstantDefinition = TypeName 'constant' «Identifier» '=' Expression ';' ;"]
+
+/// ConstantDefinition = TypeName 'constant' «Identifier» '=' Expression ';' ;
 pub mod constant_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -1771,7 +1910,8 @@ pub mod constant_definition {
         pub semicolon_char: char,
     }
 }
-#[doc = "DoWhileStatement = 'do' Statement 'while' '(' Expression ')' ';' ;"]
+
+/// DoWhileStatement = 'do' Statement 'while' '(' Expression ')' ';' ;
 pub mod do_while_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1786,7 +1926,8 @@ pub mod do_while_statement {
         pub semicolon_char: char,
     }
 }
-#[doc = "EmitStatement = 'emit' Expression ArgumentList ';' ;"]
+
+/// EmitStatement = 'emit' Expression ArgumentList ';' ;
 pub mod emit_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1798,7 +1939,8 @@ pub mod emit_statement {
         pub semicolon_char: char,
     }
 }
-#[doc = "ExpressionStatement = Expression ';' ;"]
+
+/// ExpressionStatement = Expression ';' ;
 pub mod expression_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1808,7 +1950,8 @@ pub mod expression_statement {
         pub semicolon_char: char,
     }
 }
-#[doc = "IfStatement = 'if' '(' Expression ')' Statement [ 'else' Statement ] ;"]
+
+/// IfStatement = 'if' '(' Expression ')' Statement [ 'else' Statement ] ;
 pub mod if_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1826,7 +1969,8 @@ pub mod if_statement {
         pub statement: statement::N,
     }
 }
-#[doc = "ReturnStatement = 'return' [ Expression ] ';' ;"]
+
+/// ReturnStatement = 'return' [ Expression ] ';' ;
 pub mod return_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1837,7 +1981,8 @@ pub mod return_statement {
         pub semicolon_char: char,
     }
 }
-#[doc = "RevertStatement = 'revert' Expression ArgumentList ';' ;"]
+
+/// RevertStatement = 'revert' Expression ArgumentList ';' ;
 pub mod revert_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1849,7 +1994,8 @@ pub mod revert_statement {
         pub semicolon_char: char,
     }
 }
-#[doc = "StateVariableDeclaration = TypeName { StateVariableAttribute } «Identifier» [ '=' Expression ] ';' ;"]
+
+/// StateVariableDeclaration = TypeName { StateVariableAttribute } «Identifier» [ '=' Expression ] ';' ;
 pub mod state_variable_declaration {
     #[allow(unused_imports)]
     use super::*;
@@ -1866,7 +2012,8 @@ pub mod state_variable_declaration {
         pub expression: expression::N,
     }
 }
-#[doc = "TryStatement = 'try' Expression [ 'returns' NonEmptyParameterList ] Block CatchClause { CatchClause } ;"]
+
+/// TryStatement = 'try' Expression [ 'returns' NonEmptyParameterList ] Block CatchClause { CatchClause } ;
 pub mod try_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1884,7 +2031,8 @@ pub mod try_statement {
         pub non_empty_parameter_list: non_empty_parameter_list::N,
     }
 }
-#[doc = "VariableDeclarationStatement = ( VariableDeclaration [ '=' Expression ] | VariableDeclarationTuple '=' Expression ) ';' ;"]
+
+/// VariableDeclarationStatement = ( VariableDeclaration [ '=' Expression ] | VariableDeclarationTuple '=' Expression ) ';' ;
 pub mod variable_declaration_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1911,7 +2059,8 @@ pub mod variable_declaration_statement {
         pub expression: expression::N,
     }
 }
-#[doc = "WhileStatement = 'while' '(' Expression ')' Statement ;"]
+
+/// WhileStatement = 'while' '(' Expression ')' Statement ;
 pub mod while_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1924,7 +2073,8 @@ pub mod while_statement {
         pub statement: statement::N,
     }
 }
-#[doc = "SimpleStatement = VariableDeclarationStatement | ExpressionStatement ;"]
+
+/// SimpleStatement = VariableDeclarationStatement | ExpressionStatement ;
 pub mod simple_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1934,7 +2084,8 @@ pub mod simple_statement {
         ExpressionStatement(expression_statement::N),
     }
 }
-#[doc = "ForStatement = 'for' '(' ( SimpleStatement | ';' ) ( ExpressionStatement | ';' ) [ Expression ] ')' Statement ;"]
+
+/// ForStatement = 'for' '(' ( SimpleStatement | ';' ) ( ExpressionStatement | ';' ) [ Expression ] ')' Statement ;
 pub mod for_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1957,7 +2108,8 @@ pub mod for_statement {
         Semicolon(usize),
     }
 }
-#[doc = "Statement = Block | SimpleStatement | IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | TryStatement | ReturnStatement | EmitStatement | RevertStatement | AssemblyStatement ;"]
+
+/// Statement = Block | SimpleStatement | IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | TryStatement | ReturnStatement | EmitStatement | RevertStatement | AssemblyStatement ;
 pub mod statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1978,7 +2130,8 @@ pub mod statement {
         AssemblyStatement(assembly_statement::N),
     }
 }
-#[doc = "Block = '{' { Statement | UncheckedBlock } '}' ;"]
+
+/// Block = '{' { Statement | UncheckedBlock } '}' ;
 pub mod block {
     #[allow(unused_imports)]
     use super::*;
@@ -1993,7 +2146,8 @@ pub mod block {
         UncheckedBlock(unchecked_block::N),
     }
 }
-#[doc = "ConstructorDefinition = 'constructor' ParameterList { ConstructorAttribute } Block ;"]
+
+/// ConstructorDefinition = 'constructor' ParameterList { ConstructorAttribute } Block ;
 pub mod constructor_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -2005,7 +2159,8 @@ pub mod constructor_definition {
         pub block: block::N,
     }
 }
-#[doc = "FallbackFunctionDefinition = 'fallback' ParameterList { FallbackFunctionAttribute } [ 'returns' NonEmptyParameterList ] ( ';' | Block ) ;"]
+
+/// FallbackFunctionDefinition = 'fallback' ParameterList { FallbackFunctionAttribute } [ 'returns' NonEmptyParameterList ] ( ';' | Block ) ;
 pub mod fallback_function_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -2026,7 +2181,8 @@ pub mod fallback_function_definition {
         pub non_empty_parameter_list: non_empty_parameter_list::N,
     }
 }
-#[doc = "FunctionDefinition = 'function' ( «Identifier» | 'fallback' | 'receive' ) ParameterList { FunctionAttribute } [ 'returns' NonEmptyParameterList ] ( ';' | Block ) ;"]
+
+/// FunctionDefinition = 'function' ( «Identifier» | 'fallback' | 'receive' ) ParameterList { FunctionAttribute } [ 'returns' NonEmptyParameterList ] ( ';' | Block ) ;
 pub mod function_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -2052,7 +2208,8 @@ pub mod function_definition {
         _1(usize),
     }
 }
-#[doc = "ModifierDefinition = 'modifier' «Identifier» [ ParameterList ] { MethodAttribute } ( ';' | Block ) ;"]
+
+/// ModifierDefinition = 'modifier' «Identifier» [ ParameterList ] { MethodAttribute } ( ';' | Block ) ;
 pub mod modifier_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -2069,7 +2226,8 @@ pub mod modifier_definition {
         Block(block::N),
     }
 }
-#[doc = "ReceiveFunctionDefinition = 'receive' '(' ')' { ReceiveFunctionAttribute } ( ';' | Block ) ;"]
+
+/// ReceiveFunctionDefinition = 'receive' '(' ')' { ReceiveFunctionAttribute } ( ';' | Block ) ;
 pub mod receive_function_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -2086,7 +2244,8 @@ pub mod receive_function_definition {
         Block(block::N),
     }
 }
-#[doc = "ContractBodyElement = UsingDirective | ConstructorDefinition | FunctionDefinition | FallbackFunctionDefinition | ReceiveFunctionDefinition | ModifierDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | EventDefinition | ErrorDefinition | StateVariableDeclaration ;"]
+
+/// ContractBodyElement = UsingDirective | ConstructorDefinition | FunctionDefinition | FallbackFunctionDefinition | ReceiveFunctionDefinition | ModifierDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | EventDefinition | ErrorDefinition | StateVariableDeclaration ;
 pub mod contract_body_element {
     #[allow(unused_imports)]
     use super::*;
@@ -2106,7 +2265,8 @@ pub mod contract_body_element {
         StateVariableDeclaration(state_variable_declaration::N),
     }
 }
-#[doc = "ContractDefinition = [ 'abstract' ] 'contract' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;"]
+
+/// ContractDefinition = [ 'abstract' ] 'contract' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
 pub mod contract_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -2121,7 +2281,8 @@ pub mod contract_definition {
         pub close_brace_char: char,
     }
 }
-#[doc = "InterfaceDefinition = 'interface' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;"]
+
+/// InterfaceDefinition = 'interface' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
 pub mod interface_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -2135,7 +2296,8 @@ pub mod interface_definition {
         pub close_brace_char: char,
     }
 }
-#[doc = "LibraryDefinition = 'library' «Identifier» '{' { ContractBodyElement } '}' ;"]
+
+/// LibraryDefinition = 'library' «Identifier» '{' { ContractBodyElement } '}' ;
 pub mod library_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -2148,7 +2310,8 @@ pub mod library_definition {
         pub close_brace_char: char,
     }
 }
-#[doc = "Definition = ContractDefinition | InterfaceDefinition | LibraryDefinition | FunctionDefinition | ConstantDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | ErrorDefinition ;"]
+
+/// Definition = ContractDefinition | InterfaceDefinition | LibraryDefinition | FunctionDefinition | ConstantDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | ErrorDefinition ;
 pub mod definition {
     #[allow(unused_imports)]
     use super::*;
@@ -2165,7 +2328,8 @@ pub mod definition {
         ErrorDefinition(error_definition::N),
     }
 }
-#[doc = "SourceUnit = «IGNORE» { Directive | Definition } $ ;"]
+
+/// SourceUnit = «IGNORE» { Directive | Definition } $ ;
 pub mod source_unit {
     #[allow(unused_imports)]
     use super::*;
