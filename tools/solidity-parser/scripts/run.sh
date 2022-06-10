@@ -22,5 +22,5 @@ cargo run --manifest-path "$PROJECT_DIR/../syntax-schema/Cargo.toml" --bin "mani
   --ebnf-output "$PROJECT_DIR/syntax/solidity/derived.ebnf"
 
 cargo run --manifest-path "$PROJECT_DIR/../syntax-schema/Cargo.toml" --bin "manifest_to_chumsky" -- \
-  --manifest-input "$PROJECT_DIR/syntax/solidity/original/manifest.yml" \
+  --manifest-input "$PROJECT_DIR/syntax/solidity/manifest.yml" \
   --chumsky-output "$PROJECT_DIR/src/"

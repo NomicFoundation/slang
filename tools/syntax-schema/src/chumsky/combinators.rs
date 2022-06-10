@@ -26,12 +26,12 @@ impl<I: Clone, O, A: Parser<I, O, Error = E>, B, E: Error<I>> Parser<I, O> for E
     #[inline]
     fn parse_inner<D: Debugger>(
         &self,
-        debugger: &mut D,
-        stream: &mut StreamOf<I, E>,
+        _debugger: &mut D,
+        _stream: &mut StreamOf<I, E>,
     ) -> PResult<I, O, E> {
         todo!("This is not yet implemented correctly");
-        #[allow(deprecated)]
-        debugger.invoke(&self.0, stream)
+        // #[allow(deprecated)]
+        // debugger.invoke(&self.0, stream)
     }
 
     #[inline]

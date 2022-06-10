@@ -1,7 +1,11 @@
 use super::parser_interface::*;
 use super::tree_interface::*;
+#[allow(unused_imports)]
+use crate::chumsky::combinators::*;
 use chumsky::prelude::*;
+use chumsky::primitive::Just;
 use chumsky::Parser;
+#[allow(dead_code)]
 fn repetition_mapper<E, S>((e, es): (E, Vec<(S, E)>)) -> (Vec<E>, Vec<S>) {
     let mut expressions = vec![e];
     let mut separators = vec![];
@@ -11,11 +15,16 @@ fn repetition_mapper<E, S>((e, es): (E, Vec<(S, E)>)) -> (Vec<E>, Vec<S>) {
     }
     (expressions, separators)
 }
+#[allow(dead_code)]
+#[inline]
+fn terminal(str: &str) -> Just<char, &str, ErrorType> {
+    just(str)
+}
 impl Parsers {
     pub fn new() -> Self {
         let mut ignore_parser = Recursive::declare();
         let mut expression_parser = Recursive::declare();
-        let comment_parser = just("/*")
+        let comment_parser = terminal("/*")
             .map(|_| 2usize)
             .then(
                 choice((
@@ -31,22 +40,27 @@ impl Parsers {
                 .then(just('*').repeated())
                 .map(|v| Box::new(comment::Content::new(v))),
             )
-            .then(just("*/").map(|_| 2usize))
-            .map(|v| Box::new(comment::_S0::new(v)));
+            .then(terminal("*/").map(|_| 2usize))
+            .map(|v| Box::new(comment::_S0::new(v)))
+            .boxed();
         let whitespace_parser = filter(|&c: &char| c == '\t' || c == '\n' || c == '\r' || c == ' ')
             .repeated()
-            .at_least(1usize);
+            .at_least(1usize)
+            .boxed();
         let grouped_parser = just('(')
             .then(expression_parser.clone())
             .then(just(')'))
-            .map(|v| Box::new(grouped::_S0::new(v)));
+            .map(|v| Box::new(grouped::_S0::new(v)))
+            .boxed();
         let optional_parser = just('[')
             .then(expression_parser.clone())
             .then(just(']'))
-            .map(|v| Box::new(optional::_S0::new(v)));
+            .map(|v| Box::new(optional::_S0::new(v)))
+            .boxed();
         let repetition_separator_parser = just('/')
             .then(expression_parser.clone())
-            .map(|v| Box::new(repetition_separator::_S0::new(v)));
+            .map(|v| Box::new(repetition_separator::_S0::new(v)))
+            .boxed();
         ignore_parser.define(
             choice((
                 whitespace_parser
@@ -56,31 +70,36 @@ impl Parsers {
                     .clone()
                     .map(|v| Box::new(ignore::_C1::Comment(v))),
             ))
-            .repeated(),
+            .repeated()
+            .boxed(),
         );
-        let eof_parser = just('$');
+        let eof_parser = just('$').boxed();
         let hex_digit_parser = filter(|&c: &char| {
             ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
-        });
+        })
+        .boxed();
         let identifier_start_parser =
-            filter(|&c: &char| c == '_' || ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z'));
+            filter(|&c: &char| c == '_' || ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z'))
+                .boxed();
         let number_parser = filter(|&c: &char| ('0' <= c && c <= '9'))
             .repeated()
-            .at_least(1usize);
+            .at_least(1usize)
+            .boxed();
         let identifier_follow_parser = filter(|&c: &char| {
             c == '_' || ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9')
-        });
+        })
+        .boxed();
         let string_char_parser = choice((
             filter(|&c: &char| c != '\'' && c != '\\')
                 .map(|v| Box::new(string_char::_C0::NotQuoteOrBackslash(v))),
             just('\\')
                 .then(choice((
-                    just('\'')
-                        .map(|v| Box::new(string_char::QuoteOrBackslashOrHexEscape::QuoteChar(v))),
-                    just('\\').map(|v| {
-                        Box::new(string_char::QuoteOrBackslashOrHexEscape::BackslashChar(v))
-                    }),
-                    just("u{")
+                    choice::<_, ErrorType>((
+                        terminal("'").map(|_| 1usize),
+                        terminal("\\").map(|_| 1usize),
+                    ))
+                    .map(|v| Box::new(string_char::QuoteOrBackslashOrHexEscape::_0(v))),
+                    terminal("u{")
                         .map(|_| 2usize)
                         .then(
                             filter(|&c: &char| {
@@ -98,7 +117,8 @@ impl Parsers {
                 )))
                 .map(|v| Box::new(string_char::Escape::new(v)))
                 .map(|v| Box::new(string_char::_C0::Escape(v))),
-        ));
+        ))
+        .boxed();
         let repetition_prefix_parser = choice((
             number_parser
                 .clone()
@@ -116,7 +136,8 @@ impl Parsers {
                 .map(|v| Box::new(repetition_prefix::_C1::_S6(v))),
         ))
         .then(just('*'))
-        .map(|v| Box::new(repetition_prefix::_S0::new(v)));
+        .map(|v| Box::new(repetition_prefix::_S0::new(v)))
+        .boxed();
         let raw_identifier_parser =
             filter(|&c: &char| c == '_' || ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z'))
                 .then(
@@ -128,15 +149,18 @@ impl Parsers {
                     })
                     .repeated(),
                 )
-                .map(|v| Box::new(raw_identifier::_S0::new(v)));
+                .map(|v| Box::new(raw_identifier::_S0::new(v)))
+                .boxed();
         let single_char_string_parser = just('\'')
             .then(string_char_parser.clone())
             .then(just('\''))
-            .map(|v| Box::new(single_char_string::_S0::new(v)));
+            .map(|v| Box::new(single_char_string::_S0::new(v)))
+            .boxed();
         let string_parser = just('\'')
             .then(string_char_parser.clone().repeated())
             .then(just('\''))
-            .map(|v| Box::new(string::_S0::new(v)));
+            .map(|v| Box::new(string::_S0::new(v)))
+            .boxed();
         let repeated_parser = repetition_prefix_parser
             .clone()
             .or_not()
@@ -144,7 +168,8 @@ impl Parsers {
             .then(expression_parser.clone())
             .then(repetition_separator_parser.clone().or_not())
             .then(just('}'))
-            .map(|v| Box::new(repeated::_S0::new(v)));
+            .map(|v| Box::new(repeated::_S0::new(v)))
+            .boxed();
         let identifier_parser = choice((
             just('«')
                 .then(raw_identifier_parser.clone())
@@ -154,13 +179,15 @@ impl Parsers {
             raw_identifier_parser
                 .clone()
                 .map(|v| Box::new(identifier::_C0::RawIdentifier(v))),
-        ));
+        ))
+        .boxed();
         let char_range_parser = single_char_string_parser
             .clone()
             .then(just('…'))
             .then(single_char_string_parser.clone())
-            .map(|v| Box::new(char_range::_S0::new(v)));
-        let production_reference_parser = identifier_parser.clone();
+            .map(|v| Box::new(char_range::_S0::new(v)))
+            .boxed();
+        let production_reference_parser = identifier_parser.clone().boxed();
         let primary_parser = choice((
             production_reference_parser
                 .clone()
@@ -177,15 +204,19 @@ impl Parsers {
             char_range_parser
                 .clone()
                 .map(|v| Box::new(primary::_C0::CharRange(v))),
-            just('$').map(|v| Box::new(primary::_C0::DollarChar(v))),
+            terminal("$")
+                .map(|_| 1usize)
+                .map(|v| Box::new(primary::_C0::Dollar(v))),
             string_parser
                 .clone()
                 .map(|v| Box::new(primary::_C0::String(v))),
-        ));
+        ))
+        .boxed();
         let negation_parser = just('¬')
             .or_not()
             .then(primary_parser.clone())
-            .map(|v| Box::new(negation::_S0::new(v)));
+            .map(|v| Box::new(negation::_S0::new(v)))
+            .boxed();
         let difference_parser = negation_parser
             .clone()
             .then(
@@ -194,26 +225,34 @@ impl Parsers {
                     .map(|v| Box::new(difference::_S2::new(v)))
                     .or_not(),
             )
-            .map(|v| Box::new(difference::_S0::new(v)));
-        let sequence_parser = difference_parser.clone().repeated().at_least(1usize);
+            .map(|v| Box::new(difference::_S0::new(v)))
+            .boxed();
+        let sequence_parser = difference_parser
+            .clone()
+            .repeated()
+            .at_least(1usize)
+            .boxed();
         expression_parser.define(
             sequence_parser
                 .clone()
                 .then(just('|').then(sequence_parser.clone()).repeated())
                 .map(repetition_mapper)
-                .map(|v| Box::new(expression::_S0::new(v))),
+                .map(|v| Box::new(expression::_S0::new(v)))
+                .boxed(),
         );
         let production_parser = identifier_parser
             .clone()
             .then(just('='))
             .then(expression_parser.clone())
             .then(just(';'))
-            .map(|v| Box::new(production::_S0::new(v)));
+            .map(|v| Box::new(production::_S0::new(v)))
+            .boxed();
         let grammar_parser = ignore_parser
             .clone()
             .then(production_parser.clone().repeated())
             .then(end())
-            .map(|v| Box::new(grammar::_S0::new(v)));
+            .map(|v| Box::new(grammar::_S0::new(v)))
+            .boxed();
         Self {
             comment: comment_parser.boxed(),
             whitespace: whitespace_parser.boxed(),

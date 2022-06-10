@@ -113,8 +113,7 @@ pub mod string_char {
         pub quote_or_backslash_or_hex_escape: Box<string_char::QuoteOrBackslashOrHexEscape>,
     }
     pub enum QuoteOrBackslashOrHexEscape {
-        QuoteChar(char),
-        BackslashChar(char),
+        _0(usize),
         _S1(Box<string_char::_S1>),
     }
     pub struct _S1 {
@@ -237,7 +236,7 @@ pub mod primary {
         Optional(optional::N),
         Repeated(repeated::N),
         CharRange(char_range::N),
-        DollarChar(char),
+        Dollar(usize),
         String(string::N),
     }
 }
