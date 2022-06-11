@@ -23,11 +23,12 @@ pub mod break_statement {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub r#break: usize,
+        pub ignore: ignore::N,
         pub semicolon_char: char,
     }
 }
 
-/// «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } 1…*{ '*' } '/' ;
+/// «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
 pub mod comment {
     #[allow(unused_imports)]
     use super::*;
@@ -37,7 +38,7 @@ pub mod comment {
         pub slash_star: usize,
         pub _c2s: Vec<Box<comment::_C2>>,
         pub star_chars: Vec<char>,
-        pub slash_char: char,
+        pub star_slash: usize,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub enum _C2 {
@@ -59,6 +60,7 @@ pub mod continue_statement {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub r#continue: usize,
+        pub ignore: ignore::N,
         pub semicolon_char: char,
     }
 }
@@ -110,8 +112,18 @@ pub mod positional_argument_list {
     pub type N = Box<positional_argument_list::_S0>;
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
-        pub expressions: Vec<expression::N>,
-        pub comma_chars: Vec<char>,
+        pub _s1s: Vec<Box<positional_argument_list::_S1>>,
+        pub _s2s: Vec<Box<positional_argument_list::_S2>>,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S2 {
+        pub comma_char: char,
+        pub ignore: ignore::N,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S1 {
+        pub expression: expression::N,
+        pub ignore: ignore::N,
     }
 }
 
@@ -151,6 +163,7 @@ pub mod unchecked_block {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub unchecked: usize,
+        pub ignore: ignore::N,
         pub block: block::N,
     }
 }
@@ -162,11 +175,11 @@ pub mod visibility_specifier {
     pub type N = usize;
 }
 
-/// «Whitespace» = '\u{20}' | '\u{9}' | '\u{d}' | '\u{a}' ;
+/// «Whitespace» = 1…*{ '\u{20}' | '\u{9}' | '\u{d}' | '\u{a}' } ;
 pub mod whitespace {
     #[allow(unused_imports)]
     use super::*;
-    pub type N = char;
+    pub type N = Vec<char>;
 }
 
 /// YulBreakStatement = 'break' ;
@@ -197,7 +210,7 @@ pub mod ignore {
     pub type N = Vec<Box<ignore::_C1>>;
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub enum _C1 {
-        _0(usize),
+        Whitespace(whitespace::N),
         Comment(comment::N),
         LineComment(line_comment::N),
     }
@@ -635,6 +648,7 @@ pub mod elementary_type_with_payable {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S1 {
         pub address: usize,
+        pub ignore: ignore::N,
         pub payable: Option<usize>,
     }
 }
@@ -659,6 +673,7 @@ pub mod numeric_literal {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub _c1: Box<numeric_literal::_C1>,
+        pub ignore: ignore::N,
         pub _1: Option<usize>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -743,13 +758,25 @@ pub mod assembly_flags {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub open_paren_char: char,
-        pub double_quoted_ascii_string_literals: Box<assembly_flags::_S1>,
+        pub ignore_0: ignore::N,
+        pub _s2s: Box<assembly_flags::_S1>,
+        pub ignore_1: ignore::N,
         pub close_paren_char: char,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S1 {
-        pub double_quoted_ascii_string_literals: Vec<double_quoted_ascii_string_literal::N>,
-        pub comma_chars: Vec<char>,
+        pub _s2s: Vec<Box<assembly_flags::_S2>>,
+        pub _s3s: Vec<Box<assembly_flags::_S3>>,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S3 {
+        pub comma_char: char,
+        pub ignore: ignore::N,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S2 {
+        pub double_quoted_ascii_string_literal: double_quoted_ascii_string_literal::N,
+        pub ignore: ignore::N,
     }
 }
 
@@ -780,14 +807,27 @@ pub mod yul_function_call {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub _c1: Box<yul_function_call::_C1>,
+        pub ignore_0: ignore::N,
         pub open_paren_char: char,
-        pub yul_expressions: Option<Box<yul_function_call::_S2>>,
+        pub ignore_1: ignore::N,
+        pub _s3s: Option<Box<yul_function_call::_S2>>,
+        pub ignore_2: ignore::N,
         pub close_paren_char: char,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
-        pub yul_expressions: Vec<yul_expression::N>,
-        pub comma_chars: Vec<char>,
+        pub _s3s: Vec<Box<yul_function_call::_S3>>,
+        pub _s4s: Vec<Box<yul_function_call::_S4>>,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S4 {
+        pub comma_char: char,
+        pub ignore: ignore::N,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S3 {
+        pub yul_expression: yul_expression::N,
+        pub ignore: ignore::N,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub enum _C1 {
@@ -804,27 +844,54 @@ pub mod yul_function_definition {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub function: usize,
+        pub ignore_0: ignore::N,
         pub yul_identifier: yul_identifier::N,
+        pub ignore_1: ignore::N,
         pub open_paren_char: char,
-        pub yul_identifiers: Option<Box<yul_function_definition::_S1>>,
+        pub ignore_2: ignore::N,
+        pub _s2s: Option<Box<yul_function_definition::_S1>>,
+        pub ignore_3: ignore::N,
         pub close_paren_char: char,
-        pub _s3: Option<Box<yul_function_definition::_S3>>,
+        pub ignore_4: ignore::N,
+        pub _s5: Option<Box<yul_function_definition::_S5>>,
+        pub ignore_5: ignore::N,
         pub yul_block: yul_block::N,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub struct _S3 {
+    pub struct _S5 {
         pub minus_greater: usize,
-        pub yul_identifiers: Box<yul_function_definition::_S4>,
+        pub ignore: ignore::N,
+        pub _s7s: Box<yul_function_definition::_S6>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub struct _S4 {
-        pub yul_identifiers: Vec<yul_identifier::N>,
-        pub comma_chars: Vec<char>,
+    pub struct _S6 {
+        pub _s7s: Vec<Box<yul_function_definition::_S7>>,
+        pub _s8s: Vec<Box<yul_function_definition::_S8>>,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S8 {
+        pub comma_char: char,
+        pub ignore: ignore::N,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S7 {
+        pub yul_identifier: yul_identifier::N,
+        pub ignore: ignore::N,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S1 {
-        pub yul_identifiers: Vec<yul_identifier::N>,
-        pub comma_chars: Vec<char>,
+        pub _s2s: Vec<Box<yul_function_definition::_S2>>,
+        pub _s3s: Vec<Box<yul_function_definition::_S3>>,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S3 {
+        pub comma_char: char,
+        pub ignore: ignore::N,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S2 {
+        pub yul_identifier: yul_identifier::N,
+        pub ignore: ignore::N,
     }
 }
 
@@ -836,12 +903,15 @@ pub mod yul_path {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub yul_identifier: yul_identifier::N,
+        pub ignore: ignore::N,
         pub _s2s: Vec<Box<yul_path::_S2>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub period_char: char,
+        pub ignore_0: ignore::N,
         pub _c3: Box<yul_path::_C3>,
+        pub ignore_1: ignore::N,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub enum _C3 {
@@ -858,15 +928,29 @@ pub mod enum_definition {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub r#enum: usize,
+        pub ignore_0: ignore::N,
         pub identifier: identifier::N,
+        pub ignore_1: ignore::N,
         pub open_brace_char: char,
-        pub identifiers: Box<enum_definition::_S1>,
+        pub ignore_2: ignore::N,
+        pub _s2s: Box<enum_definition::_S1>,
+        pub ignore_3: ignore::N,
         pub close_brace_char: char,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S1 {
-        pub identifiers: Vec<identifier::N>,
-        pub comma_chars: Vec<char>,
+        pub _s2s: Vec<Box<enum_definition::_S2>>,
+        pub _s3s: Vec<Box<enum_definition::_S3>>,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S3 {
+        pub comma_char: char,
+        pub ignore: ignore::N,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S2 {
+        pub identifier: identifier::N,
+        pub ignore: ignore::N,
     }
 }
 
@@ -877,8 +961,18 @@ pub mod identifier_path {
     pub type N = Box<identifier_path::_S0>;
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
-        pub identifiers: Vec<identifier::N>,
-        pub period_chars: Vec<char>,
+        pub _s1s: Vec<Box<identifier_path::_S1>>,
+        pub _s2s: Vec<Box<identifier_path::_S2>>,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S2 {
+        pub period_char: char,
+        pub ignore: ignore::N,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S1 {
+        pub identifier: identifier::N,
+        pub ignore: ignore::N,
     }
 }
 
@@ -912,7 +1006,9 @@ pub mod named_argument {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub identifier: identifier::N,
+        pub ignore_0: ignore::N,
         pub colon_char: char,
+        pub ignore_1: ignore::N,
         pub expression: expression::N,
     }
 }
@@ -925,7 +1021,9 @@ pub mod parameter_declaration {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub type_name: type_name::N,
+        pub ignore_0: ignore::N,
         pub _1: Option<usize>,
+        pub ignore_1: ignore::N,
         pub identifier: Option<identifier::N>,
     }
 }
@@ -938,11 +1036,13 @@ pub mod selected_import {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub identifier: identifier::N,
+        pub ignore: ignore::N,
         pub _s2: Option<Box<selected_import::_S2>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub r#as: usize,
+        pub ignore: ignore::N,
         pub identifier: identifier::N,
     }
 }
@@ -955,9 +1055,13 @@ pub mod user_defined_value_type_definition {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub r#type: usize,
+        pub ignore_0: ignore::N,
         pub identifier: identifier::N,
+        pub ignore_1: ignore::N,
         pub is: usize,
+        pub ignore_2: ignore::N,
         pub elementary_type_with_payable: elementary_type_with_payable::N,
+        pub ignore_3: ignore::N,
         pub semicolon_char: char,
     }
 }
@@ -985,10 +1089,15 @@ pub mod mapping_type {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub mapping: usize,
+        pub ignore_0: ignore::N,
         pub open_paren_char: char,
+        pub ignore_1: ignore::N,
         pub _c1: Box<mapping_type::_C1>,
+        pub ignore_2: ignore::N,
         pub equal_greater: usize,
+        pub ignore_3: ignore::N,
         pub type_name: type_name::N,
+        pub ignore_4: ignore::N,
         pub close_paren_char: char,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -1006,13 +1115,25 @@ pub mod named_argument_list {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub open_brace_char: char,
-        pub named_arguments: Option<Box<named_argument_list::_S1>>,
+        pub ignore_0: ignore::N,
+        pub _s2s: Option<Box<named_argument_list::_S1>>,
+        pub ignore_1: ignore::N,
         pub close_brace_char: char,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S1 {
-        pub named_arguments: Vec<named_argument::N>,
-        pub comma_chars: Vec<char>,
+        pub _s2s: Vec<Box<named_argument_list::_S2>>,
+        pub _s3s: Vec<Box<named_argument_list::_S3>>,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S3 {
+        pub comma_char: char,
+        pub ignore: ignore::N,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S2 {
+        pub named_argument: named_argument::N,
+        pub ignore: ignore::N,
     }
 }
 
@@ -1024,13 +1145,25 @@ pub mod non_empty_parameter_list {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub open_paren_char: char,
-        pub parameter_declarations: Box<non_empty_parameter_list::_S1>,
+        pub ignore_0: ignore::N,
+        pub _s2s: Box<non_empty_parameter_list::_S1>,
+        pub ignore_1: ignore::N,
         pub close_paren_char: char,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S1 {
-        pub parameter_declarations: Vec<parameter_declaration::N>,
-        pub comma_chars: Vec<char>,
+        pub _s2s: Vec<Box<non_empty_parameter_list::_S2>>,
+        pub _s3s: Vec<Box<non_empty_parameter_list::_S3>>,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S3 {
+        pub comma_char: char,
+        pub ignore: ignore::N,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S2 {
+        pub parameter_declaration: parameter_declaration::N,
+        pub ignore: ignore::N,
     }
 }
 
@@ -1042,18 +1175,16 @@ pub mod override_specifier {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub r#override: usize,
+        pub ignore: ignore::N,
         pub _s2: Option<Box<override_specifier::_S2>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub open_paren_char: char,
-        pub identifier_paths: Box<override_specifier::_S3>,
-        pub close_paren_char: char,
-    }
-    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub struct _S3 {
+        pub ignore_0: ignore::N,
         pub identifier_paths: Vec<identifier_path::N>,
-        pub comma_chars: Vec<char>,
+        pub ignore_1: ignore::N,
+        pub close_paren_char: char,
     }
 }
 
@@ -1065,13 +1196,25 @@ pub mod parameter_list {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub open_paren_char: char,
-        pub parameter_declarations: Option<Box<parameter_list::_S1>>,
+        pub ignore_0: ignore::N,
+        pub _s2s: Option<Box<parameter_list::_S1>>,
+        pub ignore_1: ignore::N,
         pub close_paren_char: char,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S1 {
-        pub parameter_declarations: Vec<parameter_declaration::N>,
-        pub comma_chars: Vec<char>,
+        pub _s2s: Vec<Box<parameter_list::_S2>>,
+        pub _s3s: Vec<Box<parameter_list::_S3>>,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S3 {
+        pub comma_char: char,
+        pub ignore: ignore::N,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S2 {
+        pub parameter_declaration: parameter_declaration::N,
+        pub ignore: ignore::N,
     }
 }
 
@@ -1083,15 +1226,29 @@ pub mod selecting_import_directive {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub open_brace_char: char,
-        pub selected_imports: Box<selecting_import_directive::_S1>,
+        pub ignore_0: ignore::N,
+        pub _s2s: Box<selecting_import_directive::_S1>,
+        pub ignore_1: ignore::N,
         pub close_brace_char: char,
+        pub ignore_2: ignore::N,
         pub from: usize,
+        pub ignore_3: ignore::N,
         pub import_path: import_path::N,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S1 {
-        pub selected_imports: Vec<selected_import::N>,
-        pub comma_chars: Vec<char>,
+        pub _s2s: Vec<Box<selecting_import_directive::_S2>>,
+        pub _s3s: Vec<Box<selecting_import_directive::_S3>>,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S3 {
+        pub comma_char: char,
+        pub ignore: ignore::N,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S2 {
+        pub selected_import: selected_import::N,
+        pub ignore: ignore::N,
     }
 }
 
@@ -1103,12 +1260,15 @@ pub mod simple_import_directive {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub import_path: import_path::N,
+        pub ignore: ignore::N,
         pub _s2s: Vec<Box<simple_import_directive::_S2>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub r#as: usize,
+        pub ignore_0: ignore::N,
         pub identifier: identifier::N,
+        pub ignore_1: ignore::N,
     }
 }
 
@@ -1120,9 +1280,13 @@ pub mod star_import_directive {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub star_char: char,
+        pub ignore_0: ignore::N,
         pub r#as: usize,
+        pub ignore_1: ignore::N,
         pub identifier: identifier::N,
+        pub ignore_2: ignore::N,
         pub from: usize,
+        pub ignore_3: ignore::N,
         pub import_path: import_path::N,
     }
 }
@@ -1148,7 +1312,9 @@ pub mod argument_list {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub open_paren_char: char,
+        pub ignore_0: ignore::N,
         pub _c2: Option<Box<argument_list::_C2>>,
+        pub ignore_1: ignore::N,
         pub close_paren_char: char,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -1166,12 +1332,15 @@ pub mod catch_clause {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub catch: usize,
+        pub ignore_0: ignore::N,
         pub _s2: Option<Box<catch_clause::_S2>>,
+        pub ignore_1: ignore::N,
         pub block: block::N,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub identifier: Option<identifier::N>,
+        pub ignore: ignore::N,
         pub non_empty_parameter_list: non_empty_parameter_list::N,
     }
 }
@@ -1184,14 +1353,23 @@ pub mod function_type {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub function: usize,
+        pub ignore_0: ignore::N,
         pub parameter_list: parameter_list::N,
-        pub _2: Vec<usize>,
-        pub _s3: Option<Box<function_type::_S3>>,
+        pub ignore_1: ignore::N,
+        pub _s2s: Vec<Box<function_type::_S2>>,
+        pub ignore_2: ignore::N,
+        pub _s4: Option<Box<function_type::_S4>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub struct _S3 {
+    pub struct _S4 {
         pub returns: usize,
+        pub ignore: ignore::N,
         pub non_empty_parameter_list: non_empty_parameter_list::N,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S2 {
+        pub _0: usize,
+        pub ignore: ignore::N,
     }
 }
 
@@ -1203,7 +1381,9 @@ pub mod import_directive {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub import: usize,
+        pub ignore_0: ignore::N,
         pub _c1: Box<import_directive::_C1>,
+        pub ignore_1: ignore::N,
         pub semicolon_char: char,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -1247,6 +1427,7 @@ pub mod yul_assignment {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub yul_path: yul_path::N,
+        pub ignore: ignore::N,
         pub _c1: Box<yul_assignment::_C1>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -1257,17 +1438,22 @@ pub mod yul_assignment {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S3 {
         pub _s5s: Vec<Box<yul_assignment::_S5>>,
+        pub ignore_0: ignore::N,
         pub colon_equal: usize,
+        pub ignore_1: ignore::N,
         pub yul_function_call: yul_function_call::N,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S5 {
         pub comma_char: char,
+        pub ignore_0: ignore::N,
         pub yul_path: yul_path::N,
+        pub ignore_1: ignore::N,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub colon_equal: usize,
+        pub ignore: ignore::N,
         pub yul_expression: yul_expression::N,
     }
 }
@@ -1280,9 +1466,13 @@ pub mod yul_for_statement {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub r#for: usize,
+        pub ignore_0: ignore::N,
         pub yul_block_0: yul_block::N,
+        pub ignore_1: ignore::N,
         pub yul_expression: yul_expression::N,
+        pub ignore_2: ignore::N,
         pub yul_block_1: yul_block::N,
+        pub ignore_3: ignore::N,
         pub yul_block_2: yul_block::N,
     }
 }
@@ -1295,7 +1485,9 @@ pub mod yul_if_statement {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub r#if: usize,
+        pub ignore_0: ignore::N,
         pub yul_expression: yul_expression::N,
+        pub ignore_1: ignore::N,
         pub yul_block: yul_block::N,
     }
 }
@@ -1308,7 +1500,9 @@ pub mod yul_switch_statement {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub switch: usize,
+        pub ignore_0: ignore::N,
         pub yul_expression: yul_expression::N,
+        pub ignore_1: ignore::N,
         pub _c1: Box<yul_switch_statement::_C1>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -1319,23 +1513,29 @@ pub mod yul_switch_statement {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S7 {
         pub default: usize,
+        pub ignore: ignore::N,
         pub yul_block: yul_block::N,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub _s4s: Vec<Box<yul_switch_statement::_S4>>,
+        pub ignore: ignore::N,
         pub _s6: Option<Box<yul_switch_statement::_S6>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S6 {
         pub default: usize,
+        pub ignore: ignore::N,
         pub yul_block: yul_block::N,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S4 {
         pub case: usize,
+        pub ignore_0: ignore::N,
         pub yul_literal: yul_literal::N,
+        pub ignore_1: ignore::N,
         pub yul_block: yul_block::N,
+        pub ignore: ignore::N,
     }
 }
 
@@ -1347,7 +1547,9 @@ pub mod yul_variable_declaration {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub r#let: usize,
+        pub ignore_0: ignore::N,
         pub yul_identifier: yul_identifier::N,
+        pub ignore_1: ignore::N,
         pub _c2: Option<Box<yul_variable_declaration::_C2>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -1358,21 +1560,25 @@ pub mod yul_variable_declaration {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S4 {
         pub _s6: Option<Box<yul_variable_declaration::_S6>>,
+        pub ignore: ignore::N,
         pub _s8: Option<Box<yul_variable_declaration::_S8>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S8 {
         pub colon_equal: usize,
+        pub ignore: ignore::N,
         pub yul_function_call: yul_function_call::N,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S6 {
         pub comma_char: char,
+        pub ignore: ignore::N,
         pub yul_identifier: yul_identifier::N,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S3 {
         pub colon_equal: usize,
+        pub ignore: ignore::N,
         pub yul_expression: yul_expression::N,
     }
 }
@@ -1385,6 +1591,7 @@ pub mod inheritance_specifier {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub identifier_path: identifier_path::N,
+        pub ignore: ignore::N,
         pub argument_list: Option<argument_list::N>,
     }
 }
@@ -1397,6 +1604,7 @@ pub mod modifier_invocation {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub identifier_path: identifier_path::N,
+        pub ignore: ignore::N,
         pub argument_list: Option<argument_list::N>,
     }
 }
@@ -1409,13 +1617,17 @@ pub mod type_name {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub _c1: Box<type_name::_C1>,
+        pub ignore: ignore::N,
         pub _s3s: Vec<Box<type_name::_S3>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S3 {
         pub open_bracket_char: char,
+        pub ignore_0: ignore::N,
         pub expression: Option<expression::N>,
+        pub ignore_1: ignore::N,
         pub close_bracket_char: char,
+        pub ignore: ignore::N,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub enum _C1 {
@@ -1465,6 +1677,7 @@ pub mod error_parameter {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub type_name: type_name::N,
+        pub ignore: ignore::N,
         pub identifier: Option<identifier::N>,
     }
 }
@@ -1477,7 +1690,9 @@ pub mod event_parameter {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub type_name: type_name::N,
+        pub ignore_0: ignore::N,
         pub indexed: Option<usize>,
+        pub ignore_1: ignore::N,
         pub identifier: Option<identifier::N>,
     }
 }
@@ -1518,12 +1733,23 @@ pub mod inheritance_specifier_list {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub is: usize,
-        pub inheritance_specifiers: Box<inheritance_specifier_list::_S1>,
+        pub ignore: ignore::N,
+        pub _s2s: Box<inheritance_specifier_list::_S1>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S1 {
-        pub inheritance_specifiers: Vec<inheritance_specifier::N>,
-        pub comma_chars: Vec<char>,
+        pub _s2s: Vec<Box<inheritance_specifier_list::_S2>>,
+        pub _s3s: Vec<Box<inheritance_specifier_list::_S3>>,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S3 {
+        pub comma_char: char,
+        pub ignore: ignore::N,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S2 {
+        pub inheritance_specifier: inheritance_specifier::N,
+        pub ignore: ignore::N,
     }
 }
 
@@ -1538,48 +1764,77 @@ pub mod primary_expression {
         _S2(Box<primary_expression::_S2>),
         _S3(Box<primary_expression::_S3>),
         _S4(Box<primary_expression::_S4>),
-        _S7(Box<primary_expression::_S7>),
+        _S9(Box<primary_expression::_S9>),
         Identifier(identifier::N),
         Literal(literal::N),
         ElementaryTypeWithoutPayable(elementary_type_without_payable::N),
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub struct _S7 {
+    pub struct _S9 {
         pub open_bracket_char: char,
-        pub expressions: Box<primary_expression::_S8>,
+        pub ignore_0: ignore::N,
+        pub _s11s: Box<primary_expression::_S10>,
+        pub ignore_1: ignore::N,
         pub close_bracket_char: char,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub struct _S8 {
-        pub expressions: Vec<expression::N>,
-        pub comma_chars: Vec<char>,
+    pub struct _S10 {
+        pub _s11s: Vec<Box<primary_expression::_S11>>,
+        pub _s12s: Vec<Box<primary_expression::_S12>>,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S12 {
+        pub comma_char: char,
+        pub ignore: ignore::N,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S11 {
+        pub expression: expression::N,
+        pub ignore: ignore::N,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S4 {
         pub open_paren_char: char,
-        pub expressions: Box<primary_expression::_S5>,
+        pub ignore_0: ignore::N,
+        pub _s7s: Box<primary_expression::_S5>,
+        pub ignore_1: ignore::N,
         pub close_paren_char: char,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S5 {
-        pub expressions: Vec<Option<expression::N>>,
-        pub comma_chars: Vec<char>,
+        pub _s7s: Vec<Box<primary_expression::_S7>>,
+        pub _s8s: Vec<Box<primary_expression::_S8>>,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S8 {
+        pub comma_char: char,
+        pub ignore: ignore::N,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S7 {
+        pub expression: Option<expression::N>,
+        pub ignore: ignore::N,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S3 {
         pub new: usize,
+        pub ignore: ignore::N,
         pub type_name: type_name::N,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub r#type: usize,
+        pub ignore_0: ignore::N,
         pub open_paren_char: char,
+        pub ignore_1: ignore::N,
         pub type_name: type_name::N,
+        pub ignore_2: ignore::N,
         pub close_paren_char: char,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S1 {
         pub payable: usize,
+        pub ignore: ignore::N,
         pub argument_list: argument_list::N,
     }
 }
@@ -1606,16 +1861,23 @@ pub mod struct_definition {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub r#struct: usize,
+        pub ignore_0: ignore::N,
         pub identifier: identifier::N,
+        pub ignore_1: ignore::N,
         pub open_brace_char: char,
+        pub ignore_2: ignore::N,
         pub _s2s: Vec<Box<struct_definition::_S2>>,
+        pub ignore_3: ignore::N,
         pub close_brace_char: char,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub type_name: type_name::N,
+        pub ignore_0: ignore::N,
         pub identifier: identifier::N,
+        pub ignore_1: ignore::N,
         pub semicolon_char: char,
+        pub ignore: ignore::N,
     }
 }
 
@@ -1627,14 +1889,19 @@ pub mod using_directive {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub using: usize,
+        pub ignore_0: ignore::N,
         pub _c1: Box<using_directive::_C1>,
+        pub ignore_1: ignore::N,
         pub r#for: usize,
-        pub _c4: Box<using_directive::_C4>,
+        pub ignore_2: ignore::N,
+        pub _c6: Box<using_directive::_C6>,
+        pub ignore_3: ignore::N,
         pub global: Option<usize>,
+        pub ignore_4: ignore::N,
         pub semicolon_char: char,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub enum _C4 {
+    pub enum _C6 {
         Star(usize),
         TypeName(type_name::N),
     }
@@ -1646,13 +1913,25 @@ pub mod using_directive {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub open_brace_char: char,
-        pub identifier_paths: Box<using_directive::_S3>,
+        pub ignore_0: ignore::N,
+        pub _s4s: Box<using_directive::_S3>,
+        pub ignore_1: ignore::N,
         pub close_brace_char: char,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S3 {
-        pub identifier_paths: Vec<identifier_path::N>,
-        pub comma_chars: Vec<char>,
+        pub _s4s: Vec<Box<using_directive::_S4>>,
+        pub _s5s: Vec<Box<using_directive::_S5>>,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S5 {
+        pub comma_char: char,
+        pub ignore: ignore::N,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S4 {
+        pub identifier_path: identifier_path::N,
+        pub ignore: ignore::N,
     }
 }
 
@@ -1664,7 +1943,9 @@ pub mod variable_declaration {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub type_name: type_name::N,
+        pub ignore_0: ignore::N,
         pub _1: Option<usize>,
+        pub ignore_1: ignore::N,
         pub identifier: identifier::N,
     }
 }
@@ -1677,8 +1958,15 @@ pub mod yul_block {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub open_brace_char: char,
-        pub yul_statements: Vec<yul_statement::N>,
+        pub ignore_0: ignore::N,
+        pub _s2s: Vec<Box<yul_block::_S2>>,
+        pub ignore_1: ignore::N,
         pub close_brace_char: char,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S2 {
+        pub yul_statement: yul_statement::N,
+        pub ignore: ignore::N,
     }
 }
 
@@ -1690,8 +1978,11 @@ pub mod assembly_statement {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub assembly: usize,
+        pub ignore_0: ignore::N,
         pub double_quote_evmasm_double_quote: Option<usize>,
+        pub ignore_1: ignore::N,
         pub assembly_flags: Option<assembly_flags::N>,
+        pub ignore_2: ignore::N,
         pub yul_block: yul_block::N,
     }
 }
@@ -1717,16 +2008,31 @@ pub mod error_definition {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub error: usize,
+        pub ignore_0: ignore::N,
         pub identifier: identifier::N,
+        pub ignore_1: ignore::N,
         pub open_paren_char: char,
-        pub error_parameters: Option<Box<error_definition::_S1>>,
+        pub ignore_2: ignore::N,
+        pub _s2s: Option<Box<error_definition::_S1>>,
+        pub ignore_3: ignore::N,
         pub close_paren_char: char,
+        pub ignore_4: ignore::N,
         pub semicolon_char: char,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S1 {
-        pub error_parameters: Vec<error_parameter::N>,
-        pub comma_chars: Vec<char>,
+        pub _s2s: Vec<Box<error_definition::_S2>>,
+        pub _s3s: Vec<Box<error_definition::_S3>>,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S3 {
+        pub comma_char: char,
+        pub ignore: ignore::N,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S2 {
+        pub error_parameter: error_parameter::N,
+        pub ignore: ignore::N,
     }
 }
 
@@ -1738,17 +2044,33 @@ pub mod event_definition {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub event: usize,
+        pub ignore_0: ignore::N,
         pub identifier: identifier::N,
+        pub ignore_1: ignore::N,
         pub open_paren_char: char,
-        pub event_parameters: Option<Box<event_definition::_S1>>,
+        pub ignore_2: ignore::N,
+        pub _s2s: Option<Box<event_definition::_S1>>,
+        pub ignore_3: ignore::N,
         pub close_paren_char: char,
+        pub ignore_4: ignore::N,
         pub anonymous: Option<usize>,
+        pub ignore_5: ignore::N,
         pub semicolon_char: char,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S1 {
-        pub event_parameters: Vec<event_parameter::N>,
-        pub comma_chars: Vec<char>,
+        pub _s2s: Vec<Box<event_definition::_S2>>,
+        pub _s3s: Vec<Box<event_definition::_S3>>,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S3 {
+        pub comma_char: char,
+        pub ignore: ignore::N,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S2 {
+        pub event_parameter: event_parameter::N,
+        pub ignore: ignore::N,
     }
 }
 
@@ -1760,18 +2082,24 @@ pub mod index_access_expression {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub primary_expression: primary_expression::N,
+        pub ignore: ignore::N,
         pub _s2s: Vec<Box<index_access_expression::_S2>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub open_bracket_char: char,
+        pub ignore_0: ignore::N,
         pub expression: Option<expression::N>,
+        pub ignore_1: ignore::N,
         pub _s5: Option<Box<index_access_expression::_S5>>,
+        pub ignore_2: ignore::N,
         pub close_bracket_char: char,
+        pub ignore: ignore::N,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S5 {
         pub colon_char: char,
+        pub ignore: ignore::N,
         pub expression: Option<expression::N>,
     }
 }
@@ -1784,15 +2112,26 @@ pub mod variable_declaration_tuple {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub open_paren_char: char,
-        pub comma_chars: Vec<char>,
+        pub ignore_0: ignore::N,
+        pub _s2s: Vec<Box<variable_declaration_tuple::_S2>>,
+        pub ignore_1: ignore::N,
         pub variable_declaration: variable_declaration::N,
-        pub _s3s: Vec<Box<variable_declaration_tuple::_S3>>,
+        pub ignore_2: ignore::N,
+        pub _s4s: Vec<Box<variable_declaration_tuple::_S4>>,
+        pub ignore_3: ignore::N,
         pub close_paren_char: char,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub struct _S3 {
+    pub struct _S4 {
         pub comma_char: char,
+        pub ignore_0: ignore::N,
         pub variable_declaration: Option<variable_declaration::N>,
+        pub ignore_1: ignore::N,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S2 {
+        pub comma_char: char,
+        pub ignore: ignore::N,
     }
 }
 
@@ -1804,12 +2143,15 @@ pub mod member_access_expression {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub index_access_expression: index_access_expression::N,
+        pub ignore: ignore::N,
         pub _s2s: Vec<Box<member_access_expression::_S2>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub period_char: char,
+        pub ignore_0: ignore::N,
         pub _c3: Box<member_access_expression::_C3>,
+        pub ignore_1: ignore::N,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub enum _C3 {
@@ -1826,18 +2168,32 @@ pub mod function_call_options_expression {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub member_access_expression: member_access_expression::N,
+        pub ignore: ignore::N,
         pub _s2s: Vec<Box<function_call_options_expression::_S2>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub open_brace_char: char,
-        pub named_arguments: Box<function_call_options_expression::_S3>,
+        pub ignore_0: ignore::N,
+        pub _s4s: Box<function_call_options_expression::_S3>,
+        pub ignore_1: ignore::N,
         pub close_brace_char: char,
+        pub ignore: ignore::N,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S3 {
-        pub named_arguments: Vec<named_argument::N>,
-        pub comma_chars: Vec<char>,
+        pub _s4s: Vec<Box<function_call_options_expression::_S4>>,
+        pub _s5s: Vec<Box<function_call_options_expression::_S5>>,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S5 {
+        pub comma_char: char,
+        pub ignore: ignore::N,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S4 {
+        pub named_argument: named_argument::N,
+        pub ignore: ignore::N,
     }
 }
 
@@ -1849,7 +2205,13 @@ pub mod function_call_expression {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub function_call_options_expression: function_call_options_expression::N,
-        pub argument_lists: Vec<argument_list::N>,
+        pub ignore: ignore::N,
+        pub _s2s: Vec<Box<function_call_expression::_S2>>,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S2 {
+        pub argument_list: argument_list::N,
+        pub ignore: ignore::N,
     }
 }
 
@@ -1861,6 +2223,7 @@ pub mod unary_prefix_expression {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub _0: usize,
+        pub ignore: ignore::N,
         pub function_call_expression: function_call_expression::N,
     }
 }
@@ -1873,6 +2236,7 @@ pub mod unary_suffix_expression {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub unary_prefix_expression: unary_prefix_expression::N,
+        pub ignore: ignore::N,
         pub _1: usize,
     }
 }
@@ -1885,7 +2249,9 @@ pub mod exp_expression {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub unary_suffix_expression: unary_suffix_expression::N,
+        pub ignore_0: ignore::N,
         pub star_star: usize,
+        pub ignore_1: ignore::N,
         pub expression: expression::N,
     }
 }
@@ -1898,12 +2264,15 @@ pub mod mul_div_mod_expression {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub exp_expression: exp_expression::N,
+        pub ignore: ignore::N,
         pub _s2s: Vec<Box<mul_div_mod_expression::_S2>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub _0: char,
+        pub ignore_0: ignore::N,
         pub exp_expression: exp_expression::N,
+        pub ignore_1: ignore::N,
     }
 }
 
@@ -1915,12 +2284,15 @@ pub mod add_sub_expression {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub mul_div_mod_expression: mul_div_mod_expression::N,
+        pub ignore: ignore::N,
         pub _s2s: Vec<Box<add_sub_expression::_S2>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub _0: char,
+        pub ignore_0: ignore::N,
         pub mul_div_mod_expression: mul_div_mod_expression::N,
+        pub ignore_1: ignore::N,
     }
 }
 
@@ -1932,12 +2304,15 @@ pub mod shift_expression {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub add_sub_expression: add_sub_expression::N,
+        pub ignore: ignore::N,
         pub _s2s: Vec<Box<shift_expression::_S2>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub _0: usize,
+        pub ignore_0: ignore::N,
         pub add_sub_expression: add_sub_expression::N,
+        pub ignore_1: ignore::N,
     }
 }
 
@@ -1949,12 +2324,15 @@ pub mod bit_and_expression {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub shift_expression: shift_expression::N,
+        pub ignore: ignore::N,
         pub _s2s: Vec<Box<bit_and_expression::_S2>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub ampersand_char: char,
+        pub ignore_0: ignore::N,
         pub shift_expression: shift_expression::N,
+        pub ignore_1: ignore::N,
     }
 }
 
@@ -1966,12 +2344,15 @@ pub mod bit_x_or_expression {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub bit_and_expression: bit_and_expression::N,
+        pub ignore: ignore::N,
         pub _s2s: Vec<Box<bit_x_or_expression::_S2>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub caret_char: char,
+        pub ignore_0: ignore::N,
         pub bit_and_expression: bit_and_expression::N,
+        pub ignore_1: ignore::N,
     }
 }
 
@@ -1983,12 +2364,15 @@ pub mod bit_or_expression {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub bit_x_or_expression: bit_x_or_expression::N,
+        pub ignore: ignore::N,
         pub _s2s: Vec<Box<bit_or_expression::_S2>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub bar_char: char,
+        pub ignore_0: ignore::N,
         pub bit_x_or_expression: bit_x_or_expression::N,
+        pub ignore_1: ignore::N,
     }
 }
 
@@ -2000,12 +2384,15 @@ pub mod order_comparison_expression {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub bit_or_expression: bit_or_expression::N,
+        pub ignore: ignore::N,
         pub _s2s: Vec<Box<order_comparison_expression::_S2>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub _0: usize,
+        pub ignore_0: ignore::N,
         pub bit_or_expression: bit_or_expression::N,
+        pub ignore_1: ignore::N,
     }
 }
 
@@ -2017,12 +2404,15 @@ pub mod equality_comparison_expression {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub order_comparison_expression: order_comparison_expression::N,
+        pub ignore: ignore::N,
         pub _s2s: Vec<Box<equality_comparison_expression::_S2>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub _0: usize,
+        pub ignore_0: ignore::N,
         pub order_comparison_expression: order_comparison_expression::N,
+        pub ignore_1: ignore::N,
     }
 }
 
@@ -2034,12 +2424,15 @@ pub mod and_expression {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub equality_comparison_expression: equality_comparison_expression::N,
+        pub ignore: ignore::N,
         pub _s2s: Vec<Box<and_expression::_S2>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub ampersand_ampersand: usize,
+        pub ignore_0: ignore::N,
         pub equality_comparison_expression: equality_comparison_expression::N,
+        pub ignore_1: ignore::N,
     }
 }
 
@@ -2051,16 +2444,19 @@ pub mod or_expression {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub and_expression: and_expression::N,
+        pub ignore: ignore::N,
         pub _s2s: Vec<Box<or_expression::_S2>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub bar_bar: usize,
+        pub ignore_0: ignore::N,
         pub and_expression: and_expression::N,
+        pub ignore_1: ignore::N,
     }
 }
 
-/// ConditionalExpression = OrExpression '?' Expression ':' Expression ;
+/// ConditionalExpression = OrExpression [ '?' Expression ':' Expression ] ;
 pub mod conditional_expression {
     #[allow(unused_imports)]
     use super::*;
@@ -2068,9 +2464,17 @@ pub mod conditional_expression {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub or_expression: or_expression::N,
+        pub ignore: ignore::N,
+        pub _s2: Option<Box<conditional_expression::_S2>>,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S2 {
         pub question_char: char,
+        pub ignore_0: ignore::N,
         pub expression_0: expression::N,
+        pub ignore_1: ignore::N,
         pub colon_char: char,
+        pub ignore_2: ignore::N,
         pub expression_1: expression::N,
     }
 }
@@ -2083,7 +2487,9 @@ pub mod assignment_expression {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub conditional_expression: conditional_expression::N,
+        pub ignore_0: ignore::N,
         pub _1: usize,
+        pub ignore_1: ignore::N,
         pub expression: expression::N,
     }
 }
@@ -2103,10 +2509,15 @@ pub mod constant_definition {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub type_name: type_name::N,
+        pub ignore_0: ignore::N,
         pub constant: usize,
+        pub ignore_1: ignore::N,
         pub identifier: identifier::N,
+        pub ignore_2: ignore::N,
         pub equal_char: char,
+        pub ignore_3: ignore::N,
         pub expression: expression::N,
+        pub ignore_4: ignore::N,
         pub semicolon_char: char,
     }
 }
@@ -2119,11 +2530,17 @@ pub mod do_while_statement {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub r#do: usize,
+        pub ignore_0: ignore::N,
         pub statement: statement::N,
+        pub ignore_1: ignore::N,
         pub r#while: usize,
+        pub ignore_2: ignore::N,
         pub open_paren_char: char,
+        pub ignore_3: ignore::N,
         pub expression: expression::N,
+        pub ignore_4: ignore::N,
         pub close_paren_char: char,
+        pub ignore_5: ignore::N,
         pub semicolon_char: char,
     }
 }
@@ -2136,8 +2553,11 @@ pub mod emit_statement {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub emit: usize,
+        pub ignore_0: ignore::N,
         pub expression: expression::N,
+        pub ignore_1: ignore::N,
         pub argument_list: argument_list::N,
+        pub ignore_2: ignore::N,
         pub semicolon_char: char,
     }
 }
@@ -2150,6 +2570,7 @@ pub mod expression_statement {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub expression: expression::N,
+        pub ignore: ignore::N,
         pub semicolon_char: char,
     }
 }
@@ -2162,15 +2583,21 @@ pub mod if_statement {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub r#if: usize,
+        pub ignore_0: ignore::N,
         pub open_paren_char: char,
+        pub ignore_1: ignore::N,
         pub expression: expression::N,
+        pub ignore_2: ignore::N,
         pub close_paren_char: char,
+        pub ignore_3: ignore::N,
         pub statement: statement::N,
+        pub ignore_4: ignore::N,
         pub _s2: Option<Box<if_statement::_S2>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub r#else: usize,
+        pub ignore: ignore::N,
         pub statement: statement::N,
     }
 }
@@ -2183,7 +2610,9 @@ pub mod return_statement {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub r#return: usize,
+        pub ignore_0: ignore::N,
         pub expression: Option<expression::N>,
+        pub ignore_1: ignore::N,
         pub semicolon_char: char,
     }
 }
@@ -2196,8 +2625,11 @@ pub mod revert_statement {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub revert: usize,
+        pub ignore_0: ignore::N,
         pub expression: expression::N,
+        pub ignore_1: ignore::N,
         pub argument_list: argument_list::N,
+        pub ignore_2: ignore::N,
         pub semicolon_char: char,
     }
 }
@@ -2210,15 +2642,25 @@ pub mod state_variable_declaration {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub type_name: type_name::N,
-        pub state_variable_attributes: Vec<state_variable_attribute::N>,
+        pub ignore_0: ignore::N,
+        pub _s2s: Vec<Box<state_variable_declaration::_S2>>,
+        pub ignore_1: ignore::N,
         pub identifier: identifier::N,
-        pub _s3: Option<Box<state_variable_declaration::_S3>>,
+        pub ignore_2: ignore::N,
+        pub _s4: Option<Box<state_variable_declaration::_S4>>,
+        pub ignore_3: ignore::N,
         pub semicolon_char: char,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub struct _S3 {
+    pub struct _S4 {
         pub equal_char: char,
+        pub ignore: ignore::N,
         pub expression: expression::N,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S2 {
+        pub state_variable_attribute: state_variable_attribute::N,
+        pub ignore: ignore::N,
     }
 }
 
@@ -2230,15 +2672,26 @@ pub mod try_statement {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub r#try: usize,
+        pub ignore_0: ignore::N,
         pub expression: expression::N,
+        pub ignore_1: ignore::N,
         pub _s2: Option<Box<try_statement::_S2>>,
+        pub ignore_2: ignore::N,
         pub block: block::N,
+        pub ignore_3: ignore::N,
         pub catch_clause: catch_clause::N,
-        pub catch_clauses: Vec<catch_clause::N>,
+        pub ignore_4: ignore::N,
+        pub _s4s: Vec<Box<try_statement::_S4>>,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S4 {
+        pub catch_clause: catch_clause::N,
+        pub ignore: ignore::N,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub returns: usize,
+        pub ignore: ignore::N,
         pub non_empty_parameter_list: non_empty_parameter_list::N,
     }
 }
@@ -2251,6 +2704,7 @@ pub mod variable_declaration_statement {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub _c1: Box<variable_declaration_statement::_C1>,
+        pub ignore: ignore::N,
         pub semicolon_char: char,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -2261,17 +2715,21 @@ pub mod variable_declaration_statement {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S5 {
         pub variable_declaration_tuple: variable_declaration_tuple::N,
+        pub ignore_0: ignore::N,
         pub equal_char: char,
+        pub ignore_1: ignore::N,
         pub expression: expression::N,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub variable_declaration: variable_declaration::N,
+        pub ignore: ignore::N,
         pub _s4: Option<Box<variable_declaration_statement::_S4>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S4 {
         pub equal_char: char,
+        pub ignore: ignore::N,
         pub expression: expression::N,
     }
 }
@@ -2284,9 +2742,13 @@ pub mod while_statement {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub r#while: usize,
+        pub ignore_0: ignore::N,
         pub open_paren_char: char,
+        pub ignore_1: ignore::N,
         pub expression: expression::N,
+        pub ignore_2: ignore::N,
         pub close_paren_char: char,
+        pub ignore_3: ignore::N,
         pub statement: statement::N,
     }
 }
@@ -2311,11 +2773,17 @@ pub mod for_statement {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub r#for: usize,
+        pub ignore_0: ignore::N,
         pub open_paren_char: char,
+        pub ignore_1: ignore::N,
         pub _c1: Box<for_statement::_C1>,
+        pub ignore_2: ignore::N,
         pub _c2: Box<for_statement::_C2>,
+        pub ignore_3: ignore::N,
         pub expression: Option<expression::N>,
+        pub ignore_4: ignore::N,
         pub close_paren_char: char,
+        pub ignore_5: ignore::N,
         pub statement: statement::N,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -2361,8 +2829,15 @@ pub mod block {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub open_brace_char: char,
-        pub _c2s: Vec<Box<block::_C2>>,
+        pub ignore_0: ignore::N,
+        pub _s3s: Vec<Box<block::_S3>>,
+        pub ignore_1: ignore::N,
         pub close_brace_char: char,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S3 {
+        pub _c2: Box<block::_C2>,
+        pub ignore: ignore::N,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub enum _C2 {
@@ -2379,9 +2854,17 @@ pub mod constructor_definition {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub constructor: usize,
+        pub ignore_0: ignore::N,
         pub parameter_list: parameter_list::N,
-        pub constructor_attributes: Vec<constructor_attribute::N>,
+        pub ignore_1: ignore::N,
+        pub _s2s: Vec<Box<constructor_definition::_S2>>,
+        pub ignore_2: ignore::N,
         pub block: block::N,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S2 {
+        pub constructor_attribute: constructor_attribute::N,
+        pub ignore: ignore::N,
     }
 }
 
@@ -2393,20 +2876,30 @@ pub mod fallback_function_definition {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub fallback: usize,
+        pub ignore_0: ignore::N,
         pub parameter_list: parameter_list::N,
-        pub fallback_function_attributes: Vec<fallback_function_attribute::N>,
-        pub _s3: Option<Box<fallback_function_definition::_S3>>,
-        pub _c4: Box<fallback_function_definition::_C4>,
+        pub ignore_1: ignore::N,
+        pub _s2s: Vec<Box<fallback_function_definition::_S2>>,
+        pub ignore_2: ignore::N,
+        pub _s4: Option<Box<fallback_function_definition::_S4>>,
+        pub ignore_3: ignore::N,
+        pub _c5: Box<fallback_function_definition::_C5>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub enum _C4 {
+    pub enum _C5 {
         Semicolon(usize),
         Block(block::N),
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub struct _S3 {
+    pub struct _S4 {
         pub returns: usize,
+        pub ignore: ignore::N,
         pub non_empty_parameter_list: non_empty_parameter_list::N,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S2 {
+        pub fallback_function_attribute: fallback_function_attribute::N,
+        pub ignore: ignore::N,
     }
 }
 
@@ -2418,21 +2911,32 @@ pub mod function_definition {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub function: usize,
+        pub ignore_0: ignore::N,
         pub _c1: Box<function_definition::_C1>,
+        pub ignore_1: ignore::N,
         pub parameter_list: parameter_list::N,
-        pub function_attributes: Vec<function_attribute::N>,
-        pub _s4: Option<Box<function_definition::_S4>>,
-        pub _c5: Box<function_definition::_C5>,
+        pub ignore_2: ignore::N,
+        pub _s3s: Vec<Box<function_definition::_S3>>,
+        pub ignore_3: ignore::N,
+        pub _s5: Option<Box<function_definition::_S5>>,
+        pub ignore_4: ignore::N,
+        pub _c6: Box<function_definition::_C6>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub enum _C5 {
+    pub enum _C6 {
         Semicolon(usize),
         Block(block::N),
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub struct _S4 {
+    pub struct _S5 {
         pub returns: usize,
+        pub ignore: ignore::N,
         pub non_empty_parameter_list: non_empty_parameter_list::N,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S3 {
+        pub function_attribute: function_attribute::N,
+        pub ignore: ignore::N,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub enum _C1 {
@@ -2449,15 +2953,24 @@ pub mod modifier_definition {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub modifier: usize,
+        pub ignore_0: ignore::N,
         pub identifier: identifier::N,
+        pub ignore_1: ignore::N,
         pub parameter_list: Option<parameter_list::N>,
-        pub method_attributes: Vec<method_attribute::N>,
-        pub _c3: Box<modifier_definition::_C3>,
+        pub ignore_2: ignore::N,
+        pub _s3s: Vec<Box<modifier_definition::_S3>>,
+        pub ignore_3: ignore::N,
+        pub _c4: Box<modifier_definition::_C4>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub enum _C3 {
+    pub enum _C4 {
         Semicolon(usize),
         Block(block::N),
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S3 {
+        pub method_attribute: method_attribute::N,
+        pub ignore: ignore::N,
     }
 }
 
@@ -2469,15 +2982,24 @@ pub mod receive_function_definition {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub receive: usize,
+        pub ignore_0: ignore::N,
         pub open_paren_char: char,
+        pub ignore_1: ignore::N,
         pub close_paren_char: char,
-        pub receive_function_attributes: Vec<receive_function_attribute::N>,
-        pub _c2: Box<receive_function_definition::_C2>,
+        pub ignore_2: ignore::N,
+        pub _s2s: Vec<Box<receive_function_definition::_S2>>,
+        pub ignore_3: ignore::N,
+        pub _c3: Box<receive_function_definition::_C3>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub enum _C2 {
+    pub enum _C3 {
         Semicolon(usize),
         Block(block::N),
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S2 {
+        pub receive_function_attribute: receive_function_attribute::N,
+        pub ignore: ignore::N,
     }
 }
 
@@ -2511,12 +3033,23 @@ pub mod contract_definition {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub r#abstract: Option<usize>,
+        pub ignore_0: ignore::N,
         pub contract: usize,
+        pub ignore_1: ignore::N,
         pub identifier: identifier::N,
+        pub ignore_2: ignore::N,
         pub inheritance_specifier_list: Option<inheritance_specifier_list::N>,
+        pub ignore_3: ignore::N,
         pub open_brace_char: char,
-        pub contract_body_elements: Vec<contract_body_element::N>,
+        pub ignore_4: ignore::N,
+        pub _s4s: Vec<Box<contract_definition::_S4>>,
+        pub ignore_5: ignore::N,
         pub close_brace_char: char,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S4 {
+        pub contract_body_element: contract_body_element::N,
+        pub ignore: ignore::N,
     }
 }
 
@@ -2528,11 +3061,21 @@ pub mod interface_definition {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub interface: usize,
+        pub ignore_0: ignore::N,
         pub identifier: identifier::N,
+        pub ignore_1: ignore::N,
         pub inheritance_specifier_list: Option<inheritance_specifier_list::N>,
+        pub ignore_2: ignore::N,
         pub open_brace_char: char,
-        pub contract_body_elements: Vec<contract_body_element::N>,
+        pub ignore_3: ignore::N,
+        pub _s3s: Vec<Box<interface_definition::_S3>>,
+        pub ignore_4: ignore::N,
         pub close_brace_char: char,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S3 {
+        pub contract_body_element: contract_body_element::N,
+        pub ignore: ignore::N,
     }
 }
 
@@ -2544,10 +3087,19 @@ pub mod library_definition {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub library: usize,
+        pub ignore_0: ignore::N,
         pub identifier: identifier::N,
+        pub ignore_1: ignore::N,
         pub open_brace_char: char,
-        pub contract_body_elements: Vec<contract_body_element::N>,
+        pub ignore_2: ignore::N,
+        pub _s2s: Vec<Box<library_definition::_S2>>,
+        pub ignore_3: ignore::N,
         pub close_brace_char: char,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S2 {
+        pub contract_body_element: contract_body_element::N,
+        pub ignore: ignore::N,
     }
 }
 
@@ -2577,9 +3129,16 @@ pub mod source_unit {
     pub type N = Box<source_unit::_S0>;
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
-        pub ignore: ignore::N,
-        pub _c2s: Vec<Box<source_unit::_C2>>,
+        pub ignore_0: ignore::N,
+        pub ignore_1: ignore::N,
+        pub _s3s: Vec<Box<source_unit::_S3>>,
+        pub ignore_2: ignore::N,
         pub end_marker: (),
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S3 {
+        pub _c2: Box<source_unit::_C2>,
+        pub ignore: ignore::N,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub enum _C2 {

@@ -22,30 +22,41 @@ impl comment::_S3 {
 }
 impl grouped::_S0 {
     pub fn new(
-        ((open_paren_char, expression), close_paren_char): ((char, expression::N), char),
+        ((((open_paren_char, ignore_0), expression), ignore_1), close_paren_char): (
+            (((char, ignore::N), expression::N), ignore::N),
+            char,
+        ),
     ) -> Self {
         Self {
             open_paren_char,
+            ignore_0,
             expression,
+            ignore_1,
             close_paren_char,
         }
     }
 }
 impl optional::_S0 {
     pub fn new(
-        ((open_bracket_char, expression), close_bracket_char): ((char, expression::N), char),
+        ((((open_bracket_char, ignore_0), expression), ignore_1), close_bracket_char): (
+            (((char, ignore::N), expression::N), ignore::N),
+            char,
+        ),
     ) -> Self {
         Self {
             open_bracket_char,
+            ignore_0,
             expression,
+            ignore_1,
             close_bracket_char,
         }
     }
 }
 impl repetition_separator::_S0 {
-    pub fn new((slash_char, expression): (char, expression::N)) -> Self {
+    pub fn new(((slash_char, ignore), expression): ((char, ignore::N), expression::N)) -> Self {
         Self {
             slash_char,
+            ignore,
             expression,
         }
     }
@@ -73,27 +84,41 @@ impl string_char::_S1 {
     }
 }
 impl repetition_prefix::_S0 {
-    pub fn new((_c1, star_char): (Box<repetition_prefix::_C1>, char)) -> Self {
-        Self { _c1, star_char }
+    pub fn new(
+        ((_c1, ignore), star_char): ((Box<repetition_prefix::_C1>, ignore::N), char),
+    ) -> Self {
+        Self {
+            _c1,
+            ignore,
+            star_char,
+        }
     }
 }
 impl repetition_prefix::_S6 {
-    pub fn new((ellipsis_char, number): (char, number::N)) -> Self {
+    pub fn new(((ellipsis_char, ignore), number): ((char, ignore::N), number::N)) -> Self {
         Self {
             ellipsis_char,
+            ignore,
             number,
         }
     }
 }
 impl repetition_prefix::_S2 {
-    pub fn new((number, _s4): (number::N, Option<Box<repetition_prefix::_S4>>)) -> Self {
-        Self { number, _s4 }
+    pub fn new(
+        ((number, ignore), _s4): ((number::N, ignore::N), Option<Box<repetition_prefix::_S4>>),
+    ) -> Self {
+        Self {
+            number,
+            ignore,
+            _s4,
+        }
     }
 }
 impl repetition_prefix::_S4 {
-    pub fn new((ellipsis_char, number): (char, Option<number::N>)) -> Self {
+    pub fn new(((ellipsis_char, ignore), number): ((char, ignore::N), Option<number::N>)) -> Self {
         Self {
             ellipsis_char,
+            ignore,
             number,
         }
     }
@@ -128,21 +153,43 @@ impl string::_S0 {
 impl repeated::_S0 {
     pub fn new(
         (
-            (((repetition_prefix, open_brace_char), expression), repetition_separator),
+            (
+                (
+                    (
+                        ((((repetition_prefix, ignore_0), open_brace_char), ignore_1), expression),
+                        ignore_2,
+                    ),
+                    repetition_separator,
+                ),
+                ignore_3,
+            ),
             close_brace_char,
         ): (
             (
-                ((Option<repetition_prefix::N>, char), expression::N),
-                Option<repetition_separator::N>,
+                (
+                    (
+                        (
+                            (((Option<repetition_prefix::N>, ignore::N), char), ignore::N),
+                            expression::N,
+                        ),
+                        ignore::N,
+                    ),
+                    Option<repetition_separator::N>,
+                ),
+                ignore::N,
             ),
             char,
         ),
     ) -> Self {
         Self {
             repetition_prefix,
+            ignore_0,
             open_brace_char,
+            ignore_1,
             expression,
+            ignore_2,
             repetition_separator,
+            ignore_3,
             close_brace_char,
         }
     }
@@ -163,65 +210,114 @@ impl identifier::_S1 {
 }
 impl char_range::_S0 {
     pub fn new(
-        ((single_char_string_0, ellipsis_char), single_char_string_1): (
-            (single_char_string::N, char),
+        ((((single_char_string_0, ignore_0), ellipsis_char), ignore_1), single_char_string_1): (
+            (((single_char_string::N, ignore::N), char), ignore::N),
             single_char_string::N,
         ),
     ) -> Self {
         Self {
             single_char_string_0,
+            ignore_0,
             ellipsis_char,
+            ignore_1,
             single_char_string_1,
         }
     }
 }
 impl negation::_S0 {
-    pub fn new((not_char, primary): (Option<char>, primary::N)) -> Self {
-        Self { not_char, primary }
+    pub fn new(((not_char, ignore), primary): ((Option<char>, ignore::N), primary::N)) -> Self {
+        Self {
+            not_char,
+            ignore,
+            primary,
+        }
     }
 }
 impl difference::_S0 {
-    pub fn new((negation, _s2): (negation::N, Option<Box<difference::_S2>>)) -> Self {
-        Self { negation, _s2 }
+    pub fn new(
+        ((negation, ignore), _s2): ((negation::N, ignore::N), Option<Box<difference::_S2>>),
+    ) -> Self {
+        Self {
+            negation,
+            ignore,
+            _s2,
+        }
     }
 }
 impl difference::_S2 {
-    pub fn new((minus_char, negation): (char, negation::N)) -> Self {
+    pub fn new(((minus_char, ignore), negation): ((char, ignore::N), negation::N)) -> Self {
         Self {
             minus_char,
+            ignore,
             negation,
         }
     }
 }
+impl sequence::_S1 {
+    pub fn new((difference, ignore): (difference::N, ignore::N)) -> Self {
+        Self { difference, ignore }
+    }
+}
 impl expression::_S0 {
-    pub fn new((sequences, bar_chars): (Vec<sequence::N>, Vec<char>)) -> Self {
-        Self {
-            sequences,
-            bar_chars,
-        }
+    pub fn new((_s1s, _s2s): (Vec<Box<expression::_S1>>, Vec<Box<expression::_S2>>)) -> Self {
+        Self { _s1s, _s2s }
+    }
+}
+impl expression::_S2 {
+    pub fn new((bar_char, ignore): (char, ignore::N)) -> Self {
+        Self { bar_char, ignore }
+    }
+}
+impl expression::_S1 {
+    pub fn new((sequence, ignore): (sequence::N, ignore::N)) -> Self {
+        Self { sequence, ignore }
     }
 }
 impl production::_S0 {
     pub fn new(
-        (((identifier, equal_char), expression), semicolon_char): (
-            ((identifier::N, char), expression::N),
+        (
+            (((((identifier, ignore_0), equal_char), ignore_1), expression), ignore_2),
+            semicolon_char,
+        ): (
+            (
+                (
+                    (((identifier::N, ignore::N), char), ignore::N),
+                    expression::N,
+                ),
+                ignore::N,
+            ),
             char,
         ),
     ) -> Self {
         Self {
             identifier,
+            ignore_0,
             equal_char,
+            ignore_1,
             expression,
+            ignore_2,
             semicolon_char,
         }
     }
 }
 impl grammar::_S0 {
-    pub fn new(((ignore, productions), end_marker): ((ignore::N, Vec<production::N>), ())) -> Self {
+    pub fn new(
+        ((((ignore_0, ignore_1), _s2s), ignore_2), end_marker): (
+            (((ignore::N, ignore::N), Vec<Box<grammar::_S2>>), ignore::N),
+            (),
+        ),
+    ) -> Self {
         Self {
-            ignore,
-            productions,
+            ignore_0,
+            ignore_1,
+            _s2s,
+            ignore_2,
             end_marker,
         }
+    }
+}
+impl grammar::_S2 {
+    pub fn new((production, ignore): (production::N, ignore::N)) -> Self {
+        Self { production, ignore }
     }
 }

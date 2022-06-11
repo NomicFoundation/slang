@@ -9,11 +9,12 @@
       - reference: LineComment
 - name: Whitespace
   isToken: true
-  choice:
-    - terminal: " "
-    - terminal: "\t"
-    - terminal: "\r"
-    - terminal: "\n"
+  oneOrMore:
+    choice:
+      - terminal: " "
+      - terminal: "\t"
+      - terminal: "\r"
+      - terminal: "\n"
 - name: Comment
   isToken: true
   sequence:
@@ -29,9 +30,9 @@
                   choice:
                     - terminal: "*"
                     - terminal: /
-    - oneOrMore:
+    - zeroOrMore:
         terminal: "*"
-    - terminal: /
+    - terminal: "*/"
 - name: LineComment
   isToken: true
   sequence:
@@ -531,10 +532,12 @@
 - name: ConditionalExpression
   sequence:
     - reference: OrExpression
-    - terminal: "?"
-    - reference: Expression
-    - terminal: ":"
-    - reference: Expression
+    - optional:
+        sequence:
+          - terminal: "?"
+          - reference: Expression
+          - terminal: ":"
+          - reference: Expression
 - name: OrExpression
   sequence:
     - reference: AndExpression

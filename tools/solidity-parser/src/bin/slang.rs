@@ -17,7 +17,6 @@ struct ProgramArgs {
 fn main() -> Result<(), usize> {
     let args = ProgramArgs::parse();
 
-    println!(" => Parsing Solidity");
     let solidity_src = fs::read_to_string(args.solidity_input).expect("Failed to read file");
     let (parse_tree, errs) = Parsers::new()
         .source_unit
@@ -27,12 +26,12 @@ fn main() -> Result<(), usize> {
 
     if let Some(source_unit) = parse_tree {
         if let Some(json_output) = args.json_output {
-            println!(" => Writing Parse Tree as JSON");
-            fs::write(
-                json_output,
-                serde_json::to_string(&source_unit).expect("Failed to produce json"),
-            )
-            .expect("Failed to write json file");
+            let json = serde_json::to_string(&source_unit).expect("Failed to produce json");
+            if json_output == "-" {
+                println!("{}", json);
+            } else {
+                fs::write(json_output, json).expect("Failed to write json file");
+            }
         }
     }
 
