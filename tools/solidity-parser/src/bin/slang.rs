@@ -11,7 +11,7 @@ struct ProgramArgs {
     solidity_input: String,
 }
 
-fn main() {
+fn main() -> Result<(), usize> {
     let args = ProgramArgs::parse();
 
     println!(" => Parsing Solidity");
@@ -19,7 +19,13 @@ fn main() {
     let (_parse_tree, errs) = Parsers::new()
         .source_unit
         .parse_recovery(solidity_src.as_str());
+    let number_of_errors = errs.len();
     print_errors(errs, &solidity_src);
+    if number_of_errors == 0 {
+        Ok(())
+    } else {
+        Err(number_of_errors)
+    }
 }
 
 // TODO: encapsulate the following in a support library
@@ -57,7 +63,7 @@ fn generate_report(e: Simple<char>) -> ariadne::ReportBuilder<std::ops::Range<us
                         None => "end of input".to_string(),
                     })
                     .collect::<Vec<_>>()
-                    .join(", ")
+                    .join(" or ")
             },
         )
     };
