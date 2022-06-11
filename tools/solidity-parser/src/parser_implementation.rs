@@ -1,8 +1,6 @@
 use chumsky::prelude::*;
 use chumsky::primitive::Just;
 use chumsky::Parser;
-#[allow(unused_imports)]
-use syntax_schema::chumsky::combinators::*;
 #[allow(dead_code)]
 fn repetition_mapper<E, S>((e, es): (E, Vec<(S, E)>)) -> (Vec<E>, Vec<S>) {
     let mut expressions = vec![e];
@@ -12,6 +10,26 @@ fn repetition_mapper<E, S>((e, es): (E, Vec<(S, E)>)) -> (Vec<E>, Vec<S>) {
         expressions.push(e);
     }
     (expressions, separators)
+}
+#[allow(dead_code)]
+fn difference<M, MO, S, SO>(
+    minuend: M,
+    subtrahend: S,
+) -> impl Parser<char, MO, Error = Simple<char>>
+where
+    M: Clone + Parser<char, MO, Error = Simple<char>>,
+    S: Parser<char, SO, Error = Simple<char>>,
+{
+    let minuend_end = minuend.clone().map_with_span(|_, span| span.end).rewind();
+    let subtrahend_end = subtrahend.map_with_span(|_, span| span.end).rewind();
+    minuend_end
+        .then(subtrahend_end)
+        .validate(|(m, s), span, emit| {
+            if m == s {
+                emit(Simple::custom(span, "subtrahend matches minuend"))
+            }
+        })
+        .ignore_then(minuend)
 }
 #[allow(dead_code)]
 #[inline]
@@ -1389,9 +1407,9 @@ impl Parsers {
             .boxed();
 
         // «YulIdentifier» = «RawIdentifier» - «YulReservedWord» ;
-        let yul_identifier_parser = raw_identifier_parser
-            .clone()
-            .excluding(choice::<_, ErrorType>((
+        let yul_identifier_parser = difference(
+            raw_identifier_parser.clone(),
+            choice::<_, ErrorType>((
                 terminal("Blockhash").map(|_| 9usize),
                 terminal("a").ignore_then(choice((
                     terminal("dd").ignore_then(choice((
@@ -1554,8 +1572,9 @@ impl Parsers {
                     terminal("rue").map(|_| 4usize),
                 ))),
                 terminal("xor").map(|_| 3usize),
-            )))
-            .boxed();
+            )),
+        )
+        .boxed();
 
         // «AsciiStringLiteral» = «SingleQuotedAsciiStringLiteral» | «DoubleQuotedAsciiStringLiteral» ;
         let ascii_string_literal_parser = choice((
@@ -1586,10 +1605,8 @@ impl Parsers {
             .boxed();
 
         // «Identifier» = «RawIdentifier» - «ReservedWord» ;
-        let identifier_parser = raw_identifier_parser
-            .clone()
-            .excluding(reserved_word_parser.clone())
-            .boxed();
+        let identifier_parser =
+            difference(raw_identifier_parser.clone(), reserved_word_parser.clone()).boxed();
 
         // «UnicodeStringLiteral» = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral» ;
         let unicode_string_literal_parser = choice((
