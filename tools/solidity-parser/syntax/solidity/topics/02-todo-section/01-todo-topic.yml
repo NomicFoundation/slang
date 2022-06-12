@@ -431,8 +431,10 @@
 - name: AssignmentExpression
   sequence:
     - reference: ConditionalExpression
-    - reference: AssignmentOperator
-    - reference: Expression
+    - zeroOrMore:
+        sequence:
+          - reference: AssignmentOperator
+          - reference: Expression
 
 - name: AssignmentOperator
   choice:
@@ -571,13 +573,16 @@
 - name: ExpExpression
   sequence:
     - reference: UnarySuffixExpression
-    - terminal: "**"
-    - reference: Expression
+    - zeroOrMore:
+        sequence:
+          - terminal: "**"
+          - reference: Expression
 
 - name: UnarySuffixExpression
   sequence:
     - reference: UnaryPrefixExpression
-    - reference: UnarySuffixOperator
+    - optional:
+        reference: UnarySuffixOperator
 
 - name: UnarySuffixOperator
   choice:
@@ -586,7 +591,8 @@
 
 - name: UnaryPrefixExpression
   sequence:
-    - reference: UnaryPrefixOperator
+    - optional:
+        reference: UnaryPrefixOperator
     - reference: FunctionCallExpression
 
 - name: UnaryPrefixOperator

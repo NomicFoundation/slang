@@ -2539,7 +2539,10 @@ impl function_call_expression::_S2 {
 }
 impl unary_prefix_expression::_S0 {
     pub fn new(
-        ((_0, ignore), function_call_expression): ((usize, ignore::N), function_call_expression::N),
+        ((_0, ignore), function_call_expression): (
+            (Option<usize>, ignore::N),
+            function_call_expression::N,
+        ),
     ) -> Self {
         Self {
             _0,
@@ -2552,7 +2555,7 @@ impl unary_suffix_expression::_S0 {
     pub fn new(
         ((unary_prefix_expression, ignore), _1): (
             (unary_prefix_expression::N, ignore::N),
-            FixedTerminal<2usize>,
+            Option<FixedTerminal<2usize>>,
         ),
     ) -> Self {
         Self {
@@ -2564,23 +2567,30 @@ impl unary_suffix_expression::_S0 {
 }
 impl exp_expression::_S0 {
     pub fn new(
-        ((((unary_suffix_expression, ignore_0), star_star), ignore_1), expression): (
-            (
-                (
-                    (unary_suffix_expression::N, ignore::N),
-                    FixedTerminal<2usize>,
-                ),
-                ignore::N,
-            ),
-            expression::N,
+        ((unary_suffix_expression, ignore), _s2s): (
+            (unary_suffix_expression::N, ignore::N),
+            Vec<Box<exp_expression::_S2>>,
         ),
     ) -> Self {
         Self {
             unary_suffix_expression,
-            ignore_0,
+            ignore,
+            _s2s,
+        }
+    }
+}
+impl exp_expression::_S2 {
+    pub fn new(
+        (((star_star, ignore_0), expression), ignore_1): (
+            ((FixedTerminal<2usize>, ignore::N), expression::N),
+            ignore::N,
+        ),
+    ) -> Self {
+        Self {
             star_star,
-            ignore_1,
+            ignore_0,
             expression,
+            ignore_1,
         }
     }
 }
@@ -2929,17 +2939,27 @@ impl conditional_expression::_S2 {
 }
 impl assignment_expression::_S0 {
     pub fn new(
-        ((((conditional_expression, ignore_0), _1), ignore_1), expression): (
-            (((conditional_expression::N, ignore::N), usize), ignore::N),
-            expression::N,
+        ((conditional_expression, ignore), _s2s): (
+            (conditional_expression::N, ignore::N),
+            Vec<Box<assignment_expression::_S2>>,
         ),
     ) -> Self {
         Self {
             conditional_expression,
+            ignore,
+            _s2s,
+        }
+    }
+}
+impl assignment_expression::_S2 {
+    pub fn new(
+        (((_0, ignore_0), expression), ignore_1): (((usize, ignore::N), expression::N), ignore::N),
+    ) -> Self {
+        Self {
+            _0,
             ignore_0,
-            _1,
-            ignore_1,
             expression,
+            ignore_1,
         }
     }
 }

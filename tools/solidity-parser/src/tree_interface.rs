@@ -2710,22 +2710,22 @@ pub mod function_call_expression {
     }
 }
 
-/// UnaryPrefixExpression = UnaryPrefixOperator FunctionCallExpression ;
+/// UnaryPrefixExpression = [ UnaryPrefixOperator ] FunctionCallExpression ;
 pub mod unary_prefix_expression {
     #[allow(unused_imports)]
     use super::*;
     pub type N = Box<unary_prefix_expression::_S0>;
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
-        #[serde(default, skip_serializing_if = "usize_is_zero")]
-        pub _0: usize,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        pub _0: Option<usize>,
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
         pub ignore: ignore::N,
         pub function_call_expression: function_call_expression::N,
     }
 }
 
-/// UnarySuffixExpression = UnaryPrefixExpression UnarySuffixOperator ;
+/// UnarySuffixExpression = UnaryPrefixExpression [ UnarySuffixOperator ] ;
 pub mod unary_suffix_expression {
     #[allow(unused_imports)]
     use super::*;
@@ -2735,12 +2735,12 @@ pub mod unary_suffix_expression {
         pub unary_prefix_expression: unary_prefix_expression::N,
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
         pub ignore: ignore::N,
-        #[serde(skip)]
-        pub _1: FixedTerminal<2usize>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        pub _1: Option<FixedTerminal<2usize>>,
     }
 }
 
-/// ExpExpression = UnarySuffixExpression '**' Expression ;
+/// ExpExpression = UnarySuffixExpression { '**' Expression } ;
 pub mod exp_expression {
     #[allow(unused_imports)]
     use super::*;
@@ -2749,12 +2749,19 @@ pub mod exp_expression {
     pub struct _S0 {
         pub unary_suffix_expression: unary_suffix_expression::N,
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
-        pub ignore_0: ignore::N,
+        pub ignore: ignore::N,
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        pub _s2s: Vec<Box<exp_expression::_S2>>,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S2 {
         #[serde(skip)]
         pub star_star: FixedTerminal<2usize>,
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
-        pub ignore_1: ignore::N,
+        pub ignore_0: ignore::N,
         pub expression: expression::N,
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        pub ignore_1: ignore::N,
     }
 }
 
@@ -3038,7 +3045,7 @@ pub mod conditional_expression {
     }
 }
 
-/// AssignmentExpression = ConditionalExpression AssignmentOperator Expression ;
+/// AssignmentExpression = ConditionalExpression { AssignmentOperator Expression } ;
 pub mod assignment_expression {
     #[allow(unused_imports)]
     use super::*;
@@ -3047,12 +3054,19 @@ pub mod assignment_expression {
     pub struct _S0 {
         pub conditional_expression: conditional_expression::N,
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
-        pub ignore_0: ignore::N,
+        pub ignore: ignore::N,
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        pub _s2s: Vec<Box<assignment_expression::_S2>>,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S2 {
         #[serde(default, skip_serializing_if = "usize_is_zero")]
-        pub _1: usize,
+        pub _0: usize,
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        pub ignore_0: ignore::N,
+        pub expression: expression::N,
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
         pub ignore_1: ignore::N,
-        pub expression: expression::N,
     }
 }
 

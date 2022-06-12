@@ -118,7 +118,7 @@ DataLocation = 'memory' | 'storage' | 'calldata' ;
 
 Expression = AssignmentExpression ;
 
-AssignmentExpression = ConditionalExpression AssignmentOperator Expression ;
+AssignmentExpression = ConditionalExpression { AssignmentOperator Expression } ;
 
 AssignmentOperator = '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ;
 
@@ -154,13 +154,13 @@ MulDivModExpression = ExpExpression { MulDivModOperator ExpExpression } ;
 
 MulDivModOperator = '*' | '/' | '%' ;
 
-ExpExpression = UnarySuffixExpression '**' Expression ;
+ExpExpression = UnarySuffixExpression { '**' Expression } ;
 
-UnarySuffixExpression = UnaryPrefixExpression UnarySuffixOperator ;
+UnarySuffixExpression = UnaryPrefixExpression [ UnarySuffixOperator ] ;
 
 UnarySuffixOperator = '++' | '--' ;
 
-UnaryPrefixExpression = UnaryPrefixOperator FunctionCallExpression ;
+UnaryPrefixExpression = [ UnaryPrefixOperator ] FunctionCallExpression ;
 
 UnaryPrefixOperator = '++' | '--' | '!' | '~' | 'delete' | '-' ;
 

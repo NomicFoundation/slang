@@ -3524,7 +3524,7 @@ impl Parsers {
             .map(|v| Box::new(function_call_expression::_S0::new(v)))
             .boxed();
 
-        // UnaryPrefixExpression = UnaryPrefixOperator FunctionCallExpression ;
+        // UnaryPrefixExpression = [ UnaryPrefixOperator ] FunctionCallExpression ;
         let unary_prefix_expression_parser = choice::<_, ErrorType>((
             terminal("!").map(|_| 1usize),
             terminal("++").map(|_| 2usize),
@@ -3535,29 +3535,38 @@ impl Parsers {
             terminal("delete").map(|_| 6usize),
             terminal("~").map(|_| 1usize),
         ))
+        .or_not()
         .then(ignore_parser.clone())
         .then(function_call_expression_parser.clone())
         .map(|v| Box::new(unary_prefix_expression::_S0::new(v)))
         .boxed();
 
-        // UnarySuffixExpression = UnaryPrefixExpression UnarySuffixOperator ;
+        // UnarySuffixExpression = UnaryPrefixExpression [ UnarySuffixOperator ] ;
         let unary_suffix_expression_parser = unary_prefix_expression_parser
             .clone()
             .then(ignore_parser.clone())
             .then(
                 choice::<_, ErrorType>((terminal("++").ignored(), terminal("--").ignored()))
-                    .map(|_| FixedTerminal::<2usize>()),
+                    .map(|_| FixedTerminal::<2usize>())
+                    .or_not(),
             )
             .map(|v| Box::new(unary_suffix_expression::_S0::new(v)))
             .boxed();
 
-        // ExpExpression = UnarySuffixExpression '**' Expression ;
+        // ExpExpression = UnarySuffixExpression { '**' Expression } ;
         let exp_expression_parser = unary_suffix_expression_parser
             .clone()
             .then(ignore_parser.clone())
-            .then(terminal("**").ignored().map(|_| FixedTerminal::<2usize>()))
-            .then(ignore_parser.clone())
-            .then(expression_parser.clone())
+            .then(
+                terminal("**")
+                    .ignored()
+                    .map(|_| FixedTerminal::<2usize>())
+                    .then(ignore_parser.clone())
+                    .then(expression_parser.clone())
+                    .then(ignore_parser.clone())
+                    .map(|v| Box::new(exp_expression::_S2::new(v)))
+                    .repeated(),
+            )
             .map(|v| Box::new(exp_expression::_S0::new(v)))
             .boxed();
 
@@ -3755,28 +3764,33 @@ impl Parsers {
             .map(|v| Box::new(conditional_expression::_S0::new(v)))
             .boxed();
 
-        // AssignmentExpression = ConditionalExpression AssignmentOperator Expression ;
+        // AssignmentExpression = ConditionalExpression { AssignmentOperator Expression } ;
         let assignment_expression_parser = conditional_expression_parser
             .clone()
             .then(ignore_parser.clone())
-            .then(choice::<_, ErrorType>((
-                terminal("%=").map(|_| 2usize),
-                terminal("&=").map(|_| 2usize),
-                terminal("*=").map(|_| 2usize),
-                terminal("+=").map(|_| 2usize),
-                terminal("-=").map(|_| 2usize),
-                terminal("/=").map(|_| 2usize),
-                terminal("<<=").map(|_| 3usize),
-                terminal("=").map(|_| 1usize),
-                terminal(">>").ignore_then(choice((
-                    terminal("=").map(|_| 3usize),
-                    terminal(">=").map(|_| 4usize),
-                ))),
-                terminal("^=").map(|_| 2usize),
-                terminal("|=").map(|_| 2usize),
-            )))
-            .then(ignore_parser.clone())
-            .then(expression_parser.clone())
+            .then(
+                choice::<_, ErrorType>((
+                    terminal("%=").map(|_| 2usize),
+                    terminal("&=").map(|_| 2usize),
+                    terminal("*=").map(|_| 2usize),
+                    terminal("+=").map(|_| 2usize),
+                    terminal("-=").map(|_| 2usize),
+                    terminal("/=").map(|_| 2usize),
+                    terminal("<<=").map(|_| 3usize),
+                    terminal("=").map(|_| 1usize),
+                    terminal(">>").ignore_then(choice((
+                        terminal("=").map(|_| 3usize),
+                        terminal(">=").map(|_| 4usize),
+                    ))),
+                    terminal("^=").map(|_| 2usize),
+                    terminal("|=").map(|_| 2usize),
+                ))
+                .then(ignore_parser.clone())
+                .then(expression_parser.clone())
+                .then(ignore_parser.clone())
+                .map(|v| Box::new(assignment_expression::_S2::new(v)))
+                .repeated(),
+            )
             .map(|v| Box::new(assignment_expression::_S0::new(v)))
             .boxed();
 
