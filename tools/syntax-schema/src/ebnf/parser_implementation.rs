@@ -20,7 +20,10 @@ where
     S: Parser<char, SO, Error = ErrorType>,
 {
     let minuend_end = minuend.clone().map_with_span(|_, span| span.end).rewind();
-    let subtrahend_end = subtrahend.map_with_span(|_, span| span.end).rewind();
+    let subtrahend_end = subtrahend
+        .map_with_span(|_, span| span.end)
+        .rewind()
+        .or_else(|_| Ok(0));
     minuend_end
         .then(subtrahend_end)
         .validate(|(m, s), span, emit| {
@@ -44,51 +47,61 @@ impl Parsers {
 
         // «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
         let comment_parser = terminal("/*")
-            .map(|_| 2usize)
+            .ignored()
+            .ignored()
             .then(
                 choice((
-                    filter(|&c: &char| c != '*').map(|v| Box::new(comment::_C2::StarChar(v))),
+                    filter(|&c: &char| c != '*')
+                        .ignored()
+                        .map(|v| Box::new(comment::_C2::StarChar(v))),
                     just('*')
+                        .ignored()
                         .repeated()
                         .at_least(1usize)
-                        .then(filter(|&c: &char| c != '*' && c != '/'))
+                        .map(|v| v.len())
+                        .then(filter(|&c: &char| c != '*' && c != '/').ignored())
                         .map(|v| Box::new(comment::_S3::new(v)))
                         .map(|v| Box::new(comment::_C2::_S3(v))),
                 ))
                 .repeated()
-                .then(just('*').repeated())
+                .then(just('*').ignored().repeated().map(|v| v.len()))
                 .map(|v| Box::new(comment::Content::new(v))),
             )
-            .then(terminal("*/").map(|_| 2usize))
+            .then(terminal("*/").ignored().ignored())
             .map(|v| Box::new(comment::_S0::new(v)))
             .boxed();
 
         // «Whitespace» = 1…*{ '\u{9}' | '\u{a}' | '\u{d}' | '\u{20}' } ;
         let whitespace_parser = filter(|&c: &char| c == '\t' || c == '\n' || c == '\r' || c == ' ')
+            .ignored()
             .repeated()
             .at_least(1usize)
+            .map(|v| v.len())
             .boxed();
 
         // grouped = '(' expression ')' ;
         let grouped_parser = just('(')
+            .ignored()
             .then(ignore_parser.clone())
             .then(expression_parser.clone())
             .then(ignore_parser.clone())
-            .then(just(')'))
+            .then(just(')').ignored())
             .map(|v| Box::new(grouped::_S0::new(v)))
             .boxed();
 
         // optional = '[' expression ']' ;
         let optional_parser = just('[')
+            .ignored()
             .then(ignore_parser.clone())
             .then(expression_parser.clone())
             .then(ignore_parser.clone())
-            .then(just(']'))
+            .then(just(']').ignored())
             .map(|v| Box::new(optional::_S0::new(v)))
             .boxed();
 
         // repetitionSeparator = '/' expression ;
         let repetition_separator_parser = just('/')
+            .ignored()
             .then(ignore_parser.clone())
             .then(expression_parser.clone())
             .map(|v| Box::new(repetition_separator::_S0::new(v)))
@@ -109,55 +122,63 @@ impl Parsers {
         );
 
         // «EOF» = '$' ;
-        let eof_parser = just('$').boxed();
+        let eof_parser = just('$').ignored().boxed();
 
         // «HexDigit» = '0'…'9' | 'a'…'f' | 'A'…'F' ;
         let hex_digit_parser = filter(|&c: &char| {
             ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
         })
+        .ignored()
         .boxed();
 
         // «IdentifierStart» = '_' | 'a'…'z' | 'A'…'Z' ;
         let identifier_start_parser =
             filter(|&c: &char| c == '_' || ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z'))
+                .ignored()
                 .boxed();
 
         // «Number» = 1…*{ '0'…'9' } ;
         let number_parser = filter(|&c: &char| ('0' <= c && c <= '9'))
+            .ignored()
             .repeated()
             .at_least(1usize)
+            .map(|v| v.len())
             .boxed();
 
         // «IdentifierFollow» = «IdentifierStart» | '0'…'9' ;
         let identifier_follow_parser = filter(|&c: &char| {
             c == '_' || ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9')
         })
+        .ignored()
         .boxed();
 
         // «StringChar» = ¬( '\'' | '\\' ) | '\\' ( '\'' | '\\' | 'u{' 1…6*{ «HexDigit» } '}' ) ;
         let string_char_parser = choice((
             filter(|&c: &char| c != '\'' && c != '\\')
+                .ignored()
                 .map(|v| Box::new(string_char::_C0::NotQuoteOrBackslash(v))),
             just('\\')
+                .ignored()
                 .then(choice((
-                    choice::<_, ErrorType>((
-                        terminal("'").map(|_| 1usize),
-                        terminal("\\").map(|_| 1usize),
-                    ))
-                    .map(|v| Box::new(string_char::QuoteOrBackslashOrHexEscape::_0(v))),
+                    choice::<_, ErrorType>((terminal("'").ignored(), terminal("\\").ignored()))
+                        .ignored()
+                        .map(|v| Box::new(string_char::QuoteOrBackslashOrHexEscape::_0(v))),
                     terminal("u{")
-                        .map(|_| 2usize)
+                        .ignored()
+                        .ignored()
                         .then(
                             filter(|&c: &char| {
                                 ('0' <= c && c <= '9')
                                     || ('a' <= c && c <= 'f')
                                     || ('A' <= c && c <= 'F')
                             })
+                            .ignored()
                             .repeated()
                             .at_least(1usize)
-                            .at_most(6usize),
+                            .at_most(6usize)
+                            .map(|v| v.len()),
                         )
-                        .then(just('}'))
+                        .then(just('}').ignored())
                         .map(|v| Box::new(string_char::_S1::new(v)))
                         .map(|v| Box::new(string_char::QuoteOrBackslashOrHexEscape::_S1(v))),
                 )))
@@ -173,6 +194,7 @@ impl Parsers {
                 .then(ignore_parser.clone())
                 .then(
                     just('…')
+                        .ignored()
                         .then(ignore_parser.clone())
                         .then(number_parser.clone().or_not())
                         .map(|v| Box::new(repetition_prefix::_S4::new(v)))
@@ -181,19 +203,21 @@ impl Parsers {
                 .map(|v| Box::new(repetition_prefix::_S2::new(v)))
                 .map(|v| Box::new(repetition_prefix::_C1::_S2(v))),
             just('…')
+                .ignored()
                 .then(ignore_parser.clone())
                 .then(number_parser.clone())
                 .map(|v| Box::new(repetition_prefix::_S6::new(v)))
                 .map(|v| Box::new(repetition_prefix::_C1::_S6(v))),
         ))
         .then(ignore_parser.clone())
-        .then(just('*'))
+        .then(just('*').ignored())
         .map(|v| Box::new(repetition_prefix::_S0::new(v)))
         .boxed();
 
         // «RawIdentifier» = «IdentifierStart» { «IdentifierFollow» } ;
         let raw_identifier_parser =
             filter(|&c: &char| c == '_' || ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z'))
+                .ignored()
                 .then(
                     filter(|&c: &char| {
                         c == '_'
@@ -201,22 +225,26 @@ impl Parsers {
                             || ('A' <= c && c <= 'Z')
                             || ('0' <= c && c <= '9')
                     })
-                    .repeated(),
+                    .ignored()
+                    .repeated()
+                    .map(|v| v.len()),
                 )
                 .map(|v| Box::new(raw_identifier::_S0::new(v)))
                 .boxed();
 
         // «SingleCharString» = '\'' «StringChar» '\'' ;
         let single_char_string_parser = just('\'')
+            .ignored()
             .then(string_char_parser.clone())
-            .then(just('\''))
+            .then(just('\'').ignored())
             .map(|v| Box::new(single_char_string::_S0::new(v)))
             .boxed();
 
         // «String» = '\'' { «StringChar» } '\'' ;
         let string_parser = just('\'')
+            .ignored()
             .then(string_char_parser.clone().repeated())
-            .then(just('\''))
+            .then(just('\'').ignored())
             .map(|v| Box::new(string::_S0::new(v)))
             .boxed();
 
@@ -225,21 +253,22 @@ impl Parsers {
             .clone()
             .or_not()
             .then(ignore_parser.clone())
-            .then(just('{'))
+            .then(just('{').ignored())
             .then(ignore_parser.clone())
             .then(expression_parser.clone())
             .then(ignore_parser.clone())
             .then(repetition_separator_parser.clone().or_not())
             .then(ignore_parser.clone())
-            .then(just('}'))
+            .then(just('}').ignored())
             .map(|v| Box::new(repeated::_S0::new(v)))
             .boxed();
 
         // «Identifier» = '«' «RawIdentifier» '»' | «RawIdentifier» ;
         let identifier_parser = choice((
             just('«')
+                .ignored()
                 .then(raw_identifier_parser.clone())
-                .then(just('»'))
+                .then(just('»').ignored())
                 .map(|v| Box::new(identifier::_S1::new(v)))
                 .map(|v| Box::new(identifier::_C0::_S1(v))),
             raw_identifier_parser
@@ -252,7 +281,7 @@ impl Parsers {
         let char_range_parser = single_char_string_parser
             .clone()
             .then(ignore_parser.clone())
-            .then(just('…'))
+            .then(just('…').ignored())
             .then(ignore_parser.clone())
             .then(single_char_string_parser.clone())
             .map(|v| Box::new(char_range::_S0::new(v)))
@@ -279,7 +308,8 @@ impl Parsers {
                 .clone()
                 .map(|v| Box::new(primary::_C0::CharRange(v))),
             terminal("$")
-                .map(|_| 1usize)
+                .ignored()
+                .ignored()
                 .map(|v| Box::new(primary::_C0::Dollar(v))),
             string_parser
                 .clone()
@@ -289,6 +319,7 @@ impl Parsers {
 
         // negation = [ '¬' ] primary ;
         let negation_parser = just('¬')
+            .ignored()
             .or_not()
             .then(ignore_parser.clone())
             .then(primary_parser.clone())
@@ -301,6 +332,7 @@ impl Parsers {
             .then(ignore_parser.clone())
             .then(
                 just('-')
+                    .ignored()
                     .then(ignore_parser.clone())
                     .then(negation_parser.clone())
                     .map(|v| Box::new(difference::_S2::new(v)))
@@ -326,6 +358,7 @@ impl Parsers {
                 .map(|v| Box::new(expression::_S1::new(v)))
                 .then(
                     just('|')
+                        .ignored()
                         .then(ignore_parser.clone())
                         .map(|v| Box::new(expression::_S2::new(v)))
                         .then(
@@ -345,11 +378,11 @@ impl Parsers {
         let production_parser = identifier_parser
             .clone()
             .then(ignore_parser.clone())
-            .then(just('='))
+            .then(just('=').ignored())
             .then(ignore_parser.clone())
             .then(expression_parser.clone())
             .then(ignore_parser.clone())
-            .then(just(';'))
+            .then(just(';').ignored())
             .map(|v| Box::new(production::_S0::new(v)))
             .boxed();
 

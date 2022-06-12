@@ -6,6 +6,7 @@ use crate::schema::*;
 
 use super::slang_name::SlangName;
 
+#[derive(Clone, Debug)]
 pub struct TerminalTrie(PatriciaSet);
 
 impl TerminalTrie {
@@ -19,19 +20,46 @@ impl TerminalTrie {
         }
     }
 
-    pub fn to_parser_expression(&self) -> TokenStream {
-        fn generate_from_trie(node: Option<&Node<()>>, length: usize) -> Vec<TokenStream> {
+    pub fn common_terminal_length(&self) -> Option<usize> {
+        let mut iter = self
+            .0
+            .iter()
+            .map(|x| String::from_utf8_lossy(&x).into_owned());
+        let len = iter.next().unwrap().chars().count();
+        if iter.all(|x| x.chars().count() == len) {
+            Some(len)
+        } else {
+            None
+        }
+    }
+
+    pub fn to_parser_combinator_code(&self) -> TokenStream {
+        let common_size = self.common_terminal_length();
+
+        fn generate_from_trie(
+            node: Option<&Node<()>>,
+            length: usize,
+            ignore_all: bool,
+        ) -> Vec<TokenStream> {
             let mut result = vec![];
             let mut n = node;
             while let Some(node) = n {
                 let label = String::from_utf8_lossy(node.label());
                 let new_length = length + label.chars().count();
-                let mut children = generate_from_trie(node.child(), new_length);
+                let mut children = generate_from_trie(node.child(), new_length, ignore_all);
                 if node.child().is_some() && node.value().is_some() {
-                    children.push(quote!( empty().map(|_| #new_length) ));
+                    if ignore_all {
+                        children.push(quote!(empty()));
+                    } else {
+                        children.push(quote!( empty().map(|_| #new_length) ));
+                    }
                 }
                 if children.is_empty() {
-                    result.push(quote!( terminal(#label).map(|_| #new_length) ))
+                    if ignore_all {
+                        result.push(quote!( terminal(#label).ignored() ))
+                    } else {
+                        result.push(quote!( terminal(#label).map(|_| #new_length) ))
+                    }
                 } else if children.len() == 1 {
                     let child = &children[0];
                     result.push(quote!( terminal(#label).ignore_then(#child) ))
@@ -45,12 +73,18 @@ impl TerminalTrie {
             result
         }
 
-        let mut choices = generate_from_trie(self.0.as_ref().child(), 0);
+        let mut choices = generate_from_trie(self.0.as_ref().child(), 0, common_size.is_some());
 
-        if choices.len() == 1 {
+        let code = if choices.len() == 1 {
             choices.pop().unwrap()
         } else {
             quote!( choice::<_, ErrorType>((#(#choices),*)) )
+        };
+
+        if common_size.is_some() {
+            quote!( #code.ignored())
+        } else {
+            code
         }
     }
 

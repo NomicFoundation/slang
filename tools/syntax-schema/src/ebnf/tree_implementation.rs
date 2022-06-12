@@ -1,8 +1,6 @@
 use super::tree_interface::*;
 impl comment::_S0 {
-    pub fn new(
-        ((slash_star, content), star_slash): ((usize, Box<comment::Content>), usize),
-    ) -> Self {
+    pub fn new(((slash_star, content), star_slash): (((), Box<comment::Content>), ())) -> Self {
         Self {
             slash_star,
             content,
@@ -11,20 +9,20 @@ impl comment::_S0 {
     }
 }
 impl comment::Content {
-    pub fn new((_c2s, star_chars): (Vec<Box<comment::_C2>>, Vec<char>)) -> Self {
+    pub fn new((_c2s, star_chars): (Vec<Box<comment::_C2>>, usize)) -> Self {
         Self { _c2s, star_chars }
     }
 }
 impl comment::_S3 {
-    pub fn new((star_chars, _1): (Vec<char>, char)) -> Self {
+    pub fn new((star_chars, _1): (usize, ())) -> Self {
         Self { star_chars, _1 }
     }
 }
 impl grouped::_S0 {
     pub fn new(
         ((((open_paren_char, ignore_0), expression), ignore_1), close_paren_char): (
-            (((char, ignore::N), expression::N), ignore::N),
-            char,
+            ((((), ignore::N), expression::N), ignore::N),
+            (),
         ),
     ) -> Self {
         Self {
@@ -39,8 +37,8 @@ impl grouped::_S0 {
 impl optional::_S0 {
     pub fn new(
         ((((open_bracket_char, ignore_0), expression), ignore_1), close_bracket_char): (
-            (((char, ignore::N), expression::N), ignore::N),
-            char,
+            ((((), ignore::N), expression::N), ignore::N),
+            (),
         ),
     ) -> Self {
         Self {
@@ -53,7 +51,7 @@ impl optional::_S0 {
     }
 }
 impl repetition_separator::_S0 {
-    pub fn new(((slash_char, ignore), expression): ((char, ignore::N), expression::N)) -> Self {
+    pub fn new(((slash_char, ignore), expression): (((), ignore::N), expression::N)) -> Self {
         Self {
             slash_char,
             ignore,
@@ -64,7 +62,7 @@ impl repetition_separator::_S0 {
 impl string_char::Escape {
     pub fn new(
         (backslash_char, quote_or_backslash_or_hex_escape): (
-            char,
+            (),
             Box<string_char::QuoteOrBackslashOrHexEscape>,
         ),
     ) -> Self {
@@ -75,7 +73,7 @@ impl string_char::Escape {
     }
 }
 impl string_char::_S1 {
-    pub fn new(((u_open_brace, _1), close_brace_char): ((usize, Vec<char>), char)) -> Self {
+    pub fn new(((u_open_brace, _1), close_brace_char): (((), usize), ())) -> Self {
         Self {
             u_open_brace,
             _1,
@@ -84,9 +82,7 @@ impl string_char::_S1 {
     }
 }
 impl repetition_prefix::_S0 {
-    pub fn new(
-        ((_c1, ignore), star_char): ((Box<repetition_prefix::_C1>, ignore::N), char),
-    ) -> Self {
+    pub fn new(((_c1, ignore), star_char): ((Box<repetition_prefix::_C1>, ignore::N), ())) -> Self {
         Self {
             _c1,
             ignore,
@@ -95,7 +91,7 @@ impl repetition_prefix::_S0 {
     }
 }
 impl repetition_prefix::_S6 {
-    pub fn new(((ellipsis_char, ignore), number): ((char, ignore::N), number::N)) -> Self {
+    pub fn new(((ellipsis_char, ignore), number): (((), ignore::N), number::N)) -> Self {
         Self {
             ellipsis_char,
             ignore,
@@ -115,7 +111,7 @@ impl repetition_prefix::_S2 {
     }
 }
 impl repetition_prefix::_S4 {
-    pub fn new(((ellipsis_char, ignore), number): ((char, ignore::N), Option<number::N>)) -> Self {
+    pub fn new(((ellipsis_char, ignore), number): (((), ignore::N), Option<number::N>)) -> Self {
         Self {
             ellipsis_char,
             ignore,
@@ -124,14 +120,12 @@ impl repetition_prefix::_S4 {
     }
 }
 impl raw_identifier::_S0 {
-    pub fn new((_0, _1): (char, Vec<char>)) -> Self {
+    pub fn new((_0, _1): ((), usize)) -> Self {
         Self { _0, _1 }
     }
 }
 impl single_char_string::_S0 {
-    pub fn new(
-        ((quote_char_0, string_char), quote_char_1): ((char, string_char::N), char),
-    ) -> Self {
+    pub fn new(((quote_char_0, string_char), quote_char_1): (((), string_char::N), ())) -> Self {
         Self {
             quote_char_0,
             string_char,
@@ -141,7 +135,7 @@ impl single_char_string::_S0 {
 }
 impl string::_S0 {
     pub fn new(
-        ((quote_char_0, string_chars), quote_char_1): ((char, Vec<string_char::N>), char),
+        ((quote_char_0, string_chars), quote_char_1): (((), Vec<string_char::N>), ()),
     ) -> Self {
         Self {
             quote_char_0,
@@ -169,7 +163,7 @@ impl repeated::_S0 {
                 (
                     (
                         (
-                            (((Option<repetition_prefix::N>, ignore::N), char), ignore::N),
+                            (((Option<repetition_prefix::N>, ignore::N), ()), ignore::N),
                             expression::N,
                         ),
                         ignore::N,
@@ -178,7 +172,7 @@ impl repeated::_S0 {
                 ),
                 ignore::N,
             ),
-            char,
+            (),
         ),
     ) -> Self {
         Self {
@@ -197,8 +191,8 @@ impl repeated::_S0 {
 impl identifier::_S1 {
     pub fn new(
         ((open_double_angle_char, raw_identifier), close_double_angle_char): (
-            (char, raw_identifier::N),
-            char,
+            ((), raw_identifier::N),
+            (),
         ),
     ) -> Self {
         Self {
@@ -211,7 +205,7 @@ impl identifier::_S1 {
 impl char_range::_S0 {
     pub fn new(
         ((((single_char_string_0, ignore_0), ellipsis_char), ignore_1), single_char_string_1): (
-            (((single_char_string::N, ignore::N), char), ignore::N),
+            (((single_char_string::N, ignore::N), ()), ignore::N),
             single_char_string::N,
         ),
     ) -> Self {
@@ -225,7 +219,7 @@ impl char_range::_S0 {
     }
 }
 impl negation::_S0 {
-    pub fn new(((not_char, ignore), primary): ((Option<char>, ignore::N), primary::N)) -> Self {
+    pub fn new(((not_char, ignore), primary): ((Option<()>, ignore::N), primary::N)) -> Self {
         Self {
             not_char,
             ignore,
@@ -245,7 +239,7 @@ impl difference::_S0 {
     }
 }
 impl difference::_S2 {
-    pub fn new(((minus_char, ignore), negation): ((char, ignore::N), negation::N)) -> Self {
+    pub fn new(((minus_char, ignore), negation): (((), ignore::N), negation::N)) -> Self {
         Self {
             minus_char,
             ignore,
@@ -264,7 +258,7 @@ impl expression::_S0 {
     }
 }
 impl expression::_S2 {
-    pub fn new((bar_char, ignore): (char, ignore::N)) -> Self {
+    pub fn new((bar_char, ignore): ((), ignore::N)) -> Self {
         Self { bar_char, ignore }
     }
 }
@@ -280,13 +274,10 @@ impl production::_S0 {
             semicolon_char,
         ): (
             (
-                (
-                    (((identifier::N, ignore::N), char), ignore::N),
-                    expression::N,
-                ),
+                ((((identifier::N, ignore::N), ()), ignore::N), expression::N),
                 ignore::N,
             ),
-            char,
+            (),
         ),
     ) -> Self {
         Self {

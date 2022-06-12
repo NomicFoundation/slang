@@ -6,16 +6,18 @@ use serde::{
     Deserialize, Serialize, Serializer,
 };
 use serde_yaml::Value;
-use std::{collections::BTreeMap, fmt, path::PathBuf, rc::Rc};
+use std::{cell::RefCell, collections::BTreeMap, fmt, path::PathBuf, rc::Rc};
+
+use crate::chumsky::combinator_tree::CombinatorTree;
 
 #[derive(Clone, Debug)]
 pub struct Grammar {
     pub manifest: Manifest,
-    pub productions: IndexMap<String, Vec<Production>>,
+    pub productions: IndexMap<String, Vec<ProductionRef>>,
 }
 
 impl Grammar {
-    pub fn get_production(&self, name: &str) -> Option<&Production> {
+    pub fn get_production(&self, name: &str) -> Option<&ProductionRef> {
         for (_, v) in &self.productions {
             if let p @ Some(_) = v.iter().find(|p| p.name == name) {
                 return p;
@@ -47,13 +49,17 @@ pub struct Topic {
     pub definition: Option<String>,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Clone, Debug)]
 pub struct Production {
     pub name: String,
     pub is_token: bool,
     pub title: Option<String>,
     pub versions: BTreeMap<Version, ExpressionRef>,
+
+    pub combinator_tree: RefCell<CombinatorTree>,
 }
+
+type ProductionRef = Rc<Production>;
 
 impl Production {
     fn serialize_in_map<S: Serializer>(&self, state: &mut S::SerializeMap) -> Result<(), S::Error> {
@@ -265,6 +271,7 @@ impl<'de> Deserialize<'de> for Production {
                     is_token,
                     title,
                     versions,
+                    combinator_tree: Default::default(),
                 })
             }
         }
@@ -582,7 +589,7 @@ impl Grammar {
         let manifest_path_str = &manifest_path.to_str().unwrap();
         let manifest: Manifest = serde_yaml::from_slice(&contents).expect(manifest_path_str);
 
-        let topics: IndexMap<String, Vec<Production>> = manifest
+        let productions: IndexMap<String, Vec<ProductionRef>> = manifest
             .sections
             .iter()
             .flat_map(|section| &section.topics)
@@ -595,15 +602,26 @@ impl Grammar {
                     let contents = std::fs::read(&topic_path).expect(topic_path_str);
                     let rules: Vec<Production> =
                         serde_yaml::from_slice(&contents).expect(topic_path_str);
+                    let rules: Vec<ProductionRef> = rules.into_iter().map(|p| Rc::new(p)).collect();
 
                     return Some((definition.clone(), rules));
                 }
             })
             .collect();
 
-        return Grammar {
+        let grammar = Grammar {
             manifest,
-            productions: topics,
+            productions,
         };
+
+        grammar.post_initialize();
+
+        grammar
+    }
+
+    fn post_initialize(&self) {
+        for production in self.productions.iter().map(|(_, v)| v).flatten() {
+            production.initialize_combinator_tree(self);
+        }
     }
 }

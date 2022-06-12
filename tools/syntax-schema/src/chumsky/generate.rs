@@ -171,10 +171,10 @@ impl Production {
                 let module_name = slang_name.to_module_name_ident();
                 module_names.push(module_name.clone());
 
-                let combinator_tree = production.to_combinator_tree(grammar);
+                let combinator_tree = production.combinator_tree();
                 let type_tree = combinator_tree.to_type_tree();
                 let (tree_interface, tree_implementation) =
-                    type_tree.to_type_definition_code(&module_name);
+                    type_tree.to_type_definition_code(&module_name, grammar);
                 tree_interfaces.push(format!(
                     "{}\n{}",
                     ebnf_doc_comment,
@@ -286,6 +286,12 @@ impl Production {
                 quote!(
                     #[allow(unused_imports)]
                     use serde::{Serialize, Deserialize};
+
+                    #[allow(dead_code)]
+                    #[inline]
+                    fn usize_is_zero(v: &usize) -> bool {
+                        *v == 0
+                    }
                 )
                 .to_string(),
                 tree_interfaces.join("\n\n")

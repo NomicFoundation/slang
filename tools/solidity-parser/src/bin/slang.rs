@@ -12,6 +12,9 @@ struct ProgramArgs {
 
     #[clap(long)]
     json_output: Option<String>,
+
+    #[clap(long)]
+    yaml_output: Option<String>,
 }
 
 fn main() -> Result<(), usize> {
@@ -31,6 +34,14 @@ fn main() -> Result<(), usize> {
                 println!("{}", json);
             } else {
                 fs::write(json_output, json).expect("Failed to write json file");
+            }
+        }
+        if let Some(yaml_output) = args.yaml_output {
+            let yaml = serde_yaml::to_string(&source_unit).expect("Failed to produce yaml");
+            if yaml_output == "-" {
+                println!("{}", yaml);
+            } else {
+                fs::write(yaml_output, yaml).expect("Failed to write yaml file");
             }
         }
     }

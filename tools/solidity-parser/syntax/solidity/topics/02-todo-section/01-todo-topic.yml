@@ -1014,6 +1014,7 @@
     - zeroOrMore:
         not:
           terminal: ;
+        config: { name: NonSemicolonChar }
     - terminal: ;
 
 - name: RawIdentifier

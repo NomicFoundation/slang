@@ -5,6 +5,7 @@ use crate::schema::*;
 
 use super::slang_name::SlangName;
 
+#[derive(Clone, Debug)]
 pub enum CharacterFilterNode {
     Range { from: char, to: char, negated: bool },
     Char { char: char, negated: bool },
@@ -53,7 +54,7 @@ impl CharacterFilterNode {
         }
     }
 
-    pub fn to_parser_expression(&self) -> TokenStream {
+    pub fn to_parser_combinator_code(&self) -> TokenStream {
         if let CharacterFilterNode::Char {
             char,
             negated: false,

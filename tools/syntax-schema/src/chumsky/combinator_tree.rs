@@ -10,6 +10,7 @@ use super::{
     character_filter::CharacterFilter, slang_name::SlangName, terminal_trie::TerminalTrie,
 };
 
+#[derive(Clone, Debug)]
 pub struct CombinatorTree {
     pub root: CombinatorTreeNode,
     pub module_name: SlangName,
@@ -17,6 +18,7 @@ pub struct CombinatorTree {
 
 type CombinatorTreeNode = Box<CombinatorTreeNodeData>;
 
+#[derive(Clone, Debug)]
 pub enum CombinatorTreeNodeData {
     Difference {
         minuend: CombinatorTreeNode,
@@ -58,6 +60,15 @@ pub enum CombinatorTreeNodeData {
 impl CombinatorTree {
     pub fn to_parser_combinator_code(&self) -> TokenStream {
         self.root.to_parser_combinator_code(self)
+    }
+}
+
+impl Default for CombinatorTree {
+    fn default() -> Self {
+        Self {
+            root: ct_end(),
+            module_name: SlangName::from_string("__uninitialized__"),
+        }
     }
 }
 
@@ -237,8 +248,10 @@ impl CombinatorTreeNodeData {
                 let name = name.to_parser_name_ident();
                 quote!( #name.clone() )
             }
-            CombinatorTreeNodeData::TerminalTrie { trie, .. } => trie.to_parser_expression(),
-            CombinatorTreeNodeData::CharacterFilter { filter, .. } => filter.to_parser_expression(),
+            CombinatorTreeNodeData::TerminalTrie { trie, .. } => trie.to_parser_combinator_code(),
+            CombinatorTreeNodeData::CharacterFilter { filter, .. } => {
+                filter.to_parser_combinator_code()
+            }
             CombinatorTreeNodeData::End => quote!(end()),
         }
     }
@@ -303,15 +316,16 @@ fn ct_end() -> CombinatorTreeNode {
 }
 
 impl Production {
-    pub fn to_combinator_tree(&self, grammar: &Grammar) -> CombinatorTree {
-        CombinatorTree {
-            root: self.expression_to_generate().to_combinator_tree_node(
-                &mut Cell::new(0),
-                self,
-                grammar,
-            ),
-            module_name: SlangName::from_string(&self.name),
-        }
+    pub fn combinator_tree(&self) -> std::cell::Ref<'_, CombinatorTree> {
+        self.combinator_tree.borrow()
+    }
+
+    pub fn initialize_combinator_tree(&self, grammar: &Grammar) {
+        let root =
+            self.expression_to_generate()
+                .to_combinator_tree_node(&mut Cell::new(0), self, grammar);
+        let module_name = SlangName::from_string(&self.name);
+        *self.combinator_tree.borrow_mut() = CombinatorTree { root, module_name };
     }
 }
 
