@@ -287,10 +287,39 @@ impl Production {
                     #[allow(unused_imports)]
                     use serde::{Serialize, Deserialize};
 
-                    #[allow(dead_code)]
-                    #[inline]
-                    fn usize_is_zero(v: &usize) -> bool {
-                        *v == 0
+                    pub trait DefaultTest {
+                        fn is_default(&self) -> bool {
+                            false
+                        }
+                    }
+
+                    impl<T: DefaultTest> DefaultTest for Box<T> {
+                        fn is_default(&self) -> bool {
+                            self.as_ref().is_default()
+                        }
+                    }
+
+                    impl<T> DefaultTest for Vec<T> {
+                        fn is_default(&self) -> bool {
+                          self.is_empty()
+                        }
+                    }
+
+                    impl<T> DefaultTest for Option<T> {
+                        fn is_default(&self) -> bool {
+                          self.is_none()
+                        }
+                    }
+                    impl DefaultTest for () {
+                        fn is_default(&self) -> bool {
+                          true
+                        }
+                    }
+
+                    impl DefaultTest for usize {
+                        fn is_default(&self) -> bool {
+                            *self == 0
+                        }
                     }
 
                     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
@@ -298,6 +327,13 @@ impl Production {
                     // impl<const N: usize> FixedTerminal<N> {
                     //     pub fn number_of_chars(&self) -> usize { N }
                     // }
+
+                    impl<const N: usize> DefaultTest for FixedTerminal<N> {
+                        fn is_default(&self) -> bool {
+                            true
+                        }
+                    }
+
                 )
                 .to_string(),
                 tree_interfaces.join("\n\n")
