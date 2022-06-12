@@ -55,15 +55,16 @@ impl CharacterFilterNode {
     }
 
     pub fn to_parser_combinator_code(&self) -> TokenStream {
+        let map = quote!(.map(|_| FixedTerminal::<1>()) );
         if let CharacterFilterNode::Char {
             char,
             negated: false,
         } = self
         {
-            quote!(just(#char).ignored() )
+            quote!(just(#char)#map )
         } else {
             let predicate = self.to_parser_predicate();
-            quote!( filter(|&c: &char| #predicate).ignored() )
+            quote!( filter(|&c: &char| #predicate)#map )
         }
     }
 

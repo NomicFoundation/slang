@@ -292,6 +292,12 @@ impl Production {
                     fn usize_is_zero(v: &usize) -> bool {
                         *v == 0
                     }
+
+                    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
+                    pub struct FixedTerminal<const N: usize>();
+                    // impl<const N: usize> FixedTerminal<N> {
+                    //     pub fn number_of_chars(&self) -> usize { N }
+                    // }
                 )
                 .to_string(),
                 tree_interfaces.join("\n\n")

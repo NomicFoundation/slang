@@ -20,8 +20,8 @@ pub enum TypeTreeNodeData {
     Repetition(TypeTreeNode),
     Option(TypeTreeNode),
     Named(SlangName),
-    Length,
-    Char,
+    FixedTerminal(usize),
+    VariableTerminal,
     Unit,
 }
 
@@ -75,11 +75,11 @@ impl TypeTreeNodeData {
                     quote!()
                 }
             }
-            TypeTreeNodeData::Char | TypeTreeNodeData::Unit => {
+            TypeTreeNodeData::FixedTerminal(_) | TypeTreeNodeData::Unit => {
                 quote!( #[serde(skip)])
             }
             TypeTreeNodeData::Tuple(_, _) | TypeTreeNodeData::Choice(_, _) => quote!(),
-            TypeTreeNodeData::Length => quote!(
+            TypeTreeNodeData::VariableTerminal => quote!(
                 #[serde(default, skip_serializing_if="usize_is_zero")]
             ),
         }
@@ -154,11 +154,11 @@ impl TypeTreeNodeData {
                 let name = name.to_module_name_ident();
                 quote!(#name::N)
             }
-            Self::Length => {
+            Self::VariableTerminal => {
                 quote!(usize)
             }
-            Self::Char => {
-                quote!(char)
+            Self::FixedTerminal(size) => {
+                quote!( FixedTerminal<#size> )
             }
             Self::Unit => {
                 quote!(())
@@ -187,13 +187,12 @@ fn tt_named(name: SlangName) -> TypeTreeNode {
     Box::new(TypeTreeNodeData::Named(name))
 }
 
-fn tt_length() -> TypeTreeNode {
-    Box::new(TypeTreeNodeData::Length)
+fn tt_variable_terminal() -> TypeTreeNode {
+    Box::new(TypeTreeNodeData::VariableTerminal)
 }
 
-#[allow(dead_code)]
-fn tt_char() -> TypeTreeNode {
-    Box::new(TypeTreeNodeData::Char)
+fn tt_fixed_terminal(size: usize) -> TypeTreeNode {
+    Box::new(TypeTreeNodeData::FixedTerminal(size))
 }
 
 fn tt_unit() -> TypeTreeNode {
@@ -239,7 +238,7 @@ impl CombinatorTreeNodeData {
                 ..
             } => {
                 if let Self::CharacterFilter { .. } = **expr {
-                    tt_length()
+                    tt_variable_terminal()
                 } else {
                     tt_repetition(expr.to_type_tree_node())
                 }
@@ -278,13 +277,13 @@ impl CombinatorTreeNodeData {
             }
             Self::Reference { name } => tt_named(name.clone()),
             Self::TerminalTrie { trie, .. } => {
-                if trie.common_terminal_length().is_some() {
-                    tt_unit()
+                if let Some(size) = trie.common_terminal_length() {
+                    tt_fixed_terminal(size)
                 } else {
-                    tt_length()
+                    tt_variable_terminal()
                 }
             }
-            Self::CharacterFilter { .. } => tt_unit(),
+            Self::CharacterFilter { .. } => tt_fixed_terminal(1),
             Self::End => tt_unit(),
         }
     }

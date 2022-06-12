@@ -5,6 +5,8 @@ use serde::{Deserialize, Serialize};
 fn usize_is_zero(v: &usize) -> bool {
     *v == 0
 }
+#[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
+pub struct FixedTerminal<const N: usize>();
 
 /// «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
 pub mod comment {
@@ -14,10 +16,10 @@ pub mod comment {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         #[serde(skip)]
-        pub slash_star: (),
+        pub slash_star: FixedTerminal<2usize>,
         pub content: Box<comment::Content>,
         #[serde(skip)]
-        pub star_slash: (),
+        pub star_slash: FixedTerminal<2usize>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct Content {
@@ -28,7 +30,7 @@ pub mod comment {
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub enum _C2 {
-        StarChar(()),
+        StarChar(FixedTerminal<1usize>),
         _S3(Box<comment::_S3>),
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -36,7 +38,7 @@ pub mod comment {
         #[serde(default, skip_serializing_if = "usize_is_zero")]
         pub star_chars: usize,
         #[serde(skip)]
-        pub _1: (),
+        pub _1: FixedTerminal<1usize>,
     }
 }
 
@@ -55,14 +57,14 @@ pub mod grouped {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         #[serde(skip)]
-        pub open_paren_char: (),
+        pub open_paren_char: FixedTerminal<1usize>,
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
         pub ignore_0: ignore::N,
         pub expression: expression::N,
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
         pub ignore_1: ignore::N,
         #[serde(skip)]
-        pub close_paren_char: (),
+        pub close_paren_char: FixedTerminal<1usize>,
     }
 }
 
@@ -74,14 +76,14 @@ pub mod optional {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         #[serde(skip)]
-        pub open_bracket_char: (),
+        pub open_bracket_char: FixedTerminal<1usize>,
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
         pub ignore_0: ignore::N,
         pub expression: expression::N,
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
         pub ignore_1: ignore::N,
         #[serde(skip)]
-        pub close_bracket_char: (),
+        pub close_bracket_char: FixedTerminal<1usize>,
     }
 }
 
@@ -93,7 +95,7 @@ pub mod repetition_separator {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         #[serde(skip)]
-        pub slash_char: (),
+        pub slash_char: FixedTerminal<1usize>,
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
         pub ignore: ignore::N,
         pub expression: expression::N,
@@ -116,21 +118,21 @@ pub mod ignore {
 pub mod eof {
     #[allow(unused_imports)]
     use super::*;
-    pub type N = ();
+    pub type N = FixedTerminal<1usize>;
 }
 
 /// «HexDigit» = '0'…'9' | 'a'…'f' | 'A'…'F' ;
 pub mod hex_digit {
     #[allow(unused_imports)]
     use super::*;
-    pub type N = ();
+    pub type N = FixedTerminal<1usize>;
 }
 
 /// «IdentifierStart» = '_' | 'a'…'z' | 'A'…'Z' ;
 pub mod identifier_start {
     #[allow(unused_imports)]
     use super::*;
-    pub type N = ();
+    pub type N = FixedTerminal<1usize>;
 }
 
 /// «Number» = 1…*{ '0'…'9' } ;
@@ -144,7 +146,7 @@ pub mod number {
 pub mod identifier_follow {
     #[allow(unused_imports)]
     use super::*;
-    pub type N = ();
+    pub type N = FixedTerminal<1usize>;
 }
 
 /// «StringChar» = ¬( '\'' | '\\' ) | '\\' ( '\'' | '\\' | 'u{' 1…6*{ «HexDigit» } '}' ) ;
@@ -154,28 +156,28 @@ pub mod string_char {
     pub type N = Box<string_char::_C0>;
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub enum _C0 {
-        NotQuoteOrBackslash(()),
+        NotQuoteOrBackslash(FixedTerminal<1usize>),
         Escape(Box<string_char::Escape>),
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct Escape {
         #[serde(skip)]
-        pub backslash_char: (),
+        pub backslash_char: FixedTerminal<1usize>,
         pub quote_or_backslash_or_hex_escape: Box<string_char::QuoteOrBackslashOrHexEscape>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub enum QuoteOrBackslashOrHexEscape {
-        _0(()),
+        _0(FixedTerminal<1usize>),
         _S1(Box<string_char::_S1>),
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S1 {
         #[serde(skip)]
-        pub u_open_brace: (),
+        pub u_open_brace: FixedTerminal<2usize>,
         #[serde(default, skip_serializing_if = "usize_is_zero")]
         pub _1: usize,
         #[serde(skip)]
-        pub close_brace_char: (),
+        pub close_brace_char: FixedTerminal<1usize>,
     }
 }
 
@@ -190,7 +192,7 @@ pub mod repetition_prefix {
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
         pub ignore: ignore::N,
         #[serde(skip)]
-        pub star_char: (),
+        pub star_char: FixedTerminal<1usize>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub enum _C1 {
@@ -200,7 +202,7 @@ pub mod repetition_prefix {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S6 {
         #[serde(skip)]
-        pub ellipsis_char: (),
+        pub ellipsis_char: FixedTerminal<1usize>,
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
         pub ignore: ignore::N,
         #[serde(default, skip_serializing_if = "usize_is_zero")]
@@ -218,7 +220,7 @@ pub mod repetition_prefix {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S4 {
         #[serde(skip)]
-        pub ellipsis_char: (),
+        pub ellipsis_char: FixedTerminal<1usize>,
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
         pub ignore: ignore::N,
         #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -234,7 +236,7 @@ pub mod raw_identifier {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         #[serde(skip)]
-        pub _0: (),
+        pub _0: FixedTerminal<1usize>,
         #[serde(default, skip_serializing_if = "usize_is_zero")]
         pub _1: usize,
     }
@@ -248,10 +250,10 @@ pub mod single_char_string {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         #[serde(skip)]
-        pub quote_char_0: (),
+        pub quote_char_0: FixedTerminal<1usize>,
         pub string_char: string_char::N,
         #[serde(skip)]
-        pub quote_char_1: (),
+        pub quote_char_1: FixedTerminal<1usize>,
     }
 }
 
@@ -263,11 +265,11 @@ pub mod string {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         #[serde(skip)]
-        pub quote_char_0: (),
+        pub quote_char_0: FixedTerminal<1usize>,
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
         pub string_chars: Vec<string_char::N>,
         #[serde(skip)]
-        pub quote_char_1: (),
+        pub quote_char_1: FixedTerminal<1usize>,
     }
 }
 
@@ -283,7 +285,7 @@ pub mod repeated {
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
         pub ignore_0: ignore::N,
         #[serde(skip)]
-        pub open_brace_char: (),
+        pub open_brace_char: FixedTerminal<1usize>,
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
         pub ignore_1: ignore::N,
         pub expression: expression::N,
@@ -294,7 +296,7 @@ pub mod repeated {
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
         pub ignore_3: ignore::N,
         #[serde(skip)]
-        pub close_brace_char: (),
+        pub close_brace_char: FixedTerminal<1usize>,
     }
 }
 
@@ -311,10 +313,10 @@ pub mod identifier {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S1 {
         #[serde(skip)]
-        pub open_double_angle_char: (),
+        pub open_double_angle_char: FixedTerminal<1usize>,
         pub raw_identifier: raw_identifier::N,
         #[serde(skip)]
-        pub close_double_angle_char: (),
+        pub close_double_angle_char: FixedTerminal<1usize>,
     }
 }
 
@@ -329,7 +331,7 @@ pub mod char_range {
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
         pub ignore_0: ignore::N,
         #[serde(skip)]
-        pub ellipsis_char: (),
+        pub ellipsis_char: FixedTerminal<1usize>,
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
         pub ignore_1: ignore::N,
         pub single_char_string_1: single_char_string::N,
@@ -355,7 +357,7 @@ pub mod primary {
         Optional(optional::N),
         Repeated(repeated::N),
         CharRange(char_range::N),
-        Dollar(()),
+        Dollar(FixedTerminal<1usize>),
         String(string::N),
     }
 }
@@ -368,7 +370,7 @@ pub mod negation {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         #[serde(default, skip_serializing_if = "Option::is_none")]
-        pub not_char: Option<()>,
+        pub not_char: Option<FixedTerminal<1usize>>,
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
         pub ignore: ignore::N,
         pub primary: primary::N,
@@ -391,7 +393,7 @@ pub mod difference {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         #[serde(skip)]
-        pub minus_char: (),
+        pub minus_char: FixedTerminal<1usize>,
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
         pub ignore: ignore::N,
         pub negation: negation::N,
@@ -426,7 +428,7 @@ pub mod expression {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         #[serde(skip)]
-        pub bar_char: (),
+        pub bar_char: FixedTerminal<1usize>,
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
         pub ignore: ignore::N,
     }
@@ -450,14 +452,14 @@ pub mod production {
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
         pub ignore_0: ignore::N,
         #[serde(skip)]
-        pub equal_char: (),
+        pub equal_char: FixedTerminal<1usize>,
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
         pub ignore_1: ignore::N,
         pub expression: expression::N,
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
         pub ignore_2: ignore::N,
         #[serde(skip)]
-        pub semicolon_char: (),
+        pub semicolon_char: FixedTerminal<1usize>,
     }
 }
 

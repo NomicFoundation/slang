@@ -81,8 +81,8 @@ impl TerminalTrie {
             quote!( choice::<_, ErrorType>((#(#choices),*)) )
         };
 
-        if common_size.is_some() {
-            quote!( #code.ignored())
+        if let Some(size) = common_size {
+            quote!( #code.map(|_| FixedTerminal::<#size>()) )
         } else {
             code
         }
