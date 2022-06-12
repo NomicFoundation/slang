@@ -170,14 +170,25 @@ impl CombinatorTreeNodeData {
                 separator: None,
                 ..
             } => {
+                let vec_to_length = if let Self::CharacterFilter { .. } = **expr {
+                    // Vec<()>
+                    quote!( .map(|v| v.len()) )
+                } else {
+                    quote!()
+                };
+
                 let expr = expr.to_parser_combinator_code(tree);
 
                 match (min, max) {
-                    (0, None) => quote!( #expr.repeated() ),
-                    (0, Some(max)) => quote!( #expr.repeated().at_most(#max) ),
-                    (min, None) => quote!( #expr.repeated().at_least(#min) ),
-                    (min, Some(max)) if min == max => quote!( #expr.repeated().exactly(#min) ),
-                    (min, Some(max)) => quote!( #expr.repeated().at_least(#min).at_most(#max) ),
+                    (0, None) => quote!( #expr.repeated()#vec_to_length ),
+                    (0, Some(max)) => quote!( #expr.repeated().at_most(#max)#vec_to_length),
+                    (min, None) => quote!( #expr.repeated().at_least(#min)#vec_to_length ),
+                    (min, Some(max)) if min == max => {
+                        quote!( #expr.repeated().exactly(#min)#vec_to_length )
+                    }
+                    (min, Some(max)) => {
+                        quote!( #expr.repeated().at_least(#min).at_most(#max)#vec_to_length )
+                    }
                 }
             }
             CombinatorTreeNodeData::Repeat {
@@ -483,6 +494,8 @@ impl Expression {
     }
 }
 
+// TODO: this should remove disambiguation suffixes *before* checking
+// for repeated identifiers.
 fn disambiguate_structure_names(
     mut members: Vec<(SlangName, CombinatorTreeNode)>,
 ) -> Vec<(SlangName, CombinatorTreeNode)> {

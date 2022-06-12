@@ -59,10 +59,10 @@ impl CharacterFilterNode {
             negated: false,
         } = self
         {
-            quote!(just(#char))
+            quote!(just(#char).ignored() )
         } else {
             let predicate = self.to_parser_predicate();
-            quote!( filter(|&c: &char| #predicate) )
+            quote!( filter(|&c: &char| #predicate).ignored() )
         }
     }
 

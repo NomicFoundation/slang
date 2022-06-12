@@ -47,6 +47,33 @@ impl TypeTree {
 }
 
 impl TypeTreeNodeData {
+    fn to_serde_annotation(&self) -> TokenStream {
+        match self {
+            TypeTreeNodeData::Repetition(_) => quote!(
+                #[serde(default, skip_serializing_if="Vec::is_empty")]
+            ),
+            TypeTreeNodeData::Option(_) => quote!(
+                #[serde(default, skip_serializing_if="Option::is_none")]
+            ),
+            TypeTreeNodeData::Named(_) => {
+                // if let Some(production) = grammar.get_production(name.as_str()) {
+                //     let expr = production.expression_to_generate();
+                //     expr.to_combinator_tree()
+                //         .to_type_tree()
+                //         .to_serde_annocation()
+                // } else {
+                quote!()
+                // }
+            }
+            TypeTreeNodeData::Char | TypeTreeNodeData::Unit => {
+                quote!( #[serde(skip)])
+            }
+            TypeTreeNodeData::Tuple(_, _)
+            | TypeTreeNodeData::Choice(_, _)
+            | TypeTreeNodeData::Length => quote!(),
+        }
+    }
+
     fn collect_type_definition_code(
         &self,
         module_name: &Ident,
@@ -62,6 +89,10 @@ impl TypeTreeNodeData {
                     .iter()
                     .map(|(_, t)| t.collect_type_definition_code(module_name, accum))
                     .collect();
+                let serde_annotations: Vec<TokenStream> = members
+                    .iter()
+                    .map(|(_, t)| t.to_serde_annotation())
+                    .collect();
                 let nested_tags: TokenStream = tags
                     .iter()
                     .map(|t| quote!(#t))
@@ -75,7 +106,7 @@ impl TypeTreeNodeData {
                 let name = name.to_type_name_ident();
                 accum.0.push(quote!(
                     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-                    pub struct #name { #(pub #tags: #types),* }
+                    pub struct #name { #(#serde_annotations pub #tags: #types),* }
                 ));
                 accum.1.push(quote!(
                     impl #module_name::#name {
@@ -148,6 +179,7 @@ fn tt_length() -> TypeTreeNode {
     Box::new(TypeTreeNodeData::Length)
 }
 
+#[allow(dead_code)]
 fn tt_char() -> TypeTreeNode {
     Box::new(TypeTreeNodeData::Char)
 }
@@ -193,7 +225,13 @@ impl CombinatorTreeNodeData {
                 expr,
                 separator: None,
                 ..
-            } => tt_repetition(expr.to_type_tree_node()),
+            } => {
+                if let Self::CharacterFilter { .. } = **expr {
+                    tt_length()
+                } else {
+                    tt_repetition(expr.to_type_tree_node())
+                }
+            }
             Self::Repeat {
                 name,
                 expr,
@@ -228,7 +266,7 @@ impl CombinatorTreeNodeData {
             }
             Self::Reference { name } => tt_named(name.clone()),
             Self::TerminalTrie { .. } => tt_length(),
-            Self::CharacterFilter { .. } => tt_char(),
+            Self::CharacterFilter { .. } => tt_unit(),
             Self::End => tt_unit(),
         }
     }

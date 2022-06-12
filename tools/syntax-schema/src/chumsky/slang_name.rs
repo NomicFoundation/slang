@@ -11,6 +11,10 @@ use quote::format_ident;
 pub struct SlangName(String);
 
 impl SlangName {
+    pub fn as_str<'a>(&'a self) -> &'a str {
+        self.0.as_str()
+    }
+
     pub fn from_string(s: &str) -> Self {
         Self(s.into())
     }
