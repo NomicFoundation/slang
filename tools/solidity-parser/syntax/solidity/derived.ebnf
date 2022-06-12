@@ -270,15 +270,15 @@ AssemblyFlags = '(' 1…*{ «DoubleQuotedAsciiStringLiteral» / ',' } ')' ;
 
 «AsciiStringLiteral» = «SingleQuotedAsciiStringLiteral» | «DoubleQuotedAsciiStringLiteral» ;
 
-«SingleQuotedAsciiStringLiteral» = '\'' { '\u{20}'…'~' - ( '\'' | '\\' ) | «EscapeSequence» } '\'' ;
+«SingleQuotedAsciiStringLiteral» = '\'' { 1…*{ '\u{20}'…'~' - ( '\'' | '\\' ) } | «EscapeSequence» } '\'' ;
 
-«DoubleQuotedAsciiStringLiteral» = '"' { '\u{20}'…'~' - ( '"' | '\\' ) | «EscapeSequence» } '"' ;
+«DoubleQuotedAsciiStringLiteral» = '"' { 1…*{ '\u{20}'…'~' - ( '"' | '\\' ) } | «EscapeSequence» } '"' ;
 
 «UnicodeStringLiteral» = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral» ;
 
-«SingleQuotedUnicodeStringLiteral» = 'unicode\'' { ¬( '\'' | '\\' | '\u{a}' | '\u{d}' ) | «EscapeSequence» } '\'' ;
+«SingleQuotedUnicodeStringLiteral» = 'unicode\'' { 1…*{ ¬( '\'' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '\'' ;
 
-«DoubleQuotedUnicodeStringLiteral» = 'unicode"' { ¬( '"' | '\\' | '\u{a}' | '\u{d}' ) | «EscapeSequence» } '"' ;
+«DoubleQuotedUnicodeStringLiteral» = 'unicode"' { 1…*{ ¬( '"' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '"' ;
 
 «EscapeSequence» = '\\' ( «AsciiEscape» | «HexByteEscape» | «UnicodeEscape» ) ;
 

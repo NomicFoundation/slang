@@ -676,7 +676,7 @@ pub mod raw_identifier {
     }
 }
 
-/// «DoubleQuotedAsciiStringLiteral» = '"' { '\u{20}'…'~' - ( '"' | '\\' ) | «EscapeSequence» } '"' ;
+/// «DoubleQuotedAsciiStringLiteral» = '"' { 1…*{ '\u{20}'…'~' - ( '"' | '\\' ) } | «EscapeSequence» } '"' ;
 pub mod double_quoted_ascii_string_literal {
     #[allow(unused_imports)]
     use super::*;
@@ -686,18 +686,18 @@ pub mod double_quoted_ascii_string_literal {
         #[serde(skip)]
         pub double_quote_char_0: FixedTerminal<1usize>,
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
-        pub _c2s: Vec<Box<double_quoted_ascii_string_literal::_C2>>,
+        pub runs: Vec<Box<double_quoted_ascii_string_literal::Run>>,
         #[serde(skip)]
         pub double_quote_char_1: FixedTerminal<1usize>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub enum _C2 {
-        _0(FixedTerminal<1usize>),
+    pub enum Run {
+        Chars(usize),
         EscapeSequence(escape_sequence::N),
     }
 }
 
-/// «DoubleQuotedUnicodeStringLiteral» = 'unicode"' { ¬( '"' | '\\' | '\u{a}' | '\u{d}' ) | «EscapeSequence» } '"' ;
+/// «DoubleQuotedUnicodeStringLiteral» = 'unicode"' { 1…*{ ¬( '"' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '"' ;
 pub mod double_quoted_unicode_string_literal {
     #[allow(unused_imports)]
     use super::*;
@@ -707,13 +707,13 @@ pub mod double_quoted_unicode_string_literal {
         #[serde(skip)]
         pub unicode_double_quote: FixedTerminal<8usize>,
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
-        pub _c2s: Vec<Box<double_quoted_unicode_string_literal::_C2>>,
+        pub runs: Vec<Box<double_quoted_unicode_string_literal::Run>>,
         #[serde(skip)]
         pub double_quote_char: FixedTerminal<1usize>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub enum _C2 {
-        _0(FixedTerminal<1usize>),
+    pub enum Run {
+        Chars(usize),
         EscapeSequence(escape_sequence::N),
     }
 }
@@ -783,7 +783,7 @@ pub mod reserved_word {
     }
 }
 
-/// «SingleQuotedAsciiStringLiteral» = '\'' { '\u{20}'…'~' - ( '\'' | '\\' ) | «EscapeSequence» } '\'' ;
+/// «SingleQuotedAsciiStringLiteral» = '\'' { 1…*{ '\u{20}'…'~' - ( '\'' | '\\' ) } | «EscapeSequence» } '\'' ;
 pub mod single_quoted_ascii_string_literal {
     #[allow(unused_imports)]
     use super::*;
@@ -793,18 +793,18 @@ pub mod single_quoted_ascii_string_literal {
         #[serde(skip)]
         pub quote_char_0: FixedTerminal<1usize>,
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
-        pub _c2s: Vec<Box<single_quoted_ascii_string_literal::_C2>>,
+        pub runs: Vec<Box<single_quoted_ascii_string_literal::Run>>,
         #[serde(skip)]
         pub quote_char_1: FixedTerminal<1usize>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub enum _C2 {
-        _0(FixedTerminal<1usize>),
+    pub enum Run {
+        Chars(usize),
         EscapeSequence(escape_sequence::N),
     }
 }
 
-/// «SingleQuotedUnicodeStringLiteral» = 'unicode\'' { ¬( '\'' | '\\' | '\u{a}' | '\u{d}' ) | «EscapeSequence» } '\'' ;
+/// «SingleQuotedUnicodeStringLiteral» = 'unicode\'' { 1…*{ ¬( '\'' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '\'' ;
 pub mod single_quoted_unicode_string_literal {
     #[allow(unused_imports)]
     use super::*;
@@ -814,13 +814,13 @@ pub mod single_quoted_unicode_string_literal {
         #[serde(skip)]
         pub unicode_quote: FixedTerminal<8usize>,
         #[serde(default, skip_serializing_if = "Vec::is_empty")]
-        pub _c2s: Vec<Box<single_quoted_unicode_string_literal::_C2>>,
+        pub runs: Vec<Box<single_quoted_unicode_string_literal::Run>>,
         #[serde(skip)]
         pub quote_char: FixedTerminal<1usize>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub enum _C2 {
-        _0(FixedTerminal<1usize>),
+    pub enum Run {
+        Chars(usize),
         EscapeSequence(escape_sequence::N),
     }
 }

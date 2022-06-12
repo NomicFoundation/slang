@@ -1318,16 +1318,19 @@ impl Parsers {
         .map(|v| Box::new(raw_identifier::_S0::new(v)))
         .boxed();
 
-        // «DoubleQuotedAsciiStringLiteral» = '"' { '\u{20}'…'~' - ( '"' | '\\' ) | «EscapeSequence» } '"' ;
+        // «DoubleQuotedAsciiStringLiteral» = '"' { 1…*{ '\u{20}'…'~' - ( '"' | '\\' ) } | «EscapeSequence» } '"' ;
         let double_quoted_ascii_string_literal_parser = just('"')
             .map(|_| FixedTerminal::<1>())
             .then(
                 choice((
                     filter(|&c: &char| (' ' <= c && c <= '~') && c != '"' && c != '\\')
                         .map(|_| FixedTerminal::<1>())
-                        .map(|v| Box::new(double_quoted_ascii_string_literal::_C2::_0(v))),
+                        .repeated()
+                        .at_least(1usize)
+                        .map(|v| v.len())
+                        .map(|v| Box::new(double_quoted_ascii_string_literal::Run::Chars(v))),
                     escape_sequence_parser.clone().map(|v| {
-                        Box::new(double_quoted_ascii_string_literal::_C2::EscapeSequence(v))
+                        Box::new(double_quoted_ascii_string_literal::Run::EscapeSequence(v))
                     }),
                 ))
                 .repeated(),
@@ -1336,7 +1339,7 @@ impl Parsers {
             .map(|v| Box::new(double_quoted_ascii_string_literal::_S0::new(v)))
             .boxed();
 
-        // «DoubleQuotedUnicodeStringLiteral» = 'unicode"' { ¬( '"' | '\\' | '\u{a}' | '\u{d}' ) | «EscapeSequence» } '"' ;
+        // «DoubleQuotedUnicodeStringLiteral» = 'unicode"' { 1…*{ ¬( '"' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '"' ;
         let double_quoted_unicode_string_literal_parser = terminal("unicode\"")
             .ignored()
             .map(|_| FixedTerminal::<8usize>())
@@ -1344,9 +1347,12 @@ impl Parsers {
                 choice((
                     filter(|&c: &char| c != '"' && c != '\\' && c != '\n' && c != '\r')
                         .map(|_| FixedTerminal::<1>())
-                        .map(|v| Box::new(double_quoted_unicode_string_literal::_C2::_0(v))),
+                        .repeated()
+                        .at_least(1usize)
+                        .map(|v| v.len())
+                        .map(|v| Box::new(double_quoted_unicode_string_literal::Run::Chars(v))),
                     escape_sequence_parser.clone().map(|v| {
-                        Box::new(double_quoted_unicode_string_literal::_C2::EscapeSequence(v))
+                        Box::new(double_quoted_unicode_string_literal::Run::EscapeSequence(v))
                     }),
                 ))
                 .repeated(),
@@ -1501,16 +1507,19 @@ impl Parsers {
         ))
         .boxed();
 
-        // «SingleQuotedAsciiStringLiteral» = '\'' { '\u{20}'…'~' - ( '\'' | '\\' ) | «EscapeSequence» } '\'' ;
+        // «SingleQuotedAsciiStringLiteral» = '\'' { 1…*{ '\u{20}'…'~' - ( '\'' | '\\' ) } | «EscapeSequence» } '\'' ;
         let single_quoted_ascii_string_literal_parser = just('\'')
             .map(|_| FixedTerminal::<1>())
             .then(
                 choice((
                     filter(|&c: &char| (' ' <= c && c <= '~') && c != '\'' && c != '\\')
                         .map(|_| FixedTerminal::<1>())
-                        .map(|v| Box::new(single_quoted_ascii_string_literal::_C2::_0(v))),
+                        .repeated()
+                        .at_least(1usize)
+                        .map(|v| v.len())
+                        .map(|v| Box::new(single_quoted_ascii_string_literal::Run::Chars(v))),
                     escape_sequence_parser.clone().map(|v| {
-                        Box::new(single_quoted_ascii_string_literal::_C2::EscapeSequence(v))
+                        Box::new(single_quoted_ascii_string_literal::Run::EscapeSequence(v))
                     }),
                 ))
                 .repeated(),
@@ -1519,7 +1528,7 @@ impl Parsers {
             .map(|v| Box::new(single_quoted_ascii_string_literal::_S0::new(v)))
             .boxed();
 
-        // «SingleQuotedUnicodeStringLiteral» = 'unicode\'' { ¬( '\'' | '\\' | '\u{a}' | '\u{d}' ) | «EscapeSequence» } '\'' ;
+        // «SingleQuotedUnicodeStringLiteral» = 'unicode\'' { 1…*{ ¬( '\'' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '\'' ;
         let single_quoted_unicode_string_literal_parser = terminal("unicode'")
             .ignored()
             .map(|_| FixedTerminal::<8usize>())
@@ -1527,9 +1536,12 @@ impl Parsers {
                 choice((
                     filter(|&c: &char| c != '\'' && c != '\\' && c != '\n' && c != '\r')
                         .map(|_| FixedTerminal::<1>())
-                        .map(|v| Box::new(single_quoted_unicode_string_literal::_C2::_0(v))),
+                        .repeated()
+                        .at_least(1usize)
+                        .map(|v| v.len())
+                        .map(|v| Box::new(single_quoted_unicode_string_literal::Run::Chars(v))),
                     escape_sequence_parser.clone().map(|v| {
-                        Box::new(single_quoted_unicode_string_literal::_C2::EscapeSequence(v))
+                        Box::new(single_quoted_unicode_string_literal::Run::EscapeSequence(v))
                     }),
                 ))
                 .repeated(),

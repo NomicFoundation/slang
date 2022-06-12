@@ -299,34 +299,34 @@ impl raw_identifier::_S0 {
 }
 impl double_quoted_ascii_string_literal::_S0 {
     pub fn new(
-        ((double_quote_char_0, _c2s), double_quote_char_1): (
+        ((double_quote_char_0, runs), double_quote_char_1): (
             (
                 FixedTerminal<1usize>,
-                Vec<Box<double_quoted_ascii_string_literal::_C2>>,
+                Vec<Box<double_quoted_ascii_string_literal::Run>>,
             ),
             FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
             double_quote_char_0,
-            _c2s,
+            runs,
             double_quote_char_1,
         }
     }
 }
 impl double_quoted_unicode_string_literal::_S0 {
     pub fn new(
-        ((unicode_double_quote, _c2s), double_quote_char): (
+        ((unicode_double_quote, runs), double_quote_char): (
             (
                 FixedTerminal<8usize>,
-                Vec<Box<double_quoted_unicode_string_literal::_C2>>,
+                Vec<Box<double_quoted_unicode_string_literal::Run>>,
             ),
             FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
             unicode_double_quote,
-            _c2s,
+            runs,
             double_quote_char,
         }
     }
@@ -354,34 +354,34 @@ impl numeric_literal::_S0 {
 }
 impl single_quoted_ascii_string_literal::_S0 {
     pub fn new(
-        ((quote_char_0, _c2s), quote_char_1): (
+        ((quote_char_0, runs), quote_char_1): (
             (
                 FixedTerminal<1usize>,
-                Vec<Box<single_quoted_ascii_string_literal::_C2>>,
+                Vec<Box<single_quoted_ascii_string_literal::Run>>,
             ),
             FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
             quote_char_0,
-            _c2s,
+            runs,
             quote_char_1,
         }
     }
 }
 impl single_quoted_unicode_string_literal::_S0 {
     pub fn new(
-        ((unicode_quote, _c2s), quote_char): (
+        ((unicode_quote, runs), quote_char): (
             (
                 FixedTerminal<8usize>,
-                Vec<Box<single_quoted_unicode_string_literal::_C2>>,
+                Vec<Box<single_quoted_unicode_string_literal::Run>>,
             ),
             FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
             unicode_quote,
-            _c2s,
+            runs,
             quote_char,
         }
     }
