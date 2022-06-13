@@ -1,23 +1,31 @@
 use std::fs;
 
 use ariadne::{Color, Fmt, Label, Report, ReportKind, Source};
-use chumsky::{prelude::*, Parser};
+use chumsky::prelude::*;
 use clap::Parser as ClapParser;
 
-use solidity_parser::parser::create_source_unit_parser;
+use solidity_parser::parser_interface::Parsers;
 
 #[derive(ClapParser, Debug)]
 struct ProgramArgs {
     solidity_input: String,
 }
 
-fn main() {
+fn main() -> Result<(), usize> {
     let args = ProgramArgs::parse();
 
     println!(" => Parsing Solidity");
     let solidity_src = fs::read_to_string(args.solidity_input).expect("Failed to read file");
-    let (_parse_tree, errs) = create_source_unit_parser().parse_recovery(solidity_src.as_str());
+    let (_parse_tree, errs) = Parsers::new()
+        .source_unit
+        .parse_recovery(solidity_src.as_str());
+    let number_of_errors = errs.len();
     print_errors(errs, &solidity_src);
+    if number_of_errors == 0 {
+        Ok(())
+    } else {
+        Err(number_of_errors)
+    }
 }
 
 // TODO: encapsulate the following in a support library
@@ -55,7 +63,7 @@ fn generate_report(e: Simple<char>) -> ariadne::ReportBuilder<std::ops::Range<us
                         None => "end of input".to_string(),
                     })
                     .collect::<Vec<_>>()
-                    .join(", ")
+                    .join(" or ")
             },
         )
     };

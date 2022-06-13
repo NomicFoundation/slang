@@ -2,12 +2,7 @@
 
 - name: SourceUnit
   config:
-    prelude: |
-      use syntax_schema::chumsky::combinators::NomicParser;
-      use super::builder;
-
-      pub type SourceUnitParserResultType = ();
-    ignore: true
+    prelude: ""
   sequence:
     - reference: IGNORE
     - zeroOrMore:
@@ -17,14 +12,12 @@
     - end: ~
 
 - name: Directive
-  config: { ignore: true }
   choice:
     - reference: PragmaDirective
     - reference: ImportDirective
     - reference: UsingDirective
 
 - name: Definition
-  config: { ignore: true }
   choice:
     - reference: ContractDefinition
     - reference: InterfaceDefinition
@@ -37,7 +30,6 @@
     - reference: ErrorDefinition
 
 - name: ImportDirective
-  config: { ignore: true }
   sequence:
     - terminal: import
     - choice:
@@ -47,7 +39,6 @@
     - terminal: ;
 
 - name: SimpleImportDirective
-  config: { ignore: true }
   sequence:
     - reference: ImportPath
     - zeroOrMore:
@@ -56,7 +47,6 @@
           - reference: Identifier
 
 - name: StarImportDirective
-  config: { ignore: true }
   sequence:
     - terminal: "*"
     - terminal: as
@@ -65,7 +55,6 @@
     - reference: ImportPath
 
 - name: SelectingImportDirective
-  config: { ignore: true }
   sequence:
     - terminal: "{"
     - oneOrMore:
@@ -77,7 +66,6 @@
     - reference: ImportPath
 
 - name: SelectedImport
-  config: { ignore: true }
   sequence:
     - reference: Identifier
     - optional:
@@ -86,11 +74,9 @@
           - reference: Identifier
 
 - name: ImportPath
-  config: { ignore: true }
   reference: AsciiStringLiteral
 
 - name: UsingDirective
-  config: { ignore: true }
   sequence:
     - terminal: using
     - choice:

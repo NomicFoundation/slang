@@ -3,6 +3,16 @@
 version = 3
 
 [[package]]
+name = "Inflector"
+version = "0.11.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fe438c63458706e03479442743baae6c88256498e6431708f6dfc520a26515d3"
+dependencies = [
+ "lazy_static",
+ "regex 1.5.6",
+]
+
+[[package]]
 name = "ahash"
 version = "0.3.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -16,6 +26,15 @@ name = "aho-corasick"
 version = "0.6.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "81ce3d38065e618af2d7b77e10c5ad9a069859b4be3c2250f674af3840d9c8a5"
+dependencies = [
+ "memchr",
+]
+
+[[package]]
+name = "aho-corasick"
+version = "0.7.18"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1e37cfd5e7657ada45f742d6e99ca5788580b5c529dc78faf11ece6dc702656f"
 dependencies = [
  "memchr",
 ]
@@ -54,6 +73,12 @@ name = "autocfg"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d468802bab17cbc0cc575e9b053f41e72aa36bfa6b7f55e3529ffa43161b97fa"
+
+[[package]]
+name = "binary-search"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bea0ab2808834a04d4ae0d831f476217fdbee35cb620bf6b2e5807a4e9435776"
 
 [[package]]
 name = "bitflags"
@@ -174,7 +199,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3ddf21e73e016298f5cb37d6ef8e8da8e39f91f9ec8b0df44b7deb16a9f8cd5b"
 dependencies = [
  "log 0.3.9",
- "regex",
+ "regex 0.2.11",
 ]
 
 [[package]]
@@ -314,6 +339,12 @@ name = "memchr"
 version = "2.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "308cc39be01b73d0d18f82a0e7b2a3df85245f84af96fdddc5d202d27e47b86a"
+
+[[package]]
+name = "mset"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "05d1cf737c48148e9956a9ea00710258dcf2a7afdedc34a2c672a44866f618dc"
 
 [[package]]
 name = "num-traits"
@@ -511,11 +542,22 @@ version = "0.2.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9329abc99e39129fcceabd24cf5d85b4671ef7c29c50e972bc5afe32438ec384"
 dependencies = [
- "aho-corasick",
+ "aho-corasick 0.6.10",
  "memchr",
- "regex-syntax",
+ "regex-syntax 0.5.6",
  "thread_local",
  "utf8-ranges",
+]
+
+[[package]]
+name = "regex"
+version = "1.5.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d83f127d94bdbcda4c8cc2e50f6f84f4b611f69c902699ca385a39c3a75f9ff1"
+dependencies = [
+ "aho-corasick 0.7.18",
+ "memchr",
+ "regex-syntax 0.6.26",
 ]
 
 [[package]]
@@ -526,6 +568,12 @@ checksum = "7d707a4fa2637f2dca2ef9fd02225ec7661fe01a53623c1e6515b6916511f7a7"
 dependencies = [
  "ucd-util",
 ]
+
+[[package]]
+name = "regex-syntax"
+version = "0.6.26"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "49b3de9ec5dc0a3417da371aab17d729997c15010e7fd24ff707773a33bddb64"
 
 [[package]]
 name = "rustc_version"
@@ -548,7 +596,7 @@ dependencies = [
  "kernel32-sys",
  "libc",
  "log 0.3.9",
- "regex",
+ "regex 0.2.11",
  "serde",
  "serde_derive",
  "serde_json",
@@ -664,12 +712,15 @@ dependencies = [
 name = "syntax_schema"
 version = "0.0.0"
 dependencies = [
+ "Inflector",
  "ariadne",
+ "binary-search",
  "chumsky",
  "clap",
  "convert_case",
  "indexmap",
  "itertools",
+ "mset",
  "patricia_tree",
  "proc-macro2",
  "quote",

@@ -48,6 +48,6 @@ charRange = «SingleCharString» '…' «SingleCharString» ;
 
 «IGNORE» = { «Whitespace» | «Comment» } ;
 
-«Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } 1…*{ '*' } '/' ;
+«Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
 
-«Whitespace» = '\u{9}' | '\u{a}' | '\u{d}' | '\u{20}' ;
+«Whitespace» = 1…*{ '\u{9}' | '\u{a}' | '\u{d}' | '\u{20}' } ;

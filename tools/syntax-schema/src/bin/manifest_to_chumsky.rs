@@ -2,18 +2,12 @@ use std::path::PathBuf;
 
 use clap::Parser;
 
-use syntax_schema::{chumsky::generator::Context, schema::Grammar};
+use syntax_schema::{chumsky::generate::GenerationContext, schema::Grammar};
 
 #[derive(Parser, Debug)]
 struct ProgramArgs {
     #[clap(long)]
     manifest_input: String,
-
-    #[clap(long)]
-    no_default_map: bool,
-
-    #[clap(long)]
-    box_non_tokens: bool,
 
     #[clap(long)]
     chumsky_output: String,
@@ -29,11 +23,7 @@ fn main() {
     grammar.validate();
 
     println!(" => Generating Parser");
-    grammar.generate_chumsky(
-        &Context {
-            no_default_map: args.no_default_map,
-            box_non_tokens: args.box_non_tokens,
-        },
-        &PathBuf::from(args.chumsky_output),
-    );
+    grammar.generate_chumsky(&GenerationContext {
+        output_dir: PathBuf::from(args.chumsky_output),
+    });
 }

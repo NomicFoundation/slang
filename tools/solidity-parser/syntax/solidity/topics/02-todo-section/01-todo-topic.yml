@@ -1,7 +1,6 @@
 # yaml-language-server: $schema=../../../../../syntax-schema/syntax/schema/topic.schema.json
 
 - name: ContractDefinition
-  config: { ignore: true }
   sequence:
     - optional:
         terminal: abstract
@@ -15,7 +14,6 @@
     - terminal: "}"
 
 - name: InterfaceDefinition
-  config: { ignore: true }
   sequence:
     - terminal: interface
     - reference: Identifier
@@ -27,7 +25,6 @@
     - terminal: "}"
 
 - name: InheritanceSpecifierList
-  config: { ignore: true }
   sequence:
     - terminal: is
     - oneOrMore:
@@ -36,14 +33,12 @@
           terminal: ","
 
 - name: InheritanceSpecifier
-  config: { ignore: true }
   sequence:
     - reference: IdentifierPath
     - optional:
         reference: ArgumentList
 
 - name: LibraryDefinition
-  config: { ignore: true }
   sequence:
     - terminal: library
     - reference: Identifier
@@ -53,7 +48,6 @@
     - terminal: "}"
 
 - name: FunctionDefinition
-  config: { ignore: true }
   sequence:
     - terminal: function
     - choice:
@@ -72,7 +66,6 @@
         - reference: Block
 
 - name: FunctionAttribute
-  config: { ignore: true }
   choice:
     - reference: VisibilitySpecifier
     - reference: StateMutabilitySpecifier
@@ -81,7 +74,6 @@
     - reference: OverrideSpecifier
 
 - name: ConstantDefinition
-  config: { ignore: true }
   sequence:
     - reference: TypeName
     - terminal: constant
@@ -91,7 +83,6 @@
     - terminal: ;
 
 - name: StructDefinition
-  config: { ignore: true }
   sequence:
     - terminal: struct
     - reference: Identifier
@@ -104,7 +95,6 @@
     - terminal: "}"
 
 - name: EnumDefinition
-  config: { ignore: true }
   sequence:
     - terminal: enum
     - reference: Identifier
@@ -116,7 +106,6 @@
     - terminal: "}"
 
 - name: UserDefinedValueTypeDefinition
-  config: { ignore: true }
   sequence:
     - terminal: type
     - reference: Identifier
@@ -125,7 +114,6 @@
     - terminal: ;
 
 - name: EventDefinition
-  config: { ignore: true }
   sequence:
     - terminal: event
     - reference: Identifier
@@ -140,7 +128,6 @@
     - terminal: ;
 
 - name: EventParameter
-  config: { ignore: true }
   sequence:
     - reference: TypeName
     - optional:
@@ -149,7 +136,6 @@
         reference: Identifier
 
 - name: ErrorDefinition
-  config: { ignore: true }
   sequence:
     - terminal: error
     - reference: Identifier
@@ -162,14 +148,12 @@
     - terminal: ;
 
 - name: ErrorParameter
-  config: { ignore: true }
   sequence:
     - reference: TypeName
     - optional:
         reference: Identifier
 
 - name: ContractBodyElement
-  config: { ignore: true }
   choice:
     - reference: UsingDirective
     - reference: ConstructorDefinition
@@ -185,7 +169,6 @@
     - reference: StateVariableDeclaration
 
 - name: ConstructorDefinition
-  config: { ignore: true }
   sequence:
     - terminal: constructor
     - reference: ParameterList
@@ -194,7 +177,6 @@
     - reference: Block
 
 - name: ConstructorAttribute
-  config: { ignore: true }
   choice:
     - reference: ModifierInvocation
     - terminal: payable
@@ -202,7 +184,6 @@
     - terminal: public
 
 - name: FallbackFunctionDefinition
-  config: { ignore: true }
   sequence:
     - terminal: fallback
     - reference: ParameterList
@@ -217,7 +198,6 @@
         - reference: Block
 
 - name: FallbackFunctionAttribute
-  config: { ignore: true }
   choice:
     - terminal: external
     - reference: StateMutabilitySpecifier
@@ -226,7 +206,6 @@
     - reference: OverrideSpecifier
 
 - name: ReceiveFunctionDefinition
-  config: { ignore: true }
   sequence:
     - terminal: receive
     - terminal: (
@@ -238,7 +217,6 @@
         - reference: Block
 
 - name: ReceiveFunctionAttribute
-  config: { ignore: true }
   choice:
     - terminal: external
     - terminal: payable
@@ -247,7 +225,6 @@
     - reference: OverrideSpecifier
 
 - name: ModifierDefinition
-  config: { ignore: true }
   sequence:
     - terminal: modifier
     - reference: Identifier
@@ -260,13 +237,11 @@
         - reference: Block
 
 - name: MethodAttribute
-  config: { ignore: true }
   choice:
     - terminal: virtual
     - reference: OverrideSpecifier
 
 - name: StateVariableDeclaration
-  config: { ignore: true }
   sequence:
     - reference: TypeName
     - zeroOrMore:
@@ -279,7 +254,6 @@
     - terminal: ;
 
 - name: StateVariableAttribute
-  config: { ignore: true }
   choice:
     - terminal: public
     - terminal: private
@@ -289,7 +263,6 @@
     - terminal: immutable
 
 - name: ArgumentList
-  config: { ignore: true }
   sequence:
     - terminal: (
     - optional:
@@ -299,14 +272,12 @@
     - terminal: )
 
 - name: PositionalArgumentList
-  config: { ignore: true }
   oneOrMore:
     reference: Expression
     separator:
       terminal: ","
 
 - name: NamedArgumentList
-  config: { ignore: true }
   sequence:
     - terminal: "{"
     - zeroOrMore:
@@ -316,21 +287,18 @@
     - terminal: "}"
 
 - name: NamedArgument
-  config: { ignore: true }
   sequence:
     - reference: Identifier
     - terminal: ":"
     - reference: Expression
 
 - name: ModifierInvocation
-  config: { map: to_str }
   sequence:
     - reference: IdentifierPath
     - optional:
         reference: ArgumentList
 
 - name: ParameterList
-  config: { ignore: true }
   sequence:
     - terminal: (
     - zeroOrMore:
@@ -340,7 +308,6 @@
     - terminal: )
 
 - name: NonEmptyParameterList
-  config: { ignore: true }
   sequence:
     - terminal: (
     - oneOrMore:
@@ -350,7 +317,6 @@
     - terminal: )
 
 - name: ParameterDeclaration
-  config: { ignore: true }
   sequence:
     - reference: TypeName
     - optional:
@@ -359,7 +325,6 @@
         reference: Identifier
 
 - name: VisibilitySpecifier
-  config: { nomap: true }
   choice:
     - terminal: internal
     - terminal: external
@@ -367,14 +332,12 @@
     - terminal: public
 
 - name: StateMutabilitySpecifier
-  config: { nomap: true }
   choice:
     - terminal: pure
     - terminal: view
     - terminal: payable
 
 - name: OverrideSpecifier
-  config: { map: to_str }
   sequence:
     - terminal: override
     - optional:
@@ -389,14 +352,12 @@
           - terminal: )
 
 - name: IdentifierPath
-  config: { map: to_str }
   oneOrMore:
     reference: Identifier
     separator:
       terminal: "."
 
 - name: TypeName
-  config: { ignore: true }
   sequence:
     - choice:
         - reference: ElementaryTypeWithPayable
@@ -411,23 +372,19 @@
           - terminal: "]"
 
 - name: ElementaryTypeWithPayable
-  config: { nomap: true }
   choice:
     - sequence:
         - terminal: address
         - optional:
             terminal: payable
-      config: { map: to_str }
     - reference: ElementaryType
 
 - name: ElementaryTypeWithoutPayable
-  config: { nomap: true }
   choice:
     - terminal: address
     - reference: ElementaryType
 
 - name: ElementaryType
-  config: { nomap: true }
   choice:
     - terminal: bool
     - terminal: string
@@ -439,7 +396,6 @@
     - reference: UfixedType
 
 - name: FunctionType
-  config: { ignore: true }
   sequence:
     - terminal: function
     - reference: ParameterList
@@ -453,7 +409,6 @@
           - reference: NonEmptyParameterList
 
 - name: MappingType
-  config: { ignore: true }
   sequence:
     - terminal: mapping
     - terminal: (
@@ -465,25 +420,21 @@
     - terminal: )
 
 - name: DataLocation
-  config: { ignore: true }
   choice:
     - terminal: memory
     - terminal: storage
     - terminal: calldata
 
 - name: Expression
-  config: { ignore: true }
   reference: AssignmentExpression
 
 - name: AssignmentExpression
-  config: { ignore: true }
   sequence:
     - reference: ConditionalExpression
     - reference: AssignmentOperator
     - reference: Expression
 
 - name: AssignmentOperator
-  config: { ignore: true }
   choice:
     - terminal: "="
     - terminal: "|="
@@ -499,7 +450,6 @@
     - terminal: "%="
 
 - name: ConditionalExpression
-  config: { ignore: true }
   sequence:
     - reference: OrExpression
     - terminal: "?"
@@ -508,7 +458,6 @@
     - reference: Expression
 
 - name: OrExpression
-  config: { ignore: true }
   sequence:
     - reference: AndExpression
     - zeroOrMore:
@@ -517,7 +466,6 @@
           - reference: AndExpression
 
 - name: AndExpression
-  config: { ignore: true }
   sequence:
     - reference: EqualityComparisonExpression
     - zeroOrMore:
@@ -526,7 +474,6 @@
           - reference: EqualityComparisonExpression
 
 - name: EqualityComparisonExpression
-  config: { ignore: true }
   sequence:
     - reference: OrderComparisonExpression
     - zeroOrMore:
@@ -535,13 +482,11 @@
           - reference: OrderComparisonExpression
 
 - name: EqualityComparisonOperator
-  config: { ignore: true }
   choice:
     - terminal: "=="
     - terminal: "!="
 
 - name: OrderComparisonExpression
-  config: { ignore: true }
   sequence:
     - reference: BitOrExpression
     - zeroOrMore:
@@ -550,7 +495,6 @@
           - reference: BitOrExpression
 
 - name: OrderComparisonOperator
-  config: { ignore: true }
   choice:
     - terminal: "<"
     - terminal: ">"
@@ -558,7 +502,6 @@
     - terminal: ">="
 
 - name: BitOrExpression
-  config: { ignore: true }
   sequence:
     - reference: BitXOrExpression
     - zeroOrMore:
@@ -567,7 +510,6 @@
           - reference: BitXOrExpression
 
 - name: BitXOrExpression
-  config: { ignore: true }
   sequence:
     - reference: BitAndExpression
     - zeroOrMore:
@@ -576,7 +518,6 @@
           - reference: BitAndExpression
 
 - name: BitAndExpression
-  config: { ignore: true }
   sequence:
     - reference: ShiftExpression
     - zeroOrMore:
@@ -585,7 +526,6 @@
           - reference: ShiftExpression
 
 - name: ShiftExpression
-  config: { ignore: true }
   sequence:
     - reference: AddSubExpression
     - zeroOrMore:
@@ -594,14 +534,12 @@
           - reference: AddSubExpression
 
 - name: ShiftOperator
-  config: { ignore: true }
   choice:
     - terminal: "<<"
     - terminal: ">>"
     - terminal: ">>>"
 
 - name: AddSubExpression
-  config: { ignore: true }
   sequence:
     - reference: MulDivModExpression
     - zeroOrMore:
@@ -610,13 +548,11 @@
           - reference: MulDivModExpression
 
 - name: AddSubOperator
-  config: { ignore: true }
   choice:
     - terminal: +
     - terminal: "-"
 
 - name: MulDivModExpression
-  config: { ignore: true }
   sequence:
     - reference: ExpExpression
     - zeroOrMore:
@@ -625,39 +561,33 @@
           - reference: ExpExpression
 
 - name: MulDivModOperator
-  config: { ignore: true }
   choice:
     - terminal: "*"
     - terminal: /
     - terminal: "%"
 
 - name: ExpExpression
-  config: { ignore: true }
   sequence:
     - reference: UnarySuffixExpression
     - terminal: "**"
     - reference: Expression
 
 - name: UnarySuffixExpression
-  config: { ignore: true }
   sequence:
     - reference: UnaryPrefixExpression
     - reference: UnarySuffixOperator
 
 - name: UnarySuffixOperator
-  config: { ignore: true }
   choice:
     - terminal: ++
     - terminal: "--"
 
 - name: UnaryPrefixExpression
-  config: { ignore: true }
   sequence:
     - reference: UnaryPrefixOperator
     - reference: FunctionCallExpression
 
 - name: UnaryPrefixOperator
-  config: { ignore: true }
   choice:
     - terminal: ++
     - terminal: "--"
@@ -667,14 +597,12 @@
     - terminal: "-"
 
 - name: FunctionCallExpression
-  config: { ignore: true }
   sequence:
     - reference: FunctionCallOptionsExpression
     - zeroOrMore:
         reference: ArgumentList
 
 - name: FunctionCallOptionsExpression
-  config: { ignore: true }
   sequence:
     - reference: MemberAccessExpression
     - zeroOrMore:
@@ -687,7 +615,6 @@
           - terminal: "}"
 
 - name: MemberAccessExpression
-  config: { ignore: true }
   sequence:
     - reference: IndexAccessExpression
     - zeroOrMore:
@@ -698,7 +625,6 @@
               - terminal: address
 
 - name: IndexAccessExpression
-  config: { ignore: true }
   sequence:
     - reference: PrimaryExpression
     - zeroOrMore:
@@ -714,7 +640,6 @@
           - terminal: "]"
 
 - name: PrimaryExpression
-  config: { ignore: true }
   choice:
     - sequence:
         - terminal: payable
@@ -747,7 +672,6 @@
     - reference: ElementaryTypeWithoutPayable
 
 - name: Literal
-  config: { ignore: true }
   choice:
     - reference: AsciiStringLiteral
     - reference: UnicodeStringLiteral
@@ -756,7 +680,6 @@
     - reference: BooleanLiteral
 
 - name: NumericLiteral
-  config: { ignore: true }
   sequence:
     - choice:
         - reference: DecimalNumber
@@ -765,7 +688,6 @@
         reference: NumberUnit
 
 - name: Block
-  config: { ignore: true }
   sequence:
     - terminal: "{"
     - zeroOrMore:
@@ -775,13 +697,11 @@
     - terminal: "}"
 
 - name: UncheckedBlock
-  config: { ignore: true }
   sequence:
     - terminal: unchecked
     - reference: Block
 
 - name: Statement
-  config: { ignore: true }
   choice:
     - reference: Block
     - reference: SimpleStatement
@@ -798,13 +718,11 @@
     - reference: AssemblyStatement
 
 - name: SimpleStatement
-  config: { ignore: true }
   choice:
     - reference: VariableDeclarationStatement
     - reference: ExpressionStatement
 
 - name: IfStatement
-  config: { ignore: true }
   sequence:
     - terminal: if
     - terminal: (
@@ -817,7 +735,6 @@
           - reference: Statement
 
 - name: ForStatement
-  config: { ignore: true }
   sequence:
     - terminal: for
     - terminal: (
@@ -833,7 +750,6 @@
     - reference: Statement
 
 - name: WhileStatement
-  config: { ignore: true }
   sequence:
     - terminal: while
     - terminal: (
@@ -842,7 +758,6 @@
     - reference: Statement
 
 - name: DoWhileStatement
-  config: { ignore: true }
   sequence:
     - terminal: do
     - reference: Statement
@@ -853,19 +768,16 @@
     - terminal: ;
 
 - name: ContinueStatement
-  config: { ignore: true }
   sequence:
     - terminal: continue
     - terminal: ;
 
 - name: BreakStatement
-  config: { ignore: true }
   sequence:
     - terminal: break
     - terminal: ;
 
 - name: TryStatement
-  config: { ignore: true }
   sequence:
     - terminal: try
     - reference: Expression
@@ -879,7 +791,6 @@
         reference: CatchClause
 
 - name: CatchClause
-  config: { ignore: true }
   sequence:
     - terminal: catch
     - optional:
@@ -890,7 +801,6 @@
     - reference: Block
 
 - name: ReturnStatement
-  config: { ignore: true }
   sequence:
     - terminal: return
     - optional:
@@ -898,7 +808,6 @@
     - terminal: ;
 
 - name: EmitStatement
-  config: { ignore: true }
   sequence:
     - terminal: emit
     - reference: Expression
@@ -906,7 +815,6 @@
     - terminal: ;
 
 - name: RevertStatement
-  config: { ignore: true }
   sequence:
     - terminal: revert
     - reference: Expression
@@ -914,14 +822,12 @@
     - terminal: ;
 
 - name: VariableDeclarationList
-  config: { ignore: true }
   oneOrMore:
     reference: VariableDeclaration
     separator:
       terminal: ","
 
 - name: VariableDeclarationTuple
-  config: { ignore: true }
   sequence:
     - terminal: (
     - zeroOrMore:
@@ -935,7 +841,6 @@
     - terminal: )
 
 - name: VariableDeclarationStatement
-  config: { ignore: true }
   sequence:
     - choice:
         - sequence:
@@ -951,7 +856,6 @@
     - terminal: ;
 
 - name: VariableDeclaration
-  config: { ignore: true }
   sequence:
     - reference: TypeName
     - optional:
@@ -959,13 +863,11 @@
     - reference: Identifier
 
 - name: ExpressionStatement
-  config: { ignore: true }
   sequence:
     - reference: Expression
     - terminal: ;
 
 - name: AssemblyStatement
-  config: { ignore: true }
   sequence:
     - terminal: assembly
     - optional:
@@ -975,7 +877,6 @@
     - reference: YulBlock
 
 - name: AssemblyFlags
-  config: { ignore: true }
   sequence:
     - terminal: (
     - oneOrMore:
@@ -985,7 +886,6 @@
     - terminal: )
 
 - name: Identifier
-  config: { ignore: true }
   isToken: true
   difference:
     minuend:
@@ -994,7 +894,6 @@
       reference: ReservedWord
 
 - name: ReservedWord
-  config: { ignore: true }
   isToken: true
   choice:
     - reference: Keyword
@@ -1003,7 +902,6 @@
     - reference: BooleanLiteral
 
 - name: Keyword
-  config: { ignore: true }
   isToken: true
   choice:
     - terminal: pragma
@@ -1071,7 +969,6 @@
     - terminal: ufixed
 
 - name: ReservedKeyword
-  config: { ignore: true }
   isToken: true
   choice:
     - terminal: after
@@ -1107,7 +1004,6 @@
     - terminal: var
 
 - name: PragmaDirective
-  config: { ignore: true }
   isToken: true
   sequence:
     - terminal: pragma
@@ -1120,9 +1016,6 @@
 
 - name: RawIdentifier
   isToken: true
-  config:
-    chain: true
-    nomap: true
   sequence:
     - reference: IdentifierStart
     - zeroOrMore:
@@ -1149,7 +1042,6 @@
         to: "9"
 
 - name: SignedIntegerType
-  config: { map: to_str }
   isToken: true
   sequence:
     - terminal: int
@@ -1191,14 +1083,12 @@
         lookahead: { not: { range: { from: "0", to: "9" } } }
 
 - name: UnsignedIntegerType
-  config: { map: to_str }
   isToken: true
   sequence:
     - terminal: u
     - reference: SignedIntegerType
 
 - name: FixedBytesType
-  config: { map: to_str }
   isToken: true
   sequence:
     - terminal: bytes
@@ -1240,7 +1130,6 @@
         lookahead: { not: { range: { from: "0", to: "9" } } }
 
 - name: FixedType
-  config: { map: to_str }
   isToken: true
   sequence:
     - terminal: fixed
@@ -1263,21 +1152,18 @@
                 to: "9"
 
 - name: UfixedType
-  config: { map: to_str }
   isToken: true
   sequence:
     - terminal: u
     - reference: FixedType
 
 - name: BooleanLiteral
-  config: { ignore: true }
   isToken: true
   choice:
     - terminal: "true"
     - terminal: "false"
 
 - name: DecimalNumber
-  config: { ignore: true }
   isToken: true
   sequence:
     - choice:
@@ -1287,7 +1173,6 @@
         reference: DecimalExponent
 
 - name: DecimalInteger
-  config: { ignore: true }
   isToken: true
   oneOrMore:
     range:
@@ -1298,7 +1183,6 @@
         terminal: _
 
 - name: DecimalFloat
-  config: { ignore: true }
   isToken: true
   sequence:
     - optional:
@@ -1307,7 +1191,6 @@
     - reference: DecimalInteger
 
 - name: DecimalExponent
-  config: { ignore: true }
   isToken: true
   sequence:
     - choice:
@@ -1318,7 +1201,6 @@
     - reference: DecimalInteger
 
 - name: HexNumber
-  config: { ignore: true }
   isToken: true
   sequence:
     - terminal: "0"
@@ -1330,7 +1212,6 @@
             terminal: _
 
 - name: NumberUnit
-  config: { ignore: true }
   isToken: true
   choice:
     - terminal: wei
@@ -1344,7 +1225,6 @@
     - terminal: years
 
 - name: HexStringLiteral
-  config: { ignore: true }
   isToken: true
   sequence:
     - terminal: hex
@@ -1361,7 +1241,6 @@
             - terminal: "'"
 
 - name: PossiblySeparatedPairsOfHexDigits
-  config: { ignore: true }
   isToken: true
   oneOrMore:
     repeat:
@@ -1373,7 +1252,6 @@
         terminal: _
 
 - name: HexCharacter
-  config: { ignore: true }
   isToken: true
   choice:
     - range:
@@ -1387,14 +1265,12 @@
         to: F
 
 - name: AsciiStringLiteral
-  config: { ignore: true }
   isToken: true
   choice:
     - reference: SingleQuotedAsciiStringLiteral
     - reference: DoubleQuotedAsciiStringLiteral
 
 - name: SingleQuotedAsciiStringLiteral
-  config: { ignore: true }
   isToken: true
   sequence:
     - terminal: "'"
@@ -1413,7 +1289,6 @@
     - terminal: "'"
 
 - name: DoubleQuotedAsciiStringLiteral
-  config: { ignore: true }
   isToken: true
   sequence:
     - terminal: '"'
@@ -1432,14 +1307,12 @@
     - terminal: '"'
 
 - name: UnicodeStringLiteral
-  config: { ignore: true }
   isToken: true
   choice:
     - reference: SingleQuotedUnicodeStringLiteral
     - reference: DoubleQuotedUnicodeStringLiteral
 
 - name: SingleQuotedUnicodeStringLiteral
-  config: { ignore: true }
   isToken: true
   sequence:
     - terminal: "unicode'"
@@ -1455,7 +1328,6 @@
     - terminal: "'"
 
 - name: DoubleQuotedUnicodeStringLiteral
-  config: { ignore: true }
   isToken: true
   sequence:
     - terminal: 'unicode"'
@@ -1471,7 +1343,6 @@
     - terminal: '"'
 
 - name: EscapeSequence
-  config: { nomap: true }
   isToken: true
   sequence:
     - terminal: "\\"
@@ -1481,7 +1352,6 @@
         - reference: UnicodeEscape
 
 - name: AsciiEscape
-  config: { map: to_char }
   isToken: true
   choice:
     - terminal: n
@@ -1494,7 +1364,6 @@
     - terminal: "\r"
 
 - name: HexByteEscape
-  config: { map: to_char }
   isToken: true
   sequence:
     - terminal: x
@@ -1504,7 +1373,6 @@
         reference: HexCharacter
 
 - name: UnicodeEscape
-  config: { map: to_char }
   isToken: true
   sequence:
     - terminal: u
@@ -1514,7 +1382,6 @@
         reference: HexCharacter
 
 - name: YulBlock
-  config: { ignore: true }
   sequence:
     - terminal: "{"
     - zeroOrMore:
@@ -1522,7 +1389,6 @@
     - terminal: "}"
 
 - name: YulStatement
-  config: { ignore: true }
   choice:
     - reference: YulBlock
     - reference: YulVariableDeclaration
@@ -1537,7 +1403,6 @@
     - reference: YulContinueStatement
 
 - name: YulVariableDeclaration
-  config: { ignore: true }
   sequence:
     - terminal: let
     - reference: YulIdentifier
@@ -1557,7 +1422,6 @@
                     - reference: YulFunctionCall
 
 - name: YulFunctionDefinition
-  config: { ignore: true }
   sequence:
     - terminal: function
     - reference: YulIdentifier
@@ -1577,7 +1441,6 @@
     - reference: YulBlock
 
 - name: YulAssignment
-  config: { ignore: true }
   sequence:
     - reference: YulPath
     - choice:
@@ -1593,7 +1456,6 @@
             - reference: YulFunctionCall
 
 - name: YulFunctionCall
-  config: { ignore: true }
   sequence:
     - choice:
         - reference: YulIdentifier
@@ -1606,26 +1468,21 @@
     - terminal: )
 
 - name: YulIfStatement
-  config: { ignore: true }
   sequence:
     - terminal: if
     - reference: YulExpression
     - reference: YulBlock
 
 - name: YulLeaveStatement
-  config: { ignore: true }
   terminal: leave
 
 - name: YulBreakStatement
-  config: { ignore: true }
   terminal: break
 
 - name: YulContinueStatement
-  config: { ignore: true }
   terminal: continue
 
 - name: YulForStatement
-  config: { ignore: true }
   sequence:
     - terminal: for
     - reference: YulBlock
@@ -1634,7 +1491,6 @@
     - reference: YulBlock
 
 - name: YulSwitchStatement
-  config: { ignore: true }
   sequence:
     - terminal: switch
     - reference: YulExpression
@@ -1654,14 +1510,12 @@
             - reference: YulBlock
 
 - name: YulExpression
-  config: { ignore: true }
   choice:
     - reference: YulPath
     - reference: YulFunctionCall
     - reference: YulLiteral
 
 - name: YulPath
-  config: { ignore: true }
   sequence:
     - reference: YulIdentifier
     - zeroOrMore:
@@ -1672,7 +1526,6 @@
               - reference: YulEVMBuiltinFunctionName
 
 - name: YulLiteral
-  config: { ignore: true }
   choice:
     - reference: YulDecimalNumberLiteral
     - reference: YulHexLiteral
@@ -1681,7 +1534,6 @@
     - reference: HexStringLiteral
 
 - name: YulIdentifier
-  config: { ignore: true }
   isToken: true
   difference:
     minuend:
@@ -1690,7 +1542,6 @@
       reference: YulReservedWord
 
 - name: YulReservedWord
-  config: { ignore: true }
   isToken: true
   choice:
     - reference: YulKeyword
@@ -1698,7 +1549,6 @@
     - reference: BooleanLiteral
 
 - name: YulKeyword
-  config: { ignore: true }
   isToken: true
   choice:
     - terminal: break
@@ -1714,7 +1564,6 @@
     - terminal: hex
 
 - name: YulEVMBuiltinFunctionName
-  config: { ignore: true }
   isToken: true
   choice:
     - terminal: stop
@@ -1792,11 +1641,9 @@
     - terminal: basefee
 
 - name: YulDecimalNumberLiteral
-  config: { ignore: true }
   isToken: true
   choice:
     - terminal: "0"
-      config: { map: to_str }
     - sequence:
         - range:
             from: "1"
@@ -1805,10 +1652,8 @@
             range:
               from: "0"
               to: "9"
-      config: { chain: true, map: to_str }
 
 - name: YulHexLiteral
-  config: { ignore: true }
   isToken: true
   sequence:
     - terminal: "0x"

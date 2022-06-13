@@ -2,12 +2,7 @@
 
 - name: grammar
   config:
-    nomap: true
-    prelude: |
-      use super::builder;
-
-      use crate::schema::Production;
-      pub type GrammarParserResultType = Vec<Production>;
+    prelude: ""
   sequence:
     - reference: IGNORE
     - zeroOrMore:
@@ -46,7 +41,6 @@
     - reference: primary
 
 - name: primary
-  config: { nomap: true }
   choice:
     - reference: productionReference
     - reference: grouped
@@ -60,14 +54,12 @@
   reference: Identifier
 
 - name: grouped
-  config: { nomap: true }
   sequence:
     - terminal: (
     - reference: expression
     - terminal: )
 
 - name: repetitionPrefix
-  config: { nomap: true }
   sequence:
     - choice:
         - sequence:
@@ -77,15 +69,12 @@
                   - terminal: "…"
                   - optional:
                       reference: Number
-          config: { map: repetition_prefix_1 }
         - sequence:
             - terminal: "…"
             - reference: Number
-          config: { map: repetition_prefix_2 }
     - terminal: "*"
 
 - name: repetitionSeparator
-  config: { nomap: true }
   sequence:
     - terminal: "/"
     - reference: expression
@@ -133,12 +122,12 @@
 
 - name: StringChar
   isToken: true
-  config: { nomap: true }
   choice:
     - not:
         choice:
           - terminal: "'"
           - terminal: "\\"
+      config: { name: NotQuoteOrBackslash }
     - sequence:
         - terminal: "\\"
         - choice:
@@ -150,12 +139,12 @@
                     min: 1
                     max: 6
                     reference: HexDigit
-                  config: { map: hex_digits_to_char, unwrap: true }
                 - terminal: "}"
+          config: { name: QuoteOrBackslashOrHexEscape }
+      config: { name: Escape }
 
 - name: SingleCharString
   isToken: true
-  config: { nomap: true }
   sequence:
     - terminal: "'"
     - reference: StringChar
@@ -163,7 +152,6 @@
 
 - name: HexDigit
   isToken: true
-  config: { nomap: true }
   choice:
     - range:
         from: "0"
@@ -177,18 +165,14 @@
 
 - name: Identifier
   isToken: true
-  config: { nomap: true }
   choice:
     - sequence:
         - terminal: «
         - reference: RawIdentifier
         - terminal: »
-      config: { map: identifier_1 }
     - reference: RawIdentifier
-      config: { map: identifier_2 }
 
 - name: RawIdentifier
-  config: { chain: true }
   isToken: true
   sequence:
     - reference: IdentifierStart
@@ -197,7 +181,6 @@
 
 - name: IdentifierStart
   isToken: true
-  config: { nomap: true }
   choice:
     - terminal: _
     - range:
@@ -209,7 +192,6 @@
 
 - name: IdentifierFollow
   isToken: true
-  config: { nomap: true }
   choice:
     - reference: IdentifierStart
     - range:
@@ -218,7 +200,6 @@
 
 - name: IGNORE
   isToken: true
-  config: { ignore: true }
   zeroOrMore:
     choice:
       - reference: Whitespace
@@ -226,31 +207,30 @@
 
 - name: Comment
   isToken: true
-  config: { ignore: true }
   sequence:
     - terminal: /*
-    - zeroOrMore:
-        choice:
-          - not:
-              terminal: "*"
-            config: { ignore: true }
-          - sequence:
-              - oneOrMore:
-                  terminal: "*"
+    - sequence:
+        - zeroOrMore:
+            choice:
               - not:
-                  choice:
-                    - terminal: "*"
-                    - terminal: /
-            config: { ignore: true }
-    - oneOrMore:
-        terminal: "*"
-    - terminal: /
+                  terminal: "*"
+              - sequence:
+                  - oneOrMore:
+                      terminal: "*"
+                  - not:
+                      choice:
+                        - terminal: "*"
+                        - terminal: /
+        - zeroOrMore:
+            terminal: "*"
+      config: { name: Content }
+    - terminal: "*/"
 
 - name: Whitespace
   isToken: true
-  config: { ignore: true }
-  choice:
-    - terminal: "\t"
-    - terminal: "\n"
-    - terminal: "\r"
-    - terminal: " "
+  oneOrMore:
+    choice:
+      - terminal: "\t"
+      - terminal: "\n"
+      - terminal: "\r"
+      - terminal: " "

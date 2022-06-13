@@ -22,9 +22,8 @@ cargo run --manifest-path "$PROJECT_DIR/../syntax-schema/Cargo.toml" --bin "mani
   --ebnf-output "$PROJECT_DIR/syntax/solidity/derived.ebnf"
 
 cargo run --manifest-path "$PROJECT_DIR/../syntax-schema/Cargo.toml" --bin "manifest_to_chumsky" -- \
-  --no-default-map --box-non-tokens \
   --manifest-input "$PROJECT_DIR/syntax/solidity/manifest.yml" \
-  --chumsky-output "$PROJECT_DIR/src/parser.rs"
+  --chumsky-output "$PROJECT_DIR/src/"
 
 cargo run --manifest-path "$PROJECT_DIR/../syntax-schema/Cargo.toml" --bin "manifest_to_spec" -- \
   --manifest-input "$PROJECT_DIR/syntax/solidity/manifest.yml" \
