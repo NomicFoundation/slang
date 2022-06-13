@@ -90,7 +90,7 @@ impl CombinatorTreeNodeData {
             } => {
                 let minuend = minuend.to_parser_combinator_code(tree);
                 let subtrahend = subtrahend.to_parser_combinator_code(tree);
-                quote! ( #minuend.excluding(#subtrahend) )
+                quote! ( difference(#minuend, #subtrahend) )
             }
             CombinatorTreeNodeData::Lookahead { expr, lookahead } => {
                 let expr = expr.to_parser_combinator_code(tree);

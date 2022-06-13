@@ -218,8 +218,6 @@ impl Production {
                     use chumsky::Parser;
                     use chumsky::prelude::*;
                     use chumsky::primitive::Just;
-                    #[allow(unused_imports)]
-                    use syntax_schema::chumsky::combinators::*;
 
                     #[allow(dead_code)]
                     fn repetition_mapper<E, S>((e, es): (E, Vec<(S, E)>)) -> (Vec<E>, Vec<S>) {
@@ -230,6 +228,30 @@ impl Production {
                             expressions.push(e);
                         }
                         (expressions, separators)
+                    }
+
+                    #[allow(dead_code)]
+                    fn difference<M, MO, S, SO>(
+                        minuend: M,
+                        subtrahend: S,
+                    ) -> impl Parser<char, MO, Error = Simple<char>>
+                    where
+                        M: Clone + Parser<char, MO, Error = Simple<char>>,
+                        S: Parser<char, SO, Error = Simple<char>>,
+                    {
+                        // TODO This could be much more efficient if we were able
+                        // to conditionally rewind
+                        let minuend_end =
+                            minuend.clone().map_with_span(|_, span| span.end).rewind();
+                        let subtrahend_end = subtrahend.map_with_span(|_, span| span.end).rewind();
+                        minuend_end
+                            .then(subtrahend_end)
+                            .validate(|(m, s), span, emit| {
+                                if m == s {
+                                    emit(Simple::custom(span, "subtrahend matches minuend"))
+                                }
+                            })
+                            .ignore_then(minuend)
                     }
 
                     #[allow(dead_code)]
