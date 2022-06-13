@@ -30,7 +30,7 @@ impl TypeTree {
         &self,
         module_name: &Ident,
         grammar: &Grammar,
-    ) -> (TokenStream, TokenStream) {
+    ) -> (TokenStream, String) {
         let mut subtypes = (vec![], vec![]);
         let node_type =
             self.root
@@ -47,7 +47,11 @@ impl TypeTree {
                     #(#subtype_definitions)*
                 }
             ),
-            quote!( #(#subtype_implementations)* ),
+            subtype_implementations
+                .iter()
+                .map(|q| q.to_string())
+                .collect::<Vec<_>>()
+                .join("\n\n"),
         )
     }
 }
@@ -127,13 +131,6 @@ impl TypeTreeNodeData {
                         pub struct #name { #(#serde_annotations pub #tags: #types),* }
                     )
                 });
-                accum.1.push(quote!(
-                    impl #module_name::#name {
-                        pub fn new(#nested_tags: #nested_types) -> Self {
-                            Self { #(#tags),* }
-                        }
-                    }
-                ));
                 accum.1.push(if is_defaultable {
                     quote!(
                         impl DefaultTest for #module_name::#name {
@@ -145,6 +142,13 @@ impl TypeTreeNodeData {
                 } else {
                     quote!( impl DefaultTest for #module_name::#name {})
                 });
+                accum.1.push(quote!(
+                    impl #module_name::#name {
+                        pub fn new(#nested_tags: #nested_types) -> Self {
+                            Self { #(#tags),* }
+                        }
+                    }
+                ));
                 quote!( Box<#module_name::#name> )
             }
             Self::Choice(name, choices) => {

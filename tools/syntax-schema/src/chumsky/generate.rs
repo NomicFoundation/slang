@@ -345,11 +345,7 @@ impl Production {
                     }
                 )
                 .to_string(),
-                tree_implementations
-                    .into_iter()
-                    .map(|q| q.to_string())
-                    .collect::<Vec<_>>()
-                    .join("\n\n"),
+                tree_implementations.join("\n\n")
             ),
             parser_implementation: parser_implementation,
         }
