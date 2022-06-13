@@ -1,4 +1,4 @@
-#[doc = "«Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;"]
+/// «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
 pub mod comment {
     #[allow(unused_imports)]
     use super::*;
@@ -21,13 +21,15 @@ pub mod comment {
         pub _1: char,
     }
 }
-#[doc = "«Whitespace» = 1…*{ '\\u{9}' | '\\u{a}' | '\\u{d}' | '\\u{20}' } ;"]
+
+/// «Whitespace» = 1…*{ '\u{9}' | '\u{a}' | '\u{d}' | '\u{20}' } ;
 pub mod whitespace {
     #[allow(unused_imports)]
     use super::*;
     pub type N = Vec<char>;
 }
-#[doc = "grouped = '(' expression ')' ;"]
+
+/// grouped = '(' expression ')' ;
 pub mod grouped {
     #[allow(unused_imports)]
     use super::*;
@@ -38,7 +40,8 @@ pub mod grouped {
         pub close_paren_char: char,
     }
 }
-#[doc = "optional = '[' expression ']' ;"]
+
+/// optional = '[' expression ']' ;
 pub mod optional {
     #[allow(unused_imports)]
     use super::*;
@@ -49,7 +52,8 @@ pub mod optional {
         pub close_bracket_char: char,
     }
 }
-#[doc = "repetitionSeparator = '/' expression ;"]
+
+/// repetitionSeparator = '/' expression ;
 pub mod repetition_separator {
     #[allow(unused_imports)]
     use super::*;
@@ -59,7 +63,8 @@ pub mod repetition_separator {
         pub expression: expression::N,
     }
 }
-#[doc = "«IGNORE» = { «Whitespace» | «Comment» } ;"]
+
+/// «IGNORE» = { «Whitespace» | «Comment» } ;
 pub mod ignore {
     #[allow(unused_imports)]
     use super::*;
@@ -69,37 +74,43 @@ pub mod ignore {
         Comment(comment::N),
     }
 }
-#[doc = "«EOF» = '$' ;"]
+
+/// «EOF» = '$' ;
 pub mod eof {
     #[allow(unused_imports)]
     use super::*;
     pub type N = char;
 }
-#[doc = "«HexDigit» = '0'…'9' | 'a'…'f' | 'A'…'F' ;"]
+
+/// «HexDigit» = '0'…'9' | 'a'…'f' | 'A'…'F' ;
 pub mod hex_digit {
     #[allow(unused_imports)]
     use super::*;
     pub type N = char;
 }
-#[doc = "«IdentifierStart» = '_' | 'a'…'z' | 'A'…'Z' ;"]
+
+/// «IdentifierStart» = '_' | 'a'…'z' | 'A'…'Z' ;
 pub mod identifier_start {
     #[allow(unused_imports)]
     use super::*;
     pub type N = char;
 }
-#[doc = "«Number» = 1…*{ '0'…'9' } ;"]
+
+/// «Number» = 1…*{ '0'…'9' } ;
 pub mod number {
     #[allow(unused_imports)]
     use super::*;
     pub type N = Vec<char>;
 }
-#[doc = "«IdentifierFollow» = «IdentifierStart» | '0'…'9' ;"]
+
+/// «IdentifierFollow» = «IdentifierStart» | '0'…'9' ;
 pub mod identifier_follow {
     #[allow(unused_imports)]
     use super::*;
     pub type N = char;
 }
-#[doc = "«StringChar» = ¬( '\\'' | '\\\\' ) | '\\\\' ( '\\'' | '\\\\' | 'u{' 1…6*{ «HexDigit» } '}' ) ;"]
+
+/// «StringChar» = ¬( '\'' | '\\' ) | '\\' ( '\'' | '\\' | 'u{' 1…6*{ «HexDigit» } '}' ) ;
 pub mod string_char {
     #[allow(unused_imports)]
     use super::*;
@@ -122,7 +133,8 @@ pub mod string_char {
         pub close_brace_char: char,
     }
 }
-#[doc = "repetitionPrefix = ( «Number» [ '…' [ «Number» ] ] | '…' «Number» ) '*' ;"]
+
+/// repetitionPrefix = ( «Number» [ '…' [ «Number» ] ] | '…' «Number» ) '*' ;
 pub mod repetition_prefix {
     #[allow(unused_imports)]
     use super::*;
@@ -148,7 +160,8 @@ pub mod repetition_prefix {
         pub number: Option<number::N>,
     }
 }
-#[doc = "«RawIdentifier» = «IdentifierStart» { «IdentifierFollow» } ;"]
+
+/// «RawIdentifier» = «IdentifierStart» { «IdentifierFollow» } ;
 pub mod raw_identifier {
     #[allow(unused_imports)]
     use super::*;
@@ -158,7 +171,8 @@ pub mod raw_identifier {
         pub _1: Vec<char>,
     }
 }
-#[doc = "«SingleCharString» = '\\'' «StringChar» '\\'' ;"]
+
+/// «SingleCharString» = '\'' «StringChar» '\'' ;
 pub mod single_char_string {
     #[allow(unused_imports)]
     use super::*;
@@ -169,7 +183,8 @@ pub mod single_char_string {
         pub quote_char_1: char,
     }
 }
-#[doc = "«String» = '\\'' { «StringChar» } '\\'' ;"]
+
+/// «String» = '\'' { «StringChar» } '\'' ;
 pub mod string {
     #[allow(unused_imports)]
     use super::*;
@@ -180,7 +195,8 @@ pub mod string {
         pub quote_char_1: char,
     }
 }
-#[doc = "repeated = [ repetitionPrefix ] '{' expression [ repetitionSeparator ] '}' ;"]
+
+/// repeated = [ repetitionPrefix ] '{' expression [ repetitionSeparator ] '}' ;
 pub mod repeated {
     #[allow(unused_imports)]
     use super::*;
@@ -193,7 +209,8 @@ pub mod repeated {
         pub close_brace_char: char,
     }
 }
-#[doc = "«Identifier» = '«' «RawIdentifier» '»' | «RawIdentifier» ;"]
+
+/// «Identifier» = '«' «RawIdentifier» '»' | «RawIdentifier» ;
 pub mod identifier {
     #[allow(unused_imports)]
     use super::*;
@@ -208,7 +225,8 @@ pub mod identifier {
         pub close_double_angle_char: char,
     }
 }
-#[doc = "charRange = «SingleCharString» '…' «SingleCharString» ;"]
+
+/// charRange = «SingleCharString» '…' «SingleCharString» ;
 pub mod char_range {
     #[allow(unused_imports)]
     use super::*;
@@ -219,13 +237,15 @@ pub mod char_range {
         pub single_char_string_1: single_char_string::N,
     }
 }
-#[doc = "productionReference = «Identifier» ;"]
+
+/// productionReference = «Identifier» ;
 pub mod production_reference {
     #[allow(unused_imports)]
     use super::*;
     pub type N = identifier::N;
 }
-#[doc = "primary = productionReference | grouped | optional | repeated | charRange | «EOF» | «String» ;"]
+
+/// primary = productionReference | grouped | optional | repeated | charRange | «EOF» | «String» ;
 pub mod primary {
     #[allow(unused_imports)]
     use super::*;
@@ -240,7 +260,8 @@ pub mod primary {
         String(string::N),
     }
 }
-#[doc = "negation = [ '¬' ] primary ;"]
+
+/// negation = [ '¬' ] primary ;
 pub mod negation {
     #[allow(unused_imports)]
     use super::*;
@@ -250,7 +271,8 @@ pub mod negation {
         pub primary: primary::N,
     }
 }
-#[doc = "difference = negation [ '-' negation ] ;"]
+
+/// difference = negation [ '-' negation ] ;
 pub mod difference {
     #[allow(unused_imports)]
     use super::*;
@@ -264,13 +286,15 @@ pub mod difference {
         pub negation: negation::N,
     }
 }
-#[doc = "sequence = 1…*{ difference } ;"]
+
+/// sequence = 1…*{ difference } ;
 pub mod sequence {
     #[allow(unused_imports)]
     use super::*;
     pub type N = Vec<difference::N>;
 }
-#[doc = "expression = 1…*{ sequence / '|' } ;"]
+
+/// expression = 1…*{ sequence / '|' } ;
 pub mod expression {
     #[allow(unused_imports)]
     use super::*;
@@ -280,7 +304,8 @@ pub mod expression {
         pub bar_chars: Vec<char>,
     }
 }
-#[doc = "production = «Identifier» '=' expression ';' ;"]
+
+/// production = «Identifier» '=' expression ';' ;
 pub mod production {
     #[allow(unused_imports)]
     use super::*;
@@ -292,7 +317,8 @@ pub mod production {
         pub semicolon_char: char,
     }
 }
-#[doc = "grammar = «IGNORE» { production } $ ;"]
+
+/// grammar = «IGNORE» { production } $ ;
 pub mod grammar {
     #[allow(unused_imports)]
     use super::*;
