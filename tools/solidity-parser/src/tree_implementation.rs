@@ -1,4 +1,35 @@
 use super::tree_interface::*;
+impl<T: DefaultTest> DefaultTest for Box<T> {
+    fn is_default(&self) -> bool {
+        self.as_ref().is_default()
+    }
+}
+impl<T> DefaultTest for Vec<T> {
+    fn is_default(&self) -> bool {
+        self.is_empty()
+    }
+}
+impl<T> DefaultTest for Option<T> {
+    fn is_default(&self) -> bool {
+        self.is_none()
+    }
+}
+impl DefaultTest for () {
+    fn is_default(&self) -> bool {
+        true
+    }
+}
+impl DefaultTest for usize {
+    fn is_default(&self) -> bool {
+        *self == 0
+    }
+}
+impl<const N: usize> DefaultTest for FixedTerminal<N> {
+    fn is_default(&self) -> bool {
+        true
+    }
+}
+
 impl DefaultTest for break_statement::_S0 {
     fn is_default(&self) -> bool {
         self.r#break.is_default() && self.ignore.is_default() && self.semicolon_char.is_default()
@@ -18,6 +49,7 @@ impl break_statement::_S0 {
         }
     }
 }
+
 impl DefaultTest for comment::_S0 {
     fn is_default(&self) -> bool {
         self.slash_star.is_default()
@@ -52,6 +84,7 @@ impl comment::_S3 {
         Self { star_chars, _1 }
     }
 }
+
 impl DefaultTest for continue_statement::_S0 {
     fn is_default(&self) -> bool {
         self.r#continue.is_default() && self.ignore.is_default() && self.semicolon_char.is_default()
@@ -71,6 +104,7 @@ impl continue_statement::_S0 {
         }
     }
 }
+
 impl DefaultTest for line_comment::_S0 {
     fn is_default(&self) -> bool {
         self.slash_slash.is_default() && self._1.is_default()
@@ -81,6 +115,7 @@ impl line_comment::_S0 {
         Self { slash_slash, _1 }
     }
 }
+
 impl DefaultTest for positional_argument_list::_S0 {
     fn is_default(&self) -> bool {
         self._s1s.is_default() && self._s2s.is_default()
@@ -112,6 +147,7 @@ impl positional_argument_list::_S1 {
         Self { expression, ignore }
     }
 }
+
 impl DefaultTest for unchecked_block::_S0 {
     fn is_default(&self) -> bool {
         self.unchecked.is_default() && self.ignore.is_default() && self.block.is_default()
@@ -128,7 +164,9 @@ impl unchecked_block::_S0 {
         }
     }
 }
+
 impl DefaultTest for ignore::_C1 {}
+
 impl DefaultTest for decimal_integer::_S0 {
     fn is_default(&self) -> bool {
         self.expressions.is_default() && self.underscore_chars.is_default()
@@ -147,6 +185,7 @@ impl decimal_integer::_S0 {
         }
     }
 }
+
 impl DefaultTest for fixed_bytes_type::_S0 {
     fn is_default(&self) -> bool {
         self.bytes.is_default() && self._1.is_default()
@@ -157,6 +196,7 @@ impl fixed_bytes_type::_S0 {
         Self { bytes, _1 }
     }
 }
+
 impl DefaultTest for fixed_type::_S0 {
     fn is_default(&self) -> bool {
         self.fixed.is_default() && self._s2.is_default()
@@ -189,6 +229,7 @@ impl fixed_type::_S2 {
         Self { _0, _1, _2, _3, _4 }
     }
 }
+
 impl DefaultTest for pragma_directive::_S0 {
     fn is_default(&self) -> bool {
         self.pragma.is_default()
@@ -212,6 +253,7 @@ impl pragma_directive::_S0 {
         }
     }
 }
+
 impl DefaultTest for signed_integer_type::_S0 {
     fn is_default(&self) -> bool {
         self.int.is_default() && self._1.is_default()
@@ -222,6 +264,7 @@ impl signed_integer_type::_S0 {
         Self { int, _1 }
     }
 }
+
 impl DefaultTest for yul_decimal_number_literal::_C0 {}
 impl DefaultTest for yul_decimal_number_literal::_S1 {
     fn is_default(&self) -> bool {
@@ -233,6 +276,7 @@ impl yul_decimal_number_literal::_S1 {
         Self { _0, _1 }
     }
 }
+
 impl DefaultTest for yul_hex_literal::_S0 {
     fn is_default(&self) -> bool {
         self.zero_x.is_default() && self._1.is_default() && self._2.is_default()
@@ -245,6 +289,7 @@ impl yul_hex_literal::_S0 {
         Self { zero_x, _1, _2 }
     }
 }
+
 impl DefaultTest for decimal_exponent::_S0 {
     fn is_default(&self) -> bool {
         self._0.is_default() && self.minus_char.is_default() && self.decimal_integer.is_default()
@@ -264,6 +309,7 @@ impl decimal_exponent::_S0 {
         }
     }
 }
+
 impl DefaultTest for decimal_float::_S0 {
     fn is_default(&self) -> bool {
         self.decimal_integer_0.is_default()
@@ -285,6 +331,7 @@ impl decimal_float::_S0 {
         }
     }
 }
+
 impl DefaultTest for hex_byte_escape::_S0 {
     fn is_default(&self) -> bool {
         self._0.is_default() && self._1.is_default()
@@ -295,6 +342,7 @@ impl hex_byte_escape::_S0 {
         Self { _0, _1 }
     }
 }
+
 impl DefaultTest for hex_number::_S0 {
     fn is_default(&self) -> bool {
         self.zero_char.is_default() && self._1.is_default() && self._2.is_default()
@@ -328,6 +376,7 @@ impl hex_number::_S1 {
         }
     }
 }
+
 impl DefaultTest for possibly_separated_pairs_of_hex_digits::_S0 {
     fn is_default(&self) -> bool {
         self.expressions.is_default() && self.underscore_chars.is_default()
@@ -343,6 +392,7 @@ impl possibly_separated_pairs_of_hex_digits::_S0 {
         }
     }
 }
+
 impl DefaultTest for ufixed_type::_S0 {
     fn is_default(&self) -> bool {
         self._0.is_default() && self.fixed_type.is_default()
@@ -353,6 +403,7 @@ impl ufixed_type::_S0 {
         Self { _0, fixed_type }
     }
 }
+
 impl DefaultTest for unicode_escape::_S0 {
     fn is_default(&self) -> bool {
         self._0.is_default() && self._1.is_default()
@@ -363,6 +414,7 @@ impl unicode_escape::_S0 {
         Self { _0, _1 }
     }
 }
+
 impl DefaultTest for unsigned_integer_type::_S0 {
     fn is_default(&self) -> bool {
         self._0.is_default() && self.signed_integer_type.is_default()
@@ -376,6 +428,7 @@ impl unsigned_integer_type::_S0 {
         }
     }
 }
+
 impl DefaultTest for decimal_number::_S0 {}
 impl decimal_number::_S0 {
     pub fn new(
@@ -388,7 +441,9 @@ impl decimal_number::_S0 {
     }
 }
 impl DefaultTest for decimal_number::_C1 {}
+
 impl DefaultTest for elementary_type::_C0 {}
+
 impl DefaultTest for escape_sequence::_S0 {}
 impl escape_sequence::_S0 {
     pub fn new((backslash_char, _c1): (FixedTerminal<1usize>, Box<escape_sequence::_C1>)) -> Self {
@@ -399,6 +454,7 @@ impl escape_sequence::_S0 {
     }
 }
 impl DefaultTest for escape_sequence::_C1 {}
+
 impl DefaultTest for hex_string_literal::_S0 {}
 impl hex_string_literal::_S0 {
     pub fn new((hex, _c1): (FixedTerminal<3usize>, Box<hex_string_literal::_C1>)) -> Self {
@@ -454,7 +510,9 @@ impl hex_string_literal::_S2 {
         }
     }
 }
+
 impl DefaultTest for keyword::_C0 {}
+
 impl DefaultTest for raw_identifier::_S0 {
     fn is_default(&self) -> bool {
         self._0.is_default() && self._1.is_default()
@@ -465,6 +523,7 @@ impl raw_identifier::_S0 {
         Self { _0, _1 }
     }
 }
+
 impl DefaultTest for double_quoted_ascii_string_literal::_S0 {
     fn is_default(&self) -> bool {
         self.double_quote_char_0.is_default()
@@ -490,6 +549,7 @@ impl double_quoted_ascii_string_literal::_S0 {
     }
 }
 impl DefaultTest for double_quoted_ascii_string_literal::Run {}
+
 impl DefaultTest for double_quoted_unicode_string_literal::_S0 {
     fn is_default(&self) -> bool {
         self.unicode_double_quote.is_default()
@@ -515,6 +575,7 @@ impl double_quoted_unicode_string_literal::_S0 {
     }
 }
 impl DefaultTest for double_quoted_unicode_string_literal::Run {}
+
 impl DefaultTest for elementary_type_with_payable::_C0 {}
 impl DefaultTest for elementary_type_with_payable::_S1 {
     fn is_default(&self) -> bool {
@@ -535,7 +596,9 @@ impl elementary_type_with_payable::_S1 {
         }
     }
 }
+
 impl DefaultTest for elementary_type_without_payable::_C0 {}
+
 impl DefaultTest for numeric_literal::_S0 {}
 impl numeric_literal::_S0 {
     pub fn new(
@@ -545,7 +608,9 @@ impl numeric_literal::_S0 {
     }
 }
 impl DefaultTest for numeric_literal::_C1 {}
+
 impl DefaultTest for reserved_word::_C0 {}
+
 impl DefaultTest for single_quoted_ascii_string_literal::_S0 {
     fn is_default(&self) -> bool {
         self.quote_char_0.is_default() && self.runs.is_default() && self.quote_char_1.is_default()
@@ -569,6 +634,7 @@ impl single_quoted_ascii_string_literal::_S0 {
     }
 }
 impl DefaultTest for single_quoted_ascii_string_literal::Run {}
+
 impl DefaultTest for single_quoted_unicode_string_literal::_S0 {
     fn is_default(&self) -> bool {
         self.unicode_quote.is_default() && self.runs.is_default() && self.quote_char.is_default()
@@ -592,7 +658,9 @@ impl single_quoted_unicode_string_literal::_S0 {
     }
 }
 impl DefaultTest for single_quoted_unicode_string_literal::Run {}
+
 impl DefaultTest for ascii_string_literal::_C0 {}
+
 impl DefaultTest for assembly_flags::_S0 {
     fn is_default(&self) -> bool {
         self.open_paren_char.is_default()
@@ -661,7 +729,9 @@ impl assembly_flags::_S2 {
         }
     }
 }
+
 impl DefaultTest for unicode_string_literal::_C0 {}
+
 impl DefaultTest for yul_function_call::_S0 {}
 impl yul_function_call::_S0 {
     pub fn new(
@@ -728,6 +798,7 @@ impl yul_function_call::_S3 {
     }
 }
 impl DefaultTest for yul_function_call::_C1 {}
+
 impl DefaultTest for yul_function_definition::_S0 {
     fn is_default(&self) -> bool {
         self.function.is_default()
@@ -921,6 +992,7 @@ impl yul_function_definition::_S2 {
         }
     }
 }
+
 impl DefaultTest for yul_path::_S0 {
     fn is_default(&self) -> bool {
         self.yul_identifier.is_default() && self.ignore.is_default() && self._s2s.is_default()
@@ -954,6 +1026,7 @@ impl yul_path::_S2 {
     }
 }
 impl DefaultTest for yul_path::_C3 {}
+
 impl DefaultTest for enum_definition::_S0 {
     fn is_default(&self) -> bool {
         self.r#enum.is_default()
@@ -1043,6 +1116,7 @@ impl enum_definition::_S2 {
         Self { identifier, ignore }
     }
 }
+
 impl DefaultTest for identifier_path::_S0 {
     fn is_default(&self) -> bool {
         self._s1s.is_default() && self._s2s.is_default()
@@ -1081,7 +1155,9 @@ impl identifier_path::_S1 {
         Self { identifier, ignore }
     }
 }
+
 impl DefaultTest for literal::_C0 {}
+
 impl DefaultTest for named_argument::_S0 {}
 impl named_argument::_S0 {
     pub fn new(
@@ -1102,6 +1178,7 @@ impl named_argument::_S0 {
         }
     }
 }
+
 impl DefaultTest for parameter_declaration::_S0 {}
 impl parameter_declaration::_S0 {
     pub fn new(
@@ -1119,6 +1196,7 @@ impl parameter_declaration::_S0 {
         }
     }
 }
+
 impl DefaultTest for selected_import::_S0 {
     fn is_default(&self) -> bool {
         self.identifier.is_default() && self.ignore.is_default() && self._s2.is_default()
@@ -1154,6 +1232,7 @@ impl selected_import::_S2 {
         }
     }
 }
+
 impl DefaultTest for user_defined_value_type_definition::_S0 {}
 impl user_defined_value_type_definition::_S0 {
     pub fn new(
@@ -1199,7 +1278,9 @@ impl user_defined_value_type_definition::_S0 {
         }
     }
 }
+
 impl DefaultTest for yul_literal::_C0 {}
+
 impl DefaultTest for mapping_type::_S0 {}
 impl mapping_type::_S0 {
     pub fn new(
@@ -1260,6 +1341,7 @@ impl mapping_type::_S0 {
     }
 }
 impl DefaultTest for mapping_type::_C1 {}
+
 impl DefaultTest for named_argument_list::_S0 {
     fn is_default(&self) -> bool {
         self.open_brace_char.is_default()
@@ -1325,6 +1407,7 @@ impl named_argument_list::_S2 {
         }
     }
 }
+
 impl DefaultTest for non_empty_parameter_list::_S0 {
     fn is_default(&self) -> bool {
         self.open_paren_char.is_default()
@@ -1390,6 +1473,7 @@ impl non_empty_parameter_list::_S2 {
         }
     }
 }
+
 impl DefaultTest for override_specifier::_S0 {
     fn is_default(&self) -> bool {
         self.r#override.is_default() && self.ignore.is_default() && self._s2.is_default()
@@ -1437,6 +1521,7 @@ impl override_specifier::_S2 {
         }
     }
 }
+
 impl DefaultTest for parameter_list::_S0 {
     fn is_default(&self) -> bool {
         self.open_paren_char.is_default()
@@ -1499,6 +1584,7 @@ impl parameter_list::_S2 {
         }
     }
 }
+
 impl DefaultTest for selecting_import_directive::_S0 {}
 impl selecting_import_directive::_S0 {
     pub fn new(
@@ -1585,6 +1671,7 @@ impl selecting_import_directive::_S2 {
         }
     }
 }
+
 impl DefaultTest for simple_import_directive::_S0 {}
 impl simple_import_directive::_S0 {
     pub fn new(
@@ -1623,6 +1710,7 @@ impl simple_import_directive::_S2 {
         }
     }
 }
+
 impl DefaultTest for star_import_directive::_S0 {}
 impl star_import_directive::_S0 {
     pub fn new(
@@ -1662,7 +1750,9 @@ impl star_import_directive::_S0 {
         }
     }
 }
+
 impl DefaultTest for yul_expression::_C0 {}
+
 impl DefaultTest for argument_list::_S0 {
     fn is_default(&self) -> bool {
         self.open_paren_char.is_default()
@@ -1695,6 +1785,7 @@ impl argument_list::_S0 {
     }
 }
 impl DefaultTest for argument_list::_C2 {}
+
 impl DefaultTest for catch_clause::_S0 {
     fn is_default(&self) -> bool {
         self.catch.is_default()
@@ -1747,6 +1838,7 @@ impl catch_clause::_S2 {
         }
     }
 }
+
 impl DefaultTest for function_type::_S0 {
     fn is_default(&self) -> bool {
         self.function.is_default()
@@ -1816,6 +1908,7 @@ impl function_type::_S2 {
         Self { _0, ignore }
     }
 }
+
 impl DefaultTest for import_directive::_S0 {}
 impl import_directive::_S0 {
     pub fn new(
@@ -1840,8 +1933,11 @@ impl import_directive::_S0 {
     }
 }
 impl DefaultTest for import_directive::_C1 {}
+
 impl DefaultTest for method_attribute::_C0 {}
+
 impl DefaultTest for state_variable_attribute::_C0 {}
+
 impl DefaultTest for yul_assignment::_S0 {}
 impl yul_assignment::_S0 {
     pub fn new(
@@ -1916,6 +2012,7 @@ impl yul_assignment::_S2 {
         }
     }
 }
+
 impl DefaultTest for yul_for_statement::_S0 {}
 impl yul_for_statement::_S0 {
     pub fn new(
@@ -1961,6 +2058,7 @@ impl yul_for_statement::_S0 {
         }
     }
 }
+
 impl DefaultTest for yul_if_statement::_S0 {}
 impl yul_if_statement::_S0 {
     pub fn new(
@@ -1981,6 +2079,7 @@ impl yul_if_statement::_S0 {
         }
     }
 }
+
 impl DefaultTest for yul_switch_statement::_S0 {}
 impl yul_switch_statement::_S0 {
     pub fn new(
@@ -2073,6 +2172,7 @@ impl yul_switch_statement::_S4 {
         }
     }
 }
+
 impl DefaultTest for yul_variable_declaration::_S0 {
     fn is_default(&self) -> bool {
         self.r#let.is_default()
@@ -2166,6 +2266,7 @@ impl yul_variable_declaration::_S3 {
         }
     }
 }
+
 impl DefaultTest for inheritance_specifier::_S0 {
     fn is_default(&self) -> bool {
         self.identifier_path.is_default()
@@ -2187,6 +2288,7 @@ impl inheritance_specifier::_S0 {
         }
     }
 }
+
 impl DefaultTest for modifier_invocation::_S0 {
     fn is_default(&self) -> bool {
         self.identifier_path.is_default()
@@ -2208,6 +2310,7 @@ impl modifier_invocation::_S0 {
         }
     }
 }
+
 impl DefaultTest for type_name::_S0 {}
 impl type_name::_S0 {
     pub fn new(
@@ -2250,8 +2353,11 @@ impl type_name::_S3 {
     }
 }
 impl DefaultTest for type_name::_C1 {}
+
 impl DefaultTest for yul_statement::_C0 {}
+
 impl DefaultTest for constructor_attribute::_C0 {}
+
 impl DefaultTest for error_parameter::_S0 {}
 impl error_parameter::_S0 {
     pub fn new(
@@ -2264,6 +2370,7 @@ impl error_parameter::_S0 {
         }
     }
 }
+
 impl DefaultTest for event_parameter::_S0 {}
 impl event_parameter::_S0 {
     pub fn new(
@@ -2284,8 +2391,11 @@ impl event_parameter::_S0 {
         }
     }
 }
+
 impl DefaultTest for fallback_function_attribute::_C0 {}
+
 impl DefaultTest for function_attribute::_C0 {}
+
 impl DefaultTest for inheritance_specifier_list::_S0 {
     fn is_default(&self) -> bool {
         self.is.is_default() && self.ignore.is_default() && self._s2s.is_default()
@@ -2339,6 +2449,7 @@ impl inheritance_specifier_list::_S2 {
         }
     }
 }
+
 impl DefaultTest for primary_expression::_C0 {}
 impl DefaultTest for primary_expression::_S9 {
     fn is_default(&self) -> bool {
@@ -2527,7 +2638,9 @@ impl primary_expression::_S1 {
         }
     }
 }
+
 impl DefaultTest for receive_function_attribute::_C0 {}
+
 impl DefaultTest for struct_definition::_S0 {
     fn is_default(&self) -> bool {
         self.r#struct.is_default()
@@ -2606,6 +2719,7 @@ impl struct_definition::_S2 {
         }
     }
 }
+
 impl DefaultTest for using_directive::_S0 {}
 impl using_directive::_S0 {
     pub fn new(
@@ -2733,6 +2847,7 @@ impl using_directive::_S4 {
         }
     }
 }
+
 impl DefaultTest for variable_declaration::_S0 {}
 impl variable_declaration::_S0 {
     pub fn new(
@@ -2750,6 +2865,7 @@ impl variable_declaration::_S0 {
         }
     }
 }
+
 impl DefaultTest for yul_block::_S0 {
     fn is_default(&self) -> bool {
         self.open_brace_char.is_default()
@@ -2787,6 +2903,7 @@ impl yul_block::_S2 {
         }
     }
 }
+
 impl DefaultTest for assembly_statement::_S0 {
     fn is_default(&self) -> bool {
         self.assembly.is_default()
@@ -2837,7 +2954,9 @@ impl assembly_statement::_S0 {
         }
     }
 }
+
 impl DefaultTest for directive::_C0 {}
+
 impl DefaultTest for error_definition::_S0 {
     fn is_default(&self) -> bool {
         self.error.is_default()
@@ -2948,6 +3067,7 @@ impl error_definition::_S2 {
         }
     }
 }
+
 impl DefaultTest for event_definition::_S0 {
     fn is_default(&self) -> bool {
         self.event.is_default()
@@ -3077,6 +3197,7 @@ impl event_definition::_S2 {
         }
     }
 }
+
 impl DefaultTest for index_access_expression::_S0 {}
 impl index_access_expression::_S0 {
     pub fn new(
@@ -3160,6 +3281,7 @@ impl index_access_expression::_S5 {
         }
     }
 }
+
 impl DefaultTest for variable_declaration_tuple::_S0 {}
 impl variable_declaration_tuple::_S0 {
     pub fn new(
@@ -3247,6 +3369,7 @@ impl variable_declaration_tuple::_S2 {
         Self { comma_char, ignore }
     }
 }
+
 impl DefaultTest for member_access_expression::_S0 {}
 impl member_access_expression::_S0 {
     pub fn new(
@@ -3282,6 +3405,7 @@ impl member_access_expression::_S2 {
     }
 }
 impl DefaultTest for member_access_expression::_C3 {}
+
 impl DefaultTest for function_call_options_expression::_S0 {}
 impl function_call_options_expression::_S0 {
     pub fn new(
@@ -3367,6 +3491,7 @@ impl function_call_options_expression::_S4 {
         }
     }
 }
+
 impl DefaultTest for function_call_expression::_S0 {}
 impl function_call_expression::_S0 {
     pub fn new(
@@ -3395,6 +3520,7 @@ impl function_call_expression::_S2 {
         }
     }
 }
+
 impl DefaultTest for unary_prefix_expression::_S0 {}
 impl unary_prefix_expression::_S0 {
     pub fn new(
@@ -3410,6 +3536,7 @@ impl unary_prefix_expression::_S0 {
         }
     }
 }
+
 impl DefaultTest for unary_suffix_expression::_S0 {}
 impl unary_suffix_expression::_S0 {
     pub fn new(
@@ -3425,6 +3552,7 @@ impl unary_suffix_expression::_S0 {
         }
     }
 }
+
 impl DefaultTest for exp_expression::_S0 {}
 impl exp_expression::_S0 {
     pub fn new(
@@ -3456,6 +3584,7 @@ impl exp_expression::_S2 {
         }
     }
 }
+
 impl DefaultTest for mul_div_mod_expression::_S0 {}
 impl mul_div_mod_expression::_S0 {
     pub fn new(
@@ -3487,6 +3616,7 @@ impl mul_div_mod_expression::_S2 {
         }
     }
 }
+
 impl DefaultTest for add_sub_expression::_S0 {}
 impl add_sub_expression::_S0 {
     pub fn new(
@@ -3521,6 +3651,7 @@ impl add_sub_expression::_S2 {
         }
     }
 }
+
 impl DefaultTest for shift_expression::_S0 {}
 impl shift_expression::_S0 {
     pub fn new(
@@ -3552,6 +3683,7 @@ impl shift_expression::_S2 {
         }
     }
 }
+
 impl DefaultTest for bit_and_expression::_S0 {}
 impl bit_and_expression::_S0 {
     pub fn new(
@@ -3583,6 +3715,7 @@ impl bit_and_expression::_S2 {
         }
     }
 }
+
 impl DefaultTest for bit_x_or_expression::_S0 {}
 impl bit_x_or_expression::_S0 {
     pub fn new(
@@ -3614,6 +3747,7 @@ impl bit_x_or_expression::_S2 {
         }
     }
 }
+
 impl DefaultTest for bit_or_expression::_S0 {}
 impl bit_or_expression::_S0 {
     pub fn new(
@@ -3645,6 +3779,7 @@ impl bit_or_expression::_S2 {
         }
     }
 }
+
 impl DefaultTest for order_comparison_expression::_S0 {}
 impl order_comparison_expression::_S0 {
     pub fn new(
@@ -3676,6 +3811,7 @@ impl order_comparison_expression::_S2 {
         }
     }
 }
+
 impl DefaultTest for equality_comparison_expression::_S0 {}
 impl equality_comparison_expression::_S0 {
     pub fn new(
@@ -3710,6 +3846,7 @@ impl equality_comparison_expression::_S2 {
         }
     }
 }
+
 impl DefaultTest for and_expression::_S0 {}
 impl and_expression::_S0 {
     pub fn new(
@@ -3744,6 +3881,7 @@ impl and_expression::_S2 {
         }
     }
 }
+
 impl DefaultTest for or_expression::_S0 {}
 impl or_expression::_S0 {
     pub fn new(
@@ -3775,6 +3913,7 @@ impl or_expression::_S2 {
         }
     }
 }
+
 impl DefaultTest for conditional_expression::_S0 {}
 impl conditional_expression::_S0 {
     pub fn new(
@@ -3821,6 +3960,7 @@ impl conditional_expression::_S2 {
         }
     }
 }
+
 impl DefaultTest for assignment_expression::_S0 {}
 impl assignment_expression::_S0 {
     pub fn new(
@@ -3849,6 +3989,7 @@ impl assignment_expression::_S2 {
         }
     }
 }
+
 impl DefaultTest for constant_definition::_S0 {}
 impl constant_definition::_S0 {
     pub fn new(
@@ -3908,6 +4049,7 @@ impl constant_definition::_S0 {
         }
     }
 }
+
 impl DefaultTest for do_while_statement::_S0 {}
 impl do_while_statement::_S0 {
     pub fn new(
@@ -3984,6 +4126,7 @@ impl do_while_statement::_S0 {
         }
     }
 }
+
 impl DefaultTest for emit_statement::_S0 {}
 impl emit_statement::_S0 {
     pub fn new(
@@ -4012,6 +4155,7 @@ impl emit_statement::_S0 {
         }
     }
 }
+
 impl DefaultTest for expression_statement::_S0 {}
 impl expression_statement::_S0 {
     pub fn new(
@@ -4024,6 +4168,7 @@ impl expression_statement::_S0 {
         }
     }
 }
+
 impl DefaultTest for if_statement::_S0 {}
 impl if_statement::_S0 {
     pub fn new(
@@ -4098,6 +4243,7 @@ impl if_statement::_S2 {
         }
     }
 }
+
 impl DefaultTest for return_statement::_S0 {
     fn is_default(&self) -> bool {
         self.r#return.is_default()
@@ -4126,6 +4272,7 @@ impl return_statement::_S0 {
         }
     }
 }
+
 impl DefaultTest for revert_statement::_S0 {}
 impl revert_statement::_S0 {
     pub fn new(
@@ -4142,6 +4289,7 @@ impl revert_statement::_S0 {
         }
     }
 }
+
 impl DefaultTest for state_variable_declaration::_S0 {}
 impl state_variable_declaration::_S0 {
     pub fn new(
@@ -4207,6 +4355,7 @@ impl state_variable_declaration::_S2 {
         }
     }
 }
+
 impl DefaultTest for try_statement::_S0 {}
 impl try_statement::_S0 {
     pub fn new(
@@ -4297,6 +4446,7 @@ impl try_statement::_S2 {
         }
     }
 }
+
 impl DefaultTest for variable_declaration_statement::_S0 {}
 impl variable_declaration_statement::_S0 {
     pub fn new(
@@ -4363,6 +4513,7 @@ impl variable_declaration_statement::_S4 {
         }
     }
 }
+
 impl DefaultTest for while_statement::_S0 {}
 impl while_statement::_S0 {
     pub fn new(
@@ -4408,7 +4559,9 @@ impl while_statement::_S0 {
         }
     }
 }
+
 impl DefaultTest for simple_statement::_C0 {}
+
 impl DefaultTest for for_statement::_S0 {}
 impl for_statement::_S0 {
     pub fn new(
@@ -4490,7 +4643,9 @@ impl for_statement::_S0 {
 }
 impl DefaultTest for for_statement::_C2 {}
 impl DefaultTest for for_statement::_C1 {}
+
 impl DefaultTest for statement::_C0 {}
+
 impl DefaultTest for block::_S0 {
     fn is_default(&self) -> bool {
         self.open_brace_char.is_default()
@@ -4526,6 +4681,7 @@ impl block::_S3 {
     }
 }
 impl DefaultTest for block::_C2 {}
+
 impl DefaultTest for constructor_definition::_S0 {
     fn is_default(&self) -> bool {
         self.constructor.is_default()
@@ -4573,6 +4729,7 @@ impl constructor_definition::_S2 {
         }
     }
 }
+
 impl DefaultTest for fallback_function_definition::_S0 {}
 impl fallback_function_definition::_S0 {
     pub fn new(
@@ -4648,6 +4805,7 @@ impl fallback_function_definition::_S2 {
         }
     }
 }
+
 impl DefaultTest for function_definition::_S0 {}
 impl function_definition::_S0 {
     pub fn new(
@@ -4742,6 +4900,7 @@ impl function_definition::_S3 {
     }
 }
 impl DefaultTest for function_definition::_C1 {}
+
 impl DefaultTest for modifier_definition::_S0 {}
 impl modifier_definition::_S0 {
     pub fn new(
@@ -4797,6 +4956,7 @@ impl modifier_definition::_S3 {
         }
     }
 }
+
 impl DefaultTest for receive_function_definition::_S0 {}
 impl receive_function_definition::_S0 {
     pub fn new(
@@ -4857,7 +5017,9 @@ impl receive_function_definition::_S2 {
         }
     }
 }
+
 impl DefaultTest for contract_body_element::_C0 {}
+
 impl DefaultTest for contract_definition::_S0 {
     fn is_default(&self) -> bool {
         self.r#abstract.is_default()
@@ -4965,6 +5127,7 @@ impl contract_definition::_S4 {
         }
     }
 }
+
 impl DefaultTest for interface_definition::_S0 {
     fn is_default(&self) -> bool {
         self.interface.is_default()
@@ -5053,6 +5216,7 @@ impl interface_definition::_S3 {
         }
     }
 }
+
 impl DefaultTest for library_definition::_S0 {
     fn is_default(&self) -> bool {
         self.library.is_default()
@@ -5119,7 +5283,9 @@ impl library_definition::_S2 {
         }
     }
 }
+
 impl DefaultTest for definition::_C0 {}
+
 impl DefaultTest for source_unit::_S0 {
     fn is_default(&self) -> bool {
         self.ignore_0.is_default()

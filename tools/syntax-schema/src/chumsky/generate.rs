@@ -293,6 +293,22 @@ impl Production {
                         }
                     }
 
+                    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
+                    pub struct FixedTerminal<const N: usize>();
+                )
+                .to_string(),
+                tree_interfaces.join("\n\n")
+            ),
+            parser_interface: quote!(
+                use super::tree_interface::*;
+                #parser_interface
+            )
+            .to_string(),
+            tree_implementation: format!(
+                "{}\n\n{}",
+                quote!(
+                    use super::tree_interface::*;
+
                     impl<T: DefaultTest> DefaultTest for Box<T> {
                         fn is_default(&self) -> bool {
                             self.as_ref().is_default()
@@ -322,32 +338,19 @@ impl Production {
                         }
                     }
 
-                    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
-                    pub struct FixedTerminal<const N: usize>();
-                    // impl<const N: usize> FixedTerminal<N> {
-                    //     pub fn number_of_chars(&self) -> usize { N }
-                    // }
-
                     impl<const N: usize> DefaultTest for FixedTerminal<N> {
                         fn is_default(&self) -> bool {
                             true
                         }
                     }
-
                 )
                 .to_string(),
-                tree_interfaces.join("\n\n")
+                tree_implementations
+                    .into_iter()
+                    .map(|q| q.to_string())
+                    .collect::<Vec<_>>()
+                    .join("\n\n"),
             ),
-            parser_interface: quote!(
-                use super::tree_interface::*;
-                #parser_interface
-            )
-            .to_string(),
-            tree_implementation: quote!(
-                use super::tree_interface::*;
-                #(#tree_implementations)*
-            )
-            .to_string(),
             parser_implementation: parser_implementation,
         }
     }
