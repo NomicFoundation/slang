@@ -695,6 +695,8 @@ dependencies = [
  "ariadne",
  "chumsky",
  "clap",
+ "serde",
+ "serde_json",
  "syntax_schema",
 ]
 

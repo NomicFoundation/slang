@@ -73,9 +73,10 @@ impl TypeTreeNodeData {
                     .reduce(|accum, tipe| quote!((#accum, #tipe)))
                     .unwrap();
                 let name = name.to_type_name_ident();
-                accum
-                    .0
-                    .push(quote!( pub struct #name { #(pub #tags: #types),* }));
+                accum.0.push(quote!(
+                    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+                    pub struct #name { #(pub #tags: #types),* }
+                ));
                 accum.1.push(quote!(
                     impl #module_name::#name {
                         pub fn new(#nested_tags: #nested_types) -> Self {
@@ -92,9 +93,10 @@ impl TypeTreeNodeData {
                     .map(|(_, t)| t.collect_type_definition_code(module_name, accum))
                     .collect();
                 let name = name.to_type_name_ident();
-                accum
-                    .0
-                    .push(quote!( pub enum #name { #(#tags(#types)),* } ));
+                accum.0.push(quote!(
+                  #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+                   pub enum #name { #(#tags(#types)),* }
+                ));
                 quote!( Box<#module_name::#name> )
             }
             Self::Repetition(child) => {

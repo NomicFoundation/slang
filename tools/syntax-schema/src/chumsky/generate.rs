@@ -256,7 +256,15 @@ impl Production {
         };
 
         GeneratedOutput {
-            tree_interface: tree_interfaces.join("\n\n"),
+            tree_interface: format!(
+                "{}\n\n{}",
+                quote!(
+                    #[allow(unused_imports)]
+                    use serde::{Serialize, Deserialize};
+                )
+                .to_string(),
+                tree_interfaces.join("\n\n")
+            ),
             parser_interface: quote!(
                 use super::tree_interface::*;
                 #parser_interface

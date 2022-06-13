@@ -1,21 +1,28 @@
+#[allow(unused_imports)]
+use serde::{Deserialize, Serialize};
+
 /// «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
 pub mod comment {
     #[allow(unused_imports)]
     use super::*;
     pub type N = Box<comment::_S0>;
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub slash_star: usize,
         pub content: Box<comment::Content>,
         pub star_slash: usize,
     }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct Content {
         pub _c2s: Vec<Box<comment::_C2>>,
         pub star_chars: Vec<char>,
     }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub enum _C2 {
         StarChar(char),
         _S3(Box<comment::_S3>),
     }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S3 {
         pub star_chars: Vec<char>,
         pub _1: char,
@@ -34,6 +41,7 @@ pub mod grouped {
     #[allow(unused_imports)]
     use super::*;
     pub type N = Box<grouped::_S0>;
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub open_paren_char: char,
         pub expression: expression::N,
@@ -46,6 +54,7 @@ pub mod optional {
     #[allow(unused_imports)]
     use super::*;
     pub type N = Box<optional::_S0>;
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub open_bracket_char: char,
         pub expression: expression::N,
@@ -58,6 +67,7 @@ pub mod repetition_separator {
     #[allow(unused_imports)]
     use super::*;
     pub type N = Box<repetition_separator::_S0>;
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub slash_char: char,
         pub expression: expression::N,
@@ -69,6 +79,7 @@ pub mod ignore {
     #[allow(unused_imports)]
     use super::*;
     pub type N = Vec<Box<ignore::_C1>>;
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub enum _C1 {
         Whitespace(whitespace::N),
         Comment(comment::N),
@@ -115,18 +126,22 @@ pub mod string_char {
     #[allow(unused_imports)]
     use super::*;
     pub type N = Box<string_char::_C0>;
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub enum _C0 {
         NotQuoteOrBackslash(char),
         Escape(Box<string_char::Escape>),
     }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct Escape {
         pub backslash_char: char,
         pub quote_or_backslash_or_hex_escape: Box<string_char::QuoteOrBackslashOrHexEscape>,
     }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub enum QuoteOrBackslashOrHexEscape {
         _0(usize),
         _S1(Box<string_char::_S1>),
     }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S1 {
         pub u_open_brace: usize,
         pub _1: Vec<char>,
@@ -139,22 +154,27 @@ pub mod repetition_prefix {
     #[allow(unused_imports)]
     use super::*;
     pub type N = Box<repetition_prefix::_S0>;
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub _c1: Box<repetition_prefix::_C1>,
         pub star_char: char,
     }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub enum _C1 {
         _S2(Box<repetition_prefix::_S2>),
         _S6(Box<repetition_prefix::_S6>),
     }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S6 {
         pub ellipsis_char: char,
         pub number: number::N,
     }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub number: number::N,
         pub _s4: Option<Box<repetition_prefix::_S4>>,
     }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S4 {
         pub ellipsis_char: char,
         pub number: Option<number::N>,
@@ -166,6 +186,7 @@ pub mod raw_identifier {
     #[allow(unused_imports)]
     use super::*;
     pub type N = Box<raw_identifier::_S0>;
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub _0: char,
         pub _1: Vec<char>,
@@ -177,6 +198,7 @@ pub mod single_char_string {
     #[allow(unused_imports)]
     use super::*;
     pub type N = Box<single_char_string::_S0>;
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub quote_char_0: char,
         pub string_char: string_char::N,
@@ -189,6 +211,7 @@ pub mod string {
     #[allow(unused_imports)]
     use super::*;
     pub type N = Box<string::_S0>;
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub quote_char_0: char,
         pub string_chars: Vec<string_char::N>,
@@ -201,6 +224,7 @@ pub mod repeated {
     #[allow(unused_imports)]
     use super::*;
     pub type N = Box<repeated::_S0>;
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub repetition_prefix: Option<repetition_prefix::N>,
         pub open_brace_char: char,
@@ -215,10 +239,12 @@ pub mod identifier {
     #[allow(unused_imports)]
     use super::*;
     pub type N = Box<identifier::_C0>;
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub enum _C0 {
         _S1(Box<identifier::_S1>),
         RawIdentifier(raw_identifier::N),
     }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S1 {
         pub open_double_angle_char: char,
         pub raw_identifier: raw_identifier::N,
@@ -231,6 +257,7 @@ pub mod char_range {
     #[allow(unused_imports)]
     use super::*;
     pub type N = Box<char_range::_S0>;
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub single_char_string_0: single_char_string::N,
         pub ellipsis_char: char,
@@ -250,6 +277,7 @@ pub mod primary {
     #[allow(unused_imports)]
     use super::*;
     pub type N = Box<primary::_C0>;
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub enum _C0 {
         ProductionReference(production_reference::N),
         Grouped(grouped::N),
@@ -266,6 +294,7 @@ pub mod negation {
     #[allow(unused_imports)]
     use super::*;
     pub type N = Box<negation::_S0>;
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub not_char: Option<char>,
         pub primary: primary::N,
@@ -277,10 +306,12 @@ pub mod difference {
     #[allow(unused_imports)]
     use super::*;
     pub type N = Box<difference::_S0>;
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub negation: negation::N,
         pub _s2: Option<Box<difference::_S2>>,
     }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub minus_char: char,
         pub negation: negation::N,
@@ -299,6 +330,7 @@ pub mod expression {
     #[allow(unused_imports)]
     use super::*;
     pub type N = Box<expression::_S0>;
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub sequences: Vec<sequence::N>,
         pub bar_chars: Vec<char>,
@@ -310,6 +342,7 @@ pub mod production {
     #[allow(unused_imports)]
     use super::*;
     pub type N = Box<production::_S0>;
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub identifier: identifier::N,
         pub equal_char: char,
@@ -323,6 +356,7 @@ pub mod grammar {
     #[allow(unused_imports)]
     use super::*;
     pub type N = Box<grammar::_S0>;
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub ignore: ignore::N,
         pub productions: Vec<production::N>,
