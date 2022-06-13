@@ -10,6 +10,7 @@ use super::{
     character_filter::CharacterFilter, slang_name::SlangName, terminal_trie::TerminalTrie,
 };
 
+#[derive(Clone, Debug)]
 pub struct CombinatorTree {
     pub root: CombinatorTreeNode,
     pub module_name: SlangName,
@@ -17,6 +18,7 @@ pub struct CombinatorTree {
 
 type CombinatorTreeNode = Box<CombinatorTreeNodeData>;
 
+#[derive(Clone, Debug)]
 pub enum CombinatorTreeNodeData {
     Difference {
         minuend: CombinatorTreeNode,
@@ -58,6 +60,15 @@ pub enum CombinatorTreeNodeData {
 impl CombinatorTree {
     pub fn to_parser_combinator_code(&self) -> TokenStream {
         self.root.to_parser_combinator_code(self)
+    }
+}
+
+impl Default for CombinatorTree {
+    fn default() -> Self {
+        Self {
+            root: ct_end(),
+            module_name: SlangName::from_string("__uninitialized__"),
+        }
     }
 }
 
@@ -170,14 +181,25 @@ impl CombinatorTreeNodeData {
                 separator: None,
                 ..
             } => {
+                let vec_to_length = if let Self::CharacterFilter { .. } = **expr {
+                    // Vec<()>
+                    quote!( .map(|v| v.len()) )
+                } else {
+                    quote!()
+                };
+
                 let expr = expr.to_parser_combinator_code(tree);
 
                 match (min, max) {
-                    (0, None) => quote!( #expr.repeated() ),
-                    (0, Some(max)) => quote!( #expr.repeated().at_most(#max) ),
-                    (min, None) => quote!( #expr.repeated().at_least(#min) ),
-                    (min, Some(max)) if min == max => quote!( #expr.repeated().exactly(#min) ),
-                    (min, Some(max)) => quote!( #expr.repeated().at_least(#min).at_most(#max) ),
+                    (0, None) => quote!( #expr.repeated()#vec_to_length ),
+                    (0, Some(max)) => quote!( #expr.repeated().at_most(#max)#vec_to_length),
+                    (min, None) => quote!( #expr.repeated().at_least(#min)#vec_to_length ),
+                    (min, Some(max)) if min == max => {
+                        quote!( #expr.repeated().exactly(#min)#vec_to_length )
+                    }
+                    (min, Some(max)) => {
+                        quote!( #expr.repeated().at_least(#min).at_most(#max)#vec_to_length )
+                    }
                 }
             }
             CombinatorTreeNodeData::Repeat {
@@ -226,8 +248,10 @@ impl CombinatorTreeNodeData {
                 let name = name.to_parser_name_ident();
                 quote!( #name.clone() )
             }
-            CombinatorTreeNodeData::TerminalTrie { trie, .. } => trie.to_parser_expression(),
-            CombinatorTreeNodeData::CharacterFilter { filter, .. } => filter.to_parser_expression(),
+            CombinatorTreeNodeData::TerminalTrie { trie, .. } => trie.to_parser_combinator_code(),
+            CombinatorTreeNodeData::CharacterFilter { filter, .. } => {
+                filter.to_parser_combinator_code()
+            }
             CombinatorTreeNodeData::End => quote!(end()),
         }
     }
@@ -292,15 +316,16 @@ fn ct_end() -> CombinatorTreeNode {
 }
 
 impl Production {
-    pub fn to_combinator_tree(&self, grammar: &Grammar) -> CombinatorTree {
-        CombinatorTree {
-            root: self.expression_to_generate().to_combinator_tree_node(
-                &mut Cell::new(0),
-                self,
-                grammar,
-            ),
-            module_name: SlangName::from_string(&self.name),
-        }
+    pub fn combinator_tree(&self) -> std::cell::Ref<'_, CombinatorTree> {
+        self.combinator_tree.borrow()
+    }
+
+    pub fn initialize_combinator_tree(&self, grammar: &Grammar) {
+        let root =
+            self.expression_to_generate()
+                .to_combinator_tree_node(&mut Cell::new(0), self, grammar);
+        let module_name = SlangName::from_string(&self.name);
+        *self.combinator_tree.borrow_mut() = CombinatorTree { root, module_name };
     }
 }
 
@@ -483,6 +508,8 @@ impl Expression {
     }
 }
 
+// TODO: this should remove disambiguation suffixes *before* checking
+// for repeated identifiers.
 fn disambiguate_structure_names(
     mut members: Vec<(SlangName, CombinatorTreeNode)>,
 ) -> Vec<(SlangName, CombinatorTreeNode)> {

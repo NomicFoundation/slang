@@ -17,6 +17,7 @@ pub fn production(((name, is_token), ebnf): ((String, bool), EBNF)) -> Productio
         is_token,
         title: None,
         versions: BTreeMap::from([(Version::parse("0.0.0").unwrap(), ref_from_ebnf(ebnf))]),
+        combinator_tree: Default::default(),
     }
 }
 

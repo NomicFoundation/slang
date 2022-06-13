@@ -513,8 +513,10 @@
 - name: AssignmentExpression
   sequence:
     - reference: ConditionalExpression
-    - reference: AssignmentOperator
-    - reference: Expression
+    - zeroOrMore:
+        sequence:
+          - reference: AssignmentOperator
+          - reference: Expression
 - name: AssignmentOperator
   choice:
     - terminal: "="
@@ -635,19 +637,23 @@
 - name: ExpExpression
   sequence:
     - reference: UnarySuffixExpression
-    - terminal: "**"
-    - reference: Expression
+    - zeroOrMore:
+        sequence:
+          - terminal: "**"
+          - reference: Expression
 - name: UnarySuffixExpression
   sequence:
     - reference: UnaryPrefixExpression
-    - reference: UnarySuffixOperator
+    - optional:
+        reference: UnarySuffixOperator
 - name: UnarySuffixOperator
   choice:
     - terminal: ++
     - terminal: "--"
 - name: UnaryPrefixExpression
   sequence:
-    - reference: UnaryPrefixOperator
+    - optional:
+        reference: UnaryPrefixOperator
     - reference: FunctionCallExpression
 - name: UnaryPrefixOperator
   choice:
@@ -1040,6 +1046,7 @@
     - zeroOrMore:
         not:
           terminal: ;
+        config: { name: NonSemicolonChar }
     - terminal: ;
 - name: RawIdentifier
   isToken: true
@@ -1283,16 +1290,19 @@
   sequence:
     - terminal: "'"
     - zeroOrMore:
+        config: { name: Run }
         choice:
-          - difference:
-              minuend:
-                range:
-                  from: " "
-                  to: "~"
-              subtrahend:
-                choice:
-                  - terminal: "'"
-                  - terminal: "\\"
+          - oneOrMore:
+              config: { name: Char }
+              difference:
+                minuend:
+                  range:
+                    from: " "
+                    to: "~"
+                subtrahend:
+                  choice:
+                    - terminal: "'"
+                    - terminal: "\\"
           - reference: EscapeSequence
     - terminal: "'"
 - name: DoubleQuotedAsciiStringLiteral
@@ -1300,16 +1310,19 @@
   sequence:
     - terminal: '"'
     - zeroOrMore:
+        config: { name: Run }
         choice:
-          - difference:
-              minuend:
-                range:
-                  from: " "
-                  to: "~"
-              subtrahend:
-                choice:
-                  - terminal: '"'
-                  - terminal: "\\"
+          - oneOrMore:
+              config: { name: Char }
+              difference:
+                minuend:
+                  range:
+                    from: " "
+                    to: "~"
+                subtrahend:
+                  choice:
+                    - terminal: '"'
+                    - terminal: "\\"
           - reference: EscapeSequence
     - terminal: '"'
 - name: UnicodeStringLiteral
@@ -1322,13 +1335,16 @@
   sequence:
     - terminal: "unicode'"
     - zeroOrMore:
+        config: { name: Run }
         choice:
-          - not:
-              choice:
-                - terminal: "'"
-                - terminal: "\\"
-                - terminal: "\n"
-                - terminal: "\r"
+          - oneOrMore:
+              config: { name: Char }
+              not:
+                choice:
+                  - terminal: "'"
+                  - terminal: "\\"
+                  - terminal: "\n"
+                  - terminal: "\r"
           - reference: EscapeSequence
     - terminal: "'"
 - name: DoubleQuotedUnicodeStringLiteral
@@ -1336,13 +1352,16 @@
   sequence:
     - terminal: 'unicode"'
     - zeroOrMore:
+        config: { name: Run }
         choice:
-          - not:
-              choice:
-                - terminal: '"'
-                - terminal: "\\"
-                - terminal: "\n"
-                - terminal: "\r"
+          - oneOrMore:
+              config: { name: Char }
+              not:
+                choice:
+                  - terminal: '"'
+                  - terminal: "\\"
+                  - terminal: "\n"
+                  - terminal: "\r"
           - reference: EscapeSequence
     - terminal: '"'
 - name: EscapeSequence

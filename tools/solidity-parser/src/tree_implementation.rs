@@ -1,6 +1,11 @@
 use super::tree_interface::*;
 impl break_statement::_S0 {
-    pub fn new(((r#break, ignore), semicolon_char): ((usize, ignore::N), char)) -> Self {
+    pub fn new(
+        ((r#break, ignore), semicolon_char): (
+            (FixedTerminal<5usize>, ignore::N),
+            FixedTerminal<1usize>,
+        ),
+    ) -> Self {
         Self {
             r#break,
             ignore,
@@ -11,8 +16,8 @@ impl break_statement::_S0 {
 impl comment::_S0 {
     pub fn new(
         (((slash_star, _c2s), star_chars), star_slash): (
-            ((usize, Vec<Box<comment::_C2>>), Vec<char>),
-            usize,
+            ((FixedTerminal<2usize>, Vec<Box<comment::_C2>>), usize),
+            FixedTerminal<2usize>,
         ),
     ) -> Self {
         Self {
@@ -24,12 +29,17 @@ impl comment::_S0 {
     }
 }
 impl comment::_S3 {
-    pub fn new((star_chars, _1): (Vec<char>, char)) -> Self {
+    pub fn new((star_chars, _1): (usize, FixedTerminal<1usize>)) -> Self {
         Self { star_chars, _1 }
     }
 }
 impl continue_statement::_S0 {
-    pub fn new(((r#continue, ignore), semicolon_char): ((usize, ignore::N), char)) -> Self {
+    pub fn new(
+        ((r#continue, ignore), semicolon_char): (
+            (FixedTerminal<8usize>, ignore::N),
+            FixedTerminal<1usize>,
+        ),
+    ) -> Self {
         Self {
             r#continue,
             ignore,
@@ -38,7 +48,7 @@ impl continue_statement::_S0 {
     }
 }
 impl line_comment::_S0 {
-    pub fn new((slash_slash, _1): (usize, Vec<char>)) -> Self {
+    pub fn new((slash_slash, _1): (FixedTerminal<2usize>, usize)) -> Self {
         Self { slash_slash, _1 }
     }
 }
@@ -53,7 +63,7 @@ impl positional_argument_list::_S0 {
     }
 }
 impl positional_argument_list::_S2 {
-    pub fn new((comma_char, ignore): (char, ignore::N)) -> Self {
+    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
         Self { comma_char, ignore }
     }
 }
@@ -63,7 +73,9 @@ impl positional_argument_list::_S1 {
     }
 }
 impl unchecked_block::_S0 {
-    pub fn new(((unchecked, ignore), block): ((usize, ignore::N), block::N)) -> Self {
+    pub fn new(
+        ((unchecked, ignore), block): ((FixedTerminal<9usize>, ignore::N), block::N),
+    ) -> Self {
         Self {
             unchecked,
             ignore,
@@ -72,7 +84,12 @@ impl unchecked_block::_S0 {
     }
 }
 impl decimal_integer::_S0 {
-    pub fn new((expressions, underscore_chars): (Vec<char>, Vec<Option<char>>)) -> Self {
+    pub fn new(
+        (expressions, underscore_chars): (
+            Vec<FixedTerminal<1usize>>,
+            Vec<Option<FixedTerminal<1usize>>>,
+        ),
+    ) -> Self {
         Self {
             expressions,
             underscore_chars,
@@ -80,53 +97,66 @@ impl decimal_integer::_S0 {
     }
 }
 impl fixed_bytes_type::_S0 {
-    pub fn new((bytes, _1): (usize, usize)) -> Self {
+    pub fn new((bytes, _1): (FixedTerminal<5usize>, usize)) -> Self {
         Self { bytes, _1 }
     }
 }
 impl fixed_type::_S0 {
-    pub fn new((fixed, _s2): (usize, Option<Box<fixed_type::_S2>>)) -> Self {
+    pub fn new((fixed, _s2): (FixedTerminal<5usize>, Option<Box<fixed_type::_S2>>)) -> Self {
         Self { fixed, _s2 }
     }
 }
 impl fixed_type::_S2 {
-    pub fn new(((((_0, _1), _2), _3), _4): ((((char, Vec<char>), char), char), Vec<char>)) -> Self {
+    pub fn new(
+        ((((_0, _1), _2), _3), _4): (
+            (
+                ((FixedTerminal<1usize>, usize), FixedTerminal<1usize>),
+                FixedTerminal<1usize>,
+            ),
+            usize,
+        ),
+    ) -> Self {
         Self { _0, _1, _2, _3, _4 }
     }
 }
 impl pragma_directive::_S0 {
     pub fn new(
-        (((pragma, semicolon_char_0), semicolon_chars), semicolon_char_1): (
-            ((usize, char), Vec<char>),
-            char,
+        (((pragma, semicolon_char_0), non_semicolon_chars), semicolon_char_1): (
+            ((FixedTerminal<6usize>, FixedTerminal<1usize>), usize),
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
             pragma,
             semicolon_char_0,
-            semicolon_chars,
+            non_semicolon_chars,
             semicolon_char_1,
         }
     }
 }
 impl signed_integer_type::_S0 {
-    pub fn new((int, _1): (usize, usize)) -> Self {
+    pub fn new((int, _1): (FixedTerminal<3usize>, usize)) -> Self {
         Self { int, _1 }
     }
 }
 impl yul_decimal_number_literal::_S1 {
-    pub fn new((_0, _1): (char, Vec<char>)) -> Self {
+    pub fn new((_0, _1): (FixedTerminal<1usize>, usize)) -> Self {
         Self { _0, _1 }
     }
 }
 impl yul_hex_literal::_S0 {
-    pub fn new(((zero_x, _1), _2): ((usize, char), Vec<char>)) -> Self {
+    pub fn new(
+        ((zero_x, _1), _2): ((FixedTerminal<2usize>, FixedTerminal<1usize>), usize),
+    ) -> Self {
         Self { zero_x, _1, _2 }
     }
 }
 impl decimal_exponent::_S0 {
     pub fn new(
-        ((_0, minus_char), decimal_integer): ((char, Option<char>), decimal_integer::N),
+        ((_0, minus_char), decimal_integer): (
+            (FixedTerminal<1usize>, Option<FixedTerminal<1usize>>),
+            decimal_integer::N,
+        ),
     ) -> Self {
         Self {
             _0,
@@ -138,7 +168,7 @@ impl decimal_exponent::_S0 {
 impl decimal_float::_S0 {
     pub fn new(
         ((decimal_integer_0, period_char), decimal_integer_1): (
-            (Option<decimal_integer::N>, char),
+            (Option<decimal_integer::N>, FixedTerminal<1usize>),
             decimal_integer::N,
         ),
     ) -> Self {
@@ -150,17 +180,27 @@ impl decimal_float::_S0 {
     }
 }
 impl hex_byte_escape::_S0 {
-    pub fn new((_0, _1): (char, Vec<char>)) -> Self {
+    pub fn new((_0, _1): (FixedTerminal<1usize>, usize)) -> Self {
         Self { _0, _1 }
     }
 }
 impl hex_number::_S0 {
-    pub fn new(((zero_char, _1), _2): ((char, char), Box<hex_number::_S1>)) -> Self {
+    pub fn new(
+        ((zero_char, _1), _2): (
+            (FixedTerminal<1usize>, FixedTerminal<1usize>),
+            Box<hex_number::_S1>,
+        ),
+    ) -> Self {
         Self { zero_char, _1, _2 }
     }
 }
 impl hex_number::_S1 {
-    pub fn new((expressions, underscore_chars): (Vec<char>, Vec<Option<char>>)) -> Self {
+    pub fn new(
+        (expressions, underscore_chars): (
+            Vec<FixedTerminal<1usize>>,
+            Vec<Option<FixedTerminal<1usize>>>,
+        ),
+    ) -> Self {
         Self {
             expressions,
             underscore_chars,
@@ -168,7 +208,9 @@ impl hex_number::_S1 {
     }
 }
 impl possibly_separated_pairs_of_hex_digits::_S0 {
-    pub fn new((expressions, underscore_chars): (Vec<Vec<char>>, Vec<Option<char>>)) -> Self {
+    pub fn new(
+        (expressions, underscore_chars): (Vec<usize>, Vec<Option<FixedTerminal<1usize>>>),
+    ) -> Self {
         Self {
             expressions,
             underscore_chars,
@@ -176,17 +218,17 @@ impl possibly_separated_pairs_of_hex_digits::_S0 {
     }
 }
 impl ufixed_type::_S0 {
-    pub fn new((_0, fixed_type): (char, fixed_type::N)) -> Self {
+    pub fn new((_0, fixed_type): (FixedTerminal<1usize>, fixed_type::N)) -> Self {
         Self { _0, fixed_type }
     }
 }
 impl unicode_escape::_S0 {
-    pub fn new((_0, _1): (char, Vec<char>)) -> Self {
+    pub fn new((_0, _1): (FixedTerminal<1usize>, usize)) -> Self {
         Self { _0, _1 }
     }
 }
 impl unsigned_integer_type::_S0 {
-    pub fn new((_0, signed_integer_type): (char, signed_integer_type::N)) -> Self {
+    pub fn new((_0, signed_integer_type): (FixedTerminal<1usize>, signed_integer_type::N)) -> Self {
         Self {
             _0,
             signed_integer_type,
@@ -204,7 +246,7 @@ impl decimal_number::_S0 {
     }
 }
 impl escape_sequence::_S0 {
-    pub fn new((backslash_char, _c1): (char, Box<escape_sequence::_C1>)) -> Self {
+    pub fn new((backslash_char, _c1): (FixedTerminal<1usize>, Box<escape_sequence::_C1>)) -> Self {
         Self {
             backslash_char,
             _c1,
@@ -212,15 +254,18 @@ impl escape_sequence::_S0 {
     }
 }
 impl hex_string_literal::_S0 {
-    pub fn new((hex, _c1): (usize, Box<hex_string_literal::_C1>)) -> Self {
+    pub fn new((hex, _c1): (FixedTerminal<3usize>, Box<hex_string_literal::_C1>)) -> Self {
         Self { hex, _c1 }
     }
 }
 impl hex_string_literal::_S4 {
     pub fn new(
         ((quote_char_0, possibly_separated_pairs_of_hex_digits), quote_char_1): (
-            (char, Option<possibly_separated_pairs_of_hex_digits::N>),
-            char,
+            (
+                FixedTerminal<1usize>,
+                Option<possibly_separated_pairs_of_hex_digits::N>,
+            ),
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -233,8 +278,11 @@ impl hex_string_literal::_S4 {
 impl hex_string_literal::_S2 {
     pub fn new(
         ((double_quote_char_0, possibly_separated_pairs_of_hex_digits), double_quote_char_1): (
-            (char, Option<possibly_separated_pairs_of_hex_digits::N>),
-            char,
+            (
+                FixedTerminal<1usize>,
+                Option<possibly_separated_pairs_of_hex_digits::N>,
+            ),
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -245,40 +293,51 @@ impl hex_string_literal::_S2 {
     }
 }
 impl raw_identifier::_S0 {
-    pub fn new((_0, _1): (char, Vec<char>)) -> Self {
+    pub fn new((_0, _1): (FixedTerminal<1usize>, usize)) -> Self {
         Self { _0, _1 }
     }
 }
 impl double_quoted_ascii_string_literal::_S0 {
     pub fn new(
-        ((double_quote_char_0, _c2s), double_quote_char_1): (
-            (char, Vec<Box<double_quoted_ascii_string_literal::_C2>>),
-            char,
+        ((double_quote_char_0, runs), double_quote_char_1): (
+            (
+                FixedTerminal<1usize>,
+                Vec<Box<double_quoted_ascii_string_literal::Run>>,
+            ),
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
             double_quote_char_0,
-            _c2s,
+            runs,
             double_quote_char_1,
         }
     }
 }
 impl double_quoted_unicode_string_literal::_S0 {
     pub fn new(
-        ((unicode_double_quote, _c2s), double_quote_char): (
-            (usize, Vec<Box<double_quoted_unicode_string_literal::_C2>>),
-            char,
+        ((unicode_double_quote, runs), double_quote_char): (
+            (
+                FixedTerminal<8usize>,
+                Vec<Box<double_quoted_unicode_string_literal::Run>>,
+            ),
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
             unicode_double_quote,
-            _c2s,
+            runs,
             double_quote_char,
         }
     }
 }
 impl elementary_type_with_payable::_S1 {
-    pub fn new(((address, ignore), payable): ((usize, ignore::N), Option<usize>)) -> Self {
+    pub fn new(
+        ((address, ignore), payable): (
+            (FixedTerminal<7usize>, ignore::N),
+            Option<FixedTerminal<7usize>>,
+        ),
+    ) -> Self {
         Self {
             address,
             ignore,
@@ -295,28 +354,34 @@ impl numeric_literal::_S0 {
 }
 impl single_quoted_ascii_string_literal::_S0 {
     pub fn new(
-        ((quote_char_0, _c2s), quote_char_1): (
-            (char, Vec<Box<single_quoted_ascii_string_literal::_C2>>),
-            char,
+        ((quote_char_0, runs), quote_char_1): (
+            (
+                FixedTerminal<1usize>,
+                Vec<Box<single_quoted_ascii_string_literal::Run>>,
+            ),
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
             quote_char_0,
-            _c2s,
+            runs,
             quote_char_1,
         }
     }
 }
 impl single_quoted_unicode_string_literal::_S0 {
     pub fn new(
-        ((unicode_quote, _c2s), quote_char): (
-            (usize, Vec<Box<single_quoted_unicode_string_literal::_C2>>),
-            char,
+        ((unicode_quote, runs), quote_char): (
+            (
+                FixedTerminal<8usize>,
+                Vec<Box<single_quoted_unicode_string_literal::Run>>,
+            ),
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
             unicode_quote,
-            _c2s,
+            runs,
             quote_char,
         }
     }
@@ -324,8 +389,11 @@ impl single_quoted_unicode_string_literal::_S0 {
 impl assembly_flags::_S0 {
     pub fn new(
         ((((open_paren_char, ignore_0), _s2s), ignore_1), close_paren_char): (
-            (((char, ignore::N), Box<assembly_flags::_S1>), ignore::N),
-            char,
+            (
+                ((FixedTerminal<1usize>, ignore::N), Box<assembly_flags::_S1>),
+                ignore::N,
+            ),
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -345,7 +413,7 @@ impl assembly_flags::_S1 {
     }
 }
 impl assembly_flags::_S3 {
-    pub fn new((comma_char, ignore): (char, ignore::N)) -> Self {
+    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
         Self { comma_char, ignore }
     }
 }
@@ -367,12 +435,18 @@ impl yul_function_call::_S0 {
         ((((((_c1, ignore_0), open_paren_char), ignore_1), _s3s), ignore_2), close_paren_char): (
             (
                 (
-                    (((Box<yul_function_call::_C1>, ignore::N), char), ignore::N),
+                    (
+                        (
+                            (Box<yul_function_call::_C1>, ignore::N),
+                            FixedTerminal<1usize>,
+                        ),
+                        ignore::N,
+                    ),
                     Option<Box<yul_function_call::_S2>>,
                 ),
                 ignore::N,
             ),
-            char,
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -397,7 +471,7 @@ impl yul_function_call::_S2 {
     }
 }
 impl yul_function_call::_S4 {
-    pub fn new((comma_char, ignore): (char, ignore::N)) -> Self {
+    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
         Self { comma_char, ignore }
     }
 }
@@ -447,8 +521,14 @@ impl yul_function_definition::_S0 {
                                 (
                                     (
                                         (
-                                            (((usize, ignore::N), yul_identifier::N), ignore::N),
-                                            char,
+                                            (
+                                                (
+                                                    (FixedTerminal<8usize>, ignore::N),
+                                                    yul_identifier::N,
+                                                ),
+                                                ignore::N,
+                                            ),
+                                            FixedTerminal<1usize>,
                                         ),
                                         ignore::N,
                                     ),
@@ -456,7 +536,7 @@ impl yul_function_definition::_S0 {
                                 ),
                                 ignore::N,
                             ),
-                            char,
+                            FixedTerminal<1usize>,
                         ),
                         ignore::N,
                     ),
@@ -486,7 +566,10 @@ impl yul_function_definition::_S0 {
 }
 impl yul_function_definition::_S5 {
     pub fn new(
-        ((minus_greater, ignore), _s7s): ((usize, ignore::N), Box<yul_function_definition::_S6>),
+        ((minus_greater, ignore), _s7s): (
+            (FixedTerminal<2usize>, ignore::N),
+            Box<yul_function_definition::_S6>,
+        ),
     ) -> Self {
         Self {
             minus_greater,
@@ -506,7 +589,7 @@ impl yul_function_definition::_S6 {
     }
 }
 impl yul_function_definition::_S8 {
-    pub fn new((comma_char, ignore): (char, ignore::N)) -> Self {
+    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
         Self { comma_char, ignore }
     }
 }
@@ -529,7 +612,7 @@ impl yul_function_definition::_S1 {
     }
 }
 impl yul_function_definition::_S3 {
-    pub fn new((comma_char, ignore): (char, ignore::N)) -> Self {
+    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
         Self { comma_char, ignore }
     }
 }
@@ -555,7 +638,7 @@ impl yul_path::_S0 {
 impl yul_path::_S2 {
     pub fn new(
         (((period_char, ignore_0), _c3), ignore_1): (
-            ((char, ignore::N), Box<yul_path::_C3>),
+            ((FixedTerminal<1usize>, ignore::N), Box<yul_path::_C3>),
             ignore::N,
         ),
     ) -> Self {
@@ -579,14 +662,20 @@ impl enum_definition::_S0 {
             (
                 (
                     (
-                        ((((usize, ignore::N), identifier::N), ignore::N), char),
+                        (
+                            (
+                                ((FixedTerminal<4usize>, ignore::N), identifier::N),
+                                ignore::N,
+                            ),
+                            FixedTerminal<1usize>,
+                        ),
                         ignore::N,
                     ),
                     Box<enum_definition::_S1>,
                 ),
                 ignore::N,
             ),
-            char,
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -613,7 +702,7 @@ impl enum_definition::_S1 {
     }
 }
 impl enum_definition::_S3 {
-    pub fn new((comma_char, ignore): (char, ignore::N)) -> Self {
+    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
         Self { comma_char, ignore }
     }
 }
@@ -633,7 +722,7 @@ impl identifier_path::_S0 {
     }
 }
 impl identifier_path::_S2 {
-    pub fn new((period_char, ignore): (char, ignore::N)) -> Self {
+    pub fn new((period_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
         Self {
             period_char,
             ignore,
@@ -648,7 +737,10 @@ impl identifier_path::_S1 {
 impl named_argument::_S0 {
     pub fn new(
         ((((identifier, ignore_0), colon_char), ignore_1), expression): (
-            (((identifier::N, ignore::N), char), ignore::N),
+            (
+                ((identifier::N, ignore::N), FixedTerminal<1usize>),
+                ignore::N,
+            ),
             expression::N,
         ),
     ) -> Self {
@@ -692,7 +784,9 @@ impl selected_import::_S0 {
     }
 }
 impl selected_import::_S2 {
-    pub fn new(((r#as, ignore), identifier): ((usize, ignore::N), identifier::N)) -> Self {
+    pub fn new(
+        ((r#as, ignore), identifier): ((FixedTerminal<2usize>, ignore::N), identifier::N),
+    ) -> Self {
         Self {
             r#as,
             ignore,
@@ -715,14 +809,20 @@ impl user_defined_value_type_definition::_S0 {
             (
                 (
                     (
-                        ((((usize, ignore::N), identifier::N), ignore::N), usize),
+                        (
+                            (
+                                ((FixedTerminal<4usize>, ignore::N), identifier::N),
+                                ignore::N,
+                            ),
+                            FixedTerminal<2usize>,
+                        ),
                         ignore::N,
                     ),
                     elementary_type_with_payable::N,
                 ),
                 ignore::N,
             ),
-            char,
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -762,12 +862,15 @@ impl mapping_type::_S0 {
                         (
                             (
                                 (
-                                    (((usize, ignore::N), char), ignore::N),
+                                    (
+                                        ((FixedTerminal<7usize>, ignore::N), FixedTerminal<1usize>),
+                                        ignore::N,
+                                    ),
                                     Box<mapping_type::_C1>,
                                 ),
                                 ignore::N,
                             ),
-                            usize,
+                            FixedTerminal<2usize>,
                         ),
                         ignore::N,
                     ),
@@ -775,7 +878,7 @@ impl mapping_type::_S0 {
                 ),
                 ignore::N,
             ),
-            char,
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -797,10 +900,13 @@ impl named_argument_list::_S0 {
     pub fn new(
         ((((open_brace_char, ignore_0), _s2s), ignore_1), close_brace_char): (
             (
-                ((char, ignore::N), Option<Box<named_argument_list::_S1>>),
+                (
+                    (FixedTerminal<1usize>, ignore::N),
+                    Option<Box<named_argument_list::_S1>>,
+                ),
                 ignore::N,
             ),
-            char,
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -823,7 +929,7 @@ impl named_argument_list::_S1 {
     }
 }
 impl named_argument_list::_S3 {
-    pub fn new((comma_char, ignore): (char, ignore::N)) -> Self {
+    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
         Self { comma_char, ignore }
     }
 }
@@ -839,10 +945,13 @@ impl non_empty_parameter_list::_S0 {
     pub fn new(
         ((((open_paren_char, ignore_0), _s2s), ignore_1), close_paren_char): (
             (
-                ((char, ignore::N), Box<non_empty_parameter_list::_S1>),
+                (
+                    (FixedTerminal<1usize>, ignore::N),
+                    Box<non_empty_parameter_list::_S1>,
+                ),
                 ignore::N,
             ),
-            char,
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -865,7 +974,7 @@ impl non_empty_parameter_list::_S1 {
     }
 }
 impl non_empty_parameter_list::_S3 {
-    pub fn new((comma_char, ignore): (char, ignore::N)) -> Self {
+    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
         Self { comma_char, ignore }
     }
 }
@@ -879,7 +988,10 @@ impl non_empty_parameter_list::_S2 {
 }
 impl override_specifier::_S0 {
     pub fn new(
-        ((r#override, ignore), _s2): ((usize, ignore::N), Option<Box<override_specifier::_S2>>),
+        ((r#override, ignore), _s2): (
+            (FixedTerminal<8usize>, ignore::N),
+            Option<Box<override_specifier::_S2>>,
+        ),
     ) -> Self {
         Self {
             r#override,
@@ -891,8 +1003,11 @@ impl override_specifier::_S0 {
 impl override_specifier::_S2 {
     pub fn new(
         ((((open_paren_char, ignore_0), identifier_paths), ignore_1), close_paren_char): (
-            (((char, ignore::N), Vec<identifier_path::N>), ignore::N),
-            char,
+            (
+                ((FixedTerminal<1usize>, ignore::N), Vec<identifier_path::N>),
+                ignore::N,
+            ),
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -908,10 +1023,13 @@ impl parameter_list::_S0 {
     pub fn new(
         ((((open_paren_char, ignore_0), _s2s), ignore_1), close_paren_char): (
             (
-                ((char, ignore::N), Option<Box<parameter_list::_S1>>),
+                (
+                    (FixedTerminal<1usize>, ignore::N),
+                    Option<Box<parameter_list::_S1>>,
+                ),
                 ignore::N,
             ),
-            char,
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -931,7 +1049,7 @@ impl parameter_list::_S1 {
     }
 }
 impl parameter_list::_S3 {
-    pub fn new((comma_char, ignore): (char, ignore::N)) -> Self {
+    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
         Self { comma_char, ignore }
     }
 }
@@ -960,14 +1078,17 @@ impl selecting_import_directive::_S0 {
                     (
                         (
                             (
-                                ((char, ignore::N), Box<selecting_import_directive::_S1>),
+                                (
+                                    (FixedTerminal<1usize>, ignore::N),
+                                    Box<selecting_import_directive::_S1>,
+                                ),
                                 ignore::N,
                             ),
-                            char,
+                            FixedTerminal<1usize>,
                         ),
                         ignore::N,
                     ),
-                    usize,
+                    FixedTerminal<4usize>,
                 ),
                 ignore::N,
             ),
@@ -998,7 +1119,7 @@ impl selecting_import_directive::_S1 {
     }
 }
 impl selecting_import_directive::_S3 {
-    pub fn new((comma_char, ignore): (char, ignore::N)) -> Self {
+    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
         Self { comma_char, ignore }
     }
 }
@@ -1027,7 +1148,7 @@ impl simple_import_directive::_S0 {
 impl simple_import_directive::_S2 {
     pub fn new(
         (((r#as, ignore_0), identifier), ignore_1): (
-            ((usize, ignore::N), identifier::N),
+            ((FixedTerminal<2usize>, ignore::N), identifier::N),
             ignore::N,
         ),
     ) -> Self {
@@ -1048,10 +1169,16 @@ impl star_import_directive::_S0 {
             (
                 (
                     (
-                        ((((char, ignore::N), usize), ignore::N), identifier::N),
+                        (
+                            (
+                                ((FixedTerminal<1usize>, ignore::N), FixedTerminal<2usize>),
+                                ignore::N,
+                            ),
+                            identifier::N,
+                        ),
                         ignore::N,
                     ),
-                    usize,
+                    FixedTerminal<4usize>,
                 ),
                 ignore::N,
             ),
@@ -1075,10 +1202,13 @@ impl argument_list::_S0 {
     pub fn new(
         ((((open_paren_char, ignore_0), _c2), ignore_1), close_paren_char): (
             (
-                ((char, ignore::N), Option<Box<argument_list::_C2>>),
+                (
+                    (FixedTerminal<1usize>, ignore::N),
+                    Option<Box<argument_list::_C2>>,
+                ),
                 ignore::N,
             ),
-            char,
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -1094,7 +1224,10 @@ impl catch_clause::_S0 {
     pub fn new(
         ((((catch, ignore_0), _s2), ignore_1), block): (
             (
-                ((usize, ignore::N), Option<Box<catch_clause::_S2>>),
+                (
+                    (FixedTerminal<5usize>, ignore::N),
+                    Option<Box<catch_clause::_S2>>,
+                ),
                 ignore::N,
             ),
             block::N,
@@ -1128,7 +1261,10 @@ impl function_type::_S0 {
         ((((((function, ignore_0), parameter_list), ignore_1), _s2s), ignore_2), _s4): (
             (
                 (
-                    (((usize, ignore::N), parameter_list::N), ignore::N),
+                    (
+                        ((FixedTerminal<8usize>, ignore::N), parameter_list::N),
+                        ignore::N,
+                    ),
                     Vec<Box<function_type::_S2>>,
                 ),
                 ignore::N,
@@ -1150,7 +1286,7 @@ impl function_type::_S0 {
 impl function_type::_S4 {
     pub fn new(
         ((returns, ignore), non_empty_parameter_list): (
-            (usize, ignore::N),
+            (FixedTerminal<7usize>, ignore::N),
             non_empty_parameter_list::N,
         ),
     ) -> Self {
@@ -1169,8 +1305,14 @@ impl function_type::_S2 {
 impl import_directive::_S0 {
     pub fn new(
         ((((import, ignore_0), _c1), ignore_1), semicolon_char): (
-            (((usize, ignore::N), Box<import_directive::_C1>), ignore::N),
-            char,
+            (
+                (
+                    (FixedTerminal<6usize>, ignore::N),
+                    Box<import_directive::_C1>,
+                ),
+                ignore::N,
+            ),
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -1197,7 +1339,10 @@ impl yul_assignment::_S3 {
     pub fn new(
         ((((_s5s, ignore_0), colon_equal), ignore_1), yul_function_call): (
             (
-                ((Vec<Box<yul_assignment::_S5>>, ignore::N), usize),
+                (
+                    (Vec<Box<yul_assignment::_S5>>, ignore::N),
+                    FixedTerminal<2usize>,
+                ),
                 ignore::N,
             ),
             yul_function_call::N,
@@ -1215,7 +1360,7 @@ impl yul_assignment::_S3 {
 impl yul_assignment::_S5 {
     pub fn new(
         (((comma_char, ignore_0), yul_path), ignore_1): (
-            ((char, ignore::N), yul_path::N),
+            ((FixedTerminal<1usize>, ignore::N), yul_path::N),
             ignore::N,
         ),
     ) -> Self {
@@ -1229,7 +1374,10 @@ impl yul_assignment::_S5 {
 }
 impl yul_assignment::_S2 {
     pub fn new(
-        ((colon_equal, ignore), yul_expression): ((usize, ignore::N), yul_expression::N),
+        ((colon_equal, ignore), yul_expression): (
+            (FixedTerminal<2usize>, ignore::N),
+            yul_expression::N,
+        ),
     ) -> Self {
         Self {
             colon_equal,
@@ -1254,7 +1402,10 @@ impl yul_for_statement::_S0 {
                 (
                     (
                         (
-                            (((usize, ignore::N), yul_block::N), ignore::N),
+                            (
+                                ((FixedTerminal<3usize>, ignore::N), yul_block::N),
+                                ignore::N,
+                            ),
                             yul_expression::N,
                         ),
                         ignore::N,
@@ -1282,7 +1433,10 @@ impl yul_for_statement::_S0 {
 impl yul_if_statement::_S0 {
     pub fn new(
         ((((r#if, ignore_0), yul_expression), ignore_1), yul_block): (
-            (((usize, ignore::N), yul_expression::N), ignore::N),
+            (
+                ((FixedTerminal<2usize>, ignore::N), yul_expression::N),
+                ignore::N,
+            ),
             yul_block::N,
         ),
     ) -> Self {
@@ -1298,7 +1452,10 @@ impl yul_if_statement::_S0 {
 impl yul_switch_statement::_S0 {
     pub fn new(
         ((((switch, ignore_0), yul_expression), ignore_1), _c1): (
-            (((usize, ignore::N), yul_expression::N), ignore::N),
+            (
+                ((FixedTerminal<6usize>, ignore::N), yul_expression::N),
+                ignore::N,
+            ),
             Box<yul_switch_statement::_C1>,
         ),
     ) -> Self {
@@ -1312,7 +1469,9 @@ impl yul_switch_statement::_S0 {
     }
 }
 impl yul_switch_statement::_S7 {
-    pub fn new(((default, ignore), yul_block): ((usize, ignore::N), yul_block::N)) -> Self {
+    pub fn new(
+        ((default, ignore), yul_block): ((FixedTerminal<7usize>, ignore::N), yul_block::N),
+    ) -> Self {
         Self {
             default,
             ignore,
@@ -1331,7 +1490,9 @@ impl yul_switch_statement::_S2 {
     }
 }
 impl yul_switch_statement::_S6 {
-    pub fn new(((default, ignore), yul_block): ((usize, ignore::N), yul_block::N)) -> Self {
+    pub fn new(
+        ((default, ignore), yul_block): ((FixedTerminal<7usize>, ignore::N), yul_block::N),
+    ) -> Self {
         Self {
             default,
             ignore,
@@ -1343,7 +1504,10 @@ impl yul_switch_statement::_S4 {
     pub fn new(
         (((((case, ignore_0), yul_literal), ignore_1), yul_block), ignore): (
             (
-                (((usize, ignore::N), yul_literal::N), ignore::N),
+                (
+                    ((FixedTerminal<4usize>, ignore::N), yul_literal::N),
+                    ignore::N,
+                ),
                 yul_block::N,
             ),
             ignore::N,
@@ -1362,7 +1526,10 @@ impl yul_switch_statement::_S4 {
 impl yul_variable_declaration::_S0 {
     pub fn new(
         ((((r#let, ignore_0), yul_identifier), ignore_1), _c2): (
-            (((usize, ignore::N), yul_identifier::N), ignore::N),
+            (
+                ((FixedTerminal<3usize>, ignore::N), yul_identifier::N),
+                ignore::N,
+            ),
             Option<Box<yul_variable_declaration::_C2>>,
         ),
     ) -> Self {
@@ -1387,7 +1554,10 @@ impl yul_variable_declaration::_S4 {
 }
 impl yul_variable_declaration::_S8 {
     pub fn new(
-        ((colon_equal, ignore), yul_function_call): ((usize, ignore::N), yul_function_call::N),
+        ((colon_equal, ignore), yul_function_call): (
+            (FixedTerminal<2usize>, ignore::N),
+            yul_function_call::N,
+        ),
     ) -> Self {
         Self {
             colon_equal,
@@ -1398,7 +1568,10 @@ impl yul_variable_declaration::_S8 {
 }
 impl yul_variable_declaration::_S6 {
     pub fn new(
-        ((comma_char, ignore), yul_identifier): ((char, ignore::N), yul_identifier::N),
+        ((comma_char, ignore), yul_identifier): (
+            (FixedTerminal<1usize>, ignore::N),
+            yul_identifier::N,
+        ),
     ) -> Self {
         Self {
             comma_char,
@@ -1409,7 +1582,10 @@ impl yul_variable_declaration::_S6 {
 }
 impl yul_variable_declaration::_S3 {
     pub fn new(
-        ((colon_equal, ignore), yul_expression): ((usize, ignore::N), yul_expression::N),
+        ((colon_equal, ignore), yul_expression): (
+            (FixedTerminal<2usize>, ignore::N),
+            yul_expression::N,
+        ),
     ) -> Self {
         Self {
             colon_equal,
@@ -1457,8 +1633,11 @@ impl type_name::_S3 {
     pub fn new(
         (((((open_bracket_char, ignore_0), expression), ignore_1), close_bracket_char), ignore): (
             (
-                (((char, ignore::N), Option<expression::N>), ignore::N),
-                char,
+                (
+                    ((FixedTerminal<1usize>, ignore::N), Option<expression::N>),
+                    ignore::N,
+                ),
+                FixedTerminal<1usize>,
             ),
             ignore::N,
         ),
@@ -1487,7 +1666,10 @@ impl error_parameter::_S0 {
 impl event_parameter::_S0 {
     pub fn new(
         ((((type_name, ignore_0), indexed), ignore_1), identifier): (
-            (((type_name::N, ignore::N), Option<usize>), ignore::N),
+            (
+                ((type_name::N, ignore::N), Option<FixedTerminal<7usize>>),
+                ignore::N,
+            ),
             Option<identifier::N>,
         ),
     ) -> Self {
@@ -1502,7 +1684,10 @@ impl event_parameter::_S0 {
 }
 impl inheritance_specifier_list::_S0 {
     pub fn new(
-        ((is, ignore), _s2s): ((usize, ignore::N), Box<inheritance_specifier_list::_S1>),
+        ((is, ignore), _s2s): (
+            (FixedTerminal<2usize>, ignore::N),
+            Box<inheritance_specifier_list::_S1>,
+        ),
     ) -> Self {
         Self { is, ignore, _s2s }
     }
@@ -1518,7 +1703,7 @@ impl inheritance_specifier_list::_S1 {
     }
 }
 impl inheritance_specifier_list::_S3 {
-    pub fn new((comma_char, ignore): (char, ignore::N)) -> Self {
+    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
         Self { comma_char, ignore }
     }
 }
@@ -1534,10 +1719,13 @@ impl primary_expression::_S9 {
     pub fn new(
         ((((open_bracket_char, ignore_0), _s11s), ignore_1), close_bracket_char): (
             (
-                ((char, ignore::N), Box<primary_expression::_S10>),
+                (
+                    (FixedTerminal<1usize>, ignore::N),
+                    Box<primary_expression::_S10>,
+                ),
                 ignore::N,
             ),
-            char,
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -1560,7 +1748,7 @@ impl primary_expression::_S10 {
     }
 }
 impl primary_expression::_S12 {
-    pub fn new((comma_char, ignore): (char, ignore::N)) -> Self {
+    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
         Self { comma_char, ignore }
     }
 }
@@ -1572,8 +1760,14 @@ impl primary_expression::_S11 {
 impl primary_expression::_S4 {
     pub fn new(
         ((((open_paren_char, ignore_0), _s7s), ignore_1), close_paren_char): (
-            (((char, ignore::N), Box<primary_expression::_S5>), ignore::N),
-            char,
+            (
+                (
+                    (FixedTerminal<1usize>, ignore::N),
+                    Box<primary_expression::_S5>,
+                ),
+                ignore::N,
+            ),
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -1596,7 +1790,7 @@ impl primary_expression::_S5 {
     }
 }
 impl primary_expression::_S8 {
-    pub fn new((comma_char, ignore): (char, ignore::N)) -> Self {
+    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
         Self { comma_char, ignore }
     }
 }
@@ -1606,7 +1800,9 @@ impl primary_expression::_S7 {
     }
 }
 impl primary_expression::_S3 {
-    pub fn new(((new, ignore), type_name): ((usize, ignore::N), type_name::N)) -> Self {
+    pub fn new(
+        ((new, ignore), type_name): ((FixedTerminal<3usize>, ignore::N), type_name::N),
+    ) -> Self {
         Self {
             new,
             ignore,
@@ -1621,10 +1817,16 @@ impl primary_expression::_S2 {
             close_paren_char,
         ): (
             (
-                ((((usize, ignore::N), char), ignore::N), type_name::N),
+                (
+                    (
+                        ((FixedTerminal<4usize>, ignore::N), FixedTerminal<1usize>),
+                        ignore::N,
+                    ),
+                    type_name::N,
+                ),
                 ignore::N,
             ),
-            char,
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -1639,7 +1841,9 @@ impl primary_expression::_S2 {
     }
 }
 impl primary_expression::_S1 {
-    pub fn new(((payable, ignore), argument_list): ((usize, ignore::N), argument_list::N)) -> Self {
+    pub fn new(
+        ((payable, ignore), argument_list): ((FixedTerminal<7usize>, ignore::N), argument_list::N),
+    ) -> Self {
         Self {
             payable,
             ignore,
@@ -1662,14 +1866,20 @@ impl struct_definition::_S0 {
             (
                 (
                     (
-                        ((((usize, ignore::N), identifier::N), ignore::N), char),
+                        (
+                            (
+                                ((FixedTerminal<6usize>, ignore::N), identifier::N),
+                                ignore::N,
+                            ),
+                            FixedTerminal<1usize>,
+                        ),
                         ignore::N,
                     ),
                     Vec<Box<struct_definition::_S2>>,
                 ),
                 ignore::N,
             ),
-            char,
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -1690,7 +1900,7 @@ impl struct_definition::_S2 {
         (((((type_name, ignore_0), identifier), ignore_1), semicolon_char), ignore): (
             (
                 (((type_name::N, ignore::N), identifier::N), ignore::N),
-                char,
+                FixedTerminal<1usize>,
             ),
             ignore::N,
         ),
@@ -1723,8 +1933,14 @@ impl using_directive::_S0 {
                         (
                             (
                                 (
-                                    (((usize, ignore::N), Box<using_directive::_C1>), ignore::N),
-                                    usize,
+                                    (
+                                        (
+                                            (FixedTerminal<5usize>, ignore::N),
+                                            Box<using_directive::_C1>,
+                                        ),
+                                        ignore::N,
+                                    ),
+                                    FixedTerminal<3usize>,
                                 ),
                                 ignore::N,
                             ),
@@ -1732,11 +1948,11 @@ impl using_directive::_S0 {
                         ),
                         ignore::N,
                     ),
-                    Option<usize>,
+                    Option<FixedTerminal<6usize>>,
                 ),
                 ignore::N,
             ),
-            char,
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -1757,8 +1973,14 @@ impl using_directive::_S0 {
 impl using_directive::_S2 {
     pub fn new(
         ((((open_brace_char, ignore_0), _s4s), ignore_1), close_brace_char): (
-            (((char, ignore::N), Box<using_directive::_S3>), ignore::N),
-            char,
+            (
+                (
+                    (FixedTerminal<1usize>, ignore::N),
+                    Box<using_directive::_S3>,
+                ),
+                ignore::N,
+            ),
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -1781,7 +2003,7 @@ impl using_directive::_S3 {
     }
 }
 impl using_directive::_S5 {
-    pub fn new((comma_char, ignore): (char, ignore::N)) -> Self {
+    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
         Self { comma_char, ignore }
     }
 }
@@ -1812,8 +2034,11 @@ impl variable_declaration::_S0 {
 impl yul_block::_S0 {
     pub fn new(
         ((((open_brace_char, ignore_0), _s2s), ignore_1), close_brace_char): (
-            (((char, ignore::N), Vec<Box<yul_block::_S2>>), ignore::N),
-            char,
+            (
+                ((FixedTerminal<1usize>, ignore::N), Vec<Box<yul_block::_S2>>),
+                ignore::N,
+            ),
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -1847,7 +2072,13 @@ impl assembly_statement::_S0 {
         ): (
             (
                 (
-                    (((usize, ignore::N), Option<usize>), ignore::N),
+                    (
+                        (
+                            (FixedTerminal<8usize>, ignore::N),
+                            Option<FixedTerminal<8usize>>,
+                        ),
+                        ignore::N,
+                    ),
                     Option<assembly_flags::N>,
                 ),
                 ignore::N,
@@ -1892,18 +2123,24 @@ impl error_definition::_S0 {
                     (
                         (
                             (
-                                ((((usize, ignore::N), identifier::N), ignore::N), char),
+                                (
+                                    (
+                                        ((FixedTerminal<5usize>, ignore::N), identifier::N),
+                                        ignore::N,
+                                    ),
+                                    FixedTerminal<1usize>,
+                                ),
                                 ignore::N,
                             ),
                             Option<Box<error_definition::_S1>>,
                         ),
                         ignore::N,
                     ),
-                    char,
+                    FixedTerminal<1usize>,
                 ),
                 ignore::N,
             ),
-            char,
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -1932,7 +2169,7 @@ impl error_definition::_S1 {
     }
 }
 impl error_definition::_S3 {
-    pub fn new((comma_char, ignore): (char, ignore::N)) -> Self {
+    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
         Self { comma_char, ignore }
     }
 }
@@ -1981,22 +2218,28 @@ impl event_definition::_S0 {
                             (
                                 (
                                     (
-                                        ((((usize, ignore::N), identifier::N), ignore::N), char),
+                                        (
+                                            (
+                                                ((FixedTerminal<5usize>, ignore::N), identifier::N),
+                                                ignore::N,
+                                            ),
+                                            FixedTerminal<1usize>,
+                                        ),
                                         ignore::N,
                                     ),
                                     Option<Box<event_definition::_S1>>,
                                 ),
                                 ignore::N,
                             ),
-                            char,
+                            FixedTerminal<1usize>,
                         ),
                         ignore::N,
                     ),
-                    Option<usize>,
+                    Option<FixedTerminal<9usize>>,
                 ),
                 ignore::N,
             ),
-            char,
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -2027,7 +2270,7 @@ impl event_definition::_S1 {
     }
 }
 impl event_definition::_S3 {
-    pub fn new((comma_char, ignore): (char, ignore::N)) -> Self {
+    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
         Self { comma_char, ignore }
     }
 }
@@ -2065,12 +2308,15 @@ impl index_access_expression::_S2 {
             (
                 (
                     (
-                        (((char, ignore::N), Option<expression::N>), ignore::N),
+                        (
+                            ((FixedTerminal<1usize>, ignore::N), Option<expression::N>),
+                            ignore::N,
+                        ),
                         Option<Box<index_access_expression::_S5>>,
                     ),
                     ignore::N,
                 ),
-                char,
+                FixedTerminal<1usize>,
             ),
             ignore::N,
         ),
@@ -2089,7 +2335,10 @@ impl index_access_expression::_S2 {
 }
 impl index_access_expression::_S5 {
     pub fn new(
-        ((colon_char, ignore), expression): ((char, ignore::N), Option<expression::N>),
+        ((colon_char, ignore), expression): (
+            (FixedTerminal<1usize>, ignore::N),
+            Option<expression::N>,
+        ),
     ) -> Self {
         Self {
             colon_char,
@@ -2118,7 +2367,10 @@ impl variable_declaration_tuple::_S0 {
                     (
                         (
                             (
-                                ((char, ignore::N), Vec<Box<variable_declaration_tuple::_S2>>),
+                                (
+                                    (FixedTerminal<1usize>, ignore::N),
+                                    Vec<Box<variable_declaration_tuple::_S2>>,
+                                ),
                                 ignore::N,
                             ),
                             variable_declaration::N,
@@ -2129,7 +2381,7 @@ impl variable_declaration_tuple::_S0 {
                 ),
                 ignore::N,
             ),
-            char,
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -2148,7 +2400,10 @@ impl variable_declaration_tuple::_S0 {
 impl variable_declaration_tuple::_S4 {
     pub fn new(
         (((comma_char, ignore_0), variable_declaration), ignore_1): (
-            ((char, ignore::N), Option<variable_declaration::N>),
+            (
+                (FixedTerminal<1usize>, ignore::N),
+                Option<variable_declaration::N>,
+            ),
             ignore::N,
         ),
     ) -> Self {
@@ -2161,7 +2416,7 @@ impl variable_declaration_tuple::_S4 {
     }
 }
 impl variable_declaration_tuple::_S2 {
-    pub fn new((comma_char, ignore): (char, ignore::N)) -> Self {
+    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
         Self { comma_char, ignore }
     }
 }
@@ -2182,7 +2437,10 @@ impl member_access_expression::_S0 {
 impl member_access_expression::_S2 {
     pub fn new(
         (((period_char, ignore_0), _c3), ignore_1): (
-            ((char, ignore::N), Box<member_access_expression::_C3>),
+            (
+                (FixedTerminal<1usize>, ignore::N),
+                Box<member_access_expression::_C3>,
+            ),
             ignore::N,
         ),
     ) -> Self {
@@ -2214,12 +2472,12 @@ impl function_call_options_expression::_S2 {
             (
                 (
                     (
-                        (char, ignore::N),
+                        (FixedTerminal<1usize>, ignore::N),
                         Box<function_call_options_expression::_S3>,
                     ),
                     ignore::N,
                 ),
-                char,
+                FixedTerminal<1usize>,
             ),
             ignore::N,
         ),
@@ -2245,7 +2503,7 @@ impl function_call_options_expression::_S3 {
     }
 }
 impl function_call_options_expression::_S5 {
-    pub fn new((comma_char, ignore): (char, ignore::N)) -> Self {
+    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
         Self { comma_char, ignore }
     }
 }
@@ -2281,7 +2539,10 @@ impl function_call_expression::_S2 {
 }
 impl unary_prefix_expression::_S0 {
     pub fn new(
-        ((_0, ignore), function_call_expression): ((usize, ignore::N), function_call_expression::N),
+        ((_0, ignore), function_call_expression): (
+            (Option<usize>, ignore::N),
+            function_call_expression::N,
+        ),
     ) -> Self {
         Self {
             _0,
@@ -2292,7 +2553,10 @@ impl unary_prefix_expression::_S0 {
 }
 impl unary_suffix_expression::_S0 {
     pub fn new(
-        ((unary_prefix_expression, ignore), _1): ((unary_prefix_expression::N, ignore::N), usize),
+        ((unary_prefix_expression, ignore), _1): (
+            (unary_prefix_expression::N, ignore::N),
+            Option<FixedTerminal<2usize>>,
+        ),
     ) -> Self {
         Self {
             unary_prefix_expression,
@@ -2303,17 +2567,30 @@ impl unary_suffix_expression::_S0 {
 }
 impl exp_expression::_S0 {
     pub fn new(
-        ((((unary_suffix_expression, ignore_0), star_star), ignore_1), expression): (
-            (((unary_suffix_expression::N, ignore::N), usize), ignore::N),
-            expression::N,
+        ((unary_suffix_expression, ignore), _s2s): (
+            (unary_suffix_expression::N, ignore::N),
+            Vec<Box<exp_expression::_S2>>,
         ),
     ) -> Self {
         Self {
             unary_suffix_expression,
-            ignore_0,
+            ignore,
+            _s2s,
+        }
+    }
+}
+impl exp_expression::_S2 {
+    pub fn new(
+        (((star_star, ignore_0), expression), ignore_1): (
+            ((FixedTerminal<2usize>, ignore::N), expression::N),
+            ignore::N,
+        ),
+    ) -> Self {
+        Self {
             star_star,
-            ignore_1,
+            ignore_0,
             expression,
+            ignore_1,
         }
     }
 }
@@ -2334,7 +2611,7 @@ impl mul_div_mod_expression::_S0 {
 impl mul_div_mod_expression::_S2 {
     pub fn new(
         (((_0, ignore_0), exp_expression), ignore_1): (
-            ((char, ignore::N), exp_expression::N),
+            ((FixedTerminal<1usize>, ignore::N), exp_expression::N),
             ignore::N,
         ),
     ) -> Self {
@@ -2363,7 +2640,10 @@ impl add_sub_expression::_S0 {
 impl add_sub_expression::_S2 {
     pub fn new(
         (((_0, ignore_0), mul_div_mod_expression), ignore_1): (
-            ((char, ignore::N), mul_div_mod_expression::N),
+            (
+                (FixedTerminal<1usize>, ignore::N),
+                mul_div_mod_expression::N,
+            ),
             ignore::N,
         ),
     ) -> Self {
@@ -2421,7 +2701,7 @@ impl bit_and_expression::_S0 {
 impl bit_and_expression::_S2 {
     pub fn new(
         (((ampersand_char, ignore_0), shift_expression), ignore_1): (
-            ((char, ignore::N), shift_expression::N),
+            ((FixedTerminal<1usize>, ignore::N), shift_expression::N),
             ignore::N,
         ),
     ) -> Self {
@@ -2450,7 +2730,7 @@ impl bit_x_or_expression::_S0 {
 impl bit_x_or_expression::_S2 {
     pub fn new(
         (((caret_char, ignore_0), bit_and_expression), ignore_1): (
-            ((char, ignore::N), bit_and_expression::N),
+            ((FixedTerminal<1usize>, ignore::N), bit_and_expression::N),
             ignore::N,
         ),
     ) -> Self {
@@ -2479,7 +2759,7 @@ impl bit_or_expression::_S0 {
 impl bit_or_expression::_S2 {
     pub fn new(
         (((bar_char, ignore_0), bit_x_or_expression), ignore_1): (
-            ((char, ignore::N), bit_x_or_expression::N),
+            ((FixedTerminal<1usize>, ignore::N), bit_x_or_expression::N),
             ignore::N,
         ),
     ) -> Self {
@@ -2537,7 +2817,10 @@ impl equality_comparison_expression::_S0 {
 impl equality_comparison_expression::_S2 {
     pub fn new(
         (((_0, ignore_0), order_comparison_expression), ignore_1): (
-            ((usize, ignore::N), order_comparison_expression::N),
+            (
+                (FixedTerminal<2usize>, ignore::N),
+                order_comparison_expression::N,
+            ),
             ignore::N,
         ),
     ) -> Self {
@@ -2566,7 +2849,10 @@ impl and_expression::_S0 {
 impl and_expression::_S2 {
     pub fn new(
         (((ampersand_ampersand, ignore_0), equality_comparison_expression), ignore_1): (
-            ((usize, ignore::N), equality_comparison_expression::N),
+            (
+                (FixedTerminal<2usize>, ignore::N),
+                equality_comparison_expression::N,
+            ),
             ignore::N,
         ),
     ) -> Self {
@@ -2595,7 +2881,7 @@ impl or_expression::_S0 {
 impl or_expression::_S2 {
     pub fn new(
         (((bar_bar, ignore_0), and_expression), ignore_1): (
-            ((usize, ignore::N), and_expression::N),
+            ((FixedTerminal<2usize>, ignore::N), and_expression::N),
             ignore::N,
         ),
     ) -> Self {
@@ -2628,7 +2914,13 @@ impl conditional_expression::_S2 {
             expression_1,
         ): (
             (
-                ((((char, ignore::N), expression::N), ignore::N), char),
+                (
+                    (
+                        ((FixedTerminal<1usize>, ignore::N), expression::N),
+                        ignore::N,
+                    ),
+                    FixedTerminal<1usize>,
+                ),
                 ignore::N,
             ),
             expression::N,
@@ -2647,17 +2939,27 @@ impl conditional_expression::_S2 {
 }
 impl assignment_expression::_S0 {
     pub fn new(
-        ((((conditional_expression, ignore_0), _1), ignore_1), expression): (
-            (((conditional_expression::N, ignore::N), usize), ignore::N),
-            expression::N,
+        ((conditional_expression, ignore), _s2s): (
+            (conditional_expression::N, ignore::N),
+            Vec<Box<assignment_expression::_S2>>,
         ),
     ) -> Self {
         Self {
             conditional_expression,
+            ignore,
+            _s2s,
+        }
+    }
+}
+impl assignment_expression::_S2 {
+    pub fn new(
+        (((_0, ignore_0), expression), ignore_1): (((usize, ignore::N), expression::N), ignore::N),
+    ) -> Self {
+        Self {
+            _0,
             ignore_0,
-            _1,
-            ignore_1,
             expression,
+            ignore_1,
         }
     }
 }
@@ -2685,12 +2987,15 @@ impl constant_definition::_S0 {
                         (
                             (
                                 (
-                                    (((type_name::N, ignore::N), usize), ignore::N),
+                                    (
+                                        ((type_name::N, ignore::N), FixedTerminal<8usize>),
+                                        ignore::N,
+                                    ),
                                     identifier::N,
                                 ),
                                 ignore::N,
                             ),
-                            char,
+                            FixedTerminal<1usize>,
                         ),
                         ignore::N,
                     ),
@@ -2698,7 +3003,7 @@ impl constant_definition::_S0 {
                 ),
                 ignore::N,
             ),
-            char,
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -2750,10 +3055,16 @@ impl do_while_statement::_S0 {
                             (
                                 (
                                     (
-                                        ((((usize, ignore::N), statement::N), ignore::N), usize),
+                                        (
+                                            (
+                                                ((FixedTerminal<2usize>, ignore::N), statement::N),
+                                                ignore::N,
+                                            ),
+                                            FixedTerminal<5usize>,
+                                        ),
                                         ignore::N,
                                     ),
-                                    char,
+                                    FixedTerminal<1usize>,
                                 ),
                                 ignore::N,
                             ),
@@ -2761,11 +3072,11 @@ impl do_while_statement::_S0 {
                         ),
                         ignore::N,
                     ),
-                    char,
+                    FixedTerminal<1usize>,
                 ),
                 ignore::N,
             ),
-            char,
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -2790,12 +3101,15 @@ impl emit_statement::_S0 {
         ((((((emit, ignore_0), expression), ignore_1), argument_list), ignore_2), semicolon_char): (
             (
                 (
-                    (((usize, ignore::N), expression::N), ignore::N),
+                    (
+                        ((FixedTerminal<4usize>, ignore::N), expression::N),
+                        ignore::N,
+                    ),
                     argument_list::N,
                 ),
                 ignore::N,
             ),
-            char,
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -2810,7 +3124,9 @@ impl emit_statement::_S0 {
     }
 }
 impl expression_statement::_S0 {
-    pub fn new(((expression, ignore), semicolon_char): ((expression::N, ignore::N), char)) -> Self {
+    pub fn new(
+        ((expression, ignore), semicolon_char): ((expression::N, ignore::N), FixedTerminal<1usize>),
+    ) -> Self {
         Self {
             expression,
             ignore,
@@ -2844,10 +3160,16 @@ impl if_statement::_S0 {
                     (
                         (
                             (
-                                ((((usize, ignore::N), char), ignore::N), expression::N),
+                                (
+                                    (
+                                        ((FixedTerminal<2usize>, ignore::N), FixedTerminal<1usize>),
+                                        ignore::N,
+                                    ),
+                                    expression::N,
+                                ),
                                 ignore::N,
                             ),
-                            char,
+                            FixedTerminal<1usize>,
                         ),
                         ignore::N,
                     ),
@@ -2874,7 +3196,9 @@ impl if_statement::_S0 {
     }
 }
 impl if_statement::_S2 {
-    pub fn new(((r#else, ignore), statement): ((usize, ignore::N), statement::N)) -> Self {
+    pub fn new(
+        ((r#else, ignore), statement): ((FixedTerminal<4usize>, ignore::N), statement::N),
+    ) -> Self {
         Self {
             r#else,
             ignore,
@@ -2885,8 +3209,11 @@ impl if_statement::_S2 {
 impl return_statement::_S0 {
     pub fn new(
         ((((r#return, ignore_0), expression), ignore_1), semicolon_char): (
-            (((usize, ignore::N), Option<expression::N>), ignore::N),
-            char,
+            (
+                ((FixedTerminal<6usize>, ignore::N), Option<expression::N>),
+                ignore::N,
+            ),
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -2900,7 +3227,7 @@ impl return_statement::_S0 {
 }
 impl revert_statement::_S0 {
     pub fn new(
-        ((((((revert , ignore_0) , expression) , ignore_1) , argument_list) , ignore_2) , semicolon_char) : ((((((usize , ignore :: N) , expression :: N) , ignore :: N) , argument_list :: N) , ignore :: N) , char),
+        ((((((revert , ignore_0) , expression) , ignore_1) , argument_list) , ignore_2) , semicolon_char) : ((((((FixedTerminal < 6usize > , ignore :: N) , expression :: N) , ignore :: N) , argument_list :: N) , ignore :: N) , FixedTerminal < 1usize >),
     ) -> Self {
         Self {
             revert,
@@ -2938,7 +3265,7 @@ impl state_variable_declaration::_S0 {
                 ),
                 ignore::N,
             ),
-            char,
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -2955,7 +3282,9 @@ impl state_variable_declaration::_S0 {
     }
 }
 impl state_variable_declaration::_S4 {
-    pub fn new(((equal_char, ignore), expression): ((char, ignore::N), expression::N)) -> Self {
+    pub fn new(
+        ((equal_char, ignore), expression): ((FixedTerminal<1usize>, ignore::N), expression::N),
+    ) -> Self {
         Self {
             equal_char,
             ignore,
@@ -2994,7 +3323,10 @@ impl try_statement::_S0 {
                         (
                             (
                                 (
-                                    (((usize, ignore::N), expression::N), ignore::N),
+                                    (
+                                        ((FixedTerminal<3usize>, ignore::N), expression::N),
+                                        ignore::N,
+                                    ),
                                     Option<Box<try_statement::_S2>>,
                                 ),
                                 ignore::N,
@@ -3036,7 +3368,7 @@ impl try_statement::_S4 {
 impl try_statement::_S2 {
     pub fn new(
         ((returns, ignore), non_empty_parameter_list): (
-            (usize, ignore::N),
+            (FixedTerminal<7usize>, ignore::N),
             non_empty_parameter_list::N,
         ),
     ) -> Self {
@@ -3051,7 +3383,7 @@ impl variable_declaration_statement::_S0 {
     pub fn new(
         ((_c1, ignore), semicolon_char): (
             (Box<variable_declaration_statement::_C1>, ignore::N),
-            char,
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -3065,7 +3397,10 @@ impl variable_declaration_statement::_S5 {
     pub fn new(
         ((((variable_declaration_tuple, ignore_0), equal_char), ignore_1), expression): (
             (
-                ((variable_declaration_tuple::N, ignore::N), char),
+                (
+                    (variable_declaration_tuple::N, ignore::N),
+                    FixedTerminal<1usize>,
+                ),
                 ignore::N,
             ),
             expression::N,
@@ -3095,7 +3430,9 @@ impl variable_declaration_statement::_S2 {
     }
 }
 impl variable_declaration_statement::_S4 {
-    pub fn new(((equal_char, ignore), expression): ((char, ignore::N), expression::N)) -> Self {
+    pub fn new(
+        ((equal_char, ignore), expression): ((FixedTerminal<1usize>, ignore::N), expression::N),
+    ) -> Self {
         Self {
             equal_char,
             ignore,
@@ -3118,10 +3455,16 @@ impl while_statement::_S0 {
             (
                 (
                     (
-                        ((((usize, ignore::N), char), ignore::N), expression::N),
+                        (
+                            (
+                                ((FixedTerminal<5usize>, ignore::N), FixedTerminal<1usize>),
+                                ignore::N,
+                            ),
+                            expression::N,
+                        ),
                         ignore::N,
                     ),
-                    char,
+                    FixedTerminal<1usize>,
                 ),
                 ignore::N,
             ),
@@ -3176,7 +3519,13 @@ impl for_statement::_S0 {
                                 (
                                     (
                                         (
-                                            (((usize, ignore::N), char), ignore::N),
+                                            (
+                                                (
+                                                    (FixedTerminal<3usize>, ignore::N),
+                                                    FixedTerminal<1usize>,
+                                                ),
+                                                ignore::N,
+                                            ),
                                             Box<for_statement::_C1>,
                                         ),
                                         ignore::N,
@@ -3189,7 +3538,7 @@ impl for_statement::_S0 {
                         ),
                         ignore::N,
                     ),
-                    char,
+                    FixedTerminal<1usize>,
                 ),
                 ignore::N,
             ),
@@ -3216,8 +3565,11 @@ impl for_statement::_S0 {
 impl block::_S0 {
     pub fn new(
         ((((open_brace_char, ignore_0), _s3s), ignore_1), close_brace_char): (
-            (((char, ignore::N), Vec<Box<block::_S3>>), ignore::N),
-            char,
+            (
+                ((FixedTerminal<1usize>, ignore::N), Vec<Box<block::_S3>>),
+                ignore::N,
+            ),
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -3239,7 +3591,10 @@ impl constructor_definition::_S0 {
         ((((((constructor, ignore_0), parameter_list), ignore_1), _s2s), ignore_2), block): (
             (
                 (
-                    (((usize, ignore::N), parameter_list::N), ignore::N),
+                    (
+                        ((FixedTerminal<11usize>, ignore::N), parameter_list::N),
+                        ignore::N,
+                    ),
                     Vec<Box<constructor_definition::_S2>>,
                 ),
                 ignore::N,
@@ -3279,7 +3634,10 @@ impl fallback_function_definition::_S0 {
                 (
                     (
                         (
-                            (((usize, ignore::N), parameter_list::N), ignore::N),
+                            (
+                                ((FixedTerminal<8usize>, ignore::N), parameter_list::N),
+                                ignore::N,
+                            ),
                             Vec<Box<fallback_function_definition::_S2>>,
                         ),
                         ignore::N,
@@ -3307,7 +3665,7 @@ impl fallback_function_definition::_S0 {
 impl fallback_function_definition::_S4 {
     pub fn new(
         ((returns, ignore), non_empty_parameter_list): (
-            (usize, ignore::N),
+            (FixedTerminal<7usize>, ignore::N),
             non_empty_parameter_list::N,
         ),
     ) -> Self {
@@ -3353,7 +3711,10 @@ impl function_definition::_S0 {
                             (
                                 (
                                     (
-                                        ((usize, ignore::N), Box<function_definition::_C1>),
+                                        (
+                                            (FixedTerminal<8usize>, ignore::N),
+                                            Box<function_definition::_C1>,
+                                        ),
                                         ignore::N,
                                     ),
                                     parameter_list::N,
@@ -3389,7 +3750,7 @@ impl function_definition::_S0 {
 impl function_definition::_S5 {
     pub fn new(
         ((returns, ignore), non_empty_parameter_list): (
-            (usize, ignore::N),
+            (FixedTerminal<7usize>, ignore::N),
             non_empty_parameter_list::N,
         ),
     ) -> Self {
@@ -3424,7 +3785,10 @@ impl modifier_definition::_S0 {
                 (
                     (
                         (
-                            (((usize, ignore::N), identifier::N), ignore::N),
+                            (
+                                ((FixedTerminal<8usize>, ignore::N), identifier::N),
+                                ignore::N,
+                            ),
                             Option<parameter_list::N>,
                         ),
                         ignore::N,
@@ -3474,7 +3838,16 @@ impl receive_function_definition::_S0 {
         ): (
             (
                 (
-                    (((((usize, ignore::N), char), ignore::N), char), ignore::N),
+                    (
+                        (
+                            (
+                                ((FixedTerminal<7usize>, ignore::N), FixedTerminal<1usize>),
+                                ignore::N,
+                            ),
+                            FixedTerminal<1usize>,
+                        ),
+                        ignore::N,
+                    ),
                     Vec<Box<receive_function_definition::_S2>>,
                 ),
                 ignore::N,
@@ -3543,7 +3916,13 @@ impl contract_definition::_S0 {
                                 (
                                     (
                                         (
-                                            (((Option<usize>, ignore::N), usize), ignore::N),
+                                            (
+                                                (
+                                                    (Option<FixedTerminal<8usize>>, ignore::N),
+                                                    FixedTerminal<8usize>,
+                                                ),
+                                                ignore::N,
+                                            ),
                                             identifier::N,
                                         ),
                                         ignore::N,
@@ -3552,7 +3931,7 @@ impl contract_definition::_S0 {
                                 ),
                                 ignore::N,
                             ),
-                            char,
+                            FixedTerminal<1usize>,
                         ),
                         ignore::N,
                     ),
@@ -3560,7 +3939,7 @@ impl contract_definition::_S0 {
                 ),
                 ignore::N,
             ),
-            char,
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -3618,12 +3997,15 @@ impl interface_definition::_S0 {
                         (
                             (
                                 (
-                                    (((usize, ignore::N), identifier::N), ignore::N),
+                                    (
+                                        ((FixedTerminal<9usize>, ignore::N), identifier::N),
+                                        ignore::N,
+                                    ),
                                     Option<inheritance_specifier_list::N>,
                                 ),
                                 ignore::N,
                             ),
-                            char,
+                            FixedTerminal<1usize>,
                         ),
                         ignore::N,
                     ),
@@ -3631,7 +4013,7 @@ impl interface_definition::_S0 {
                 ),
                 ignore::N,
             ),
-            char,
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
@@ -3672,14 +4054,20 @@ impl library_definition::_S0 {
             (
                 (
                     (
-                        ((((usize, ignore::N), identifier::N), ignore::N), char),
+                        (
+                            (
+                                ((FixedTerminal<7usize>, ignore::N), identifier::N),
+                                ignore::N,
+                            ),
+                            FixedTerminal<1usize>,
+                        ),
                         ignore::N,
                     ),
                     Vec<Box<library_definition::_S2>>,
                 ),
                 ignore::N,
             ),
-            char,
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
