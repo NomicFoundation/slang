@@ -50,38 +50,37 @@ impl TypeTree {
             quote!( #(#subtype_implementations)* ),
         )
     }
-
-    fn to_serde_annotation(&self, grammar: &Grammar) -> TokenStream {
-        self.root.to_serde_annotation(grammar)
-    }
 }
 
 impl TypeTreeNodeData {
     fn to_serde_annotation(&self, grammar: &Grammar) -> TokenStream {
+        if self.is_defaultable(grammar) {
+            quote!( #[serde(default, skip_serializing_if="DefaultTest::is_default")] )
+        } else {
+            quote!()
+        }
+    }
+
+    fn is_defaultable(&self, grammar: &Grammar) -> bool {
         match self {
-            TypeTreeNodeData::Repetition(_) => quote!(
-                #[serde(default, skip_serializing_if="Vec::is_empty")]
-            ),
-            TypeTreeNodeData::Option(_) => quote!(
-                #[serde(default, skip_serializing_if="Option::is_none")]
-            ),
-            TypeTreeNodeData::Named(name) => {
-                if let Some(production) = grammar.get_production(name.as_str()) {
-                    production
-                        .combinator_tree()
+            TypeTreeNodeData::Choice(_, _) => false,
+            TypeTreeNodeData::Tuple(_, members) => {
+                members.iter().all(|(_, t)| t.is_defaultable(grammar))
+            }
+            TypeTreeNodeData::Named(name) => grammar
+                .get_production(name.as_str())
+                .map(|p| {
+                    p.combinator_tree()
                         .to_type_tree()
-                        .to_serde_annotation(grammar)
-                } else {
-                    quote!()
-                }
-            }
-            TypeTreeNodeData::FixedTerminal(_) | TypeTreeNodeData::Unit => {
-                quote!( #[serde(skip)])
-            }
-            TypeTreeNodeData::Tuple(_, _) | TypeTreeNodeData::Choice(_, _) => quote!(),
-            TypeTreeNodeData::VariableTerminal => quote!(
-                #[serde(default, skip_serializing_if="usize_is_zero")]
-            ),
+                        .root
+                        .is_defaultable(grammar)
+                })
+                .unwrap_or_default(),
+            TypeTreeNodeData::Repetition(_)
+            | TypeTreeNodeData::Option(_)
+            | TypeTreeNodeData::FixedTerminal(_)
+            | TypeTreeNodeData::VariableTerminal
+            | TypeTreeNodeData::Unit => true,
         }
     }
 
@@ -115,11 +114,19 @@ impl TypeTreeNodeData {
                     .cloned()
                     .reduce(|accum, tipe| quote!((#accum, #tipe)))
                     .unwrap();
+                let is_defaultable = self.is_defaultable(grammar);
                 let name = name.to_type_name_ident();
-                accum.0.push(quote!(
-                    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-                    pub struct #name { #(#serde_annotations pub #tags: #types),* }
-                ));
+                accum.0.push(if is_defaultable {
+                    quote!(
+                        #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
+                        pub struct #name { #(#serde_annotations pub #tags: #types),* }
+                    )
+                } else {
+                    quote!(
+                        #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+                        pub struct #name { #(#serde_annotations pub #tags: #types),* }
+                    )
+                });
                 accum.1.push(quote!(
                     impl #module_name::#name {
                         pub fn new(#nested_tags: #nested_types) -> Self {
@@ -127,6 +134,17 @@ impl TypeTreeNodeData {
                         }
                     }
                 ));
+                accum.1.push(if is_defaultable {
+                    quote!(
+                        impl DefaultTest for #module_name::#name {
+                            fn is_default(&self) -> bool {
+                                #(self.#tags.is_default())&&*
+                            }
+                        }
+                    )
+                } else {
+                    quote!( impl DefaultTest for #module_name::#name {})
+                });
                 quote!( Box<#module_name::#name> )
             }
             Self::Choice(name, choices) => {
@@ -139,6 +157,9 @@ impl TypeTreeNodeData {
                 accum.0.push(quote!(
                   #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
                    pub enum #name { #(#tags(#types)),* }
+                ));
+                accum.1.push(quote!(
+                    impl DefaultTest for #module_name::#name {}
                 ));
                 quote!( Box<#module_name::#name> )
             }
