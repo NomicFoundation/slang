@@ -1,8 +1,8 @@
 «IGNORE» = { «Whitespace» | «Comment» | «LineComment» } ;
 
-«Whitespace» = '\u{20}' | '\u{9}' | '\u{d}' | '\u{a}' ;
+«Whitespace» = 1…*{ '\u{20}' | '\u{9}' | '\u{d}' | '\u{a}' } ;
 
-«Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } 1…*{ '*' } '/' ;
+«Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
 
 «LineComment» = '//' { ¬( '\u{a}' | '\u{d}' ) } ;
 
@@ -122,7 +122,7 @@ AssignmentExpression = ConditionalExpression AssignmentOperator Expression ;
 
 AssignmentOperator = '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ;
 
-ConditionalExpression = OrExpression '?' Expression ':' Expression ;
+ConditionalExpression = OrExpression [ '?' Expression ':' Expression ] ;
 
 OrExpression = AndExpression { '||' AndExpression } ;
 

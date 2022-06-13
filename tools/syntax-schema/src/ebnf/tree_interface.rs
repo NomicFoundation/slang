@@ -44,7 +44,9 @@ pub mod grouped {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub open_paren_char: char,
+        pub ignore_0: ignore::N,
         pub expression: expression::N,
+        pub ignore_1: ignore::N,
         pub close_paren_char: char,
     }
 }
@@ -57,7 +59,9 @@ pub mod optional {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub open_bracket_char: char,
+        pub ignore_0: ignore::N,
         pub expression: expression::N,
+        pub ignore_1: ignore::N,
         pub close_bracket_char: char,
     }
 }
@@ -70,6 +74,7 @@ pub mod repetition_separator {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub slash_char: char,
+        pub ignore: ignore::N,
         pub expression: expression::N,
     }
 }
@@ -157,6 +162,7 @@ pub mod repetition_prefix {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub _c1: Box<repetition_prefix::_C1>,
+        pub ignore: ignore::N,
         pub star_char: char,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -167,16 +173,19 @@ pub mod repetition_prefix {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S6 {
         pub ellipsis_char: char,
+        pub ignore: ignore::N,
         pub number: number::N,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub number: number::N,
+        pub ignore: ignore::N,
         pub _s4: Option<Box<repetition_prefix::_S4>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S4 {
         pub ellipsis_char: char,
+        pub ignore: ignore::N,
         pub number: Option<number::N>,
     }
 }
@@ -227,9 +236,13 @@ pub mod repeated {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub repetition_prefix: Option<repetition_prefix::N>,
+        pub ignore_0: ignore::N,
         pub open_brace_char: char,
+        pub ignore_1: ignore::N,
         pub expression: expression::N,
+        pub ignore_2: ignore::N,
         pub repetition_separator: Option<repetition_separator::N>,
+        pub ignore_3: ignore::N,
         pub close_brace_char: char,
     }
 }
@@ -260,7 +273,9 @@ pub mod char_range {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub single_char_string_0: single_char_string::N,
+        pub ignore_0: ignore::N,
         pub ellipsis_char: char,
+        pub ignore_1: ignore::N,
         pub single_char_string_1: single_char_string::N,
     }
 }
@@ -297,6 +312,7 @@ pub mod negation {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub not_char: Option<char>,
+        pub ignore: ignore::N,
         pub primary: primary::N,
     }
 }
@@ -309,11 +325,13 @@ pub mod difference {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub negation: negation::N,
+        pub ignore: ignore::N,
         pub _s2: Option<Box<difference::_S2>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S2 {
         pub minus_char: char,
+        pub ignore: ignore::N,
         pub negation: negation::N,
     }
 }
@@ -322,7 +340,12 @@ pub mod difference {
 pub mod sequence {
     #[allow(unused_imports)]
     use super::*;
-    pub type N = Vec<difference::N>;
+    pub type N = Vec<Box<sequence::_S1>>;
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S1 {
+        pub difference: difference::N,
+        pub ignore: ignore::N,
+    }
 }
 
 /// expression = 1…*{ sequence / '|' } ;
@@ -332,8 +355,18 @@ pub mod expression {
     pub type N = Box<expression::_S0>;
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
-        pub sequences: Vec<sequence::N>,
-        pub bar_chars: Vec<char>,
+        pub _s1s: Vec<Box<expression::_S1>>,
+        pub _s2s: Vec<Box<expression::_S2>>,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S2 {
+        pub bar_char: char,
+        pub ignore: ignore::N,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S1 {
+        pub sequence: sequence::N,
+        pub ignore: ignore::N,
     }
 }
 
@@ -345,8 +378,11 @@ pub mod production {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
         pub identifier: identifier::N,
+        pub ignore_0: ignore::N,
         pub equal_char: char,
+        pub ignore_1: ignore::N,
         pub expression: expression::N,
+        pub ignore_2: ignore::N,
         pub semicolon_char: char,
     }
 }
@@ -358,8 +394,15 @@ pub mod grammar {
     pub type N = Box<grammar::_S0>;
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _S0 {
-        pub ignore: ignore::N,
-        pub productions: Vec<production::N>,
+        pub ignore_0: ignore::N,
+        pub ignore_1: ignore::N,
+        pub _s2s: Vec<Box<grammar::_S2>>,
+        pub ignore_2: ignore::N,
         pub end_marker: (),
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S2 {
+        pub production: production::N,
+        pub ignore: ignore::N,
     }
 }

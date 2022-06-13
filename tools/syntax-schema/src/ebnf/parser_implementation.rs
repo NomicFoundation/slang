@@ -1,3 +1,5 @@
+use super::parser_interface::*;
+use super::tree_interface::*;
 use chumsky::prelude::*;
 use chumsky::primitive::Just;
 use chumsky::Parser;
@@ -12,13 +14,10 @@ fn repetition_mapper<E, S>((e, es): (E, Vec<(S, E)>)) -> (Vec<E>, Vec<S>) {
     (expressions, separators)
 }
 #[allow(dead_code)]
-fn difference<M, MO, S, SO>(
-    minuend: M,
-    subtrahend: S,
-) -> impl Parser<char, MO, Error = Simple<char>>
+fn difference<M, MO, S, SO>(minuend: M, subtrahend: S) -> impl Parser<char, MO, Error = ErrorType>
 where
-    M: Clone + Parser<char, MO, Error = Simple<char>>,
-    S: Parser<char, SO, Error = Simple<char>>,
+    M: Clone + Parser<char, MO, Error = ErrorType>,
+    S: Parser<char, SO, Error = ErrorType>,
 {
     let minuend_end = minuend.clone().map_with_span(|_, span| span.end).rewind();
     let subtrahend_end = subtrahend.map_with_span(|_, span| span.end).rewind();
@@ -36,8 +35,6 @@ where
 fn terminal(str: &str) -> Just<char, &str, ErrorType> {
     just(str)
 }
-use super::parser_interface::*;
-use super::tree_interface::*;
 
 impl Parsers {
     pub fn new() -> Self {
@@ -74,20 +71,25 @@ impl Parsers {
 
         // grouped = '(' expression ')' ;
         let grouped_parser = just('(')
+            .then(ignore_parser.clone())
             .then(expression_parser.clone())
+            .then(ignore_parser.clone())
             .then(just(')'))
             .map(|v| Box::new(grouped::_S0::new(v)))
             .boxed();
 
         // optional = '[' expression ']' ;
         let optional_parser = just('[')
+            .then(ignore_parser.clone())
             .then(expression_parser.clone())
+            .then(ignore_parser.clone())
             .then(just(']'))
             .map(|v| Box::new(optional::_S0::new(v)))
             .boxed();
 
         // repetitionSeparator = '/' expression ;
         let repetition_separator_parser = just('/')
+            .then(ignore_parser.clone())
             .then(expression_parser.clone())
             .map(|v| Box::new(repetition_separator::_S0::new(v)))
             .boxed();
@@ -168,8 +170,10 @@ impl Parsers {
         let repetition_prefix_parser = choice((
             number_parser
                 .clone()
+                .then(ignore_parser.clone())
                 .then(
                     just('…')
+                        .then(ignore_parser.clone())
                         .then(number_parser.clone().or_not())
                         .map(|v| Box::new(repetition_prefix::_S4::new(v)))
                         .or_not(),
@@ -177,10 +181,12 @@ impl Parsers {
                 .map(|v| Box::new(repetition_prefix::_S2::new(v)))
                 .map(|v| Box::new(repetition_prefix::_C1::_S2(v))),
             just('…')
+                .then(ignore_parser.clone())
                 .then(number_parser.clone())
                 .map(|v| Box::new(repetition_prefix::_S6::new(v)))
                 .map(|v| Box::new(repetition_prefix::_C1::_S6(v))),
         ))
+        .then(ignore_parser.clone())
         .then(just('*'))
         .map(|v| Box::new(repetition_prefix::_S0::new(v)))
         .boxed();
@@ -218,9 +224,13 @@ impl Parsers {
         let repeated_parser = repetition_prefix_parser
             .clone()
             .or_not()
+            .then(ignore_parser.clone())
             .then(just('{'))
+            .then(ignore_parser.clone())
             .then(expression_parser.clone())
+            .then(ignore_parser.clone())
             .then(repetition_separator_parser.clone().or_not())
+            .then(ignore_parser.clone())
             .then(just('}'))
             .map(|v| Box::new(repeated::_S0::new(v)))
             .boxed();
@@ -241,7 +251,9 @@ impl Parsers {
         // charRange = «SingleCharString» '…' «SingleCharString» ;
         let char_range_parser = single_char_string_parser
             .clone()
+            .then(ignore_parser.clone())
             .then(just('…'))
+            .then(ignore_parser.clone())
             .then(single_char_string_parser.clone())
             .map(|v| Box::new(char_range::_S0::new(v)))
             .boxed();
@@ -278,6 +290,7 @@ impl Parsers {
         // negation = [ '¬' ] primary ;
         let negation_parser = just('¬')
             .or_not()
+            .then(ignore_parser.clone())
             .then(primary_parser.clone())
             .map(|v| Box::new(negation::_S0::new(v)))
             .boxed();
@@ -285,8 +298,10 @@ impl Parsers {
         // difference = negation [ '-' negation ] ;
         let difference_parser = negation_parser
             .clone()
+            .then(ignore_parser.clone())
             .then(
                 just('-')
+                    .then(ignore_parser.clone())
                     .then(negation_parser.clone())
                     .map(|v| Box::new(difference::_S2::new(v)))
                     .or_not(),
@@ -297,6 +312,8 @@ impl Parsers {
         // sequence = 1…*{ difference } ;
         let sequence_parser = difference_parser
             .clone()
+            .then(ignore_parser.clone())
+            .map(|v| Box::new(sequence::_S1::new(v)))
             .repeated()
             .at_least(1usize)
             .boxed();
@@ -305,7 +322,20 @@ impl Parsers {
         expression_parser.define(
             sequence_parser
                 .clone()
-                .then(just('|').then(sequence_parser.clone()).repeated())
+                .then(ignore_parser.clone())
+                .map(|v| Box::new(expression::_S1::new(v)))
+                .then(
+                    just('|')
+                        .then(ignore_parser.clone())
+                        .map(|v| Box::new(expression::_S2::new(v)))
+                        .then(
+                            sequence_parser
+                                .clone()
+                                .then(ignore_parser.clone())
+                                .map(|v| Box::new(expression::_S1::new(v))),
+                        )
+                        .repeated(),
+                )
                 .map(repetition_mapper)
                 .map(|v| Box::new(expression::_S0::new(v)))
                 .boxed(),
@@ -314,8 +344,11 @@ impl Parsers {
         // production = «Identifier» '=' expression ';' ;
         let production_parser = identifier_parser
             .clone()
+            .then(ignore_parser.clone())
             .then(just('='))
+            .then(ignore_parser.clone())
             .then(expression_parser.clone())
+            .then(ignore_parser.clone())
             .then(just(';'))
             .map(|v| Box::new(production::_S0::new(v)))
             .boxed();
@@ -323,7 +356,15 @@ impl Parsers {
         // grammar = «IGNORE» { production } $ ;
         let grammar_parser = ignore_parser
             .clone()
-            .then(production_parser.clone().repeated())
+            .then(ignore_parser.clone())
+            .then(
+                production_parser
+                    .clone()
+                    .then(ignore_parser.clone())
+                    .map(|v| Box::new(grammar::_S2::new(v)))
+                    .repeated(),
+            )
+            .then(ignore_parser.clone())
             .then(end())
             .map(|v| Box::new(grammar::_S0::new(v)))
             .boxed();

@@ -452,10 +452,12 @@
 - name: ConditionalExpression
   sequence:
     - reference: OrExpression
-    - terminal: "?"
-    - reference: Expression
-    - terminal: ":"
-    - reference: Expression
+    - optional:
+        sequence:
+          - terminal: "?"
+          - reference: Expression
+          - terminal: ":"
+          - reference: Expression
 
 - name: OrExpression
   sequence:

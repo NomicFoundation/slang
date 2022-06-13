@@ -219,6 +219,9 @@ impl Production {
                     use chumsky::prelude::*;
                     use chumsky::primitive::Just;
 
+                    use super::parser_interface::*;
+                    use super::tree_interface::*;
+
                     #[allow(dead_code)]
                     fn repetition_mapper<E, S>((e, es): (E, Vec<(S, E)>)) -> (Vec<E>, Vec<S>) {
                         let mut expressions = vec![e];
@@ -234,16 +237,19 @@ impl Production {
                     fn difference<M, MO, S, SO>(
                         minuend: M,
                         subtrahend: S,
-                    ) -> impl Parser<char, MO, Error = Simple<char>>
+                    ) -> impl Parser<char, MO, Error = ErrorType>
                     where
-                        M: Clone + Parser<char, MO, Error = Simple<char>>,
-                        S: Parser<char, SO, Error = Simple<char>>,
+                        M: Clone + Parser<char, MO, Error = ErrorType>,
+                        S: Parser<char, SO, Error = ErrorType>,
                     {
                         // TODO This could be much more efficient if we were able
                         // to conditionally rewind
                         let minuend_end =
                             minuend.clone().map_with_span(|_, span| span.end).rewind();
-                        let subtrahend_end = subtrahend.map_with_span(|_, span| span.end).rewind();
+                        let subtrahend_end = subtrahend
+                            .map_with_span(|_, span| span.end)
+                            .rewind()
+                            .or_else(|_| Ok(0));
                         minuend_end
                             .then(subtrahend_end)
                             .validate(|(m, s), span, emit| {
@@ -259,9 +265,6 @@ impl Production {
                     fn terminal(str: &str) -> Just<char, &str, ErrorType> {
                         just(str)
                     }
-
-                    use super::parser_interface::*;
-                    use super::tree_interface::*;
                 )
                 .to_string(),
                 "impl Parsers { pub fn new() -> Self {".to_owned(),

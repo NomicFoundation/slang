@@ -82,6 +82,43 @@ impl CombinatorTreeNodeData {
         }
     }
 
+    fn append_noise(self, subtype_index: &mut Cell<usize>) -> CombinatorTreeNode {
+        match self {
+            CombinatorTreeNodeData::Sequence { name, mut elements } => {
+                elements.push((
+                    SlangName::from_string("IGNORE"),
+                    ct_reference(SlangName::from_string("IGNORE")),
+                ));
+                elements = disambiguate_structure_names(elements);
+                ct_sequence(name, elements)
+            }
+
+            CombinatorTreeNodeData::Lookahead { .. }
+            | CombinatorTreeNodeData::Difference { .. }
+            | CombinatorTreeNodeData::Repeat { .. }
+            | CombinatorTreeNodeData::Choice { .. }
+            | CombinatorTreeNodeData::Reference { .. }
+            | CombinatorTreeNodeData::TerminalTrie { .. }
+            | CombinatorTreeNodeData::CharacterFilter { .. } => {
+                let index = subtype_index.get();
+                subtype_index.set(index + 1);
+                let name = SlangName::from_prefix_and_index("_S", index);
+                let c0 = (
+                    self.name()
+                        .unwrap_or_else(|| SlangName::from_prefix_and_index("_", 0)),
+                    Box::new(self),
+                );
+                let ignore = (
+                    SlangName::from_string("IGNORE"),
+                    ct_reference(SlangName::from_string("IGNORE")),
+                );
+                ct_sequence(name, vec![c0, ignore])
+            }
+
+            CombinatorTreeNodeData::End => Box::new(self),
+        }
+    }
+
     fn to_parser_combinator_code(&self, tree: &CombinatorTree) -> TokenStream {
         match self {
             CombinatorTreeNodeData::Difference {
@@ -257,9 +294,11 @@ fn ct_end() -> CombinatorTreeNode {
 impl Production {
     pub fn to_combinator_tree(&self, grammar: &Grammar) -> CombinatorTree {
         CombinatorTree {
-            root: self
-                .expression_to_generate()
-                .to_combinator_tree_node(&mut Cell::new(0), grammar),
+            root: self.expression_to_generate().to_combinator_tree_node(
+                &mut Cell::new(0),
+                self,
+                grammar,
+            ),
             module_name: SlangName::from_string(&self.name),
         }
     }
@@ -269,6 +308,7 @@ impl Expression {
     fn to_combinator_tree_node(
         &self,
         subtype_index: &mut Cell<usize>,
+        production: &Production,
         grammar: &Grammar,
     ) -> CombinatorTreeNode {
         if let Some(filter) = self.to_character_filter(grammar) {
@@ -294,9 +334,28 @@ impl Expression {
                     minuend,
                     subtrahend,
                 }) => ct_difference(
-                    minuend.to_combinator_tree_node(subtype_index, grammar),
-                    subtrahend.to_combinator_tree_node(subtype_index, grammar),
+                    minuend.to_combinator_tree_node(subtype_index, production, grammar),
+                    subtrahend.to_combinator_tree_node(subtype_index, production, grammar),
                 ),
+                EBNF::Repeat(EBNFRepeat {
+                    expr,
+                    min,
+                    max: Some(1),
+                    ..
+                }) => {
+                    let name = self
+                        .config
+                        .name
+                        .as_ref()
+                        .map(|s| SlangName::from_string(s))
+                        .unwrap_or_else(|| {
+                            let index = subtype_index.get();
+                            subtype_index.set(index + 1);
+                            SlangName::from_prefix_and_index("_S", index)
+                        });
+                    let et = expr.to_combinator_tree_node(subtype_index, production, grammar);
+                    ct_repeat(name, et, *min, Some(1), None)
+                }
                 EBNF::Repeat(EBNFRepeat {
                     expr,
                     min,
@@ -313,15 +372,15 @@ impl Expression {
                             subtype_index.set(index + 1);
                             SlangName::from_prefix_and_index("_S", index)
                         });
-                    ct_repeat(
-                        name,
-                        expr.to_combinator_tree_node(subtype_index, grammar),
-                        *min,
-                        *max,
-                        separator
-                            .clone()
-                            .map(|s| s.to_combinator_tree_node(subtype_index, grammar)),
-                    )
+                    let mut et = expr.to_combinator_tree_node(subtype_index, production, grammar);
+                    let mut st = separator
+                        .clone()
+                        .map(|s| s.to_combinator_tree_node(subtype_index, production, grammar));
+                    if !production.is_token {
+                        et = et.append_noise(subtype_index);
+                        st = st.map(|st| st.append_noise(subtype_index));
+                    }
+                    ct_repeat(name, et, *min, *max, st)
                 }
                 EBNF::Choice(exprs) => {
                     let name = self
@@ -356,7 +415,11 @@ impl Expression {
                                     current_terminal_tree = None
                                 };
                                 choices.push({
-                                    let e = e.to_combinator_tree_node(subtype_index, grammar);
+                                    let e = e.to_combinator_tree_node(
+                                        subtype_index,
+                                        production,
+                                        grammar,
+                                    );
                                     let name = e.name().unwrap_or_else(|| {
                                         SlangName::from_prefix_and_index("_", choices.len())
                                     });
@@ -372,26 +435,7 @@ impl Expression {
                         };
                     }
 
-                    // Find all the duplicated names, with the count of their occurance
-                    let mut names =
-                        MultiSet::<SlangName>::from_iter(choices.iter().map(|(n, _)| n.clone()));
-                    names.retain(|_, count| count > 1);
-                    // Reverse so that the suffix goes from _0 .. _n when we re-reverse the list
-                    choices.reverse();
-                    let mut choices: Vec<_> = choices
-                        .into_iter()
-                        .map(|(n, t)| {
-                            if let Some(count) = names.get(&n) {
-                                // Remove the element to decrement the occurance occount
-                                names.remove(&n);
-                                (n.with_disambiguating_suffix(count - 1), t)
-                            } else {
-                                (n, t)
-                            }
-                        })
-                        .collect();
-                    choices.reverse();
-
+                    choices = disambiguate_structure_names(choices);
                     ct_choice(name, choices)
                 }
                 EBNF::Sequence(exprs) => {
@@ -410,34 +454,22 @@ impl Expression {
                         .iter()
                         .enumerate()
                         .map(|(i, e)| {
-                            let e = e.to_combinator_tree_node(subtype_index, grammar);
+                            let e = e.to_combinator_tree_node(subtype_index, production, grammar);
                             let name = e
                                 .name()
                                 .unwrap_or_else(|| SlangName::from_prefix_and_index("_", i));
-                            (name, e)
-                        })
-                        .collect::<Vec<_>>();
-
-                    // Find all the duplicated names, with the count of their occurance
-                    let mut names =
-                        MultiSet::<SlangName>::from_iter(members.iter().map(|(n, _)| n.clone()));
-                    names.retain(|_, count| count > 1);
-                    // Reverse so that the suffix goes from _0 .. _n when we re-reverse the list
-                    members.reverse();
-                    let mut members: Vec<_> = members
-                        .into_iter()
-                        .map(|(n, t)| {
-                            if let Some(count) = names.get(&n) {
-                                // Remove the element to decrement the occurance occount
-                                names.remove(&n);
-                                (n.with_disambiguating_suffix(count - 1), t)
+                            let e = (name, e);
+                            if !production.is_token && 0 < i {
+                                let name = SlangName::from_string("IGNORE");
+                                vec![(name.clone(), ct_reference(name)), e]
                             } else {
-                                (n, t)
+                                vec![e]
                             }
                         })
-                        .collect();
-                    members.reverse();
+                        .flatten()
+                        .collect::<Vec<_>>();
 
+                    members = disambiguate_structure_names(members);
                     ct_sequence(name, members)
                 }
                 EBNF::Reference(name) => ct_reference(SlangName::from_string(name)),
@@ -448,5 +480,33 @@ impl Expression {
                 EBNF::Range(_) => unreachable!("Ranges are always character filters"),
             }
         }
+    }
+}
+
+fn disambiguate_structure_names(
+    mut members: Vec<(SlangName, CombinatorTreeNode)>,
+) -> Vec<(SlangName, CombinatorTreeNode)> {
+    // Find all the duplicated names, with the count of their occurance
+    let mut names = MultiSet::<SlangName>::from_iter(members.iter().map(|(n, _)| n.clone()));
+    names.retain(|_, count| count > 1);
+    if names.is_empty() {
+        members
+    } else {
+        // Reverse so that the suffix goes from _0 .. _n when we re-reverse the list
+        members.reverse();
+        members = members
+            .into_iter()
+            .map(|(n, t)| {
+                if let Some(count) = names.get(&n) {
+                    // Remove the element to decrement the occurance occount
+                    names.remove(&n);
+                    (n.with_disambiguating_suffix(count - 1), t)
+                } else {
+                    (n, t)
+                }
+            })
+            .collect::<Vec<_>>();
+        members.reverse();
+        members
     }
 }
