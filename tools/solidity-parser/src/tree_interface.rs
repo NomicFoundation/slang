@@ -56,7 +56,7 @@ pub mod comment {
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub enum _C2 {
-        StarChar(FixedTerminal<1usize>),
+        NotStarChar(FixedTerminal<1usize>),
         _S3(Box<comment::_S3>),
     }
     #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
@@ -335,7 +335,7 @@ pub mod number_unit {
     pub type N = usize;
 }
 
-/// «PragmaDirective» = 'pragma' ¬';' { ¬';' } ';' ;
+/// «PragmaDirective» = 'pragma' 1…*{ ¬';' } ';' ;
 pub mod pragma_directive {
     #[allow(unused_imports)]
     use super::*;
@@ -345,11 +345,9 @@ pub mod pragma_directive {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub pragma: FixedTerminal<6usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub semicolon_char_0: FixedTerminal<1usize>,
+        pub not_semicolon_chars: usize,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub non_semicolon_chars: usize,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub semicolon_char_1: FixedTerminal<1usize>,
+        pub semicolon_char: FixedTerminal<1usize>,
     }
 }
 

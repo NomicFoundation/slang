@@ -1041,12 +1041,9 @@
   isToken: true
   sequence:
     - terminal: pragma
-    - not:
-        terminal: ;
-    - zeroOrMore:
+    - oneOrMore:
         not:
           terminal: ;
-        config: { name: NonSemicolonChar }
     - terminal: ;
 - name: RawIdentifier
   isToken: true

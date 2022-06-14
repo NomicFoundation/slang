@@ -230,7 +230,7 @@ AssemblyFlags = '(' 1…*{ «DoubleQuotedAsciiStringLiteral» / ',' } ')' ;
 
 «ReservedKeyword» = 'after' | 'alias' | 'apply' | 'auto' | 'byte' | 'case' | 'copyof' | 'default' | 'define' | 'final' | 'implements' | 'in' | 'inline' | 'let' | 'macro' | 'match' | 'mutable' | 'null' | 'of' | 'partial' | 'promise' | 'reference' | 'relocatable' | 'sealed' | 'sizeof' | 'static' | 'supports' | 'switch' | 'typedef' | 'typeof' | 'var' ;
 
-«PragmaDirective» = 'pragma' ¬';' { ¬';' } ';' ;
+«PragmaDirective» = 'pragma' 1…*{ ¬';' } ';' ;
 
 «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;
 

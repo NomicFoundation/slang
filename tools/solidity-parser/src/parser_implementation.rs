@@ -96,7 +96,7 @@ impl Parsers {
                 choice((
                     filter(|&c: &char| c != '*')
                         .map(|_| FixedTerminal::<1>())
-                        .map(|v| Box::new(comment::_C2::StarChar(v))),
+                        .map(|v| Box::new(comment::_C2::NotStarChar(v))),
                     just('*')
                         .map(|_| FixedTerminal::<1>())
                         .repeated()
@@ -437,15 +437,15 @@ impl Parsers {
         ))
         .boxed();
 
-        // «PragmaDirective» = 'pragma' ¬';' { ¬';' } ';' ;
+        // «PragmaDirective» = 'pragma' 1…*{ ¬';' } ';' ;
         let pragma_directive_parser = terminal("pragma")
             .ignored()
             .map(|_| FixedTerminal::<6usize>())
-            .then(filter(|&c: &char| c != ';').map(|_| FixedTerminal::<1>()))
             .then(
                 filter(|&c: &char| c != ';')
                     .map(|_| FixedTerminal::<1>())
                     .repeated()
+                    .at_least(1usize)
                     .map(|v| v.len()),
             )
             .then(just(';').map(|_| FixedTerminal::<1>()))
