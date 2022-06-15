@@ -506,15 +506,18 @@
     - terminal: memory
     - terminal: storage
     - terminal: calldata
+#
+# Start of Expressions
+#
+
 - name: Expression
+  config: { pattern: Passthrough }
   reference: AssignmentExpression
 - name: AssignmentExpression
-  sequence:
-    - reference: ConditionalExpression
-    - zeroOrMore:
-        sequence:
-          - reference: AssignmentOperator
-          - reference: Expression
+  config: { pattern: FoldLeftOrPassthrough }
+  oneOrMore:
+    reference: ConditionalExpression
+    separator: { reference: AssignmentOperator }
 - name: AssignmentOperator
   choice:
     - terminal: "="
@@ -530,6 +533,7 @@
     - terminal: /=
     - terminal: "%="
 - name: ConditionalExpression
+  config: { pattern: Passthrough }
   sequence:
     - reference: OrExpression
     - optional:
@@ -539,37 +543,29 @@
           - terminal: ":"
           - reference: Expression
 - name: OrExpression
-  sequence:
-    - reference: AndExpression
-    - zeroOrMore:
-        sequence:
-          - terminal: "||"
-          - reference: AndExpression
+  config: { pattern: FoldLeftOrPassthrough }
+  oneOrMore:
+    reference: AndExpression
+    separator: { terminal: "||" }
 - name: AndExpression
-  sequence:
-    - reference: EqualityComparisonExpression
-    - zeroOrMore:
-        sequence:
-          - terminal: "&&"
-          - reference: EqualityComparisonExpression
+  config: { pattern: FoldLeftOrPassthrough }
+  oneOrMore:
+    reference: EqualityComparisonExpression
+    separator: { terminal: "&&" }
 - name: EqualityComparisonExpression
-  sequence:
-    - reference: OrderComparisonExpression
-    - zeroOrMore:
-        sequence:
-          - reference: EqualityComparisonOperator
-          - reference: OrderComparisonExpression
+  config: { pattern: FoldLeftOrPassthrough }
+  oneOrMore:
+    reference: OrderComparisonExpression
+    separator: { reference: EqualityComparisonOperator }
 - name: EqualityComparisonOperator
   choice:
     - terminal: "=="
     - terminal: "!="
 - name: OrderComparisonExpression
-  sequence:
-    - reference: BitOrExpression
-    - zeroOrMore:
-        sequence:
-          - reference: OrderComparisonOperator
-          - reference: BitOrExpression
+  config: { pattern: FoldLeftOrPassthrough }
+  oneOrMore:
+    reference: BitOrExpression
+    separator: { reference: OrderComparisonOperator }
 - name: OrderComparisonOperator
   choice:
     - terminal: "<"
@@ -577,69 +573,56 @@
     - terminal: "<="
     - terminal: ">="
 - name: BitOrExpression
-  sequence:
-    - reference: BitXOrExpression
-    - zeroOrMore:
-        sequence:
-          - terminal: "|"
-          - reference: BitXOrExpression
+  config: { pattern: FoldLeftOrPassthrough }
+  oneOrMore:
+    reference: BitXOrExpression
+    separator: { terminal: "|" }
 - name: BitXOrExpression
-  sequence:
-    - reference: BitAndExpression
-    - zeroOrMore:
-        sequence:
-          - terminal: ^
-          - reference: BitAndExpression
+  config: { pattern: FoldLeftOrPassthrough }
+  oneOrMore:
+    reference: BitAndExpression
+    separator: { terminal: ^ }
 - name: BitAndExpression
-  sequence:
-    - reference: ShiftExpression
-    - zeroOrMore:
-        sequence:
-          - terminal: "&"
-          - reference: ShiftExpression
+  config: { pattern: FoldLeftOrPassthrough }
+  oneOrMore:
+    reference: ShiftExpression
+    separator: { terminal: "&" }
 - name: ShiftExpression
-  sequence:
-    - reference: AddSubExpression
-    - zeroOrMore:
-        sequence:
-          - reference: ShiftOperator
-          - reference: AddSubExpression
+  config: { pattern: FoldLeftOrPassthrough }
+  oneOrMore:
+    reference: AddSubExpression
+    separator: { reference: ShiftOperator }
 - name: ShiftOperator
   choice:
     - terminal: "<<"
     - terminal: ">>"
     - terminal: ">>>"
 - name: AddSubExpression
-  sequence:
-    - reference: MulDivModExpression
-    - zeroOrMore:
-        sequence:
-          - reference: AddSubOperator
-          - reference: MulDivModExpression
+  config: { pattern: FoldLeftOrPassthrough }
+  oneOrMore:
+    reference: MulDivModExpression
+    separator: { reference: AddSubOperator }
 - name: AddSubOperator
   choice:
     - terminal: +
     - terminal: "-"
 - name: MulDivModExpression
-  sequence:
-    - reference: ExpExpression
-    - zeroOrMore:
-        sequence:
-          - reference: MulDivModOperator
-          - reference: ExpExpression
+  config: { pattern: FoldLeftOrPassthrough }
+  oneOrMore:
+    reference: ExponentiationExpression
+    separator: { reference: MulDivModOperator }
 - name: MulDivModOperator
   choice:
     - terminal: "*"
     - terminal: /
     - terminal: "%"
-- name: ExpExpression
-  sequence:
-    - reference: UnarySuffixExpression
-    - zeroOrMore:
-        sequence:
-          - terminal: "**"
-          - reference: Expression
+- name: ExponentiationExpression
+  config: { pattern: FoldRightOrPassthrough }
+  oneOrMore:
+    reference: UnarySuffixExpression
+    separator: { terminal: "**" }
 - name: UnarySuffixExpression
+  config: { pattern: Passthrough }
   sequence:
     - reference: UnaryPrefixExpression
     - optional:
@@ -649,6 +632,7 @@
     - terminal: ++
     - terminal: "--"
 - name: UnaryPrefixExpression
+  config: { pattern: Passthrough }
   sequence:
     - optional:
         reference: UnaryPrefixOperator
@@ -662,11 +646,13 @@
     - terminal: delete
     - terminal: "-"
 - name: FunctionCallExpression
+  config: { pattern: FoldLeftOrPassthrough }
   sequence:
     - reference: FunctionCallOptionsExpression
     - zeroOrMore:
         reference: ArgumentList
 - name: FunctionCallOptionsExpression
+  config: { pattern: FoldLeftOrPassthrough }
   sequence:
     - reference: MemberAccessExpression
     - zeroOrMore:
@@ -678,6 +664,7 @@
                 terminal: ","
           - terminal: "}"
 - name: MemberAccessExpression
+  config: { pattern: FoldLeftOrPassthrough }
   sequence:
     - reference: IndexAccessExpression
     - zeroOrMore:
@@ -687,8 +674,10 @@
               - reference: Identifier
               - terminal: address
 - name: IndexAccessExpression
+  config: { pattern: FoldLeftOrPassthrough }
   sequence:
     - reference: PrimaryExpression
+      config: { pattern: Inline }
     - zeroOrMore:
         sequence:
           - terminal: "["
@@ -731,6 +720,11 @@
     - reference: Identifier
     - reference: Literal
     - reference: ElementaryTypeWithoutPayable
+
+#
+# End of Expressions
+#
+
 - name: Literal
   choice:
     - reference: AsciiStringLiteral

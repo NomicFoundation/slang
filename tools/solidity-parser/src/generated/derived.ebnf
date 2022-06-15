@@ -134,43 +134,43 @@ DataLocation = 'memory' | 'storage' | 'calldata' ;
 
 Expression = AssignmentExpression ;
 
-AssignmentExpression = ConditionalExpression { AssignmentOperator Expression } ;
+AssignmentExpression = 1…*{ ConditionalExpression / AssignmentOperator } ;
 
 AssignmentOperator = '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ;
 
 ConditionalExpression = OrExpression [ '?' Expression ':' Expression ] ;
 
-OrExpression = AndExpression { '||' AndExpression } ;
+OrExpression = 1…*{ AndExpression / '||' } ;
 
-AndExpression = EqualityComparisonExpression { '&&' EqualityComparisonExpression } ;
+AndExpression = 1…*{ EqualityComparisonExpression / '&&' } ;
 
-EqualityComparisonExpression = OrderComparisonExpression { EqualityComparisonOperator OrderComparisonExpression } ;
+EqualityComparisonExpression = 1…*{ OrderComparisonExpression / EqualityComparisonOperator } ;
 
 EqualityComparisonOperator = '==' | '!=' ;
 
-OrderComparisonExpression = BitOrExpression { OrderComparisonOperator BitOrExpression } ;
+OrderComparisonExpression = 1…*{ BitOrExpression / OrderComparisonOperator } ;
 
 OrderComparisonOperator = '<' | '>' | '<=' | '>=' ;
 
-BitOrExpression = BitXOrExpression { '|' BitXOrExpression } ;
+BitOrExpression = 1…*{ BitXOrExpression / '|' } ;
 
-BitXOrExpression = BitAndExpression { '^' BitAndExpression } ;
+BitXOrExpression = 1…*{ BitAndExpression / '^' } ;
 
-BitAndExpression = ShiftExpression { '&' ShiftExpression } ;
+BitAndExpression = 1…*{ ShiftExpression / '&' } ;
 
-ShiftExpression = AddSubExpression { ShiftOperator AddSubExpression } ;
+ShiftExpression = 1…*{ AddSubExpression / ShiftOperator } ;
 
 ShiftOperator = '<<' | '>>' | '>>>' ;
 
-AddSubExpression = MulDivModExpression { AddSubOperator MulDivModExpression } ;
+AddSubExpression = 1…*{ MulDivModExpression / AddSubOperator } ;
 
 AddSubOperator = '+' | '-' ;
 
-MulDivModExpression = ExpExpression { MulDivModOperator ExpExpression } ;
+MulDivModExpression = 1…*{ ExponentiationExpression / MulDivModOperator } ;
 
 MulDivModOperator = '*' | '/' | '%' ;
 
-ExpExpression = UnarySuffixExpression { '**' Expression } ;
+ExponentiationExpression = 1…*{ UnarySuffixExpression / '**' } ;
 
 UnarySuffixExpression = UnaryPrefixExpression [ UnarySuffixOperator ] ;
 

@@ -158,7 +158,11 @@ impl positional_argument_list::_S1 {
     }
 }
 
-impl DefaultTest for positional_argument_list::_S1 {}
+impl DefaultTest for positional_argument_list::_S1 {
+    fn is_default(&self) -> bool {
+        self.expression.is_default() && self.ignore.is_default()
+    }
+}
 
 impl unchecked_block::_S0 {
     pub fn new(
@@ -1278,7 +1282,15 @@ impl named_argument::_S0 {
     }
 }
 
-impl DefaultTest for named_argument::_S0 {}
+impl DefaultTest for named_argument::_S0 {
+    fn is_default(&self) -> bool {
+        self.identifier.is_default()
+            && self.ignore_0.is_default()
+            && self.colon_char.is_default()
+            && self.ignore_1.is_default()
+            && self.expression.is_default()
+    }
+}
 
 impl parameter_declaration::_S0 {
     pub fn new(
@@ -1521,7 +1533,11 @@ impl named_argument_list::_S2 {
     }
 }
 
-impl DefaultTest for named_argument_list::_S2 {}
+impl DefaultTest for named_argument_list::_S2 {
+    fn is_default(&self) -> bool {
+        self.named_argument.is_default() && self.ignore.is_default()
+    }
+}
 
 impl non_empty_parameter_list::_S0 {
     pub fn new(
@@ -2720,7 +2736,11 @@ impl primary_expression::_S11 {
     }
 }
 
-impl DefaultTest for primary_expression::_S11 {}
+impl DefaultTest for primary_expression::_S11 {
+    fn is_default(&self) -> bool {
+        self.expression.is_default() && self.ignore.is_default()
+    }
+}
 
 impl primary_expression::_S4 {
     pub fn new(
@@ -3768,7 +3788,11 @@ impl function_call_options_expression::_S4 {
     }
 }
 
-impl DefaultTest for function_call_options_expression::_S4 {}
+impl DefaultTest for function_call_options_expression::_S4 {
+    fn is_default(&self) -> bool {
+        self.named_argument.is_default() && self.ignore.is_default()
+    }
+}
 
 impl function_call_expression::_S0 {
     pub fn new(
@@ -3836,399 +3860,489 @@ impl unary_suffix_expression::_S0 {
 
 impl DefaultTest for unary_suffix_expression::_S0 {}
 
-impl exp_expression::_S0 {
+impl exponentiation_expression::_S0 {
     pub fn new(
-        ((unary_suffix_expression, ignore), _s2s): (
-            (unary_suffix_expression::N, ignore::N),
-            Vec<Box<exp_expression::_S2>>,
+        (_s1s, _s2s): (
+            Vec<Box<exponentiation_expression::_S1>>,
+            Vec<Box<exponentiation_expression::_S2>>,
         ),
     ) -> Self {
+        Self { _s1s, _s2s }
+    }
+}
+
+impl DefaultTest for exponentiation_expression::_S0 {
+    fn is_default(&self) -> bool {
+        self._s1s.is_default() && self._s2s.is_default()
+    }
+}
+
+impl exponentiation_expression::_S2 {
+    pub fn new((star_star, ignore): (FixedTerminal<2usize>, ignore::N)) -> Self {
+        Self { star_star, ignore }
+    }
+}
+
+impl DefaultTest for exponentiation_expression::_S2 {
+    fn is_default(&self) -> bool {
+        self.star_star.is_default() && self.ignore.is_default()
+    }
+}
+
+impl exponentiation_expression::_S1 {
+    pub fn new((unary_suffix_expression, ignore): (unary_suffix_expression::N, ignore::N)) -> Self {
         Self {
             unary_suffix_expression,
             ignore,
-            _s2s,
         }
     }
 }
 
-impl DefaultTest for exp_expression::_S0 {}
-
-impl exp_expression::_S2 {
-    pub fn new(
-        (((star_star, ignore_0), expression), ignore_1): (
-            ((FixedTerminal<2usize>, ignore::N), expression::N),
-            ignore::N,
-        ),
-    ) -> Self {
-        Self {
-            star_star,
-            ignore_0,
-            expression,
-            ignore_1,
-        }
-    }
-}
-
-impl DefaultTest for exp_expression::_S2 {}
+impl DefaultTest for exponentiation_expression::_S1 {}
 
 impl mul_div_mod_expression::_S0 {
     pub fn new(
-        ((exp_expression, ignore), _s2s): (
-            (exp_expression::N, ignore::N),
+        (_s1s, _s2s): (
+            Vec<Box<mul_div_mod_expression::_S1>>,
             Vec<Box<mul_div_mod_expression::_S2>>,
         ),
     ) -> Self {
-        Self {
-            exp_expression,
-            ignore,
-            _s2s,
-        }
+        Self { _s1s, _s2s }
     }
 }
 
-impl DefaultTest for mul_div_mod_expression::_S0 {}
+impl DefaultTest for mul_div_mod_expression::_S0 {
+    fn is_default(&self) -> bool {
+        self._s1s.is_default() && self._s2s.is_default()
+    }
+}
 
 impl mul_div_mod_expression::_S2 {
+    pub fn new((_0, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
+        Self { _0, ignore }
+    }
+}
+
+impl DefaultTest for mul_div_mod_expression::_S2 {
+    fn is_default(&self) -> bool {
+        self._0.is_default() && self.ignore.is_default()
+    }
+}
+
+impl mul_div_mod_expression::_S1 {
     pub fn new(
-        (((_0, ignore_0), exp_expression), ignore_1): (
-            ((FixedTerminal<1usize>, ignore::N), exp_expression::N),
-            ignore::N,
-        ),
+        (exponentiation_expression, ignore): (exponentiation_expression::N, ignore::N),
     ) -> Self {
         Self {
-            _0,
-            ignore_0,
-            exp_expression,
-            ignore_1,
+            exponentiation_expression,
+            ignore,
         }
     }
 }
 
-impl DefaultTest for mul_div_mod_expression::_S2 {}
+impl DefaultTest for mul_div_mod_expression::_S1 {
+    fn is_default(&self) -> bool {
+        self.exponentiation_expression.is_default() && self.ignore.is_default()
+    }
+}
 
 impl add_sub_expression::_S0 {
     pub fn new(
-        ((mul_div_mod_expression, ignore), _s2s): (
-            (mul_div_mod_expression::N, ignore::N),
+        (_s1s, _s2s): (
+            Vec<Box<add_sub_expression::_S1>>,
             Vec<Box<add_sub_expression::_S2>>,
         ),
     ) -> Self {
+        Self { _s1s, _s2s }
+    }
+}
+
+impl DefaultTest for add_sub_expression::_S0 {
+    fn is_default(&self) -> bool {
+        self._s1s.is_default() && self._s2s.is_default()
+    }
+}
+
+impl add_sub_expression::_S2 {
+    pub fn new((_0, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
+        Self { _0, ignore }
+    }
+}
+
+impl DefaultTest for add_sub_expression::_S2 {
+    fn is_default(&self) -> bool {
+        self._0.is_default() && self.ignore.is_default()
+    }
+}
+
+impl add_sub_expression::_S1 {
+    pub fn new((mul_div_mod_expression, ignore): (mul_div_mod_expression::N, ignore::N)) -> Self {
         Self {
             mul_div_mod_expression,
             ignore,
-            _s2s,
         }
     }
 }
 
-impl DefaultTest for add_sub_expression::_S0 {}
-
-impl add_sub_expression::_S2 {
-    pub fn new(
-        (((_0, ignore_0), mul_div_mod_expression), ignore_1): (
-            (
-                (FixedTerminal<1usize>, ignore::N),
-                mul_div_mod_expression::N,
-            ),
-            ignore::N,
-        ),
-    ) -> Self {
-        Self {
-            _0,
-            ignore_0,
-            mul_div_mod_expression,
-            ignore_1,
-        }
+impl DefaultTest for add_sub_expression::_S1 {
+    fn is_default(&self) -> bool {
+        self.mul_div_mod_expression.is_default() && self.ignore.is_default()
     }
 }
-
-impl DefaultTest for add_sub_expression::_S2 {}
 
 impl shift_expression::_S0 {
     pub fn new(
-        ((add_sub_expression, ignore), _s2s): (
-            (add_sub_expression::N, ignore::N),
+        (_s1s, _s2s): (
+            Vec<Box<shift_expression::_S1>>,
             Vec<Box<shift_expression::_S2>>,
         ),
     ) -> Self {
+        Self { _s1s, _s2s }
+    }
+}
+
+impl DefaultTest for shift_expression::_S0 {
+    fn is_default(&self) -> bool {
+        self._s1s.is_default() && self._s2s.is_default()
+    }
+}
+
+impl shift_expression::_S2 {
+    pub fn new((_0, ignore): (usize, ignore::N)) -> Self {
+        Self { _0, ignore }
+    }
+}
+
+impl DefaultTest for shift_expression::_S2 {
+    fn is_default(&self) -> bool {
+        self._0.is_default() && self.ignore.is_default()
+    }
+}
+
+impl shift_expression::_S1 {
+    pub fn new((add_sub_expression, ignore): (add_sub_expression::N, ignore::N)) -> Self {
         Self {
             add_sub_expression,
             ignore,
-            _s2s,
         }
     }
 }
 
-impl DefaultTest for shift_expression::_S0 {}
-
-impl shift_expression::_S2 {
-    pub fn new(
-        (((_0, ignore_0), add_sub_expression), ignore_1): (
-            ((usize, ignore::N), add_sub_expression::N),
-            ignore::N,
-        ),
-    ) -> Self {
-        Self {
-            _0,
-            ignore_0,
-            add_sub_expression,
-            ignore_1,
-        }
+impl DefaultTest for shift_expression::_S1 {
+    fn is_default(&self) -> bool {
+        self.add_sub_expression.is_default() && self.ignore.is_default()
     }
 }
-
-impl DefaultTest for shift_expression::_S2 {}
 
 impl bit_and_expression::_S0 {
     pub fn new(
-        ((shift_expression, ignore), _s2s): (
-            (shift_expression::N, ignore::N),
+        (_s1s, _s2s): (
+            Vec<Box<bit_and_expression::_S1>>,
             Vec<Box<bit_and_expression::_S2>>,
         ),
     ) -> Self {
+        Self { _s1s, _s2s }
+    }
+}
+
+impl DefaultTest for bit_and_expression::_S0 {
+    fn is_default(&self) -> bool {
+        self._s1s.is_default() && self._s2s.is_default()
+    }
+}
+
+impl bit_and_expression::_S2 {
+    pub fn new((ampersand_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
+        Self {
+            ampersand_char,
+            ignore,
+        }
+    }
+}
+
+impl DefaultTest for bit_and_expression::_S2 {
+    fn is_default(&self) -> bool {
+        self.ampersand_char.is_default() && self.ignore.is_default()
+    }
+}
+
+impl bit_and_expression::_S1 {
+    pub fn new((shift_expression, ignore): (shift_expression::N, ignore::N)) -> Self {
         Self {
             shift_expression,
             ignore,
-            _s2s,
         }
     }
 }
 
-impl DefaultTest for bit_and_expression::_S0 {}
-
-impl bit_and_expression::_S2 {
-    pub fn new(
-        (((ampersand_char, ignore_0), shift_expression), ignore_1): (
-            ((FixedTerminal<1usize>, ignore::N), shift_expression::N),
-            ignore::N,
-        ),
-    ) -> Self {
-        Self {
-            ampersand_char,
-            ignore_0,
-            shift_expression,
-            ignore_1,
-        }
+impl DefaultTest for bit_and_expression::_S1 {
+    fn is_default(&self) -> bool {
+        self.shift_expression.is_default() && self.ignore.is_default()
     }
 }
-
-impl DefaultTest for bit_and_expression::_S2 {}
 
 impl bit_x_or_expression::_S0 {
     pub fn new(
-        ((bit_and_expression, ignore), _s2s): (
-            (bit_and_expression::N, ignore::N),
+        (_s1s, _s2s): (
+            Vec<Box<bit_x_or_expression::_S1>>,
             Vec<Box<bit_x_or_expression::_S2>>,
         ),
     ) -> Self {
+        Self { _s1s, _s2s }
+    }
+}
+
+impl DefaultTest for bit_x_or_expression::_S0 {
+    fn is_default(&self) -> bool {
+        self._s1s.is_default() && self._s2s.is_default()
+    }
+}
+
+impl bit_x_or_expression::_S2 {
+    pub fn new((caret_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
+        Self { caret_char, ignore }
+    }
+}
+
+impl DefaultTest for bit_x_or_expression::_S2 {
+    fn is_default(&self) -> bool {
+        self.caret_char.is_default() && self.ignore.is_default()
+    }
+}
+
+impl bit_x_or_expression::_S1 {
+    pub fn new((bit_and_expression, ignore): (bit_and_expression::N, ignore::N)) -> Self {
         Self {
             bit_and_expression,
             ignore,
-            _s2s,
         }
     }
 }
 
-impl DefaultTest for bit_x_or_expression::_S0 {}
-
-impl bit_x_or_expression::_S2 {
-    pub fn new(
-        (((caret_char, ignore_0), bit_and_expression), ignore_1): (
-            ((FixedTerminal<1usize>, ignore::N), bit_and_expression::N),
-            ignore::N,
-        ),
-    ) -> Self {
-        Self {
-            caret_char,
-            ignore_0,
-            bit_and_expression,
-            ignore_1,
-        }
+impl DefaultTest for bit_x_or_expression::_S1 {
+    fn is_default(&self) -> bool {
+        self.bit_and_expression.is_default() && self.ignore.is_default()
     }
 }
-
-impl DefaultTest for bit_x_or_expression::_S2 {}
 
 impl bit_or_expression::_S0 {
     pub fn new(
-        ((bit_x_or_expression, ignore), _s2s): (
-            (bit_x_or_expression::N, ignore::N),
+        (_s1s, _s2s): (
+            Vec<Box<bit_or_expression::_S1>>,
             Vec<Box<bit_or_expression::_S2>>,
         ),
     ) -> Self {
+        Self { _s1s, _s2s }
+    }
+}
+
+impl DefaultTest for bit_or_expression::_S0 {
+    fn is_default(&self) -> bool {
+        self._s1s.is_default() && self._s2s.is_default()
+    }
+}
+
+impl bit_or_expression::_S2 {
+    pub fn new((bar_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
+        Self { bar_char, ignore }
+    }
+}
+
+impl DefaultTest for bit_or_expression::_S2 {
+    fn is_default(&self) -> bool {
+        self.bar_char.is_default() && self.ignore.is_default()
+    }
+}
+
+impl bit_or_expression::_S1 {
+    pub fn new((bit_x_or_expression, ignore): (bit_x_or_expression::N, ignore::N)) -> Self {
         Self {
             bit_x_or_expression,
             ignore,
-            _s2s,
         }
     }
 }
 
-impl DefaultTest for bit_or_expression::_S0 {}
-
-impl bit_or_expression::_S2 {
-    pub fn new(
-        (((bar_char, ignore_0), bit_x_or_expression), ignore_1): (
-            ((FixedTerminal<1usize>, ignore::N), bit_x_or_expression::N),
-            ignore::N,
-        ),
-    ) -> Self {
-        Self {
-            bar_char,
-            ignore_0,
-            bit_x_or_expression,
-            ignore_1,
-        }
+impl DefaultTest for bit_or_expression::_S1 {
+    fn is_default(&self) -> bool {
+        self.bit_x_or_expression.is_default() && self.ignore.is_default()
     }
 }
-
-impl DefaultTest for bit_or_expression::_S2 {}
 
 impl order_comparison_expression::_S0 {
     pub fn new(
-        ((bit_or_expression, ignore), _s2s): (
-            (bit_or_expression::N, ignore::N),
+        (_s1s, _s2s): (
+            Vec<Box<order_comparison_expression::_S1>>,
             Vec<Box<order_comparison_expression::_S2>>,
         ),
     ) -> Self {
+        Self { _s1s, _s2s }
+    }
+}
+
+impl DefaultTest for order_comparison_expression::_S0 {
+    fn is_default(&self) -> bool {
+        self._s1s.is_default() && self._s2s.is_default()
+    }
+}
+
+impl order_comparison_expression::_S2 {
+    pub fn new((_0, ignore): (usize, ignore::N)) -> Self {
+        Self { _0, ignore }
+    }
+}
+
+impl DefaultTest for order_comparison_expression::_S2 {
+    fn is_default(&self) -> bool {
+        self._0.is_default() && self.ignore.is_default()
+    }
+}
+
+impl order_comparison_expression::_S1 {
+    pub fn new((bit_or_expression, ignore): (bit_or_expression::N, ignore::N)) -> Self {
         Self {
             bit_or_expression,
             ignore,
-            _s2s,
         }
     }
 }
 
-impl DefaultTest for order_comparison_expression::_S0 {}
-
-impl order_comparison_expression::_S2 {
-    pub fn new(
-        (((_0, ignore_0), bit_or_expression), ignore_1): (
-            ((usize, ignore::N), bit_or_expression::N),
-            ignore::N,
-        ),
-    ) -> Self {
-        Self {
-            _0,
-            ignore_0,
-            bit_or_expression,
-            ignore_1,
-        }
+impl DefaultTest for order_comparison_expression::_S1 {
+    fn is_default(&self) -> bool {
+        self.bit_or_expression.is_default() && self.ignore.is_default()
     }
 }
-
-impl DefaultTest for order_comparison_expression::_S2 {}
 
 impl equality_comparison_expression::_S0 {
     pub fn new(
-        ((order_comparison_expression, ignore), _s2s): (
-            (order_comparison_expression::N, ignore::N),
+        (_s1s, _s2s): (
+            Vec<Box<equality_comparison_expression::_S1>>,
             Vec<Box<equality_comparison_expression::_S2>>,
         ),
     ) -> Self {
+        Self { _s1s, _s2s }
+    }
+}
+
+impl DefaultTest for equality_comparison_expression::_S0 {
+    fn is_default(&self) -> bool {
+        self._s1s.is_default() && self._s2s.is_default()
+    }
+}
+
+impl equality_comparison_expression::_S2 {
+    pub fn new((_0, ignore): (FixedTerminal<2usize>, ignore::N)) -> Self {
+        Self { _0, ignore }
+    }
+}
+
+impl DefaultTest for equality_comparison_expression::_S2 {
+    fn is_default(&self) -> bool {
+        self._0.is_default() && self.ignore.is_default()
+    }
+}
+
+impl equality_comparison_expression::_S1 {
+    pub fn new(
+        (order_comparison_expression, ignore): (order_comparison_expression::N, ignore::N),
+    ) -> Self {
         Self {
             order_comparison_expression,
             ignore,
-            _s2s,
         }
     }
 }
 
-impl DefaultTest for equality_comparison_expression::_S0 {}
-
-impl equality_comparison_expression::_S2 {
-    pub fn new(
-        (((_0, ignore_0), order_comparison_expression), ignore_1): (
-            (
-                (FixedTerminal<2usize>, ignore::N),
-                order_comparison_expression::N,
-            ),
-            ignore::N,
-        ),
-    ) -> Self {
-        Self {
-            _0,
-            ignore_0,
-            order_comparison_expression,
-            ignore_1,
-        }
+impl DefaultTest for equality_comparison_expression::_S1 {
+    fn is_default(&self) -> bool {
+        self.order_comparison_expression.is_default() && self.ignore.is_default()
     }
 }
-
-impl DefaultTest for equality_comparison_expression::_S2 {}
 
 impl and_expression::_S0 {
     pub fn new(
-        ((equality_comparison_expression, ignore), _s2s): (
-            (equality_comparison_expression::N, ignore::N),
-            Vec<Box<and_expression::_S2>>,
-        ),
+        (_s1s, _s2s): (Vec<Box<and_expression::_S1>>, Vec<Box<and_expression::_S2>>),
     ) -> Self {
-        Self {
-            equality_comparison_expression,
-            ignore,
-            _s2s,
-        }
+        Self { _s1s, _s2s }
     }
 }
 
-impl DefaultTest for and_expression::_S0 {}
+impl DefaultTest for and_expression::_S0 {
+    fn is_default(&self) -> bool {
+        self._s1s.is_default() && self._s2s.is_default()
+    }
+}
 
 impl and_expression::_S2 {
-    pub fn new(
-        (((ampersand_ampersand, ignore_0), equality_comparison_expression), ignore_1): (
-            (
-                (FixedTerminal<2usize>, ignore::N),
-                equality_comparison_expression::N,
-            ),
-            ignore::N,
-        ),
-    ) -> Self {
+    pub fn new((ampersand_ampersand, ignore): (FixedTerminal<2usize>, ignore::N)) -> Self {
         Self {
             ampersand_ampersand,
-            ignore_0,
-            equality_comparison_expression,
-            ignore_1,
+            ignore,
         }
     }
 }
 
-impl DefaultTest for and_expression::_S2 {}
+impl DefaultTest for and_expression::_S2 {
+    fn is_default(&self) -> bool {
+        self.ampersand_ampersand.is_default() && self.ignore.is_default()
+    }
+}
+
+impl and_expression::_S1 {
+    pub fn new(
+        (equality_comparison_expression, ignore): (equality_comparison_expression::N, ignore::N),
+    ) -> Self {
+        Self {
+            equality_comparison_expression,
+            ignore,
+        }
+    }
+}
+
+impl DefaultTest for and_expression::_S1 {
+    fn is_default(&self) -> bool {
+        self.equality_comparison_expression.is_default() && self.ignore.is_default()
+    }
+}
 
 impl or_expression::_S0 {
-    pub fn new(
-        ((and_expression, ignore), _s2s): (
-            (and_expression::N, ignore::N),
-            Vec<Box<or_expression::_S2>>,
-        ),
-    ) -> Self {
+    pub fn new((_s1s, _s2s): (Vec<Box<or_expression::_S1>>, Vec<Box<or_expression::_S2>>)) -> Self {
+        Self { _s1s, _s2s }
+    }
+}
+
+impl DefaultTest for or_expression::_S0 {
+    fn is_default(&self) -> bool {
+        self._s1s.is_default() && self._s2s.is_default()
+    }
+}
+
+impl or_expression::_S2 {
+    pub fn new((bar_bar, ignore): (FixedTerminal<2usize>, ignore::N)) -> Self {
+        Self { bar_bar, ignore }
+    }
+}
+
+impl DefaultTest for or_expression::_S2 {
+    fn is_default(&self) -> bool {
+        self.bar_bar.is_default() && self.ignore.is_default()
+    }
+}
+
+impl or_expression::_S1 {
+    pub fn new((and_expression, ignore): (and_expression::N, ignore::N)) -> Self {
         Self {
             and_expression,
             ignore,
-            _s2s,
         }
     }
 }
 
-impl DefaultTest for or_expression::_S0 {}
-
-impl or_expression::_S2 {
-    pub fn new(
-        (((bar_bar, ignore_0), and_expression), ignore_1): (
-            ((FixedTerminal<2usize>, ignore::N), and_expression::N),
-            ignore::N,
-        ),
-    ) -> Self {
-        Self {
-            bar_bar,
-            ignore_0,
-            and_expression,
-            ignore_1,
-        }
+impl DefaultTest for or_expression::_S1 {
+    fn is_default(&self) -> bool {
+        self.and_expression.is_default() && self.ignore.is_default()
     }
 }
-
-impl DefaultTest for or_expression::_S2 {}
 
 impl conditional_expression::_S0 {
     pub fn new(
@@ -4245,7 +4359,11 @@ impl conditional_expression::_S0 {
     }
 }
 
-impl DefaultTest for conditional_expression::_S0 {}
+impl DefaultTest for conditional_expression::_S0 {
+    fn is_default(&self) -> bool {
+        self.or_expression.is_default() && self.ignore.is_default() && self._s2.is_default()
+    }
+}
 
 impl conditional_expression::_S2 {
     pub fn new(
@@ -4278,39 +4396,61 @@ impl conditional_expression::_S2 {
     }
 }
 
-impl DefaultTest for conditional_expression::_S2 {}
+impl DefaultTest for conditional_expression::_S2 {
+    fn is_default(&self) -> bool {
+        self.question_char.is_default()
+            && self.ignore_0.is_default()
+            && self.expression_0.is_default()
+            && self.ignore_1.is_default()
+            && self.colon_char.is_default()
+            && self.ignore_2.is_default()
+            && self.expression_1.is_default()
+    }
+}
 
 impl assignment_expression::_S0 {
     pub fn new(
-        ((conditional_expression, ignore), _s2s): (
-            (conditional_expression::N, ignore::N),
+        (_s1s, _s2s): (
+            Vec<Box<assignment_expression::_S1>>,
             Vec<Box<assignment_expression::_S2>>,
         ),
     ) -> Self {
+        Self { _s1s, _s2s }
+    }
+}
+
+impl DefaultTest for assignment_expression::_S0 {
+    fn is_default(&self) -> bool {
+        self._s1s.is_default() && self._s2s.is_default()
+    }
+}
+
+impl assignment_expression::_S2 {
+    pub fn new((_0, ignore): (usize, ignore::N)) -> Self {
+        Self { _0, ignore }
+    }
+}
+
+impl DefaultTest for assignment_expression::_S2 {
+    fn is_default(&self) -> bool {
+        self._0.is_default() && self.ignore.is_default()
+    }
+}
+
+impl assignment_expression::_S1 {
+    pub fn new((conditional_expression, ignore): (conditional_expression::N, ignore::N)) -> Self {
         Self {
             conditional_expression,
             ignore,
-            _s2s,
         }
     }
 }
 
-impl DefaultTest for assignment_expression::_S0 {}
-
-impl assignment_expression::_S2 {
-    pub fn new(
-        (((_0, ignore_0), expression), ignore_1): (((usize, ignore::N), expression::N), ignore::N),
-    ) -> Self {
-        Self {
-            _0,
-            ignore_0,
-            expression,
-            ignore_1,
-        }
+impl DefaultTest for assignment_expression::_S1 {
+    fn is_default(&self) -> bool {
+        self.conditional_expression.is_default() && self.ignore.is_default()
     }
 }
-
-impl DefaultTest for assignment_expression::_S2 {}
 
 impl constant_definition::_S0 {
     pub fn new(
@@ -4479,7 +4619,17 @@ impl emit_statement::_S0 {
     }
 }
 
-impl DefaultTest for emit_statement::_S0 {}
+impl DefaultTest for emit_statement::_S0 {
+    fn is_default(&self) -> bool {
+        self.emit.is_default()
+            && self.ignore_0.is_default()
+            && self.expression.is_default()
+            && self.ignore_1.is_default()
+            && self.argument_list.is_default()
+            && self.ignore_2.is_default()
+            && self.semicolon_char.is_default()
+    }
+}
 
 impl expression_statement::_S0 {
     pub fn new(
@@ -4493,7 +4643,11 @@ impl expression_statement::_S0 {
     }
 }
 
-impl DefaultTest for expression_statement::_S0 {}
+impl DefaultTest for expression_statement::_S0 {
+    fn is_default(&self) -> bool {
+        self.expression.is_default() && self.ignore.is_default() && self.semicolon_char.is_default()
+    }
+}
 
 impl if_statement::_S0 {
     pub fn new(
@@ -4619,7 +4773,17 @@ impl revert_statement::_S0 {
     }
 }
 
-impl DefaultTest for revert_statement::_S0 {}
+impl DefaultTest for revert_statement::_S0 {
+    fn is_default(&self) -> bool {
+        self.revert.is_default()
+            && self.ignore_0.is_default()
+            && self.expression.is_default()
+            && self.ignore_1.is_default()
+            && self.argument_list.is_default()
+            && self.ignore_2.is_default()
+            && self.semicolon_char.is_default()
+    }
+}
 
 impl state_variable_declaration::_S0 {
     pub fn new(
@@ -4677,7 +4841,11 @@ impl state_variable_declaration::_S4 {
     }
 }
 
-impl DefaultTest for state_variable_declaration::_S4 {}
+impl DefaultTest for state_variable_declaration::_S4 {
+    fn is_default(&self) -> bool {
+        self.equal_char.is_default() && self.ignore.is_default() && self.expression.is_default()
+    }
+}
 
 impl state_variable_declaration::_S2 {
     pub fn new(
@@ -4748,7 +4916,21 @@ impl try_statement::_S0 {
     }
 }
 
-impl DefaultTest for try_statement::_S0 {}
+impl DefaultTest for try_statement::_S0 {
+    fn is_default(&self) -> bool {
+        self.r#try.is_default()
+            && self.ignore_0.is_default()
+            && self.expression.is_default()
+            && self.ignore_1.is_default()
+            && self._s2.is_default()
+            && self.ignore_2.is_default()
+            && self.block.is_default()
+            && self.ignore_3.is_default()
+            && self.catch_clause.is_default()
+            && self.ignore_4.is_default()
+            && self._s4s.is_default()
+    }
+}
 
 impl try_statement::_S4 {
     pub fn new((catch_clause, ignore): (catch_clause::N, ignore::N)) -> Self {
@@ -4861,7 +5043,11 @@ impl variable_declaration_statement::_S4 {
     }
 }
 
-impl DefaultTest for variable_declaration_statement::_S4 {}
+impl DefaultTest for variable_declaration_statement::_S4 {
+    fn is_default(&self) -> bool {
+        self.equal_char.is_default() && self.ignore.is_default() && self.expression.is_default()
+    }
+}
 
 impl while_statement::_S0 {
     pub fn new(

@@ -3565,59 +3565,78 @@ impl Parsers {
             .map(|v| Box::new(unary_suffix_expression::_S0::new(v)))
             .boxed();
 
-        // ExpExpression = UnarySuffixExpression { '**' Expression } ;
-        let exp_expression_parser = unary_suffix_expression_parser
+        // ExponentiationExpression = 1…*{ UnarySuffixExpression / '**' } ;
+        let exponentiation_expression_parser = unary_suffix_expression_parser
             .clone()
             .then(ignore_parser.clone())
+            .map(|v| Box::new(exponentiation_expression::_S1::new(v)))
             .then(
                 terminal("**")
                     .ignored()
                     .map(|_| FixedTerminal::<2usize>())
                     .then(ignore_parser.clone())
-                    .then(expression_parser.clone())
-                    .then(ignore_parser.clone())
-                    .map(|v| Box::new(exp_expression::_S2::new(v)))
+                    .map(|v| Box::new(exponentiation_expression::_S2::new(v)))
+                    .then(
+                        unary_suffix_expression_parser
+                            .clone()
+                            .then(ignore_parser.clone())
+                            .map(|v| Box::new(exponentiation_expression::_S1::new(v))),
+                    )
                     .repeated(),
             )
-            .map(|v| Box::new(exp_expression::_S0::new(v)))
+            .map(repetition_mapper)
+            .map(|v| Box::new(exponentiation_expression::_S0::new(v)))
             .boxed();
 
-        // MulDivModExpression = ExpExpression { MulDivModOperator ExpExpression } ;
-        let mul_div_mod_expression_parser = exp_expression_parser
+        // MulDivModExpression = 1…*{ ExponentiationExpression / MulDivModOperator } ;
+        let mul_div_mod_expression_parser = exponentiation_expression_parser
             .clone()
             .then(ignore_parser.clone())
+            .map(|v| Box::new(mul_div_mod_expression::_S1::new(v)))
             .then(
                 filter(|&c: &char| c == '*' || c == '/' || c == '%')
                     .map(|_| FixedTerminal::<1>())
                     .then(ignore_parser.clone())
-                    .then(exp_expression_parser.clone())
-                    .then(ignore_parser.clone())
                     .map(|v| Box::new(mul_div_mod_expression::_S2::new(v)))
+                    .then(
+                        exponentiation_expression_parser
+                            .clone()
+                            .then(ignore_parser.clone())
+                            .map(|v| Box::new(mul_div_mod_expression::_S1::new(v))),
+                    )
                     .repeated(),
             )
+            .map(repetition_mapper)
             .map(|v| Box::new(mul_div_mod_expression::_S0::new(v)))
             .boxed();
 
-        // AddSubExpression = MulDivModExpression { AddSubOperator MulDivModExpression } ;
+        // AddSubExpression = 1…*{ MulDivModExpression / AddSubOperator } ;
         let add_sub_expression_parser = mul_div_mod_expression_parser
             .clone()
             .then(ignore_parser.clone())
+            .map(|v| Box::new(add_sub_expression::_S1::new(v)))
             .then(
                 filter(|&c: &char| c == '+' || c == '-')
                     .map(|_| FixedTerminal::<1>())
                     .then(ignore_parser.clone())
-                    .then(mul_div_mod_expression_parser.clone())
-                    .then(ignore_parser.clone())
                     .map(|v| Box::new(add_sub_expression::_S2::new(v)))
+                    .then(
+                        mul_div_mod_expression_parser
+                            .clone()
+                            .then(ignore_parser.clone())
+                            .map(|v| Box::new(add_sub_expression::_S1::new(v))),
+                    )
                     .repeated(),
             )
+            .map(repetition_mapper)
             .map(|v| Box::new(add_sub_expression::_S0::new(v)))
             .boxed();
 
-        // ShiftExpression = AddSubExpression { ShiftOperator AddSubExpression } ;
+        // ShiftExpression = 1…*{ AddSubExpression / ShiftOperator } ;
         let shift_expression_parser = add_sub_expression_parser
             .clone()
             .then(ignore_parser.clone())
+            .map(|v| Box::new(shift_expression::_S1::new(v)))
             .then(
                 choice::<_, ErrorType>((
                     terminal("<<").map(|_| 2usize),
@@ -3627,66 +3646,90 @@ impl Parsers {
                     ))),
                 ))
                 .then(ignore_parser.clone())
-                .then(add_sub_expression_parser.clone())
-                .then(ignore_parser.clone())
                 .map(|v| Box::new(shift_expression::_S2::new(v)))
+                .then(
+                    add_sub_expression_parser
+                        .clone()
+                        .then(ignore_parser.clone())
+                        .map(|v| Box::new(shift_expression::_S1::new(v))),
+                )
                 .repeated(),
             )
+            .map(repetition_mapper)
             .map(|v| Box::new(shift_expression::_S0::new(v)))
             .boxed();
 
-        // BitAndExpression = ShiftExpression { '&' ShiftExpression } ;
+        // BitAndExpression = 1…*{ ShiftExpression / '&' } ;
         let bit_and_expression_parser = shift_expression_parser
             .clone()
             .then(ignore_parser.clone())
+            .map(|v| Box::new(bit_and_expression::_S1::new(v)))
             .then(
                 just('&')
                     .map(|_| FixedTerminal::<1>())
                     .then(ignore_parser.clone())
-                    .then(shift_expression_parser.clone())
-                    .then(ignore_parser.clone())
                     .map(|v| Box::new(bit_and_expression::_S2::new(v)))
+                    .then(
+                        shift_expression_parser
+                            .clone()
+                            .then(ignore_parser.clone())
+                            .map(|v| Box::new(bit_and_expression::_S1::new(v))),
+                    )
                     .repeated(),
             )
+            .map(repetition_mapper)
             .map(|v| Box::new(bit_and_expression::_S0::new(v)))
             .boxed();
 
-        // BitXOrExpression = BitAndExpression { '^' BitAndExpression } ;
+        // BitXOrExpression = 1…*{ BitAndExpression / '^' } ;
         let bit_x_or_expression_parser = bit_and_expression_parser
             .clone()
             .then(ignore_parser.clone())
+            .map(|v| Box::new(bit_x_or_expression::_S1::new(v)))
             .then(
                 just('^')
                     .map(|_| FixedTerminal::<1>())
                     .then(ignore_parser.clone())
-                    .then(bit_and_expression_parser.clone())
-                    .then(ignore_parser.clone())
                     .map(|v| Box::new(bit_x_or_expression::_S2::new(v)))
+                    .then(
+                        bit_and_expression_parser
+                            .clone()
+                            .then(ignore_parser.clone())
+                            .map(|v| Box::new(bit_x_or_expression::_S1::new(v))),
+                    )
                     .repeated(),
             )
+            .map(repetition_mapper)
             .map(|v| Box::new(bit_x_or_expression::_S0::new(v)))
             .boxed();
 
-        // BitOrExpression = BitXOrExpression { '|' BitXOrExpression } ;
+        // BitOrExpression = 1…*{ BitXOrExpression / '|' } ;
         let bit_or_expression_parser = bit_x_or_expression_parser
             .clone()
             .then(ignore_parser.clone())
+            .map(|v| Box::new(bit_or_expression::_S1::new(v)))
             .then(
                 just('|')
                     .map(|_| FixedTerminal::<1>())
                     .then(ignore_parser.clone())
-                    .then(bit_x_or_expression_parser.clone())
-                    .then(ignore_parser.clone())
                     .map(|v| Box::new(bit_or_expression::_S2::new(v)))
+                    .then(
+                        bit_x_or_expression_parser
+                            .clone()
+                            .then(ignore_parser.clone())
+                            .map(|v| Box::new(bit_or_expression::_S1::new(v))),
+                    )
                     .repeated(),
             )
+            .map(repetition_mapper)
             .map(|v| Box::new(bit_or_expression::_S0::new(v)))
             .boxed();
 
-        // OrderComparisonExpression = BitOrExpression { OrderComparisonOperator BitOrExpression } ;
+        // OrderComparisonExpression = 1…*{ BitOrExpression / OrderComparisonOperator } ;
         let order_comparison_expression_parser = bit_or_expression_parser
             .clone()
             .then(ignore_parser.clone())
+            .map(|v| Box::new(order_comparison_expression::_S1::new(v)))
             .then(
                 choice::<_, ErrorType>((
                     terminal("<").ignore_then(choice((
@@ -3699,61 +3742,84 @@ impl Parsers {
                     ))),
                 ))
                 .then(ignore_parser.clone())
-                .then(bit_or_expression_parser.clone())
-                .then(ignore_parser.clone())
                 .map(|v| Box::new(order_comparison_expression::_S2::new(v)))
+                .then(
+                    bit_or_expression_parser
+                        .clone()
+                        .then(ignore_parser.clone())
+                        .map(|v| Box::new(order_comparison_expression::_S1::new(v))),
+                )
                 .repeated(),
             )
+            .map(repetition_mapper)
             .map(|v| Box::new(order_comparison_expression::_S0::new(v)))
             .boxed();
 
-        // EqualityComparisonExpression = OrderComparisonExpression { EqualityComparisonOperator OrderComparisonExpression } ;
+        // EqualityComparisonExpression = 1…*{ OrderComparisonExpression / EqualityComparisonOperator } ;
         let equality_comparison_expression_parser = order_comparison_expression_parser
             .clone()
             .then(ignore_parser.clone())
+            .map(|v| Box::new(equality_comparison_expression::_S1::new(v)))
             .then(
                 choice::<_, ErrorType>((terminal("!=").ignored(), terminal("==").ignored()))
                     .map(|_| FixedTerminal::<2usize>())
                     .then(ignore_parser.clone())
-                    .then(order_comparison_expression_parser.clone())
-                    .then(ignore_parser.clone())
                     .map(|v| Box::new(equality_comparison_expression::_S2::new(v)))
+                    .then(
+                        order_comparison_expression_parser
+                            .clone()
+                            .then(ignore_parser.clone())
+                            .map(|v| Box::new(equality_comparison_expression::_S1::new(v))),
+                    )
                     .repeated(),
             )
+            .map(repetition_mapper)
             .map(|v| Box::new(equality_comparison_expression::_S0::new(v)))
             .boxed();
 
-        // AndExpression = EqualityComparisonExpression { '&&' EqualityComparisonExpression } ;
+        // AndExpression = 1…*{ EqualityComparisonExpression / '&&' } ;
         let and_expression_parser = equality_comparison_expression_parser
             .clone()
             .then(ignore_parser.clone())
+            .map(|v| Box::new(and_expression::_S1::new(v)))
             .then(
                 terminal("&&")
                     .ignored()
                     .map(|_| FixedTerminal::<2usize>())
                     .then(ignore_parser.clone())
-                    .then(equality_comparison_expression_parser.clone())
-                    .then(ignore_parser.clone())
                     .map(|v| Box::new(and_expression::_S2::new(v)))
+                    .then(
+                        equality_comparison_expression_parser
+                            .clone()
+                            .then(ignore_parser.clone())
+                            .map(|v| Box::new(and_expression::_S1::new(v))),
+                    )
                     .repeated(),
             )
+            .map(repetition_mapper)
             .map(|v| Box::new(and_expression::_S0::new(v)))
             .boxed();
 
-        // OrExpression = AndExpression { '||' AndExpression } ;
+        // OrExpression = 1…*{ AndExpression / '||' } ;
         let or_expression_parser = and_expression_parser
             .clone()
             .then(ignore_parser.clone())
+            .map(|v| Box::new(or_expression::_S1::new(v)))
             .then(
                 terminal("||")
                     .ignored()
                     .map(|_| FixedTerminal::<2usize>())
                     .then(ignore_parser.clone())
-                    .then(and_expression_parser.clone())
-                    .then(ignore_parser.clone())
                     .map(|v| Box::new(or_expression::_S2::new(v)))
+                    .then(
+                        and_expression_parser
+                            .clone()
+                            .then(ignore_parser.clone())
+                            .map(|v| Box::new(or_expression::_S1::new(v))),
+                    )
                     .repeated(),
             )
+            .map(repetition_mapper)
             .map(|v| Box::new(or_expression::_S0::new(v)))
             .boxed();
 
@@ -3776,10 +3842,11 @@ impl Parsers {
             .map(|v| Box::new(conditional_expression::_S0::new(v)))
             .boxed();
 
-        // AssignmentExpression = ConditionalExpression { AssignmentOperator Expression } ;
+        // AssignmentExpression = 1…*{ ConditionalExpression / AssignmentOperator } ;
         let assignment_expression_parser = conditional_expression_parser
             .clone()
             .then(ignore_parser.clone())
+            .map(|v| Box::new(assignment_expression::_S1::new(v)))
             .then(
                 choice::<_, ErrorType>((
                     terminal("%=").map(|_| 2usize),
@@ -3798,11 +3865,16 @@ impl Parsers {
                     terminal("|=").map(|_| 2usize),
                 ))
                 .then(ignore_parser.clone())
-                .then(expression_parser.clone())
-                .then(ignore_parser.clone())
                 .map(|v| Box::new(assignment_expression::_S2::new(v)))
+                .then(
+                    conditional_expression_parser
+                        .clone()
+                        .then(ignore_parser.clone())
+                        .map(|v| Box::new(assignment_expression::_S1::new(v))),
+                )
                 .repeated(),
             )
+            .map(repetition_mapper)
             .map(|v| Box::new(assignment_expression::_S0::new(v)))
             .boxed();
 
@@ -4602,7 +4674,7 @@ impl Parsers {
             function_call_expression: function_call_expression_parser.boxed(),
             unary_prefix_expression: unary_prefix_expression_parser.boxed(),
             unary_suffix_expression: unary_suffix_expression_parser.boxed(),
-            exp_expression: exp_expression_parser.boxed(),
+            exponentiation_expression: exponentiation_expression_parser.boxed(),
             mul_div_mod_expression: mul_div_mod_expression_parser.boxed(),
             add_sub_expression: add_sub_expression_parser.boxed(),
             shift_expression: shift_expression_parser.boxed(),

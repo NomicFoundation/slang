@@ -419,8 +419,6 @@ impl Expression {
                             SlangName::from_prefix_and_index("_C", index)
                         });
 
-                    // TODO: Merge potential terminal_trie and character_filter elements.
-
                     let mut choices: Vec<(SlangName, CombinatorTreeNode)> = vec![];
                     {
                         let mut current_terminal_tree: Option<TerminalTrie> = None;

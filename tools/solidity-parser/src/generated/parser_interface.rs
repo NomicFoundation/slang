@@ -130,7 +130,7 @@ pub struct Parsers {
     pub function_call_expression: ParserType<function_call_expression::N>,
     pub unary_prefix_expression: ParserType<unary_prefix_expression::N>,
     pub unary_suffix_expression: ParserType<unary_suffix_expression::N>,
-    pub exp_expression: ParserType<exp_expression::N>,
+    pub exponentiation_expression: ParserType<exponentiation_expression::N>,
     pub mul_div_mod_expression: ParserType<mul_div_mod_expression::N>,
     pub add_sub_expression: ParserType<add_sub_expression::N>,
     pub shift_expression: ParserType<shift_expression::N>,

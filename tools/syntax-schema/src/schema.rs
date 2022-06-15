@@ -566,6 +566,10 @@ pub struct ExpressionConfig {
     pub name: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub lookahead: Option<ExpressionRef>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub prelude: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub pattern: Option<ExpressionPattern>,
 }
 
 impl ExpressionConfig {
@@ -579,8 +583,18 @@ impl Default for ExpressionConfig {
         Self {
             name: None,
             lookahead: None,
+            prelude: None,
+            pattern: None,
         }
     }
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, Hash)]
+pub enum ExpressionPattern {
+    Passthrough,
+    FoldLeftOrPassthrough,
+    FoldRightOrPassthrough,
+    Inline,
 }
 
 impl Grammar {

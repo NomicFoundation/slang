@@ -88,7 +88,7 @@
           - AddSubOperator
           - MulDivModExpression
           - MulDivModOperator
-          - ExpExpression
+          - ExponentiationExpression
           - UnarySuffixExpression
           - UnarySuffixOperator
           - UnaryPrefixExpression
