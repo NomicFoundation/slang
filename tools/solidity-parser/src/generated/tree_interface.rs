@@ -399,7 +399,7 @@ pub mod yul_evm_builtin_function_name {
     pub type N = usize;
 }
 
-/// «YulHexLiteral» = '0x' ( '0'…'9' | 'a'…'f' | 'A'…'F' ) { '0'…'9' | 'a'…'f' | 'A'…'F' } ;
+/// «YulHexLiteral» = '0x' 1…*{ '0'…'9' | 'a'…'f' | 'A'…'F' } ;
 pub mod yul_hex_literal {
     #[allow(unused_imports)]
     use super::*;
@@ -409,9 +409,7 @@ pub mod yul_hex_literal {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub zero_x: FixedTerminal<2usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _1: FixedTerminal<1usize>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _2: usize,
+        pub _1: usize,
     }
 }
 
@@ -3408,7 +3406,7 @@ pub mod state_variable_declaration {
     }
 }
 
-/// TryStatement = 'try' Expression [ 'returns' NonEmptyParameterList ] Block CatchClause { CatchClause } ;
+/// TryStatement = 'try' Expression [ 'returns' NonEmptyParameterList ] Block 1…*{ CatchClause } ;
 pub mod try_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -3431,10 +3429,6 @@ pub mod try_statement {
         pub block: block::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub ignore_3: ignore::N,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub catch_clause: catch_clause::N,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore_4: ignore::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _s4s: Vec<Box<try_statement::_S4>>,
     }

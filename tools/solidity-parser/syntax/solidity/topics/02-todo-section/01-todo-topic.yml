@@ -788,8 +788,7 @@
           - terminal: returns
           - reference: NonEmptyParameterList
     - reference: Block
-    - reference: CatchClause
-    - zeroOrMore:
+    - oneOrMore:
         reference: CatchClause
 
 - name: CatchClause
@@ -1663,17 +1662,7 @@
   isToken: true
   sequence:
     - terminal: "0x"
-    - choice:
-        - range:
-            from: "0"
-            to: "9"
-        - range:
-            from: a
-            to: f
-        - range:
-            from: A
-            to: F
-    - zeroOrMore:
+    - oneOrMore:
         choice:
           - range:
               from: "0"

@@ -302,16 +302,14 @@ impl DefaultTest for yul_decimal_number_literal::_S1 {
 }
 
 impl yul_hex_literal::_S0 {
-    pub fn new(
-        ((zero_x, _1), _2): ((FixedTerminal<2usize>, FixedTerminal<1usize>), usize),
-    ) -> Self {
-        Self { zero_x, _1, _2 }
+    pub fn new((zero_x, _1): (FixedTerminal<2usize>, usize)) -> Self {
+        Self { zero_x, _1 }
     }
 }
 
 impl DefaultTest for yul_hex_literal::_S0 {
     fn is_default(&self) -> bool {
-        self.zero_x.is_default() && self._1.is_default() && self._2.is_default()
+        self.zero_x.is_default() && self._1.is_default()
     }
 }
 
@@ -4862,43 +4860,7 @@ impl DefaultTest for state_variable_declaration::_S2 {}
 
 impl try_statement::_S0 {
     pub fn new(
-        (
-            (
-                (
-                    (
-                        ((((((r#try, ignore_0), expression), ignore_1), _s2), ignore_2), block),
-                        ignore_3,
-                    ),
-                    catch_clause,
-                ),
-                ignore_4,
-            ),
-            _s4s,
-        ): (
-            (
-                (
-                    (
-                        (
-                            (
-                                (
-                                    (
-                                        ((FixedTerminal<3usize>, ignore::N), expression::N),
-                                        ignore::N,
-                                    ),
-                                    Option<Box<try_statement::_S2>>,
-                                ),
-                                ignore::N,
-                            ),
-                            block::N,
-                        ),
-                        ignore::N,
-                    ),
-                    catch_clause::N,
-                ),
-                ignore::N,
-            ),
-            Vec<Box<try_statement::_S4>>,
-        ),
+        ((((((((r#try , ignore_0) , expression) , ignore_1) , _s2) , ignore_2) , block) , ignore_3) , _s4s) : ((((((((FixedTerminal < 3usize > , ignore :: N) , expression :: N) , ignore :: N) , Option < Box < try_statement :: _S2 > >) , ignore :: N) , block :: N) , ignore :: N) , Vec < Box < try_statement :: _S4 > >),
     ) -> Self {
         Self {
             r#try,
@@ -4909,8 +4871,6 @@ impl try_statement::_S0 {
             ignore_2,
             block,
             ignore_3,
-            catch_clause,
-            ignore_4,
             _s4s,
         }
     }
@@ -4926,8 +4886,6 @@ impl DefaultTest for try_statement::_S0 {
             && self.ignore_2.is_default()
             && self.block.is_default()
             && self.ignore_3.is_default()
-            && self.catch_clause.is_default()
-            && self.ignore_4.is_default()
             && self._s4s.is_default()
     }
 }

@@ -214,7 +214,7 @@ ContinueStatement = 'continue' ';' ;
 
 BreakStatement = 'break' ';' ;
 
-TryStatement = 'try' Expression [ 'returns' NonEmptyParameterList ] Block CatchClause { CatchClause } ;
+TryStatement = 'try' Expression [ 'returns' NonEmptyParameterList ] Block 1…*{ CatchClause } ;
 
 CatchClause = 'catch' [ [ «Identifier» ] NonEmptyParameterList ] Block ;
 
@@ -342,4 +342,4 @@ YulLiteral = «YulDecimalNumberLiteral» | «YulHexLiteral» | «AsciiStringLite
 
 «YulDecimalNumberLiteral» = '0' | '1'…'9' { '0'…'9' } ;
 
-«YulHexLiteral» = '0x' ( '0'…'9' | 'a'…'f' | 'A'…'F' ) { '0'…'9' | 'a'…'f' | 'A'…'F' } ;
+«YulHexLiteral» = '0x' 1…*{ '0'…'9' | 'a'…'f' | 'A'…'F' } ;

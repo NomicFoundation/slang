@@ -728,7 +728,7 @@ impl Parsers {
         ))
         .boxed();
 
-        // «YulHexLiteral» = '0x' ( '0'…'9' | 'a'…'f' | 'A'…'F' ) { '0'…'9' | 'a'…'f' | 'A'…'F' } ;
+        // «YulHexLiteral» = '0x' 1…*{ '0'…'9' | 'a'…'f' | 'A'…'F' } ;
         let yul_hex_literal_parser = terminal("0x")
             .ignored()
             .map(|_| FixedTerminal::<2usize>())
@@ -736,14 +736,9 @@ impl Parsers {
                 filter(|&c: &char| {
                     ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
                 })
-                .map(|_| FixedTerminal::<1>()),
-            )
-            .then(
-                filter(|&c: &char| {
-                    ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
-                })
                 .map(|_| FixedTerminal::<1>())
                 .repeated()
+                .at_least(1usize)
                 .map(|v| v.len()),
             )
             .map(|v| Box::new(yul_hex_literal::_S0::new(v)))
@@ -4021,7 +4016,7 @@ impl Parsers {
             .map(|v| Box::new(state_variable_declaration::_S0::new(v)))
             .boxed();
 
-        // TryStatement = 'try' Expression [ 'returns' NonEmptyParameterList ] Block CatchClause { CatchClause } ;
+        // TryStatement = 'try' Expression [ 'returns' NonEmptyParameterList ] Block 1…*{ CatchClause } ;
         let try_statement_parser = terminal("try")
             .ignored()
             .map(|_| FixedTerminal::<3usize>())
@@ -4040,14 +4035,13 @@ impl Parsers {
             .then(ignore_parser.clone())
             .then(block_parser.clone())
             .then(ignore_parser.clone())
-            .then(catch_clause_parser.clone())
-            .then(ignore_parser.clone())
             .then(
                 catch_clause_parser
                     .clone()
                     .then(ignore_parser.clone())
                     .map(|v| Box::new(try_statement::_S4::new(v)))
-                    .repeated(),
+                    .repeated()
+                    .at_least(1usize),
             )
             .map(|v| Box::new(try_statement::_S0::new(v)))
             .boxed();
