@@ -250,16 +250,15 @@ impl DefaultTest for fixed_type::_S2 {
 
 impl pragma_directive::_S0 {
     pub fn new(
-        (((pragma, semicolon_char_0), non_semicolon_chars), semicolon_char_1): (
-            ((FixedTerminal<6usize>, FixedTerminal<1usize>), usize),
+        ((pragma, not_semicolon_chars), semicolon_char): (
+            (FixedTerminal<6usize>, usize),
             FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
             pragma,
-            semicolon_char_0,
-            non_semicolon_chars,
-            semicolon_char_1,
+            not_semicolon_chars,
+            semicolon_char,
         }
     }
 }
@@ -267,9 +266,8 @@ impl pragma_directive::_S0 {
 impl DefaultTest for pragma_directive::_S0 {
     fn is_default(&self) -> bool {
         self.pragma.is_default()
-            && self.semicolon_char_0.is_default()
-            && self.non_semicolon_chars.is_default()
-            && self.semicolon_char_1.is_default()
+            && self.not_semicolon_chars.is_default()
+            && self.semicolon_char.is_default()
     }
 }
 

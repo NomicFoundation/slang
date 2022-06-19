@@ -53,7 +53,7 @@ impl Parsers {
                 choice((
                     filter(|&c: &char| c != '*')
                         .map(|_| FixedTerminal::<1>())
-                        .map(|v| Box::new(comment::_C2::StarChar(v))),
+                        .map(|v| Box::new(comment::_C2::NotStarChar(v))),
                     just('*')
                         .map(|_| FixedTerminal::<1>())
                         .repeated()

@@ -31,7 +31,7 @@ pub mod comment {
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub enum _C2 {
-        StarChar(FixedTerminal<1usize>),
+        NotStarChar(FixedTerminal<1usize>),
         _S3(Box<comment::_S3>),
     }
     #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]

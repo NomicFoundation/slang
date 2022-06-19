@@ -7,35 +7,29 @@ use super::slang_name::SlangName;
 
 #[derive(Clone, Debug)]
 pub enum CharacterFilterNode {
-    Range { from: char, to: char, negated: bool },
-    Char { char: char, negated: bool },
+    Negation { child: CharacterFilter },
+    Range { from: char, to: char },
+    Char { char: char },
     Disjunction { nodes: Vec<CharacterFilter> },
     Conjunction { nodes: Vec<CharacterFilter> },
 }
 
-impl CharacterFilterNode {
-    pub fn negated(self) -> CharacterFilter {
-        match self {
-            Self::Range { from, to, negated } => cf_range(from, to, !negated),
-            Self::Char { char, negated } => cf_char(char, !negated),
-            Self::Disjunction { nodes } => {
-                cf_conjunction(nodes.into_iter().map(|n| n.negated()).collect())
-            }
-            Self::Conjunction { nodes } => {
-                cf_disjunction(nodes.into_iter().map(|n| n.negated()).collect())
-            }
-        }
+pub type CharacterFilter = Box<CharacterFilterNode>;
+
+fn cf_negation(child: CharacterFilter) -> CharacterFilter {
+    if let CharacterFilterNode::Negation { child } = *child {
+        child
+    } else {
+        Box::new(CharacterFilterNode::Negation { child })
     }
 }
 
-pub type CharacterFilter = Box<CharacterFilterNode>;
-
-fn cf_range(from: char, to: char, negated: bool) -> CharacterFilter {
-    Box::new(CharacterFilterNode::Range { from, to, negated })
+fn cf_range(from: char, to: char) -> CharacterFilter {
+    Box::new(CharacterFilterNode::Range { from, to })
 }
 
-fn cf_char(char: char, negated: bool) -> CharacterFilter {
-    Box::new(CharacterFilterNode::Char { char, negated })
+fn cf_char(char: char) -> CharacterFilter {
+    Box::new(CharacterFilterNode::Char { char })
 }
 fn cf_disjunction(nodes: Vec<CharacterFilter>) -> CharacterFilter {
     Box::new(CharacterFilterNode::Disjunction { nodes })
@@ -47,7 +41,11 @@ fn cf_conjunction(nodes: Vec<CharacterFilter>) -> CharacterFilter {
 
 impl CharacterFilterNode {
     pub fn slang_name(&self) -> Option<SlangName> {
-        if let Self::Char { char, .. } = self {
+        if let Self::Negation { child } = self {
+            child
+                .slang_name()
+                .map(|s| SlangName::from_string(&format!("not_{}", s.as_str())))
+        } else if let Self::Char { char, .. } = self {
             SlangName::from_terminal_char(*char)
         } else {
             None
@@ -56,45 +54,46 @@ impl CharacterFilterNode {
 
     pub fn to_parser_combinator_code(&self) -> TokenStream {
         let map = quote!(.map(|_| FixedTerminal::<1>()) );
-        if let CharacterFilterNode::Char {
-            char,
-            negated: false,
-        } = self
-        {
+        if let CharacterFilterNode::Char { char } = self {
             quote!(just(#char)#map )
         } else {
-            let predicate = self.to_parser_predicate();
+            let predicate = self.to_parser_predicate(false);
             quote!( filter(|&c: &char| #predicate)#map )
         }
     }
 
-    fn to_parser_predicate(&self) -> TokenStream {
+    fn to_parser_predicate(&self, negated: bool) -> TokenStream {
         match self {
-            CharacterFilterNode::Range {
-                from,
-                to,
-                negated: false,
-            } => quote!( (#from <= c && c <= #to) ),
-            CharacterFilterNode::Range {
-                from,
-                to,
-                negated: true,
-            } => quote!( (c < #from || #to < c) ),
-            CharacterFilterNode::Char {
-                char,
-                negated: false,
-            } => quote!( c == #char ),
-            CharacterFilterNode::Char {
-                char,
-                negated: true,
-            } => quote!( c != #char ),
+            CharacterFilterNode::Negation { child } => child.to_parser_predicate(!negated),
+            CharacterFilterNode::Range { from, to } => {
+                if negated {
+                    quote!( (c < #from || #to < c) )
+                } else {
+                    quote!( (#from <= c && c <= #to) )
+                }
+            }
+            CharacterFilterNode::Char { char } => {
+                if negated {
+                    quote!( c != #char )
+                } else {
+                    quote!( c == #char )
+                }
+            }
             CharacterFilterNode::Disjunction { nodes } => {
-                let nodes = nodes.iter().map(|n| n.to_parser_predicate());
-                quote! ( #(#nodes)||* )
+                let nodes = nodes.iter().map(|n| n.to_parser_predicate(negated));
+                if negated {
+                    quote! ( #(#nodes)&&* )
+                } else {
+                    quote! ( #(#nodes)||* )
+                }
             }
             CharacterFilterNode::Conjunction { nodes } => {
-                let nodes = nodes.iter().map(|n| n.to_parser_predicate());
-                quote! ( #(#nodes)&&* )
+                let nodes = nodes.iter().map(|n| n.to_parser_predicate(negated));
+                if negated {
+                    quote! ( #(#nodes)||* )
+                } else {
+                    quote! ( #(#nodes)&&* )
+                }
             }
         }
     }
@@ -103,7 +102,7 @@ impl CharacterFilterNode {
 impl Expression {
     pub fn to_character_filter(&self, grammar: &Grammar) -> Option<CharacterFilter> {
         match &self.ebnf {
-            EBNF::Not(child) => child.to_character_filter(grammar).map(|c| c.negated()),
+            EBNF::Not(child) => child.to_character_filter(grammar).map(cf_negation),
             EBNF::Choice(children) => {
                 let child_filters = children
                     .iter()
@@ -117,12 +116,12 @@ impl Expression {
             }
             EBNF::Terminal(string) => {
                 if string.chars().count() == 1 {
-                    Some(cf_char(string.chars().next().unwrap(), false))
+                    Some(cf_char(string.chars().next().unwrap()))
                 } else {
                     None
                 }
             }
-            EBNF::Range(EBNFRange { from, to }) => Some(cf_range(*from, *to, false)),
+            EBNF::Range(EBNFRange { from, to }) => Some(cf_range(*from, *to)),
             EBNF::Reference(name) => {
                 if let Some(production) = grammar.get_production(name) {
                     production
@@ -140,7 +139,7 @@ impl Expression {
                     minuend.to_character_filter(grammar),
                     subtrahend.to_character_filter(grammar),
                 ) {
-                    Some(cf_conjunction(vec![minuend, subtrahend.negated()]))
+                    Some(cf_conjunction(vec![minuend, cf_negation(subtrahend)]))
                 } else {
                     None
                 }
