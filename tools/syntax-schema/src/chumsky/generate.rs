@@ -190,8 +190,6 @@ impl Production {
                 } else {
                     quote!( let #parser_name = #parser_expression.boxed(); )
                 };
-                // TODO: Move to strings so this can be inserted
-                // parser_implementations.push(ebnf_comment.clone());
                 parser_implementations.push(format!(
                     "{}\n{}",
                     ebnf_comment,
@@ -345,11 +343,7 @@ impl Production {
                     }
                 )
                 .to_string(),
-                tree_implementations
-                    .into_iter()
-                    .map(|q| q.to_string())
-                    .collect::<Vec<_>>()
-                    .join("\n\n"),
+                tree_implementations.join("\n\n")
             ),
             parser_implementation: parser_implementation,
         }
