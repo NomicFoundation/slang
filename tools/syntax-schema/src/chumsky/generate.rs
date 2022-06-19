@@ -150,7 +150,6 @@ impl Production {
 
         for name in &backlinked {
             let parser_name = SlangName::from_string(name).to_parser_name_ident();
-            // parser_implementations.push("// Forward Reference");
             parser_implementations
                 .push(quote!( let mut #parser_name = Recursive::declare(); ).to_string());
         }
