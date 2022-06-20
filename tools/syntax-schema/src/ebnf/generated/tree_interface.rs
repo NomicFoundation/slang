@@ -237,8 +237,6 @@ pub mod repetition_prefix {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub ellipsis_char: FixedTerminal<1usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore: ignore::N,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub number: number::N,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
@@ -246,16 +244,12 @@ pub mod repetition_prefix {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub number: number::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore: ignore::N,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t3: Option<Box<repetition_prefix::_T3>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
     pub struct _T3 {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub ellipsis_char: FixedTerminal<1usize>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore: ignore::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub number: Option<number::N>,
     }
@@ -400,8 +394,6 @@ pub mod difference {
     pub struct _T1 {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub minus_char: FixedTerminal<1usize>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore: ignore::N,
         pub negation: negation::N,
     }
 }
@@ -410,13 +402,7 @@ pub mod difference {
 pub mod sequence {
     #[allow(unused_imports)]
     use super::*;
-    pub type N = Vec<Box<sequence::_T1>>;
-    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub struct _T1 {
-        pub difference: difference::N,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore: ignore::N,
-    }
+    pub type N = Vec<difference::N>;
 }
 
 /// expression = 1…*{ sequence / '|' } ;
@@ -427,23 +413,9 @@ pub mod expression {
     #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
     pub struct _T0 {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _t1s: Vec<Box<expression::_T1>>,
+        pub sequences: Vec<sequence::N>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _t2s: Vec<Box<expression::_T2>>,
-    }
-    #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
-    pub struct _T2 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub bar_char: FixedTerminal<1usize>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore: ignore::N,
-    }
-    #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
-    pub struct _T1 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub sequence: sequence::N,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore: ignore::N,
+        pub bar_chars: Vec<FixedTerminal<1usize>>,
     }
 }
 
@@ -482,16 +454,10 @@ pub mod grammar {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub ignore_1: ignore::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _t2s: Vec<Box<grammar::_T2>>,
+        pub productions: Vec<production::N>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub ignore_2: ignore::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub end_marker: (),
-    }
-    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub struct _T2 {
-        pub production: production::N,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore: ignore::N,
     }
 }

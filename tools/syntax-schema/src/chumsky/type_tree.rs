@@ -197,7 +197,7 @@ fn tt_option(child: TypeTreeNode) -> TypeTreeNode {
     Box::new(TypeTreeNodeData::Option(child))
 }
 
-fn tt_named(production: ProductionRef) -> TypeTreeNode {
+fn tt_reference(production: ProductionRef) -> TypeTreeNode {
     Box::new(TypeTreeNodeData::Reference(production))
 }
 
@@ -241,39 +241,29 @@ impl CombinatorTreeNodeData {
                     .collect(),
             ),
             Self::Optional { expr } => tt_option(expr.to_type_tree_node()),
-            Self::Repeat {
-                expr,
-                separator: None,
-                ..
-            } => {
+            Self::Repeat { expr, .. } => {
                 if let Self::CharacterFilter { .. } = **expr {
                     tt_variable_terminal()
                 } else {
                     tt_repetition(expr.to_type_tree_node())
                 }
             }
-            Self::Repeat {
+            Self::SeparatedBy {
                 name,
                 expr,
                 min,
-                separator: Some(separator),
+                separator,
                 ..
             } => {
                 let inner = tt_tuple(
                     name.clone(),
                     vec![
                         (
-                            expr.name().map_or_else(
-                                || SlangName::from_string("expressions"),
-                                |n| n.plural(),
-                            ),
+                            expr.name().plural().self_or_positional(0),
                             tt_repetition(expr.to_type_tree_node()),
                         ),
                         (
-                            separator.name().map_or_else(
-                                || SlangName::from_string("separators"),
-                                |n| n.plural(),
-                            ),
+                            separator.name().plural().self_or_positional(1),
                             tt_repetition(separator.to_type_tree_node()),
                         ),
                     ],
@@ -284,7 +274,7 @@ impl CombinatorTreeNodeData {
                     inner
                 }
             }
-            Self::Reference { production } => tt_named(production.clone()),
+            Self::Reference { production } => tt_reference(production.clone()),
             Self::TerminalTrie { trie, .. } => {
                 if let Some(size) = trie.common_terminal_length() {
                     tt_fixed_terminal(size)

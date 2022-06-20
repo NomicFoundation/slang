@@ -223,11 +223,9 @@ impl Parsers {
         let repetition_prefix_parser_unmpapped = choice((
             number_parser
                 .clone()
-                .then(ignore_parser.clone())
                 .then(
                     just('…')
                         .map(|_| FixedTerminal::<1>())
-                        .then(ignore_parser.clone())
                         .then(number_parser.clone().or_not())
                         .map(|v| Box::new(repetition_prefix::_S4::new(v)))
                         .or_not(),
@@ -236,7 +234,6 @@ impl Parsers {
                 .map(|v| Box::new(repetition_prefix::_C1::_S2(v))),
             just('…')
                 .map(|_| FixedTerminal::<1>())
-                .then(ignore_parser.clone())
                 .then(number_parser.clone())
                 .map(|v| Box::new(repetition_prefix::_S6::new(v)))
                 .map(|v| Box::new(repetition_prefix::_C1::_S6(v))),
@@ -340,7 +337,6 @@ impl Parsers {
             .then(
                 just('-')
                     .map(|_| FixedTerminal::<1>())
-                    .then(ignore_parser.clone())
                     .then(negation_parser.clone())
                     .map(|v| Box::new(difference::_S2::new(v)))
                     .or_not(),

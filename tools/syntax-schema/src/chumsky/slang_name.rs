@@ -7,12 +7,22 @@ use inflector::{
 use proc_macro2::Ident;
 use quote::format_ident;
 
+use crate::schema::ExpressionConfig;
+
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub struct SlangName(String);
 
 impl SlangName {
     pub fn as_str<'a>(&'a self) -> &'a str {
         self.0.as_str()
+    }
+
+    pub fn anonymous() -> Self {
+        Self("".to_owned())
+    }
+
+    pub fn is_anonymous(&self) -> bool {
+        self.0.is_empty()
     }
 
     pub fn from_string(s: &str) -> Self {
@@ -52,25 +62,57 @@ impl SlangName {
         })
     }
 
-    pub fn from_terminal_char(char: char) -> Option<Self> {
+    pub fn from_terminal_char(char: char) -> Self {
         DEFAULT_TOKEN_NAMES
             .binary_search_by(|probe| probe.0.cmp(&char))
             .ok()
             .map(|i| Self(format!("{}_char", DEFAULT_TOKEN_NAMES[i].1)))
+            .unwrap_or_else(|| SlangName::anonymous())
     }
 
-    pub fn anonymous_type(subtype_index: &mut Cell<usize>) -> Self {
-        let index = subtype_index.get();
-        subtype_index.set(index + 1);
-        Self(format!("_T{}", index))
+    pub fn self_or_numbered(self, index: &mut Cell<usize>) -> Self {
+        if self.is_anonymous() {
+            let i = index.get();
+            index.set(i + 1);
+            Self(format!("_T{}", i))
+        } else {
+            self
+        }
     }
 
-    pub fn positional_type(index: usize) -> Self {
-        Self(format!("_{}", index))
+    pub fn self_or_positional(self, i: usize) -> Self {
+        if self.is_anonymous() {
+            Self(format!("_{}", i))
+        } else {
+            self
+        }
     }
 
-    pub fn plural(&self) -> Self {
-        Self(self.0.to_plural())
+    pub fn self_or_else<F>(self, f: F) -> Self
+    where
+        F: FnOnce() -> Self,
+    {
+        if self.is_anonymous() {
+            f()
+        } else {
+            self
+        }
+    }
+
+    pub fn plural(self) -> Self {
+        if self.is_anonymous() {
+            self
+        } else {
+            Self(self.0.to_plural())
+        }
+    }
+
+    pub fn negated(self) -> Self {
+        if self.is_anonymous() {
+            self
+        } else {
+            Self(format!("not_{}", self.0.as_str()))
+        }
     }
 
     pub fn with_disambiguating_suffix(&self, index: usize) -> Self {
@@ -78,16 +120,22 @@ impl SlangName {
     }
 
     pub fn to_module_name_ident(&self) -> Ident {
-        let id = to_snake_case(self.0.as_str());
-        if is_reserved_identifier(id.as_str()) {
-            format_ident!("r#{}", id)
+        if self.is_anonymous() {
+            format_ident!("__anonymous__")
         } else {
-            format_ident!("{}", id)
+            let id = to_snake_case(self.0.as_str());
+            if is_reserved_identifier(id.as_str()) {
+                format_ident!("r#{}", id)
+            } else {
+                format_ident!("{}", id)
+            }
         }
     }
 
     pub fn to_type_name_ident(&self) -> Ident {
-        if self.0.starts_with('_') {
+        if self.is_anonymous() {
+            format_ident!("__anonymous__")
+        } else if self.0.starts_with('_') {
             format_ident!("{}", self.0.as_str().to_ascii_uppercase())
         } else {
             format_ident!("{}", to_pascal_case(self.0.as_str()))
@@ -95,7 +143,9 @@ impl SlangName {
     }
 
     pub fn to_enum_tag_ident(&self) -> Ident {
-        if self.0.starts_with('_') {
+        if self.is_anonymous() {
+            format_ident!("__anonymous__")
+        } else if self.0.starts_with('_') {
             format_ident!("{}", self.0.as_str().to_ascii_uppercase())
         } else {
             format_ident!("{}", to_pascal_case(self.0.as_str()))
@@ -103,7 +153,9 @@ impl SlangName {
     }
 
     pub fn to_field_name_ident(&self) -> Ident {
-        if self.0.starts_with('_') {
+        if self.is_anonymous() {
+            format_ident!("__anonymous__")
+        } else if self.0.starts_with('_') {
             format_ident!("{}", self.0.as_str().to_ascii_lowercase())
         } else {
             let id = to_snake_case(self.0.as_str());
@@ -116,11 +168,29 @@ impl SlangName {
     }
 
     pub fn to_parser_name_ident(&self) -> Ident {
-        format_ident!("{}_parser", to_snake_case(self.0.as_str()))
+        if self.is_anonymous() {
+            format_ident!("__anonymous__")
+        } else {
+            format_ident!("{}_parser", to_snake_case(self.0.as_str()))
+        }
     }
 
     pub fn to_unmapped_parser_name_ident(&self) -> Ident {
-        format_ident!("{}_parser_unmpapped", to_snake_case(self.0.as_str()))
+        if self.is_anonymous() {
+            format_ident!("__anonymous__")
+        } else {
+            format_ident!("{}_parser_unmpapped", to_snake_case(self.0.as_str()))
+        }
+    }
+}
+
+impl ExpressionConfig {
+    pub fn slang_name(&self) -> SlangName {
+        if let Some(name) = &self.name {
+            SlangName::from_string(name)
+        } else {
+            SlangName::anonymous()
+        }
     }
 }
 

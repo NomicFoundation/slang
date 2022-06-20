@@ -40,15 +40,13 @@ fn cf_conjunction(nodes: Vec<CharacterFilter>) -> CharacterFilter {
 }
 
 impl CharacterFilterNode {
-    pub fn slang_name(&self) -> Option<SlangName> {
+    pub fn slang_name(&self) -> SlangName {
         if let Self::Negation { child } = self {
-            child
-                .slang_name()
-                .map(|s| SlangName::from_string(&format!("not_{}", s.as_str())))
+            child.slang_name().negated()
         } else if let Self::Char { char, .. } = self {
             SlangName::from_terminal_char(*char)
         } else {
-            None
+            SlangName::anonymous()
         }
     }
 

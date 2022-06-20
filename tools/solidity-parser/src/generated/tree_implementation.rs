@@ -71,13 +71,13 @@ impl DefaultTest for comment::_T3 {
 
 impl decimal_integer::_T0 {
     pub fn new(
-        (expressions, underscore_chars): (
+        (_0, underscore_chars): (
             Vec<FixedTerminal<1usize>>,
             Vec<Option<FixedTerminal<1usize>>>,
         ),
     ) -> Self {
         Self {
-            expressions,
+            _0,
             underscore_chars,
         }
     }
@@ -85,7 +85,7 @@ impl decimal_integer::_T0 {
 
 impl DefaultTest for decimal_integer::_T0 {
     fn is_default(&self) -> bool {
-        self.expressions.is_default() && self.underscore_chars.is_default()
+        self._0.is_default() && self.underscore_chars.is_default()
     }
 }
 
@@ -285,13 +285,13 @@ impl DefaultTest for hex_number::_T0 {
 
 impl hex_number::_T1 {
     pub fn new(
-        (expressions, underscore_chars): (
+        (_0, underscore_chars): (
             Vec<FixedTerminal<1usize>>,
             Vec<Option<FixedTerminal<1usize>>>,
         ),
     ) -> Self {
         Self {
-            expressions,
+            _0,
             underscore_chars,
         }
     }
@@ -299,18 +299,16 @@ impl hex_number::_T1 {
 
 impl DefaultTest for hex_number::_T1 {
     fn is_default(&self) -> bool {
-        self.expressions.is_default() && self.underscore_chars.is_default()
+        self._0.is_default() && self.underscore_chars.is_default()
     }
 }
 
 impl DefaultTest for ignore::_T1 {}
 
 impl possibly_separated_pairs_of_hex_digits::_T0 {
-    pub fn new(
-        (expressions, underscore_chars): (Vec<usize>, Vec<Option<FixedTerminal<1usize>>>),
-    ) -> Self {
+    pub fn new((_0, underscore_chars): (Vec<usize>, Vec<Option<FixedTerminal<1usize>>>)) -> Self {
         Self {
-            expressions,
+            _0,
             underscore_chars,
         }
     }
@@ -318,7 +316,7 @@ impl possibly_separated_pairs_of_hex_digits::_T0 {
 
 impl DefaultTest for possibly_separated_pairs_of_hex_digits::_T0 {
     fn is_default(&self) -> bool {
-        self.expressions.is_default() && self.underscore_chars.is_default()
+        self._0.is_default() && self.underscore_chars.is_default()
     }
 }
 
@@ -499,42 +497,18 @@ impl DefaultTest for keyword::_T0 {}
 
 impl positional_argument_list::_T0 {
     pub fn new(
-        (_t1s, _t2s): (
-            Vec<Box<positional_argument_list::_T1>>,
-            Vec<Box<positional_argument_list::_T2>>,
-        ),
+        (expressions, comma_chars): (Vec<expression::N>, Vec<FixedTerminal<1usize>>),
     ) -> Self {
-        Self { _t1s, _t2s }
+        Self {
+            expressions,
+            comma_chars,
+        }
     }
 }
 
 impl DefaultTest for positional_argument_list::_T0 {
     fn is_default(&self) -> bool {
-        self._t1s.is_default() && self._t2s.is_default()
-    }
-}
-
-impl positional_argument_list::_T2 {
-    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
-        Self { comma_char, ignore }
-    }
-}
-
-impl DefaultTest for positional_argument_list::_T2 {
-    fn is_default(&self) -> bool {
-        self.comma_char.is_default() && self.ignore.is_default()
-    }
-}
-
-impl positional_argument_list::_T1 {
-    pub fn new((expression, ignore): (expression::N, ignore::N)) -> Self {
-        Self { expression, ignore }
-    }
-}
-
-impl DefaultTest for positional_argument_list::_T1 {
-    fn is_default(&self) -> bool {
-        self.expression.is_default() && self.ignore.is_default()
+        self.expressions.is_default() && self.comma_chars.is_default()
     }
 }
 
@@ -627,23 +601,14 @@ impl DefaultTest for double_quoted_unicode_string_literal::Run {}
 impl DefaultTest for elementary_type_with_payable::_T0 {}
 
 impl elementary_type_with_payable::_T1 {
-    pub fn new(
-        ((address, ignore), payable): (
-            (FixedTerminal<7usize>, ignore::N),
-            Option<FixedTerminal<7usize>>,
-        ),
-    ) -> Self {
-        Self {
-            address,
-            ignore,
-            payable,
-        }
+    pub fn new((address, payable): (FixedTerminal<7usize>, Option<FixedTerminal<7usize>>)) -> Self {
+        Self { address, payable }
     }
 }
 
 impl DefaultTest for elementary_type_with_payable::_T1 {
     fn is_default(&self) -> bool {
-        self.address.is_default() && self.ignore.is_default() && self.payable.is_default()
+        self.address.is_default() && self.payable.is_default()
     }
 }
 
@@ -651,9 +616,9 @@ impl DefaultTest for elementary_type_without_payable::_T0 {}
 
 impl numeric_literal::_T0 {
     pub fn new(
-        ((_t1, ignore), _1): ((Box<numeric_literal::_T1>, ignore::N), Option<usize>),
+        ((_t1, ignore), _2): ((Box<numeric_literal::_T1>, ignore::N), Option<usize>),
     ) -> Self {
-        Self { _t1, ignore, _1 }
+        Self { _t1, ignore, _2 }
     }
 }
 
@@ -719,7 +684,10 @@ impl DefaultTest for ascii_string_literal::_T0 {}
 
 impl assembly_flags::_T0 {
     pub fn new(
-        ((((open_paren_char, ignore_0), _t2s), ignore_1), close_paren_char): (
+        (
+            (((open_paren_char, ignore_0), double_quoted_ascii_string_literals), ignore_1),
+            close_paren_char,
+        ): (
             (
                 ((FixedTerminal<1usize>, ignore::N), Box<assembly_flags::_T1>),
                 ignore::N,
@@ -730,7 +698,7 @@ impl assembly_flags::_T0 {
         Self {
             open_paren_char,
             ignore_0,
-            _t2s,
+            double_quoted_ascii_string_literals,
             ignore_1,
             close_paren_char,
         }
@@ -741,7 +709,7 @@ impl DefaultTest for assembly_flags::_T0 {
     fn is_default(&self) -> bool {
         self.open_paren_char.is_default()
             && self.ignore_0.is_default()
-            && self._t2s.is_default()
+            && self.double_quoted_ascii_string_literals.is_default()
             && self.ignore_1.is_default()
             && self.close_paren_char.is_default()
     }
@@ -749,47 +717,21 @@ impl DefaultTest for assembly_flags::_T0 {
 
 impl assembly_flags::_T1 {
     pub fn new(
-        (_t2s, _t3s): (Vec<Box<assembly_flags::_T2>>, Vec<Box<assembly_flags::_T3>>),
+        (double_quoted_ascii_string_literals, comma_chars): (
+            Vec<double_quoted_ascii_string_literal::N>,
+            Vec<FixedTerminal<1usize>>,
+        ),
     ) -> Self {
-        Self { _t2s, _t3s }
+        Self {
+            double_quoted_ascii_string_literals,
+            comma_chars,
+        }
     }
 }
 
 impl DefaultTest for assembly_flags::_T1 {
     fn is_default(&self) -> bool {
-        self._t2s.is_default() && self._t3s.is_default()
-    }
-}
-
-impl assembly_flags::_T3 {
-    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
-        Self { comma_char, ignore }
-    }
-}
-
-impl DefaultTest for assembly_flags::_T3 {
-    fn is_default(&self) -> bool {
-        self.comma_char.is_default() && self.ignore.is_default()
-    }
-}
-
-impl assembly_flags::_T2 {
-    pub fn new(
-        (double_quoted_ascii_string_literal, ignore): (
-            double_quoted_ascii_string_literal::N,
-            ignore::N,
-        ),
-    ) -> Self {
-        Self {
-            double_quoted_ascii_string_literal,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for assembly_flags::_T2 {
-    fn is_default(&self) -> bool {
-        self.double_quoted_ascii_string_literal.is_default() && self.ignore.is_default()
+        self.double_quoted_ascii_string_literals.is_default() && self.comma_chars.is_default()
     }
 }
 
@@ -797,7 +739,10 @@ impl DefaultTest for unicode_string_literal::_T0 {}
 
 impl yul_function_call::_T0 {
     pub fn new(
-        ((((((_t1, ignore_0), open_paren_char), ignore_1), _t3s), ignore_2), close_paren_char): (
+        (
+            (((((_t1, ignore_0), open_paren_char), ignore_1), yul_expressions), ignore_2),
+            close_paren_char,
+        ): (
             (
                 (
                     (
@@ -819,7 +764,7 @@ impl yul_function_call::_T0 {
             ignore_0,
             open_paren_char,
             ignore_1,
-            _t3s,
+            yul_expressions,
             ignore_2,
             close_paren_char,
         }
@@ -830,43 +775,20 @@ impl DefaultTest for yul_function_call::_T0 {}
 
 impl yul_function_call::_T2 {
     pub fn new(
-        (_t3s, _t4s): (
-            Vec<Box<yul_function_call::_T3>>,
-            Vec<Box<yul_function_call::_T4>>,
-        ),
+        (yul_expressions, comma_chars): (Vec<yul_expression::N>, Vec<FixedTerminal<1usize>>),
     ) -> Self {
-        Self { _t3s, _t4s }
+        Self {
+            yul_expressions,
+            comma_chars,
+        }
     }
 }
 
 impl DefaultTest for yul_function_call::_T2 {
     fn is_default(&self) -> bool {
-        self._t3s.is_default() && self._t4s.is_default()
+        self.yul_expressions.is_default() && self.comma_chars.is_default()
     }
 }
-
-impl yul_function_call::_T4 {
-    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
-        Self { comma_char, ignore }
-    }
-}
-
-impl DefaultTest for yul_function_call::_T4 {
-    fn is_default(&self) -> bool {
-        self.comma_char.is_default() && self.ignore.is_default()
-    }
-}
-
-impl yul_function_call::_T3 {
-    pub fn new((yul_expression, ignore): (yul_expression::N, ignore::N)) -> Self {
-        Self {
-            yul_expression,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for yul_function_call::_T3 {}
 
 impl DefaultTest for yul_function_call::_T1 {}
 
@@ -886,7 +808,7 @@ impl yul_function_definition::_T0 {
                                         ),
                                         ignore_2,
                                     ),
-                                    _t2s,
+                                    yul_identifiers,
                                 ),
                                 ignore_3,
                             ),
@@ -894,7 +816,7 @@ impl yul_function_definition::_T0 {
                         ),
                         ignore_4,
                     ),
-                    _t4,
+                    _t2,
                 ),
                 ignore_5,
             ),
@@ -927,7 +849,7 @@ impl yul_function_definition::_T0 {
                         ),
                         ignore::N,
                     ),
-                    Option<Box<yul_function_definition::_T4>>,
+                    Option<Box<yul_function_definition::_T2>>,
                 ),
                 ignore::N,
             ),
@@ -941,11 +863,11 @@ impl yul_function_definition::_T0 {
             ignore_1,
             open_paren_char,
             ignore_2,
-            _t2s,
+            yul_identifiers,
             ignore_3,
             close_paren_char,
             ignore_4,
-            _t4,
+            _t2,
             ignore_5,
             yul_block,
         }
@@ -960,122 +882,67 @@ impl DefaultTest for yul_function_definition::_T0 {
             && self.ignore_1.is_default()
             && self.open_paren_char.is_default()
             && self.ignore_2.is_default()
-            && self._t2s.is_default()
+            && self.yul_identifiers.is_default()
             && self.ignore_3.is_default()
             && self.close_paren_char.is_default()
             && self.ignore_4.is_default()
-            && self._t4.is_default()
+            && self._t2.is_default()
             && self.ignore_5.is_default()
             && self.yul_block.is_default()
     }
 }
 
-impl yul_function_definition::_T4 {
+impl yul_function_definition::_T2 {
     pub fn new(
-        ((minus_greater, ignore), _t6s): (
-            (FixedTerminal<2usize>, ignore::N),
-            Box<yul_function_definition::_T5>,
+        (minus_greater, yul_identifiers): (
+            FixedTerminal<2usize>,
+            Box<yul_function_definition::_T3>,
         ),
     ) -> Self {
         Self {
             minus_greater,
-            ignore,
-            _t6s,
-        }
-    }
-}
-
-impl DefaultTest for yul_function_definition::_T4 {
-    fn is_default(&self) -> bool {
-        self.minus_greater.is_default() && self.ignore.is_default() && self._t6s.is_default()
-    }
-}
-
-impl yul_function_definition::_T5 {
-    pub fn new(
-        (_t6s, _t7s): (
-            Vec<Box<yul_function_definition::_T6>>,
-            Vec<Box<yul_function_definition::_T7>>,
-        ),
-    ) -> Self {
-        Self { _t6s, _t7s }
-    }
-}
-
-impl DefaultTest for yul_function_definition::_T5 {
-    fn is_default(&self) -> bool {
-        self._t6s.is_default() && self._t7s.is_default()
-    }
-}
-
-impl yul_function_definition::_T7 {
-    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
-        Self { comma_char, ignore }
-    }
-}
-
-impl DefaultTest for yul_function_definition::_T7 {
-    fn is_default(&self) -> bool {
-        self.comma_char.is_default() && self.ignore.is_default()
-    }
-}
-
-impl yul_function_definition::_T6 {
-    pub fn new((yul_identifier, ignore): (yul_identifier::N, ignore::N)) -> Self {
-        Self {
-            yul_identifier,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for yul_function_definition::_T6 {
-    fn is_default(&self) -> bool {
-        self.yul_identifier.is_default() && self.ignore.is_default()
-    }
-}
-
-impl yul_function_definition::_T1 {
-    pub fn new(
-        (_t2s, _t3s): (
-            Vec<Box<yul_function_definition::_T2>>,
-            Vec<Box<yul_function_definition::_T3>>,
-        ),
-    ) -> Self {
-        Self { _t2s, _t3s }
-    }
-}
-
-impl DefaultTest for yul_function_definition::_T1 {
-    fn is_default(&self) -> bool {
-        self._t2s.is_default() && self._t3s.is_default()
-    }
-}
-
-impl yul_function_definition::_T3 {
-    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
-        Self { comma_char, ignore }
-    }
-}
-
-impl DefaultTest for yul_function_definition::_T3 {
-    fn is_default(&self) -> bool {
-        self.comma_char.is_default() && self.ignore.is_default()
-    }
-}
-
-impl yul_function_definition::_T2 {
-    pub fn new((yul_identifier, ignore): (yul_identifier::N, ignore::N)) -> Self {
-        Self {
-            yul_identifier,
-            ignore,
+            yul_identifiers,
         }
     }
 }
 
 impl DefaultTest for yul_function_definition::_T2 {
     fn is_default(&self) -> bool {
-        self.yul_identifier.is_default() && self.ignore.is_default()
+        self.minus_greater.is_default() && self.yul_identifiers.is_default()
+    }
+}
+
+impl yul_function_definition::_T3 {
+    pub fn new(
+        (yul_identifiers, comma_chars): (Vec<yul_identifier::N>, Vec<FixedTerminal<1usize>>),
+    ) -> Self {
+        Self {
+            yul_identifiers,
+            comma_chars,
+        }
+    }
+}
+
+impl DefaultTest for yul_function_definition::_T3 {
+    fn is_default(&self) -> bool {
+        self.yul_identifiers.is_default() && self.comma_chars.is_default()
+    }
+}
+
+impl yul_function_definition::_T1 {
+    pub fn new(
+        (yul_identifiers, comma_chars): (Vec<yul_identifier::N>, Vec<FixedTerminal<1usize>>),
+    ) -> Self {
+        Self {
+            yul_identifiers,
+            comma_chars,
+        }
+    }
+}
+
+impl DefaultTest for yul_function_definition::_T1 {
+    fn is_default(&self) -> bool {
+        self.yul_identifiers.is_default() && self.comma_chars.is_default()
     }
 }
 
@@ -1098,18 +965,8 @@ impl DefaultTest for yul_path::_T0 {
 }
 
 impl yul_path::_T2 {
-    pub fn new(
-        (((period_char, ignore_0), _t3), ignore_1): (
-            ((FixedTerminal<1usize>, ignore::N), Box<yul_path::_T3>),
-            ignore::N,
-        ),
-    ) -> Self {
-        Self {
-            period_char,
-            ignore_0,
-            _t3,
-            ignore_1,
-        }
+    pub fn new((period_char, _t3): (FixedTerminal<1usize>, Box<yul_path::_T3>)) -> Self {
+        Self { period_char, _t3 }
     }
 }
 
@@ -1121,7 +978,10 @@ impl enum_definition::_T0 {
     pub fn new(
         (
             (
-                ((((((r#enum, ignore_0), identifier), ignore_1), open_brace_char), ignore_2), _t2s),
+                (
+                    (((((r#enum, ignore_0), identifier), ignore_1), open_brace_char), ignore_2),
+                    identifiers,
+                ),
                 ignore_3,
             ),
             close_brace_char,
@@ -1152,7 +1012,7 @@ impl enum_definition::_T0 {
             ignore_1,
             open_brace_char,
             ignore_2,
-            _t2s,
+            identifiers,
             ignore_3,
             close_brace_char,
         }
@@ -1167,7 +1027,7 @@ impl DefaultTest for enum_definition::_T0 {
             && self.ignore_1.is_default()
             && self.open_brace_char.is_default()
             && self.ignore_2.is_default()
-            && self._t2s.is_default()
+            && self.identifiers.is_default()
             && self.ignore_3.is_default()
             && self.close_brace_char.is_default()
     }
@@ -1175,86 +1035,35 @@ impl DefaultTest for enum_definition::_T0 {
 
 impl enum_definition::_T1 {
     pub fn new(
-        (_t2s, _t3s): (
-            Vec<Box<enum_definition::_T2>>,
-            Vec<Box<enum_definition::_T3>>,
-        ),
+        (identifiers, comma_chars): (Vec<identifier::N>, Vec<FixedTerminal<1usize>>),
     ) -> Self {
-        Self { _t2s, _t3s }
+        Self {
+            identifiers,
+            comma_chars,
+        }
     }
 }
 
 impl DefaultTest for enum_definition::_T1 {
     fn is_default(&self) -> bool {
-        self._t2s.is_default() && self._t3s.is_default()
-    }
-}
-
-impl enum_definition::_T3 {
-    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
-        Self { comma_char, ignore }
-    }
-}
-
-impl DefaultTest for enum_definition::_T3 {
-    fn is_default(&self) -> bool {
-        self.comma_char.is_default() && self.ignore.is_default()
-    }
-}
-
-impl enum_definition::_T2 {
-    pub fn new((identifier, ignore): (identifier::N, ignore::N)) -> Self {
-        Self { identifier, ignore }
-    }
-}
-
-impl DefaultTest for enum_definition::_T2 {
-    fn is_default(&self) -> bool {
-        self.identifier.is_default() && self.ignore.is_default()
+        self.identifiers.is_default() && self.comma_chars.is_default()
     }
 }
 
 impl identifier_path::_T0 {
     pub fn new(
-        (_t1s, _t2s): (
-            Vec<Box<identifier_path::_T1>>,
-            Vec<Box<identifier_path::_T2>>,
-        ),
+        (identifiers, period_chars): (Vec<identifier::N>, Vec<FixedTerminal<1usize>>),
     ) -> Self {
-        Self { _t1s, _t2s }
+        Self {
+            identifiers,
+            period_chars,
+        }
     }
 }
 
 impl DefaultTest for identifier_path::_T0 {
     fn is_default(&self) -> bool {
-        self._t1s.is_default() && self._t2s.is_default()
-    }
-}
-
-impl identifier_path::_T2 {
-    pub fn new((period_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
-        Self {
-            period_char,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for identifier_path::_T2 {
-    fn is_default(&self) -> bool {
-        self.period_char.is_default() && self.ignore.is_default()
-    }
-}
-
-impl identifier_path::_T1 {
-    pub fn new((identifier, ignore): (identifier::N, ignore::N)) -> Self {
-        Self { identifier, ignore }
-    }
-}
-
-impl DefaultTest for identifier_path::_T1 {
-    fn is_default(&self) -> bool {
-        self.identifier.is_default() && self.ignore.is_default()
+        self.identifiers.is_default() && self.period_chars.is_default()
     }
 }
 
@@ -1292,7 +1101,7 @@ impl DefaultTest for named_argument::_T0 {
 
 impl parameter_declaration::_T0 {
     pub fn new(
-        ((((type_name, ignore_0), _1), ignore_1), identifier): (
+        ((((type_name, ignore_0), _2), ignore_1), identifier): (
             (((type_name::N, ignore::N), Option<usize>), ignore::N),
             Option<identifier::N>,
         ),
@@ -1300,7 +1109,7 @@ impl parameter_declaration::_T0 {
         Self {
             type_name,
             ignore_0,
-            _1,
+            _2,
             ignore_1,
             identifier,
         }
@@ -1331,20 +1140,14 @@ impl DefaultTest for selected_import::_T0 {
 }
 
 impl selected_import::_T1 {
-    pub fn new(
-        ((r#as, ignore), identifier): ((FixedTerminal<2usize>, ignore::N), identifier::N),
-    ) -> Self {
-        Self {
-            r#as,
-            ignore,
-            identifier,
-        }
+    pub fn new((r#as, identifier): (FixedTerminal<2usize>, identifier::N)) -> Self {
+        Self { r#as, identifier }
     }
 }
 
 impl DefaultTest for selected_import::_T1 {
     fn is_default(&self) -> bool {
-        self.r#as.is_default() && self.ignore.is_default() && self.identifier.is_default()
+        self.r#as.is_default() && self.identifier.is_default()
     }
 }
 
@@ -1462,7 +1265,7 @@ impl DefaultTest for mapping_type::_T1 {}
 
 impl named_argument_list::_T0 {
     pub fn new(
-        ((((open_brace_char, ignore_0), _t2s), ignore_1), close_brace_char): (
+        ((((open_brace_char, ignore_0), named_arguments), ignore_1), close_brace_char): (
             (
                 (
                     (FixedTerminal<1usize>, ignore::N),
@@ -1476,7 +1279,7 @@ impl named_argument_list::_T0 {
         Self {
             open_brace_char,
             ignore_0,
-            _t2s,
+            named_arguments,
             ignore_1,
             close_brace_char,
         }
@@ -1487,7 +1290,7 @@ impl DefaultTest for named_argument_list::_T0 {
     fn is_default(&self) -> bool {
         self.open_brace_char.is_default()
             && self.ignore_0.is_default()
-            && self._t2s.is_default()
+            && self.named_arguments.is_default()
             && self.ignore_1.is_default()
             && self.close_brace_char.is_default()
     }
@@ -1495,51 +1298,24 @@ impl DefaultTest for named_argument_list::_T0 {
 
 impl named_argument_list::_T1 {
     pub fn new(
-        (_t2s, _t3s): (
-            Vec<Box<named_argument_list::_T2>>,
-            Vec<Box<named_argument_list::_T3>>,
-        ),
+        (named_arguments, comma_chars): (Vec<named_argument::N>, Vec<FixedTerminal<1usize>>),
     ) -> Self {
-        Self { _t2s, _t3s }
+        Self {
+            named_arguments,
+            comma_chars,
+        }
     }
 }
 
 impl DefaultTest for named_argument_list::_T1 {
     fn is_default(&self) -> bool {
-        self._t2s.is_default() && self._t3s.is_default()
-    }
-}
-
-impl named_argument_list::_T3 {
-    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
-        Self { comma_char, ignore }
-    }
-}
-
-impl DefaultTest for named_argument_list::_T3 {
-    fn is_default(&self) -> bool {
-        self.comma_char.is_default() && self.ignore.is_default()
-    }
-}
-
-impl named_argument_list::_T2 {
-    pub fn new((named_argument, ignore): (named_argument::N, ignore::N)) -> Self {
-        Self {
-            named_argument,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for named_argument_list::_T2 {
-    fn is_default(&self) -> bool {
-        self.named_argument.is_default() && self.ignore.is_default()
+        self.named_arguments.is_default() && self.comma_chars.is_default()
     }
 }
 
 impl non_empty_parameter_list::_T0 {
     pub fn new(
-        ((((open_paren_char, ignore_0), _t2s), ignore_1), close_paren_char): (
+        ((((open_paren_char, ignore_0), parameter_declarations), ignore_1), close_paren_char): (
             (
                 (
                     (FixedTerminal<1usize>, ignore::N),
@@ -1553,7 +1329,7 @@ impl non_empty_parameter_list::_T0 {
         Self {
             open_paren_char,
             ignore_0,
-            _t2s,
+            parameter_declarations,
             ignore_1,
             close_paren_char,
         }
@@ -1564,7 +1340,7 @@ impl DefaultTest for non_empty_parameter_list::_T0 {
     fn is_default(&self) -> bool {
         self.open_paren_char.is_default()
             && self.ignore_0.is_default()
-            && self._t2s.is_default()
+            && self.parameter_declarations.is_default()
             && self.ignore_1.is_default()
             && self.close_paren_char.is_default()
     }
@@ -1572,43 +1348,23 @@ impl DefaultTest for non_empty_parameter_list::_T0 {
 
 impl non_empty_parameter_list::_T1 {
     pub fn new(
-        (_t2s, _t3s): (
-            Vec<Box<non_empty_parameter_list::_T2>>,
-            Vec<Box<non_empty_parameter_list::_T3>>,
+        (parameter_declarations, comma_chars): (
+            Vec<parameter_declaration::N>,
+            Vec<FixedTerminal<1usize>>,
         ),
     ) -> Self {
-        Self { _t2s, _t3s }
+        Self {
+            parameter_declarations,
+            comma_chars,
+        }
     }
 }
 
 impl DefaultTest for non_empty_parameter_list::_T1 {
     fn is_default(&self) -> bool {
-        self._t2s.is_default() && self._t3s.is_default()
+        self.parameter_declarations.is_default() && self.comma_chars.is_default()
     }
 }
-
-impl non_empty_parameter_list::_T3 {
-    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
-        Self { comma_char, ignore }
-    }
-}
-
-impl DefaultTest for non_empty_parameter_list::_T3 {
-    fn is_default(&self) -> bool {
-        self.comma_char.is_default() && self.ignore.is_default()
-    }
-}
-
-impl non_empty_parameter_list::_T2 {
-    pub fn new((parameter_declaration, ignore): (parameter_declaration::N, ignore::N)) -> Self {
-        Self {
-            parameter_declaration,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for non_empty_parameter_list::_T2 {}
 
 impl override_specifier::_T0 {
     pub fn new(
@@ -1633,22 +1389,14 @@ impl DefaultTest for override_specifier::_T0 {
 
 impl override_specifier::_T1 {
     pub fn new(
-        ((((open_paren_char, ignore_0), _t3s), ignore_1), close_paren_char): (
-            (
-                (
-                    (FixedTerminal<1usize>, ignore::N),
-                    Box<override_specifier::_T2>,
-                ),
-                ignore::N,
-            ),
+        ((open_paren_char, identifier_paths), close_paren_char): (
+            (FixedTerminal<1usize>, Box<override_specifier::_T2>),
             FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
             open_paren_char,
-            ignore_0,
-            _t3s,
-            ignore_1,
+            identifier_paths,
             close_paren_char,
         }
     }
@@ -1657,60 +1405,31 @@ impl override_specifier::_T1 {
 impl DefaultTest for override_specifier::_T1 {
     fn is_default(&self) -> bool {
         self.open_paren_char.is_default()
-            && self.ignore_0.is_default()
-            && self._t3s.is_default()
-            && self.ignore_1.is_default()
+            && self.identifier_paths.is_default()
             && self.close_paren_char.is_default()
     }
 }
 
 impl override_specifier::_T2 {
     pub fn new(
-        (_t3s, _t4s): (
-            Vec<Box<override_specifier::_T3>>,
-            Vec<Box<override_specifier::_T4>>,
-        ),
+        (identifier_paths, comma_chars): (Vec<identifier_path::N>, Vec<FixedTerminal<1usize>>),
     ) -> Self {
-        Self { _t3s, _t4s }
+        Self {
+            identifier_paths,
+            comma_chars,
+        }
     }
 }
 
 impl DefaultTest for override_specifier::_T2 {
     fn is_default(&self) -> bool {
-        self._t3s.is_default() && self._t4s.is_default()
-    }
-}
-
-impl override_specifier::_T4 {
-    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
-        Self { comma_char, ignore }
-    }
-}
-
-impl DefaultTest for override_specifier::_T4 {
-    fn is_default(&self) -> bool {
-        self.comma_char.is_default() && self.ignore.is_default()
-    }
-}
-
-impl override_specifier::_T3 {
-    pub fn new((identifier_path, ignore): (identifier_path::N, ignore::N)) -> Self {
-        Self {
-            identifier_path,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for override_specifier::_T3 {
-    fn is_default(&self) -> bool {
-        self.identifier_path.is_default() && self.ignore.is_default()
+        self.identifier_paths.is_default() && self.comma_chars.is_default()
     }
 }
 
 impl parameter_list::_T0 {
     pub fn new(
-        ((((open_paren_char, ignore_0), _t2s), ignore_1), close_paren_char): (
+        ((((open_paren_char, ignore_0), parameter_declarations), ignore_1), close_paren_char): (
             (
                 (
                     (FixedTerminal<1usize>, ignore::N),
@@ -1724,7 +1443,7 @@ impl parameter_list::_T0 {
         Self {
             open_paren_char,
             ignore_0,
-            _t2s,
+            parameter_declarations,
             ignore_1,
             close_paren_char,
         }
@@ -1735,7 +1454,7 @@ impl DefaultTest for parameter_list::_T0 {
     fn is_default(&self) -> bool {
         self.open_paren_char.is_default()
             && self.ignore_0.is_default()
-            && self._t2s.is_default()
+            && self.parameter_declarations.is_default()
             && self.ignore_1.is_default()
             && self.close_paren_char.is_default()
     }
@@ -1743,47 +1462,36 @@ impl DefaultTest for parameter_list::_T0 {
 
 impl parameter_list::_T1 {
     pub fn new(
-        (_t2s, _t3s): (Vec<Box<parameter_list::_T2>>, Vec<Box<parameter_list::_T3>>),
+        (parameter_declarations, comma_chars): (
+            Vec<parameter_declaration::N>,
+            Vec<FixedTerminal<1usize>>,
+        ),
     ) -> Self {
-        Self { _t2s, _t3s }
+        Self {
+            parameter_declarations,
+            comma_chars,
+        }
     }
 }
 
 impl DefaultTest for parameter_list::_T1 {
     fn is_default(&self) -> bool {
-        self._t2s.is_default() && self._t3s.is_default()
+        self.parameter_declarations.is_default() && self.comma_chars.is_default()
     }
 }
-
-impl parameter_list::_T3 {
-    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
-        Self { comma_char, ignore }
-    }
-}
-
-impl DefaultTest for parameter_list::_T3 {
-    fn is_default(&self) -> bool {
-        self.comma_char.is_default() && self.ignore.is_default()
-    }
-}
-
-impl parameter_list::_T2 {
-    pub fn new((parameter_declaration, ignore): (parameter_declaration::N, ignore::N)) -> Self {
-        Self {
-            parameter_declaration,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for parameter_list::_T2 {}
 
 impl selecting_import_directive::_T0 {
     pub fn new(
         (
             (
                 (
-                    (((((open_brace_char, ignore_0), _t2s), ignore_1), close_brace_char), ignore_2),
+                    (
+                        (
+                            (((open_brace_char, ignore_0), selected_imports), ignore_1),
+                            close_brace_char,
+                        ),
+                        ignore_2,
+                    ),
                     from,
                 ),
                 ignore_3,
@@ -1815,7 +1523,7 @@ impl selecting_import_directive::_T0 {
         Self {
             open_brace_char,
             ignore_0,
-            _t2s,
+            selected_imports,
             ignore_1,
             close_brace_char,
             ignore_2,
@@ -1830,45 +1538,18 @@ impl DefaultTest for selecting_import_directive::_T0 {}
 
 impl selecting_import_directive::_T1 {
     pub fn new(
-        (_t2s, _t3s): (
-            Vec<Box<selecting_import_directive::_T2>>,
-            Vec<Box<selecting_import_directive::_T3>>,
-        ),
+        (selected_imports, comma_chars): (Vec<selected_import::N>, Vec<FixedTerminal<1usize>>),
     ) -> Self {
-        Self { _t2s, _t3s }
+        Self {
+            selected_imports,
+            comma_chars,
+        }
     }
 }
 
 impl DefaultTest for selecting_import_directive::_T1 {
     fn is_default(&self) -> bool {
-        self._t2s.is_default() && self._t3s.is_default()
-    }
-}
-
-impl selecting_import_directive::_T3 {
-    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
-        Self { comma_char, ignore }
-    }
-}
-
-impl DefaultTest for selecting_import_directive::_T3 {
-    fn is_default(&self) -> bool {
-        self.comma_char.is_default() && self.ignore.is_default()
-    }
-}
-
-impl selecting_import_directive::_T2 {
-    pub fn new((selected_import, ignore): (selected_import::N, ignore::N)) -> Self {
-        Self {
-            selected_import,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for selecting_import_directive::_T2 {
-    fn is_default(&self) -> bool {
-        self.selected_import.is_default() && self.ignore.is_default()
+        self.selected_imports.is_default() && self.comma_chars.is_default()
     }
 }
 
@@ -1890,27 +1571,14 @@ impl simple_import_directive::_T0 {
 impl DefaultTest for simple_import_directive::_T0 {}
 
 impl simple_import_directive::_T2 {
-    pub fn new(
-        (((r#as, ignore_0), identifier), ignore_1): (
-            ((FixedTerminal<2usize>, ignore::N), identifier::N),
-            ignore::N,
-        ),
-    ) -> Self {
-        Self {
-            r#as,
-            ignore_0,
-            identifier,
-            ignore_1,
-        }
+    pub fn new((r#as, identifier): (FixedTerminal<2usize>, identifier::N)) -> Self {
+        Self { r#as, identifier }
     }
 }
 
 impl DefaultTest for simple_import_directive::_T2 {
     fn is_default(&self) -> bool {
-        self.r#as.is_default()
-            && self.ignore_0.is_default()
-            && self.identifier.is_default()
-            && self.ignore_1.is_default()
+        self.r#as.is_default() && self.identifier.is_default()
     }
 }
 
@@ -2027,14 +1695,13 @@ impl DefaultTest for catch_clause::_T0 {
 
 impl catch_clause::_T1 {
     pub fn new(
-        ((identifier, ignore), non_empty_parameter_list): (
-            (Option<identifier::N>, ignore::N),
+        (identifier, non_empty_parameter_list): (
+            Option<identifier::N>,
             non_empty_parameter_list::N,
         ),
     ) -> Self {
         Self {
             identifier,
-            ignore,
             non_empty_parameter_list,
         }
     }
@@ -2042,26 +1709,24 @@ impl catch_clause::_T1 {
 
 impl DefaultTest for catch_clause::_T1 {
     fn is_default(&self) -> bool {
-        self.identifier.is_default()
-            && self.ignore.is_default()
-            && self.non_empty_parameter_list.is_default()
+        self.identifier.is_default() && self.non_empty_parameter_list.is_default()
     }
 }
 
 impl function_type::_T0 {
     pub fn new(
-        ((((((function, ignore_0), parameter_list), ignore_1), _t2s), ignore_2), _t3): (
+        ((((((function, ignore_0), parameter_list), ignore_1), _4), ignore_2), _t2): (
             (
                 (
                     (
                         ((FixedTerminal<8usize>, ignore::N), parameter_list::N),
                         ignore::N,
                     ),
-                    Vec<Box<function_type::_T2>>,
+                    Vec<usize>,
                 ),
                 ignore::N,
             ),
-            Option<Box<function_type::_T3>>,
+            Option<Box<function_type::_T2>>,
         ),
     ) -> Self {
         Self {
@@ -2069,9 +1734,9 @@ impl function_type::_T0 {
             ignore_0,
             parameter_list,
             ignore_1,
-            _t2s,
+            _4,
             ignore_2,
-            _t3,
+            _t2,
         }
     }
 }
@@ -2082,44 +1747,26 @@ impl DefaultTest for function_type::_T0 {
             && self.ignore_0.is_default()
             && self.parameter_list.is_default()
             && self.ignore_1.is_default()
-            && self._t2s.is_default()
+            && self._4.is_default()
             && self.ignore_2.is_default()
-            && self._t3.is_default()
+            && self._t2.is_default()
     }
 }
 
-impl function_type::_T3 {
+impl function_type::_T2 {
     pub fn new(
-        ((returns, ignore), non_empty_parameter_list): (
-            (FixedTerminal<7usize>, ignore::N),
-            non_empty_parameter_list::N,
-        ),
+        (returns, non_empty_parameter_list): (FixedTerminal<7usize>, non_empty_parameter_list::N),
     ) -> Self {
         Self {
             returns,
-            ignore,
             non_empty_parameter_list,
         }
     }
 }
 
-impl DefaultTest for function_type::_T3 {
-    fn is_default(&self) -> bool {
-        self.returns.is_default()
-            && self.ignore.is_default()
-            && self.non_empty_parameter_list.is_default()
-    }
-}
-
-impl function_type::_T2 {
-    pub fn new((_0, ignore): (usize, ignore::N)) -> Self {
-        Self { _0, ignore }
-    }
-}
-
 impl DefaultTest for function_type::_T2 {
     fn is_default(&self) -> bool {
-        self._0.is_default() && self.ignore.is_default()
+        self.returns.is_default() && self.non_empty_parameter_list.is_default()
     }
 }
 
@@ -2172,22 +1819,14 @@ impl DefaultTest for yul_assignment::_T1 {}
 
 impl yul_assignment::_T3 {
     pub fn new(
-        ((((_t5s, ignore_0), colon_equal), ignore_1), yul_function_call): (
-            (
-                (
-                    (Vec<Box<yul_assignment::_T5>>, ignore::N),
-                    FixedTerminal<2usize>,
-                ),
-                ignore::N,
-            ),
+        ((_t5s, colon_equal), yul_function_call): (
+            (Vec<Box<yul_assignment::_T5>>, FixedTerminal<2usize>),
             yul_function_call::N,
         ),
     ) -> Self {
         Self {
             _t5s,
-            ignore_0,
             colon_equal,
-            ignore_1,
             yul_function_call,
         }
     }
@@ -2196,40 +1835,24 @@ impl yul_assignment::_T3 {
 impl DefaultTest for yul_assignment::_T3 {}
 
 impl yul_assignment::_T5 {
-    pub fn new(
-        (((comma_char, ignore_0), yul_path), ignore_1): (
-            ((FixedTerminal<1usize>, ignore::N), yul_path::N),
-            ignore::N,
-        ),
-    ) -> Self {
+    pub fn new((comma_char, yul_path): (FixedTerminal<1usize>, yul_path::N)) -> Self {
         Self {
             comma_char,
-            ignore_0,
             yul_path,
-            ignore_1,
         }
     }
 }
 
 impl DefaultTest for yul_assignment::_T5 {
     fn is_default(&self) -> bool {
-        self.comma_char.is_default()
-            && self.ignore_0.is_default()
-            && self.yul_path.is_default()
-            && self.ignore_1.is_default()
+        self.comma_char.is_default() && self.yul_path.is_default()
     }
 }
 
 impl yul_assignment::_T2 {
-    pub fn new(
-        ((colon_equal, ignore), yul_expression): (
-            (FixedTerminal<2usize>, ignore::N),
-            yul_expression::N,
-        ),
-    ) -> Self {
+    pub fn new((colon_equal, yul_expression): (FixedTerminal<2usize>, yul_expression::N)) -> Self {
         Self {
             colon_equal,
-            ignore,
             yul_expression,
         }
     }
@@ -2331,78 +1954,54 @@ impl DefaultTest for yul_switch_statement::_T0 {}
 impl DefaultTest for yul_switch_statement::_T1 {}
 
 impl yul_switch_statement::_T6 {
-    pub fn new(
-        ((default, ignore), yul_block): ((FixedTerminal<7usize>, ignore::N), yul_block::N),
-    ) -> Self {
-        Self {
-            default,
-            ignore,
-            yul_block,
-        }
+    pub fn new((default, yul_block): (FixedTerminal<7usize>, yul_block::N)) -> Self {
+        Self { default, yul_block }
     }
 }
 
 impl DefaultTest for yul_switch_statement::_T6 {
     fn is_default(&self) -> bool {
-        self.default.is_default() && self.ignore.is_default() && self.yul_block.is_default()
+        self.default.is_default() && self.yul_block.is_default()
     }
 }
 
 impl yul_switch_statement::_T2 {
     pub fn new(
-        ((_t4s, ignore), _t5): (
-            (Vec<Box<yul_switch_statement::_T4>>, ignore::N),
+        (_t4s, _t5): (
+            Vec<Box<yul_switch_statement::_T4>>,
             Option<Box<yul_switch_statement::_T5>>,
         ),
     ) -> Self {
-        Self { _t4s, ignore, _t5 }
+        Self { _t4s, _t5 }
     }
 }
 
 impl DefaultTest for yul_switch_statement::_T2 {
     fn is_default(&self) -> bool {
-        self._t4s.is_default() && self.ignore.is_default() && self._t5.is_default()
+        self._t4s.is_default() && self._t5.is_default()
     }
 }
 
 impl yul_switch_statement::_T5 {
-    pub fn new(
-        ((default, ignore), yul_block): ((FixedTerminal<7usize>, ignore::N), yul_block::N),
-    ) -> Self {
-        Self {
-            default,
-            ignore,
-            yul_block,
-        }
+    pub fn new((default, yul_block): (FixedTerminal<7usize>, yul_block::N)) -> Self {
+        Self { default, yul_block }
     }
 }
 
 impl DefaultTest for yul_switch_statement::_T5 {
     fn is_default(&self) -> bool {
-        self.default.is_default() && self.ignore.is_default() && self.yul_block.is_default()
+        self.default.is_default() && self.yul_block.is_default()
     }
 }
 
 impl yul_switch_statement::_T4 {
     pub fn new(
-        (((((case, ignore_0), yul_literal), ignore_1), yul_block), ignore): (
-            (
-                (
-                    ((FixedTerminal<4usize>, ignore::N), yul_literal::N),
-                    ignore::N,
-                ),
-                yul_block::N,
-            ),
-            ignore::N,
-        ),
+        ((case, yul_literal), yul_block): ((FixedTerminal<4usize>, yul_literal::N), yul_block::N),
     ) -> Self {
         Self {
             case,
-            ignore_0,
             yul_literal,
-            ignore_1,
             yul_block,
-            ignore,
         }
     }
 }
@@ -2443,31 +2042,27 @@ impl DefaultTest for yul_variable_declaration::_T1 {}
 
 impl yul_variable_declaration::_T3 {
     pub fn new(
-        ((_t4, ignore), _t5): (
-            (Option<Box<yul_variable_declaration::_T4>>, ignore::N),
+        (_t4, _t5): (
+            Option<Box<yul_variable_declaration::_T4>>,
             Option<Box<yul_variable_declaration::_T5>>,
         ),
     ) -> Self {
-        Self { _t4, ignore, _t5 }
+        Self { _t4, _t5 }
     }
 }
 
 impl DefaultTest for yul_variable_declaration::_T3 {
     fn is_default(&self) -> bool {
-        self._t4.is_default() && self.ignore.is_default() && self._t5.is_default()
+        self._t4.is_default() && self._t5.is_default()
     }
 }
 
 impl yul_variable_declaration::_T5 {
     pub fn new(
-        ((colon_equal, ignore), yul_function_call): (
-            (FixedTerminal<2usize>, ignore::N),
-            yul_function_call::N,
-        ),
+        (colon_equal, yul_function_call): (FixedTerminal<2usize>, yul_function_call::N),
     ) -> Self {
         Self {
             colon_equal,
-            ignore,
             yul_function_call,
         }
     }
@@ -2476,15 +2071,9 @@ impl yul_variable_declaration::_T5 {
 impl DefaultTest for yul_variable_declaration::_T5 {}
 
 impl yul_variable_declaration::_T4 {
-    pub fn new(
-        ((comma_char, ignore), yul_identifier): (
-            (FixedTerminal<1usize>, ignore::N),
-            yul_identifier::N,
-        ),
-    ) -> Self {
+    pub fn new((comma_char, yul_identifier): (FixedTerminal<1usize>, yul_identifier::N)) -> Self {
         Self {
             comma_char,
-            ignore,
             yul_identifier,
         }
     }
@@ -2492,20 +2081,14 @@ impl yul_variable_declaration::_T4 {
 
 impl DefaultTest for yul_variable_declaration::_T4 {
     fn is_default(&self) -> bool {
-        self.comma_char.is_default() && self.ignore.is_default() && self.yul_identifier.is_default()
+        self.comma_char.is_default() && self.yul_identifier.is_default()
     }
 }
 
 impl yul_variable_declaration::_T2 {
-    pub fn new(
-        ((colon_equal, ignore), yul_expression): (
-            (FixedTerminal<2usize>, ignore::N),
-            yul_expression::N,
-        ),
-    ) -> Self {
+    pub fn new((colon_equal, yul_expression): (FixedTerminal<2usize>, yul_expression::N)) -> Self {
         Self {
             colon_equal,
-            ignore,
             yul_expression,
         }
     }
@@ -2571,24 +2154,15 @@ impl DefaultTest for type_name::_T0 {}
 
 impl type_name::_T3 {
     pub fn new(
-        (((((open_bracket_char, ignore_0), expression), ignore_1), close_bracket_char), ignore): (
-            (
-                (
-                    ((FixedTerminal<1usize>, ignore::N), Option<expression::N>),
-                    ignore::N,
-                ),
-                FixedTerminal<1usize>,
-            ),
-            ignore::N,
+        ((open_bracket_char, expression), close_bracket_char): (
+            (FixedTerminal<1usize>, Option<expression::N>),
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
             open_bracket_char,
-            ignore_0,
             expression,
-            ignore_1,
             close_bracket_char,
-            ignore,
         }
     }
 }
@@ -2596,11 +2170,8 @@ impl type_name::_T3 {
 impl DefaultTest for type_name::_T3 {
     fn is_default(&self) -> bool {
         self.open_bracket_char.is_default()
-            && self.ignore_0.is_default()
             && self.expression.is_default()
-            && self.ignore_1.is_default()
             && self.close_bracket_char.is_default()
-            && self.ignore.is_default()
     }
 }
 
@@ -2652,159 +2223,97 @@ impl DefaultTest for function_attribute::_T0 {}
 
 impl inheritance_specifier_list::_T0 {
     pub fn new(
-        ((is, ignore), _t2s): (
+        ((is, ignore), inheritance_specifiers): (
             (FixedTerminal<2usize>, ignore::N),
             Box<inheritance_specifier_list::_T1>,
         ),
     ) -> Self {
-        Self { is, ignore, _t2s }
+        Self {
+            is,
+            ignore,
+            inheritance_specifiers,
+        }
     }
 }
 
 impl DefaultTest for inheritance_specifier_list::_T0 {
     fn is_default(&self) -> bool {
-        self.is.is_default() && self.ignore.is_default() && self._t2s.is_default()
+        self.is.is_default() && self.ignore.is_default() && self.inheritance_specifiers.is_default()
     }
 }
 
 impl inheritance_specifier_list::_T1 {
     pub fn new(
-        (_t2s, _t3s): (
-            Vec<Box<inheritance_specifier_list::_T2>>,
-            Vec<Box<inheritance_specifier_list::_T3>>,
+        (inheritance_specifiers, comma_chars): (
+            Vec<inheritance_specifier::N>,
+            Vec<FixedTerminal<1usize>>,
         ),
     ) -> Self {
-        Self { _t2s, _t3s }
+        Self {
+            inheritance_specifiers,
+            comma_chars,
+        }
     }
 }
 
 impl DefaultTest for inheritance_specifier_list::_T1 {
     fn is_default(&self) -> bool {
-        self._t2s.is_default() && self._t3s.is_default()
-    }
-}
-
-impl inheritance_specifier_list::_T3 {
-    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
-        Self { comma_char, ignore }
-    }
-}
-
-impl DefaultTest for inheritance_specifier_list::_T3 {
-    fn is_default(&self) -> bool {
-        self.comma_char.is_default() && self.ignore.is_default()
-    }
-}
-
-impl inheritance_specifier_list::_T2 {
-    pub fn new((inheritance_specifier, ignore): (inheritance_specifier::N, ignore::N)) -> Self {
-        Self {
-            inheritance_specifier,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for inheritance_specifier_list::_T2 {
-    fn is_default(&self) -> bool {
-        self.inheritance_specifier.is_default() && self.ignore.is_default()
+        self.inheritance_specifiers.is_default() && self.comma_chars.is_default()
     }
 }
 
 impl DefaultTest for primary_expression::_T0 {}
 
-impl primary_expression::_T8 {
+impl primary_expression::_T6 {
     pub fn new(
-        ((((open_bracket_char, ignore_0), _t10s), ignore_1), close_bracket_char): (
-            (
-                (
-                    (FixedTerminal<1usize>, ignore::N),
-                    Box<primary_expression::_T9>,
-                ),
-                ignore::N,
-            ),
+        ((open_bracket_char, expressions), close_bracket_char): (
+            (FixedTerminal<1usize>, Box<primary_expression::_T7>),
             FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
             open_bracket_char,
-            ignore_0,
-            _t10s,
-            ignore_1,
+            expressions,
             close_bracket_char,
         }
     }
 }
 
-impl DefaultTest for primary_expression::_T8 {
+impl DefaultTest for primary_expression::_T6 {
     fn is_default(&self) -> bool {
         self.open_bracket_char.is_default()
-            && self.ignore_0.is_default()
-            && self._t10s.is_default()
-            && self.ignore_1.is_default()
+            && self.expressions.is_default()
             && self.close_bracket_char.is_default()
     }
 }
 
-impl primary_expression::_T9 {
+impl primary_expression::_T7 {
     pub fn new(
-        (_t10s, _t11s): (
-            Vec<Box<primary_expression::_T10>>,
-            Vec<Box<primary_expression::_T11>>,
-        ),
+        (expressions, comma_chars): (Vec<expression::N>, Vec<FixedTerminal<1usize>>),
     ) -> Self {
-        Self { _t10s, _t11s }
+        Self {
+            expressions,
+            comma_chars,
+        }
     }
 }
 
-impl DefaultTest for primary_expression::_T9 {
+impl DefaultTest for primary_expression::_T7 {
     fn is_default(&self) -> bool {
-        self._t10s.is_default() && self._t11s.is_default()
-    }
-}
-
-impl primary_expression::_T11 {
-    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
-        Self { comma_char, ignore }
-    }
-}
-
-impl DefaultTest for primary_expression::_T11 {
-    fn is_default(&self) -> bool {
-        self.comma_char.is_default() && self.ignore.is_default()
-    }
-}
-
-impl primary_expression::_T10 {
-    pub fn new((expression, ignore): (expression::N, ignore::N)) -> Self {
-        Self { expression, ignore }
-    }
-}
-
-impl DefaultTest for primary_expression::_T10 {
-    fn is_default(&self) -> bool {
-        self.expression.is_default() && self.ignore.is_default()
+        self.expressions.is_default() && self.comma_chars.is_default()
     }
 }
 
 impl primary_expression::_T4 {
     pub fn new(
-        ((((open_paren_char, ignore_0), _t6s), ignore_1), close_paren_char): (
-            (
-                (
-                    (FixedTerminal<1usize>, ignore::N),
-                    Box<primary_expression::_T5>,
-                ),
-                ignore::N,
-            ),
+        ((open_paren_char, expressions), close_paren_char): (
+            (FixedTerminal<1usize>, Box<primary_expression::_T5>),
             FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
             open_paren_char,
-            ignore_0,
-            _t6s,
-            ignore_1,
+            expressions,
             close_paren_char,
         }
     }
@@ -2813,63 +2322,31 @@ impl primary_expression::_T4 {
 impl DefaultTest for primary_expression::_T4 {
     fn is_default(&self) -> bool {
         self.open_paren_char.is_default()
-            && self.ignore_0.is_default()
-            && self._t6s.is_default()
-            && self.ignore_1.is_default()
+            && self.expressions.is_default()
             && self.close_paren_char.is_default()
     }
 }
 
 impl primary_expression::_T5 {
     pub fn new(
-        (_t6s, _t7s): (
-            Vec<Option<Box<primary_expression::_T6>>>,
-            Vec<Box<primary_expression::_T7>>,
-        ),
+        (expressions, comma_chars): (Vec<Option<expression::N>>, Vec<FixedTerminal<1usize>>),
     ) -> Self {
-        Self { _t6s, _t7s }
+        Self {
+            expressions,
+            comma_chars,
+        }
     }
 }
 
 impl DefaultTest for primary_expression::_T5 {
     fn is_default(&self) -> bool {
-        self._t6s.is_default() && self._t7s.is_default()
-    }
-}
-
-impl primary_expression::_T7 {
-    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
-        Self { comma_char, ignore }
-    }
-}
-
-impl DefaultTest for primary_expression::_T7 {
-    fn is_default(&self) -> bool {
-        self.comma_char.is_default() && self.ignore.is_default()
-    }
-}
-
-impl primary_expression::_T6 {
-    pub fn new((expression, ignore): (expression::N, ignore::N)) -> Self {
-        Self { expression, ignore }
-    }
-}
-
-impl DefaultTest for primary_expression::_T6 {
-    fn is_default(&self) -> bool {
-        self.expression.is_default() && self.ignore.is_default()
+        self.expressions.is_default() && self.comma_chars.is_default()
     }
 }
 
 impl primary_expression::_T3 {
-    pub fn new(
-        ((new, ignore), type_name): ((FixedTerminal<3usize>, ignore::N), type_name::N),
-    ) -> Self {
-        Self {
-            new,
-            ignore,
-            type_name,
-        }
+    pub fn new((new, type_name): (FixedTerminal<3usize>, type_name::N)) -> Self {
+        Self { new, type_name }
     }
 }
 
@@ -2877,30 +2354,15 @@ impl DefaultTest for primary_expression::_T3 {}
 
 impl primary_expression::_T2 {
     pub fn new(
-        (
-            (((((r#type, ignore_0), open_paren_char), ignore_1), type_name), ignore_2),
-            close_paren_char,
-        ): (
-            (
-                (
-                    (
-                        ((FixedTerminal<4usize>, ignore::N), FixedTerminal<1usize>),
-                        ignore::N,
-                    ),
-                    type_name::N,
-                ),
-                ignore::N,
-            ),
+        (((r#type, open_paren_char), type_name), close_paren_char): (
+            ((FixedTerminal<4usize>, FixedTerminal<1usize>), type_name::N),
             FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
             r#type,
-            ignore_0,
             open_paren_char,
-            ignore_1,
             type_name,
-            ignore_2,
             close_paren_char,
         }
     }
@@ -2909,12 +2371,9 @@ impl primary_expression::_T2 {
 impl DefaultTest for primary_expression::_T2 {}
 
 impl primary_expression::_T1 {
-    pub fn new(
-        ((payable, ignore), argument_list): ((FixedTerminal<7usize>, ignore::N), argument_list::N),
-    ) -> Self {
+    pub fn new((payable, argument_list): (FixedTerminal<7usize>, argument_list::N)) -> Self {
         Self {
             payable,
-            ignore,
             argument_list,
         }
     }
@@ -2922,7 +2381,7 @@ impl primary_expression::_T1 {
 
 impl DefaultTest for primary_expression::_T1 {
     fn is_default(&self) -> bool {
-        self.payable.is_default() && self.ignore.is_default() && self.argument_list.is_default()
+        self.payable.is_default() && self.argument_list.is_default()
     }
 }
 
@@ -2989,21 +2448,15 @@ impl DefaultTest for struct_definition::_T0 {
 
 impl struct_definition::_T2 {
     pub fn new(
-        (((((type_name, ignore_0), identifier), ignore_1), semicolon_char), ignore): (
-            (
-                (((type_name::N, ignore::N), identifier::N), ignore::N),
-                FixedTerminal<1usize>,
-            ),
-            ignore::N,
+        ((type_name, identifier), semicolon_char): (
+            (type_name::N, identifier::N),
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
             type_name,
-            ignore_0,
             identifier,
-            ignore_1,
             semicolon_char,
-            ignore,
         }
     }
 }
@@ -3015,7 +2468,7 @@ impl using_directive::_T0 {
         (
             (
                 (
-                    (((((((using, ignore_0), _t1), ignore_1), r#for), ignore_2), _t6), ignore_3),
+                    (((((((using, ignore_0), _t1), ignore_1), r#for), ignore_2), _t4), ignore_3),
                     global,
                 ),
                 ignore_4,
@@ -3039,7 +2492,7 @@ impl using_directive::_T0 {
                                 ),
                                 ignore::N,
                             ),
-                            Box<using_directive::_T6>,
+                            Box<using_directive::_T4>,
                         ),
                         ignore::N,
                     ),
@@ -3057,7 +2510,7 @@ impl using_directive::_T0 {
             ignore_1,
             r#for,
             ignore_2,
-            _t6,
+            _t4,
             ignore_3,
             global,
             ignore_4,
@@ -3068,28 +2521,20 @@ impl using_directive::_T0 {
 
 impl DefaultTest for using_directive::_T0 {}
 
-impl DefaultTest for using_directive::_T6 {}
+impl DefaultTest for using_directive::_T4 {}
 
 impl DefaultTest for using_directive::_T1 {}
 
 impl using_directive::_T2 {
     pub fn new(
-        ((((open_brace_char, ignore_0), _t4s), ignore_1), close_brace_char): (
-            (
-                (
-                    (FixedTerminal<1usize>, ignore::N),
-                    Box<using_directive::_T3>,
-                ),
-                ignore::N,
-            ),
+        ((open_brace_char, identifier_paths), close_brace_char): (
+            (FixedTerminal<1usize>, Box<using_directive::_T3>),
             FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
             open_brace_char,
-            ignore_0,
-            _t4s,
-            ignore_1,
+            identifier_paths,
             close_brace_char,
         }
     }
@@ -3098,60 +2543,31 @@ impl using_directive::_T2 {
 impl DefaultTest for using_directive::_T2 {
     fn is_default(&self) -> bool {
         self.open_brace_char.is_default()
-            && self.ignore_0.is_default()
-            && self._t4s.is_default()
-            && self.ignore_1.is_default()
+            && self.identifier_paths.is_default()
             && self.close_brace_char.is_default()
     }
 }
 
 impl using_directive::_T3 {
     pub fn new(
-        (_t4s, _t5s): (
-            Vec<Box<using_directive::_T4>>,
-            Vec<Box<using_directive::_T5>>,
-        ),
+        (identifier_paths, comma_chars): (Vec<identifier_path::N>, Vec<FixedTerminal<1usize>>),
     ) -> Self {
-        Self { _t4s, _t5s }
+        Self {
+            identifier_paths,
+            comma_chars,
+        }
     }
 }
 
 impl DefaultTest for using_directive::_T3 {
     fn is_default(&self) -> bool {
-        self._t4s.is_default() && self._t5s.is_default()
-    }
-}
-
-impl using_directive::_T5 {
-    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
-        Self { comma_char, ignore }
-    }
-}
-
-impl DefaultTest for using_directive::_T5 {
-    fn is_default(&self) -> bool {
-        self.comma_char.is_default() && self.ignore.is_default()
-    }
-}
-
-impl using_directive::_T4 {
-    pub fn new((identifier_path, ignore): (identifier_path::N, ignore::N)) -> Self {
-        Self {
-            identifier_path,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for using_directive::_T4 {
-    fn is_default(&self) -> bool {
-        self.identifier_path.is_default() && self.ignore.is_default()
+        self.identifier_paths.is_default() && self.comma_chars.is_default()
     }
 }
 
 impl variable_declaration::_T0 {
     pub fn new(
-        ((((type_name, ignore_0), _1), ignore_1), identifier): (
+        ((((type_name, ignore_0), _2), ignore_1), identifier): (
             (((type_name::N, ignore::N), Option<usize>), ignore::N),
             identifier::N,
         ),
@@ -3159,7 +2575,7 @@ impl variable_declaration::_T0 {
         Self {
             type_name,
             ignore_0,
-            _1,
+            _2,
             ignore_1,
             identifier,
         }
@@ -3170,9 +2586,9 @@ impl DefaultTest for variable_declaration::_T0 {}
 
 impl yul_block::_T0 {
     pub fn new(
-        ((((open_brace_char, ignore_0), _t2s), ignore_1), close_brace_char): (
+        ((((open_brace_char, ignore_0), yul_statements), ignore_1), close_brace_char): (
             (
-                ((FixedTerminal<1usize>, ignore::N), Vec<Box<yul_block::_T2>>),
+                ((FixedTerminal<1usize>, ignore::N), Vec<yul_statement::N>),
                 ignore::N,
             ),
             FixedTerminal<1usize>,
@@ -3181,7 +2597,7 @@ impl yul_block::_T0 {
         Self {
             open_brace_char,
             ignore_0,
-            _t2s,
+            yul_statements,
             ignore_1,
             close_brace_char,
         }
@@ -3192,22 +2608,11 @@ impl DefaultTest for yul_block::_T0 {
     fn is_default(&self) -> bool {
         self.open_brace_char.is_default()
             && self.ignore_0.is_default()
-            && self._t2s.is_default()
+            && self.yul_statements.is_default()
             && self.ignore_1.is_default()
             && self.close_brace_char.is_default()
     }
 }
-
-impl yul_block::_T2 {
-    pub fn new((yul_statement, ignore): (yul_statement::N, ignore::N)) -> Self {
-        Self {
-            yul_statement,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for yul_block::_T2 {}
 
 impl assembly_statement::_T0 {
     pub fn new(
@@ -3274,7 +2679,7 @@ impl error_definition::_T0 {
                                 ((((error, ignore_0), identifier), ignore_1), open_paren_char),
                                 ignore_2,
                             ),
-                            _t2s,
+                            error_parameters,
                         ),
                         ignore_3,
                     ),
@@ -3316,7 +2721,7 @@ impl error_definition::_T0 {
             ignore_1,
             open_paren_char,
             ignore_2,
-            _t2s,
+            error_parameters,
             ignore_3,
             close_paren_char,
             ignore_4,
@@ -3333,7 +2738,7 @@ impl DefaultTest for error_definition::_T0 {
             && self.ignore_1.is_default()
             && self.open_paren_char.is_default()
             && self.ignore_2.is_default()
-            && self._t2s.is_default()
+            && self.error_parameters.is_default()
             && self.ignore_3.is_default()
             && self.close_paren_char.is_default()
             && self.ignore_4.is_default()
@@ -3343,43 +2748,20 @@ impl DefaultTest for error_definition::_T0 {
 
 impl error_definition::_T1 {
     pub fn new(
-        (_t2s, _t3s): (
-            Vec<Box<error_definition::_T2>>,
-            Vec<Box<error_definition::_T3>>,
-        ),
+        (error_parameters, comma_chars): (Vec<error_parameter::N>, Vec<FixedTerminal<1usize>>),
     ) -> Self {
-        Self { _t2s, _t3s }
+        Self {
+            error_parameters,
+            comma_chars,
+        }
     }
 }
 
 impl DefaultTest for error_definition::_T1 {
     fn is_default(&self) -> bool {
-        self._t2s.is_default() && self._t3s.is_default()
+        self.error_parameters.is_default() && self.comma_chars.is_default()
     }
 }
-
-impl error_definition::_T3 {
-    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
-        Self { comma_char, ignore }
-    }
-}
-
-impl DefaultTest for error_definition::_T3 {
-    fn is_default(&self) -> bool {
-        self.comma_char.is_default() && self.ignore.is_default()
-    }
-}
-
-impl error_definition::_T2 {
-    pub fn new((error_parameter, ignore): (error_parameter::N, ignore::N)) -> Self {
-        Self {
-            error_parameter,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for error_definition::_T2 {}
 
 impl event_definition::_T0 {
     pub fn new(
@@ -3397,7 +2779,7 @@ impl event_definition::_T0 {
                                         ),
                                         ignore_2,
                                     ),
-                                    _t2s,
+                                    event_parameters,
                                 ),
                                 ignore_3,
                             ),
@@ -3449,7 +2831,7 @@ impl event_definition::_T0 {
             ignore_1,
             open_paren_char,
             ignore_2,
-            _t2s,
+            event_parameters,
             ignore_3,
             close_paren_char,
             ignore_4,
@@ -3468,7 +2850,7 @@ impl DefaultTest for event_definition::_T0 {
             && self.ignore_1.is_default()
             && self.open_paren_char.is_default()
             && self.ignore_2.is_default()
-            && self._t2s.is_default()
+            && self.event_parameters.is_default()
             && self.ignore_3.is_default()
             && self.close_paren_char.is_default()
             && self.ignore_4.is_default()
@@ -3480,43 +2862,20 @@ impl DefaultTest for event_definition::_T0 {
 
 impl event_definition::_T1 {
     pub fn new(
-        (_t2s, _t3s): (
-            Vec<Box<event_definition::_T2>>,
-            Vec<Box<event_definition::_T3>>,
-        ),
+        (event_parameters, comma_chars): (Vec<event_parameter::N>, Vec<FixedTerminal<1usize>>),
     ) -> Self {
-        Self { _t2s, _t3s }
+        Self {
+            event_parameters,
+            comma_chars,
+        }
     }
 }
 
 impl DefaultTest for event_definition::_T1 {
     fn is_default(&self) -> bool {
-        self._t2s.is_default() && self._t3s.is_default()
+        self.event_parameters.is_default() && self.comma_chars.is_default()
     }
 }
-
-impl event_definition::_T3 {
-    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
-        Self { comma_char, ignore }
-    }
-}
-
-impl DefaultTest for event_definition::_T3 {
-    fn is_default(&self) -> bool {
-        self.comma_char.is_default() && self.ignore.is_default()
-    }
-}
-
-impl event_definition::_T2 {
-    pub fn new((event_parameter, ignore): (event_parameter::N, ignore::N)) -> Self {
-        Self {
-            event_parameter,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for event_definition::_T2 {}
 
 impl index_access_expression::_T0 {
     pub fn new(
@@ -3537,38 +2896,19 @@ impl DefaultTest for index_access_expression::_T0 {}
 
 impl index_access_expression::_T2 {
     pub fn new(
-        (
+        (((open_bracket_char, expression), _t3), close_bracket_char): (
             (
-                (((((open_bracket_char, ignore_0), expression), ignore_1), _t3), ignore_2),
-                close_bracket_char,
+                (FixedTerminal<1usize>, Option<expression::N>),
+                Option<Box<index_access_expression::_T3>>,
             ),
-            ignore,
-        ): (
-            (
-                (
-                    (
-                        (
-                            ((FixedTerminal<1usize>, ignore::N), Option<expression::N>),
-                            ignore::N,
-                        ),
-                        Option<Box<index_access_expression::_T3>>,
-                    ),
-                    ignore::N,
-                ),
-                FixedTerminal<1usize>,
-            ),
-            ignore::N,
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
             open_bracket_char,
-            ignore_0,
             expression,
-            ignore_1,
             _t3,
-            ignore_2,
             close_bracket_char,
-            ignore,
         }
     }
 }
@@ -3576,26 +2916,16 @@ impl index_access_expression::_T2 {
 impl DefaultTest for index_access_expression::_T2 {
     fn is_default(&self) -> bool {
         self.open_bracket_char.is_default()
-            && self.ignore_0.is_default()
             && self.expression.is_default()
-            && self.ignore_1.is_default()
             && self._t3.is_default()
-            && self.ignore_2.is_default()
             && self.close_bracket_char.is_default()
-            && self.ignore.is_default()
     }
 }
 
 impl index_access_expression::_T3 {
-    pub fn new(
-        ((colon_char, ignore), expression): (
-            (FixedTerminal<1usize>, ignore::N),
-            Option<expression::N>,
-        ),
-    ) -> Self {
+    pub fn new((colon_char, expression): (FixedTerminal<1usize>, Option<expression::N>)) -> Self {
         Self {
             colon_char,
-            ignore,
             expression,
         }
     }
@@ -3603,7 +2933,7 @@ impl index_access_expression::_T3 {
 
 impl DefaultTest for index_access_expression::_T3 {
     fn is_default(&self) -> bool {
-        self.colon_char.is_default() && self.ignore.is_default() && self.expression.is_default()
+        self.colon_char.is_default() && self.expression.is_default()
     }
 }
 
@@ -3613,10 +2943,13 @@ impl variable_declaration_tuple::_T0 {
             (
                 (
                     (
-                        ((((open_paren_char, ignore_0), _t2s), ignore_1), variable_declaration),
+                        (
+                            (((open_paren_char, ignore_0), comma_chars), ignore_1),
+                            variable_declaration,
+                        ),
                         ignore_2,
                     ),
-                    _t4s,
+                    _t3s,
                 ),
                 ignore_3,
             ),
@@ -3626,18 +2959,12 @@ impl variable_declaration_tuple::_T0 {
                 (
                     (
                         (
-                            (
-                                (
-                                    (FixedTerminal<1usize>, ignore::N),
-                                    Vec<Box<variable_declaration_tuple::_T2>>,
-                                ),
-                                ignore::N,
-                            ),
+                            (((FixedTerminal<1usize>, ignore::N), usize), ignore::N),
                             variable_declaration::N,
                         ),
                         ignore::N,
                     ),
-                    Vec<Box<variable_declaration_tuple::_T4>>,
+                    Vec<Box<variable_declaration_tuple::_T3>>,
                 ),
                 ignore::N,
             ),
@@ -3647,11 +2974,11 @@ impl variable_declaration_tuple::_T0 {
         Self {
             open_paren_char,
             ignore_0,
-            _t2s,
+            comma_chars,
             ignore_1,
             variable_declaration,
             ignore_2,
-            _t4s,
+            _t3s,
             ignore_3,
             close_paren_char,
         }
@@ -3660,43 +2987,23 @@ impl variable_declaration_tuple::_T0 {
 
 impl DefaultTest for variable_declaration_tuple::_T0 {}
 
-impl variable_declaration_tuple::_T4 {
+impl variable_declaration_tuple::_T3 {
     pub fn new(
-        (((comma_char, ignore_0), variable_declaration), ignore_1): (
-            (
-                (FixedTerminal<1usize>, ignore::N),
-                Option<variable_declaration::N>,
-            ),
-            ignore::N,
+        (comma_char, variable_declaration): (
+            FixedTerminal<1usize>,
+            Option<variable_declaration::N>,
         ),
     ) -> Self {
         Self {
             comma_char,
-            ignore_0,
             variable_declaration,
-            ignore_1,
         }
     }
 }
 
-impl DefaultTest for variable_declaration_tuple::_T4 {
+impl DefaultTest for variable_declaration_tuple::_T3 {
     fn is_default(&self) -> bool {
-        self.comma_char.is_default()
-            && self.ignore_0.is_default()
-            && self.variable_declaration.is_default()
-            && self.ignore_1.is_default()
-    }
-}
-
-impl variable_declaration_tuple::_T2 {
-    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
-        Self { comma_char, ignore }
-    }
-}
-
-impl DefaultTest for variable_declaration_tuple::_T2 {
-    fn is_default(&self) -> bool {
-        self.comma_char.is_default() && self.ignore.is_default()
+        self.comma_char.is_default() && self.variable_declaration.is_default()
     }
 }
 
@@ -3719,20 +3026,9 @@ impl DefaultTest for member_access_expression::_T0 {}
 
 impl member_access_expression::_T2 {
     pub fn new(
-        (((period_char, ignore_0), _t3), ignore_1): (
-            (
-                (FixedTerminal<1usize>, ignore::N),
-                Box<member_access_expression::_T3>,
-            ),
-            ignore::N,
-        ),
+        (period_char, _t3): (FixedTerminal<1usize>, Box<member_access_expression::_T3>),
     ) -> Self {
-        Self {
-            period_char,
-            ignore_0,
-            _t3,
-            ignore_1,
-        }
+        Self { period_char, _t3 }
     }
 }
 
@@ -3759,27 +3055,18 @@ impl DefaultTest for function_call_options_expression::_T0 {}
 
 impl function_call_options_expression::_T2 {
     pub fn new(
-        (((((open_brace_char, ignore_0), _t4s), ignore_1), close_brace_char), ignore): (
+        ((open_brace_char, named_arguments), close_brace_char): (
             (
-                (
-                    (
-                        (FixedTerminal<1usize>, ignore::N),
-                        Box<function_call_options_expression::_T3>,
-                    ),
-                    ignore::N,
-                ),
                 FixedTerminal<1usize>,
+                Box<function_call_options_expression::_T3>,
             ),
-            ignore::N,
+            FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
             open_brace_char,
-            ignore_0,
-            _t4s,
-            ignore_1,
+            named_arguments,
             close_brace_char,
-            ignore,
         }
     }
 }
@@ -3787,89 +3074,44 @@ impl function_call_options_expression::_T2 {
 impl DefaultTest for function_call_options_expression::_T2 {
     fn is_default(&self) -> bool {
         self.open_brace_char.is_default()
-            && self.ignore_0.is_default()
-            && self._t4s.is_default()
-            && self.ignore_1.is_default()
+            && self.named_arguments.is_default()
             && self.close_brace_char.is_default()
-            && self.ignore.is_default()
     }
 }
 
 impl function_call_options_expression::_T3 {
     pub fn new(
-        (_t4s, _t5s): (
-            Vec<Box<function_call_options_expression::_T4>>,
-            Vec<Box<function_call_options_expression::_T5>>,
-        ),
+        (named_arguments, comma_chars): (Vec<named_argument::N>, Vec<FixedTerminal<1usize>>),
     ) -> Self {
-        Self { _t4s, _t5s }
+        Self {
+            named_arguments,
+            comma_chars,
+        }
     }
 }
 
 impl DefaultTest for function_call_options_expression::_T3 {
     fn is_default(&self) -> bool {
-        self._t4s.is_default() && self._t5s.is_default()
-    }
-}
-
-impl function_call_options_expression::_T5 {
-    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
-        Self { comma_char, ignore }
-    }
-}
-
-impl DefaultTest for function_call_options_expression::_T5 {
-    fn is_default(&self) -> bool {
-        self.comma_char.is_default() && self.ignore.is_default()
-    }
-}
-
-impl function_call_options_expression::_T4 {
-    pub fn new((named_argument, ignore): (named_argument::N, ignore::N)) -> Self {
-        Self {
-            named_argument,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for function_call_options_expression::_T4 {
-    fn is_default(&self) -> bool {
-        self.named_argument.is_default() && self.ignore.is_default()
+        self.named_arguments.is_default() && self.comma_chars.is_default()
     }
 }
 
 impl function_call_expression::_T0 {
     pub fn new(
-        ((function_call_options_expression, ignore), _t2s): (
+        ((function_call_options_expression, ignore), argument_lists): (
             (function_call_options_expression::N, ignore::N),
-            Vec<Box<function_call_expression::_T2>>,
+            Vec<argument_list::N>,
         ),
     ) -> Self {
         Self {
             function_call_options_expression,
             ignore,
-            _t2s,
+            argument_lists,
         }
     }
 }
 
 impl DefaultTest for function_call_expression::_T0 {}
-
-impl function_call_expression::_T2 {
-    pub fn new((argument_list, ignore): (argument_list::N, ignore::N)) -> Self {
-        Self {
-            argument_list,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for function_call_expression::_T2 {
-    fn is_default(&self) -> bool {
-        self.argument_list.is_default() && self.ignore.is_default()
-    }
-}
 
 impl unary_prefix_expression::_T0 {
     pub fn new(
@@ -3890,7 +3132,7 @@ impl DefaultTest for unary_prefix_expression::_T0 {}
 
 impl unary_suffix_expression::_T0 {
     pub fn new(
-        ((unary_prefix_expression, ignore), _1): (
+        ((unary_prefix_expression, ignore), _2): (
             (unary_prefix_expression::N, ignore::N),
             Option<FixedTerminal<2usize>>,
         ),
@@ -3898,7 +3140,7 @@ impl unary_suffix_expression::_T0 {
         Self {
             unary_prefix_expression,
             ignore,
-            _1,
+            _2,
         }
     }
 }
@@ -3907,485 +3149,205 @@ impl DefaultTest for unary_suffix_expression::_T0 {}
 
 impl exponentiation_expression::_T0 {
     pub fn new(
-        (_t1s, _t2s): (
-            Vec<Box<exponentiation_expression::_T1>>,
-            Vec<Box<exponentiation_expression::_T2>>,
+        (unary_suffix_expressions, star_stars): (
+            Vec<unary_suffix_expression::N>,
+            Vec<FixedTerminal<2usize>>,
         ),
     ) -> Self {
-        Self { _t1s, _t2s }
+        Self {
+            unary_suffix_expressions,
+            star_stars,
+        }
     }
 }
 
 impl DefaultTest for exponentiation_expression::_T0 {
     fn is_default(&self) -> bool {
-        self._t1s.is_default() && self._t2s.is_default()
+        self.unary_suffix_expressions.is_default() && self.star_stars.is_default()
     }
 }
-
-impl exponentiation_expression::_T2 {
-    pub fn new((star_star, ignore): (FixedTerminal<2usize>, ignore::N)) -> Self {
-        Self { star_star, ignore }
-    }
-}
-
-impl DefaultTest for exponentiation_expression::_T2 {
-    fn is_default(&self) -> bool {
-        self.star_star.is_default() && self.ignore.is_default()
-    }
-}
-
-impl exponentiation_expression::_T1 {
-    pub fn new((unary_suffix_expression, ignore): (unary_suffix_expression::N, ignore::N)) -> Self {
-        Self {
-            unary_suffix_expression,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for exponentiation_expression::_T1 {}
 
 impl mul_div_mod_expression::_T0 {
     pub fn new(
-        (_t1s, _t2s): (
-            Vec<Box<mul_div_mod_expression::_T1>>,
-            Vec<Box<mul_div_mod_expression::_T2>>,
+        (exponentiation_expressions, _1): (
+            Vec<exponentiation_expression::N>,
+            Vec<FixedTerminal<1usize>>,
         ),
     ) -> Self {
-        Self { _t1s, _t2s }
+        Self {
+            exponentiation_expressions,
+            _1,
+        }
     }
 }
 
 impl DefaultTest for mul_div_mod_expression::_T0 {
     fn is_default(&self) -> bool {
-        self._t1s.is_default() && self._t2s.is_default()
-    }
-}
-
-impl mul_div_mod_expression::_T2 {
-    pub fn new((_0, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
-        Self { _0, ignore }
-    }
-}
-
-impl DefaultTest for mul_div_mod_expression::_T2 {
-    fn is_default(&self) -> bool {
-        self._0.is_default() && self.ignore.is_default()
-    }
-}
-
-impl mul_div_mod_expression::_T1 {
-    pub fn new(
-        (exponentiation_expression, ignore): (exponentiation_expression::N, ignore::N),
-    ) -> Self {
-        Self {
-            exponentiation_expression,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for mul_div_mod_expression::_T1 {
-    fn is_default(&self) -> bool {
-        self.exponentiation_expression.is_default() && self.ignore.is_default()
+        self.exponentiation_expressions.is_default() && self._1.is_default()
     }
 }
 
 impl add_sub_expression::_T0 {
     pub fn new(
-        (_t1s, _t2s): (
-            Vec<Box<add_sub_expression::_T1>>,
-            Vec<Box<add_sub_expression::_T2>>,
-        ),
+        (mul_div_mod_expressions, _1): (Vec<mul_div_mod_expression::N>, Vec<FixedTerminal<1usize>>),
     ) -> Self {
-        Self { _t1s, _t2s }
+        Self {
+            mul_div_mod_expressions,
+            _1,
+        }
     }
 }
 
 impl DefaultTest for add_sub_expression::_T0 {
     fn is_default(&self) -> bool {
-        self._t1s.is_default() && self._t2s.is_default()
-    }
-}
-
-impl add_sub_expression::_T2 {
-    pub fn new((_0, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
-        Self { _0, ignore }
-    }
-}
-
-impl DefaultTest for add_sub_expression::_T2 {
-    fn is_default(&self) -> bool {
-        self._0.is_default() && self.ignore.is_default()
-    }
-}
-
-impl add_sub_expression::_T1 {
-    pub fn new((mul_div_mod_expression, ignore): (mul_div_mod_expression::N, ignore::N)) -> Self {
-        Self {
-            mul_div_mod_expression,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for add_sub_expression::_T1 {
-    fn is_default(&self) -> bool {
-        self.mul_div_mod_expression.is_default() && self.ignore.is_default()
+        self.mul_div_mod_expressions.is_default() && self._1.is_default()
     }
 }
 
 impl shift_expression::_T0 {
-    pub fn new(
-        (_t1s, _t2s): (
-            Vec<Box<shift_expression::_T1>>,
-            Vec<Box<shift_expression::_T2>>,
-        ),
-    ) -> Self {
-        Self { _t1s, _t2s }
+    pub fn new((add_sub_expressions, _1): (Vec<add_sub_expression::N>, Vec<usize>)) -> Self {
+        Self {
+            add_sub_expressions,
+            _1,
+        }
     }
 }
 
 impl DefaultTest for shift_expression::_T0 {
     fn is_default(&self) -> bool {
-        self._t1s.is_default() && self._t2s.is_default()
-    }
-}
-
-impl shift_expression::_T2 {
-    pub fn new((_0, ignore): (usize, ignore::N)) -> Self {
-        Self { _0, ignore }
-    }
-}
-
-impl DefaultTest for shift_expression::_T2 {
-    fn is_default(&self) -> bool {
-        self._0.is_default() && self.ignore.is_default()
-    }
-}
-
-impl shift_expression::_T1 {
-    pub fn new((add_sub_expression, ignore): (add_sub_expression::N, ignore::N)) -> Self {
-        Self {
-            add_sub_expression,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for shift_expression::_T1 {
-    fn is_default(&self) -> bool {
-        self.add_sub_expression.is_default() && self.ignore.is_default()
+        self.add_sub_expressions.is_default() && self._1.is_default()
     }
 }
 
 impl bit_and_expression::_T0 {
     pub fn new(
-        (_t1s, _t2s): (
-            Vec<Box<bit_and_expression::_T1>>,
-            Vec<Box<bit_and_expression::_T2>>,
+        (shift_expressions, ampersand_chars): (
+            Vec<shift_expression::N>,
+            Vec<FixedTerminal<1usize>>,
         ),
     ) -> Self {
-        Self { _t1s, _t2s }
+        Self {
+            shift_expressions,
+            ampersand_chars,
+        }
     }
 }
 
 impl DefaultTest for bit_and_expression::_T0 {
     fn is_default(&self) -> bool {
-        self._t1s.is_default() && self._t2s.is_default()
-    }
-}
-
-impl bit_and_expression::_T2 {
-    pub fn new((ampersand_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
-        Self {
-            ampersand_char,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for bit_and_expression::_T2 {
-    fn is_default(&self) -> bool {
-        self.ampersand_char.is_default() && self.ignore.is_default()
-    }
-}
-
-impl bit_and_expression::_T1 {
-    pub fn new((shift_expression, ignore): (shift_expression::N, ignore::N)) -> Self {
-        Self {
-            shift_expression,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for bit_and_expression::_T1 {
-    fn is_default(&self) -> bool {
-        self.shift_expression.is_default() && self.ignore.is_default()
+        self.shift_expressions.is_default() && self.ampersand_chars.is_default()
     }
 }
 
 impl bit_x_or_expression::_T0 {
     pub fn new(
-        (_t1s, _t2s): (
-            Vec<Box<bit_x_or_expression::_T1>>,
-            Vec<Box<bit_x_or_expression::_T2>>,
+        (bit_and_expressions, caret_chars): (
+            Vec<bit_and_expression::N>,
+            Vec<FixedTerminal<1usize>>,
         ),
     ) -> Self {
-        Self { _t1s, _t2s }
+        Self {
+            bit_and_expressions,
+            caret_chars,
+        }
     }
 }
 
 impl DefaultTest for bit_x_or_expression::_T0 {
     fn is_default(&self) -> bool {
-        self._t1s.is_default() && self._t2s.is_default()
-    }
-}
-
-impl bit_x_or_expression::_T2 {
-    pub fn new((caret_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
-        Self { caret_char, ignore }
-    }
-}
-
-impl DefaultTest for bit_x_or_expression::_T2 {
-    fn is_default(&self) -> bool {
-        self.caret_char.is_default() && self.ignore.is_default()
-    }
-}
-
-impl bit_x_or_expression::_T1 {
-    pub fn new((bit_and_expression, ignore): (bit_and_expression::N, ignore::N)) -> Self {
-        Self {
-            bit_and_expression,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for bit_x_or_expression::_T1 {
-    fn is_default(&self) -> bool {
-        self.bit_and_expression.is_default() && self.ignore.is_default()
+        self.bit_and_expressions.is_default() && self.caret_chars.is_default()
     }
 }
 
 impl bit_or_expression::_T0 {
     pub fn new(
-        (_t1s, _t2s): (
-            Vec<Box<bit_or_expression::_T1>>,
-            Vec<Box<bit_or_expression::_T2>>,
+        (bit_x_or_expressions, bar_chars): (
+            Vec<bit_x_or_expression::N>,
+            Vec<FixedTerminal<1usize>>,
         ),
     ) -> Self {
-        Self { _t1s, _t2s }
+        Self {
+            bit_x_or_expressions,
+            bar_chars,
+        }
     }
 }
 
 impl DefaultTest for bit_or_expression::_T0 {
     fn is_default(&self) -> bool {
-        self._t1s.is_default() && self._t2s.is_default()
-    }
-}
-
-impl bit_or_expression::_T2 {
-    pub fn new((bar_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
-        Self { bar_char, ignore }
-    }
-}
-
-impl DefaultTest for bit_or_expression::_T2 {
-    fn is_default(&self) -> bool {
-        self.bar_char.is_default() && self.ignore.is_default()
-    }
-}
-
-impl bit_or_expression::_T1 {
-    pub fn new((bit_x_or_expression, ignore): (bit_x_or_expression::N, ignore::N)) -> Self {
-        Self {
-            bit_x_or_expression,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for bit_or_expression::_T1 {
-    fn is_default(&self) -> bool {
-        self.bit_x_or_expression.is_default() && self.ignore.is_default()
+        self.bit_x_or_expressions.is_default() && self.bar_chars.is_default()
     }
 }
 
 impl order_comparison_expression::_T0 {
-    pub fn new(
-        (_t1s, _t2s): (
-            Vec<Box<order_comparison_expression::_T1>>,
-            Vec<Box<order_comparison_expression::_T2>>,
-        ),
-    ) -> Self {
-        Self { _t1s, _t2s }
+    pub fn new((bit_or_expressions, _1): (Vec<bit_or_expression::N>, Vec<usize>)) -> Self {
+        Self {
+            bit_or_expressions,
+            _1,
+        }
     }
 }
 
 impl DefaultTest for order_comparison_expression::_T0 {
     fn is_default(&self) -> bool {
-        self._t1s.is_default() && self._t2s.is_default()
-    }
-}
-
-impl order_comparison_expression::_T2 {
-    pub fn new((_0, ignore): (usize, ignore::N)) -> Self {
-        Self { _0, ignore }
-    }
-}
-
-impl DefaultTest for order_comparison_expression::_T2 {
-    fn is_default(&self) -> bool {
-        self._0.is_default() && self.ignore.is_default()
-    }
-}
-
-impl order_comparison_expression::_T1 {
-    pub fn new((bit_or_expression, ignore): (bit_or_expression::N, ignore::N)) -> Self {
-        Self {
-            bit_or_expression,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for order_comparison_expression::_T1 {
-    fn is_default(&self) -> bool {
-        self.bit_or_expression.is_default() && self.ignore.is_default()
+        self.bit_or_expressions.is_default() && self._1.is_default()
     }
 }
 
 impl equality_comparison_expression::_T0 {
     pub fn new(
-        (_t1s, _t2s): (
-            Vec<Box<equality_comparison_expression::_T1>>,
-            Vec<Box<equality_comparison_expression::_T2>>,
+        (order_comparison_expressions, _1): (
+            Vec<order_comparison_expression::N>,
+            Vec<FixedTerminal<2usize>>,
         ),
     ) -> Self {
-        Self { _t1s, _t2s }
+        Self {
+            order_comparison_expressions,
+            _1,
+        }
     }
 }
 
 impl DefaultTest for equality_comparison_expression::_T0 {
     fn is_default(&self) -> bool {
-        self._t1s.is_default() && self._t2s.is_default()
-    }
-}
-
-impl equality_comparison_expression::_T2 {
-    pub fn new((_0, ignore): (FixedTerminal<2usize>, ignore::N)) -> Self {
-        Self { _0, ignore }
-    }
-}
-
-impl DefaultTest for equality_comparison_expression::_T2 {
-    fn is_default(&self) -> bool {
-        self._0.is_default() && self.ignore.is_default()
-    }
-}
-
-impl equality_comparison_expression::_T1 {
-    pub fn new(
-        (order_comparison_expression, ignore): (order_comparison_expression::N, ignore::N),
-    ) -> Self {
-        Self {
-            order_comparison_expression,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for equality_comparison_expression::_T1 {
-    fn is_default(&self) -> bool {
-        self.order_comparison_expression.is_default() && self.ignore.is_default()
+        self.order_comparison_expressions.is_default() && self._1.is_default()
     }
 }
 
 impl and_expression::_T0 {
     pub fn new(
-        (_t1s, _t2s): (Vec<Box<and_expression::_T1>>, Vec<Box<and_expression::_T2>>),
+        (equality_comparison_expressions, ampersand_ampersands): (
+            Vec<equality_comparison_expression::N>,
+            Vec<FixedTerminal<2usize>>,
+        ),
     ) -> Self {
-        Self { _t1s, _t2s }
+        Self {
+            equality_comparison_expressions,
+            ampersand_ampersands,
+        }
     }
 }
 
 impl DefaultTest for and_expression::_T0 {
     fn is_default(&self) -> bool {
-        self._t1s.is_default() && self._t2s.is_default()
-    }
-}
-
-impl and_expression::_T2 {
-    pub fn new((ampersand_ampersand, ignore): (FixedTerminal<2usize>, ignore::N)) -> Self {
-        Self {
-            ampersand_ampersand,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for and_expression::_T2 {
-    fn is_default(&self) -> bool {
-        self.ampersand_ampersand.is_default() && self.ignore.is_default()
-    }
-}
-
-impl and_expression::_T1 {
-    pub fn new(
-        (equality_comparison_expression, ignore): (equality_comparison_expression::N, ignore::N),
-    ) -> Self {
-        Self {
-            equality_comparison_expression,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for and_expression::_T1 {
-    fn is_default(&self) -> bool {
-        self.equality_comparison_expression.is_default() && self.ignore.is_default()
+        self.equality_comparison_expressions.is_default() && self.ampersand_ampersands.is_default()
     }
 }
 
 impl or_expression::_T0 {
-    pub fn new((_t1s, _t2s): (Vec<Box<or_expression::_T1>>, Vec<Box<or_expression::_T2>>)) -> Self {
-        Self { _t1s, _t2s }
+    pub fn new(
+        (and_expressions, bar_bars): (Vec<and_expression::N>, Vec<FixedTerminal<2usize>>),
+    ) -> Self {
+        Self {
+            and_expressions,
+            bar_bars,
+        }
     }
 }
 
 impl DefaultTest for or_expression::_T0 {
     fn is_default(&self) -> bool {
-        self._t1s.is_default() && self._t2s.is_default()
-    }
-}
-
-impl or_expression::_T2 {
-    pub fn new((bar_bar, ignore): (FixedTerminal<2usize>, ignore::N)) -> Self {
-        Self { bar_bar, ignore }
-    }
-}
-
-impl DefaultTest for or_expression::_T2 {
-    fn is_default(&self) -> bool {
-        self.bar_bar.is_default() && self.ignore.is_default()
-    }
-}
-
-impl or_expression::_T1 {
-    pub fn new((and_expression, ignore): (and_expression::N, ignore::N)) -> Self {
-        Self {
-            and_expression,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for or_expression::_T1 {
-    fn is_default(&self) -> bool {
-        self.and_expression.is_default() && self.ignore.is_default()
+        self.and_expressions.is_default() && self.bar_bars.is_default()
     }
 }
 
@@ -4412,30 +3374,18 @@ impl DefaultTest for conditional_expression::_T0 {
 
 impl conditional_expression::_T1 {
     pub fn new(
-        (
-            (((((question_char, ignore_0), expression_0), ignore_1), colon_char), ignore_2),
-            expression_1,
-        ): (
+        (((question_char, expression_0), colon_char), expression_1): (
             (
-                (
-                    (
-                        ((FixedTerminal<1usize>, ignore::N), expression::N),
-                        ignore::N,
-                    ),
-                    FixedTerminal<1usize>,
-                ),
-                ignore::N,
+                (FixedTerminal<1usize>, expression::N),
+                FixedTerminal<1usize>,
             ),
             expression::N,
         ),
     ) -> Self {
         Self {
             question_char,
-            ignore_0,
             expression_0,
-            ignore_1,
             colon_char,
-            ignore_2,
             expression_1,
         }
     }
@@ -4444,56 +3394,43 @@ impl conditional_expression::_T1 {
 impl DefaultTest for conditional_expression::_T1 {
     fn is_default(&self) -> bool {
         self.question_char.is_default()
-            && self.ignore_0.is_default()
             && self.expression_0.is_default()
-            && self.ignore_1.is_default()
             && self.colon_char.is_default()
-            && self.ignore_2.is_default()
             && self.expression_1.is_default()
     }
 }
 
 impl assignment_expression::_T0 {
     pub fn new(
-        (_t1s, _t2s): (
-            Vec<Box<assignment_expression::_T1>>,
-            Vec<Box<assignment_expression::_T2>>,
-        ),
+        (conditional_expressions, _1): (Vec<conditional_expression::N>, Vec<usize>),
     ) -> Self {
-        Self { _t1s, _t2s }
+        Self {
+            conditional_expressions,
+            _1,
+        }
     }
 }
 
 impl DefaultTest for assignment_expression::_T0 {
     fn is_default(&self) -> bool {
-        self._t1s.is_default() && self._t2s.is_default()
+        self.conditional_expressions.is_default() && self._1.is_default()
     }
 }
 
-impl assignment_expression::_T2 {
-    pub fn new((_0, ignore): (usize, ignore::N)) -> Self {
-        Self { _0, ignore }
-    }
-}
-
-impl DefaultTest for assignment_expression::_T2 {
-    fn is_default(&self) -> bool {
-        self._0.is_default() && self.ignore.is_default()
-    }
-}
-
-impl assignment_expression::_T1 {
-    pub fn new((conditional_expression, ignore): (conditional_expression::N, ignore::N)) -> Self {
+impl expression::_T0 {
+    pub fn new(
+        (conditional_expressions, _1): (Vec<conditional_expression::N>, Vec<usize>),
+    ) -> Self {
         Self {
-            conditional_expression,
-            ignore,
+            conditional_expressions,
+            _1,
         }
     }
 }
 
-impl DefaultTest for assignment_expression::_T1 {
+impl DefaultTest for expression::_T0 {
     fn is_default(&self) -> bool {
-        self.conditional_expression.is_default() && self.ignore.is_default()
+        self.conditional_expressions.is_default() && self._1.is_default()
     }
 }
 
@@ -4759,14 +3696,8 @@ impl if_statement::_T0 {
 impl DefaultTest for if_statement::_T0 {}
 
 impl if_statement::_T1 {
-    pub fn new(
-        ((r#else, ignore), statement): ((FixedTerminal<4usize>, ignore::N), statement::N),
-    ) -> Self {
-        Self {
-            r#else,
-            ignore,
-            statement,
-        }
+    pub fn new((r#else, statement): (FixedTerminal<4usize>, statement::N)) -> Self {
+        Self { r#else, statement }
     }
 }
 
@@ -4833,7 +3764,19 @@ impl DefaultTest for revert_statement::_T0 {
 impl state_variable_declaration::_T0 {
     pub fn new(
         (
-            (((((((type_name, ignore_0), _t2s), ignore_1), identifier), ignore_2), _t3), ignore_3),
+            (
+                (
+                    (
+                        (
+                            (((type_name, ignore_0), state_variable_attributes), ignore_1),
+                            identifier,
+                        ),
+                        ignore_2,
+                    ),
+                    _t2,
+                ),
+                ignore_3,
+            ),
             semicolon_char,
         ): (
             (
@@ -4841,17 +3784,14 @@ impl state_variable_declaration::_T0 {
                     (
                         (
                             (
-                                (
-                                    (type_name::N, ignore::N),
-                                    Vec<Box<state_variable_declaration::_T2>>,
-                                ),
+                                ((type_name::N, ignore::N), Vec<state_variable_attribute::N>),
                                 ignore::N,
                             ),
                             identifier::N,
                         ),
                         ignore::N,
                     ),
-                    Option<Box<state_variable_declaration::_T3>>,
+                    Option<Box<state_variable_declaration::_T2>>,
                 ),
                 ignore::N,
             ),
@@ -4861,11 +3801,11 @@ impl state_variable_declaration::_T0 {
         Self {
             type_name,
             ignore_0,
-            _t2s,
+            state_variable_attributes,
             ignore_1,
             identifier,
             ignore_2,
-            _t3,
+            _t2,
             ignore_3,
             semicolon_char,
         }
@@ -4874,40 +3814,45 @@ impl state_variable_declaration::_T0 {
 
 impl DefaultTest for state_variable_declaration::_T0 {}
 
-impl state_variable_declaration::_T3 {
-    pub fn new(
-        ((equal_char, ignore), expression): ((FixedTerminal<1usize>, ignore::N), expression::N),
-    ) -> Self {
+impl state_variable_declaration::_T2 {
+    pub fn new((equal_char, expression): (FixedTerminal<1usize>, expression::N)) -> Self {
         Self {
             equal_char,
-            ignore,
             expression,
         }
     }
 }
 
-impl DefaultTest for state_variable_declaration::_T3 {
+impl DefaultTest for state_variable_declaration::_T2 {
     fn is_default(&self) -> bool {
-        self.equal_char.is_default() && self.ignore.is_default() && self.expression.is_default()
+        self.equal_char.is_default() && self.expression.is_default()
     }
 }
-
-impl state_variable_declaration::_T2 {
-    pub fn new(
-        (state_variable_attribute, ignore): (state_variable_attribute::N, ignore::N),
-    ) -> Self {
-        Self {
-            state_variable_attribute,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for state_variable_declaration::_T2 {}
 
 impl try_statement::_T0 {
     pub fn new(
-        ((((((((r#try , ignore_0) , expression) , ignore_1) , _t1) , ignore_2) , block) , ignore_3) , _t3s) : ((((((((FixedTerminal < 3usize > , ignore :: N) , expression :: N) , ignore :: N) , Option < Box < try_statement :: _T1 > >) , ignore :: N) , block :: N) , ignore :: N) , Vec < Box < try_statement :: _T3 > >),
+        (
+            (((((((r#try, ignore_0), expression), ignore_1), _t1), ignore_2), block), ignore_3),
+            catch_clauses,
+        ): (
+            (
+                (
+                    (
+                        (
+                            (
+                                ((FixedTerminal<3usize>, ignore::N), expression::N),
+                                ignore::N,
+                            ),
+                            Option<Box<try_statement::_T1>>,
+                        ),
+                        ignore::N,
+                    ),
+                    block::N,
+                ),
+                ignore::N,
+            ),
+            Vec<catch_clause::N>,
+        ),
     ) -> Self {
         Self {
             r#try,
@@ -4918,7 +3863,7 @@ impl try_statement::_T0 {
             ignore_2,
             block,
             ignore_3,
-            _t3s,
+            catch_clauses,
         }
     }
 }
@@ -4933,35 +3878,16 @@ impl DefaultTest for try_statement::_T0 {
             && self.ignore_2.is_default()
             && self.block.is_default()
             && self.ignore_3.is_default()
-            && self._t3s.is_default()
-    }
-}
-
-impl try_statement::_T3 {
-    pub fn new((catch_clause, ignore): (catch_clause::N, ignore::N)) -> Self {
-        Self {
-            catch_clause,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for try_statement::_T3 {
-    fn is_default(&self) -> bool {
-        self.catch_clause.is_default() && self.ignore.is_default()
+            && self.catch_clauses.is_default()
     }
 }
 
 impl try_statement::_T1 {
     pub fn new(
-        ((returns, ignore), non_empty_parameter_list): (
-            (FixedTerminal<7usize>, ignore::N),
-            non_empty_parameter_list::N,
-        ),
+        (returns, non_empty_parameter_list): (FixedTerminal<7usize>, non_empty_parameter_list::N),
     ) -> Self {
         Self {
             returns,
-            ignore,
             non_empty_parameter_list,
         }
     }
@@ -4969,9 +3895,7 @@ impl try_statement::_T1 {
 
 impl DefaultTest for try_statement::_T1 {
     fn is_default(&self) -> bool {
-        self.returns.is_default()
-            && self.ignore.is_default()
-            && self.non_empty_parameter_list.is_default()
+        self.returns.is_default() && self.non_empty_parameter_list.is_default()
     }
 }
 
@@ -4996,22 +3920,14 @@ impl DefaultTest for variable_declaration_statement::_T1 {}
 
 impl variable_declaration_statement::_T4 {
     pub fn new(
-        ((((variable_declaration_tuple, ignore_0), equal_char), ignore_1), expression): (
-            (
-                (
-                    (variable_declaration_tuple::N, ignore::N),
-                    FixedTerminal<1usize>,
-                ),
-                ignore::N,
-            ),
+        ((variable_declaration_tuple, equal_char), expression): (
+            (variable_declaration_tuple::N, FixedTerminal<1usize>),
             expression::N,
         ),
     ) -> Self {
         Self {
             variable_declaration_tuple,
-            ignore_0,
             equal_char,
-            ignore_1,
             expression,
         }
     }
@@ -5021,14 +3937,13 @@ impl DefaultTest for variable_declaration_statement::_T4 {}
 
 impl variable_declaration_statement::_T2 {
     pub fn new(
-        ((variable_declaration, ignore), _t3): (
-            (variable_declaration::N, ignore::N),
+        (variable_declaration, _t3): (
+            variable_declaration::N,
             Option<Box<variable_declaration_statement::_T3>>,
         ),
     ) -> Self {
         Self {
             variable_declaration,
-            ignore,
             _t3,
         }
     }
@@ -5037,12 +3952,9 @@ impl variable_declaration_statement::_T2 {
 impl DefaultTest for variable_declaration_statement::_T2 {}
 
 impl variable_declaration_statement::_T3 {
-    pub fn new(
-        ((equal_char, ignore), expression): ((FixedTerminal<1usize>, ignore::N), expression::N),
-    ) -> Self {
+    pub fn new((equal_char, expression): (FixedTerminal<1usize>, expression::N)) -> Self {
         Self {
             equal_char,
-            ignore,
             expression,
         }
     }
@@ -5050,7 +3962,7 @@ impl variable_declaration_statement::_T3 {
 
 impl DefaultTest for variable_declaration_statement::_T3 {
     fn is_default(&self) -> bool {
-        self.equal_char.is_default() && self.ignore.is_default() && self.expression.is_default()
+        self.equal_char.is_default() && self.expression.is_default()
     }
 }
 
@@ -5192,9 +4104,9 @@ impl DefaultTest for statement::_T0 {}
 
 impl block::_T0 {
     pub fn new(
-        ((((open_brace_char, ignore_0), _t3s), ignore_1), close_brace_char): (
+        ((((open_brace_char, ignore_0), _t2s), ignore_1), close_brace_char): (
             (
-                ((FixedTerminal<1usize>, ignore::N), Vec<Box<block::_T3>>),
+                ((FixedTerminal<1usize>, ignore::N), Vec<Box<block::_T2>>),
                 ignore::N,
             ),
             FixedTerminal<1usize>,
@@ -5203,7 +4115,7 @@ impl block::_T0 {
         Self {
             open_brace_char,
             ignore_0,
-            _t3s,
+            _t2s,
             ignore_1,
             close_brace_char,
         }
@@ -5214,32 +4126,30 @@ impl DefaultTest for block::_T0 {
     fn is_default(&self) -> bool {
         self.open_brace_char.is_default()
             && self.ignore_0.is_default()
-            && self._t3s.is_default()
+            && self._t2s.is_default()
             && self.ignore_1.is_default()
             && self.close_brace_char.is_default()
     }
 }
 
-impl block::_T3 {
-    pub fn new((_t2, ignore): (Box<block::_T2>, ignore::N)) -> Self {
-        Self { _t2, ignore }
-    }
-}
-
-impl DefaultTest for block::_T3 {}
-
 impl DefaultTest for block::_T2 {}
 
 impl constructor_definition::_T0 {
     pub fn new(
-        ((((((constructor, ignore_0), parameter_list), ignore_1), _t2s), ignore_2), block): (
+        (
+            (
+                ((((constructor, ignore_0), parameter_list), ignore_1), constructor_attributes),
+                ignore_2,
+            ),
+            block,
+        ): (
             (
                 (
                     (
                         ((FixedTerminal<11usize>, ignore::N), parameter_list::N),
                         ignore::N,
                     ),
-                    Vec<Box<constructor_definition::_T2>>,
+                    Vec<constructor_attribute::N>,
                 ),
                 ignore::N,
             ),
@@ -5251,7 +4161,7 @@ impl constructor_definition::_T0 {
             ignore_0,
             parameter_list,
             ignore_1,
-            _t2s,
+            constructor_attributes,
             ignore_2,
             block,
         }
@@ -5264,31 +4174,29 @@ impl DefaultTest for constructor_definition::_T0 {
             && self.ignore_0.is_default()
             && self.parameter_list.is_default()
             && self.ignore_1.is_default()
-            && self._t2s.is_default()
+            && self.constructor_attributes.is_default()
             && self.ignore_2.is_default()
             && self.block.is_default()
     }
 }
 
-impl constructor_definition::_T2 {
-    pub fn new((constructor_attribute, ignore): (constructor_attribute::N, ignore::N)) -> Self {
-        Self {
-            constructor_attribute,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for constructor_definition::_T2 {}
-
 impl fallback_function_definition::_T0 {
     pub fn new(
         (
             (
-                ((((((fallback, ignore_0), parameter_list), ignore_1), _t2s), ignore_2), _t3),
+                (
+                    (
+                        (
+                            (((fallback, ignore_0), parameter_list), ignore_1),
+                            fallback_function_attributes,
+                        ),
+                        ignore_2,
+                    ),
+                    _t2,
+                ),
                 ignore_3,
             ),
-            _t4,
+            _t3,
         ): (
             (
                 (
@@ -5298,15 +4206,15 @@ impl fallback_function_definition::_T0 {
                                 ((FixedTerminal<8usize>, ignore::N), parameter_list::N),
                                 ignore::N,
                             ),
-                            Vec<Box<fallback_function_definition::_T2>>,
+                            Vec<fallback_function_attribute::N>,
                         ),
                         ignore::N,
                     ),
-                    Option<Box<fallback_function_definition::_T3>>,
+                    Option<Box<fallback_function_definition::_T2>>,
                 ),
                 ignore::N,
             ),
-            Box<fallback_function_definition::_T4>,
+            Box<fallback_function_definition::_T3>,
         ),
     ) -> Self {
         Self {
@@ -5314,54 +4222,35 @@ impl fallback_function_definition::_T0 {
             ignore_0,
             parameter_list,
             ignore_1,
-            _t2s,
+            fallback_function_attributes,
             ignore_2,
-            _t3,
+            _t2,
             ignore_3,
-            _t4,
+            _t3,
         }
     }
 }
 
 impl DefaultTest for fallback_function_definition::_T0 {}
 
-impl DefaultTest for fallback_function_definition::_T4 {}
+impl DefaultTest for fallback_function_definition::_T3 {}
 
-impl fallback_function_definition::_T3 {
+impl fallback_function_definition::_T2 {
     pub fn new(
-        ((returns, ignore), non_empty_parameter_list): (
-            (FixedTerminal<7usize>, ignore::N),
-            non_empty_parameter_list::N,
-        ),
+        (returns, non_empty_parameter_list): (FixedTerminal<7usize>, non_empty_parameter_list::N),
     ) -> Self {
         Self {
             returns,
-            ignore,
             non_empty_parameter_list,
         }
     }
 }
 
-impl DefaultTest for fallback_function_definition::_T3 {
+impl DefaultTest for fallback_function_definition::_T2 {
     fn is_default(&self) -> bool {
-        self.returns.is_default()
-            && self.ignore.is_default()
-            && self.non_empty_parameter_list.is_default()
+        self.returns.is_default() && self.non_empty_parameter_list.is_default()
     }
 }
-
-impl fallback_function_definition::_T2 {
-    pub fn new(
-        (fallback_function_attribute, ignore): (fallback_function_attribute::N, ignore::N),
-    ) -> Self {
-        Self {
-            fallback_function_attribute,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for fallback_function_definition::_T2 {}
 
 impl function_definition::_T0 {
     pub fn new(
@@ -5371,15 +4260,15 @@ impl function_definition::_T0 {
                     (
                         (
                             (((((function, ignore_0), _t1), ignore_1), parameter_list), ignore_2),
-                            _t3s,
+                            function_attributes,
                         ),
                         ignore_3,
                     ),
-                    _t4,
+                    _t3,
                 ),
                 ignore_4,
             ),
-            _t5,
+            _t4,
         ): (
             (
                 (
@@ -5398,15 +4287,15 @@ impl function_definition::_T0 {
                                 ),
                                 ignore::N,
                             ),
-                            Vec<Box<function_definition::_T3>>,
+                            Vec<function_attribute::N>,
                         ),
                         ignore::N,
                     ),
-                    Option<Box<function_definition::_T4>>,
+                    Option<Box<function_definition::_T3>>,
                 ),
                 ignore::N,
             ),
-            Box<function_definition::_T5>,
+            Box<function_definition::_T4>,
         ),
     ) -> Self {
         Self {
@@ -5416,52 +4305,35 @@ impl function_definition::_T0 {
             ignore_1,
             parameter_list,
             ignore_2,
-            _t3s,
+            function_attributes,
             ignore_3,
-            _t4,
+            _t3,
             ignore_4,
-            _t5,
+            _t4,
         }
     }
 }
 
 impl DefaultTest for function_definition::_T0 {}
 
-impl DefaultTest for function_definition::_T5 {}
+impl DefaultTest for function_definition::_T4 {}
 
-impl function_definition::_T4 {
+impl function_definition::_T3 {
     pub fn new(
-        ((returns, ignore), non_empty_parameter_list): (
-            (FixedTerminal<7usize>, ignore::N),
-            non_empty_parameter_list::N,
-        ),
+        (returns, non_empty_parameter_list): (FixedTerminal<7usize>, non_empty_parameter_list::N),
     ) -> Self {
         Self {
             returns,
-            ignore,
             non_empty_parameter_list,
         }
     }
 }
 
-impl DefaultTest for function_definition::_T4 {
+impl DefaultTest for function_definition::_T3 {
     fn is_default(&self) -> bool {
-        self.returns.is_default()
-            && self.ignore.is_default()
-            && self.non_empty_parameter_list.is_default()
+        self.returns.is_default() && self.non_empty_parameter_list.is_default()
     }
 }
-
-impl function_definition::_T3 {
-    pub fn new((function_attribute, ignore): (function_attribute::N, ignore::N)) -> Self {
-        Self {
-            function_attribute,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for function_definition::_T3 {}
 
 impl DefaultTest for function_definition::_T1 {}
 
@@ -5471,11 +4343,11 @@ impl modifier_definition::_T0 {
             (
                 (
                     (((((modifier, ignore_0), identifier), ignore_1), parameter_list), ignore_2),
-                    _t2s,
+                    method_attributes,
                 ),
                 ignore_3,
             ),
-            _t3,
+            _t2,
         ): (
             (
                 (
@@ -5489,11 +4361,11 @@ impl modifier_definition::_T0 {
                         ),
                         ignore::N,
                     ),
-                    Vec<Box<modifier_definition::_T2>>,
+                    Vec<method_attribute::N>,
                 ),
                 ignore::N,
             ),
-            Box<modifier_definition::_T3>,
+            Box<modifier_definition::_T2>,
         ),
     ) -> Self {
         Self {
@@ -5503,25 +4375,14 @@ impl modifier_definition::_T0 {
             ignore_1,
             parameter_list,
             ignore_2,
-            _t2s,
+            method_attributes,
             ignore_3,
-            _t3,
+            _t2,
         }
     }
 }
 
 impl DefaultTest for modifier_definition::_T0 {}
-
-impl DefaultTest for modifier_definition::_T3 {}
-
-impl modifier_definition::_T2 {
-    pub fn new((method_attribute, ignore): (method_attribute::N, ignore::N)) -> Self {
-        Self {
-            method_attribute,
-            ignore,
-        }
-    }
-}
 
 impl DefaultTest for modifier_definition::_T2 {}
 
@@ -5534,11 +4395,11 @@ impl receive_function_definition::_T0 {
                         ((((receive, ignore_0), open_paren_char), ignore_1), close_paren_char),
                         ignore_2,
                     ),
-                    _t2s,
+                    receive_function_attributes,
                 ),
                 ignore_3,
             ),
-            _t3,
+            _t2,
         ): (
             (
                 (
@@ -5552,11 +4413,11 @@ impl receive_function_definition::_T0 {
                         ),
                         ignore::N,
                     ),
-                    Vec<Box<receive_function_definition::_T2>>,
+                    Vec<receive_function_attribute::N>,
                 ),
                 ignore::N,
             ),
-            Box<receive_function_definition::_T3>,
+            Box<receive_function_definition::_T2>,
         ),
     ) -> Self {
         Self {
@@ -5566,27 +4427,14 @@ impl receive_function_definition::_T0 {
             ignore_1,
             close_paren_char,
             ignore_2,
-            _t2s,
+            receive_function_attributes,
             ignore_3,
-            _t3,
+            _t2,
         }
     }
 }
 
 impl DefaultTest for receive_function_definition::_T0 {}
-
-impl DefaultTest for receive_function_definition::_T3 {}
-
-impl receive_function_definition::_T2 {
-    pub fn new(
-        (receive_function_attribute, ignore): (receive_function_attribute::N, ignore::N),
-    ) -> Self {
-        Self {
-            receive_function_attribute,
-            ignore,
-        }
-    }
-}
 
 impl DefaultTest for receive_function_definition::_T2 {}
 
@@ -5616,7 +4464,7 @@ impl contract_definition::_T0 {
                         ),
                         ignore_4,
                     ),
-                    _t2s,
+                    contract_body_elements,
                 ),
                 ignore_5,
             ),
@@ -5649,7 +4497,7 @@ impl contract_definition::_T0 {
                         ),
                         ignore::N,
                     ),
-                    Vec<Box<contract_definition::_T2>>,
+                    Vec<contract_body_element::N>,
                 ),
                 ignore::N,
             ),
@@ -5667,7 +4515,7 @@ impl contract_definition::_T0 {
             ignore_3,
             open_brace_char,
             ignore_4,
-            _t2s,
+            contract_body_elements,
             ignore_5,
             close_brace_char,
         }
@@ -5686,22 +4534,11 @@ impl DefaultTest for contract_definition::_T0 {
             && self.ignore_3.is_default()
             && self.open_brace_char.is_default()
             && self.ignore_4.is_default()
-            && self._t2s.is_default()
+            && self.contract_body_elements.is_default()
             && self.ignore_5.is_default()
             && self.close_brace_char.is_default()
     }
 }
-
-impl contract_definition::_T2 {
-    pub fn new((contract_body_element, ignore): (contract_body_element::N, ignore::N)) -> Self {
-        Self {
-            contract_body_element,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for contract_definition::_T2 {}
 
 impl interface_definition::_T0 {
     pub fn new(
@@ -5721,7 +4558,7 @@ impl interface_definition::_T0 {
                         ),
                         ignore_3,
                     ),
-                    _t2s,
+                    contract_body_elements,
                 ),
                 ignore_4,
             ),
@@ -5745,7 +4582,7 @@ impl interface_definition::_T0 {
                         ),
                         ignore::N,
                     ),
-                    Vec<Box<interface_definition::_T2>>,
+                    Vec<contract_body_element::N>,
                 ),
                 ignore::N,
             ),
@@ -5761,7 +4598,7 @@ impl interface_definition::_T0 {
             ignore_2,
             open_brace_char,
             ignore_3,
-            _t2s,
+            contract_body_elements,
             ignore_4,
             close_brace_char,
         }
@@ -5778,22 +4615,11 @@ impl DefaultTest for interface_definition::_T0 {
             && self.ignore_2.is_default()
             && self.open_brace_char.is_default()
             && self.ignore_3.is_default()
-            && self._t2s.is_default()
+            && self.contract_body_elements.is_default()
             && self.ignore_4.is_default()
             && self.close_brace_char.is_default()
     }
 }
-
-impl interface_definition::_T2 {
-    pub fn new((contract_body_element, ignore): (contract_body_element::N, ignore::N)) -> Self {
-        Self {
-            contract_body_element,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for interface_definition::_T2 {}
 
 impl library_definition::_T0 {
     pub fn new(
@@ -5801,7 +4627,7 @@ impl library_definition::_T0 {
             (
                 (
                     (((((library, ignore_0), identifier), ignore_1), open_brace_char), ignore_2),
-                    _t2s,
+                    contract_body_elements,
                 ),
                 ignore_3,
             ),
@@ -5819,7 +4645,7 @@ impl library_definition::_T0 {
                         ),
                         ignore::N,
                     ),
-                    Vec<Box<library_definition::_T2>>,
+                    Vec<contract_body_element::N>,
                 ),
                 ignore::N,
             ),
@@ -5833,7 +4659,7 @@ impl library_definition::_T0 {
             ignore_1,
             open_brace_char,
             ignore_2,
-            _t2s,
+            contract_body_elements,
             ignore_3,
             close_brace_char,
         }
@@ -5848,30 +4674,19 @@ impl DefaultTest for library_definition::_T0 {
             && self.ignore_1.is_default()
             && self.open_brace_char.is_default()
             && self.ignore_2.is_default()
-            && self._t2s.is_default()
+            && self.contract_body_elements.is_default()
             && self.ignore_3.is_default()
             && self.close_brace_char.is_default()
     }
 }
 
-impl library_definition::_T2 {
-    pub fn new((contract_body_element, ignore): (contract_body_element::N, ignore::N)) -> Self {
-        Self {
-            contract_body_element,
-            ignore,
-        }
-    }
-}
-
-impl DefaultTest for library_definition::_T2 {}
-
 impl DefaultTest for definition::_T0 {}
 
 impl source_unit::_T0 {
     pub fn new(
-        ((((ignore_0, ignore_1), _t3s), ignore_2), end_marker): (
+        ((((ignore_0, ignore_1), _t2s), ignore_2), end_marker): (
             (
-                ((ignore::N, ignore::N), Vec<Box<source_unit::_T3>>),
+                ((ignore::N, ignore::N), Vec<Box<source_unit::_T2>>),
                 ignore::N,
             ),
             (),
@@ -5880,7 +4695,7 @@ impl source_unit::_T0 {
         Self {
             ignore_0,
             ignore_1,
-            _t3s,
+            _t2s,
             ignore_2,
             end_marker,
         }
@@ -5891,18 +4706,10 @@ impl DefaultTest for source_unit::_T0 {
     fn is_default(&self) -> bool {
         self.ignore_0.is_default()
             && self.ignore_1.is_default()
-            && self._t3s.is_default()
+            && self._t2s.is_default()
             && self.ignore_2.is_default()
             && self.end_marker.is_default()
     }
 }
-
-impl source_unit::_T3 {
-    pub fn new((_t2, ignore): (Box<source_unit::_T2>, ignore::N)) -> Self {
-        Self { _t2, ignore }
-    }
-}
-
-impl DefaultTest for source_unit::_T3 {}
 
 impl DefaultTest for source_unit::_T2 {}

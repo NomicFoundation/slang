@@ -254,12 +254,9 @@ impl DefaultTest for repetition_prefix::_T0 {}
 impl DefaultTest for repetition_prefix::_T1 {}
 
 impl repetition_prefix::_T4 {
-    pub fn new(
-        ((ellipsis_char, ignore), number): ((FixedTerminal<1usize>, ignore::N), number::N),
-    ) -> Self {
+    pub fn new((ellipsis_char, number): (FixedTerminal<1usize>, number::N)) -> Self {
         Self {
             ellipsis_char,
-            ignore,
             number,
         }
     }
@@ -267,35 +264,26 @@ impl repetition_prefix::_T4 {
 
 impl DefaultTest for repetition_prefix::_T4 {
     fn is_default(&self) -> bool {
-        self.ellipsis_char.is_default() && self.ignore.is_default() && self.number.is_default()
+        self.ellipsis_char.is_default() && self.number.is_default()
     }
 }
 
 impl repetition_prefix::_T2 {
-    pub fn new(
-        ((number, ignore), _t3): ((number::N, ignore::N), Option<Box<repetition_prefix::_T3>>),
-    ) -> Self {
-        Self {
-            number,
-            ignore,
-            _t3,
-        }
+    pub fn new((number, _t3): (number::N, Option<Box<repetition_prefix::_T3>>)) -> Self {
+        Self { number, _t3 }
     }
 }
 
 impl DefaultTest for repetition_prefix::_T2 {
     fn is_default(&self) -> bool {
-        self.number.is_default() && self.ignore.is_default() && self._t3.is_default()
+        self.number.is_default() && self._t3.is_default()
     }
 }
 
 impl repetition_prefix::_T3 {
-    pub fn new(
-        ((ellipsis_char, ignore), number): ((FixedTerminal<1usize>, ignore::N), Option<number::N>),
-    ) -> Self {
+    pub fn new((ellipsis_char, number): (FixedTerminal<1usize>, Option<number::N>)) -> Self {
         Self {
             ellipsis_char,
-            ignore,
             number,
         }
     }
@@ -303,7 +291,7 @@ impl repetition_prefix::_T3 {
 
 impl DefaultTest for repetition_prefix::_T3 {
     fn is_default(&self) -> bool {
-        self.ellipsis_char.is_default() && self.ignore.is_default() && self.number.is_default()
+        self.ellipsis_char.is_default() && self.number.is_default()
     }
 }
 
@@ -468,12 +456,9 @@ impl difference::_T0 {
 impl DefaultTest for difference::_T0 {}
 
 impl difference::_T1 {
-    pub fn new(
-        ((minus_char, ignore), negation): ((FixedTerminal<1usize>, ignore::N), negation::N),
-    ) -> Self {
+    pub fn new((minus_char, negation): (FixedTerminal<1usize>, negation::N)) -> Self {
         Self {
             minus_char,
-            ignore,
             negation,
         }
     }
@@ -481,47 +466,18 @@ impl difference::_T1 {
 
 impl DefaultTest for difference::_T1 {}
 
-impl sequence::_T1 {
-    pub fn new((difference, ignore): (difference::N, ignore::N)) -> Self {
-        Self { difference, ignore }
-    }
-}
-
-impl DefaultTest for sequence::_T1 {}
-
 impl expression::_T0 {
-    pub fn new((_t1s, _t2s): (Vec<Box<expression::_T1>>, Vec<Box<expression::_T2>>)) -> Self {
-        Self { _t1s, _t2s }
+    pub fn new((sequences, bar_chars): (Vec<sequence::N>, Vec<FixedTerminal<1usize>>)) -> Self {
+        Self {
+            sequences,
+            bar_chars,
+        }
     }
 }
 
 impl DefaultTest for expression::_T0 {
     fn is_default(&self) -> bool {
-        self._t1s.is_default() && self._t2s.is_default()
-    }
-}
-
-impl expression::_T2 {
-    pub fn new((bar_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
-        Self { bar_char, ignore }
-    }
-}
-
-impl DefaultTest for expression::_T2 {
-    fn is_default(&self) -> bool {
-        self.bar_char.is_default() && self.ignore.is_default()
-    }
-}
-
-impl expression::_T1 {
-    pub fn new((sequence, ignore): (sequence::N, ignore::N)) -> Self {
-        Self { sequence, ignore }
-    }
-}
-
-impl DefaultTest for expression::_T1 {
-    fn is_default(&self) -> bool {
-        self.sequence.is_default() && self.ignore.is_default()
+        self.sequences.is_default() && self.bar_chars.is_default()
     }
 }
 
@@ -560,15 +516,15 @@ impl DefaultTest for production::_T0 {}
 
 impl grammar::_T0 {
     pub fn new(
-        ((((ignore_0, ignore_1), _t2s), ignore_2), end_marker): (
-            (((ignore::N, ignore::N), Vec<Box<grammar::_T2>>), ignore::N),
+        ((((ignore_0, ignore_1), productions), ignore_2), end_marker): (
+            (((ignore::N, ignore::N), Vec<production::N>), ignore::N),
             (),
         ),
     ) -> Self {
         Self {
             ignore_0,
             ignore_1,
-            _t2s,
+            productions,
             ignore_2,
             end_marker,
         }
@@ -579,16 +535,8 @@ impl DefaultTest for grammar::_T0 {
     fn is_default(&self) -> bool {
         self.ignore_0.is_default()
             && self.ignore_1.is_default()
-            && self._t2s.is_default()
+            && self.productions.is_default()
             && self.ignore_2.is_default()
             && self.end_marker.is_default()
     }
 }
-
-impl grammar::_T2 {
-    pub fn new((production, ignore): (production::N, ignore::N)) -> Self {
-        Self { production, ignore }
-    }
-}
-
-impl DefaultTest for grammar::_T2 {}

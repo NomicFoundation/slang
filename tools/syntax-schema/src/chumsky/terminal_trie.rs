@@ -10,13 +10,13 @@ use super::slang_name::SlangName;
 pub struct TerminalTrie(PatriciaSet);
 
 impl TerminalTrie {
-    pub fn slang_name(&self) -> Option<SlangName> {
+    pub fn slang_name(&self) -> SlangName {
         if self.0.len() == 1 {
             let node = self.0.as_ref().child().unwrap();
             let name = String::from_utf8_lossy(node.label()).to_string();
-            Some(SlangName::from_terminal(&name))
+            SlangName::from_terminal(&name)
         } else {
-            None
+            SlangName::anonymous()
         }
     }
 
