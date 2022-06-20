@@ -8,34 +8,18 @@ pub trait DefaultTest {
 #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
 pub struct FixedTerminal<const N: usize>();
 
-/// AddSubOperator = '+' | '-' ;
-pub mod add_sub_operator {
+/// «AsciiEscape» = 'n' | 'r' | 't' | '\'' | '"' | '\\' | '\u{a}' | '\u{d}' ;
+pub mod ascii_escape {
     #[allow(unused_imports)]
     use super::*;
     pub type N = FixedTerminal<1usize>;
 }
 
-/// AssignmentOperator = '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ;
-pub mod assignment_operator {
+/// «BooleanLiteral» = 'true' | 'false' ;
+pub mod boolean_literal {
     #[allow(unused_imports)]
     use super::*;
     pub type N = usize;
-}
-
-/// BreakStatement = 'break' ';' ;
-pub mod break_statement {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = Box<break_statement::_S0>;
-    #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
-    pub struct _S0 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub r#break: FixedTerminal<5usize>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore: ignore::N,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub semicolon_char: FixedTerminal<1usize>,
-    }
 }
 
 /// «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
@@ -66,198 +50,6 @@ pub mod comment {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _1: FixedTerminal<1usize>,
     }
-}
-
-/// ContinueStatement = 'continue' ';' ;
-pub mod continue_statement {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = Box<continue_statement::_S0>;
-    #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
-    pub struct _S0 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub r#continue: FixedTerminal<8usize>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore: ignore::N,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub semicolon_char: FixedTerminal<1usize>,
-    }
-}
-
-/// DataLocation = 'memory' | 'storage' | 'calldata' ;
-pub mod data_location {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = usize;
-}
-
-/// EqualityComparisonOperator = '==' | '!=' ;
-pub mod equality_comparison_operator {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = FixedTerminal<2usize>;
-}
-
-/// «LineComment» = '//' { ¬( '\u{a}' | '\u{d}' ) } ;
-pub mod line_comment {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = Box<line_comment::_S0>;
-    #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
-    pub struct _S0 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub slash_slash: FixedTerminal<2usize>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _1: usize,
-    }
-}
-
-/// MulDivModOperator = '*' | '/' | '%' ;
-pub mod mul_div_mod_operator {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = FixedTerminal<1usize>;
-}
-
-/// OrderComparisonOperator = '<' | '>' | '<=' | '>=' ;
-pub mod order_comparison_operator {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = usize;
-}
-
-/// PositionalArgumentList = 1…*{ Expression / ',' } ;
-pub mod positional_argument_list {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = Box<positional_argument_list::_S0>;
-    #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
-    pub struct _S0 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _s1s: Vec<Box<positional_argument_list::_S1>>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _s2s: Vec<Box<positional_argument_list::_S2>>,
-    }
-    #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
-    pub struct _S2 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub comma_char: FixedTerminal<1usize>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore: ignore::N,
-    }
-    #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
-    pub struct _S1 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub expression: expression::N,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore: ignore::N,
-    }
-}
-
-/// ShiftOperator = '<<' | '>>' | '>>>' ;
-pub mod shift_operator {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = usize;
-}
-
-/// StateMutabilitySpecifier = 'pure' | 'view' | 'payable' ;
-pub mod state_mutability_specifier {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = usize;
-}
-
-/// UnaryPrefixOperator = '++' | '--' | '!' | '~' | 'delete' | '-' ;
-pub mod unary_prefix_operator {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = usize;
-}
-
-/// UnarySuffixOperator = '++' | '--' ;
-pub mod unary_suffix_operator {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = FixedTerminal<2usize>;
-}
-
-/// UncheckedBlock = 'unchecked' Block ;
-pub mod unchecked_block {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = Box<unchecked_block::_S0>;
-    #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
-    pub struct _S0 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub unchecked: FixedTerminal<9usize>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore: ignore::N,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub block: block::N,
-    }
-}
-
-/// VisibilitySpecifier = 'internal' | 'external' | 'private' | 'public' ;
-pub mod visibility_specifier {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = usize;
-}
-
-/// «Whitespace» = 1…*{ '\u{20}' | '\u{9}' | '\u{d}' | '\u{a}' } ;
-pub mod whitespace {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = usize;
-}
-
-/// YulBreakStatement = 'break' ;
-pub mod yul_break_statement {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = FixedTerminal<5usize>;
-}
-
-/// YulContinueStatement = 'continue' ;
-pub mod yul_continue_statement {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = FixedTerminal<8usize>;
-}
-
-/// YulLeaveStatement = 'leave' ;
-pub mod yul_leave_statement {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = FixedTerminal<5usize>;
-}
-
-/// «IGNORE» = { «Whitespace» | «Comment» | «LineComment» } ;
-pub mod ignore {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = Vec<Box<ignore::_C1>>;
-    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub enum _C1 {
-        Whitespace(whitespace::N),
-        Comment(comment::N),
-        LineComment(line_comment::N),
-    }
-}
-
-/// «AsciiEscape» = 'n' | 'r' | 't' | '\'' | '"' | '\\' | '\u{a}' | '\u{d}' ;
-pub mod ascii_escape {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = FixedTerminal<1usize>;
-}
-
-/// «BooleanLiteral» = 'true' | 'false' ;
-pub mod boolean_literal {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = usize;
 }
 
 /// «DecimalInteger» = 1…*{ '0'…'9' / [ '_' ] } ;
@@ -329,6 +121,20 @@ pub mod identifier_start {
     pub type N = FixedTerminal<1usize>;
 }
 
+/// «LineComment» = '//' { ¬( '\u{a}' | '\u{d}' ) } ;
+pub mod line_comment {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = Box<line_comment::_S0>;
+    #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
+    pub struct _S0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub slash_slash: FixedTerminal<2usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _1: usize,
+    }
+}
+
 /// «NumberUnit» = 'wei' | 'gwei' | 'ether' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'years' ;
 pub mod number_unit {
     #[allow(unused_imports)]
@@ -371,6 +177,13 @@ pub mod signed_integer_type {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _1: usize,
     }
+}
+
+/// «Whitespace» = 1…*{ '\u{20}' | '\u{9}' | '\u{d}' | '\u{a}' } ;
+pub mod whitespace {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = usize;
 }
 
 /// «YulDecimalNumberLiteral» = '0' | '1'…'9' { '0'…'9' } ;
@@ -489,6 +302,19 @@ pub mod hex_number {
     }
 }
 
+/// «IGNORE» = { «Whitespace» | «Comment» | «LineComment» } ;
+pub mod ignore {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = Vec<Box<ignore::_C1>>;
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub enum _C1 {
+        Whitespace(whitespace::N),
+        Comment(comment::N),
+        LineComment(line_comment::N),
+    }
+}
+
 /// «IdentifierPart» = «IdentifierStart» | '0'…'9' ;
 pub mod identifier_part {
     #[allow(unused_imports)]
@@ -559,6 +385,59 @@ pub mod yul_reserved_word {
     pub type N = usize;
 }
 
+/// AddSubOperator = '+' | '-' ;
+pub mod add_sub_operator {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = FixedTerminal<1usize>;
+}
+
+/// AssignmentOperator = '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ;
+pub mod assignment_operator {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = usize;
+}
+
+/// BreakStatement = 'break' ';' ;
+pub mod break_statement {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = Box<break_statement::_S0>;
+    #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
+    pub struct _S0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub r#break: FixedTerminal<5usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub ignore: ignore::N,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub semicolon_char: FixedTerminal<1usize>,
+    }
+}
+
+/// ContinueStatement = 'continue' ';' ;
+pub mod continue_statement {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = Box<continue_statement::_S0>;
+    #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
+    pub struct _S0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub r#continue: FixedTerminal<8usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub ignore: ignore::N,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub semicolon_char: FixedTerminal<1usize>,
+    }
+}
+
+/// DataLocation = 'memory' | 'storage' | 'calldata' ;
+pub mod data_location {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = usize;
+}
+
 /// «DecimalNumber» = ( «DecimalInteger» | «DecimalFloat» ) [ «DecimalExponent» ] ;
 pub mod decimal_number {
     #[allow(unused_imports)]
@@ -591,6 +470,13 @@ pub mod elementary_type {
         FixedType(fixed_type::N),
         UfixedType(ufixed_type::N),
     }
+}
+
+/// EqualityComparisonOperator = '==' | '!=' ;
+pub mod equality_comparison_operator {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = FixedTerminal<2usize>;
 }
 
 /// «EscapeSequence» = '\\' ( «AsciiEscape» | «HexByteEscape» | «UnicodeEscape» ) ;
@@ -665,6 +551,48 @@ pub mod keyword {
     }
 }
 
+/// MulDivModOperator = '*' | '/' | '%' ;
+pub mod mul_div_mod_operator {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = FixedTerminal<1usize>;
+}
+
+/// OrderComparisonOperator = '<' | '>' | '<=' | '>=' ;
+pub mod order_comparison_operator {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = usize;
+}
+
+/// PositionalArgumentList = 1…*{ Expression / ',' } ;
+pub mod positional_argument_list {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = Box<positional_argument_list::_S0>;
+    #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
+    pub struct _S0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _s1s: Vec<Box<positional_argument_list::_S1>>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _s2s: Vec<Box<positional_argument_list::_S2>>,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
+    pub struct _S2 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub comma_char: FixedTerminal<1usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub ignore: ignore::N,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
+    pub struct _S1 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub expression: expression::N,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub ignore: ignore::N,
+    }
+}
+
 /// «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;
 pub mod raw_identifier {
     #[allow(unused_imports)]
@@ -677,6 +605,78 @@ pub mod raw_identifier {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _1: usize,
     }
+}
+
+/// ShiftOperator = '<<' | '>>' | '>>>' ;
+pub mod shift_operator {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = usize;
+}
+
+/// StateMutabilitySpecifier = 'pure' | 'view' | 'payable' ;
+pub mod state_mutability_specifier {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = usize;
+}
+
+/// UnaryPrefixOperator = '++' | '--' | '!' | '~' | 'delete' | '-' ;
+pub mod unary_prefix_operator {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = usize;
+}
+
+/// UnarySuffixOperator = '++' | '--' ;
+pub mod unary_suffix_operator {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = FixedTerminal<2usize>;
+}
+
+/// UncheckedBlock = 'unchecked' Block ;
+pub mod unchecked_block {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = Box<unchecked_block::_S0>;
+    #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
+    pub struct _S0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub unchecked: FixedTerminal<9usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub ignore: ignore::N,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub block: block::N,
+    }
+}
+
+/// VisibilitySpecifier = 'internal' | 'external' | 'private' | 'public' ;
+pub mod visibility_specifier {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = usize;
+}
+
+/// YulBreakStatement = 'break' ;
+pub mod yul_break_statement {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = FixedTerminal<5usize>;
+}
+
+/// YulContinueStatement = 'continue' ;
+pub mod yul_continue_statement {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = FixedTerminal<8usize>;
+}
+
+/// YulLeaveStatement = 'leave' ;
+pub mod yul_leave_statement {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = FixedTerminal<5usize>;
 }
 
 /// «DoubleQuotedAsciiStringLiteral» = '"' { 1…*{ '\u{20}'…'~' - ( '"' | '\\' ) } | «EscapeSequence» } '"' ;

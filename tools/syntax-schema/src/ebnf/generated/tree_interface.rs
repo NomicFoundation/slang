@@ -43,11 +43,135 @@ pub mod comment {
     }
 }
 
+/// «EOF» = '$' ;
+pub mod eof {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = FixedTerminal<1usize>;
+}
+
+/// «HexDigit» = '0'…'9' | 'a'…'f' | 'A'…'F' ;
+pub mod hex_digit {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = FixedTerminal<1usize>;
+}
+
+/// «IdentifierStart» = '_' | 'a'…'z' | 'A'…'Z' ;
+pub mod identifier_start {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = FixedTerminal<1usize>;
+}
+
+/// «Number» = 1…*{ '0'…'9' } ;
+pub mod number {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = usize;
+}
+
 /// «Whitespace» = 1…*{ '\u{9}' | '\u{a}' | '\u{d}' | '\u{20}' } ;
 pub mod whitespace {
     #[allow(unused_imports)]
     use super::*;
     pub type N = usize;
+}
+
+/// «IGNORE» = { «Whitespace» | «Comment» } ;
+pub mod ignore {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = Vec<Box<ignore::_C1>>;
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub enum _C1 {
+        Whitespace(whitespace::N),
+        Comment(comment::N),
+    }
+}
+
+/// «IdentifierFollow» = «IdentifierStart» | '0'…'9' ;
+pub mod identifier_follow {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = FixedTerminal<1usize>;
+}
+
+/// «StringChar» = ¬( '\'' | '\\' ) | '\\' ( '\'' | '\\' | 'u{' 1…6*{ «HexDigit» } '}' ) ;
+pub mod string_char {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = Box<string_char::_C0>;
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub enum _C0 {
+        NotQuoteOrBackslash(FixedTerminal<1usize>),
+        Escape(Box<string_char::Escape>),
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct Escape {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub backslash_char: FixedTerminal<1usize>,
+        pub quote_or_backslash_or_hex_escape: Box<string_char::QuoteOrBackslashOrHexEscape>,
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub enum QuoteOrBackslashOrHexEscape {
+        _0(FixedTerminal<1usize>),
+        _S1(Box<string_char::_S1>),
+    }
+    #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
+    pub struct _S1 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub u_open_brace: FixedTerminal<2usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _1: usize,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub close_brace_char: FixedTerminal<1usize>,
+    }
+}
+
+/// «RawIdentifier» = «IdentifierStart» { «IdentifierFollow» } ;
+pub mod raw_identifier {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = Box<raw_identifier::_S0>;
+    #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
+    pub struct _S0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _0: FixedTerminal<1usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _1: usize,
+    }
+}
+
+/// «SingleCharString» = '\'' «StringChar» '\'' ;
+pub mod single_char_string {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = Box<single_char_string::_S0>;
+    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
+    pub struct _S0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub quote_char_0: FixedTerminal<1usize>,
+        pub string_char: string_char::N,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub quote_char_1: FixedTerminal<1usize>,
+    }
+}
+
+/// «String» = '\'' { «StringChar» } '\'' ;
+pub mod string {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = Box<string::_S0>;
+    #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
+    pub struct _S0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub quote_char_0: FixedTerminal<1usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub string_chars: Vec<string_char::N>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub quote_char_1: FixedTerminal<1usize>,
+    }
 }
 
 /// grouped = '(' expression ')' ;
@@ -87,101 +211,6 @@ pub mod optional {
         pub ignore_1: ignore::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_bracket_char: FixedTerminal<1usize>,
-    }
-}
-
-/// repetitionSeparator = '/' expression ;
-pub mod repetition_separator {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = Box<repetition_separator::_S0>;
-    #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
-    pub struct _S0 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub slash_char: FixedTerminal<1usize>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore: ignore::N,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub expression: expression::N,
-    }
-}
-
-/// «IGNORE» = { «Whitespace» | «Comment» } ;
-pub mod ignore {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = Vec<Box<ignore::_C1>>;
-    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub enum _C1 {
-        Whitespace(whitespace::N),
-        Comment(comment::N),
-    }
-}
-
-/// «EOF» = '$' ;
-pub mod eof {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = FixedTerminal<1usize>;
-}
-
-/// «HexDigit» = '0'…'9' | 'a'…'f' | 'A'…'F' ;
-pub mod hex_digit {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = FixedTerminal<1usize>;
-}
-
-/// «IdentifierStart» = '_' | 'a'…'z' | 'A'…'Z' ;
-pub mod identifier_start {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = FixedTerminal<1usize>;
-}
-
-/// «Number» = 1…*{ '0'…'9' } ;
-pub mod number {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = usize;
-}
-
-/// «IdentifierFollow» = «IdentifierStart» | '0'…'9' ;
-pub mod identifier_follow {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = FixedTerminal<1usize>;
-}
-
-/// «StringChar» = ¬( '\'' | '\\' ) | '\\' ( '\'' | '\\' | 'u{' 1…6*{ «HexDigit» } '}' ) ;
-pub mod string_char {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = Box<string_char::_C0>;
-    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub enum _C0 {
-        NotQuoteOrBackslash(FixedTerminal<1usize>),
-        Escape(Box<string_char::Escape>),
-    }
-    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub struct Escape {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub backslash_char: FixedTerminal<1usize>,
-        pub quote_or_backslash_or_hex_escape: Box<string_char::QuoteOrBackslashOrHexEscape>,
-    }
-    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub enum QuoteOrBackslashOrHexEscape {
-        _0(FixedTerminal<1usize>),
-        _S1(Box<string_char::_S1>),
-    }
-    #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
-    pub struct _S1 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub u_open_brace: FixedTerminal<2usize>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _1: usize,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub close_brace_char: FixedTerminal<1usize>,
     }
 }
 
@@ -232,76 +261,19 @@ pub mod repetition_prefix {
     }
 }
 
-/// «RawIdentifier» = «IdentifierStart» { «IdentifierFollow» } ;
-pub mod raw_identifier {
+/// repetitionSeparator = '/' expression ;
+pub mod repetition_separator {
     #[allow(unused_imports)]
     use super::*;
-    pub type N = Box<raw_identifier::_S0>;
+    pub type N = Box<repetition_separator::_S0>;
     #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
     pub struct _S0 {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _0: FixedTerminal<1usize>,
+        pub slash_char: FixedTerminal<1usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _1: usize,
-    }
-}
-
-/// «SingleCharString» = '\'' «StringChar» '\'' ;
-pub mod single_char_string {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = Box<single_char_string::_S0>;
-    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub struct _S0 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub quote_char_0: FixedTerminal<1usize>,
-        pub string_char: string_char::N,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub quote_char_1: FixedTerminal<1usize>,
-    }
-}
-
-/// «String» = '\'' { «StringChar» } '\'' ;
-pub mod string {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = Box<string::_S0>;
-    #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
-    pub struct _S0 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub quote_char_0: FixedTerminal<1usize>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub string_chars: Vec<string_char::N>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub quote_char_1: FixedTerminal<1usize>,
-    }
-}
-
-/// repeated = [ repetitionPrefix ] '{' expression [ repetitionSeparator ] '}' ;
-pub mod repeated {
-    #[allow(unused_imports)]
-    use super::*;
-    pub type N = Box<repeated::_S0>;
-    #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
-    pub struct _S0 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub repetition_prefix: Option<repetition_prefix::N>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore_0: ignore::N,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub open_brace_char: FixedTerminal<1usize>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore_1: ignore::N,
+        pub ignore: ignore::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub expression: expression::N,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore_2: ignore::N,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub repetition_separator: Option<repetition_separator::N>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore_3: ignore::N,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub close_brace_char: FixedTerminal<1usize>,
     }
 }
 
@@ -341,6 +313,34 @@ pub mod char_range {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub ignore_1: ignore::N,
         pub single_char_string_1: single_char_string::N,
+    }
+}
+
+/// repeated = [ repetitionPrefix ] '{' expression [ repetitionSeparator ] '}' ;
+pub mod repeated {
+    #[allow(unused_imports)]
+    use super::*;
+    pub type N = Box<repeated::_S0>;
+    #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
+    pub struct _S0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub repetition_prefix: Option<repetition_prefix::N>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub ignore_0: ignore::N,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub open_brace_char: FixedTerminal<1usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub ignore_1: ignore::N,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub expression: expression::N,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub ignore_2: ignore::N,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub repetition_separator: Option<repetition_separator::N>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub ignore_3: ignore::N,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub close_brace_char: FixedTerminal<1usize>,
     }
 }
 

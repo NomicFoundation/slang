@@ -78,56 +78,6 @@ impl Parsers {
             .map(|v| Box::new(comment::_S0::new(v)))
             .boxed();
 
-        // «Whitespace» = 1…*{ '\u{9}' | '\u{a}' | '\u{d}' | '\u{20}' } ;
-        let whitespace_parser = filter(|&c: &char| c == '\t' || c == '\n' || c == '\r' || c == ' ')
-            .map(|_| FixedTerminal::<1>())
-            .repeated()
-            .at_least(1usize)
-            .map(|v| v.len())
-            .boxed();
-
-        // grouped = '(' expression ')' ;
-        let grouped_parser = just('(')
-            .map(|_| FixedTerminal::<1>())
-            .then(ignore_parser.clone())
-            .then(expression_parser.clone())
-            .then(ignore_parser.clone())
-            .then(just(')').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(grouped::_S0::new(v)))
-            .boxed();
-
-        // optional = '[' expression ']' ;
-        let optional_parser = just('[')
-            .map(|_| FixedTerminal::<1>())
-            .then(ignore_parser.clone())
-            .then(expression_parser.clone())
-            .then(ignore_parser.clone())
-            .then(just(']').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(optional::_S0::new(v)))
-            .boxed();
-
-        // repetitionSeparator = '/' expression ;
-        let repetition_separator_parser = just('/')
-            .map(|_| FixedTerminal::<1>())
-            .then(ignore_parser.clone())
-            .then(expression_parser.clone())
-            .map(|v| Box::new(repetition_separator::_S0::new(v)))
-            .boxed();
-
-        // «IGNORE» = { «Whitespace» | «Comment» } ;
-        ignore_parser.define(
-            choice((
-                whitespace_parser
-                    .clone()
-                    .map(|v| Box::new(ignore::_C1::Whitespace(v))),
-                comment_parser
-                    .clone()
-                    .map(|v| Box::new(ignore::_C1::Comment(v))),
-            ))
-            .repeated()
-            .boxed(),
-        );
-
         // «EOF» = '$' ;
         let eof_parser = just('$').map(|_| FixedTerminal::<1>()).boxed();
 
@@ -151,6 +101,28 @@ impl Parsers {
             .at_least(1usize)
             .map(|v| v.len())
             .boxed();
+
+        // «Whitespace» = 1…*{ '\u{9}' | '\u{a}' | '\u{d}' | '\u{20}' } ;
+        let whitespace_parser = filter(|&c: &char| c == '\t' || c == '\n' || c == '\r' || c == ' ')
+            .map(|_| FixedTerminal::<1>())
+            .repeated()
+            .at_least(1usize)
+            .map(|v| v.len())
+            .boxed();
+
+        // «IGNORE» = { «Whitespace» | «Comment» } ;
+        ignore_parser.define(
+            choice((
+                whitespace_parser
+                    .clone()
+                    .map(|v| Box::new(ignore::_C1::Whitespace(v))),
+                comment_parser
+                    .clone()
+                    .map(|v| Box::new(ignore::_C1::Comment(v))),
+            ))
+            .repeated()
+            .boxed(),
+        );
 
         // «IdentifierFollow» = «IdentifierStart» | '0'…'9' ;
         let identifier_follow_parser = filter(|&c: &char| {
@@ -194,33 +166,6 @@ impl Parsers {
         ))
         .boxed();
 
-        // repetitionPrefix = ( «Number» [ '…' [ «Number» ] ] | '…' «Number» ) '*' ;
-        let repetition_prefix_parser = choice((
-            number_parser
-                .clone()
-                .then(ignore_parser.clone())
-                .then(
-                    just('…')
-                        .map(|_| FixedTerminal::<1>())
-                        .then(ignore_parser.clone())
-                        .then(number_parser.clone().or_not())
-                        .map(|v| Box::new(repetition_prefix::_S4::new(v)))
-                        .or_not(),
-                )
-                .map(|v| Box::new(repetition_prefix::_S2::new(v)))
-                .map(|v| Box::new(repetition_prefix::_C1::_S2(v))),
-            just('…')
-                .map(|_| FixedTerminal::<1>())
-                .then(ignore_parser.clone())
-                .then(number_parser.clone())
-                .map(|v| Box::new(repetition_prefix::_S6::new(v)))
-                .map(|v| Box::new(repetition_prefix::_C1::_S6(v))),
-        ))
-        .then(ignore_parser.clone())
-        .then(just('*').map(|_| FixedTerminal::<1>()))
-        .map(|v| Box::new(repetition_prefix::_S0::new(v)))
-        .boxed();
-
         // «RawIdentifier» = «IdentifierStart» { «IdentifierFollow» } ;
         let raw_identifier_parser =
             filter(|&c: &char| c == '_' || ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z'))
@@ -255,19 +200,59 @@ impl Parsers {
             .map(|v| Box::new(string::_S0::new(v)))
             .boxed();
 
-        // repeated = [ repetitionPrefix ] '{' expression [ repetitionSeparator ] '}' ;
-        let repeated_parser = repetition_prefix_parser
-            .clone()
-            .or_not()
-            .then(ignore_parser.clone())
-            .then(just('{').map(|_| FixedTerminal::<1>()))
+        // grouped = '(' expression ')' ;
+        let grouped_parser = just('(')
+            .map(|_| FixedTerminal::<1>())
             .then(ignore_parser.clone())
             .then(expression_parser.clone())
             .then(ignore_parser.clone())
-            .then(repetition_separator_parser.clone().or_not())
+            .then(just(')').map(|_| FixedTerminal::<1>()))
+            .map(|v| Box::new(grouped::_S0::new(v)))
+            .boxed();
+
+        // optional = '[' expression ']' ;
+        let optional_parser = just('[')
+            .map(|_| FixedTerminal::<1>())
             .then(ignore_parser.clone())
-            .then(just('}').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(repeated::_S0::new(v)))
+            .then(expression_parser.clone())
+            .then(ignore_parser.clone())
+            .then(just(']').map(|_| FixedTerminal::<1>()))
+            .map(|v| Box::new(optional::_S0::new(v)))
+            .boxed();
+
+        // repetitionPrefix = ( «Number» [ '…' [ «Number» ] ] | '…' «Number» ) '*' ;
+        let repetition_prefix_parser = choice((
+            number_parser
+                .clone()
+                .then(ignore_parser.clone())
+                .then(
+                    just('…')
+                        .map(|_| FixedTerminal::<1>())
+                        .then(ignore_parser.clone())
+                        .then(number_parser.clone().or_not())
+                        .map(|v| Box::new(repetition_prefix::_S4::new(v)))
+                        .or_not(),
+                )
+                .map(|v| Box::new(repetition_prefix::_S2::new(v)))
+                .map(|v| Box::new(repetition_prefix::_C1::_S2(v))),
+            just('…')
+                .map(|_| FixedTerminal::<1>())
+                .then(ignore_parser.clone())
+                .then(number_parser.clone())
+                .map(|v| Box::new(repetition_prefix::_S6::new(v)))
+                .map(|v| Box::new(repetition_prefix::_C1::_S6(v))),
+        ))
+        .then(ignore_parser.clone())
+        .then(just('*').map(|_| FixedTerminal::<1>()))
+        .map(|v| Box::new(repetition_prefix::_S0::new(v)))
+        .boxed();
+
+        // repetitionSeparator = '/' expression ;
+        let repetition_separator_parser = just('/')
+            .map(|_| FixedTerminal::<1>())
+            .then(ignore_parser.clone())
+            .then(expression_parser.clone())
+            .map(|v| Box::new(repetition_separator::_S0::new(v)))
             .boxed();
 
         // «Identifier» = '«' «RawIdentifier» '»' | «RawIdentifier» ;
@@ -292,6 +277,21 @@ impl Parsers {
             .then(ignore_parser.clone())
             .then(single_char_string_parser.clone())
             .map(|v| Box::new(char_range::_S0::new(v)))
+            .boxed();
+
+        // repeated = [ repetitionPrefix ] '{' expression [ repetitionSeparator ] '}' ;
+        let repeated_parser = repetition_prefix_parser
+            .clone()
+            .or_not()
+            .then(ignore_parser.clone())
+            .then(just('{').map(|_| FixedTerminal::<1>()))
+            .then(ignore_parser.clone())
+            .then(expression_parser.clone())
+            .then(ignore_parser.clone())
+            .then(repetition_separator_parser.clone().or_not())
+            .then(ignore_parser.clone())
+            .then(just('}').map(|_| FixedTerminal::<1>()))
+            .map(|v| Box::new(repeated::_S0::new(v)))
             .boxed();
 
         // productionReference = «Identifier» ;
@@ -411,24 +411,24 @@ impl Parsers {
 
         Self {
             comment: comment_parser.boxed(),
-            whitespace: whitespace_parser.boxed(),
-            grouped: grouped_parser.boxed(),
-            optional: optional_parser.boxed(),
-            repetition_separator: repetition_separator_parser.boxed(),
-            ignore: ignore_parser.boxed(),
             eof: eof_parser.boxed(),
             hex_digit: hex_digit_parser.boxed(),
             identifier_start: identifier_start_parser.boxed(),
             number: number_parser.boxed(),
+            whitespace: whitespace_parser.boxed(),
+            ignore: ignore_parser.boxed(),
             identifier_follow: identifier_follow_parser.boxed(),
             string_char: string_char_parser.boxed(),
-            repetition_prefix: repetition_prefix_parser.boxed(),
             raw_identifier: raw_identifier_parser.boxed(),
             single_char_string: single_char_string_parser.boxed(),
             string: string_parser.boxed(),
-            repeated: repeated_parser.boxed(),
+            grouped: grouped_parser.boxed(),
+            optional: optional_parser.boxed(),
+            repetition_prefix: repetition_prefix_parser.boxed(),
+            repetition_separator: repetition_separator_parser.boxed(),
             identifier: identifier_parser.boxed(),
             char_range: char_range_parser.boxed(),
+            repeated: repeated_parser.boxed(),
             production_reference: production_reference_parser.boxed(),
             primary: primary_parser.boxed(),
             negation: negation_parser.boxed(),

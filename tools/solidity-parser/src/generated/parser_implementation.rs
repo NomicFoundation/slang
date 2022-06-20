@@ -55,38 +55,26 @@ impl Parsers {
 
         let mut yul_expression_parser = Recursive::declare();
 
-        // AddSubOperator = '+' | '-' ;
-        let add_sub_operator_parser = filter(|&c: &char| c == '+' || c == '-')
-            .map(|_| FixedTerminal::<1>())
-            .boxed();
-
-        // AssignmentOperator = '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ;
-        let assignment_operator_parser = choice::<_, ErrorType>((
-            terminal("%=").map(|_| 2usize),
-            terminal("&=").map(|_| 2usize),
-            terminal("*=").map(|_| 2usize),
-            terminal("+=").map(|_| 2usize),
-            terminal("-=").map(|_| 2usize),
-            terminal("/=").map(|_| 2usize),
-            terminal("<<=").map(|_| 3usize),
-            terminal("=").map(|_| 1usize),
-            terminal(">>").ignore_then(choice((
-                terminal("=").map(|_| 3usize),
-                terminal(">=").map(|_| 4usize),
-            ))),
-            terminal("^=").map(|_| 2usize),
-            terminal("|=").map(|_| 2usize),
-        ))
+        // «AsciiEscape» = 'n' | 'r' | 't' | '\'' | '"' | '\\' | '\u{a}' | '\u{d}' ;
+        let ascii_escape_parser = filter(|&c: &char| {
+            c == 'n'
+                || c == 'r'
+                || c == 't'
+                || c == '\''
+                || c == '"'
+                || c == '\\'
+                || c == '\n'
+                || c == '\r'
+        })
+        .map(|_| FixedTerminal::<1>())
         .boxed();
 
-        // BreakStatement = 'break' ';' ;
-        let break_statement_parser = terminal("break")
-            .ignored()
-            .map(|_| FixedTerminal::<5usize>())
-            .then(ignore_parser.clone())
-            .then(just(';').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(break_statement::_S0::new(v)))
-            .boxed();
+        // «BooleanLiteral» = 'true' | 'false' ;
+        let boolean_literal_parser = choice::<_, ErrorType>((
+            terminal("false").map(|_| 5usize),
+            terminal("true").map(|_| 4usize),
+        ))
+        .boxed();
 
         // «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
         let comment_parser = terminal("/*")
@@ -119,205 +107,6 @@ impl Parsers {
             .then(terminal("*/").ignored().map(|_| FixedTerminal::<2usize>()))
             .map(|v| Box::new(comment::_S0::new(v)))
             .boxed();
-
-        // ContinueStatement = 'continue' ';' ;
-        let continue_statement_parser = terminal("continue")
-            .ignored()
-            .map(|_| FixedTerminal::<8usize>())
-            .then(ignore_parser.clone())
-            .then(just(';').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(continue_statement::_S0::new(v)))
-            .boxed();
-
-        // DataLocation = 'memory' | 'storage' | 'calldata' ;
-        let data_location_parser = choice::<_, ErrorType>((
-            terminal("calldata").map(|_| 8usize),
-            terminal("memory").map(|_| 6usize),
-            terminal("storage").map(|_| 7usize),
-        ))
-        .boxed();
-
-        // EqualityComparisonOperator = '==' | '!=' ;
-        let equality_comparison_operator_parser =
-            choice::<_, ErrorType>((terminal("!=").ignored(), terminal("==").ignored()))
-                .map(|_| FixedTerminal::<2usize>())
-                .boxed();
-
-        // «LineComment» = '//' { ¬( '\u{a}' | '\u{d}' ) } ;
-        let line_comment_parser = terminal("//")
-            .ignored()
-            .map(|_| FixedTerminal::<2usize>())
-            .then(
-                filter(|&c: &char| c != '\n' && c != '\r')
-                    .map(|_| FixedTerminal::<1>())
-                    .repeated()
-                    .map(|v| v.len()),
-            )
-            .map(|v| Box::new(line_comment::_S0::new(v)))
-            .boxed();
-
-        // MulDivModOperator = '*' | '/' | '%' ;
-        let mul_div_mod_operator_parser = filter(|&c: &char| c == '*' || c == '/' || c == '%')
-            .map(|_| FixedTerminal::<1>())
-            .boxed();
-
-        // OrderComparisonOperator = '<' | '>' | '<=' | '>=' ;
-        let order_comparison_operator_parser = choice::<_, ErrorType>((
-            terminal("<").ignore_then(choice((
-                terminal("=").map(|_| 2usize),
-                empty().map(|_| 1usize),
-            ))),
-            terminal(">").ignore_then(choice((
-                terminal("=").map(|_| 2usize),
-                empty().map(|_| 1usize),
-            ))),
-        ))
-        .boxed();
-
-        // PositionalArgumentList = 1…*{ Expression / ',' } ;
-        let positional_argument_list_parser = expression_parser
-            .clone()
-            .then(ignore_parser.clone())
-            .map(|v| Box::new(positional_argument_list::_S1::new(v)))
-            .then(
-                just(',')
-                    .map(|_| FixedTerminal::<1>())
-                    .then(ignore_parser.clone())
-                    .map(|v| Box::new(positional_argument_list::_S2::new(v)))
-                    .then(
-                        expression_parser
-                            .clone()
-                            .then(ignore_parser.clone())
-                            .map(|v| Box::new(positional_argument_list::_S1::new(v))),
-                    )
-                    .repeated(),
-            )
-            .map(repetition_mapper)
-            .map(|v| Box::new(positional_argument_list::_S0::new(v)))
-            .boxed();
-
-        // ShiftOperator = '<<' | '>>' | '>>>' ;
-        let shift_operator_parser = choice::<_, ErrorType>((
-            terminal("<<").map(|_| 2usize),
-            terminal(">>").ignore_then(choice((
-                terminal(">").map(|_| 3usize),
-                empty().map(|_| 2usize),
-            ))),
-        ))
-        .boxed();
-
-        // StateMutabilitySpecifier = 'pure' | 'view' | 'payable' ;
-        let state_mutability_specifier_parser = choice::<_, ErrorType>((
-            terminal("p").ignore_then(choice((
-                terminal("ayable").map(|_| 7usize),
-                terminal("ure").map(|_| 4usize),
-            ))),
-            terminal("view").map(|_| 4usize),
-        ))
-        .boxed();
-
-        // UnaryPrefixOperator = '++' | '--' | '!' | '~' | 'delete' | '-' ;
-        let unary_prefix_operator_parser = choice::<_, ErrorType>((
-            terminal("!").map(|_| 1usize),
-            terminal("++").map(|_| 2usize),
-            terminal("-").ignore_then(choice((
-                terminal("-").map(|_| 2usize),
-                empty().map(|_| 1usize),
-            ))),
-            terminal("delete").map(|_| 6usize),
-            terminal("~").map(|_| 1usize),
-        ))
-        .boxed();
-
-        // UnarySuffixOperator = '++' | '--' ;
-        let unary_suffix_operator_parser =
-            choice::<_, ErrorType>((terminal("++").ignored(), terminal("--").ignored()))
-                .map(|_| FixedTerminal::<2usize>())
-                .boxed();
-
-        // UncheckedBlock = 'unchecked' Block ;
-        let unchecked_block_parser = terminal("unchecked")
-            .ignored()
-            .map(|_| FixedTerminal::<9usize>())
-            .then(ignore_parser.clone())
-            .then(block_parser.clone())
-            .map(|v| Box::new(unchecked_block::_S0::new(v)))
-            .boxed();
-
-        // VisibilitySpecifier = 'internal' | 'external' | 'private' | 'public' ;
-        let visibility_specifier_parser = choice::<_, ErrorType>((
-            terminal("external").map(|_| 8usize),
-            terminal("internal").map(|_| 8usize),
-            terminal("p").ignore_then(choice((
-                terminal("rivate").map(|_| 7usize),
-                terminal("ublic").map(|_| 6usize),
-            ))),
-        ))
-        .boxed();
-
-        // «Whitespace» = 1…*{ '\u{20}' | '\u{9}' | '\u{d}' | '\u{a}' } ;
-        let whitespace_parser = filter(|&c: &char| c == ' ' || c == '\t' || c == '\r' || c == '\n')
-            .map(|_| FixedTerminal::<1>())
-            .repeated()
-            .at_least(1usize)
-            .map(|v| v.len())
-            .boxed();
-
-        // YulBreakStatement = 'break' ;
-        let yul_break_statement_parser = terminal("break")
-            .ignored()
-            .map(|_| FixedTerminal::<5usize>())
-            .boxed();
-
-        // YulContinueStatement = 'continue' ;
-        let yul_continue_statement_parser = terminal("continue")
-            .ignored()
-            .map(|_| FixedTerminal::<8usize>())
-            .boxed();
-
-        // YulLeaveStatement = 'leave' ;
-        let yul_leave_statement_parser = terminal("leave")
-            .ignored()
-            .map(|_| FixedTerminal::<5usize>())
-            .boxed();
-
-        // «IGNORE» = { «Whitespace» | «Comment» | «LineComment» } ;
-        ignore_parser.define(
-            choice((
-                whitespace_parser
-                    .clone()
-                    .map(|v| Box::new(ignore::_C1::Whitespace(v))),
-                comment_parser
-                    .clone()
-                    .map(|v| Box::new(ignore::_C1::Comment(v))),
-                line_comment_parser
-                    .clone()
-                    .map(|v| Box::new(ignore::_C1::LineComment(v))),
-            ))
-            .repeated()
-            .boxed(),
-        );
-
-        // «AsciiEscape» = 'n' | 'r' | 't' | '\'' | '"' | '\\' | '\u{a}' | '\u{d}' ;
-        let ascii_escape_parser = filter(|&c: &char| {
-            c == 'n'
-                || c == 'r'
-                || c == 't'
-                || c == '\''
-                || c == '"'
-                || c == '\\'
-                || c == '\n'
-                || c == '\r'
-        })
-        .map(|_| FixedTerminal::<1>())
-        .boxed();
-
-        // «BooleanLiteral» = 'true' | 'false' ;
-        let boolean_literal_parser = choice::<_, ErrorType>((
-            terminal("false").map(|_| 5usize),
-            terminal("true").map(|_| 4usize),
-        ))
-        .boxed();
 
         // «DecimalInteger» = 1…*{ '0'…'9' / [ '_' ] } ;
         let decimal_integer_parser = filter(|&c: &char| ('0' <= c && c <= '9'))
@@ -420,6 +209,19 @@ impl Parsers {
         })
         .map(|_| FixedTerminal::<1>())
         .boxed();
+
+        // «LineComment» = '//' { ¬( '\u{a}' | '\u{d}' ) } ;
+        let line_comment_parser = terminal("//")
+            .ignored()
+            .map(|_| FixedTerminal::<2usize>())
+            .then(
+                filter(|&c: &char| c != '\n' && c != '\r')
+                    .map(|_| FixedTerminal::<1>())
+                    .repeated()
+                    .map(|v| v.len()),
+            )
+            .map(|v| Box::new(line_comment::_S0::new(v)))
+            .boxed();
 
         // «NumberUnit» = 'wei' | 'gwei' | 'ether' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'years' ;
         let number_unit_parser = choice::<_, ErrorType>((
@@ -565,6 +367,14 @@ impl Parsers {
                 terminal("96").map(|_| 2usize),
             )))
             .map(|v| Box::new(signed_integer_type::_S0::new(v)))
+            .boxed();
+
+        // «Whitespace» = 1…*{ '\u{20}' | '\u{9}' | '\u{d}' | '\u{a}' } ;
+        let whitespace_parser = filter(|&c: &char| c == ' ' || c == '\t' || c == '\r' || c == '\n')
+            .map(|_| FixedTerminal::<1>())
+            .repeated()
+            .at_least(1usize)
+            .map(|v| v.len())
             .boxed();
 
         // «YulDecimalNumberLiteral» = '0' | '1'…'9' { '0'…'9' } ;
@@ -827,6 +637,23 @@ impl Parsers {
             .map(|v| Box::new(hex_number::_S0::new(v)))
             .boxed();
 
+        // «IGNORE» = { «Whitespace» | «Comment» | «LineComment» } ;
+        ignore_parser.define(
+            choice((
+                whitespace_parser
+                    .clone()
+                    .map(|v| Box::new(ignore::_C1::Whitespace(v))),
+                comment_parser
+                    .clone()
+                    .map(|v| Box::new(ignore::_C1::Comment(v))),
+                line_comment_parser
+                    .clone()
+                    .map(|v| Box::new(ignore::_C1::LineComment(v))),
+            ))
+            .repeated()
+            .boxed(),
+        );
+
         // «IdentifierPart» = «IdentifierStart» | '0'…'9' ;
         let identifier_part_parser = filter(|&c: &char| {
             c == '_'
@@ -1061,6 +888,56 @@ impl Parsers {
         ))
         .boxed();
 
+        // AddSubOperator = '+' | '-' ;
+        let add_sub_operator_parser = filter(|&c: &char| c == '+' || c == '-')
+            .map(|_| FixedTerminal::<1>())
+            .boxed();
+
+        // AssignmentOperator = '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ;
+        let assignment_operator_parser = choice::<_, ErrorType>((
+            terminal("%=").map(|_| 2usize),
+            terminal("&=").map(|_| 2usize),
+            terminal("*=").map(|_| 2usize),
+            terminal("+=").map(|_| 2usize),
+            terminal("-=").map(|_| 2usize),
+            terminal("/=").map(|_| 2usize),
+            terminal("<<=").map(|_| 3usize),
+            terminal("=").map(|_| 1usize),
+            terminal(">>").ignore_then(choice((
+                terminal("=").map(|_| 3usize),
+                terminal(">=").map(|_| 4usize),
+            ))),
+            terminal("^=").map(|_| 2usize),
+            terminal("|=").map(|_| 2usize),
+        ))
+        .boxed();
+
+        // BreakStatement = 'break' ';' ;
+        let break_statement_parser = terminal("break")
+            .ignored()
+            .map(|_| FixedTerminal::<5usize>())
+            .then(ignore_parser.clone())
+            .then(just(';').map(|_| FixedTerminal::<1>()))
+            .map(|v| Box::new(break_statement::_S0::new(v)))
+            .boxed();
+
+        // ContinueStatement = 'continue' ';' ;
+        let continue_statement_parser = terminal("continue")
+            .ignored()
+            .map(|_| FixedTerminal::<8usize>())
+            .then(ignore_parser.clone())
+            .then(just(';').map(|_| FixedTerminal::<1>()))
+            .map(|v| Box::new(continue_statement::_S0::new(v)))
+            .boxed();
+
+        // DataLocation = 'memory' | 'storage' | 'calldata' ;
+        let data_location_parser = choice::<_, ErrorType>((
+            terminal("calldata").map(|_| 8usize),
+            terminal("memory").map(|_| 6usize),
+            terminal("storage").map(|_| 7usize),
+        ))
+        .boxed();
+
         // «DecimalNumber» = ( «DecimalInteger» | «DecimalFloat» ) [ «DecimalExponent» ] ;
         let decimal_number_parser = choice((
             decimal_integer_parser
@@ -1101,6 +978,12 @@ impl Parsers {
                 .map(|v| Box::new(elementary_type::_C0::UfixedType(v))),
         ))
         .boxed();
+
+        // EqualityComparisonOperator = '==' | '!=' ;
+        let equality_comparison_operator_parser =
+            choice::<_, ErrorType>((terminal("!=").ignored(), terminal("==").ignored()))
+                .map(|_| FixedTerminal::<2usize>())
+                .boxed();
 
         // «EscapeSequence» = '\\' ( «AsciiEscape» | «HexByteEscape» | «UnicodeEscape» ) ;
         let escape_sequence_parser = just('\\')
@@ -1293,6 +1176,46 @@ impl Parsers {
         ))
         .boxed();
 
+        // MulDivModOperator = '*' | '/' | '%' ;
+        let mul_div_mod_operator_parser = filter(|&c: &char| c == '*' || c == '/' || c == '%')
+            .map(|_| FixedTerminal::<1>())
+            .boxed();
+
+        // OrderComparisonOperator = '<' | '>' | '<=' | '>=' ;
+        let order_comparison_operator_parser = choice::<_, ErrorType>((
+            terminal("<").ignore_then(choice((
+                terminal("=").map(|_| 2usize),
+                empty().map(|_| 1usize),
+            ))),
+            terminal(">").ignore_then(choice((
+                terminal("=").map(|_| 2usize),
+                empty().map(|_| 1usize),
+            ))),
+        ))
+        .boxed();
+
+        // PositionalArgumentList = 1…*{ Expression / ',' } ;
+        let positional_argument_list_parser = expression_parser
+            .clone()
+            .then(ignore_parser.clone())
+            .map(|v| Box::new(positional_argument_list::_S1::new(v)))
+            .then(
+                just(',')
+                    .map(|_| FixedTerminal::<1>())
+                    .then(ignore_parser.clone())
+                    .map(|v| Box::new(positional_argument_list::_S2::new(v)))
+                    .then(
+                        expression_parser
+                            .clone()
+                            .then(ignore_parser.clone())
+                            .map(|v| Box::new(positional_argument_list::_S1::new(v))),
+                    )
+                    .repeated(),
+            )
+            .map(repetition_mapper)
+            .map(|v| Box::new(positional_argument_list::_S0::new(v)))
+            .boxed();
+
         // «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;
         let raw_identifier_parser = filter(|&c: &char| {
             c == '_' || c == '$' || ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z')
@@ -1312,6 +1235,83 @@ impl Parsers {
         )
         .map(|v| Box::new(raw_identifier::_S0::new(v)))
         .boxed();
+
+        // ShiftOperator = '<<' | '>>' | '>>>' ;
+        let shift_operator_parser = choice::<_, ErrorType>((
+            terminal("<<").map(|_| 2usize),
+            terminal(">>").ignore_then(choice((
+                terminal(">").map(|_| 3usize),
+                empty().map(|_| 2usize),
+            ))),
+        ))
+        .boxed();
+
+        // StateMutabilitySpecifier = 'pure' | 'view' | 'payable' ;
+        let state_mutability_specifier_parser = choice::<_, ErrorType>((
+            terminal("p").ignore_then(choice((
+                terminal("ayable").map(|_| 7usize),
+                terminal("ure").map(|_| 4usize),
+            ))),
+            terminal("view").map(|_| 4usize),
+        ))
+        .boxed();
+
+        // UnaryPrefixOperator = '++' | '--' | '!' | '~' | 'delete' | '-' ;
+        let unary_prefix_operator_parser = choice::<_, ErrorType>((
+            terminal("!").map(|_| 1usize),
+            terminal("++").map(|_| 2usize),
+            terminal("-").ignore_then(choice((
+                terminal("-").map(|_| 2usize),
+                empty().map(|_| 1usize),
+            ))),
+            terminal("delete").map(|_| 6usize),
+            terminal("~").map(|_| 1usize),
+        ))
+        .boxed();
+
+        // UnarySuffixOperator = '++' | '--' ;
+        let unary_suffix_operator_parser =
+            choice::<_, ErrorType>((terminal("++").ignored(), terminal("--").ignored()))
+                .map(|_| FixedTerminal::<2usize>())
+                .boxed();
+
+        // UncheckedBlock = 'unchecked' Block ;
+        let unchecked_block_parser = terminal("unchecked")
+            .ignored()
+            .map(|_| FixedTerminal::<9usize>())
+            .then(ignore_parser.clone())
+            .then(block_parser.clone())
+            .map(|v| Box::new(unchecked_block::_S0::new(v)))
+            .boxed();
+
+        // VisibilitySpecifier = 'internal' | 'external' | 'private' | 'public' ;
+        let visibility_specifier_parser = choice::<_, ErrorType>((
+            terminal("external").map(|_| 8usize),
+            terminal("internal").map(|_| 8usize),
+            terminal("p").ignore_then(choice((
+                terminal("rivate").map(|_| 7usize),
+                terminal("ublic").map(|_| 6usize),
+            ))),
+        ))
+        .boxed();
+
+        // YulBreakStatement = 'break' ;
+        let yul_break_statement_parser = terminal("break")
+            .ignored()
+            .map(|_| FixedTerminal::<5usize>())
+            .boxed();
+
+        // YulContinueStatement = 'continue' ;
+        let yul_continue_statement_parser = terminal("continue")
+            .ignored()
+            .map(|_| FixedTerminal::<8usize>())
+            .boxed();
+
+        // YulLeaveStatement = 'leave' ;
+        let yul_leave_statement_parser = terminal("leave")
+            .ignored()
+            .map(|_| FixedTerminal::<5usize>())
+            .boxed();
 
         // «DoubleQuotedAsciiStringLiteral» = '"' { 1…*{ '\u{20}'…'~' - ( '"' | '\\' ) } | «EscapeSequence» } '"' ;
         let double_quoted_ascii_string_literal_parser = just('"')
@@ -4540,39 +4540,20 @@ impl Parsers {
             .boxed();
 
         Self {
-            add_sub_operator: add_sub_operator_parser.boxed(),
-            assignment_operator: assignment_operator_parser.boxed(),
-            break_statement: break_statement_parser.boxed(),
-            comment: comment_parser.boxed(),
-            continue_statement: continue_statement_parser.boxed(),
-            data_location: data_location_parser.boxed(),
-            equality_comparison_operator: equality_comparison_operator_parser.boxed(),
-            line_comment: line_comment_parser.boxed(),
-            mul_div_mod_operator: mul_div_mod_operator_parser.boxed(),
-            order_comparison_operator: order_comparison_operator_parser.boxed(),
-            positional_argument_list: positional_argument_list_parser.boxed(),
-            shift_operator: shift_operator_parser.boxed(),
-            state_mutability_specifier: state_mutability_specifier_parser.boxed(),
-            unary_prefix_operator: unary_prefix_operator_parser.boxed(),
-            unary_suffix_operator: unary_suffix_operator_parser.boxed(),
-            unchecked_block: unchecked_block_parser.boxed(),
-            visibility_specifier: visibility_specifier_parser.boxed(),
-            whitespace: whitespace_parser.boxed(),
-            yul_break_statement: yul_break_statement_parser.boxed(),
-            yul_continue_statement: yul_continue_statement_parser.boxed(),
-            yul_leave_statement: yul_leave_statement_parser.boxed(),
-            ignore: ignore_parser.boxed(),
             ascii_escape: ascii_escape_parser.boxed(),
             boolean_literal: boolean_literal_parser.boxed(),
+            comment: comment_parser.boxed(),
             decimal_integer: decimal_integer_parser.boxed(),
             fixed_bytes_type: fixed_bytes_type_parser.boxed(),
             fixed_type: fixed_type_parser.boxed(),
             hex_character: hex_character_parser.boxed(),
             identifier_start: identifier_start_parser.boxed(),
+            line_comment: line_comment_parser.boxed(),
             number_unit: number_unit_parser.boxed(),
             pragma_directive: pragma_directive_parser.boxed(),
             reserved_keyword: reserved_keyword_parser.boxed(),
             signed_integer_type: signed_integer_type_parser.boxed(),
+            whitespace: whitespace_parser.boxed(),
             yul_decimal_number_literal: yul_decimal_number_literal_parser.boxed(),
             yul_evm_builtin_function_name: yul_evm_builtin_function_name_parser.boxed(),
             yul_hex_literal: yul_hex_literal_parser.boxed(),
@@ -4581,6 +4562,7 @@ impl Parsers {
             decimal_float: decimal_float_parser.boxed(),
             hex_byte_escape: hex_byte_escape_parser.boxed(),
             hex_number: hex_number_parser.boxed(),
+            ignore: ignore_parser.boxed(),
             identifier_part: identifier_part_parser.boxed(),
             possibly_separated_pairs_of_hex_digits: possibly_separated_pairs_of_hex_digits_parser
                 .boxed(),
@@ -4588,12 +4570,30 @@ impl Parsers {
             unicode_escape: unicode_escape_parser.boxed(),
             unsigned_integer_type: unsigned_integer_type_parser.boxed(),
             yul_reserved_word: yul_reserved_word_parser.boxed(),
+            add_sub_operator: add_sub_operator_parser.boxed(),
+            assignment_operator: assignment_operator_parser.boxed(),
+            break_statement: break_statement_parser.boxed(),
+            continue_statement: continue_statement_parser.boxed(),
+            data_location: data_location_parser.boxed(),
             decimal_number: decimal_number_parser.boxed(),
             elementary_type: elementary_type_parser.boxed(),
+            equality_comparison_operator: equality_comparison_operator_parser.boxed(),
             escape_sequence: escape_sequence_parser.boxed(),
             hex_string_literal: hex_string_literal_parser.boxed(),
             keyword: keyword_parser.boxed(),
+            mul_div_mod_operator: mul_div_mod_operator_parser.boxed(),
+            order_comparison_operator: order_comparison_operator_parser.boxed(),
+            positional_argument_list: positional_argument_list_parser.boxed(),
             raw_identifier: raw_identifier_parser.boxed(),
+            shift_operator: shift_operator_parser.boxed(),
+            state_mutability_specifier: state_mutability_specifier_parser.boxed(),
+            unary_prefix_operator: unary_prefix_operator_parser.boxed(),
+            unary_suffix_operator: unary_suffix_operator_parser.boxed(),
+            unchecked_block: unchecked_block_parser.boxed(),
+            visibility_specifier: visibility_specifier_parser.boxed(),
+            yul_break_statement: yul_break_statement_parser.boxed(),
+            yul_continue_statement: yul_continue_statement_parser.boxed(),
+            yul_leave_statement: yul_leave_statement_parser.boxed(),
             double_quoted_ascii_string_literal: double_quoted_ascii_string_literal_parser.boxed(),
             double_quoted_unicode_string_literal: double_quoted_unicode_string_literal_parser
                 .boxed(),

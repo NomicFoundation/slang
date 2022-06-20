@@ -79,6 +79,101 @@ impl DefaultTest for comment::_S3 {
     }
 }
 
+impl DefaultTest for ignore::_C1 {}
+
+impl DefaultTest for string_char::_C0 {}
+
+impl string_char::Escape {
+    pub fn new(
+        (backslash_char, quote_or_backslash_or_hex_escape): (
+            FixedTerminal<1usize>,
+            Box<string_char::QuoteOrBackslashOrHexEscape>,
+        ),
+    ) -> Self {
+        Self {
+            backslash_char,
+            quote_or_backslash_or_hex_escape,
+        }
+    }
+}
+
+impl DefaultTest for string_char::Escape {}
+
+impl DefaultTest for string_char::QuoteOrBackslashOrHexEscape {}
+
+impl string_char::_S1 {
+    pub fn new(
+        ((u_open_brace, _1), close_brace_char): (
+            (FixedTerminal<2usize>, usize),
+            FixedTerminal<1usize>,
+        ),
+    ) -> Self {
+        Self {
+            u_open_brace,
+            _1,
+            close_brace_char,
+        }
+    }
+}
+
+impl DefaultTest for string_char::_S1 {
+    fn is_default(&self) -> bool {
+        self.u_open_brace.is_default() && self._1.is_default() && self.close_brace_char.is_default()
+    }
+}
+
+impl raw_identifier::_S0 {
+    pub fn new((_0, _1): (FixedTerminal<1usize>, usize)) -> Self {
+        Self { _0, _1 }
+    }
+}
+
+impl DefaultTest for raw_identifier::_S0 {
+    fn is_default(&self) -> bool {
+        self._0.is_default() && self._1.is_default()
+    }
+}
+
+impl single_char_string::_S0 {
+    pub fn new(
+        ((quote_char_0, string_char), quote_char_1): (
+            (FixedTerminal<1usize>, string_char::N),
+            FixedTerminal<1usize>,
+        ),
+    ) -> Self {
+        Self {
+            quote_char_0,
+            string_char,
+            quote_char_1,
+        }
+    }
+}
+
+impl DefaultTest for single_char_string::_S0 {}
+
+impl string::_S0 {
+    pub fn new(
+        ((quote_char_0, string_chars), quote_char_1): (
+            (FixedTerminal<1usize>, Vec<string_char::N>),
+            FixedTerminal<1usize>,
+        ),
+    ) -> Self {
+        Self {
+            quote_char_0,
+            string_chars,
+            quote_char_1,
+        }
+    }
+}
+
+impl DefaultTest for string::_S0 {
+    fn is_default(&self) -> bool {
+        self.quote_char_0.is_default()
+            && self.string_chars.is_default()
+            && self.quote_char_1.is_default()
+    }
+}
+
 impl grouped::_S0 {
     pub fn new(
         ((((open_paren_char, ignore_0), expression), ignore_1), close_paren_char): (
@@ -136,67 +231,6 @@ impl DefaultTest for optional::_S0 {
             && self.expression.is_default()
             && self.ignore_1.is_default()
             && self.close_bracket_char.is_default()
-    }
-}
-
-impl repetition_separator::_S0 {
-    pub fn new(
-        ((slash_char, ignore), expression): ((FixedTerminal<1usize>, ignore::N), expression::N),
-    ) -> Self {
-        Self {
-            slash_char,
-            ignore,
-            expression,
-        }
-    }
-}
-
-impl DefaultTest for repetition_separator::_S0 {
-    fn is_default(&self) -> bool {
-        self.slash_char.is_default() && self.ignore.is_default() && self.expression.is_default()
-    }
-}
-
-impl DefaultTest for ignore::_C1 {}
-
-impl DefaultTest for string_char::_C0 {}
-
-impl string_char::Escape {
-    pub fn new(
-        (backslash_char, quote_or_backslash_or_hex_escape): (
-            FixedTerminal<1usize>,
-            Box<string_char::QuoteOrBackslashOrHexEscape>,
-        ),
-    ) -> Self {
-        Self {
-            backslash_char,
-            quote_or_backslash_or_hex_escape,
-        }
-    }
-}
-
-impl DefaultTest for string_char::Escape {}
-
-impl DefaultTest for string_char::QuoteOrBackslashOrHexEscape {}
-
-impl string_char::_S1 {
-    pub fn new(
-        ((u_open_brace, _1), close_brace_char): (
-            (FixedTerminal<2usize>, usize),
-            FixedTerminal<1usize>,
-        ),
-    ) -> Self {
-        Self {
-            u_open_brace,
-            _1,
-            close_brace_char,
-        }
-    }
-}
-
-impl DefaultTest for string_char::_S1 {
-    fn is_default(&self) -> bool {
-        self.u_open_brace.is_default() && self._1.is_default() && self.close_brace_char.is_default()
     }
 }
 
@@ -273,57 +307,70 @@ impl DefaultTest for repetition_prefix::_S4 {
     }
 }
 
-impl raw_identifier::_S0 {
-    pub fn new((_0, _1): (FixedTerminal<1usize>, usize)) -> Self {
-        Self { _0, _1 }
-    }
-}
-
-impl DefaultTest for raw_identifier::_S0 {
-    fn is_default(&self) -> bool {
-        self._0.is_default() && self._1.is_default()
-    }
-}
-
-impl single_char_string::_S0 {
+impl repetition_separator::_S0 {
     pub fn new(
-        ((quote_char_0, string_char), quote_char_1): (
-            (FixedTerminal<1usize>, string_char::N),
-            FixedTerminal<1usize>,
-        ),
+        ((slash_char, ignore), expression): ((FixedTerminal<1usize>, ignore::N), expression::N),
     ) -> Self {
         Self {
-            quote_char_0,
-            string_char,
-            quote_char_1,
+            slash_char,
+            ignore,
+            expression,
         }
     }
 }
 
-impl DefaultTest for single_char_string::_S0 {}
+impl DefaultTest for repetition_separator::_S0 {
+    fn is_default(&self) -> bool {
+        self.slash_char.is_default() && self.ignore.is_default() && self.expression.is_default()
+    }
+}
 
-impl string::_S0 {
+impl DefaultTest for identifier::_C0 {}
+
+impl identifier::_S1 {
     pub fn new(
-        ((quote_char_0, string_chars), quote_char_1): (
-            (FixedTerminal<1usize>, Vec<string_char::N>),
+        ((open_double_angle_char, raw_identifier), close_double_angle_char): (
+            (FixedTerminal<1usize>, raw_identifier::N),
             FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
-            quote_char_0,
-            string_chars,
-            quote_char_1,
+            open_double_angle_char,
+            raw_identifier,
+            close_double_angle_char,
         }
     }
 }
 
-impl DefaultTest for string::_S0 {
+impl DefaultTest for identifier::_S1 {
     fn is_default(&self) -> bool {
-        self.quote_char_0.is_default()
-            && self.string_chars.is_default()
-            && self.quote_char_1.is_default()
+        self.open_double_angle_char.is_default()
+            && self.raw_identifier.is_default()
+            && self.close_double_angle_char.is_default()
     }
 }
+
+impl char_range::_S0 {
+    pub fn new(
+        ((((single_char_string_0, ignore_0), ellipsis_char), ignore_1), single_char_string_1): (
+            (
+                ((single_char_string::N, ignore::N), FixedTerminal<1usize>),
+                ignore::N,
+            ),
+            single_char_string::N,
+        ),
+    ) -> Self {
+        Self {
+            single_char_string_0,
+            ignore_0,
+            ellipsis_char,
+            ignore_1,
+            single_char_string_1,
+        }
+    }
+}
+
+impl DefaultTest for char_range::_S0 {}
 
 impl repeated::_S0 {
     pub fn new(
@@ -389,53 +436,6 @@ impl DefaultTest for repeated::_S0 {
             && self.close_brace_char.is_default()
     }
 }
-
-impl DefaultTest for identifier::_C0 {}
-
-impl identifier::_S1 {
-    pub fn new(
-        ((open_double_angle_char, raw_identifier), close_double_angle_char): (
-            (FixedTerminal<1usize>, raw_identifier::N),
-            FixedTerminal<1usize>,
-        ),
-    ) -> Self {
-        Self {
-            open_double_angle_char,
-            raw_identifier,
-            close_double_angle_char,
-        }
-    }
-}
-
-impl DefaultTest for identifier::_S1 {
-    fn is_default(&self) -> bool {
-        self.open_double_angle_char.is_default()
-            && self.raw_identifier.is_default()
-            && self.close_double_angle_char.is_default()
-    }
-}
-
-impl char_range::_S0 {
-    pub fn new(
-        ((((single_char_string_0, ignore_0), ellipsis_char), ignore_1), single_char_string_1): (
-            (
-                ((single_char_string::N, ignore::N), FixedTerminal<1usize>),
-                ignore::N,
-            ),
-            single_char_string::N,
-        ),
-    ) -> Self {
-        Self {
-            single_char_string_0,
-            ignore_0,
-            ellipsis_char,
-            ignore_1,
-            single_char_string_1,
-        }
-    }
-}
-
-impl DefaultTest for char_range::_S0 {}
 
 impl DefaultTest for primary::_C0 {}
 

@@ -30,27 +30,6 @@ impl<const N: usize> DefaultTest for FixedTerminal<N> {
     }
 }
 
-impl break_statement::_S0 {
-    pub fn new(
-        ((r#break, ignore), semicolon_char): (
-            (FixedTerminal<5usize>, ignore::N),
-            FixedTerminal<1usize>,
-        ),
-    ) -> Self {
-        Self {
-            r#break,
-            ignore,
-            semicolon_char,
-        }
-    }
-}
-
-impl DefaultTest for break_statement::_S0 {
-    fn is_default(&self) -> bool {
-        self.r#break.is_default() && self.ignore.is_default() && self.semicolon_char.is_default()
-    }
-}
-
 impl comment::_S0 {
     pub fn new(
         (((slash_star, _c2s), star_chars), star_slash): (
@@ -89,100 +68,6 @@ impl DefaultTest for comment::_S3 {
         self.star_chars.is_default() && self._1.is_default()
     }
 }
-
-impl continue_statement::_S0 {
-    pub fn new(
-        ((r#continue, ignore), semicolon_char): (
-            (FixedTerminal<8usize>, ignore::N),
-            FixedTerminal<1usize>,
-        ),
-    ) -> Self {
-        Self {
-            r#continue,
-            ignore,
-            semicolon_char,
-        }
-    }
-}
-
-impl DefaultTest for continue_statement::_S0 {
-    fn is_default(&self) -> bool {
-        self.r#continue.is_default() && self.ignore.is_default() && self.semicolon_char.is_default()
-    }
-}
-
-impl line_comment::_S0 {
-    pub fn new((slash_slash, _1): (FixedTerminal<2usize>, usize)) -> Self {
-        Self { slash_slash, _1 }
-    }
-}
-
-impl DefaultTest for line_comment::_S0 {
-    fn is_default(&self) -> bool {
-        self.slash_slash.is_default() && self._1.is_default()
-    }
-}
-
-impl positional_argument_list::_S0 {
-    pub fn new(
-        (_s1s, _s2s): (
-            Vec<Box<positional_argument_list::_S1>>,
-            Vec<Box<positional_argument_list::_S2>>,
-        ),
-    ) -> Self {
-        Self { _s1s, _s2s }
-    }
-}
-
-impl DefaultTest for positional_argument_list::_S0 {
-    fn is_default(&self) -> bool {
-        self._s1s.is_default() && self._s2s.is_default()
-    }
-}
-
-impl positional_argument_list::_S2 {
-    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
-        Self { comma_char, ignore }
-    }
-}
-
-impl DefaultTest for positional_argument_list::_S2 {
-    fn is_default(&self) -> bool {
-        self.comma_char.is_default() && self.ignore.is_default()
-    }
-}
-
-impl positional_argument_list::_S1 {
-    pub fn new((expression, ignore): (expression::N, ignore::N)) -> Self {
-        Self { expression, ignore }
-    }
-}
-
-impl DefaultTest for positional_argument_list::_S1 {
-    fn is_default(&self) -> bool {
-        self.expression.is_default() && self.ignore.is_default()
-    }
-}
-
-impl unchecked_block::_S0 {
-    pub fn new(
-        ((unchecked, ignore), block): ((FixedTerminal<9usize>, ignore::N), block::N),
-    ) -> Self {
-        Self {
-            unchecked,
-            ignore,
-            block,
-        }
-    }
-}
-
-impl DefaultTest for unchecked_block::_S0 {
-    fn is_default(&self) -> bool {
-        self.unchecked.is_default() && self.ignore.is_default() && self.block.is_default()
-    }
-}
-
-impl DefaultTest for ignore::_C1 {}
 
 impl decimal_integer::_S0 {
     pub fn new(
@@ -249,6 +134,18 @@ impl DefaultTest for fixed_type::_S2 {
             && self._2.is_default()
             && self._3.is_default()
             && self._4.is_default()
+    }
+}
+
+impl line_comment::_S0 {
+    pub fn new((slash_slash, _1): (FixedTerminal<2usize>, usize)) -> Self {
+        Self { slash_slash, _1 }
+    }
+}
+
+impl DefaultTest for line_comment::_S0 {
+    fn is_default(&self) -> bool {
+        self.slash_slash.is_default() && self._1.is_default()
     }
 }
 
@@ -406,6 +303,8 @@ impl DefaultTest for hex_number::_S1 {
     }
 }
 
+impl DefaultTest for ignore::_C1 {}
+
 impl possibly_separated_pairs_of_hex_digits::_S0 {
     pub fn new(
         (expressions, underscore_chars): (Vec<usize>, Vec<Option<FixedTerminal<1usize>>>),
@@ -459,6 +358,48 @@ impl unsigned_integer_type::_S0 {
 impl DefaultTest for unsigned_integer_type::_S0 {
     fn is_default(&self) -> bool {
         self._0.is_default() && self.signed_integer_type.is_default()
+    }
+}
+
+impl break_statement::_S0 {
+    pub fn new(
+        ((r#break, ignore), semicolon_char): (
+            (FixedTerminal<5usize>, ignore::N),
+            FixedTerminal<1usize>,
+        ),
+    ) -> Self {
+        Self {
+            r#break,
+            ignore,
+            semicolon_char,
+        }
+    }
+}
+
+impl DefaultTest for break_statement::_S0 {
+    fn is_default(&self) -> bool {
+        self.r#break.is_default() && self.ignore.is_default() && self.semicolon_char.is_default()
+    }
+}
+
+impl continue_statement::_S0 {
+    pub fn new(
+        ((r#continue, ignore), semicolon_char): (
+            (FixedTerminal<8usize>, ignore::N),
+            FixedTerminal<1usize>,
+        ),
+    ) -> Self {
+        Self {
+            r#continue,
+            ignore,
+            semicolon_char,
+        }
+    }
+}
+
+impl DefaultTest for continue_statement::_S0 {
+    fn is_default(&self) -> bool {
+        self.r#continue.is_default() && self.ignore.is_default() && self.semicolon_char.is_default()
     }
 }
 
@@ -556,6 +497,47 @@ impl DefaultTest for hex_string_literal::_S2 {
 
 impl DefaultTest for keyword::_C0 {}
 
+impl positional_argument_list::_S0 {
+    pub fn new(
+        (_s1s, _s2s): (
+            Vec<Box<positional_argument_list::_S1>>,
+            Vec<Box<positional_argument_list::_S2>>,
+        ),
+    ) -> Self {
+        Self { _s1s, _s2s }
+    }
+}
+
+impl DefaultTest for positional_argument_list::_S0 {
+    fn is_default(&self) -> bool {
+        self._s1s.is_default() && self._s2s.is_default()
+    }
+}
+
+impl positional_argument_list::_S2 {
+    pub fn new((comma_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
+        Self { comma_char, ignore }
+    }
+}
+
+impl DefaultTest for positional_argument_list::_S2 {
+    fn is_default(&self) -> bool {
+        self.comma_char.is_default() && self.ignore.is_default()
+    }
+}
+
+impl positional_argument_list::_S1 {
+    pub fn new((expression, ignore): (expression::N, ignore::N)) -> Self {
+        Self { expression, ignore }
+    }
+}
+
+impl DefaultTest for positional_argument_list::_S1 {
+    fn is_default(&self) -> bool {
+        self.expression.is_default() && self.ignore.is_default()
+    }
+}
+
 impl raw_identifier::_S0 {
     pub fn new((_0, _1): (FixedTerminal<1usize>, usize)) -> Self {
         Self { _0, _1 }
@@ -565,6 +547,24 @@ impl raw_identifier::_S0 {
 impl DefaultTest for raw_identifier::_S0 {
     fn is_default(&self) -> bool {
         self._0.is_default() && self._1.is_default()
+    }
+}
+
+impl unchecked_block::_S0 {
+    pub fn new(
+        ((unchecked, ignore), block): ((FixedTerminal<9usize>, ignore::N), block::N),
+    ) -> Self {
+        Self {
+            unchecked,
+            ignore,
+            block,
+        }
+    }
+}
+
+impl DefaultTest for unchecked_block::_S0 {
+    fn is_default(&self) -> bool {
+        self.unchecked.is_default() && self.ignore.is_default() && self.block.is_default()
     }
 }
 

@@ -69,7 +69,7 @@ impl Grammar {
             let production = grammar.get_production(name);
             let expr = production.expression_to_generate();
             let mut identifiers = expr.referenced_identifiers();
-            if production.is_token {
+            if !production.is_token {
                 identifiers.insert("IGNORE".to_owned());
             }
             for name in identifiers {
@@ -95,7 +95,7 @@ impl Grammar {
 
     // Detect backlinked (recursively-referenced) productions
 
-    fn recursive_productions(&self, ordering: &BTreeMap<String, usize>) -> BTreeSet<String> {
+    fn recursive_production_names(&self, ordering: &BTreeMap<String, usize>) -> BTreeSet<String> {
         let mut backlinked = BTreeSet::new();
 
         for (name, order) in ordering {
@@ -130,51 +130,44 @@ impl Production {
     }
 
     fn generate_chumsky(&self, grammar: &Grammar, _context: &GenerationContext) -> GeneratedOutput {
-        let root = self.name.clone();
-        let ordering = grammar.production_ordering(&root);
-        let backlinked = grammar.recursive_productions(&ordering);
+        let production_ordering = grammar.production_ordering(&self.name);
+        let recursive_production_names = grammar.recursive_production_names(&production_ordering);
 
-        // Define each production
+        let mut module_names = vec![];
 
         let mut tree_interfaces = vec![];
         let mut tree_implementations = vec![];
 
-        let mut module_names = vec![];
-        let mut parsers_field_names = vec![];
         let mut parser_names = vec![];
+        let mut parsers_field_names = vec![];
         let mut parser_implementations = vec![];
 
-        for name in &backlinked {
+        for name in &recursive_production_names {
             let parser_name = SlangName::from_string(name).to_parser_name_ident();
             parser_implementations
                 .push(quote!( let mut #parser_name = Recursive::declare(); ).to_string());
         }
 
-        let mut ordered_productions = ordering.keys().cloned().collect::<Vec<String>>();
-        ordered_productions.sort_by(|a, b| (&ordering[a]).cmp(&ordering[b]));
+        let mut ordered_productions = production_ordering.keys().cloned().collect::<Vec<String>>();
+        ordered_productions.sort_by(|a, b| (&production_ordering[a]).cmp(&production_ordering[b]));
         for name in ordered_productions {
             let production = grammar.get_production(&name);
-            let slang_name = SlangName::from_string(&name);
-            let ebnf_comment = production
-                .generate_ebnf(grammar)
-                .iter()
-                .map(|s| format!("// {}", s))
-                .collect::<Vec<_>>()
-                .join("\n");
+            let slang_name = production.slang_name();
+            let module_name = slang_name.to_module_name_ident();
+            module_names.push(module_name.clone());
+
+            // Generate the tree
+
+            let combinator_tree = production.combinator_tree();
+            let type_tree = combinator_tree.to_type_tree();
+            let (tree_interface, tree_implementation) =
+                type_tree.to_type_definition_code(&module_name);
             let ebnf_doc_comment = production
                 .generate_ebnf(grammar)
                 .iter()
                 .map(|s| format!("/// {}", s))
                 .collect::<Vec<_>>()
                 .join("\n");
-
-            let module_name = slang_name.to_module_name_ident();
-            module_names.push(module_name.clone());
-
-            let combinator_tree = production.combinator_tree();
-            let type_tree = combinator_tree.to_type_tree();
-            let (tree_interface, tree_implementation) =
-                type_tree.to_type_definition_code(&module_name);
             tree_interfaces.push(format!(
                 "{}\n{}",
                 ebnf_doc_comment,
@@ -182,22 +175,92 @@ impl Production {
             ));
             tree_implementations.push(tree_implementation);
 
+            // Generate the parser
+
             let parser_name = slang_name.to_parser_name_ident();
             parser_names.push(parser_name.clone());
             let parser_expression = combinator_tree.to_parser_combinator_code();
-            let parser_implementation = if backlinked.contains(&name) {
+            let parser_implementation = if recursive_production_names.contains(&name) {
                 quote!( #parser_name.define(#parser_expression.boxed()); )
             } else {
                 quote!( let #parser_name = #parser_expression.boxed(); )
             };
+            let ebnf_comment = production
+                .generate_ebnf(grammar)
+                .iter()
+                .map(|s| format!("// {}", s))
+                .collect::<Vec<_>>()
+                .join("\n");
             parser_implementations.push(format!(
                 "{}\n{}",
                 ebnf_comment,
                 parser_implementation.to_string()
             ));
-
             parsers_field_names.push(slang_name.to_field_name_ident());
         }
+
+        let tree_interface = format!(
+            "{}\n\n{}",
+            quote!(
+                #[allow(unused_imports)]
+                use serde::{Serialize, Deserialize};
+
+                pub trait DefaultTest {
+                    fn is_default(&self) -> bool {
+                        false
+                    }
+                }
+
+                #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
+                pub struct FixedTerminal<const N: usize>();
+            )
+            .to_string(),
+            tree_interfaces.join("\n\n")
+        );
+
+        let tree_implementation = format!(
+            "{}\n\n{}",
+            quote!(
+                use super::tree_interface::*;
+
+                impl<T: DefaultTest> DefaultTest for Box<T> {
+                    fn is_default(&self) -> bool {
+                        self.as_ref().is_default()
+                    }
+                }
+
+                impl<T> DefaultTest for Vec<T> {
+                    fn is_default(&self) -> bool {
+                      self.is_empty()
+                    }
+                }
+
+                impl<T> DefaultTest for Option<T> {
+                    fn is_default(&self) -> bool {
+                      self.is_none()
+                    }
+                }
+                impl DefaultTest for () {
+                    fn is_default(&self) -> bool {
+                      true
+                    }
+                }
+
+                impl DefaultTest for usize {
+                    fn is_default(&self) -> bool {
+                        *self == 0
+                    }
+                }
+
+                impl<const N: usize> DefaultTest for FixedTerminal<N> {
+                    fn is_default(&self) -> bool {
+                        true
+                    }
+                }
+            )
+            .to_string(),
+            tree_implementations.join("\n\n")
+        );
 
         let parser_interface = quote!(
             use chumsky::prelude::{Simple, BoxedParser};
@@ -205,9 +268,12 @@ impl Production {
             pub type ErrorType = Simple<char>;
             pub type ParserType<T> = BoxedParser<'static, char, T, ErrorType>;
 
+            use super::tree_interface::*;
+
             #[allow(dead_code)]
             pub struct Parsers { #(pub #parsers_field_names: ParserType<#module_names::N>),* }
-        );
+        )
+        .to_string();
 
         let parser_implementation = {
             vec![
@@ -277,84 +343,20 @@ impl Production {
             .join("\n\n")
         };
 
+        let mod_file = quote!(
+            pub mod parser_implementation;
+            pub mod parser_interface;
+            pub mod tree_implementation;
+            pub mod tree_interface;
+        )
+        .to_string();
+
         GeneratedOutput {
-            tree_interface: format!(
-                "{}\n\n{}",
-                quote!(
-                    #[allow(unused_imports)]
-                    use serde::{Serialize, Deserialize};
-
-                    pub trait DefaultTest {
-                        fn is_default(&self) -> bool {
-                            false
-                        }
-                    }
-
-                    #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
-                    pub struct FixedTerminal<const N: usize>();
-                )
-                .to_string(),
-                tree_interfaces.join("\n\n")
-            ),
-            parser_interface: quote!(
-                use super::tree_interface::*;
-                #parser_interface
-            )
-            .to_string(),
-            tree_implementation: format!(
-                "{}\n\n{}",
-                quote!(
-                    use super::tree_interface::*;
-
-                    impl<T: DefaultTest> DefaultTest for Box<T> {
-                        fn is_default(&self) -> bool {
-                            self.as_ref().is_default()
-                        }
-                    }
-
-                    impl<T> DefaultTest for Vec<T> {
-                        fn is_default(&self) -> bool {
-                          self.is_empty()
-                        }
-                    }
-
-                    impl<T> DefaultTest for Option<T> {
-                        fn is_default(&self) -> bool {
-                          self.is_none()
-                        }
-                    }
-                    impl DefaultTest for () {
-                        fn is_default(&self) -> bool {
-                          true
-                        }
-                    }
-
-                    impl DefaultTest for usize {
-                        fn is_default(&self) -> bool {
-                            *self == 0
-                        }
-                    }
-
-                    impl<const N: usize> DefaultTest for FixedTerminal<N> {
-                        fn is_default(&self) -> bool {
-                            true
-                        }
-                    }
-                )
-                .to_string(),
-                tree_implementations.join("\n\n")
-            ),
-            parser_implementation: parser_implementation,
-            mod_file: format!(
-                "{}",
-                quote!(
-                    pub mod parser_implementation;
-                    pub mod parser_interface;
-                    pub mod tree_implementation;
-                    pub mod tree_interface;
-                )
-                .to_string(),
-            ),
+            tree_interface,
+            tree_implementation,
+            parser_interface,
+            parser_implementation,
+            mod_file,
         }
     }
 }
