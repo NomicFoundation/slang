@@ -274,6 +274,7 @@ impl CombinatorTreeNodeData {
             | CombinatorTreeNodeData::TerminalTrie { .. }
             | CombinatorTreeNodeData::CharacterFilter { .. }
             | CombinatorTreeNodeData::End => Box::new(self),
+            // TODO: inject the production into the sequence elements
             CombinatorTreeNodeData::Sequence { name, elements } => ct_sequence(
                 name,
                 #[allow(unstable_name_collisions)]
@@ -575,86 +576,76 @@ impl Expression {
                 EBNF::Choice(exprs) => {
                     let name = self.config.slang_name();
 
-                    // Merge adjacent TerminalTrees
+                    // Merge runs of TerminalTrees and CharacterFilters
 
                     let mut choices: Vec<(SlangName, CombinatorTreeNode)> = vec![];
                     {
                         let mut current_terminal_tree: Option<TerminalTrie> = None;
                         let mut current_character_filter: Option<CharacterFilter> = None;
                         for e in exprs {
-                            if e.config.name.is_some() {
-                                // named nodes don't get merged
-                                if let Some(ccf) = current_character_filter {
-                                    choices.push((
-                                        ccf.slang_name(),
-                                        ct_character_filter(ccf.slang_name(), ccf),
-                                    ));
-                                    current_character_filter = None
-                                };
-                                if let Some(ctt) = current_terminal_tree {
-                                    choices.push((
-                                        ctt.slang_name(),
-                                        ct_terminal_trie(ctt.slang_name(), ctt),
-                                    ));
-                                    current_terminal_tree = None
-                                };
-                                choices.push({
-                                    let e = e.to_combinator_tree_node(production, grammar);
-                                    (e.name(), e)
-                                })
-                            } else if let Some(cf) = e.to_character_filter(grammar) {
-                                if let Some(ctt) = current_terminal_tree {
-                                    choices.push((
-                                        ctt.slang_name(),
-                                        ct_terminal_trie(ctt.slang_name(), ctt),
-                                    ));
-                                    current_terminal_tree = None
-                                };
-                                if let Some(ccf) = current_character_filter {
-                                    current_character_filter = Some(ccf.merged_with(cf))
-                                } else {
-                                    current_character_filter = Some(cf)
+                            // Sub-expressions with a user-specified name aren't merged
+                            if e.config.name.is_none() {
+                                if let Some(cf) = e.to_character_filter(grammar) {
+                                    if let Some(ctt) = current_terminal_tree {
+                                        choices.push((
+                                            ctt.slang_name(),
+                                            ct_terminal_trie(ctt.slang_name(), ctt),
+                                        ));
+                                        current_terminal_tree = None
+                                    };
+                                    if let Some(ccf) = current_character_filter {
+                                        current_character_filter = Some(ccf.merged_with(cf))
+                                    } else {
+                                        current_character_filter = Some(cf)
+                                    }
+                                    continue;
                                 }
-                            } else if let Some(tt) = e.to_terminal_trie(grammar) {
-                                if let Some(ccf) = current_character_filter {
-                                    choices.push((
-                                        ccf.slang_name(),
-                                        ct_character_filter(ccf.slang_name(), ccf),
-                                    ));
-                                    current_character_filter = None
-                                };
-                                if let Some(ctt) = current_terminal_tree.as_mut() {
-                                    ctt.merge_with(tt)
-                                } else {
-                                    current_terminal_tree = Some(tt)
+                                if let Some(tt) = e.to_terminal_trie(grammar) {
+                                    if let Some(ccf) = current_character_filter {
+                                        choices.push((
+                                            ccf.slang_name(),
+                                            ct_character_filter(ccf.slang_name(), ccf),
+                                        ));
+                                        current_character_filter = None
+                                    };
+                                    if let Some(ctt) = current_terminal_tree.as_mut() {
+                                        ctt.merge_with(tt)
+                                    } else {
+                                        current_terminal_tree = Some(tt)
+                                    }
+                                    continue;
                                 }
-                            } else {
-                                if let Some(ccf) = current_character_filter {
-                                    choices.push((
-                                        ccf.slang_name(),
-                                        ct_character_filter(ccf.slang_name(), ccf),
-                                    ));
-                                    current_character_filter = None
-                                };
-                                if let Some(ctt) = current_terminal_tree {
-                                    choices.push((
-                                        ctt.slang_name(),
-                                        ct_terminal_trie(ctt.slang_name(), ctt),
-                                    ));
-                                    current_terminal_tree = None
-                                };
-                                choices.push({
-                                    let e = e.to_combinator_tree_node(production, grammar);
-                                    (e.name(), e)
-                                })
                             }
+
+                            if let Some(ccf) = current_character_filter {
+                                choices.push((
+                                    ccf.slang_name(),
+                                    ct_character_filter(ccf.slang_name(), ccf),
+                                ));
+                                current_character_filter = None
+                            };
+
+                            if let Some(ctt) = current_terminal_tree {
+                                choices.push((
+                                    ctt.slang_name(),
+                                    ct_terminal_trie(ctt.slang_name(), ctt),
+                                ));
+                                current_terminal_tree = None
+                            };
+
+                            choices.push({
+                                let e = e.to_combinator_tree_node(production, grammar);
+                                (e.name(), e)
+                            })
                         }
+
                         if let Some(ccf) = current_character_filter {
                             choices.push((
                                 ccf.slang_name(),
                                 ct_character_filter(ccf.slang_name(), ccf),
                             ));
                         };
+
                         if let Some(ctt) = current_terminal_tree {
                             choices
                                 .push((ctt.slang_name(), ct_terminal_trie(ctt.slang_name(), ctt)));

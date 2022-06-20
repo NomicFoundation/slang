@@ -304,7 +304,6 @@ impl SlangName {
 impl ExpressionConfig {
     pub fn slang_name(&self) -> SlangName {
         if let Some(name) = &self.name {
-            println!("{}", name);
             SlangName::from_string(name)
         } else {
             SlangName::anonymous()
