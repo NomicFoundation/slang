@@ -143,8 +143,14 @@ impl Production {
 
         for name in &recursive_production_names {
             let parser_name = SlangName::from_string(name).to_parser_name_ident();
-            parser_implementations
-                .push(quote!( let mut #parser_name = Recursive::declare(); ).to_string());
+            let unmapped_parser_name = SlangName::from_string(name).to_unmapped_parser_name_ident();
+            parser_implementations.push(
+                quote!(
+                    let mut #unmapped_parser_name = Recursive::declare();
+                    let mut #parser_name = Recursive::declare();
+                )
+                .to_string(),
+            );
         }
 
         let mut ordered_productions = production_ordering.keys().cloned().collect::<Vec<String>>();
@@ -177,12 +183,19 @@ impl Production {
             // Generate the parser
 
             let parser_name = slang_name.to_parser_name_ident();
+            let unmapped_parser_name = slang_name.to_unmapped_parser_name_ident();
             parser_names.push(parser_name.clone());
             let parser_expression = combinator_tree.to_parser_combinator_code();
             let parser_implementation = if recursive_production_names.contains(&name) {
-                quote!( #parser_name.define(#parser_expression.boxed()); )
+                quote!(
+                    #unmapped_parser_name.define(#parser_expression);
+                    #parser_name.define(#unmapped_parser_name.boxed());
+                )
             } else {
-                quote!( let #parser_name = #parser_expression.boxed(); )
+                quote!(
+                    let #unmapped_parser_name = #parser_expression;
+                    let #parser_name = #unmapped_parser_name.boxed();
+                )
             };
             let ebnf_comment = production
                 .generate_ebnf(grammar)

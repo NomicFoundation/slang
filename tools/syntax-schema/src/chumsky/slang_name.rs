@@ -112,6 +112,10 @@ impl SlangName {
     pub fn to_parser_name_ident(&self) -> Ident {
         format_ident!("{}_parser", to_snake_case(self.0.as_str()))
     }
+
+    pub fn to_unmapped_parser_name_ident(&self) -> Ident {
+        format_ident!("{}_parser_unmpapped", to_snake_case(self.0.as_str()))
+    }
 }
 
 fn is_reserved_identifier(s: &str) -> bool {
