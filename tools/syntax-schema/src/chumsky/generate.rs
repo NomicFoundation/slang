@@ -100,9 +100,8 @@ impl Grammar {
 
         for (name, order) in ordering {
             let production = self.get_production(name);
-            let expr = production.expression_to_generate();
-            let mut identifiers = expr.referenced_identifiers();
-            if production.is_token {
+            let mut identifiers = production.expression_to_generate().referenced_identifiers();
+            if !production.is_token {
                 identifiers.insert("IGNORE".to_owned());
             }
             for name in identifiers {

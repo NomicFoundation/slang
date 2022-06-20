@@ -41,8 +41,6 @@ fn terminal(str: &str) -> Just<char, &str, ErrorType> {
 
 impl Parsers {
     pub fn new() -> Self {
-        let mut ignore_parser = Recursive::declare();
-
         let mut expression_parser = Recursive::declare();
 
         // «Comment» = '(*' { ¬'*' | 1…*{ '*' } ¬( '*' | ')' ) } { '*' } '*)' ;
@@ -111,18 +109,16 @@ impl Parsers {
             .boxed();
 
         // «IGNORE» = { «Whitespace» | «Comment» } ;
-        ignore_parser.define(
-            choice((
-                whitespace_parser
-                    .clone()
-                    .map(|v| Box::new(ignore::_C1::Whitespace(v))),
-                comment_parser
-                    .clone()
-                    .map(|v| Box::new(ignore::_C1::Comment(v))),
-            ))
-            .repeated()
-            .boxed(),
-        );
+        let ignore_parser = choice((
+            whitespace_parser
+                .clone()
+                .map(|v| Box::new(ignore::_C1::Whitespace(v))),
+            comment_parser
+                .clone()
+                .map(|v| Box::new(ignore::_C1::Comment(v))),
+        ))
+        .repeated()
+        .boxed();
 
         // «IdentifierFollow» = «IdentifierStart» | '0'…'9' ;
         let identifier_follow_parser = filter(|&c: &char| {

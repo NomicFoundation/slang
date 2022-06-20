@@ -45,8 +45,6 @@ impl Parsers {
 
         let mut expression_parser = Recursive::declare();
 
-        let mut ignore_parser = Recursive::declare();
-
         let mut statement_parser = Recursive::declare();
 
         let mut type_name_parser = Recursive::declare();
@@ -638,21 +636,19 @@ impl Parsers {
             .boxed();
 
         // «IGNORE» = { «Whitespace» | «Comment» | «LineComment» } ;
-        ignore_parser.define(
-            choice((
-                whitespace_parser
-                    .clone()
-                    .map(|v| Box::new(ignore::_C1::Whitespace(v))),
-                comment_parser
-                    .clone()
-                    .map(|v| Box::new(ignore::_C1::Comment(v))),
-                line_comment_parser
-                    .clone()
-                    .map(|v| Box::new(ignore::_C1::LineComment(v))),
-            ))
-            .repeated()
-            .boxed(),
-        );
+        let ignore_parser = choice((
+            whitespace_parser
+                .clone()
+                .map(|v| Box::new(ignore::_C1::Whitespace(v))),
+            comment_parser
+                .clone()
+                .map(|v| Box::new(ignore::_C1::Comment(v))),
+            line_comment_parser
+                .clone()
+                .map(|v| Box::new(ignore::_C1::LineComment(v))),
+        ))
+        .repeated()
+        .boxed();
 
         // «IdentifierPart» = «IdentifierStart» | '0'…'9' ;
         let identifier_part_parser = filter(|&c: &char| {
