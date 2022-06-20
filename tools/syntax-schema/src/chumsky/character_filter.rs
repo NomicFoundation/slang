@@ -42,12 +42,16 @@ fn cf_conjunction(nodes: Vec<CharacterFilter>) -> CharacterFilter {
 impl CharacterFilterNode {
     pub fn slang_name(&self) -> SlangName {
         if let Self::Negation { child } = self {
-            child.slang_name().negated()
+            child.slang_name().negate()
         } else if let Self::Char { char, .. } = self {
             SlangName::from_terminal_char(*char)
         } else {
             SlangName::anonymous()
         }
+    }
+
+    pub fn merged_with(self, other: CharacterFilter) -> CharacterFilter {
+        cf_disjunction(vec![Box::new(self), other])
     }
 
     pub fn to_parser_combinator_code(&self) -> TokenStream {

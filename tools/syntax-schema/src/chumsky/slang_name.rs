@@ -1,32 +1,44 @@
 use std::{cell::Cell, fmt::Write};
 
-use inflector::{
-    cases::{pascalcase::to_pascal_case, snakecase::to_snake_case},
-    Inflector,
-};
+use inflector::Inflector;
 use proc_macro2::Ident;
 use quote::format_ident;
 
 use crate::schema::ExpressionConfig;
 
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
-pub struct SlangName(String);
+pub enum SlangName {
+    Anonymous,
+    String {
+        text: String, // stored in snake case
+        plural: bool,
+        negated: bool,
+        suffix: usize,
+    },
+    Numbered {
+        number: usize,
+        plural: bool,
+        suffix: usize,
+    },
+    Positional {
+        position: usize,
+    },
+}
 
 impl SlangName {
-    pub fn as_str<'a>(&'a self) -> &'a str {
-        self.0.as_str()
-    }
-
     pub fn anonymous() -> Self {
-        Self("".to_owned())
-    }
-
-    pub fn is_anonymous(&self) -> bool {
-        self.0.is_empty()
+        Self::Anonymous
     }
 
     pub fn from_string(s: &str) -> Self {
-        Self(s.into())
+        let text: String = s.into();
+        let text = text.to_snake_case();
+        Self::String {
+            text,
+            plural: false,
+            negated: false,
+            suffix: 0,
+        }
     }
 
     pub fn from_terminal(string: &str) -> Self {
@@ -51,38 +63,53 @@ impl SlangName {
                 last_was_named = Some(false)
             }
         }
-        Self({
-            let c = result.chars().next().unwrap();
-            if !(c.is_alphabetic() || c == '_') {
-                println!("INVALID IDENTIFIER: {}", result);
-                format!("__{}", result)
-            } else {
-                result
-            }
-        })
+        Self::String {
+            text: {
+                let c = result.chars().next().unwrap();
+                if !(c.is_alphabetic() || c == '_') {
+                    println!("INVALID IDENTIFIER: {}", result);
+                    format!("__{}", result)
+                } else {
+                    result
+                }
+                .to_snake_case()
+            },
+            plural: false,
+            negated: false,
+            suffix: 0,
+        }
     }
 
     pub fn from_terminal_char(char: char) -> Self {
         DEFAULT_TOKEN_NAMES
             .binary_search_by(|probe| probe.0.cmp(&char))
             .ok()
-            .map(|i| Self(format!("{}_char", DEFAULT_TOKEN_NAMES[i].1)))
-            .unwrap_or_else(|| SlangName::anonymous())
+            .map(|i| Self::String {
+                text: format!("{}_char", DEFAULT_TOKEN_NAMES[i].1),
+                plural: false,
+                negated: false,
+                suffix: 0,
+            })
+            .unwrap_or_else(|| Self::Anonymous)
     }
 
     pub fn self_or_numbered(self, index: &mut Cell<usize>) -> Self {
-        if self.is_anonymous() {
+        if self == Self::Anonymous {
             let i = index.get();
             index.set(i + 1);
-            Self(format!("_T{}", i))
+            Self::Numbered {
+                number: i,
+                plural: false,
+                suffix: 0,
+            }
         } else {
             self
         }
     }
 
     pub fn self_or_positional(self, i: usize) -> Self {
-        if self.is_anonymous() {
-            Self(format!("_{}", i))
+        if self == Self::Anonymous {
+            Self::Positional { position: i }
         } else {
             self
         }
@@ -92,101 +119,192 @@ impl SlangName {
     where
         F: FnOnce() -> Self,
     {
-        if self.is_anonymous() {
+        if self == Self::Anonymous {
             f()
         } else {
             self
         }
     }
 
-    pub fn plural(self) -> Self {
-        if self.is_anonymous() {
-            self
-        } else {
-            Self(self.0.to_plural())
+    pub fn pluralize(self) -> Self {
+        match self {
+            SlangName::Anonymous => self,
+            SlangName::Positional { .. } => panic!("Cannot pluralize a positional name"),
+            SlangName::String { plural: true, .. } | SlangName::Numbered { plural: true, .. } => {
+                panic!("Cannot pluralize a plural name")
+            }
+            SlangName::String {
+                text,
+                suffix,
+                negated,
+                ..
+            } => Self::String {
+                text,
+                suffix,
+                negated,
+                plural: true,
+            },
+            SlangName::Numbered { number, suffix, .. } => Self::Numbered {
+                number,
+                suffix,
+                plural: true,
+            },
         }
     }
 
-    pub fn negated(self) -> Self {
-        if self.is_anonymous() {
-            self
-        } else {
-            Self(format!("not_{}", self.0.as_str()))
+    pub fn negate(self) -> Self {
+        match self {
+            SlangName::Anonymous | SlangName::Numbered { .. } => self,
+            SlangName::Positional { .. } => panic!("Cannot negate a positional name"),
+            SlangName::String { negated: true, .. } => panic!("Cannot negate a negated name"),
+            SlangName::String {
+                text,
+                suffix,
+                plural,
+                ..
+            } => Self::String {
+                text,
+                suffix,
+                negated: true,
+                plural,
+            },
         }
     }
 
-    pub fn with_disambiguating_suffix(&self, index: usize) -> Self {
-        Self(format!("{}_{}", self.0, index))
+    pub fn with_disambiguating_suffix(self, suffix: usize) -> Self {
+        match self {
+            SlangName::Anonymous => panic!("Cannot disambiguate an anonymous name"),
+            SlangName::Positional { .. } => panic!("Cannot disambiguate an positional name"),
+            SlangName::String {
+                text,
+                plural,
+                negated,
+                ..
+            } => Self::String {
+                text,
+                negated,
+                plural,
+                suffix: suffix + 1,
+            },
+            SlangName::Numbered { number, plural, .. } => Self::Numbered {
+                number,
+                suffix: suffix + 1,
+                plural,
+            },
+        }
+    }
+
+    fn to_snake_case_string(&self) -> String {
+        match self {
+            SlangName::Anonymous => panic!("Cannot use anonymous names"),
+            SlangName::Positional { position } => format!("_{}", position),
+            SlangName::String {
+                text,
+                plural,
+                negated,
+                suffix,
+            } => {
+                let text = if *negated {
+                    format!("not_{}", text)
+                } else {
+                    text.clone()
+                };
+                let text = if *plural { text.to_plural() } else { text };
+                if 0 < *suffix {
+                    format!("{}_{}", text, suffix)
+                } else {
+                    text
+                }
+            }
+            SlangName::Numbered {
+                number,
+                plural,
+                suffix,
+            } => {
+                let text = format!("_t{}", number);
+                let text = if *plural { format!("{}s", text) } else { text };
+                if 0 < *suffix {
+                    format!("{}_{}", text, suffix)
+                } else {
+                    text
+                }
+            }
+        }
+    }
+
+    fn to_pascal_case_string(&self) -> String {
+        match self {
+            SlangName::Anonymous => panic!("Cannot use anonymous names"),
+            SlangName::Positional { position } => format!("_{}", position),
+            SlangName::String {
+                text,
+                plural,
+                negated,
+                suffix,
+            } => {
+                let text = if *negated {
+                    format!("not_{}", text)
+                } else {
+                    text.clone()
+                };
+                let text = if *plural { text.to_plural() } else { text };
+                let text = text.to_pascal_case();
+                if 0 < *suffix {
+                    format!("{}_{}", text, suffix)
+                } else {
+                    text
+                }
+            }
+            SlangName::Numbered {
+                number,
+                plural,
+                suffix,
+            } => {
+                let text = format!("_T{}", number);
+                let text = if *plural { format!("{}s", text) } else { text };
+                if 0 < *suffix {
+                    format!("{}_{}", text, suffix)
+                } else {
+                    text
+                }
+            }
+        }
     }
 
     pub fn to_module_name_ident(&self) -> Ident {
-        if self.is_anonymous() {
-            format_ident!("__anonymous__")
-        } else {
-            let id = to_snake_case(self.0.as_str());
-            if is_reserved_identifier(id.as_str()) {
-                format_ident!("r#{}", id)
-            } else {
-                format_ident!("{}", id)
-            }
-        }
+        format_ident!("{}", self.to_snake_case_string())
     }
 
     pub fn to_type_name_ident(&self) -> Ident {
-        if self.is_anonymous() {
-            format_ident!("__anonymous__")
-        } else if self.0.starts_with('_') {
-            format_ident!("{}", self.0.as_str().to_ascii_uppercase())
-        } else {
-            format_ident!("{}", to_pascal_case(self.0.as_str()))
-        }
+        format_ident!("{}", self.to_pascal_case_string())
     }
 
     pub fn to_enum_tag_ident(&self) -> Ident {
-        if self.is_anonymous() {
-            format_ident!("__anonymous__")
-        } else if self.0.starts_with('_') {
-            format_ident!("{}", self.0.as_str().to_ascii_uppercase())
-        } else {
-            format_ident!("{}", to_pascal_case(self.0.as_str()))
-        }
+        format_ident!("{}", self.to_pascal_case_string())
     }
 
     pub fn to_field_name_ident(&self) -> Ident {
-        if self.is_anonymous() {
-            format_ident!("__anonymous__")
-        } else if self.0.starts_with('_') {
-            format_ident!("{}", self.0.as_str().to_ascii_lowercase())
+        let text = self.to_snake_case_string();
+        if is_reserved_identifier(&text) {
+            format_ident!("r#{}", text)
         } else {
-            let id = to_snake_case(self.0.as_str());
-            if is_reserved_identifier(id.as_str()) {
-                format_ident!("r#{}", id)
-            } else {
-                format_ident!("{}", id)
-            }
+            format_ident!("{}", text)
         }
     }
 
     pub fn to_parser_name_ident(&self) -> Ident {
-        if self.is_anonymous() {
-            format_ident!("__anonymous__")
-        } else {
-            format_ident!("{}_parser", to_snake_case(self.0.as_str()))
-        }
+        format_ident!("{}_parser", self.to_snake_case_string())
     }
 
     pub fn to_unmapped_parser_name_ident(&self) -> Ident {
-        if self.is_anonymous() {
-            format_ident!("__anonymous__")
-        } else {
-            format_ident!("{}_parser_unmpapped", to_snake_case(self.0.as_str()))
-        }
+        format_ident!("{}_parser_unmapped", self.to_snake_case_string())
     }
 }
 
 impl ExpressionConfig {
     pub fn slang_name(&self) -> SlangName {
         if let Some(name) = &self.name {
+            println!("{}", name);
             SlangName::from_string(name)
         } else {
             SlangName::anonymous()

@@ -151,10 +151,10 @@ pub mod single_char_string {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _T0 {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub quote_char_0: FixedTerminal<1usize>,
+        pub quote_char_1: FixedTerminal<1usize>,
         pub string_char: string_char::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub quote_char_1: FixedTerminal<1usize>,
+        pub quote_char_2: FixedTerminal<1usize>,
     }
 }
 
@@ -166,11 +166,11 @@ pub mod string {
     #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
     pub struct _T0 {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub quote_char_0: FixedTerminal<1usize>,
+        pub quote_char_1: FixedTerminal<1usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub string_chars: Vec<string_char::N>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub quote_char_1: FixedTerminal<1usize>,
+        pub quote_char_2: FixedTerminal<1usize>,
     }
 }
 
@@ -184,11 +184,11 @@ pub mod grouped {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_paren_char: FixedTerminal<1usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore_0: ignore::N,
+        pub ignore_1: ignore::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub expression: expression::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore_1: ignore::N,
+        pub ignore_2: ignore::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_paren_char: FixedTerminal<1usize>,
     }
@@ -204,11 +204,11 @@ pub mod optional {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_bracket_char: FixedTerminal<1usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore_0: ignore::N,
+        pub ignore_1: ignore::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub expression: expression::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore_1: ignore::N,
+        pub ignore_2: ignore::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_bracket_char: FixedTerminal<1usize>,
     }
@@ -299,14 +299,14 @@ pub mod char_range {
     pub type N = Box<char_range::_T0>;
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub struct _T0 {
-        pub single_char_string_0: single_char_string::N,
+        pub single_char_string_1: single_char_string::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore_0: ignore::N,
+        pub ignore_1: ignore::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub ellipsis_char: FixedTerminal<1usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore_1: ignore::N,
-        pub single_char_string_1: single_char_string::N,
+        pub ignore_2: ignore::N,
+        pub single_char_string_2: single_char_string::N,
     }
 }
 
@@ -320,19 +320,19 @@ pub mod repeated {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub repetition_prefix: Option<repetition_prefix::N>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore_0: ignore::N,
+        pub ignore_1: ignore::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_brace_char: FixedTerminal<1usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore_1: ignore::N,
+        pub ignore_2: ignore::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub expression: expression::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore_2: ignore::N,
+        pub ignore_3: ignore::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub repetition_separator: Option<repetition_separator::N>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore_3: ignore::N,
+        pub ignore_4: ignore::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_brace_char: FixedTerminal<1usize>,
     }
@@ -357,7 +357,7 @@ pub mod primary {
         Optional(optional::N),
         Repeated(repeated::N),
         CharRange(char_range::N),
-        Dollar(FixedTerminal<1usize>),
+        DollarChar(FixedTerminal<1usize>),
         String(string::N),
     }
 }
@@ -428,15 +428,15 @@ pub mod production {
     pub struct _T0 {
         pub identifier: identifier::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore_0: ignore::N,
+        pub ignore_1: ignore::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub equal_char: FixedTerminal<1usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore_1: ignore::N,
+        pub ignore_2: ignore::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub expression: expression::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore_2: ignore::N,
+        pub ignore_3: ignore::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub semicolon_char: FixedTerminal<1usize>,
     }
@@ -450,13 +450,13 @@ pub mod grammar {
     #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
     pub struct _T0 {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore_0: ignore::N,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub ignore_1: ignore::N,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub ignore_2: ignore::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub productions: Vec<production::N>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub ignore_2: ignore::N,
+        pub ignore_3: ignore::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub end_marker: (),
     }

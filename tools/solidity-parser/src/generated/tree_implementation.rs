@@ -233,24 +233,24 @@ impl DefaultTest for decimal_exponent::_T0 {
 
 impl decimal_float::_T0 {
     pub fn new(
-        ((decimal_integer_0, period_char), decimal_integer_1): (
+        ((decimal_integer_1, period_char), decimal_integer_2): (
             (Option<decimal_integer::N>, FixedTerminal<1usize>),
             decimal_integer::N,
         ),
     ) -> Self {
         Self {
-            decimal_integer_0,
-            period_char,
             decimal_integer_1,
+            period_char,
+            decimal_integer_2,
         }
     }
 }
 
 impl DefaultTest for decimal_float::_T0 {
     fn is_default(&self) -> bool {
-        self.decimal_integer_0.is_default()
+        self.decimal_integer_1.is_default()
             && self.period_char.is_default()
-            && self.decimal_integer_1.is_default()
+            && self.decimal_integer_2.is_default()
     }
 }
 
@@ -443,7 +443,7 @@ impl DefaultTest for hex_string_literal::_T1 {}
 
 impl hex_string_literal::_T3 {
     pub fn new(
-        ((quote_char_0, possibly_separated_pairs_of_hex_digits), quote_char_1): (
+        ((quote_char_1, possibly_separated_pairs_of_hex_digits), quote_char_2): (
             (
                 FixedTerminal<1usize>,
                 Option<possibly_separated_pairs_of_hex_digits::N>,
@@ -452,24 +452,24 @@ impl hex_string_literal::_T3 {
         ),
     ) -> Self {
         Self {
-            quote_char_0,
-            possibly_separated_pairs_of_hex_digits,
             quote_char_1,
+            possibly_separated_pairs_of_hex_digits,
+            quote_char_2,
         }
     }
 }
 
 impl DefaultTest for hex_string_literal::_T3 {
     fn is_default(&self) -> bool {
-        self.quote_char_0.is_default()
+        self.quote_char_1.is_default()
             && self.possibly_separated_pairs_of_hex_digits.is_default()
-            && self.quote_char_1.is_default()
+            && self.quote_char_2.is_default()
     }
 }
 
 impl hex_string_literal::_T2 {
     pub fn new(
-        ((double_quote_char_0, possibly_separated_pairs_of_hex_digits), double_quote_char_1): (
+        ((double_quote_char_1, possibly_separated_pairs_of_hex_digits), double_quote_char_2): (
             (
                 FixedTerminal<1usize>,
                 Option<possibly_separated_pairs_of_hex_digits::N>,
@@ -478,18 +478,18 @@ impl hex_string_literal::_T2 {
         ),
     ) -> Self {
         Self {
-            double_quote_char_0,
-            possibly_separated_pairs_of_hex_digits,
             double_quote_char_1,
+            possibly_separated_pairs_of_hex_digits,
+            double_quote_char_2,
         }
     }
 }
 
 impl DefaultTest for hex_string_literal::_T2 {
     fn is_default(&self) -> bool {
-        self.double_quote_char_0.is_default()
+        self.double_quote_char_1.is_default()
             && self.possibly_separated_pairs_of_hex_digits.is_default()
-            && self.double_quote_char_1.is_default()
+            && self.double_quote_char_2.is_default()
     }
 }
 
@@ -544,7 +544,7 @@ impl DefaultTest for unchecked_block::_T0 {
 
 impl double_quoted_ascii_string_literal::_T0 {
     pub fn new(
-        ((double_quote_char_0, runs), double_quote_char_1): (
+        ((double_quote_char_1, runs), double_quote_char_2): (
             (
                 FixedTerminal<1usize>,
                 Vec<Box<double_quoted_ascii_string_literal::Run>>,
@@ -553,18 +553,18 @@ impl double_quoted_ascii_string_literal::_T0 {
         ),
     ) -> Self {
         Self {
-            double_quote_char_0,
-            runs,
             double_quote_char_1,
+            runs,
+            double_quote_char_2,
         }
     }
 }
 
 impl DefaultTest for double_quoted_ascii_string_literal::_T0 {
     fn is_default(&self) -> bool {
-        self.double_quote_char_0.is_default()
+        self.double_quote_char_1.is_default()
             && self.runs.is_default()
-            && self.double_quote_char_1.is_default()
+            && self.double_quote_char_2.is_default()
     }
 }
 
@@ -630,7 +630,7 @@ impl DefaultTest for reserved_word::_T0 {}
 
 impl single_quoted_ascii_string_literal::_T0 {
     pub fn new(
-        ((quote_char_0, runs), quote_char_1): (
+        ((quote_char_1, runs), quote_char_2): (
             (
                 FixedTerminal<1usize>,
                 Vec<Box<single_quoted_ascii_string_literal::Run>>,
@@ -639,16 +639,16 @@ impl single_quoted_ascii_string_literal::_T0 {
         ),
     ) -> Self {
         Self {
-            quote_char_0,
-            runs,
             quote_char_1,
+            runs,
+            quote_char_2,
         }
     }
 }
 
 impl DefaultTest for single_quoted_ascii_string_literal::_T0 {
     fn is_default(&self) -> bool {
-        self.quote_char_0.is_default() && self.runs.is_default() && self.quote_char_1.is_default()
+        self.quote_char_1.is_default() && self.runs.is_default() && self.quote_char_2.is_default()
     }
 }
 
@@ -685,7 +685,7 @@ impl DefaultTest for ascii_string_literal::_T0 {}
 impl assembly_flags::_T0 {
     pub fn new(
         (
-            (((open_paren_char, ignore_0), double_quoted_ascii_string_literals), ignore_1),
+            (((open_paren_char, ignore_1), double_quoted_ascii_string_literals), ignore_2),
             close_paren_char,
         ): (
             (
@@ -697,9 +697,9 @@ impl assembly_flags::_T0 {
     ) -> Self {
         Self {
             open_paren_char,
-            ignore_0,
-            double_quoted_ascii_string_literals,
             ignore_1,
+            double_quoted_ascii_string_literals,
+            ignore_2,
             close_paren_char,
         }
     }
@@ -708,9 +708,9 @@ impl assembly_flags::_T0 {
 impl DefaultTest for assembly_flags::_T0 {
     fn is_default(&self) -> bool {
         self.open_paren_char.is_default()
-            && self.ignore_0.is_default()
-            && self.double_quoted_ascii_string_literals.is_default()
             && self.ignore_1.is_default()
+            && self.double_quoted_ascii_string_literals.is_default()
+            && self.ignore_2.is_default()
             && self.close_paren_char.is_default()
     }
 }
@@ -740,7 +740,7 @@ impl DefaultTest for unicode_string_literal::_T0 {}
 impl yul_function_call::_T0 {
     pub fn new(
         (
-            (((((_t1, ignore_0), open_paren_char), ignore_1), yul_expressions), ignore_2),
+            (((((_t1, ignore_1), open_paren_char), ignore_2), yul_expressions), ignore_3),
             close_paren_char,
         ): (
             (
@@ -761,11 +761,11 @@ impl yul_function_call::_T0 {
     ) -> Self {
         Self {
             _t1,
-            ignore_0,
-            open_paren_char,
             ignore_1,
-            yul_expressions,
+            open_paren_char,
             ignore_2,
+            yul_expressions,
+            ignore_3,
             close_paren_char,
         }
     }
@@ -803,22 +803,22 @@ impl yul_function_definition::_T0 {
                                 (
                                     (
                                         (
-                                            (((function, ignore_0), yul_identifier), ignore_1),
+                                            (((function, ignore_1), yul_identifier), ignore_2),
                                             open_paren_char,
                                         ),
-                                        ignore_2,
+                                        ignore_3,
                                     ),
                                     yul_identifiers,
                                 ),
-                                ignore_3,
+                                ignore_4,
                             ),
                             close_paren_char,
                         ),
-                        ignore_4,
+                        ignore_5,
                     ),
                     _t2,
                 ),
-                ignore_5,
+                ignore_6,
             ),
             yul_block,
         ): (
@@ -858,17 +858,17 @@ impl yul_function_definition::_T0 {
     ) -> Self {
         Self {
             function,
-            ignore_0,
-            yul_identifier,
             ignore_1,
-            open_paren_char,
+            yul_identifier,
             ignore_2,
-            yul_identifiers,
+            open_paren_char,
             ignore_3,
-            close_paren_char,
+            yul_identifiers,
             ignore_4,
-            _t2,
+            close_paren_char,
             ignore_5,
+            _t2,
+            ignore_6,
             yul_block,
         }
     }
@@ -877,17 +877,17 @@ impl yul_function_definition::_T0 {
 impl DefaultTest for yul_function_definition::_T0 {
     fn is_default(&self) -> bool {
         self.function.is_default()
-            && self.ignore_0.is_default()
-            && self.yul_identifier.is_default()
             && self.ignore_1.is_default()
-            && self.open_paren_char.is_default()
+            && self.yul_identifier.is_default()
             && self.ignore_2.is_default()
-            && self.yul_identifiers.is_default()
+            && self.open_paren_char.is_default()
             && self.ignore_3.is_default()
-            && self.close_paren_char.is_default()
+            && self.yul_identifiers.is_default()
             && self.ignore_4.is_default()
-            && self._t2.is_default()
+            && self.close_paren_char.is_default()
             && self.ignore_5.is_default()
+            && self._t2.is_default()
+            && self.ignore_6.is_default()
             && self.yul_block.is_default()
     }
 }
@@ -979,10 +979,10 @@ impl enum_definition::_T0 {
         (
             (
                 (
-                    (((((r#enum, ignore_0), identifier), ignore_1), open_brace_char), ignore_2),
+                    (((((r#enum, ignore_1), identifier), ignore_2), open_brace_char), ignore_3),
                     identifiers,
                 ),
-                ignore_3,
+                ignore_4,
             ),
             close_brace_char,
         ): (
@@ -1007,13 +1007,13 @@ impl enum_definition::_T0 {
     ) -> Self {
         Self {
             r#enum,
-            ignore_0,
-            identifier,
             ignore_1,
-            open_brace_char,
+            identifier,
             ignore_2,
-            identifiers,
+            open_brace_char,
             ignore_3,
+            identifiers,
+            ignore_4,
             close_brace_char,
         }
     }
@@ -1022,13 +1022,13 @@ impl enum_definition::_T0 {
 impl DefaultTest for enum_definition::_T0 {
     fn is_default(&self) -> bool {
         self.r#enum.is_default()
-            && self.ignore_0.is_default()
-            && self.identifier.is_default()
             && self.ignore_1.is_default()
-            && self.open_brace_char.is_default()
+            && self.identifier.is_default()
             && self.ignore_2.is_default()
-            && self.identifiers.is_default()
+            && self.open_brace_char.is_default()
             && self.ignore_3.is_default()
+            && self.identifiers.is_default()
+            && self.ignore_4.is_default()
             && self.close_brace_char.is_default()
     }
 }
@@ -1071,7 +1071,7 @@ impl DefaultTest for literal::_T0 {}
 
 impl named_argument::_T0 {
     pub fn new(
-        ((((identifier, ignore_0), colon_char), ignore_1), expression): (
+        ((((identifier, ignore_1), colon_char), ignore_2), expression): (
             (
                 ((identifier::N, ignore::N), FixedTerminal<1usize>),
                 ignore::N,
@@ -1081,9 +1081,9 @@ impl named_argument::_T0 {
     ) -> Self {
         Self {
             identifier,
-            ignore_0,
-            colon_char,
             ignore_1,
+            colon_char,
+            ignore_2,
             expression,
         }
     }
@@ -1092,25 +1092,25 @@ impl named_argument::_T0 {
 impl DefaultTest for named_argument::_T0 {
     fn is_default(&self) -> bool {
         self.identifier.is_default()
-            && self.ignore_0.is_default()
-            && self.colon_char.is_default()
             && self.ignore_1.is_default()
+            && self.colon_char.is_default()
+            && self.ignore_2.is_default()
             && self.expression.is_default()
     }
 }
 
 impl parameter_declaration::_T0 {
     pub fn new(
-        ((((type_name, ignore_0), _2), ignore_1), identifier): (
+        ((((type_name, ignore_1), _2), ignore_2), identifier): (
             (((type_name::N, ignore::N), Option<usize>), ignore::N),
             Option<identifier::N>,
         ),
     ) -> Self {
         Self {
             type_name,
-            ignore_0,
-            _2,
             ignore_1,
+            _2,
+            ignore_2,
             identifier,
         }
     }
@@ -1156,10 +1156,10 @@ impl user_defined_value_type_definition::_T0 {
         (
             (
                 (
-                    (((((r#type, ignore_0), identifier), ignore_1), is), ignore_2),
+                    (((((r#type, ignore_1), identifier), ignore_2), is), ignore_3),
                     elementary_type_with_payable,
                 ),
-                ignore_3,
+                ignore_4,
             ),
             semicolon_char,
         ): (
@@ -1184,13 +1184,13 @@ impl user_defined_value_type_definition::_T0 {
     ) -> Self {
         Self {
             r#type,
-            ignore_0,
-            identifier,
             ignore_1,
-            is,
+            identifier,
             ignore_2,
-            elementary_type_with_payable,
+            is,
             ignore_3,
+            elementary_type_with_payable,
+            ignore_4,
             semicolon_char,
         }
     }
@@ -1207,14 +1207,14 @@ impl mapping_type::_T0 {
                 (
                     (
                         (
-                            (((((mapping, ignore_0), open_paren_char), ignore_1), _t1), ignore_2),
+                            (((((mapping, ignore_1), open_paren_char), ignore_2), _t1), ignore_3),
                             equal_greater,
                         ),
-                        ignore_3,
+                        ignore_4,
                     ),
                     type_name,
                 ),
-                ignore_4,
+                ignore_5,
             ),
             close_paren_char,
         ): (
@@ -1245,15 +1245,15 @@ impl mapping_type::_T0 {
     ) -> Self {
         Self {
             mapping,
-            ignore_0,
-            open_paren_char,
             ignore_1,
-            _t1,
+            open_paren_char,
             ignore_2,
-            equal_greater,
+            _t1,
             ignore_3,
-            type_name,
+            equal_greater,
             ignore_4,
+            type_name,
+            ignore_5,
             close_paren_char,
         }
     }
@@ -1265,7 +1265,7 @@ impl DefaultTest for mapping_type::_T1 {}
 
 impl named_argument_list::_T0 {
     pub fn new(
-        ((((open_brace_char, ignore_0), named_arguments), ignore_1), close_brace_char): (
+        ((((open_brace_char, ignore_1), named_arguments), ignore_2), close_brace_char): (
             (
                 (
                     (FixedTerminal<1usize>, ignore::N),
@@ -1278,9 +1278,9 @@ impl named_argument_list::_T0 {
     ) -> Self {
         Self {
             open_brace_char,
-            ignore_0,
-            named_arguments,
             ignore_1,
+            named_arguments,
+            ignore_2,
             close_brace_char,
         }
     }
@@ -1289,9 +1289,9 @@ impl named_argument_list::_T0 {
 impl DefaultTest for named_argument_list::_T0 {
     fn is_default(&self) -> bool {
         self.open_brace_char.is_default()
-            && self.ignore_0.is_default()
-            && self.named_arguments.is_default()
             && self.ignore_1.is_default()
+            && self.named_arguments.is_default()
+            && self.ignore_2.is_default()
             && self.close_brace_char.is_default()
     }
 }
@@ -1315,7 +1315,7 @@ impl DefaultTest for named_argument_list::_T1 {
 
 impl non_empty_parameter_list::_T0 {
     pub fn new(
-        ((((open_paren_char, ignore_0), parameter_declarations), ignore_1), close_paren_char): (
+        ((((open_paren_char, ignore_1), parameter_declarations), ignore_2), close_paren_char): (
             (
                 (
                     (FixedTerminal<1usize>, ignore::N),
@@ -1328,9 +1328,9 @@ impl non_empty_parameter_list::_T0 {
     ) -> Self {
         Self {
             open_paren_char,
-            ignore_0,
-            parameter_declarations,
             ignore_1,
+            parameter_declarations,
+            ignore_2,
             close_paren_char,
         }
     }
@@ -1339,9 +1339,9 @@ impl non_empty_parameter_list::_T0 {
 impl DefaultTest for non_empty_parameter_list::_T0 {
     fn is_default(&self) -> bool {
         self.open_paren_char.is_default()
-            && self.ignore_0.is_default()
-            && self.parameter_declarations.is_default()
             && self.ignore_1.is_default()
+            && self.parameter_declarations.is_default()
+            && self.ignore_2.is_default()
             && self.close_paren_char.is_default()
     }
 }
@@ -1429,7 +1429,7 @@ impl DefaultTest for override_specifier::_T2 {
 
 impl parameter_list::_T0 {
     pub fn new(
-        ((((open_paren_char, ignore_0), parameter_declarations), ignore_1), close_paren_char): (
+        ((((open_paren_char, ignore_1), parameter_declarations), ignore_2), close_paren_char): (
             (
                 (
                     (FixedTerminal<1usize>, ignore::N),
@@ -1442,9 +1442,9 @@ impl parameter_list::_T0 {
     ) -> Self {
         Self {
             open_paren_char,
-            ignore_0,
-            parameter_declarations,
             ignore_1,
+            parameter_declarations,
+            ignore_2,
             close_paren_char,
         }
     }
@@ -1453,9 +1453,9 @@ impl parameter_list::_T0 {
 impl DefaultTest for parameter_list::_T0 {
     fn is_default(&self) -> bool {
         self.open_paren_char.is_default()
-            && self.ignore_0.is_default()
-            && self.parameter_declarations.is_default()
             && self.ignore_1.is_default()
+            && self.parameter_declarations.is_default()
+            && self.ignore_2.is_default()
             && self.close_paren_char.is_default()
     }
 }
@@ -1487,14 +1487,14 @@ impl selecting_import_directive::_T0 {
                 (
                     (
                         (
-                            (((open_brace_char, ignore_0), selected_imports), ignore_1),
+                            (((open_brace_char, ignore_1), selected_imports), ignore_2),
                             close_brace_char,
                         ),
-                        ignore_2,
+                        ignore_3,
                     ),
                     from,
                 ),
-                ignore_3,
+                ignore_4,
             ),
             import_path,
         ): (
@@ -1522,13 +1522,13 @@ impl selecting_import_directive::_T0 {
     ) -> Self {
         Self {
             open_brace_char,
-            ignore_0,
-            selected_imports,
             ignore_1,
-            close_brace_char,
+            selected_imports,
             ignore_2,
-            from,
+            close_brace_char,
             ignore_3,
+            from,
+            ignore_4,
             import_path,
         }
     }
@@ -1585,7 +1585,7 @@ impl DefaultTest for simple_import_directive::_T2 {
 impl star_import_directive::_T0 {
     pub fn new(
         (
-            (((((((star_char, ignore_0), r#as), ignore_1), identifier), ignore_2), from), ignore_3),
+            (((((((star_char, ignore_1), r#as), ignore_2), identifier), ignore_3), from), ignore_4),
             import_path,
         ): (
             (
@@ -1609,13 +1609,13 @@ impl star_import_directive::_T0 {
     ) -> Self {
         Self {
             star_char,
-            ignore_0,
-            r#as,
             ignore_1,
-            identifier,
+            r#as,
             ignore_2,
-            from,
+            identifier,
             ignore_3,
+            from,
+            ignore_4,
             import_path,
         }
     }
@@ -1627,7 +1627,7 @@ impl DefaultTest for yul_expression::_T0 {}
 
 impl argument_list::_T0 {
     pub fn new(
-        ((((open_paren_char, ignore_0), _t1), ignore_1), close_paren_char): (
+        ((((open_paren_char, ignore_1), _t1), ignore_2), close_paren_char): (
             (
                 (
                     (FixedTerminal<1usize>, ignore::N),
@@ -1640,9 +1640,9 @@ impl argument_list::_T0 {
     ) -> Self {
         Self {
             open_paren_char,
-            ignore_0,
-            _t1,
             ignore_1,
+            _t1,
+            ignore_2,
             close_paren_char,
         }
     }
@@ -1651,9 +1651,9 @@ impl argument_list::_T0 {
 impl DefaultTest for argument_list::_T0 {
     fn is_default(&self) -> bool {
         self.open_paren_char.is_default()
-            && self.ignore_0.is_default()
-            && self._t1.is_default()
             && self.ignore_1.is_default()
+            && self._t1.is_default()
+            && self.ignore_2.is_default()
             && self.close_paren_char.is_default()
     }
 }
@@ -1662,7 +1662,7 @@ impl DefaultTest for argument_list::_T1 {}
 
 impl catch_clause::_T0 {
     pub fn new(
-        ((((catch, ignore_0), _t1), ignore_1), block): (
+        ((((catch, ignore_1), _t1), ignore_2), block): (
             (
                 (
                     (FixedTerminal<5usize>, ignore::N),
@@ -1675,9 +1675,9 @@ impl catch_clause::_T0 {
     ) -> Self {
         Self {
             catch,
-            ignore_0,
-            _t1,
             ignore_1,
+            _t1,
+            ignore_2,
             block,
         }
     }
@@ -1686,9 +1686,9 @@ impl catch_clause::_T0 {
 impl DefaultTest for catch_clause::_T0 {
     fn is_default(&self) -> bool {
         self.catch.is_default()
-            && self.ignore_0.is_default()
-            && self._t1.is_default()
             && self.ignore_1.is_default()
+            && self._t1.is_default()
+            && self.ignore_2.is_default()
             && self.block.is_default()
     }
 }
@@ -1715,7 +1715,7 @@ impl DefaultTest for catch_clause::_T1 {
 
 impl function_type::_T0 {
     pub fn new(
-        ((((((function, ignore_0), parameter_list), ignore_1), _4), ignore_2), _t2): (
+        ((((((function, ignore_1), parameter_list), ignore_2), _4), ignore_3), _t2): (
             (
                 (
                     (
@@ -1731,11 +1731,11 @@ impl function_type::_T0 {
     ) -> Self {
         Self {
             function,
-            ignore_0,
-            parameter_list,
             ignore_1,
-            _4,
+            parameter_list,
             ignore_2,
+            _4,
+            ignore_3,
             _t2,
         }
     }
@@ -1744,11 +1744,11 @@ impl function_type::_T0 {
 impl DefaultTest for function_type::_T0 {
     fn is_default(&self) -> bool {
         self.function.is_default()
-            && self.ignore_0.is_default()
-            && self.parameter_list.is_default()
             && self.ignore_1.is_default()
-            && self._4.is_default()
+            && self.parameter_list.is_default()
             && self.ignore_2.is_default()
+            && self._4.is_default()
+            && self.ignore_3.is_default()
             && self._t2.is_default()
     }
 }
@@ -1772,7 +1772,7 @@ impl DefaultTest for function_type::_T2 {
 
 impl import_directive::_T0 {
     pub fn new(
-        ((((import, ignore_0), _t1), ignore_1), semicolon_char): (
+        ((((import, ignore_1), _t1), ignore_2), semicolon_char): (
             (
                 (
                     (FixedTerminal<6usize>, ignore::N),
@@ -1785,9 +1785,9 @@ impl import_directive::_T0 {
     ) -> Self {
         Self {
             import,
-            ignore_0,
-            _t1,
             ignore_1,
+            _t1,
+            ignore_2,
             semicolon_char,
         }
     }
@@ -1865,12 +1865,12 @@ impl yul_for_statement::_T0 {
         (
             (
                 (
-                    (((((r#for, ignore_0), yul_block_0), ignore_1), yul_expression), ignore_2),
-                    yul_block_1,
+                    (((((r#for, ignore_1), yul_block_1), ignore_2), yul_expression), ignore_3),
+                    yul_block_2,
                 ),
-                ignore_3,
+                ignore_4,
             ),
-            yul_block_2,
+            yul_block_3,
         ): (
             (
                 (
@@ -1893,14 +1893,14 @@ impl yul_for_statement::_T0 {
     ) -> Self {
         Self {
             r#for,
-            ignore_0,
-            yul_block_0,
             ignore_1,
-            yul_expression,
-            ignore_2,
             yul_block_1,
+            ignore_2,
+            yul_expression,
             ignore_3,
             yul_block_2,
+            ignore_4,
+            yul_block_3,
         }
     }
 }
@@ -1909,7 +1909,7 @@ impl DefaultTest for yul_for_statement::_T0 {}
 
 impl yul_if_statement::_T0 {
     pub fn new(
-        ((((r#if, ignore_0), yul_expression), ignore_1), yul_block): (
+        ((((r#if, ignore_1), yul_expression), ignore_2), yul_block): (
             (
                 ((FixedTerminal<2usize>, ignore::N), yul_expression::N),
                 ignore::N,
@@ -1919,9 +1919,9 @@ impl yul_if_statement::_T0 {
     ) -> Self {
         Self {
             r#if,
-            ignore_0,
-            yul_expression,
             ignore_1,
+            yul_expression,
+            ignore_2,
             yul_block,
         }
     }
@@ -1931,7 +1931,7 @@ impl DefaultTest for yul_if_statement::_T0 {}
 
 impl yul_switch_statement::_T0 {
     pub fn new(
-        ((((switch, ignore_0), yul_expression), ignore_1), _t1): (
+        ((((switch, ignore_1), yul_expression), ignore_2), _t1): (
             (
                 ((FixedTerminal<6usize>, ignore::N), yul_expression::N),
                 ignore::N,
@@ -1941,9 +1941,9 @@ impl yul_switch_statement::_T0 {
     ) -> Self {
         Self {
             switch,
-            ignore_0,
-            yul_expression,
             ignore_1,
+            yul_expression,
+            ignore_2,
             _t1,
         }
     }
@@ -2010,7 +2010,7 @@ impl DefaultTest for yul_switch_statement::_T4 {}
 
 impl yul_variable_declaration::_T0 {
     pub fn new(
-        ((((r#let, ignore_0), yul_identifier), ignore_1), _t1): (
+        ((((r#let, ignore_1), yul_identifier), ignore_2), _t1): (
             (
                 ((FixedTerminal<3usize>, ignore::N), yul_identifier::N),
                 ignore::N,
@@ -2020,9 +2020,9 @@ impl yul_variable_declaration::_T0 {
     ) -> Self {
         Self {
             r#let,
-            ignore_0,
-            yul_identifier,
             ignore_1,
+            yul_identifier,
+            ignore_2,
             _t1,
         }
     }
@@ -2031,9 +2031,9 @@ impl yul_variable_declaration::_T0 {
 impl DefaultTest for yul_variable_declaration::_T0 {
     fn is_default(&self) -> bool {
         self.r#let.is_default()
-            && self.ignore_0.is_default()
-            && self.yul_identifier.is_default()
             && self.ignore_1.is_default()
+            && self.yul_identifier.is_default()
+            && self.ignore_2.is_default()
             && self._t1.is_default()
     }
 }
@@ -2197,7 +2197,7 @@ impl DefaultTest for error_parameter::_T0 {}
 
 impl event_parameter::_T0 {
     pub fn new(
-        ((((type_name, ignore_0), indexed), ignore_1), identifier): (
+        ((((type_name, ignore_1), indexed), ignore_2), identifier): (
             (
                 ((type_name::N, ignore::N), Option<FixedTerminal<7usize>>),
                 ignore::N,
@@ -2207,9 +2207,9 @@ impl event_parameter::_T0 {
     ) -> Self {
         Self {
             type_name,
-            ignore_0,
-            indexed,
             ignore_1,
+            indexed,
+            ignore_2,
             identifier,
         }
     }
@@ -2392,10 +2392,10 @@ impl struct_definition::_T0 {
         (
             (
                 (
-                    (((((r#struct, ignore_0), identifier), ignore_1), open_brace_char), ignore_2),
+                    (((((r#struct, ignore_1), identifier), ignore_2), open_brace_char), ignore_3),
                     _t2s,
                 ),
-                ignore_3,
+                ignore_4,
             ),
             close_brace_char,
         ): (
@@ -2420,13 +2420,13 @@ impl struct_definition::_T0 {
     ) -> Self {
         Self {
             r#struct,
-            ignore_0,
-            identifier,
             ignore_1,
-            open_brace_char,
+            identifier,
             ignore_2,
-            _t2s,
+            open_brace_char,
             ignore_3,
+            _t2s,
+            ignore_4,
             close_brace_char,
         }
     }
@@ -2435,13 +2435,13 @@ impl struct_definition::_T0 {
 impl DefaultTest for struct_definition::_T0 {
     fn is_default(&self) -> bool {
         self.r#struct.is_default()
-            && self.ignore_0.is_default()
-            && self.identifier.is_default()
             && self.ignore_1.is_default()
-            && self.open_brace_char.is_default()
+            && self.identifier.is_default()
             && self.ignore_2.is_default()
-            && self._t2s.is_default()
+            && self.open_brace_char.is_default()
             && self.ignore_3.is_default()
+            && self._t2s.is_default()
+            && self.ignore_4.is_default()
             && self.close_brace_char.is_default()
     }
 }
@@ -2468,10 +2468,10 @@ impl using_directive::_T0 {
         (
             (
                 (
-                    (((((((using, ignore_0), _t1), ignore_1), r#for), ignore_2), _t4), ignore_3),
+                    (((((((using, ignore_1), _t1), ignore_2), r#for), ignore_3), _t4), ignore_4),
                     global,
                 ),
-                ignore_4,
+                ignore_5,
             ),
             semicolon_char,
         ): (
@@ -2505,15 +2505,15 @@ impl using_directive::_T0 {
     ) -> Self {
         Self {
             using,
-            ignore_0,
-            _t1,
             ignore_1,
-            r#for,
+            _t1,
             ignore_2,
-            _t4,
+            r#for,
             ignore_3,
-            global,
+            _t4,
             ignore_4,
+            global,
+            ignore_5,
             semicolon_char,
         }
     }
@@ -2567,16 +2567,16 @@ impl DefaultTest for using_directive::_T3 {
 
 impl variable_declaration::_T0 {
     pub fn new(
-        ((((type_name, ignore_0), _2), ignore_1), identifier): (
+        ((((type_name, ignore_1), _2), ignore_2), identifier): (
             (((type_name::N, ignore::N), Option<usize>), ignore::N),
             identifier::N,
         ),
     ) -> Self {
         Self {
             type_name,
-            ignore_0,
-            _2,
             ignore_1,
+            _2,
+            ignore_2,
             identifier,
         }
     }
@@ -2586,7 +2586,7 @@ impl DefaultTest for variable_declaration::_T0 {}
 
 impl yul_block::_T0 {
     pub fn new(
-        ((((open_brace_char, ignore_0), yul_statements), ignore_1), close_brace_char): (
+        ((((open_brace_char, ignore_1), yul_statements), ignore_2), close_brace_char): (
             (
                 ((FixedTerminal<1usize>, ignore::N), Vec<yul_statement::N>),
                 ignore::N,
@@ -2596,9 +2596,9 @@ impl yul_block::_T0 {
     ) -> Self {
         Self {
             open_brace_char,
-            ignore_0,
-            yul_statements,
             ignore_1,
+            yul_statements,
+            ignore_2,
             close_brace_char,
         }
     }
@@ -2607,9 +2607,9 @@ impl yul_block::_T0 {
 impl DefaultTest for yul_block::_T0 {
     fn is_default(&self) -> bool {
         self.open_brace_char.is_default()
-            && self.ignore_0.is_default()
-            && self.yul_statements.is_default()
             && self.ignore_1.is_default()
+            && self.yul_statements.is_default()
+            && self.ignore_2.is_default()
             && self.close_brace_char.is_default()
     }
 }
@@ -2619,10 +2619,10 @@ impl assembly_statement::_T0 {
         (
             (
                 (
-                    (((assembly, ignore_0), double_quote_evmasm_double_quote), ignore_1),
+                    (((assembly, ignore_1), double_quote_evmasm_double_quote), ignore_2),
                     assembly_flags,
                 ),
-                ignore_2,
+                ignore_3,
             ),
             yul_block,
         ): (
@@ -2644,11 +2644,11 @@ impl assembly_statement::_T0 {
     ) -> Self {
         Self {
             assembly,
-            ignore_0,
-            double_quote_evmasm_double_quote,
             ignore_1,
-            assembly_flags,
+            double_quote_evmasm_double_quote,
             ignore_2,
+            assembly_flags,
+            ignore_3,
             yul_block,
         }
     }
@@ -2657,11 +2657,11 @@ impl assembly_statement::_T0 {
 impl DefaultTest for assembly_statement::_T0 {
     fn is_default(&self) -> bool {
         self.assembly.is_default()
-            && self.ignore_0.is_default()
-            && self.double_quote_evmasm_double_quote.is_default()
             && self.ignore_1.is_default()
-            && self.assembly_flags.is_default()
+            && self.double_quote_evmasm_double_quote.is_default()
             && self.ignore_2.is_default()
+            && self.assembly_flags.is_default()
+            && self.ignore_3.is_default()
             && self.yul_block.is_default()
     }
 }
@@ -2676,16 +2676,16 @@ impl error_definition::_T0 {
                     (
                         (
                             (
-                                ((((error, ignore_0), identifier), ignore_1), open_paren_char),
-                                ignore_2,
+                                ((((error, ignore_1), identifier), ignore_2), open_paren_char),
+                                ignore_3,
                             ),
                             error_parameters,
                         ),
-                        ignore_3,
+                        ignore_4,
                     ),
                     close_paren_char,
                 ),
-                ignore_4,
+                ignore_5,
             ),
             semicolon_char,
         ): (
@@ -2716,15 +2716,15 @@ impl error_definition::_T0 {
     ) -> Self {
         Self {
             error,
-            ignore_0,
-            identifier,
             ignore_1,
-            open_paren_char,
+            identifier,
             ignore_2,
-            error_parameters,
+            open_paren_char,
             ignore_3,
-            close_paren_char,
+            error_parameters,
             ignore_4,
+            close_paren_char,
+            ignore_5,
             semicolon_char,
         }
     }
@@ -2733,15 +2733,15 @@ impl error_definition::_T0 {
 impl DefaultTest for error_definition::_T0 {
     fn is_default(&self) -> bool {
         self.error.is_default()
-            && self.ignore_0.is_default()
-            && self.identifier.is_default()
             && self.ignore_1.is_default()
-            && self.open_paren_char.is_default()
+            && self.identifier.is_default()
             && self.ignore_2.is_default()
-            && self.error_parameters.is_default()
+            && self.open_paren_char.is_default()
             && self.ignore_3.is_default()
-            && self.close_paren_char.is_default()
+            && self.error_parameters.is_default()
             && self.ignore_4.is_default()
+            && self.close_paren_char.is_default()
+            && self.ignore_5.is_default()
             && self.semicolon_char.is_default()
     }
 }
@@ -2774,22 +2774,22 @@ impl event_definition::_T0 {
                                 (
                                     (
                                         (
-                                            (((event, ignore_0), identifier), ignore_1),
+                                            (((event, ignore_1), identifier), ignore_2),
                                             open_paren_char,
                                         ),
-                                        ignore_2,
+                                        ignore_3,
                                     ),
                                     event_parameters,
                                 ),
-                                ignore_3,
+                                ignore_4,
                             ),
                             close_paren_char,
                         ),
-                        ignore_4,
+                        ignore_5,
                     ),
                     anonymous,
                 ),
-                ignore_5,
+                ignore_6,
             ),
             semicolon_char,
         ): (
@@ -2826,17 +2826,17 @@ impl event_definition::_T0 {
     ) -> Self {
         Self {
             event,
-            ignore_0,
-            identifier,
             ignore_1,
-            open_paren_char,
+            identifier,
             ignore_2,
-            event_parameters,
+            open_paren_char,
             ignore_3,
-            close_paren_char,
+            event_parameters,
             ignore_4,
-            anonymous,
+            close_paren_char,
             ignore_5,
+            anonymous,
+            ignore_6,
             semicolon_char,
         }
     }
@@ -2845,17 +2845,17 @@ impl event_definition::_T0 {
 impl DefaultTest for event_definition::_T0 {
     fn is_default(&self) -> bool {
         self.event.is_default()
-            && self.ignore_0.is_default()
-            && self.identifier.is_default()
             && self.ignore_1.is_default()
-            && self.open_paren_char.is_default()
+            && self.identifier.is_default()
             && self.ignore_2.is_default()
-            && self.event_parameters.is_default()
+            && self.open_paren_char.is_default()
             && self.ignore_3.is_default()
-            && self.close_paren_char.is_default()
+            && self.event_parameters.is_default()
             && self.ignore_4.is_default()
-            && self.anonymous.is_default()
+            && self.close_paren_char.is_default()
             && self.ignore_5.is_default()
+            && self.anonymous.is_default()
+            && self.ignore_6.is_default()
             && self.semicolon_char.is_default()
     }
 }
@@ -2944,14 +2944,14 @@ impl variable_declaration_tuple::_T0 {
                 (
                     (
                         (
-                            (((open_paren_char, ignore_0), comma_chars), ignore_1),
+                            (((open_paren_char, ignore_1), comma_chars), ignore_2),
                             variable_declaration,
                         ),
-                        ignore_2,
+                        ignore_3,
                     ),
                     _t3s,
                 ),
-                ignore_3,
+                ignore_4,
             ),
             close_paren_char,
         ): (
@@ -2973,13 +2973,13 @@ impl variable_declaration_tuple::_T0 {
     ) -> Self {
         Self {
             open_paren_char,
-            ignore_0,
-            comma_chars,
             ignore_1,
-            variable_declaration,
+            comma_chars,
             ignore_2,
-            _t3s,
+            variable_declaration,
             ignore_3,
+            _t3s,
+            ignore_4,
             close_paren_char,
         }
     }
@@ -3374,7 +3374,7 @@ impl DefaultTest for conditional_expression::_T0 {
 
 impl conditional_expression::_T1 {
     pub fn new(
-        (((question_char, expression_0), colon_char), expression_1): (
+        (((question_char, expression_1), colon_char), expression_2): (
             (
                 (FixedTerminal<1usize>, expression::N),
                 FixedTerminal<1usize>,
@@ -3384,9 +3384,9 @@ impl conditional_expression::_T1 {
     ) -> Self {
         Self {
             question_char,
-            expression_0,
-            colon_char,
             expression_1,
+            colon_char,
+            expression_2,
         }
     }
 }
@@ -3394,9 +3394,9 @@ impl conditional_expression::_T1 {
 impl DefaultTest for conditional_expression::_T1 {
     fn is_default(&self) -> bool {
         self.question_char.is_default()
-            && self.expression_0.is_default()
-            && self.colon_char.is_default()
             && self.expression_1.is_default()
+            && self.colon_char.is_default()
+            && self.expression_2.is_default()
     }
 }
 
@@ -3441,14 +3441,14 @@ impl constant_definition::_T0 {
                 (
                     (
                         (
-                            (((((type_name, ignore_0), constant), ignore_1), identifier), ignore_2),
+                            (((((type_name, ignore_1), constant), ignore_2), identifier), ignore_3),
                             equal_char,
                         ),
-                        ignore_3,
+                        ignore_4,
                     ),
                     expression,
                 ),
-                ignore_4,
+                ignore_5,
             ),
             semicolon_char,
         ): (
@@ -3479,15 +3479,15 @@ impl constant_definition::_T0 {
     ) -> Self {
         Self {
             type_name,
-            ignore_0,
-            constant,
             ignore_1,
-            identifier,
+            constant,
             ignore_2,
-            equal_char,
+            identifier,
             ignore_3,
-            expression,
+            equal_char,
             ignore_4,
+            expression,
+            ignore_5,
             semicolon_char,
         }
     }
@@ -3505,20 +3505,20 @@ impl do_while_statement::_T0 {
                             (
                                 (
                                     (
-                                        ((((r#do, ignore_0), statement), ignore_1), r#while),
-                                        ignore_2,
+                                        ((((r#do, ignore_1), statement), ignore_2), r#while),
+                                        ignore_3,
                                     ),
                                     open_paren_char,
                                 ),
-                                ignore_3,
+                                ignore_4,
                             ),
                             expression,
                         ),
-                        ignore_4,
+                        ignore_5,
                     ),
                     close_paren_char,
                 ),
-                ignore_5,
+                ignore_6,
             ),
             semicolon_char,
         ): (
@@ -3555,17 +3555,17 @@ impl do_while_statement::_T0 {
     ) -> Self {
         Self {
             r#do,
-            ignore_0,
-            statement,
             ignore_1,
-            r#while,
+            statement,
             ignore_2,
-            open_paren_char,
+            r#while,
             ignore_3,
-            expression,
+            open_paren_char,
             ignore_4,
-            close_paren_char,
+            expression,
             ignore_5,
+            close_paren_char,
+            ignore_6,
             semicolon_char,
         }
     }
@@ -3575,7 +3575,7 @@ impl DefaultTest for do_while_statement::_T0 {}
 
 impl emit_statement::_T0 {
     pub fn new(
-        ((((((emit, ignore_0), expression), ignore_1), argument_list), ignore_2), semicolon_char): (
+        ((((((emit, ignore_1), expression), ignore_2), argument_list), ignore_3), semicolon_char): (
             (
                 (
                     (
@@ -3591,11 +3591,11 @@ impl emit_statement::_T0 {
     ) -> Self {
         Self {
             emit,
-            ignore_0,
-            expression,
             ignore_1,
-            argument_list,
+            expression,
             ignore_2,
+            argument_list,
+            ignore_3,
             semicolon_char,
         }
     }
@@ -3604,11 +3604,11 @@ impl emit_statement::_T0 {
 impl DefaultTest for emit_statement::_T0 {
     fn is_default(&self) -> bool {
         self.emit.is_default()
-            && self.ignore_0.is_default()
-            && self.expression.is_default()
             && self.ignore_1.is_default()
-            && self.argument_list.is_default()
+            && self.expression.is_default()
             && self.ignore_2.is_default()
+            && self.argument_list.is_default()
+            && self.ignore_3.is_default()
             && self.semicolon_char.is_default()
     }
 }
@@ -3639,16 +3639,16 @@ impl if_statement::_T0 {
                     (
                         (
                             (
-                                ((((r#if, ignore_0), open_paren_char), ignore_1), expression),
-                                ignore_2,
+                                ((((r#if, ignore_1), open_paren_char), ignore_2), expression),
+                                ignore_3,
                             ),
                             close_paren_char,
                         ),
-                        ignore_3,
+                        ignore_4,
                     ),
                     statement,
                 ),
-                ignore_4,
+                ignore_5,
             ),
             _t1,
         ): (
@@ -3679,15 +3679,15 @@ impl if_statement::_T0 {
     ) -> Self {
         Self {
             r#if,
-            ignore_0,
-            open_paren_char,
             ignore_1,
-            expression,
+            open_paren_char,
             ignore_2,
-            close_paren_char,
+            expression,
             ignore_3,
-            statement,
+            close_paren_char,
             ignore_4,
+            statement,
+            ignore_5,
             _t1,
         }
     }
@@ -3705,7 +3705,7 @@ impl DefaultTest for if_statement::_T1 {}
 
 impl return_statement::_T0 {
     pub fn new(
-        ((((r#return, ignore_0), expression), ignore_1), semicolon_char): (
+        ((((r#return, ignore_1), expression), ignore_2), semicolon_char): (
             (
                 ((FixedTerminal<6usize>, ignore::N), Option<expression::N>),
                 ignore::N,
@@ -3715,9 +3715,9 @@ impl return_statement::_T0 {
     ) -> Self {
         Self {
             r#return,
-            ignore_0,
-            expression,
             ignore_1,
+            expression,
+            ignore_2,
             semicolon_char,
         }
     }
@@ -3726,24 +3726,24 @@ impl return_statement::_T0 {
 impl DefaultTest for return_statement::_T0 {
     fn is_default(&self) -> bool {
         self.r#return.is_default()
-            && self.ignore_0.is_default()
-            && self.expression.is_default()
             && self.ignore_1.is_default()
+            && self.expression.is_default()
+            && self.ignore_2.is_default()
             && self.semicolon_char.is_default()
     }
 }
 
 impl revert_statement::_T0 {
     pub fn new(
-        ((((((revert , ignore_0) , expression) , ignore_1) , argument_list) , ignore_2) , semicolon_char) : ((((((FixedTerminal < 6usize > , ignore :: N) , expression :: N) , ignore :: N) , argument_list :: N) , ignore :: N) , FixedTerminal < 1usize >),
+        ((((((revert , ignore_1) , expression) , ignore_2) , argument_list) , ignore_3) , semicolon_char) : ((((((FixedTerminal < 6usize > , ignore :: N) , expression :: N) , ignore :: N) , argument_list :: N) , ignore :: N) , FixedTerminal < 1usize >),
     ) -> Self {
         Self {
             revert,
-            ignore_0,
-            expression,
             ignore_1,
-            argument_list,
+            expression,
             ignore_2,
+            argument_list,
+            ignore_3,
             semicolon_char,
         }
     }
@@ -3752,11 +3752,11 @@ impl revert_statement::_T0 {
 impl DefaultTest for revert_statement::_T0 {
     fn is_default(&self) -> bool {
         self.revert.is_default()
-            && self.ignore_0.is_default()
-            && self.expression.is_default()
             && self.ignore_1.is_default()
-            && self.argument_list.is_default()
+            && self.expression.is_default()
             && self.ignore_2.is_default()
+            && self.argument_list.is_default()
+            && self.ignore_3.is_default()
             && self.semicolon_char.is_default()
     }
 }
@@ -3768,14 +3768,14 @@ impl state_variable_declaration::_T0 {
                 (
                     (
                         (
-                            (((type_name, ignore_0), state_variable_attributes), ignore_1),
+                            (((type_name, ignore_1), state_variable_attributes), ignore_2),
                             identifier,
                         ),
-                        ignore_2,
+                        ignore_3,
                     ),
                     _t2,
                 ),
-                ignore_3,
+                ignore_4,
             ),
             semicolon_char,
         ): (
@@ -3800,13 +3800,13 @@ impl state_variable_declaration::_T0 {
     ) -> Self {
         Self {
             type_name,
-            ignore_0,
-            state_variable_attributes,
             ignore_1,
-            identifier,
+            state_variable_attributes,
             ignore_2,
-            _t2,
+            identifier,
             ignore_3,
+            _t2,
+            ignore_4,
             semicolon_char,
         }
     }
@@ -3832,7 +3832,7 @@ impl DefaultTest for state_variable_declaration::_T2 {
 impl try_statement::_T0 {
     pub fn new(
         (
-            (((((((r#try, ignore_0), expression), ignore_1), _t1), ignore_2), block), ignore_3),
+            (((((((r#try, ignore_1), expression), ignore_2), _t1), ignore_3), block), ignore_4),
             catch_clauses,
         ): (
             (
@@ -3856,13 +3856,13 @@ impl try_statement::_T0 {
     ) -> Self {
         Self {
             r#try,
-            ignore_0,
-            expression,
             ignore_1,
-            _t1,
+            expression,
             ignore_2,
-            block,
+            _t1,
             ignore_3,
+            block,
+            ignore_4,
             catch_clauses,
         }
     }
@@ -3871,13 +3871,13 @@ impl try_statement::_T0 {
 impl DefaultTest for try_statement::_T0 {
     fn is_default(&self) -> bool {
         self.r#try.is_default()
-            && self.ignore_0.is_default()
-            && self.expression.is_default()
             && self.ignore_1.is_default()
-            && self._t1.is_default()
+            && self.expression.is_default()
             && self.ignore_2.is_default()
-            && self.block.is_default()
+            && self._t1.is_default()
             && self.ignore_3.is_default()
+            && self.block.is_default()
+            && self.ignore_4.is_default()
             && self.catch_clauses.is_default()
     }
 }
@@ -3971,10 +3971,10 @@ impl while_statement::_T0 {
         (
             (
                 (
-                    (((((r#while, ignore_0), open_paren_char), ignore_1), expression), ignore_2),
+                    (((((r#while, ignore_1), open_paren_char), ignore_2), expression), ignore_3),
                     close_paren_char,
                 ),
-                ignore_3,
+                ignore_4,
             ),
             statement,
         ): (
@@ -3999,13 +3999,13 @@ impl while_statement::_T0 {
     ) -> Self {
         Self {
             r#while,
-            ignore_0,
-            open_paren_char,
             ignore_1,
-            expression,
+            open_paren_char,
             ignore_2,
-            close_paren_char,
+            expression,
             ignore_3,
+            close_paren_char,
+            ignore_4,
             statement,
         }
     }
@@ -4025,20 +4025,20 @@ impl for_statement::_T0 {
                             (
                                 (
                                     (
-                                        ((((r#for, ignore_0), open_paren_char), ignore_1), _t1),
-                                        ignore_2,
+                                        ((((r#for, ignore_1), open_paren_char), ignore_2), _t1),
+                                        ignore_3,
                                     ),
                                     _t2,
                                 ),
-                                ignore_3,
+                                ignore_4,
                             ),
                             expression,
                         ),
-                        ignore_4,
+                        ignore_5,
                     ),
                     close_paren_char,
                 ),
-                ignore_5,
+                ignore_6,
             ),
             statement,
         ): (
@@ -4078,17 +4078,17 @@ impl for_statement::_T0 {
     ) -> Self {
         Self {
             r#for,
-            ignore_0,
-            open_paren_char,
             ignore_1,
-            _t1,
+            open_paren_char,
             ignore_2,
-            _t2,
+            _t1,
             ignore_3,
-            expression,
+            _t2,
             ignore_4,
-            close_paren_char,
+            expression,
             ignore_5,
+            close_paren_char,
+            ignore_6,
             statement,
         }
     }
@@ -4104,7 +4104,7 @@ impl DefaultTest for statement::_T0 {}
 
 impl block::_T0 {
     pub fn new(
-        ((((open_brace_char, ignore_0), _t2s), ignore_1), close_brace_char): (
+        ((((open_brace_char, ignore_1), _t2s), ignore_2), close_brace_char): (
             (
                 ((FixedTerminal<1usize>, ignore::N), Vec<Box<block::_T2>>),
                 ignore::N,
@@ -4114,9 +4114,9 @@ impl block::_T0 {
     ) -> Self {
         Self {
             open_brace_char,
-            ignore_0,
-            _t2s,
             ignore_1,
+            _t2s,
+            ignore_2,
             close_brace_char,
         }
     }
@@ -4125,9 +4125,9 @@ impl block::_T0 {
 impl DefaultTest for block::_T0 {
     fn is_default(&self) -> bool {
         self.open_brace_char.is_default()
-            && self.ignore_0.is_default()
-            && self._t2s.is_default()
             && self.ignore_1.is_default()
+            && self._t2s.is_default()
+            && self.ignore_2.is_default()
             && self.close_brace_char.is_default()
     }
 }
@@ -4138,8 +4138,8 @@ impl constructor_definition::_T0 {
     pub fn new(
         (
             (
-                ((((constructor, ignore_0), parameter_list), ignore_1), constructor_attributes),
-                ignore_2,
+                ((((constructor, ignore_1), parameter_list), ignore_2), constructor_attributes),
+                ignore_3,
             ),
             block,
         ): (
@@ -4158,11 +4158,11 @@ impl constructor_definition::_T0 {
     ) -> Self {
         Self {
             constructor,
-            ignore_0,
-            parameter_list,
             ignore_1,
-            constructor_attributes,
+            parameter_list,
             ignore_2,
+            constructor_attributes,
+            ignore_3,
             block,
         }
     }
@@ -4171,11 +4171,11 @@ impl constructor_definition::_T0 {
 impl DefaultTest for constructor_definition::_T0 {
     fn is_default(&self) -> bool {
         self.constructor.is_default()
-            && self.ignore_0.is_default()
-            && self.parameter_list.is_default()
             && self.ignore_1.is_default()
-            && self.constructor_attributes.is_default()
+            && self.parameter_list.is_default()
             && self.ignore_2.is_default()
+            && self.constructor_attributes.is_default()
+            && self.ignore_3.is_default()
             && self.block.is_default()
     }
 }
@@ -4187,14 +4187,14 @@ impl fallback_function_definition::_T0 {
                 (
                     (
                         (
-                            (((fallback, ignore_0), parameter_list), ignore_1),
+                            (((fallback, ignore_1), parameter_list), ignore_2),
                             fallback_function_attributes,
                         ),
-                        ignore_2,
+                        ignore_3,
                     ),
                     _t2,
                 ),
-                ignore_3,
+                ignore_4,
             ),
             _t3,
         ): (
@@ -4219,13 +4219,13 @@ impl fallback_function_definition::_T0 {
     ) -> Self {
         Self {
             fallback,
-            ignore_0,
-            parameter_list,
             ignore_1,
-            fallback_function_attributes,
+            parameter_list,
             ignore_2,
-            _t2,
+            fallback_function_attributes,
             ignore_3,
+            _t2,
+            ignore_4,
             _t3,
         }
     }
@@ -4259,14 +4259,14 @@ impl function_definition::_T0 {
                 (
                     (
                         (
-                            (((((function, ignore_0), _t1), ignore_1), parameter_list), ignore_2),
+                            (((((function, ignore_1), _t1), ignore_2), parameter_list), ignore_3),
                             function_attributes,
                         ),
-                        ignore_3,
+                        ignore_4,
                     ),
                     _t3,
                 ),
-                ignore_4,
+                ignore_5,
             ),
             _t4,
         ): (
@@ -4300,15 +4300,15 @@ impl function_definition::_T0 {
     ) -> Self {
         Self {
             function,
-            ignore_0,
-            _t1,
             ignore_1,
-            parameter_list,
+            _t1,
             ignore_2,
-            function_attributes,
+            parameter_list,
             ignore_3,
-            _t3,
+            function_attributes,
             ignore_4,
+            _t3,
+            ignore_5,
             _t4,
         }
     }
@@ -4342,10 +4342,10 @@ impl modifier_definition::_T0 {
         (
             (
                 (
-                    (((((modifier, ignore_0), identifier), ignore_1), parameter_list), ignore_2),
+                    (((((modifier, ignore_1), identifier), ignore_2), parameter_list), ignore_3),
                     method_attributes,
                 ),
-                ignore_3,
+                ignore_4,
             ),
             _t2,
         ): (
@@ -4370,13 +4370,13 @@ impl modifier_definition::_T0 {
     ) -> Self {
         Self {
             modifier,
-            ignore_0,
-            identifier,
             ignore_1,
-            parameter_list,
+            identifier,
             ignore_2,
-            method_attributes,
+            parameter_list,
             ignore_3,
+            method_attributes,
+            ignore_4,
             _t2,
         }
     }
@@ -4392,12 +4392,12 @@ impl receive_function_definition::_T0 {
             (
                 (
                     (
-                        ((((receive, ignore_0), open_paren_char), ignore_1), close_paren_char),
-                        ignore_2,
+                        ((((receive, ignore_1), open_paren_char), ignore_2), close_paren_char),
+                        ignore_3,
                     ),
                     receive_function_attributes,
                 ),
-                ignore_3,
+                ignore_4,
             ),
             _t2,
         ): (
@@ -4422,13 +4422,13 @@ impl receive_function_definition::_T0 {
     ) -> Self {
         Self {
             receive,
-            ignore_0,
-            open_paren_char,
             ignore_1,
-            close_paren_char,
+            open_paren_char,
             ignore_2,
-            receive_function_attributes,
+            close_paren_char,
             ignore_3,
+            receive_function_attributes,
+            ignore_4,
             _t2,
         }
     }
@@ -4451,22 +4451,22 @@ impl contract_definition::_T0 {
                                 (
                                     (
                                         (
-                                            (((r#abstract, ignore_0), contract), ignore_1),
+                                            (((r#abstract, ignore_1), contract), ignore_2),
                                             identifier,
                                         ),
-                                        ignore_2,
+                                        ignore_3,
                                     ),
                                     inheritance_specifier_list,
                                 ),
-                                ignore_3,
+                                ignore_4,
                             ),
                             open_brace_char,
                         ),
-                        ignore_4,
+                        ignore_5,
                     ),
                     contract_body_elements,
                 ),
-                ignore_5,
+                ignore_6,
             ),
             close_brace_char,
         ): (
@@ -4506,17 +4506,17 @@ impl contract_definition::_T0 {
     ) -> Self {
         Self {
             r#abstract,
-            ignore_0,
-            contract,
             ignore_1,
-            identifier,
+            contract,
             ignore_2,
-            inheritance_specifier_list,
+            identifier,
             ignore_3,
-            open_brace_char,
+            inheritance_specifier_list,
             ignore_4,
-            contract_body_elements,
+            open_brace_char,
             ignore_5,
+            contract_body_elements,
+            ignore_6,
             close_brace_char,
         }
     }
@@ -4525,17 +4525,17 @@ impl contract_definition::_T0 {
 impl DefaultTest for contract_definition::_T0 {
     fn is_default(&self) -> bool {
         self.r#abstract.is_default()
-            && self.ignore_0.is_default()
-            && self.contract.is_default()
             && self.ignore_1.is_default()
-            && self.identifier.is_default()
+            && self.contract.is_default()
             && self.ignore_2.is_default()
-            && self.inheritance_specifier_list.is_default()
+            && self.identifier.is_default()
             && self.ignore_3.is_default()
-            && self.open_brace_char.is_default()
+            && self.inheritance_specifier_list.is_default()
             && self.ignore_4.is_default()
-            && self.contract_body_elements.is_default()
+            && self.open_brace_char.is_default()
             && self.ignore_5.is_default()
+            && self.contract_body_elements.is_default()
+            && self.ignore_6.is_default()
             && self.close_brace_char.is_default()
     }
 }
@@ -4549,18 +4549,18 @@ impl interface_definition::_T0 {
                         (
                             (
                                 (
-                                    (((interface, ignore_0), identifier), ignore_1),
+                                    (((interface, ignore_1), identifier), ignore_2),
                                     inheritance_specifier_list,
                                 ),
-                                ignore_2,
+                                ignore_3,
                             ),
                             open_brace_char,
                         ),
-                        ignore_3,
+                        ignore_4,
                     ),
                     contract_body_elements,
                 ),
-                ignore_4,
+                ignore_5,
             ),
             close_brace_char,
         ): (
@@ -4591,15 +4591,15 @@ impl interface_definition::_T0 {
     ) -> Self {
         Self {
             interface,
-            ignore_0,
-            identifier,
             ignore_1,
-            inheritance_specifier_list,
+            identifier,
             ignore_2,
-            open_brace_char,
+            inheritance_specifier_list,
             ignore_3,
-            contract_body_elements,
+            open_brace_char,
             ignore_4,
+            contract_body_elements,
+            ignore_5,
             close_brace_char,
         }
     }
@@ -4608,15 +4608,15 @@ impl interface_definition::_T0 {
 impl DefaultTest for interface_definition::_T0 {
     fn is_default(&self) -> bool {
         self.interface.is_default()
-            && self.ignore_0.is_default()
-            && self.identifier.is_default()
             && self.ignore_1.is_default()
-            && self.inheritance_specifier_list.is_default()
+            && self.identifier.is_default()
             && self.ignore_2.is_default()
-            && self.open_brace_char.is_default()
+            && self.inheritance_specifier_list.is_default()
             && self.ignore_3.is_default()
-            && self.contract_body_elements.is_default()
+            && self.open_brace_char.is_default()
             && self.ignore_4.is_default()
+            && self.contract_body_elements.is_default()
+            && self.ignore_5.is_default()
             && self.close_brace_char.is_default()
     }
 }
@@ -4626,10 +4626,10 @@ impl library_definition::_T0 {
         (
             (
                 (
-                    (((((library, ignore_0), identifier), ignore_1), open_brace_char), ignore_2),
+                    (((((library, ignore_1), identifier), ignore_2), open_brace_char), ignore_3),
                     contract_body_elements,
                 ),
-                ignore_3,
+                ignore_4,
             ),
             close_brace_char,
         ): (
@@ -4654,13 +4654,13 @@ impl library_definition::_T0 {
     ) -> Self {
         Self {
             library,
-            ignore_0,
-            identifier,
             ignore_1,
-            open_brace_char,
+            identifier,
             ignore_2,
-            contract_body_elements,
+            open_brace_char,
             ignore_3,
+            contract_body_elements,
+            ignore_4,
             close_brace_char,
         }
     }
@@ -4669,13 +4669,13 @@ impl library_definition::_T0 {
 impl DefaultTest for library_definition::_T0 {
     fn is_default(&self) -> bool {
         self.library.is_default()
-            && self.ignore_0.is_default()
-            && self.identifier.is_default()
             && self.ignore_1.is_default()
-            && self.open_brace_char.is_default()
+            && self.identifier.is_default()
             && self.ignore_2.is_default()
-            && self.contract_body_elements.is_default()
+            && self.open_brace_char.is_default()
             && self.ignore_3.is_default()
+            && self.contract_body_elements.is_default()
+            && self.ignore_4.is_default()
             && self.close_brace_char.is_default()
     }
 }
@@ -4684,7 +4684,7 @@ impl DefaultTest for definition::_T0 {}
 
 impl source_unit::_T0 {
     pub fn new(
-        ((((ignore_0, ignore_1), _t2s), ignore_2), end_marker): (
+        ((((ignore_1, ignore_2), _t2s), ignore_3), end_marker): (
             (
                 ((ignore::N, ignore::N), Vec<Box<source_unit::_T2>>),
                 ignore::N,
@@ -4693,10 +4693,10 @@ impl source_unit::_T0 {
         ),
     ) -> Self {
         Self {
-            ignore_0,
             ignore_1,
-            _t2s,
             ignore_2,
+            _t2s,
+            ignore_3,
             end_marker,
         }
     }
@@ -4704,10 +4704,10 @@ impl source_unit::_T0 {
 
 impl DefaultTest for source_unit::_T0 {
     fn is_default(&self) -> bool {
-        self.ignore_0.is_default()
-            && self.ignore_1.is_default()
-            && self._t2s.is_default()
+        self.ignore_1.is_default()
             && self.ignore_2.is_default()
+            && self._t2s.is_default()
+            && self.ignore_3.is_default()
             && self.end_marker.is_default()
     }
 }

@@ -136,15 +136,15 @@ impl DefaultTest for raw_identifier::_T0 {
 
 impl single_char_string::_T0 {
     pub fn new(
-        ((quote_char_0, string_char), quote_char_1): (
+        ((quote_char_1, string_char), quote_char_2): (
             (FixedTerminal<1usize>, string_char::N),
             FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
-            quote_char_0,
-            string_char,
             quote_char_1,
+            string_char,
+            quote_char_2,
         }
     }
 }
@@ -153,30 +153,30 @@ impl DefaultTest for single_char_string::_T0 {}
 
 impl string::_T0 {
     pub fn new(
-        ((quote_char_0, string_chars), quote_char_1): (
+        ((quote_char_1, string_chars), quote_char_2): (
             (FixedTerminal<1usize>, Vec<string_char::N>),
             FixedTerminal<1usize>,
         ),
     ) -> Self {
         Self {
-            quote_char_0,
-            string_chars,
             quote_char_1,
+            string_chars,
+            quote_char_2,
         }
     }
 }
 
 impl DefaultTest for string::_T0 {
     fn is_default(&self) -> bool {
-        self.quote_char_0.is_default()
+        self.quote_char_1.is_default()
             && self.string_chars.is_default()
-            && self.quote_char_1.is_default()
+            && self.quote_char_2.is_default()
     }
 }
 
 impl grouped::_T0 {
     pub fn new(
-        ((((open_paren_char, ignore_0), expression), ignore_1), close_paren_char): (
+        ((((open_paren_char, ignore_1), expression), ignore_2), close_paren_char): (
             (
                 ((FixedTerminal<1usize>, ignore::N), expression::N),
                 ignore::N,
@@ -186,9 +186,9 @@ impl grouped::_T0 {
     ) -> Self {
         Self {
             open_paren_char,
-            ignore_0,
-            expression,
             ignore_1,
+            expression,
+            ignore_2,
             close_paren_char,
         }
     }
@@ -197,16 +197,16 @@ impl grouped::_T0 {
 impl DefaultTest for grouped::_T0 {
     fn is_default(&self) -> bool {
         self.open_paren_char.is_default()
-            && self.ignore_0.is_default()
-            && self.expression.is_default()
             && self.ignore_1.is_default()
+            && self.expression.is_default()
+            && self.ignore_2.is_default()
             && self.close_paren_char.is_default()
     }
 }
 
 impl optional::_T0 {
     pub fn new(
-        ((((open_bracket_char, ignore_0), expression), ignore_1), close_bracket_char): (
+        ((((open_bracket_char, ignore_1), expression), ignore_2), close_bracket_char): (
             (
                 ((FixedTerminal<1usize>, ignore::N), expression::N),
                 ignore::N,
@@ -216,9 +216,9 @@ impl optional::_T0 {
     ) -> Self {
         Self {
             open_bracket_char,
-            ignore_0,
-            expression,
             ignore_1,
+            expression,
+            ignore_2,
             close_bracket_char,
         }
     }
@@ -227,9 +227,9 @@ impl optional::_T0 {
 impl DefaultTest for optional::_T0 {
     fn is_default(&self) -> bool {
         self.open_bracket_char.is_default()
-            && self.ignore_0.is_default()
-            && self.expression.is_default()
             && self.ignore_1.is_default()
+            && self.expression.is_default()
+            && self.ignore_2.is_default()
             && self.close_bracket_char.is_default()
     }
 }
@@ -340,7 +340,7 @@ impl DefaultTest for identifier::_T1 {
 
 impl char_range::_T0 {
     pub fn new(
-        ((((single_char_string_0, ignore_0), ellipsis_char), ignore_1), single_char_string_1): (
+        ((((single_char_string_1, ignore_1), ellipsis_char), ignore_2), single_char_string_2): (
             (
                 ((single_char_string::N, ignore::N), FixedTerminal<1usize>),
                 ignore::N,
@@ -349,11 +349,11 @@ impl char_range::_T0 {
         ),
     ) -> Self {
         Self {
-            single_char_string_0,
-            ignore_0,
-            ellipsis_char,
-            ignore_1,
             single_char_string_1,
+            ignore_1,
+            ellipsis_char,
+            ignore_2,
+            single_char_string_2,
         }
     }
 }
@@ -366,12 +366,12 @@ impl repeated::_T0 {
             (
                 (
                     (
-                        ((((repetition_prefix, ignore_0), open_brace_char), ignore_1), expression),
-                        ignore_2,
+                        ((((repetition_prefix, ignore_1), open_brace_char), ignore_2), expression),
+                        ignore_3,
                     ),
                     repetition_separator,
                 ),
-                ignore_3,
+                ignore_4,
             ),
             close_brace_char,
         ): (
@@ -399,13 +399,13 @@ impl repeated::_T0 {
     ) -> Self {
         Self {
             repetition_prefix,
-            ignore_0,
-            open_brace_char,
             ignore_1,
-            expression,
+            open_brace_char,
             ignore_2,
-            repetition_separator,
+            expression,
             ignore_3,
+            repetition_separator,
+            ignore_4,
             close_brace_char,
         }
     }
@@ -414,13 +414,13 @@ impl repeated::_T0 {
 impl DefaultTest for repeated::_T0 {
     fn is_default(&self) -> bool {
         self.repetition_prefix.is_default()
-            && self.ignore_0.is_default()
-            && self.open_brace_char.is_default()
             && self.ignore_1.is_default()
-            && self.expression.is_default()
+            && self.open_brace_char.is_default()
             && self.ignore_2.is_default()
-            && self.repetition_separator.is_default()
+            && self.expression.is_default()
             && self.ignore_3.is_default()
+            && self.repetition_separator.is_default()
+            && self.ignore_4.is_default()
             && self.close_brace_char.is_default()
     }
 }
@@ -484,7 +484,7 @@ impl DefaultTest for expression::_T0 {
 impl production::_T0 {
     pub fn new(
         (
-            (((((identifier, ignore_0), equal_char), ignore_1), expression), ignore_2),
+            (((((identifier, ignore_1), equal_char), ignore_2), expression), ignore_3),
             semicolon_char,
         ): (
             (
@@ -502,11 +502,11 @@ impl production::_T0 {
     ) -> Self {
         Self {
             identifier,
-            ignore_0,
-            equal_char,
             ignore_1,
-            expression,
+            equal_char,
             ignore_2,
+            expression,
+            ignore_3,
             semicolon_char,
         }
     }
@@ -516,16 +516,16 @@ impl DefaultTest for production::_T0 {}
 
 impl grammar::_T0 {
     pub fn new(
-        ((((ignore_0, ignore_1), productions), ignore_2), end_marker): (
+        ((((ignore_1, ignore_2), productions), ignore_3), end_marker): (
             (((ignore::N, ignore::N), Vec<production::N>), ignore::N),
             (),
         ),
     ) -> Self {
         Self {
-            ignore_0,
             ignore_1,
-            productions,
             ignore_2,
+            productions,
+            ignore_3,
             end_marker,
         }
     }
@@ -533,10 +533,10 @@ impl grammar::_T0 {
 
 impl DefaultTest for grammar::_T0 {
     fn is_default(&self) -> bool {
-        self.ignore_0.is_default()
-            && self.ignore_1.is_default()
-            && self.productions.is_default()
+        self.ignore_1.is_default()
             && self.ignore_2.is_default()
+            && self.productions.is_default()
+            && self.ignore_3.is_default()
             && self.end_marker.is_default()
     }
 }

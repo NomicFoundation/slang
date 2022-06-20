@@ -297,7 +297,7 @@ impl CombinatorTreeNodeData {
             | CombinatorTreeNodeData::Lookahead { expr, .. }
             | CombinatorTreeNodeData::Optional { expr } => expr.name(),
             CombinatorTreeNodeData::SeparatedBy { expr, .. }
-            | CombinatorTreeNodeData::Repeat { expr, .. } => expr.name().plural(),
+            | CombinatorTreeNodeData::Repeat { expr, .. } => expr.name().pluralize(),
             CombinatorTreeNodeData::Reference { production } => production.slang_name(),
             CombinatorTreeNodeData::End => SlangName::from_string("end_marker"),
         }
@@ -580,14 +580,62 @@ impl Expression {
                     let mut choices: Vec<(SlangName, CombinatorTreeNode)> = vec![];
                     {
                         let mut current_terminal_tree: Option<TerminalTrie> = None;
+                        let mut current_character_filter: Option<CharacterFilter> = None;
                         for e in exprs {
-                            if let Some(tt) = e.to_terminal_trie(grammar) {
+                            if e.config.name.is_some() {
+                                // named nodes don't get merged
+                                if let Some(ccf) = current_character_filter {
+                                    choices.push((
+                                        ccf.slang_name(),
+                                        ct_character_filter(ccf.slang_name(), ccf),
+                                    ));
+                                    current_character_filter = None
+                                };
+                                if let Some(ctt) = current_terminal_tree {
+                                    choices.push((
+                                        ctt.slang_name(),
+                                        ct_terminal_trie(ctt.slang_name(), ctt),
+                                    ));
+                                    current_terminal_tree = None
+                                };
+                                choices.push({
+                                    let e = e.to_combinator_tree_node(production, grammar);
+                                    (e.name(), e)
+                                })
+                            } else if let Some(cf) = e.to_character_filter(grammar) {
+                                if let Some(ctt) = current_terminal_tree {
+                                    choices.push((
+                                        ctt.slang_name(),
+                                        ct_terminal_trie(ctt.slang_name(), ctt),
+                                    ));
+                                    current_terminal_tree = None
+                                };
+                                if let Some(ccf) = current_character_filter {
+                                    current_character_filter = Some(ccf.merged_with(cf))
+                                } else {
+                                    current_character_filter = Some(cf)
+                                }
+                            } else if let Some(tt) = e.to_terminal_trie(grammar) {
+                                if let Some(ccf) = current_character_filter {
+                                    choices.push((
+                                        ccf.slang_name(),
+                                        ct_character_filter(ccf.slang_name(), ccf),
+                                    ));
+                                    current_character_filter = None
+                                };
                                 if let Some(ctt) = current_terminal_tree.as_mut() {
                                     ctt.merge_with(tt)
                                 } else {
                                     current_terminal_tree = Some(tt)
                                 }
                             } else {
+                                if let Some(ccf) = current_character_filter {
+                                    choices.push((
+                                        ccf.slang_name(),
+                                        ct_character_filter(ccf.slang_name(), ccf),
+                                    ));
+                                    current_character_filter = None
+                                };
                                 if let Some(ctt) = current_terminal_tree {
                                     choices.push((
                                         ctt.slang_name(),
@@ -601,6 +649,12 @@ impl Expression {
                                 })
                             }
                         }
+                        if let Some(ccf) = current_character_filter {
+                            choices.push((
+                                ccf.slang_name(),
+                                ct_character_filter(ccf.slang_name(), ccf),
+                            ));
+                        };
                         if let Some(ctt) = current_terminal_tree {
                             choices
                                 .push((ctt.slang_name(), ct_terminal_trie(ctt.slang_name(), ctt)));

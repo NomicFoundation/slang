@@ -259,11 +259,11 @@ impl CombinatorTreeNodeData {
                     name.clone(),
                     vec![
                         (
-                            expr.name().plural().self_or_positional(0),
+                            expr.name().pluralize().self_or_positional(0),
                             tt_repetition(expr.to_type_tree_node()),
                         ),
                         (
-                            separator.name().plural().self_or_positional(1),
+                            separator.name().pluralize().self_or_positional(1),
                             tt_repetition(separator.to_type_tree_node()),
                         ),
                     ],
