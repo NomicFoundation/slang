@@ -197,12 +197,9 @@ impl CombinatorTreeNodeData {
             }
 
             CombinatorTreeNodeData::Optional { expr } => {
-                let index = subtype_index.get();
-                subtype_index.set(index + 1);
-                let name = SlangName::from_prefix_and_index("_S", index);
+                let name = SlangName::anonymous_type(subtype_index);
                 let c0 = (
-                    expr.name()
-                        .unwrap_or_else(|| SlangName::from_prefix_and_index("_", 0)),
+                    expr.name().unwrap_or_else(|| SlangName::positional_type(0)),
                     expr,
                 );
                 let ignore = (
@@ -219,12 +216,9 @@ impl CombinatorTreeNodeData {
             | CombinatorTreeNodeData::Reference { .. }
             | CombinatorTreeNodeData::TerminalTrie { .. }
             | CombinatorTreeNodeData::CharacterFilter { .. } => {
-                let index = subtype_index.get();
-                subtype_index.set(index + 1);
-                let name = SlangName::from_prefix_and_index("_S", index);
+                let name = SlangName::anonymous_type(subtype_index);
                 let c0 = (
-                    self.name()
-                        .unwrap_or_else(|| SlangName::from_prefix_and_index("_", 0)),
+                    self.name().unwrap_or_else(|| SlangName::positional_type(0)),
                     Box::new(self),
                 );
                 let ignore = (
@@ -421,9 +415,7 @@ impl Expression {
         //                         .as_ref()
         //                         .map(|s| SlangName::from_string(s))
         //                         .unwrap_or_else(|| {
-        //                             let index = subtype_index.get();
-        //                             subtype_index.set(index + 1);
-        //                             SlangName::from_prefix_and_index("_C", index)
+        //                             SlangName::anonymous_type(subtype_index)
         //                         });
         //                     ct_passthrough(
         //                         name,
@@ -504,11 +496,7 @@ impl Expression {
                         .name
                         .as_ref()
                         .map(|s| SlangName::from_string(s))
-                        .unwrap_or_else(|| {
-                            let index = subtype_index.get();
-                            subtype_index.set(index + 1);
-                            SlangName::from_prefix_and_index("_S", index)
-                        });
+                        .unwrap_or_else(|| SlangName::anonymous_type(subtype_index));
                     let mut et = expr.to_combinator_tree_node(subtype_index, production, grammar);
                     let mut st = separator
                         .clone()
@@ -525,11 +513,7 @@ impl Expression {
                         .name
                         .as_ref()
                         .map(|s| SlangName::from_string(s))
-                        .unwrap_or_else(|| {
-                            let index = subtype_index.get();
-                            subtype_index.set(index + 1);
-                            SlangName::from_prefix_and_index("_C", index)
-                        });
+                        .unwrap_or_else(|| SlangName::anonymous_type(subtype_index));
 
                     let mut choices: Vec<(SlangName, CombinatorTreeNode)> = vec![];
                     {
@@ -544,7 +528,7 @@ impl Expression {
                             } else {
                                 if let Some(ctt) = current_terminal_tree {
                                     let name = ctt.slang_name().unwrap_or_else(|| {
-                                        SlangName::from_prefix_and_index("_", choices.len())
+                                        SlangName::positional_type(choices.len())
                                     });
                                     choices.push((name, ct_terminal_trie(ctt.slang_name(), ctt)));
                                     current_terminal_tree = None
@@ -556,16 +540,16 @@ impl Expression {
                                         grammar,
                                     );
                                     let name = e.name().unwrap_or_else(|| {
-                                        SlangName::from_prefix_and_index("_", choices.len())
+                                        SlangName::positional_type(choices.len())
                                     });
                                     (name, e)
                                 })
                             }
                         }
                         if let Some(ctt) = current_terminal_tree {
-                            let name = ctt.slang_name().unwrap_or_else(|| {
-                                SlangName::from_prefix_and_index("_", choices.len())
-                            });
+                            let name = ctt
+                                .slang_name()
+                                .unwrap_or_else(|| SlangName::positional_type(choices.len()));
                             choices.push((name, ct_terminal_trie(ctt.slang_name(), ctt)));
                         };
                     }
@@ -579,20 +563,14 @@ impl Expression {
                         .name
                         .as_ref()
                         .map(|s| SlangName::from_string(s))
-                        .unwrap_or_else(|| {
-                            let index = subtype_index.get();
-                            subtype_index.set(index + 1);
-                            SlangName::from_prefix_and_index("_S", index)
-                        });
+                        .unwrap_or_else(|| SlangName::anonymous_type(subtype_index));
 
                     let mut members = exprs
                         .iter()
                         .enumerate()
                         .map(|(i, e)| {
                             let e = e.to_combinator_tree_node(subtype_index, production, grammar);
-                            let name = e
-                                .name()
-                                .unwrap_or_else(|| SlangName::from_prefix_and_index("_", i));
+                            let name = e.name().unwrap_or_else(|| SlangName::positional_type(i));
                             let e = (name, e);
                             if !production.is_token && 0 < i {
                                 vec![

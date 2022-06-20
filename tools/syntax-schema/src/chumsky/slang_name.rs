@@ -1,4 +1,4 @@
-use std::fmt::Write;
+use std::{cell::Cell, fmt::Write};
 
 use inflector::{
     cases::{pascalcase::to_pascal_case, snakecase::to_snake_case},
@@ -59,8 +59,14 @@ impl SlangName {
             .map(|i| Self(format!("{}_char", DEFAULT_TOKEN_NAMES[i].1)))
     }
 
-    pub fn from_prefix_and_index(str: &str, index: usize) -> Self {
-        Self(format!("{}{}", str, index))
+    pub fn anonymous_type(subtype_index: &mut Cell<usize>) -> Self {
+        let index = subtype_index.get();
+        subtype_index.set(index + 1);
+        Self(format!("_T{}", index))
+    }
+
+    pub fn positional_type(index: usize) -> Self {
+        Self(format!("_{}", index))
     }
 
     pub fn plural(&self) -> Self {
