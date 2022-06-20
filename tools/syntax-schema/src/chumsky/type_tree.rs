@@ -1,7 +1,7 @@
 use proc_macro2::{Ident, TokenStream};
 use quote::quote;
 
-use crate::schema::Grammar;
+use crate::schema::ProductionRef;
 
 use super::{
     combinator_tree::{CombinatorTree, CombinatorTreeNodeData},
@@ -19,22 +19,18 @@ pub enum TypeTreeNodeData {
     Choice(SlangName, Vec<(SlangName, TypeTreeNode)>),
     Repetition(TypeTreeNode),
     Option(TypeTreeNode),
-    Named(SlangName),
+    Reference(ProductionRef),
     FixedTerminal(usize),
     VariableTerminal,
     Unit,
 }
 
 impl TypeTree {
-    pub fn to_type_definition_code(
-        &self,
-        module_name: &Ident,
-        grammar: &Grammar,
-    ) -> (TokenStream, String) {
+    pub fn to_type_definition_code(&self, module_name: &Ident) -> (TokenStream, String) {
         let mut subtypes = (vec![], vec![]);
-        let node_type =
-            self.root
-                .collect_type_definition_code(&module_name, grammar, &mut subtypes);
+        let node_type = self
+            .root
+            .collect_type_definition_code(&module_name, &mut subtypes);
         subtypes.0.reverse();
         subtypes.1.reverse();
         let (subtype_definitions, subtype_implementations) = subtypes;
@@ -57,29 +53,23 @@ impl TypeTree {
 }
 
 impl TypeTreeNodeData {
-    fn to_serde_annotation(&self, grammar: &Grammar) -> TokenStream {
-        if self.is_defaultable(grammar) {
+    fn to_serde_annotation(&self) -> TokenStream {
+        if self.is_defaultable() {
             quote!( #[serde(default, skip_serializing_if="DefaultTest::is_default")] )
         } else {
             quote!()
         }
     }
 
-    fn is_defaultable(&self, grammar: &Grammar) -> bool {
+    fn is_defaultable(&self) -> bool {
         match self {
             TypeTreeNodeData::Choice(_, _) => false,
-            TypeTreeNodeData::Tuple(_, members) => {
-                members.iter().all(|(_, t)| t.is_defaultable(grammar))
-            }
-            TypeTreeNodeData::Named(name) => grammar
-                .get_production(name.as_str())
-                .map(|p| {
-                    p.combinator_tree()
-                        .to_type_tree()
-                        .root
-                        .is_defaultable(grammar)
-                })
-                .unwrap_or_default(),
+            TypeTreeNodeData::Tuple(_, members) => members.iter().all(|(_, t)| t.is_defaultable()),
+            TypeTreeNodeData::Reference(production) => production
+                .combinator_tree()
+                .to_type_tree()
+                .root
+                .is_defaultable(),
             TypeTreeNodeData::Repetition(_)
             | TypeTreeNodeData::Option(_)
             | TypeTreeNodeData::FixedTerminal(_)
@@ -91,7 +81,6 @@ impl TypeTreeNodeData {
     fn collect_type_definition_code(
         &self,
         module_name: &Ident,
-        grammar: &Grammar,
         accum: &mut (Vec<TokenStream>, Vec<TokenStream>),
     ) -> TokenStream {
         match self {
@@ -102,11 +91,11 @@ impl TypeTreeNodeData {
                     .collect();
                 let types: Vec<TokenStream> = members
                     .iter()
-                    .map(|(_, t)| t.collect_type_definition_code(module_name, grammar, accum))
+                    .map(|(_, t)| t.collect_type_definition_code(module_name, accum))
                     .collect();
                 let serde_annotations: Vec<TokenStream> = members
                     .iter()
-                    .map(|(_, t)| t.to_serde_annotation(grammar))
+                    .map(|(_, t)| t.to_serde_annotation())
                     .collect();
                 let nested_tags: TokenStream = tags
                     .iter()
@@ -118,7 +107,7 @@ impl TypeTreeNodeData {
                     .cloned()
                     .reduce(|accum, tipe| quote!((#accum, #tipe)))
                     .unwrap();
-                let is_defaultable = self.is_defaultable(grammar);
+                let is_defaultable = self.is_defaultable();
                 let name = name.to_type_name_ident();
                 accum.0.push(if is_defaultable {
                     quote!(
@@ -155,7 +144,7 @@ impl TypeTreeNodeData {
                 let tags: Vec<Ident> = choices.iter().map(|(n, _)| n.to_enum_tag_ident()).collect();
                 let types: Vec<TokenStream> = choices
                     .iter()
-                    .map(|(_, t)| t.collect_type_definition_code(module_name, grammar, accum))
+                    .map(|(_, t)| t.collect_type_definition_code(module_name, accum))
                     .collect();
                 let name = name.to_type_name_ident();
                 accum.0.push(quote!(
@@ -168,15 +157,15 @@ impl TypeTreeNodeData {
                 quote!( Box<#module_name::#name> )
             }
             Self::Repetition(child) => {
-                let child = child.collect_type_definition_code(module_name, grammar, accum);
+                let child = child.collect_type_definition_code(module_name, accum);
                 quote!( Vec<#child> )
             }
             Self::Option(child) => {
-                let child = child.collect_type_definition_code(module_name, grammar, accum);
+                let child = child.collect_type_definition_code(module_name, accum);
                 quote!( Option<#child> )
             }
-            Self::Named(name) => {
-                let name = name.to_module_name_ident();
+            Self::Reference(production) => {
+                let name = production.slang_name().to_module_name_ident();
                 quote!(#name::N)
             }
             Self::VariableTerminal => {
@@ -208,8 +197,8 @@ fn tt_option(child: TypeTreeNode) -> TypeTreeNode {
     Box::new(TypeTreeNodeData::Option(child))
 }
 
-fn tt_named(name: SlangName) -> TypeTreeNode {
-    Box::new(TypeTreeNodeData::Named(name))
+fn tt_named(production: ProductionRef) -> TypeTreeNode {
+    Box::new(TypeTreeNodeData::Reference(production))
 }
 
 fn tt_variable_terminal() -> TypeTreeNode {
@@ -233,7 +222,7 @@ impl CombinatorTree {
 }
 
 impl CombinatorTreeNodeData {
-    pub fn to_type_tree_node(&self) -> TypeTreeNode {
+    fn to_type_tree_node(&self) -> TypeTreeNode {
         match self {
             Self::Difference { minuend, .. } => minuend.to_type_tree_node(),
             Self::Lookahead { expr, .. } => expr.to_type_tree_node(),
@@ -300,7 +289,7 @@ impl CombinatorTreeNodeData {
                     inner
                 }
             }
-            Self::Reference { name } => tt_named(name.clone()),
+            Self::Reference { production } => tt_named(production.clone()),
             Self::TerminalTrie { trie, .. } => {
                 if let Some(size) = trie.common_terminal_length() {
                     tt_fixed_terminal(size)

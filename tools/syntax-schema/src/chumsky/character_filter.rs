@@ -122,15 +122,10 @@ impl Expression {
                 }
             }
             EBNF::Range(EBNFRange { from, to }) => Some(cf_range(*from, *to)),
-            EBNF::Reference(name) => {
-                if let Some(production) = grammar.get_production(name) {
-                    production
-                        .expression_to_generate()
-                        .to_character_filter(grammar)
-                } else {
-                    None
-                }
-            }
+            EBNF::Reference(name) => grammar
+                .get_production(name)
+                .expression_to_generate()
+                .to_character_filter(grammar),
             EBNF::Difference(EBNFDifference {
                 minuend,
                 subtrahend,

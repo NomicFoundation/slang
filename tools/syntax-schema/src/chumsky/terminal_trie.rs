@@ -114,8 +114,8 @@ impl Expression {
             EBNF::Choice(exprs) => exprs.iter().all(|e| e.collect_terminals(grammar, accum)),
             EBNF::Reference(name) => grammar
                 .get_production(name)
-                .map(|p| p.expression_to_generate().collect_terminals(grammar, accum))
-                .unwrap_or(false),
+                .expression_to_generate()
+                .collect_terminals(grammar, accum),
             EBNF::Sequence(_) => false, // TODO: special case this
             EBNF::End | EBNF::Repeat(_) | EBNF::Not(_) | EBNF::Difference(_) | EBNF::Range(_) => {
                 false

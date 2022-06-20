@@ -17,13 +17,14 @@ pub struct Grammar {
 }
 
 impl Grammar {
-    pub fn get_production(&self, name: &str) -> Option<&ProductionRef> {
+    pub fn get_production(&self, name: &str) -> ProductionRef {
+        // We can do this because the grammar has been validated
         for (_, v) in &self.productions {
-            if let p @ Some(_) = v.iter().find(|p| p.name == name) {
-                return p;
+            if let Some(production) = v.iter().find(|p| p.name == name) {
+                return production.clone();
             }
         }
-        return None;
+        panic!("Cannot find {} production", name)
     }
 }
 
@@ -62,7 +63,7 @@ pub struct Production {
     pub combinator_tree: RefCell<CombinatorTree>,
 }
 
-type ProductionRef = Rc<Production>;
+pub type ProductionRef = Rc<Production>;
 
 impl Production {
     fn serialize_in_map<S: Serializer>(&self, state: &mut S::SerializeMap) -> Result<(), S::Error> {

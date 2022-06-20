@@ -21,40 +21,129 @@ type CombinatorTreeNode = Box<CombinatorTreeNodeData>;
 #[derive(Clone, Debug)]
 pub enum CombinatorTreeNodeData {
     Difference {
+        // -> M
         minuend: CombinatorTreeNode,
         subtrahend: CombinatorTreeNode,
     },
     Lookahead {
+        // -> E
         expr: CombinatorTreeNode,
         lookahead: CombinatorTreeNode,
     },
     Choice {
-        name: SlangName,
+        // N::N0(E0) | N:N1(E1) ..
+        name: SlangName, // Assigned when created
         choices: Vec<(SlangName, CombinatorTreeNode)>,
     },
     Sequence {
-        name: SlangName,
+        // -> Vec<E>
+        name: SlangName, // Assigned when created
         elements: Vec<(SlangName, CombinatorTreeNode)>,
     },
+    // Passthrough {
+    //     // -> E
+    //     expr: CombinatorTreeNode,
+    // },
+    // PassthroughOrPair {
+    //     // -> E || N(E, O) || N(O, E)
+    //     name: SlangName,
+    //     expr: CombinatorTreeNode,
+    //     optional: CombinatorTreeNode,
+    //     is_prefix: bool,
+    // },
+    // PassthroughOrFold {
+    //     // -> X := E || N(E, S, X) || N(X, S, E)
+    //     name: SlangName,
+    //     expr: CombinatorTreeNode,
+    //     min: usize,
+    //     max: Option<usize>,
+    //     separator: CombinatorTreeNode,
+    //     is_left_fold: bool,
+    // },
+    // Optional {
+    //     // -> Option<E>
+    //     expr: CombinatorTreeNode,
+    // },
     Repeat {
-        name: SlangName,
+        // -> Vec<E> || (Vec<E>, Vec<S>)
+        name: SlangName, // Assigned when created
         expr: CombinatorTreeNode,
         min: usize,
         max: Option<usize>,
         separator: Option<CombinatorTreeNode>,
     },
     Reference {
-        name: SlangName,
+        production: ProductionRef,
     },
     TerminalTrie {
+        // -> Fixed<n> || usize
         name: Option<SlangName>,
         trie: TerminalTrie,
     },
     CharacterFilter {
+        // -> Fixed<1>
         name: Option<SlangName>,
         filter: CharacterFilter,
     },
     End,
+}
+
+pub fn ct_difference(
+    minuend: CombinatorTreeNode,
+    subtrahend: CombinatorTreeNode,
+) -> CombinatorTreeNode {
+    Box::new(CombinatorTreeNodeData::Difference {
+        minuend,
+        subtrahend,
+    })
+}
+
+#[allow(dead_code)]
+fn ct_lookahead(expr: CombinatorTreeNode, lookahead: CombinatorTreeNode) -> CombinatorTreeNode {
+    Box::new(CombinatorTreeNodeData::Lookahead { expr, lookahead })
+}
+
+fn ct_choice(name: SlangName, choices: Vec<(SlangName, CombinatorTreeNode)>) -> CombinatorTreeNode {
+    Box::new(CombinatorTreeNodeData::Choice { name, choices })
+}
+
+fn ct_sequence(
+    name: SlangName,
+    elements: Vec<(SlangName, CombinatorTreeNode)>,
+) -> CombinatorTreeNode {
+    Box::new(CombinatorTreeNodeData::Sequence { name, elements })
+}
+
+fn ct_repeat(
+    name: SlangName,
+    expr: CombinatorTreeNode,
+    min: usize,
+    max: Option<usize>,
+    separator: Option<CombinatorTreeNode>,
+) -> CombinatorTreeNode {
+    Box::new(CombinatorTreeNodeData::Repeat {
+        name,
+        expr,
+        min,
+        max,
+        separator,
+    })
+}
+
+fn ct_reference(production: ProductionRef) -> CombinatorTreeNode {
+    Box::new(CombinatorTreeNodeData::Reference { production })
+}
+
+fn ct_terminal_trie(name: Option<SlangName>, trie: TerminalTrie) -> CombinatorTreeNode {
+    Box::new(CombinatorTreeNodeData::TerminalTrie { name, trie })
+}
+
+fn ct_character_filter(name: Option<SlangName>, filter: CharacterFilter) -> CombinatorTreeNode {
+    Box::new(CombinatorTreeNodeData::CharacterFilter { name, filter })
+}
+
+fn ct_end() -> CombinatorTreeNode {
+    Box::new(CombinatorTreeNodeData::End)
 }
 
 impl CombinatorTree {
@@ -86,19 +175,23 @@ impl CombinatorTreeNodeData {
                 ..
             } => expr.name(),
             CombinatorTreeNodeData::Repeat { expr, .. } => expr.name().map(|n| n.plural()),
-            CombinatorTreeNodeData::Reference { name } => Some(name.clone()),
+            CombinatorTreeNodeData::Reference { production } => Some(production.slang_name()),
             CombinatorTreeNodeData::TerminalTrie { name, .. } => name.clone(),
             CombinatorTreeNodeData::CharacterFilter { name, .. } => name.clone(),
             CombinatorTreeNodeData::End => Some(SlangName::from_string("end_marker")),
         }
     }
 
-    fn append_noise(self, subtype_index: &mut Cell<usize>) -> CombinatorTreeNode {
+    fn append_noise(
+        self,
+        subtype_index: &mut Cell<usize>,
+        grammar: &Grammar,
+    ) -> CombinatorTreeNode {
         match self {
             CombinatorTreeNodeData::Sequence { name, mut elements } => {
                 elements.push((
                     SlangName::from_string("IGNORE"),
-                    ct_reference(SlangName::from_string("IGNORE")),
+                    ct_reference(grammar.get_production("IGNORE")),
                 ));
                 elements = disambiguate_structure_names(elements);
                 ct_sequence(name, elements)
@@ -121,7 +214,7 @@ impl CombinatorTreeNodeData {
                 );
                 let ignore = (
                     SlangName::from_string("IGNORE"),
-                    ct_reference(SlangName::from_string("IGNORE")),
+                    ct_reference(grammar.get_production("IGNORE")),
                 );
                 ct_sequence(name, vec![c0, ignore])
             }
@@ -244,8 +337,8 @@ impl CombinatorTreeNodeData {
                     }
                 }
             }
-            CombinatorTreeNodeData::Reference { name } => {
-                let name = name.to_parser_name_ident();
+            CombinatorTreeNodeData::Reference { production } => {
+                let name = production.slang_name().to_parser_name_ident();
                 quote!( #name.clone() )
             }
             CombinatorTreeNodeData::TerminalTrie { trie, .. } => trie.to_parser_combinator_code(),
@@ -257,65 +350,11 @@ impl CombinatorTreeNodeData {
     }
 }
 
-pub fn ct_difference(
-    minuend: CombinatorTreeNode,
-    subtrahend: CombinatorTreeNode,
-) -> CombinatorTreeNode {
-    Box::new(CombinatorTreeNodeData::Difference {
-        minuend,
-        subtrahend,
-    })
-}
-
-#[allow(dead_code)]
-fn ct_lookahead(expr: CombinatorTreeNode, lookahead: CombinatorTreeNode) -> CombinatorTreeNode {
-    Box::new(CombinatorTreeNodeData::Lookahead { expr, lookahead })
-}
-
-fn ct_choice(name: SlangName, choices: Vec<(SlangName, CombinatorTreeNode)>) -> CombinatorTreeNode {
-    Box::new(CombinatorTreeNodeData::Choice { name, choices })
-}
-
-fn ct_sequence(
-    name: SlangName,
-    elements: Vec<(SlangName, CombinatorTreeNode)>,
-) -> CombinatorTreeNode {
-    Box::new(CombinatorTreeNodeData::Sequence { name, elements })
-}
-
-fn ct_repeat(
-    name: SlangName,
-    expr: CombinatorTreeNode,
-    min: usize,
-    max: Option<usize>,
-    separator: Option<CombinatorTreeNode>,
-) -> CombinatorTreeNode {
-    Box::new(CombinatorTreeNodeData::Repeat {
-        name,
-        expr,
-        min,
-        max,
-        separator,
-    })
-}
-
-fn ct_reference(name: SlangName) -> CombinatorTreeNode {
-    Box::new(CombinatorTreeNodeData::Reference { name })
-}
-
-fn ct_terminal_trie(name: Option<SlangName>, trie: TerminalTrie) -> CombinatorTreeNode {
-    Box::new(CombinatorTreeNodeData::TerminalTrie { name, trie })
-}
-
-fn ct_character_filter(name: Option<SlangName>, filter: CharacterFilter) -> CombinatorTreeNode {
-    Box::new(CombinatorTreeNodeData::CharacterFilter { name, filter })
-}
-
-fn ct_end() -> CombinatorTreeNode {
-    Box::new(CombinatorTreeNodeData::End)
-}
-
 impl Production {
+    pub fn slang_name(&self) -> SlangName {
+        SlangName::from_string(&self.name)
+    }
+
     pub fn combinator_tree(&self) -> std::cell::Ref<'_, CombinatorTree> {
         self.combinator_tree.borrow()
     }
@@ -324,7 +363,7 @@ impl Production {
         let root =
             self.expression_to_generate()
                 .to_combinator_tree_node(&mut Cell::new(0), self, grammar);
-        let module_name = SlangName::from_string(&self.name);
+        let module_name = self.slang_name();
         *self.combinator_tree.borrow_mut() = CombinatorTree { root, module_name };
     }
 }
@@ -336,6 +375,79 @@ impl Expression {
         production: &Production,
         grammar: &Grammar,
     ) -> CombinatorTreeNode {
+        // match self.config.pattern {
+        //     None => {}
+        //     Some(ExpressionPattern::Passthrough) => match &self.ebnf {
+        //         EBNF::Reference(name) => {
+        //             if let Some(production) = grammar.get_production(&name) {
+        //                 return production.expression_to_generate().to_combinator_tree_node(
+        //                     subtype_index,
+        //                     production,
+        //                     grammar,
+        //                 );
+        //             }
+        //         }
+        //         EBNF::Sequence(elements) if elements.len() == 2 => {
+        //             match (&elements[0].ebnf, &elements[1].ebnf) {
+        //                 (
+        //                     EBNF::Repeat(EBNFRepeat {
+        //                         min: 0,
+        //                         max: Some(1),
+        //                         ..
+        //                     }),
+        //                     _,
+        //                 ) => {}
+        //                 (
+        //                     _,
+        //                     EBNF::Repeat(EBNFRepeat {
+        //                         min: 0,
+        //                         max: Some(1),
+        //                         ..
+        //                     }),
+        //                 ) => {
+        //                     let name = self
+        //                         .config
+        //                         .name
+        //                         .as_ref()
+        //                         .map(|s| SlangName::from_string(s))
+        //                         .unwrap_or_else(|| {
+        //                             let index = subtype_index.get();
+        //                             subtype_index.set(index + 1);
+        //                             SlangName::from_prefix_and_index("_C", index)
+        //                         });
+        //                     ct_passthrough(
+        //                         name,
+        //                         0,
+        //                         elements[0].to_combinator_tree_node(
+        //                             subtype_index,
+        //                             production,
+        //                             grammar,
+        //                         ),
+        //                         elements[1].to_combinator_tree_node(
+        //                             subtype_index,
+        //                             production,
+        //                             grammar,
+        //                         ),
+        //                     )
+        //                 }
+        //                 _ => (),
+        //             }
+        //         }
+        //         _ => {}
+        //     },
+        //     Some(ExpressionPattern::FoldLeftOrPassthrough)
+        //     | Some(ExpressionPattern::FoldRightOrPassthrough) => match &self.ebnf {
+        //         EBNF::Repeat(EBNFRepeat {
+        //             min: _,
+        //             max: _,
+        //             expr: _,
+        //             separator: _,
+        //         }) => {}
+        //         _ => {}
+        //     },
+        //     Some(ExpressionPattern::Inline) => {}
+        // }
+
         if let Some(filter) = self.to_character_filter(grammar) {
             let name = self
                 .config
@@ -402,8 +514,8 @@ impl Expression {
                         .clone()
                         .map(|s| s.to_combinator_tree_node(subtype_index, production, grammar));
                     if !production.is_token {
-                        et = et.append_noise(subtype_index);
-                        st = st.map(|st| st.append_noise(subtype_index));
+                        et = et.append_noise(subtype_index, grammar);
+                        st = st.map(|st| st.append_noise(subtype_index, grammar));
                     }
                     ct_repeat(name, et, *min, *max, st)
                 }
@@ -483,8 +595,13 @@ impl Expression {
                                 .unwrap_or_else(|| SlangName::from_prefix_and_index("_", i));
                             let e = (name, e);
                             if !production.is_token && 0 < i {
-                                let name = SlangName::from_string("IGNORE");
-                                vec![(name.clone(), ct_reference(name)), e]
+                                vec![
+                                    (
+                                        SlangName::from_string("IGNORE"),
+                                        ct_reference(grammar.get_production("IGNORE")),
+                                    ),
+                                    e,
+                                ]
                             } else {
                                 vec![e]
                             }
@@ -495,7 +612,7 @@ impl Expression {
                     members = disambiguate_structure_names(members);
                     ct_sequence(name, members)
                 }
-                EBNF::Reference(name) => ct_reference(SlangName::from_string(name)),
+                EBNF::Reference(name) => ct_reference(grammar.get_production(name)),
                 EBNF::Not(_) => unimplemented!("¬ is only supported on characters or sets thereof"),
                 EBNF::Terminal(_) => {
                     unreachable!("Terminals are either character filters or terminal tries")

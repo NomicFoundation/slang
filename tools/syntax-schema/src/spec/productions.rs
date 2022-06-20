@@ -126,7 +126,7 @@ fn write_expression<T: Write>(w: &mut T, expr: &Expression, context: &SpecProduc
         }
 
         EBNF::Reference(name) => {
-            let referenced = context.grammar.get_production(name).expect(name);
+            let referenced = context.grammar.get_production(name);
             let location = context.productions_location.get(name).expect(name);
 
             write_token(
@@ -136,7 +136,7 @@ fn write_expression<T: Write>(w: &mut T, expr: &Expression, context: &SpecProduc
                     "<a href=\"{}#{}\">{}</a>",
                     location,
                     get_production_hash_link(name),
-                    get_production_name(referenced)
+                    get_production_name(referenced.as_ref())
                 ),
             );
         }

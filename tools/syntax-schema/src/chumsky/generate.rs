@@ -66,24 +66,21 @@ impl Grammar {
         ) -> usize {
             let mut order = 0;
             ordering.insert(name.clone(), 0);
-            if let Some(production) = grammar.get_production(name) {
-                let expr = production.expression_to_generate();
-                let mut identifiers = expr.referenced_identifiers();
-                if production.is_token {
-                    identifiers.insert("IGNORE".to_owned());
+            let production = grammar.get_production(name);
+            let expr = production.expression_to_generate();
+            let mut identifiers = expr.referenced_identifiers();
+            if production.is_token {
+                identifiers.insert("IGNORE".to_owned());
+            }
+            for name in identifiers {
+                let child_order = if let Some(child_order) = ordering.get(&name) {
+                    *child_order
+                } else {
+                    visit_production(grammar, &name, ordering)
+                };
+                if child_order > order {
+                    order = child_order;
                 }
-                for name in identifiers {
-                    let child_order = if let Some(child_order) = ordering.get(&name) {
-                        *child_order
-                    } else {
-                        visit_production(grammar, &name, ordering)
-                    };
-                    if child_order > order {
-                        order = child_order;
-                    }
-                }
-            } else {
-                println!("Couldn't find production: {}", name);
             }
             order += 1;
             ordering.insert(name.clone(), order);
@@ -102,16 +99,15 @@ impl Grammar {
         let mut backlinked = BTreeSet::new();
 
         for (name, order) in ordering {
-            if let Some(production) = self.get_production(name) {
-                let expr = production.expression_to_generate();
-                let mut identifiers = expr.referenced_identifiers();
-                if production.is_token {
-                    identifiers.insert("IGNORE".to_owned());
-                }
-                for name in identifiers {
-                    if ordering[&name] >= *order {
-                        backlinked.insert(name.clone());
-                    }
+            let production = self.get_production(name);
+            let expr = production.expression_to_generate();
+            let mut identifiers = expr.referenced_identifiers();
+            if production.is_token {
+                identifiers.insert("IGNORE".to_owned());
+            }
+            for name in identifiers {
+                if ordering[&name] >= *order {
+                    backlinked.insert(name.clone());
                 }
             }
         }
@@ -157,51 +153,50 @@ impl Production {
         let mut ordered_productions = ordering.keys().cloned().collect::<Vec<String>>();
         ordered_productions.sort_by(|a, b| (&ordering[a]).cmp(&ordering[b]));
         for name in ordered_productions {
-            if let Some(production) = grammar.get_production(&name) {
-                let slang_name = SlangName::from_string(&name);
-                let ebnf_comment = production
-                    .generate_ebnf(grammar)
-                    .iter()
-                    .map(|s| format!("// {}", s))
-                    .collect::<Vec<_>>()
-                    .join("\n");
-                let ebnf_doc_comment = production
-                    .generate_ebnf(grammar)
-                    .iter()
-                    .map(|s| format!("/// {}", s))
-                    .collect::<Vec<_>>()
-                    .join("\n");
+            let production = grammar.get_production(&name);
+            let slang_name = SlangName::from_string(&name);
+            let ebnf_comment = production
+                .generate_ebnf(grammar)
+                .iter()
+                .map(|s| format!("// {}", s))
+                .collect::<Vec<_>>()
+                .join("\n");
+            let ebnf_doc_comment = production
+                .generate_ebnf(grammar)
+                .iter()
+                .map(|s| format!("/// {}", s))
+                .collect::<Vec<_>>()
+                .join("\n");
 
-                let module_name = slang_name.to_module_name_ident();
-                module_names.push(module_name.clone());
+            let module_name = slang_name.to_module_name_ident();
+            module_names.push(module_name.clone());
 
-                let combinator_tree = production.combinator_tree();
-                let type_tree = combinator_tree.to_type_tree();
-                let (tree_interface, tree_implementation) =
-                    type_tree.to_type_definition_code(&module_name, grammar);
-                tree_interfaces.push(format!(
-                    "{}\n{}",
-                    ebnf_doc_comment,
-                    tree_interface.to_string()
-                ));
-                tree_implementations.push(tree_implementation);
+            let combinator_tree = production.combinator_tree();
+            let type_tree = combinator_tree.to_type_tree();
+            let (tree_interface, tree_implementation) =
+                type_tree.to_type_definition_code(&module_name);
+            tree_interfaces.push(format!(
+                "{}\n{}",
+                ebnf_doc_comment,
+                tree_interface.to_string()
+            ));
+            tree_implementations.push(tree_implementation);
 
-                let parser_name = slang_name.to_parser_name_ident();
-                parser_names.push(parser_name.clone());
-                let parser_expression = combinator_tree.to_parser_combinator_code();
-                let parser_implementation = if backlinked.contains(&name) {
-                    quote!( #parser_name.define(#parser_expression.boxed()); )
-                } else {
-                    quote!( let #parser_name = #parser_expression.boxed(); )
-                };
-                parser_implementations.push(format!(
-                    "{}\n{}",
-                    ebnf_comment,
-                    parser_implementation.to_string()
-                ));
+            let parser_name = slang_name.to_parser_name_ident();
+            parser_names.push(parser_name.clone());
+            let parser_expression = combinator_tree.to_parser_combinator_code();
+            let parser_implementation = if backlinked.contains(&name) {
+                quote!( #parser_name.define(#parser_expression.boxed()); )
+            } else {
+                quote!( let #parser_name = #parser_expression.boxed(); )
+            };
+            parser_implementations.push(format!(
+                "{}\n{}",
+                ebnf_comment,
+                parser_implementation.to_string()
+            ));
 
-                parsers_field_names.push(slang_name.to_field_name_ident());
-            }
+            parsers_field_names.push(slang_name.to_field_name_ident());
         }
 
         let parser_interface = quote!(
