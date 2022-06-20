@@ -248,6 +248,24 @@ impl CombinatorTreeNodeData {
                     tt_repetition(expr.to_type_tree_node())
                 }
             }
+            Self::FoldOrPassthrough {
+                name,
+                expr,
+                separator,
+                ..
+            } => tt_tuple(
+                name.clone(),
+                vec![
+                    (
+                        expr.name().pluralize().self_or_positional(0),
+                        tt_repetition(expr.to_type_tree_node()),
+                    ),
+                    (
+                        separator.name().pluralize().self_or_positional(1),
+                        tt_repetition(separator.to_type_tree_node()),
+                    ),
+                ],
+            ),
             Self::SeparatedBy {
                 name,
                 expr,

@@ -52,15 +52,13 @@ pub enum CombinatorTreeNodeData {
     //     optional: CombinatorTreeNode,
     //     is_prefix: bool,
     // },
-    // PassthroughOrFold {
-    //     // -> X := E || N(E, S, X) || N(X, S, E)
-    //     name: SlangName,
-    //     expr: CombinatorTreeNode,
-    //     min: usize,
-    //     max: Option<usize>,
-    //     separator: CombinatorTreeNode,
-    //     is_left_fold: bool,
-    // },
+    FoldOrPassthrough {
+        // -> E | N(E, S, N) RIGHT | N(N, S, E) LEFT
+        name: SlangName,
+        expr: CombinatorTreeNode,
+        separator: CombinatorTreeNode,
+        fold_direction: FoldDirection,
+    },
     Optional {
         // -> Option<E>
         expr: CombinatorTreeNode,
@@ -69,7 +67,7 @@ pub enum CombinatorTreeNodeData {
         // -> (Vec<E>, Vec<S>)
         name: SlangName, // Assigned when created
         expr: CombinatorTreeNode,
-        min: usize,
+        min: usize, // > 0
         max: Option<usize>,
         separator: CombinatorTreeNode,
     },
@@ -94,6 +92,12 @@ pub enum CombinatorTreeNodeData {
         filter: CharacterFilter,
     },
     End,
+}
+
+#[derive(Clone, Debug)]
+pub enum FoldDirection {
+    Left,
+    Right,
 }
 
 pub fn ct_difference(
@@ -123,6 +127,20 @@ fn ct_sequence(
 
 fn ct_optional(expr: CombinatorTreeNode) -> CombinatorTreeNode {
     Box::new(CombinatorTreeNodeData::Optional { expr })
+}
+
+fn ct_fold_or_passthrough(
+    name: SlangName,
+    expr: CombinatorTreeNode,
+    separator: CombinatorTreeNode,
+    fold_direction: FoldDirection,
+) -> CombinatorTreeNode {
+    Box::new(CombinatorTreeNodeData::FoldOrPassthrough {
+        name,
+        expr,
+        separator,
+        fold_direction,
+    })
 }
 
 fn ct_separated_by(
@@ -233,6 +251,17 @@ impl CombinatorTreeNodeData {
             CombinatorTreeNodeData::Optional { expr } => {
                 ct_optional(expr.with_unambiguous_named_types(index))
             }
+            CombinatorTreeNodeData::FoldOrPassthrough {
+                name,
+                expr,
+                separator,
+                fold_direction,
+            } => {
+                let name = name.self_or_numbered(index);
+                let expr = expr.with_unambiguous_named_types(index);
+                let separator = separator.with_unambiguous_named_types(index);
+                ct_fold_or_passthrough(name, expr, separator, fold_direction)
+            }
             CombinatorTreeNodeData::SeparatedBy {
                 name,
                 expr,
@@ -262,12 +291,13 @@ impl CombinatorTreeNodeData {
         }
     }
 
-    pub fn with_interspersed(self, production: &ProductionRef) -> CombinatorTreeNode {
+    fn with_interspersed(self, production: &ProductionRef) -> CombinatorTreeNode {
         match self {
             CombinatorTreeNodeData::Difference { .. }
             | CombinatorTreeNodeData::Lookahead { .. }
             | CombinatorTreeNodeData::Choice { .. }
             | CombinatorTreeNodeData::Optional { .. }
+            | CombinatorTreeNodeData::FoldOrPassthrough { .. }
             | CombinatorTreeNodeData::SeparatedBy { .. }
             | CombinatorTreeNodeData::Repeat { .. }
             | CombinatorTreeNodeData::Reference { .. }
@@ -297,7 +327,8 @@ impl CombinatorTreeNodeData {
             CombinatorTreeNodeData::Difference { minuend: expr, .. }
             | CombinatorTreeNodeData::Lookahead { expr, .. }
             | CombinatorTreeNodeData::Optional { expr } => expr.name(),
-            CombinatorTreeNodeData::SeparatedBy { expr, .. }
+            CombinatorTreeNodeData::FoldOrPassthrough { expr, .. }
+            | CombinatorTreeNodeData::SeparatedBy { expr, .. }
             | CombinatorTreeNodeData::Repeat { expr, .. } => expr.name().pluralize(),
             CombinatorTreeNodeData::Reference { production } => production.slang_name(),
             CombinatorTreeNodeData::End => SlangName::from_string("end_marker"),
@@ -364,6 +395,20 @@ impl CombinatorTreeNodeData {
                         quote!( #expr.repeated().at_least(#min).at_most(#max)#vec_to_length )
                     }
                 }
+            }
+            CombinatorTreeNodeData::FoldOrPassthrough {
+                name,
+                expr,
+                separator,
+                fold_direction: _,
+            } => {
+                let expr = expr.to_parser_combinator_code(tree);
+                let separator = separator.to_parser_combinator_code(tree);
+
+                let module_name = tree.module_name.to_module_name_ident();
+                let struct_name = name.to_type_name_ident();
+
+                quote!( #expr.then(#separator.then(#expr).repeated()).map(repetition_mapper).map(|v| Box::new(#module_name::#struct_name::new(v)))  )
             }
             CombinatorTreeNodeData::SeparatedBy {
                 name,
@@ -463,6 +508,7 @@ impl Expression {
                             .expression_to_generate()
                             .to_combinator_tree_node(production.as_ref(), grammar);
                     }
+
                     EBNF::Sequence(elements) if elements.len() == 2 => {
                         // match (&elements[0].ebnf, &elements[1].ebnf) {
                         //     (
@@ -505,18 +551,49 @@ impl Expression {
                         //     _ => (),
                         // }
                     }
+
                     _ => {}
                 },
-                ExpressionPattern::FoldLeftOrPassthrough
-                | ExpressionPattern::FoldRightOrPassthrough => match &self.ebnf {
+
+                // TODO: Ensure validation is done earlier
+                // 1. repeat must be 1…*
+                // 2. max must be None
+                // 3. separator must be Some - otherwise fold doesn't make sense
+                // 4. expr must be reference (?)
+                ExpressionPattern::FoldLeftOrPassthrough => match &self.ebnf {
                     EBNF::Repeat(EBNFRepeat {
-                        min: _,
-                        max: _,
-                        expr: _,
-                        separator: _,
-                    }) => {}
+                        min: 1,
+                        max: None,
+                        expr,
+                        separator: Some(separator),
+                    }) => {
+                        return ct_fold_or_passthrough(
+                            self.config.slang_name(),
+                            expr.to_combinator_tree_node(production, grammar),
+                            separator.to_combinator_tree_node(production, grammar),
+                            FoldDirection::Left,
+                        )
+                    }
                     _ => {}
                 },
+
+                ExpressionPattern::FoldRightOrPassthrough => match &self.ebnf {
+                    EBNF::Repeat(EBNFRepeat {
+                        min: 1,
+                        max: None,
+                        expr,
+                        separator: Some(separator),
+                    }) => {
+                        return ct_fold_or_passthrough(
+                            self.config.slang_name(),
+                            expr.to_combinator_tree_node(production, grammar),
+                            separator.to_combinator_tree_node(production, grammar),
+                            FoldDirection::Right,
+                        )
+                    }
+                    _ => {}
+                },
+
                 ExpressionPattern::Inline => {}
             }
         }
