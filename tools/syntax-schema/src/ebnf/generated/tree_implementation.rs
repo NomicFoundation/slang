@@ -253,7 +253,7 @@ impl DefaultTest for repetition_prefix::_S0 {}
 
 impl DefaultTest for repetition_prefix::_C1 {}
 
-impl repetition_prefix::_S6 {
+impl repetition_prefix::_S4 {
     pub fn new(
         ((ellipsis_char, ignore), number): ((FixedTerminal<1usize>, ignore::N), number::N),
     ) -> Self {
@@ -265,7 +265,7 @@ impl repetition_prefix::_S6 {
     }
 }
 
-impl DefaultTest for repetition_prefix::_S6 {
+impl DefaultTest for repetition_prefix::_S4 {
     fn is_default(&self) -> bool {
         self.ellipsis_char.is_default() && self.ignore.is_default() && self.number.is_default()
     }
@@ -273,23 +273,23 @@ impl DefaultTest for repetition_prefix::_S6 {
 
 impl repetition_prefix::_S2 {
     pub fn new(
-        ((number, ignore), _s4): ((number::N, ignore::N), Option<Box<repetition_prefix::_S4>>),
+        ((number, ignore), _s3): ((number::N, ignore::N), Option<Box<repetition_prefix::_S3>>),
     ) -> Self {
         Self {
             number,
             ignore,
-            _s4,
+            _s3,
         }
     }
 }
 
 impl DefaultTest for repetition_prefix::_S2 {
     fn is_default(&self) -> bool {
-        self.number.is_default() && self.ignore.is_default() && self._s4.is_default()
+        self.number.is_default() && self.ignore.is_default() && self._s3.is_default()
     }
 }
 
-impl repetition_prefix::_S4 {
+impl repetition_prefix::_S3 {
     pub fn new(
         ((ellipsis_char, ignore), number): ((FixedTerminal<1usize>, ignore::N), Option<number::N>),
     ) -> Self {
@@ -301,7 +301,7 @@ impl repetition_prefix::_S4 {
     }
 }
 
-impl DefaultTest for repetition_prefix::_S4 {
+impl DefaultTest for repetition_prefix::_S3 {
     fn is_default(&self) -> bool {
         self.ellipsis_char.is_default() && self.ignore.is_default() && self.number.is_default()
     }
@@ -455,19 +455,19 @@ impl DefaultTest for negation::_S0 {}
 
 impl difference::_S0 {
     pub fn new(
-        ((negation, ignore), _s2): ((negation::N, ignore::N), Option<Box<difference::_S2>>),
+        ((negation, ignore), _s1): ((negation::N, ignore::N), Option<Box<difference::_S1>>),
     ) -> Self {
         Self {
             negation,
             ignore,
-            _s2,
+            _s1,
         }
     }
 }
 
 impl DefaultTest for difference::_S0 {}
 
-impl difference::_S2 {
+impl difference::_S1 {
     pub fn new(
         ((minus_char, ignore), negation): ((FixedTerminal<1usize>, ignore::N), negation::N),
     ) -> Self {
@@ -479,7 +479,7 @@ impl difference::_S2 {
     }
 }
 
-impl DefaultTest for difference::_S2 {}
+impl DefaultTest for difference::_S1 {}
 
 impl sequence::_S1 {
     pub fn new((difference, ignore): (difference::N, ignore::N)) -> Self {

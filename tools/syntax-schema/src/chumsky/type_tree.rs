@@ -240,12 +240,7 @@ impl CombinatorTreeNodeData {
                     .map(|(n, c)| (n.clone(), c.to_type_tree_node()))
                     .collect(),
             ),
-            Self::Repeat {
-                expr,
-                min: 0,
-                max: Some(1),
-                ..
-            } => tt_option(expr.to_type_tree_node()),
+            Self::Optional { expr } => tt_option(expr.to_type_tree_node()),
             Self::Repeat {
                 expr,
                 separator: None,

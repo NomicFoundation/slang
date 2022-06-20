@@ -229,7 +229,7 @@ impl Parsers {
                         .map(|_| FixedTerminal::<1>())
                         .then(ignore_parser.clone())
                         .then(number_parser.clone().or_not())
-                        .map(|v| Box::new(repetition_prefix::_S4::new(v)))
+                        .map(|v| Box::new(repetition_prefix::_S3::new(v)))
                         .or_not(),
                 )
                 .map(|v| Box::new(repetition_prefix::_S2::new(v)))
@@ -238,8 +238,8 @@ impl Parsers {
                 .map(|_| FixedTerminal::<1>())
                 .then(ignore_parser.clone())
                 .then(number_parser.clone())
-                .map(|v| Box::new(repetition_prefix::_S6::new(v)))
-                .map(|v| Box::new(repetition_prefix::_C1::_S6(v))),
+                .map(|v| Box::new(repetition_prefix::_S4::new(v)))
+                .map(|v| Box::new(repetition_prefix::_C1::_S4(v))),
         ))
         .then(ignore_parser.clone())
         .then(just('*').map(|_| FixedTerminal::<1>()))
@@ -342,7 +342,7 @@ impl Parsers {
                     .map(|_| FixedTerminal::<1>())
                     .then(ignore_parser.clone())
                     .then(negation_parser.clone())
-                    .map(|v| Box::new(difference::_S2::new(v)))
+                    .map(|v| Box::new(difference::_S1::new(v)))
                     .or_not(),
             )
             .map(|v| Box::new(difference::_S0::new(v)));

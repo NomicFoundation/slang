@@ -230,10 +230,10 @@ pub mod repetition_prefix {
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
     pub enum _C1 {
         _S2(Box<repetition_prefix::_S2>),
-        _S6(Box<repetition_prefix::_S6>),
+        _S4(Box<repetition_prefix::_S4>),
     }
     #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
-    pub struct _S6 {
+    pub struct _S4 {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub ellipsis_char: FixedTerminal<1usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
@@ -248,10 +248,10 @@ pub mod repetition_prefix {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub ignore: ignore::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _s4: Option<Box<repetition_prefix::_S4>>,
+        pub _s3: Option<Box<repetition_prefix::_S3>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
-    pub struct _S4 {
+    pub struct _S3 {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub ellipsis_char: FixedTerminal<1usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
@@ -394,10 +394,10 @@ pub mod difference {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub ignore: ignore::N,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _s2: Option<Box<difference::_S2>>,
+        pub _s1: Option<Box<difference::_S1>>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-    pub struct _S2 {
+    pub struct _S1 {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub minus_char: FixedTerminal<1usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]

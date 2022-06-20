@@ -60,10 +60,10 @@ pub enum CombinatorTreeNodeData {
     //     separator: CombinatorTreeNode,
     //     is_left_fold: bool,
     // },
-    // Optional {
-    //     // -> Option<E>
-    //     expr: CombinatorTreeNode,
-    // },
+    Optional {
+        // -> Option<E>
+        expr: CombinatorTreeNode,
+    },
     Repeat {
         // -> Vec<E> || (Vec<E>, Vec<S>)
         name: SlangName, // Assigned when created
@@ -112,6 +112,10 @@ fn ct_sequence(
     elements: Vec<(SlangName, CombinatorTreeNode)>,
 ) -> CombinatorTreeNode {
     Box::new(CombinatorTreeNodeData::Sequence { name, elements })
+}
+
+fn ct_optional(expr: CombinatorTreeNode) -> CombinatorTreeNode {
+    Box::new(CombinatorTreeNodeData::Optional { expr })
 }
 
 fn ct_repeat(
@@ -168,12 +172,7 @@ impl CombinatorTreeNodeData {
             CombinatorTreeNodeData::Lookahead { expr, .. } => expr.name(),
             CombinatorTreeNodeData::Choice { name, .. } => Some(name.clone()),
             CombinatorTreeNodeData::Sequence { name, .. } => Some(name.clone()),
-            CombinatorTreeNodeData::Repeat {
-                expr,
-                min: 0,
-                max: Some(1),
-                ..
-            } => expr.name(),
+            CombinatorTreeNodeData::Optional { expr } => expr.name(),
             CombinatorTreeNodeData::Repeat { expr, .. } => expr.name().map(|n| n.plural()),
             CombinatorTreeNodeData::Reference { production } => Some(production.slang_name()),
             CombinatorTreeNodeData::TerminalTrie { name, .. } => name.clone(),
@@ -195,6 +194,22 @@ impl CombinatorTreeNodeData {
                 ));
                 elements = disambiguate_structure_names(elements);
                 ct_sequence(name, elements)
+            }
+
+            CombinatorTreeNodeData::Optional { expr } => {
+                let index = subtype_index.get();
+                subtype_index.set(index + 1);
+                let name = SlangName::from_prefix_and_index("_S", index);
+                let c0 = (
+                    expr.name()
+                        .unwrap_or_else(|| SlangName::from_prefix_and_index("_", 0)),
+                    expr,
+                );
+                let ignore = (
+                    SlangName::from_string("IGNORE"),
+                    ct_reference(grammar.get_production("IGNORE")),
+                );
+                ct_optional(ct_sequence(name, vec![c0, ignore]))
             }
 
             CombinatorTreeNodeData::Lookahead { .. }
@@ -258,12 +273,7 @@ impl CombinatorTreeNodeData {
                 let module_name = tree.module_name.to_module_name_ident();
                 quote!( #first #(#rest)* .map(|v| Box::new(#module_name::#struct_name::new(v))) )
             }
-            CombinatorTreeNodeData::Repeat {
-                expr,
-                min: 0,
-                max: Some(1),
-                ..
-            } => {
+            CombinatorTreeNodeData::Optional { expr } => {
                 let expr = expr.to_parser_combinator_code(tree);
                 quote!( #expr.or_not() )
             }
@@ -476,22 +486,12 @@ impl Expression {
                 ),
                 EBNF::Repeat(EBNFRepeat {
                     expr,
-                    min,
+                    min: 0,
                     max: Some(1),
                     ..
                 }) => {
-                    let name = self
-                        .config
-                        .name
-                        .as_ref()
-                        .map(|s| SlangName::from_string(s))
-                        .unwrap_or_else(|| {
-                            let index = subtype_index.get();
-                            subtype_index.set(index + 1);
-                            SlangName::from_prefix_and_index("_S", index)
-                        });
                     let et = expr.to_combinator_tree_node(subtype_index, production, grammar);
-                    ct_repeat(name, et, *min, Some(1), None)
+                    ct_optional(et)
                 }
                 EBNF::Repeat(EBNFRepeat {
                     expr,
