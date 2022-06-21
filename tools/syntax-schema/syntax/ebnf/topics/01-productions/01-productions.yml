@@ -1,8 +1,6 @@
-# yaml-language-server: $schema=../../schema/topic.schema.json
+# yaml-language-server: $schema=../../../schema/topic.schema.json
 
 - name: grammar
-  config:
-    prelude: ""
   sequence:
     - reference: IGNORE
     - zeroOrMore:

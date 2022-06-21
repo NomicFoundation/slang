@@ -5,13 +5,19 @@
     "Manifest": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["title", "sections"],
+      "required": ["title", "rootProduction", "sections"],
       "properties": {
         "title": { "type": "string" },
+        "rootProduction": { "type": "string" },
         "sections": {
           "type": "array",
           "minItems": 1,
           "items": { "$ref": "#/$defs/Section" }
+        },
+        "versions": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
         }
       }
     },

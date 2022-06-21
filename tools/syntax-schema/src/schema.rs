@@ -31,7 +31,10 @@ impl Grammar {
 #[serde(deny_unknown_fields)]
 pub struct Manifest {
     pub title: String,
+    #[serde(rename = "rootProduction")]
+    pub root_production: String,
     pub sections: Vec<Section>,
+    pub versions: Option<Vec<String>>,
 }
 
 #[derive(Deserialize, Clone, Debug)]
@@ -563,8 +566,6 @@ pub struct ExpressionConfig {
     pub name: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub lookahead: Option<ExpressionRef>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub prelude: Option<String>,
 }
 
 impl ExpressionConfig {
@@ -578,7 +579,6 @@ impl Default for ExpressionConfig {
         Self {
             name: None,
             lookahead: None,
-            prelude: None,
         }
     }
 }

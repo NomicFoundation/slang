@@ -6,17 +6,15 @@ use syntax_schema::schema::Grammar;
 struct ProgramArgs {
     #[clap(long)]
     manifest_input: String,
-
-    #[clap(long)]
-    documentation_folder: String,
 }
 
 fn main() {
     let args = ProgramArgs::parse();
+    let manifest_input = PathBuf::from(args.manifest_input);
 
     println!(" => Loading Manifest");
-    let grammar = Grammar::from_manifest(&PathBuf::from(args.manifest_input));
+    let grammar = Grammar::from_manifest(&manifest_input);
 
-    println!(" => Generating Specification");
-    grammar.generate_spec(&PathBuf::from(args.documentation_folder));
+    println!(" => Validating Manifest");
+    grammar.validate(&manifest_input);
 }

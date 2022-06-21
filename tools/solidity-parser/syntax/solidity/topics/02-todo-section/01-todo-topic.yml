@@ -829,12 +829,6 @@
     - reference: ArgumentList
     - terminal: ;
 
-- name: VariableDeclarationList
-  oneOrMore:
-    reference: VariableDeclaration
-    separator:
-      terminal: ","
-
 - name: VariableDeclarationTuple
   sequence:
     - terminal: (

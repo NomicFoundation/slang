@@ -208,8 +208,6 @@ EmitStatement = 'emit' Expression ArgumentList ';' ;
 
 RevertStatement = 'revert' Expression ArgumentList ';' ;
 
-VariableDeclarationList = 1…*{ VariableDeclaration / ',' } ;
-
 VariableDeclarationTuple = '(' { ',' } VariableDeclaration { ',' [ VariableDeclaration ] } ')' ;
 
 VariableDeclarationStatement = ( VariableDeclaration [ '=' Expression ] | VariableDeclarationTuple '=' Expression ) ';' ;

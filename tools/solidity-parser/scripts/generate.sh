@@ -17,6 +17,9 @@ cargo run --manifest-path "$PROJECT_DIR/../syntax-schema/Cargo.toml" --bin "gram
   --splits-file "$PROJECT_DIR/syntax/solidity/temporary-split/splits.yml" \
   --output-folder "$PROJECT_DIR/syntax/solidity"
 
+cargo run --manifest-path "$PROJECT_DIR/../syntax-schema/Cargo.toml" --bin "validate_manifest" -- \
+  --manifest-input "$PROJECT_DIR/syntax/solidity/manifest.yml"
+
 cargo run --manifest-path "$PROJECT_DIR/../syntax-schema/Cargo.toml" --bin "manifest_to_ebnf" -- \
   --manifest-input "$PROJECT_DIR/syntax/solidity/manifest.yml" \
   --ebnf-output "$PROJECT_DIR/syntax/solidity/derived.ebnf"

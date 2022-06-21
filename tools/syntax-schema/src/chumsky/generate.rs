@@ -19,8 +19,8 @@ impl Grammar {
             .productions
             .iter()
             .flat_map(|(_, p)| p)
-            .find(|p| p.expression_to_generate().config.prelude.is_some())
-            .expect("Didn't find any expression with a prelude");
+            .find(|p| p.name == self.manifest.root_production)
+            .expect("Didn't find root production");
         let generated_output = root.generate_chumsky(self, context);
 
         Self::format_and_write_source(
