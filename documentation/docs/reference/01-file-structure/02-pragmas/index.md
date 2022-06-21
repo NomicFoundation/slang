@@ -31,9 +31,9 @@ pragma abicoder v2;
 !!! danger "Breaking Changes"
 
     Supported in `v0.7.5`:
-    --8<-- "reference/01-file-structure/02-pragmas/tests/abicoder/v1/output/combined"
+    --8<-- "reference/01-file-structure/02-pragmas/tests/abicoder/v1/generated/combined"
     ---
-    --8<-- "reference/01-file-structure/02-pragmas/tests/abicoder/v2/output/combined"
+    --8<-- "reference/01-file-structure/02-pragmas/tests/abicoder/v2/generated/combined"
 
 ## Experimental Pragma
 
@@ -52,7 +52,7 @@ pragma experimental ABIEncoderV2;
 !!! danger "Breaking Changes"
 
     Experimental in `v0.4.16`, and enabled by default in `v0.6.0`:
-    --8<-- "reference/01-file-structure/02-pragmas/tests/experimental/abi-encoder-v2/output/combined"
+    --8<-- "reference/01-file-structure/02-pragmas/tests/experimental/abi-encoder-v2/generated/combined"
 
 ### SMTChecker
 
@@ -68,4 +68,4 @@ pragma experimental SMTChecker;
 !!! danger "Breaking Changes"
 
     Experimental in `v0.4.16`, enabled by default in `v0.4.21`, and deprecated in `v0.8.4`:
-    --8<-- "reference/01-file-structure/02-pragmas/tests/experimental/smt-checker/output/combined"
+    --8<-- "reference/01-file-structure/02-pragmas/tests/experimental/smt-checker/generated/combined"

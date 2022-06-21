@@ -88,7 +88,7 @@ fn create_combined_header(icon: &String, title: &str, language: &str, file: &Pat
 }
 
 fn prepare_test_output_dir(test: &PathBuf) -> PathBuf {
-    let test_output_dir = test.parent().unwrap().join("output");
+    let test_output_dir = test.parent().unwrap().join("generated");
     if test_output_dir.exists() {
         std::fs::remove_dir_all(&test_output_dir).unwrap();
     }

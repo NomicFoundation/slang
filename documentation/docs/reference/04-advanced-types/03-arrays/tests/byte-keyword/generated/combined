@@ -7,11 +7,11 @@
 === "✅ 0.4.13"
 
     ```json
-    --8<-- "reference/04-advanced-types/03-arrays/tests/byte-keyword/output/0.4.13"
+    --8<-- "reference/04-advanced-types/03-arrays/tests/byte-keyword/generated/0.4.13"
     ```
 
 === "❌ 0.8.0"
 
     ```log
-    --8<-- "reference/04-advanced-types/03-arrays/tests/byte-keyword/output/0.8.0"
+    --8<-- "reference/04-advanced-types/03-arrays/tests/byte-keyword/generated/0.8.0"
     ```
