@@ -132,63 +132,23 @@ MappingType = 'mapping' '(' ( ElementaryTypeWithoutPayable | IdentifierPath ) '=
 
 DataLocation = 'memory' | 'storage' | 'calldata' ;
 
-Expression = AssignmentExpression ;
-
-AssignmentExpression = 1…*{ ConditionalExpression / AssignmentOperator } ;
+Expression = 1…*{ Expression / AssignmentOperator } | Expression [ '?' Expression ':' Expression ] | 1…*{ Expression / '||' } | 1…*{ Expression / '&&' } | 1…*{ Expression / EqualityComparisonOperator } | 1…*{ Expression / OrderComparisonOperator } | 1…*{ Expression / '|' } | 1…*{ Expression / '^' } | 1…*{ Expression / '&' } | 1…*{ Expression / ShiftOperator } | 1…*{ Expression / AddSubOperator } | 1…*{ Expression / MulDivModOperator } | 1…*{ Expression / '**' } | Expression [ UnarySuffixOperator ] | [ UnaryPrefixOperator ] Expression | Expression { ArgumentList } | Expression { '{' 1…*{ NamedArgument / ',' } '}' } | Expression { '.' ( «Identifier» | 'address' ) } | Expression { '[' [ Expression ] [ ':' [ Expression ] ] ']' } | 'payable' ArgumentList | 'type' '(' TypeName ')' | 'new' TypeName | '(' 1…*{ [ Expression ] / ',' } ')' | '[' 1…*{ Expression / ',' } ']' | «Identifier» | Literal | ElementaryTypeWithoutPayable ;
 
 AssignmentOperator = '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ;
 
-ConditionalExpression = OrExpression [ '?' Expression ':' Expression ] ;
-
-OrExpression = 1…*{ AndExpression / '||' } ;
-
-AndExpression = 1…*{ EqualityComparisonExpression / '&&' } ;
-
-EqualityComparisonExpression = 1…*{ OrderComparisonExpression / EqualityComparisonOperator } ;
-
 EqualityComparisonOperator = '==' | '!=' ;
-
-OrderComparisonExpression = 1…*{ BitOrExpression / OrderComparisonOperator } ;
 
 OrderComparisonOperator = '<' | '>' | '<=' | '>=' ;
 
-BitOrExpression = 1…*{ BitXOrExpression / '|' } ;
-
-BitXOrExpression = 1…*{ BitAndExpression / '^' } ;
-
-BitAndExpression = 1…*{ ShiftExpression / '&' } ;
-
-ShiftExpression = 1…*{ AddSubExpression / ShiftOperator } ;
-
 ShiftOperator = '<<' | '>>' | '>>>' ;
-
-AddSubExpression = 1…*{ MulDivModExpression / AddSubOperator } ;
 
 AddSubOperator = '+' | '-' ;
 
-MulDivModExpression = 1…*{ ExponentiationExpression / MulDivModOperator } ;
-
 MulDivModOperator = '*' | '/' | '%' ;
-
-ExponentiationExpression = 1…*{ UnarySuffixExpression / '**' } ;
-
-UnarySuffixExpression = UnaryPrefixExpression [ UnarySuffixOperator ] ;
 
 UnarySuffixOperator = '++' | '--' ;
 
-UnaryPrefixExpression = [ UnaryPrefixOperator ] FunctionCallExpression ;
-
 UnaryPrefixOperator = '++' | '--' | '!' | '~' | 'delete' | '-' ;
-
-FunctionCallExpression = FunctionCallOptionsExpression { ArgumentList } ;
-
-FunctionCallOptionsExpression = MemberAccessExpression { '{' 1…*{ NamedArgument / ',' } '}' } ;
-
-MemberAccessExpression = IndexAccessExpression { '.' ( «Identifier» | 'address' ) } ;
-
-IndexAccessExpression = PrimaryExpression { '[' [ Expression ] [ ':' [ Expression ] ] ']' } ;
-
-PrimaryExpression = 'payable' ArgumentList | 'type' '(' TypeName ')' | 'new' TypeName | '(' 1…*{ [ Expression ] / ',' } ')' | '[' 1…*{ Expression / ',' } ']' | «Identifier» | Literal | ElementaryTypeWithoutPayable ;
 
 Literal = «AsciiStringLiteral» | «UnicodeStringLiteral» | NumericLiteral | «HexStringLiteral» | «BooleanLiteral» ;
 

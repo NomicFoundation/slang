@@ -424,220 +424,160 @@
     - terminal: memory
     - terminal: storage
     - terminal: calldata
+
 #
 # Start of Expressions
 #
 
 
 - name: Expression
-  config: { pattern: Passthrough }
-  reference: AssignmentExpression
-
-- name: AssignmentExpression
-  config: { pattern: FoldLeftOrPassthrough }
-  oneOrMore:
-    reference: ConditionalExpression
-    separator: { reference: AssignmentOperator }
-
-- name: AssignmentOperator
+  pattern: Expression
   choice:
-    - terminal: "="
-    - terminal: "|="
-    - terminal: ^=
-    - terminal: "&="
-    - terminal: "<<="
-    - terminal: ">>="
-    - terminal: ">>>="
-    - terminal: +=
-    - terminal: "-="
-    - terminal: "*="
-    - terminal: /=
-    - terminal: "%="
-
-- name: ConditionalExpression
-  config: { pattern: Passthrough }
-  sequence:
-    - reference: OrExpression
-    - optional:
-        sequence:
-          - terminal: "?"
-          - reference: Expression
-          - terminal: ":"
-          - reference: Expression
-
-- name: OrExpression
-  config: { pattern: FoldLeftOrPassthrough }
-  oneOrMore:
-    reference: AndExpression
-    separator: { terminal: "||" }
-
-- name: AndExpression
-  config: { pattern: FoldLeftOrPassthrough }
-  oneOrMore:
-    reference: EqualityComparisonExpression
-    separator: { terminal: "&&" }
-
-- name: EqualityComparisonExpression
-  config: { pattern: FoldLeftOrPassthrough }
-  oneOrMore:
-    reference: OrderComparisonExpression
-    separator: { reference: EqualityComparisonOperator }
-
-- name: EqualityComparisonOperator
-  choice:
-    - terminal: "=="
-    - terminal: "!="
-
-- name: OrderComparisonExpression
-  config: { pattern: FoldLeftOrPassthrough }
-  oneOrMore:
-    reference: BitOrExpression
-    separator: { reference: OrderComparisonOperator }
-
-- name: OrderComparisonOperator
-  choice:
-    - terminal: "<"
-    - terminal: ">"
-    - terminal: "<="
-    - terminal: ">="
-
-- name: BitOrExpression
-  config: { pattern: FoldLeftOrPassthrough }
-  oneOrMore:
-    reference: BitXOrExpression
-    separator: { terminal: "|" }
-
-- name: BitXOrExpression
-  config: { pattern: FoldLeftOrPassthrough }
-  oneOrMore:
-    reference: BitAndExpression
-    separator: { terminal: ^ }
-
-- name: BitAndExpression
-  config: { pattern: FoldLeftOrPassthrough }
-  oneOrMore:
-    reference: ShiftExpression
-    separator: { terminal: "&" }
-
-- name: ShiftExpression
-  config: { pattern: FoldLeftOrPassthrough }
-  oneOrMore:
-    reference: AddSubExpression
-    separator: { reference: ShiftOperator }
-
-- name: ShiftOperator
-  choice:
-    - terminal: "<<"
-    - terminal: ">>"
-    - terminal: ">>>"
-
-- name: AddSubExpression
-  config: { pattern: FoldLeftOrPassthrough }
-  oneOrMore:
-    reference: MulDivModExpression
-    separator: { reference: AddSubOperator }
-
-- name: AddSubOperator
-  choice:
-    - terminal: +
-    - terminal: "-"
-
-- name: MulDivModExpression
-  config: { pattern: FoldLeftOrPassthrough }
-  oneOrMore:
-    reference: ExponentiationExpression
-    separator: { reference: MulDivModOperator }
-
-- name: MulDivModOperator
-  choice:
-    - terminal: "*"
-    - terminal: /
-    - terminal: "%"
-
-- name: ExponentiationExpression
-  config: { pattern: FoldRightOrPassthrough }
-  oneOrMore:
-    reference: UnarySuffixExpression
-    separator: { terminal: "**" }
-
-- name: UnarySuffixExpression
-  config: { pattern: Passthrough }
-  sequence:
-    - reference: UnaryPrefixExpression
-    - optional:
-        reference: UnarySuffixOperator
-
-- name: UnarySuffixOperator
-  choice:
-    - terminal: ++
-    - terminal: "--"
-
-- name: UnaryPrefixExpression
-  config: { pattern: Passthrough }
-  sequence:
-    - optional:
-        reference: UnaryPrefixOperator
-    - reference: FunctionCallExpression
-
-- name: UnaryPrefixOperator
-  choice:
-    - terminal: ++
-    - terminal: "--"
-    - terminal: "!"
-    - terminal: "~"
-    - terminal: delete
-    - terminal: "-"
-
-- name: FunctionCallExpression
-  config: { pattern: FoldLeftOrPassthrough }
-  sequence:
-    - reference: FunctionCallOptionsExpression
-    - zeroOrMore:
-        reference: ArgumentList
-
-- name: FunctionCallOptionsExpression
-  config: { pattern: FoldLeftOrPassthrough }
-  sequence:
-    - reference: MemberAccessExpression
-    - zeroOrMore:
-        sequence:
-          - terminal: "{"
-          - oneOrMore:
-              reference: NamedArgument
-              separator:
-                terminal: ","
-          - terminal: "}"
-
-- name: MemberAccessExpression
-  config: { pattern: FoldLeftOrPassthrough }
-  sequence:
-    - reference: IndexAccessExpression
-    - zeroOrMore:
-        sequence:
-          - terminal: "."
-          - choice:
-              - reference: Identifier
-              - terminal: address
-
-- name: IndexAccessExpression
-  config: { pattern: FoldLeftOrPassthrough }
-  sequence:
-    - reference: PrimaryExpression
-      config: { pattern: Inline }
-    - zeroOrMore:
-        sequence:
-          - terminal: "["
-          - optional:
-              reference: Expression
-          - optional:
-              sequence:
-                - terminal: ":"
-                - optional:
-                    reference: Expression
-          - terminal: "]"
-
-- name: PrimaryExpression
-  choice:
+    - config:
+        name: AssignmentExpression
+        pattern: FoldLeftOrPassthrough
+      oneOrMore:
+        reference: Expression
+        separator: { reference: AssignmentOperator }
+    - config:
+        name: ConditionalExpression
+        pattern: Passthrough
+      sequence:
+        - reference: Expression
+        - optional:
+            sequence:
+              - terminal: "?"
+              - reference: Expression
+              - terminal: ":"
+              - reference: Expression
+    - config:
+        name: OrExpression
+        pattern: FoldLeftOrPassthrough
+      oneOrMore:
+        reference: Expression
+        separator: { terminal: "||" }
+    - config:
+        name: AndExpression
+        pattern: FoldLeftOrPassthrough
+      oneOrMore:
+        reference: Expression
+        separator: { terminal: "&&" }
+    - config:
+        name: EqualityComparisonExpression
+        pattern: FoldLeftOrPassthrough
+      oneOrMore:
+        reference: Expression
+        separator: { reference: EqualityComparisonOperator }
+    - config:
+        name: OrderComparisonExpression
+        pattern: FoldLeftOrPassthrough
+      oneOrMore:
+        reference: Expression
+        separator: { reference: OrderComparisonOperator }
+    - config:
+        name: BitOrExpression
+        pattern: FoldLeftOrPassthrough
+      oneOrMore:
+        reference: Expression
+        separator: { terminal: "|" }
+    - config:
+        name: BitXOrExpression
+        pattern: FoldLeftOrPassthrough
+      oneOrMore:
+        reference: Expression
+        separator: { terminal: ^ }
+    - config:
+        name: BitAndExpression
+        pattern: FoldLeftOrPassthrough
+      oneOrMore:
+        reference: Expression
+        separator: { terminal: "&" }
+    - config:
+        name: ShiftExpression
+        pattern: FoldLeftOrPassthrough
+      oneOrMore:
+        reference: Expression
+        separator: { reference: ShiftOperator }
+    - config:
+        name: AddSubExpression
+        pattern: FoldLeftOrPassthrough
+      oneOrMore:
+        reference: Expression
+        separator: { reference: AddSubOperator }
+    - config:
+        name: MulDivModExpression
+        pattern: FoldLeftOrPassthrough
+      oneOrMore:
+        reference: Expression
+        separator: { reference: MulDivModOperator }
+    - config:
+        name: ExponentiationExpression
+        pattern: FoldRightOrPassthrough
+      oneOrMore:
+        reference: Expression
+        separator: { terminal: "**" }
+    - config:
+        name: UnarySuffixExpression
+        pattern: Passthrough
+      sequence:
+        - reference: Expression
+        - optional:
+            reference: UnarySuffixOperator
+    - config:
+        name: UnaryPrefixExpression
+        pattern: Passthrough
+      sequence:
+        - optional:
+            reference: UnaryPrefixOperator
+        - reference: Expression
+    - config:
+        name: FunctionCallExpression
+        pattern: FoldLeftOrPassthrough
+      sequence:
+        - reference: Expression
+        - zeroOrMore:
+            reference: ArgumentList
+    - config:
+        name: FunctionCallOptionsExpression
+        pattern: FoldLeftOrPassthrough
+      sequence:
+        - reference: Expression
+        - zeroOrMore:
+            sequence:
+              - terminal: "{"
+              - oneOrMore:
+                  reference: NamedArgument
+                  separator:
+                    terminal: ","
+              - terminal: "}"
+    - config:
+        name: MemberAccessExpression
+        pattern: FoldLeftOrPassthrough
+      sequence:
+        - reference: Expression
+        - zeroOrMore:
+            sequence:
+              - terminal: "."
+              - choice:
+                  - reference: Identifier
+                  - terminal: address
+    - config:
+        name: IndexAccessExpression
+        pattern: FoldLeftOrPassthrough
+      sequence:
+        - reference: Expression
+          config: { pattern: Inline }
+        - zeroOrMore:
+            sequence:
+              - terminal: "["
+              - optional:
+                  reference: Expression
+              - optional:
+                  sequence:
+                    - terminal: ":"
+                    - optional:
+                        reference: Expression
+              - terminal: "]"
     - sequence:
         - terminal: payable
         - reference: ArgumentList
@@ -667,6 +607,72 @@
     - reference: Identifier
     - reference: Literal
     - reference: ElementaryTypeWithoutPayable
+
+
+- name: AssignmentOperator
+  choice:
+    - terminal: "="
+    - terminal: "|="
+    - terminal: ^=
+    - terminal: "&="
+    - terminal: "<<="
+    - terminal: ">>="
+    - terminal: ">>>="
+    - terminal: +=
+    - terminal: "-="
+    - terminal: "*="
+    - terminal: /=
+    - terminal: "%="
+
+
+- name: EqualityComparisonOperator
+  choice:
+    - terminal: "=="
+    - terminal: "!="
+
+
+- name: OrderComparisonOperator
+  choice:
+    - terminal: "<"
+    - terminal: ">"
+    - terminal: "<="
+    - terminal: ">="
+
+
+- name: ShiftOperator
+  choice:
+    - terminal: "<<"
+    - terminal: ">>"
+    - terminal: ">>>"
+
+
+- name: AddSubOperator
+  choice:
+    - terminal: +
+    - terminal: "-"
+
+
+- name: MulDivModOperator
+  choice:
+    - terminal: "*"
+    - terminal: /
+    - terminal: "%"
+
+
+- name: UnarySuffixOperator
+  choice:
+    - terminal: ++
+    - terminal: "--"
+
+
+- name: UnaryPrefixOperator
+  choice:
+    - terminal: ++
+    - terminal: "--"
+    - terminal: "!"
+    - terminal: "~"
+    - terminal: delete
+    - terminal: "-"
 
 #
 # End of Expressions
