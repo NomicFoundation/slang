@@ -66,7 +66,9 @@ impl DefaultTest for end_of_line::WithTrivia {
 }
 
 impl fixed_bytes_type::_T0 {
-    pub fn from_parse((bytes, _1): (FixedSizeTerminal<5usize>, VariableSizeTerminal)) -> Self {
+    pub fn from_parse(
+        (bytes, _1): (FixedSizeTerminal<5usize>, Option<VariableSizeTerminal>),
+    ) -> Self {
         Self { bytes, _1 }
     }
 }
@@ -362,7 +364,9 @@ impl DefaultTest for raw_identifier::WithTrivia {
 }
 
 impl signed_integer_type::_T0 {
-    pub fn from_parse((int, _1): (FixedSizeTerminal<3usize>, VariableSizeTerminal)) -> Self {
+    pub fn from_parse(
+        (int, _1): (FixedSizeTerminal<3usize>, Option<VariableSizeTerminal>),
+    ) -> Self {
         Self { int, _1 }
     }
 }

@@ -81,7 +81,7 @@ impl Parsers {
             .map(|v| VariableSizeTerminal(v.len()))
             .boxed();
 
-        // «FixedBytesType» = 'bytes' ( '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15' | '16' | '17' | '18' | '19' | '20' | '21' | '22' | '23' | '24' | '25' | '26' | '27' | '28' | '29' | '30' | '31' | '32' ) ;
+        // «FixedBytesType» = 'bytes' [ '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15' | '16' | '17' | '18' | '19' | '20' | '21' | '22' | '23' | '24' | '25' | '26' | '27' | '28' | '29' | '30' | '31' | '32' ] ;
         let fixed_bytes_type_parser = terminal("bytes")
             .ignored()
             .map(|_| FixedSizeTerminal::<5usize>())
@@ -126,7 +126,8 @@ impl Parsers {
                     terminal("8").map(|_| 1usize),
                     terminal("9").map(|_| 1usize),
                 ))
-                .map(VariableSizeTerminal),
+                .map(VariableSizeTerminal)
+                .or_not(),
             )
             .map(|v| fixed_bytes_type::_T0::from_parse(v))
             .boxed();
@@ -313,7 +314,7 @@ impl Parsers {
         .map(|v| raw_identifier::_T0::from_parse(v))
         .boxed();
 
-        // «SignedIntegerType» = 'int' ( '8' | '16' | '24' | '32' | '40' | '48' | '56' | '64' | '72' | '80' | '88' | '96' | '104' | '112' | '120' | '128' | '136' | '144' | '152' | '160' | '168' | '176' | '184' | '192' | '200' | '208' | '216' | '224' | '232' | '240' | '248' | '256' ) ;
+        // «SignedIntegerType» = 'int' [ '8' | '16' | '24' | '32' | '40' | '48' | '56' | '64' | '72' | '80' | '88' | '96' | '104' | '112' | '120' | '128' | '136' | '144' | '152' | '160' | '168' | '176' | '184' | '192' | '200' | '208' | '216' | '224' | '232' | '240' | '248' | '256' ] ;
         let signed_integer_type_parser = terminal("int")
             .ignored()
             .map(|_| FixedSizeTerminal::<3usize>())
@@ -368,7 +369,8 @@ impl Parsers {
                     ))),
                     terminal("96").map(|_| 2usize),
                 ))
-                .map(VariableSizeTerminal),
+                .map(VariableSizeTerminal)
+                .or_not(),
             )
             .map(|v| signed_integer_type::_T0::from_parse(v))
             .boxed();
@@ -964,7 +966,7 @@ impl Parsers {
             .map(|v| double_quoted_unicode_string_literal::_T0::from_parse(v))
             .boxed();
 
-        // «Keyword» = 'pragma' | 'abstract' | 'anonymous' | 'address' | 'as' | 'assembly' | 'bool' | 'break' | 'bytes' | 'calldata' | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum' | 'event' | 'external' | 'fallback' | 'false' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import' | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override' | 'payable' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct' | 'true' | 'try' | 'type' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | 'fixed' | 'ufixed' ;
+        // «Keyword» = 'pragma' | 'abstract' | 'anonymous' | 'address' | 'as' | 'assembly' | 'bool' | 'break' | 'calldata' | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum' | 'event' | 'external' | 'fallback' | 'false' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import' | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override' | 'payable' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct' | 'true' | 'try' | 'type' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | 'fixed' | 'ufixed' ;
         let keyword_parser = choice((
             choice::<_, ErrorType>((
                 terminal("a").ignore_then(choice((
@@ -979,7 +981,6 @@ impl Parsers {
                 terminal("b").ignore_then(choice((
                     terminal("ool").map(|_| 4usize),
                     terminal("reak").map(|_| 5usize),
-                    terminal("ytes").map(|_| 5usize),
                 ))),
                 terminal("c").ignore_then(choice((
                     terminal("a").ignore_then(choice((
@@ -1909,15 +1910,12 @@ impl Parsers {
             .map(|v| assembly_flags::_T0::from_parse(v))
             .boxed();
 
-        // ElementaryType = 'bool' | 'string' | 'bytes' | AddressType | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | «FixedType» | «UfixedType» ;
+        // ElementaryType = 'bool' | 'string' | AddressType | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | «FixedType» | «UfixedType» ;
         let elementary_type_parser = choice((
             leading_trivia_parser
                 .clone()
                 .then(choice::<_, ErrorType>((
-                    terminal("b").ignore_then(choice((
-                        terminal("ool").map(|_| 4usize),
-                        terminal("ytes").map(|_| 5usize),
-                    ))),
+                    terminal("bool").map(|_| 4usize),
                     terminal("string").map(|_| 6usize),
                 )))
                 .then(trailing_trivia_parser.clone())
