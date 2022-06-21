@@ -19,7 +19,7 @@
           - ImportPath
           - UsingDirective
     - nat-spec-comments:
-        notes: specification/notes/01-first-section/03-natspec/index.md
+        notes: specification/notes/01-first-section/03-nat-spec-comments/index.md
 
 - todo-section:
     - todo-topic:
@@ -115,7 +115,6 @@
           - ReturnStatement
           - EmitStatement
           - RevertStatement
-          - VariableDeclarationList
           - VariableDeclarationTuple
           - VariableDeclarationStatement
           - VariableDeclaration

@@ -19,9 +19,6 @@ fn main() {
     println!(" => Loading Manifest");
     let grammar = Grammar::from_manifest(&PathBuf::from(args.manifest_input));
 
-    println!(" => Validating Grammar");
-    grammar.validate();
-
     println!(" => Generating EBNF");
     grammar.generate_ebnf(&PathBuf::from(args.ebnf_output));
 }

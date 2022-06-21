@@ -43,8 +43,6 @@
             - terminal: "\n"
             - terminal: "\r"
 - name: SourceUnit
-  config:
-    prelude: ""
   sequence:
     - reference: IGNORE
     - zeroOrMore:
@@ -866,11 +864,6 @@
     - reference: Expression
     - reference: ArgumentList
     - terminal: ;
-- name: VariableDeclarationList
-  oneOrMore:
-    reference: VariableDeclaration
-    separator:
-      terminal: ","
 - name: VariableDeclarationTuple
   sequence:
     - terminal: (

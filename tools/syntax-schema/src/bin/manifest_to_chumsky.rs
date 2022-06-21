@@ -19,9 +19,6 @@ fn main() {
     println!(" => Loading Manifest");
     let grammar = Grammar::from_manifest(&PathBuf::from(args.manifest_input));
 
-    println!(" => Validating Grammar");
-    grammar.validate();
-
     println!(" => Generating Parser");
     grammar.generate_chumsky(&GenerationContext {
         output_dir: PathBuf::from(args.chumsky_output),
