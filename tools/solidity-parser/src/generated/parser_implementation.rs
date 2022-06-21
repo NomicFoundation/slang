@@ -2756,58 +2756,6 @@ impl Parsers {
             .map(|v| named_argument_list::_T0::from_parse(v))
             .boxed();
 
-        // NonEmptyParameterList = '(' 1…*{ ParameterDeclaration / ',' } ')' ;
-        let non_empty_parameter_list_parser = leading_trivia_parser
-            .clone()
-            .then(just('(').map(|_| FixedSizeTerminal::<1>()))
-            .then(trailing_trivia_parser.clone())
-            .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                    leading,
-                    content,
-                    trailing,
-                },
-            )
-            .then(
-                parameter_declaration_parser
-                    .clone()
-                    .then(
-                        leading_trivia_parser
-                            .clone()
-                            .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                            .then(trailing_trivia_parser.clone())
-                            .map(
-                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                                    leading,
-                                    content,
-                                    trailing,
-                                },
-                            )
-                            .then(parameter_declaration_parser.clone())
-                            .repeated(),
-                    )
-                    .map(repetition_mapper)
-                    .map(|(elements, separators)| non_empty_parameter_list::_T1 {
-                        elements,
-                        separators,
-                    }),
-            )
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(just(')').map(|_| FixedSizeTerminal::<1>()))
-                    .then(trailing_trivia_parser.clone())
-                    .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                            leading,
-                            content,
-                            trailing,
-                        },
-                    ),
-            )
-            .map(|v| non_empty_parameter_list::_T0::from_parse(v))
-            .boxed();
-
         // OverrideSpecifier = 'override' [ '(' 1…1*{ IdentifierPath / ',' } ')' ] ;
         let override_specifier_parser = leading_trivia_parser
             .clone()
@@ -3332,7 +3280,7 @@ impl Parsers {
             .map(|v| argument_list::_T0::from_parse(v))
             .boxed();
 
-        // CatchClause = 'catch' [ [ «Identifier» ] NonEmptyParameterList ] Block ;
+        // CatchClause = 'catch' [ [ «Identifier» ] ParameterList ] Block ;
         let catch_clause_parser = leading_trivia_parser
             .clone()
             .then(
@@ -3359,7 +3307,7 @@ impl Parsers {
                         trailing,
                     })
                     .or_not()
-                    .then(non_empty_parameter_list_parser.clone())
+                    .then(parameter_list_parser.clone())
                     .map(|v| catch_clause::_T1::from_parse(v))
                     .or_not(),
             )
@@ -3367,7 +3315,7 @@ impl Parsers {
             .map(|v| catch_clause::_T0::from_parse(v))
             .boxed();
 
-        // FunctionType = 'function' ParameterList { VisibilitySpecifier | StateMutabilitySpecifier } [ 'returns' NonEmptyParameterList ] ;
+        // FunctionType = 'function' ParameterList { VisibilitySpecifier | StateMutabilitySpecifier } [ 'returns' ParameterList ] ;
         let function_type_parser = leading_trivia_parser
             .clone()
             .then(
@@ -3426,7 +3374,7 @@ impl Parsers {
                             trailing,
                         },
                     )
-                    .then(non_empty_parameter_list_parser.clone())
+                    .then(parameter_list_parser.clone())
                     .map(|v| function_type::_T2::from_parse(v))
                     .or_not(),
             )
@@ -5983,7 +5931,7 @@ impl Parsers {
             .map(|v| state_variable_declaration::_T0::from_parse(v))
             .boxed();
 
-        // TryStatement = 'try' Expression [ 'returns' NonEmptyParameterList ] Block 1…*{ CatchClause } ;
+        // TryStatement = 'try' Expression [ 'returns' ParameterList ] Block 1…*{ CatchClause } ;
         let try_statement_parser = leading_trivia_parser
             .clone()
             .then(
@@ -6016,7 +5964,7 @@ impl Parsers {
                             trailing,
                         },
                     )
-                    .then(non_empty_parameter_list_parser.clone())
+                    .then(parameter_list_parser.clone())
                     .map(|v| try_statement::_T1::from_parse(v))
                     .or_not(),
             )
@@ -6330,7 +6278,7 @@ impl Parsers {
             .map(|v| constructor_definition::_T0::from_parse(v))
             .boxed();
 
-        // FallbackFunctionDefinition = 'fallback' ParameterList { FallbackFunctionAttribute } [ 'returns' NonEmptyParameterList ] ( ';' | Block ) ;
+        // FallbackFunctionDefinition = 'fallback' ParameterList { FallbackFunctionAttribute } [ 'returns' ParameterList ] ( ';' | Block ) ;
         let fallback_function_definition_parser = leading_trivia_parser
             .clone()
             .then(
@@ -6364,7 +6312,7 @@ impl Parsers {
                             trailing,
                         },
                     )
-                    .then(non_empty_parameter_list_parser.clone())
+                    .then(parameter_list_parser.clone())
                     .map(|v| fallback_function_definition::_T2::from_parse(v))
                     .or_not(),
             )
@@ -6388,7 +6336,7 @@ impl Parsers {
             .map(|v| fallback_function_definition::_T0::from_parse(v))
             .boxed();
 
-        // FunctionDefinition = 'function' ( «Identifier» | 'fallback' | 'receive' ) ParameterList { FunctionAttribute } [ 'returns' NonEmptyParameterList ] ( ';' | Block ) ;
+        // FunctionDefinition = 'function' ( «Identifier» | 'fallback' | 'receive' ) ParameterList { FunctionAttribute } [ 'returns' ParameterList ] ( ';' | Block ) ;
         let function_definition_parser = leading_trivia_parser
             .clone()
             .then(
@@ -6449,7 +6397,7 @@ impl Parsers {
                             trailing,
                         },
                     )
-                    .then(non_empty_parameter_list_parser.clone())
+                    .then(parameter_list_parser.clone())
                     .map(|v| function_definition::_T3::from_parse(v))
                     .or_not(),
             )
@@ -6522,7 +6470,7 @@ impl Parsers {
             .map(|v| modifier_definition::_T0::from_parse(v))
             .boxed();
 
-        // ReceiveFunctionDefinition = 'receive' '(' ')' { ReceiveFunctionAttribute } ( ';' | Block ) ;
+        // ReceiveFunctionDefinition = 'receive' ParameterList { ReceiveFunctionAttribute } ( ';' | Block ) ;
         let receive_function_definition_parser = leading_trivia_parser
             .clone()
             .then(
@@ -6538,32 +6486,7 @@ impl Parsers {
                     trailing,
                 },
             )
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(just('(').map(|_| FixedSizeTerminal::<1>()))
-                    .then(trailing_trivia_parser.clone())
-                    .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                            leading,
-                            content,
-                            trailing,
-                        },
-                    ),
-            )
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(just(')').map(|_| FixedSizeTerminal::<1>()))
-                    .then(trailing_trivia_parser.clone())
-                    .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                            leading,
-                            content,
-                            trailing,
-                        },
-                    ),
-            )
+            .then(parameter_list_parser.clone())
             .then(receive_function_attribute_parser.clone().repeated())
             .then(choice((
                 leading_trivia_parser
@@ -6954,7 +6877,6 @@ impl Parsers {
             yul_expression: yul_expression_parser.boxed(),
             mapping_type: mapping_type_parser,
             named_argument_list: named_argument_list_parser,
-            non_empty_parameter_list: non_empty_parameter_list_parser,
             override_specifier: override_specifier_parser,
             parameter_list: parameter_list_parser,
             selecting_import_directive: selecting_import_directive_parser,

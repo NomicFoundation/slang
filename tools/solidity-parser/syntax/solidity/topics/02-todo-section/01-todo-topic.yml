@@ -60,7 +60,7 @@
     - optional:
         sequence:
           - terminal: returns
-          - reference: NonEmptyParameterList
+          - reference: ParameterList
     - choice:
         - terminal: ;
         - reference: Block
@@ -192,7 +192,7 @@
     - optional:
         sequence:
           - terminal: returns
-          - reference: NonEmptyParameterList
+          - reference: ParameterList
     - choice:
         - terminal: ;
         - reference: Block
@@ -208,8 +208,7 @@
 - name: ReceiveFunctionDefinition
   sequence:
     - terminal: receive
-    - terminal: (
-    - terminal: )
+    - reference: ParameterList
     - zeroOrMore:
         reference: ReceiveFunctionAttribute
     - choice:
@@ -307,15 +306,6 @@
           terminal: ","
     - terminal: )
 
-- name: NonEmptyParameterList
-  sequence:
-    - terminal: (
-    - oneOrMore:
-        reference: ParameterDeclaration
-        separator:
-          terminal: ","
-    - terminal: )
-
 - name: ParameterDeclaration
   sequence:
     - reference: TypeName
@@ -406,7 +396,7 @@
     - optional:
         sequence:
           - terminal: returns
-          - reference: NonEmptyParameterList
+          - reference: ParameterList
 
 - name: MappingType
   sequence:
@@ -768,7 +758,7 @@
     - optional:
         sequence:
           - terminal: returns
-          - reference: NonEmptyParameterList
+          - reference: ParameterList
     - reference: Block
     - oneOrMore:
         reference: CatchClause
@@ -780,7 +770,7 @@
         sequence:
           - optional:
               reference: Identifier
-          - reference: NonEmptyParameterList
+          - reference: ParameterList
     - reference: Block
 
 - name: ReturnStatement

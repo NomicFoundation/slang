@@ -1421,29 +1421,6 @@ pub mod named_argument_list {
     }
 }
 
-/// NonEmptyParameterList = '(' 1…*{ ParameterDeclaration / ',' } ')' ;
-pub type NonEmptyParameterList = non_empty_parameter_list::_T0;
-pub mod non_empty_parameter_list {
-    #[allow(unused_imports)]
-    use super::*;
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T1 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub elements: Vec<ParameterDeclaration>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<FixedSizeTerminalWithTrivia<1>>,
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T0 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub open_paren_char: FixedSizeTerminalWithTrivia<1>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub parameter_declarations: non_empty_parameter_list::_T1,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub close_paren_char: FixedSizeTerminalWithTrivia<1>,
-    }
-}
-
 /// OverrideSpecifier = 'override' [ '(' 1…1*{ IdentifierPath / ',' } ')' ] ;
 pub type OverrideSpecifier = override_specifier::_T0;
 pub mod override_specifier {
@@ -1712,7 +1689,7 @@ pub mod argument_list {
     }
 }
 
-/// CatchClause = 'catch' [ [ «Identifier» ] NonEmptyParameterList ] Block ;
+/// CatchClause = 'catch' [ [ «Identifier» ] ParameterList ] Block ;
 pub type CatchClause = catch_clause::_T0;
 pub mod catch_clause {
     #[allow(unused_imports)]
@@ -1722,7 +1699,7 @@ pub mod catch_clause {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub identifier: Option<identifier::WithTrivia>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub non_empty_parameter_list: NonEmptyParameterList,
+        pub parameter_list: ParameterList,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
@@ -1735,7 +1712,7 @@ pub mod catch_clause {
     }
 }
 
-/// FunctionType = 'function' ParameterList { VisibilitySpecifier | StateMutabilitySpecifier } [ 'returns' NonEmptyParameterList ] ;
+/// FunctionType = 'function' ParameterList { VisibilitySpecifier | StateMutabilitySpecifier } [ 'returns' ParameterList ] ;
 pub type FunctionType = function_type::_T0;
 pub mod function_type {
     #[allow(unused_imports)]
@@ -1745,7 +1722,7 @@ pub mod function_type {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub returns: FixedSizeTerminalWithTrivia<7usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub non_empty_parameter_list: NonEmptyParameterList,
+        pub parameter_list: ParameterList,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
@@ -2778,7 +2755,7 @@ pub mod state_variable_declaration {
     }
 }
 
-/// TryStatement = 'try' Expression [ 'returns' NonEmptyParameterList ] Block 1…*{ CatchClause } ;
+/// TryStatement = 'try' Expression [ 'returns' ParameterList ] Block 1…*{ CatchClause } ;
 pub type TryStatement = try_statement::_T0;
 pub mod try_statement {
     #[allow(unused_imports)]
@@ -2788,7 +2765,7 @@ pub mod try_statement {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub returns: FixedSizeTerminalWithTrivia<7usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub non_empty_parameter_list: NonEmptyParameterList,
+        pub parameter_list: ParameterList,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
@@ -2964,7 +2941,7 @@ pub mod constructor_definition {
     }
 }
 
-/// FallbackFunctionDefinition = 'fallback' ParameterList { FallbackFunctionAttribute } [ 'returns' NonEmptyParameterList ] ( ';' | Block ) ;
+/// FallbackFunctionDefinition = 'fallback' ParameterList { FallbackFunctionAttribute } [ 'returns' ParameterList ] ( ';' | Block ) ;
 pub type FallbackFunctionDefinition = fallback_function_definition::_T0;
 pub mod fallback_function_definition {
     #[allow(unused_imports)]
@@ -2974,7 +2951,7 @@ pub mod fallback_function_definition {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub returns: FixedSizeTerminalWithTrivia<7usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub non_empty_parameter_list: NonEmptyParameterList,
+        pub parameter_list: ParameterList,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub enum _T3 {
@@ -2995,7 +2972,7 @@ pub mod fallback_function_definition {
     }
 }
 
-/// FunctionDefinition = 'function' ( «Identifier» | 'fallback' | 'receive' ) ParameterList { FunctionAttribute } [ 'returns' NonEmptyParameterList ] ( ';' | Block ) ;
+/// FunctionDefinition = 'function' ( «Identifier» | 'fallback' | 'receive' ) ParameterList { FunctionAttribute } [ 'returns' ParameterList ] ( ';' | Block ) ;
 pub type FunctionDefinition = function_definition::_T0;
 pub mod function_definition {
     #[allow(unused_imports)]
@@ -3010,7 +2987,7 @@ pub mod function_definition {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub returns: FixedSizeTerminalWithTrivia<7usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub non_empty_parameter_list: NonEmptyParameterList,
+        pub parameter_list: ParameterList,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub enum _T4 {
@@ -3056,7 +3033,7 @@ pub mod modifier_definition {
     }
 }
 
-/// ReceiveFunctionDefinition = 'receive' '(' ')' { ReceiveFunctionAttribute } ( ';' | Block ) ;
+/// ReceiveFunctionDefinition = 'receive' ParameterList { ReceiveFunctionAttribute } ( ';' | Block ) ;
 pub type ReceiveFunctionDefinition = receive_function_definition::_T0;
 pub mod receive_function_definition {
     #[allow(unused_imports)]
@@ -3071,9 +3048,7 @@ pub mod receive_function_definition {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub receive: FixedSizeTerminalWithTrivia<7usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub open_paren_char: FixedSizeTerminalWithTrivia<1>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub close_paren_char: FixedSizeTerminalWithTrivia<1>,
+        pub parameter_list: ParameterList,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub receive_function_attributes: Vec<ReceiveFunctionAttribute>,
         pub _t2: Box<receive_function_definition::_T2>,

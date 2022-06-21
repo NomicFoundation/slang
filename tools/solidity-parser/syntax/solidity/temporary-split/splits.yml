@@ -59,7 +59,6 @@
           - NamedArgument
           - ModifierInvocation
           - ParameterList
-          - NonEmptyParameterList
           - ParameterDeclaration
           - VisibilitySpecifier
           - StateMutabilitySpecifier

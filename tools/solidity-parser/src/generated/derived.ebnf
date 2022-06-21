@@ -58,7 +58,7 @@ InheritanceSpecifier = IdentifierPath [ ArgumentList ] ;
 
 LibraryDefinition = 'library' «Identifier» '{' { ContractBodyElement } '}' ;
 
-FunctionDefinition = 'function' ( «Identifier» | 'fallback' | 'receive' ) ParameterList { FunctionAttribute } [ 'returns' NonEmptyParameterList ] ( ';' | Block ) ;
+FunctionDefinition = 'function' ( «Identifier» | 'fallback' | 'receive' ) ParameterList { FunctionAttribute } [ 'returns' ParameterList ] ( ';' | Block ) ;
 
 FunctionAttribute = VisibilitySpecifier | StateMutabilitySpecifier | ModifierInvocation | 'virtual' | OverrideSpecifier ;
 
@@ -84,11 +84,11 @@ ConstructorDefinition = 'constructor' ParameterList { ConstructorAttribute } Blo
 
 ConstructorAttribute = ModifierInvocation | 'payable' | 'internal' | 'public' ;
 
-FallbackFunctionDefinition = 'fallback' ParameterList { FallbackFunctionAttribute } [ 'returns' NonEmptyParameterList ] ( ';' | Block ) ;
+FallbackFunctionDefinition = 'fallback' ParameterList { FallbackFunctionAttribute } [ 'returns' ParameterList ] ( ';' | Block ) ;
 
 FallbackFunctionAttribute = 'external' | StateMutabilitySpecifier | ModifierInvocation | 'virtual' | OverrideSpecifier ;
 
-ReceiveFunctionDefinition = 'receive' '(' ')' { ReceiveFunctionAttribute } ( ';' | Block ) ;
+ReceiveFunctionDefinition = 'receive' ParameterList { ReceiveFunctionAttribute } ( ';' | Block ) ;
 
 ReceiveFunctionAttribute = 'external' | 'payable' | ModifierInvocation | 'virtual' | OverrideSpecifier ;
 
@@ -112,8 +112,6 @@ ModifierInvocation = IdentifierPath [ ArgumentList ] ;
 
 ParameterList = '(' { ParameterDeclaration / ',' } ')' ;
 
-NonEmptyParameterList = '(' 1…*{ ParameterDeclaration / ',' } ')' ;
-
 ParameterDeclaration = TypeName [ DataLocation ] [ «Identifier» ] ;
 
 VisibilitySpecifier = 'internal' | 'external' | 'private' | 'public' ;
@@ -132,7 +130,7 @@ ElementaryTypeWithoutPayable = 'address' | ElementaryType ;
 
 ElementaryType = 'bool' | 'string' | 'bytes' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | «FixedType» | «UfixedType» ;
 
-FunctionType = 'function' ParameterList { VisibilitySpecifier | StateMutabilitySpecifier } [ 'returns' NonEmptyParameterList ] ;
+FunctionType = 'function' ParameterList { VisibilitySpecifier | StateMutabilitySpecifier } [ 'returns' ParameterList ] ;
 
 MappingType = 'mapping' '(' ( ElementaryTypeWithoutPayable | IdentifierPath ) '=>' TypeName ')' ;
 
@@ -204,9 +202,9 @@ ContinueStatement = 'continue' ';' ;
 
 BreakStatement = 'break' ';' ;
 
-TryStatement = 'try' Expression [ 'returns' NonEmptyParameterList ] Block 1…*{ CatchClause } ;
+TryStatement = 'try' Expression [ 'returns' ParameterList ] Block 1…*{ CatchClause } ;
 
-CatchClause = 'catch' [ [ «Identifier» ] NonEmptyParameterList ] Block ;
+CatchClause = 'catch' [ [ «Identifier» ] ParameterList ] Block ;
 
 ReturnStatement = 'return' [ Expression ] ';' ;
 

@@ -1535,53 +1535,6 @@ impl DefaultTest for named_argument_list::_T0 {
     }
 }
 
-impl Default for non_empty_parameter_list::_T1 {
-    fn default() -> Self {
-        Self {
-            elements: Default::default(),
-            separators: Default::default(),
-        }
-    }
-}
-impl DefaultTest for non_empty_parameter_list::_T1 {
-    fn is_default(&self) -> bool {
-        self.elements.is_default() && self.separators.is_default()
-    }
-}
-impl non_empty_parameter_list::_T0 {
-    pub fn from_parse(
-        ((open_paren_char, parameter_declarations), close_paren_char): (
-            (
-                FixedSizeTerminalWithTrivia<1>,
-                non_empty_parameter_list::_T1,
-            ),
-            FixedSizeTerminalWithTrivia<1>,
-        ),
-    ) -> Self {
-        Self {
-            open_paren_char,
-            parameter_declarations,
-            close_paren_char,
-        }
-    }
-}
-impl Default for non_empty_parameter_list::_T0 {
-    fn default() -> Self {
-        Self {
-            open_paren_char: Default::default(),
-            parameter_declarations: Default::default(),
-            close_paren_char: Default::default(),
-        }
-    }
-}
-impl DefaultTest for non_empty_parameter_list::_T0 {
-    fn is_default(&self) -> bool {
-        self.open_paren_char.is_default()
-            && self.parameter_declarations.is_default()
-            && self.close_paren_char.is_default()
-    }
-}
-
 impl Default for override_specifier::_T2 {
     fn default() -> Self {
         Self {
@@ -2050,14 +2003,11 @@ impl DefaultTest for argument_list::_T0 {
 
 impl catch_clause::_T1 {
     pub fn from_parse(
-        (identifier, non_empty_parameter_list): (
-            Option<identifier::WithTrivia>,
-            NonEmptyParameterList,
-        ),
+        (identifier, parameter_list): (Option<identifier::WithTrivia>, ParameterList),
     ) -> Self {
         Self {
             identifier,
-            non_empty_parameter_list,
+            parameter_list,
         }
     }
 }
@@ -2065,13 +2015,13 @@ impl Default for catch_clause::_T1 {
     fn default() -> Self {
         Self {
             identifier: Default::default(),
-            non_empty_parameter_list: Default::default(),
+            parameter_list: Default::default(),
         }
     }
 }
 impl DefaultTest for catch_clause::_T1 {
     fn is_default(&self) -> bool {
-        self.identifier.is_default() && self.non_empty_parameter_list.is_default()
+        self.identifier.is_default() && self.parameter_list.is_default()
     }
 }
 impl catch_clause::_T0 {
@@ -2104,14 +2054,11 @@ impl DefaultTest for catch_clause::_T0 {
 
 impl function_type::_T2 {
     pub fn from_parse(
-        (returns, non_empty_parameter_list): (
-            FixedSizeTerminalWithTrivia<7usize>,
-            NonEmptyParameterList,
-        ),
+        (returns, parameter_list): (FixedSizeTerminalWithTrivia<7usize>, ParameterList),
     ) -> Self {
         Self {
             returns,
-            non_empty_parameter_list,
+            parameter_list,
         }
     }
 }
@@ -2119,13 +2066,13 @@ impl Default for function_type::_T2 {
     fn default() -> Self {
         Self {
             returns: Default::default(),
-            non_empty_parameter_list: Default::default(),
+            parameter_list: Default::default(),
         }
     }
 }
 impl DefaultTest for function_type::_T2 {
     fn is_default(&self) -> bool {
-        self.returns.is_default() && self.non_empty_parameter_list.is_default()
+        self.returns.is_default() && self.parameter_list.is_default()
     }
 }
 impl function_type::_T0 {
@@ -3221,14 +3168,11 @@ impl state_variable_declaration::_T0 {
 
 impl try_statement::_T1 {
     pub fn from_parse(
-        (returns, non_empty_parameter_list): (
-            FixedSizeTerminalWithTrivia<7usize>,
-            NonEmptyParameterList,
-        ),
+        (returns, parameter_list): (FixedSizeTerminalWithTrivia<7usize>, ParameterList),
     ) -> Self {
         Self {
             returns,
-            non_empty_parameter_list,
+            parameter_list,
         }
     }
 }
@@ -3236,13 +3180,13 @@ impl Default for try_statement::_T1 {
     fn default() -> Self {
         Self {
             returns: Default::default(),
-            non_empty_parameter_list: Default::default(),
+            parameter_list: Default::default(),
         }
     }
 }
 impl DefaultTest for try_statement::_T1 {
     fn is_default(&self) -> bool {
-        self.returns.is_default() && self.non_empty_parameter_list.is_default()
+        self.returns.is_default() && self.parameter_list.is_default()
     }
 }
 impl try_statement::_T0 {
@@ -3449,14 +3393,11 @@ impl DefaultTest for constructor_definition::_T0 {
 
 impl fallback_function_definition::_T2 {
     pub fn from_parse(
-        (returns, non_empty_parameter_list): (
-            FixedSizeTerminalWithTrivia<7usize>,
-            NonEmptyParameterList,
-        ),
+        (returns, parameter_list): (FixedSizeTerminalWithTrivia<7usize>, ParameterList),
     ) -> Self {
         Self {
             returns,
-            non_empty_parameter_list,
+            parameter_list,
         }
     }
 }
@@ -3464,13 +3405,13 @@ impl Default for fallback_function_definition::_T2 {
     fn default() -> Self {
         Self {
             returns: Default::default(),
-            non_empty_parameter_list: Default::default(),
+            parameter_list: Default::default(),
         }
     }
 }
 impl DefaultTest for fallback_function_definition::_T2 {
     fn is_default(&self) -> bool {
-        self.returns.is_default() && self.non_empty_parameter_list.is_default()
+        self.returns.is_default() && self.parameter_list.is_default()
     }
 }
 impl fallback_function_definition::_T0 {
@@ -3498,14 +3439,11 @@ impl fallback_function_definition::_T0 {
 
 impl function_definition::_T3 {
     pub fn from_parse(
-        (returns, non_empty_parameter_list): (
-            FixedSizeTerminalWithTrivia<7usize>,
-            NonEmptyParameterList,
-        ),
+        (returns, parameter_list): (FixedSizeTerminalWithTrivia<7usize>, ParameterList),
     ) -> Self {
         Self {
             returns,
-            non_empty_parameter_list,
+            parameter_list,
         }
     }
 }
@@ -3513,13 +3451,13 @@ impl Default for function_definition::_T3 {
     fn default() -> Self {
         Self {
             returns: Default::default(),
-            non_empty_parameter_list: Default::default(),
+            parameter_list: Default::default(),
         }
     }
 }
 impl DefaultTest for function_definition::_T3 {
     fn is_default(&self) -> bool {
-        self.returns.is_default() && self.non_empty_parameter_list.is_default()
+        self.returns.is_default() && self.parameter_list.is_default()
     }
 }
 impl function_definition::_T0 {
@@ -3577,15 +3515,9 @@ impl modifier_definition::_T0 {
 
 impl receive_function_definition::_T0 {
     pub fn from_parse(
-        ((((receive, open_paren_char), close_paren_char), receive_function_attributes), _t2): (
+        (((receive, parameter_list), receive_function_attributes), _t2): (
             (
-                (
-                    (
-                        FixedSizeTerminalWithTrivia<7usize>,
-                        FixedSizeTerminalWithTrivia<1>,
-                    ),
-                    FixedSizeTerminalWithTrivia<1>,
-                ),
+                (FixedSizeTerminalWithTrivia<7usize>, ParameterList),
                 Vec<ReceiveFunctionAttribute>,
             ),
             Box<receive_function_definition::_T2>,
@@ -3593,8 +3525,7 @@ impl receive_function_definition::_T0 {
     ) -> Self {
         Self {
             receive,
-            open_paren_char,
-            close_paren_char,
+            parameter_list,
             receive_function_attributes,
             _t2,
         }
