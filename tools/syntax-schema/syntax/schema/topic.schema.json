@@ -12,6 +12,7 @@
       "properties": {
         "name": { "type": "string", "minLength": 1 },
         "title": { "type": "string", "minLength": 1 },
+        "pattern": { "enum": ["Token", "Expression"] },
         "config": {
           "$ref": "#/$defs/Config",
           "$comment": "How to model this constraint structurally?",
@@ -39,8 +40,7 @@
       "properties": {
         "name": { "type": "string", "minLength": 1 },
         "lookahead": { "$ref": "#/$defs/Expression" },
-        "prelude": { "type": "string" },
-        "pattern": { "enum": ["Passthrough", "FoldLeftOrPassthrough", "FoldRightOrPassthrough", "Inline"] }
+        "prelude": { "type": "string" }
       }
     },
     "Versions": {

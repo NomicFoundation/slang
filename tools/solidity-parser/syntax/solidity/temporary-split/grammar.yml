@@ -1,14 +1,14 @@
 # yaml-language-server: $schema=../../../../syntax-schema/syntax/schema/topic.schema.json
 
 - name: IGNORE
-  isToken: true
+  pattern: Token
   zeroOrMore:
     choice:
       - reference: Whitespace
       - reference: Comment
       - reference: LineComment
 - name: Whitespace
-  isToken: true
+  pattern: Token
   oneOrMore:
     choice:
       - terminal: " "
@@ -16,7 +16,7 @@
       - terminal: "\r"
       - terminal: "\n"
 - name: Comment
-  isToken: true
+  pattern: Token
   sequence:
     - terminal: /*
     - zeroOrMore:
@@ -34,7 +34,7 @@
         terminal: "*"
     - terminal: "*/"
 - name: LineComment
-  isToken: true
+  pattern: Token
   sequence:
     - terminal: //
     - zeroOrMore:
@@ -910,21 +910,21 @@
           terminal: ","
     - terminal: )
 - name: Identifier
-  isToken: true
+  pattern: Token
   difference:
     minuend:
       reference: RawIdentifier
     subtrahend:
       reference: ReservedWord
 - name: ReservedWord
-  isToken: true
+  pattern: Token
   choice:
     - reference: Keyword
     - reference: ReservedKeyword
     - reference: NumberUnit
     - reference: BooleanLiteral
 - name: Keyword
-  isToken: true
+  pattern: Token
   choice:
     - terminal: pragma
     - terminal: abstract
@@ -990,7 +990,7 @@
     - terminal: fixed
     - terminal: ufixed
 - name: ReservedKeyword
-  isToken: true
+  pattern: Token
   choice:
     - terminal: after
     - terminal: alias
@@ -1024,7 +1024,7 @@
     - terminal: typeof
     - terminal: var
 - name: PragmaDirective
-  isToken: true
+  pattern: Token
   sequence:
     - terminal: pragma
     - oneOrMore:
@@ -1032,13 +1032,13 @@
           terminal: ;
     - terminal: ;
 - name: RawIdentifier
-  isToken: true
+  pattern: Token
   sequence:
     - reference: IdentifierStart
     - zeroOrMore:
         reference: IdentifierPart
 - name: IdentifierStart
-  isToken: true
+  pattern: Token
   choice:
     - terminal: _
     - terminal: $
@@ -1049,14 +1049,14 @@
         from: A
         to: Z
 - name: IdentifierPart
-  isToken: true
+  pattern: Token
   choice:
     - reference: IdentifierStart
     - range:
         from: "0"
         to: "9"
 - name: SignedIntegerType
-  isToken: true
+  pattern: Token
   sequence:
     - terminal: int
     - choice:
@@ -1096,12 +1096,12 @@
         # Makes the likely errors clearer?
         lookahead: { not: { range: { from: "0", to: "9" } } }
 - name: UnsignedIntegerType
-  isToken: true
+  pattern: Token
   sequence:
     - terminal: u
     - reference: SignedIntegerType
 - name: FixedBytesType
-  isToken: true
+  pattern: Token
   sequence:
     - terminal: bytes
     - choice:
@@ -1141,7 +1141,7 @@
         # Makes the likely errors clearer?
         lookahead: { not: { range: { from: "0", to: "9" } } }
 - name: FixedType
-  isToken: true
+  pattern: Token
   sequence:
     - terminal: fixed
     - optional:
@@ -1162,17 +1162,17 @@
                 from: "0"
                 to: "9"
 - name: UfixedType
-  isToken: true
+  pattern: Token
   sequence:
     - terminal: u
     - reference: FixedType
 - name: BooleanLiteral
-  isToken: true
+  pattern: Token
   choice:
     - terminal: "true"
     - terminal: "false"
 - name: DecimalNumber
-  isToken: true
+  pattern: Token
   sequence:
     - choice:
         - reference: DecimalInteger
@@ -1180,7 +1180,7 @@
     - optional:
         reference: DecimalExponent
 - name: DecimalInteger
-  isToken: true
+  pattern: Token
   oneOrMore:
     range:
       from: "0"
@@ -1189,14 +1189,14 @@
       optional:
         terminal: _
 - name: DecimalFloat
-  isToken: true
+  pattern: Token
   sequence:
     - optional:
         reference: DecimalInteger
     - terminal: "."
     - reference: DecimalInteger
 - name: DecimalExponent
-  isToken: true
+  pattern: Token
   sequence:
     - choice:
         - terminal: e
@@ -1205,7 +1205,7 @@
         terminal: "-"
     - reference: DecimalInteger
 - name: HexNumber
-  isToken: true
+  pattern: Token
   sequence:
     - terminal: "0"
     - terminal: x
@@ -1215,7 +1215,7 @@
           optional:
             terminal: _
 - name: NumberUnit
-  isToken: true
+  pattern: Token
   choice:
     - terminal: wei
     - terminal: gwei
@@ -1227,7 +1227,7 @@
     - terminal: weeks
     - terminal: years
 - name: HexStringLiteral
-  isToken: true
+  pattern: Token
   sequence:
     - terminal: hex
     - choice:
@@ -1242,7 +1242,7 @@
                 reference: PossiblySeparatedPairsOfHexDigits
             - terminal: "'"
 - name: PossiblySeparatedPairsOfHexDigits
-  isToken: true
+  pattern: Token
   oneOrMore:
     repeat:
       min: 2
@@ -1252,7 +1252,7 @@
       optional:
         terminal: _
 - name: HexCharacter
-  isToken: true
+  pattern: Token
   choice:
     - range:
         from: "0"
@@ -1264,12 +1264,12 @@
         from: A
         to: F
 - name: AsciiStringLiteral
-  isToken: true
+  pattern: Token
   choice:
     - reference: SingleQuotedAsciiStringLiteral
     - reference: DoubleQuotedAsciiStringLiteral
 - name: SingleQuotedAsciiStringLiteral
-  isToken: true
+  pattern: Token
   sequence:
     - terminal: "'"
     - zeroOrMore:
@@ -1289,7 +1289,7 @@
           - reference: EscapeSequence
     - terminal: "'"
 - name: DoubleQuotedAsciiStringLiteral
-  isToken: true
+  pattern: Token
   sequence:
     - terminal: '"'
     - zeroOrMore:
@@ -1309,12 +1309,12 @@
           - reference: EscapeSequence
     - terminal: '"'
 - name: UnicodeStringLiteral
-  isToken: true
+  pattern: Token
   choice:
     - reference: SingleQuotedUnicodeStringLiteral
     - reference: DoubleQuotedUnicodeStringLiteral
 - name: SingleQuotedUnicodeStringLiteral
-  isToken: true
+  pattern: Token
   sequence:
     - terminal: "unicode'"
     - zeroOrMore:
@@ -1331,7 +1331,7 @@
           - reference: EscapeSequence
     - terminal: "'"
 - name: DoubleQuotedUnicodeStringLiteral
-  isToken: true
+  pattern: Token
   sequence:
     - terminal: 'unicode"'
     - zeroOrMore:
@@ -1348,7 +1348,7 @@
           - reference: EscapeSequence
     - terminal: '"'
 - name: EscapeSequence
-  isToken: true
+  pattern: Token
   sequence:
     - terminal: "\\"
     - choice:
@@ -1356,7 +1356,7 @@
         - reference: HexByteEscape
         - reference: UnicodeEscape
 - name: AsciiEscape
-  isToken: true
+  pattern: Token
   choice:
     - terminal: n
     - terminal: r
@@ -1367,7 +1367,7 @@
     - terminal: "\n"
     - terminal: "\r"
 - name: HexByteEscape
-  isToken: true
+  pattern: Token
   sequence:
     - terminal: x
     - repeat:
@@ -1375,7 +1375,7 @@
         max: 2
         reference: HexCharacter
 - name: UnicodeEscape
-  isToken: true
+  pattern: Token
   sequence:
     - terminal: u
     - repeat:
@@ -1520,20 +1520,20 @@
     - reference: BooleanLiteral
     - reference: HexStringLiteral
 - name: YulIdentifier
-  isToken: true
+  pattern: Token
   difference:
     minuend:
       reference: RawIdentifier
     subtrahend:
       reference: YulReservedWord
 - name: YulReservedWord
-  isToken: true
+  pattern: Token
   choice:
     - reference: YulKeyword
     - reference: YulEVMBuiltinFunctionName
     - reference: BooleanLiteral
 - name: YulKeyword
-  isToken: true
+  pattern: Token
   choice:
     - terminal: break
     - terminal: case
@@ -1547,7 +1547,7 @@
     - terminal: switch
     - terminal: hex
 - name: YulEVMBuiltinFunctionName
-  isToken: true
+  pattern: Token
   choice:
     - terminal: stop
     - terminal: add
@@ -1623,7 +1623,7 @@
     - terminal: gaslimit
     - terminal: basefee
 - name: YulDecimalNumberLiteral
-  isToken: true
+  pattern: Token
   choice:
     - terminal: "0"
     - sequence:
@@ -1635,7 +1635,7 @@
               from: "0"
               to: "9"
 - name: YulHexLiteral
-  isToken: true
+  pattern: Token
   sequence:
     - terminal: "0x"
     - oneOrMore:

@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../../syntax-schema/syntax/schema/topic.schema.json
 
 - name: IGNORE
-  isToken: true
+  pattern: Token
   zeroOrMore:
     choice:
       - reference: Whitespace
@@ -9,7 +9,7 @@
       - reference: LineComment
 
 - name: Whitespace
-  isToken: true
+  pattern: Token
   oneOrMore:
     choice:
       - terminal: " "
@@ -18,7 +18,7 @@
       - terminal: "\n"
 
 - name: Comment
-  isToken: true
+  pattern: Token
   sequence:
     - terminal: /*
     - zeroOrMore:
@@ -37,7 +37,7 @@
     - terminal: "*/"
 
 - name: LineComment
-  isToken: true
+  pattern: Token
   sequence:
     - terminal: //
     - zeroOrMore:

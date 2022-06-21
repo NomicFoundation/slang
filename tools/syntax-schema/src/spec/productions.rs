@@ -236,7 +236,7 @@ fn format_string_literal(value: &str) -> String {
 }
 
 fn get_production_name(production: &Production) -> String {
-    if production.is_token {
+    if production.is_token() {
         format!("«{}»", production.name)
     } else {
         production.name.clone()

@@ -56,20 +56,30 @@ pub struct Topic {
 #[derive(Clone, Debug)]
 pub struct Production {
     pub name: String,
-    pub is_token: bool,
+    pub pattern: Option<ProductionPattern>,
     pub title: Option<String>,
     pub versions: BTreeMap<Version, ExpressionRef>,
 
     pub combinator_tree: RefCell<CombinatorTree>,
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+pub enum ProductionPattern {
+    Token,
+    Expression,
+}
+
 pub type ProductionRef = Rc<Production>;
 
 impl Production {
+    pub fn is_token(&self) -> bool {
+        self.pattern == Some(ProductionPattern::Token)
+    }
+
     fn serialize_in_map<S: Serializer>(&self, state: &mut S::SerializeMap) -> Result<(), S::Error> {
         state.serialize_entry("name", &self.name)?;
-        if self.is_token {
-            state.serialize_entry("isToken", &self.is_token)?;
+        if let Some(pattern) = self.pattern {
+            state.serialize_entry("pattern", &pattern)?;
         }
         if let Some(title) = &self.title {
             state.serialize_entry("title", title)?;
@@ -108,7 +118,7 @@ impl<'de> Deserialize<'de> for Production {
         #[serde(field_identifier, rename_all = "camelCase")]
         enum Field {
             Name,
-            IsToken,
+            Pattern,
             Title,
             Versions,
             Config,
@@ -140,11 +150,11 @@ impl<'de> Deserialize<'de> for Production {
                 V: MapAccess<'de>,
             {
                 let mut name = None;
-                let mut is_token = None;
                 let mut title = None;
                 let mut versions = None;
                 let mut config = None;
                 let mut ebnf = None;
+                let mut pattern = None;
 
                 while let Some(key) = map.next_key()? {
                     match key {
@@ -153,9 +163,9 @@ impl<'de> Deserialize<'de> for Production {
                                 return Err(de::Error::duplicate_field("name"));
                             }
                         }
-                        Field::IsToken => {
-                            if is_token.is_some() {
-                                return Err(de::Error::duplicate_field("is_token"));
+                        Field::Pattern => {
+                            if pattern.is_some() {
+                                return Err(de::Error::duplicate_field("pattern"));
                             }
                         }
                         Field::Title => {
@@ -210,7 +220,7 @@ impl<'de> Deserialize<'de> for Production {
 
                     match key {
                         Field::Name => name = Some(map.next_value()?),
-                        Field::IsToken => is_token = Some(map.next_value()?),
+                        Field::Pattern => pattern = Some(map.next_value()?),
                         Field::Title => title = Some(map.next_value()?),
                         Field::Versions => versions = Some(map.next_value()?),
                         Field::Config => config = Some(map.next_value()?),
@@ -268,11 +278,9 @@ impl<'de> Deserialize<'de> for Production {
                 }
                 let versions = versions.unwrap();
 
-                let is_token = is_token.unwrap_or_default();
-
                 Ok(Production {
                     name,
-                    is_token,
+                    pattern,
                     title,
                     versions,
                     combinator_tree: Default::default(),
@@ -282,7 +290,7 @@ impl<'de> Deserialize<'de> for Production {
 
         const FIELDS: &'static [&'static str] = &[
             "name",
-            "isToken",
+            "pattern",
             "title",
             "versions",
             "config",

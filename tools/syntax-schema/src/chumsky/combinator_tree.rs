@@ -475,10 +475,11 @@ impl Production {
     }
 
     pub fn initialize_combinator_tree(&self, grammar: &Grammar) {
+        // TODO: process pattern
         let root = self
             .expression_to_generate()
             .to_combinator_tree_node(self, grammar);
-        let root = if self.is_token {
+        let root = if self.is_token() {
             root
         } else {
             let ignore = grammar.get_production("IGNORE");
@@ -501,6 +502,7 @@ impl Expression {
     ) -> CombinatorTreeNode {
         if let Some(pattern) = &self.config.pattern {
             match pattern {
+                // TODO: Pattern should be on the production, not the expression
                 ExpressionPattern::Passthrough => match &self.ebnf {
                     EBNF::Reference(name) => {
                         let production = grammar.get_production(&name);
@@ -559,7 +561,7 @@ impl Expression {
                 // 1. repeat must be 1…*
                 // 2. max must be None
                 // 3. separator must be Some - otherwise fold doesn't make sense
-                // 4. expr must be reference (?)
+                // 4. expr must be reference
                 ExpressionPattern::FoldLeftOrPassthrough => match &self.ebnf {
                     EBNF::Repeat(EBNFRepeat {
                         min: 1,

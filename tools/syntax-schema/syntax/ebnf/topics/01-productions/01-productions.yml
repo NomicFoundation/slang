@@ -102,16 +102,16 @@
 # Tokens
 
 - name: EOF
-  isToken: true
+  pattern: Token
   terminal: $
 
 - name: Number
-  isToken: true
+  pattern: Token
   oneOrMore:
     range: { from: "0", to: "9" }
 
 - name: String
-  isToken: true
+  pattern: Token
   sequence:
     - terminal: "'"
     - zeroOrMore:
@@ -119,7 +119,7 @@
     - terminal: "'"
 
 - name: StringChar
-  isToken: true
+  pattern: Token
   choice:
     - not:
         choice:
@@ -142,14 +142,14 @@
       config: { name: Escape }
 
 - name: SingleCharString
-  isToken: true
+  pattern: Token
   sequence:
     - terminal: "'"
     - reference: StringChar
     - terminal: "'"
 
 - name: HexDigit
-  isToken: true
+  pattern: Token
   choice:
     - range:
         from: "0"
@@ -162,7 +162,7 @@
         to: F
 
 - name: Identifier
-  isToken: true
+  pattern: Token
   choice:
     - sequence:
         - terminal: «
@@ -171,14 +171,14 @@
     - reference: RawIdentifier
 
 - name: RawIdentifier
-  isToken: true
+  pattern: Token
   sequence:
     - reference: IdentifierStart
     - zeroOrMore:
         reference: IdentifierFollow
 
 - name: IdentifierStart
-  isToken: true
+  pattern: Token
   choice:
     - terminal: _
     - range:
@@ -189,7 +189,7 @@
         to: Z
 
 - name: IdentifierFollow
-  isToken: true
+  pattern: Token
   choice:
     - reference: IdentifierStart
     - range:
@@ -197,14 +197,14 @@
         to: "9"
 
 - name: IGNORE
-  isToken: true
+  pattern: Token
   zeroOrMore:
     choice:
       - reference: Whitespace
       - reference: Comment
 
 - name: Comment
-  isToken: true
+  pattern: Token
   sequence:
     - terminal: (*
     - sequence:
@@ -225,7 +225,7 @@
     - terminal: "*)"
 
 - name: Whitespace
-  isToken: true
+  pattern: Token
   oneOrMore:
     choice:
       - terminal: "\t"
