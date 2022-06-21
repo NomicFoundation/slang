@@ -27,7 +27,7 @@ impl Production {
                 .iter()
                 .map(|(version, expr)| {
                     let mut w = String::new();
-                    write!(w, "/* {} */ {} = ", version, self.ebnf_display_name()).unwrap();
+                    write!(w, "(* {} *) {} = ", version, self.ebnf_display_name()).unwrap();
                     expr.generate_ebnf(grammar, &mut w);
                     write!(w, ";").unwrap();
                     w

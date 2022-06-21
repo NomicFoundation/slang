@@ -8,7 +8,7 @@ pub trait DefaultTest {
 #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
 pub struct FixedTerminal<const N: usize>();
 
-/// «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
+/// «Comment» = '(*' { ¬'*' | 1…*{ '*' } ¬( '*' | ')' ) } { '*' } '*)' ;
 pub mod comment {
     #[allow(unused_imports)]
     use super::*;
@@ -16,11 +16,11 @@ pub mod comment {
     #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
     pub struct _S0 {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub slash_star: FixedTerminal<2usize>,
+        pub open_paren_star: FixedTerminal<2usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub content: Box<comment::Content>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub star_slash: FixedTerminal<2usize>,
+        pub star_close_paren: FixedTerminal<2usize>,
     }
     #[derive(Clone, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
     pub struct Content {
