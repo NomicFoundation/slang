@@ -2485,7 +2485,7 @@ impl DefaultTest for primary_expression::_T6 {
     }
 }
 
-impl struct_definition::_T2 {
+impl struct_member::_T0 {
     pub fn from_parse(
         ((type_name, identifier), semicolon_char): (
             (TypeName, identifier::WithTrivia),
@@ -2497,48 +2497,6 @@ impl struct_definition::_T2 {
             identifier,
             semicolon_char,
         }
-    }
-}
-impl struct_definition::_T0 {
-    pub fn from_parse(
-        ((((r#struct, identifier), open_brace_char), _t2s), close_brace_char): (
-            (
-                (
-                    (FixedSizeTerminalWithTrivia<6usize>, identifier::WithTrivia),
-                    FixedSizeTerminalWithTrivia<1>,
-                ),
-                Vec<struct_definition::_T2>,
-            ),
-            FixedSizeTerminalWithTrivia<1>,
-        ),
-    ) -> Self {
-        Self {
-            r#struct,
-            identifier,
-            open_brace_char,
-            _t2s,
-            close_brace_char,
-        }
-    }
-}
-impl Default for struct_definition::_T0 {
-    fn default() -> Self {
-        Self {
-            r#struct: Default::default(),
-            identifier: Default::default(),
-            open_brace_char: Default::default(),
-            _t2s: Default::default(),
-            close_brace_char: Default::default(),
-        }
-    }
-}
-impl DefaultTest for struct_definition::_T0 {
-    fn is_default(&self) -> bool {
-        self.r#struct.is_default()
-            && self.identifier.is_default()
-            && self.open_brace_char.is_default()
-            && self._t2s.is_default()
-            && self.close_brace_char.is_default()
     }
 }
 
@@ -2826,6 +2784,49 @@ impl DefaultTest for index_access_expression::Operator {
             && self.expression_2.is_default()
             && self._t1.is_default()
             && self.close_bracket_char.is_default()
+    }
+}
+
+impl struct_definition::_T0 {
+    pub fn from_parse(
+        ((((r#struct, identifier), open_brace_char), struct_members), close_brace_char): (
+            (
+                (
+                    (FixedSizeTerminalWithTrivia<6usize>, identifier::WithTrivia),
+                    FixedSizeTerminalWithTrivia<1>,
+                ),
+                Vec<StructMember>,
+            ),
+            FixedSizeTerminalWithTrivia<1>,
+        ),
+    ) -> Self {
+        Self {
+            r#struct,
+            identifier,
+            open_brace_char,
+            struct_members,
+            close_brace_char,
+        }
+    }
+}
+impl Default for struct_definition::_T0 {
+    fn default() -> Self {
+        Self {
+            r#struct: Default::default(),
+            identifier: Default::default(),
+            open_brace_char: Default::default(),
+            struct_members: Default::default(),
+            close_brace_char: Default::default(),
+        }
+    }
+}
+impl DefaultTest for struct_definition::_T0 {
+    fn is_default(&self) -> bool {
+        self.r#struct.is_default()
+            && self.identifier.is_default()
+            && self.open_brace_char.is_default()
+            && self.struct_members.is_default()
+            && self.close_brace_char.is_default()
     }
 }
 
