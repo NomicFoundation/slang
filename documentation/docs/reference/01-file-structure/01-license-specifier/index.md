@@ -13,4 +13,4 @@ If you do not want to specify a license or if the source code is not open-source
 !!! danger "Breaking Changes"
 
     Starting from `v0.8.8`, multiple license specifiers will result in a parse error:
-    --8<-- "reference/01-file-structure/01-license-specifier/tests/multiple/output/combined"
+    --8<-- "reference/01-file-structure/01-license-specifier/tests/multiple/generated/combined"

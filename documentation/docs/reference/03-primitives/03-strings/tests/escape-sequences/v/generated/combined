@@ -7,11 +7,11 @@
 === "✅ 0.4.13"
 
     ```json
-    --8<-- "reference/03-primitives/03-strings/tests/escape-sequences/v/output/0.4.13"
+    --8<-- "reference/03-primitives/03-strings/tests/escape-sequences/v/generated/0.4.13"
     ```
 
 === "❌ 0.8.0"
 
     ```log
-    --8<-- "reference/03-primitives/03-strings/tests/escape-sequences/v/output/0.8.0"
+    --8<-- "reference/03-primitives/03-strings/tests/escape-sequences/v/generated/0.8.0"
     ```

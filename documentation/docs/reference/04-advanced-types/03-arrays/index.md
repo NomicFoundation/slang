@@ -26,7 +26,7 @@ The value types `bytes1`, `bytes2`, `bytes3`, …, `bytes32` hold a sequence of 
 !!! danger "Breaking Change\s"
 
     Keyword `byte` was an alias for `bytes1`. It was deprecated in `v0.8.0`:
-    --8<-- "reference/04-advanced-types/03-arrays/tests/byte-keyword/output/combined"
+    --8<-- "reference/04-advanced-types/03-arrays/tests/byte-keyword/generated/combined"
 
 ## Dynamic String and Byte Arrays
 

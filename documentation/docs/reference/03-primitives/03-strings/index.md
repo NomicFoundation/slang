@@ -39,8 +39,8 @@ Any Unicode line terminator which is not a newline (i.e. LF, VF, FF, CR, NEL, LS
 !!! danger "Breaking Changes"
 
     Escape sequences  `\b`, `\f` and `\v` have been removed in `v0.8.0`. You can use `\x08`, `\x0c` and `\x0b` instead.
-    --8<-- "reference/03-primitives/03-strings/tests/escape-sequences/b/output/combined"
+    --8<-- "reference/03-primitives/03-strings/tests/escape-sequences/b/generated/combined"
     ---
-    --8<-- "reference/03-primitives/03-strings/tests/escape-sequences/f/output/combined"
+    --8<-- "reference/03-primitives/03-strings/tests/escape-sequences/f/generated/combined"
     ---
-    --8<-- "reference/03-primitives/03-strings/tests/escape-sequences/v/output/combined"
+    --8<-- "reference/03-primitives/03-strings/tests/escape-sequences/v/generated/combined"

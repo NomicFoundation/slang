@@ -53,9 +53,9 @@ assert(1 ether == 1e18);
 !!! danger "Breaking Changes"
 
     Units `szabo` and `finney` have been removed in `v0.7.0`.
-    --8<-- "reference/03-primitives/02-numbers/tests/units/finney/output/combined"
+    --8<-- "reference/03-primitives/02-numbers/tests/units/finney/generated/combined"
     ---
-    --8<-- "reference/03-primitives/02-numbers/tests/units/szabo/output/combined"
+    --8<-- "reference/03-primitives/02-numbers/tests/units/szabo/generated/combined"
 
 ## Time Units
 
@@ -72,4 +72,4 @@ assert(1 weeks == 7 days);
 !!! danger "Breaking Changes"
 
     Unit `years` have been deprecated in `v0.4.24` removed in `v0.5.0`.
-    --8<-- "reference/03-primitives/02-numbers/tests/units/years/output/combined"
+    --8<-- "reference/03-primitives/02-numbers/tests/units/years/generated/combined"
