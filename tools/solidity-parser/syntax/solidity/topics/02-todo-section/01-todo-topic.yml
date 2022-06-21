@@ -435,13 +435,12 @@
   choice:
     - config:
         name: AssignmentExpression
-        pattern: FoldLeftOrPassthrough
+        pattern: FoldLeft
       oneOrMore:
         reference: Expression
         separator: { reference: AssignmentOperator }
     - config:
         name: ConditionalExpression
-        pattern: Passthrough
       sequence:
         - reference: Expression
         - optional:
@@ -452,94 +451,92 @@
               - reference: Expression
     - config:
         name: OrExpression
-        pattern: FoldLeftOrPassthrough
+        pattern: FoldLeft
       oneOrMore:
         reference: Expression
         separator: { terminal: "||" }
     - config:
         name: AndExpression
-        pattern: FoldLeftOrPassthrough
+        pattern: FoldLeft
       oneOrMore:
         reference: Expression
         separator: { terminal: "&&" }
     - config:
         name: EqualityComparisonExpression
-        pattern: FoldLeftOrPassthrough
+        pattern: FoldLeft
       oneOrMore:
         reference: Expression
         separator: { reference: EqualityComparisonOperator }
     - config:
         name: OrderComparisonExpression
-        pattern: FoldLeftOrPassthrough
+        pattern: FoldLeft
       oneOrMore:
         reference: Expression
         separator: { reference: OrderComparisonOperator }
     - config:
         name: BitOrExpression
-        pattern: FoldLeftOrPassthrough
+        pattern: FoldLeft
       oneOrMore:
         reference: Expression
         separator: { terminal: "|" }
     - config:
         name: BitXOrExpression
-        pattern: FoldLeftOrPassthrough
+        pattern: FoldLeft
       oneOrMore:
         reference: Expression
         separator: { terminal: ^ }
     - config:
         name: BitAndExpression
-        pattern: FoldLeftOrPassthrough
+        pattern: FoldLeft
       oneOrMore:
         reference: Expression
         separator: { terminal: "&" }
     - config:
         name: ShiftExpression
-        pattern: FoldLeftOrPassthrough
+        pattern: FoldLeft
       oneOrMore:
         reference: Expression
         separator: { reference: ShiftOperator }
     - config:
         name: AddSubExpression
-        pattern: FoldLeftOrPassthrough
+        pattern: FoldLeft
       oneOrMore:
         reference: Expression
         separator: { reference: AddSubOperator }
     - config:
         name: MulDivModExpression
-        pattern: FoldLeftOrPassthrough
+        pattern: FoldLeft
       oneOrMore:
         reference: Expression
         separator: { reference: MulDivModOperator }
     - config:
         name: ExponentiationExpression
-        pattern: FoldRightOrPassthrough
+        pattern: FoldRight
       oneOrMore:
         reference: Expression
         separator: { terminal: "**" }
     - config:
         name: UnarySuffixExpression
-        pattern: Passthrough
       sequence:
         - reference: Expression
         - optional:
             reference: UnarySuffixOperator
     - config:
         name: UnaryPrefixExpression
-        pattern: Passthrough
       sequence:
         - optional:
             reference: UnaryPrefixOperator
         - reference: Expression
     - config:
         name: FunctionCallExpression
-        pattern: FoldLeftOrPassthrough
+        pattern: FoldLeft
       sequence:
         - reference: Expression
         - zeroOrMore:
             reference: ArgumentList
     - config:
         name: FunctionCallOptionsExpression
-        pattern: FoldLeftOrPassthrough
+        pattern: FoldLeft
       sequence:
         - reference: Expression
         - zeroOrMore:
@@ -552,7 +549,7 @@
               - terminal: "}"
     - config:
         name: MemberAccessExpression
-        pattern: FoldLeftOrPassthrough
+        pattern: FoldLeft
       sequence:
         - reference: Expression
         - zeroOrMore:
@@ -563,10 +560,9 @@
                   - terminal: address
     - config:
         name: IndexAccessExpression
-        pattern: FoldLeftOrPassthrough
+        pattern: FoldLeft
       sequence:
         - reference: Expression
-          config: { pattern: Inline }
         - zeroOrMore:
             sequence:
               - terminal: "["

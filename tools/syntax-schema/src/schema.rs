@@ -6,7 +6,13 @@ use serde::{
     Deserialize, Serialize, Serializer,
 };
 use serde_yaml::Value;
-use std::{cell::RefCell, collections::BTreeMap, fmt, path::PathBuf, rc::Rc};
+use std::{
+    cell::RefCell,
+    collections::BTreeMap,
+    fmt,
+    path::PathBuf,
+    rc::{Rc, Weak},
+};
 
 use crate::chumsky::combinator_tree::CombinatorTree;
 
@@ -59,7 +65,6 @@ pub struct Production {
     pub pattern: Option<ProductionPattern>,
     pub title: Option<String>,
     pub versions: BTreeMap<Version, ExpressionRef>,
-
     pub combinator_tree: RefCell<CombinatorTree>,
 }
 
@@ -70,6 +75,7 @@ pub enum ProductionPattern {
 }
 
 pub type ProductionRef = Rc<Production>;
+pub type ProductionWeakRef = Weak<Production>;
 
 impl Production {
     pub fn is_token(&self) -> bool {
@@ -600,10 +606,8 @@ impl Default for ExpressionConfig {
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, Hash)]
 pub enum ExpressionPattern {
-    Passthrough,
-    FoldLeftOrPassthrough,
-    FoldRightOrPassthrough,
-    Inline,
+    FoldLeft,
+    FoldRight,
 }
 
 impl Grammar {
@@ -644,7 +648,7 @@ impl Grammar {
 
     fn post_initialize(&self) {
         for production in self.productions.iter().map(|(_, v)| v).flatten() {
-            production.initialize_combinator_tree(self);
+            Production::initialize_combinator_tree(production, self);
         }
     }
 }

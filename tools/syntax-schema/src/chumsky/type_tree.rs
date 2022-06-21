@@ -1,10 +1,10 @@
 use proc_macro2::{Ident, TokenStream};
 use quote::quote;
 
-use crate::schema::ProductionRef;
+use crate::schema::ProductionWeakRef;
 
 use super::{
-    combinator_tree::{CombinatorTree, CombinatorTreeNodeData},
+    combinator_tree::{CombinatorTree, CombinatorTreeNodeData, Direction},
     slang_name::SlangName,
 };
 
@@ -19,7 +19,7 @@ pub enum TypeTreeNodeData {
     Choice(SlangName, Vec<(SlangName, TypeTreeNode)>),
     Repetition(TypeTreeNode),
     Option(TypeTreeNode),
-    Reference(ProductionRef),
+    Reference(ProductionWeakRef),
     FixedTerminal(usize),
     VariableTerminal,
     Unit,
@@ -66,6 +66,8 @@ impl TypeTreeNodeData {
             TypeTreeNodeData::Choice(_, _) => false,
             TypeTreeNodeData::Tuple(_, members) => members.iter().all(|(_, t)| t.is_defaultable()),
             TypeTreeNodeData::Reference(production) => production
+                .upgrade()
+                .unwrap()
                 .combinator_tree()
                 .to_type_tree()
                 .root
@@ -165,7 +167,11 @@ impl TypeTreeNodeData {
                 quote!( Option<#child> )
             }
             Self::Reference(production) => {
-                let name = production.slang_name().to_module_name_ident();
+                let name = production
+                    .upgrade()
+                    .unwrap()
+                    .slang_name()
+                    .to_module_name_ident();
                 quote!(#name::N)
             }
             Self::VariableTerminal => {
@@ -197,7 +203,7 @@ fn tt_option(child: TypeTreeNode) -> TypeTreeNode {
     Box::new(TypeTreeNodeData::Option(child))
 }
 
-fn tt_reference(production: ProductionRef) -> TypeTreeNode {
+fn tt_reference(production: ProductionWeakRef) -> TypeTreeNode {
     Box::new(TypeTreeNodeData::Reference(production))
 }
 
@@ -248,6 +254,36 @@ impl CombinatorTreeNodeData {
                     tt_repetition(expr.to_type_tree_node())
                 }
             }
+            Self::PairOrPassthrough {
+                name,
+                expr,
+                optional,
+                direction: Direction::Left,
+            } => tt_tuple(
+                name.clone(),
+                vec![
+                    (
+                        optional.name().self_or_positional(0),
+                        tt_option(optional.to_type_tree_node()),
+                    ),
+                    (expr.name().self_or_positional(1), expr.to_type_tree_node()),
+                ],
+            ),
+            Self::PairOrPassthrough {
+                name,
+                expr,
+                optional,
+                direction: Direction::Right,
+            } => tt_tuple(
+                name.clone(),
+                vec![
+                    (expr.name().self_or_positional(0), expr.to_type_tree_node()),
+                    (
+                        optional.name().self_or_positional(1),
+                        tt_option(optional.to_type_tree_node()),
+                    ),
+                ],
+            ),
             Self::FoldOrPassthrough {
                 name,
                 expr,
