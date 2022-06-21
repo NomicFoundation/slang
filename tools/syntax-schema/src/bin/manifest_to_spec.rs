@@ -1,7 +1,5 @@
-use std::path::PathBuf;
-
 use clap::Parser;
-
+use std::path::PathBuf;
 use syntax_schema::schema::Grammar;
 
 #[derive(Parser, Debug)]
@@ -22,22 +20,6 @@ fn main() {
     println!(" => Validating Grammar");
     grammar.validate();
 
-    println!(" => Generating Spec Navigation");
-    grammar.generate_spec_navigation(
-        &PathBuf::from(&args.documentation_folder).join("mkdocs.specification.yml"),
-    );
-
-    println!(" => Generating Grammar Spec");
-    grammar.generate_grammar_spec(
-        &PathBuf::from(&args.documentation_folder)
-            .join("docs")
-            .join("grammar.md"),
-    );
-
-    println!(" => Generating Full Spec");
-    grammar.generate_full_spec(
-        &PathBuf::from(&args.documentation_folder)
-            .join("docs")
-            .join("specification"),
-    );
+    println!(" => Generating Specification");
+    grammar.generate_spec(&PathBuf::from(args.documentation_folder));
 }

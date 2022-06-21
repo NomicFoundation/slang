@@ -39,7 +39,6 @@ theme:
     - navigation.top
     - search.highlight
     - search.suggest
-    - toc.integrate
     - toc.follow
   font:
     text: Nunito

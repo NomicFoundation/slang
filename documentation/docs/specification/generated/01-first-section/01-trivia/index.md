@@ -17,4 +17,4 @@
 
 </div>
 
---8<-- "specification-notes/01-first-section/01-trivia/index.md"
+--8<-- "specification/notes/01-first-section/01-trivia/index.md"
