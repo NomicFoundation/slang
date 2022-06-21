@@ -5,7 +5,7 @@ use itertools::Itertools;
 use semver::Version;
 use std::{collections::HashMap, io::Write};
 
-pub struct SpecGeneratorContext<'a> {
+pub struct SpecProductionContext<'a> {
     pub grammar: &'a Grammar,
     pub productions_location: HashMap<String, String>,
 }
@@ -13,7 +13,7 @@ pub struct SpecGeneratorContext<'a> {
 pub fn write_production<T: Write>(
     w: &mut T,
     production: &Production,
-    context: &SpecGeneratorContext,
+    context: &SpecProductionContext,
 ) {
     write!(w, "<pre style=\"white-space: pre-wrap;\">").unwrap();
     write!(
@@ -43,7 +43,7 @@ fn write_version<T: Write>(
     w: &mut T,
     production: &Production,
     expr: &Expression,
-    context: &SpecGeneratorContext,
+    context: &SpecProductionContext,
 ) {
     write_token(w, TokenKind::keyword, &get_production_name(production));
     write_token(w, TokenKind::operator, " = ");
@@ -52,7 +52,7 @@ fn write_version<T: Write>(
     write!(w, "<br/>").unwrap();
 }
 
-fn write_expression<T: Write>(w: &mut T, expr: &Expression, context: &SpecGeneratorContext) {
+fn write_expression<T: Write>(w: &mut T, expr: &Expression, context: &SpecProductionContext) {
     match &expr.ebnf {
         EBNF::End => {
             write_token(w, TokenKind::keyword, "$");
@@ -174,7 +174,7 @@ fn write_subexpression<T: Write>(
     w: &mut T,
     expr: &Expression,
     sub_expr: &ExpressionRef,
-    context: &SpecGeneratorContext,
+    context: &SpecProductionContext,
 ) {
     if expr.precedence() < sub_expr.precedence() {
         write_token(w, TokenKind::operator, "(");

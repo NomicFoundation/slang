@@ -1,4 +1,4 @@
-# Grammar
+# Solidity Grammar
 
 <!-- markdownlint-disable no-inline-html -->
 <!-- markdownlint-disable no-space-in-emphasis -->
