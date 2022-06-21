@@ -14,10 +14,10 @@ PROJECT_DIR=$(dirname "$THIS_DIR")
 # Do this twice to auto-dogfood the ebnf -> chumsky process
 # Should be a fixed point
 
-cargo run --bin manifest_to_chumsky -- \
+cargo run --manifest-path "$PROJECT_DIR/Cargo.toml" --bin "manifest_to_chumsky" -- \
   --manifest-input "$PROJECT_DIR/syntax/ebnf/manifest.yml" \
   --chumsky-output "$PROJECT_DIR/src/ebnf/"
 
-cargo run --bin manifest_to_ebnf -- \
+cargo run --manifest-path "$PROJECT_DIR/Cargo.toml" --bin "manifest_to_ebnf" -- \
   --manifest-input "$PROJECT_DIR/syntax/ebnf/manifest.yml" \
   --ebnf-output "$PROJECT_DIR/syntax/ebnf/derived.ebnf"

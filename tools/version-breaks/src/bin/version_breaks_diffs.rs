@@ -1,12 +1,9 @@
 use clap::Parser;
 use std::path::PathBuf;
-
-mod api;
-mod ast;
-mod builds;
-mod mirror;
-mod tests;
-mod utils;
+use version_breaks::{
+    mirror::fetch_builds,
+    tests::{collect_tests, execute_test},
+};
 
 #[derive(Parser, Debug)]
 struct ProgramArgs {
@@ -19,12 +16,12 @@ fn main() {
     let args = ProgramArgs::parse();
 
     let binaries_dir = std::env::temp_dir().join("slang-solc-binaries");
-    let builds = mirror::fetch_builds(&binaries_dir);
+    let builds = fetch_builds(&binaries_dir);
 
     let tests_dir = PathBuf::from(&args.tests_dir);
-    let tests = tests::collect_tests(tests_dir.clone());
+    let tests = collect_tests(tests_dir.clone());
 
     tests
         .iter()
-        .for_each(|test| tests::execute_test(&tests_dir, test, &builds));
+        .for_each(|test| execute_test(&tests_dir, test, &builds));
 }
