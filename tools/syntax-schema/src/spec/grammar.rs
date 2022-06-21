@@ -53,6 +53,9 @@ pub fn generate_spec_grammar(
                 }
             })
     });
+
+    writeln!(w).unwrap();
+    writeln!(w, "--8<-- \"specification/notes/00-grammar/index.md\"").unwrap();
 }
 
 fn generate_context(grammar: &Grammar) -> SpecProductionContext {
