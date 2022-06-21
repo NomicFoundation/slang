@@ -7,6 +7,12 @@
   "editor.formatOnSave": true,
   "editor.rulers": [120],
   "files.eol": "\n",
+  "search.exclude": {
+    "**/.hermit/": true,
+    "**/generated/": true,
+    "**/node_modules/": true,
+    "**/target/": true
+  },
   // Terminal
   "terminal.integrated.defaultProfile.linux": "devcontainer-zsh",
   "terminal.integrated.profiles.linux": {

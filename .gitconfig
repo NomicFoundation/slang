@@ -1,0 +1,11 @@
+# To include this in your local git config, add the following two lines to your ".git/config" file:
+# --------------------- .git/config ---------------------
+# [include]
+# path = ../.gitconfig
+# -------------------------------------------------------
+
+# Always choose existing (ours) version of any conflict
+# Our CI will ensure each individual PR has the corrrect changes if any were missed
+[merge "slang-generated-files-merge-driver"]
+name = slang-generated-files-merge-driver
+driver = true

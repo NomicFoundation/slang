@@ -1,1 +1,6 @@
+# Use LF instead of CRLF everywhere
 * text eol=lf
+
+# Generated files
+**/generated/** linguist-generated=true
+**/generated/** merge=slang-generated-files-merge-driver
