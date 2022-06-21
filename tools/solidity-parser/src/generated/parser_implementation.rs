@@ -2850,8 +2850,8 @@ impl Parsers {
         let event_parameter_parser = event_parameter_parser_unmapped.boxed();
 
         // Expression = 1…*{ Expression / AssignmentOperator } | Expression [ '?' Expression ':' Expression ] | 1…*{ Expression / '||' } | 1…*{ Expression / '&&' } | 1…*{ Expression / EqualityComparisonOperator } | 1…*{ Expression / OrderComparisonOperator } | 1…*{ Expression / '|' } | 1…*{ Expression / '^' } | 1…*{ Expression / '&' } | 1…*{ Expression / ShiftOperator } | 1…*{ Expression / AddSubOperator } | 1…*{ Expression / MulDivModOperator } | 1…*{ Expression / '**' } | Expression [ UnarySuffixOperator ] | [ UnaryPrefixOperator ] Expression | Expression { ArgumentList } | Expression { '{' 1…*{ NamedArgument / ',' } '}' } | Expression { '.' ( «Identifier» | 'address' ) } | Expression { '[' [ Expression ] [ ':' [ Expression ] ] ']' } | 'payable' ArgumentList | 'type' '(' TypeName ')' | 'new' TypeName | '(' 1…*{ [ Expression ] / ',' } ')' | '[' 1…*{ Expression / ',' } ']' | «Identifier» | Literal | ElementaryTypeWithoutPayable ;
-        expression_parser_unmapped.define(choice((
-            expression_parser
+        expression_parser_unmapped.define({
+            let choice_0 = expression_parser
                 .clone()
                 .then(
                     choice::<_, ErrorType>((
@@ -2874,9 +2874,8 @@ impl Parsers {
                     .repeated(),
                 )
                 .map(repetition_mapper)
-                .map(|v| Box::new(expression::AssignmentExpression::new(v)))
-                .map(|v| Box::new(expression::_T0::Expressions_1(v))),
-            expression_parser
+                .map(|v| Box::new(expression::AssignmentExpression::new(v)));
+            let choice_1 = expression_parser
                 .clone()
                 .then(
                     just('?')
@@ -2887,9 +2886,8 @@ impl Parsers {
                         .map(|v| Box::new(expression::_T1::new(v)))
                         .or_not(),
                 )
-                .map(|v| Box::new(expression::ConditionalExpression::new(v)))
-                .map(|v| Box::new(expression::_T0::ConditionalExpression(v))),
-            expression_parser
+                .map(|v| Box::new(expression::ConditionalExpression::new(v)));
+            let choice_2 = expression_parser
                 .clone()
                 .then(
                     terminal("||")
@@ -2899,9 +2897,8 @@ impl Parsers {
                         .repeated(),
                 )
                 .map(repetition_mapper)
-                .map(|v| Box::new(expression::OrExpression::new(v)))
-                .map(|v| Box::new(expression::_T0::Expressions_2(v))),
-            expression_parser
+                .map(|v| Box::new(expression::OrExpression::new(v)));
+            let choice_3 = expression_parser
                 .clone()
                 .then(
                     terminal("&&")
@@ -2911,9 +2908,8 @@ impl Parsers {
                         .repeated(),
                 )
                 .map(repetition_mapper)
-                .map(|v| Box::new(expression::AndExpression::new(v)))
-                .map(|v| Box::new(expression::_T0::Expressions_3(v))),
-            expression_parser
+                .map(|v| Box::new(expression::AndExpression::new(v)));
+            let choice_4 = expression_parser
                 .clone()
                 .then(
                     choice::<_, ErrorType>((terminal("!=").ignored(), terminal("==").ignored()))
@@ -2922,9 +2918,8 @@ impl Parsers {
                         .repeated(),
                 )
                 .map(repetition_mapper)
-                .map(|v| Box::new(expression::EqualityComparisonExpression::new(v)))
-                .map(|v| Box::new(expression::_T0::Expressions_4(v))),
-            expression_parser
+                .map(|v| Box::new(expression::EqualityComparisonExpression::new(v)));
+            let choice_5 = expression_parser
                 .clone()
                 .then(
                     choice::<_, ErrorType>((
@@ -2941,9 +2936,8 @@ impl Parsers {
                     .repeated(),
                 )
                 .map(repetition_mapper)
-                .map(|v| Box::new(expression::OrderComparisonExpression::new(v)))
-                .map(|v| Box::new(expression::_T0::Expressions_5(v))),
-            expression_parser
+                .map(|v| Box::new(expression::OrderComparisonExpression::new(v)));
+            let choice_6 = expression_parser
                 .clone()
                 .then(
                     just('|')
@@ -2952,9 +2946,8 @@ impl Parsers {
                         .repeated(),
                 )
                 .map(repetition_mapper)
-                .map(|v| Box::new(expression::BitOrExpression::new(v)))
-                .map(|v| Box::new(expression::_T0::Expressions_6(v))),
-            expression_parser
+                .map(|v| Box::new(expression::BitOrExpression::new(v)));
+            let choice_7 = expression_parser
                 .clone()
                 .then(
                     just('^')
@@ -2963,9 +2956,8 @@ impl Parsers {
                         .repeated(),
                 )
                 .map(repetition_mapper)
-                .map(|v| Box::new(expression::BitXOrExpression::new(v)))
-                .map(|v| Box::new(expression::_T0::Expressions_7(v))),
-            expression_parser
+                .map(|v| Box::new(expression::BitXOrExpression::new(v)));
+            let choice_8 = expression_parser
                 .clone()
                 .then(
                     just('&')
@@ -2974,9 +2966,8 @@ impl Parsers {
                         .repeated(),
                 )
                 .map(repetition_mapper)
-                .map(|v| Box::new(expression::BitAndExpression::new(v)))
-                .map(|v| Box::new(expression::_T0::Expressions_8(v))),
-            expression_parser
+                .map(|v| Box::new(expression::BitAndExpression::new(v)));
+            let choice_9 = expression_parser
                 .clone()
                 .then(
                     choice::<_, ErrorType>((
@@ -2990,9 +2981,8 @@ impl Parsers {
                     .repeated(),
                 )
                 .map(repetition_mapper)
-                .map(|v| Box::new(expression::ShiftExpression::new(v)))
-                .map(|v| Box::new(expression::_T0::Expressions_9(v))),
-            expression_parser
+                .map(|v| Box::new(expression::ShiftExpression::new(v)));
+            let choice_10 = expression_parser
                 .clone()
                 .then(
                     filter(|&c: &char| c == '+' || c == '-')
@@ -3001,9 +2991,8 @@ impl Parsers {
                         .repeated(),
                 )
                 .map(repetition_mapper)
-                .map(|v| Box::new(expression::AddSubExpression::new(v)))
-                .map(|v| Box::new(expression::_T0::Expressions_10(v))),
-            expression_parser
+                .map(|v| Box::new(expression::AddSubExpression::new(v)));
+            let choice_11 = expression_parser
                 .clone()
                 .then(
                     filter(|&c: &char| c == '*' || c == '/' || c == '%')
@@ -3012,9 +3001,8 @@ impl Parsers {
                         .repeated(),
                 )
                 .map(repetition_mapper)
-                .map(|v| Box::new(expression::MulDivModExpression::new(v)))
-                .map(|v| Box::new(expression::_T0::Expressions_11(v))),
-            expression_parser
+                .map(|v| Box::new(expression::MulDivModExpression::new(v)));
+            let choice_12 = expression_parser
                 .clone()
                 .then(
                     terminal("**")
@@ -3024,18 +3012,16 @@ impl Parsers {
                         .repeated(),
                 )
                 .map(repetition_mapper)
-                .map(|v| Box::new(expression::ExponentiationExpression::new(v)))
-                .map(|v| Box::new(expression::_T0::Expressions_12(v))),
-            expression_parser
+                .map(|v| Box::new(expression::ExponentiationExpression::new(v)));
+            let choice_13 = expression_parser
                 .clone()
                 .then(
                     choice::<_, ErrorType>((terminal("++").ignored(), terminal("--").ignored()))
                         .map(|_| FixedTerminal::<2usize>())
                         .or_not(),
                 )
-                .map(|v| Box::new(expression::UnarySuffixExpression::new(v)))
-                .map(|v| Box::new(expression::_T0::UnarySuffixExpression(v))),
-            choice::<_, ErrorType>((
+                .map(|v| Box::new(expression::UnarySuffixExpression::new(v)));
+            let choice_14 = choice::<_, ErrorType>((
                 terminal("!").map(|_| 1usize),
                 terminal("++").map(|_| 2usize),
                 terminal("-").ignore_then(choice((
@@ -3047,14 +3033,12 @@ impl Parsers {
             ))
             .or_not()
             .then(expression_parser.clone())
-            .map(|v| Box::new(expression::UnaryPrefixExpression::new(v)))
-            .map(|v| Box::new(expression::_T0::UnaryPrefixExpression(v))),
-            expression_parser
+            .map(|v| Box::new(expression::UnaryPrefixExpression::new(v)));
+            let choice_15 = expression_parser
                 .clone()
                 .then(argument_list_parser.clone().repeated())
-                .map(|v| Box::new(expression::FunctionCallExpression::new(v)))
-                .map(|v| Box::new(expression::_T0::FunctionCallExpression(v))),
-            expression_parser
+                .map(|v| Box::new(expression::FunctionCallExpression::new(v)));
+            let choice_16 = expression_parser
                 .clone()
                 .then(
                     just('{')
@@ -3075,9 +3059,8 @@ impl Parsers {
                         .map(|v| Box::new(expression::_T4::new(v)))
                         .repeated(),
                 )
-                .map(|v| Box::new(expression::FunctionCallOptionsExpression::new(v)))
-                .map(|v| Box::new(expression::_T0::FunctionCallOptionsExpression(v))),
-            expression_parser
+                .map(|v| Box::new(expression::FunctionCallOptionsExpression::new(v)));
+            let choice_17 = expression_parser
                 .clone()
                 .then(
                     just('.')
@@ -3094,9 +3077,8 @@ impl Parsers {
                         .map(|v| Box::new(expression::_T7::new(v)))
                         .repeated(),
                 )
-                .map(|v| Box::new(expression::MemberAccessExpression::new(v)))
-                .map(|v| Box::new(expression::_T0::MemberAccessExpression(v))),
-            expression_parser
+                .map(|v| Box::new(expression::MemberAccessExpression::new(v)));
+            let choice_18 = expression_parser
                 .clone()
                 .then(
                     just('[')
@@ -3113,29 +3095,25 @@ impl Parsers {
                         .map(|v| Box::new(expression::_T10::new(v)))
                         .repeated(),
                 )
-                .map(|v| Box::new(expression::IndexAccessExpression::new(v)))
-                .map(|v| Box::new(expression::_T0::IndexAccessExpression(v))),
-            terminal("payable")
+                .map(|v| Box::new(expression::IndexAccessExpression::new(v)));
+            let choice_19 = terminal("payable")
                 .ignored()
                 .map(|_| FixedTerminal::<7usize>())
                 .then(argument_list_parser.clone())
-                .map(|v| Box::new(expression::_T12::new(v)))
-                .map(|v| Box::new(expression::_T0::_T12(v))),
-            terminal("type")
+                .map(|v| Box::new(expression::_T12::new(v)));
+            let choice_20 = terminal("type")
                 .ignored()
                 .map(|_| FixedTerminal::<4usize>())
                 .then(just('(').map(|_| FixedTerminal::<1>()))
                 .then(type_name_parser.clone())
                 .then(just(')').map(|_| FixedTerminal::<1>()))
-                .map(|v| Box::new(expression::_T13::new(v)))
-                .map(|v| Box::new(expression::_T0::_T13(v))),
-            terminal("new")
+                .map(|v| Box::new(expression::_T13::new(v)));
+            let choice_21 = terminal("new")
                 .ignored()
                 .map(|_| FixedTerminal::<3usize>())
                 .then(type_name_parser.clone())
-                .map(|v| Box::new(expression::_T14::new(v)))
-                .map(|v| Box::new(expression::_T0::_T14(v))),
-            just('(')
+                .map(|v| Box::new(expression::_T14::new(v)));
+            let choice_22 = just('(')
                 .map(|_| FixedTerminal::<1>())
                 .then(
                     expression_parser
@@ -3151,9 +3129,8 @@ impl Parsers {
                         .map(|v| Box::new(expression::_T16::new(v))),
                 )
                 .then(just(')').map(|_| FixedTerminal::<1>()))
-                .map(|v| Box::new(expression::_T15::new(v)))
-                .map(|v| Box::new(expression::_T0::_T15(v))),
-            just('[')
+                .map(|v| Box::new(expression::_T15::new(v)));
+            let choice_23 = just('[')
                 .map(|_| FixedTerminal::<1>())
                 .then(
                     expression_parser
@@ -3168,18 +3145,12 @@ impl Parsers {
                         .map(|v| Box::new(expression::_T18::new(v))),
                 )
                 .then(just(']').map(|_| FixedTerminal::<1>()))
-                .map(|v| Box::new(expression::_T17::new(v)))
-                .map(|v| Box::new(expression::_T0::_T17(v))),
-            identifier_parser
-                .clone()
-                .map(|v| Box::new(expression::_T0::Identifier(v))),
-            literal_parser
-                .clone()
-                .map(|v| Box::new(expression::_T0::Literal(v))),
-            elementary_type_without_payable_parser
-                .clone()
-                .map(|v| Box::new(expression::_T0::ElementaryTypeWithoutPayable(v))),
-        )));
+                .map(|v| Box::new(expression::_T17::new(v)));
+            let choice_24 = identifier_parser.clone();
+            let choice_25 = literal_parser.clone();
+            let choice_26 = elementary_type_without_payable_parser.clone();
+            choice_0
+        });
         expression_parser.define(expression_parser_unmapped.boxed());
 
         // FallbackFunctionAttribute = 'external' | StateMutabilitySpecifier | ModifierInvocation | 'virtual' | OverrideSpecifier ;

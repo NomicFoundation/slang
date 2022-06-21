@@ -3,7 +3,7 @@ use std::{cell::Cell, rc::Rc};
 use itertools::Itertools;
 use mset::MultiSet;
 use proc_macro2::TokenStream;
-use quote::quote;
+use quote::{format_ident, quote};
 
 use crate::schema::*;
 
@@ -373,9 +373,31 @@ impl CombinatorTreeNodeData {
     }
 
     fn to_expression_parser_combinator_code(&self, tree: &CombinatorTree) -> TokenStream {
-        self.to_parser_combinator_code(tree, |node, tree| {
-            node.to_expression_parser_combinator_code(tree)
-        })
+        if let Self::Choice { name: _, choices } = self {
+            // Each choice is it's own production, with the ref(root) changing to
+            // reference the next choice.
+
+            let first_name = format_ident!("choice_0");
+            let names = (0..choices.len()).map(|i| format_ident!("choice_{}", i));
+            let exprs = choices
+                .iter()
+                .map(|(_, e)| e.to_default_parser_combinator_code(tree));
+
+            quote!(
+                {
+                    #(let #names = #exprs;)*
+                    #first_name
+                }
+            )
+
+            // ForAll choices:
+            // [ option, ref(root) ] -> X ( + X::N(...option, ref) )
+            // [ ref(root), option ] -> X ( + X::N(ref, ...option) )
+            // 1…*{ ref(root) / S } -> X ( + X::N(left: ref, ...S, right: ref) )
+            // other -> X::N(other)
+        } else {
+            panic!("The 'Expression' pattern can only be used with a choice production")
+        }
     }
 
     fn to_default_parser_combinator_code(&self, tree: &CombinatorTree) -> TokenStream {
