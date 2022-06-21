@@ -19,8 +19,8 @@ cargo run --manifest-path "$PROJECT_DIR/Cargo.toml" --bin "validate_manifest" --
 
 cargo run --manifest-path "$PROJECT_DIR/Cargo.toml" --bin "manifest_to_chumsky" -- \
   --manifest-input "$PROJECT_DIR/syntax/ebnf/manifest.yml" \
-  --chumsky-output "$PROJECT_DIR/src/ebnf/"
+  --chumsky-output "$PROJECT_DIR/src/ebnf/generated/"
 
 cargo run --manifest-path "$PROJECT_DIR/Cargo.toml" --bin "manifest_to_ebnf" -- \
   --manifest-input "$PROJECT_DIR/syntax/ebnf/manifest.yml" \
-  --ebnf-output "$PROJECT_DIR/syntax/ebnf/derived.ebnf"
+  --ebnf-output "$PROJECT_DIR/src/ebnf/generated/derived.ebnf"

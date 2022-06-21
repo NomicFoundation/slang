@@ -39,6 +39,10 @@ impl Grammar {
             &context.output_dir.join("tree_implementation.rs"),
             generated_output.tree_implementation,
         );
+        Self::format_and_write_source(
+            &context.output_dir.join("mod.rs"),
+            generated_output.mod_file,
+        );
     }
 
     fn format_and_write_source(path: &PathBuf, source: String) {
@@ -121,6 +125,7 @@ pub struct GeneratedOutput {
     pub tree_interface: String,
     pub parser_implementation: String,
     pub tree_implementation: String,
+    pub mod_file: String,
 }
 
 impl Production {
@@ -346,6 +351,16 @@ impl Production {
                 tree_implementations.join("\n\n")
             ),
             parser_implementation: parser_implementation,
+            mod_file: format!(
+                "{}",
+                quote!(
+                    pub mod parser_implementation;
+                    pub mod parser_interface;
+                    pub mod tree_implementation;
+                    pub mod tree_interface;
+                )
+                .to_string(),
+            ),
         }
     }
 }
