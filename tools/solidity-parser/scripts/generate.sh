@@ -22,11 +22,11 @@ cargo run --manifest-path "$PROJECT_DIR/../syntax-schema/Cargo.toml" --bin "vali
 
 cargo run --manifest-path "$PROJECT_DIR/../syntax-schema/Cargo.toml" --bin "manifest_to_ebnf" -- \
   --manifest-input "$PROJECT_DIR/syntax/solidity/manifest.yml" \
-  --ebnf-output "$PROJECT_DIR/syntax/solidity/derived.ebnf"
+  --ebnf-output "$PROJECT_DIR/src/generated/derived.ebnf"
 
 cargo run --manifest-path "$PROJECT_DIR/../syntax-schema/Cargo.toml" --bin "manifest_to_chumsky" -- \
   --manifest-input "$PROJECT_DIR/syntax/solidity/manifest.yml" \
-  --chumsky-output "$PROJECT_DIR/src/"
+  --chumsky-output "$PROJECT_DIR/src/generated"
 
 cargo run --manifest-path "$PROJECT_DIR/../syntax-schema/Cargo.toml" --bin "manifest_to_spec" -- \
   --manifest-input "$PROJECT_DIR/syntax/solidity/manifest.yml" \
