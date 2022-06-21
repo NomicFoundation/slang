@@ -91,7 +91,11 @@
           - MemberAccessExpression
           - IndexAccessExpression
           - PrimaryExpression
-          - Literal
+          - PayableExpression
+          - TypeExpression
+          - NewExpression
+          - ParenthesisExpression
+          - ArrayLiteral
           - NumericLiteral
           - Block
           - UncheckedBlock

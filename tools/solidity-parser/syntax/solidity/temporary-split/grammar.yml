@@ -706,43 +706,52 @@
     - terminal: "]"
 - name: PrimaryExpression
   choice:
-    - sequence:
-        - terminal: payable
-        - reference: ArgumentList
-    - sequence:
-        - terminal: type
-        - terminal: (
-        - reference: TypeName
-        - terminal: )
-    - sequence:
-        - terminal: new
-        - reference: TypeName
-    - sequence:
-        - terminal: (
-        - oneOrMore:
-            optional:
-              reference: Expression
-            separator:
-              terminal: ","
-        - terminal: )
-    - sequence:
-        - terminal: "["
-        - oneOrMore:
-            reference: Expression
-            separator:
-              terminal: ","
-        - terminal: "]"
-    - reference: Identifier
-    - reference: Literal
-    - reference: ElementaryTypeWithoutPayable
-- name: Literal
-  choice:
+    - reference: PayableExpression
+    - reference: TypeExpression
+    - reference: NewExpression
+    - reference: ParenthesisExpression
+    - reference: ArrayLiteral
     - reference: AsciiStringLiteral
     - reference: UnicodeStringLiteral
-    - reference: NumericLiteral
     - reference: HexStringLiteral
+    - reference: NumericLiteral
+    - reference: ElementaryTypeWithoutPayable
     - reference: BooleanLiteral
+    - reference: Identifier
+- name: PayableExpression
+  sequence:
+    - terminal: payable
+    - reference: ArgumentList
+- name: TypeExpression
+  sequence:
+    - terminal: type
+    - terminal: (
+    - reference: TypeName
+    - terminal: )
+- name: NewExpression
+  sequence:
+    - terminal: new
+    - reference: IdentifierPath
+    - reference: ArgumentList
+- name: ParenthesisExpression
+  sequence:
+    - terminal: (
+    - oneOrMore:
+        optional:
+          reference: Expression
+        separator:
+          terminal: ","
+    - terminal: )
+- name: ArrayLiteral
+  sequence:
+    - terminal: "["
+    - oneOrMore:
+        reference: Expression
+        separator:
+          terminal: ","
+    - terminal: "]"
 - name: NumericLiteral
+  kind: Token
   sequence:
     - choice:
         - reference: DecimalNumber

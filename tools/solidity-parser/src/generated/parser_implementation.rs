@@ -755,6 +755,58 @@ impl Parsers {
         )
         .boxed();
 
+        // ArrayLiteral = '[' 1…*{ Expression / ',' } ']' ;
+        let array_literal_parser = leading_trivia_parser
+            .clone()
+            .then(just('[').map(|_| FixedSizeTerminal::<1>()))
+            .then(trailing_trivia_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(
+                expression_parser
+                    .clone()
+                    .then(
+                        leading_trivia_parser
+                            .clone()
+                            .then(just(',').map(|_| FixedSizeTerminal::<1>()))
+                            .then(trailing_trivia_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            )
+                            .then(expression_parser.clone())
+                            .repeated(),
+                    )
+                    .map(repetition_mapper)
+                    .map(|(elements, separators)| array_literal::_T1 {
+                        elements,
+                        separators,
+                    }),
+            )
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(just(']').map(|_| FixedSizeTerminal::<1>()))
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| array_literal::_T0::from_parse(v))
+            .boxed();
+
         // BreakStatement = 'break' ';' ;
         let break_statement_parser = leading_trivia_parser
             .clone()
@@ -1091,6 +1143,59 @@ impl Parsers {
             .map(|v| Box::new(keyword::_T0::_4(v))),
         ))
         .boxed();
+
+        // ParenthesisExpression = '(' 1…*{ [ Expression ] / ',' } ')' ;
+        let parenthesis_expression_parser = leading_trivia_parser
+            .clone()
+            .then(just('(').map(|_| FixedSizeTerminal::<1>()))
+            .then(trailing_trivia_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(
+                expression_parser
+                    .clone()
+                    .or_not()
+                    .then(
+                        leading_trivia_parser
+                            .clone()
+                            .then(just(',').map(|_| FixedSizeTerminal::<1>()))
+                            .then(trailing_trivia_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            )
+                            .then(expression_parser.clone().or_not())
+                            .repeated(),
+                    )
+                    .map(repetition_mapper)
+                    .map(|(elements, separators)| parenthesis_expression::_T1 {
+                        elements,
+                        separators,
+                    }),
+            )
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(just(')').map(|_| FixedSizeTerminal::<1>()))
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| parenthesis_expression::_T0::from_parse(v))
+            .boxed();
 
         // PositionalArgumentList = 1…*{ Expression / ',' } ;
         let positional_argument_list_parser = expression_parser
@@ -1913,56 +2018,31 @@ impl Parsers {
         ))
         .boxed();
 
-        // NumericLiteral = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
+        // «NumericLiteral» = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
         let numeric_literal_parser = choice((
-            leading_trivia_parser
+            decimal_number_parser
                 .clone()
-                .then(decimal_number_parser.clone())
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| decimal_number::WithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    },
-                )
                 .map(|v| Box::new(numeric_literal::_T1::DecimalNumber(v))),
-            leading_trivia_parser
+            hex_number_parser
                 .clone()
-                .then(hex_number_parser.clone())
-                .then(trailing_trivia_parser.clone())
-                .map(|((leading, content), trailing)| hex_number::WithTrivia {
-                    leading,
-                    content,
-                    trailing,
-                })
                 .map(|v| Box::new(numeric_literal::_T1::HexNumber(v))),
         ))
         .then(
-            leading_trivia_parser
-                .clone()
-                .then(choice::<_, ErrorType>((
-                    terminal("days").map(|_| 4usize),
-                    terminal("ether").map(|_| 5usize),
-                    terminal("gwei").map(|_| 4usize),
-                    terminal("hours").map(|_| 5usize),
-                    terminal("minutes").map(|_| 7usize),
-                    terminal("seconds").map(|_| 7usize),
-                    terminal("we").ignore_then(choice((
-                        terminal("eks").map(|_| 5usize),
-                        terminal("i").map(|_| 3usize),
-                    ))),
-                    terminal("years").map(|_| 5usize),
-                )))
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
-                        leading,
-                        content: VariableSizeTerminal(content),
-                        trailing,
-                    },
-                )
-                .or_not(),
+            choice::<_, ErrorType>((
+                terminal("days").map(|_| 4usize),
+                terminal("ether").map(|_| 5usize),
+                terminal("gwei").map(|_| 4usize),
+                terminal("hours").map(|_| 5usize),
+                terminal("minutes").map(|_| 7usize),
+                terminal("seconds").map(|_| 7usize),
+                terminal("we").ignore_then(choice((
+                    terminal("eks").map(|_| 5usize),
+                    terminal("i").map(|_| 3usize),
+                ))),
+                terminal("years").map(|_| 5usize),
+            ))
+            .map(VariableSizeTerminal)
+            .or_not(),
         )
         .map(|v| numeric_literal::_T0::from_parse(v))
         .boxed();
@@ -2085,65 +2165,6 @@ impl Parsers {
                 },
             )
             .boxed();
-
-        // Literal = «AsciiStringLiteral» | «UnicodeStringLiteral» | NumericLiteral | «HexStringLiteral» | «BooleanLiteral» ;
-        let literal_parser = choice((
-            leading_trivia_parser
-                .clone()
-                .then(ascii_string_literal_parser.clone())
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| ascii_string_literal::WithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    },
-                )
-                .map(|v| Box::new(literal::_T0::AsciiStringLiteral(v))),
-            leading_trivia_parser
-                .clone()
-                .then(unicode_string_literal_parser.clone())
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| unicode_string_literal::WithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    },
-                )
-                .map(|v| Box::new(literal::_T0::UnicodeStringLiteral(v))),
-            numeric_literal_parser
-                .clone()
-                .map(|v| Box::new(literal::_T0::NumericLiteral(v))),
-            leading_trivia_parser
-                .clone()
-                .then(hex_string_literal_parser.clone())
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| hex_string_literal::WithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    },
-                )
-                .map(|v| Box::new(literal::_T0::HexStringLiteral(v))),
-            leading_trivia_parser
-                .clone()
-                .then(choice::<_, ErrorType>((
-                    terminal("false").map(|_| 5usize),
-                    terminal("true").map(|_| 4usize),
-                )))
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
-                        leading,
-                        content: VariableSizeTerminal(content),
-                        trailing,
-                    },
-                )
-                .map(|v| Box::new(literal::_T0::_4(v))),
-        ))
-        .boxed();
 
         // YulLiteral = «YulDecimalNumberLiteral» | «YulHexLiteral» | «AsciiStringLiteral» | «BooleanLiteral» | «HexStringLiteral» ;
         let yul_literal_parser = choice((
@@ -3537,6 +3558,47 @@ impl Parsers {
             .map(|v| modifier_invocation::_T0::from_parse(v))
             .boxed();
 
+        // NewExpression = 'new' IdentifierPath ArgumentList ;
+        let new_expression_parser = leading_trivia_parser
+            .clone()
+            .then(
+                terminal("new")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<3usize>()),
+            )
+            .then(trailing_trivia_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(identifier_path_parser.clone())
+            .then(argument_list_parser.clone())
+            .map(|v| new_expression::_T0::from_parse(v))
+            .boxed();
+
+        // PayableExpression = 'payable' ArgumentList ;
+        let payable_expression_parser = leading_trivia_parser
+            .clone()
+            .then(
+                terminal("payable")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<7usize>()),
+            )
+            .then(trailing_trivia_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(argument_list_parser.clone())
+            .map(|v| payable_expression::_T0::from_parse(v))
+            .boxed();
+
         // TypeName = ( ElementaryTypeWithPayable | FunctionType | MappingType | IdentifierPath ) { '[' [ Expression ] ']' } ;
         type_name_parser.define(
             choice((
@@ -3850,209 +3912,6 @@ impl Parsers {
             .map(|v| inheritance_specifier_list::_T0::from_parse(v))
             .boxed();
 
-        // PrimaryExpression = 'payable' ArgumentList | 'type' '(' TypeName ')' | 'new' TypeName | '(' 1…*{ [ Expression ] / ',' } ')' | '[' 1…*{ Expression / ',' } ']' | «Identifier» | Literal | ElementaryTypeWithoutPayable ;
-        let primary_expression_parser = choice((
-            leading_trivia_parser
-                .clone()
-                .then(
-                    terminal("payable")
-                        .ignored()
-                        .map(|_| FixedSizeTerminal::<7usize>()),
-                )
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    },
-                )
-                .then(argument_list_parser.clone())
-                .map(|v| primary_expression::_T1::from_parse(v))
-                .map(|v| Box::new(primary_expression::_T0::_T1(v))),
-            leading_trivia_parser
-                .clone()
-                .then(
-                    terminal("type")
-                        .ignored()
-                        .map(|_| FixedSizeTerminal::<4usize>()),
-                )
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    },
-                )
-                .then(
-                    leading_trivia_parser
-                        .clone()
-                        .then(just('(').map(|_| FixedSizeTerminal::<1>()))
-                        .then(trailing_trivia_parser.clone())
-                        .map(
-                            |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                                leading,
-                                content,
-                                trailing,
-                            },
-                        ),
-                )
-                .then(type_name_parser.clone())
-                .then(
-                    leading_trivia_parser
-                        .clone()
-                        .then(just(')').map(|_| FixedSizeTerminal::<1>()))
-                        .then(trailing_trivia_parser.clone())
-                        .map(
-                            |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                                leading,
-                                content,
-                                trailing,
-                            },
-                        ),
-                )
-                .map(|v| primary_expression::_T2::from_parse(v))
-                .map(|v| Box::new(primary_expression::_T0::_T2(v))),
-            leading_trivia_parser
-                .clone()
-                .then(
-                    terminal("new")
-                        .ignored()
-                        .map(|_| FixedSizeTerminal::<3usize>()),
-                )
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    },
-                )
-                .then(type_name_parser.clone())
-                .map(|v| primary_expression::_T3::from_parse(v))
-                .map(|v| Box::new(primary_expression::_T0::_T3(v))),
-            leading_trivia_parser
-                .clone()
-                .then(just('(').map(|_| FixedSizeTerminal::<1>()))
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    },
-                )
-                .then(
-                    expression_parser
-                        .clone()
-                        .or_not()
-                        .then(
-                            leading_trivia_parser
-                                .clone()
-                                .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                                .then(trailing_trivia_parser.clone())
-                                .map(
-                                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                                        leading,
-                                        content,
-                                        trailing,
-                                    },
-                                )
-                                .then(expression_parser.clone().or_not())
-                                .repeated(),
-                        )
-                        .map(repetition_mapper)
-                        .map(|(elements, separators)| primary_expression::_T5 {
-                            elements,
-                            separators,
-                        }),
-                )
-                .then(
-                    leading_trivia_parser
-                        .clone()
-                        .then(just(')').map(|_| FixedSizeTerminal::<1>()))
-                        .then(trailing_trivia_parser.clone())
-                        .map(
-                            |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                                leading,
-                                content,
-                                trailing,
-                            },
-                        ),
-                )
-                .map(|v| primary_expression::_T4::from_parse(v))
-                .map(|v| Box::new(primary_expression::_T0::_T4(v))),
-            leading_trivia_parser
-                .clone()
-                .then(just('[').map(|_| FixedSizeTerminal::<1>()))
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    },
-                )
-                .then(
-                    expression_parser
-                        .clone()
-                        .then(
-                            leading_trivia_parser
-                                .clone()
-                                .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                                .then(trailing_trivia_parser.clone())
-                                .map(
-                                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                                        leading,
-                                        content,
-                                        trailing,
-                                    },
-                                )
-                                .then(expression_parser.clone())
-                                .repeated(),
-                        )
-                        .map(repetition_mapper)
-                        .map(|(elements, separators)| primary_expression::_T7 {
-                            elements,
-                            separators,
-                        }),
-                )
-                .then(
-                    leading_trivia_parser
-                        .clone()
-                        .then(just(']').map(|_| FixedSizeTerminal::<1>()))
-                        .then(trailing_trivia_parser.clone())
-                        .map(
-                            |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                                leading,
-                                content,
-                                trailing,
-                            },
-                        ),
-                )
-                .map(|v| primary_expression::_T6::from_parse(v))
-                .map(|v| Box::new(primary_expression::_T0::_T6(v))),
-            leading_trivia_parser
-                .clone()
-                .then(identifier_parser.clone())
-                .then(trailing_trivia_parser.clone())
-                .map(|((leading, content), trailing)| identifier::WithTrivia {
-                    leading,
-                    content,
-                    trailing,
-                })
-                .map(|v| Box::new(primary_expression::_T0::Identifier(v))),
-            literal_parser
-                .clone()
-                .map(|v| Box::new(primary_expression::_T0::Literal(v))),
-            elementary_type_without_payable_parser
-                .clone()
-                .map(|v| Box::new(primary_expression::_T0::ElementaryTypeWithoutPayable(v))),
-        ))
-        .map(|v| Box::new(expression::Expression::PrimaryExpression(v)))
-        .boxed();
-
         // ReceiveFunctionAttribute = ModifierInvocation | OverrideSpecifier | 'external' | 'payable' | 'virtual' ;
         let receive_function_attribute_parser = choice((
             modifier_invocation_parser
@@ -4108,6 +3967,52 @@ impl Parsers {
                     ),
             )
             .map(|v| struct_member::_T0::from_parse(v))
+            .boxed();
+
+        // TypeExpression = 'type' '(' TypeName ')' ;
+        let type_expression_parser = leading_trivia_parser
+            .clone()
+            .then(
+                terminal("type")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<4usize>()),
+            )
+            .then(trailing_trivia_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(just('(').map(|_| FixedSizeTerminal::<1>()))
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(type_name_parser.clone())
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(just(')').map(|_| FixedSizeTerminal::<1>()))
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| type_expression::_T0::from_parse(v))
             .boxed();
 
         // UsingDirective = 'using' ( IdentifierPath | '{' 1…*{ IdentifierPath / ',' } '}' ) 'for' ( '*' | TypeName ) [ 'global' ] ';' ;
@@ -4513,71 +4418,102 @@ impl Parsers {
             .map(|v| event_definition::_T0::from_parse(v))
             .boxed();
 
-        // IndexAccessExpression = Expression '[' [ Expression ] [ ':' [ Expression ] ] ']' ;
-        let index_access_expression_parser = primary_expression_parser
-            .clone()
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(just('[').map(|_| FixedSizeTerminal::<1>()))
-                    .then(trailing_trivia_parser.clone())
-                    .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                            leading,
-                            content,
-                            trailing,
-                        },
-                    )
-                    .then(expression_parser.clone().or_not())
-                    .then(
-                        leading_trivia_parser
-                            .clone()
-                            .then(just(':').map(|_| FixedSizeTerminal::<1>()))
-                            .then(trailing_trivia_parser.clone())
-                            .map(
-                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                                    leading,
-                                    content,
-                                    trailing,
-                                },
-                            )
-                            .then(expression_parser.clone().or_not())
-                            .map(|v| index_access_expression::_T1::from_parse(v))
-                            .or_not(),
-                    )
-                    .then(
-                        leading_trivia_parser
-                            .clone()
-                            .then(just(']').map(|_| FixedSizeTerminal::<1>()))
-                            .then(trailing_trivia_parser.clone())
-                            .map(
-                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                                    leading,
-                                    content,
-                                    trailing,
-                                },
-                            ),
-                    )
-                    .map(|v| index_access_expression::Operator::from_parse(v))
-                    .repeated(),
-            )
-            .map(|(operand, operators)| {
-                if operators.is_empty() {
-                    operand
-                } else {
-                    operators
-                        .into_iter()
-                        .fold(operand, |left_operand, operator| {
-                            Box::new(expression::Expression::IndexAccessExpression(
-                                index_access_expression::E {
-                                    left_operand,
-                                    operator,
-                                },
-                            ))
-                        })
-                }
-            })
-            .boxed();
+        // PrimaryExpression = PayableExpression | TypeExpression | NewExpression | ParenthesisExpression | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | «NumericLiteral» | ElementaryTypeWithoutPayable | «BooleanLiteral» | «Identifier» ;
+        let primary_expression_parser = choice((
+            payable_expression_parser
+                .clone()
+                .map(|v| Box::new(primary_expression::_T0::PayableExpression(v))),
+            type_expression_parser
+                .clone()
+                .map(|v| Box::new(primary_expression::_T0::TypeExpression(v))),
+            new_expression_parser
+                .clone()
+                .map(|v| Box::new(primary_expression::_T0::NewExpression(v))),
+            parenthesis_expression_parser
+                .clone()
+                .map(|v| Box::new(primary_expression::_T0::ParenthesisExpression(v))),
+            array_literal_parser
+                .clone()
+                .map(|v| Box::new(primary_expression::_T0::ArrayLiteral(v))),
+            leading_trivia_parser
+                .clone()
+                .then(ascii_string_literal_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| ascii_string_literal::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(primary_expression::_T0::AsciiStringLiteral(v))),
+            leading_trivia_parser
+                .clone()
+                .then(unicode_string_literal_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| unicode_string_literal::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(primary_expression::_T0::UnicodeStringLiteral(v))),
+            leading_trivia_parser
+                .clone()
+                .then(hex_string_literal_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| hex_string_literal::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(primary_expression::_T0::HexStringLiteral(v))),
+            leading_trivia_parser
+                .clone()
+                .then(numeric_literal_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| numeric_literal::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(primary_expression::_T0::NumericLiteral(v))),
+            elementary_type_without_payable_parser
+                .clone()
+                .map(|v| Box::new(primary_expression::_T0::ElementaryTypeWithoutPayable(v))),
+            leading_trivia_parser
+                .clone()
+                .then(choice::<_, ErrorType>((
+                    terminal("false").map(|_| 5usize),
+                    terminal("true").map(|_| 4usize),
+                )))
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
+                        leading,
+                        content: VariableSizeTerminal(content),
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(primary_expression::_T0::_10(v))),
+            leading_trivia_parser
+                .clone()
+                .then(identifier_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(|((leading, content), trailing)| identifier::WithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                })
+                .map(|v| Box::new(primary_expression::_T0::Identifier(v))),
+        ))
+        .map(|v| Box::new(expression::Expression::PrimaryExpression(v)))
+        .boxed();
 
         // StructDefinition = 'struct' «Identifier» '{' 1…*{ StructMember } '}' ;
         let struct_definition_parser = leading_trivia_parser
@@ -4694,6 +4630,72 @@ impl Parsers {
                     ),
             )
             .map(|v| tuple_variable_declaration::_T0::from_parse(v))
+            .boxed();
+
+        // IndexAccessExpression = Expression '[' [ Expression ] [ ':' [ Expression ] ] ']' ;
+        let index_access_expression_parser = primary_expression_parser
+            .clone()
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(just('[').map(|_| FixedSizeTerminal::<1>()))
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .then(expression_parser.clone().or_not())
+                    .then(
+                        leading_trivia_parser
+                            .clone()
+                            .then(just(':').map(|_| FixedSizeTerminal::<1>()))
+                            .then(trailing_trivia_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            )
+                            .then(expression_parser.clone().or_not())
+                            .map(|v| index_access_expression::_T1::from_parse(v))
+                            .or_not(),
+                    )
+                    .then(
+                        leading_trivia_parser
+                            .clone()
+                            .then(just(']').map(|_| FixedSizeTerminal::<1>()))
+                            .then(trailing_trivia_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            ),
+                    )
+                    .map(|v| index_access_expression::Operator::from_parse(v))
+                    .repeated(),
+            )
+            .map(|(operand, operators)| {
+                if operators.is_empty() {
+                    operand
+                } else {
+                    operators
+                        .into_iter()
+                        .fold(operand, |left_operand, operator| {
+                            Box::new(expression::Expression::IndexAccessExpression(
+                                index_access_expression::E {
+                                    left_operand,
+                                    operator,
+                                },
+                            ))
+                        })
+                }
+            })
             .boxed();
 
         // MemberAccessExpression = Expression '.' ( «Identifier» | 'address' ) ;
@@ -6787,6 +6789,7 @@ impl Parsers {
             ufixed_type: ufixed_type_parser,
             unsigned_integer_type: unsigned_integer_type_parser,
             yul_identifier: yul_identifier_parser,
+            array_literal: array_literal_parser,
             break_statement: break_statement_parser,
             continue_statement: continue_statement_parser,
             decimal_number: decimal_number_parser,
@@ -6794,6 +6797,7 @@ impl Parsers {
             double_quoted_unicode_string_literal: double_quoted_unicode_string_literal_parser,
             elementary_type: elementary_type_parser,
             keyword: keyword_parser,
+            parenthesis_expression: parenthesis_expression_parser,
             positional_argument_list: positional_argument_list_parser,
             single_quoted_ascii_string_literal: single_quoted_ascii_string_literal_parser,
             single_quoted_unicode_string_literal: single_quoted_unicode_string_literal_parser,
@@ -6810,7 +6814,6 @@ impl Parsers {
             unicode_string_literal: unicode_string_literal_parser,
             identifier: identifier_parser,
             import_path: import_path_parser,
-            literal: literal_parser,
             yul_literal: yul_literal_parser,
             enum_definition: enum_definition_parser,
             identifier_path: identifier_path_parser,
@@ -6840,6 +6843,8 @@ impl Parsers {
             yul_statement: yul_statement_parser,
             inheritance_specifier: inheritance_specifier_parser,
             modifier_invocation: modifier_invocation_parser,
+            new_expression: new_expression_parser,
+            payable_expression: payable_expression_parser,
             type_name: type_name_parser.boxed(),
             yul_block: yul_block_parser.boxed(),
             assembly_statement: assembly_statement_parser,
@@ -6849,17 +6854,18 @@ impl Parsers {
             fallback_function_attribute: fallback_function_attribute_parser,
             function_attribute: function_attribute_parser,
             inheritance_specifier_list: inheritance_specifier_list_parser,
-            primary_expression: primary_expression_parser,
             receive_function_attribute: receive_function_attribute_parser,
             struct_member: struct_member_parser,
+            type_expression: type_expression_parser,
             using_directive: using_directive_parser,
             variable_declaration: variable_declaration_parser,
             directive: directive_parser,
             error_definition: error_definition_parser,
             event_definition: event_definition_parser,
-            index_access_expression: index_access_expression_parser,
+            primary_expression: primary_expression_parser,
             struct_definition: struct_definition_parser,
             tuple_variable_declaration: tuple_variable_declaration_parser,
+            index_access_expression: index_access_expression_parser,
             member_access_expression: member_access_expression_parser,
             function_call_options_expression: function_call_options_expression_parser,
             function_call_expression: function_call_expression_parser,
