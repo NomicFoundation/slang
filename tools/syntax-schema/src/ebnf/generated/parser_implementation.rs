@@ -45,8 +45,8 @@ impl Parsers {
 
         let mut expression_parser = Recursive::declare();
 
-        // «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
-        let comment_parser = terminal("/*")
+        // «Comment» = '(*' { ¬'*' | 1…*{ '*' } ¬( '*' | ')' ) } { '*' } '*)' ;
+        let comment_parser = terminal("(*")
             .ignored()
             .map(|_| FixedTerminal::<2usize>())
             .then(
@@ -60,7 +60,7 @@ impl Parsers {
                         .at_least(1usize)
                         .map(|v| v.len())
                         .then(
-                            filter(|&c: &char| c != '*' && c != '/').map(|_| FixedTerminal::<1>()),
+                            filter(|&c: &char| c != '*' && c != ')').map(|_| FixedTerminal::<1>()),
                         )
                         .map(|v| Box::new(comment::_S3::new(v)))
                         .map(|v| Box::new(comment::_C2::_S3(v))),
@@ -74,7 +74,7 @@ impl Parsers {
                 )
                 .map(|v| Box::new(comment::Content::new(v))),
             )
-            .then(terminal("*/").ignored().map(|_| FixedTerminal::<2usize>()))
+            .then(terminal("*)").ignored().map(|_| FixedTerminal::<2usize>()))
             .map(|v| Box::new(comment::_S0::new(v)))
             .boxed();
 

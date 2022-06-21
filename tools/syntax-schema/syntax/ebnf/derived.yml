@@ -177,7 +177,7 @@
 - name: Comment
   isToken: true
   sequence:
-    - terminal: /*
+    - terminal: (*
     - zeroOrMore:
         choice:
           - not:
@@ -188,10 +188,10 @@
               - not:
                   choice:
                     - terminal: "*"
-                    - terminal: /
+                    - terminal: )
     - oneOrMore:
         terminal: "*"
-    - terminal: /
+    - terminal: )
 - name: Whitespace
   isToken: true
   choice:

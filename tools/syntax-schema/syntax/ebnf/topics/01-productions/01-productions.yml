@@ -206,7 +206,7 @@
 - name: Comment
   isToken: true
   sequence:
-    - terminal: /*
+    - terminal: (*
     - sequence:
         - zeroOrMore:
             choice:
@@ -218,11 +218,11 @@
                   - not:
                       choice:
                         - terminal: "*"
-                        - terminal: /
+                        - terminal: )
         - zeroOrMore:
             terminal: "*"
       config: { name: Content }
-    - terminal: "*/"
+    - terminal: "*)"
 
 - name: Whitespace
   isToken: true

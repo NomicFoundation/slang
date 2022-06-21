@@ -32,22 +32,24 @@ impl<const N: usize> DefaultTest for FixedTerminal<N> {
 
 impl comment::_S0 {
     pub fn new(
-        ((slash_star, content), star_slash): (
+        ((open_paren_star, content), star_close_paren): (
             (FixedTerminal<2usize>, Box<comment::Content>),
             FixedTerminal<2usize>,
         ),
     ) -> Self {
         Self {
-            slash_star,
+            open_paren_star,
             content,
-            star_slash,
+            star_close_paren,
         }
     }
 }
 
 impl DefaultTest for comment::_S0 {
     fn is_default(&self) -> bool {
-        self.slash_star.is_default() && self.content.is_default() && self.star_slash.is_default()
+        self.open_paren_star.is_default()
+            && self.content.is_default()
+            && self.star_close_paren.is_default()
     }
 }
 

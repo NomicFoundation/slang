@@ -1,3 +1,11 @@
+(*
+ * Solidity Grammar
+ *)
+
+(*
+ * First Section: Trivia
+ *)
+
 «IGNORE» = { «Whitespace» | «Comment» | «LineComment» } ;
 
 «Whitespace» = 1…*{ '\u{20}' | '\u{9}' | '\u{d}' | '\u{a}' } ;
@@ -5,6 +13,10 @@
 «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
 
 «LineComment» = '//' { ¬( '\u{a}' | '\u{d}' ) } ;
+
+(*
+ * First Section: Solidity File
+ *)
 
 SourceUnit = «IGNORE» { Directive | Definition } $ ;
 
@@ -25,6 +37,10 @@ SelectedImport = «Identifier» [ 'as' «Identifier» ] ;
 ImportPath = «AsciiStringLiteral» ;
 
 UsingDirective = 'using' ( IdentifierPath | '{' 1…*{ IdentifierPath / ',' } '}' ) 'for' ( '*' | TypeName ) [ 'global' ] ';' ;
+
+(*
+ * Todo Section: Todo Topic
+ *)
 
 ContractDefinition = [ 'abstract' ] 'contract' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
 

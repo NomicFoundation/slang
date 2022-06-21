@@ -1,3 +1,11 @@
+(*
+ * Nomic Foundation EBNF Grammar
+ *)
+
+(*
+ * Productions: Productions
+ *)
+
 grammar = «IGNORE» { production } $ ;
 
 production = «Identifier» '=' expression ';' ;
@@ -48,6 +56,6 @@ charRange = «SingleCharString» '…' «SingleCharString» ;
 
 «IGNORE» = { «Whitespace» | «Comment» } ;
 
-«Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
+«Comment» = '(*' { ¬'*' | 1…*{ '*' } ¬( '*' | ')' ) } { '*' } '*)' ;
 
 «Whitespace» = 1…*{ '\u{9}' | '\u{a}' | '\u{d}' | '\u{20}' } ;
