@@ -72,13 +72,15 @@ pub fn generate_spec_sections(
                         }
                     }
 
-                    match &topic.notes {
-                        None => {}
-                        Some(notes) => {
-                            writeln!(w).unwrap();
-                            writeln!(&w, "--8<-- \"{}\"", notes).unwrap();
-                        }
-                    }
+                    writeln!(w).unwrap();
+                    writeln!(
+                        &w,
+                        "--8<-- \"{}\"",
+                        topic.notes.as_ref().unwrap_or(
+                            &"specification/notes/under-construction-snippet.md".to_string()
+                        )
+                    )
+                    .unwrap();
                 });
         });
 }
