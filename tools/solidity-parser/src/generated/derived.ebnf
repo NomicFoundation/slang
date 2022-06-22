@@ -132,23 +132,47 @@ MappingType = 'mapping' '(' ( ElementaryTypeWithoutPayable | IdentifierPath ) '=
 
 DataLocation = 'memory' | 'storage' | 'calldata' ;
 
-Expression = 1…*{ Expression / AssignmentOperator } | Expression [ '?' Expression ':' Expression ] | 1…*{ Expression / '||' } | 1…*{ Expression / '&&' } | 1…*{ Expression / EqualityComparisonOperator } | 1…*{ Expression / OrderComparisonOperator } | 1…*{ Expression / '|' } | 1…*{ Expression / '^' } | 1…*{ Expression / '&' } | 1…*{ Expression / ShiftOperator } | 1…*{ Expression / AddSubOperator } | 1…*{ Expression / MulDivModOperator } | 1…*{ Expression / '**' } | Expression [ UnarySuffixOperator ] | [ UnaryPrefixOperator ] Expression | Expression { ArgumentList } | Expression { '{' 1…*{ NamedArgument / ',' } '}' } | Expression { '.' ( «Identifier» | 'address' ) } | Expression { '[' [ Expression ] [ ':' [ Expression ] ] ']' } | 'payable' ArgumentList | 'type' '(' TypeName ')' | 'new' TypeName | '(' 1…*{ [ Expression ] / ',' } ')' | '[' 1…*{ Expression / ',' } ']' | «Identifier» | Literal | ElementaryTypeWithoutPayable ;
+Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnarySuffixExpression | UnaryPrefixExpression | FunctionCallExpression | FunctionCallOptionsExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
 
-AssignmentOperator = '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ;
+AssignmentExpression = Expression ( '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ) Expression ;
 
-EqualityComparisonOperator = '==' | '!=' ;
+ConditionalExpression = Expression [ '?' Expression ':' Expression ] ;
 
-OrderComparisonOperator = '<' | '>' | '<=' | '>=' ;
+OrExpression = Expression '||' Expression ;
 
-ShiftOperator = '<<' | '>>' | '>>>' ;
+AndExpression = Expression '&&' Expression ;
 
-AddSubOperator = '+' | '-' ;
+EqualityComparisonExpression = Expression ( '==' | '!=' ) Expression ;
 
-MulDivModOperator = '*' | '/' | '%' ;
+OrderComparisonExpression = Expression ( '<' | '>' | '<=' | '>=' ) Expression ;
 
-UnarySuffixOperator = '++' | '--' ;
+BitOrExpression = Expression '|' Expression ;
 
-UnaryPrefixOperator = '++' | '--' | '!' | '~' | 'delete' | '-' ;
+BitXOrExpression = Expression '^' Expression ;
+
+BitAndExpression = Expression '&' Expression ;
+
+ShiftExpression = Expression ( '<<' | '>>' | '>>>' ) Expression ;
+
+AddSubExpression = Expression ( '+' | '-' ) Expression ;
+
+MulDivModExpression = Expression ( '*' | '/' | '%' ) Expression ;
+
+ExponentiationExpression = Expression '**' Expression ;
+
+UnarySuffixExpression = Expression [ '++' | '--' ] ;
+
+UnaryPrefixExpression = [ '++' | '--' | '!' | '~' | 'delete' | '-' ] Expression ;
+
+FunctionCallExpression = Expression { ArgumentList } ;
+
+FunctionCallOptionsExpression = Expression { '{' 1…*{ NamedArgument / ',' } '}' } ;
+
+MemberAccessExpression = Expression { '.' ( «Identifier» | 'address' ) } ;
+
+IndexAccessExpression = Expression { '[' [ Expression ] [ ':' [ Expression ] ] ']' } ;
+
+PrimaryExpression = 'payable' ArgumentList | 'type' '(' TypeName ')' | 'new' TypeName | '(' 1…*{ [ Expression ] / ',' } ')' | '[' 1…*{ Expression / ',' } ']' | «Identifier» | Literal | ElementaryTypeWithoutPayable ;
 
 Literal = «AsciiStringLiteral» | «UnicodeStringLiteral» | NumericLiteral | «HexStringLiteral» | «BooleanLiteral» ;
 

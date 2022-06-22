@@ -506,7 +506,6 @@
     - terminal: memory
     - terminal: storage
     - terminal: calldata
-
 #
 # Start of Expressions
 #
@@ -514,147 +513,213 @@
 - name: Expression
   pattern: Expression
   choice:
-    - config:
-        name: AssignmentExpression
-        pattern: FoldLeft
-      oneOrMore:
-        reference: Expression
-        separator: { reference: AssignmentOperator }
-    - config:
-        name: ConditionalExpression
-      sequence:
-        - reference: Expression
-        - optional:
-            sequence:
-              - terminal: "?"
-              - reference: Expression
-              - terminal: ":"
-              - reference: Expression
-    - config:
-        name: OrExpression
-        pattern: FoldLeft
-      oneOrMore:
-        reference: Expression
-        separator: { terminal: "||" }
-    - config:
-        name: AndExpression
-        pattern: FoldLeft
-      oneOrMore:
-        reference: Expression
-        separator: { terminal: "&&" }
-    - config:
-        name: EqualityComparisonExpression
-        pattern: FoldLeft
-      oneOrMore:
-        reference: Expression
-        separator: { reference: EqualityComparisonOperator }
-    - config:
-        name: OrderComparisonExpression
-        pattern: FoldLeft
-      oneOrMore:
-        reference: Expression
-        separator: { reference: OrderComparisonOperator }
-    - config:
-        name: BitOrExpression
-        pattern: FoldLeft
-      oneOrMore:
-        reference: Expression
-        separator: { terminal: "|" }
-    - config:
-        name: BitXOrExpression
-        pattern: FoldLeft
-      oneOrMore:
-        reference: Expression
-        separator: { terminal: ^ }
-    - config:
-        name: BitAndExpression
-        pattern: FoldLeft
-      oneOrMore:
-        reference: Expression
-        separator: { terminal: "&" }
-    - config:
-        name: ShiftExpression
-        pattern: FoldLeft
-      oneOrMore:
-        reference: Expression
-        separator: { reference: ShiftOperator }
-    - config:
-        name: AddSubExpression
-        pattern: FoldLeft
-      oneOrMore:
-        reference: Expression
-        separator: { reference: AddSubOperator }
-    - config:
-        name: MulDivModExpression
-        pattern: FoldLeft
-      oneOrMore:
-        reference: Expression
-        separator: { reference: MulDivModOperator }
-    - config:
-        name: ExponentiationExpression
-        pattern: FoldRight
-      oneOrMore:
-        reference: Expression
-        separator: { terminal: "**" }
-    - config:
-        name: UnarySuffixExpression
-      sequence:
-        - reference: Expression
-        - optional:
-            reference: UnarySuffixOperator
-    - config:
-        name: UnaryPrefixExpression
-      sequence:
-        - optional:
-            reference: UnaryPrefixOperator
-        - reference: Expression
-    - config:
-        name: FunctionCallExpression
-        pattern: FoldLeft
-      sequence:
-        - reference: Expression
-        - zeroOrMore:
-            reference: ArgumentList
-    - config:
-        name: FunctionCallOptionsExpression
-        pattern: FoldLeft
-      sequence:
-        - reference: Expression
-        - zeroOrMore:
-            sequence:
-              - terminal: "{"
-              - oneOrMore:
-                  reference: NamedArgument
-                  separator:
-                    terminal: ","
-              - terminal: "}"
-    - config:
-        name: MemberAccessExpression
-        pattern: FoldLeft
-      sequence:
-        - reference: Expression
-        - zeroOrMore:
-            sequence:
-              - terminal: "."
-              - choice:
-                  - reference: Identifier
-                  - terminal: address
-    - config:
-        name: IndexAccessExpression
-        pattern: FoldLeft
-      sequence:
-        - reference: Expression
-        - zeroOrMore:
-            sequence:
-              - terminal: "["
-              - optional:
-                  reference: Expression
-              - optional:
-                  sequence:
-                    - terminal: ":"
-                    - optional:
-                        reference: Expression
-              - terminal: "]"
+    - reference: AssignmentExpression
+    - reference: ConditionalExpression
+    - reference: OrExpression
+    - reference: AndExpression
+    - reference: EqualityComparisonExpression
+    - reference: OrderComparisonExpression
+    - reference: BitOrExpression
+    - reference: BitXOrExpression
+    - reference: BitAndExpression
+    - reference: ShiftExpression
+    - reference: AddSubExpression
+    - reference: MulDivModExpression
+    - reference: ExponentiationExpression
+    - reference: UnarySuffixExpression
+    - reference: UnaryPrefixExpression
+    - reference: FunctionCallExpression
+    - reference: FunctionCallOptionsExpression
+    - reference: MemberAccessExpression
+    - reference: IndexAccessExpression
+    - reference: PrimaryExpression
+
+- name: AssignmentExpression
+  config: { pattern: FoldLeft }
+  sequence:
+    - reference: Expression
+    - choice:
+        - terminal: "="
+        - terminal: "|="
+        - terminal: ^=
+        - terminal: "&="
+        - terminal: "<<="
+        - terminal: ">>="
+        - terminal: ">>>="
+        - terminal: +=
+        - terminal: "-="
+        - terminal: "*="
+        - terminal: /=
+        - terminal: "%="
+    - reference: Expression
+
+- name: ConditionalExpression
+  sequence:
+    - reference: Expression
+    - optional:
+        sequence:
+          - terminal: "?"
+          - reference: Expression
+          - terminal: ":"
+          - reference: Expression
+
+- name: OrExpression
+  config: { pattern: FoldLeft }
+  sequence:
+    - reference: Expression
+    - terminal: "||"
+    - reference: Expression
+
+- name: AndExpression
+  config: { pattern: FoldLeft }
+  sequence:
+    - reference: Expression
+    - terminal: "&&"
+    - reference: Expression
+
+- name: EqualityComparisonExpression
+  config: { pattern: FoldLeft }
+  sequence:
+    - reference: Expression
+    - choice:
+        - terminal: "=="
+        - terminal: "!="
+    - reference: Expression
+
+- name: OrderComparisonExpression
+  config: { pattern: FoldLeft }
+  sequence:
+    - reference: Expression
+    - choice:
+        - terminal: "<"
+        - terminal: ">"
+        - terminal: "<="
+        - terminal: ">="
+    - reference: Expression
+
+- name: BitOrExpression
+  config: { pattern: FoldLeft }
+  sequence:
+    - reference: Expression
+    - terminal: "|"
+    - reference: Expression
+
+- name: BitXOrExpression
+  config: { pattern: FoldLeft }
+  sequence:
+    - reference: Expression
+    - terminal: "^"
+    - reference: Expression
+
+- name: BitAndExpression
+  config: { pattern: FoldLeft }
+  sequence:
+    - reference: Expression
+    - terminal: "&"
+    - reference: Expression
+
+- name: ShiftExpression
+  config: { pattern: FoldLeft }
+  sequence:
+    - reference: Expression
+    - choice:
+        - terminal: "<<"
+        - terminal: ">>"
+        - terminal: ">>>"
+    - reference: Expression
+
+- name: AddSubExpression
+  config: { pattern: FoldLeft }
+  sequence:
+    - reference: Expression
+    - choice:
+        - terminal: +
+        - terminal: "-"
+    - reference: Expression
+
+- name: MulDivModExpression
+  config: { pattern: FoldLeft }
+  sequence:
+    - reference: Expression
+    - choice:
+        - terminal: "*"
+        - terminal: /
+        - terminal: "%"
+    - reference: Expression
+
+- name: ExponentiationExpression
+  config: { pattern: FoldRight }
+  sequence:
+    - reference: Expression
+    - terminal: "**"
+    - reference: Expression
+
+- name: UnarySuffixExpression
+  sequence:
+    - reference: Expression
+    - optional:
+        choice:
+          - terminal: ++
+          - terminal: "--"
+
+- name: UnaryPrefixExpression
+  sequence:
+    - optional:
+        choice:
+          - terminal: ++
+          - terminal: "--"
+          - terminal: "!"
+          - terminal: "~"
+          - terminal: delete
+          - terminal: "-"
+    - reference: Expression
+
+- name: FunctionCallExpression
+  sequence:
+    - reference: Expression
+    - zeroOrMore:
+        reference: ArgumentList
+
+- name: FunctionCallOptionsExpression
+  sequence:
+    - reference: Expression
+    - zeroOrMore:
+        sequence:
+          - terminal: "{"
+          - oneOrMore:
+              reference: NamedArgument
+              separator:
+                terminal: ","
+          - terminal: "}"
+
+- name: MemberAccessExpression
+  sequence:
+    - reference: Expression
+    - zeroOrMore:
+        sequence:
+          - terminal: "."
+          - choice:
+              - reference: Identifier
+              - terminal: address
+
+- name: IndexAccessExpression
+  config: { pattern: FoldLeft }
+  sequence:
+    - reference: Expression
+    - zeroOrMore:
+        sequence:
+          - terminal: "["
+          - optional:
+              reference: Expression
+          - optional:
+              sequence:
+                - terminal: ":"
+                - optional:
+                    reference: Expression
+          - terminal: "]"
+
+- name: PrimaryExpression
+  choice:
     - sequence:
         - terminal: payable
         - reference: ArgumentList
@@ -684,64 +749,6 @@
     - reference: Identifier
     - reference: Literal
     - reference: ElementaryTypeWithoutPayable
-
-- name: AssignmentOperator
-  choice:
-    - terminal: "="
-    - terminal: "|="
-    - terminal: ^=
-    - terminal: "&="
-    - terminal: "<<="
-    - terminal: ">>="
-    - terminal: ">>>="
-    - terminal: +=
-    - terminal: "-="
-    - terminal: "*="
-    - terminal: /=
-    - terminal: "%="
-
-- name: EqualityComparisonOperator
-  choice:
-    - terminal: "=="
-    - terminal: "!="
-
-- name: OrderComparisonOperator
-  choice:
-    - terminal: "<"
-    - terminal: ">"
-    - terminal: "<="
-    - terminal: ">="
-
-- name: ShiftOperator
-  choice:
-    - terminal: "<<"
-    - terminal: ">>"
-    - terminal: ">>>"
-
-- name: AddSubOperator
-  choice:
-    - terminal: +
-    - terminal: "-"
-
-- name: MulDivModOperator
-  choice:
-    - terminal: "*"
-    - terminal: /
-    - terminal: "%"
-
-- name: UnarySuffixOperator
-  choice:
-    - terminal: ++
-    - terminal: "--"
-
-- name: UnaryPrefixOperator
-  choice:
-    - terminal: ++
-    - terminal: "--"
-    - terminal: "!"
-    - terminal: "~"
-    - terminal: delete
-    - terminal: "-"
 
 #
 # End of Expressions

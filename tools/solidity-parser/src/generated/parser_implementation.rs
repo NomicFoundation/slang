@@ -41,26 +41,20 @@ fn terminal(str: &str) -> Just<char, &str, ErrorType> {
 
 impl Parsers {
     pub fn new() -> Self {
-        let mut block_parser_unmapped = Recursive::declare();
         let mut block_parser = Recursive::declare();
 
-        let mut expression_parser_unmapped = Recursive::declare();
         let mut expression_parser = Recursive::declare();
 
-        let mut statement_parser_unmapped = Recursive::declare();
         let mut statement_parser = Recursive::declare();
 
-        let mut type_name_parser_unmapped = Recursive::declare();
         let mut type_name_parser = Recursive::declare();
 
-        let mut yul_block_parser_unmapped = Recursive::declare();
         let mut yul_block_parser = Recursive::declare();
 
-        let mut yul_expression_parser_unmapped = Recursive::declare();
         let mut yul_expression_parser = Recursive::declare();
 
         // «AsciiEscape» = 'n' | 'r' | 't' | '\'' | '"' | '\\' | '\u{a}' | '\u{d}' ;
-        let ascii_escape_parser_unmapped = filter(|&c: &char| {
+        let ascii_escape_parser = filter(|&c: &char| {
             c == 'n'
                 || c == 'r'
                 || c == 't'
@@ -70,18 +64,18 @@ impl Parsers {
                 || c == '\n'
                 || c == '\r'
         })
-        .map(|_| FixedTerminal::<1>());
-        let ascii_escape_parser = ascii_escape_parser_unmapped.boxed();
+        .map(|_| FixedTerminal::<1>())
+        .boxed();
 
         // «BooleanLiteral» = 'true' | 'false' ;
-        let boolean_literal_parser_unmapped = choice::<_, ErrorType>((
+        let boolean_literal_parser = choice::<_, ErrorType>((
             terminal("false").map(|_| 5usize),
             terminal("true").map(|_| 4usize),
-        ));
-        let boolean_literal_parser = boolean_literal_parser_unmapped.boxed();
+        ))
+        .boxed();
 
         // «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
-        let comment_parser_unmapped = terminal("/*")
+        let comment_parser = terminal("/*")
             .ignored()
             .map(|_| FixedTerminal::<2usize>())
             .then(
@@ -109,11 +103,11 @@ impl Parsers {
                     .map(|v| v.len()),
             )
             .then(terminal("*/").ignored().map(|_| FixedTerminal::<2usize>()))
-            .map(|v| Box::new(comment::_T0::new(v)));
-        let comment_parser = comment_parser_unmapped.boxed();
+            .map(|v| Box::new(comment::_T0::new(v)))
+            .boxed();
 
         // «DecimalInteger» = 1…*{ '0'…'9' / [ '_' ] } ;
-        let decimal_integer_parser_unmapped = filter(|&c: &char| ('0' <= c && c <= '9'))
+        let decimal_integer_parser = filter(|&c: &char| ('0' <= c && c <= '9'))
             .map(|_| FixedTerminal::<1>())
             .then(
                 just('_')
@@ -123,11 +117,11 @@ impl Parsers {
                     .repeated(),
             )
             .map(repetition_mapper)
-            .map(|v| Box::new(decimal_integer::_T0::new(v)));
-        let decimal_integer_parser = decimal_integer_parser_unmapped.boxed();
+            .map(|v| Box::new(decimal_integer::_T0::new(v)))
+            .boxed();
 
         // «FixedBytesType» = 'bytes' ( '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15' | '16' | '17' | '18' | '19' | '20' | '21' | '22' | '23' | '24' | '25' | '26' | '27' | '28' | '29' | '30' | '31' | '32' ) ;
-        let fixed_bytes_type_parser_unmapped = terminal("bytes")
+        let fixed_bytes_type_parser = terminal("bytes")
             .ignored()
             .map(|_| FixedTerminal::<5usize>())
             .then(choice::<_, ErrorType>((
@@ -170,11 +164,11 @@ impl Parsers {
                 terminal("8").map(|_| 1usize),
                 terminal("9").map(|_| 1usize),
             )))
-            .map(|v| Box::new(fixed_bytes_type::_T0::new(v)));
-        let fixed_bytes_type_parser = fixed_bytes_type_parser_unmapped.boxed();
+            .map(|v| Box::new(fixed_bytes_type::_T0::new(v)))
+            .boxed();
 
         // «FixedType» = 'fixed' [ '1'…'9' { '0'…'9' } 'x' '1'…'9' { '0'…'9' } ] ;
-        let fixed_type_parser_unmapped = terminal("fixed")
+        let fixed_type_parser = terminal("fixed")
             .ignored()
             .map(|_| FixedTerminal::<5usize>())
             .then(
@@ -197,25 +191,25 @@ impl Parsers {
                     .map(|v| Box::new(fixed_type::_T1::new(v)))
                     .or_not(),
             )
-            .map(|v| Box::new(fixed_type::_T0::new(v)));
-        let fixed_type_parser = fixed_type_parser_unmapped.boxed();
+            .map(|v| Box::new(fixed_type::_T0::new(v)))
+            .boxed();
 
         // «HexCharacter» = '0'…'9' | 'a'…'f' | 'A'…'F' ;
-        let hex_character_parser_unmapped = filter(|&c: &char| {
+        let hex_character_parser = filter(|&c: &char| {
             ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
         })
-        .map(|_| FixedTerminal::<1>());
-        let hex_character_parser = hex_character_parser_unmapped.boxed();
+        .map(|_| FixedTerminal::<1>())
+        .boxed();
 
         // «IdentifierStart» = '_' | '$' | 'a'…'z' | 'A'…'Z' ;
-        let identifier_start_parser_unmapped = filter(|&c: &char| {
+        let identifier_start_parser = filter(|&c: &char| {
             c == '_' || c == '$' || ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z')
         })
-        .map(|_| FixedTerminal::<1>());
-        let identifier_start_parser = identifier_start_parser_unmapped.boxed();
+        .map(|_| FixedTerminal::<1>())
+        .boxed();
 
         // «LineComment» = '//' { ¬( '\u{a}' | '\u{d}' ) } ;
-        let line_comment_parser_unmapped = terminal("//")
+        let line_comment_parser = terminal("//")
             .ignored()
             .map(|_| FixedTerminal::<2usize>())
             .then(
@@ -224,11 +218,11 @@ impl Parsers {
                     .repeated()
                     .map(|v| v.len()),
             )
-            .map(|v| Box::new(line_comment::_T0::new(v)));
-        let line_comment_parser = line_comment_parser_unmapped.boxed();
+            .map(|v| Box::new(line_comment::_T0::new(v)))
+            .boxed();
 
         // «NumberUnit» = 'wei' | 'gwei' | 'ether' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'years' ;
-        let number_unit_parser_unmapped = choice::<_, ErrorType>((
+        let number_unit_parser = choice::<_, ErrorType>((
             terminal("days").map(|_| 4usize),
             terminal("ether").map(|_| 5usize),
             terminal("gwei").map(|_| 4usize),
@@ -240,11 +234,11 @@ impl Parsers {
                 terminal("i").map(|_| 3usize),
             ))),
             terminal("years").map(|_| 5usize),
-        ));
-        let number_unit_parser = number_unit_parser_unmapped.boxed();
+        ))
+        .boxed();
 
         // «PragmaDirective» = 'pragma' 1…*{ ¬';' } ';' ;
-        let pragma_directive_parser_unmapped = terminal("pragma")
+        let pragma_directive_parser = terminal("pragma")
             .ignored()
             .map(|_| FixedTerminal::<6usize>())
             .then(
@@ -255,11 +249,11 @@ impl Parsers {
                     .map(|v| v.len()),
             )
             .then(just(';').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(pragma_directive::_T0::new(v)));
-        let pragma_directive_parser = pragma_directive_parser_unmapped.boxed();
+            .map(|v| Box::new(pragma_directive::_T0::new(v)))
+            .boxed();
 
         // «ReservedKeyword» = 'after' | 'alias' | 'apply' | 'auto' | 'byte' | 'case' | 'copyof' | 'default' | 'define' | 'final' | 'implements' | 'in' | 'inline' | 'let' | 'macro' | 'match' | 'mutable' | 'null' | 'of' | 'partial' | 'promise' | 'reference' | 'relocatable' | 'sealed' | 'sizeof' | 'static' | 'supports' | 'switch' | 'typedef' | 'typeof' | 'var' ;
-        let reserved_keyword_parser_unmapped = choice::<_, ErrorType>((
+        let reserved_keyword_parser = choice::<_, ErrorType>((
             terminal("a").ignore_then(choice((
                 terminal("fter").map(|_| 5usize),
                 terminal("lias").map(|_| 5usize),
@@ -313,11 +307,11 @@ impl Parsers {
                 terminal("of").map(|_| 6usize),
             ))),
             terminal("var").map(|_| 3usize),
-        ));
-        let reserved_keyword_parser = reserved_keyword_parser_unmapped.boxed();
+        ))
+        .boxed();
 
         // «SignedIntegerType» = 'int' ( '8' | '16' | '24' | '32' | '40' | '48' | '56' | '64' | '72' | '80' | '88' | '96' | '104' | '112' | '120' | '128' | '136' | '144' | '152' | '160' | '168' | '176' | '184' | '192' | '200' | '208' | '216' | '224' | '232' | '240' | '248' | '256' ) ;
-        let signed_integer_type_parser_unmapped = terminal("int")
+        let signed_integer_type_parser = terminal("int")
             .ignored()
             .map(|_| FixedTerminal::<3usize>())
             .then(choice::<_, ErrorType>((
@@ -370,20 +364,19 @@ impl Parsers {
                 ))),
                 terminal("96").map(|_| 2usize),
             )))
-            .map(|v| Box::new(signed_integer_type::_T0::new(v)));
-        let signed_integer_type_parser = signed_integer_type_parser_unmapped.boxed();
+            .map(|v| Box::new(signed_integer_type::_T0::new(v)))
+            .boxed();
 
         // «Whitespace» = 1…*{ '\u{20}' | '\u{9}' | '\u{d}' | '\u{a}' } ;
-        let whitespace_parser_unmapped =
-            filter(|&c: &char| c == ' ' || c == '\t' || c == '\r' || c == '\n')
-                .map(|_| FixedTerminal::<1>())
-                .repeated()
-                .at_least(1usize)
-                .map(|v| v.len());
-        let whitespace_parser = whitespace_parser_unmapped.boxed();
+        let whitespace_parser = filter(|&c: &char| c == ' ' || c == '\t' || c == '\r' || c == '\n')
+            .map(|_| FixedTerminal::<1>())
+            .repeated()
+            .at_least(1usize)
+            .map(|v| v.len())
+            .boxed();
 
         // «YulDecimalNumberLiteral» = '0' | '1'…'9' { '0'…'9' } ;
-        let yul_decimal_number_literal_parser_unmapped = choice((
+        let yul_decimal_number_literal_parser = choice((
             just('0')
                 .map(|_| FixedTerminal::<1>())
                 .map(|v| Box::new(yul_decimal_number_literal::_T0::ZeroChar(v))),
@@ -397,11 +390,11 @@ impl Parsers {
                 )
                 .map(|v| Box::new(yul_decimal_number_literal::_T1::new(v)))
                 .map(|v| Box::new(yul_decimal_number_literal::_T0::_T1(v))),
-        ));
-        let yul_decimal_number_literal_parser = yul_decimal_number_literal_parser_unmapped.boxed();
+        ))
+        .boxed();
 
         // «YulEVMBuiltinFunctionName» = 'stop' | 'add' | 'sub' | 'mul' | 'div' | 'sdiv' | 'mod' | 'smod' | 'exp' | 'not' | 'lt' | 'gt' | 'slt' | 'sgt' | 'eq' | 'iszero' | 'and' | 'or' | 'xor' | 'byte' | 'shl' | 'shr' | 'sar' | 'addmod' | 'mulmod' | 'signextend' | 'keccak256' | 'pop' | 'mload' | 'mstore' | 'mstore8' | 'sload' | 'sstore' | 'msize' | 'gas' | 'address' | 'balance' | 'selfbalance' | 'caller' | 'callvalue' | 'calldataload' | 'calldatasize' | 'calldatacopy' | 'extcodesize' | 'extcodecopy' | 'returndatasize' | 'returndatacopy' | 'extcodehash' | 'create' | 'create2' | 'call' | 'callcode' | 'delegatecall' | 'staticcall' | 'return' | 'revert' | 'selfdestruct' | 'invalid' | 'log0' | 'log1' | 'log2' | 'log3' | 'log4' | 'chainid' | 'origin' | 'gasprice' | 'Blockhash' | 'coinbase' | 'timestamp' | 'number' | 'difficulty' | 'gaslimit' | 'basefee' ;
-        let yul_evm_builtin_function_name_parser_unmapped = choice::<_, ErrorType>((
+        let yul_evm_builtin_function_name_parser = choice::<_, ErrorType>((
             terminal("Blockhash").map(|_| 9usize),
             terminal("a").ignore_then(choice((
                 terminal("dd").ignore_then(choice((
@@ -539,12 +532,11 @@ impl Parsers {
             ))),
             terminal("timestamp").map(|_| 9usize),
             terminal("xor").map(|_| 3usize),
-        ));
-        let yul_evm_builtin_function_name_parser =
-            yul_evm_builtin_function_name_parser_unmapped.boxed();
+        ))
+        .boxed();
 
         // «YulHexLiteral» = '0x' 1…*{ '0'…'9' | 'a'…'f' | 'A'…'F' } ;
-        let yul_hex_literal_parser_unmapped = terminal("0x")
+        let yul_hex_literal_parser = terminal("0x")
             .ignored()
             .map(|_| FixedTerminal::<2usize>())
             .then(
@@ -556,11 +548,11 @@ impl Parsers {
                 .at_least(1usize)
                 .map(|v| v.len()),
             )
-            .map(|v| Box::new(yul_hex_literal::_T0::new(v)));
-        let yul_hex_literal_parser = yul_hex_literal_parser_unmapped.boxed();
+            .map(|v| Box::new(yul_hex_literal::_T0::new(v)))
+            .boxed();
 
         // «YulKeyword» = 'break' | 'case' | 'continue' | 'default' | 'for' | 'function' | 'if' | 'leave' | 'let' | 'switch' | 'hex' ;
-        let yul_keyword_parser_unmapped = choice::<_, ErrorType>((
+        let yul_keyword_parser = choice::<_, ErrorType>((
             terminal("break").map(|_| 5usize),
             terminal("c").ignore_then(choice((
                 terminal("ase").map(|_| 4usize),
@@ -578,28 +570,28 @@ impl Parsers {
                 terminal("t").map(|_| 3usize),
             ))),
             terminal("switch").map(|_| 6usize),
-        ));
-        let yul_keyword_parser = yul_keyword_parser_unmapped.boxed();
+        ))
+        .boxed();
 
         // «DecimalExponent» = ( 'e' | 'E' ) [ '-' ] «DecimalInteger» ;
-        let decimal_exponent_parser_unmapped = filter(|&c: &char| c == 'e' || c == 'E')
+        let decimal_exponent_parser = filter(|&c: &char| c == 'e' || c == 'E')
             .map(|_| FixedTerminal::<1>())
             .then(just('-').map(|_| FixedTerminal::<1>()).or_not())
             .then(decimal_integer_parser.clone())
-            .map(|v| Box::new(decimal_exponent::_T0::new(v)));
-        let decimal_exponent_parser = decimal_exponent_parser_unmapped.boxed();
+            .map(|v| Box::new(decimal_exponent::_T0::new(v)))
+            .boxed();
 
         // «DecimalFloat» = [ «DecimalInteger» ] '.' «DecimalInteger» ;
-        let decimal_float_parser_unmapped = decimal_integer_parser
+        let decimal_float_parser = decimal_integer_parser
             .clone()
             .or_not()
             .then(just('.').map(|_| FixedTerminal::<1>()))
             .then(decimal_integer_parser.clone())
-            .map(|v| Box::new(decimal_float::_T0::new(v)));
-        let decimal_float_parser = decimal_float_parser_unmapped.boxed();
+            .map(|v| Box::new(decimal_float::_T0::new(v)))
+            .boxed();
 
         // «HexByteEscape» = 'x' 2…2*{ «HexCharacter» } ;
-        let hex_byte_escape_parser_unmapped = just('x')
+        let hex_byte_escape_parser = just('x')
             .map(|_| FixedTerminal::<1>())
             .then(
                 filter(|&c: &char| {
@@ -610,11 +602,11 @@ impl Parsers {
                 .exactly(2usize)
                 .map(|v| v.len()),
             )
-            .map(|v| Box::new(hex_byte_escape::_T0::new(v)));
-        let hex_byte_escape_parser = hex_byte_escape_parser_unmapped.boxed();
+            .map(|v| Box::new(hex_byte_escape::_T0::new(v)))
+            .boxed();
 
         // «HexNumber» = '0' 'x' 1…*{ «HexCharacter» / [ '_' ] } ;
-        let hex_number_parser_unmapped = just('0')
+        let hex_number_parser = just('0')
             .map(|_| FixedTerminal::<1>())
             .then(just('x').map(|_| FixedTerminal::<1>()))
             .then(
@@ -639,11 +631,11 @@ impl Parsers {
                 .map(repetition_mapper)
                 .map(|v| Box::new(hex_number::_T1::new(v))),
             )
-            .map(|v| Box::new(hex_number::_T0::new(v)));
-        let hex_number_parser = hex_number_parser_unmapped.boxed();
+            .map(|v| Box::new(hex_number::_T0::new(v)))
+            .boxed();
 
         // «IGNORE» = { «Whitespace» | «Comment» | «LineComment» } ;
-        let ignore_parser_unmapped = choice((
+        let ignore_parser = choice((
             whitespace_parser
                 .clone()
                 .map(|v| Box::new(ignore::_T1::Whitespace(v))),
@@ -654,22 +646,22 @@ impl Parsers {
                 .clone()
                 .map(|v| Box::new(ignore::_T1::LineComment(v))),
         ))
-        .repeated();
-        let ignore_parser = ignore_parser_unmapped.boxed();
+        .repeated()
+        .boxed();
 
         // «IdentifierPart» = «IdentifierStart» | '0'…'9' ;
-        let identifier_part_parser_unmapped = filter(|&c: &char| {
+        let identifier_part_parser = filter(|&c: &char| {
             c == '_'
                 || c == '$'
                 || ('a' <= c && c <= 'z')
                 || ('A' <= c && c <= 'Z')
                 || ('0' <= c && c <= '9')
         })
-        .map(|_| FixedTerminal::<1>());
-        let identifier_part_parser = identifier_part_parser_unmapped.boxed();
+        .map(|_| FixedTerminal::<1>())
+        .boxed();
 
         // «PossiblySeparatedPairsOfHexDigits» = 1…*{ 2…2*{ «HexCharacter» } / [ '_' ] } ;
-        let possibly_separated_pairs_of_hex_digits_parser_unmapped = filter(|&c: &char| {
+        let possibly_separated_pairs_of_hex_digits_parser = filter(|&c: &char| {
             ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
         })
         .map(|_| FixedTerminal::<1>())
@@ -692,19 +684,18 @@ impl Parsers {
                 .repeated(),
         )
         .map(repetition_mapper)
-        .map(|v| Box::new(possibly_separated_pairs_of_hex_digits::_T0::new(v)));
-        let possibly_separated_pairs_of_hex_digits_parser =
-            possibly_separated_pairs_of_hex_digits_parser_unmapped.boxed();
+        .map(|v| Box::new(possibly_separated_pairs_of_hex_digits::_T0::new(v)))
+        .boxed();
 
         // «UfixedType» = 'u' «FixedType» ;
-        let ufixed_type_parser_unmapped = just('u')
+        let ufixed_type_parser = just('u')
             .map(|_| FixedTerminal::<1>())
             .then(fixed_type_parser.clone())
-            .map(|v| Box::new(ufixed_type::_T0::new(v)));
-        let ufixed_type_parser = ufixed_type_parser_unmapped.boxed();
+            .map(|v| Box::new(ufixed_type::_T0::new(v)))
+            .boxed();
 
         // «UnicodeEscape» = 'u' 4…4*{ «HexCharacter» } ;
-        let unicode_escape_parser_unmapped = just('u')
+        let unicode_escape_parser = just('u')
             .map(|_| FixedTerminal::<1>())
             .then(
                 filter(|&c: &char| {
@@ -715,18 +706,18 @@ impl Parsers {
                 .exactly(4usize)
                 .map(|v| v.len()),
             )
-            .map(|v| Box::new(unicode_escape::_T0::new(v)));
-        let unicode_escape_parser = unicode_escape_parser_unmapped.boxed();
+            .map(|v| Box::new(unicode_escape::_T0::new(v)))
+            .boxed();
 
         // «UnsignedIntegerType» = 'u' «SignedIntegerType» ;
-        let unsigned_integer_type_parser_unmapped = just('u')
+        let unsigned_integer_type_parser = just('u')
             .map(|_| FixedTerminal::<1>())
             .then(signed_integer_type_parser.clone())
-            .map(|v| Box::new(unsigned_integer_type::_T0::new(v)));
-        let unsigned_integer_type_parser = unsigned_integer_type_parser_unmapped.boxed();
+            .map(|v| Box::new(unsigned_integer_type::_T0::new(v)))
+            .boxed();
 
         // «YulReservedWord» = «YulKeyword» | «YulEVMBuiltinFunctionName» | «BooleanLiteral» ;
-        let yul_reserved_word_parser_unmapped = choice::<_, ErrorType>((
+        let yul_reserved_word_parser = choice::<_, ErrorType>((
             terminal("Blockhash").map(|_| 9usize),
             terminal("a").ignore_then(choice((
                 terminal("dd").ignore_then(choice((
@@ -889,61 +880,128 @@ impl Parsers {
                 terminal("rue").map(|_| 4usize),
             ))),
             terminal("xor").map(|_| 3usize),
-        ));
-        let yul_reserved_word_parser = yul_reserved_word_parser_unmapped.boxed();
+        ))
+        .boxed();
 
-        // AddSubOperator = '+' | '-' ;
-        let add_sub_operator_parser_unmapped =
-            filter(|&c: &char| c == '+' || c == '-').map(|_| FixedTerminal::<1>());
-        let add_sub_operator_parser = add_sub_operator_parser_unmapped.boxed();
+        // AddSubExpression = Expression ( '+' | '-' ) Expression ;
+        let add_sub_expression_parser = expression_parser
+            .clone()
+            .then(ignore_parser.clone())
+            .then(filter(|&c: &char| c == '+' || c == '-').map(|_| FixedTerminal::<1>()))
+            .then(ignore_parser.clone())
+            .then(expression_parser.clone())
+            .map(|v| Box::new(add_sub_expression::_T0::new(v)))
+            .boxed();
 
-        // AssignmentOperator = '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ;
-        let assignment_operator_parser_unmapped = choice::<_, ErrorType>((
-            terminal("%=").map(|_| 2usize),
-            terminal("&=").map(|_| 2usize),
-            terminal("*=").map(|_| 2usize),
-            terminal("+=").map(|_| 2usize),
-            terminal("-=").map(|_| 2usize),
-            terminal("/=").map(|_| 2usize),
-            terminal("<<=").map(|_| 3usize),
-            terminal("=").map(|_| 1usize),
-            terminal(">>").ignore_then(choice((
-                terminal("=").map(|_| 3usize),
-                terminal(">=").map(|_| 4usize),
-            ))),
-            terminal("^=").map(|_| 2usize),
-            terminal("|=").map(|_| 2usize),
-        ));
-        let assignment_operator_parser = assignment_operator_parser_unmapped.boxed();
+        // AndExpression = Expression '&&' Expression ;
+        let and_expression_parser = expression_parser
+            .clone()
+            .then(ignore_parser.clone())
+            .then(terminal("&&").ignored().map(|_| FixedTerminal::<2usize>()))
+            .then(ignore_parser.clone())
+            .then(expression_parser.clone())
+            .map(|v| Box::new(and_expression::_T0::new(v)))
+            .boxed();
+
+        // AssignmentExpression = Expression ( '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ) Expression ;
+        let assignment_expression_parser = expression_parser
+            .clone()
+            .then(ignore_parser.clone())
+            .then(choice::<_, ErrorType>((
+                terminal("%=").map(|_| 2usize),
+                terminal("&=").map(|_| 2usize),
+                terminal("*=").map(|_| 2usize),
+                terminal("+=").map(|_| 2usize),
+                terminal("-=").map(|_| 2usize),
+                terminal("/=").map(|_| 2usize),
+                terminal("<<=").map(|_| 3usize),
+                terminal("=").map(|_| 1usize),
+                terminal(">>").ignore_then(choice((
+                    terminal("=").map(|_| 3usize),
+                    terminal(">=").map(|_| 4usize),
+                ))),
+                terminal("^=").map(|_| 2usize),
+                terminal("|=").map(|_| 2usize),
+            )))
+            .then(ignore_parser.clone())
+            .then(expression_parser.clone())
+            .map(|v| Box::new(assignment_expression::_T0::new(v)))
+            .boxed();
+
+        // BitAndExpression = Expression '&' Expression ;
+        let bit_and_expression_parser = expression_parser
+            .clone()
+            .then(ignore_parser.clone())
+            .then(just('&').map(|_| FixedTerminal::<1>()))
+            .then(ignore_parser.clone())
+            .then(expression_parser.clone())
+            .map(|v| Box::new(bit_and_expression::_T0::new(v)))
+            .boxed();
+
+        // BitOrExpression = Expression '|' Expression ;
+        let bit_or_expression_parser = expression_parser
+            .clone()
+            .then(ignore_parser.clone())
+            .then(just('|').map(|_| FixedTerminal::<1>()))
+            .then(ignore_parser.clone())
+            .then(expression_parser.clone())
+            .map(|v| Box::new(bit_or_expression::_T0::new(v)))
+            .boxed();
+
+        // BitXOrExpression = Expression '^' Expression ;
+        let bit_x_or_expression_parser = expression_parser
+            .clone()
+            .then(ignore_parser.clone())
+            .then(just('^').map(|_| FixedTerminal::<1>()))
+            .then(ignore_parser.clone())
+            .then(expression_parser.clone())
+            .map(|v| Box::new(bit_x_or_expression::_T0::new(v)))
+            .boxed();
 
         // BreakStatement = 'break' ';' ;
-        let break_statement_parser_unmapped = terminal("break")
+        let break_statement_parser = terminal("break")
             .ignored()
             .map(|_| FixedTerminal::<5usize>())
             .then(ignore_parser.clone())
             .then(just(';').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(break_statement::_T0::new(v)));
-        let break_statement_parser = break_statement_parser_unmapped.boxed();
+            .map(|v| Box::new(break_statement::_T0::new(v)))
+            .boxed();
+
+        // ConditionalExpression = Expression [ '?' Expression ':' Expression ] ;
+        let conditional_expression_parser = expression_parser
+            .clone()
+            .then(ignore_parser.clone())
+            .then(
+                just('?')
+                    .map(|_| FixedTerminal::<1>())
+                    .then(expression_parser.clone())
+                    .then(just(':').map(|_| FixedTerminal::<1>()))
+                    .then(expression_parser.clone())
+                    .map(|v| Box::new(conditional_expression::_T1::new(v)))
+                    .or_not(),
+            )
+            .map(|v| Box::new(conditional_expression::_T0::new(v)))
+            .boxed();
 
         // ContinueStatement = 'continue' ';' ;
-        let continue_statement_parser_unmapped = terminal("continue")
+        let continue_statement_parser = terminal("continue")
             .ignored()
             .map(|_| FixedTerminal::<8usize>())
             .then(ignore_parser.clone())
             .then(just(';').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(continue_statement::_T0::new(v)));
-        let continue_statement_parser = continue_statement_parser_unmapped.boxed();
+            .map(|v| Box::new(continue_statement::_T0::new(v)))
+            .boxed();
 
         // DataLocation = 'memory' | 'storage' | 'calldata' ;
-        let data_location_parser_unmapped = choice::<_, ErrorType>((
+        let data_location_parser = choice::<_, ErrorType>((
             terminal("calldata").map(|_| 8usize),
             terminal("memory").map(|_| 6usize),
             terminal("storage").map(|_| 7usize),
-        ));
-        let data_location_parser = data_location_parser_unmapped.boxed();
+        ))
+        .boxed();
 
         // «DecimalNumber» = ( «DecimalInteger» | «DecimalFloat» ) [ «DecimalExponent» ] ;
-        let decimal_number_parser_unmapped = choice((
+        let decimal_number_parser = choice((
             decimal_integer_parser
                 .clone()
                 .map(|v| Box::new(decimal_number::_T1::DecimalInteger(v))),
@@ -952,11 +1010,11 @@ impl Parsers {
                 .map(|v| Box::new(decimal_number::_T1::DecimalFloat(v))),
         ))
         .then(decimal_exponent_parser.clone().or_not())
-        .map(|v| Box::new(decimal_number::_T0::new(v)));
-        let decimal_number_parser = decimal_number_parser_unmapped.boxed();
+        .map(|v| Box::new(decimal_number::_T0::new(v)))
+        .boxed();
 
         // ElementaryType = 'bool' | 'string' | 'bytes' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | «FixedType» | «UfixedType» ;
-        let elementary_type_parser_unmapped = choice((
+        let elementary_type_parser = choice((
             choice::<_, ErrorType>((
                 terminal("b").ignore_then(choice((
                     terminal("ool").map(|_| 4usize),
@@ -980,18 +1038,24 @@ impl Parsers {
             ufixed_type_parser
                 .clone()
                 .map(|v| Box::new(elementary_type::_T0::UfixedType(v))),
-        ));
-        let elementary_type_parser = elementary_type_parser_unmapped.boxed();
+        ))
+        .boxed();
 
-        // EqualityComparisonOperator = '==' | '!=' ;
-        let equality_comparison_operator_parser_unmapped =
-            choice::<_, ErrorType>((terminal("!=").ignored(), terminal("==").ignored()))
-                .map(|_| FixedTerminal::<2usize>());
-        let equality_comparison_operator_parser =
-            equality_comparison_operator_parser_unmapped.boxed();
+        // EqualityComparisonExpression = Expression ( '==' | '!=' ) Expression ;
+        let equality_comparison_expression_parser = expression_parser
+            .clone()
+            .then(ignore_parser.clone())
+            .then(
+                choice::<_, ErrorType>((terminal("!=").ignored(), terminal("==").ignored()))
+                    .map(|_| FixedTerminal::<2usize>()),
+            )
+            .then(ignore_parser.clone())
+            .then(expression_parser.clone())
+            .map(|v| Box::new(equality_comparison_expression::_T0::new(v)))
+            .boxed();
 
         // «EscapeSequence» = '\\' ( «AsciiEscape» | «HexByteEscape» | «UnicodeEscape» ) ;
-        let escape_sequence_parser_unmapped = just('\\')
+        let escape_sequence_parser = just('\\')
             .map(|_| FixedTerminal::<1>())
             .then(choice((
                 filter(|&c: &char| {
@@ -1013,11 +1077,21 @@ impl Parsers {
                     .clone()
                     .map(|v| Box::new(escape_sequence::_T1::UnicodeEscape(v))),
             )))
-            .map(|v| Box::new(escape_sequence::_T0::new(v)));
-        let escape_sequence_parser = escape_sequence_parser_unmapped.boxed();
+            .map(|v| Box::new(escape_sequence::_T0::new(v)))
+            .boxed();
+
+        // ExponentiationExpression = Expression '**' Expression ;
+        let exponentiation_expression_parser = expression_parser
+            .clone()
+            .then(ignore_parser.clone())
+            .then(terminal("**").ignored().map(|_| FixedTerminal::<2usize>()))
+            .then(ignore_parser.clone())
+            .then(expression_parser.clone())
+            .map(|v| Box::new(exponentiation_expression::_T0::new(v)))
+            .boxed();
 
         // «HexStringLiteral» = 'hex' ( '"' [ «PossiblySeparatedPairsOfHexDigits» ] '"' | '\'' [ «PossiblySeparatedPairsOfHexDigits» ] '\'' ) ;
-        let hex_string_literal_parser_unmapped = terminal("hex")
+        let hex_string_literal_parser = terminal("hex")
             .ignored()
             .map(|_| FixedTerminal::<3usize>())
             .then(choice((
@@ -1042,11 +1116,33 @@ impl Parsers {
                     .map(|v| Box::new(hex_string_literal::_T3::new(v)))
                     .map(|v| Box::new(hex_string_literal::_T1::_T3(v))),
             )))
-            .map(|v| Box::new(hex_string_literal::_T0::new(v)));
-        let hex_string_literal_parser = hex_string_literal_parser_unmapped.boxed();
+            .map(|v| Box::new(hex_string_literal::_T0::new(v)))
+            .boxed();
+
+        // IndexAccessExpression = Expression { '[' [ Expression ] [ ':' [ Expression ] ] ']' } ;
+        let index_access_expression_parser = expression_parser
+            .clone()
+            .then(ignore_parser.clone())
+            .then(
+                just('[')
+                    .map(|_| FixedTerminal::<1>())
+                    .then(expression_parser.clone().or_not())
+                    .then(
+                        just(':')
+                            .map(|_| FixedTerminal::<1>())
+                            .then(expression_parser.clone().or_not())
+                            .map(|v| Box::new(index_access_expression::_T3::new(v)))
+                            .or_not(),
+                    )
+                    .then(just(']').map(|_| FixedTerminal::<1>()))
+                    .map(|v| Box::new(index_access_expression::_T2::new(v)))
+                    .repeated(),
+            )
+            .map(|v| Box::new(index_access_expression::_T0::new(v)))
+            .boxed();
 
         // «Keyword» = 'pragma' | 'abstract' | 'anonymous' | 'address' | 'as' | 'assembly' | 'bool' | 'break' | 'bytes' | 'calldata' | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum' | 'event' | 'external' | 'fallback' | 'false' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import' | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override' | 'payable' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct' | 'true' | 'try' | 'type' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | 'fixed' | 'ufixed' ;
-        let keyword_parser_unmapped = choice((
+        let keyword_parser = choice((
             choice::<_, ErrorType>((
                 terminal("a").ignore_then(choice((
                     terminal("bstract").map(|_| 8usize),
@@ -1178,29 +1274,52 @@ impl Parsers {
                 terminal("ufixed").map(|_| 6usize),
             ))
             .map(|v| Box::new(keyword::_T0::_4(v))),
-        ));
-        let keyword_parser = keyword_parser_unmapped.boxed();
+        ))
+        .boxed();
 
-        // MulDivModOperator = '*' | '/' | '%' ;
-        let mul_div_mod_operator_parser_unmapped =
-            filter(|&c: &char| c == '*' || c == '/' || c == '%').map(|_| FixedTerminal::<1>());
-        let mul_div_mod_operator_parser = mul_div_mod_operator_parser_unmapped.boxed();
+        // MulDivModExpression = Expression ( '*' | '/' | '%' ) Expression ;
+        let mul_div_mod_expression_parser = expression_parser
+            .clone()
+            .then(ignore_parser.clone())
+            .then(
+                filter(|&c: &char| c == '*' || c == '/' || c == '%').map(|_| FixedTerminal::<1>()),
+            )
+            .then(ignore_parser.clone())
+            .then(expression_parser.clone())
+            .map(|v| Box::new(mul_div_mod_expression::_T0::new(v)))
+            .boxed();
 
-        // OrderComparisonOperator = '<' | '>' | '<=' | '>=' ;
-        let order_comparison_operator_parser_unmapped = choice::<_, ErrorType>((
-            terminal("<").ignore_then(choice((
-                terminal("=").map(|_| 2usize),
-                empty().map(|_| 1usize),
-            ))),
-            terminal(">").ignore_then(choice((
-                terminal("=").map(|_| 2usize),
-                empty().map(|_| 1usize),
-            ))),
-        ));
-        let order_comparison_operator_parser = order_comparison_operator_parser_unmapped.boxed();
+        // OrExpression = Expression '||' Expression ;
+        let or_expression_parser = expression_parser
+            .clone()
+            .then(ignore_parser.clone())
+            .then(terminal("||").ignored().map(|_| FixedTerminal::<2usize>()))
+            .then(ignore_parser.clone())
+            .then(expression_parser.clone())
+            .map(|v| Box::new(or_expression::_T0::new(v)))
+            .boxed();
+
+        // OrderComparisonExpression = Expression ( '<' | '>' | '<=' | '>=' ) Expression ;
+        let order_comparison_expression_parser = expression_parser
+            .clone()
+            .then(ignore_parser.clone())
+            .then(choice::<_, ErrorType>((
+                terminal("<").ignore_then(choice((
+                    terminal("=").map(|_| 2usize),
+                    empty().map(|_| 1usize),
+                ))),
+                terminal(">").ignore_then(choice((
+                    terminal("=").map(|_| 2usize),
+                    empty().map(|_| 1usize),
+                ))),
+            )))
+            .then(ignore_parser.clone())
+            .then(expression_parser.clone())
+            .map(|v| Box::new(order_comparison_expression::_T0::new(v)))
+            .boxed();
 
         // PositionalArgumentList = 1…*{ Expression / ',' } ;
-        let positional_argument_list_parser_unmapped = expression_parser
+        let positional_argument_list_parser = expression_parser
             .clone()
             .then(
                 just(',')
@@ -1209,11 +1328,11 @@ impl Parsers {
                     .repeated(),
             )
             .map(repetition_mapper)
-            .map(|v| Box::new(positional_argument_list::_T0::new(v)));
-        let positional_argument_list_parser = positional_argument_list_parser_unmapped.boxed();
+            .map(|v| Box::new(positional_argument_list::_T0::new(v)))
+            .boxed();
 
         // «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;
-        let raw_identifier_parser_unmapped = filter(|&c: &char| {
+        let raw_identifier_parser = filter(|&c: &char| {
             c == '_' || c == '$' || ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z')
         })
         .map(|_| FixedTerminal::<1>())
@@ -1229,31 +1348,37 @@ impl Parsers {
             .repeated()
             .map(|v| v.len()),
         )
-        .map(|v| Box::new(raw_identifier::_T0::new(v)));
-        let raw_identifier_parser = raw_identifier_parser_unmapped.boxed();
+        .map(|v| Box::new(raw_identifier::_T0::new(v)))
+        .boxed();
 
-        // ShiftOperator = '<<' | '>>' | '>>>' ;
-        let shift_operator_parser_unmapped = choice::<_, ErrorType>((
-            terminal("<<").map(|_| 2usize),
-            terminal(">>").ignore_then(choice((
-                terminal(">").map(|_| 3usize),
-                empty().map(|_| 2usize),
-            ))),
-        ));
-        let shift_operator_parser = shift_operator_parser_unmapped.boxed();
+        // ShiftExpression = Expression ( '<<' | '>>' | '>>>' ) Expression ;
+        let shift_expression_parser = expression_parser
+            .clone()
+            .then(ignore_parser.clone())
+            .then(choice::<_, ErrorType>((
+                terminal("<<").map(|_| 2usize),
+                terminal(">>").ignore_then(choice((
+                    terminal(">").map(|_| 3usize),
+                    empty().map(|_| 2usize),
+                ))),
+            )))
+            .then(ignore_parser.clone())
+            .then(expression_parser.clone())
+            .map(|v| Box::new(shift_expression::_T0::new(v)))
+            .boxed();
 
         // StateMutabilitySpecifier = 'pure' | 'view' | 'payable' ;
-        let state_mutability_specifier_parser_unmapped = choice::<_, ErrorType>((
+        let state_mutability_specifier_parser = choice::<_, ErrorType>((
             terminal("p").ignore_then(choice((
                 terminal("ayable").map(|_| 7usize),
                 terminal("ure").map(|_| 4usize),
             ))),
             terminal("view").map(|_| 4usize),
-        ));
-        let state_mutability_specifier_parser = state_mutability_specifier_parser_unmapped.boxed();
+        ))
+        .boxed();
 
-        // UnaryPrefixOperator = '++' | '--' | '!' | '~' | 'delete' | '-' ;
-        let unary_prefix_operator_parser_unmapped = choice::<_, ErrorType>((
+        // UnaryPrefixExpression = [ '++' | '--' | '!' | '~' | 'delete' | '-' ] Expression ;
+        let unary_prefix_expression_parser = choice::<_, ErrorType>((
             terminal("!").map(|_| 1usize),
             terminal("++").map(|_| 2usize),
             terminal("-").ignore_then(choice((
@@ -1262,55 +1387,65 @@ impl Parsers {
             ))),
             terminal("delete").map(|_| 6usize),
             terminal("~").map(|_| 1usize),
-        ));
-        let unary_prefix_operator_parser = unary_prefix_operator_parser_unmapped.boxed();
+        ))
+        .or_not()
+        .then(ignore_parser.clone())
+        .then(expression_parser.clone())
+        .map(|v| Box::new(unary_prefix_expression::_T0::new(v)))
+        .boxed();
 
-        // UnarySuffixOperator = '++' | '--' ;
-        let unary_suffix_operator_parser_unmapped =
-            choice::<_, ErrorType>((terminal("++").ignored(), terminal("--").ignored()))
-                .map(|_| FixedTerminal::<2usize>());
-        let unary_suffix_operator_parser = unary_suffix_operator_parser_unmapped.boxed();
+        // UnarySuffixExpression = Expression [ '++' | '--' ] ;
+        let unary_suffix_expression_parser = expression_parser
+            .clone()
+            .then(ignore_parser.clone())
+            .then(
+                choice::<_, ErrorType>((terminal("++").ignored(), terminal("--").ignored()))
+                    .map(|_| FixedTerminal::<2usize>())
+                    .or_not(),
+            )
+            .map(|v| Box::new(unary_suffix_expression::_T0::new(v)))
+            .boxed();
 
         // UncheckedBlock = 'unchecked' Block ;
-        let unchecked_block_parser_unmapped = terminal("unchecked")
+        let unchecked_block_parser = terminal("unchecked")
             .ignored()
             .map(|_| FixedTerminal::<9usize>())
             .then(ignore_parser.clone())
             .then(block_parser.clone())
-            .map(|v| Box::new(unchecked_block::_T0::new(v)));
-        let unchecked_block_parser = unchecked_block_parser_unmapped.boxed();
+            .map(|v| Box::new(unchecked_block::_T0::new(v)))
+            .boxed();
 
         // VisibilitySpecifier = 'internal' | 'external' | 'private' | 'public' ;
-        let visibility_specifier_parser_unmapped = choice::<_, ErrorType>((
+        let visibility_specifier_parser = choice::<_, ErrorType>((
             terminal("external").map(|_| 8usize),
             terminal("internal").map(|_| 8usize),
             terminal("p").ignore_then(choice((
                 terminal("rivate").map(|_| 7usize),
                 terminal("ublic").map(|_| 6usize),
             ))),
-        ));
-        let visibility_specifier_parser = visibility_specifier_parser_unmapped.boxed();
+        ))
+        .boxed();
 
         // YulBreakStatement = 'break' ;
-        let yul_break_statement_parser_unmapped = terminal("break")
+        let yul_break_statement_parser = terminal("break")
             .ignored()
-            .map(|_| FixedTerminal::<5usize>());
-        let yul_break_statement_parser = yul_break_statement_parser_unmapped.boxed();
+            .map(|_| FixedTerminal::<5usize>())
+            .boxed();
 
         // YulContinueStatement = 'continue' ;
-        let yul_continue_statement_parser_unmapped = terminal("continue")
+        let yul_continue_statement_parser = terminal("continue")
             .ignored()
-            .map(|_| FixedTerminal::<8usize>());
-        let yul_continue_statement_parser = yul_continue_statement_parser_unmapped.boxed();
+            .map(|_| FixedTerminal::<8usize>())
+            .boxed();
 
         // YulLeaveStatement = 'leave' ;
-        let yul_leave_statement_parser_unmapped = terminal("leave")
+        let yul_leave_statement_parser = terminal("leave")
             .ignored()
-            .map(|_| FixedTerminal::<5usize>());
-        let yul_leave_statement_parser = yul_leave_statement_parser_unmapped.boxed();
+            .map(|_| FixedTerminal::<5usize>())
+            .boxed();
 
         // «DoubleQuotedAsciiStringLiteral» = '"' { 1…*{ '\u{20}'…'~' - ( '"' | '\\' ) } | «EscapeSequence» } '"' ;
-        let double_quoted_ascii_string_literal_parser_unmapped = just('"')
+        let double_quoted_ascii_string_literal_parser = just('"')
             .map(|_| FixedTerminal::<1>())
             .then(
                 choice((
@@ -1327,12 +1462,11 @@ impl Parsers {
                 .repeated(),
             )
             .then(just('"').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(double_quoted_ascii_string_literal::_T0::new(v)));
-        let double_quoted_ascii_string_literal_parser =
-            double_quoted_ascii_string_literal_parser_unmapped.boxed();
+            .map(|v| Box::new(double_quoted_ascii_string_literal::_T0::new(v)))
+            .boxed();
 
         // «DoubleQuotedUnicodeStringLiteral» = 'unicode"' { 1…*{ ¬( '"' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '"' ;
-        let double_quoted_unicode_string_literal_parser_unmapped = terminal("unicode\"")
+        let double_quoted_unicode_string_literal_parser = terminal("unicode\"")
             .ignored()
             .map(|_| FixedTerminal::<8usize>())
             .then(
@@ -1350,12 +1484,11 @@ impl Parsers {
                 .repeated(),
             )
             .then(just('"').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(double_quoted_unicode_string_literal::_T0::new(v)));
-        let double_quoted_unicode_string_literal_parser =
-            double_quoted_unicode_string_literal_parser_unmapped.boxed();
+            .map(|v| Box::new(double_quoted_unicode_string_literal::_T0::new(v)))
+            .boxed();
 
         // ElementaryTypeWithPayable = 'address' [ 'payable' ] | ElementaryType ;
-        let elementary_type_with_payable_parser_unmapped = choice((
+        let elementary_type_with_payable_parser = choice((
             terminal("address")
                 .ignored()
                 .map(|_| FixedTerminal::<7usize>())
@@ -1370,12 +1503,11 @@ impl Parsers {
             elementary_type_parser
                 .clone()
                 .map(|v| Box::new(elementary_type_with_payable::_T0::ElementaryType(v))),
-        ));
-        let elementary_type_with_payable_parser =
-            elementary_type_with_payable_parser_unmapped.boxed();
+        ))
+        .boxed();
 
         // ElementaryTypeWithoutPayable = 'address' | ElementaryType ;
-        let elementary_type_without_payable_parser_unmapped = choice((
+        let elementary_type_without_payable_parser = choice((
             terminal("address")
                 .ignored()
                 .map(|_| FixedTerminal::<7usize>())
@@ -1383,12 +1515,11 @@ impl Parsers {
             elementary_type_parser
                 .clone()
                 .map(|v| Box::new(elementary_type_without_payable::_T0::ElementaryType(v))),
-        ));
-        let elementary_type_without_payable_parser =
-            elementary_type_without_payable_parser_unmapped.boxed();
+        ))
+        .boxed();
 
         // NumericLiteral = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
-        let numeric_literal_parser_unmapped = choice((
+        let numeric_literal_parser = choice((
             decimal_number_parser
                 .clone()
                 .map(|v| Box::new(numeric_literal::_T1::DecimalNumber(v))),
@@ -1413,11 +1544,11 @@ impl Parsers {
             ))
             .or_not(),
         )
-        .map(|v| Box::new(numeric_literal::_T0::new(v)));
-        let numeric_literal_parser = numeric_literal_parser_unmapped.boxed();
+        .map(|v| Box::new(numeric_literal::_T0::new(v)))
+        .boxed();
 
         // «ReservedWord» = «Keyword» | «ReservedKeyword» | «NumberUnit» | «BooleanLiteral» ;
-        let reserved_word_parser_unmapped = choice((
+        let reserved_word_parser = choice((
             keyword_parser
                 .clone()
                 .map(|v| Box::new(reserved_word::_T0::Keyword(v))),
@@ -1498,11 +1629,11 @@ impl Parsers {
                 terminal("years").map(|_| 5usize),
             ))
             .map(|v| Box::new(reserved_word::_T0::_1(v))),
-        ));
-        let reserved_word_parser = reserved_word_parser_unmapped.boxed();
+        ))
+        .boxed();
 
         // «SingleQuotedAsciiStringLiteral» = '\'' { 1…*{ '\u{20}'…'~' - ( '\'' | '\\' ) } | «EscapeSequence» } '\'' ;
-        let single_quoted_ascii_string_literal_parser_unmapped = just('\'')
+        let single_quoted_ascii_string_literal_parser = just('\'')
             .map(|_| FixedTerminal::<1>())
             .then(
                 choice((
@@ -1519,12 +1650,11 @@ impl Parsers {
                 .repeated(),
             )
             .then(just('\'').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(single_quoted_ascii_string_literal::_T0::new(v)));
-        let single_quoted_ascii_string_literal_parser =
-            single_quoted_ascii_string_literal_parser_unmapped.boxed();
+            .map(|v| Box::new(single_quoted_ascii_string_literal::_T0::new(v)))
+            .boxed();
 
         // «SingleQuotedUnicodeStringLiteral» = 'unicode\'' { 1…*{ ¬( '\'' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '\'' ;
-        let single_quoted_unicode_string_literal_parser_unmapped = terminal("unicode'")
+        let single_quoted_unicode_string_literal_parser = terminal("unicode'")
             .ignored()
             .map(|_| FixedTerminal::<8usize>())
             .then(
@@ -1542,12 +1672,11 @@ impl Parsers {
                 .repeated(),
             )
             .then(just('\'').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(single_quoted_unicode_string_literal::_T0::new(v)));
-        let single_quoted_unicode_string_literal_parser =
-            single_quoted_unicode_string_literal_parser_unmapped.boxed();
+            .map(|v| Box::new(single_quoted_unicode_string_literal::_T0::new(v)))
+            .boxed();
 
         // «YulIdentifier» = «RawIdentifier» - «YulReservedWord» ;
-        let yul_identifier_parser_unmapped = difference(
+        let yul_identifier_parser = difference(
             raw_identifier_parser.clone(),
             choice::<_, ErrorType>((
                 terminal("Blockhash").map(|_| 9usize),
@@ -1713,22 +1842,22 @@ impl Parsers {
                 ))),
                 terminal("xor").map(|_| 3usize),
             )),
-        );
-        let yul_identifier_parser = yul_identifier_parser_unmapped.boxed();
+        )
+        .boxed();
 
         // «AsciiStringLiteral» = «SingleQuotedAsciiStringLiteral» | «DoubleQuotedAsciiStringLiteral» ;
-        let ascii_string_literal_parser_unmapped = choice((
+        let ascii_string_literal_parser = choice((
             single_quoted_ascii_string_literal_parser
                 .clone()
                 .map(|v| Box::new(ascii_string_literal::_T0::SingleQuotedAsciiStringLiteral(v))),
             double_quoted_ascii_string_literal_parser
                 .clone()
                 .map(|v| Box::new(ascii_string_literal::_T0::DoubleQuotedAsciiStringLiteral(v))),
-        ));
-        let ascii_string_literal_parser = ascii_string_literal_parser_unmapped.boxed();
+        ))
+        .boxed();
 
         // AssemblyFlags = '(' 1…*{ «DoubleQuotedAsciiStringLiteral» / ',' } ')' ;
-        let assembly_flags_parser_unmapped = just('(')
+        let assembly_flags_parser = just('(')
             .map(|_| FixedTerminal::<1>())
             .then(ignore_parser.clone())
             .then(
@@ -1745,16 +1874,15 @@ impl Parsers {
             )
             .then(ignore_parser.clone())
             .then(just(')').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(assembly_flags::_T0::new(v)));
-        let assembly_flags_parser = assembly_flags_parser_unmapped.boxed();
+            .map(|v| Box::new(assembly_flags::_T0::new(v)))
+            .boxed();
 
         // «Identifier» = «RawIdentifier» - «ReservedWord» ;
-        let identifier_parser_unmapped =
-            difference(raw_identifier_parser.clone(), reserved_word_parser.clone());
-        let identifier_parser = identifier_parser_unmapped.boxed();
+        let identifier_parser =
+            difference(raw_identifier_parser.clone(), reserved_word_parser.clone()).boxed();
 
         // «UnicodeStringLiteral» = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral» ;
-        let unicode_string_literal_parser_unmapped = choice((
+        let unicode_string_literal_parser = choice((
             single_quoted_unicode_string_literal_parser
                 .clone()
                 .map(|v| {
@@ -1765,11 +1893,11 @@ impl Parsers {
                 .map(|v| {
                     Box::new(unicode_string_literal::_T0::DoubleQuotedUnicodeStringLiteral(v))
                 }),
-        ));
-        let unicode_string_literal_parser = unicode_string_literal_parser_unmapped.boxed();
+        ))
+        .boxed();
 
         // YulFunctionCall = ( «YulIdentifier» | «YulEVMBuiltinFunctionName» ) '(' { YulExpression / ',' } ')' ;
-        let yul_function_call_parser_unmapped = choice((
+        let yul_function_call_parser = choice((
             yul_identifier_parser
                 .clone()
                 .map(|v| Box::new(yul_function_call::_T1::YulIdentifier(v))),
@@ -1932,11 +2060,11 @@ impl Parsers {
         )
         .then(ignore_parser.clone())
         .then(just(')').map(|_| FixedTerminal::<1>()))
-        .map(|v| Box::new(yul_function_call::_T0::new(v)));
-        let yul_function_call_parser = yul_function_call_parser_unmapped.boxed();
+        .map(|v| Box::new(yul_function_call::_T0::new(v)))
+        .boxed();
 
         // YulFunctionDefinition = 'function' «YulIdentifier» '(' { «YulIdentifier» / ',' } ')' [ '->' 1…*{ «YulIdentifier» / ',' } ] YulBlock ;
-        let yul_function_definition_parser_unmapped = terminal("function")
+        let yul_function_definition_parser = terminal("function")
             .ignored()
             .map(|_| FixedTerminal::<8usize>())
             .then(ignore_parser.clone())
@@ -1981,11 +2109,11 @@ impl Parsers {
             )
             .then(ignore_parser.clone())
             .then(yul_block_parser.clone())
-            .map(|v| Box::new(yul_function_definition::_T0::new(v)));
-        let yul_function_definition_parser = yul_function_definition_parser_unmapped.boxed();
+            .map(|v| Box::new(yul_function_definition::_T0::new(v)))
+            .boxed();
 
         // YulPath = «YulIdentifier» { '.' ( «YulIdentifier» | «YulEVMBuiltinFunctionName» ) } ;
-        let yul_path_parser_unmapped = yul_identifier_parser
+        let yul_path_parser = yul_identifier_parser
             .clone()
             .then(ignore_parser.clone())
             .then(
@@ -2139,11 +2267,11 @@ impl Parsers {
                     .map(|v| Box::new(yul_path::_T2::new(v)))
                     .repeated(),
             )
-            .map(|v| Box::new(yul_path::_T0::new(v)));
-        let yul_path_parser = yul_path_parser_unmapped.boxed();
+            .map(|v| Box::new(yul_path::_T0::new(v)))
+            .boxed();
 
         // EnumDefinition = 'enum' «Identifier» '{' 1…*{ «Identifier» / ',' } '}' ;
-        let enum_definition_parser_unmapped = terminal("enum")
+        let enum_definition_parser = terminal("enum")
             .ignored()
             .map(|_| FixedTerminal::<4usize>())
             .then(ignore_parser.clone())
@@ -2165,11 +2293,11 @@ impl Parsers {
             )
             .then(ignore_parser.clone())
             .then(just('}').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(enum_definition::_T0::new(v)));
-        let enum_definition_parser = enum_definition_parser_unmapped.boxed();
+            .map(|v| Box::new(enum_definition::_T0::new(v)))
+            .boxed();
 
         // IdentifierPath = 1…*{ «Identifier» / '.' } ;
-        let identifier_path_parser_unmapped = identifier_parser
+        let identifier_path_parser = identifier_parser
             .clone()
             .then(
                 just('.')
@@ -2178,15 +2306,14 @@ impl Parsers {
                     .repeated(),
             )
             .map(repetition_mapper)
-            .map(|v| Box::new(identifier_path::_T0::new(v)));
-        let identifier_path_parser = identifier_path_parser_unmapped.boxed();
+            .map(|v| Box::new(identifier_path::_T0::new(v)))
+            .boxed();
 
         // ImportPath = «AsciiStringLiteral» ;
-        let import_path_parser_unmapped = ascii_string_literal_parser.clone();
-        let import_path_parser = import_path_parser_unmapped.boxed();
+        let import_path_parser = ascii_string_literal_parser.clone().boxed();
 
         // Literal = «AsciiStringLiteral» | «UnicodeStringLiteral» | NumericLiteral | «HexStringLiteral» | «BooleanLiteral» ;
-        let literal_parser_unmapped = choice((
+        let literal_parser = choice((
             ascii_string_literal_parser
                 .clone()
                 .map(|v| Box::new(literal::_T0::AsciiStringLiteral(v))),
@@ -2204,21 +2331,43 @@ impl Parsers {
                 terminal("true").map(|_| 4usize),
             ))
             .map(|v| Box::new(literal::_T0::_4(v))),
-        ));
-        let literal_parser = literal_parser_unmapped.boxed();
+        ))
+        .boxed();
+
+        // MemberAccessExpression = Expression { '.' ( «Identifier» | 'address' ) } ;
+        let member_access_expression_parser = expression_parser
+            .clone()
+            .then(ignore_parser.clone())
+            .then(
+                just('.')
+                    .map(|_| FixedTerminal::<1>())
+                    .then(choice((
+                        identifier_parser
+                            .clone()
+                            .map(|v| Box::new(member_access_expression::_T3::Identifier(v))),
+                        terminal("address")
+                            .ignored()
+                            .map(|_| FixedTerminal::<7usize>())
+                            .map(|v| Box::new(member_access_expression::_T3::Address(v))),
+                    )))
+                    .map(|v| Box::new(member_access_expression::_T2::new(v)))
+                    .repeated(),
+            )
+            .map(|v| Box::new(member_access_expression::_T0::new(v)))
+            .boxed();
 
         // NamedArgument = «Identifier» ':' Expression ;
-        let named_argument_parser_unmapped = identifier_parser
+        let named_argument_parser = identifier_parser
             .clone()
             .then(ignore_parser.clone())
             .then(just(':').map(|_| FixedTerminal::<1>()))
             .then(ignore_parser.clone())
             .then(expression_parser.clone())
-            .map(|v| Box::new(named_argument::_T0::new(v)));
-        let named_argument_parser = named_argument_parser_unmapped.boxed();
+            .map(|v| Box::new(named_argument::_T0::new(v)))
+            .boxed();
 
         // ParameterDeclaration = TypeName [ DataLocation ] [ «Identifier» ] ;
-        let parameter_declaration_parser_unmapped = type_name_parser
+        let parameter_declaration_parser = type_name_parser
             .clone()
             .then(ignore_parser.clone())
             .then(
@@ -2231,11 +2380,11 @@ impl Parsers {
             )
             .then(ignore_parser.clone())
             .then(identifier_parser.clone().or_not())
-            .map(|v| Box::new(parameter_declaration::_T0::new(v)));
-        let parameter_declaration_parser = parameter_declaration_parser_unmapped.boxed();
+            .map(|v| Box::new(parameter_declaration::_T0::new(v)))
+            .boxed();
 
         // SelectedImport = «Identifier» [ 'as' «Identifier» ] ;
-        let selected_import_parser_unmapped = identifier_parser
+        let selected_import_parser = identifier_parser
             .clone()
             .then(ignore_parser.clone())
             .then(
@@ -2246,11 +2395,11 @@ impl Parsers {
                     .map(|v| Box::new(selected_import::_T1::new(v)))
                     .or_not(),
             )
-            .map(|v| Box::new(selected_import::_T0::new(v)));
-        let selected_import_parser = selected_import_parser_unmapped.boxed();
+            .map(|v| Box::new(selected_import::_T0::new(v)))
+            .boxed();
 
         // UserDefinedValueTypeDefinition = 'type' «Identifier» 'is' ElementaryTypeWithPayable ';' ;
-        let user_defined_value_type_definition_parser_unmapped = terminal("type")
+        let user_defined_value_type_definition_parser = terminal("type")
             .ignored()
             .map(|_| FixedTerminal::<4usize>())
             .then(ignore_parser.clone())
@@ -2261,12 +2410,11 @@ impl Parsers {
             .then(elementary_type_with_payable_parser.clone())
             .then(ignore_parser.clone())
             .then(just(';').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(user_defined_value_type_definition::_T0::new(v)));
-        let user_defined_value_type_definition_parser =
-            user_defined_value_type_definition_parser_unmapped.boxed();
+            .map(|v| Box::new(user_defined_value_type_definition::_T0::new(v)))
+            .boxed();
 
         // YulLiteral = «YulDecimalNumberLiteral» | «YulHexLiteral» | «AsciiStringLiteral» | «BooleanLiteral» | «HexStringLiteral» ;
-        let yul_literal_parser_unmapped = choice((
+        let yul_literal_parser = choice((
             yul_decimal_number_literal_parser
                 .clone()
                 .map(|v| Box::new(yul_literal::_T0::YulDecimalNumberLiteral(v))),
@@ -2284,11 +2432,37 @@ impl Parsers {
             hex_string_literal_parser
                 .clone()
                 .map(|v| Box::new(yul_literal::_T0::HexStringLiteral(v))),
-        ));
-        let yul_literal_parser = yul_literal_parser_unmapped.boxed();
+        ))
+        .boxed();
+
+        // FunctionCallOptionsExpression = Expression { '{' 1…*{ NamedArgument / ',' } '}' } ;
+        let function_call_options_expression_parser = expression_parser
+            .clone()
+            .then(ignore_parser.clone())
+            .then(
+                just('{')
+                    .map(|_| FixedTerminal::<1>())
+                    .then(
+                        named_argument_parser
+                            .clone()
+                            .then(
+                                just(',')
+                                    .map(|_| FixedTerminal::<1>())
+                                    .then(named_argument_parser.clone())
+                                    .repeated(),
+                            )
+                            .map(repetition_mapper)
+                            .map(|v| Box::new(function_call_options_expression::_T3::new(v))),
+                    )
+                    .then(just('}').map(|_| FixedTerminal::<1>()))
+                    .map(|v| Box::new(function_call_options_expression::_T2::new(v)))
+                    .repeated(),
+            )
+            .map(|v| Box::new(function_call_options_expression::_T0::new(v)))
+            .boxed();
 
         // MappingType = 'mapping' '(' ( ElementaryTypeWithoutPayable | IdentifierPath ) '=>' TypeName ')' ;
-        let mapping_type_parser_unmapped = terminal("mapping")
+        let mapping_type_parser = terminal("mapping")
             .ignored()
             .map(|_| FixedTerminal::<7usize>())
             .then(ignore_parser.clone())
@@ -2308,11 +2482,11 @@ impl Parsers {
             .then(type_name_parser.clone())
             .then(ignore_parser.clone())
             .then(just(')').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(mapping_type::_T0::new(v)));
-        let mapping_type_parser = mapping_type_parser_unmapped.boxed();
+            .map(|v| Box::new(mapping_type::_T0::new(v)))
+            .boxed();
 
         // NamedArgumentList = '{' { NamedArgument / ',' } '}' ;
-        let named_argument_list_parser_unmapped = just('{')
+        let named_argument_list_parser = just('{')
             .map(|_| FixedTerminal::<1>())
             .then(ignore_parser.clone())
             .then(
@@ -2330,11 +2504,11 @@ impl Parsers {
             )
             .then(ignore_parser.clone())
             .then(just('}').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(named_argument_list::_T0::new(v)));
-        let named_argument_list_parser = named_argument_list_parser_unmapped.boxed();
+            .map(|v| Box::new(named_argument_list::_T0::new(v)))
+            .boxed();
 
         // NonEmptyParameterList = '(' 1…*{ ParameterDeclaration / ',' } ')' ;
-        let non_empty_parameter_list_parser_unmapped = just('(')
+        let non_empty_parameter_list_parser = just('(')
             .map(|_| FixedTerminal::<1>())
             .then(ignore_parser.clone())
             .then(
@@ -2351,11 +2525,11 @@ impl Parsers {
             )
             .then(ignore_parser.clone())
             .then(just(')').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(non_empty_parameter_list::_T0::new(v)));
-        let non_empty_parameter_list_parser = non_empty_parameter_list_parser_unmapped.boxed();
+            .map(|v| Box::new(non_empty_parameter_list::_T0::new(v)))
+            .boxed();
 
         // OverrideSpecifier = 'override' [ '(' 1…1*{ IdentifierPath / ',' } ')' ] ;
-        let override_specifier_parser_unmapped = terminal("override")
+        let override_specifier_parser = terminal("override")
             .ignored()
             .map(|_| FixedTerminal::<8usize>())
             .then(ignore_parser.clone())
@@ -2379,11 +2553,11 @@ impl Parsers {
                     .map(|v| Box::new(override_specifier::_T1::new(v)))
                     .or_not(),
             )
-            .map(|v| Box::new(override_specifier::_T0::new(v)));
-        let override_specifier_parser = override_specifier_parser_unmapped.boxed();
+            .map(|v| Box::new(override_specifier::_T0::new(v)))
+            .boxed();
 
         // ParameterList = '(' { ParameterDeclaration / ',' } ')' ;
-        let parameter_list_parser_unmapped = just('(')
+        let parameter_list_parser = just('(')
             .map(|_| FixedTerminal::<1>())
             .then(ignore_parser.clone())
             .then(
@@ -2401,11 +2575,11 @@ impl Parsers {
             )
             .then(ignore_parser.clone())
             .then(just(')').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(parameter_list::_T0::new(v)));
-        let parameter_list_parser = parameter_list_parser_unmapped.boxed();
+            .map(|v| Box::new(parameter_list::_T0::new(v)))
+            .boxed();
 
         // SelectingImportDirective = '{' 1…*{ SelectedImport / ',' } '}' 'from' ImportPath ;
-        let selecting_import_directive_parser_unmapped = just('{')
+        let selecting_import_directive_parser = just('{')
             .map(|_| FixedTerminal::<1>())
             .then(ignore_parser.clone())
             .then(
@@ -2430,11 +2604,11 @@ impl Parsers {
             )
             .then(ignore_parser.clone())
             .then(import_path_parser.clone())
-            .map(|v| Box::new(selecting_import_directive::_T0::new(v)));
-        let selecting_import_directive_parser = selecting_import_directive_parser_unmapped.boxed();
+            .map(|v| Box::new(selecting_import_directive::_T0::new(v)))
+            .boxed();
 
         // SimpleImportDirective = ImportPath { 'as' «Identifier» } ;
-        let simple_import_directive_parser_unmapped = import_path_parser
+        let simple_import_directive_parser = import_path_parser
             .clone()
             .then(ignore_parser.clone())
             .then(
@@ -2445,11 +2619,11 @@ impl Parsers {
                     .map(|v| Box::new(simple_import_directive::_T2::new(v)))
                     .repeated(),
             )
-            .map(|v| Box::new(simple_import_directive::_T0::new(v)));
-        let simple_import_directive_parser = simple_import_directive_parser_unmapped.boxed();
+            .map(|v| Box::new(simple_import_directive::_T0::new(v)))
+            .boxed();
 
         // StarImportDirective = '*' 'as' «Identifier» 'from' ImportPath ;
-        let star_import_directive_parser_unmapped = just('*')
+        let star_import_directive_parser = just('*')
             .map(|_| FixedTerminal::<1>())
             .then(ignore_parser.clone())
             .then(terminal("as").ignored().map(|_| FixedTerminal::<2usize>()))
@@ -2463,25 +2637,27 @@ impl Parsers {
             )
             .then(ignore_parser.clone())
             .then(import_path_parser.clone())
-            .map(|v| Box::new(star_import_directive::_T0::new(v)));
-        let star_import_directive_parser = star_import_directive_parser_unmapped.boxed();
+            .map(|v| Box::new(star_import_directive::_T0::new(v)))
+            .boxed();
 
         // YulExpression = YulPath | YulFunctionCall | YulLiteral ;
-        yul_expression_parser_unmapped.define(choice((
-            yul_path_parser
-                .clone()
-                .map(|v| Box::new(yul_expression::_T0::YulPath(v))),
-            yul_function_call_parser
-                .clone()
-                .map(|v| Box::new(yul_expression::_T0::YulFunctionCall(v))),
-            yul_literal_parser
-                .clone()
-                .map(|v| Box::new(yul_expression::_T0::YulLiteral(v))),
-        )));
-        yul_expression_parser.define(yul_expression_parser_unmapped.boxed());
+        yul_expression_parser.define(
+            choice((
+                yul_path_parser
+                    .clone()
+                    .map(|v| Box::new(yul_expression::_T0::YulPath(v))),
+                yul_function_call_parser
+                    .clone()
+                    .map(|v| Box::new(yul_expression::_T0::YulFunctionCall(v))),
+                yul_literal_parser
+                    .clone()
+                    .map(|v| Box::new(yul_expression::_T0::YulLiteral(v))),
+            ))
+            .boxed(),
+        );
 
         // ArgumentList = '(' [ PositionalArgumentList | NamedArgumentList ] ')' ;
-        let argument_list_parser_unmapped = just('(')
+        let argument_list_parser = just('(')
             .map(|_| FixedTerminal::<1>())
             .then(ignore_parser.clone())
             .then(
@@ -2497,11 +2673,11 @@ impl Parsers {
             )
             .then(ignore_parser.clone())
             .then(just(')').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(argument_list::_T0::new(v)));
-        let argument_list_parser = argument_list_parser_unmapped.boxed();
+            .map(|v| Box::new(argument_list::_T0::new(v)))
+            .boxed();
 
         // CatchClause = 'catch' [ [ «Identifier» ] NonEmptyParameterList ] Block ;
-        let catch_clause_parser_unmapped = terminal("catch")
+        let catch_clause_parser = terminal("catch")
             .ignored()
             .map(|_| FixedTerminal::<5usize>())
             .then(ignore_parser.clone())
@@ -2515,11 +2691,11 @@ impl Parsers {
             )
             .then(ignore_parser.clone())
             .then(block_parser.clone())
-            .map(|v| Box::new(catch_clause::_T0::new(v)));
-        let catch_clause_parser = catch_clause_parser_unmapped.boxed();
+            .map(|v| Box::new(catch_clause::_T0::new(v)))
+            .boxed();
 
         // FunctionType = 'function' ParameterList { VisibilitySpecifier | StateMutabilitySpecifier } [ 'returns' NonEmptyParameterList ] ;
-        let function_type_parser_unmapped = terminal("function")
+        let function_type_parser = terminal("function")
             .ignored()
             .map(|_| FixedTerminal::<8usize>())
             .then(ignore_parser.clone())
@@ -2550,11 +2726,11 @@ impl Parsers {
                     .map(|v| Box::new(function_type::_T2::new(v)))
                     .or_not(),
             )
-            .map(|v| Box::new(function_type::_T0::new(v)));
-        let function_type_parser = function_type_parser_unmapped.boxed();
+            .map(|v| Box::new(function_type::_T0::new(v)))
+            .boxed();
 
         // ImportDirective = 'import' ( SimpleImportDirective | StarImportDirective | SelectingImportDirective ) ';' ;
-        let import_directive_parser_unmapped = terminal("import")
+        let import_directive_parser = terminal("import")
             .ignored()
             .map(|_| FixedTerminal::<6usize>())
             .then(ignore_parser.clone())
@@ -2571,11 +2747,11 @@ impl Parsers {
             )))
             .then(ignore_parser.clone())
             .then(just(';').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(import_directive::_T0::new(v)));
-        let import_directive_parser = import_directive_parser_unmapped.boxed();
+            .map(|v| Box::new(import_directive::_T0::new(v)))
+            .boxed();
 
         // MethodAttribute = 'virtual' | OverrideSpecifier ;
-        let method_attribute_parser_unmapped = choice((
+        let method_attribute_parser = choice((
             terminal("virtual")
                 .ignored()
                 .map(|_| FixedTerminal::<7usize>())
@@ -2583,11 +2759,11 @@ impl Parsers {
             override_specifier_parser
                 .clone()
                 .map(|v| Box::new(method_attribute::_T0::OverrideSpecifier(v))),
-        ));
-        let method_attribute_parser = method_attribute_parser_unmapped.boxed();
+        ))
+        .boxed();
 
         // StateVariableAttribute = 'public' | 'private' | 'internal' | 'constant' | OverrideSpecifier | 'immutable' ;
-        let state_variable_attribute_parser_unmapped = choice((
+        let state_variable_attribute_parser = choice((
             choice::<_, ErrorType>((
                 terminal("constant").map(|_| 8usize),
                 terminal("internal").map(|_| 8usize),
@@ -2604,11 +2780,11 @@ impl Parsers {
                 .ignored()
                 .map(|_| FixedTerminal::<9usize>())
                 .map(|v| Box::new(state_variable_attribute::_T0::Immutable(v))),
-        ));
-        let state_variable_attribute_parser = state_variable_attribute_parser_unmapped.boxed();
+        ))
+        .boxed();
 
         // YulAssignment = YulPath ( ':=' YulExpression | 1…*{ ',' YulPath } ':=' YulFunctionCall ) ;
-        let yul_assignment_parser_unmapped = yul_path_parser
+        let yul_assignment_parser = yul_path_parser
             .clone()
             .then(ignore_parser.clone())
             .then(choice((
@@ -2629,11 +2805,11 @@ impl Parsers {
                     .map(|v| Box::new(yul_assignment::_T3::new(v)))
                     .map(|v| Box::new(yul_assignment::_T1::_T3(v))),
             )))
-            .map(|v| Box::new(yul_assignment::_T0::new(v)));
-        let yul_assignment_parser = yul_assignment_parser_unmapped.boxed();
+            .map(|v| Box::new(yul_assignment::_T0::new(v)))
+            .boxed();
 
         // YulForStatement = 'for' YulBlock YulExpression YulBlock YulBlock ;
-        let yul_for_statement_parser_unmapped = terminal("for")
+        let yul_for_statement_parser = terminal("for")
             .ignored()
             .map(|_| FixedTerminal::<3usize>())
             .then(ignore_parser.clone())
@@ -2644,22 +2820,22 @@ impl Parsers {
             .then(yul_block_parser.clone())
             .then(ignore_parser.clone())
             .then(yul_block_parser.clone())
-            .map(|v| Box::new(yul_for_statement::_T0::new(v)));
-        let yul_for_statement_parser = yul_for_statement_parser_unmapped.boxed();
+            .map(|v| Box::new(yul_for_statement::_T0::new(v)))
+            .boxed();
 
         // YulIfStatement = 'if' YulExpression YulBlock ;
-        let yul_if_statement_parser_unmapped = terminal("if")
+        let yul_if_statement_parser = terminal("if")
             .ignored()
             .map(|_| FixedTerminal::<2usize>())
             .then(ignore_parser.clone())
             .then(yul_expression_parser.clone())
             .then(ignore_parser.clone())
             .then(yul_block_parser.clone())
-            .map(|v| Box::new(yul_if_statement::_T0::new(v)));
-        let yul_if_statement_parser = yul_if_statement_parser_unmapped.boxed();
+            .map(|v| Box::new(yul_if_statement::_T0::new(v)))
+            .boxed();
 
         // YulSwitchStatement = 'switch' YulExpression ( 1…*{ 'case' YulLiteral YulBlock } [ 'default' YulBlock ] | 'default' YulBlock ) ;
-        let yul_switch_statement_parser_unmapped = terminal("switch")
+        let yul_switch_statement_parser = terminal("switch")
             .ignored()
             .map(|_| FixedTerminal::<6usize>())
             .then(ignore_parser.clone())
@@ -2691,11 +2867,11 @@ impl Parsers {
                     .map(|v| Box::new(yul_switch_statement::_T6::new(v)))
                     .map(|v| Box::new(yul_switch_statement::_T1::_T6(v))),
             )))
-            .map(|v| Box::new(yul_switch_statement::_T0::new(v)));
-        let yul_switch_statement_parser = yul_switch_statement_parser_unmapped.boxed();
+            .map(|v| Box::new(yul_switch_statement::_T0::new(v)))
+            .boxed();
 
         // YulVariableDeclaration = 'let' «YulIdentifier» [ ':=' YulExpression | [ ',' «YulIdentifier» ] [ ':=' YulFunctionCall ] ] ;
-        let yul_variable_declaration_parser_unmapped = terminal("let")
+        let yul_variable_declaration_parser = terminal("let")
             .ignored()
             .map(|_| FixedTerminal::<3usize>())
             .then(ignore_parser.clone())
@@ -2727,27 +2903,35 @@ impl Parsers {
                 ))
                 .or_not(),
             )
-            .map(|v| Box::new(yul_variable_declaration::_T0::new(v)));
-        let yul_variable_declaration_parser = yul_variable_declaration_parser_unmapped.boxed();
+            .map(|v| Box::new(yul_variable_declaration::_T0::new(v)))
+            .boxed();
+
+        // FunctionCallExpression = Expression { ArgumentList } ;
+        let function_call_expression_parser = expression_parser
+            .clone()
+            .then(ignore_parser.clone())
+            .then(argument_list_parser.clone().repeated())
+            .map(|v| Box::new(function_call_expression::_T0::new(v)))
+            .boxed();
 
         // InheritanceSpecifier = IdentifierPath [ ArgumentList ] ;
-        let inheritance_specifier_parser_unmapped = identifier_path_parser
+        let inheritance_specifier_parser = identifier_path_parser
             .clone()
             .then(ignore_parser.clone())
             .then(argument_list_parser.clone().or_not())
-            .map(|v| Box::new(inheritance_specifier::_T0::new(v)));
-        let inheritance_specifier_parser = inheritance_specifier_parser_unmapped.boxed();
+            .map(|v| Box::new(inheritance_specifier::_T0::new(v)))
+            .boxed();
 
         // ModifierInvocation = IdentifierPath [ ArgumentList ] ;
-        let modifier_invocation_parser_unmapped = identifier_path_parser
+        let modifier_invocation_parser = identifier_path_parser
             .clone()
             .then(ignore_parser.clone())
             .then(argument_list_parser.clone().or_not())
-            .map(|v| Box::new(modifier_invocation::_T0::new(v)));
-        let modifier_invocation_parser = modifier_invocation_parser_unmapped.boxed();
+            .map(|v| Box::new(modifier_invocation::_T0::new(v)))
+            .boxed();
 
         // TypeName = ( ElementaryTypeWithPayable | FunctionType | MappingType | IdentifierPath ) { '[' [ Expression ] ']' } ;
-        type_name_parser_unmapped.define(
+        type_name_parser.define(
             choice((
                 elementary_type_with_payable_parser
                     .clone()
@@ -2771,12 +2955,12 @@ impl Parsers {
                     .map(|v| Box::new(type_name::_T3::new(v)))
                     .repeated(),
             )
-            .map(|v| Box::new(type_name::_T0::new(v))),
+            .map(|v| Box::new(type_name::_T0::new(v)))
+            .boxed(),
         );
-        type_name_parser.define(type_name_parser_unmapped.boxed());
 
         // YulStatement = YulBlock | YulVariableDeclaration | YulFunctionDefinition | YulAssignment | YulFunctionCall | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement ;
-        let yul_statement_parser_unmapped = choice((
+        let yul_statement_parser = choice((
             yul_block_parser
                 .clone()
                 .map(|v| Box::new(yul_statement::_T0::YulBlock(v))),
@@ -2807,11 +2991,11 @@ impl Parsers {
                 terminal("leave").map(|_| 5usize),
             ))
             .map(|v| Box::new(yul_statement::_T0::_8(v))),
-        ));
-        let yul_statement_parser = yul_statement_parser_unmapped.boxed();
+        ))
+        .boxed();
 
         // ConstructorAttribute = ModifierInvocation | 'payable' | 'internal' | 'public' ;
-        let constructor_attribute_parser_unmapped = choice((
+        let constructor_attribute_parser = choice((
             modifier_invocation_parser
                 .clone()
                 .map(|v| Box::new(constructor_attribute::_T0::ModifierInvocation(v))),
@@ -2823,19 +3007,19 @@ impl Parsers {
                 ))),
             ))
             .map(|v| Box::new(constructor_attribute::_T0::_1(v))),
-        ));
-        let constructor_attribute_parser = constructor_attribute_parser_unmapped.boxed();
+        ))
+        .boxed();
 
         // ErrorParameter = TypeName [ «Identifier» ] ;
-        let error_parameter_parser_unmapped = type_name_parser
+        let error_parameter_parser = type_name_parser
             .clone()
             .then(ignore_parser.clone())
             .then(identifier_parser.clone().or_not())
-            .map(|v| Box::new(error_parameter::_T0::new(v)));
-        let error_parameter_parser = error_parameter_parser_unmapped.boxed();
+            .map(|v| Box::new(error_parameter::_T0::new(v)))
+            .boxed();
 
         // EventParameter = TypeName [ 'indexed' ] [ «Identifier» ] ;
-        let event_parameter_parser_unmapped = type_name_parser
+        let event_parameter_parser = type_name_parser
             .clone()
             .then(ignore_parser.clone())
             .then(
@@ -2846,315 +3030,11 @@ impl Parsers {
             )
             .then(ignore_parser.clone())
             .then(identifier_parser.clone().or_not())
-            .map(|v| Box::new(event_parameter::_T0::new(v)));
-        let event_parameter_parser = event_parameter_parser_unmapped.boxed();
-
-        // Expression = 1…*{ Expression / AssignmentOperator } | Expression [ '?' Expression ':' Expression ] | 1…*{ Expression / '||' } | 1…*{ Expression / '&&' } | 1…*{ Expression / EqualityComparisonOperator } | 1…*{ Expression / OrderComparisonOperator } | 1…*{ Expression / '|' } | 1…*{ Expression / '^' } | 1…*{ Expression / '&' } | 1…*{ Expression / ShiftOperator } | 1…*{ Expression / AddSubOperator } | 1…*{ Expression / MulDivModOperator } | 1…*{ Expression / '**' } | Expression [ UnarySuffixOperator ] | [ UnaryPrefixOperator ] Expression | Expression { ArgumentList } | Expression { '{' 1…*{ NamedArgument / ',' } '}' } | Expression { '.' ( «Identifier» | 'address' ) } | Expression { '[' [ Expression ] [ ':' [ Expression ] ] ']' } | 'payable' ArgumentList | 'type' '(' TypeName ')' | 'new' TypeName | '(' 1…*{ [ Expression ] / ',' } ')' | '[' 1…*{ Expression / ',' } ']' | «Identifier» | Literal | ElementaryTypeWithoutPayable ;
-        expression_parser_unmapped.define({
-            let choice_0 = expression_parser
-                .clone()
-                .then(
-                    choice::<_, ErrorType>((
-                        terminal("%=").map(|_| 2usize),
-                        terminal("&=").map(|_| 2usize),
-                        terminal("*=").map(|_| 2usize),
-                        terminal("+=").map(|_| 2usize),
-                        terminal("-=").map(|_| 2usize),
-                        terminal("/=").map(|_| 2usize),
-                        terminal("<<=").map(|_| 3usize),
-                        terminal("=").map(|_| 1usize),
-                        terminal(">>").ignore_then(choice((
-                            terminal("=").map(|_| 3usize),
-                            terminal(">=").map(|_| 4usize),
-                        ))),
-                        terminal("^=").map(|_| 2usize),
-                        terminal("|=").map(|_| 2usize),
-                    ))
-                    .then(expression_parser.clone())
-                    .repeated(),
-                )
-                .map(repetition_mapper)
-                .map(|v| Box::new(expression::AssignmentExpression::new(v)));
-            let choice_1 = expression_parser
-                .clone()
-                .then(
-                    just('?')
-                        .map(|_| FixedTerminal::<1>())
-                        .then(expression_parser.clone())
-                        .then(just(':').map(|_| FixedTerminal::<1>()))
-                        .then(expression_parser.clone())
-                        .map(|v| Box::new(expression::_T1::new(v)))
-                        .or_not(),
-                )
-                .map(|v| Box::new(expression::ConditionalExpression::new(v)));
-            let choice_2 = expression_parser
-                .clone()
-                .then(
-                    terminal("||")
-                        .ignored()
-                        .map(|_| FixedTerminal::<2usize>())
-                        .then(expression_parser.clone())
-                        .repeated(),
-                )
-                .map(repetition_mapper)
-                .map(|v| Box::new(expression::OrExpression::new(v)));
-            let choice_3 = expression_parser
-                .clone()
-                .then(
-                    terminal("&&")
-                        .ignored()
-                        .map(|_| FixedTerminal::<2usize>())
-                        .then(expression_parser.clone())
-                        .repeated(),
-                )
-                .map(repetition_mapper)
-                .map(|v| Box::new(expression::AndExpression::new(v)));
-            let choice_4 = expression_parser
-                .clone()
-                .then(
-                    choice::<_, ErrorType>((terminal("!=").ignored(), terminal("==").ignored()))
-                        .map(|_| FixedTerminal::<2usize>())
-                        .then(expression_parser.clone())
-                        .repeated(),
-                )
-                .map(repetition_mapper)
-                .map(|v| Box::new(expression::EqualityComparisonExpression::new(v)));
-            let choice_5 = expression_parser
-                .clone()
-                .then(
-                    choice::<_, ErrorType>((
-                        terminal("<").ignore_then(choice((
-                            terminal("=").map(|_| 2usize),
-                            empty().map(|_| 1usize),
-                        ))),
-                        terminal(">").ignore_then(choice((
-                            terminal("=").map(|_| 2usize),
-                            empty().map(|_| 1usize),
-                        ))),
-                    ))
-                    .then(expression_parser.clone())
-                    .repeated(),
-                )
-                .map(repetition_mapper)
-                .map(|v| Box::new(expression::OrderComparisonExpression::new(v)));
-            let choice_6 = expression_parser
-                .clone()
-                .then(
-                    just('|')
-                        .map(|_| FixedTerminal::<1>())
-                        .then(expression_parser.clone())
-                        .repeated(),
-                )
-                .map(repetition_mapper)
-                .map(|v| Box::new(expression::BitOrExpression::new(v)));
-            let choice_7 = expression_parser
-                .clone()
-                .then(
-                    just('^')
-                        .map(|_| FixedTerminal::<1>())
-                        .then(expression_parser.clone())
-                        .repeated(),
-                )
-                .map(repetition_mapper)
-                .map(|v| Box::new(expression::BitXOrExpression::new(v)));
-            let choice_8 = expression_parser
-                .clone()
-                .then(
-                    just('&')
-                        .map(|_| FixedTerminal::<1>())
-                        .then(expression_parser.clone())
-                        .repeated(),
-                )
-                .map(repetition_mapper)
-                .map(|v| Box::new(expression::BitAndExpression::new(v)));
-            let choice_9 = expression_parser
-                .clone()
-                .then(
-                    choice::<_, ErrorType>((
-                        terminal("<<").map(|_| 2usize),
-                        terminal(">>").ignore_then(choice((
-                            terminal(">").map(|_| 3usize),
-                            empty().map(|_| 2usize),
-                        ))),
-                    ))
-                    .then(expression_parser.clone())
-                    .repeated(),
-                )
-                .map(repetition_mapper)
-                .map(|v| Box::new(expression::ShiftExpression::new(v)));
-            let choice_10 = expression_parser
-                .clone()
-                .then(
-                    filter(|&c: &char| c == '+' || c == '-')
-                        .map(|_| FixedTerminal::<1>())
-                        .then(expression_parser.clone())
-                        .repeated(),
-                )
-                .map(repetition_mapper)
-                .map(|v| Box::new(expression::AddSubExpression::new(v)));
-            let choice_11 = expression_parser
-                .clone()
-                .then(
-                    filter(|&c: &char| c == '*' || c == '/' || c == '%')
-                        .map(|_| FixedTerminal::<1>())
-                        .then(expression_parser.clone())
-                        .repeated(),
-                )
-                .map(repetition_mapper)
-                .map(|v| Box::new(expression::MulDivModExpression::new(v)));
-            let choice_12 = expression_parser
-                .clone()
-                .then(
-                    terminal("**")
-                        .ignored()
-                        .map(|_| FixedTerminal::<2usize>())
-                        .then(expression_parser.clone())
-                        .repeated(),
-                )
-                .map(repetition_mapper)
-                .map(|v| Box::new(expression::ExponentiationExpression::new(v)));
-            let choice_13 = expression_parser
-                .clone()
-                .then(
-                    choice::<_, ErrorType>((terminal("++").ignored(), terminal("--").ignored()))
-                        .map(|_| FixedTerminal::<2usize>())
-                        .or_not(),
-                )
-                .map(|v| Box::new(expression::UnarySuffixExpression::new(v)));
-            let choice_14 = choice::<_, ErrorType>((
-                terminal("!").map(|_| 1usize),
-                terminal("++").map(|_| 2usize),
-                terminal("-").ignore_then(choice((
-                    terminal("-").map(|_| 2usize),
-                    empty().map(|_| 1usize),
-                ))),
-                terminal("delete").map(|_| 6usize),
-                terminal("~").map(|_| 1usize),
-            ))
-            .or_not()
-            .then(expression_parser.clone())
-            .map(|v| Box::new(expression::UnaryPrefixExpression::new(v)));
-            let choice_15 = expression_parser
-                .clone()
-                .then(argument_list_parser.clone().repeated())
-                .map(|v| Box::new(expression::FunctionCallExpression::new(v)));
-            let choice_16 = expression_parser
-                .clone()
-                .then(
-                    just('{')
-                        .map(|_| FixedTerminal::<1>())
-                        .then(
-                            named_argument_parser
-                                .clone()
-                                .then(
-                                    just(',')
-                                        .map(|_| FixedTerminal::<1>())
-                                        .then(named_argument_parser.clone())
-                                        .repeated(),
-                                )
-                                .map(repetition_mapper)
-                                .map(|v| Box::new(expression::_T5::new(v))),
-                        )
-                        .then(just('}').map(|_| FixedTerminal::<1>()))
-                        .map(|v| Box::new(expression::_T4::new(v)))
-                        .repeated(),
-                )
-                .map(|v| Box::new(expression::FunctionCallOptionsExpression::new(v)));
-            let choice_17 = expression_parser
-                .clone()
-                .then(
-                    just('.')
-                        .map(|_| FixedTerminal::<1>())
-                        .then(choice((
-                            identifier_parser
-                                .clone()
-                                .map(|v| Box::new(expression::_T8::Identifier(v))),
-                            terminal("address")
-                                .ignored()
-                                .map(|_| FixedTerminal::<7usize>())
-                                .map(|v| Box::new(expression::_T8::Address(v))),
-                        )))
-                        .map(|v| Box::new(expression::_T7::new(v)))
-                        .repeated(),
-                )
-                .map(|v| Box::new(expression::MemberAccessExpression::new(v)));
-            let choice_18 = expression_parser
-                .clone()
-                .then(
-                    just('[')
-                        .map(|_| FixedTerminal::<1>())
-                        .then(expression_parser.clone().or_not())
-                        .then(
-                            just(':')
-                                .map(|_| FixedTerminal::<1>())
-                                .then(expression_parser.clone().or_not())
-                                .map(|v| Box::new(expression::_T11::new(v)))
-                                .or_not(),
-                        )
-                        .then(just(']').map(|_| FixedTerminal::<1>()))
-                        .map(|v| Box::new(expression::_T10::new(v)))
-                        .repeated(),
-                )
-                .map(|v| Box::new(expression::IndexAccessExpression::new(v)));
-            let choice_19 = terminal("payable")
-                .ignored()
-                .map(|_| FixedTerminal::<7usize>())
-                .then(argument_list_parser.clone())
-                .map(|v| Box::new(expression::_T12::new(v)));
-            let choice_20 = terminal("type")
-                .ignored()
-                .map(|_| FixedTerminal::<4usize>())
-                .then(just('(').map(|_| FixedTerminal::<1>()))
-                .then(type_name_parser.clone())
-                .then(just(')').map(|_| FixedTerminal::<1>()))
-                .map(|v| Box::new(expression::_T13::new(v)));
-            let choice_21 = terminal("new")
-                .ignored()
-                .map(|_| FixedTerminal::<3usize>())
-                .then(type_name_parser.clone())
-                .map(|v| Box::new(expression::_T14::new(v)));
-            let choice_22 = just('(')
-                .map(|_| FixedTerminal::<1>())
-                .then(
-                    expression_parser
-                        .clone()
-                        .or_not()
-                        .then(
-                            just(',')
-                                .map(|_| FixedTerminal::<1>())
-                                .then(expression_parser.clone().or_not())
-                                .repeated(),
-                        )
-                        .map(repetition_mapper)
-                        .map(|v| Box::new(expression::_T16::new(v))),
-                )
-                .then(just(')').map(|_| FixedTerminal::<1>()))
-                .map(|v| Box::new(expression::_T15::new(v)));
-            let choice_23 = just('[')
-                .map(|_| FixedTerminal::<1>())
-                .then(
-                    expression_parser
-                        .clone()
-                        .then(
-                            just(',')
-                                .map(|_| FixedTerminal::<1>())
-                                .then(expression_parser.clone())
-                                .repeated(),
-                        )
-                        .map(repetition_mapper)
-                        .map(|v| Box::new(expression::_T18::new(v))),
-                )
-                .then(just(']').map(|_| FixedTerminal::<1>()))
-                .map(|v| Box::new(expression::_T17::new(v)));
-            let choice_24 = identifier_parser.clone();
-            let choice_25 = literal_parser.clone();
-            let choice_26 = elementary_type_without_payable_parser.clone();
-            choice_0
-        });
-        expression_parser.define(expression_parser_unmapped.boxed());
+            .map(|v| Box::new(event_parameter::_T0::new(v)))
+            .boxed();
 
         // FallbackFunctionAttribute = 'external' | StateMutabilitySpecifier | ModifierInvocation | 'virtual' | OverrideSpecifier ;
-        let fallback_function_attribute_parser_unmapped = choice((
+        let fallback_function_attribute_parser = choice((
             choice::<_, ErrorType>((
                 terminal("external").map(|_| 8usize),
                 terminal("p").ignore_then(choice((
@@ -3174,12 +3054,11 @@ impl Parsers {
             override_specifier_parser
                 .clone()
                 .map(|v| Box::new(fallback_function_attribute::_T0::OverrideSpecifier(v))),
-        ));
-        let fallback_function_attribute_parser =
-            fallback_function_attribute_parser_unmapped.boxed();
+        ))
+        .boxed();
 
         // FunctionAttribute = VisibilitySpecifier | StateMutabilitySpecifier | ModifierInvocation | 'virtual' | OverrideSpecifier ;
-        let function_attribute_parser_unmapped = choice((
+        let function_attribute_parser = choice((
             choice::<_, ErrorType>((
                 terminal("external").map(|_| 8usize),
                 terminal("internal").map(|_| 8usize),
@@ -3204,11 +3083,11 @@ impl Parsers {
             override_specifier_parser
                 .clone()
                 .map(|v| Box::new(function_attribute::_T0::OverrideSpecifier(v))),
-        ));
-        let function_attribute_parser = function_attribute_parser_unmapped.boxed();
+        ))
+        .boxed();
 
         // InheritanceSpecifierList = 'is' 1…*{ InheritanceSpecifier / ',' } ;
-        let inheritance_specifier_list_parser_unmapped = terminal("is")
+        let inheritance_specifier_list_parser = terminal("is")
             .ignored()
             .map(|_| FixedTerminal::<2usize>())
             .then(ignore_parser.clone())
@@ -3224,11 +3103,80 @@ impl Parsers {
                     .map(repetition_mapper)
                     .map(|v| Box::new(inheritance_specifier_list::_T1::new(v))),
             )
-            .map(|v| Box::new(inheritance_specifier_list::_T0::new(v)));
-        let inheritance_specifier_list_parser = inheritance_specifier_list_parser_unmapped.boxed();
+            .map(|v| Box::new(inheritance_specifier_list::_T0::new(v)))
+            .boxed();
+
+        // PrimaryExpression = 'payable' ArgumentList | 'type' '(' TypeName ')' | 'new' TypeName | '(' 1…*{ [ Expression ] / ',' } ')' | '[' 1…*{ Expression / ',' } ']' | «Identifier» | Literal | ElementaryTypeWithoutPayable ;
+        let primary_expression_parser = choice((
+            terminal("payable")
+                .ignored()
+                .map(|_| FixedTerminal::<7usize>())
+                .then(argument_list_parser.clone())
+                .map(|v| Box::new(primary_expression::_T1::new(v)))
+                .map(|v| Box::new(primary_expression::_T0::_T1(v))),
+            terminal("type")
+                .ignored()
+                .map(|_| FixedTerminal::<4usize>())
+                .then(just('(').map(|_| FixedTerminal::<1>()))
+                .then(type_name_parser.clone())
+                .then(just(')').map(|_| FixedTerminal::<1>()))
+                .map(|v| Box::new(primary_expression::_T2::new(v)))
+                .map(|v| Box::new(primary_expression::_T0::_T2(v))),
+            terminal("new")
+                .ignored()
+                .map(|_| FixedTerminal::<3usize>())
+                .then(type_name_parser.clone())
+                .map(|v| Box::new(primary_expression::_T3::new(v)))
+                .map(|v| Box::new(primary_expression::_T0::_T3(v))),
+            just('(')
+                .map(|_| FixedTerminal::<1>())
+                .then(
+                    expression_parser
+                        .clone()
+                        .or_not()
+                        .then(
+                            just(',')
+                                .map(|_| FixedTerminal::<1>())
+                                .then(expression_parser.clone().or_not())
+                                .repeated(),
+                        )
+                        .map(repetition_mapper)
+                        .map(|v| Box::new(primary_expression::_T5::new(v))),
+                )
+                .then(just(')').map(|_| FixedTerminal::<1>()))
+                .map(|v| Box::new(primary_expression::_T4::new(v)))
+                .map(|v| Box::new(primary_expression::_T0::_T4(v))),
+            just('[')
+                .map(|_| FixedTerminal::<1>())
+                .then(
+                    expression_parser
+                        .clone()
+                        .then(
+                            just(',')
+                                .map(|_| FixedTerminal::<1>())
+                                .then(expression_parser.clone())
+                                .repeated(),
+                        )
+                        .map(repetition_mapper)
+                        .map(|v| Box::new(primary_expression::_T7::new(v))),
+                )
+                .then(just(']').map(|_| FixedTerminal::<1>()))
+                .map(|v| Box::new(primary_expression::_T6::new(v)))
+                .map(|v| Box::new(primary_expression::_T0::_T6(v))),
+            identifier_parser
+                .clone()
+                .map(|v| Box::new(primary_expression::_T0::Identifier(v))),
+            literal_parser
+                .clone()
+                .map(|v| Box::new(primary_expression::_T0::Literal(v))),
+            elementary_type_without_payable_parser
+                .clone()
+                .map(|v| Box::new(primary_expression::_T0::ElementaryTypeWithoutPayable(v))),
+        ))
+        .boxed();
 
         // ReceiveFunctionAttribute = 'external' | 'payable' | ModifierInvocation | 'virtual' | OverrideSpecifier ;
-        let receive_function_attribute_parser_unmapped = choice((
+        let receive_function_attribute_parser = choice((
             choice::<_, ErrorType>((
                 terminal("external").map(|_| 8usize),
                 terminal("payable").map(|_| 7usize),
@@ -3244,11 +3192,11 @@ impl Parsers {
             override_specifier_parser
                 .clone()
                 .map(|v| Box::new(receive_function_attribute::_T0::OverrideSpecifier(v))),
-        ));
-        let receive_function_attribute_parser = receive_function_attribute_parser_unmapped.boxed();
+        ))
+        .boxed();
 
         // StructDefinition = 'struct' «Identifier» '{' 1…*{ TypeName «Identifier» ';' } '}' ;
-        let struct_definition_parser_unmapped = terminal("struct")
+        let struct_definition_parser = terminal("struct")
             .ignored()
             .map(|_| FixedTerminal::<6usize>())
             .then(ignore_parser.clone())
@@ -3267,11 +3215,11 @@ impl Parsers {
             )
             .then(ignore_parser.clone())
             .then(just('}').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(struct_definition::_T0::new(v)));
-        let struct_definition_parser = struct_definition_parser_unmapped.boxed();
+            .map(|v| Box::new(struct_definition::_T0::new(v)))
+            .boxed();
 
         // UsingDirective = 'using' ( IdentifierPath | '{' 1…*{ IdentifierPath / ',' } '}' ) 'for' ( '*' | TypeName ) [ 'global' ] ';' ;
-        let using_directive_parser_unmapped = terminal("using")
+        let using_directive_parser = terminal("using")
             .ignored()
             .map(|_| FixedTerminal::<5usize>())
             .then(ignore_parser.clone())
@@ -3317,11 +3265,11 @@ impl Parsers {
             )
             .then(ignore_parser.clone())
             .then(just(';').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(using_directive::_T0::new(v)));
-        let using_directive_parser = using_directive_parser_unmapped.boxed();
+            .map(|v| Box::new(using_directive::_T0::new(v)))
+            .boxed();
 
         // VariableDeclaration = TypeName [ DataLocation ] «Identifier» ;
-        let variable_declaration_parser_unmapped = type_name_parser
+        let variable_declaration_parser = type_name_parser
             .clone()
             .then(ignore_parser.clone())
             .then(
@@ -3334,23 +3282,23 @@ impl Parsers {
             )
             .then(ignore_parser.clone())
             .then(identifier_parser.clone())
-            .map(|v| Box::new(variable_declaration::_T0::new(v)));
-        let variable_declaration_parser = variable_declaration_parser_unmapped.boxed();
+            .map(|v| Box::new(variable_declaration::_T0::new(v)))
+            .boxed();
 
         // YulBlock = '{' { YulStatement } '}' ;
-        yul_block_parser_unmapped.define(
+        yul_block_parser.define(
             just('{')
                 .map(|_| FixedTerminal::<1>())
                 .then(ignore_parser.clone())
                 .then(yul_statement_parser.clone().repeated())
                 .then(ignore_parser.clone())
                 .then(just('}').map(|_| FixedTerminal::<1>()))
-                .map(|v| Box::new(yul_block::_T0::new(v))),
+                .map(|v| Box::new(yul_block::_T0::new(v)))
+                .boxed(),
         );
-        yul_block_parser.define(yul_block_parser_unmapped.boxed());
 
         // AssemblyStatement = 'assembly' [ '"evmasm"' ] [ AssemblyFlags ] YulBlock ;
-        let assembly_statement_parser_unmapped = terminal("assembly")
+        let assembly_statement_parser = terminal("assembly")
             .ignored()
             .map(|_| FixedTerminal::<8usize>())
             .then(ignore_parser.clone())
@@ -3364,31 +3312,11 @@ impl Parsers {
             .then(assembly_flags_parser.clone().or_not())
             .then(ignore_parser.clone())
             .then(yul_block_parser.clone())
-            .map(|v| Box::new(assembly_statement::_T0::new(v)));
-        let assembly_statement_parser = assembly_statement_parser_unmapped.boxed();
-
-        // ConstantDefinition = TypeName 'constant' «Identifier» '=' Expression ';' ;
-        let constant_definition_parser_unmapped = type_name_parser
-            .clone()
-            .then(ignore_parser.clone())
-            .then(
-                terminal("constant")
-                    .ignored()
-                    .map(|_| FixedTerminal::<8usize>()),
-            )
-            .then(ignore_parser.clone())
-            .then(identifier_parser.clone())
-            .then(ignore_parser.clone())
-            .then(just('=').map(|_| FixedTerminal::<1>()))
-            .then(ignore_parser.clone())
-            .then(expression_parser.clone())
-            .then(ignore_parser.clone())
-            .then(just(';').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(constant_definition::_T0::new(v)));
-        let constant_definition_parser = constant_definition_parser_unmapped.boxed();
+            .map(|v| Box::new(assembly_statement::_T0::new(v)))
+            .boxed();
 
         // Directive = «PragmaDirective» | ImportDirective | UsingDirective ;
-        let directive_parser_unmapped = choice((
+        let directive_parser = choice((
             pragma_directive_parser
                 .clone()
                 .map(|v| Box::new(directive::_T0::PragmaDirective(v))),
@@ -3398,47 +3326,11 @@ impl Parsers {
             using_directive_parser
                 .clone()
                 .map(|v| Box::new(directive::_T0::UsingDirective(v))),
-        ));
-        let directive_parser = directive_parser_unmapped.boxed();
-
-        // DoWhileStatement = 'do' Statement 'while' '(' Expression ')' ';' ;
-        let do_while_statement_parser_unmapped = terminal("do")
-            .ignored()
-            .map(|_| FixedTerminal::<2usize>())
-            .then(ignore_parser.clone())
-            .then(statement_parser.clone())
-            .then(ignore_parser.clone())
-            .then(
-                terminal("while")
-                    .ignored()
-                    .map(|_| FixedTerminal::<5usize>()),
-            )
-            .then(ignore_parser.clone())
-            .then(just('(').map(|_| FixedTerminal::<1>()))
-            .then(ignore_parser.clone())
-            .then(expression_parser.clone())
-            .then(ignore_parser.clone())
-            .then(just(')').map(|_| FixedTerminal::<1>()))
-            .then(ignore_parser.clone())
-            .then(just(';').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(do_while_statement::_T0::new(v)));
-        let do_while_statement_parser = do_while_statement_parser_unmapped.boxed();
-
-        // EmitStatement = 'emit' Expression ArgumentList ';' ;
-        let emit_statement_parser_unmapped = terminal("emit")
-            .ignored()
-            .map(|_| FixedTerminal::<4usize>())
-            .then(ignore_parser.clone())
-            .then(expression_parser.clone())
-            .then(ignore_parser.clone())
-            .then(argument_list_parser.clone())
-            .then(ignore_parser.clone())
-            .then(just(';').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(emit_statement::_T0::new(v)));
-        let emit_statement_parser = emit_statement_parser_unmapped.boxed();
+        ))
+        .boxed();
 
         // ErrorDefinition = 'error' «Identifier» '(' { ErrorParameter / ',' } ')' ';' ;
-        let error_definition_parser_unmapped = terminal("error")
+        let error_definition_parser = terminal("error")
             .ignored()
             .map(|_| FixedTerminal::<5usize>())
             .then(ignore_parser.clone())
@@ -3463,11 +3355,11 @@ impl Parsers {
             .then(just(')').map(|_| FixedTerminal::<1>()))
             .then(ignore_parser.clone())
             .then(just(';').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(error_definition::_T0::new(v)));
-        let error_definition_parser = error_definition_parser_unmapped.boxed();
+            .map(|v| Box::new(error_definition::_T0::new(v)))
+            .boxed();
 
         // EventDefinition = 'event' «Identifier» '(' { EventParameter / ',' } ')' [ 'anonymous' ] ';' ;
-        let event_definition_parser_unmapped = terminal("event")
+        let event_definition_parser = terminal("event")
             .ignored()
             .map(|_| FixedTerminal::<5usize>())
             .then(ignore_parser.clone())
@@ -3499,109 +3391,39 @@ impl Parsers {
             )
             .then(ignore_parser.clone())
             .then(just(';').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(event_definition::_T0::new(v)));
-        let event_definition_parser = event_definition_parser_unmapped.boxed();
+            .map(|v| Box::new(event_definition::_T0::new(v)))
+            .boxed();
 
-        // ExpressionStatement = Expression ';' ;
-        let expression_statement_parser_unmapped = expression_parser
-            .clone()
-            .then(ignore_parser.clone())
-            .then(just(';').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(expression_statement::_T0::new(v)));
-        let expression_statement_parser = expression_statement_parser_unmapped.boxed();
-
-        // IfStatement = 'if' '(' Expression ')' Statement [ 'else' Statement ] ;
-        let if_statement_parser_unmapped = terminal("if")
-            .ignored()
-            .map(|_| FixedTerminal::<2usize>())
-            .then(ignore_parser.clone())
-            .then(just('(').map(|_| FixedTerminal::<1>()))
-            .then(ignore_parser.clone())
-            .then(expression_parser.clone())
-            .then(ignore_parser.clone())
-            .then(just(')').map(|_| FixedTerminal::<1>()))
-            .then(ignore_parser.clone())
-            .then(statement_parser.clone())
-            .then(ignore_parser.clone())
-            .then(
-                terminal("else")
-                    .ignored()
-                    .map(|_| FixedTerminal::<4usize>())
-                    .then(statement_parser.clone())
-                    .map(|v| Box::new(if_statement::_T1::new(v)))
-                    .or_not(),
-            )
-            .map(|v| Box::new(if_statement::_T0::new(v)));
-        let if_statement_parser = if_statement_parser_unmapped.boxed();
-
-        // ReturnStatement = 'return' [ Expression ] ';' ;
-        let return_statement_parser_unmapped = terminal("return")
-            .ignored()
-            .map(|_| FixedTerminal::<6usize>())
-            .then(ignore_parser.clone())
-            .then(expression_parser.clone().or_not())
-            .then(ignore_parser.clone())
-            .then(just(';').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(return_statement::_T0::new(v)));
-        let return_statement_parser = return_statement_parser_unmapped.boxed();
-
-        // RevertStatement = 'revert' Expression ArgumentList ';' ;
-        let revert_statement_parser_unmapped = terminal("revert")
-            .ignored()
-            .map(|_| FixedTerminal::<6usize>())
-            .then(ignore_parser.clone())
-            .then(expression_parser.clone())
-            .then(ignore_parser.clone())
-            .then(argument_list_parser.clone())
-            .then(ignore_parser.clone())
-            .then(just(';').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(revert_statement::_T0::new(v)));
-        let revert_statement_parser = revert_statement_parser_unmapped.boxed();
-
-        // StateVariableDeclaration = TypeName { StateVariableAttribute } «Identifier» [ '=' Expression ] ';' ;
-        let state_variable_declaration_parser_unmapped = type_name_parser
-            .clone()
-            .then(ignore_parser.clone())
-            .then(state_variable_attribute_parser.clone().repeated())
-            .then(ignore_parser.clone())
-            .then(identifier_parser.clone())
-            .then(ignore_parser.clone())
-            .then(
-                just('=')
-                    .map(|_| FixedTerminal::<1>())
-                    .then(expression_parser.clone())
-                    .map(|v| Box::new(state_variable_declaration::_T2::new(v)))
-                    .or_not(),
-            )
-            .then(ignore_parser.clone())
-            .then(just(';').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(state_variable_declaration::_T0::new(v)));
-        let state_variable_declaration_parser = state_variable_declaration_parser_unmapped.boxed();
-
-        // TryStatement = 'try' Expression [ 'returns' NonEmptyParameterList ] Block 1…*{ CatchClause } ;
-        let try_statement_parser_unmapped = terminal("try")
-            .ignored()
-            .map(|_| FixedTerminal::<3usize>())
-            .then(ignore_parser.clone())
-            .then(expression_parser.clone())
-            .then(ignore_parser.clone())
-            .then(
-                terminal("returns")
-                    .ignored()
-                    .map(|_| FixedTerminal::<7usize>())
-                    .then(non_empty_parameter_list_parser.clone())
-                    .map(|v| Box::new(try_statement::_T1::new(v)))
-                    .or_not(),
-            )
-            .then(ignore_parser.clone())
-            .then(block_parser.clone())
-            .then(ignore_parser.clone())
-            .then(catch_clause_parser.clone().repeated().at_least(1usize))
-            .map(|v| Box::new(try_statement::_T0::new(v)));
-        let try_statement_parser = try_statement_parser_unmapped.boxed();
+        // Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnarySuffixExpression | UnaryPrefixExpression | FunctionCallExpression | FunctionCallOptionsExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
+        expression_parser.define(
+            {
+                let choice_19 = primary_expression_parser.clone().boxed();
+                let choice_18 = index_access_expression_parser.clone().boxed();
+                let choice_17 = member_access_expression_parser.clone().boxed();
+                let choice_16 = function_call_options_expression_parser.clone().boxed();
+                let choice_15 = function_call_expression_parser.clone().boxed();
+                let choice_14 = unary_prefix_expression_parser.clone().boxed();
+                let choice_13 = unary_suffix_expression_parser.clone().boxed();
+                let choice_12 = exponentiation_expression_parser.clone().boxed();
+                let choice_11 = mul_div_mod_expression_parser.clone().boxed();
+                let choice_10 = add_sub_expression_parser.clone().boxed();
+                let choice_9 = shift_expression_parser.clone().boxed();
+                let choice_8 = bit_and_expression_parser.clone().boxed();
+                let choice_7 = bit_x_or_expression_parser.clone().boxed();
+                let choice_6 = bit_or_expression_parser.clone().boxed();
+                let choice_5 = order_comparison_expression_parser.clone().boxed();
+                let choice_4 = equality_comparison_expression_parser.clone().boxed();
+                let choice_3 = and_expression_parser.clone().boxed();
+                let choice_2 = or_expression_parser.clone().boxed();
+                let choice_1 = conditional_expression_parser.clone().boxed();
+                let choice_0 = assignment_expression_parser.clone().boxed();
+                choice_0
+            }
+            .boxed(),
+        );
 
         // VariableDeclarationTuple = '(' { ',' } VariableDeclaration { ',' [ VariableDeclaration ] } ')' ;
-        let variable_declaration_tuple_parser_unmapped = just('(')
+        let variable_declaration_tuple_parser = just('(')
             .map(|_| FixedTerminal::<1>())
             .then(ignore_parser.clone())
             .then(
@@ -3622,13 +3444,77 @@ impl Parsers {
             )
             .then(ignore_parser.clone())
             .then(just(')').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(variable_declaration_tuple::_T0::new(v)));
-        let variable_declaration_tuple_parser = variable_declaration_tuple_parser_unmapped.boxed();
+            .map(|v| Box::new(variable_declaration_tuple::_T0::new(v)))
+            .boxed();
 
-        // WhileStatement = 'while' '(' Expression ')' Statement ;
-        let while_statement_parser_unmapped = terminal("while")
+        // ConstantDefinition = TypeName 'constant' «Identifier» '=' Expression ';' ;
+        let constant_definition_parser = type_name_parser
+            .clone()
+            .then(ignore_parser.clone())
+            .then(
+                terminal("constant")
+                    .ignored()
+                    .map(|_| FixedTerminal::<8usize>()),
+            )
+            .then(ignore_parser.clone())
+            .then(identifier_parser.clone())
+            .then(ignore_parser.clone())
+            .then(just('=').map(|_| FixedTerminal::<1>()))
+            .then(ignore_parser.clone())
+            .then(expression_parser.clone())
+            .then(ignore_parser.clone())
+            .then(just(';').map(|_| FixedTerminal::<1>()))
+            .map(|v| Box::new(constant_definition::_T0::new(v)))
+            .boxed();
+
+        // DoWhileStatement = 'do' Statement 'while' '(' Expression ')' ';' ;
+        let do_while_statement_parser = terminal("do")
             .ignored()
-            .map(|_| FixedTerminal::<5usize>())
+            .map(|_| FixedTerminal::<2usize>())
+            .then(ignore_parser.clone())
+            .then(statement_parser.clone())
+            .then(ignore_parser.clone())
+            .then(
+                terminal("while")
+                    .ignored()
+                    .map(|_| FixedTerminal::<5usize>()),
+            )
+            .then(ignore_parser.clone())
+            .then(just('(').map(|_| FixedTerminal::<1>()))
+            .then(ignore_parser.clone())
+            .then(expression_parser.clone())
+            .then(ignore_parser.clone())
+            .then(just(')').map(|_| FixedTerminal::<1>()))
+            .then(ignore_parser.clone())
+            .then(just(';').map(|_| FixedTerminal::<1>()))
+            .map(|v| Box::new(do_while_statement::_T0::new(v)))
+            .boxed();
+
+        // EmitStatement = 'emit' Expression ArgumentList ';' ;
+        let emit_statement_parser = terminal("emit")
+            .ignored()
+            .map(|_| FixedTerminal::<4usize>())
+            .then(ignore_parser.clone())
+            .then(expression_parser.clone())
+            .then(ignore_parser.clone())
+            .then(argument_list_parser.clone())
+            .then(ignore_parser.clone())
+            .then(just(';').map(|_| FixedTerminal::<1>()))
+            .map(|v| Box::new(emit_statement::_T0::new(v)))
+            .boxed();
+
+        // ExpressionStatement = Expression ';' ;
+        let expression_statement_parser = expression_parser
+            .clone()
+            .then(ignore_parser.clone())
+            .then(just(';').map(|_| FixedTerminal::<1>()))
+            .map(|v| Box::new(expression_statement::_T0::new(v)))
+            .boxed();
+
+        // IfStatement = 'if' '(' Expression ')' Statement [ 'else' Statement ] ;
+        let if_statement_parser = terminal("if")
+            .ignored()
+            .map(|_| FixedTerminal::<2usize>())
             .then(ignore_parser.clone())
             .then(just('(').map(|_| FixedTerminal::<1>()))
             .then(ignore_parser.clone())
@@ -3637,11 +3523,86 @@ impl Parsers {
             .then(just(')').map(|_| FixedTerminal::<1>()))
             .then(ignore_parser.clone())
             .then(statement_parser.clone())
-            .map(|v| Box::new(while_statement::_T0::new(v)));
-        let while_statement_parser = while_statement_parser_unmapped.boxed();
+            .then(ignore_parser.clone())
+            .then(
+                terminal("else")
+                    .ignored()
+                    .map(|_| FixedTerminal::<4usize>())
+                    .then(statement_parser.clone())
+                    .map(|v| Box::new(if_statement::_T1::new(v)))
+                    .or_not(),
+            )
+            .map(|v| Box::new(if_statement::_T0::new(v)))
+            .boxed();
+
+        // ReturnStatement = 'return' [ Expression ] ';' ;
+        let return_statement_parser = terminal("return")
+            .ignored()
+            .map(|_| FixedTerminal::<6usize>())
+            .then(ignore_parser.clone())
+            .then(expression_parser.clone().or_not())
+            .then(ignore_parser.clone())
+            .then(just(';').map(|_| FixedTerminal::<1>()))
+            .map(|v| Box::new(return_statement::_T0::new(v)))
+            .boxed();
+
+        // RevertStatement = 'revert' Expression ArgumentList ';' ;
+        let revert_statement_parser = terminal("revert")
+            .ignored()
+            .map(|_| FixedTerminal::<6usize>())
+            .then(ignore_parser.clone())
+            .then(expression_parser.clone())
+            .then(ignore_parser.clone())
+            .then(argument_list_parser.clone())
+            .then(ignore_parser.clone())
+            .then(just(';').map(|_| FixedTerminal::<1>()))
+            .map(|v| Box::new(revert_statement::_T0::new(v)))
+            .boxed();
+
+        // StateVariableDeclaration = TypeName { StateVariableAttribute } «Identifier» [ '=' Expression ] ';' ;
+        let state_variable_declaration_parser = type_name_parser
+            .clone()
+            .then(ignore_parser.clone())
+            .then(state_variable_attribute_parser.clone().repeated())
+            .then(ignore_parser.clone())
+            .then(identifier_parser.clone())
+            .then(ignore_parser.clone())
+            .then(
+                just('=')
+                    .map(|_| FixedTerminal::<1>())
+                    .then(expression_parser.clone())
+                    .map(|v| Box::new(state_variable_declaration::_T2::new(v)))
+                    .or_not(),
+            )
+            .then(ignore_parser.clone())
+            .then(just(';').map(|_| FixedTerminal::<1>()))
+            .map(|v| Box::new(state_variable_declaration::_T0::new(v)))
+            .boxed();
+
+        // TryStatement = 'try' Expression [ 'returns' NonEmptyParameterList ] Block 1…*{ CatchClause } ;
+        let try_statement_parser = terminal("try")
+            .ignored()
+            .map(|_| FixedTerminal::<3usize>())
+            .then(ignore_parser.clone())
+            .then(expression_parser.clone())
+            .then(ignore_parser.clone())
+            .then(
+                terminal("returns")
+                    .ignored()
+                    .map(|_| FixedTerminal::<7usize>())
+                    .then(non_empty_parameter_list_parser.clone())
+                    .map(|v| Box::new(try_statement::_T1::new(v)))
+                    .or_not(),
+            )
+            .then(ignore_parser.clone())
+            .then(block_parser.clone())
+            .then(ignore_parser.clone())
+            .then(catch_clause_parser.clone().repeated().at_least(1usize))
+            .map(|v| Box::new(try_statement::_T0::new(v)))
+            .boxed();
 
         // VariableDeclarationStatement = ( VariableDeclaration [ '=' Expression ] | VariableDeclarationTuple '=' Expression ) ';' ;
-        let variable_declaration_statement_parser_unmapped = choice((
+        let variable_declaration_statement_parser = choice((
             variable_declaration_parser
                 .clone()
                 .then(
@@ -3662,23 +3623,37 @@ impl Parsers {
         ))
         .then(ignore_parser.clone())
         .then(just(';').map(|_| FixedTerminal::<1>()))
-        .map(|v| Box::new(variable_declaration_statement::_T0::new(v)));
-        let variable_declaration_statement_parser =
-            variable_declaration_statement_parser_unmapped.boxed();
+        .map(|v| Box::new(variable_declaration_statement::_T0::new(v)))
+        .boxed();
+
+        // WhileStatement = 'while' '(' Expression ')' Statement ;
+        let while_statement_parser = terminal("while")
+            .ignored()
+            .map(|_| FixedTerminal::<5usize>())
+            .then(ignore_parser.clone())
+            .then(just('(').map(|_| FixedTerminal::<1>()))
+            .then(ignore_parser.clone())
+            .then(expression_parser.clone())
+            .then(ignore_parser.clone())
+            .then(just(')').map(|_| FixedTerminal::<1>()))
+            .then(ignore_parser.clone())
+            .then(statement_parser.clone())
+            .map(|v| Box::new(while_statement::_T0::new(v)))
+            .boxed();
 
         // SimpleStatement = VariableDeclarationStatement | ExpressionStatement ;
-        let simple_statement_parser_unmapped = choice((
+        let simple_statement_parser = choice((
             variable_declaration_statement_parser
                 .clone()
                 .map(|v| Box::new(simple_statement::_T0::VariableDeclarationStatement(v))),
             expression_statement_parser
                 .clone()
                 .map(|v| Box::new(simple_statement::_T0::ExpressionStatement(v))),
-        ));
-        let simple_statement_parser = simple_statement_parser_unmapped.boxed();
+        ))
+        .boxed();
 
         // ForStatement = 'for' '(' ( SimpleStatement | ';' ) ( ExpressionStatement | ';' ) [ Expression ] ')' Statement ;
-        let for_statement_parser_unmapped = terminal("for")
+        let for_statement_parser = terminal("for")
             .ignored()
             .map(|_| FixedTerminal::<3usize>())
             .then(ignore_parser.clone())
@@ -3707,55 +3682,57 @@ impl Parsers {
             .then(just(')').map(|_| FixedTerminal::<1>()))
             .then(ignore_parser.clone())
             .then(statement_parser.clone())
-            .map(|v| Box::new(for_statement::_T0::new(v)));
-        let for_statement_parser = for_statement_parser_unmapped.boxed();
+            .map(|v| Box::new(for_statement::_T0::new(v)))
+            .boxed();
 
         // Statement = Block | SimpleStatement | IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | TryStatement | ReturnStatement | EmitStatement | RevertStatement | AssemblyStatement ;
-        statement_parser_unmapped.define(choice((
-            block_parser
-                .clone()
-                .map(|v| Box::new(statement::_T0::Block(v))),
-            simple_statement_parser
-                .clone()
-                .map(|v| Box::new(statement::_T0::SimpleStatement(v))),
-            if_statement_parser
-                .clone()
-                .map(|v| Box::new(statement::_T0::IfStatement(v))),
-            for_statement_parser
-                .clone()
-                .map(|v| Box::new(statement::_T0::ForStatement(v))),
-            while_statement_parser
-                .clone()
-                .map(|v| Box::new(statement::_T0::WhileStatement(v))),
-            do_while_statement_parser
-                .clone()
-                .map(|v| Box::new(statement::_T0::DoWhileStatement(v))),
-            continue_statement_parser
-                .clone()
-                .map(|v| Box::new(statement::_T0::ContinueStatement(v))),
-            break_statement_parser
-                .clone()
-                .map(|v| Box::new(statement::_T0::BreakStatement(v))),
-            try_statement_parser
-                .clone()
-                .map(|v| Box::new(statement::_T0::TryStatement(v))),
-            return_statement_parser
-                .clone()
-                .map(|v| Box::new(statement::_T0::ReturnStatement(v))),
-            emit_statement_parser
-                .clone()
-                .map(|v| Box::new(statement::_T0::EmitStatement(v))),
-            revert_statement_parser
-                .clone()
-                .map(|v| Box::new(statement::_T0::RevertStatement(v))),
-            assembly_statement_parser
-                .clone()
-                .map(|v| Box::new(statement::_T0::AssemblyStatement(v))),
-        )));
-        statement_parser.define(statement_parser_unmapped.boxed());
+        statement_parser.define(
+            choice((
+                block_parser
+                    .clone()
+                    .map(|v| Box::new(statement::_T0::Block(v))),
+                simple_statement_parser
+                    .clone()
+                    .map(|v| Box::new(statement::_T0::SimpleStatement(v))),
+                if_statement_parser
+                    .clone()
+                    .map(|v| Box::new(statement::_T0::IfStatement(v))),
+                for_statement_parser
+                    .clone()
+                    .map(|v| Box::new(statement::_T0::ForStatement(v))),
+                while_statement_parser
+                    .clone()
+                    .map(|v| Box::new(statement::_T0::WhileStatement(v))),
+                do_while_statement_parser
+                    .clone()
+                    .map(|v| Box::new(statement::_T0::DoWhileStatement(v))),
+                continue_statement_parser
+                    .clone()
+                    .map(|v| Box::new(statement::_T0::ContinueStatement(v))),
+                break_statement_parser
+                    .clone()
+                    .map(|v| Box::new(statement::_T0::BreakStatement(v))),
+                try_statement_parser
+                    .clone()
+                    .map(|v| Box::new(statement::_T0::TryStatement(v))),
+                return_statement_parser
+                    .clone()
+                    .map(|v| Box::new(statement::_T0::ReturnStatement(v))),
+                emit_statement_parser
+                    .clone()
+                    .map(|v| Box::new(statement::_T0::EmitStatement(v))),
+                revert_statement_parser
+                    .clone()
+                    .map(|v| Box::new(statement::_T0::RevertStatement(v))),
+                assembly_statement_parser
+                    .clone()
+                    .map(|v| Box::new(statement::_T0::AssemblyStatement(v))),
+            ))
+            .boxed(),
+        );
 
         // Block = '{' { Statement | UncheckedBlock } '}' ;
-        block_parser_unmapped.define(
+        block_parser.define(
             just('{')
                 .map(|_| FixedTerminal::<1>())
                 .then(ignore_parser.clone())
@@ -3772,12 +3749,12 @@ impl Parsers {
                 )
                 .then(ignore_parser.clone())
                 .then(just('}').map(|_| FixedTerminal::<1>()))
-                .map(|v| Box::new(block::_T0::new(v))),
+                .map(|v| Box::new(block::_T0::new(v)))
+                .boxed(),
         );
-        block_parser.define(block_parser_unmapped.boxed());
 
         // ConstructorDefinition = 'constructor' ParameterList { ConstructorAttribute } Block ;
-        let constructor_definition_parser_unmapped = terminal("constructor")
+        let constructor_definition_parser = terminal("constructor")
             .ignored()
             .map(|_| FixedTerminal::<11usize>())
             .then(ignore_parser.clone())
@@ -3786,11 +3763,11 @@ impl Parsers {
             .then(constructor_attribute_parser.clone().repeated())
             .then(ignore_parser.clone())
             .then(block_parser.clone())
-            .map(|v| Box::new(constructor_definition::_T0::new(v)));
-        let constructor_definition_parser = constructor_definition_parser_unmapped.boxed();
+            .map(|v| Box::new(constructor_definition::_T0::new(v)))
+            .boxed();
 
         // FallbackFunctionDefinition = 'fallback' ParameterList { FallbackFunctionAttribute } [ 'returns' NonEmptyParameterList ] ( ';' | Block ) ;
-        let fallback_function_definition_parser_unmapped = terminal("fallback")
+        let fallback_function_definition_parser = terminal("fallback")
             .ignored()
             .map(|_| FixedTerminal::<8usize>())
             .then(ignore_parser.clone())
@@ -3815,12 +3792,11 @@ impl Parsers {
                     .clone()
                     .map(|v| Box::new(fallback_function_definition::_T3::Block(v))),
             )))
-            .map(|v| Box::new(fallback_function_definition::_T0::new(v)));
-        let fallback_function_definition_parser =
-            fallback_function_definition_parser_unmapped.boxed();
+            .map(|v| Box::new(fallback_function_definition::_T0::new(v)))
+            .boxed();
 
         // FunctionDefinition = 'function' ( «Identifier» | 'fallback' | 'receive' ) ParameterList { FunctionAttribute } [ 'returns' NonEmptyParameterList ] ( ';' | Block ) ;
-        let function_definition_parser_unmapped = terminal("function")
+        let function_definition_parser = terminal("function")
             .ignored()
             .map(|_| FixedTerminal::<8usize>())
             .then(ignore_parser.clone())
@@ -3856,11 +3832,11 @@ impl Parsers {
                     .clone()
                     .map(|v| Box::new(function_definition::_T4::Block(v))),
             )))
-            .map(|v| Box::new(function_definition::_T0::new(v)));
-        let function_definition_parser = function_definition_parser_unmapped.boxed();
+            .map(|v| Box::new(function_definition::_T0::new(v)))
+            .boxed();
 
         // ModifierDefinition = 'modifier' «Identifier» [ ParameterList ] { MethodAttribute } ( ';' | Block ) ;
-        let modifier_definition_parser_unmapped = terminal("modifier")
+        let modifier_definition_parser = terminal("modifier")
             .ignored()
             .map(|_| FixedTerminal::<8usize>())
             .then(ignore_parser.clone())
@@ -3878,11 +3854,11 @@ impl Parsers {
                     .clone()
                     .map(|v| Box::new(modifier_definition::_T2::Block(v))),
             )))
-            .map(|v| Box::new(modifier_definition::_T0::new(v)));
-        let modifier_definition_parser = modifier_definition_parser_unmapped.boxed();
+            .map(|v| Box::new(modifier_definition::_T0::new(v)))
+            .boxed();
 
         // ReceiveFunctionDefinition = 'receive' '(' ')' { ReceiveFunctionAttribute } ( ';' | Block ) ;
-        let receive_function_definition_parser_unmapped = terminal("receive")
+        let receive_function_definition_parser = terminal("receive")
             .ignored()
             .map(|_| FixedTerminal::<7usize>())
             .then(ignore_parser.clone())
@@ -3900,12 +3876,11 @@ impl Parsers {
                     .clone()
                     .map(|v| Box::new(receive_function_definition::_T2::Block(v))),
             )))
-            .map(|v| Box::new(receive_function_definition::_T0::new(v)));
-        let receive_function_definition_parser =
-            receive_function_definition_parser_unmapped.boxed();
+            .map(|v| Box::new(receive_function_definition::_T0::new(v)))
+            .boxed();
 
         // ContractBodyElement = UsingDirective | ConstructorDefinition | FunctionDefinition | FallbackFunctionDefinition | ReceiveFunctionDefinition | ModifierDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | EventDefinition | ErrorDefinition | StateVariableDeclaration ;
-        let contract_body_element_parser_unmapped = choice((
+        let contract_body_element_parser = choice((
             using_directive_parser
                 .clone()
                 .map(|v| Box::new(contract_body_element::_T0::UsingDirective(v))),
@@ -3944,11 +3919,11 @@ impl Parsers {
             state_variable_declaration_parser
                 .clone()
                 .map(|v| Box::new(contract_body_element::_T0::StateVariableDeclaration(v))),
-        ));
-        let contract_body_element_parser = contract_body_element_parser_unmapped.boxed();
+        ))
+        .boxed();
 
         // ContractDefinition = [ 'abstract' ] 'contract' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
-        let contract_definition_parser_unmapped = terminal("abstract")
+        let contract_definition_parser = terminal("abstract")
             .ignored()
             .map(|_| FixedTerminal::<8usize>())
             .or_not()
@@ -3968,11 +3943,11 @@ impl Parsers {
             .then(contract_body_element_parser.clone().repeated())
             .then(ignore_parser.clone())
             .then(just('}').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(contract_definition::_T0::new(v)));
-        let contract_definition_parser = contract_definition_parser_unmapped.boxed();
+            .map(|v| Box::new(contract_definition::_T0::new(v)))
+            .boxed();
 
         // InterfaceDefinition = 'interface' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
-        let interface_definition_parser_unmapped = terminal("interface")
+        let interface_definition_parser = terminal("interface")
             .ignored()
             .map(|_| FixedTerminal::<9usize>())
             .then(ignore_parser.clone())
@@ -3985,11 +3960,11 @@ impl Parsers {
             .then(contract_body_element_parser.clone().repeated())
             .then(ignore_parser.clone())
             .then(just('}').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(interface_definition::_T0::new(v)));
-        let interface_definition_parser = interface_definition_parser_unmapped.boxed();
+            .map(|v| Box::new(interface_definition::_T0::new(v)))
+            .boxed();
 
         // LibraryDefinition = 'library' «Identifier» '{' { ContractBodyElement } '}' ;
-        let library_definition_parser_unmapped = terminal("library")
+        let library_definition_parser = terminal("library")
             .ignored()
             .map(|_| FixedTerminal::<7usize>())
             .then(ignore_parser.clone())
@@ -4000,11 +3975,11 @@ impl Parsers {
             .then(contract_body_element_parser.clone().repeated())
             .then(ignore_parser.clone())
             .then(just('}').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(library_definition::_T0::new(v)));
-        let library_definition_parser = library_definition_parser_unmapped.boxed();
+            .map(|v| Box::new(library_definition::_T0::new(v)))
+            .boxed();
 
         // Definition = ContractDefinition | InterfaceDefinition | LibraryDefinition | FunctionDefinition | ConstantDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | ErrorDefinition ;
-        let definition_parser_unmapped = choice((
+        let definition_parser = choice((
             contract_definition_parser
                 .clone()
                 .map(|v| Box::new(definition::_T0::ContractDefinition(v))),
@@ -4032,11 +4007,11 @@ impl Parsers {
             error_definition_parser
                 .clone()
                 .map(|v| Box::new(definition::_T0::ErrorDefinition(v))),
-        ));
-        let definition_parser = definition_parser_unmapped.boxed();
+        ))
+        .boxed();
 
         // SourceUnit = «IGNORE» { Directive | Definition } $ ;
-        let source_unit_parser_unmapped = ignore_parser
+        let source_unit_parser = ignore_parser
             .clone()
             .then(ignore_parser.clone())
             .then(
@@ -4052,8 +4027,8 @@ impl Parsers {
             )
             .then(ignore_parser.clone())
             .then(end())
-            .map(|v| Box::new(source_unit::_T0::new(v)));
-        let source_unit_parser = source_unit_parser_unmapped.boxed();
+            .map(|v| Box::new(source_unit::_T0::new(v)))
+            .boxed();
 
         Self {
             ascii_escape: ascii_escape_parser.boxed(),
@@ -4086,25 +4061,33 @@ impl Parsers {
             unicode_escape: unicode_escape_parser.boxed(),
             unsigned_integer_type: unsigned_integer_type_parser.boxed(),
             yul_reserved_word: yul_reserved_word_parser.boxed(),
-            add_sub_operator: add_sub_operator_parser.boxed(),
-            assignment_operator: assignment_operator_parser.boxed(),
+            add_sub_expression: add_sub_expression_parser.boxed(),
+            and_expression: and_expression_parser.boxed(),
+            assignment_expression: assignment_expression_parser.boxed(),
+            bit_and_expression: bit_and_expression_parser.boxed(),
+            bit_or_expression: bit_or_expression_parser.boxed(),
+            bit_x_or_expression: bit_x_or_expression_parser.boxed(),
             break_statement: break_statement_parser.boxed(),
+            conditional_expression: conditional_expression_parser.boxed(),
             continue_statement: continue_statement_parser.boxed(),
             data_location: data_location_parser.boxed(),
             decimal_number: decimal_number_parser.boxed(),
             elementary_type: elementary_type_parser.boxed(),
-            equality_comparison_operator: equality_comparison_operator_parser.boxed(),
+            equality_comparison_expression: equality_comparison_expression_parser.boxed(),
             escape_sequence: escape_sequence_parser.boxed(),
+            exponentiation_expression: exponentiation_expression_parser.boxed(),
             hex_string_literal: hex_string_literal_parser.boxed(),
+            index_access_expression: index_access_expression_parser.boxed(),
             keyword: keyword_parser.boxed(),
-            mul_div_mod_operator: mul_div_mod_operator_parser.boxed(),
-            order_comparison_operator: order_comparison_operator_parser.boxed(),
+            mul_div_mod_expression: mul_div_mod_expression_parser.boxed(),
+            or_expression: or_expression_parser.boxed(),
+            order_comparison_expression: order_comparison_expression_parser.boxed(),
             positional_argument_list: positional_argument_list_parser.boxed(),
             raw_identifier: raw_identifier_parser.boxed(),
-            shift_operator: shift_operator_parser.boxed(),
+            shift_expression: shift_expression_parser.boxed(),
             state_mutability_specifier: state_mutability_specifier_parser.boxed(),
-            unary_prefix_operator: unary_prefix_operator_parser.boxed(),
-            unary_suffix_operator: unary_suffix_operator_parser.boxed(),
+            unary_prefix_expression: unary_prefix_expression_parser.boxed(),
+            unary_suffix_expression: unary_suffix_expression_parser.boxed(),
             unchecked_block: unchecked_block_parser.boxed(),
             visibility_specifier: visibility_specifier_parser.boxed(),
             yul_break_statement: yul_break_statement_parser.boxed(),
@@ -4132,11 +4115,13 @@ impl Parsers {
             identifier_path: identifier_path_parser.boxed(),
             import_path: import_path_parser.boxed(),
             literal: literal_parser.boxed(),
+            member_access_expression: member_access_expression_parser.boxed(),
             named_argument: named_argument_parser.boxed(),
             parameter_declaration: parameter_declaration_parser.boxed(),
             selected_import: selected_import_parser.boxed(),
             user_defined_value_type_definition: user_defined_value_type_definition_parser.boxed(),
             yul_literal: yul_literal_parser.boxed(),
+            function_call_options_expression: function_call_options_expression_parser.boxed(),
             mapping_type: mapping_type_parser.boxed(),
             named_argument_list: named_argument_list_parser.boxed(),
             non_empty_parameter_list: non_empty_parameter_list_parser.boxed(),
@@ -4157,6 +4142,7 @@ impl Parsers {
             yul_if_statement: yul_if_statement_parser.boxed(),
             yul_switch_statement: yul_switch_statement_parser.boxed(),
             yul_variable_declaration: yul_variable_declaration_parser.boxed(),
+            function_call_expression: function_call_expression_parser.boxed(),
             inheritance_specifier: inheritance_specifier_parser.boxed(),
             modifier_invocation: modifier_invocation_parser.boxed(),
             type_name: type_name_parser.boxed(),
@@ -4164,31 +4150,32 @@ impl Parsers {
             constructor_attribute: constructor_attribute_parser.boxed(),
             error_parameter: error_parameter_parser.boxed(),
             event_parameter: event_parameter_parser.boxed(),
-            expression: expression_parser.boxed(),
             fallback_function_attribute: fallback_function_attribute_parser.boxed(),
             function_attribute: function_attribute_parser.boxed(),
             inheritance_specifier_list: inheritance_specifier_list_parser.boxed(),
+            primary_expression: primary_expression_parser.boxed(),
             receive_function_attribute: receive_function_attribute_parser.boxed(),
             struct_definition: struct_definition_parser.boxed(),
             using_directive: using_directive_parser.boxed(),
             variable_declaration: variable_declaration_parser.boxed(),
             yul_block: yul_block_parser.boxed(),
             assembly_statement: assembly_statement_parser.boxed(),
-            constant_definition: constant_definition_parser.boxed(),
             directive: directive_parser.boxed(),
-            do_while_statement: do_while_statement_parser.boxed(),
-            emit_statement: emit_statement_parser.boxed(),
             error_definition: error_definition_parser.boxed(),
             event_definition: event_definition_parser.boxed(),
+            expression: expression_parser.boxed(),
+            variable_declaration_tuple: variable_declaration_tuple_parser.boxed(),
+            constant_definition: constant_definition_parser.boxed(),
+            do_while_statement: do_while_statement_parser.boxed(),
+            emit_statement: emit_statement_parser.boxed(),
             expression_statement: expression_statement_parser.boxed(),
             if_statement: if_statement_parser.boxed(),
             return_statement: return_statement_parser.boxed(),
             revert_statement: revert_statement_parser.boxed(),
             state_variable_declaration: state_variable_declaration_parser.boxed(),
             try_statement: try_statement_parser.boxed(),
-            variable_declaration_tuple: variable_declaration_tuple_parser.boxed(),
-            while_statement: while_statement_parser.boxed(),
             variable_declaration_statement: variable_declaration_statement_parser.boxed(),
+            while_statement: while_statement_parser.boxed(),
             simple_statement: simple_statement_parser.boxed(),
             for_statement: for_statement_parser.boxed(),
             statement: statement_parser.boxed(),

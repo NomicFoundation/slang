@@ -70,34 +70,26 @@
           - MappingType
           - DataLocation
           - Expression
-          # - AssignmentExpression
-          - AssignmentOperator
-          # - ConditionalExpression
-          # - OrExpression
-          # - AndExpression
-          # - EqualityComparisonExpression
-          - EqualityComparisonOperator
-          # - OrderComparisonExpression
-          - OrderComparisonOperator
-          # - BitOrExpression
-          # - BitXOrExpression
-          # - BitAndExpression
-          # - ShiftExpression
-          - ShiftOperator
-          # - AddSubExpression
-          - AddSubOperator
-          # - MulDivModExpression
-          - MulDivModOperator
-          # - ExponentiationExpression
-          # - UnarySuffixExpression
-          - UnarySuffixOperator
-          # - UnaryPrefixExpression
-          - UnaryPrefixOperator
-          # - FunctionCallExpression
-          # - FunctionCallOptionsExpression
-          # - MemberAccessExpression
-          # - IndexAccessExpression
-          # - PrimaryExpression
+          - AssignmentExpression
+          - ConditionalExpression
+          - OrExpression
+          - AndExpression
+          - EqualityComparisonExpression
+          - OrderComparisonExpression
+          - BitOrExpression
+          - BitXOrExpression
+          - BitAndExpression
+          - ShiftExpression
+          - AddSubExpression
+          - MulDivModExpression
+          - ExponentiationExpression
+          - UnarySuffixExpression
+          - UnaryPrefixExpression
+          - FunctionCallExpression
+          - FunctionCallOptionsExpression
+          - MemberAccessExpression
+          - IndexAccessExpression
+          - PrimaryExpression
           - Literal
           - NumericLiteral
           - Block

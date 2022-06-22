@@ -250,7 +250,7 @@ impl SlangName {
                 let text = if *plural { text.to_plural() } else { text };
                 let text = text.to_pascal_case();
                 if 0 < *suffix {
-                    format!("{}_{}", text, suffix)
+                    format!("{}{}", text, suffix)
                 } else {
                     text
                 }
@@ -294,10 +294,6 @@ impl SlangName {
 
     pub fn to_parser_name_ident(&self) -> Ident {
         format_ident!("{}_parser", self.to_snake_case_string())
-    }
-
-    pub fn to_unmapped_parser_name_ident(&self) -> Ident {
-        format_ident!("{}_parser_unmapped", self.to_snake_case_string())
     }
 }
 

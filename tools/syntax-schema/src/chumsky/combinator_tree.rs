@@ -377,22 +377,72 @@ impl CombinatorTreeNodeData {
             // Each choice is it's own production, with the ref(root) changing to
             // reference the next choice.
 
-            let first_name = format_ident!("choice_0");
-            let names = (0..choices.len()).map(|i| format_ident!("choice_{}", i));
-            let exprs = choices
+            let mut names = (0..choices.len())
+                .map(|i| format_ident!("choice_{}", i))
+                .collect::<Vec<_>>();
+            let mut exprs = choices
                 .iter()
-                .map(|(_, e)| e.to_default_parser_combinator_code(tree));
+                .enumerate()
+                .map(|(i, (_, e))| match e.as_ref() {
+                    CombinatorTreeNodeData::Sequence { name: _, elements } if elements.len() == 2 => {
+                        match (elements[0].1.as_ref(), elements[1].1.as_ref()) {
+                            (
+                                Self::Optional {
+                                    expr: optional,
+                                },
+                                Self::Reference{ production },
+                            )  if production.upgrade().unwrap().name == tree.production.upgrade().unwrap().name => {
+                                let optional = optional.to_default_parser_combinator_code(tree);
+                                let previous_choice_name = format_ident!("choice_{}", i + 1);
+                                quote!( #optional.repeated().then(#previous_choice_name) )
+                            }
+                            (
+                                Self::Reference{production},
+                                Self::Optional {
+                                    expr: optional,
+                                }
+                            )  if production.upgrade().unwrap().name == tree.production.upgrade().unwrap().name => {
+                                let optional = optional.to_default_parser_combinator_code(tree);
+                                let previous_choice_name = format_ident!("choice_{}", i + 1);
+                                quote!( #previous_choice_name.then(#optional.repeated()) )
+                            }
+                            _ => e.to_default_parser_combinator_code(tree)
+                        }
+                    }
+                    CombinatorTreeNodeData::SeparatedBy {
+                        name: _,
+                        expr,
+                        min: 1,
+                        max: None,
+                        separator,
+                    } => match expr.as_ref() {
+                        Self::Reference { production }
+                            if production.upgrade().unwrap().name
+                                == tree.production.upgrade().unwrap().name =>
+                        {
+                            let separator = separator.to_default_parser_combinator_code(tree);
+                            let previous_choice_name = format_ident!("choice_{}", i + 1);
+                            quote!( #previous_choice_name.then(#separator.then(#previous_choice_name).repeated()) )
+                        }
+                        _ => e.to_default_parser_combinator_code(tree),
+                    },
+                    _ => e.to_default_parser_combinator_code(tree),
+                }).collect::<Vec<_>>();
+
+            names.reverse();
+            exprs.reverse();
+            let first_name = format_ident!("choice_0");
 
             quote!(
                 {
-                    #(let #names = #exprs;)*
+                    #(let #names = #exprs.boxed();)*
                     #first_name
                 }
             )
 
             // ForAll choices:
-            // [ option, ref(root) ] -> X ( + X::N(...option, ref) )
-            // [ ref(root), option ] -> X ( + X::N(ref, ...option) )
+            // [ prefix... ref(root) ] -> X ( + X::N(prefix..., ref) ) NB: prefix can be repeated
+            // [ ref(root) suffix... ] -> X ( + X::N(ref, ...suffix) ) NB: suffix can be repeated
             // 1…*{ ref(root) / S } -> X ( + X::N(left: ref, ...S, right: ref) )
             // other -> X::N(other)
         } else {
