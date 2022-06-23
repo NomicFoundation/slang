@@ -442,7 +442,7 @@ impl Parsers {
         ))
         .boxed();
 
-        // «YulHexLiteral» = '0x' 1…*{ '0'…'9' | 'a'…'f' | 'A'…'F' } ;
+        // «YulHexLiteral» = '0x' 1…*{ «HexCharacter» } ;
         let yul_hex_literal_parser = terminal("0x")
             .ignored()
             .map(|_| FixedSizeTerminal::<2usize>())
@@ -2951,10 +2951,30 @@ impl Parsers {
         ))
         .boxed();
 
-        // YulAssignment = YulIdentifierPath ( ':=' YulExpression | 1…*{ ',' YulIdentifierPath } ':=' YulFunctionCall ) ;
-        let yul_assignment_parser = yul_identifier_path_parser
+        // YulAssignmentStatement = 1…*{ YulIdentifierPath / ',' } ':=' YulExpression ;
+        let yul_assignment_statement_parser = yul_identifier_path_parser
             .clone()
-            .then(choice((
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(just(',').map(|_| FixedSizeTerminal::<1>()))
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .then(yul_identifier_path_parser.clone())
+                    .repeated(),
+            )
+            .map(repetition_mapper)
+            .map(|(elements, separators)| yul_assignment_statement::_T1 {
+                elements,
+                separators,
+            })
+            .then(
                 leading_trivia_parser
                     .clone()
                     .then(
@@ -2969,47 +2989,10 @@ impl Parsers {
                             content,
                             trailing,
                         },
-                    )
-                    .then(yul_expression_parser.clone())
-                    .map(|v| yul_assignment::_T2::from_parse(v))
-                    .map(|v| Box::new(yul_assignment::_T1::_T2(v))),
-                leading_trivia_parser
-                    .clone()
-                    .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                    .then(trailing_trivia_parser.clone())
-                    .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                            leading,
-                            content,
-                            trailing,
-                        },
-                    )
-                    .then(yul_identifier_path_parser.clone())
-                    .map(|v| yul_assignment::_T5::from_parse(v))
-                    .repeated()
-                    .at_least(1usize)
-                    .then(
-                        leading_trivia_parser
-                            .clone()
-                            .then(
-                                terminal(":=")
-                                    .ignored()
-                                    .map(|_| FixedSizeTerminal::<2usize>()),
-                            )
-                            .then(trailing_trivia_parser.clone())
-                            .map(
-                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                                    leading,
-                                    content,
-                                    trailing,
-                                },
-                            ),
-                    )
-                    .then(yul_function_call_parser.clone())
-                    .map(|v| yul_assignment::_T3::from_parse(v))
-                    .map(|v| Box::new(yul_assignment::_T1::_T3(v))),
-            )))
-            .map(|v| yul_assignment::_T0::from_parse(v))
+                    ),
+            )
+            .then(yul_expression_parser.clone())
+            .map(|v| yul_assignment_statement::_T0::from_parse(v))
             .boxed();
 
         // YulForStatement = 'for' YulBlock YulExpression YulBlock YulBlock ;
@@ -3056,7 +3039,7 @@ impl Parsers {
             .map(|v| yul_if_statement::_T0::from_parse(v))
             .boxed();
 
-        // YulSwitchStatement = 'switch' YulExpression ( 1…*{ 'case' YulLiteral YulBlock } [ 'default' YulBlock ] | 'default' YulBlock ) ;
+        // YulSwitchStatement = 'switch' YulExpression 1…*{ ( 'case' YulLiteral | 'default' ) YulBlock } ;
         let yul_switch_statement_parser = leading_trivia_parser
             .clone()
             .then(
@@ -3073,72 +3056,52 @@ impl Parsers {
                 },
             )
             .then(yul_expression_parser.clone())
-            .then(choice((
-                leading_trivia_parser
-                    .clone()
-                    .then(
-                        terminal("case")
-                            .ignored()
-                            .map(|_| FixedSizeTerminal::<4usize>()),
-                    )
-                    .then(trailing_trivia_parser.clone())
-                    .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                            leading,
-                            content,
-                            trailing,
-                        },
-                    )
-                    .then(yul_literal_parser.clone())
-                    .then(yul_block_parser.clone())
-                    .map(|v| yul_switch_statement::_T4::from_parse(v))
-                    .repeated()
-                    .at_least(1usize)
-                    .then(
-                        leading_trivia_parser
-                            .clone()
-                            .then(
-                                terminal("default")
-                                    .ignored()
-                                    .map(|_| FixedSizeTerminal::<7usize>()),
-                            )
-                            .then(trailing_trivia_parser.clone())
-                            .map(
-                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                                    leading,
-                                    content,
-                                    trailing,
-                                },
-                            )
-                            .then(yul_block_parser.clone())
-                            .map(|v| yul_switch_statement::_T5::from_parse(v))
-                            .or_not(),
-                    )
-                    .map(|v| yul_switch_statement::_T2::from_parse(v))
-                    .map(|v| Box::new(yul_switch_statement::_T1::_T2(v))),
-                leading_trivia_parser
-                    .clone()
-                    .then(
-                        terminal("default")
-                            .ignored()
-                            .map(|_| FixedSizeTerminal::<7usize>()),
-                    )
-                    .then(trailing_trivia_parser.clone())
-                    .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                            leading,
-                            content,
-                            trailing,
-                        },
-                    )
-                    .then(yul_block_parser.clone())
-                    .map(|v| yul_switch_statement::_T6::from_parse(v))
-                    .map(|v| Box::new(yul_switch_statement::_T1::_T6(v))),
-            )))
+            .then(
+                choice((
+                    leading_trivia_parser
+                        .clone()
+                        .then(
+                            terminal("case")
+                                .ignored()
+                                .map(|_| FixedSizeTerminal::<4usize>()),
+                        )
+                        .then(trailing_trivia_parser.clone())
+                        .map(
+                            |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                                leading,
+                                content,
+                                trailing,
+                            },
+                        )
+                        .then(yul_literal_parser.clone())
+                        .map(|v| yul_switch_statement::_T4::from_parse(v))
+                        .map(|v| Box::new(yul_switch_statement::_T3::_T4(v))),
+                    leading_trivia_parser
+                        .clone()
+                        .then(
+                            terminal("default")
+                                .ignored()
+                                .map(|_| FixedSizeTerminal::<7usize>()),
+                        )
+                        .then(trailing_trivia_parser.clone())
+                        .map(
+                            |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                                leading,
+                                content,
+                                trailing,
+                            },
+                        )
+                        .map(|v| Box::new(yul_switch_statement::_T3::Default(v))),
+                ))
+                .then(yul_block_parser.clone())
+                .map(|v| yul_switch_statement::_T2::from_parse(v))
+                .repeated()
+                .at_least(1usize),
+            )
             .map(|v| yul_switch_statement::_T0::from_parse(v))
             .boxed();
 
-        // YulVariableDeclaration = 'let' «YulIdentifier» [ ':=' YulExpression | [ ',' «YulIdentifier» ] [ ':=' YulFunctionCall ] ] ;
+        // YulVariableDeclaration = 'let' 1…*{ YulIdentifierPath / ',' } [ ':=' YulExpression ] ;
         let yul_variable_declaration_parser = leading_trivia_parser
             .clone()
             .then(
@@ -3155,88 +3118,48 @@ impl Parsers {
                 },
             )
             .then(
+                yul_identifier_path_parser
+                    .clone()
+                    .then(
+                        leading_trivia_parser
+                            .clone()
+                            .then(just(',').map(|_| FixedSizeTerminal::<1>()))
+                            .then(trailing_trivia_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            )
+                            .then(yul_identifier_path_parser.clone())
+                            .repeated(),
+                    )
+                    .map(repetition_mapper)
+                    .map(|(elements, separators)| yul_variable_declaration::_T1 {
+                        elements,
+                        separators,
+                    }),
+            )
+            .then(
                 leading_trivia_parser
                     .clone()
-                    .then(yul_identifier_parser.clone())
+                    .then(
+                        terminal(":=")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<2usize>()),
+                    )
                     .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| yul_identifier::WithTrivia {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
                         },
-                    ),
-            )
-            .then(
-                choice((
-                    leading_trivia_parser
-                        .clone()
-                        .then(
-                            terminal(":=")
-                                .ignored()
-                                .map(|_| FixedSizeTerminal::<2usize>()),
-                        )
-                        .then(trailing_trivia_parser.clone())
-                        .map(
-                            |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                                leading,
-                                content,
-                                trailing,
-                            },
-                        )
-                        .then(yul_expression_parser.clone())
-                        .map(|v| yul_variable_declaration::_T2::from_parse(v))
-                        .map(|v| Box::new(yul_variable_declaration::_T1::_T2(v))),
-                    leading_trivia_parser
-                        .clone()
-                        .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                        .then(trailing_trivia_parser.clone())
-                        .map(
-                            |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                                leading,
-                                content,
-                                trailing,
-                            },
-                        )
-                        .then(
-                            leading_trivia_parser
-                                .clone()
-                                .then(yul_identifier_parser.clone())
-                                .then(trailing_trivia_parser.clone())
-                                .map(
-                                    |((leading, content), trailing)| yul_identifier::WithTrivia {
-                                        leading,
-                                        content,
-                                        trailing,
-                                    },
-                                ),
-                        )
-                        .map(|v| yul_variable_declaration::_T4::from_parse(v))
-                        .or_not()
-                        .then(
-                            leading_trivia_parser
-                                .clone()
-                                .then(
-                                    terminal(":=")
-                                        .ignored()
-                                        .map(|_| FixedSizeTerminal::<2usize>()),
-                                )
-                                .then(trailing_trivia_parser.clone())
-                                .map(
-                                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                                        leading,
-                                        content,
-                                        trailing,
-                                    },
-                                )
-                                .then(yul_function_call_parser.clone())
-                                .map(|v| yul_variable_declaration::_T5::from_parse(v))
-                                .or_not(),
-                        )
-                        .map(|v| yul_variable_declaration::_T3::from_parse(v))
-                        .map(|v| Box::new(yul_variable_declaration::_T1::_T3(v))),
-                ))
-                .or_not(),
+                    )
+                    .then(yul_expression_parser.clone())
+                    .map(|v| yul_variable_declaration::_T2::from_parse(v))
+                    .or_not(),
             )
             .map(|v| yul_variable_declaration::_T0::from_parse(v))
             .boxed();
@@ -3346,7 +3269,7 @@ impl Parsers {
             .boxed(),
         );
 
-        // YulStatement = YulBlock | YulVariableDeclaration | YulFunctionDefinition | YulAssignment | YulFunctionCall | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement ;
+        // YulStatement = YulBlock | YulVariableDeclaration | YulFunctionDefinition | YulAssignmentStatement | YulFunctionCall | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement ;
         let yul_statement_parser = choice((
             yul_block_parser
                 .clone()
@@ -3357,9 +3280,9 @@ impl Parsers {
             yul_function_definition_parser
                 .clone()
                 .map(|v| Box::new(yul_statement::_T0::YulFunctionDefinition(v))),
-            yul_assignment_parser
+            yul_assignment_statement_parser
                 .clone()
-                .map(|v| Box::new(yul_statement::_T0::YulAssignment(v))),
+                .map(|v| Box::new(yul_statement::_T0::YulAssignmentStatement(v))),
             yul_function_call_parser
                 .clone()
                 .map(|v| Box::new(yul_statement::_T0::YulFunctionCall(v))),
@@ -6601,7 +6524,7 @@ impl Parsers {
             import_directive: import_directive_parser,
             modifier_attribute: modifier_attribute_parser,
             state_variable_attribute: state_variable_attribute_parser,
-            yul_assignment: yul_assignment_parser,
+            yul_assignment_statement: yul_assignment_statement_parser,
             yul_for_statement: yul_for_statement_parser,
             yul_if_statement: yul_if_statement_parser,
             yul_switch_statement: yul_switch_statement_parser,
