@@ -1386,6 +1386,35 @@ impl DefaultTest for abi_coder_pragma_specifier::_T0 {
     }
 }
 
+impl delete_statement::_T0 {
+    pub fn from_parse(
+        ((delete, identifier), semicolon_char): (
+            (FixedSizeTerminalWithTrivia<6usize>, identifier::WithTrivia),
+            FixedSizeTerminalWithTrivia<1>,
+        ),
+    ) -> Self {
+        Self {
+            delete,
+            identifier,
+            semicolon_char,
+        }
+    }
+}
+impl Default for delete_statement::_T0 {
+    fn default() -> Self {
+        Self {
+            delete: Default::default(),
+            identifier: Default::default(),
+            semicolon_char: Default::default(),
+        }
+    }
+}
+impl DefaultTest for delete_statement::_T0 {
+    fn is_default(&self) -> bool {
+        self.delete.is_default() && self.identifier.is_default() && self.semicolon_char.is_default()
+    }
+}
+
 impl Default for enum_definition::_T1 {
     fn default() -> Self {
         Self {

@@ -2308,6 +2308,49 @@ impl Parsers {
             .map(|v| abi_coder_pragma_specifier::_T0::from_parse(v))
             .boxed();
 
+        // DeleteStatement = 'delete' «Identifier» ';' ;
+        let delete_statement_parser = leading_trivia_parser
+            .clone()
+            .then(
+                terminal("delete")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<6usize>()),
+            )
+            .then(trailing_trivia_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| identifier::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    }),
+            )
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| delete_statement::_T0::from_parse(v))
+            .boxed();
+
         // EnumDefinition = 'enum' «Identifier» '{' 1…*{ «Identifier» / ',' } '}' ;
         let enum_definition_parser = leading_trivia_parser
             .clone()
@@ -4900,7 +4943,7 @@ impl Parsers {
             })
             .boxed();
 
-        // UnaryPrefixExpression = ( '++' | '--' | '!' | '~' | 'delete' | '-' ) Expression ;
+        // UnaryPrefixExpression = ( '++' | '--' | '!' | '~' | '-' ) Expression ;
         let unary_prefix_expression_parser = leading_trivia_parser
             .clone()
             .then(choice::<_, ErrorType>((
@@ -4910,7 +4953,6 @@ impl Parsers {
                     terminal("-").map(|_| 2usize),
                     empty().map(|_| 1usize),
                 ))),
-                terminal("delete").map(|_| 6usize),
                 terminal("~").map(|_| 1usize),
             )))
             .then(trailing_trivia_parser.clone())
@@ -6283,7 +6325,7 @@ impl Parsers {
             .map(|v| for_statement::_T0::from_parse(v))
             .boxed();
 
-        // Statement = Block | SimpleStatement | IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | TryStatement | ReturnStatement | EmitStatement | RevertStatement | AssemblyStatement ;
+        // Statement = Block | SimpleStatement | IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | TryStatement | ReturnStatement | EmitStatement | RevertStatement | DeleteStatement | AssemblyStatement ;
         statement_parser.define(
             choice((
                 block_parser
@@ -6322,6 +6364,9 @@ impl Parsers {
                 revert_statement_parser
                     .clone()
                     .map(|v| Box::new(statement::_T0::RevertStatement(v))),
+                delete_statement_parser
+                    .clone()
+                    .map(|v| Box::new(statement::_T0::DeleteStatement(v))),
                 assembly_statement_parser
                     .clone()
                     .map(|v| Box::new(statement::_T0::AssemblyStatement(v))),
@@ -6982,6 +7027,7 @@ impl Parsers {
             import_path: import_path_parser,
             yul_literal: yul_literal_parser,
             abi_coder_pragma_specifier: abi_coder_pragma_specifier_parser,
+            delete_statement: delete_statement_parser,
             enum_definition: enum_definition_parser,
             experimental_pragma_specifier: experimental_pragma_specifier_parser,
             identifier_path: identifier_path_parser,

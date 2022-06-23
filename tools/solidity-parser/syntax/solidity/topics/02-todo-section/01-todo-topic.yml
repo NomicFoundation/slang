@@ -568,7 +568,6 @@
         - terminal: "--"
         - terminal: "!"
         - terminal: "~"
-        - terminal: delete
         - terminal: "-"
     - reference: Expression
 
@@ -697,6 +696,7 @@
     - reference: ReturnStatement
     - reference: EmitStatement
     - reference: RevertStatement
+    - reference: DeleteStatement
     - reference: AssemblyStatement
 
 - name: SimpleStatement
@@ -801,6 +801,12 @@
     - terminal: revert
     - reference: Expression
     - reference: ArgumentList
+    - terminal: ;
+
+- name: DeleteStatement
+  sequence:
+    - terminal: delete
+    - reference: Identifier
     - terminal: ;
 
 - name: TupleDeconstructionStatement
