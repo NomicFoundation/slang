@@ -4302,41 +4302,6 @@ impl Parsers {
             .map(|v| using_directive::_T0::from_parse(v))
             .boxed();
 
-        // VariableDeclaration = TypeName [ DataLocation ] «Identifier» ;
-        let variable_declaration_parser = type_name_parser
-            .clone()
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(choice::<_, ErrorType>((
-                        terminal("calldata").map(|_| 8usize),
-                        terminal("memory").map(|_| 6usize),
-                        terminal("storage").map(|_| 7usize),
-                    )))
-                    .then(trailing_trivia_parser.clone())
-                    .map(
-                        |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
-                            leading,
-                            content: VariableSizeTerminal(content),
-                            trailing,
-                        },
-                    )
-                    .or_not(),
-            )
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(identifier_parser.clone())
-                    .then(trailing_trivia_parser.clone())
-                    .map(|((leading, content), trailing)| identifier::WithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    }),
-            )
-            .map(|v| variable_declaration::_T0::from_parse(v))
-            .boxed();
-
         // Directive = PragmaDirective | ImportDirective | UsingDirective ;
         let directive_parser = choice((
             pragma_directive_parser
@@ -4706,66 +4671,6 @@ impl Parsers {
                     ),
             )
             .map(|v| struct_definition::_T0::from_parse(v))
-            .boxed();
-
-        // TupleVariableDeclaration = '(' { ',' } VariableDeclaration { ',' [ VariableDeclaration ] } ')' ;
-        let tuple_variable_declaration_parser = leading_trivia_parser
-            .clone()
-            .then(just('(').map(|_| FixedSizeTerminal::<1>()))
-            .then(trailing_trivia_parser.clone())
-            .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                    leading,
-                    content,
-                    trailing,
-                },
-            )
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                    .then(trailing_trivia_parser.clone())
-                    .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                            leading,
-                            content,
-                            trailing,
-                        },
-                    )
-                    .repeated()
-                    .map(|v| VariableSizeTerminal(v.len())),
-            )
-            .then(variable_declaration_parser.clone())
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                    .then(trailing_trivia_parser.clone())
-                    .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                            leading,
-                            content,
-                            trailing,
-                        },
-                    )
-                    .then(variable_declaration_parser.clone().or_not())
-                    .map(|v| tuple_variable_declaration::_T3::from_parse(v))
-                    .repeated(),
-            )
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(just(')').map(|_| FixedSizeTerminal::<1>()))
-                    .then(trailing_trivia_parser.clone())
-                    .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                            leading,
-                            content,
-                            trailing,
-                        },
-                    ),
-            )
-            .map(|v| tuple_variable_declaration::_T0::from_parse(v))
             .boxed();
 
         // IndexAccessExpression = Expression '[' [ Expression ] [ ':' [ Expression ] ] ']' ;
@@ -6057,62 +5962,184 @@ impl Parsers {
             .map(|v| try_statement::_T0::from_parse(v))
             .boxed();
 
-        // VariableDeclarationStatement = ( VariableDeclaration [ '=' Expression ] | TupleVariableDeclaration '=' Expression ) ';' ;
-        let variable_declaration_statement_parser = choice((
-            variable_declaration_parser
-                .clone()
-                .then(
-                    leading_trivia_parser
-                        .clone()
-                        .then(just('=').map(|_| FixedSizeTerminal::<1>()))
-                        .then(trailing_trivia_parser.clone())
-                        .map(
-                            |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+        // TupleDeconstructionStatement = '(' { [ [ TypeName ] «Identifier» ] / ',' } ')' '=' Expression ';' ;
+        let tuple_deconstruction_statement_parser = leading_trivia_parser
+            .clone()
+            .then(just('(').map(|_| FixedSizeTerminal::<1>()))
+            .then(trailing_trivia_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(
+                type_name_parser
+                    .clone()
+                    .or_not()
+                    .then(
+                        leading_trivia_parser
+                            .clone()
+                            .then(identifier_parser.clone())
+                            .then(trailing_trivia_parser.clone())
+                            .map(|((leading, content), trailing)| identifier::WithTrivia {
                                 leading,
                                 content,
                                 trailing,
-                            },
-                        )
-                        .then(expression_parser.clone())
-                        .map(|v| variable_declaration_statement::_T3::from_parse(v))
-                        .or_not(),
-                )
-                .map(|v| variable_declaration_statement::_T2::from_parse(v))
-                .map(|v| Box::new(variable_declaration_statement::_T1::_T2(v))),
-            tuple_variable_declaration_parser
-                .clone()
-                .then(
-                    leading_trivia_parser
-                        .clone()
-                        .then(just('=').map(|_| FixedSizeTerminal::<1>()))
-                        .then(trailing_trivia_parser.clone())
-                        .map(
-                            |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                                leading,
-                                content,
-                                trailing,
-                            },
-                        ),
-                )
-                .then(expression_parser.clone())
-                .map(|v| variable_declaration_statement::_T4::from_parse(v))
-                .map(|v| Box::new(variable_declaration_statement::_T1::_T4(v))),
-        ))
-        .then(
-            leading_trivia_parser
-                .clone()
-                .then(just(';').map(|_| FixedSizeTerminal::<1>()))
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            }),
+                    )
+                    .map(|v| tuple_deconstruction_statement::_T2::from_parse(v))
+                    .or_not()
+                    .then(
+                        leading_trivia_parser
+                            .clone()
+                            .then(just(',').map(|_| FixedSizeTerminal::<1>()))
+                            .then(trailing_trivia_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            )
+                            .then(
+                                type_name_parser
+                                    .clone()
+                                    .or_not()
+                                    .then(
+                                        leading_trivia_parser
+                                            .clone()
+                                            .then(identifier_parser.clone())
+                                            .then(trailing_trivia_parser.clone())
+                                            .map(|((leading, content), trailing)| {
+                                                identifier::WithTrivia {
+                                                    leading,
+                                                    content,
+                                                    trailing,
+                                                }
+                                            }),
+                                    )
+                                    .map(|v| tuple_deconstruction_statement::_T2::from_parse(v))
+                                    .or_not(),
+                            )
+                            .repeated(),
+                    )
+                    .map(repetition_mapper)
+                    .map(
+                        |(elements, separators)| tuple_deconstruction_statement::_T1 {
+                            elements,
+                            separators,
+                        },
+                    )
+                    .or_not(),
+            )
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(just(')').map(|_| FixedSizeTerminal::<1>()))
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(just('=').map(|_| FixedSizeTerminal::<1>()))
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(expression_parser.clone())
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| tuple_deconstruction_statement::_T0::from_parse(v))
+            .boxed();
+
+        // VariableDeclarationStatement = TypeName [ DataLocation ] «Identifier» [ '=' Expression ] ';' ;
+        let variable_declaration_statement_parser = type_name_parser
+            .clone()
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(choice::<_, ErrorType>((
+                        terminal("calldata").map(|_| 8usize),
+                        terminal("memory").map(|_| 6usize),
+                        terminal("storage").map(|_| 7usize),
+                    )))
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
+                            leading,
+                            content: VariableSizeTerminal(content),
+                            trailing,
+                        },
+                    )
+                    .or_not(),
+            )
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| identifier::WithTrivia {
                         leading,
                         content,
                         trailing,
-                    },
-                ),
-        )
-        .map(|v| variable_declaration_statement::_T0::from_parse(v))
-        .boxed();
+                    }),
+            )
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(just('=').map(|_| FixedSizeTerminal::<1>()))
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .then(expression_parser.clone())
+                    .map(|v| variable_declaration_statement::_T1::from_parse(v))
+                    .or_not(),
+            )
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| variable_declaration_statement::_T0::from_parse(v))
+            .boxed();
 
         // WhileStatement = 'while' '(' Expression ')' Statement ;
         let while_statement_parser = leading_trivia_parser
@@ -6161,8 +6188,11 @@ impl Parsers {
             .map(|v| while_statement::_T0::from_parse(v))
             .boxed();
 
-        // SimpleStatement = VariableDeclarationStatement | ExpressionStatement ;
+        // SimpleStatement = TupleDeconstructionStatement | VariableDeclarationStatement | ExpressionStatement ;
         let simple_statement_parser = choice((
+            tuple_deconstruction_statement_parser
+                .clone()
+                .map(|v| Box::new(simple_statement::_T0::TupleDeconstructionStatement(v))),
             variable_declaration_statement_parser
                 .clone()
                 .map(|v| Box::new(simple_statement::_T0::VariableDeclarationStatement(v))),
@@ -6997,13 +7027,11 @@ impl Parsers {
             struct_member: struct_member_parser,
             type_expression: type_expression_parser,
             using_directive: using_directive_parser,
-            variable_declaration: variable_declaration_parser,
             directive: directive_parser,
             error_definition: error_definition_parser,
             event_definition: event_definition_parser,
             primary_expression: primary_expression_parser,
             struct_definition: struct_definition_parser,
-            tuple_variable_declaration: tuple_variable_declaration_parser,
             index_access_expression: index_access_expression_parser,
             member_access_expression: member_access_expression_parser,
             function_call_options_expression: function_call_options_expression_parser,
@@ -7033,6 +7061,7 @@ impl Parsers {
             revert_statement: revert_statement_parser,
             state_variable_declaration: state_variable_declaration_parser,
             try_statement: try_statement_parser,
+            tuple_deconstruction_statement: tuple_deconstruction_statement_parser,
             variable_declaration_statement: variable_declaration_statement_parser,
             while_statement: while_statement_parser,
             simple_statement: simple_statement_parser,
