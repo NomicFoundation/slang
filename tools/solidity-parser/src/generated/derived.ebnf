@@ -6,19 +6,19 @@
  * First Section: Trivia
  *)
 
-«LeadingTrivia» = { «Whitespace» | «EndOfLine» | «Comment» | «LineComment» } ;
+«LeadingTrivia» = { «Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment» } ;
 
-«TrailingTrivia» = [ { «Whitespace» | «Comment» } ( «EndOfLine» | «LineComment» ) ] ;
+«TrailingTrivia» = [ { «Whitespace» | «MultilineComment» } ( «EndOfLine» | «SingleLineComment» ) ] ;
 
-«EndOfFileTrivia» = { «Whitespace» | «Comment» | «LineComment» } ;
+«EndOfFileTrivia» = { «Whitespace» | «MultilineComment» | «SingleLineComment» } ;
 
 «Whitespace» = 1…*{ '\u{20}' | '\u{9}' } ;
 
 «EndOfLine» = 1…*{ '\u{d}' | '\u{a}' } ;
 
-«Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
+«MultilineComment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
 
-«LineComment» = '//' { ¬( '\u{d}' | '\u{a}' ) } ;
+«SingleLineComment» = '//' { ¬( '\u{d}' | '\u{a}' ) } ;
 
 (*
  * First Section: Solidity File
@@ -214,9 +214,9 @@ EmitStatement = 'emit' Expression ArgumentList ';' ;
 
 RevertStatement = 'revert' Expression ArgumentList ';' ;
 
-VariableDeclarationTuple = '(' { ',' } VariableDeclaration { ',' [ VariableDeclaration ] } ')' ;
+TupleVariableDeclaration = '(' { ',' } VariableDeclaration { ',' [ VariableDeclaration ] } ')' ;
 
-VariableDeclarationStatement = ( VariableDeclaration [ '=' Expression ] | VariableDeclarationTuple '=' Expression ) ';' ;
+VariableDeclarationStatement = ( VariableDeclaration [ '=' Expression ] | TupleVariableDeclaration '=' Expression ) ';' ;
 
 VariableDeclaration = TypeName [ DataLocation ] «Identifier» ;
 
@@ -262,7 +262,7 @@ AssemblyFlags = '(' 1…*{ «DoubleQuotedAsciiStringLiteral» / ',' } ')' ;
 
 «DecimalExponent» = ( 'e' | 'E' ) [ '-' ] «DecimalInteger» ;
 
-«HexNumber» = '0' 'x' 1…*{ «HexCharacter» / [ '_' ] } ;
+«HexNumber» = '0x' 1…*{ «HexCharacter» / [ '_' ] } ;
 
 «NumberUnit» = 'wei' | 'gwei' | 'ether' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'years' ;
 

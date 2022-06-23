@@ -53,44 +53,6 @@ impl Parsers {
 
         let mut block_parser = Recursive::declare();
 
-        // «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
-        let comment_parser = terminal("/*")
-            .ignored()
-            .map(|_| FixedSizeTerminal::<2usize>())
-            .then(
-                choice((
-                    filter(|&c: &char| c != '*')
-                        .map(|_| FixedSizeTerminal::<1>())
-                        .map(|v| Box::new(comment::_T2::NotStarChar(v))),
-                    just('*')
-                        .map(|_| FixedSizeTerminal::<1>())
-                        .repeated()
-                        .at_least(1usize)
-                        .map(|v| VariableSizeTerminal(v.len()))
-                        .then(
-                            filter(|&c: &char| c != '*' && c != '/')
-                                .map(|_| FixedSizeTerminal::<1>()),
-                        )
-                        .map(|v| comment::_T3::from_parse(v))
-                        .map(|v| Box::new(comment::_T2::_T3(v))),
-                ))
-                .repeated()
-                .then(
-                    just('*')
-                        .map(|_| FixedSizeTerminal::<1>())
-                        .repeated()
-                        .map(|v| VariableSizeTerminal(v.len())),
-                )
-                .map(|v| comment::Content::from_parse(v)),
-            )
-            .then(
-                terminal("*/")
-                    .ignored()
-                    .map(|_| FixedSizeTerminal::<2usize>()),
-            )
-            .map(|v| comment::_T0::from_parse(v))
-            .boxed();
-
         // «DecimalInteger» = 1…*{ '0'…'9' / [ '_' ] } ;
         let decimal_integer_parser = filter(|&c: &char| ('0' <= c && c <= '9'))
             .map(|_| FixedSizeTerminal::<1>())
@@ -214,10 +176,10 @@ impl Parsers {
             .map(|v| hex_byte_escape::_T0::from_parse(v))
             .boxed();
 
-        // «HexNumber» = '0' 'x' 1…*{ «HexCharacter» / [ '_' ] } ;
-        let hex_number_parser = just('0')
-            .map(|_| FixedSizeTerminal::<1>())
-            .then(just('x').map(|_| FixedSizeTerminal::<1>()))
+        // «HexNumber» = '0x' 1…*{ «HexCharacter» / [ '_' ] } ;
+        let hex_number_parser = terminal("0x")
+            .ignored()
+            .map(|_| FixedSizeTerminal::<2usize>())
             .then(
                 filter(|&c: &char| {
                     ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
@@ -246,17 +208,42 @@ impl Parsers {
             .map(|v| hex_number::_T0::from_parse(v))
             .boxed();
 
-        // «LineComment» = '//' { ¬( '\u{d}' | '\u{a}' ) } ;
-        let line_comment_parser = terminal("//")
+        // «MultilineComment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
+        let multiline_comment_parser = terminal("/*")
             .ignored()
             .map(|_| FixedSizeTerminal::<2usize>())
             .then(
-                filter(|&c: &char| c != '\r' && c != '\n')
-                    .map(|_| FixedSizeTerminal::<1>())
-                    .repeated()
-                    .map(|v| VariableSizeTerminal(v.len())),
+                choice((
+                    filter(|&c: &char| c != '*')
+                        .map(|_| FixedSizeTerminal::<1>())
+                        .map(|v| Box::new(multiline_comment::_T2::NotStarChar(v))),
+                    just('*')
+                        .map(|_| FixedSizeTerminal::<1>())
+                        .repeated()
+                        .at_least(1usize)
+                        .map(|v| VariableSizeTerminal(v.len()))
+                        .then(
+                            filter(|&c: &char| c != '*' && c != '/')
+                                .map(|_| FixedSizeTerminal::<1>()),
+                        )
+                        .map(|v| multiline_comment::_T3::from_parse(v))
+                        .map(|v| Box::new(multiline_comment::_T2::_T3(v))),
+                ))
+                .repeated()
+                .then(
+                    just('*')
+                        .map(|_| FixedSizeTerminal::<1>())
+                        .repeated()
+                        .map(|v| VariableSizeTerminal(v.len())),
+                )
+                .map(|v| multiline_comment::Content::from_parse(v)),
             )
-            .map(|v| line_comment::_T0::from_parse(v))
+            .then(
+                terminal("*/")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<2usize>()),
+            )
+            .map(|v| multiline_comment::_T0::from_parse(v))
             .boxed();
 
         // «PossiblySeparatedPairsOfHexDigits» = 1…*{ 2…2*{ «HexCharacter» } / [ '_' ] } ;
@@ -386,6 +373,19 @@ impl Parsers {
             .map(|v| signed_integer_type::_T0::from_parse(v))
             .boxed();
 
+        // «SingleLineComment» = '//' { ¬( '\u{d}' | '\u{a}' ) } ;
+        let single_line_comment_parser = terminal("//")
+            .ignored()
+            .map(|_| FixedSizeTerminal::<2usize>())
+            .then(
+                filter(|&c: &char| c != '\r' && c != '\n')
+                    .map(|_| FixedSizeTerminal::<1>())
+                    .repeated()
+                    .map(|v| VariableSizeTerminal(v.len())),
+            )
+            .map(|v| single_line_comment::_T0::from_parse(v))
+            .boxed();
+
         // «UnicodeEscape» = 'u' 4…4*{ «HexCharacter» } ;
         let unicode_escape_parser = just('u')
             .map(|_| FixedSizeTerminal::<1>())
@@ -460,17 +460,17 @@ impl Parsers {
             .map(|v| decimal_float::_T0::from_parse(v))
             .boxed();
 
-        // «EndOfFileTrivia» = { «Whitespace» | «Comment» | «LineComment» } ;
+        // «EndOfFileTrivia» = { «Whitespace» | «MultilineComment» | «SingleLineComment» } ;
         let end_of_file_trivia_parser = choice((
             whitespace_parser
                 .clone()
                 .map(|v| Box::new(end_of_file_trivia::_T1::Whitespace(v))),
-            comment_parser
+            multiline_comment_parser
                 .clone()
-                .map(|v| Box::new(end_of_file_trivia::_T1::Comment(v))),
-            line_comment_parser
+                .map(|v| Box::new(end_of_file_trivia::_T1::MultilineComment(v))),
+            single_line_comment_parser
                 .clone()
-                .map(|v| Box::new(end_of_file_trivia::_T1::LineComment(v))),
+                .map(|v| Box::new(end_of_file_trivia::_T1::SingleLineComment(v))),
         ))
         .repeated()
         .boxed();
@@ -530,7 +530,7 @@ impl Parsers {
             .map(|v| hex_string_literal::_T0::from_parse(v))
             .boxed();
 
-        // «LeadingTrivia» = { «Whitespace» | «EndOfLine» | «Comment» | «LineComment» } ;
+        // «LeadingTrivia» = { «Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment» } ;
         let leading_trivia_parser = choice((
             whitespace_parser
                 .clone()
@@ -538,33 +538,33 @@ impl Parsers {
             end_of_line_parser
                 .clone()
                 .map(|v| Box::new(leading_trivia::_T1::EndOfLine(v))),
-            comment_parser
+            multiline_comment_parser
                 .clone()
-                .map(|v| Box::new(leading_trivia::_T1::Comment(v))),
-            line_comment_parser
+                .map(|v| Box::new(leading_trivia::_T1::MultilineComment(v))),
+            single_line_comment_parser
                 .clone()
-                .map(|v| Box::new(leading_trivia::_T1::LineComment(v))),
+                .map(|v| Box::new(leading_trivia::_T1::SingleLineComment(v))),
         ))
         .repeated()
         .boxed();
 
-        // «TrailingTrivia» = [ { «Whitespace» | «Comment» } ( «EndOfLine» | «LineComment» ) ] ;
+        // «TrailingTrivia» = [ { «Whitespace» | «MultilineComment» } ( «EndOfLine» | «SingleLineComment» ) ] ;
         let trailing_trivia_parser = choice((
             whitespace_parser
                 .clone()
                 .map(|v| Box::new(trailing_trivia::_T2::Whitespace(v))),
-            comment_parser
+            multiline_comment_parser
                 .clone()
-                .map(|v| Box::new(trailing_trivia::_T2::Comment(v))),
+                .map(|v| Box::new(trailing_trivia::_T2::MultilineComment(v))),
         ))
         .repeated()
         .then(choice((
             end_of_line_parser
                 .clone()
                 .map(|v| Box::new(trailing_trivia::_T3::EndOfLine(v))),
-            line_comment_parser
+            single_line_comment_parser
                 .clone()
-                .map(|v| Box::new(trailing_trivia::_T3::LineComment(v))),
+                .map(|v| Box::new(trailing_trivia::_T3::SingleLineComment(v))),
         )))
         .map(|v| trailing_trivia::_T0::from_parse(v))
         .or_not()
@@ -4742,8 +4742,8 @@ impl Parsers {
             })
             .boxed();
 
-        // VariableDeclarationTuple = '(' { ',' } VariableDeclaration { ',' [ VariableDeclaration ] } ')' ;
-        let variable_declaration_tuple_parser = leading_trivia_parser
+        // TupleVariableDeclaration = '(' { ',' } VariableDeclaration { ',' [ VariableDeclaration ] } ')' ;
+        let tuple_variable_declaration_parser = leading_trivia_parser
             .clone()
             .then(just('(').map(|_| FixedSizeTerminal::<1>()))
             .then(trailing_trivia_parser.clone())
@@ -4783,7 +4783,7 @@ impl Parsers {
                         },
                     )
                     .then(variable_declaration_parser.clone().or_not())
-                    .map(|v| variable_declaration_tuple::_T3::from_parse(v))
+                    .map(|v| tuple_variable_declaration::_T3::from_parse(v))
                     .repeated(),
             )
             .then(
@@ -4799,7 +4799,7 @@ impl Parsers {
                         },
                     ),
             )
-            .map(|v| variable_declaration_tuple::_T0::from_parse(v))
+            .map(|v| tuple_variable_declaration::_T0::from_parse(v))
             .boxed();
 
         // MemberAccessExpression = Expression '.' ( «Identifier» | 'address' ) ;
@@ -6025,7 +6025,7 @@ impl Parsers {
             .map(|v| try_statement::_T0::from_parse(v))
             .boxed();
 
-        // VariableDeclarationStatement = ( VariableDeclaration [ '=' Expression ] | VariableDeclarationTuple '=' Expression ) ';' ;
+        // VariableDeclarationStatement = ( VariableDeclaration [ '=' Expression ] | TupleVariableDeclaration '=' Expression ) ';' ;
         let variable_declaration_statement_parser = choice((
             variable_declaration_parser
                 .clone()
@@ -6047,7 +6047,7 @@ impl Parsers {
                 )
                 .map(|v| variable_declaration_statement::_T2::from_parse(v))
                 .map(|v| Box::new(variable_declaration_statement::_T1::_T2(v))),
-            variable_declaration_tuple_parser
+            tuple_variable_declaration_parser
                 .clone()
                 .then(
                     leading_trivia_parser
@@ -6892,18 +6892,18 @@ impl Parsers {
             .boxed();
 
         Self {
-            comment: comment_parser,
             decimal_integer: decimal_integer_parser,
             end_of_line: end_of_line_parser,
             fixed_bytes_type: fixed_bytes_type_parser,
             fixed_type: fixed_type_parser,
             hex_byte_escape: hex_byte_escape_parser,
             hex_number: hex_number_parser,
-            line_comment: line_comment_parser,
+            multiline_comment: multiline_comment_parser,
             possibly_separated_pairs_of_hex_digits: possibly_separated_pairs_of_hex_digits_parser,
             pragma_directive: pragma_directive_parser,
             raw_identifier: raw_identifier_parser,
             signed_integer_type: signed_integer_type_parser,
+            single_line_comment: single_line_comment_parser,
             unicode_escape: unicode_escape_parser,
             whitespace: whitespace_parser,
             yul_decimal_number_literal: yul_decimal_number_literal_parser,
@@ -6990,7 +6990,7 @@ impl Parsers {
             error_definition: error_definition_parser,
             event_definition: event_definition_parser,
             index_access_expression: index_access_expression_parser,
-            variable_declaration_tuple: variable_declaration_tuple_parser,
+            tuple_variable_declaration: tuple_variable_declaration_parser,
             member_access_expression: member_access_expression_parser,
             function_call_options_expression: function_call_options_expression_parser,
             function_call_expression: function_call_expression_parser,

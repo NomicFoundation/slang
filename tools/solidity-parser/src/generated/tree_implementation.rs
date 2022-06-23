@@ -40,76 +40,6 @@ impl<const N: usize> DefaultTest for FixedSizeTerminalWithTrivia<N> {
     }
 }
 
-impl comment::_T3 {
-    pub fn from_parse((star_chars, _1): (VariableSizeTerminal, FixedSizeTerminal<1>)) -> Self {
-        Self { star_chars, _1 }
-    }
-}
-impl Default for comment::_T3 {
-    fn default() -> Self {
-        Self {
-            star_chars: Default::default(),
-            _1: Default::default(),
-        }
-    }
-}
-impl DefaultTest for comment::_T3 {
-    fn is_default(&self) -> bool {
-        self.star_chars.is_default() && self._1.is_default()
-    }
-}
-impl comment::Content {
-    pub fn from_parse((_t2s, star_chars): (Vec<Box<comment::_T2>>, VariableSizeTerminal)) -> Self {
-        Self { _t2s, star_chars }
-    }
-}
-impl Default for comment::Content {
-    fn default() -> Self {
-        Self {
-            _t2s: Default::default(),
-            star_chars: Default::default(),
-        }
-    }
-}
-impl DefaultTest for comment::Content {
-    fn is_default(&self) -> bool {
-        self._t2s.is_default() && self.star_chars.is_default()
-    }
-}
-impl comment::_T0 {
-    pub fn from_parse(
-        ((slash_star, content), star_slash): (
-            (FixedSizeTerminal<2usize>, comment::Content),
-            FixedSizeTerminal<2usize>,
-        ),
-    ) -> Self {
-        Self {
-            slash_star,
-            content,
-            star_slash,
-        }
-    }
-}
-impl Default for comment::_T0 {
-    fn default() -> Self {
-        Self {
-            slash_star: Default::default(),
-            content: Default::default(),
-            star_slash: Default::default(),
-        }
-    }
-}
-impl DefaultTest for comment::_T0 {
-    fn is_default(&self) -> bool {
-        self.slash_star.is_default() && self.content.is_default() && self.star_slash.is_default()
-    }
-}
-impl DefaultTest for comment::WithTrivia {
-    fn is_default(&self) -> bool {
-        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
-    }
-}
-
 impl Default for decimal_integer::_T0 {
     fn default() -> Self {
         Self {
@@ -257,27 +187,21 @@ impl DefaultTest for hex_number::_T1 {
     }
 }
 impl hex_number::_T0 {
-    pub fn from_parse(
-        ((zero_char, _1), _2): (
-            (FixedSizeTerminal<1>, FixedSizeTerminal<1>),
-            hex_number::_T1,
-        ),
-    ) -> Self {
-        Self { zero_char, _1, _2 }
+    pub fn from_parse((zero_x, _1): (FixedSizeTerminal<2usize>, hex_number::_T1)) -> Self {
+        Self { zero_x, _1 }
     }
 }
 impl Default for hex_number::_T0 {
     fn default() -> Self {
         Self {
-            zero_char: Default::default(),
+            zero_x: Default::default(),
             _1: Default::default(),
-            _2: Default::default(),
         }
     }
 }
 impl DefaultTest for hex_number::_T0 {
     fn is_default(&self) -> bool {
-        self.zero_char.is_default() && self._1.is_default() && self._2.is_default()
+        self.zero_x.is_default() && self._1.is_default()
     }
 }
 impl DefaultTest for hex_number::WithTrivia {
@@ -286,27 +210,73 @@ impl DefaultTest for hex_number::WithTrivia {
     }
 }
 
-impl line_comment::_T0 {
-    pub fn from_parse(
-        (slash_slash, _1): (FixedSizeTerminal<2usize>, VariableSizeTerminal),
-    ) -> Self {
-        Self { slash_slash, _1 }
+impl multiline_comment::_T3 {
+    pub fn from_parse((star_chars, _1): (VariableSizeTerminal, FixedSizeTerminal<1>)) -> Self {
+        Self { star_chars, _1 }
     }
 }
-impl Default for line_comment::_T0 {
+impl Default for multiline_comment::_T3 {
     fn default() -> Self {
         Self {
-            slash_slash: Default::default(),
+            star_chars: Default::default(),
             _1: Default::default(),
         }
     }
 }
-impl DefaultTest for line_comment::_T0 {
+impl DefaultTest for multiline_comment::_T3 {
     fn is_default(&self) -> bool {
-        self.slash_slash.is_default() && self._1.is_default()
+        self.star_chars.is_default() && self._1.is_default()
     }
 }
-impl DefaultTest for line_comment::WithTrivia {
+impl multiline_comment::Content {
+    pub fn from_parse(
+        (_t2s, star_chars): (Vec<Box<multiline_comment::_T2>>, VariableSizeTerminal),
+    ) -> Self {
+        Self { _t2s, star_chars }
+    }
+}
+impl Default for multiline_comment::Content {
+    fn default() -> Self {
+        Self {
+            _t2s: Default::default(),
+            star_chars: Default::default(),
+        }
+    }
+}
+impl DefaultTest for multiline_comment::Content {
+    fn is_default(&self) -> bool {
+        self._t2s.is_default() && self.star_chars.is_default()
+    }
+}
+impl multiline_comment::_T0 {
+    pub fn from_parse(
+        ((slash_star, content), star_slash): (
+            (FixedSizeTerminal<2usize>, multiline_comment::Content),
+            FixedSizeTerminal<2usize>,
+        ),
+    ) -> Self {
+        Self {
+            slash_star,
+            content,
+            star_slash,
+        }
+    }
+}
+impl Default for multiline_comment::_T0 {
+    fn default() -> Self {
+        Self {
+            slash_star: Default::default(),
+            content: Default::default(),
+            star_slash: Default::default(),
+        }
+    }
+}
+impl DefaultTest for multiline_comment::_T0 {
+    fn is_default(&self) -> bool {
+        self.slash_star.is_default() && self.content.is_default() && self.star_slash.is_default()
+    }
+}
+impl DefaultTest for multiline_comment::WithTrivia {
     fn is_default(&self) -> bool {
         self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
     }
@@ -410,6 +380,32 @@ impl DefaultTest for signed_integer_type::_T0 {
     }
 }
 impl DefaultTest for signed_integer_type::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
+    }
+}
+
+impl single_line_comment::_T0 {
+    pub fn from_parse(
+        (slash_slash, _1): (FixedSizeTerminal<2usize>, VariableSizeTerminal),
+    ) -> Self {
+        Self { slash_slash, _1 }
+    }
+}
+impl Default for single_line_comment::_T0 {
+    fn default() -> Self {
+        Self {
+            slash_slash: Default::default(),
+            _1: Default::default(),
+        }
+    }
+}
+impl DefaultTest for single_line_comment::_T0 {
+    fn is_default(&self) -> bool {
+        self.slash_slash.is_default() && self._1.is_default()
+    }
+}
+impl DefaultTest for single_line_comment::WithTrivia {
     fn is_default(&self) -> bool {
         self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
     }
@@ -2886,7 +2882,7 @@ impl DefaultTest for index_access_expression::Operator {
     }
 }
 
-impl variable_declaration_tuple::_T3 {
+impl tuple_variable_declaration::_T3 {
     pub fn from_parse(
         (comma_char, variable_declaration): (
             FixedSizeTerminalWithTrivia<1>,
@@ -2899,7 +2895,7 @@ impl variable_declaration_tuple::_T3 {
         }
     }
 }
-impl Default for variable_declaration_tuple::_T3 {
+impl Default for tuple_variable_declaration::_T3 {
     fn default() -> Self {
         Self {
             comma_char: Default::default(),
@@ -2907,12 +2903,12 @@ impl Default for variable_declaration_tuple::_T3 {
         }
     }
 }
-impl DefaultTest for variable_declaration_tuple::_T3 {
+impl DefaultTest for tuple_variable_declaration::_T3 {
     fn is_default(&self) -> bool {
         self.comma_char.is_default() && self.variable_declaration.is_default()
     }
 }
-impl variable_declaration_tuple::_T0 {
+impl tuple_variable_declaration::_T0 {
     pub fn from_parse(
         ((((open_paren_char, comma_chars), variable_declaration), _t3s), close_paren_char): (
             (
@@ -2920,7 +2916,7 @@ impl variable_declaration_tuple::_T0 {
                     (FixedSizeTerminalWithTrivia<1>, VariableSizeTerminal),
                     VariableDeclaration,
                 ),
-                Vec<variable_declaration_tuple::_T3>,
+                Vec<tuple_variable_declaration::_T3>,
             ),
             FixedSizeTerminalWithTrivia<1>,
         ),
@@ -3297,13 +3293,13 @@ impl variable_declaration_statement::_T2 {
 }
 impl variable_declaration_statement::_T4 {
     pub fn from_parse(
-        ((variable_declaration_tuple, equal_char), expression): (
-            (VariableDeclarationTuple, FixedSizeTerminalWithTrivia<1>),
+        ((tuple_variable_declaration, equal_char), expression): (
+            (TupleVariableDeclaration, FixedSizeTerminalWithTrivia<1>),
             Expression,
         ),
     ) -> Self {
         Self {
-            variable_declaration_tuple,
+            tuple_variable_declaration,
             equal_char,
             expression,
         }

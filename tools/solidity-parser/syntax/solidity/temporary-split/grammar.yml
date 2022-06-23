@@ -6,8 +6,8 @@
     choice:
       - reference: Whitespace
       - reference: EndOfLine
-      - reference: Comment
-      - reference: LineComment
+      - reference: MultilineComment
+      - reference: SingleLineComment
 - name: TrailingTrivia
   kind: Token
   optional:
@@ -15,17 +15,17 @@
       - zeroOrMore:
           choice:
             - reference: Whitespace
-            - reference: Comment
+            - reference: MultilineComment
       - choice:
           - reference: EndOfLine
-          - reference: LineComment
+          - reference: SingleLineComment
 - name: EndOfFileTrivia
   kind: Token
   zeroOrMore:
     choice:
       - reference: Whitespace
-      - reference: Comment
-      - reference: LineComment
+      - reference: MultilineComment
+      - reference: SingleLineComment
 - name: Whitespace
   kind: Token
   oneOrMore:
@@ -38,7 +38,7 @@
     choice:
       - terminal: "\r"
       - terminal: "\n"
-- name: Comment
+- name: MultilineComment
   kind: Token
   sequence:
     - terminal: /*
@@ -58,7 +58,7 @@
         - zeroOrMore:
             terminal: "*"
     - terminal: "*/"
-- name: LineComment
+- name: SingleLineComment
   kind: Token
   sequence:
     - terminal: //
@@ -873,7 +873,7 @@
     - reference: Expression
     - reference: ArgumentList
     - terminal: ;
-- name: VariableDeclarationTuple
+- name: TupleVariableDeclaration
   sequence:
     - terminal: (
     - zeroOrMore:
@@ -895,7 +895,7 @@
                   - terminal: "="
                   - reference: Expression
         - sequence:
-            - reference: VariableDeclarationTuple
+            - reference: TupleVariableDeclaration
             - terminal: "="
             - reference: Expression
     - terminal: ;
@@ -1223,8 +1223,7 @@
 - name: HexNumber
   kind: Token
   sequence:
-    - terminal: "0"
-    - terminal: x
+    - terminal: 0x
     - oneOrMore:
         reference: HexCharacter
         separator:

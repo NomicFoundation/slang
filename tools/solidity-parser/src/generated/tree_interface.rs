@@ -28,50 +28,6 @@ pub struct VariableSizeTerminalWithTrivia {
     pub trailing: TrailingTrivia,
 }
 
-/// «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
-pub type Comment = comment::_T0;
-pub mod comment {
-    #[allow(unused_imports)]
-    use super::*;
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T3 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub star_chars: VariableSizeTerminal,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _1: FixedSizeTerminal<1>,
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub enum _T2 {
-        NotStarChar(FixedSizeTerminal<1>),
-        _T3(comment::_T3),
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct Content {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _t2s: Vec<Box<comment::_T2>>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub star_chars: VariableSizeTerminal,
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T0 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub slash_star: FixedSizeTerminal<2usize>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub content: comment::Content,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub star_slash: FixedSizeTerminal<2usize>,
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
-    pub struct WithTrivia {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub leading: LeadingTrivia,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub content: comment::_T0,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub trailing: TrailingTrivia,
-    }
-}
-
 /// «DecimalInteger» = 1…*{ '0'…'9' / [ '_' ] } ;
 pub type DecimalInteger = decimal_integer::_T0;
 pub mod decimal_integer {
@@ -193,7 +149,7 @@ pub mod hex_byte_escape {
     }
 }
 
-/// «HexNumber» = '0' 'x' 1…*{ «HexCharacter» / [ '_' ] } ;
+/// «HexNumber» = '0x' 1…*{ «HexCharacter» / [ '_' ] } ;
 pub type HexNumber = hex_number::_T0;
 pub mod hex_number {
     #[allow(unused_imports)]
@@ -208,11 +164,9 @@ pub mod hex_number {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub zero_char: FixedSizeTerminal<1>,
+        pub zero_x: FixedSizeTerminal<2usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _1: FixedSizeTerminal<1>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _2: hex_number::_T1,
+        pub _1: hex_number::_T1,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
     pub struct WithTrivia {
@@ -225,24 +179,45 @@ pub mod hex_number {
     }
 }
 
-/// «LineComment» = '//' { ¬( '\u{d}' | '\u{a}' ) } ;
-pub type LineComment = line_comment::_T0;
-pub mod line_comment {
+/// «MultilineComment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
+pub type MultilineComment = multiline_comment::_T0;
+pub mod multiline_comment {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T3 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub star_chars: VariableSizeTerminal,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _1: FixedSizeTerminal<1>,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T2 {
+        NotStarChar(FixedSizeTerminal<1>),
+        _T3(multiline_comment::_T3),
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct Content {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _t2s: Vec<Box<multiline_comment::_T2>>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub star_chars: VariableSizeTerminal,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub slash_slash: FixedSizeTerminal<2usize>,
+        pub slash_star: FixedSizeTerminal<2usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _1: VariableSizeTerminal,
+        pub content: multiline_comment::Content,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub star_slash: FixedSizeTerminal<2usize>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
     pub struct WithTrivia {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub leading: LeadingTrivia,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub content: line_comment::_T0,
+        pub content: multiline_comment::_T0,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub trailing: TrailingTrivia,
     }
@@ -337,6 +312,29 @@ pub mod signed_integer_type {
         pub leading: LeadingTrivia,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub content: signed_integer_type::_T0,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub trailing: TrailingTrivia,
+    }
+}
+
+/// «SingleLineComment» = '//' { ¬( '\u{d}' | '\u{a}' ) } ;
+pub type SingleLineComment = single_line_comment::_T0;
+pub mod single_line_comment {
+    #[allow(unused_imports)]
+    use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub slash_slash: FixedSizeTerminal<2usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _1: VariableSizeTerminal,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+    pub struct WithTrivia {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub leading: LeadingTrivia,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub content: single_line_comment::_T0,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub trailing: TrailingTrivia,
     }
@@ -481,7 +479,7 @@ pub mod decimal_float {
     }
 }
 
-/// «EndOfFileTrivia» = { «Whitespace» | «Comment» | «LineComment» } ;
+/// «EndOfFileTrivia» = { «Whitespace» | «MultilineComment» | «SingleLineComment» } ;
 pub type EndOfFileTrivia = Vec<Box<end_of_file_trivia::_T1>>;
 pub mod end_of_file_trivia {
     #[allow(unused_imports)]
@@ -489,8 +487,8 @@ pub mod end_of_file_trivia {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub enum _T1 {
         Whitespace(Whitespace),
-        Comment(Comment),
-        LineComment(LineComment),
+        MultilineComment(MultilineComment),
+        SingleLineComment(SingleLineComment),
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
     pub struct WithTrivia {
@@ -574,7 +572,7 @@ pub mod hex_string_literal {
     }
 }
 
-/// «LeadingTrivia» = { «Whitespace» | «EndOfLine» | «Comment» | «LineComment» } ;
+/// «LeadingTrivia» = { «Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment» } ;
 pub type LeadingTrivia = Vec<Box<leading_trivia::_T1>>;
 pub mod leading_trivia {
     #[allow(unused_imports)]
@@ -583,8 +581,8 @@ pub mod leading_trivia {
     pub enum _T1 {
         Whitespace(Whitespace),
         EndOfLine(EndOfLine),
-        Comment(Comment),
-        LineComment(LineComment),
+        MultilineComment(MultilineComment),
+        SingleLineComment(SingleLineComment),
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
     pub struct WithTrivia {
@@ -597,7 +595,7 @@ pub mod leading_trivia {
     }
 }
 
-/// «TrailingTrivia» = [ { «Whitespace» | «Comment» } ( «EndOfLine» | «LineComment» ) ] ;
+/// «TrailingTrivia» = [ { «Whitespace» | «MultilineComment» } ( «EndOfLine» | «SingleLineComment» ) ] ;
 pub type TrailingTrivia = Option<trailing_trivia::_T0>;
 pub mod trailing_trivia {
     #[allow(unused_imports)]
@@ -605,12 +603,12 @@ pub mod trailing_trivia {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub enum _T2 {
         Whitespace(Whitespace),
-        Comment(Comment),
+        MultilineComment(MultilineComment),
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub enum _T3 {
         EndOfLine(EndOfLine),
-        LineComment(LineComment),
+        SingleLineComment(SingleLineComment),
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
@@ -2288,9 +2286,9 @@ pub mod index_access_expression {
     }
 }
 
-/// VariableDeclarationTuple = '(' { ',' } VariableDeclaration { ',' [ VariableDeclaration ] } ')' ;
-pub type VariableDeclarationTuple = variable_declaration_tuple::_T0;
-pub mod variable_declaration_tuple {
+/// TupleVariableDeclaration = '(' { ',' } VariableDeclaration { ',' [ VariableDeclaration ] } ')' ;
+pub type TupleVariableDeclaration = tuple_variable_declaration::_T0;
+pub mod tuple_variable_declaration {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -2308,7 +2306,7 @@ pub mod variable_declaration_tuple {
         pub comma_chars: VariableSizeTerminal,
         pub variable_declaration: VariableDeclaration,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _t3s: Vec<variable_declaration_tuple::_T3>,
+        pub _t3s: Vec<tuple_variable_declaration::_T3>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_paren_char: FixedSizeTerminalWithTrivia<1>,
     }
@@ -2806,7 +2804,7 @@ pub mod try_statement {
     }
 }
 
-/// VariableDeclarationStatement = ( VariableDeclaration [ '=' Expression ] | VariableDeclarationTuple '=' Expression ) ';' ;
+/// VariableDeclarationStatement = ( VariableDeclaration [ '=' Expression ] | TupleVariableDeclaration '=' Expression ) ';' ;
 pub type VariableDeclarationStatement = variable_declaration_statement::_T0;
 pub mod variable_declaration_statement {
     #[allow(unused_imports)]
@@ -2825,7 +2823,7 @@ pub mod variable_declaration_statement {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T4 {
-        pub variable_declaration_tuple: VariableDeclarationTuple,
+        pub tuple_variable_declaration: TupleVariableDeclaration,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub equal_char: FixedSizeTerminalWithTrivia<1>,
         pub expression: Expression,
