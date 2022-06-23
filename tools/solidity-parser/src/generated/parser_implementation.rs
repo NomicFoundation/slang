@@ -2363,7 +2363,7 @@ impl Parsers {
             .map(|v| named_argument_list::_T0::from_parse(v))
             .boxed();
 
-        // OverrideSpecifier = 'override' [ '(' 1…1*{ IdentifierPath / ',' } ')' ] ;
+        // OverrideSpecifier = 'override' [ '(' 1…*{ IdentifierPath / ',' } ')' ] ;
         let override_specifier_parser = leading_trivia_parser
             .clone()
             .then(
@@ -2407,8 +2407,7 @@ impl Parsers {
                                         }
                                     })
                                     .then(identifier_path_parser.clone())
-                                    .repeated()
-                                    .at_most(1usize - 1),
+                                    .repeated(),
                             )
                             .map(repetition_mapper)
                             .map(|(elements, separators)| override_specifier::_T2 {

@@ -1421,7 +1421,7 @@ pub mod named_argument_list {
     }
 }
 
-/// OverrideSpecifier = 'override' [ '(' 1…1*{ IdentifierPath / ',' } ')' ] ;
+/// OverrideSpecifier = 'override' [ '(' 1…*{ IdentifierPath / ',' } ')' ] ;
 pub type OverrideSpecifier = override_specifier::_T0;
 pub mod override_specifier {
     #[allow(unused_imports)]

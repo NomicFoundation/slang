@@ -330,9 +330,7 @@
     - optional:
         sequence:
           - terminal: (
-          - repeat:
-              min: 1
-              max: 1
+          - oneOrMore:
               reference: IdentifierPath
               separator:
                 terminal: ","
