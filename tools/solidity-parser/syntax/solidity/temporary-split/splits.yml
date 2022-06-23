@@ -118,7 +118,6 @@
           - AssemblyStatement
           - AssemblyFlags
           - Identifier
-          - ReservedWord
           - Keyword
           - ReservedKeyword
           - PragmaDirective
@@ -168,11 +167,9 @@
           - YulForStatement
           - YulSwitchStatement
           - YulExpression
-          - YulPath
+          - YulIdentifierPath
           - YulLiteral
           - YulIdentifier
-          - YulReservedWord
           - YulKeyword
-          - YulEVMBuiltinFunctionName
           - YulDecimalNumberLiteral
           - YulHexLiteral

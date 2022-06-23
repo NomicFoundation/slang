@@ -928,21 +928,19 @@
     minuend:
       reference: RawIdentifier
     subtrahend:
-      reference: ReservedWord
-- name: ReservedWord
-  kind: Token
-  choice:
-    - reference: Keyword
-    - reference: ReservedKeyword
-    - reference: NumberUnit
-    - reference: BooleanLiteral
+      reference: Keyword
 - name: Keyword
   kind: Token
   choice:
-    - terminal: pragma
+    - reference: BooleanLiteral
+    - reference: FixedBytesType
+    - reference: NumberUnit
+    - reference: ReservedKeyword
+    - reference: SignedIntegerType
+    - reference: UnsignedIntegerType
     - terminal: abstract
-    - terminal: anonymous
     - terminal: address
+    - terminal: anonymous
     - terminal: as
     - terminal: assembly
     - terminal: bool
@@ -962,6 +960,7 @@
     - terminal: external
     - terminal: fallback
     - terminal: "false"
+    - terminal: fixed
     - terminal: for
     - terminal: function
     - terminal: hex
@@ -979,6 +978,7 @@
     - terminal: new
     - terminal: override
     - terminal: payable
+    - terminal: pragma
     - terminal: private
     - terminal: public
     - terminal: pure
@@ -991,16 +991,12 @@
     - terminal: "true"
     - terminal: try
     - terminal: type
+    - terminal: ufixed
     - terminal: unchecked
     - terminal: using
     - terminal: view
     - terminal: virtual
     - terminal: while
-    - reference: SignedIntegerType
-    - reference: UnsignedIntegerType
-    - reference: FixedBytesType
-    - terminal: fixed
-    - terminal: ufixed
 - name: ReservedKeyword
   kind: Token
   choice:
@@ -1266,14 +1262,16 @@
 - name: NumberUnit
   kind: Token
   choice:
-    - terminal: wei
-    - terminal: gwei
-    - terminal: ether
-    - terminal: seconds
-    - terminal: minutes
-    - terminal: hours
     - terminal: days
+    - terminal: ether
+    - terminal: finney
+    - terminal: gwei
+    - terminal: hours
+    - terminal: minutes
+    - terminal: seconds
+    - terminal: szabo
     - terminal: weeks
+    - terminal: wei
     - terminal: years
 - name: HexStringLiteral
   kind: Token
@@ -1488,7 +1486,7 @@
     - reference: YulBlock
 - name: YulAssignment
   sequence:
-    - reference: YulPath
+    - reference: YulIdentifierPath
     - choice:
         - sequence:
             - terminal: ":="
@@ -1497,14 +1495,12 @@
             - oneOrMore:
                 sequence:
                   - terminal: ","
-                  - reference: YulPath
+                  - reference: YulIdentifierPath
             - terminal: ":="
             - reference: YulFunctionCall
 - name: YulFunctionCall
   sequence:
-    - choice:
-        - reference: YulIdentifier
-        - reference: YulEVMBuiltinFunctionName
+    - reference: YulIdentifier
     - terminal: (
     - zeroOrMore:
         reference: YulExpression
@@ -1549,18 +1545,14 @@
             - reference: YulBlock
 - name: YulExpression
   choice:
-    - reference: YulPath
+    - reference: YulIdentifierPath
     - reference: YulFunctionCall
     - reference: YulLiteral
-- name: YulPath
-  sequence:
-    - reference: YulIdentifier
-    - zeroOrMore:
-        sequence:
-          - terminal: "."
-          - choice:
-              - reference: YulIdentifier
-              - reference: YulEVMBuiltinFunctionName
+- name: YulIdentifierPath
+  oneOrMore:
+    reference: YulIdentifier
+    separator:
+      terminal: "."
 - name: YulLiteral
   choice:
     - reference: YulDecimalNumberLiteral
@@ -1574,103 +1566,22 @@
     minuend:
       reference: RawIdentifier
     subtrahend:
-      reference: YulReservedWord
-- name: YulReservedWord
-  kind: Token
-  choice:
-    - reference: YulKeyword
-    - reference: YulEVMBuiltinFunctionName
-    - reference: BooleanLiteral
+      reference: YulKeyword
 - name: YulKeyword
   kind: Token
   choice:
+    - reference: BooleanLiteral
     - terminal: break
     - terminal: case
     - terminal: continue
     - terminal: default
     - terminal: for
     - terminal: function
+    - terminal: hex
     - terminal: if
     - terminal: leave
     - terminal: let
     - terminal: switch
-    - terminal: hex
-- name: YulEVMBuiltinFunctionName
-  kind: Token
-  choice:
-    - terminal: stop
-    - terminal: add
-    - terminal: sub
-    - terminal: mul
-    - terminal: div
-    - terminal: sdiv
-    - terminal: mod
-    - terminal: smod
-    - terminal: exp
-    - terminal: not
-    - terminal: lt
-    - terminal: gt
-    - terminal: slt
-    - terminal: sgt
-    - terminal: eq
-    - terminal: iszero
-    - terminal: and
-    - terminal: or
-    - terminal: xor
-    - terminal: byte
-    - terminal: shl
-    - terminal: shr
-    - terminal: sar
-    - terminal: addmod
-    - terminal: mulmod
-    - terminal: signextend
-    - terminal: keccak256
-    - terminal: pop
-    - terminal: mload
-    - terminal: mstore
-    - terminal: mstore8
-    - terminal: sload
-    - terminal: sstore
-    - terminal: msize
-    - terminal: gas
-    - terminal: address
-    - terminal: balance
-    - terminal: selfbalance
-    - terminal: caller
-    - terminal: callvalue
-    - terminal: calldataload
-    - terminal: calldatasize
-    - terminal: calldatacopy
-    - terminal: extcodesize
-    - terminal: extcodecopy
-    - terminal: returndatasize
-    - terminal: returndatacopy
-    - terminal: extcodehash
-    - terminal: create
-    - terminal: create2
-    - terminal: call
-    - terminal: callcode
-    - terminal: delegatecall
-    - terminal: staticcall
-    - terminal: return
-    - terminal: revert
-    - terminal: selfdestruct
-    - terminal: invalid
-    - terminal: log0
-    - terminal: log1
-    - terminal: log2
-    - terminal: log3
-    - terminal: log4
-    - terminal: chainid
-    - terminal: origin
-    - terminal: gasprice
-    - terminal: Blockhash
-    - terminal: coinbase
-    - terminal: timestamp
-    - terminal: number
-    - terminal: difficulty
-    - terminal: gaslimit
-    - terminal: basefee
 - name: YulDecimalNumberLiteral
   kind: Token
   choice:

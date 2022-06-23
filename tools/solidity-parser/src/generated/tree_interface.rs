@@ -671,7 +671,7 @@ pub mod unsigned_integer_type {
     }
 }
 
-/// «YulIdentifier» = «RawIdentifier» - «YulReservedWord» ;
+/// «YulIdentifier» = «RawIdentifier» - «YulKeyword» ;
 pub type YulIdentifier = RawIdentifier;
 pub mod yul_identifier {
     #[allow(unused_imports)]
@@ -838,7 +838,7 @@ pub mod double_quoted_unicode_string_literal {
     }
 }
 
-/// «Keyword» = 'pragma' | 'abstract' | 'anonymous' | 'address' | 'as' | 'assembly' | 'bool' | 'break' | 'calldata' | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum' | 'event' | 'external' | 'fallback' | 'false' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import' | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override' | 'payable' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct' | 'true' | 'try' | 'type' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | 'fixed' | 'ufixed' ;
+/// «Keyword» = «BooleanLiteral» | «FixedBytesType» | «NumberUnit» | «ReservedKeyword» | «SignedIntegerType» | «UnsignedIntegerType» | 'abstract' | 'address' | 'anonymous' | 'as' | 'assembly' | 'bool' | 'break' | 'calldata' | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum' | 'event' | 'external' | 'fallback' | 'false' | 'fixed' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import' | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override' | 'payable' | 'pragma' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct' | 'true' | 'try' | 'type' | 'ufixed' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while' ;
 pub type Keyword = Box<keyword::_T0>;
 pub mod keyword {
     #[allow(unused_imports)]
@@ -846,10 +846,11 @@ pub mod keyword {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub enum _T0 {
         _0(VariableSizeTerminal),
+        FixedBytesType(FixedBytesType),
+        _2(VariableSizeTerminal),
         SignedIntegerType(SignedIntegerType),
         UnsignedIntegerType(UnsignedIntegerType),
-        FixedBytesType(FixedBytesType),
-        _4(VariableSizeTerminal),
+        _5(VariableSizeTerminal),
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct WithTrivia {
@@ -993,18 +994,13 @@ pub mod version_pragma_specifier {
     }
 }
 
-/// YulFunctionCall = ( «YulIdentifier» | «YulEVMBuiltinFunctionName» ) '(' { YulExpression / ',' } ')' ;
+/// YulFunctionCall = «YulIdentifier» '(' { YulExpression / ',' } ')' ;
 pub type YulFunctionCall = yul_function_call::_T0;
 pub mod yul_function_call {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub enum _T1 {
-        YulIdentifier(yul_identifier::WithTrivia),
-        _1(VariableSizeTerminalWithTrivia),
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T2 {
+    pub struct _T1 {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<YulExpression>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
@@ -1012,11 +1008,12 @@ pub mod yul_function_call {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub _t1: Box<yul_function_call::_T1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub yul_identifier: yul_identifier::WithTrivia,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_paren_char: FixedSizeTerminalWithTrivia<1>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub yul_expressions: Option<yul_function_call::_T2>,
+        pub yul_expressions: Option<yul_function_call::_T1>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_paren_char: FixedSizeTerminalWithTrivia<1>,
     }
@@ -1067,28 +1064,17 @@ pub mod yul_function_definition {
     }
 }
 
-/// YulPath = «YulIdentifier» { '.' ( «YulIdentifier» | «YulEVMBuiltinFunctionName» ) } ;
-pub type YulPath = yul_path::_T0;
-pub mod yul_path {
+/// YulIdentifierPath = 1…*{ «YulIdentifier» / '.' } ;
+pub type YulIdentifierPath = yul_identifier_path::_T0;
+pub mod yul_identifier_path {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub enum _T3 {
-        YulIdentifier(yul_identifier::WithTrivia),
-        _1(VariableSizeTerminalWithTrivia),
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T2 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub period_char: FixedSizeTerminalWithTrivia<1>,
-        pub _t3: Box<yul_path::_T3>,
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub yul_identifier: yul_identifier::WithTrivia,
+        pub elements: Vec<yul_identifier::WithTrivia>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _t2s: Vec<yul_path::_T2>,
+        pub separators: Vec<FixedSizeTerminalWithTrivia<1>>,
     }
 }
 
@@ -1152,6 +1138,22 @@ pub mod elementary_type {
     }
 }
 
+/// «Identifier» = «RawIdentifier» - «Keyword» ;
+pub type Identifier = RawIdentifier;
+pub mod identifier {
+    #[allow(unused_imports)]
+    use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+    pub struct WithTrivia {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub leading: LeadingTrivia,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub content: RawIdentifier,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub trailing: TrailingTrivia,
+    }
+}
+
 /// «NumericLiteral» = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
 pub type NumericLiteral = numeric_literal::_T0;
 pub mod numeric_literal {
@@ -1178,26 +1180,6 @@ pub mod numeric_literal {
     }
 }
 
-/// «ReservedWord» = «Keyword» | «ReservedKeyword» | «NumberUnit» | «BooleanLiteral» ;
-pub type ReservedWord = Box<reserved_word::_T0>;
-pub mod reserved_word {
-    #[allow(unused_imports)]
-    use super::*;
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub enum _T0 {
-        Keyword(Keyword),
-        _1(VariableSizeTerminal),
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct WithTrivia {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub leading: LeadingTrivia,
-        pub content: Box<reserved_word::_T0>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub trailing: TrailingTrivia,
-    }
-}
-
 /// «UnicodeStringLiteral» = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral» ;
 pub type UnicodeStringLiteral = Box<unicode_string_literal::_T0>;
 pub mod unicode_string_literal {
@@ -1215,40 +1197,6 @@ pub mod unicode_string_literal {
         pub content: Box<unicode_string_literal::_T0>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub trailing: TrailingTrivia,
-    }
-}
-
-/// «Identifier» = «RawIdentifier» - «ReservedWord» ;
-pub type Identifier = RawIdentifier;
-pub mod identifier {
-    #[allow(unused_imports)]
-    use super::*;
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
-    pub struct WithTrivia {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub leading: LeadingTrivia,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub content: RawIdentifier,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub trailing: TrailingTrivia,
-    }
-}
-
-/// ImportPath = «AsciiStringLiteral» ;
-pub type ImportPath = ascii_string_literal::WithTrivia;
-
-/// YulLiteral = «YulDecimalNumberLiteral» | «YulHexLiteral» | «AsciiStringLiteral» | «BooleanLiteral» | «HexStringLiteral» ;
-pub type YulLiteral = Box<yul_literal::_T0>;
-pub mod yul_literal {
-    #[allow(unused_imports)]
-    use super::*;
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub enum _T0 {
-        YulDecimalNumberLiteral(yul_decimal_number_literal::WithTrivia),
-        YulHexLiteral(yul_hex_literal::WithTrivia),
-        AsciiStringLiteral(ascii_string_literal::WithTrivia),
-        _3(VariableSizeTerminalWithTrivia),
-        HexStringLiteral(hex_string_literal::WithTrivia),
     }
 }
 
@@ -1337,6 +1285,9 @@ pub mod identifier_path {
     }
 }
 
+/// ImportPath = «AsciiStringLiteral» ;
+pub type ImportPath = ascii_string_literal::WithTrivia;
+
 /// NamedArgument = «Identifier» ':' Expression ;
 pub type NamedArgument = named_argument::_T0;
 pub mod named_argument {
@@ -1388,45 +1339,6 @@ pub mod selected_import {
     }
 }
 
-/// SimpleImportDirective = ImportPath { 'as' «Identifier» } ;
-pub type SimpleImportDirective = simple_import_directive::_T0;
-pub mod simple_import_directive {
-    #[allow(unused_imports)]
-    use super::*;
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T2 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub r#as: FixedSizeTerminalWithTrivia<2usize>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub identifier: identifier::WithTrivia,
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T0 {
-        pub import_path: ImportPath,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _t2s: Vec<simple_import_directive::_T2>,
-    }
-}
-
-/// StarImportDirective = '*' 'as' «Identifier» 'from' ImportPath ;
-pub type StarImportDirective = star_import_directive::_T0;
-pub mod star_import_directive {
-    #[allow(unused_imports)]
-    use super::*;
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T0 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub star_char: FixedSizeTerminalWithTrivia<1>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub r#as: FixedSizeTerminalWithTrivia<2usize>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub identifier: identifier::WithTrivia,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub from: FixedSizeTerminalWithTrivia<4usize>,
-        pub import_path: ImportPath,
-    }
-}
-
 /// UserDefinedValueTypeDefinition = 'type' «Identifier» 'is' ElementaryType ';' ;
 pub type UserDefinedValueTypeDefinition = user_defined_value_type_definition::_T0;
 pub mod user_defined_value_type_definition {
@@ -1446,16 +1358,18 @@ pub mod user_defined_value_type_definition {
     }
 }
 
-/// YulExpression = YulPath | YulFunctionCall | YulLiteral ;
-pub type YulExpression = Box<yul_expression::_T0>;
-pub mod yul_expression {
+/// YulLiteral = «YulDecimalNumberLiteral» | «YulHexLiteral» | «AsciiStringLiteral» | «BooleanLiteral» | «HexStringLiteral» ;
+pub type YulLiteral = Box<yul_literal::_T0>;
+pub mod yul_literal {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub enum _T0 {
-        YulPath(YulPath),
-        YulFunctionCall(YulFunctionCall),
-        YulLiteral(YulLiteral),
+        YulDecimalNumberLiteral(yul_decimal_number_literal::WithTrivia),
+        YulHexLiteral(yul_hex_literal::WithTrivia),
+        AsciiStringLiteral(ascii_string_literal::WithTrivia),
+        _3(VariableSizeTerminalWithTrivia),
+        HexStringLiteral(hex_string_literal::WithTrivia),
     }
 }
 
@@ -1607,171 +1521,55 @@ pub mod selecting_import_directive {
     }
 }
 
-/// YulAssignment = YulPath ( ':=' YulExpression | 1…*{ ',' YulPath } ':=' YulFunctionCall ) ;
-pub type YulAssignment = yul_assignment::_T0;
-pub mod yul_assignment {
+/// SimpleImportDirective = ImportPath { 'as' «Identifier» } ;
+pub type SimpleImportDirective = simple_import_directive::_T0;
+pub mod simple_import_directive {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub colon_equal: FixedSizeTerminalWithTrivia<2usize>,
-        pub yul_expression: YulExpression,
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T5 {
+        pub r#as: FixedSizeTerminalWithTrivia<2usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub comma_char: FixedSizeTerminalWithTrivia<1>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub yul_path: YulPath,
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T3 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _t5s: Vec<yul_assignment::_T5>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub colon_equal: FixedSizeTerminalWithTrivia<2usize>,
-        pub yul_function_call: YulFunctionCall,
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub enum _T1 {
-        _T2(yul_assignment::_T2),
-        _T3(yul_assignment::_T3),
+        pub identifier: identifier::WithTrivia,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        pub import_path: ImportPath,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub yul_path: YulPath,
-        pub _t1: Box<yul_assignment::_T1>,
+        pub _t2s: Vec<simple_import_directive::_T2>,
     }
 }
 
-/// YulForStatement = 'for' YulBlock YulExpression YulBlock YulBlock ;
-pub type YulForStatement = yul_for_statement::_T0;
-pub mod yul_for_statement {
+/// StarImportDirective = '*' 'as' «Identifier» 'from' ImportPath ;
+pub type StarImportDirective = star_import_directive::_T0;
+pub mod star_import_directive {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub r#for: FixedSizeTerminalWithTrivia<3usize>,
+        pub star_char: FixedSizeTerminalWithTrivia<1>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub yul_block_1: YulBlock,
-        pub yul_expression: YulExpression,
+        pub r#as: FixedSizeTerminalWithTrivia<2usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub yul_block_2: YulBlock,
+        pub identifier: identifier::WithTrivia,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub yul_block_3: YulBlock,
+        pub from: FixedSizeTerminalWithTrivia<4usize>,
+        pub import_path: ImportPath,
     }
 }
 
-/// YulIfStatement = 'if' YulExpression YulBlock ;
-pub type YulIfStatement = yul_if_statement::_T0;
-pub mod yul_if_statement {
+/// YulExpression = YulIdentifierPath | YulFunctionCall | YulLiteral ;
+pub type YulExpression = Box<yul_expression::_T0>;
+pub mod yul_expression {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T0 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub r#if: FixedSizeTerminalWithTrivia<2usize>,
-        pub yul_expression: YulExpression,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub yul_block: YulBlock,
-    }
-}
-
-/// YulSwitchStatement = 'switch' YulExpression ( 1…*{ 'case' YulLiteral YulBlock } [ 'default' YulBlock ] | 'default' YulBlock ) ;
-pub type YulSwitchStatement = yul_switch_statement::_T0;
-pub mod yul_switch_statement {
-    #[allow(unused_imports)]
-    use super::*;
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T4 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub case: FixedSizeTerminalWithTrivia<4usize>,
-        pub yul_literal: YulLiteral,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub yul_block: YulBlock,
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T5 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub default: FixedSizeTerminalWithTrivia<7usize>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub yul_block: YulBlock,
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T2 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _t4s: Vec<yul_switch_statement::_T4>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _t5: Option<yul_switch_statement::_T5>,
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T6 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub default: FixedSizeTerminalWithTrivia<7usize>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub yul_block: YulBlock,
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub enum _T1 {
-        _T2(yul_switch_statement::_T2),
-        _T6(yul_switch_statement::_T6),
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T0 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub switch: FixedSizeTerminalWithTrivia<6usize>,
-        pub yul_expression: YulExpression,
-        pub _t1: Box<yul_switch_statement::_T1>,
-    }
-}
-
-/// YulVariableDeclaration = 'let' «YulIdentifier» [ ':=' YulExpression | [ ',' «YulIdentifier» ] [ ':=' YulFunctionCall ] ] ;
-pub type YulVariableDeclaration = yul_variable_declaration::_T0;
-pub mod yul_variable_declaration {
-    #[allow(unused_imports)]
-    use super::*;
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T2 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub colon_equal: FixedSizeTerminalWithTrivia<2usize>,
-        pub yul_expression: YulExpression,
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T4 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub comma_char: FixedSizeTerminalWithTrivia<1>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub yul_identifier: yul_identifier::WithTrivia,
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T5 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub colon_equal: FixedSizeTerminalWithTrivia<2usize>,
-        pub yul_function_call: YulFunctionCall,
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T3 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _t4: Option<yul_variable_declaration::_T4>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _t5: Option<yul_variable_declaration::_T5>,
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub enum _T1 {
-        _T2(yul_variable_declaration::_T2),
-        _T3(yul_variable_declaration::_T3),
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T0 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub r#let: FixedSizeTerminalWithTrivia<3usize>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub yul_identifier: yul_identifier::WithTrivia,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _t1: Option<Box<yul_variable_declaration::_T1>>,
+    pub enum _T0 {
+        YulIdentifierPath(YulIdentifierPath),
+        YulFunctionCall(YulFunctionCall),
+        YulLiteral(YulLiteral),
     }
 }
 
@@ -1889,22 +1687,173 @@ pub mod state_variable_attribute {
     }
 }
 
-/// YulStatement = YulBlock | YulVariableDeclaration | YulFunctionDefinition | YulAssignment | YulFunctionCall | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement ;
-pub type YulStatement = Box<yul_statement::_T0>;
-pub mod yul_statement {
+/// YulAssignment = YulIdentifierPath ( ':=' YulExpression | 1…*{ ',' YulIdentifierPath } ':=' YulFunctionCall ) ;
+pub type YulAssignment = yul_assignment::_T0;
+pub mod yul_assignment {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub enum _T0 {
-        YulBlock(YulBlock),
-        YulVariableDeclaration(YulVariableDeclaration),
-        YulFunctionDefinition(YulFunctionDefinition),
-        YulAssignment(YulAssignment),
-        YulFunctionCall(YulFunctionCall),
-        YulIfStatement(YulIfStatement),
-        YulForStatement(YulForStatement),
-        YulSwitchStatement(YulSwitchStatement),
-        _8(VariableSizeTerminalWithTrivia),
+    pub struct _T2 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub colon_equal: FixedSizeTerminalWithTrivia<2usize>,
+        pub yul_expression: YulExpression,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T5 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub comma_char: FixedSizeTerminalWithTrivia<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub yul_identifier_path: YulIdentifierPath,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T3 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _t5s: Vec<yul_assignment::_T5>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub colon_equal: FixedSizeTerminalWithTrivia<2usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub yul_function_call: YulFunctionCall,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T1 {
+        _T2(yul_assignment::_T2),
+        _T3(yul_assignment::_T3),
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub yul_identifier_path: YulIdentifierPath,
+        pub _t1: Box<yul_assignment::_T1>,
+    }
+}
+
+/// YulForStatement = 'for' YulBlock YulExpression YulBlock YulBlock ;
+pub type YulForStatement = yul_for_statement::_T0;
+pub mod yul_for_statement {
+    #[allow(unused_imports)]
+    use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub r#for: FixedSizeTerminalWithTrivia<3usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub yul_block_1: YulBlock,
+        pub yul_expression: YulExpression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub yul_block_2: YulBlock,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub yul_block_3: YulBlock,
+    }
+}
+
+/// YulIfStatement = 'if' YulExpression YulBlock ;
+pub type YulIfStatement = yul_if_statement::_T0;
+pub mod yul_if_statement {
+    #[allow(unused_imports)]
+    use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub r#if: FixedSizeTerminalWithTrivia<2usize>,
+        pub yul_expression: YulExpression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub yul_block: YulBlock,
+    }
+}
+
+/// YulSwitchStatement = 'switch' YulExpression ( 1…*{ 'case' YulLiteral YulBlock } [ 'default' YulBlock ] | 'default' YulBlock ) ;
+pub type YulSwitchStatement = yul_switch_statement::_T0;
+pub mod yul_switch_statement {
+    #[allow(unused_imports)]
+    use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T4 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub case: FixedSizeTerminalWithTrivia<4usize>,
+        pub yul_literal: YulLiteral,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub yul_block: YulBlock,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T5 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub default: FixedSizeTerminalWithTrivia<7usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub yul_block: YulBlock,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T2 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _t4s: Vec<yul_switch_statement::_T4>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _t5: Option<yul_switch_statement::_T5>,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T6 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub default: FixedSizeTerminalWithTrivia<7usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub yul_block: YulBlock,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T1 {
+        _T2(yul_switch_statement::_T2),
+        _T6(yul_switch_statement::_T6),
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub switch: FixedSizeTerminalWithTrivia<6usize>,
+        pub yul_expression: YulExpression,
+        pub _t1: Box<yul_switch_statement::_T1>,
+    }
+}
+
+/// YulVariableDeclaration = 'let' «YulIdentifier» [ ':=' YulExpression | [ ',' «YulIdentifier» ] [ ':=' YulFunctionCall ] ] ;
+pub type YulVariableDeclaration = yul_variable_declaration::_T0;
+pub mod yul_variable_declaration {
+    #[allow(unused_imports)]
+    use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T2 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub colon_equal: FixedSizeTerminalWithTrivia<2usize>,
+        pub yul_expression: YulExpression,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T4 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub comma_char: FixedSizeTerminalWithTrivia<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub yul_identifier: yul_identifier::WithTrivia,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T5 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub colon_equal: FixedSizeTerminalWithTrivia<2usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub yul_function_call: YulFunctionCall,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T3 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _t4: Option<yul_variable_declaration::_T4>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _t5: Option<yul_variable_declaration::_T5>,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T1 {
+        _T2(yul_variable_declaration::_T2),
+        _T3(yul_variable_declaration::_T3),
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub r#let: FixedSizeTerminalWithTrivia<3usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub yul_identifier: yul_identifier::WithTrivia,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _t1: Option<Box<yul_variable_declaration::_T1>>,
     }
 }
 
@@ -1996,37 +1945,22 @@ pub mod type_name {
     }
 }
 
-/// YulBlock = '{' { YulStatement } '}' ;
-pub type YulBlock = yul_block::_T0;
-pub mod yul_block {
+/// YulStatement = YulBlock | YulVariableDeclaration | YulFunctionDefinition | YulAssignment | YulFunctionCall | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement ;
+pub type YulStatement = Box<yul_statement::_T0>;
+pub mod yul_statement {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T0 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub open_brace_char: FixedSizeTerminalWithTrivia<1>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub yul_statements: Vec<YulStatement>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub close_brace_char: FixedSizeTerminalWithTrivia<1>,
-    }
-}
-
-/// AssemblyStatement = 'assembly' [ '"evmasm"' ] [ AssemblyFlags ] YulBlock ;
-pub type AssemblyStatement = assembly_statement::_T0;
-pub mod assembly_statement {
-    #[allow(unused_imports)]
-    use super::*;
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T0 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub assembly: FixedSizeTerminalWithTrivia<8usize>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub double_quote_evmasm_double_quote: Option<FixedSizeTerminalWithTrivia<8usize>>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub assembly_flags: Option<AssemblyFlags>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub yul_block: YulBlock,
+    pub enum _T0 {
+        YulBlock(YulBlock),
+        YulVariableDeclaration(YulVariableDeclaration),
+        YulFunctionDefinition(YulFunctionDefinition),
+        YulAssignment(YulAssignment),
+        YulFunctionCall(YulFunctionCall),
+        YulIfStatement(YulIfStatement),
+        YulForStatement(YulForStatement),
+        YulSwitchStatement(YulSwitchStatement),
+        _8(VariableSizeTerminalWithTrivia),
     }
 }
 
@@ -2205,6 +2139,40 @@ pub mod using_directive {
         pub global: Option<FixedSizeTerminalWithTrivia<6usize>>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub semicolon_char: FixedSizeTerminalWithTrivia<1>,
+    }
+}
+
+/// YulBlock = '{' { YulStatement } '}' ;
+pub type YulBlock = yul_block::_T0;
+pub mod yul_block {
+    #[allow(unused_imports)]
+    use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub open_brace_char: FixedSizeTerminalWithTrivia<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub yul_statements: Vec<YulStatement>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub close_brace_char: FixedSizeTerminalWithTrivia<1>,
+    }
+}
+
+/// AssemblyStatement = 'assembly' [ '"evmasm"' ] [ AssemblyFlags ] YulBlock ;
+pub type AssemblyStatement = assembly_statement::_T0;
+pub mod assembly_statement {
+    #[allow(unused_imports)]
+    use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub assembly: FixedSizeTerminalWithTrivia<8usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub double_quote_evmasm_double_quote: Option<FixedSizeTerminalWithTrivia<8usize>>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub assembly_flags: Option<AssemblyFlags>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub yul_block: YulBlock,
     }
 }
 

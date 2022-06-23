@@ -599,172 +599,29 @@ impl Parsers {
             .map(|v| unsigned_integer_type::_T0::from_parse(v))
             .boxed();
 
-        // «YulIdentifier» = «RawIdentifier» - «YulReservedWord» ;
+        // «YulIdentifier» = «RawIdentifier» - «YulKeyword» ;
         let yul_identifier_parser = difference(
             raw_identifier_parser.clone(),
             choice::<_, ErrorType>((
-                terminal("Blockhash").map(|_| 9usize),
-                terminal("a").ignore_then(choice((
-                    terminal("dd").ignore_then(choice((
-                        terminal("mod").map(|_| 6usize),
-                        terminal("ress").map(|_| 7usize),
-                        empty().map(|_| 3usize),
-                    ))),
-                    terminal("nd").map(|_| 3usize),
-                ))),
-                terminal("b").ignore_then(choice((
-                    terminal("a").ignore_then(choice((
-                        terminal("lance").map(|_| 7usize),
-                        terminal("sefee").map(|_| 7usize),
-                    ))),
-                    terminal("reak").map(|_| 5usize),
-                    terminal("yte").map(|_| 4usize),
-                ))),
+                terminal("break").map(|_| 5usize),
                 terminal("c").ignore_then(choice((
-                    terminal("a").ignore_then(choice((
-                        terminal("ll").ignore_then(choice((
-                            terminal("code").map(|_| 8usize),
-                            terminal("data").ignore_then(choice((
-                                terminal("copy").map(|_| 12usize),
-                                terminal("load").map(|_| 12usize),
-                                terminal("size").map(|_| 12usize),
-                            ))),
-                            terminal("er").map(|_| 6usize),
-                            terminal("value").map(|_| 9usize),
-                            empty().map(|_| 4usize),
-                        ))),
-                        terminal("se").map(|_| 4usize),
-                    ))),
-                    terminal("hainid").map(|_| 7usize),
-                    terminal("o").ignore_then(choice((
-                        terminal("inbase").map(|_| 8usize),
-                        terminal("ntinue").map(|_| 8usize),
-                    ))),
-                    terminal("reate").ignore_then(choice((
-                        terminal("2").map(|_| 7usize),
-                        empty().map(|_| 6usize),
-                    ))),
+                    terminal("ase").map(|_| 4usize),
+                    terminal("ontinue").map(|_| 8usize),
                 ))),
-                terminal("d").ignore_then(choice((
-                    terminal("e").ignore_then(choice((
-                        terminal("fault").map(|_| 7usize),
-                        terminal("legatecall").map(|_| 12usize),
-                    ))),
-                    terminal("i").ignore_then(choice((
-                        terminal("fficulty").map(|_| 10usize),
-                        terminal("v").map(|_| 3usize),
-                    ))),
-                ))),
-                terminal("e").ignore_then(choice((
-                    terminal("q").map(|_| 2usize),
-                    terminal("x").ignore_then(choice((
-                        terminal("p").map(|_| 3usize),
-                        terminal("tcode").ignore_then(choice((
-                            terminal("copy").map(|_| 11usize),
-                            terminal("hash").map(|_| 11usize),
-                            terminal("size").map(|_| 11usize),
-                        ))),
-                    ))),
-                ))),
+                terminal("default").map(|_| 7usize),
                 terminal("f").ignore_then(choice((
                     terminal("alse").map(|_| 5usize),
                     terminal("or").map(|_| 3usize),
                     terminal("unction").map(|_| 8usize),
                 ))),
-                terminal("g").ignore_then(choice((
-                    terminal("as").ignore_then(choice((
-                        terminal("limit").map(|_| 8usize),
-                        terminal("price").map(|_| 8usize),
-                        empty().map(|_| 3usize),
-                    ))),
-                    terminal("t").map(|_| 2usize),
-                ))),
                 terminal("hex").map(|_| 3usize),
-                terminal("i").ignore_then(choice((
-                    terminal("f").map(|_| 2usize),
-                    terminal("nvalid").map(|_| 7usize),
-                    terminal("szero").map(|_| 6usize),
+                terminal("if").map(|_| 2usize),
+                terminal("le").ignore_then(choice((
+                    terminal("ave").map(|_| 5usize),
+                    terminal("t").map(|_| 3usize),
                 ))),
-                terminal("keccak256").map(|_| 9usize),
-                terminal("l").ignore_then(choice((
-                    terminal("e").ignore_then(choice((
-                        terminal("ave").map(|_| 5usize),
-                        terminal("t").map(|_| 3usize),
-                    ))),
-                    terminal("og").ignore_then(choice((
-                        terminal("0").map(|_| 4usize),
-                        terminal("1").map(|_| 4usize),
-                        terminal("2").map(|_| 4usize),
-                        terminal("3").map(|_| 4usize),
-                        terminal("4").map(|_| 4usize),
-                    ))),
-                    terminal("t").map(|_| 2usize),
-                ))),
-                terminal("m").ignore_then(choice((
-                    terminal("load").map(|_| 5usize),
-                    terminal("od").map(|_| 3usize),
-                    terminal("s").ignore_then(choice((
-                        terminal("ize").map(|_| 5usize),
-                        terminal("tore").ignore_then(choice((
-                            terminal("8").map(|_| 7usize),
-                            empty().map(|_| 6usize),
-                        ))),
-                    ))),
-                    terminal("ul").ignore_then(choice((
-                        terminal("mod").map(|_| 6usize),
-                        empty().map(|_| 3usize),
-                    ))),
-                ))),
-                terminal("n").ignore_then(choice((
-                    terminal("ot").map(|_| 3usize),
-                    terminal("umber").map(|_| 6usize),
-                ))),
-                terminal("or").ignore_then(choice((
-                    terminal("igin").map(|_| 6usize),
-                    empty().map(|_| 2usize),
-                ))),
-                terminal("pop").map(|_| 3usize),
-                terminal("re").ignore_then(choice((
-                    terminal("turn").ignore_then(choice((
-                        terminal("data").ignore_then(choice((
-                            terminal("copy").map(|_| 14usize),
-                            terminal("size").map(|_| 14usize),
-                        ))),
-                        empty().map(|_| 6usize),
-                    ))),
-                    terminal("vert").map(|_| 6usize),
-                ))),
-                terminal("s").ignore_then(choice((
-                    terminal("ar").map(|_| 3usize),
-                    terminal("div").map(|_| 4usize),
-                    terminal("elf").ignore_then(choice((
-                        terminal("balance").map(|_| 11usize),
-                        terminal("destruct").map(|_| 12usize),
-                    ))),
-                    terminal("gt").map(|_| 3usize),
-                    terminal("h").ignore_then(choice((
-                        terminal("l").map(|_| 3usize),
-                        terminal("r").map(|_| 3usize),
-                    ))),
-                    terminal("ignextend").map(|_| 10usize),
-                    terminal("l").ignore_then(choice((
-                        terminal("oad").map(|_| 5usize),
-                        terminal("t").map(|_| 3usize),
-                    ))),
-                    terminal("mod").map(|_| 4usize),
-                    terminal("store").map(|_| 6usize),
-                    terminal("t").ignore_then(choice((
-                        terminal("aticcall").map(|_| 10usize),
-                        terminal("op").map(|_| 4usize),
-                    ))),
-                    terminal("ub").map(|_| 3usize),
-                    terminal("witch").map(|_| 6usize),
-                ))),
-                terminal("t").ignore_then(choice((
-                    terminal("imestamp").map(|_| 9usize),
-                    terminal("rue").map(|_| 4usize),
-                ))),
-                terminal("xor").map(|_| 3usize),
+                terminal("switch").map(|_| 6usize),
+                terminal("true").map(|_| 4usize),
             ))
             .map(VariableSizeTerminal),
         )
@@ -979,8 +836,99 @@ impl Parsers {
             .map(|v| double_quoted_unicode_string_literal::_T0::from_parse(v))
             .boxed();
 
-        // «Keyword» = 'pragma' | 'abstract' | 'anonymous' | 'address' | 'as' | 'assembly' | 'bool' | 'break' | 'calldata' | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum' | 'event' | 'external' | 'fallback' | 'false' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import' | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override' | 'payable' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct' | 'true' | 'try' | 'type' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | 'fixed' | 'ufixed' ;
+        // «Keyword» = «BooleanLiteral» | «FixedBytesType» | «NumberUnit» | «ReservedKeyword» | «SignedIntegerType» | «UnsignedIntegerType» | 'abstract' | 'address' | 'anonymous' | 'as' | 'assembly' | 'bool' | 'break' | 'calldata' | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum' | 'event' | 'external' | 'fallback' | 'false' | 'fixed' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import' | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override' | 'payable' | 'pragma' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct' | 'true' | 'try' | 'type' | 'ufixed' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while' ;
         let keyword_parser = choice((
+            choice::<_, ErrorType>((
+                terminal("false").map(|_| 5usize),
+                terminal("true").map(|_| 4usize),
+            ))
+            .map(VariableSizeTerminal)
+            .map(|v| Box::new(keyword::_T0::_0(v))),
+            fixed_bytes_type_parser
+                .clone()
+                .map(|v| Box::new(keyword::_T0::FixedBytesType(v))),
+            choice::<_, ErrorType>((
+                terminal("a").ignore_then(choice((
+                    terminal("fter").map(|_| 5usize),
+                    terminal("lias").map(|_| 5usize),
+                    terminal("pply").map(|_| 5usize),
+                    terminal("uto").map(|_| 4usize),
+                ))),
+                terminal("byte").map(|_| 4usize),
+                terminal("c").ignore_then(choice((
+                    terminal("ase").map(|_| 4usize),
+                    terminal("opyof").map(|_| 6usize),
+                ))),
+                terminal("d").ignore_then(choice((
+                    terminal("ays").map(|_| 4usize),
+                    terminal("ef").ignore_then(choice((
+                        terminal("ault").map(|_| 7usize),
+                        terminal("ine").map(|_| 6usize),
+                    ))),
+                ))),
+                terminal("ether").map(|_| 5usize),
+                terminal("fin").ignore_then(choice((
+                    terminal("al").map(|_| 5usize),
+                    terminal("ney").map(|_| 6usize),
+                ))),
+                terminal("gwei").map(|_| 4usize),
+                terminal("hours").map(|_| 5usize),
+                terminal("i").ignore_then(choice((
+                    terminal("mplements").map(|_| 10usize),
+                    terminal("n").ignore_then(choice((
+                        terminal("line").map(|_| 6usize),
+                        empty().map(|_| 2usize),
+                    ))),
+                ))),
+                terminal("let").map(|_| 3usize),
+                terminal("m").ignore_then(choice((
+                    terminal("a").ignore_then(choice((
+                        terminal("cro").map(|_| 5usize),
+                        terminal("tch").map(|_| 5usize),
+                    ))),
+                    terminal("inutes").map(|_| 7usize),
+                    terminal("utable").map(|_| 7usize),
+                ))),
+                terminal("null").map(|_| 4usize),
+                terminal("of").map(|_| 2usize),
+                terminal("p").ignore_then(choice((
+                    terminal("artial").map(|_| 7usize),
+                    terminal("romise").map(|_| 7usize),
+                ))),
+                terminal("re").ignore_then(choice((
+                    terminal("ference").map(|_| 9usize),
+                    terminal("locatable").map(|_| 11usize),
+                ))),
+                terminal("s").ignore_then(choice((
+                    terminal("e").ignore_then(choice((
+                        terminal("aled").map(|_| 6usize),
+                        terminal("conds").map(|_| 7usize),
+                    ))),
+                    terminal("izeof").map(|_| 6usize),
+                    terminal("tatic").map(|_| 6usize),
+                    terminal("upports").map(|_| 8usize),
+                    terminal("witch").map(|_| 6usize),
+                    terminal("zabo").map(|_| 5usize),
+                ))),
+                terminal("type").ignore_then(choice((
+                    terminal("def").map(|_| 7usize),
+                    terminal("of").map(|_| 6usize),
+                ))),
+                terminal("var").map(|_| 3usize),
+                terminal("we").ignore_then(choice((
+                    terminal("eks").map(|_| 5usize),
+                    terminal("i").map(|_| 3usize),
+                ))),
+                terminal("years").map(|_| 5usize),
+            ))
+            .map(VariableSizeTerminal)
+            .map(|v| Box::new(keyword::_T0::_2(v))),
+            signed_integer_type_parser
+                .clone()
+                .map(|v| Box::new(keyword::_T0::SignedIntegerType(v))),
+            unsigned_integer_type_parser
+                .clone()
+                .map(|v| Box::new(keyword::_T0::UnsignedIntegerType(v))),
             choice::<_, ErrorType>((
                 terminal("a").ignore_then(choice((
                     terminal("bstract").map(|_| 8usize),
@@ -1027,6 +975,7 @@ impl Parsers {
                         terminal("lback").map(|_| 8usize),
                         terminal("se").map(|_| 5usize),
                     ))),
+                    terminal("ixed").map(|_| 5usize),
                     terminal("or").map(|_| 3usize),
                     terminal("unction").map(|_| 8usize),
                 ))),
@@ -1087,6 +1036,7 @@ impl Parsers {
                     terminal("ype").map(|_| 4usize),
                 ))),
                 terminal("u").ignore_then(choice((
+                    terminal("fixed").map(|_| 6usize),
                     terminal("nchecked").map(|_| 9usize),
                     terminal("sing").map(|_| 5usize),
                 ))),
@@ -1097,22 +1047,7 @@ impl Parsers {
                 terminal("while").map(|_| 5usize),
             ))
             .map(VariableSizeTerminal)
-            .map(|v| Box::new(keyword::_T0::_0(v))),
-            signed_integer_type_parser
-                .clone()
-                .map(|v| Box::new(keyword::_T0::SignedIntegerType(v))),
-            unsigned_integer_type_parser
-                .clone()
-                .map(|v| Box::new(keyword::_T0::UnsignedIntegerType(v))),
-            fixed_bytes_type_parser
-                .clone()
-                .map(|v| Box::new(keyword::_T0::FixedBytesType(v))),
-            choice::<_, ErrorType>((
-                terminal("fixed").map(|_| 5usize),
-                terminal("ufixed").map(|_| 6usize),
-            ))
-            .map(VariableSizeTerminal)
-            .map(|v| Box::new(keyword::_T0::_4(v))),
+            .map(|v| Box::new(keyword::_T0::_5(v))),
         ))
         .boxed();
 
@@ -1317,224 +1252,71 @@ impl Parsers {
             .map(|v| version_pragma_specifier::_T0::from_parse(v))
             .boxed();
 
-        // YulFunctionCall = ( «YulIdentifier» | «YulEVMBuiltinFunctionName» ) '(' { YulExpression / ',' } ')' ;
-        let yul_function_call_parser = choice((
-            leading_trivia_parser
-                .clone()
-                .then(yul_identifier_parser.clone())
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| yul_identifier::WithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    },
-                )
-                .map(|v| Box::new(yul_function_call::_T1::YulIdentifier(v))),
-            leading_trivia_parser
-                .clone()
-                .then(choice::<_, ErrorType>((
-                    terminal("Blockhash").map(|_| 9usize),
-                    terminal("a").ignore_then(choice((
-                        terminal("dd").ignore_then(choice((
-                            terminal("mod").map(|_| 6usize),
-                            terminal("ress").map(|_| 7usize),
-                            empty().map(|_| 3usize),
-                        ))),
-                        terminal("nd").map(|_| 3usize),
-                    ))),
-                    terminal("b").ignore_then(choice((
-                        terminal("a").ignore_then(choice((
-                            terminal("lance").map(|_| 7usize),
-                            terminal("sefee").map(|_| 7usize),
-                        ))),
-                        terminal("yte").map(|_| 4usize),
-                    ))),
-                    terminal("c").ignore_then(choice((
-                        terminal("all").ignore_then(choice((
-                            terminal("code").map(|_| 8usize),
-                            terminal("data").ignore_then(choice((
-                                terminal("copy").map(|_| 12usize),
-                                terminal("load").map(|_| 12usize),
-                                terminal("size").map(|_| 12usize),
-                            ))),
-                            terminal("er").map(|_| 6usize),
-                            terminal("value").map(|_| 9usize),
-                            empty().map(|_| 4usize),
-                        ))),
-                        terminal("hainid").map(|_| 7usize),
-                        terminal("oinbase").map(|_| 8usize),
-                        terminal("reate").ignore_then(choice((
-                            terminal("2").map(|_| 7usize),
-                            empty().map(|_| 6usize),
-                        ))),
-                    ))),
-                    terminal("d").ignore_then(choice((
-                        terminal("elegatecall").map(|_| 12usize),
-                        terminal("i").ignore_then(choice((
-                            terminal("fficulty").map(|_| 10usize),
-                            terminal("v").map(|_| 3usize),
-                        ))),
-                    ))),
-                    terminal("e").ignore_then(choice((
-                        terminal("q").map(|_| 2usize),
-                        terminal("x").ignore_then(choice((
-                            terminal("p").map(|_| 3usize),
-                            terminal("tcode").ignore_then(choice((
-                                terminal("copy").map(|_| 11usize),
-                                terminal("hash").map(|_| 11usize),
-                                terminal("size").map(|_| 11usize),
-                            ))),
-                        ))),
-                    ))),
-                    terminal("g").ignore_then(choice((
-                        terminal("as").ignore_then(choice((
-                            terminal("limit").map(|_| 8usize),
-                            terminal("price").map(|_| 8usize),
-                            empty().map(|_| 3usize),
-                        ))),
-                        terminal("t").map(|_| 2usize),
-                    ))),
-                    terminal("i").ignore_then(choice((
-                        terminal("nvalid").map(|_| 7usize),
-                        terminal("szero").map(|_| 6usize),
-                    ))),
-                    terminal("keccak256").map(|_| 9usize),
-                    terminal("l").ignore_then(choice((
-                        terminal("og").ignore_then(choice((
-                            terminal("0").map(|_| 4usize),
-                            terminal("1").map(|_| 4usize),
-                            terminal("2").map(|_| 4usize),
-                            terminal("3").map(|_| 4usize),
-                            terminal("4").map(|_| 4usize),
-                        ))),
-                        terminal("t").map(|_| 2usize),
-                    ))),
-                    terminal("m").ignore_then(choice((
-                        terminal("load").map(|_| 5usize),
-                        terminal("od").map(|_| 3usize),
-                        terminal("s").ignore_then(choice((
-                            terminal("ize").map(|_| 5usize),
-                            terminal("tore").ignore_then(choice((
-                                terminal("8").map(|_| 7usize),
-                                empty().map(|_| 6usize),
-                            ))),
-                        ))),
-                        terminal("ul").ignore_then(choice((
-                            terminal("mod").map(|_| 6usize),
-                            empty().map(|_| 3usize),
-                        ))),
-                    ))),
-                    terminal("n").ignore_then(choice((
-                        terminal("ot").map(|_| 3usize),
-                        terminal("umber").map(|_| 6usize),
-                    ))),
-                    terminal("or").ignore_then(choice((
-                        terminal("igin").map(|_| 6usize),
-                        empty().map(|_| 2usize),
-                    ))),
-                    terminal("pop").map(|_| 3usize),
-                    terminal("re").ignore_then(choice((
-                        terminal("turn").ignore_then(choice((
-                            terminal("data").ignore_then(choice((
-                                terminal("copy").map(|_| 14usize),
-                                terminal("size").map(|_| 14usize),
-                            ))),
-                            empty().map(|_| 6usize),
-                        ))),
-                        terminal("vert").map(|_| 6usize),
-                    ))),
-                    terminal("s").ignore_then(choice((
-                        terminal("ar").map(|_| 3usize),
-                        terminal("div").map(|_| 4usize),
-                        terminal("elf").ignore_then(choice((
-                            terminal("balance").map(|_| 11usize),
-                            terminal("destruct").map(|_| 12usize),
-                        ))),
-                        terminal("gt").map(|_| 3usize),
-                        terminal("h").ignore_then(choice((
-                            terminal("l").map(|_| 3usize),
-                            terminal("r").map(|_| 3usize),
-                        ))),
-                        terminal("ignextend").map(|_| 10usize),
-                        terminal("l").ignore_then(choice((
-                            terminal("oad").map(|_| 5usize),
-                            terminal("t").map(|_| 3usize),
-                        ))),
-                        terminal("mod").map(|_| 4usize),
-                        terminal("store").map(|_| 6usize),
-                        terminal("t").ignore_then(choice((
-                            terminal("aticcall").map(|_| 10usize),
-                            terminal("op").map(|_| 4usize),
-                        ))),
-                        terminal("ub").map(|_| 3usize),
-                    ))),
-                    terminal("timestamp").map(|_| 9usize),
-                    terminal("xor").map(|_| 3usize),
-                )))
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
-                        leading,
-                        content: VariableSizeTerminal(content),
-                        trailing,
-                    },
-                )
-                .map(|v| Box::new(yul_function_call::_T1::_1(v))),
-        ))
-        .then(
-            leading_trivia_parser
-                .clone()
-                .then(just('(').map(|_| FixedSizeTerminal::<1>()))
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    },
-                ),
-        )
-        .then(
-            yul_expression_parser
-                .clone()
-                .then(
-                    leading_trivia_parser
-                        .clone()
-                        .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                        .then(trailing_trivia_parser.clone())
-                        .map(
-                            |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                                leading,
-                                content,
-                                trailing,
-                            },
-                        )
-                        .then(yul_expression_parser.clone())
-                        .repeated(),
-                )
-                .map(repetition_mapper)
-                .map(|(elements, separators)| yul_function_call::_T2 {
-                    elements,
-                    separators,
-                })
-                .or_not(),
-        )
-        .then(
-            leading_trivia_parser
-                .clone()
-                .then(just(')').map(|_| FixedSizeTerminal::<1>()))
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    },
-                ),
-        )
-        .map(|v| yul_function_call::_T0::from_parse(v))
-        .boxed();
+        // YulFunctionCall = «YulIdentifier» '(' { YulExpression / ',' } ')' ;
+        let yul_function_call_parser = leading_trivia_parser
+            .clone()
+            .then(yul_identifier_parser.clone())
+            .then(trailing_trivia_parser.clone())
+            .map(
+                |((leading, content), trailing)| yul_identifier::WithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(just('(').map(|_| FixedSizeTerminal::<1>()))
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(
+                yul_expression_parser
+                    .clone()
+                    .then(
+                        leading_trivia_parser
+                            .clone()
+                            .then(just(',').map(|_| FixedSizeTerminal::<1>()))
+                            .then(trailing_trivia_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            )
+                            .then(yul_expression_parser.clone())
+                            .repeated(),
+                    )
+                    .map(repetition_mapper)
+                    .map(|(elements, separators)| yul_function_call::_T1 {
+                        elements,
+                        separators,
+                    })
+                    .or_not(),
+            )
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(just(')').map(|_| FixedSizeTerminal::<1>()))
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| yul_function_call::_T0::from_parse(v))
+            .boxed();
 
         // YulFunctionDefinition = 'function' «YulIdentifier» '(' { «YulIdentifier» / ',' } ')' [ '->' 1…*{ «YulIdentifier» / ',' } ] YulBlock ;
         let yul_function_definition_parser = leading_trivia_parser
@@ -1705,8 +1487,8 @@ impl Parsers {
             .map(|v| yul_function_definition::_T0::from_parse(v))
             .boxed();
 
-        // YulPath = «YulIdentifier» { '.' ( «YulIdentifier» | «YulEVMBuiltinFunctionName» ) } ;
-        let yul_path_parser = leading_trivia_parser
+        // YulIdentifierPath = 1…*{ «YulIdentifier» / '.' } ;
+        let yul_identifier_path_parser = leading_trivia_parser
             .clone()
             .then(yul_identifier_parser.clone())
             .then(trailing_trivia_parser.clone())
@@ -1729,7 +1511,7 @@ impl Parsers {
                             trailing,
                         },
                     )
-                    .then(choice((
+                    .then(
                         leading_trivia_parser
                             .clone()
                             .then(yul_identifier_parser.clone())
@@ -1740,163 +1522,15 @@ impl Parsers {
                                     content,
                                     trailing,
                                 },
-                            )
-                            .map(|v| Box::new(yul_path::_T3::YulIdentifier(v))),
-                        leading_trivia_parser
-                            .clone()
-                            .then(choice::<_, ErrorType>((
-                                terminal("Blockhash").map(|_| 9usize),
-                                terminal("a").ignore_then(choice((
-                                    terminal("dd").ignore_then(choice((
-                                        terminal("mod").map(|_| 6usize),
-                                        terminal("ress").map(|_| 7usize),
-                                        empty().map(|_| 3usize),
-                                    ))),
-                                    terminal("nd").map(|_| 3usize),
-                                ))),
-                                terminal("b").ignore_then(choice((
-                                    terminal("a").ignore_then(choice((
-                                        terminal("lance").map(|_| 7usize),
-                                        terminal("sefee").map(|_| 7usize),
-                                    ))),
-                                    terminal("yte").map(|_| 4usize),
-                                ))),
-                                terminal("c").ignore_then(choice((
-                                    terminal("all").ignore_then(choice((
-                                        terminal("code").map(|_| 8usize),
-                                        terminal("data").ignore_then(choice((
-                                            terminal("copy").map(|_| 12usize),
-                                            terminal("load").map(|_| 12usize),
-                                            terminal("size").map(|_| 12usize),
-                                        ))),
-                                        terminal("er").map(|_| 6usize),
-                                        terminal("value").map(|_| 9usize),
-                                        empty().map(|_| 4usize),
-                                    ))),
-                                    terminal("hainid").map(|_| 7usize),
-                                    terminal("oinbase").map(|_| 8usize),
-                                    terminal("reate").ignore_then(choice((
-                                        terminal("2").map(|_| 7usize),
-                                        empty().map(|_| 6usize),
-                                    ))),
-                                ))),
-                                terminal("d").ignore_then(choice((
-                                    terminal("elegatecall").map(|_| 12usize),
-                                    terminal("i").ignore_then(choice((
-                                        terminal("fficulty").map(|_| 10usize),
-                                        terminal("v").map(|_| 3usize),
-                                    ))),
-                                ))),
-                                terminal("e").ignore_then(choice((
-                                    terminal("q").map(|_| 2usize),
-                                    terminal("x").ignore_then(choice((
-                                        terminal("p").map(|_| 3usize),
-                                        terminal("tcode").ignore_then(choice((
-                                            terminal("copy").map(|_| 11usize),
-                                            terminal("hash").map(|_| 11usize),
-                                            terminal("size").map(|_| 11usize),
-                                        ))),
-                                    ))),
-                                ))),
-                                terminal("g").ignore_then(choice((
-                                    terminal("as").ignore_then(choice((
-                                        terminal("limit").map(|_| 8usize),
-                                        terminal("price").map(|_| 8usize),
-                                        empty().map(|_| 3usize),
-                                    ))),
-                                    terminal("t").map(|_| 2usize),
-                                ))),
-                                terminal("i").ignore_then(choice((
-                                    terminal("nvalid").map(|_| 7usize),
-                                    terminal("szero").map(|_| 6usize),
-                                ))),
-                                terminal("keccak256").map(|_| 9usize),
-                                terminal("l").ignore_then(choice((
-                                    terminal("og").ignore_then(choice((
-                                        terminal("0").map(|_| 4usize),
-                                        terminal("1").map(|_| 4usize),
-                                        terminal("2").map(|_| 4usize),
-                                        terminal("3").map(|_| 4usize),
-                                        terminal("4").map(|_| 4usize),
-                                    ))),
-                                    terminal("t").map(|_| 2usize),
-                                ))),
-                                terminal("m").ignore_then(choice((
-                                    terminal("load").map(|_| 5usize),
-                                    terminal("od").map(|_| 3usize),
-                                    terminal("s").ignore_then(choice((
-                                        terminal("ize").map(|_| 5usize),
-                                        terminal("tore").ignore_then(choice((
-                                            terminal("8").map(|_| 7usize),
-                                            empty().map(|_| 6usize),
-                                        ))),
-                                    ))),
-                                    terminal("ul").ignore_then(choice((
-                                        terminal("mod").map(|_| 6usize),
-                                        empty().map(|_| 3usize),
-                                    ))),
-                                ))),
-                                terminal("n").ignore_then(choice((
-                                    terminal("ot").map(|_| 3usize),
-                                    terminal("umber").map(|_| 6usize),
-                                ))),
-                                terminal("or").ignore_then(choice((
-                                    terminal("igin").map(|_| 6usize),
-                                    empty().map(|_| 2usize),
-                                ))),
-                                terminal("pop").map(|_| 3usize),
-                                terminal("re").ignore_then(choice((
-                                    terminal("turn").ignore_then(choice((
-                                        terminal("data").ignore_then(choice((
-                                            terminal("copy").map(|_| 14usize),
-                                            terminal("size").map(|_| 14usize),
-                                        ))),
-                                        empty().map(|_| 6usize),
-                                    ))),
-                                    terminal("vert").map(|_| 6usize),
-                                ))),
-                                terminal("s").ignore_then(choice((
-                                    terminal("ar").map(|_| 3usize),
-                                    terminal("div").map(|_| 4usize),
-                                    terminal("elf").ignore_then(choice((
-                                        terminal("balance").map(|_| 11usize),
-                                        terminal("destruct").map(|_| 12usize),
-                                    ))),
-                                    terminal("gt").map(|_| 3usize),
-                                    terminal("h").ignore_then(choice((
-                                        terminal("l").map(|_| 3usize),
-                                        terminal("r").map(|_| 3usize),
-                                    ))),
-                                    terminal("ignextend").map(|_| 10usize),
-                                    terminal("l").ignore_then(choice((
-                                        terminal("oad").map(|_| 5usize),
-                                        terminal("t").map(|_| 3usize),
-                                    ))),
-                                    terminal("mod").map(|_| 4usize),
-                                    terminal("store").map(|_| 6usize),
-                                    terminal("t").ignore_then(choice((
-                                        terminal("aticcall").map(|_| 10usize),
-                                        terminal("op").map(|_| 4usize),
-                                    ))),
-                                    terminal("ub").map(|_| 3usize),
-                                ))),
-                                terminal("timestamp").map(|_| 9usize),
-                                terminal("xor").map(|_| 3usize),
-                            )))
-                            .then(trailing_trivia_parser.clone())
-                            .map(
-                                |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
-                                    leading,
-                                    content: VariableSizeTerminal(content),
-                                    trailing,
-                                },
-                            )
-                            .map(|v| Box::new(yul_path::_T3::_1(v))),
-                    )))
-                    .map(|v| yul_path::_T2::from_parse(v))
+                            ),
+                    )
                     .repeated(),
             )
-            .map(|v| yul_path::_T0::from_parse(v))
+            .map(repetition_mapper)
+            .map(|(elements, separators)| yul_identifier_path::_T0 {
+                elements,
+                separators,
+            })
             .boxed();
 
         // «AsciiStringLiteral» = «SingleQuotedAsciiStringLiteral» | «DoubleQuotedAsciiStringLiteral» ;
@@ -2062,6 +1696,10 @@ impl Parsers {
         ))
         .boxed();
 
+        // «Identifier» = «RawIdentifier» - «Keyword» ;
+        let identifier_parser =
+            difference(raw_identifier_parser.clone(), keyword_parser.clone()).boxed();
+
         // «NumericLiteral» = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
         let numeric_literal_parser = choice((
             decimal_number_parser
@@ -2075,10 +1713,14 @@ impl Parsers {
             choice::<_, ErrorType>((
                 terminal("days").map(|_| 4usize),
                 terminal("ether").map(|_| 5usize),
+                terminal("finney").map(|_| 6usize),
                 terminal("gwei").map(|_| 4usize),
                 terminal("hours").map(|_| 5usize),
                 terminal("minutes").map(|_| 7usize),
-                terminal("seconds").map(|_| 7usize),
+                terminal("s").ignore_then(choice((
+                    terminal("econds").map(|_| 7usize),
+                    terminal("zabo").map(|_| 5usize),
+                ))),
                 terminal("we").ignore_then(choice((
                     terminal("eks").map(|_| 5usize),
                     terminal("i").map(|_| 3usize),
@@ -2089,92 +1731,6 @@ impl Parsers {
             .or_not(),
         )
         .map(|v| numeric_literal::_T0::from_parse(v))
-        .boxed();
-
-        // «ReservedWord» = «Keyword» | «ReservedKeyword» | «NumberUnit» | «BooleanLiteral» ;
-        let reserved_word_parser = choice((
-            keyword_parser
-                .clone()
-                .map(|v| Box::new(reserved_word::_T0::Keyword(v))),
-            choice::<_, ErrorType>((
-                terminal("a").ignore_then(choice((
-                    terminal("fter").map(|_| 5usize),
-                    terminal("lias").map(|_| 5usize),
-                    terminal("pply").map(|_| 5usize),
-                    terminal("uto").map(|_| 4usize),
-                ))),
-                terminal("byte").map(|_| 4usize),
-                terminal("c").ignore_then(choice((
-                    terminal("ase").map(|_| 4usize),
-                    terminal("opyof").map(|_| 6usize),
-                ))),
-                terminal("d").ignore_then(choice((
-                    terminal("ays").map(|_| 4usize),
-                    terminal("ef").ignore_then(choice((
-                        terminal("ault").map(|_| 7usize),
-                        terminal("ine").map(|_| 6usize),
-                    ))),
-                ))),
-                terminal("ether").map(|_| 5usize),
-                terminal("f").ignore_then(choice((
-                    terminal("alse").map(|_| 5usize),
-                    terminal("inal").map(|_| 5usize),
-                ))),
-                terminal("gwei").map(|_| 4usize),
-                terminal("hours").map(|_| 5usize),
-                terminal("i").ignore_then(choice((
-                    terminal("mplements").map(|_| 10usize),
-                    terminal("n").ignore_then(choice((
-                        terminal("line").map(|_| 6usize),
-                        empty().map(|_| 2usize),
-                    ))),
-                ))),
-                terminal("let").map(|_| 3usize),
-                terminal("m").ignore_then(choice((
-                    terminal("a").ignore_then(choice((
-                        terminal("cro").map(|_| 5usize),
-                        terminal("tch").map(|_| 5usize),
-                    ))),
-                    terminal("inutes").map(|_| 7usize),
-                    terminal("utable").map(|_| 7usize),
-                ))),
-                terminal("null").map(|_| 4usize),
-                terminal("of").map(|_| 2usize),
-                terminal("p").ignore_then(choice((
-                    terminal("artial").map(|_| 7usize),
-                    terminal("romise").map(|_| 7usize),
-                ))),
-                terminal("re").ignore_then(choice((
-                    terminal("ference").map(|_| 9usize),
-                    terminal("locatable").map(|_| 11usize),
-                ))),
-                terminal("s").ignore_then(choice((
-                    terminal("e").ignore_then(choice((
-                        terminal("aled").map(|_| 6usize),
-                        terminal("conds").map(|_| 7usize),
-                    ))),
-                    terminal("izeof").map(|_| 6usize),
-                    terminal("tatic").map(|_| 6usize),
-                    terminal("upports").map(|_| 8usize),
-                    terminal("witch").map(|_| 6usize),
-                ))),
-                terminal("t").ignore_then(choice((
-                    terminal("rue").map(|_| 4usize),
-                    terminal("ype").ignore_then(choice((
-                        terminal("def").map(|_| 7usize),
-                        terminal("of").map(|_| 6usize),
-                    ))),
-                ))),
-                terminal("var").map(|_| 3usize),
-                terminal("we").ignore_then(choice((
-                    terminal("eks").map(|_| 5usize),
-                    terminal("i").map(|_| 3usize),
-                ))),
-                terminal("years").map(|_| 5usize),
-            ))
-            .map(VariableSizeTerminal)
-            .map(|v| Box::new(reserved_word::_T0::_1(v))),
-        ))
         .boxed();
 
         // «UnicodeStringLiteral» = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral» ;
@@ -2189,92 +1745,6 @@ impl Parsers {
                 .map(|v| {
                     Box::new(unicode_string_literal::_T0::DoubleQuotedUnicodeStringLiteral(v))
                 }),
-        ))
-        .boxed();
-
-        // «Identifier» = «RawIdentifier» - «ReservedWord» ;
-        let identifier_parser =
-            difference(raw_identifier_parser.clone(), reserved_word_parser.clone()).boxed();
-
-        // ImportPath = «AsciiStringLiteral» ;
-        let import_path_parser = leading_trivia_parser
-            .clone()
-            .then(ascii_string_literal_parser.clone())
-            .then(trailing_trivia_parser.clone())
-            .map(
-                |((leading, content), trailing)| ascii_string_literal::WithTrivia {
-                    leading,
-                    content,
-                    trailing,
-                },
-            )
-            .boxed();
-
-        // YulLiteral = «YulDecimalNumberLiteral» | «YulHexLiteral» | «AsciiStringLiteral» | «BooleanLiteral» | «HexStringLiteral» ;
-        let yul_literal_parser = choice((
-            leading_trivia_parser
-                .clone()
-                .then(yul_decimal_number_literal_parser.clone())
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| yul_decimal_number_literal::WithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    },
-                )
-                .map(|v| Box::new(yul_literal::_T0::YulDecimalNumberLiteral(v))),
-            leading_trivia_parser
-                .clone()
-                .then(yul_hex_literal_parser.clone())
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| yul_hex_literal::WithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    },
-                )
-                .map(|v| Box::new(yul_literal::_T0::YulHexLiteral(v))),
-            leading_trivia_parser
-                .clone()
-                .then(ascii_string_literal_parser.clone())
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| ascii_string_literal::WithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    },
-                )
-                .map(|v| Box::new(yul_literal::_T0::AsciiStringLiteral(v))),
-            leading_trivia_parser
-                .clone()
-                .then(choice::<_, ErrorType>((
-                    terminal("false").map(|_| 5usize),
-                    terminal("true").map(|_| 4usize),
-                )))
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
-                        leading,
-                        content: VariableSizeTerminal(content),
-                        trailing,
-                    },
-                )
-                .map(|v| Box::new(yul_literal::_T0::_3(v))),
-            leading_trivia_parser
-                .clone()
-                .then(hex_string_literal_parser.clone())
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| hex_string_literal::WithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    },
-                )
-                .map(|v| Box::new(yul_literal::_T0::HexStringLiteral(v))),
         ))
         .boxed();
 
@@ -2520,6 +1990,20 @@ impl Parsers {
             })
             .boxed();
 
+        // ImportPath = «AsciiStringLiteral» ;
+        let import_path_parser = leading_trivia_parser
+            .clone()
+            .then(ascii_string_literal_parser.clone())
+            .then(trailing_trivia_parser.clone())
+            .map(
+                |((leading, content), trailing)| ascii_string_literal::WithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .boxed();
+
         // NamedArgument = «Identifier» ':' Expression ;
         let named_argument_parser = leading_trivia_parser
             .clone()
@@ -2626,103 +2110,6 @@ impl Parsers {
             .map(|v| selected_import::_T0::from_parse(v))
             .boxed();
 
-        // SimpleImportDirective = ImportPath { 'as' «Identifier» } ;
-        let simple_import_directive_parser = import_path_parser
-            .clone()
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(
-                        terminal("as")
-                            .ignored()
-                            .map(|_| FixedSizeTerminal::<2usize>()),
-                    )
-                    .then(trailing_trivia_parser.clone())
-                    .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                            leading,
-                            content,
-                            trailing,
-                        },
-                    )
-                    .then(
-                        leading_trivia_parser
-                            .clone()
-                            .then(identifier_parser.clone())
-                            .then(trailing_trivia_parser.clone())
-                            .map(|((leading, content), trailing)| identifier::WithTrivia {
-                                leading,
-                                content,
-                                trailing,
-                            }),
-                    )
-                    .map(|v| simple_import_directive::_T2::from_parse(v))
-                    .repeated(),
-            )
-            .map(|v| simple_import_directive::_T0::from_parse(v))
-            .boxed();
-
-        // StarImportDirective = '*' 'as' «Identifier» 'from' ImportPath ;
-        let star_import_directive_parser = leading_trivia_parser
-            .clone()
-            .then(just('*').map(|_| FixedSizeTerminal::<1>()))
-            .then(trailing_trivia_parser.clone())
-            .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                    leading,
-                    content,
-                    trailing,
-                },
-            )
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(
-                        terminal("as")
-                            .ignored()
-                            .map(|_| FixedSizeTerminal::<2usize>()),
-                    )
-                    .then(trailing_trivia_parser.clone())
-                    .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                            leading,
-                            content,
-                            trailing,
-                        },
-                    ),
-            )
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(identifier_parser.clone())
-                    .then(trailing_trivia_parser.clone())
-                    .map(|((leading, content), trailing)| identifier::WithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    }),
-            )
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(
-                        terminal("from")
-                            .ignored()
-                            .map(|_| FixedSizeTerminal::<4usize>()),
-                    )
-                    .then(trailing_trivia_parser.clone())
-                    .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                            leading,
-                            content,
-                            trailing,
-                        },
-                    ),
-            )
-            .then(import_path_parser.clone())
-            .map(|v| star_import_directive::_T0::from_parse(v))
-            .boxed();
-
         // UserDefinedValueTypeDefinition = 'type' «Identifier» 'is' ElementaryType ';' ;
         let user_defined_value_type_definition_parser = leading_trivia_parser
             .clone()
@@ -2784,21 +2171,73 @@ impl Parsers {
             .map(|v| user_defined_value_type_definition::_T0::from_parse(v))
             .boxed();
 
-        // YulExpression = YulPath | YulFunctionCall | YulLiteral ;
-        yul_expression_parser.define(
-            choice((
-                yul_path_parser
-                    .clone()
-                    .map(|v| Box::new(yul_expression::_T0::YulPath(v))),
-                yul_function_call_parser
-                    .clone()
-                    .map(|v| Box::new(yul_expression::_T0::YulFunctionCall(v))),
-                yul_literal_parser
-                    .clone()
-                    .map(|v| Box::new(yul_expression::_T0::YulLiteral(v))),
-            ))
-            .boxed(),
-        );
+        // YulLiteral = «YulDecimalNumberLiteral» | «YulHexLiteral» | «AsciiStringLiteral» | «BooleanLiteral» | «HexStringLiteral» ;
+        let yul_literal_parser = choice((
+            leading_trivia_parser
+                .clone()
+                .then(yul_decimal_number_literal_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| yul_decimal_number_literal::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(yul_literal::_T0::YulDecimalNumberLiteral(v))),
+            leading_trivia_parser
+                .clone()
+                .then(yul_hex_literal_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| yul_hex_literal::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(yul_literal::_T0::YulHexLiteral(v))),
+            leading_trivia_parser
+                .clone()
+                .then(ascii_string_literal_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| ascii_string_literal::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(yul_literal::_T0::AsciiStringLiteral(v))),
+            leading_trivia_parser
+                .clone()
+                .then(choice::<_, ErrorType>((
+                    terminal("false").map(|_| 5usize),
+                    terminal("true").map(|_| 4usize),
+                )))
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
+                        leading,
+                        content: VariableSizeTerminal(content),
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(yul_literal::_T0::_3(v))),
+            leading_trivia_parser
+                .clone()
+                .then(hex_string_literal_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| hex_string_literal::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(yul_literal::_T0::HexStringLiteral(v))),
+        ))
+        .boxed();
 
         // MappingType = 'mapping' '(' ( ElementaryType | IdentifierPath ) '=>' TypeName ')' ;
         let mapping_type_parser = leading_trivia_parser
@@ -3162,8 +2601,358 @@ impl Parsers {
             .map(|v| selecting_import_directive::_T0::from_parse(v))
             .boxed();
 
-        // YulAssignment = YulPath ( ':=' YulExpression | 1…*{ ',' YulPath } ':=' YulFunctionCall ) ;
-        let yul_assignment_parser = yul_path_parser
+        // SimpleImportDirective = ImportPath { 'as' «Identifier» } ;
+        let simple_import_directive_parser = import_path_parser
+            .clone()
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(
+                        terminal("as")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<2usize>()),
+                    )
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .then(
+                        leading_trivia_parser
+                            .clone()
+                            .then(identifier_parser.clone())
+                            .then(trailing_trivia_parser.clone())
+                            .map(|((leading, content), trailing)| identifier::WithTrivia {
+                                leading,
+                                content,
+                                trailing,
+                            }),
+                    )
+                    .map(|v| simple_import_directive::_T2::from_parse(v))
+                    .repeated(),
+            )
+            .map(|v| simple_import_directive::_T0::from_parse(v))
+            .boxed();
+
+        // StarImportDirective = '*' 'as' «Identifier» 'from' ImportPath ;
+        let star_import_directive_parser = leading_trivia_parser
+            .clone()
+            .then(just('*').map(|_| FixedSizeTerminal::<1>()))
+            .then(trailing_trivia_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(
+                        terminal("as")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<2usize>()),
+                    )
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| identifier::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    }),
+            )
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(
+                        terminal("from")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<4usize>()),
+                    )
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(import_path_parser.clone())
+            .map(|v| star_import_directive::_T0::from_parse(v))
+            .boxed();
+
+        // YulExpression = YulIdentifierPath | YulFunctionCall | YulLiteral ;
+        yul_expression_parser.define(
+            choice((
+                yul_identifier_path_parser
+                    .clone()
+                    .map(|v| Box::new(yul_expression::_T0::YulIdentifierPath(v))),
+                yul_function_call_parser
+                    .clone()
+                    .map(|v| Box::new(yul_expression::_T0::YulFunctionCall(v))),
+                yul_literal_parser
+                    .clone()
+                    .map(|v| Box::new(yul_expression::_T0::YulLiteral(v))),
+            ))
+            .boxed(),
+        );
+
+        // ArgumentList = '(' [ PositionalArgumentList | NamedArgumentList ] ')' ;
+        let argument_list_parser = leading_trivia_parser
+            .clone()
+            .then(just('(').map(|_| FixedSizeTerminal::<1>()))
+            .then(trailing_trivia_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(
+                choice((
+                    positional_argument_list_parser
+                        .clone()
+                        .map(|v| Box::new(argument_list::_T1::PositionalArgumentList(v))),
+                    named_argument_list_parser
+                        .clone()
+                        .map(|v| Box::new(argument_list::_T1::NamedArgumentList(v))),
+                ))
+                .or_not(),
+            )
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(just(')').map(|_| FixedSizeTerminal::<1>()))
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| argument_list::_T0::from_parse(v))
+            .boxed();
+
+        // CatchClause = 'catch' [ [ «Identifier» ] ParameterList ] Block ;
+        let catch_clause_parser = leading_trivia_parser
+            .clone()
+            .then(
+                terminal("catch")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<5usize>()),
+            )
+            .then(trailing_trivia_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| identifier::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    })
+                    .or_not()
+                    .then(parameter_list_parser.clone())
+                    .map(|v| catch_clause::_T1::from_parse(v))
+                    .or_not(),
+            )
+            .then(block_parser.clone())
+            .map(|v| catch_clause::_T0::from_parse(v))
+            .boxed();
+
+        // FunctionType = 'function' ParameterList { 'internal' | 'external' | 'private' | 'public' | 'pure' | 'view' | 'payable' } [ 'returns' ParameterList ] ;
+        let function_type_parser = leading_trivia_parser
+            .clone()
+            .then(
+                terminal("function")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<8usize>()),
+            )
+            .then(trailing_trivia_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(parameter_list_parser.clone())
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(choice::<_, ErrorType>((
+                        terminal("external").map(|_| 8usize),
+                        terminal("internal").map(|_| 8usize),
+                        terminal("p").ignore_then(choice((
+                            terminal("ayable").map(|_| 7usize),
+                            terminal("rivate").map(|_| 7usize),
+                            terminal("u").ignore_then(choice((
+                                terminal("blic").map(|_| 6usize),
+                                terminal("re").map(|_| 4usize),
+                            ))),
+                        ))),
+                        terminal("view").map(|_| 4usize),
+                    )))
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
+                            leading,
+                            content: VariableSizeTerminal(content),
+                            trailing,
+                        },
+                    )
+                    .repeated(),
+            )
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(
+                        terminal("returns")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<7usize>()),
+                    )
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .then(parameter_list_parser.clone())
+                    .map(|v| function_type::_T2::from_parse(v))
+                    .or_not(),
+            )
+            .map(|v| function_type::_T0::from_parse(v))
+            .boxed();
+
+        // ImportDirective = 'import' ( SimpleImportDirective | StarImportDirective | SelectingImportDirective ) ';' ;
+        let import_directive_parser = leading_trivia_parser
+            .clone()
+            .then(
+                terminal("import")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<6usize>()),
+            )
+            .then(trailing_trivia_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(choice((
+                simple_import_directive_parser
+                    .clone()
+                    .map(|v| Box::new(import_directive::_T1::SimpleImportDirective(v))),
+                star_import_directive_parser
+                    .clone()
+                    .map(|v| Box::new(import_directive::_T1::StarImportDirective(v))),
+                selecting_import_directive_parser
+                    .clone()
+                    .map(|v| Box::new(import_directive::_T1::SelectingImportDirective(v))),
+            )))
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| import_directive::_T0::from_parse(v))
+            .boxed();
+
+        // ModifierAttribute = OverrideSpecifier | 'virtual' ;
+        let modifier_attribute_parser = choice((
+            override_specifier_parser
+                .clone()
+                .map(|v| Box::new(modifier_attribute::_T0::OverrideSpecifier(v))),
+            leading_trivia_parser
+                .clone()
+                .then(
+                    terminal("virtual")
+                        .ignored()
+                        .map(|_| FixedSizeTerminal::<7usize>()),
+                )
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(modifier_attribute::_T0::Virtual(v))),
+        ))
+        .boxed();
+
+        // StateVariableAttribute = OverrideSpecifier | 'constant' | 'immutable' | 'internal' | 'private' | 'public' ;
+        let state_variable_attribute_parser = choice((
+            override_specifier_parser
+                .clone()
+                .map(|v| Box::new(state_variable_attribute::_T0::OverrideSpecifier(v))),
+            leading_trivia_parser
+                .clone()
+                .then(choice::<_, ErrorType>((
+                    terminal("constant").map(|_| 8usize),
+                    terminal("i").ignore_then(choice((
+                        terminal("mmutable").map(|_| 9usize),
+                        terminal("nternal").map(|_| 8usize),
+                    ))),
+                    terminal("p").ignore_then(choice((
+                        terminal("rivate").map(|_| 7usize),
+                        terminal("ublic").map(|_| 6usize),
+                    ))),
+                )))
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
+                        leading,
+                        content: VariableSizeTerminal(content),
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(state_variable_attribute::_T0::_1(v))),
+        ))
+        .boxed();
+
+        // YulAssignment = YulIdentifierPath ( ':=' YulExpression | 1…*{ ',' YulIdentifierPath } ':=' YulFunctionCall ) ;
+        let yul_assignment_parser = yul_identifier_path_parser
             .clone()
             .then(choice((
                 leading_trivia_parser
@@ -3195,7 +2984,7 @@ impl Parsers {
                             trailing,
                         },
                     )
-                    .then(yul_path_parser.clone())
+                    .then(yul_identifier_path_parser.clone())
                     .map(|v| yul_assignment::_T5::from_parse(v))
                     .repeated()
                     .at_least(1usize)
@@ -3452,288 +3241,6 @@ impl Parsers {
             .map(|v| yul_variable_declaration::_T0::from_parse(v))
             .boxed();
 
-        // ArgumentList = '(' [ PositionalArgumentList | NamedArgumentList ] ')' ;
-        let argument_list_parser = leading_trivia_parser
-            .clone()
-            .then(just('(').map(|_| FixedSizeTerminal::<1>()))
-            .then(trailing_trivia_parser.clone())
-            .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                    leading,
-                    content,
-                    trailing,
-                },
-            )
-            .then(
-                choice((
-                    positional_argument_list_parser
-                        .clone()
-                        .map(|v| Box::new(argument_list::_T1::PositionalArgumentList(v))),
-                    named_argument_list_parser
-                        .clone()
-                        .map(|v| Box::new(argument_list::_T1::NamedArgumentList(v))),
-                ))
-                .or_not(),
-            )
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(just(')').map(|_| FixedSizeTerminal::<1>()))
-                    .then(trailing_trivia_parser.clone())
-                    .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                            leading,
-                            content,
-                            trailing,
-                        },
-                    ),
-            )
-            .map(|v| argument_list::_T0::from_parse(v))
-            .boxed();
-
-        // CatchClause = 'catch' [ [ «Identifier» ] ParameterList ] Block ;
-        let catch_clause_parser = leading_trivia_parser
-            .clone()
-            .then(
-                terminal("catch")
-                    .ignored()
-                    .map(|_| FixedSizeTerminal::<5usize>()),
-            )
-            .then(trailing_trivia_parser.clone())
-            .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                    leading,
-                    content,
-                    trailing,
-                },
-            )
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(identifier_parser.clone())
-                    .then(trailing_trivia_parser.clone())
-                    .map(|((leading, content), trailing)| identifier::WithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    })
-                    .or_not()
-                    .then(parameter_list_parser.clone())
-                    .map(|v| catch_clause::_T1::from_parse(v))
-                    .or_not(),
-            )
-            .then(block_parser.clone())
-            .map(|v| catch_clause::_T0::from_parse(v))
-            .boxed();
-
-        // FunctionType = 'function' ParameterList { 'internal' | 'external' | 'private' | 'public' | 'pure' | 'view' | 'payable' } [ 'returns' ParameterList ] ;
-        let function_type_parser = leading_trivia_parser
-            .clone()
-            .then(
-                terminal("function")
-                    .ignored()
-                    .map(|_| FixedSizeTerminal::<8usize>()),
-            )
-            .then(trailing_trivia_parser.clone())
-            .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                    leading,
-                    content,
-                    trailing,
-                },
-            )
-            .then(parameter_list_parser.clone())
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(choice::<_, ErrorType>((
-                        terminal("external").map(|_| 8usize),
-                        terminal("internal").map(|_| 8usize),
-                        terminal("p").ignore_then(choice((
-                            terminal("ayable").map(|_| 7usize),
-                            terminal("rivate").map(|_| 7usize),
-                            terminal("u").ignore_then(choice((
-                                terminal("blic").map(|_| 6usize),
-                                terminal("re").map(|_| 4usize),
-                            ))),
-                        ))),
-                        terminal("view").map(|_| 4usize),
-                    )))
-                    .then(trailing_trivia_parser.clone())
-                    .map(
-                        |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
-                            leading,
-                            content: VariableSizeTerminal(content),
-                            trailing,
-                        },
-                    )
-                    .repeated(),
-            )
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(
-                        terminal("returns")
-                            .ignored()
-                            .map(|_| FixedSizeTerminal::<7usize>()),
-                    )
-                    .then(trailing_trivia_parser.clone())
-                    .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                            leading,
-                            content,
-                            trailing,
-                        },
-                    )
-                    .then(parameter_list_parser.clone())
-                    .map(|v| function_type::_T2::from_parse(v))
-                    .or_not(),
-            )
-            .map(|v| function_type::_T0::from_parse(v))
-            .boxed();
-
-        // ImportDirective = 'import' ( SimpleImportDirective | StarImportDirective | SelectingImportDirective ) ';' ;
-        let import_directive_parser = leading_trivia_parser
-            .clone()
-            .then(
-                terminal("import")
-                    .ignored()
-                    .map(|_| FixedSizeTerminal::<6usize>()),
-            )
-            .then(trailing_trivia_parser.clone())
-            .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                    leading,
-                    content,
-                    trailing,
-                },
-            )
-            .then(choice((
-                simple_import_directive_parser
-                    .clone()
-                    .map(|v| Box::new(import_directive::_T1::SimpleImportDirective(v))),
-                star_import_directive_parser
-                    .clone()
-                    .map(|v| Box::new(import_directive::_T1::StarImportDirective(v))),
-                selecting_import_directive_parser
-                    .clone()
-                    .map(|v| Box::new(import_directive::_T1::SelectingImportDirective(v))),
-            )))
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
-                    .then(trailing_trivia_parser.clone())
-                    .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                            leading,
-                            content,
-                            trailing,
-                        },
-                    ),
-            )
-            .map(|v| import_directive::_T0::from_parse(v))
-            .boxed();
-
-        // ModifierAttribute = OverrideSpecifier | 'virtual' ;
-        let modifier_attribute_parser = choice((
-            override_specifier_parser
-                .clone()
-                .map(|v| Box::new(modifier_attribute::_T0::OverrideSpecifier(v))),
-            leading_trivia_parser
-                .clone()
-                .then(
-                    terminal("virtual")
-                        .ignored()
-                        .map(|_| FixedSizeTerminal::<7usize>()),
-                )
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    },
-                )
-                .map(|v| Box::new(modifier_attribute::_T0::Virtual(v))),
-        ))
-        .boxed();
-
-        // StateVariableAttribute = OverrideSpecifier | 'constant' | 'immutable' | 'internal' | 'private' | 'public' ;
-        let state_variable_attribute_parser = choice((
-            override_specifier_parser
-                .clone()
-                .map(|v| Box::new(state_variable_attribute::_T0::OverrideSpecifier(v))),
-            leading_trivia_parser
-                .clone()
-                .then(choice::<_, ErrorType>((
-                    terminal("constant").map(|_| 8usize),
-                    terminal("i").ignore_then(choice((
-                        terminal("mmutable").map(|_| 9usize),
-                        terminal("nternal").map(|_| 8usize),
-                    ))),
-                    terminal("p").ignore_then(choice((
-                        terminal("rivate").map(|_| 7usize),
-                        terminal("ublic").map(|_| 6usize),
-                    ))),
-                )))
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
-                        leading,
-                        content: VariableSizeTerminal(content),
-                        trailing,
-                    },
-                )
-                .map(|v| Box::new(state_variable_attribute::_T0::_1(v))),
-        ))
-        .boxed();
-
-        // YulStatement = YulBlock | YulVariableDeclaration | YulFunctionDefinition | YulAssignment | YulFunctionCall | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement ;
-        let yul_statement_parser = choice((
-            yul_block_parser
-                .clone()
-                .map(|v| Box::new(yul_statement::_T0::YulBlock(v))),
-            yul_variable_declaration_parser
-                .clone()
-                .map(|v| Box::new(yul_statement::_T0::YulVariableDeclaration(v))),
-            yul_function_definition_parser
-                .clone()
-                .map(|v| Box::new(yul_statement::_T0::YulFunctionDefinition(v))),
-            yul_assignment_parser
-                .clone()
-                .map(|v| Box::new(yul_statement::_T0::YulAssignment(v))),
-            yul_function_call_parser
-                .clone()
-                .map(|v| Box::new(yul_statement::_T0::YulFunctionCall(v))),
-            yul_if_statement_parser
-                .clone()
-                .map(|v| Box::new(yul_statement::_T0::YulIfStatement(v))),
-            yul_for_statement_parser
-                .clone()
-                .map(|v| Box::new(yul_statement::_T0::YulForStatement(v))),
-            yul_switch_statement_parser
-                .clone()
-                .map(|v| Box::new(yul_statement::_T0::YulSwitchStatement(v))),
-            leading_trivia_parser
-                .clone()
-                .then(choice::<_, ErrorType>((
-                    terminal("break").map(|_| 5usize),
-                    terminal("continue").map(|_| 8usize),
-                    terminal("leave").map(|_| 5usize),
-                )))
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
-                        leading,
-                        content: VariableSizeTerminal(content),
-                        trailing,
-                    },
-                )
-                .map(|v| Box::new(yul_statement::_T0::_8(v))),
-        ))
-        .boxed();
-
         // InheritanceSpecifier = IdentifierPath [ ArgumentList ] ;
         let inheritance_specifier_parser = identifier_path_parser
             .clone()
@@ -3839,75 +3346,50 @@ impl Parsers {
             .boxed(),
         );
 
-        // YulBlock = '{' { YulStatement } '}' ;
-        yul_block_parser.define(
+        // YulStatement = YulBlock | YulVariableDeclaration | YulFunctionDefinition | YulAssignment | YulFunctionCall | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement ;
+        let yul_statement_parser = choice((
+            yul_block_parser
+                .clone()
+                .map(|v| Box::new(yul_statement::_T0::YulBlock(v))),
+            yul_variable_declaration_parser
+                .clone()
+                .map(|v| Box::new(yul_statement::_T0::YulVariableDeclaration(v))),
+            yul_function_definition_parser
+                .clone()
+                .map(|v| Box::new(yul_statement::_T0::YulFunctionDefinition(v))),
+            yul_assignment_parser
+                .clone()
+                .map(|v| Box::new(yul_statement::_T0::YulAssignment(v))),
+            yul_function_call_parser
+                .clone()
+                .map(|v| Box::new(yul_statement::_T0::YulFunctionCall(v))),
+            yul_if_statement_parser
+                .clone()
+                .map(|v| Box::new(yul_statement::_T0::YulIfStatement(v))),
+            yul_for_statement_parser
+                .clone()
+                .map(|v| Box::new(yul_statement::_T0::YulForStatement(v))),
+            yul_switch_statement_parser
+                .clone()
+                .map(|v| Box::new(yul_statement::_T0::YulSwitchStatement(v))),
             leading_trivia_parser
                 .clone()
-                .then(just('{').map(|_| FixedSizeTerminal::<1>()))
+                .then(choice::<_, ErrorType>((
+                    terminal("break").map(|_| 5usize),
+                    terminal("continue").map(|_| 8usize),
+                    terminal("leave").map(|_| 5usize),
+                )))
                 .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                    |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
                         leading,
-                        content,
+                        content: VariableSizeTerminal(content),
                         trailing,
                     },
                 )
-                .then(yul_statement_parser.clone().repeated())
-                .then(
-                    leading_trivia_parser
-                        .clone()
-                        .then(just('}').map(|_| FixedSizeTerminal::<1>()))
-                        .then(trailing_trivia_parser.clone())
-                        .map(
-                            |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                                leading,
-                                content,
-                                trailing,
-                            },
-                        ),
-                )
-                .map(|v| yul_block::_T0::from_parse(v))
-                .boxed(),
-        );
-
-        // AssemblyStatement = 'assembly' [ '"evmasm"' ] [ AssemblyFlags ] YulBlock ;
-        let assembly_statement_parser = leading_trivia_parser
-            .clone()
-            .then(
-                terminal("assembly")
-                    .ignored()
-                    .map(|_| FixedSizeTerminal::<8usize>()),
-            )
-            .then(trailing_trivia_parser.clone())
-            .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                    leading,
-                    content,
-                    trailing,
-                },
-            )
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(
-                        terminal("\"evmasm\"")
-                            .ignored()
-                            .map(|_| FixedSizeTerminal::<8usize>()),
-                    )
-                    .then(trailing_trivia_parser.clone())
-                    .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                            leading,
-                            content,
-                            trailing,
-                        },
-                    )
-                    .or_not(),
-            )
-            .then(assembly_flags_parser.clone().or_not())
-            .then(yul_block_parser.clone())
-            .map(|v| assembly_statement::_T0::from_parse(v))
-            .boxed();
+                .map(|v| Box::new(yul_statement::_T0::_8(v))),
+        ))
+        .boxed();
 
         // ConstructorAttribute = ModifierInvocation | 'internal' | 'payable' | 'public' ;
         let constructor_attribute_parser = choice((
@@ -4343,6 +3825,76 @@ impl Parsers {
                     ),
             )
             .map(|v| using_directive::_T0::from_parse(v))
+            .boxed();
+
+        // YulBlock = '{' { YulStatement } '}' ;
+        yul_block_parser.define(
+            leading_trivia_parser
+                .clone()
+                .then(just('{').map(|_| FixedSizeTerminal::<1>()))
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .then(yul_statement_parser.clone().repeated())
+                .then(
+                    leading_trivia_parser
+                        .clone()
+                        .then(just('}').map(|_| FixedSizeTerminal::<1>()))
+                        .then(trailing_trivia_parser.clone())
+                        .map(
+                            |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                                leading,
+                                content,
+                                trailing,
+                            },
+                        ),
+                )
+                .map(|v| yul_block::_T0::from_parse(v))
+                .boxed(),
+        );
+
+        // AssemblyStatement = 'assembly' [ '"evmasm"' ] [ AssemblyFlags ] YulBlock ;
+        let assembly_statement_parser = leading_trivia_parser
+            .clone()
+            .then(
+                terminal("assembly")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<8usize>()),
+            )
+            .then(trailing_trivia_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(
+                        terminal("\"evmasm\"")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<8usize>()),
+                    )
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .or_not(),
+            )
+            .then(assembly_flags_parser.clone().or_not())
+            .then(yul_block_parser.clone())
+            .map(|v| assembly_statement::_T0::from_parse(v))
             .boxed();
 
         // Directive = PragmaDirective | ImportDirective | UsingDirective ;
@@ -7016,53 +6568,50 @@ impl Parsers {
             version_pragma_specifier: version_pragma_specifier_parser,
             yul_function_call: yul_function_call_parser,
             yul_function_definition: yul_function_definition_parser,
-            yul_path: yul_path_parser,
+            yul_identifier_path: yul_identifier_path_parser,
             ascii_string_literal: ascii_string_literal_parser,
             assembly_flags: assembly_flags_parser,
             elementary_type: elementary_type_parser,
-            numeric_literal: numeric_literal_parser,
-            reserved_word: reserved_word_parser,
-            unicode_string_literal: unicode_string_literal_parser,
             identifier: identifier_parser,
-            import_path: import_path_parser,
-            yul_literal: yul_literal_parser,
+            numeric_literal: numeric_literal_parser,
+            unicode_string_literal: unicode_string_literal_parser,
             abi_coder_pragma_specifier: abi_coder_pragma_specifier_parser,
             delete_statement: delete_statement_parser,
             enum_definition: enum_definition_parser,
             experimental_pragma_specifier: experimental_pragma_specifier_parser,
             identifier_path: identifier_path_parser,
+            import_path: import_path_parser,
             named_argument: named_argument_parser,
             parameter_declaration: parameter_declaration_parser,
             selected_import: selected_import_parser,
-            simple_import_directive: simple_import_directive_parser,
-            star_import_directive: star_import_directive_parser,
             user_defined_value_type_definition: user_defined_value_type_definition_parser,
-            yul_expression: yul_expression_parser.boxed(),
+            yul_literal: yul_literal_parser,
             mapping_type: mapping_type_parser,
             named_argument_list: named_argument_list_parser,
             override_specifier: override_specifier_parser,
             parameter_list: parameter_list_parser,
             pragma_directive: pragma_directive_parser,
             selecting_import_directive: selecting_import_directive_parser,
-            yul_assignment: yul_assignment_parser,
-            yul_for_statement: yul_for_statement_parser,
-            yul_if_statement: yul_if_statement_parser,
-            yul_switch_statement: yul_switch_statement_parser,
-            yul_variable_declaration: yul_variable_declaration_parser,
+            simple_import_directive: simple_import_directive_parser,
+            star_import_directive: star_import_directive_parser,
+            yul_expression: yul_expression_parser.boxed(),
             argument_list: argument_list_parser,
             catch_clause: catch_clause_parser,
             function_type: function_type_parser,
             import_directive: import_directive_parser,
             modifier_attribute: modifier_attribute_parser,
             state_variable_attribute: state_variable_attribute_parser,
-            yul_statement: yul_statement_parser,
+            yul_assignment: yul_assignment_parser,
+            yul_for_statement: yul_for_statement_parser,
+            yul_if_statement: yul_if_statement_parser,
+            yul_switch_statement: yul_switch_statement_parser,
+            yul_variable_declaration: yul_variable_declaration_parser,
             inheritance_specifier: inheritance_specifier_parser,
             modifier_invocation: modifier_invocation_parser,
             new_expression: new_expression_parser,
             payable_expression: payable_expression_parser,
             type_name: type_name_parser.boxed(),
-            yul_block: yul_block_parser.boxed(),
-            assembly_statement: assembly_statement_parser,
+            yul_statement: yul_statement_parser,
             constructor_attribute: constructor_attribute_parser,
             error_parameter: error_parameter_parser,
             event_parameter: event_parameter_parser,
@@ -7073,6 +6622,8 @@ impl Parsers {
             struct_member: struct_member_parser,
             type_expression: type_expression_parser,
             using_directive: using_directive_parser,
+            yul_block: yul_block_parser.boxed(),
+            assembly_statement: assembly_statement_parser,
             directive: directive_parser,
             error_definition: error_definition_parser,
             event_definition: event_definition_parser,
