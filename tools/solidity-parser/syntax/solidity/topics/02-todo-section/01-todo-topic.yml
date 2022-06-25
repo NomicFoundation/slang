@@ -118,7 +118,7 @@
     - terminal: type
     - reference: Identifier
     - terminal: is
-    - reference: ElementaryTypeWithPayable
+    - reference: ElementaryType
     - terminal: ;
 
 - name: EventDefinition
@@ -347,7 +347,7 @@
 - name: TypeName
   sequence:
     - choice:
-        - reference: ElementaryTypeWithPayable
+        - reference: ElementaryType
         - reference: FunctionType
         - reference: MappingType
         - reference: IdentifierPath
@@ -357,18 +357,6 @@
           - optional:
               reference: Expression
           - terminal: "]"
-
-- name: ElementaryTypeWithPayable
-  choice:
-    - sequence:
-        - terminal: address
-        - optional:
-            terminal: payable
-    - reference: ElementaryType
-
-- name: ElementaryTypeWithoutPayable
-  choice:
-    - terminal: address
     - reference: ElementaryType
 
 - name: ElementaryType
@@ -376,11 +364,18 @@
     - terminal: bool
     - terminal: string
     - terminal: bytes
+    - reference: AddressType
     - reference: SignedIntegerType
     - reference: UnsignedIntegerType
     - reference: FixedBytesType
     - reference: FixedType
     - reference: UfixedType
+
+- name: AddressType
+  sequence:
+    - terminal: address
+    - optional:
+        terminal: payable
 
 - name: FunctionType
   sequence:
@@ -405,7 +400,7 @@
     - terminal: mapping
     - terminal: (
     - choice:
-        - reference: ElementaryTypeWithoutPayable
+        - reference: ElementaryType
         - reference: IdentifierPath
     - terminal: "=>"
     - reference: TypeName
@@ -626,7 +621,6 @@
     - reference: UnicodeStringLiteral
     - reference: HexStringLiteral
     - reference: NumericLiteral
-    - reference: ElementaryTypeWithoutPayable
     - reference: BooleanLiteral
     - reference: Identifier
 

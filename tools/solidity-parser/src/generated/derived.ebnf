@@ -70,7 +70,7 @@ StructMember = TypeName «Identifier» ';' ;
 
 EnumDefinition = 'enum' «Identifier» '{' 1…*{ «Identifier» / ',' } '}' ;
 
-UserDefinedValueTypeDefinition = 'type' «Identifier» 'is' ElementaryTypeWithPayable ';' ;
+UserDefinedValueTypeDefinition = 'type' «Identifier» 'is' ElementaryType ';' ;
 
 EventDefinition = 'event' «Identifier» '(' { EventParameter / ',' } ')' [ 'anonymous' ] ';' ;
 
@@ -120,17 +120,15 @@ OverrideSpecifier = 'override' [ '(' 1…1*{ IdentifierPath / ',' } ')' ] ;
 
 IdentifierPath = 1…*{ «Identifier» / '.' } ;
 
-TypeName = ( ElementaryTypeWithPayable | FunctionType | MappingType | IdentifierPath ) { '[' [ Expression ] ']' } ;
+TypeName = ( ElementaryType | FunctionType | MappingType | IdentifierPath ) { '[' [ Expression ] ']' } ElementaryType ;
 
-ElementaryTypeWithPayable = 'address' [ 'payable' ] | ElementaryType ;
+ElementaryType = 'bool' | 'string' | 'bytes' | AddressType | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | «FixedType» | «UfixedType» ;
 
-ElementaryTypeWithoutPayable = 'address' | ElementaryType ;
-
-ElementaryType = 'bool' | 'string' | 'bytes' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | «FixedType» | «UfixedType» ;
+AddressType = 'address' [ 'payable' ] ;
 
 FunctionType = 'function' ParameterList { 'internal' | 'external' | 'private' | 'public' | 'pure' | 'view' | 'payable' } [ 'returns' ParameterList ] ;
 
-MappingType = 'mapping' '(' ( ElementaryTypeWithoutPayable | IdentifierPath ) '=>' TypeName ')' ;
+MappingType = 'mapping' '(' ( ElementaryType | IdentifierPath ) '=>' TypeName ')' ;
 
 DataLocation = 'memory' | 'storage' | 'calldata' ;
 
@@ -174,7 +172,7 @@ MemberAccessExpression = Expression '.' ( «Identifier» | 'address' ) ;
 
 IndexAccessExpression = Expression '[' [ Expression ] [ ':' [ Expression ] ] ']' ;
 
-PrimaryExpression = PayableExpression | TypeExpression | NewExpression | ParenthesisExpression | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | «NumericLiteral» | ElementaryTypeWithoutPayable | «BooleanLiteral» | «Identifier» ;
+PrimaryExpression = PayableExpression | TypeExpression | NewExpression | ParenthesisExpression | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | «NumericLiteral» | «BooleanLiteral» | «Identifier» ;
 
 PayableExpression = 'payable' ArgumentList ;
 

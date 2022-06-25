@@ -64,9 +64,8 @@
           - OverrideSpecifier
           - IdentifierPath
           - TypeName
-          - ElementaryTypeWithPayable
-          - ElementaryTypeWithoutPayable
           - ElementaryType
+          - AddressType
           - FunctionType
           - MappingType
           - DataLocation
