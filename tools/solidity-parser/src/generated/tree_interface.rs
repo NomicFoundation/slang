@@ -90,42 +90,6 @@ pub mod fixed_bytes_type {
     }
 }
 
-/// «FixedType» = 'fixed' [ '1'…'9' { '0'…'9' } 'x' '1'…'9' { '0'…'9' } ] ;
-pub type FixedType = fixed_type::_T0;
-pub mod fixed_type {
-    #[allow(unused_imports)]
-    use super::*;
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T1 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _0: FixedSizeTerminal<1>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _1: VariableSizeTerminal,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _2: FixedSizeTerminal<1>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _3: FixedSizeTerminal<1>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _4: VariableSizeTerminal,
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T0 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub fixed: FixedSizeTerminal<5usize>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _t1: Option<fixed_type::_T1>,
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
-    pub struct WithTrivia {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub leading: LeadingTrivia,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub content: fixed_type::_T0,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub trailing: TrailingTrivia,
-    }
-}
-
 /// «HexByteEscape» = 'x' 2…2*{ «HexCharacter» } ;
 pub type HexByteEscape = hex_byte_escape::_T0;
 pub mod hex_byte_escape {
@@ -264,6 +228,38 @@ pub mod raw_identifier {
         pub leading: LeadingTrivia,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub content: raw_identifier::_T0,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub trailing: TrailingTrivia,
+    }
+}
+
+/// «SignedFixedType» = 'fixed' [ 1…*{ '0'…'9' } 'x' 1…*{ '0'…'9' } ] ;
+pub type SignedFixedType = signed_fixed_type::_T0;
+pub mod signed_fixed_type {
+    #[allow(unused_imports)]
+    use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T1 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _0: VariableSizeTerminal,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _1: FixedSizeTerminal<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _2: VariableSizeTerminal,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub fixed: FixedSizeTerminal<5usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _t1: Option<signed_fixed_type::_T1>,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+    pub struct WithTrivia {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub leading: LeadingTrivia,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub content: signed_fixed_type::_T0,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub trailing: TrailingTrivia,
     }
@@ -625,9 +621,9 @@ pub mod trailing_trivia {
     }
 }
 
-/// «UfixedType» = 'u' «FixedType» ;
-pub type UfixedType = ufixed_type::_T0;
-pub mod ufixed_type {
+/// «UnsignedFixedType» = 'u' «SignedFixedType» ;
+pub type UnsignedFixedType = unsigned_fixed_type::_T0;
+pub mod unsigned_fixed_type {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -635,14 +631,14 @@ pub mod ufixed_type {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _0: FixedSizeTerminal<1>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub fixed_type: FixedType,
+        pub signed_fixed_type: SignedFixedType,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
     pub struct WithTrivia {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub leading: LeadingTrivia,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub content: ufixed_type::_T0,
+        pub content: unsigned_fixed_type::_T0,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub trailing: TrailingTrivia,
     }
@@ -1121,7 +1117,7 @@ pub mod assembly_flags {
     }
 }
 
-/// ElementaryType = 'bool' | 'string' | AddressType | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | «FixedType» | «UfixedType» ;
+/// ElementaryType = 'bool' | 'string' | AddressType | «FixedBytesType» | «SignedIntegerType» | «UnsignedIntegerType» | «SignedFixedType» | «UnsignedFixedType» ;
 pub type ElementaryType = Box<elementary_type::_T0>;
 pub mod elementary_type {
     #[allow(unused_imports)]
@@ -1130,11 +1126,11 @@ pub mod elementary_type {
     pub enum _T0 {
         _0(VariableSizeTerminalWithTrivia),
         AddressType(AddressType),
+        FixedBytesType(fixed_bytes_type::WithTrivia),
         SignedIntegerType(signed_integer_type::WithTrivia),
         UnsignedIntegerType(unsigned_integer_type::WithTrivia),
-        FixedBytesType(fixed_bytes_type::WithTrivia),
-        FixedType(fixed_type::WithTrivia),
-        UfixedType(ufixed_type::WithTrivia),
+        SignedFixedType(signed_fixed_type::WithTrivia),
+        UnsignedFixedType(unsigned_fixed_type::WithTrivia),
     }
 }
 

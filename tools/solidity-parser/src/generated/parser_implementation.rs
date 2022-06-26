@@ -132,36 +132,6 @@ impl Parsers {
             .map(|v| fixed_bytes_type::_T0::from_parse(v))
             .boxed();
 
-        // «FixedType» = 'fixed' [ '1'…'9' { '0'…'9' } 'x' '1'…'9' { '0'…'9' } ] ;
-        let fixed_type_parser = terminal("fixed")
-            .ignored()
-            .map(|_| FixedSizeTerminal::<5usize>())
-            .then(
-                filter(|&c: &char| ('1' <= c && c <= '9'))
-                    .map(|_| FixedSizeTerminal::<1>())
-                    .then(
-                        filter(|&c: &char| ('0' <= c && c <= '9'))
-                            .map(|_| FixedSizeTerminal::<1>())
-                            .repeated()
-                            .map(|v| VariableSizeTerminal(v.len())),
-                    )
-                    .then(just('x').map(|_| FixedSizeTerminal::<1>()))
-                    .then(
-                        filter(|&c: &char| ('1' <= c && c <= '9'))
-                            .map(|_| FixedSizeTerminal::<1>()),
-                    )
-                    .then(
-                        filter(|&c: &char| ('0' <= c && c <= '9'))
-                            .map(|_| FixedSizeTerminal::<1>())
-                            .repeated()
-                            .map(|v| VariableSizeTerminal(v.len())),
-                    )
-                    .map(|v| fixed_type::_T1::from_parse(v))
-                    .or_not(),
-            )
-            .map(|v| fixed_type::_T0::from_parse(v))
-            .boxed();
-
         // «HexByteEscape» = 'x' 2…2*{ «HexCharacter» } ;
         let hex_byte_escape_parser = just('x')
             .map(|_| FixedSizeTerminal::<1>())
@@ -298,6 +268,30 @@ impl Parsers {
         )
         .map(|v| raw_identifier::_T0::from_parse(v))
         .boxed();
+
+        // «SignedFixedType» = 'fixed' [ 1…*{ '0'…'9' } 'x' 1…*{ '0'…'9' } ] ;
+        let signed_fixed_type_parser = terminal("fixed")
+            .ignored()
+            .map(|_| FixedSizeTerminal::<5usize>())
+            .then(
+                filter(|&c: &char| ('0' <= c && c <= '9'))
+                    .map(|_| FixedSizeTerminal::<1>())
+                    .repeated()
+                    .at_least(1usize)
+                    .map(|v| VariableSizeTerminal(v.len()))
+                    .then(just('x').map(|_| FixedSizeTerminal::<1>()))
+                    .then(
+                        filter(|&c: &char| ('0' <= c && c <= '9'))
+                            .map(|_| FixedSizeTerminal::<1>())
+                            .repeated()
+                            .at_least(1usize)
+                            .map(|v| VariableSizeTerminal(v.len())),
+                    )
+                    .map(|v| signed_fixed_type::_T1::from_parse(v))
+                    .or_not(),
+            )
+            .map(|v| signed_fixed_type::_T0::from_parse(v))
+            .boxed();
 
         // «SignedIntegerType» = 'int' [ '8' | '16' | '24' | '32' | '40' | '48' | '56' | '64' | '72' | '80' | '88' | '96' | '104' | '112' | '120' | '128' | '136' | '144' | '152' | '160' | '168' | '176' | '184' | '192' | '200' | '208' | '216' | '224' | '232' | '240' | '248' | '256' ] ;
         let signed_integer_type_parser = terminal("int")
@@ -585,11 +579,11 @@ impl Parsers {
         .or_not()
         .boxed();
 
-        // «UfixedType» = 'u' «FixedType» ;
-        let ufixed_type_parser = just('u')
+        // «UnsignedFixedType» = 'u' «SignedFixedType» ;
+        let unsigned_fixed_type_parser = just('u')
             .map(|_| FixedSizeTerminal::<1>())
-            .then(fixed_type_parser.clone())
-            .map(|v| ufixed_type::_T0::from_parse(v))
+            .then(signed_fixed_type_parser.clone())
+            .map(|v| unsigned_fixed_type::_T0::from_parse(v))
             .boxed();
 
         // «UnsignedIntegerType» = 'u' «SignedIntegerType» ;
@@ -1617,7 +1611,7 @@ impl Parsers {
             .map(|v| assembly_flags::_T0::from_parse(v))
             .boxed();
 
-        // ElementaryType = 'bool' | 'string' | AddressType | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | «FixedType» | «UfixedType» ;
+        // ElementaryType = 'bool' | 'string' | AddressType | «FixedBytesType» | «SignedIntegerType» | «UnsignedIntegerType» | «SignedFixedType» | «UnsignedFixedType» ;
         let elementary_type_parser = choice((
             leading_trivia_parser
                 .clone()
@@ -1637,6 +1631,18 @@ impl Parsers {
             address_type_parser
                 .clone()
                 .map(|v| Box::new(elementary_type::_T0::AddressType(v))),
+            leading_trivia_parser
+                .clone()
+                .then(fixed_bytes_type_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| fixed_bytes_type::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(elementary_type::_T0::FixedBytesType(v))),
             leading_trivia_parser
                 .clone()
                 .then(signed_integer_type_parser.clone())
@@ -1663,36 +1669,28 @@ impl Parsers {
                 .map(|v| Box::new(elementary_type::_T0::UnsignedIntegerType(v))),
             leading_trivia_parser
                 .clone()
-                .then(fixed_bytes_type_parser.clone())
+                .then(signed_fixed_type_parser.clone())
                 .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| fixed_bytes_type::WithTrivia {
+                    |((leading, content), trailing)| signed_fixed_type::WithTrivia {
                         leading,
                         content,
                         trailing,
                     },
                 )
-                .map(|v| Box::new(elementary_type::_T0::FixedBytesType(v))),
+                .map(|v| Box::new(elementary_type::_T0::SignedFixedType(v))),
             leading_trivia_parser
                 .clone()
-                .then(fixed_type_parser.clone())
+                .then(unsigned_fixed_type_parser.clone())
                 .then(trailing_trivia_parser.clone())
-                .map(|((leading, content), trailing)| fixed_type::WithTrivia {
-                    leading,
-                    content,
-                    trailing,
-                })
-                .map(|v| Box::new(elementary_type::_T0::FixedType(v))),
-            leading_trivia_parser
-                .clone()
-                .then(ufixed_type_parser.clone())
-                .then(trailing_trivia_parser.clone())
-                .map(|((leading, content), trailing)| ufixed_type::WithTrivia {
-                    leading,
-                    content,
-                    trailing,
-                })
-                .map(|v| Box::new(elementary_type::_T0::UfixedType(v))),
+                .map(
+                    |((leading, content), trailing)| unsigned_fixed_type::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(elementary_type::_T0::UnsignedFixedType(v))),
         ))
         .boxed();
 
@@ -6451,12 +6449,12 @@ impl Parsers {
             decimal_integer: decimal_integer_parser,
             end_of_line: end_of_line_parser,
             fixed_bytes_type: fixed_bytes_type_parser,
-            fixed_type: fixed_type_parser,
             hex_byte_escape: hex_byte_escape_parser,
             hex_number: hex_number_parser,
             multiline_comment: multiline_comment_parser,
             possibly_separated_pairs_of_hex_digits: possibly_separated_pairs_of_hex_digits_parser,
             raw_identifier: raw_identifier_parser,
+            signed_fixed_type: signed_fixed_type_parser,
             signed_integer_type: signed_integer_type_parser,
             single_line_comment: single_line_comment_parser,
             unicode_escape: unicode_escape_parser,
@@ -6471,7 +6469,7 @@ impl Parsers {
             hex_string_literal: hex_string_literal_parser,
             leading_trivia: leading_trivia_parser,
             trailing_trivia: trailing_trivia_parser,
-            ufixed_type: ufixed_type_parser,
+            unsigned_fixed_type: unsigned_fixed_type_parser,
             unsigned_integer_type: unsigned_integer_type_parser,
             yul_identifier: yul_identifier_parser,
             address_type: address_type_parser,
