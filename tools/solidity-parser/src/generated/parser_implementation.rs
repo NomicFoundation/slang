@@ -3161,6 +3161,40 @@ impl Parsers {
             .map(|v| yul_variable_declaration::_T0::from_parse(v))
             .boxed();
 
+        // EmitStatement = 'emit' IdentifierPath ArgumentList ';' ;
+        let emit_statement_parser = leading_trivia_parser
+            .clone()
+            .then(
+                terminal("emit")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<4usize>()),
+            )
+            .then(trailing_trivia_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(identifier_path_parser.clone())
+            .then(argument_list_parser.clone())
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| emit_statement::_T0::from_parse(v))
+            .boxed();
+
         // InheritanceSpecifier = IdentifierPath [ ArgumentList ] ;
         let inheritance_specifier_parser = identifier_path_parser
             .clone()
@@ -3214,6 +3248,40 @@ impl Parsers {
             )
             .then(argument_list_parser.clone())
             .map(|v| payable_expression::_T0::from_parse(v))
+            .boxed();
+
+        // RevertStatement = 'revert' [ IdentifierPath ] ArgumentList ';' ;
+        let revert_statement_parser = leading_trivia_parser
+            .clone()
+            .then(
+                terminal("revert")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<6usize>()),
+            )
+            .then(trailing_trivia_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(identifier_path_parser.clone().or_not())
+            .then(argument_list_parser.clone())
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| revert_statement::_T0::from_parse(v))
             .boxed();
 
         // TypeName = ( ElementaryType | FunctionType | MappingType | IdentifierPath ) { '[' [ Expression ] ']' } ElementaryType ;
@@ -5200,40 +5268,6 @@ impl Parsers {
             .map(|v| do_while_statement::_T0::from_parse(v))
             .boxed();
 
-        // EmitStatement = 'emit' Expression ArgumentList ';' ;
-        let emit_statement_parser = leading_trivia_parser
-            .clone()
-            .then(
-                terminal("emit")
-                    .ignored()
-                    .map(|_| FixedSizeTerminal::<4usize>()),
-            )
-            .then(trailing_trivia_parser.clone())
-            .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                    leading,
-                    content,
-                    trailing,
-                },
-            )
-            .then(expression_parser.clone())
-            .then(argument_list_parser.clone())
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
-                    .then(trailing_trivia_parser.clone())
-                    .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                            leading,
-                            content,
-                            trailing,
-                        },
-                    ),
-            )
-            .map(|v| emit_statement::_T0::from_parse(v))
-            .boxed();
-
         // ExpressionStatement = Expression ';' ;
         let expression_statement_parser = expression_parser
             .clone()
@@ -5351,40 +5385,6 @@ impl Parsers {
                     ),
             )
             .map(|v| return_statement::_T0::from_parse(v))
-            .boxed();
-
-        // RevertStatement = 'revert' Expression ArgumentList ';' ;
-        let revert_statement_parser = leading_trivia_parser
-            .clone()
-            .then(
-                terminal("revert")
-                    .ignored()
-                    .map(|_| FixedSizeTerminal::<6usize>()),
-            )
-            .then(trailing_trivia_parser.clone())
-            .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                    leading,
-                    content,
-                    trailing,
-                },
-            )
-            .then(expression_parser.clone())
-            .then(argument_list_parser.clone())
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
-                    .then(trailing_trivia_parser.clone())
-                    .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                            leading,
-                            content,
-                            trailing,
-                        },
-                    ),
-            )
-            .map(|v| revert_statement::_T0::from_parse(v))
             .boxed();
 
         // StateVariableDeclaration = TypeName { StateVariableAttribute } «Identifier» [ '=' Expression ] ';' ;
@@ -6526,10 +6526,12 @@ impl Parsers {
             yul_if_statement: yul_if_statement_parser,
             yul_switch_statement: yul_switch_statement_parser,
             yul_variable_declaration: yul_variable_declaration_parser,
+            emit_statement: emit_statement_parser,
             inheritance_specifier: inheritance_specifier_parser,
             modifier_invocation: modifier_invocation_parser,
             new_expression: new_expression_parser,
             payable_expression: payable_expression_parser,
+            revert_statement: revert_statement_parser,
             type_name: type_name_parser.boxed(),
             yul_statement: yul_statement_parser,
             constructor_attribute: constructor_attribute_parser,
@@ -6571,11 +6573,9 @@ impl Parsers {
             expression: expression_parser.boxed(),
             constant_definition: constant_definition_parser,
             do_while_statement: do_while_statement_parser,
-            emit_statement: emit_statement_parser,
             expression_statement: expression_statement_parser,
             if_statement: if_statement_parser,
             return_statement: return_statement_parser,
-            revert_statement: revert_statement_parser,
             state_variable_declaration: state_variable_declaration_parser,
             try_statement: try_statement_parser,
             tuple_deconstruction_statement: tuple_deconstruction_statement_parser,
