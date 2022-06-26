@@ -67,11 +67,16 @@
 
 - name: FunctionAttribute
   choice:
-    - reference: VisibilitySpecifier
-    - reference: StateMutabilitySpecifier
     - reference: ModifierInvocation
-    - terminal: virtual
     - reference: OverrideSpecifier
+    - terminal: external
+    - terminal: internal
+    - terminal: payable
+    - terminal: private
+    - terminal: public
+    - terminal: pure
+    - terminal: view
+    - terminal: virtual
 
 - name: ConstantDefinition
   sequence:
@@ -182,8 +187,8 @@
 - name: ConstructorAttribute
   choice:
     - reference: ModifierInvocation
-    - terminal: payable
     - terminal: internal
+    - terminal: payable
     - terminal: public
 
 - name: FallbackFunctionDefinition
@@ -202,11 +207,13 @@
 
 - name: FallbackFunctionAttribute
   choice:
-    - terminal: external
-    - reference: StateMutabilitySpecifier
     - reference: ModifierInvocation
-    - terminal: virtual
     - reference: OverrideSpecifier
+    - terminal: external
+    - terminal: payable
+    - terminal: pure
+    - terminal: view
+    - terminal: virtual
 
 - name: ReceiveFunctionDefinition
   sequence:
@@ -220,11 +227,11 @@
 
 - name: ReceiveFunctionAttribute
   choice:
+    - reference: ModifierInvocation
+    - reference: OverrideSpecifier
     - terminal: external
     - terminal: payable
-    - reference: ModifierInvocation
     - terminal: virtual
-    - reference: OverrideSpecifier
 
 - name: ModifierDefinition
   sequence:
@@ -233,15 +240,15 @@
     - optional:
         reference: ParameterList
     - zeroOrMore:
-        reference: MethodAttribute
+        reference: ModifierAttribute
     - choice:
         - terminal: ;
         - reference: Block
 
-- name: MethodAttribute
+- name: ModifierAttribute
   choice:
-    - terminal: virtual
     - reference: OverrideSpecifier
+    - terminal: virtual
 
 - name: StateVariableDeclaration
   sequence:
@@ -257,12 +264,12 @@
 
 - name: StateVariableAttribute
   choice:
-    - terminal: public
-    - terminal: private
-    - terminal: internal
-    - terminal: constant
     - reference: OverrideSpecifier
+    - terminal: constant
     - terminal: immutable
+    - terminal: internal
+    - terminal: private
+    - terminal: public
 
 - name: ArgumentList
   sequence:
@@ -316,19 +323,6 @@
         reference: DataLocation
     - optional:
         reference: Identifier
-
-- name: VisibilitySpecifier
-  choice:
-    - terminal: internal
-    - terminal: external
-    - terminal: private
-    - terminal: public
-
-- name: StateMutabilitySpecifier
-  choice:
-    - terminal: pure
-    - terminal: view
-    - terminal: payable
 
 - name: OverrideSpecifier
   sequence:
@@ -394,8 +388,13 @@
     - reference: ParameterList
     - zeroOrMore:
         choice:
-          - reference: VisibilitySpecifier
-          - reference: StateMutabilitySpecifier
+          - terminal: internal
+          - terminal: external
+          - terminal: private
+          - terminal: public
+          - terminal: pure
+          - terminal: view
+          - terminal: payable
     - optional:
         sequence:
           - terminal: returns

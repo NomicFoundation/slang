@@ -51,7 +51,7 @@
           - ReceiveFunctionDefinition
           - ReceiveFunctionAttribute
           - ModifierDefinition
-          - MethodAttribute
+          - ModifierAttribute
           - StateVariableDeclaration
           - StateVariableAttribute
           - ArgumentList
@@ -61,8 +61,6 @@
           - ModifierInvocation
           - ParameterList
           - ParameterDeclaration
-          - VisibilitySpecifier
-          - StateMutabilitySpecifier
           - OverrideSpecifier
           - IdentifierPath
           - TypeName

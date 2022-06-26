@@ -79,7 +79,7 @@ pub struct Parsers {
     pub catch_clause: ParserType<CatchClause>,
     pub function_type: ParserType<FunctionType>,
     pub import_directive: ParserType<ImportDirective>,
-    pub method_attribute: ParserType<MethodAttribute>,
+    pub modifier_attribute: ParserType<ModifierAttribute>,
     pub state_variable_attribute: ParserType<StateVariableAttribute>,
     pub yul_statement: ParserType<YulStatement>,
     pub inheritance_specifier: ParserType<InheritanceSpecifier>,

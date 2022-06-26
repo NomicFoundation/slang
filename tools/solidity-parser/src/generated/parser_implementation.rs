@@ -3315,7 +3315,7 @@ impl Parsers {
             .map(|v| catch_clause::_T0::from_parse(v))
             .boxed();
 
-        // FunctionType = 'function' ParameterList { VisibilitySpecifier | StateMutabilitySpecifier } [ 'returns' ParameterList ] ;
+        // FunctionType = 'function' ParameterList { 'internal' | 'external' | 'private' | 'public' | 'pure' | 'view' | 'payable' } [ 'returns' ParameterList ] ;
         let function_type_parser = leading_trivia_parser
             .clone()
             .then(
@@ -3424,8 +3424,11 @@ impl Parsers {
             .map(|v| import_directive::_T0::from_parse(v))
             .boxed();
 
-        // MethodAttribute = 'virtual' | OverrideSpecifier ;
-        let method_attribute_parser = choice((
+        // ModifierAttribute = OverrideSpecifier | 'virtual' ;
+        let modifier_attribute_parser = choice((
+            override_specifier_parser
+                .clone()
+                .map(|v| Box::new(modifier_attribute::_T0::OverrideSpecifier(v))),
             leading_trivia_parser
                 .clone()
                 .then(
@@ -3441,20 +3444,23 @@ impl Parsers {
                         trailing,
                     },
                 )
-                .map(|v| Box::new(method_attribute::_T0::Virtual(v))),
-            override_specifier_parser
-                .clone()
-                .map(|v| Box::new(method_attribute::_T0::OverrideSpecifier(v))),
+                .map(|v| Box::new(modifier_attribute::_T0::Virtual(v))),
         ))
         .boxed();
 
-        // StateVariableAttribute = 'public' | 'private' | 'internal' | 'constant' | OverrideSpecifier | 'immutable' ;
+        // StateVariableAttribute = OverrideSpecifier | 'constant' | 'immutable' | 'internal' | 'private' | 'public' ;
         let state_variable_attribute_parser = choice((
+            override_specifier_parser
+                .clone()
+                .map(|v| Box::new(state_variable_attribute::_T0::OverrideSpecifier(v))),
             leading_trivia_parser
                 .clone()
                 .then(choice::<_, ErrorType>((
                     terminal("constant").map(|_| 8usize),
-                    terminal("internal").map(|_| 8usize),
+                    terminal("i").ignore_then(choice((
+                        terminal("mmutable").map(|_| 9usize),
+                        terminal("nternal").map(|_| 8usize),
+                    ))),
                     terminal("p").ignore_then(choice((
                         terminal("rivate").map(|_| 7usize),
                         terminal("ublic").map(|_| 6usize),
@@ -3468,26 +3474,7 @@ impl Parsers {
                         trailing,
                     },
                 )
-                .map(|v| Box::new(state_variable_attribute::_T0::_0(v))),
-            override_specifier_parser
-                .clone()
-                .map(|v| Box::new(state_variable_attribute::_T0::OverrideSpecifier(v))),
-            leading_trivia_parser
-                .clone()
-                .then(
-                    terminal("immutable")
-                        .ignored()
-                        .map(|_| FixedSizeTerminal::<9usize>()),
-                )
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    },
-                )
-                .map(|v| Box::new(state_variable_attribute::_T0::Immutable(v))),
+                .map(|v| Box::new(state_variable_attribute::_T0::_1(v))),
         ))
         .boxed();
 
@@ -3669,7 +3656,7 @@ impl Parsers {
             .map(|v| assembly_statement::_T0::from_parse(v))
             .boxed();
 
-        // ConstructorAttribute = ModifierInvocation | 'payable' | 'internal' | 'public' ;
+        // ConstructorAttribute = ModifierInvocation | 'internal' | 'payable' | 'public' ;
         let constructor_attribute_parser = choice((
             modifier_invocation_parser
                 .clone()
@@ -3749,8 +3736,14 @@ impl Parsers {
             .map(|v| event_parameter::_T0::from_parse(v))
             .boxed();
 
-        // FallbackFunctionAttribute = 'external' | StateMutabilitySpecifier | ModifierInvocation | 'virtual' | OverrideSpecifier ;
+        // FallbackFunctionAttribute = ModifierInvocation | OverrideSpecifier | 'external' | 'payable' | 'pure' | 'view' | 'virtual' ;
         let fallback_function_attribute_parser = choice((
+            modifier_invocation_parser
+                .clone()
+                .map(|v| Box::new(fallback_function_attribute::_T0::ModifierInvocation(v))),
+            override_specifier_parser
+                .clone()
+                .map(|v| Box::new(fallback_function_attribute::_T0::OverrideSpecifier(v))),
             leading_trivia_parser
                 .clone()
                 .then(choice::<_, ErrorType>((
@@ -3759,7 +3752,10 @@ impl Parsers {
                         terminal("ayable").map(|_| 7usize),
                         terminal("ure").map(|_| 4usize),
                     ))),
-                    terminal("view").map(|_| 4usize),
+                    terminal("vi").ignore_then(choice((
+                        terminal("ew").map(|_| 4usize),
+                        terminal("rtual").map(|_| 7usize),
+                    ))),
                 )))
                 .then(trailing_trivia_parser.clone())
                 .map(
@@ -3769,34 +3765,18 @@ impl Parsers {
                         trailing,
                     },
                 )
-                .map(|v| Box::new(fallback_function_attribute::_T0::_0(v))),
-            modifier_invocation_parser
-                .clone()
-                .map(|v| Box::new(fallback_function_attribute::_T0::ModifierInvocation(v))),
-            leading_trivia_parser
-                .clone()
-                .then(
-                    terminal("virtual")
-                        .ignored()
-                        .map(|_| FixedSizeTerminal::<7usize>()),
-                )
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    },
-                )
-                .map(|v| Box::new(fallback_function_attribute::_T0::Virtual(v))),
-            override_specifier_parser
-                .clone()
-                .map(|v| Box::new(fallback_function_attribute::_T0::OverrideSpecifier(v))),
+                .map(|v| Box::new(fallback_function_attribute::_T0::_2(v))),
         ))
         .boxed();
 
-        // FunctionAttribute = VisibilitySpecifier | StateMutabilitySpecifier | ModifierInvocation | 'virtual' | OverrideSpecifier ;
+        // FunctionAttribute = ModifierInvocation | OverrideSpecifier | 'external' | 'internal' | 'payable' | 'private' | 'public' | 'pure' | 'view' | 'virtual' ;
         let function_attribute_parser = choice((
+            modifier_invocation_parser
+                .clone()
+                .map(|v| Box::new(function_attribute::_T0::ModifierInvocation(v))),
+            override_specifier_parser
+                .clone()
+                .map(|v| Box::new(function_attribute::_T0::OverrideSpecifier(v))),
             leading_trivia_parser
                 .clone()
                 .then(choice::<_, ErrorType>((
@@ -3810,7 +3790,10 @@ impl Parsers {
                             terminal("re").map(|_| 4usize),
                         ))),
                     ))),
-                    terminal("view").map(|_| 4usize),
+                    terminal("vi").ignore_then(choice((
+                        terminal("ew").map(|_| 4usize),
+                        terminal("rtual").map(|_| 7usize),
+                    ))),
                 )))
                 .then(trailing_trivia_parser.clone())
                 .map(
@@ -3820,29 +3803,7 @@ impl Parsers {
                         trailing,
                     },
                 )
-                .map(|v| Box::new(function_attribute::_T0::_0(v))),
-            modifier_invocation_parser
-                .clone()
-                .map(|v| Box::new(function_attribute::_T0::ModifierInvocation(v))),
-            leading_trivia_parser
-                .clone()
-                .then(
-                    terminal("virtual")
-                        .ignored()
-                        .map(|_| FixedSizeTerminal::<7usize>()),
-                )
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    },
-                )
-                .map(|v| Box::new(function_attribute::_T0::Virtual(v))),
-            override_specifier_parser
-                .clone()
-                .map(|v| Box::new(function_attribute::_T0::OverrideSpecifier(v))),
+                .map(|v| Box::new(function_attribute::_T0::_2(v))),
         ))
         .boxed();
 
@@ -4092,13 +4053,20 @@ impl Parsers {
         .map(|v| Box::new(expression::Expression::PrimaryExpression(v)))
         .boxed();
 
-        // ReceiveFunctionAttribute = 'external' | 'payable' | ModifierInvocation | 'virtual' | OverrideSpecifier ;
+        // ReceiveFunctionAttribute = ModifierInvocation | OverrideSpecifier | 'external' | 'payable' | 'virtual' ;
         let receive_function_attribute_parser = choice((
+            modifier_invocation_parser
+                .clone()
+                .map(|v| Box::new(receive_function_attribute::_T0::ModifierInvocation(v))),
+            override_specifier_parser
+                .clone()
+                .map(|v| Box::new(receive_function_attribute::_T0::OverrideSpecifier(v))),
             leading_trivia_parser
                 .clone()
                 .then(choice::<_, ErrorType>((
                     terminal("external").map(|_| 8usize),
                     terminal("payable").map(|_| 7usize),
+                    terminal("virtual").map(|_| 7usize),
                 )))
                 .then(trailing_trivia_parser.clone())
                 .map(
@@ -4108,29 +4076,7 @@ impl Parsers {
                         trailing,
                     },
                 )
-                .map(|v| Box::new(receive_function_attribute::_T0::_0(v))),
-            modifier_invocation_parser
-                .clone()
-                .map(|v| Box::new(receive_function_attribute::_T0::ModifierInvocation(v))),
-            leading_trivia_parser
-                .clone()
-                .then(
-                    terminal("virtual")
-                        .ignored()
-                        .map(|_| FixedSizeTerminal::<7usize>()),
-                )
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    },
-                )
-                .map(|v| Box::new(receive_function_attribute::_T0::Virtual(v))),
-            override_specifier_parser
-                .clone()
-                .map(|v| Box::new(receive_function_attribute::_T0::OverrideSpecifier(v))),
+                .map(|v| Box::new(receive_function_attribute::_T0::_2(v))),
         ))
         .boxed();
 
@@ -6421,7 +6367,7 @@ impl Parsers {
             .map(|v| function_definition::_T0::from_parse(v))
             .boxed();
 
-        // ModifierDefinition = 'modifier' «Identifier» [ ParameterList ] { MethodAttribute } ( ';' | Block ) ;
+        // ModifierDefinition = 'modifier' «Identifier» [ ParameterList ] { ModifierAttribute } ( ';' | Block ) ;
         let modifier_definition_parser = leading_trivia_parser
             .clone()
             .then(
@@ -6449,7 +6395,7 @@ impl Parsers {
                     }),
             )
             .then(parameter_list_parser.clone().or_not())
-            .then(method_attribute_parser.clone().repeated())
+            .then(modifier_attribute_parser.clone().repeated())
             .then(choice((
                 leading_trivia_parser
                     .clone()
@@ -6889,7 +6835,7 @@ impl Parsers {
             catch_clause: catch_clause_parser,
             function_type: function_type_parser,
             import_directive: import_directive_parser,
-            method_attribute: method_attribute_parser,
+            modifier_attribute: modifier_attribute_parser,
             state_variable_attribute: state_variable_attribute_parser,
             yul_statement: yul_statement_parser,
             inheritance_specifier: inheritance_specifier_parser,

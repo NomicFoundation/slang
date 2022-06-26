@@ -60,7 +60,7 @@ LibraryDefinition = 'library' «Identifier» '{' { ContractBodyElement } '}' ;
 
 FunctionDefinition = 'function' ( «Identifier» | 'fallback' | 'receive' ) ParameterList { FunctionAttribute } [ 'returns' ParameterList ] ( ';' | Block ) ;
 
-FunctionAttribute = VisibilitySpecifier | StateMutabilitySpecifier | ModifierInvocation | 'virtual' | OverrideSpecifier ;
+FunctionAttribute = ModifierInvocation | OverrideSpecifier | 'external' | 'internal' | 'payable' | 'private' | 'public' | 'pure' | 'view' | 'virtual' ;
 
 ConstantDefinition = TypeName 'constant' «Identifier» '=' Expression ';' ;
 
@@ -84,23 +84,23 @@ ContractBodyElement = UsingDirective | ConstructorDefinition | FunctionDefinitio
 
 ConstructorDefinition = 'constructor' ParameterList { ConstructorAttribute } Block ;
 
-ConstructorAttribute = ModifierInvocation | 'payable' | 'internal' | 'public' ;
+ConstructorAttribute = ModifierInvocation | 'internal' | 'payable' | 'public' ;
 
 FallbackFunctionDefinition = 'fallback' ParameterList { FallbackFunctionAttribute } [ 'returns' ParameterList ] ( ';' | Block ) ;
 
-FallbackFunctionAttribute = 'external' | StateMutabilitySpecifier | ModifierInvocation | 'virtual' | OverrideSpecifier ;
+FallbackFunctionAttribute = ModifierInvocation | OverrideSpecifier | 'external' | 'payable' | 'pure' | 'view' | 'virtual' ;
 
 ReceiveFunctionDefinition = 'receive' ParameterList { ReceiveFunctionAttribute } ( ';' | Block ) ;
 
-ReceiveFunctionAttribute = 'external' | 'payable' | ModifierInvocation | 'virtual' | OverrideSpecifier ;
+ReceiveFunctionAttribute = ModifierInvocation | OverrideSpecifier | 'external' | 'payable' | 'virtual' ;
 
-ModifierDefinition = 'modifier' «Identifier» [ ParameterList ] { MethodAttribute } ( ';' | Block ) ;
+ModifierDefinition = 'modifier' «Identifier» [ ParameterList ] { ModifierAttribute } ( ';' | Block ) ;
 
-MethodAttribute = 'virtual' | OverrideSpecifier ;
+ModifierAttribute = OverrideSpecifier | 'virtual' ;
 
 StateVariableDeclaration = TypeName { StateVariableAttribute } «Identifier» [ '=' Expression ] ';' ;
 
-StateVariableAttribute = 'public' | 'private' | 'internal' | 'constant' | OverrideSpecifier | 'immutable' ;
+StateVariableAttribute = OverrideSpecifier | 'constant' | 'immutable' | 'internal' | 'private' | 'public' ;
 
 ArgumentList = '(' [ PositionalArgumentList | NamedArgumentList ] ')' ;
 
@@ -116,10 +116,6 @@ ParameterList = '(' { ParameterDeclaration / ',' } ')' ;
 
 ParameterDeclaration = TypeName [ DataLocation ] [ «Identifier» ] ;
 
-VisibilitySpecifier = 'internal' | 'external' | 'private' | 'public' ;
-
-StateMutabilitySpecifier = 'pure' | 'view' | 'payable' ;
-
 OverrideSpecifier = 'override' [ '(' 1…1*{ IdentifierPath / ',' } ')' ] ;
 
 IdentifierPath = 1…*{ «Identifier» / '.' } ;
@@ -132,7 +128,7 @@ ElementaryTypeWithoutPayable = 'address' | ElementaryType ;
 
 ElementaryType = 'bool' | 'string' | 'bytes' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | «FixedType» | «UfixedType» ;
 
-FunctionType = 'function' ParameterList { VisibilitySpecifier | StateMutabilitySpecifier } [ 'returns' ParameterList ] ;
+FunctionType = 'function' ParameterList { 'internal' | 'external' | 'private' | 'public' | 'pure' | 'view' | 'payable' } [ 'returns' ParameterList ] ;
 
 MappingType = 'mapping' '(' ( ElementaryTypeWithoutPayable | IdentifierPath ) '=>' TypeName ')' ;
 
