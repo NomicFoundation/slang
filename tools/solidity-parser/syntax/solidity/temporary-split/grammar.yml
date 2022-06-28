@@ -556,12 +556,11 @@
 - name: ConditionalExpression
   sequence:
     - reference: Expression
-    - optional:
-        sequence:
-          - terminal: "?"
-          - reference: Expression
-          - terminal: ":"
-          - reference: Expression
+    - sequence: # Has this subsequence gives the correct form to the AST
+        - terminal: "?"
+        - reference: Expression
+        - terminal: ":"
+        - reference: Expression
 
 - name: OrExpression
   config: { pattern: FoldLeft }
@@ -657,66 +656,57 @@
 - name: UnarySuffixExpression
   sequence:
     - reference: Expression
-    - optional:
-        choice:
-          - terminal: ++
-          - terminal: "--"
+    - choice:
+        - terminal: ++
+        - terminal: "--"
 
 - name: UnaryPrefixExpression
   sequence:
-    - optional:
-        choice:
-          - terminal: ++
-          - terminal: "--"
-          - terminal: "!"
-          - terminal: "~"
-          - terminal: delete
-          - terminal: "-"
+    - choice:
+        - terminal: ++
+        - terminal: "--"
+        - terminal: "!"
+        - terminal: "~"
+        - terminal: delete
+        - terminal: "-"
     - reference: Expression
 
 - name: FunctionCallExpression
   sequence:
     - reference: Expression
-    - zeroOrMore:
-        reference: ArgumentList
+    - reference: ArgumentList
 
 - name: FunctionCallOptionsExpression
   sequence:
     - reference: Expression
-    - zeroOrMore:
-        sequence:
-          - terminal: "{"
-          - oneOrMore:
-              reference: NamedArgument
-              separator:
-                terminal: ","
-          - terminal: "}"
+    - terminal: "{"
+    - oneOrMore:
+        reference: NamedArgument
+        separator:
+          terminal: ","
+    - terminal: "}"
 
 - name: MemberAccessExpression
   sequence:
     - reference: Expression
-    - zeroOrMore:
-        sequence:
-          - terminal: "."
-          - choice:
-              - reference: Identifier
-              - terminal: address
+    - terminal: "."
+    - choice:
+        - reference: Identifier
+        - terminal: address
 
 - name: IndexAccessExpression
   config: { pattern: FoldLeft }
   sequence:
     - reference: Expression
-    - zeroOrMore:
+    - terminal: "["
+    - optional:
+        reference: Expression
+    - optional:
         sequence:
-          - terminal: "["
+          - terminal: ":"
           - optional:
               reference: Expression
-          - optional:
-              sequence:
-                - terminal: ":"
-                - optional:
-                    reference: Expression
-          - terminal: "]"
+    - terminal: "]"
 
 - name: PrimaryExpression
   choice:

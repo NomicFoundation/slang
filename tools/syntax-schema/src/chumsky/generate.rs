@@ -6,7 +6,7 @@ use std::{
 
 use quote::quote;
 
-use super::{rustfmt::rustfmt, slang_name::SlangName};
+use super::{name::Name, rustfmt::rustfmt, type_tree::TypeTreeRefTrait};
 use crate::schema::*;
 
 pub struct GenerationContext {
@@ -142,7 +142,7 @@ impl Production {
         let mut parser_implementations = vec![];
 
         for name in &recursive_production_names {
-            let parser_name = SlangName::from_string(name).to_parser_name_ident();
+            let parser_name = Name::from_string(name).to_parser_name_ident();
             parser_implementations.push(
                 quote!(
                     let mut #parser_name = Recursive::declare();

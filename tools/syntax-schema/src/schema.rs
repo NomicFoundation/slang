@@ -14,7 +14,7 @@ use std::{
     rc::{Rc, Weak},
 };
 
-use crate::chumsky::combinator_tree::CombinatorTree;
+use crate::chumsky::combinator_tree::CombinatorTreeRoot;
 
 #[derive(Clone, Debug)]
 pub struct Grammar {
@@ -65,7 +65,7 @@ pub struct Production {
     pub pattern: Option<ProductionPattern>,
     pub title: Option<String>,
     pub versions: BTreeMap<Version, ExpressionRef>,
-    pub combinator_tree: RefCell<CombinatorTree>,
+    pub combinator_tree: RefCell<CombinatorTreeRoot>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -636,7 +636,7 @@ impl Grammar {
             })
             .collect();
 
-        let grammar = Grammar {
+        let mut grammar = Grammar {
             manifest,
             productions,
         };
@@ -646,9 +646,7 @@ impl Grammar {
         grammar
     }
 
-    fn post_initialize(&self) {
-        for production in self.productions.iter().map(|(_, v)| v).flatten() {
-            Production::initialize_combinator_tree(production, self);
-        }
+    fn post_initialize(&mut self) {
+        self.initialize_combinator_trees();
     }
 }

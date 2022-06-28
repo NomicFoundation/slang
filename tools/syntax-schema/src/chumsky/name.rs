@@ -7,7 +7,7 @@ use quote::format_ident;
 use crate::schema::ExpressionConfig;
 
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
-pub enum SlangName {
+pub enum Name {
     Anonymous,
     String {
         text: String, // stored in snake case
@@ -25,7 +25,7 @@ pub enum SlangName {
     },
 }
 
-impl SlangName {
+impl Name {
     pub fn anonymous() -> Self {
         Self::Anonymous
     }
@@ -128,12 +128,12 @@ impl SlangName {
 
     pub fn pluralize(self) -> Self {
         match self {
-            SlangName::Anonymous => self,
-            SlangName::Positional { .. } => panic!("Cannot pluralize a positional name"),
-            SlangName::String { plural: true, .. } | SlangName::Numbered { plural: true, .. } => {
+            Name::Anonymous => self,
+            Name::Positional { .. } => panic!("Cannot pluralize a positional name"),
+            Name::String { plural: true, .. } | Name::Numbered { plural: true, .. } => {
                 panic!("Cannot pluralize a plural name")
             }
-            SlangName::String {
+            Name::String {
                 text,
                 suffix,
                 negated,
@@ -144,7 +144,7 @@ impl SlangName {
                 negated,
                 plural: true,
             },
-            SlangName::Numbered { number, suffix, .. } => Self::Numbered {
+            Name::Numbered { number, suffix, .. } => Self::Numbered {
                 number,
                 suffix,
                 plural: true,
@@ -154,10 +154,10 @@ impl SlangName {
 
     pub fn negate(self) -> Self {
         match self {
-            SlangName::Anonymous | SlangName::Numbered { .. } => self,
-            SlangName::Positional { .. } => panic!("Cannot negate a positional name"),
-            SlangName::String { negated: true, .. } => panic!("Cannot negate a negated name"),
-            SlangName::String {
+            Name::Anonymous | Name::Numbered { .. } => self,
+            Name::Positional { .. } => panic!("Cannot negate a positional name"),
+            Name::String { negated: true, .. } => panic!("Cannot negate a negated name"),
+            Name::String {
                 text,
                 suffix,
                 plural,
@@ -173,9 +173,9 @@ impl SlangName {
 
     pub fn with_disambiguating_suffix(self, suffix: usize) -> Self {
         match self {
-            SlangName::Anonymous => panic!("Cannot disambiguate an anonymous name"),
-            SlangName::Positional { .. } => panic!("Cannot disambiguate an positional name"),
-            SlangName::String {
+            Name::Anonymous => panic!("Cannot disambiguate an anonymous name"),
+            Name::Positional { .. } => panic!("Cannot disambiguate an positional name"),
+            Name::String {
                 text,
                 plural,
                 negated,
@@ -186,7 +186,7 @@ impl SlangName {
                 plural,
                 suffix: suffix + 1,
             },
-            SlangName::Numbered { number, plural, .. } => Self::Numbered {
+            Name::Numbered { number, plural, .. } => Self::Numbered {
                 number,
                 suffix: suffix + 1,
                 plural,
@@ -196,9 +196,9 @@ impl SlangName {
 
     fn to_snake_case_string(&self) -> String {
         match self {
-            SlangName::Anonymous => panic!("Cannot use anonymous names"),
-            SlangName::Positional { position } => format!("_{}", position),
-            SlangName::String {
+            Name::Anonymous => panic!("Cannot use anonymous names"),
+            Name::Positional { position } => format!("_{}", position),
+            Name::String {
                 text,
                 plural,
                 negated,
@@ -216,7 +216,7 @@ impl SlangName {
                     text
                 }
             }
-            SlangName::Numbered {
+            Name::Numbered {
                 number,
                 plural,
                 suffix,
@@ -234,9 +234,9 @@ impl SlangName {
 
     fn to_pascal_case_string(&self) -> String {
         match self {
-            SlangName::Anonymous => panic!("Cannot use anonymous names"),
-            SlangName::Positional { position } => format!("_{}", position),
-            SlangName::String {
+            Name::Anonymous => panic!("Cannot use anonymous names"),
+            Name::Positional { position } => format!("_{}", position),
+            Name::String {
                 text,
                 plural,
                 negated,
@@ -255,7 +255,7 @@ impl SlangName {
                     text
                 }
             }
-            SlangName::Numbered {
+            Name::Numbered {
                 number,
                 plural,
                 suffix,
@@ -298,11 +298,11 @@ impl SlangName {
 }
 
 impl ExpressionConfig {
-    pub fn slang_name(&self) -> SlangName {
+    pub fn slang_name(&self) -> Name {
         if let Some(name) = &self.name {
-            SlangName::from_string(name)
+            Name::from_string(name)
         } else {
-            SlangName::anonymous()
+            Name::anonymous()
         }
     }
 }

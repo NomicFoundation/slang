@@ -136,7 +136,7 @@ Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndEx
 
 AssignmentExpression = Expression ( '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ) Expression ;
 
-ConditionalExpression = Expression [ '?' Expression ':' Expression ] ;
+ConditionalExpression = Expression '?' Expression ':' Expression ;
 
 OrExpression = Expression '||' Expression ;
 
@@ -160,17 +160,17 @@ MulDivModExpression = Expression ( '*' | '/' | '%' ) Expression ;
 
 ExponentiationExpression = Expression '**' Expression ;
 
-UnarySuffixExpression = Expression [ '++' | '--' ] ;
+UnarySuffixExpression = Expression ( '++' | '--' ) ;
 
-UnaryPrefixExpression = [ '++' | '--' | '!' | '~' | 'delete' | '-' ] Expression ;
+UnaryPrefixExpression = ( '++' | '--' | '!' | '~' | 'delete' | '-' ) Expression ;
 
-FunctionCallExpression = Expression { ArgumentList } ;
+FunctionCallExpression = Expression ArgumentList ;
 
-FunctionCallOptionsExpression = Expression { '{' 1…*{ NamedArgument / ',' } '}' } ;
+FunctionCallOptionsExpression = Expression '{' 1…*{ NamedArgument / ',' } '}' ;
 
-MemberAccessExpression = Expression { '.' ( «Identifier» | 'address' ) } ;
+MemberAccessExpression = Expression '.' ( «Identifier» | 'address' ) ;
 
-IndexAccessExpression = Expression { '[' [ Expression ] [ ':' [ Expression ] ] ']' } ;
+IndexAccessExpression = Expression '[' [ Expression ] [ ':' [ Expression ] ] ']' ;
 
 PrimaryExpression = 'payable' ArgumentList | 'type' '(' TypeName ')' | 'new' TypeName | '(' 1…*{ [ Expression ] / ',' } ')' | '[' 1…*{ Expression / ',' } ']' | «Identifier» | Literal | ElementaryTypeWithoutPayable ;
 

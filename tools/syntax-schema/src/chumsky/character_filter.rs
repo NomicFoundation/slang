@@ -3,7 +3,7 @@ use quote::quote;
 
 use crate::schema::*;
 
-use super::slang_name::SlangName;
+use super::name::Name;
 
 #[derive(Clone, Debug)]
 pub enum CharacterFilterNode {
@@ -40,13 +40,13 @@ fn cf_conjunction(nodes: Vec<CharacterFilter>) -> CharacterFilter {
 }
 
 impl CharacterFilterNode {
-    pub fn slang_name(&self) -> SlangName {
+    pub fn slang_name(&self) -> Name {
         if let Self::Negation { child } = self {
             child.slang_name().negate()
         } else if let Self::Char { char, .. } = self {
-            SlangName::from_terminal_char(*char)
+            Name::from_terminal_char(*char)
         } else {
-            SlangName::anonymous()
+            Name::anonymous()
         }
     }
 

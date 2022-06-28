@@ -4,19 +4,19 @@ use quote::quote;
 
 use crate::schema::*;
 
-use super::slang_name::SlangName;
+use super::name::Name;
 
 #[derive(Clone, Debug)]
 pub struct TerminalTrie(PatriciaSet);
 
 impl TerminalTrie {
-    pub fn slang_name(&self) -> SlangName {
+    pub fn slang_name(&self) -> Name {
         if self.0.len() == 1 {
             let node = self.0.as_ref().child().unwrap();
             let name = String::from_utf8_lossy(node.label()).to_string();
-            SlangName::from_terminal(&name)
+            Name::from_terminal(&name)
         } else {
-            SlangName::anonymous()
+            Name::anonymous()
         }
     }
 
