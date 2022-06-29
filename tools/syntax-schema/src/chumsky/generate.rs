@@ -132,8 +132,6 @@ impl Production {
         let production_ordering = grammar.production_ordering(&self.name);
         let recursive_production_names = grammar.recursive_production_names(&production_ordering);
 
-        let mut module_names = vec![];
-
         let mut parser_field_definitions = vec![];
         let mut parser_field_initializations = vec![];
         let mut parser_implementation_predeclarations = vec![];
@@ -145,8 +143,6 @@ impl Production {
         ordered_productions.sort_by(|a, b| (&production_ordering[a]).cmp(&production_ordering[b]));
         for name in ordered_productions {
             let production = grammar.get_production(&name);
-            let slang_name = production.slang_name();
-            let module_name = slang_name.to_module_name_ident();
             let combinator_tree = production.combinator_tree();
             let is_recursive = recursive_production_names.contains(&name);
             let ProductionGeneratedCode {
@@ -157,8 +153,6 @@ impl Production {
                 tree_interface,
                 tree_implementation,
             } = combinator_tree.to_generated_code(is_recursive);
-
-            module_names.push(module_name.clone());
 
             parser_field_definitions.push(parser_field_definition);
             parser_field_initializations.push(parser_field_initialization);
@@ -205,6 +199,16 @@ impl Production {
 
                 #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
                 pub struct FixedTerminal<const N: usize>();
+
+                #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
+                pub struct WithNoise<T>
+                where
+                    T: Sized + Clone + PartialEq + Hash + Serialize + Deserialize + Default,
+                {
+                    leading: Ignore,
+                    content: T,
+                    trailing: Ignore,
+                }
             )
             .to_string(),
             tree_interfaces.join("\n\n")
@@ -319,6 +323,31 @@ impl Production {
                     #[inline]
                     fn terminal(str: &str) -> Just<char, &str, ErrorType> {
                         just(str)
+                    }
+
+                    #[allow(dead_code)]
+                    fn with_noise<C, CO, N>(content: C) -> impl Parser<char, N, Error = ErrorType>
+                    where
+                        C: Clone + Parser<char, CO, Error = ErrorType>,
+                        CO: Sized
+                            + Clone
+                            + PartialEq
+                            + Eq
+                            + Hash
+                            + Serialize
+                            + Deserialize
+                            + Default,
+                        N: WithNoise<CO>,
+                    {
+                        ignore_parser
+                            .clone()
+                            .then(content)
+                            .then(ignore_parser.clone())
+                            .map(|((leading, content), trailing)| N {
+                                leading,
+                                content,
+                                trailing,
+                            })
                     }
                 )
                 .to_string(),

@@ -38,6 +38,23 @@ where
 fn terminal(str: &str) -> Just<char, &str, ErrorType> {
     just(str)
 }
+#[allow(dead_code)]
+fn with_noise<C, CO, N>(content: C) -> impl Parser<char, N, Error = ErrorType>
+where
+    C: Clone + Parser<char, CO, Error = ErrorType>,
+    CO: Sized + Clone + PartialEq + Eq + Hash + Serialize + Deserialize + Default,
+    N: WithNoise<CO>,
+{
+    ignore_parser
+        .clone()
+        .then(content)
+        .then(ignore_parser.clone())
+        .map(|((leading, content), trailing)| N {
+            leading,
+            content,
+            trailing,
+        })
+}
 
 impl Parsers {
     pub fn new() -> Self {
@@ -106,7 +123,7 @@ impl Parsers {
                     .repeated(),
             )
             .map(repetition_mapper)
-            .map(|v| Box::new(decimal_integer::_T0::new(v)))
+            .map(|v| decimal_integer::_T0::new(v))
             .boxed();
 
         // «FixedBytesType» = 'bytes' ( '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15' | '16' | '17' | '18' | '19' | '20' | '21' | '22' | '23' | '24' | '25' | '26' | '27' | '28' | '29' | '30' | '31' | '32' ) ;
@@ -618,7 +635,7 @@ impl Parsers {
                         .repeated(),
                 )
                 .map(repetition_mapper)
-                .map(|v| Box::new(hex_number::_T1::new(v))),
+                .map(|v| hex_number::_T1::new(v)),
             )
             .map(|v| hex_number::_T0::new(v))
             .boxed();
@@ -673,7 +690,7 @@ impl Parsers {
                 .repeated(),
         )
         .map(repetition_mapper)
-        .map(|v| Box::new(possibly_separated_pairs_of_hex_digits::_T0::new(v)))
+        .map(|v| possibly_separated_pairs_of_hex_digits::_T0::new(v))
         .boxed();
 
         // «UfixedType» = 'u' «FixedType» ;
@@ -1180,7 +1197,7 @@ impl Parsers {
                     .repeated(),
             )
             .map(repetition_mapper)
-            .map(|v| Box::new(positional_argument_list::_T0::new(v)))
+            .map(|v| positional_argument_list::_T0::new(v))
             .boxed();
 
         // «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;
@@ -1631,7 +1648,7 @@ impl Parsers {
                             .repeated(),
                     )
                     .map(repetition_mapper)
-                    .map(|v| Box::new(assembly_flags::_T1::new(v))),
+                    .map(|v| assembly_flags::_T1::new(v)),
             )
             .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
             .map(|v| assembly_flags::_T0::new(v))
@@ -1800,7 +1817,7 @@ impl Parsers {
                         .repeated(),
                 )
                 .map(repetition_mapper)
-                .map(|v| Box::new(yul_function_call::_T1::new(v)))
+                .map(|v| yul_function_call::_T1::new(v))
                 .or_not(),
         )
         .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
@@ -1824,7 +1841,7 @@ impl Parsers {
                         .repeated(),
                 )
                 .map(repetition_mapper)
-                .map(|v| Box::new(yul_function_definition::_T1::new(v)))
+                .map(|v| yul_function_definition::_T1::new(v))
                 .or_not(),
         )
         .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
@@ -1839,7 +1856,7 @@ impl Parsers {
                                 .repeated(),
                         )
                         .map(repetition_mapper)
-                        .map(|v| Box::new(yul_function_definition::_T3::new(v))),
+                        .map(|v| yul_function_definition::_T3::new(v)),
                 )
                 .map(|v| yul_function_definition::_T2::new(v))
                 .or_not(),
@@ -2021,7 +2038,7 @@ impl Parsers {
                         .repeated(),
                 )
                 .map(repetition_mapper)
-                .map(|v| Box::new(enum_definition::_T1::new(v))),
+                .map(|v| enum_definition::_T1::new(v)),
         )
         .then(with_noise(just('}').map(|_| FixedTerminal::<1>())))
         .map(|v| enum_definition::_T0::new(v))
@@ -2036,7 +2053,7 @@ impl Parsers {
                     .repeated(),
             )
             .map(repetition_mapper)
-            .map(|v| Box::new(identifier_path::_T0::new(v)))
+            .map(|v| identifier_path::_T0::new(v))
             .boxed();
 
         // ImportPath = «AsciiStringLiteral» ;
@@ -2176,7 +2193,7 @@ impl Parsers {
                             .repeated(),
                     )
                     .map(repetition_mapper)
-                    .map(|v| Box::new(named_argument_list::_T1::new(v)))
+                    .map(|v| named_argument_list::_T1::new(v))
                     .or_not(),
             )
             .then(with_noise(just('}').map(|_| FixedTerminal::<1>())))
@@ -2194,7 +2211,7 @@ impl Parsers {
                             .repeated(),
                     )
                     .map(repetition_mapper)
-                    .map(|v| Box::new(non_empty_parameter_list::_T1::new(v))),
+                    .map(|v| non_empty_parameter_list::_T1::new(v)),
             )
             .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
             .map(|v| non_empty_parameter_list::_T0::new(v))
@@ -2218,7 +2235,7 @@ impl Parsers {
                                 .at_most(1usize - 1),
                         )
                         .map(repetition_mapper)
-                        .map(|v| Box::new(override_specifier::_T2::new(v))),
+                        .map(|v| override_specifier::_T2::new(v)),
                 )
                 .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
                 .map(|v| override_specifier::_T1::new(v))
@@ -2238,7 +2255,7 @@ impl Parsers {
                             .repeated(),
                     )
                     .map(repetition_mapper)
-                    .map(|v| Box::new(parameter_list::_T1::new(v)))
+                    .map(|v| parameter_list::_T1::new(v))
                     .or_not(),
             )
             .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
@@ -2256,7 +2273,7 @@ impl Parsers {
                             .repeated(),
                     )
                     .map(repetition_mapper)
-                    .map(|v| Box::new(selecting_import_directive::_T1::new(v))),
+                    .map(|v| selecting_import_directive::_T1::new(v)),
             )
             .then(with_noise(just('}').map(|_| FixedTerminal::<1>())))
             .then(with_noise(
@@ -2757,7 +2774,7 @@ impl Parsers {
                                 .repeated(),
                         )
                         .map(repetition_mapper)
-                        .map(|v| Box::new(inheritance_specifier_list::_T1::new(v))),
+                        .map(|v| inheritance_specifier_list::_T1::new(v)),
                 )
                 .map(|v| inheritance_specifier_list::_T0::new(v))
                 .boxed();
@@ -2830,7 +2847,7 @@ impl Parsers {
                                 .repeated(),
                         )
                         .map(repetition_mapper)
-                        .map(|v| Box::new(using_directive::_T2::new(v))),
+                        .map(|v| using_directive::_T2::new(v)),
                 )
                 .then(with_noise(just('}').map(|_| FixedTerminal::<1>())))
                 .map(|v| using_directive::_T1::new(v))
@@ -2932,7 +2949,7 @@ impl Parsers {
                         .repeated(),
                 )
                 .map(repetition_mapper)
-                .map(|v| Box::new(error_definition::_T1::new(v)))
+                .map(|v| error_definition::_T1::new(v))
                 .or_not(),
         )
         .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
@@ -2957,7 +2974,7 @@ impl Parsers {
                         .repeated(),
                 )
                 .map(repetition_mapper)
-                .map(|v| Box::new(event_definition::_T1::new(v)))
+                .map(|v| event_definition::_T1::new(v))
                 .or_not(),
         )
         .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))

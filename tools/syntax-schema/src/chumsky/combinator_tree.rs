@@ -464,10 +464,13 @@ impl CombinatorTree {
                 };
 
                 result.tree_interface.push(quote!( pub struct #type_name { #(#fields),* } ));
+                // TODO: tree implementation
+                // TODO: serde
+                // TODO: default
 
                 let parser = parser_chain.unwrap();
-                result.parser = quote!( #parser.map(|v| #module_name::#type_name::new(v)) );
-                result.parser_type = quote!( #module_name::#type_name );
+                result.parser = quote!( #parser.map(|v| Box::new(#module_name::#type_name::new(v))) );
+                result.parser_type = quote!( Box<#module_name::#type_name> );
 
                 result
             },
@@ -494,7 +497,7 @@ impl CombinatorTree {
                 result.tree_interface.push(quote!( pub enum #type_name { #(#fields),* } ));
 
                 result.parser = quote!( choice(( #(#parsers),* )) );
-                result.parser_type = quote!( #module_name::#type_name );
+                result.parser_type = quote!( Box<#module_name::#type_name> );
 
                 result
             },
@@ -529,7 +532,7 @@ impl CombinatorTree {
                 result.merge(separator);
                 
                 let repetition = quote!(#separator_parser.then(#expr_parser).repeated());
-                let mapping = quote!( .map(repetition_mapper).map(|v| Box::new(#module_name::#type_name::new(v))) );
+                let mapping = quote!( .map(repetition_mapper).map(|v| #module_name::#type_name::new(v)) );
                 result.parser = match (min, max) {
                     (0, None) => {
                         quote!( #expr_parser.then(#repetition)#mapping.or_not() )
