@@ -6,7 +6,7 @@ use std::{
 
 use quote::quote;
 
-use super::{name::Name, rustfmt::rustfmt, type_tree::TypeTreeRefTrait};
+use super::{combinator_tree::ProductionGeneratedCode, rustfmt::rustfmt};
 use crate::schema::*;
 
 pub struct GenerationContext {
@@ -134,22 +134,12 @@ impl Production {
 
         let mut module_names = vec![];
 
+        let mut parser_field_definitions = vec![];
+        let mut parser_field_initializations = vec![];
+        let mut parser_implementation_predeclarations = vec![];
+        let mut parser_implementations = vec![];
         let mut tree_interfaces = vec![];
         let mut tree_implementations = vec![];
-
-        let mut parser_names = vec![];
-        let mut parsers_field_names = vec![];
-        let mut parser_implementations = vec![];
-
-        for name in &recursive_production_names {
-            let parser_name = Name::from_string(name).to_parser_name_ident();
-            parser_implementations.push(
-                quote!(
-                    let mut #parser_name = Recursive::declare();
-                )
-                .to_string(),
-            );
-        }
 
         let mut ordered_productions = production_ordering.keys().cloned().collect::<Vec<String>>();
         ordered_productions.sort_by(|a, b| (&production_ordering[a]).cmp(&production_ordering[b]));
@@ -157,41 +147,23 @@ impl Production {
             let production = grammar.get_production(&name);
             let slang_name = production.slang_name();
             let module_name = slang_name.to_module_name_ident();
+            let combinator_tree = production.combinator_tree();
+            let is_recursive = recursive_production_names.contains(&name);
+            let ProductionGeneratedCode {
+                parser_field_definition,
+                parser_field_initialization,
+                parser_implementation_predeclaration,
+                parser_implementation,
+                tree_interface,
+                tree_implementation,
+            } = combinator_tree.to_generated_code(is_recursive);
+
             module_names.push(module_name.clone());
 
-            // Generate the tree
+            parser_field_definitions.push(parser_field_definition);
+            parser_field_initializations.push(parser_field_initialization);
+            parser_implementation_predeclarations.push(parser_implementation_predeclaration);
 
-            let combinator_tree = production.combinator_tree();
-            let type_tree = combinator_tree.to_type_tree();
-            let (tree_interface, tree_implementation) =
-                type_tree.to_type_definition_code(&module_name);
-            let ebnf_doc_comment = production
-                .generate_ebnf(grammar)
-                .iter()
-                .map(|s| format!("/// {}", s))
-                .collect::<Vec<_>>()
-                .join("\n");
-            tree_interfaces.push(format!(
-                "{}\n{}",
-                ebnf_doc_comment,
-                tree_interface.to_string()
-            ));
-            tree_implementations.push(tree_implementation);
-
-            // Generate the parser
-
-            let parser_name = slang_name.to_parser_name_ident();
-            parser_names.push(parser_name.clone());
-            let parser_expression = combinator_tree.to_parser_combinator_code();
-            let parser_implementation = if recursive_production_names.contains(&name) {
-                quote!(
-                    #parser_name.define(#parser_expression.boxed());
-                )
-            } else {
-                quote!(
-                    let #parser_name = #parser_expression.boxed();
-                )
-            };
             let ebnf_comment = production
                 .generate_ebnf(grammar)
                 .iter()
@@ -203,7 +175,20 @@ impl Production {
                 ebnf_comment,
                 parser_implementation.to_string()
             ));
-            parsers_field_names.push(slang_name.to_field_name_ident());
+
+            let ebnf_doc_comment = production
+                .generate_ebnf(grammar)
+                .iter()
+                .map(|s| format!("/// {}", s))
+                .collect::<Vec<_>>()
+                .join("\n");
+            tree_interfaces.push(format!(
+                "{}\n{}",
+                ebnf_doc_comment,
+                tree_interface.to_string()
+            ));
+
+            tree_implementations.push(tree_implementation.to_string());
         }
 
         let tree_interface = format!(
@@ -278,7 +263,7 @@ impl Production {
             use super::tree_interface::*;
 
             #[allow(dead_code)]
-            pub struct Parsers { #(pub #parsers_field_names: ParserType<#module_names::N>),* }
+            pub struct Parsers { #(#parser_field_definitions),* }
         )
         .to_string();
 
@@ -341,7 +326,7 @@ impl Production {
                 parser_implementations.join("\n\n"),
                 quote!(
                     Self {
-                        #(#parsers_field_names: #parser_names.boxed()),*
+                        #(#parser_field_initializations),*
                     }
                 )
                 .to_string(),

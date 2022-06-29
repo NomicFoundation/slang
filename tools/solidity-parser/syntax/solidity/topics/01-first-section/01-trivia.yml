@@ -21,19 +21,21 @@
   pattern: Token
   sequence:
     - terminal: /*
-    - zeroOrMore:
-        choice:
-          - not:
-              terminal: "*"
-          - sequence:
-              - oneOrMore:
-                  terminal: "*"
+    - config: { name: content }
+      sequence:
+        - zeroOrMore:
+            choice:
               - not:
-                  choice:
-                    - terminal: "*"
-                    - terminal: /
-    - zeroOrMore:
-        terminal: "*"
+                  terminal: "*"
+              - sequence:
+                  - oneOrMore:
+                      terminal: "*"
+                  - not:
+                      choice:
+                        - terminal: "*"
+                        - terminal: /
+        - zeroOrMore:
+            terminal: "*"
     - terminal: "*/"
 
 - name: LineComment

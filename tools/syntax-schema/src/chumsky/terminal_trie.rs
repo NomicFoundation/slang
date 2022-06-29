@@ -4,7 +4,7 @@ use quote::quote;
 
 use crate::schema::*;
 
-use super::name::Name;
+use super::{combinator_tree::GeneratedCode, name::Name};
 
 #[derive(Clone, Debug)]
 pub struct TerminalTrie(PatriciaSet);
@@ -33,7 +33,9 @@ impl TerminalTrie {
         }
     }
 
-    pub fn to_parser_combinator_code(&self) -> TokenStream {
+    pub fn to_generated_code(&self) -> GeneratedCode {
+        let mut result: GeneratedCode = Default::default();
+
         let common_size = self.common_terminal_length();
 
         fn generate_from_trie(
@@ -70,22 +72,28 @@ impl TerminalTrie {
                 }
                 n = node.sibling()
             }
+
             result
         }
 
         let mut choices = generate_from_trie(self.0.as_ref().child(), 0, common_size.is_some());
 
-        let code = if choices.len() == 1 {
+        let mut parser = if choices.len() == 1 {
             choices.pop().unwrap()
         } else {
             quote!( choice::<_, ErrorType>((#(#choices),*)) )
         };
+        let mut parser_type = quote!(usize);
 
         if let Some(size) = common_size {
-            quote!( #code.map(|_| FixedTerminal::<#size>()) )
-        } else {
-            code
+            parser = quote!( #parser.map(|_| FixedTerminal::<#size>()) );
+            parser_type = quote!( FixedTerminal<#size> );
         }
+
+        result.parser = parser;
+        result.parser_type = parser_type;
+
+        result
     }
 
     pub fn merge_with(&mut self, other: Self) {

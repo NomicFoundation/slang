@@ -647,6 +647,6 @@ impl Grammar {
     }
 
     fn post_initialize(&mut self) {
-        self.initialize_combinator_trees();
+        self.create_combinator_trees();
     }
 }

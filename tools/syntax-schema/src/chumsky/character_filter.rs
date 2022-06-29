@@ -3,7 +3,7 @@ use quote::quote;
 
 use crate::schema::*;
 
-use super::name::Name;
+use super::{combinator_tree::GeneratedCode, name::Name};
 
 #[derive(Clone, Debug)]
 pub enum CharacterFilterNode {
@@ -54,14 +54,20 @@ impl CharacterFilterNode {
         cf_disjunction(vec![Box::new(self), other])
     }
 
-    pub fn to_parser_combinator_code(&self) -> TokenStream {
+    pub fn to_generated_code(&self) -> GeneratedCode {
+        let mut result: GeneratedCode = Default::default();
+
         let map = quote!(.map(|_| FixedTerminal::<1>()) );
         if let CharacterFilterNode::Char { char } = self {
-            quote!(just(#char)#map )
+            result.parser = quote!(just(#char)#map )
         } else {
             let predicate = self.to_parser_predicate(false);
-            quote!( filter(|&c: &char| #predicate)#map )
+            result.parser = quote!( filter(|&c: &char| #predicate)#map )
         }
+
+        result.parser_type = quote!(FixedTerminal<1>);
+
+        result
     }
 
     fn to_parser_predicate(&self, negated: bool) -> TokenStream {
