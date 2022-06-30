@@ -447,24 +447,33 @@ impl CombinatorTree {
                 let module_name = tree.slang_name().to_module_name_ident(); 
                 let type_name = name.to_type_name_ident();
 
-                let mut fields = vec![];
+                let mut field_names = vec![];
+                let mut field_types = vec![];
                 let mut parser_chain = None;
                 for (name, element) in elements {
                     result.merge(element.to_generated_code(tree));
 
                     let name = name.to_field_name_ident();
+                    field_names.push(quote!( #name ));
+
                     let parser_type = result.parser_type.clone();
-                    fields.push(quote!( pub #name: #parser_type ));
+                    field_types.push(quote!( #parser_type ));
 
                     let next_parser = result.parser.clone();
-                    parser_chain = Some(match parser_chain {
-                        Some(_) => quote!( #parser_chain.then(#next_parser)),
-                        None => next_parser
-                    })
+                    parser_chain = parser_chain.and_then(|p| Some(quote!( #p.then(#next_parser) ))).or_else(|| Some(next_parser))
                 };
 
-                result.tree_interface.push(quote!( pub struct #type_name { #(#fields),* } ));
-                // TODO: tree implementation
+                result.tree_interface.push(quote!( pub struct #type_name { #(pub #field_names: #field_types),* } ));
+
+                let folded_field_names = field_names.clone().into_iter().reduce(|accum, next| quote!( (#accum, #next) ));
+                let folded_field_types = field_types.clone().into_iter().reduce(|accum, next| quote!( (#accum, #next) ));
+                result.tree_implementation.push(quote!(
+                    impl #module_name::#type_name {
+                        pub fn new(#folded_field_names: #folded_field_types) -> Self {
+                            Self { #(#field_names),* }
+                        }
+                    }
+                ));
                 // TODO: serde
                 // TODO: default
 
@@ -601,11 +610,79 @@ impl CombinatorTree {
                 result
             },
 
-            CombinatorTree::Expression {..}
-            | CombinatorTree::ExpressionMember {..} => {
+            CombinatorTree::Expression { name, members } => {
                 let mut result: GeneratedCode = Default::default();
+
+                let module_name = tree.slang_name().to_module_name_ident(); 
+                let type_name = name.to_type_name_ident();
+
+                let names = members.iter().map(|p| p.upgrade().unwrap().slang_name()).collect::<Vec<_>>();
+
+                let fields = names.iter().map(|name| {
+                    let tag_name = name.to_enum_tag_ident();
+                    let module_name = name.to_module_name_ident();
+                    quote!( #tag_name(#module_name::E) )
+                }).collect::<Vec<_>>();
+                result.tree_interface.push(quote!( pub enum #type_name { #(#fields),* } ));
+
+                let first_parser_name = names[0].to_parser_name_ident();
+                result.parser = quote!( #first_parser_name );
+                result.parser_type = quote!( Box<#module_name::#type_name> );
+
+                result
+            }
+
+            CombinatorTree::ExpressionMember { parent_name, left, operator, right, .. } => {
+                let mut result = operator.to_generated_code(tree);
+
+                let operator_type = result.parser_type;
+                // let operator_parser = result.parser;
+
+                let parent_type_name = parent_name.to_type_name_ident();
+
+                match (left, right) {
+                    (None, None) => {
+                result.tree_interface.push(
+                        quote!( pub type E = #operator_type; ));
                 result.parser = quote!( todo!() );
-                result.parser_type = quote!( () );
+                    }
+                    (None, Some(_)) => {
+                result.tree_interface.push(
+                        quote!(
+                            pub struct E {
+                                pub operator: #operator_type,
+                                pub right: #parent_type_name,
+                            }
+                        ));
+
+                result.parser = quote!( todo!() );
+                    }
+                    (Some(_), None) => {
+                result.tree_interface.push(
+                        quote!(
+                            pub struct E {
+                                pub left: #parent_type_name,
+                                pub operator: #operator_type,
+                            }
+                        ));
+
+                result.parser = quote!( todo!() );
+                    }
+                    (Some(_), Some(_)) => {
+                result.tree_interface.push(
+                        quote!(
+                            pub struct E {
+                                pub left: #parent_type_name,
+                                pub operator: #operator_type,
+                                pub right: #parent_type_name,
+                            }
+                        ));
+                result.parser = quote!( todo!() );
+                    }
+                };
+
+                result.parser_type = quote!( #parent_type_name );
+
                 result
             }
 
@@ -737,15 +814,20 @@ impl ProductionRefTrait for ProductionRef {
 
                     let operator = match (&left, &right) {
                         (None, None) => &elements[..],
-                        (None, Some(_)) => &elements[..elements.len()],
+                        (None, Some(_)) => &elements[..elements.len() - 1],
                         (Some(_), None) => &elements[1..],
-                        (Some(_), Some(_)) => &elements[1..elements.len()],
+                        (Some(_), Some(_)) => &elements[1..elements.len() - 1],
+                    };
+                    let operator = if operator.len() == 1 {
+                        operator[0].1.clone()
+                    } else {
+                        ct_sequence(Name::from_string("operator"), operator.into())
                     };
 
                     tree.root = ct_expression_member(
                         name, parent_name,
                         left,
-                        ct_sequence(Name::from_string("operator"), operator.into()),
+                        operator,
                         right,
                         direction,
                     );

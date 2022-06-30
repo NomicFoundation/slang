@@ -24,7 +24,7 @@ pub type AsciiEscape = FixedTerminal<1>;
 pub type BooleanLiteral = usize;
 
 /// «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
-pub type Comment = comment::_T0;
+pub type Comment = Box<comment::_T0>;
 pub mod comment {
     #[allow(unused_imports)]
     use super::*;
@@ -34,7 +34,7 @@ pub mod comment {
     }
     pub enum Comment {
         NotStarChar(FixedTerminal<1>),
-        _T2(comment::_T2),
+        _T2(Box<comment::_T2>),
     }
     pub struct Content {
         pub comments: Vec<Box<comment::Comment>>,
@@ -42,7 +42,7 @@ pub mod comment {
     }
     pub struct _T0 {
         pub slash_star: FixedTerminal<2usize>,
-        pub content: comment::Content,
+        pub content: Box<comment::Content>,
         pub star_slash: FixedTerminal<2usize>,
     }
 }
@@ -59,7 +59,7 @@ pub mod decimal_integer {
 }
 
 /// «FixedBytesType» = 'bytes' ( '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15' | '16' | '17' | '18' | '19' | '20' | '21' | '22' | '23' | '24' | '25' | '26' | '27' | '28' | '29' | '30' | '31' | '32' ) ;
-pub type FixedBytesType = fixed_bytes_type::_T0;
+pub type FixedBytesType = Box<fixed_bytes_type::_T0>;
 pub mod fixed_bytes_type {
     #[allow(unused_imports)]
     use super::*;
@@ -70,7 +70,7 @@ pub mod fixed_bytes_type {
 }
 
 /// «FixedType» = 'fixed' [ '1'…'9' { '0'…'9' } 'x' '1'…'9' { '0'…'9' } ] ;
-pub type FixedType = fixed_type::_T0;
+pub type FixedType = Box<fixed_type::_T0>;
 pub mod fixed_type {
     #[allow(unused_imports)]
     use super::*;
@@ -83,7 +83,7 @@ pub mod fixed_type {
     }
     pub struct _T0 {
         pub fixed: FixedTerminal<5usize>,
-        pub _t1: Option<fixed_type::_T1>,
+        pub _t1: Option<Box<fixed_type::_T1>>,
     }
 }
 
@@ -94,7 +94,7 @@ pub type HexCharacter = FixedTerminal<1>;
 pub type IdentifierStart = FixedTerminal<1>;
 
 /// «LineComment» = '//' { ¬( '\u{a}' | '\u{d}' ) } ;
-pub type LineComment = line_comment::_T0;
+pub type LineComment = Box<line_comment::_T0>;
 pub mod line_comment {
     #[allow(unused_imports)]
     use super::*;
@@ -108,7 +108,7 @@ pub mod line_comment {
 pub type NumberUnit = usize;
 
 /// «PragmaDirective» = 'pragma' 1…*{ ¬';' } ';' ;
-pub type PragmaDirective = pragma_directive::_T0;
+pub type PragmaDirective = Box<pragma_directive::_T0>;
 pub mod pragma_directive {
     #[allow(unused_imports)]
     use super::*;
@@ -123,7 +123,7 @@ pub mod pragma_directive {
 pub type ReservedKeyword = usize;
 
 /// «SignedIntegerType» = 'int' ( '8' | '16' | '24' | '32' | '40' | '48' | '56' | '64' | '72' | '80' | '88' | '96' | '104' | '112' | '120' | '128' | '136' | '144' | '152' | '160' | '168' | '176' | '184' | '192' | '200' | '208' | '216' | '224' | '232' | '240' | '248' | '256' ) ;
-pub type SignedIntegerType = signed_integer_type::_T0;
+pub type SignedIntegerType = Box<signed_integer_type::_T0>;
 pub mod signed_integer_type {
     #[allow(unused_imports)]
     use super::*;
@@ -147,7 +147,7 @@ pub mod yul_decimal_number_literal {
     }
     pub enum YulDecimalNumberLiteral {
         ZeroChar(FixedTerminal<1>),
-        _T0(yul_decimal_number_literal::_T0),
+        _T0(Box<yul_decimal_number_literal::_T0>),
     }
 }
 
@@ -155,7 +155,7 @@ pub mod yul_decimal_number_literal {
 pub type YulEvmBuiltinFunctionName = usize;
 
 /// «YulHexLiteral» = '0x' 1…*{ '0'…'9' | 'a'…'f' | 'A'…'F' } ;
-pub type YulHexLiteral = yul_hex_literal::_T0;
+pub type YulHexLiteral = Box<yul_hex_literal::_T0>;
 pub mod yul_hex_literal {
     #[allow(unused_imports)]
     use super::*;
@@ -169,7 +169,7 @@ pub mod yul_hex_literal {
 pub type YulKeyword = usize;
 
 /// «DecimalExponent» = ( 'e' | 'E' ) [ '-' ] «DecimalInteger» ;
-pub type DecimalExponent = decimal_exponent::_T0;
+pub type DecimalExponent = Box<decimal_exponent::_T0>;
 pub mod decimal_exponent {
     #[allow(unused_imports)]
     use super::*;
@@ -181,7 +181,7 @@ pub mod decimal_exponent {
 }
 
 /// «DecimalFloat» = [ «DecimalInteger» ] '.' «DecimalInteger» ;
-pub type DecimalFloat = decimal_float::_T0;
+pub type DecimalFloat = Box<decimal_float::_T0>;
 pub mod decimal_float {
     #[allow(unused_imports)]
     use super::*;
@@ -193,7 +193,7 @@ pub mod decimal_float {
 }
 
 /// «HexByteEscape» = 'x' 2…2*{ «HexCharacter» } ;
-pub type HexByteEscape = hex_byte_escape::_T0;
+pub type HexByteEscape = Box<hex_byte_escape::_T0>;
 pub mod hex_byte_escape {
     #[allow(unused_imports)]
     use super::*;
@@ -204,7 +204,7 @@ pub mod hex_byte_escape {
 }
 
 /// «HexNumber» = '0' 'x' 1…*{ «HexCharacter» / [ '_' ] } ;
-pub type HexNumber = hex_number::_T0;
+pub type HexNumber = Box<hex_number::_T0>;
 pub mod hex_number {
     #[allow(unused_imports)]
     use super::*;
@@ -246,7 +246,7 @@ pub mod possibly_separated_pairs_of_hex_digits {
 }
 
 /// «UfixedType» = 'u' «FixedType» ;
-pub type UfixedType = ufixed_type::_T0;
+pub type UfixedType = Box<ufixed_type::_T0>;
 pub mod ufixed_type {
     #[allow(unused_imports)]
     use super::*;
@@ -257,7 +257,7 @@ pub mod ufixed_type {
 }
 
 /// «UnicodeEscape» = 'u' 4…4*{ «HexCharacter» } ;
-pub type UnicodeEscape = unicode_escape::_T0;
+pub type UnicodeEscape = Box<unicode_escape::_T0>;
 pub mod unicode_escape {
     #[allow(unused_imports)]
     use super::*;
@@ -268,7 +268,7 @@ pub mod unicode_escape {
 }
 
 /// «UnsignedIntegerType» = 'u' «SignedIntegerType» ;
-pub type UnsignedIntegerType = unsigned_integer_type::_T0;
+pub type UnsignedIntegerType = Box<unsigned_integer_type::_T0>;
 pub mod unsigned_integer_type {
     #[allow(unused_imports)]
     use super::*;
@@ -282,25 +282,79 @@ pub mod unsigned_integer_type {
 pub type YulReservedWord = usize;
 
 /// AddSubExpression = Expression ( '+' | '-' ) Expression ;
-pub type AddSubExpression = ();
+pub type AddSubExpression = Expression;
+pub mod add_sub_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub left: Expression,
+        pub operator: WithNoise<FixedTerminal<1>>,
+        pub right: Expression,
+    }
+}
 
 /// AndExpression = Expression '&&' Expression ;
-pub type AndExpression = ();
+pub type AndExpression = Expression;
+pub mod and_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub left: Expression,
+        pub operator: WithNoise<FixedTerminal<2usize>>,
+        pub right: Expression,
+    }
+}
 
 /// AssignmentExpression = Expression ( '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ) Expression ;
-pub type AssignmentExpression = ();
+pub type AssignmentExpression = Expression;
+pub mod assignment_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub left: Expression,
+        pub operator: WithNoise<usize>,
+        pub right: Expression,
+    }
+}
 
 /// BitAndExpression = Expression '&' Expression ;
-pub type BitAndExpression = ();
+pub type BitAndExpression = Expression;
+pub mod bit_and_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub left: Expression,
+        pub operator: WithNoise<FixedTerminal<1>>,
+        pub right: Expression,
+    }
+}
 
 /// BitOrExpression = Expression '|' Expression ;
-pub type BitOrExpression = ();
+pub type BitOrExpression = Expression;
+pub mod bit_or_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub left: Expression,
+        pub operator: WithNoise<FixedTerminal<1>>,
+        pub right: Expression,
+    }
+}
 
 /// BitXOrExpression = Expression '^' Expression ;
-pub type BitXOrExpression = ();
+pub type BitXOrExpression = Expression;
+pub mod bit_x_or_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub left: Expression,
+        pub operator: WithNoise<FixedTerminal<1>>,
+        pub right: Expression,
+    }
+}
 
 /// BreakStatement = 'break' ';' ;
-pub type BreakStatement = break_statement::_T0;
+pub type BreakStatement = Box<break_statement::_T0>;
 pub mod break_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -311,10 +365,24 @@ pub mod break_statement {
 }
 
 /// ConditionalExpression = Expression '?' Expression ':' Expression ;
-pub type ConditionalExpression = ();
+pub type ConditionalExpression = Expression;
+pub mod conditional_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct _T1 {
+        pub question_char: WithNoise<FixedTerminal<1>>,
+        pub expression_1: Expression,
+        pub colon_char: WithNoise<FixedTerminal<1>>,
+        pub expression_2: Expression,
+    }
+    pub struct E {
+        pub left: Expression,
+        pub operator: Box<conditional_expression::_T1>,
+    }
+}
 
 /// ContinueStatement = 'continue' ';' ;
-pub type ContinueStatement = continue_statement::_T0;
+pub type ContinueStatement = Box<continue_statement::_T0>;
 pub mod continue_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -328,7 +396,7 @@ pub mod continue_statement {
 pub type DataLocation = WithNoise<usize>;
 
 /// «DecimalNumber» = ( «DecimalInteger» | «DecimalFloat» ) [ «DecimalExponent» ] ;
-pub type DecimalNumber = decimal_number::_T0;
+pub type DecimalNumber = Box<decimal_number::_T0>;
 pub mod decimal_number {
     #[allow(unused_imports)]
     use super::*;
@@ -358,10 +426,19 @@ pub mod elementary_type {
 }
 
 /// EqualityComparisonExpression = Expression ( '==' | '!=' ) Expression ;
-pub type EqualityComparisonExpression = ();
+pub type EqualityComparisonExpression = Expression;
+pub mod equality_comparison_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub left: Expression,
+        pub operator: WithNoise<FixedTerminal<2usize>>,
+        pub right: Expression,
+    }
+}
 
 /// «EscapeSequence» = '\\' ( «AsciiEscape» | «HexByteEscape» | «UnicodeEscape» ) ;
-pub type EscapeSequence = escape_sequence::_T0;
+pub type EscapeSequence = Box<escape_sequence::_T0>;
 pub mod escape_sequence {
     #[allow(unused_imports)]
     use super::*;
@@ -377,10 +454,19 @@ pub mod escape_sequence {
 }
 
 /// ExponentiationExpression = Expression '**' Expression ;
-pub type ExponentiationExpression = ();
+pub type ExponentiationExpression = Expression;
+pub mod exponentiation_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub left: Expression,
+        pub operator: WithNoise<FixedTerminal<2usize>>,
+        pub right: Expression,
+    }
+}
 
 /// «HexStringLiteral» = 'hex' ( '"' [ «PossiblySeparatedPairsOfHexDigits» ] '"' | '\'' [ «PossiblySeparatedPairsOfHexDigits» ] '\'' ) ;
-pub type HexStringLiteral = hex_string_literal::_T0;
+pub type HexStringLiteral = Box<hex_string_literal::_T0>;
 pub mod hex_string_literal {
     #[allow(unused_imports)]
     use super::*;
@@ -395,8 +481,8 @@ pub mod hex_string_literal {
         pub quote_char_2: FixedTerminal<1>,
     }
     pub enum HexStringLiteral {
-        _T1(hex_string_literal::_T1),
-        _T2(hex_string_literal::_T2),
+        _T1(Box<hex_string_literal::_T1>),
+        _T2(Box<hex_string_literal::_T2>),
     }
     pub struct _T0 {
         pub hex: FixedTerminal<3usize>,
@@ -405,7 +491,25 @@ pub mod hex_string_literal {
 }
 
 /// IndexAccessExpression = Expression '[' [ Expression ] [ ':' [ Expression ] ] ']' ;
-pub type IndexAccessExpression = ();
+pub type IndexAccessExpression = Expression;
+pub mod index_access_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct _T1 {
+        pub colon_char: WithNoise<FixedTerminal<1>>,
+        pub expression: Option<Expression>,
+    }
+    pub struct Operator {
+        pub open_bracket_char: WithNoise<FixedTerminal<1>>,
+        pub expression_2: Option<Expression>,
+        pub _t1: Option<Box<index_access_expression::_T1>>,
+        pub close_bracket_char: WithNoise<FixedTerminal<1>>,
+    }
+    pub struct E {
+        pub left: Expression,
+        pub operator: Box<index_access_expression::Operator>,
+    }
+}
 
 /// «Keyword» = 'pragma' | 'abstract' | 'anonymous' | 'address' | 'as' | 'assembly' | 'bool' | 'break' | 'bytes' | 'calldata' | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum' | 'event' | 'external' | 'fallback' | 'false' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import' | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override' | 'payable' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct' | 'true' | 'try' | 'type' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | 'fixed' | 'ufixed' ;
 pub type Keyword = Box<keyword::Keyword>;
@@ -422,13 +526,40 @@ pub mod keyword {
 }
 
 /// MulDivModExpression = Expression ( '*' | '/' | '%' ) Expression ;
-pub type MulDivModExpression = ();
+pub type MulDivModExpression = Expression;
+pub mod mul_div_mod_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub left: Expression,
+        pub operator: WithNoise<FixedTerminal<1>>,
+        pub right: Expression,
+    }
+}
 
 /// OrExpression = Expression '||' Expression ;
-pub type OrExpression = ();
+pub type OrExpression = Expression;
+pub mod or_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub left: Expression,
+        pub operator: WithNoise<FixedTerminal<2usize>>,
+        pub right: Expression,
+    }
+}
 
 /// OrderComparisonExpression = Expression ( '<' | '>' | '<=' | '>=' ) Expression ;
-pub type OrderComparisonExpression = ();
+pub type OrderComparisonExpression = Expression;
+pub mod order_comparison_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub left: Expression,
+        pub operator: WithNoise<usize>,
+        pub right: Expression,
+    }
+}
 
 /// PositionalArgumentList = 1…*{ Expression / ',' } ;
 pub type PositionalArgumentList = positional_argument_list::_T0;
@@ -442,7 +573,7 @@ pub mod positional_argument_list {
 }
 
 /// «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;
-pub type RawIdentifier = raw_identifier::_T0;
+pub type RawIdentifier = Box<raw_identifier::_T0>;
 pub mod raw_identifier {
     #[allow(unused_imports)]
     use super::*;
@@ -453,19 +584,44 @@ pub mod raw_identifier {
 }
 
 /// ShiftExpression = Expression ( '<<' | '>>' | '>>>' ) Expression ;
-pub type ShiftExpression = ();
+pub type ShiftExpression = Expression;
+pub mod shift_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub left: Expression,
+        pub operator: WithNoise<usize>,
+        pub right: Expression,
+    }
+}
 
 /// StateMutabilitySpecifier = 'pure' | 'view' | 'payable' ;
 pub type StateMutabilitySpecifier = WithNoise<usize>;
 
 /// UnaryPrefixExpression = ( '++' | '--' | '!' | '~' | 'delete' | '-' ) Expression ;
-pub type UnaryPrefixExpression = ();
+pub type UnaryPrefixExpression = Expression;
+pub mod unary_prefix_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub operator: WithNoise<usize>,
+        pub right: Expression,
+    }
+}
 
 /// UnarySuffixExpression = Expression ( '++' | '--' ) ;
-pub type UnarySuffixExpression = ();
+pub type UnarySuffixExpression = Expression;
+pub mod unary_suffix_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub left: Expression,
+        pub operator: WithNoise<FixedTerminal<2usize>>,
+    }
+}
 
 /// UncheckedBlock = 'unchecked' Block ;
-pub type UncheckedBlock = unchecked_block::_T0;
+pub type UncheckedBlock = Box<unchecked_block::_T0>;
 pub mod unchecked_block {
     #[allow(unused_imports)]
     use super::*;
@@ -488,7 +644,7 @@ pub type YulContinueStatement = WithNoise<FixedTerminal<8usize>>;
 pub type YulLeaveStatement = WithNoise<FixedTerminal<5usize>>;
 
 /// «DoubleQuotedAsciiStringLiteral» = '"' { 1…*{ '\u{20}'…'~' - ( '"' | '\\' ) } | «EscapeSequence» } '"' ;
-pub type DoubleQuotedAsciiStringLiteral = double_quoted_ascii_string_literal::_T0;
+pub type DoubleQuotedAsciiStringLiteral = Box<double_quoted_ascii_string_literal::_T0>;
 pub mod double_quoted_ascii_string_literal {
     #[allow(unused_imports)]
     use super::*;
@@ -505,7 +661,7 @@ pub mod double_quoted_ascii_string_literal {
 }
 
 /// «DoubleQuotedUnicodeStringLiteral» = 'unicode"' { 1…*{ ¬( '"' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '"' ;
-pub type DoubleQuotedUnicodeStringLiteral = double_quoted_unicode_string_literal::_T0;
+pub type DoubleQuotedUnicodeStringLiteral = Box<double_quoted_unicode_string_literal::_T0>;
 pub mod double_quoted_unicode_string_literal {
     #[allow(unused_imports)]
     use super::*;
@@ -531,7 +687,7 @@ pub mod elementary_type_with_payable {
         pub payable: Option<WithNoise<FixedTerminal<7usize>>>,
     }
     pub enum ElementaryTypeWithPayable {
-        _T0(elementary_type_with_payable::_T0),
+        _T0(Box<elementary_type_with_payable::_T0>),
         ElementaryType(ElementaryType),
     }
 }
@@ -549,7 +705,7 @@ pub mod elementary_type_without_payable {
 }
 
 /// NumericLiteral = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
-pub type NumericLiteral = numeric_literal::_T0;
+pub type NumericLiteral = Box<numeric_literal::_T0>;
 pub mod numeric_literal {
     #[allow(unused_imports)]
     use super::*;
@@ -575,7 +731,7 @@ pub mod reserved_word {
 }
 
 /// «SingleQuotedAsciiStringLiteral» = '\'' { 1…*{ '\u{20}'…'~' - ( '\'' | '\\' ) } | «EscapeSequence» } '\'' ;
-pub type SingleQuotedAsciiStringLiteral = single_quoted_ascii_string_literal::_T0;
+pub type SingleQuotedAsciiStringLiteral = Box<single_quoted_ascii_string_literal::_T0>;
 pub mod single_quoted_ascii_string_literal {
     #[allow(unused_imports)]
     use super::*;
@@ -592,7 +748,7 @@ pub mod single_quoted_ascii_string_literal {
 }
 
 /// «SingleQuotedUnicodeStringLiteral» = 'unicode\'' { 1…*{ ¬( '\'' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '\'' ;
-pub type SingleQuotedUnicodeStringLiteral = single_quoted_unicode_string_literal::_T0;
+pub type SingleQuotedUnicodeStringLiteral = Box<single_quoted_unicode_string_literal::_T0>;
 pub mod single_quoted_unicode_string_literal {
     #[allow(unused_imports)]
     use super::*;
@@ -623,7 +779,7 @@ pub mod ascii_string_literal {
 }
 
 /// AssemblyFlags = '(' 1…*{ «DoubleQuotedAsciiStringLiteral» / ',' } ')' ;
-pub type AssemblyFlags = assembly_flags::_T0;
+pub type AssemblyFlags = Box<assembly_flags::_T0>;
 pub mod assembly_flags {
     #[allow(unused_imports)]
     use super::*;
@@ -653,7 +809,7 @@ pub mod unicode_string_literal {
 }
 
 /// YulFunctionCall = ( «YulIdentifier» | «YulEVMBuiltinFunctionName» ) '(' { YulExpression / ',' } ')' ;
-pub type YulFunctionCall = yul_function_call::_T0;
+pub type YulFunctionCall = Box<yul_function_call::_T0>;
 pub mod yul_function_call {
     #[allow(unused_imports)]
     use super::*;
@@ -674,7 +830,7 @@ pub mod yul_function_call {
 }
 
 /// YulFunctionDefinition = 'function' «YulIdentifier» '(' { «YulIdentifier» / ',' } ')' [ '->' 1…*{ «YulIdentifier» / ',' } ] YulBlock ;
-pub type YulFunctionDefinition = yul_function_definition::_T0;
+pub type YulFunctionDefinition = Box<yul_function_definition::_T0>;
 pub mod yul_function_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -696,13 +852,13 @@ pub mod yul_function_definition {
         pub open_paren_char: WithNoise<FixedTerminal<1>>,
         pub yul_identifiers: Option<yul_function_definition::_T1>,
         pub close_paren_char: WithNoise<FixedTerminal<1>>,
-        pub _t2: Option<yul_function_definition::_T2>,
+        pub _t2: Option<Box<yul_function_definition::_T2>>,
         pub yul_block: YulBlock,
     }
 }
 
 /// YulPath = «YulIdentifier» { '.' ( «YulIdentifier» | «YulEVMBuiltinFunctionName» ) } ;
-pub type YulPath = yul_path::_T0;
+pub type YulPath = Box<yul_path::_T0>;
 pub mod yul_path {
     #[allow(unused_imports)]
     use super::*;
@@ -716,12 +872,12 @@ pub mod yul_path {
     }
     pub struct _T0 {
         pub yul_identifier: YulIdentifier,
-        pub _t2s: Vec<yul_path::_T2>,
+        pub _t2s: Vec<Box<yul_path::_T2>>,
     }
 }
 
 /// EnumDefinition = 'enum' «Identifier» '{' 1…*{ «Identifier» / ',' } '}' ;
-pub type EnumDefinition = enum_definition::_T0;
+pub type EnumDefinition = Box<enum_definition::_T0>;
 pub mod enum_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -767,10 +923,26 @@ pub mod literal {
 }
 
 /// MemberAccessExpression = Expression '.' ( «Identifier» | 'address' ) ;
-pub type MemberAccessExpression = ();
+pub type MemberAccessExpression = Expression;
+pub mod member_access_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub enum MemberAccessExpression {
+        Identifier(Identifier),
+        Address(WithNoise<FixedTerminal<7usize>>),
+    }
+    pub struct Operator {
+        pub period_char: WithNoise<FixedTerminal<1>>,
+        pub member_access_expression: Box<member_access_expression::MemberAccessExpression>,
+    }
+    pub struct E {
+        pub left: Expression,
+        pub operator: Box<member_access_expression::Operator>,
+    }
+}
 
 /// NamedArgument = «Identifier» ':' Expression ;
-pub type NamedArgument = named_argument::_T0;
+pub type NamedArgument = Box<named_argument::_T0>;
 pub mod named_argument {
     #[allow(unused_imports)]
     use super::*;
@@ -782,7 +954,7 @@ pub mod named_argument {
 }
 
 /// ParameterDeclaration = TypeName [ DataLocation ] [ «Identifier» ] ;
-pub type ParameterDeclaration = parameter_declaration::_T0;
+pub type ParameterDeclaration = Box<parameter_declaration::_T0>;
 pub mod parameter_declaration {
     #[allow(unused_imports)]
     use super::*;
@@ -794,7 +966,7 @@ pub mod parameter_declaration {
 }
 
 /// SelectedImport = «Identifier» [ 'as' «Identifier» ] ;
-pub type SelectedImport = selected_import::_T0;
+pub type SelectedImport = Box<selected_import::_T0>;
 pub mod selected_import {
     #[allow(unused_imports)]
     use super::*;
@@ -804,12 +976,12 @@ pub mod selected_import {
     }
     pub struct _T0 {
         pub identifier: Identifier,
-        pub _t1: Option<selected_import::_T1>,
+        pub _t1: Option<Box<selected_import::_T1>>,
     }
 }
 
 /// UserDefinedValueTypeDefinition = 'type' «Identifier» 'is' ElementaryTypeWithPayable ';' ;
-pub type UserDefinedValueTypeDefinition = user_defined_value_type_definition::_T0;
+pub type UserDefinedValueTypeDefinition = Box<user_defined_value_type_definition::_T0>;
 pub mod user_defined_value_type_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -837,10 +1009,27 @@ pub mod yul_literal {
 }
 
 /// FunctionCallOptionsExpression = Expression '{' 1…*{ NamedArgument / ',' } '}' ;
-pub type FunctionCallOptionsExpression = ();
+pub type FunctionCallOptionsExpression = Expression;
+pub mod function_call_options_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct _T1 {
+        pub elements: Vec<NamedArgument>,
+        pub separators: Vec<WithNoise<FixedTerminal<1>>>,
+    }
+    pub struct Operator {
+        pub open_brace_char: WithNoise<FixedTerminal<1>>,
+        pub named_arguments: function_call_options_expression::_T1,
+        pub close_brace_char: WithNoise<FixedTerminal<1>>,
+    }
+    pub struct E {
+        pub left: Expression,
+        pub operator: Box<function_call_options_expression::Operator>,
+    }
+}
 
 /// MappingType = 'mapping' '(' ( ElementaryTypeWithoutPayable | IdentifierPath ) '=>' TypeName ')' ;
-pub type MappingType = mapping_type::_T0;
+pub type MappingType = Box<mapping_type::_T0>;
 pub mod mapping_type {
     #[allow(unused_imports)]
     use super::*;
@@ -859,7 +1048,7 @@ pub mod mapping_type {
 }
 
 /// NamedArgumentList = '{' { NamedArgument / ',' } '}' ;
-pub type NamedArgumentList = named_argument_list::_T0;
+pub type NamedArgumentList = Box<named_argument_list::_T0>;
 pub mod named_argument_list {
     #[allow(unused_imports)]
     use super::*;
@@ -875,7 +1064,7 @@ pub mod named_argument_list {
 }
 
 /// NonEmptyParameterList = '(' 1…*{ ParameterDeclaration / ',' } ')' ;
-pub type NonEmptyParameterList = non_empty_parameter_list::_T0;
+pub type NonEmptyParameterList = Box<non_empty_parameter_list::_T0>;
 pub mod non_empty_parameter_list {
     #[allow(unused_imports)]
     use super::*;
@@ -891,7 +1080,7 @@ pub mod non_empty_parameter_list {
 }
 
 /// OverrideSpecifier = 'override' [ '(' 1…1*{ IdentifierPath / ',' } ')' ] ;
-pub type OverrideSpecifier = override_specifier::_T0;
+pub type OverrideSpecifier = Box<override_specifier::_T0>;
 pub mod override_specifier {
     #[allow(unused_imports)]
     use super::*;
@@ -906,12 +1095,12 @@ pub mod override_specifier {
     }
     pub struct _T0 {
         pub r#override: WithNoise<FixedTerminal<8usize>>,
-        pub _t1: Option<override_specifier::_T1>,
+        pub _t1: Option<Box<override_specifier::_T1>>,
     }
 }
 
 /// ParameterList = '(' { ParameterDeclaration / ',' } ')' ;
-pub type ParameterList = parameter_list::_T0;
+pub type ParameterList = Box<parameter_list::_T0>;
 pub mod parameter_list {
     #[allow(unused_imports)]
     use super::*;
@@ -927,7 +1116,7 @@ pub mod parameter_list {
 }
 
 /// SelectingImportDirective = '{' 1…*{ SelectedImport / ',' } '}' 'from' ImportPath ;
-pub type SelectingImportDirective = selecting_import_directive::_T0;
+pub type SelectingImportDirective = Box<selecting_import_directive::_T0>;
 pub mod selecting_import_directive {
     #[allow(unused_imports)]
     use super::*;
@@ -945,7 +1134,7 @@ pub mod selecting_import_directive {
 }
 
 /// SimpleImportDirective = ImportPath { 'as' «Identifier» } ;
-pub type SimpleImportDirective = simple_import_directive::_T0;
+pub type SimpleImportDirective = Box<simple_import_directive::_T0>;
 pub mod simple_import_directive {
     #[allow(unused_imports)]
     use super::*;
@@ -955,12 +1144,12 @@ pub mod simple_import_directive {
     }
     pub struct _T0 {
         pub import_path: ImportPath,
-        pub _t2s: Vec<simple_import_directive::_T2>,
+        pub _t2s: Vec<Box<simple_import_directive::_T2>>,
     }
 }
 
 /// StarImportDirective = '*' 'as' «Identifier» 'from' ImportPath ;
-pub type StarImportDirective = star_import_directive::_T0;
+pub type StarImportDirective = Box<star_import_directive::_T0>;
 pub mod star_import_directive {
     #[allow(unused_imports)]
     use super::*;
@@ -986,7 +1175,7 @@ pub mod yul_expression {
 }
 
 /// ArgumentList = '(' [ PositionalArgumentList | NamedArgumentList ] ')' ;
-pub type ArgumentList = argument_list::_T0;
+pub type ArgumentList = Box<argument_list::_T0>;
 pub mod argument_list {
     #[allow(unused_imports)]
     use super::*;
@@ -1002,7 +1191,7 @@ pub mod argument_list {
 }
 
 /// CatchClause = 'catch' [ [ «Identifier» ] NonEmptyParameterList ] Block ;
-pub type CatchClause = catch_clause::_T0;
+pub type CatchClause = Box<catch_clause::_T0>;
 pub mod catch_clause {
     #[allow(unused_imports)]
     use super::*;
@@ -1012,13 +1201,13 @@ pub mod catch_clause {
     }
     pub struct _T0 {
         pub catch: WithNoise<FixedTerminal<5usize>>,
-        pub _t1: Option<catch_clause::_T1>,
+        pub _t1: Option<Box<catch_clause::_T1>>,
         pub block: Block,
     }
 }
 
 /// FunctionType = 'function' ParameterList { VisibilitySpecifier | StateMutabilitySpecifier } [ 'returns' NonEmptyParameterList ] ;
-pub type FunctionType = function_type::_T0;
+pub type FunctionType = Box<function_type::_T0>;
 pub mod function_type {
     #[allow(unused_imports)]
     use super::*;
@@ -1030,12 +1219,12 @@ pub mod function_type {
         pub function: WithNoise<FixedTerminal<8usize>>,
         pub parameter_list: ParameterList,
         pub _2: Vec<WithNoise<usize>>,
-        pub _t2: Option<function_type::_T2>,
+        pub _t2: Option<Box<function_type::_T2>>,
     }
 }
 
 /// ImportDirective = 'import' ( SimpleImportDirective | StarImportDirective | SelectingImportDirective ) ';' ;
-pub type ImportDirective = import_directive::_T0;
+pub type ImportDirective = Box<import_directive::_T0>;
 pub mod import_directive {
     #[allow(unused_imports)]
     use super::*;
@@ -1075,7 +1264,7 @@ pub mod state_variable_attribute {
 }
 
 /// YulAssignment = YulPath ( ':=' YulExpression | 1…*{ ',' YulPath } ':=' YulFunctionCall ) ;
-pub type YulAssignment = yul_assignment::_T0;
+pub type YulAssignment = Box<yul_assignment::_T0>;
 pub mod yul_assignment {
     #[allow(unused_imports)]
     use super::*;
@@ -1088,13 +1277,13 @@ pub mod yul_assignment {
         pub yul_path: YulPath,
     }
     pub struct _T2 {
-        pub _t4s: Vec<yul_assignment::_T4>,
+        pub _t4s: Vec<Box<yul_assignment::_T4>>,
         pub colon_equal: WithNoise<FixedTerminal<2usize>>,
         pub yul_function_call: YulFunctionCall,
     }
     pub enum YulAssignment {
-        _T1(yul_assignment::_T1),
-        _T2(yul_assignment::_T2),
+        _T1(Box<yul_assignment::_T1>),
+        _T2(Box<yul_assignment::_T2>),
     }
     pub struct _T0 {
         pub yul_path: YulPath,
@@ -1103,7 +1292,7 @@ pub mod yul_assignment {
 }
 
 /// YulForStatement = 'for' YulBlock YulExpression YulBlock YulBlock ;
-pub type YulForStatement = yul_for_statement::_T0;
+pub type YulForStatement = Box<yul_for_statement::_T0>;
 pub mod yul_for_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1117,7 +1306,7 @@ pub mod yul_for_statement {
 }
 
 /// YulIfStatement = 'if' YulExpression YulBlock ;
-pub type YulIfStatement = yul_if_statement::_T0;
+pub type YulIfStatement = Box<yul_if_statement::_T0>;
 pub mod yul_if_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1129,7 +1318,7 @@ pub mod yul_if_statement {
 }
 
 /// YulSwitchStatement = 'switch' YulExpression ( 1…*{ 'case' YulLiteral YulBlock } [ 'default' YulBlock ] | 'default' YulBlock ) ;
-pub type YulSwitchStatement = yul_switch_statement::_T0;
+pub type YulSwitchStatement = Box<yul_switch_statement::_T0>;
 pub mod yul_switch_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1143,16 +1332,16 @@ pub mod yul_switch_statement {
         pub yul_block: YulBlock,
     }
     pub struct _T1 {
-        pub _t3s: Vec<yul_switch_statement::_T3>,
-        pub _t4: Option<yul_switch_statement::_T4>,
+        pub _t3s: Vec<Box<yul_switch_statement::_T3>>,
+        pub _t4: Option<Box<yul_switch_statement::_T4>>,
     }
     pub struct _T5 {
         pub default: WithNoise<FixedTerminal<7usize>>,
         pub yul_block: YulBlock,
     }
     pub enum YulSwitchStatement {
-        _T1(yul_switch_statement::_T1),
-        _T5(yul_switch_statement::_T5),
+        _T1(Box<yul_switch_statement::_T1>),
+        _T5(Box<yul_switch_statement::_T5>),
     }
     pub struct _T0 {
         pub switch: WithNoise<FixedTerminal<6usize>>,
@@ -1162,7 +1351,7 @@ pub mod yul_switch_statement {
 }
 
 /// YulVariableDeclaration = 'let' «YulIdentifier» [ ':=' YulExpression | [ ',' «YulIdentifier» ] [ ':=' YulFunctionCall ] ] ;
-pub type YulVariableDeclaration = yul_variable_declaration::_T0;
+pub type YulVariableDeclaration = Box<yul_variable_declaration::_T0>;
 pub mod yul_variable_declaration {
     #[allow(unused_imports)]
     use super::*;
@@ -1179,12 +1368,12 @@ pub mod yul_variable_declaration {
         pub yul_function_call: YulFunctionCall,
     }
     pub struct _T2 {
-        pub _t3: Option<yul_variable_declaration::_T3>,
-        pub _t4: Option<yul_variable_declaration::_T4>,
+        pub _t3: Option<Box<yul_variable_declaration::_T3>>,
+        pub _t4: Option<Box<yul_variable_declaration::_T4>>,
     }
     pub enum YulVariableDeclaration {
-        _T1(yul_variable_declaration::_T1),
-        _T2(yul_variable_declaration::_T2),
+        _T1(Box<yul_variable_declaration::_T1>),
+        _T2(Box<yul_variable_declaration::_T2>),
     }
     pub struct _T0 {
         pub r#let: WithNoise<FixedTerminal<3usize>>,
@@ -1194,10 +1383,18 @@ pub mod yul_variable_declaration {
 }
 
 /// FunctionCallExpression = Expression ArgumentList ;
-pub type FunctionCallExpression = ();
+pub type FunctionCallExpression = Expression;
+pub mod function_call_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub left: Expression,
+        pub operator: ArgumentList,
+    }
+}
 
 /// InheritanceSpecifier = IdentifierPath [ ArgumentList ] ;
-pub type InheritanceSpecifier = inheritance_specifier::_T0;
+pub type InheritanceSpecifier = Box<inheritance_specifier::_T0>;
 pub mod inheritance_specifier {
     #[allow(unused_imports)]
     use super::*;
@@ -1208,7 +1405,7 @@ pub mod inheritance_specifier {
 }
 
 /// ModifierInvocation = IdentifierPath [ ArgumentList ] ;
-pub type ModifierInvocation = modifier_invocation::_T0;
+pub type ModifierInvocation = Box<modifier_invocation::_T0>;
 pub mod modifier_invocation {
     #[allow(unused_imports)]
     use super::*;
@@ -1219,7 +1416,7 @@ pub mod modifier_invocation {
 }
 
 /// TypeName = ( ElementaryTypeWithPayable | FunctionType | MappingType | IdentifierPath ) { '[' [ Expression ] ']' } ;
-pub type TypeName = type_name::_T0;
+pub type TypeName = Box<type_name::_T0>;
 pub mod type_name {
     #[allow(unused_imports)]
     use super::*;
@@ -1236,7 +1433,7 @@ pub mod type_name {
     }
     pub struct _T0 {
         pub type_name: Box<type_name::TypeName>,
-        pub _t2s: Vec<type_name::_T2>,
+        pub _t2s: Vec<Box<type_name::_T2>>,
     }
 }
 
@@ -1270,7 +1467,7 @@ pub mod constructor_attribute {
 }
 
 /// ErrorParameter = TypeName [ «Identifier» ] ;
-pub type ErrorParameter = error_parameter::_T0;
+pub type ErrorParameter = Box<error_parameter::_T0>;
 pub mod error_parameter {
     #[allow(unused_imports)]
     use super::*;
@@ -1281,7 +1478,7 @@ pub mod error_parameter {
 }
 
 /// EventParameter = TypeName [ 'indexed' ] [ «Identifier» ] ;
-pub type EventParameter = event_parameter::_T0;
+pub type EventParameter = Box<event_parameter::_T0>;
 pub mod event_parameter {
     #[allow(unused_imports)]
     use super::*;
@@ -1319,7 +1516,7 @@ pub mod function_attribute {
 }
 
 /// InheritanceSpecifierList = 'is' 1…*{ InheritanceSpecifier / ',' } ;
-pub type InheritanceSpecifierList = inheritance_specifier_list::_T0;
+pub type InheritanceSpecifierList = Box<inheritance_specifier_list::_T0>;
 pub mod inheritance_specifier_list {
     #[allow(unused_imports)]
     use super::*;
@@ -1334,7 +1531,54 @@ pub mod inheritance_specifier_list {
 }
 
 /// PrimaryExpression = 'payable' ArgumentList | 'type' '(' TypeName ')' | 'new' TypeName | '(' 1…*{ [ Expression ] / ',' } ')' | '[' 1…*{ Expression / ',' } ']' | «Identifier» | Literal | ElementaryTypeWithoutPayable ;
-pub type PrimaryExpression = ();
+pub type PrimaryExpression = Expression;
+pub mod primary_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct _T0 {
+        pub payable: WithNoise<FixedTerminal<7usize>>,
+        pub argument_list: ArgumentList,
+    }
+    pub struct _T1 {
+        pub r#type: WithNoise<FixedTerminal<4usize>>,
+        pub open_paren_char: WithNoise<FixedTerminal<1>>,
+        pub type_name: TypeName,
+        pub close_paren_char: WithNoise<FixedTerminal<1>>,
+    }
+    pub struct _T2 {
+        pub new: WithNoise<FixedTerminal<3usize>>,
+        pub type_name: TypeName,
+    }
+    pub struct _T4 {
+        pub elements: Vec<Option<Expression>>,
+        pub separators: Vec<WithNoise<FixedTerminal<1>>>,
+    }
+    pub struct _T3 {
+        pub open_paren_char: WithNoise<FixedTerminal<1>>,
+        pub expressions: primary_expression::_T4,
+        pub close_paren_char: WithNoise<FixedTerminal<1>>,
+    }
+    pub struct _T6 {
+        pub elements: Vec<Expression>,
+        pub separators: Vec<WithNoise<FixedTerminal<1>>>,
+    }
+    pub struct _T5 {
+        pub open_bracket_char: WithNoise<FixedTerminal<1>>,
+        pub expressions: primary_expression::_T6,
+        pub close_bracket_char: WithNoise<FixedTerminal<1>>,
+    }
+    pub enum PrimaryExpression {
+        _T0(Box<primary_expression::_T0>),
+        _T1(Box<primary_expression::_T1>),
+        _T2(Box<primary_expression::_T2>),
+        _T3(Box<primary_expression::_T3>),
+        _T5(Box<primary_expression::_T5>),
+        Identifier(Identifier),
+        Literal(Literal),
+        ElementaryTypeWithoutPayable(ElementaryTypeWithoutPayable),
+    }
+    pub type E = Box<primary_expression::PrimaryExpression>;
+}
 
 /// ReceiveFunctionAttribute = 'external' | 'payable' | ModifierInvocation | 'virtual' | OverrideSpecifier ;
 pub type ReceiveFunctionAttribute = Box<receive_function_attribute::ReceiveFunctionAttribute>;
@@ -1350,7 +1594,7 @@ pub mod receive_function_attribute {
 }
 
 /// StructDefinition = 'struct' «Identifier» '{' 1…*{ TypeName «Identifier» ';' } '}' ;
-pub type StructDefinition = struct_definition::_T0;
+pub type StructDefinition = Box<struct_definition::_T0>;
 pub mod struct_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -1363,13 +1607,13 @@ pub mod struct_definition {
         pub r#struct: WithNoise<FixedTerminal<6usize>>,
         pub identifier: Identifier,
         pub open_brace_char: WithNoise<FixedTerminal<1>>,
-        pub _t2s: Vec<struct_definition::_T2>,
+        pub _t2s: Vec<Box<struct_definition::_T2>>,
         pub close_brace_char: WithNoise<FixedTerminal<1>>,
     }
 }
 
 /// UsingDirective = 'using' ( IdentifierPath | '{' 1…*{ IdentifierPath / ',' } '}' ) 'for' ( '*' | TypeName ) [ 'global' ] ';' ;
-pub type UsingDirective = using_directive::_T0;
+pub type UsingDirective = Box<using_directive::_T0>;
 pub mod using_directive {
     #[allow(unused_imports)]
     use super::*;
@@ -1384,7 +1628,7 @@ pub mod using_directive {
     }
     pub enum UsingDirective {
         IdentifierPath(IdentifierPath),
-        _T1(using_directive::_T1),
+        _T1(Box<using_directive::_T1>),
     }
     pub enum UsingDirective {
         StarChar(WithNoise<FixedTerminal<1>>),
@@ -1401,7 +1645,7 @@ pub mod using_directive {
 }
 
 /// VariableDeclaration = TypeName [ DataLocation ] «Identifier» ;
-pub type VariableDeclaration = variable_declaration::_T0;
+pub type VariableDeclaration = Box<variable_declaration::_T0>;
 pub mod variable_declaration {
     #[allow(unused_imports)]
     use super::*;
@@ -1413,7 +1657,7 @@ pub mod variable_declaration {
 }
 
 /// YulBlock = '{' { YulStatement } '}' ;
-pub type YulBlock = yul_block::_T0;
+pub type YulBlock = Box<yul_block::_T0>;
 pub mod yul_block {
     #[allow(unused_imports)]
     use super::*;
@@ -1425,7 +1669,7 @@ pub mod yul_block {
 }
 
 /// AssemblyStatement = 'assembly' [ '"evmasm"' ] [ AssemblyFlags ] YulBlock ;
-pub type AssemblyStatement = assembly_statement::_T0;
+pub type AssemblyStatement = Box<assembly_statement::_T0>;
 pub mod assembly_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1450,7 +1694,7 @@ pub mod directive {
 }
 
 /// ErrorDefinition = 'error' «Identifier» '(' { ErrorParameter / ',' } ')' ';' ;
-pub type ErrorDefinition = error_definition::_T0;
+pub type ErrorDefinition = Box<error_definition::_T0>;
 pub mod error_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -1469,7 +1713,7 @@ pub mod error_definition {
 }
 
 /// EventDefinition = 'event' «Identifier» '(' { EventParameter / ',' } ')' [ 'anonymous' ] ';' ;
-pub type EventDefinition = event_definition::_T0;
+pub type EventDefinition = Box<event_definition::_T0>;
 pub mod event_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -1489,10 +1733,36 @@ pub mod event_definition {
 }
 
 /// Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnarySuffixExpression | UnaryPrefixExpression | FunctionCallExpression | FunctionCallOptionsExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
-pub type Expression = ();
+pub type Expression = Box<expression::Expression>;
+pub mod expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub enum Expression {
+        AssignmentExpression(assignment_expression::E),
+        ConditionalExpression(conditional_expression::E),
+        OrExpression(or_expression::E),
+        AndExpression(and_expression::E),
+        EqualityComparisonExpression(equality_comparison_expression::E),
+        OrderComparisonExpression(order_comparison_expression::E),
+        BitOrExpression(bit_or_expression::E),
+        BitXOrExpression(bit_x_or_expression::E),
+        BitAndExpression(bit_and_expression::E),
+        ShiftExpression(shift_expression::E),
+        AddSubExpression(add_sub_expression::E),
+        MulDivModExpression(mul_div_mod_expression::E),
+        ExponentiationExpression(exponentiation_expression::E),
+        UnarySuffixExpression(unary_suffix_expression::E),
+        UnaryPrefixExpression(unary_prefix_expression::E),
+        FunctionCallExpression(function_call_expression::E),
+        FunctionCallOptionsExpression(function_call_options_expression::E),
+        MemberAccessExpression(member_access_expression::E),
+        IndexAccessExpression(index_access_expression::E),
+        PrimaryExpression(primary_expression::E),
+    }
+}
 
 /// VariableDeclarationTuple = '(' { ',' } VariableDeclaration { ',' [ VariableDeclaration ] } ')' ;
-pub type VariableDeclarationTuple = variable_declaration_tuple::_T0;
+pub type VariableDeclarationTuple = Box<variable_declaration_tuple::_T0>;
 pub mod variable_declaration_tuple {
     #[allow(unused_imports)]
     use super::*;
@@ -1504,13 +1774,13 @@ pub mod variable_declaration_tuple {
         pub open_paren_char: WithNoise<FixedTerminal<1>>,
         pub comma_chars: usize,
         pub variable_declaration: VariableDeclaration,
-        pub _t3s: Vec<variable_declaration_tuple::_T3>,
+        pub _t3s: Vec<Box<variable_declaration_tuple::_T3>>,
         pub close_paren_char: WithNoise<FixedTerminal<1>>,
     }
 }
 
 /// ConstantDefinition = TypeName 'constant' «Identifier» '=' Expression ';' ;
-pub type ConstantDefinition = constant_definition::_T0;
+pub type ConstantDefinition = Box<constant_definition::_T0>;
 pub mod constant_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -1525,7 +1795,7 @@ pub mod constant_definition {
 }
 
 /// DoWhileStatement = 'do' Statement 'while' '(' Expression ')' ';' ;
-pub type DoWhileStatement = do_while_statement::_T0;
+pub type DoWhileStatement = Box<do_while_statement::_T0>;
 pub mod do_while_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1541,7 +1811,7 @@ pub mod do_while_statement {
 }
 
 /// EmitStatement = 'emit' Expression ArgumentList ';' ;
-pub type EmitStatement = emit_statement::_T0;
+pub type EmitStatement = Box<emit_statement::_T0>;
 pub mod emit_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1554,7 +1824,7 @@ pub mod emit_statement {
 }
 
 /// ExpressionStatement = Expression ';' ;
-pub type ExpressionStatement = expression_statement::_T0;
+pub type ExpressionStatement = Box<expression_statement::_T0>;
 pub mod expression_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1565,7 +1835,7 @@ pub mod expression_statement {
 }
 
 /// IfStatement = 'if' '(' Expression ')' Statement [ 'else' Statement ] ;
-pub type IfStatement = if_statement::_T0;
+pub type IfStatement = Box<if_statement::_T0>;
 pub mod if_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1579,12 +1849,12 @@ pub mod if_statement {
         pub expression: Expression,
         pub close_paren_char: WithNoise<FixedTerminal<1>>,
         pub statement: Statement,
-        pub _t1: Option<if_statement::_T1>,
+        pub _t1: Option<Box<if_statement::_T1>>,
     }
 }
 
 /// ReturnStatement = 'return' [ Expression ] ';' ;
-pub type ReturnStatement = return_statement::_T0;
+pub type ReturnStatement = Box<return_statement::_T0>;
 pub mod return_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1596,7 +1866,7 @@ pub mod return_statement {
 }
 
 /// RevertStatement = 'revert' Expression ArgumentList ';' ;
-pub type RevertStatement = revert_statement::_T0;
+pub type RevertStatement = Box<revert_statement::_T0>;
 pub mod revert_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1609,7 +1879,7 @@ pub mod revert_statement {
 }
 
 /// StateVariableDeclaration = TypeName { StateVariableAttribute } «Identifier» [ '=' Expression ] ';' ;
-pub type StateVariableDeclaration = state_variable_declaration::_T0;
+pub type StateVariableDeclaration = Box<state_variable_declaration::_T0>;
 pub mod state_variable_declaration {
     #[allow(unused_imports)]
     use super::*;
@@ -1621,13 +1891,13 @@ pub mod state_variable_declaration {
         pub type_name: TypeName,
         pub state_variable_attributes: Vec<StateVariableAttribute>,
         pub identifier: Identifier,
-        pub _t2: Option<state_variable_declaration::_T2>,
+        pub _t2: Option<Box<state_variable_declaration::_T2>>,
         pub semicolon_char: WithNoise<FixedTerminal<1>>,
     }
 }
 
 /// TryStatement = 'try' Expression [ 'returns' NonEmptyParameterList ] Block 1…*{ CatchClause } ;
-pub type TryStatement = try_statement::_T0;
+pub type TryStatement = Box<try_statement::_T0>;
 pub mod try_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1638,14 +1908,14 @@ pub mod try_statement {
     pub struct _T0 {
         pub r#try: WithNoise<FixedTerminal<3usize>>,
         pub expression: Expression,
-        pub _t1: Option<try_statement::_T1>,
+        pub _t1: Option<Box<try_statement::_T1>>,
         pub block: Block,
         pub catch_clauses: Vec<CatchClause>,
     }
 }
 
 /// VariableDeclarationStatement = ( VariableDeclaration [ '=' Expression ] | VariableDeclarationTuple '=' Expression ) ';' ;
-pub type VariableDeclarationStatement = variable_declaration_statement::_T0;
+pub type VariableDeclarationStatement = Box<variable_declaration_statement::_T0>;
 pub mod variable_declaration_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1655,7 +1925,7 @@ pub mod variable_declaration_statement {
     }
     pub struct _T1 {
         pub variable_declaration: VariableDeclaration,
-        pub _t2: Option<variable_declaration_statement::_T2>,
+        pub _t2: Option<Box<variable_declaration_statement::_T2>>,
     }
     pub struct _T3 {
         pub variable_declaration_tuple: VariableDeclarationTuple,
@@ -1663,8 +1933,8 @@ pub mod variable_declaration_statement {
         pub expression: Expression,
     }
     pub enum VariableDeclarationStatement {
-        _T1(variable_declaration_statement::_T1),
-        _T3(variable_declaration_statement::_T3),
+        _T1(Box<variable_declaration_statement::_T1>),
+        _T3(Box<variable_declaration_statement::_T3>),
     }
     pub struct _T0 {
         pub variable_declaration_statement:
@@ -1674,7 +1944,7 @@ pub mod variable_declaration_statement {
 }
 
 /// WhileStatement = 'while' '(' Expression ')' Statement ;
-pub type WhileStatement = while_statement::_T0;
+pub type WhileStatement = Box<while_statement::_T0>;
 pub mod while_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1699,7 +1969,7 @@ pub mod simple_statement {
 }
 
 /// ForStatement = 'for' '(' ( SimpleStatement | ';' ) ( ExpressionStatement | ';' ) [ Expression ] ')' Statement ;
-pub type ForStatement = for_statement::_T0;
+pub type ForStatement = Box<for_statement::_T0>;
 pub mod for_statement {
     #[allow(unused_imports)]
     use super::*;
@@ -1745,7 +2015,7 @@ pub mod statement {
 }
 
 /// Block = '{' { Statement | UncheckedBlock } '}' ;
-pub type Block = block::_T0;
+pub type Block = Box<block::_T0>;
 pub mod block {
     #[allow(unused_imports)]
     use super::*;
@@ -1761,7 +2031,7 @@ pub mod block {
 }
 
 /// ConstructorDefinition = 'constructor' ParameterList { ConstructorAttribute } Block ;
-pub type ConstructorDefinition = constructor_definition::_T0;
+pub type ConstructorDefinition = Box<constructor_definition::_T0>;
 pub mod constructor_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -1774,7 +2044,7 @@ pub mod constructor_definition {
 }
 
 /// FallbackFunctionDefinition = 'fallback' ParameterList { FallbackFunctionAttribute } [ 'returns' NonEmptyParameterList ] ( ';' | Block ) ;
-pub type FallbackFunctionDefinition = fallback_function_definition::_T0;
+pub type FallbackFunctionDefinition = Box<fallback_function_definition::_T0>;
 pub mod fallback_function_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -1790,14 +2060,14 @@ pub mod fallback_function_definition {
         pub fallback: WithNoise<FixedTerminal<8usize>>,
         pub parameter_list: ParameterList,
         pub fallback_function_attributes: Vec<FallbackFunctionAttribute>,
-        pub _t2: Option<fallback_function_definition::_T2>,
+        pub _t2: Option<Box<fallback_function_definition::_T2>>,
         pub fallback_function_definition:
             Box<fallback_function_definition::FallbackFunctionDefinition>,
     }
 }
 
 /// FunctionDefinition = 'function' ( «Identifier» | 'fallback' | 'receive' ) ParameterList { FunctionAttribute } [ 'returns' NonEmptyParameterList ] ( ';' | Block ) ;
-pub type FunctionDefinition = function_definition::_T0;
+pub type FunctionDefinition = Box<function_definition::_T0>;
 pub mod function_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -1818,13 +2088,13 @@ pub mod function_definition {
         pub function_definition_1: Box<function_definition::FunctionDefinition>,
         pub parameter_list: ParameterList,
         pub function_attributes: Vec<FunctionAttribute>,
-        pub _t2: Option<function_definition::_T2>,
+        pub _t2: Option<Box<function_definition::_T2>>,
         pub function_definition_2: Box<function_definition::FunctionDefinition>,
     }
 }
 
 /// ModifierDefinition = 'modifier' «Identifier» [ ParameterList ] { MethodAttribute } ( ';' | Block ) ;
-pub type ModifierDefinition = modifier_definition::_T0;
+pub type ModifierDefinition = Box<modifier_definition::_T0>;
 pub mod modifier_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -1842,7 +2112,7 @@ pub mod modifier_definition {
 }
 
 /// ReceiveFunctionDefinition = 'receive' '(' ')' { ReceiveFunctionAttribute } ( ';' | Block ) ;
-pub type ReceiveFunctionDefinition = receive_function_definition::_T0;
+pub type ReceiveFunctionDefinition = Box<receive_function_definition::_T0>;
 pub mod receive_function_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -1882,7 +2152,7 @@ pub mod contract_body_element {
 }
 
 /// ContractDefinition = [ 'abstract' ] 'contract' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
-pub type ContractDefinition = contract_definition::_T0;
+pub type ContractDefinition = Box<contract_definition::_T0>;
 pub mod contract_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -1898,7 +2168,7 @@ pub mod contract_definition {
 }
 
 /// InterfaceDefinition = 'interface' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
-pub type InterfaceDefinition = interface_definition::_T0;
+pub type InterfaceDefinition = Box<interface_definition::_T0>;
 pub mod interface_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -1913,7 +2183,7 @@ pub mod interface_definition {
 }
 
 /// LibraryDefinition = 'library' «Identifier» '{' { ContractBodyElement } '}' ;
-pub type LibraryDefinition = library_definition::_T0;
+pub type LibraryDefinition = Box<library_definition::_T0>;
 pub mod library_definition {
     #[allow(unused_imports)]
     use super::*;
@@ -1945,7 +2215,7 @@ pub mod definition {
 }
 
 /// SourceUnit = «IGNORE» { Directive | Definition } $ ;
-pub type SourceUnit = source_unit::_T0;
+pub type SourceUnit = Box<source_unit::_T0>;
 pub mod source_unit {
     #[allow(unused_imports)]
     use super::*;
