@@ -6,10 +6,7 @@ use std::{
 
 use quote::quote;
 
-use super::{
-    combinator_tree::{CombinatorTree, CombinatorTreeRoot, ProductionGeneratedCode},
-    rustfmt::rustfmt,
-};
+use super::{combinator_tree::ProductionGeneratedCode, rustfmt::rustfmt};
 use crate::schema::*;
 
 pub struct GenerationContext {
@@ -188,175 +185,31 @@ impl Production {
             tree_implementations.push(tree_implementation.to_string());
         }
 
-        let tree_interface = format!(
-            "{}\n\n{}",
-            quote!(
-                #[allow(unused_imports)]
-                use serde::{Serialize, Deserialize};
+        GeneratedOutput {
+            tree_interface: vec![
+                boilerplate::tree_interface().to_string(),
+                tree_interfaces.join("\n\n"),
+            ]
+            .join("\n\n"),
 
-                pub trait DefaultTest {
-                    fn is_default(&self) -> bool {
-                        false
-                    }
-                }
+            tree_implementation: vec![
+                boilerplate::tree_implementation().to_string(),
+                tree_implementations.join("\n\n"),
+            ]
+            .join("\n\n"),
 
-                #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
-                pub struct FixedTerminal<const N: usize>();
-
-                #[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
-                pub struct WithNoise<T>
-                where
-                    T: Sized + Clone + PartialEq + Hash + Serialize + Deserialize + Default,
-                {
-                    leading: Ignore,
-                    content: T,
-                    trailing: Ignore,
-                }
-            )
-            .to_string(),
-            tree_interfaces.join("\n\n")
-        );
-
-        let tree_implementation = format!(
-            "{}\n\n{}",
-            quote!(
-                use super::tree_interface::*;
-
-                impl<T: DefaultTest> DefaultTest for Box<T> {
-                    fn is_default(&self) -> bool {
-                        self.as_ref().is_default()
-                    }
-                }
-
-                impl<T> DefaultTest for Vec<T> {
-                    fn is_default(&self) -> bool {
-                      self.is_empty()
-                    }
-                }
-
-                impl<T> DefaultTest for Option<T> {
-                    fn is_default(&self) -> bool {
-                      self.is_none()
-                    }
-                }
-                impl DefaultTest for () {
-                    fn is_default(&self) -> bool {
-                      true
-                    }
-                }
-
-                impl DefaultTest for usize {
-                    fn is_default(&self) -> bool {
-                        *self == 0
-                    }
-                }
-
-                impl<const N: usize> DefaultTest for FixedTerminal<N> {
-                    fn is_default(&self) -> bool {
-                        true
-                    }
-                }
-            )
-            .to_string(),
-            tree_implementations.join("\n\n")
-        );
-
-        let parser_interface = quote!(
-            use chumsky::prelude::{Simple, BoxedParser};
-
-            pub type ErrorType = Simple<char>;
-            pub type ParserType<T> = BoxedParser<'static, char, T, ErrorType>;
-
-            use super::tree_interface::*;
-
-            #[allow(dead_code)]
-            pub struct Parsers { #(#parser_field_definitions),* }
-        )
-        .to_string();
-
-        let parser_implementation = {
-            vec![
+            parser_interface: vec![
+                boilerplate::parser_interface().to_string(),
                 quote!(
-                    use chumsky::Parser;
-                    use chumsky::prelude::*;
-                    use chumsky::primitive::Just;
-                    use serde::{Serialize, Deserialize};
-                    use std::hash::Hash;
-
-                    use super::parser_interface::*;
-                    use super::tree_interface::*;
-
                     #[allow(dead_code)]
-                    fn repetition_mapper<E, S>((e, es): (E, Vec<(S, E)>)) -> (Vec<E>, Vec<S>) {
-                        let mut expressions = vec![e];
-                        let mut separators = vec![];
-                        for (s, e) in es.into_iter() {
-                            separators.push(s);
-                            expressions.push(e);
-                        }
-                        (expressions, separators)
-                    }
-
-                    #[allow(dead_code)]
-                    fn difference<M, MO, S, SO>(
-                        minuend: M,
-                        subtrahend: S,
-                    ) -> impl Parser<char, MO, Error = ErrorType>
-                    where
-                        M: Clone + Parser<char, MO, Error = ErrorType>,
-                        S: Parser<char, SO, Error = ErrorType>,
-                    {
-                        // TODO This could be much more efficient if we were able
-                        // to conditionally rewind
-                        let minuend_end =
-                            minuend.clone().map_with_span(|_, span| span.end).rewind();
-                        let subtrahend_end = subtrahend
-                            .map_with_span(|_, span| span.end)
-                            .rewind()
-                            .or_else(|_| Ok(0));
-                        minuend_end
-                            .then(subtrahend_end)
-                            .validate(|(m, s), span, emit| {
-                                if m == s {
-                                    emit(Simple::custom(span, "subtrahend matches minuend"))
-                                }
-                            })
-                            .ignore_then(minuend)
-                    }
-
-                    #[allow(dead_code)]
-                    #[inline]
-                    fn terminal(str: &str) -> Just<char, &str, ErrorType> {
-                        just(str)
-                    }
-
-                    #[allow(dead_code)]
-                    fn with_noise<C, CO>(
-                        content: C,
-                    ) -> impl Parser<char, WithNoise<CO>, Error = ErrorType>
-                    where
-                        C: Clone + Parser<char, CO, Error = ErrorType>,
-                        CO: Sized
-                            + Clone
-                            + PartialEq
-                            + Eq
-                            + Hash
-                            + Serialize
-                            + Deserialize
-                            + Default,
-                    {
-                        ignore_parser
-                            .clone()
-                            .then(content)
-                            .then(ignore_parser.clone())
-                            .map(|((leading, content), trailing)| N {
-                                leading,
-                                content,
-                                trailing,
-                            })
-                    }
+                    pub struct Parsers { #(#parser_field_definitions),* }
                 )
                 .to_string(),
+            ]
+            .join("\n\n"),
+
+            parser_implementation: vec![
+                boilerplate::parser_implementation().to_string(),
                 "impl Parsers { pub fn new() -> Self {".to_owned(),
                 parser_implementation_predeclarations.join("\n\n"),
                 parser_implementations.join("\n\n"),
@@ -368,95 +221,158 @@ impl Production {
                 .to_string(),
                 "}}".to_owned(),
             ]
-            .join("\n\n")
-        };
+            .join("\n\n"),
 
-        let mod_file = quote!(
-            pub mod parser_implementation;
-            pub mod parser_interface;
-            pub mod tree_implementation;
-            pub mod tree_interface;
+            mod_file: quote!(
+                pub mod parser_implementation;
+                pub mod parser_interface;
+                pub mod tree_implementation;
+                pub mod tree_interface;
+            )
+            .to_string(),
+        }
+    }
+}
+
+mod boilerplate {
+    use proc_macro2::TokenStream;
+    use quote::quote;
+
+    pub fn tree_interface() -> TokenStream {
+        quote!(
+            #[allow(unused_imports)]
+            use serde::{Serialize, Deserialize};
+
+            pub trait DefaultTest {
+                fn is_default(&self) -> bool {
+                    false
+                }
+            }
+
+            #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+            pub struct FixedSizeTerminal<const N: usize>();
+
+            #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+            pub struct FixedSizeTerminalWithNoise<const N: usize> {
+                pub leading: Ignore,
+                pub content: FixedSizeTerminal<N>,
+                pub trailing: Ignore,
+            }
+
+            pub type VariableSizeTerminal = usize;
+
+            #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+            pub struct VariableSizeTerminalWithNoise {
+                pub leading: Ignore,
+                pub content: VariableSizeTerminal,
+                pub trailing: Ignore,
+            }
         )
-        .to_string();
-
-        GeneratedOutput {
-            tree_interface,
-            tree_implementation,
-            parser_interface,
-            parser_implementation,
-            mod_file,
-        }
-    }
-}
-
-impl CombinatorTreeRoot {
-    fn referenced_identifiers(&self) -> BTreeSet<String> {
-        self.root.referenced_identifiers()
-    }
-}
-
-impl CombinatorTree {
-    fn referenced_identifiers(&self) -> BTreeSet<String> {
-        let mut accum = BTreeSet::new();
-        self.collect_identifiers(&mut accum);
-        accum
     }
 
-    fn collect_identifiers(&self, accum: &mut BTreeSet<String>) {
-        match self {
-            CombinatorTree::Difference {
-                minuend,
-                subtrahend,
-            } => {
-                minuend.collect_identifiers(accum);
-                subtrahend.collect_identifiers(accum)
-            }
-            CombinatorTree::Lookahead { expr, lookahead } => {
-                expr.collect_identifiers(accum);
-                lookahead.collect_identifiers(accum);
-            }
-            CombinatorTree::Sequence { elements, .. } => {
-                for (_, member) in elements {
-                    member.collect_identifiers(accum);
+    pub fn tree_implementation() -> TokenStream {
+        quote!(
+            use super::tree_interface::*;
+
+            impl<T: DefaultTest> DefaultTest for Box<T> {
+                fn is_default(&self) -> bool {
+                    self.as_ref().is_default()
                 }
             }
-            CombinatorTree::Choice { choices, .. } => {
-                for (_, member) in choices {
-                    member.collect_identifiers(accum);
+
+            impl<T> DefaultTest for Vec<T> {
+                fn is_default(&self) -> bool {
+                  self.is_empty()
                 }
             }
-            CombinatorTree::Optional { expr } => expr.collect_identifiers(accum),
-            CombinatorTree::SeparatedBy {
-                expr, separator, ..
-            } => {
-                expr.collect_identifiers(accum);
-                separator.collect_identifiers(accum);
-            }
-            CombinatorTree::Repeated { expr, .. } => expr.collect_identifiers(accum),
-            CombinatorTree::Expression { members, .. } => {
-                for pr in members {
-                    let p = pr.upgrade().unwrap();
-                    accum.insert(p.name.clone());
+
+            impl<T> DefaultTest for Option<T> {
+                fn is_default(&self) -> bool {
+                  self.is_none()
                 }
             }
-            CombinatorTree::ExpressionMember {
-                parent_name,
-                next_sibling_name,
-                operator,
-                ..
-            } => {
-                accum.insert(parent_name.raw());
-                if let Some(n) = next_sibling_name {
-                    accum.insert(n.raw());
+            impl DefaultTest for () {
+                fn is_default(&self) -> bool {
+                  true
                 }
-                operator.collect_identifiers(accum);
             }
-            CombinatorTree::Reference { production } => {
-                accum.insert(production.upgrade().unwrap().name.clone());
+
+            impl DefaultTest for VariableSizeTerminal {
+                fn is_default(&self) -> bool {
+                    *self == 0
+                }
             }
-            CombinatorTree::TerminalTrie { .. }
-            | CombinatorTree::CharacterFilter { .. }
-            | CombinatorTree::End => {}
-        }
+
+            impl<const N: usize> DefaultTest for FixedSizeTerminal<N> {
+                fn is_default(&self) -> bool {
+                    true
+                }
+            }
+        )
+    }
+
+    pub fn parser_interface() -> TokenStream {
+        quote!(
+            use chumsky::prelude::{Simple, BoxedParser};
+
+            pub type ErrorType = Simple<char>;
+            pub type ParserType<T> = BoxedParser<'static, char, T, ErrorType>;
+
+            use super::tree_interface::*;
+        )
+    }
+
+    pub fn parser_implementation() -> TokenStream {
+        quote!(
+            use chumsky::Parser;
+            use chumsky::prelude::*;
+            use chumsky::primitive::Just;
+
+            use super::parser_interface::*;
+            use super::tree_interface::*;
+
+            #[allow(dead_code)]
+            fn repetition_mapper<E, S>((e, es): (E, Vec<(S, E)>)) -> (Vec<E>, Vec<S>) {
+                let mut elements = vec![e];
+                let mut separators = vec![];
+                for (s, e) in es.into_iter() {
+                    separators.push(s);
+                    elements.push(e);
+                }
+                (elements, separators)
+            }
+
+            #[allow(dead_code)]
+            fn difference<M, MO, S, SO>(
+                minuend: M,
+                subtrahend: S,
+            ) -> impl Parser<char, MO, Error = ErrorType>
+            where
+                M: Clone + Parser<char, MO, Error = ErrorType>,
+                S: Parser<char, SO, Error = ErrorType>,
+            {
+                // TODO This could be much more efficient if we were able
+                // to conditionally rewind
+                let minuend_end = minuend.clone().map_with_span(|_, span| span.end).rewind();
+                let subtrahend_end = subtrahend
+                    .map_with_span(|_, span| span.end)
+                    .rewind()
+                    .or_else(|_| Ok(0));
+                minuend_end
+                    .then(subtrahend_end)
+                    .validate(|(m, s), span, emit| {
+                        if m == s {
+                            emit(Simple::custom(span, "subtrahend matches minuend"))
+                        }
+                    })
+                    .ignore_then(minuend)
+            }
+
+            #[allow(dead_code)]
+            #[inline]
+            fn terminal(str: &str) -> Just<char, &str, ErrorType> {
+                just(str)
+            }
+        )
     }
 }

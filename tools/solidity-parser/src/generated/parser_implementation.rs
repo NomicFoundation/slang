@@ -3,17 +3,15 @@ use super::tree_interface::*;
 use chumsky::prelude::*;
 use chumsky::primitive::Just;
 use chumsky::Parser;
-use serde::{Deserialize, Serialize};
-use std::hash::Hash;
 #[allow(dead_code)]
 fn repetition_mapper<E, S>((e, es): (E, Vec<(S, E)>)) -> (Vec<E>, Vec<S>) {
-    let mut expressions = vec![e];
+    let mut elements = vec![e];
     let mut separators = vec![];
     for (s, e) in es.into_iter() {
         separators.push(s);
-        expressions.push(e);
+        elements.push(e);
     }
-    (expressions, separators)
+    (elements, separators)
 }
 #[allow(dead_code)]
 fn difference<M, MO, S, SO>(minuend: M, subtrahend: S) -> impl Parser<char, MO, Error = ErrorType>
@@ -40,22 +38,6 @@ where
 fn terminal(str: &str) -> Just<char, &str, ErrorType> {
     just(str)
 }
-#[allow(dead_code)]
-fn with_noise<C, CO>(content: C) -> impl Parser<char, WithNoise<CO>, Error = ErrorType>
-where
-    C: Clone + Parser<char, CO, Error = ErrorType>,
-    CO: Sized + Clone + PartialEq + Eq + Hash + Serialize + Deserialize + Default,
-{
-    ignore_parser
-        .clone()
-        .then(content)
-        .then(ignore_parser.clone())
-        .map(|((leading, content), trailing)| N {
-            leading,
-            content,
-            trailing,
-        })
-}
 
 impl Parsers {
     pub fn new() -> Self {
@@ -74,54 +56,65 @@ impl Parsers {
         // «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
         let comment_parser = terminal("/*")
             .ignored()
-            .map(|_| FixedTerminal::<2usize>())
+            .map(|_| FixedSizeTerminal::<2usize>())
             .then(
                 choice((
                     filter(|&c: &char| c != '*')
-                        .map(|_| FixedTerminal::<1>())
-                        .map(|v| Box::new(comment::Comment::NotStarChar(v))),
+                        .map(|_| FixedSizeTerminal::<1>())
+                        .map(|v| Box::new(comment::_T2::NotStarChar(v))),
                     just('*')
-                        .map(|_| FixedTerminal::<1>())
+                        .map(|_| FixedSizeTerminal::<1>())
                         .repeated()
                         .at_least(1usize)
                         .map(|v| v.len())
                         .then(
-                            filter(|&c: &char| c != '*' && c != '/').map(|_| FixedTerminal::<1>()),
+                            filter(|&c: &char| c != '*' && c != '/')
+                                .map(|_| FixedSizeTerminal::<1>()),
                         )
-                        .map(|v| Box::new(comment::_T2::new(v)))
-                        .map(|v| Box::new(comment::Comment::_T2(v))),
+                        .map(|v| comment::_T3::from_parse(v))
+                        .map(|v| Box::new(comment::_T2::_T3(v))),
                 ))
                 .repeated()
                 .then(
                     just('*')
-                        .map(|_| FixedTerminal::<1>())
+                        .map(|_| FixedSizeTerminal::<1>())
                         .repeated()
                         .map(|v| v.len()),
                 )
-                .map(|v| Box::new(comment::Content::new(v))),
+                .map(|v| comment::Content::from_parse(v)),
             )
-            .then(terminal("*/").ignored().map(|_| FixedTerminal::<2usize>()))
-            .map(|v| Box::new(comment::_T0::new(v)))
+            .then(
+                terminal("*/")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<2usize>()),
+            )
+            .map(|v| comment::_T0::from_parse(v))
             .boxed();
 
         // «DecimalInteger» = 1…*{ '0'…'9' / [ '_' ] } ;
         let decimal_integer_parser = filter(|&c: &char| ('0' <= c && c <= '9'))
-            .map(|_| FixedTerminal::<1>())
+            .map(|_| FixedSizeTerminal::<1>())
             .then(
                 just('_')
-                    .map(|_| FixedTerminal::<1>())
+                    .map(|_| FixedSizeTerminal::<1>())
                     .or_not()
-                    .then(filter(|&c: &char| ('0' <= c && c <= '9')).map(|_| FixedTerminal::<1>()))
+                    .then(
+                        filter(|&c: &char| ('0' <= c && c <= '9'))
+                            .map(|_| FixedSizeTerminal::<1>()),
+                    )
                     .repeated(),
             )
             .map(repetition_mapper)
-            .map(|v| decimal_integer::_T0::new(v))
+            .map(|(elements, separators)| decimal_integer::_T0 {
+                elements,
+                separators,
+            })
             .boxed();
 
         // «FixedBytesType» = 'bytes' ( '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15' | '16' | '17' | '18' | '19' | '20' | '21' | '22' | '23' | '24' | '25' | '26' | '27' | '28' | '29' | '30' | '31' | '32' ) ;
         let fixed_bytes_type_parser = terminal("bytes")
             .ignored()
-            .map(|_| FixedTerminal::<5usize>())
+            .map(|_| FixedSizeTerminal::<5usize>())
             .then(choice::<_, ErrorType>((
                 terminal("1").ignore_then(choice((
                     terminal("0").map(|_| 2usize),
@@ -162,63 +155,66 @@ impl Parsers {
                 terminal("8").map(|_| 1usize),
                 terminal("9").map(|_| 1usize),
             )))
-            .map(|v| Box::new(fixed_bytes_type::_T0::new(v)))
+            .map(|v| fixed_bytes_type::_T0::from_parse(v))
             .boxed();
 
         // «FixedType» = 'fixed' [ '1'…'9' { '0'…'9' } 'x' '1'…'9' { '0'…'9' } ] ;
         let fixed_type_parser = terminal("fixed")
             .ignored()
-            .map(|_| FixedTerminal::<5usize>())
+            .map(|_| FixedSizeTerminal::<5usize>())
             .then(
                 filter(|&c: &char| ('1' <= c && c <= '9'))
-                    .map(|_| FixedTerminal::<1>())
+                    .map(|_| FixedSizeTerminal::<1>())
                     .then(
                         filter(|&c: &char| ('0' <= c && c <= '9'))
-                            .map(|_| FixedTerminal::<1>())
+                            .map(|_| FixedSizeTerminal::<1>())
                             .repeated()
                             .map(|v| v.len()),
                     )
-                    .then(just('x').map(|_| FixedTerminal::<1>()))
-                    .then(filter(|&c: &char| ('1' <= c && c <= '9')).map(|_| FixedTerminal::<1>()))
+                    .then(just('x').map(|_| FixedSizeTerminal::<1>()))
+                    .then(
+                        filter(|&c: &char| ('1' <= c && c <= '9'))
+                            .map(|_| FixedSizeTerminal::<1>()),
+                    )
                     .then(
                         filter(|&c: &char| ('0' <= c && c <= '9'))
-                            .map(|_| FixedTerminal::<1>())
+                            .map(|_| FixedSizeTerminal::<1>())
                             .repeated()
                             .map(|v| v.len()),
                     )
-                    .map(|v| Box::new(fixed_type::_T1::new(v)))
+                    .map(|v| fixed_type::_T1::from_parse(v))
                     .or_not(),
             )
-            .map(|v| Box::new(fixed_type::_T0::new(v)))
+            .map(|v| fixed_type::_T0::from_parse(v))
             .boxed();
 
         // «HexByteEscape» = 'x' 2…2*{ «HexCharacter» } ;
         let hex_byte_escape_parser = just('x')
-            .map(|_| FixedTerminal::<1>())
+            .map(|_| FixedSizeTerminal::<1>())
             .then(
                 filter(|&c: &char| {
                     ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
                 })
-                .map(|_| FixedTerminal::<1>())
+                .map(|_| FixedSizeTerminal::<1>())
                 .repeated()
                 .exactly(2usize)
                 .map(|v| v.len()),
             )
-            .map(|v| Box::new(hex_byte_escape::_T0::new(v)))
+            .map(|v| hex_byte_escape::_T0::from_parse(v))
             .boxed();
 
         // «HexNumber» = '0' 'x' 1…*{ «HexCharacter» / [ '_' ] } ;
         let hex_number_parser = just('0')
-            .map(|_| FixedTerminal::<1>())
-            .then(just('x').map(|_| FixedTerminal::<1>()))
+            .map(|_| FixedSizeTerminal::<1>())
+            .then(just('x').map(|_| FixedSizeTerminal::<1>()))
             .then(
                 filter(|&c: &char| {
                     ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
                 })
-                .map(|_| FixedTerminal::<1>())
+                .map(|_| FixedSizeTerminal::<1>())
                 .then(
                     just('_')
-                        .map(|_| FixedTerminal::<1>())
+                        .map(|_| FixedSizeTerminal::<1>())
                         .or_not()
                         .then(
                             filter(|&c: &char| {
@@ -226,46 +222,49 @@ impl Parsers {
                                     || ('a' <= c && c <= 'f')
                                     || ('A' <= c && c <= 'F')
                             })
-                            .map(|_| FixedTerminal::<1>()),
+                            .map(|_| FixedSizeTerminal::<1>()),
                         )
                         .repeated(),
                 )
                 .map(repetition_mapper)
-                .map(|v| hex_number::_T1::new(v)),
+                .map(|(elements, separators)| hex_number::_T1 {
+                    elements,
+                    separators,
+                }),
             )
-            .map(|v| Box::new(hex_number::_T0::new(v)))
+            .map(|v| hex_number::_T0::from_parse(v))
             .boxed();
 
         // «LineComment» = '//' { ¬( '\u{a}' | '\u{d}' ) } ;
         let line_comment_parser = terminal("//")
             .ignored()
-            .map(|_| FixedTerminal::<2usize>())
+            .map(|_| FixedSizeTerminal::<2usize>())
             .then(
                 filter(|&c: &char| c != '\n' && c != '\r')
-                    .map(|_| FixedTerminal::<1>())
+                    .map(|_| FixedSizeTerminal::<1>())
                     .repeated()
                     .map(|v| v.len()),
             )
-            .map(|v| Box::new(line_comment::_T0::new(v)))
+            .map(|v| line_comment::_T0::from_parse(v))
             .boxed();
 
         // «PossiblySeparatedPairsOfHexDigits» = 1…*{ 2…2*{ «HexCharacter» } / [ '_' ] } ;
         let possibly_separated_pairs_of_hex_digits_parser = filter(|&c: &char| {
             ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
         })
-        .map(|_| FixedTerminal::<1>())
+        .map(|_| FixedSizeTerminal::<1>())
         .repeated()
         .exactly(2usize)
         .map(|v| v.len())
         .then(
             just('_')
-                .map(|_| FixedTerminal::<1>())
+                .map(|_| FixedSizeTerminal::<1>())
                 .or_not()
                 .then(
                     filter(|&c: &char| {
                         ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
                     })
-                    .map(|_| FixedTerminal::<1>())
+                    .map(|_| FixedSizeTerminal::<1>())
                     .repeated()
                     .exactly(2usize)
                     .map(|v| v.len()),
@@ -273,29 +272,34 @@ impl Parsers {
                 .repeated(),
         )
         .map(repetition_mapper)
-        .map(|v| possibly_separated_pairs_of_hex_digits::_T0::new(v))
+        .map(
+            |(elements, separators)| possibly_separated_pairs_of_hex_digits::_T0 {
+                elements,
+                separators,
+            },
+        )
         .boxed();
 
         // «PragmaDirective» = 'pragma' 1…*{ ¬';' } ';' ;
         let pragma_directive_parser = terminal("pragma")
             .ignored()
-            .map(|_| FixedTerminal::<6usize>())
+            .map(|_| FixedSizeTerminal::<6usize>())
             .then(
                 filter(|&c: &char| c != ';')
-                    .map(|_| FixedTerminal::<1>())
+                    .map(|_| FixedSizeTerminal::<1>())
                     .repeated()
                     .at_least(1usize)
                     .map(|v| v.len()),
             )
-            .then(just(';').map(|_| FixedTerminal::<1>()))
-            .map(|v| Box::new(pragma_directive::_T0::new(v)))
+            .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+            .map(|v| pragma_directive::_T0::from_parse(v))
             .boxed();
 
         // «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;
         let raw_identifier_parser = filter(|&c: &char| {
             c == '_' || c == '$' || ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z')
         })
-        .map(|_| FixedTerminal::<1>())
+        .map(|_| FixedSizeTerminal::<1>())
         .then(
             filter(|&c: &char| {
                 c == '_'
@@ -304,17 +308,17 @@ impl Parsers {
                     || ('A' <= c && c <= 'Z')
                     || ('0' <= c && c <= '9')
             })
-            .map(|_| FixedTerminal::<1>())
+            .map(|_| FixedSizeTerminal::<1>())
             .repeated()
             .map(|v| v.len()),
         )
-        .map(|v| Box::new(raw_identifier::_T0::new(v)))
+        .map(|v| raw_identifier::_T0::from_parse(v))
         .boxed();
 
         // «SignedIntegerType» = 'int' ( '8' | '16' | '24' | '32' | '40' | '48' | '56' | '64' | '72' | '80' | '88' | '96' | '104' | '112' | '120' | '128' | '136' | '144' | '152' | '160' | '168' | '176' | '184' | '192' | '200' | '208' | '216' | '224' | '232' | '240' | '248' | '256' ) ;
         let signed_integer_type_parser = terminal("int")
             .ignored()
-            .map(|_| FixedTerminal::<3usize>())
+            .map(|_| FixedSizeTerminal::<3usize>())
             .then(choice::<_, ErrorType>((
                 terminal("1").ignore_then(choice((
                     terminal("04").map(|_| 3usize),
@@ -365,27 +369,27 @@ impl Parsers {
                 ))),
                 terminal("96").map(|_| 2usize),
             )))
-            .map(|v| Box::new(signed_integer_type::_T0::new(v)))
+            .map(|v| signed_integer_type::_T0::from_parse(v))
             .boxed();
 
         // «UnicodeEscape» = 'u' 4…4*{ «HexCharacter» } ;
         let unicode_escape_parser = just('u')
-            .map(|_| FixedTerminal::<1>())
+            .map(|_| FixedSizeTerminal::<1>())
             .then(
                 filter(|&c: &char| {
                     ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
                 })
-                .map(|_| FixedTerminal::<1>())
+                .map(|_| FixedSizeTerminal::<1>())
                 .repeated()
                 .exactly(4usize)
                 .map(|v| v.len()),
             )
-            .map(|v| Box::new(unicode_escape::_T0::new(v)))
+            .map(|v| unicode_escape::_T0::from_parse(v))
             .boxed();
 
         // «Whitespace» = 1…*{ '\u{20}' | '\u{9}' | '\u{d}' | '\u{a}' } ;
         let whitespace_parser = filter(|&c: &char| c == ' ' || c == '\t' || c == '\r' || c == '\n')
-            .map(|_| FixedTerminal::<1>())
+            .map(|_| FixedSizeTerminal::<1>())
             .repeated()
             .at_least(1usize)
             .map(|v| v.len())
@@ -393,58 +397,58 @@ impl Parsers {
 
         // «YulDecimalNumberLiteral» = '0' | '1'…'9' { '0'…'9' } ;
         let yul_decimal_number_literal_parser = choice((
-            just('0').map(|_| FixedTerminal::<1>()).map(|v| {
-                Box::new(yul_decimal_number_literal::YulDecimalNumberLiteral::ZeroChar(v))
-            }),
+            just('0')
+                .map(|_| FixedSizeTerminal::<1>())
+                .map(|v| Box::new(yul_decimal_number_literal::_T0::ZeroChar(v))),
             filter(|&c: &char| ('1' <= c && c <= '9'))
-                .map(|_| FixedTerminal::<1>())
+                .map(|_| FixedSizeTerminal::<1>())
                 .then(
                     filter(|&c: &char| ('0' <= c && c <= '9'))
-                        .map(|_| FixedTerminal::<1>())
+                        .map(|_| FixedSizeTerminal::<1>())
                         .repeated()
                         .map(|v| v.len()),
                 )
-                .map(|v| Box::new(yul_decimal_number_literal::_T0::new(v)))
-                .map(|v| Box::new(yul_decimal_number_literal::YulDecimalNumberLiteral::_T0(v))),
+                .map(|v| yul_decimal_number_literal::_T1::from_parse(v))
+                .map(|v| Box::new(yul_decimal_number_literal::_T0::_T1(v))),
         ))
         .boxed();
 
         // «YulHexLiteral» = '0x' 1…*{ '0'…'9' | 'a'…'f' | 'A'…'F' } ;
         let yul_hex_literal_parser = terminal("0x")
             .ignored()
-            .map(|_| FixedTerminal::<2usize>())
+            .map(|_| FixedSizeTerminal::<2usize>())
             .then(
                 filter(|&c: &char| {
                     ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
                 })
-                .map(|_| FixedTerminal::<1>())
+                .map(|_| FixedSizeTerminal::<1>())
                 .repeated()
                 .at_least(1usize)
                 .map(|v| v.len()),
             )
-            .map(|v| Box::new(yul_hex_literal::_T0::new(v)))
+            .map(|v| yul_hex_literal::_T0::from_parse(v))
             .boxed();
 
         // «DecimalExponent» = ( 'e' | 'E' ) [ '-' ] «DecimalInteger» ;
         let decimal_exponent_parser = filter(|&c: &char| c == 'e' || c == 'E')
-            .map(|_| FixedTerminal::<1>())
-            .then(just('-').map(|_| FixedTerminal::<1>()).or_not())
+            .map(|_| FixedSizeTerminal::<1>())
+            .then(just('-').map(|_| FixedSizeTerminal::<1>()).or_not())
             .then(decimal_integer_parser.clone())
-            .map(|v| Box::new(decimal_exponent::_T0::new(v)))
+            .map(|v| decimal_exponent::_T0::from_parse(v))
             .boxed();
 
         // «DecimalFloat» = [ «DecimalInteger» ] '.' «DecimalInteger» ;
         let decimal_float_parser = decimal_integer_parser
             .clone()
             .or_not()
-            .then(just('.').map(|_| FixedTerminal::<1>()))
+            .then(just('.').map(|_| FixedSizeTerminal::<1>()))
             .then(decimal_integer_parser.clone())
-            .map(|v| Box::new(decimal_float::_T0::new(v)))
+            .map(|v| decimal_float::_T0::from_parse(v))
             .boxed();
 
         // «EscapeSequence» = '\\' ( «AsciiEscape» | «HexByteEscape» | «UnicodeEscape» ) ;
         let escape_sequence_parser = just('\\')
-            .map(|_| FixedTerminal::<1>())
+            .map(|_| FixedSizeTerminal::<1>())
             .then(choice((
                 filter(|&c: &char| {
                     c == 'n'
@@ -456,74 +460,74 @@ impl Parsers {
                         || c == '\n'
                         || c == '\r'
                 })
-                .map(|_| FixedTerminal::<1>())
-                .map(|v| Box::new(escape_sequence::EscapeSequence::_0(v))),
+                .map(|_| FixedSizeTerminal::<1>())
+                .map(|v| Box::new(escape_sequence::_T1::_0(v))),
                 hex_byte_escape_parser
                     .clone()
-                    .map(|v| Box::new(escape_sequence::EscapeSequence::HexByteEscape(v))),
+                    .map(|v| Box::new(escape_sequence::_T1::HexByteEscape(v))),
                 unicode_escape_parser
                     .clone()
-                    .map(|v| Box::new(escape_sequence::EscapeSequence::UnicodeEscape(v))),
+                    .map(|v| Box::new(escape_sequence::_T1::UnicodeEscape(v))),
             )))
-            .map(|v| Box::new(escape_sequence::_T0::new(v)))
+            .map(|v| escape_sequence::_T0::from_parse(v))
             .boxed();
 
         // «HexStringLiteral» = 'hex' ( '"' [ «PossiblySeparatedPairsOfHexDigits» ] '"' | '\'' [ «PossiblySeparatedPairsOfHexDigits» ] '\'' ) ;
         let hex_string_literal_parser = terminal("hex")
             .ignored()
-            .map(|_| FixedTerminal::<3usize>())
+            .map(|_| FixedSizeTerminal::<3usize>())
             .then(choice((
                 just('"')
-                    .map(|_| FixedTerminal::<1>())
+                    .map(|_| FixedSizeTerminal::<1>())
                     .then(
                         possibly_separated_pairs_of_hex_digits_parser
                             .clone()
                             .or_not(),
                     )
-                    .then(just('"').map(|_| FixedTerminal::<1>()))
-                    .map(|v| Box::new(hex_string_literal::_T1::new(v)))
-                    .map(|v| Box::new(hex_string_literal::HexStringLiteral::_T1(v))),
+                    .then(just('"').map(|_| FixedSizeTerminal::<1>()))
+                    .map(|v| hex_string_literal::_T2::from_parse(v))
+                    .map(|v| Box::new(hex_string_literal::_T1::_T2(v))),
                 just('\'')
-                    .map(|_| FixedTerminal::<1>())
+                    .map(|_| FixedSizeTerminal::<1>())
                     .then(
                         possibly_separated_pairs_of_hex_digits_parser
                             .clone()
                             .or_not(),
                     )
-                    .then(just('\'').map(|_| FixedTerminal::<1>()))
-                    .map(|v| Box::new(hex_string_literal::_T2::new(v)))
-                    .map(|v| Box::new(hex_string_literal::HexStringLiteral::_T2(v))),
+                    .then(just('\'').map(|_| FixedSizeTerminal::<1>()))
+                    .map(|v| hex_string_literal::_T3::from_parse(v))
+                    .map(|v| Box::new(hex_string_literal::_T1::_T3(v))),
             )))
-            .map(|v| Box::new(hex_string_literal::_T0::new(v)))
+            .map(|v| hex_string_literal::_T0::from_parse(v))
             .boxed();
 
         // «IGNORE» = { «Whitespace» | «Comment» | «LineComment» } ;
         let ignore_parser = choice((
             whitespace_parser
                 .clone()
-                .map(|v| Box::new(ignore::Ignore::Whitespace(v))),
+                .map(|v| Box::new(ignore::_T1::Whitespace(v))),
             comment_parser
                 .clone()
-                .map(|v| Box::new(ignore::Ignore::Comment(v))),
+                .map(|v| Box::new(ignore::_T1::Comment(v))),
             line_comment_parser
                 .clone()
-                .map(|v| Box::new(ignore::Ignore::LineComment(v))),
+                .map(|v| Box::new(ignore::_T1::LineComment(v))),
         ))
         .repeated()
         .boxed();
 
         // «UfixedType» = 'u' «FixedType» ;
         let ufixed_type_parser = just('u')
-            .map(|_| FixedTerminal::<1>())
+            .map(|_| FixedSizeTerminal::<1>())
             .then(fixed_type_parser.clone())
-            .map(|v| Box::new(ufixed_type::_T0::new(v)))
+            .map(|v| ufixed_type::_T0::from_parse(v))
             .boxed();
 
         // «UnsignedIntegerType» = 'u' «SignedIntegerType» ;
         let unsigned_integer_type_parser = just('u')
-            .map(|_| FixedTerminal::<1>())
+            .map(|_| FixedSizeTerminal::<1>())
             .then(signed_integer_type_parser.clone())
-            .map(|v| Box::new(unsigned_integer_type::_T0::new(v)))
+            .map(|v| unsigned_integer_type::_T0::from_parse(v))
             .boxed();
 
         // «YulIdentifier» = «RawIdentifier» - «YulReservedWord» ;
@@ -697,69 +701,160 @@ impl Parsers {
         .boxed();
 
         // BreakStatement = 'break' ';' ;
-        let break_statement_parser = with_noise(
-            terminal("break")
-                .ignored()
-                .map(|_| FixedTerminal::<5usize>()),
-        )
-        .then(with_noise(just(';').map(|_| FixedTerminal::<1>())))
-        .map(|v| Box::new(break_statement::_T0::new(v)))
-        .boxed();
+        let break_statement_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("break")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<5usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| break_statement::_T0::from_parse(v))
+            .boxed();
 
         // ContinueStatement = 'continue' ';' ;
-        let continue_statement_parser = with_noise(
-            terminal("continue")
-                .ignored()
-                .map(|_| FixedTerminal::<8usize>()),
-        )
-        .then(with_noise(just(';').map(|_| FixedTerminal::<1>())))
-        .map(|v| Box::new(continue_statement::_T0::new(v)))
-        .boxed();
+        let continue_statement_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("continue")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<8usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| continue_statement::_T0::from_parse(v))
+            .boxed();
 
         // «DecimalNumber» = ( «DecimalInteger» | «DecimalFloat» ) [ «DecimalExponent» ] ;
         let decimal_number_parser = choice((
             decimal_integer_parser
                 .clone()
-                .map(|v| Box::new(decimal_number::DecimalNumber::DecimalInteger(v))),
+                .map(|v| Box::new(decimal_number::_T1::DecimalInteger(v))),
             decimal_float_parser
                 .clone()
-                .map(|v| Box::new(decimal_number::DecimalNumber::DecimalFloat(v))),
+                .map(|v| Box::new(decimal_number::_T1::DecimalFloat(v))),
         ))
         .then(decimal_exponent_parser.clone().or_not())
-        .map(|v| Box::new(decimal_number::_T0::new(v)))
+        .map(|v| decimal_number::_T0::from_parse(v))
         .boxed();
 
         // «DoubleQuotedAsciiStringLiteral» = '"' { 1…*{ '\u{20}'…'~' - ( '"' | '\\' ) } | «EscapeSequence» } '"' ;
-        let double_quoted_ascii_string_literal_parser = just ('"') . map (| _ | FixedTerminal :: < 1 > ()) . then (choice ((filter (| & c : & char | (' ' <= c && c <= '~') && c != '"' && c != '\\') . map (| _ | FixedTerminal :: < 1 > ()) . repeated () . at_least (1usize) . map (| v | v . len ()) . map (| v | Box :: new (double_quoted_ascii_string_literal :: DoubleQuotedAsciiStringLiteral :: Chars (v))) , escape_sequence_parser . clone () . map (| v | Box :: new (double_quoted_ascii_string_literal :: DoubleQuotedAsciiStringLiteral :: EscapeSequence (v))))) . repeated ()) . then (just ('"') . map (| _ | FixedTerminal :: < 1 > ())) . map (| v | Box :: new (double_quoted_ascii_string_literal :: _T0 :: new (v))) . boxed () ;
+        let double_quoted_ascii_string_literal_parser = just('"')
+            .map(|_| FixedSizeTerminal::<1>())
+            .then(
+                choice((
+                    filter(|&c: &char| (' ' <= c && c <= '~') && c != '"' && c != '\\')
+                        .map(|_| FixedSizeTerminal::<1>())
+                        .repeated()
+                        .at_least(1usize)
+                        .map(|v| v.len())
+                        .map(|v| Box::new(double_quoted_ascii_string_literal::Run::Chars(v))),
+                    escape_sequence_parser.clone().map(|v| {
+                        Box::new(double_quoted_ascii_string_literal::Run::EscapeSequence(v))
+                    }),
+                ))
+                .repeated(),
+            )
+            .then(just('"').map(|_| FixedSizeTerminal::<1>()))
+            .map(|v| double_quoted_ascii_string_literal::_T0::from_parse(v))
+            .boxed();
 
         // «DoubleQuotedUnicodeStringLiteral» = 'unicode"' { 1…*{ ¬( '"' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '"' ;
-        let double_quoted_unicode_string_literal_parser = terminal ("unicode\"") . ignored () . map (| _ | FixedTerminal :: < 8usize > ()) . then (choice ((filter (| & c : & char | c != '"' && c != '\\' && c != '\n' && c != '\r') . map (| _ | FixedTerminal :: < 1 > ()) . repeated () . at_least (1usize) . map (| v | v . len ()) . map (| v | Box :: new (double_quoted_unicode_string_literal :: DoubleQuotedUnicodeStringLiteral :: Chars (v))) , escape_sequence_parser . clone () . map (| v | Box :: new (double_quoted_unicode_string_literal :: DoubleQuotedUnicodeStringLiteral :: EscapeSequence (v))))) . repeated ()) . then (just ('"') . map (| _ | FixedTerminal :: < 1 > ())) . map (| v | Box :: new (double_quoted_unicode_string_literal :: _T0 :: new (v))) . boxed () ;
+        let double_quoted_unicode_string_literal_parser = terminal("unicode\"")
+            .ignored()
+            .map(|_| FixedSizeTerminal::<8usize>())
+            .then(
+                choice((
+                    filter(|&c: &char| c != '"' && c != '\\' && c != '\n' && c != '\r')
+                        .map(|_| FixedSizeTerminal::<1>())
+                        .repeated()
+                        .at_least(1usize)
+                        .map(|v| v.len())
+                        .map(|v| Box::new(double_quoted_unicode_string_literal::Run::Chars(v))),
+                    escape_sequence_parser.clone().map(|v| {
+                        Box::new(double_quoted_unicode_string_literal::Run::EscapeSequence(v))
+                    }),
+                ))
+                .repeated(),
+            )
+            .then(just('"').map(|_| FixedSizeTerminal::<1>()))
+            .map(|v| double_quoted_unicode_string_literal::_T0::from_parse(v))
+            .boxed();
 
         // ElementaryType = 'bool' | 'string' | 'bytes' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | «FixedType» | «UfixedType» ;
         let elementary_type_parser = choice((
-            with_noise(choice::<_, ErrorType>((
-                terminal("b").ignore_then(choice((
-                    terminal("ool").map(|_| 4usize),
-                    terminal("ytes").map(|_| 5usize),
-                ))),
-                terminal("string").map(|_| 6usize),
-            )))
-            .map(|v| Box::new(elementary_type::ElementaryType::_0(v))),
+            ignore_parser
+                .clone()
+                .then(choice::<_, ErrorType>((
+                    terminal("b").ignore_then(choice((
+                        terminal("ool").map(|_| 4usize),
+                        terminal("ytes").map(|_| 5usize),
+                    ))),
+                    terminal("string").map(|_| 6usize),
+                )))
+                .then(ignore_parser.clone())
+                .map(
+                    |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(elementary_type::_T0::_0(v))),
             signed_integer_type_parser
                 .clone()
-                .map(|v| Box::new(elementary_type::ElementaryType::SignedIntegerType(v))),
+                .map(|v| Box::new(elementary_type::_T0::SignedIntegerType(v))),
             unsigned_integer_type_parser
                 .clone()
-                .map(|v| Box::new(elementary_type::ElementaryType::UnsignedIntegerType(v))),
+                .map(|v| Box::new(elementary_type::_T0::UnsignedIntegerType(v))),
             fixed_bytes_type_parser
                 .clone()
-                .map(|v| Box::new(elementary_type::ElementaryType::FixedBytesType(v))),
+                .map(|v| Box::new(elementary_type::_T0::FixedBytesType(v))),
             fixed_type_parser
                 .clone()
-                .map(|v| Box::new(elementary_type::ElementaryType::FixedType(v))),
+                .map(|v| Box::new(elementary_type::_T0::FixedType(v))),
             ufixed_type_parser
                 .clone()
-                .map(|v| Box::new(elementary_type::ElementaryType::UfixedType(v))),
+                .map(|v| Box::new(elementary_type::_T0::UfixedType(v))),
         ))
         .boxed();
 
@@ -881,21 +976,21 @@ impl Parsers {
                 ))),
                 terminal("while").map(|_| 5usize),
             ))
-            .map(|v| Box::new(keyword::Keyword::_0(v))),
+            .map(|v| Box::new(keyword::_T0::_0(v))),
             signed_integer_type_parser
                 .clone()
-                .map(|v| Box::new(keyword::Keyword::SignedIntegerType(v))),
+                .map(|v| Box::new(keyword::_T0::SignedIntegerType(v))),
             unsigned_integer_type_parser
                 .clone()
-                .map(|v| Box::new(keyword::Keyword::UnsignedIntegerType(v))),
+                .map(|v| Box::new(keyword::_T0::UnsignedIntegerType(v))),
             fixed_bytes_type_parser
                 .clone()
-                .map(|v| Box::new(keyword::Keyword::FixedBytesType(v))),
+                .map(|v| Box::new(keyword::_T0::FixedBytesType(v))),
             choice::<_, ErrorType>((
                 terminal("fixed").map(|_| 5usize),
                 terminal("ufixed").map(|_| 6usize),
             ))
-            .map(|v| Box::new(keyword::Keyword::_4(v))),
+            .map(|v| Box::new(keyword::_T0::_4(v))),
         ))
         .boxed();
 
@@ -903,462 +998,718 @@ impl Parsers {
         let positional_argument_list_parser = expression_parser
             .clone()
             .then(
-                with_noise(just(',').map(|_| FixedTerminal::<1>()))
+                ignore_parser
+                    .clone()
+                    .then(just(',').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
                     .then(expression_parser.clone())
                     .repeated(),
             )
             .map(repetition_mapper)
-            .map(|v| positional_argument_list::_T0::new(v))
+            .map(|(elements, separators)| positional_argument_list::_T0 {
+                elements,
+                separators,
+            })
             .boxed();
 
         // «SingleQuotedAsciiStringLiteral» = '\'' { 1…*{ '\u{20}'…'~' - ( '\'' | '\\' ) } | «EscapeSequence» } '\'' ;
-        let single_quoted_ascii_string_literal_parser = just ('\'') . map (| _ | FixedTerminal :: < 1 > ()) . then (choice ((filter (| & c : & char | (' ' <= c && c <= '~') && c != '\'' && c != '\\') . map (| _ | FixedTerminal :: < 1 > ()) . repeated () . at_least (1usize) . map (| v | v . len ()) . map (| v | Box :: new (single_quoted_ascii_string_literal :: SingleQuotedAsciiStringLiteral :: Chars (v))) , escape_sequence_parser . clone () . map (| v | Box :: new (single_quoted_ascii_string_literal :: SingleQuotedAsciiStringLiteral :: EscapeSequence (v))))) . repeated ()) . then (just ('\'') . map (| _ | FixedTerminal :: < 1 > ())) . map (| v | Box :: new (single_quoted_ascii_string_literal :: _T0 :: new (v))) . boxed () ;
+        let single_quoted_ascii_string_literal_parser = just('\'')
+            .map(|_| FixedSizeTerminal::<1>())
+            .then(
+                choice((
+                    filter(|&c: &char| (' ' <= c && c <= '~') && c != '\'' && c != '\\')
+                        .map(|_| FixedSizeTerminal::<1>())
+                        .repeated()
+                        .at_least(1usize)
+                        .map(|v| v.len())
+                        .map(|v| Box::new(single_quoted_ascii_string_literal::Run::Chars(v))),
+                    escape_sequence_parser.clone().map(|v| {
+                        Box::new(single_quoted_ascii_string_literal::Run::EscapeSequence(v))
+                    }),
+                ))
+                .repeated(),
+            )
+            .then(just('\'').map(|_| FixedSizeTerminal::<1>()))
+            .map(|v| single_quoted_ascii_string_literal::_T0::from_parse(v))
+            .boxed();
 
         // «SingleQuotedUnicodeStringLiteral» = 'unicode\'' { 1…*{ ¬( '\'' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '\'' ;
-        let single_quoted_unicode_string_literal_parser = terminal ("unicode'") . ignored () . map (| _ | FixedTerminal :: < 8usize > ()) . then (choice ((filter (| & c : & char | c != '\'' && c != '\\' && c != '\n' && c != '\r') . map (| _ | FixedTerminal :: < 1 > ()) . repeated () . at_least (1usize) . map (| v | v . len ()) . map (| v | Box :: new (single_quoted_unicode_string_literal :: SingleQuotedUnicodeStringLiteral :: Chars (v))) , escape_sequence_parser . clone () . map (| v | Box :: new (single_quoted_unicode_string_literal :: SingleQuotedUnicodeStringLiteral :: EscapeSequence (v))))) . repeated ()) . then (just ('\'') . map (| _ | FixedTerminal :: < 1 > ())) . map (| v | Box :: new (single_quoted_unicode_string_literal :: _T0 :: new (v))) . boxed () ;
+        let single_quoted_unicode_string_literal_parser = terminal("unicode'")
+            .ignored()
+            .map(|_| FixedSizeTerminal::<8usize>())
+            .then(
+                choice((
+                    filter(|&c: &char| c != '\'' && c != '\\' && c != '\n' && c != '\r')
+                        .map(|_| FixedSizeTerminal::<1>())
+                        .repeated()
+                        .at_least(1usize)
+                        .map(|v| v.len())
+                        .map(|v| Box::new(single_quoted_unicode_string_literal::Run::Chars(v))),
+                    escape_sequence_parser.clone().map(|v| {
+                        Box::new(single_quoted_unicode_string_literal::Run::EscapeSequence(v))
+                    }),
+                ))
+                .repeated(),
+            )
+            .then(just('\'').map(|_| FixedSizeTerminal::<1>()))
+            .map(|v| single_quoted_unicode_string_literal::_T0::from_parse(v))
+            .boxed();
 
         // UncheckedBlock = 'unchecked' Block ;
-        let unchecked_block_parser = with_noise(
-            terminal("unchecked")
-                .ignored()
-                .map(|_| FixedTerminal::<9usize>()),
-        )
-        .then(block_parser.clone())
-        .map(|v| Box::new(unchecked_block::_T0::new(v)))
-        .boxed();
+        let unchecked_block_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("unchecked")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<9usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(block_parser.clone())
+            .map(|v| unchecked_block::_T0::from_parse(v))
+            .boxed();
 
         // YulFunctionCall = ( «YulIdentifier» | «YulEVMBuiltinFunctionName» ) '(' { YulExpression / ',' } ')' ;
         let yul_function_call_parser = choice((
             yul_identifier_parser
                 .clone()
-                .map(|v| Box::new(yul_function_call::YulFunctionCall::YulIdentifier(v))),
-            with_noise(choice::<_, ErrorType>((
-                terminal("Blockhash").map(|_| 9usize),
-                terminal("a").ignore_then(choice((
-                    terminal("dd").ignore_then(choice((
-                        terminal("mod").map(|_| 6usize),
-                        terminal("ress").map(|_| 7usize),
-                        empty().map(|_| 3usize),
-                    ))),
-                    terminal("nd").map(|_| 3usize),
-                ))),
-                terminal("b").ignore_then(choice((
+                .map(|v| Box::new(yul_function_call::_T1::YulIdentifier(v))),
+            ignore_parser
+                .clone()
+                .then(choice::<_, ErrorType>((
+                    terminal("Blockhash").map(|_| 9usize),
                     terminal("a").ignore_then(choice((
-                        terminal("lance").map(|_| 7usize),
-                        terminal("sefee").map(|_| 7usize),
-                    ))),
-                    terminal("yte").map(|_| 4usize),
-                ))),
-                terminal("c").ignore_then(choice((
-                    terminal("all").ignore_then(choice((
-                        terminal("code").map(|_| 8usize),
-                        terminal("data").ignore_then(choice((
-                            terminal("copy").map(|_| 12usize),
-                            terminal("load").map(|_| 12usize),
-                            terminal("size").map(|_| 12usize),
+                        terminal("dd").ignore_then(choice((
+                            terminal("mod").map(|_| 6usize),
+                            terminal("ress").map(|_| 7usize),
+                            empty().map(|_| 3usize),
                         ))),
-                        terminal("er").map(|_| 6usize),
-                        terminal("value").map(|_| 9usize),
-                        empty().map(|_| 4usize),
+                        terminal("nd").map(|_| 3usize),
                     ))),
-                    terminal("hainid").map(|_| 7usize),
-                    terminal("oinbase").map(|_| 8usize),
-                    terminal("reate").ignore_then(choice((
-                        terminal("2").map(|_| 7usize),
-                        empty().map(|_| 6usize),
-                    ))),
-                ))),
-                terminal("d").ignore_then(choice((
-                    terminal("elegatecall").map(|_| 12usize),
-                    terminal("i").ignore_then(choice((
-                        terminal("fficulty").map(|_| 10usize),
-                        terminal("v").map(|_| 3usize),
-                    ))),
-                ))),
-                terminal("e").ignore_then(choice((
-                    terminal("q").map(|_| 2usize),
-                    terminal("x").ignore_then(choice((
-                        terminal("p").map(|_| 3usize),
-                        terminal("tcode").ignore_then(choice((
-                            terminal("copy").map(|_| 11usize),
-                            terminal("hash").map(|_| 11usize),
-                            terminal("size").map(|_| 11usize),
+                    terminal("b").ignore_then(choice((
+                        terminal("a").ignore_then(choice((
+                            terminal("lance").map(|_| 7usize),
+                            terminal("sefee").map(|_| 7usize),
                         ))),
+                        terminal("yte").map(|_| 4usize),
                     ))),
-                ))),
-                terminal("g").ignore_then(choice((
-                    terminal("as").ignore_then(choice((
-                        terminal("limit").map(|_| 8usize),
-                        terminal("price").map(|_| 8usize),
-                        empty().map(|_| 3usize),
-                    ))),
-                    terminal("t").map(|_| 2usize),
-                ))),
-                terminal("i").ignore_then(choice((
-                    terminal("nvalid").map(|_| 7usize),
-                    terminal("szero").map(|_| 6usize),
-                ))),
-                terminal("keccak256").map(|_| 9usize),
-                terminal("l").ignore_then(choice((
-                    terminal("og").ignore_then(choice((
-                        terminal("0").map(|_| 4usize),
-                        terminal("1").map(|_| 4usize),
-                        terminal("2").map(|_| 4usize),
-                        terminal("3").map(|_| 4usize),
-                        terminal("4").map(|_| 4usize),
-                    ))),
-                    terminal("t").map(|_| 2usize),
-                ))),
-                terminal("m").ignore_then(choice((
-                    terminal("load").map(|_| 5usize),
-                    terminal("od").map(|_| 3usize),
-                    terminal("s").ignore_then(choice((
-                        terminal("ize").map(|_| 5usize),
-                        terminal("tore").ignore_then(choice((
-                            terminal("8").map(|_| 7usize),
+                    terminal("c").ignore_then(choice((
+                        terminal("all").ignore_then(choice((
+                            terminal("code").map(|_| 8usize),
+                            terminal("data").ignore_then(choice((
+                                terminal("copy").map(|_| 12usize),
+                                terminal("load").map(|_| 12usize),
+                                terminal("size").map(|_| 12usize),
+                            ))),
+                            terminal("er").map(|_| 6usize),
+                            terminal("value").map(|_| 9usize),
+                            empty().map(|_| 4usize),
+                        ))),
+                        terminal("hainid").map(|_| 7usize),
+                        terminal("oinbase").map(|_| 8usize),
+                        terminal("reate").ignore_then(choice((
+                            terminal("2").map(|_| 7usize),
                             empty().map(|_| 6usize),
                         ))),
                     ))),
-                    terminal("ul").ignore_then(choice((
-                        terminal("mod").map(|_| 6usize),
-                        empty().map(|_| 3usize),
-                    ))),
-                ))),
-                terminal("n").ignore_then(choice((
-                    terminal("ot").map(|_| 3usize),
-                    terminal("umber").map(|_| 6usize),
-                ))),
-                terminal("or").ignore_then(choice((
-                    terminal("igin").map(|_| 6usize),
-                    empty().map(|_| 2usize),
-                ))),
-                terminal("pop").map(|_| 3usize),
-                terminal("re").ignore_then(choice((
-                    terminal("turn").ignore_then(choice((
-                        terminal("data").ignore_then(choice((
-                            terminal("copy").map(|_| 14usize),
-                            terminal("size").map(|_| 14usize),
+                    terminal("d").ignore_then(choice((
+                        terminal("elegatecall").map(|_| 12usize),
+                        terminal("i").ignore_then(choice((
+                            terminal("fficulty").map(|_| 10usize),
+                            terminal("v").map(|_| 3usize),
                         ))),
-                        empty().map(|_| 6usize),
                     ))),
-                    terminal("vert").map(|_| 6usize),
-                ))),
-                terminal("s").ignore_then(choice((
-                    terminal("ar").map(|_| 3usize),
-                    terminal("div").map(|_| 4usize),
-                    terminal("elf").ignore_then(choice((
-                        terminal("balance").map(|_| 11usize),
-                        terminal("destruct").map(|_| 12usize),
+                    terminal("e").ignore_then(choice((
+                        terminal("q").map(|_| 2usize),
+                        terminal("x").ignore_then(choice((
+                            terminal("p").map(|_| 3usize),
+                            terminal("tcode").ignore_then(choice((
+                                terminal("copy").map(|_| 11usize),
+                                terminal("hash").map(|_| 11usize),
+                                terminal("size").map(|_| 11usize),
+                            ))),
+                        ))),
                     ))),
-                    terminal("gt").map(|_| 3usize),
-                    terminal("h").ignore_then(choice((
-                        terminal("l").map(|_| 3usize),
-                        terminal("r").map(|_| 3usize),
+                    terminal("g").ignore_then(choice((
+                        terminal("as").ignore_then(choice((
+                            terminal("limit").map(|_| 8usize),
+                            terminal("price").map(|_| 8usize),
+                            empty().map(|_| 3usize),
+                        ))),
+                        terminal("t").map(|_| 2usize),
                     ))),
-                    terminal("ignextend").map(|_| 10usize),
+                    terminal("i").ignore_then(choice((
+                        terminal("nvalid").map(|_| 7usize),
+                        terminal("szero").map(|_| 6usize),
+                    ))),
+                    terminal("keccak256").map(|_| 9usize),
                     terminal("l").ignore_then(choice((
-                        terminal("oad").map(|_| 5usize),
-                        terminal("t").map(|_| 3usize),
+                        terminal("og").ignore_then(choice((
+                            terminal("0").map(|_| 4usize),
+                            terminal("1").map(|_| 4usize),
+                            terminal("2").map(|_| 4usize),
+                            terminal("3").map(|_| 4usize),
+                            terminal("4").map(|_| 4usize),
+                        ))),
+                        terminal("t").map(|_| 2usize),
                     ))),
-                    terminal("mod").map(|_| 4usize),
-                    terminal("store").map(|_| 6usize),
-                    terminal("t").ignore_then(choice((
-                        terminal("aticcall").map(|_| 10usize),
-                        terminal("op").map(|_| 4usize),
+                    terminal("m").ignore_then(choice((
+                        terminal("load").map(|_| 5usize),
+                        terminal("od").map(|_| 3usize),
+                        terminal("s").ignore_then(choice((
+                            terminal("ize").map(|_| 5usize),
+                            terminal("tore").ignore_then(choice((
+                                terminal("8").map(|_| 7usize),
+                                empty().map(|_| 6usize),
+                            ))),
+                        ))),
+                        terminal("ul").ignore_then(choice((
+                            terminal("mod").map(|_| 6usize),
+                            empty().map(|_| 3usize),
+                        ))),
                     ))),
-                    terminal("ub").map(|_| 3usize),
-                ))),
-                terminal("timestamp").map(|_| 9usize),
-                terminal("xor").map(|_| 3usize),
-            )))
-            .map(|v| Box::new(yul_function_call::YulFunctionCall::_1(v))),
+                    terminal("n").ignore_then(choice((
+                        terminal("ot").map(|_| 3usize),
+                        terminal("umber").map(|_| 6usize),
+                    ))),
+                    terminal("or").ignore_then(choice((
+                        terminal("igin").map(|_| 6usize),
+                        empty().map(|_| 2usize),
+                    ))),
+                    terminal("pop").map(|_| 3usize),
+                    terminal("re").ignore_then(choice((
+                        terminal("turn").ignore_then(choice((
+                            terminal("data").ignore_then(choice((
+                                terminal("copy").map(|_| 14usize),
+                                terminal("size").map(|_| 14usize),
+                            ))),
+                            empty().map(|_| 6usize),
+                        ))),
+                        terminal("vert").map(|_| 6usize),
+                    ))),
+                    terminal("s").ignore_then(choice((
+                        terminal("ar").map(|_| 3usize),
+                        terminal("div").map(|_| 4usize),
+                        terminal("elf").ignore_then(choice((
+                            terminal("balance").map(|_| 11usize),
+                            terminal("destruct").map(|_| 12usize),
+                        ))),
+                        terminal("gt").map(|_| 3usize),
+                        terminal("h").ignore_then(choice((
+                            terminal("l").map(|_| 3usize),
+                            terminal("r").map(|_| 3usize),
+                        ))),
+                        terminal("ignextend").map(|_| 10usize),
+                        terminal("l").ignore_then(choice((
+                            terminal("oad").map(|_| 5usize),
+                            terminal("t").map(|_| 3usize),
+                        ))),
+                        terminal("mod").map(|_| 4usize),
+                        terminal("store").map(|_| 6usize),
+                        terminal("t").ignore_then(choice((
+                            terminal("aticcall").map(|_| 10usize),
+                            terminal("op").map(|_| 4usize),
+                        ))),
+                        terminal("ub").map(|_| 3usize),
+                    ))),
+                    terminal("timestamp").map(|_| 9usize),
+                    terminal("xor").map(|_| 3usize),
+                )))
+                .then(ignore_parser.clone())
+                .map(
+                    |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(yul_function_call::_T1::_1(v))),
         ))
-        .then(with_noise(just('(').map(|_| FixedTerminal::<1>())))
+        .then(
+            ignore_parser
+                .clone()
+                .then(just('(').map(|_| FixedSizeTerminal::<1>()))
+                .then(ignore_parser.clone())
+                .map(
+                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                ),
+        )
         .then(
             yul_expression_parser
                 .clone()
                 .then(
-                    with_noise(just(',').map(|_| FixedTerminal::<1>()))
+                    ignore_parser
+                        .clone()
+                        .then(just(',').map(|_| FixedSizeTerminal::<1>()))
+                        .then(ignore_parser.clone())
+                        .map(
+                            |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                leading,
+                                content,
+                                trailing,
+                            },
+                        )
                         .then(yul_expression_parser.clone())
                         .repeated(),
                 )
                 .map(repetition_mapper)
-                .map(|v| yul_function_call::_T1::new(v))
+                .map(|(elements, separators)| yul_function_call::_T2 {
+                    elements,
+                    separators,
+                })
                 .or_not(),
         )
-        .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
-        .map(|v| Box::new(yul_function_call::_T0::new(v)))
+        .then(
+            ignore_parser
+                .clone()
+                .then(just(')').map(|_| FixedSizeTerminal::<1>()))
+                .then(ignore_parser.clone())
+                .map(
+                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                ),
+        )
+        .map(|v| yul_function_call::_T0::from_parse(v))
         .boxed();
 
         // YulFunctionDefinition = 'function' «YulIdentifier» '(' { «YulIdentifier» / ',' } ')' [ '->' 1…*{ «YulIdentifier» / ',' } ] YulBlock ;
-        let yul_function_definition_parser = with_noise(
-            terminal("function")
-                .ignored()
-                .map(|_| FixedTerminal::<8usize>()),
-        )
-        .then(yul_identifier_parser.clone())
-        .then(with_noise(just('(').map(|_| FixedTerminal::<1>())))
-        .then(
-            yul_identifier_parser
-                .clone()
-                .then(
-                    with_noise(just(',').map(|_| FixedTerminal::<1>()))
-                        .then(yul_identifier_parser.clone())
-                        .repeated(),
-                )
-                .map(repetition_mapper)
-                .map(|v| yul_function_definition::_T1::new(v))
-                .or_not(),
-        )
-        .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
-        .then(
-            with_noise(terminal("->").ignored().map(|_| FixedTerminal::<2usize>()))
-                .then(
-                    yul_identifier_parser
-                        .clone()
-                        .then(
-                            with_noise(just(',').map(|_| FixedTerminal::<1>()))
-                                .then(yul_identifier_parser.clone())
-                                .repeated(),
-                        )
-                        .map(repetition_mapper)
-                        .map(|v| yul_function_definition::_T3::new(v)),
-                )
-                .map(|v| Box::new(yul_function_definition::_T2::new(v)))
-                .or_not(),
-        )
-        .then(yul_block_parser.clone())
-        .map(|v| Box::new(yul_function_definition::_T0::new(v)))
-        .boxed();
+        let yul_function_definition_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("function")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<8usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(yul_identifier_parser.clone())
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just('(').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(
+                yul_identifier_parser
+                    .clone()
+                    .then(
+                        ignore_parser
+                            .clone()
+                            .then(just(',').map(|_| FixedSizeTerminal::<1>()))
+                            .then(ignore_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            )
+                            .then(yul_identifier_parser.clone())
+                            .repeated(),
+                    )
+                    .map(repetition_mapper)
+                    .map(|(elements, separators)| yul_function_definition::_T1 {
+                        elements,
+                        separators,
+                    })
+                    .or_not(),
+            )
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(')').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(
+                        terminal("->")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<2usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .then(
+                        yul_identifier_parser
+                            .clone()
+                            .then(
+                                ignore_parser
+                                    .clone()
+                                    .then(just(',').map(|_| FixedSizeTerminal::<1>()))
+                                    .then(ignore_parser.clone())
+                                    .map(|((leading, content), trailing)| {
+                                        FixedSizeTerminalWithNoise {
+                                            leading,
+                                            content,
+                                            trailing,
+                                        }
+                                    })
+                                    .then(yul_identifier_parser.clone())
+                                    .repeated(),
+                            )
+                            .map(repetition_mapper)
+                            .map(|(elements, separators)| yul_function_definition::_T3 {
+                                elements,
+                                separators,
+                            }),
+                    )
+                    .map(|v| yul_function_definition::_T2::from_parse(v))
+                    .or_not(),
+            )
+            .then(yul_block_parser.clone())
+            .map(|v| yul_function_definition::_T0::from_parse(v))
+            .boxed();
 
         // YulPath = «YulIdentifier» { '.' ( «YulIdentifier» | «YulEVMBuiltinFunctionName» ) } ;
         let yul_path_parser = yul_identifier_parser
             .clone()
             .then(
-                with_noise(just('.').map(|_| FixedTerminal::<1>()))
+                ignore_parser
+                    .clone()
+                    .then(just('.').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
                     .then(choice((
                         yul_identifier_parser
                             .clone()
-                            .map(|v| Box::new(yul_path::YulPath::YulIdentifier(v))),
-                        with_noise(choice::<_, ErrorType>((
-                            terminal("Blockhash").map(|_| 9usize),
-                            terminal("a").ignore_then(choice((
-                                terminal("dd").ignore_then(choice((
-                                    terminal("mod").map(|_| 6usize),
-                                    terminal("ress").map(|_| 7usize),
-                                    empty().map(|_| 3usize),
-                                ))),
-                                terminal("nd").map(|_| 3usize),
-                            ))),
-                            terminal("b").ignore_then(choice((
+                            .map(|v| Box::new(yul_path::_T3::YulIdentifier(v))),
+                        ignore_parser
+                            .clone()
+                            .then(choice::<_, ErrorType>((
+                                terminal("Blockhash").map(|_| 9usize),
                                 terminal("a").ignore_then(choice((
-                                    terminal("lance").map(|_| 7usize),
-                                    terminal("sefee").map(|_| 7usize),
-                                ))),
-                                terminal("yte").map(|_| 4usize),
-                            ))),
-                            terminal("c").ignore_then(choice((
-                                terminal("all").ignore_then(choice((
-                                    terminal("code").map(|_| 8usize),
-                                    terminal("data").ignore_then(choice((
-                                        terminal("copy").map(|_| 12usize),
-                                        terminal("load").map(|_| 12usize),
-                                        terminal("size").map(|_| 12usize),
+                                    terminal("dd").ignore_then(choice((
+                                        terminal("mod").map(|_| 6usize),
+                                        terminal("ress").map(|_| 7usize),
+                                        empty().map(|_| 3usize),
                                     ))),
-                                    terminal("er").map(|_| 6usize),
-                                    terminal("value").map(|_| 9usize),
-                                    empty().map(|_| 4usize),
+                                    terminal("nd").map(|_| 3usize),
                                 ))),
-                                terminal("hainid").map(|_| 7usize),
-                                terminal("oinbase").map(|_| 8usize),
-                                terminal("reate").ignore_then(choice((
-                                    terminal("2").map(|_| 7usize),
-                                    empty().map(|_| 6usize),
-                                ))),
-                            ))),
-                            terminal("d").ignore_then(choice((
-                                terminal("elegatecall").map(|_| 12usize),
-                                terminal("i").ignore_then(choice((
-                                    terminal("fficulty").map(|_| 10usize),
-                                    terminal("v").map(|_| 3usize),
-                                ))),
-                            ))),
-                            terminal("e").ignore_then(choice((
-                                terminal("q").map(|_| 2usize),
-                                terminal("x").ignore_then(choice((
-                                    terminal("p").map(|_| 3usize),
-                                    terminal("tcode").ignore_then(choice((
-                                        terminal("copy").map(|_| 11usize),
-                                        terminal("hash").map(|_| 11usize),
-                                        terminal("size").map(|_| 11usize),
+                                terminal("b").ignore_then(choice((
+                                    terminal("a").ignore_then(choice((
+                                        terminal("lance").map(|_| 7usize),
+                                        terminal("sefee").map(|_| 7usize),
                                     ))),
+                                    terminal("yte").map(|_| 4usize),
                                 ))),
-                            ))),
-                            terminal("g").ignore_then(choice((
-                                terminal("as").ignore_then(choice((
-                                    terminal("limit").map(|_| 8usize),
-                                    terminal("price").map(|_| 8usize),
-                                    empty().map(|_| 3usize),
-                                ))),
-                                terminal("t").map(|_| 2usize),
-                            ))),
-                            terminal("i").ignore_then(choice((
-                                terminal("nvalid").map(|_| 7usize),
-                                terminal("szero").map(|_| 6usize),
-                            ))),
-                            terminal("keccak256").map(|_| 9usize),
-                            terminal("l").ignore_then(choice((
-                                terminal("og").ignore_then(choice((
-                                    terminal("0").map(|_| 4usize),
-                                    terminal("1").map(|_| 4usize),
-                                    terminal("2").map(|_| 4usize),
-                                    terminal("3").map(|_| 4usize),
-                                    terminal("4").map(|_| 4usize),
-                                ))),
-                                terminal("t").map(|_| 2usize),
-                            ))),
-                            terminal("m").ignore_then(choice((
-                                terminal("load").map(|_| 5usize),
-                                terminal("od").map(|_| 3usize),
-                                terminal("s").ignore_then(choice((
-                                    terminal("ize").map(|_| 5usize),
-                                    terminal("tore").ignore_then(choice((
-                                        terminal("8").map(|_| 7usize),
+                                terminal("c").ignore_then(choice((
+                                    terminal("all").ignore_then(choice((
+                                        terminal("code").map(|_| 8usize),
+                                        terminal("data").ignore_then(choice((
+                                            terminal("copy").map(|_| 12usize),
+                                            terminal("load").map(|_| 12usize),
+                                            terminal("size").map(|_| 12usize),
+                                        ))),
+                                        terminal("er").map(|_| 6usize),
+                                        terminal("value").map(|_| 9usize),
+                                        empty().map(|_| 4usize),
+                                    ))),
+                                    terminal("hainid").map(|_| 7usize),
+                                    terminal("oinbase").map(|_| 8usize),
+                                    terminal("reate").ignore_then(choice((
+                                        terminal("2").map(|_| 7usize),
                                         empty().map(|_| 6usize),
                                     ))),
                                 ))),
-                                terminal("ul").ignore_then(choice((
-                                    terminal("mod").map(|_| 6usize),
-                                    empty().map(|_| 3usize),
-                                ))),
-                            ))),
-                            terminal("n").ignore_then(choice((
-                                terminal("ot").map(|_| 3usize),
-                                terminal("umber").map(|_| 6usize),
-                            ))),
-                            terminal("or").ignore_then(choice((
-                                terminal("igin").map(|_| 6usize),
-                                empty().map(|_| 2usize),
-                            ))),
-                            terminal("pop").map(|_| 3usize),
-                            terminal("re").ignore_then(choice((
-                                terminal("turn").ignore_then(choice((
-                                    terminal("data").ignore_then(choice((
-                                        terminal("copy").map(|_| 14usize),
-                                        terminal("size").map(|_| 14usize),
+                                terminal("d").ignore_then(choice((
+                                    terminal("elegatecall").map(|_| 12usize),
+                                    terminal("i").ignore_then(choice((
+                                        terminal("fficulty").map(|_| 10usize),
+                                        terminal("v").map(|_| 3usize),
                                     ))),
-                                    empty().map(|_| 6usize),
                                 ))),
-                                terminal("vert").map(|_| 6usize),
-                            ))),
-                            terminal("s").ignore_then(choice((
-                                terminal("ar").map(|_| 3usize),
-                                terminal("div").map(|_| 4usize),
-                                terminal("elf").ignore_then(choice((
-                                    terminal("balance").map(|_| 11usize),
-                                    terminal("destruct").map(|_| 12usize),
+                                terminal("e").ignore_then(choice((
+                                    terminal("q").map(|_| 2usize),
+                                    terminal("x").ignore_then(choice((
+                                        terminal("p").map(|_| 3usize),
+                                        terminal("tcode").ignore_then(choice((
+                                            terminal("copy").map(|_| 11usize),
+                                            terminal("hash").map(|_| 11usize),
+                                            terminal("size").map(|_| 11usize),
+                                        ))),
+                                    ))),
                                 ))),
-                                terminal("gt").map(|_| 3usize),
-                                terminal("h").ignore_then(choice((
-                                    terminal("l").map(|_| 3usize),
-                                    terminal("r").map(|_| 3usize),
+                                terminal("g").ignore_then(choice((
+                                    terminal("as").ignore_then(choice((
+                                        terminal("limit").map(|_| 8usize),
+                                        terminal("price").map(|_| 8usize),
+                                        empty().map(|_| 3usize),
+                                    ))),
+                                    terminal("t").map(|_| 2usize),
                                 ))),
-                                terminal("ignextend").map(|_| 10usize),
+                                terminal("i").ignore_then(choice((
+                                    terminal("nvalid").map(|_| 7usize),
+                                    terminal("szero").map(|_| 6usize),
+                                ))),
+                                terminal("keccak256").map(|_| 9usize),
                                 terminal("l").ignore_then(choice((
-                                    terminal("oad").map(|_| 5usize),
-                                    terminal("t").map(|_| 3usize),
+                                    terminal("og").ignore_then(choice((
+                                        terminal("0").map(|_| 4usize),
+                                        terminal("1").map(|_| 4usize),
+                                        terminal("2").map(|_| 4usize),
+                                        terminal("3").map(|_| 4usize),
+                                        terminal("4").map(|_| 4usize),
+                                    ))),
+                                    terminal("t").map(|_| 2usize),
                                 ))),
-                                terminal("mod").map(|_| 4usize),
-                                terminal("store").map(|_| 6usize),
-                                terminal("t").ignore_then(choice((
-                                    terminal("aticcall").map(|_| 10usize),
-                                    terminal("op").map(|_| 4usize),
+                                terminal("m").ignore_then(choice((
+                                    terminal("load").map(|_| 5usize),
+                                    terminal("od").map(|_| 3usize),
+                                    terminal("s").ignore_then(choice((
+                                        terminal("ize").map(|_| 5usize),
+                                        terminal("tore").ignore_then(choice((
+                                            terminal("8").map(|_| 7usize),
+                                            empty().map(|_| 6usize),
+                                        ))),
+                                    ))),
+                                    terminal("ul").ignore_then(choice((
+                                        terminal("mod").map(|_| 6usize),
+                                        empty().map(|_| 3usize),
+                                    ))),
                                 ))),
-                                terminal("ub").map(|_| 3usize),
-                            ))),
-                            terminal("timestamp").map(|_| 9usize),
-                            terminal("xor").map(|_| 3usize),
-                        )))
-                        .map(|v| Box::new(yul_path::YulPath::_1(v))),
+                                terminal("n").ignore_then(choice((
+                                    terminal("ot").map(|_| 3usize),
+                                    terminal("umber").map(|_| 6usize),
+                                ))),
+                                terminal("or").ignore_then(choice((
+                                    terminal("igin").map(|_| 6usize),
+                                    empty().map(|_| 2usize),
+                                ))),
+                                terminal("pop").map(|_| 3usize),
+                                terminal("re").ignore_then(choice((
+                                    terminal("turn").ignore_then(choice((
+                                        terminal("data").ignore_then(choice((
+                                            terminal("copy").map(|_| 14usize),
+                                            terminal("size").map(|_| 14usize),
+                                        ))),
+                                        empty().map(|_| 6usize),
+                                    ))),
+                                    terminal("vert").map(|_| 6usize),
+                                ))),
+                                terminal("s").ignore_then(choice((
+                                    terminal("ar").map(|_| 3usize),
+                                    terminal("div").map(|_| 4usize),
+                                    terminal("elf").ignore_then(choice((
+                                        terminal("balance").map(|_| 11usize),
+                                        terminal("destruct").map(|_| 12usize),
+                                    ))),
+                                    terminal("gt").map(|_| 3usize),
+                                    terminal("h").ignore_then(choice((
+                                        terminal("l").map(|_| 3usize),
+                                        terminal("r").map(|_| 3usize),
+                                    ))),
+                                    terminal("ignextend").map(|_| 10usize),
+                                    terminal("l").ignore_then(choice((
+                                        terminal("oad").map(|_| 5usize),
+                                        terminal("t").map(|_| 3usize),
+                                    ))),
+                                    terminal("mod").map(|_| 4usize),
+                                    terminal("store").map(|_| 6usize),
+                                    terminal("t").ignore_then(choice((
+                                        terminal("aticcall").map(|_| 10usize),
+                                        terminal("op").map(|_| 4usize),
+                                    ))),
+                                    terminal("ub").map(|_| 3usize),
+                                ))),
+                                terminal("timestamp").map(|_| 9usize),
+                                terminal("xor").map(|_| 3usize),
+                            )))
+                            .then(ignore_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            )
+                            .map(|v| Box::new(yul_path::_T3::_1(v))),
                     )))
-                    .map(|v| Box::new(yul_path::_T2::new(v)))
+                    .map(|v| yul_path::_T2::from_parse(v))
                     .repeated(),
             )
-            .map(|v| Box::new(yul_path::_T0::new(v)))
+            .map(|v| yul_path::_T0::from_parse(v))
             .boxed();
 
         // «AsciiStringLiteral» = «SingleQuotedAsciiStringLiteral» | «DoubleQuotedAsciiStringLiteral» ;
         let ascii_string_literal_parser = choice((
-            single_quoted_ascii_string_literal_parser.clone().map(|v| {
-                Box::new(
-                    ascii_string_literal::AsciiStringLiteral::SingleQuotedAsciiStringLiteral(v),
-                )
-            }),
-            double_quoted_ascii_string_literal_parser.clone().map(|v| {
-                Box::new(
-                    ascii_string_literal::AsciiStringLiteral::DoubleQuotedAsciiStringLiteral(v),
-                )
-            }),
+            single_quoted_ascii_string_literal_parser
+                .clone()
+                .map(|v| Box::new(ascii_string_literal::_T0::SingleQuotedAsciiStringLiteral(v))),
+            double_quoted_ascii_string_literal_parser
+                .clone()
+                .map(|v| Box::new(ascii_string_literal::_T0::DoubleQuotedAsciiStringLiteral(v))),
         ))
         .boxed();
 
         // AssemblyFlags = '(' 1…*{ «DoubleQuotedAsciiStringLiteral» / ',' } ')' ;
-        let assembly_flags_parser = with_noise(just('(').map(|_| FixedTerminal::<1>()))
+        let assembly_flags_parser = ignore_parser
+            .clone()
+            .then(just('(').map(|_| FixedSizeTerminal::<1>()))
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
             .then(
                 double_quoted_ascii_string_literal_parser
                     .clone()
                     .then(
-                        with_noise(just(',').map(|_| FixedTerminal::<1>()))
+                        ignore_parser
+                            .clone()
+                            .then(just(',').map(|_| FixedSizeTerminal::<1>()))
+                            .then(ignore_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            )
                             .then(double_quoted_ascii_string_literal_parser.clone())
                             .repeated(),
                     )
                     .map(repetition_mapper)
-                    .map(|v| assembly_flags::_T1::new(v)),
+                    .map(|(elements, separators)| assembly_flags::_T1 {
+                        elements,
+                        separators,
+                    }),
             )
-            .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
-            .map(|v| Box::new(assembly_flags::_T0::new(v)))
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(')').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| assembly_flags::_T0::from_parse(v))
             .boxed();
 
         // ElementaryTypeWithPayable = 'address' [ 'payable' ] | ElementaryType ;
         let elementary_type_with_payable_parser = choice((
-            with_noise(
-                terminal("address")
-                    .ignored()
-                    .map(|_| FixedTerminal::<7usize>()),
-            )
-            .then(
-                with_noise(
-                    terminal("payable")
+            ignore_parser
+                .clone()
+                .then(
+                    terminal("address")
                         .ignored()
-                        .map(|_| FixedTerminal::<7usize>()),
+                        .map(|_| FixedSizeTerminal::<7usize>()),
                 )
-                .or_not(),
-            )
-            .map(|v| Box::new(elementary_type_with_payable::_T0::new(v)))
-            .map(|v| Box::new(elementary_type_with_payable::ElementaryTypeWithPayable::_T0(v))),
-            elementary_type_parser.clone().map(|v| {
-                Box::new(elementary_type_with_payable::ElementaryTypeWithPayable::ElementaryType(v))
-            }),
+                .then(ignore_parser.clone())
+                .map(
+                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .then(
+                    ignore_parser
+                        .clone()
+                        .then(
+                            terminal("payable")
+                                .ignored()
+                                .map(|_| FixedSizeTerminal::<7usize>()),
+                        )
+                        .then(ignore_parser.clone())
+                        .map(
+                            |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                leading,
+                                content,
+                                trailing,
+                            },
+                        )
+                        .or_not(),
+                )
+                .map(|v| elementary_type_with_payable::_T1::from_parse(v))
+                .map(|v| Box::new(elementary_type_with_payable::_T0::_T1(v))),
+            elementary_type_parser
+                .clone()
+                .map(|v| Box::new(elementary_type_with_payable::_T0::ElementaryType(v))),
         ))
         .boxed();
 
         // ElementaryTypeWithoutPayable = 'address' | ElementaryType ;
         let elementary_type_without_payable_parser = choice((
-            with_noise(
-                terminal("address")
-                    .ignored()
-                    .map(|_| FixedTerminal::<7usize>()),
-            )
-            .map(|v| {
-                Box::new(elementary_type_without_payable::ElementaryTypeWithoutPayable::Address(v))
-            }),
-            elementary_type_parser.clone().map(|v| {
-                Box::new(
-                    elementary_type_without_payable::ElementaryTypeWithoutPayable::ElementaryType(
-                        v,
-                    ),
+            ignore_parser
+                .clone()
+                .then(
+                    terminal("address")
+                        .ignored()
+                        .map(|_| FixedSizeTerminal::<7usize>()),
                 )
-            }),
+                .then(ignore_parser.clone())
+                .map(
+                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(elementary_type_without_payable::_T0::Address(v))),
+            elementary_type_parser
+                .clone()
+                .map(|v| Box::new(elementary_type_without_payable::_T0::ElementaryType(v))),
         ))
         .boxed();
 
@@ -1366,35 +1717,45 @@ impl Parsers {
         let numeric_literal_parser = choice((
             decimal_number_parser
                 .clone()
-                .map(|v| Box::new(numeric_literal::NumericLiteral::DecimalNumber(v))),
+                .map(|v| Box::new(numeric_literal::_T1::DecimalNumber(v))),
             hex_number_parser
                 .clone()
-                .map(|v| Box::new(numeric_literal::NumericLiteral::HexNumber(v))),
+                .map(|v| Box::new(numeric_literal::_T1::HexNumber(v))),
         ))
         .then(
-            with_noise(choice::<_, ErrorType>((
-                terminal("days").map(|_| 4usize),
-                terminal("ether").map(|_| 5usize),
-                terminal("gwei").map(|_| 4usize),
-                terminal("hours").map(|_| 5usize),
-                terminal("minutes").map(|_| 7usize),
-                terminal("seconds").map(|_| 7usize),
-                terminal("we").ignore_then(choice((
-                    terminal("eks").map(|_| 5usize),
-                    terminal("i").map(|_| 3usize),
-                ))),
-                terminal("years").map(|_| 5usize),
-            )))
-            .or_not(),
+            ignore_parser
+                .clone()
+                .then(choice::<_, ErrorType>((
+                    terminal("days").map(|_| 4usize),
+                    terminal("ether").map(|_| 5usize),
+                    terminal("gwei").map(|_| 4usize),
+                    terminal("hours").map(|_| 5usize),
+                    terminal("minutes").map(|_| 7usize),
+                    terminal("seconds").map(|_| 7usize),
+                    terminal("we").ignore_then(choice((
+                        terminal("eks").map(|_| 5usize),
+                        terminal("i").map(|_| 3usize),
+                    ))),
+                    terminal("years").map(|_| 5usize),
+                )))
+                .then(ignore_parser.clone())
+                .map(
+                    |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .or_not(),
         )
-        .map(|v| Box::new(numeric_literal::_T0::new(v)))
+        .map(|v| numeric_literal::_T0::from_parse(v))
         .boxed();
 
         // «ReservedWord» = «Keyword» | «ReservedKeyword» | «NumberUnit» | «BooleanLiteral» ;
         let reserved_word_parser = choice((
             keyword_parser
                 .clone()
-                .map(|v| Box::new(reserved_word::ReservedWord::Keyword(v))),
+                .map(|v| Box::new(reserved_word::_T0::Keyword(v))),
             choice::<_, ErrorType>((
                 terminal("a").ignore_then(choice((
                     terminal("fter").map(|_| 5usize),
@@ -1471,12 +1832,24 @@ impl Parsers {
                 ))),
                 terminal("years").map(|_| 5usize),
             ))
-            .map(|v| Box::new(reserved_word::ReservedWord::_1(v))),
+            .map(|v| Box::new(reserved_word::_T0::_1(v))),
         ))
         .boxed();
 
         // «UnicodeStringLiteral» = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral» ;
-        let unicode_string_literal_parser = choice ((single_quoted_unicode_string_literal_parser . clone () . map (| v | Box :: new (unicode_string_literal :: UnicodeStringLiteral :: SingleQuotedUnicodeStringLiteral (v))) , double_quoted_unicode_string_literal_parser . clone () . map (| v | Box :: new (unicode_string_literal :: UnicodeStringLiteral :: DoubleQuotedUnicodeStringLiteral (v))))) . boxed () ;
+        let unicode_string_literal_parser = choice((
+            single_quoted_unicode_string_literal_parser
+                .clone()
+                .map(|v| {
+                    Box::new(unicode_string_literal::_T0::SingleQuotedUnicodeStringLiteral(v))
+                }),
+            double_quoted_unicode_string_literal_parser
+                .clone()
+                .map(|v| {
+                    Box::new(unicode_string_literal::_T0::DoubleQuotedUnicodeStringLiteral(v))
+                }),
+        ))
+        .boxed();
 
         // «Identifier» = «RawIdentifier» - «ReservedWord» ;
         let identifier_parser =
@@ -1489,21 +1862,31 @@ impl Parsers {
         let literal_parser = choice((
             ascii_string_literal_parser
                 .clone()
-                .map(|v| Box::new(literal::Literal::AsciiStringLiteral(v))),
+                .map(|v| Box::new(literal::_T0::AsciiStringLiteral(v))),
             unicode_string_literal_parser
                 .clone()
-                .map(|v| Box::new(literal::Literal::UnicodeStringLiteral(v))),
+                .map(|v| Box::new(literal::_T0::UnicodeStringLiteral(v))),
             numeric_literal_parser
                 .clone()
-                .map(|v| Box::new(literal::Literal::NumericLiteral(v))),
+                .map(|v| Box::new(literal::_T0::NumericLiteral(v))),
             hex_string_literal_parser
                 .clone()
-                .map(|v| Box::new(literal::Literal::HexStringLiteral(v))),
-            with_noise(choice::<_, ErrorType>((
-                terminal("false").map(|_| 5usize),
-                terminal("true").map(|_| 4usize),
-            )))
-            .map(|v| Box::new(literal::Literal::_4(v))),
+                .map(|v| Box::new(literal::_T0::HexStringLiteral(v))),
+            ignore_parser
+                .clone()
+                .then(choice::<_, ErrorType>((
+                    terminal("false").map(|_| 5usize),
+                    terminal("true").map(|_| 4usize),
+                )))
+                .then(ignore_parser.clone())
+                .map(
+                    |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(literal::_T0::_4(v))),
         ))
         .boxed();
 
@@ -1511,527 +1894,1221 @@ impl Parsers {
         let yul_literal_parser = choice((
             yul_decimal_number_literal_parser
                 .clone()
-                .map(|v| Box::new(yul_literal::YulLiteral::YulDecimalNumberLiteral(v))),
+                .map(|v| Box::new(yul_literal::_T0::YulDecimalNumberLiteral(v))),
             yul_hex_literal_parser
                 .clone()
-                .map(|v| Box::new(yul_literal::YulLiteral::YulHexLiteral(v))),
+                .map(|v| Box::new(yul_literal::_T0::YulHexLiteral(v))),
             ascii_string_literal_parser
                 .clone()
-                .map(|v| Box::new(yul_literal::YulLiteral::AsciiStringLiteral(v))),
-            with_noise(choice::<_, ErrorType>((
-                terminal("false").map(|_| 5usize),
-                terminal("true").map(|_| 4usize),
-            )))
-            .map(|v| Box::new(yul_literal::YulLiteral::_3(v))),
+                .map(|v| Box::new(yul_literal::_T0::AsciiStringLiteral(v))),
+            ignore_parser
+                .clone()
+                .then(choice::<_, ErrorType>((
+                    terminal("false").map(|_| 5usize),
+                    terminal("true").map(|_| 4usize),
+                )))
+                .then(ignore_parser.clone())
+                .map(
+                    |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(yul_literal::_T0::_3(v))),
             hex_string_literal_parser
                 .clone()
-                .map(|v| Box::new(yul_literal::YulLiteral::HexStringLiteral(v))),
+                .map(|v| Box::new(yul_literal::_T0::HexStringLiteral(v))),
         ))
         .boxed();
 
         // EnumDefinition = 'enum' «Identifier» '{' 1…*{ «Identifier» / ',' } '}' ;
-        let enum_definition_parser = with_noise(
-            terminal("enum")
-                .ignored()
-                .map(|_| FixedTerminal::<4usize>()),
-        )
-        .then(identifier_parser.clone())
-        .then(with_noise(just('{').map(|_| FixedTerminal::<1>())))
-        .then(
-            identifier_parser
-                .clone()
-                .then(
-                    with_noise(just(',').map(|_| FixedTerminal::<1>()))
-                        .then(identifier_parser.clone())
-                        .repeated(),
-                )
-                .map(repetition_mapper)
-                .map(|v| enum_definition::_T1::new(v)),
-        )
-        .then(with_noise(just('}').map(|_| FixedTerminal::<1>())))
-        .map(|v| Box::new(enum_definition::_T0::new(v)))
-        .boxed();
+        let enum_definition_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("enum")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<4usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(identifier_parser.clone())
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just('{').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(
+                identifier_parser
+                    .clone()
+                    .then(
+                        ignore_parser
+                            .clone()
+                            .then(just(',').map(|_| FixedSizeTerminal::<1>()))
+                            .then(ignore_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            )
+                            .then(identifier_parser.clone())
+                            .repeated(),
+                    )
+                    .map(repetition_mapper)
+                    .map(|(elements, separators)| enum_definition::_T1 {
+                        elements,
+                        separators,
+                    }),
+            )
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just('}').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| enum_definition::_T0::from_parse(v))
+            .boxed();
 
         // IdentifierPath = 1…*{ «Identifier» / '.' } ;
         let identifier_path_parser = identifier_parser
             .clone()
             .then(
-                with_noise(just('.').map(|_| FixedTerminal::<1>()))
+                ignore_parser
+                    .clone()
+                    .then(just('.').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
                     .then(identifier_parser.clone())
                     .repeated(),
             )
             .map(repetition_mapper)
-            .map(|v| identifier_path::_T0::new(v))
+            .map(|(elements, separators)| identifier_path::_T0 {
+                elements,
+                separators,
+            })
             .boxed();
 
         // NamedArgument = «Identifier» ':' Expression ;
         let named_argument_parser = identifier_parser
             .clone()
-            .then(with_noise(just(':').map(|_| FixedTerminal::<1>())))
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(':').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
             .then(expression_parser.clone())
-            .map(|v| Box::new(named_argument::_T0::new(v)))
+            .map(|v| named_argument::_T0::from_parse(v))
             .boxed();
 
         // ParameterDeclaration = TypeName [ DataLocation ] [ «Identifier» ] ;
         let parameter_declaration_parser = type_name_parser
             .clone()
             .then(
-                with_noise(choice::<_, ErrorType>((
-                    terminal("calldata").map(|_| 8usize),
-                    terminal("memory").map(|_| 6usize),
-                    terminal("storage").map(|_| 7usize),
-                )))
-                .or_not(),
+                ignore_parser
+                    .clone()
+                    .then(choice::<_, ErrorType>((
+                        terminal("calldata").map(|_| 8usize),
+                        terminal("memory").map(|_| 6usize),
+                        terminal("storage").map(|_| 7usize),
+                    )))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .or_not(),
             )
             .then(identifier_parser.clone().or_not())
-            .map(|v| Box::new(parameter_declaration::_T0::new(v)))
+            .map(|v| parameter_declaration::_T0::from_parse(v))
             .boxed();
 
         // SelectedImport = «Identifier» [ 'as' «Identifier» ] ;
         let selected_import_parser = identifier_parser
             .clone()
             .then(
-                with_noise(terminal("as").ignored().map(|_| FixedTerminal::<2usize>()))
+                ignore_parser
+                    .clone()
+                    .then(
+                        terminal("as")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<2usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
                     .then(identifier_parser.clone())
-                    .map(|v| Box::new(selected_import::_T1::new(v)))
+                    .map(|v| selected_import::_T1::from_parse(v))
                     .or_not(),
             )
-            .map(|v| Box::new(selected_import::_T0::new(v)))
+            .map(|v| selected_import::_T0::from_parse(v))
             .boxed();
 
         // SimpleImportDirective = ImportPath { 'as' «Identifier» } ;
         let simple_import_directive_parser = import_path_parser
             .clone()
             .then(
-                with_noise(terminal("as").ignored().map(|_| FixedTerminal::<2usize>()))
+                ignore_parser
+                    .clone()
+                    .then(
+                        terminal("as")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<2usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
                     .then(identifier_parser.clone())
-                    .map(|v| Box::new(simple_import_directive::_T2::new(v)))
+                    .map(|v| simple_import_directive::_T2::from_parse(v))
                     .repeated(),
             )
-            .map(|v| Box::new(simple_import_directive::_T0::new(v)))
+            .map(|v| simple_import_directive::_T0::from_parse(v))
             .boxed();
 
         // StarImportDirective = '*' 'as' «Identifier» 'from' ImportPath ;
-        let star_import_directive_parser = with_noise(just('*').map(|_| FixedTerminal::<1>()))
-            .then(with_noise(
-                terminal("as").ignored().map(|_| FixedTerminal::<2usize>()),
-            ))
+        let star_import_directive_parser = ignore_parser
+            .clone()
+            .then(just('*').map(|_| FixedSizeTerminal::<1>()))
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(
+                        terminal("as")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<2usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
             .then(identifier_parser.clone())
-            .then(with_noise(
-                terminal("from")
-                    .ignored()
-                    .map(|_| FixedTerminal::<4usize>()),
-            ))
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(
+                        terminal("from")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<4usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
             .then(import_path_parser.clone())
-            .map(|v| Box::new(star_import_directive::_T0::new(v)))
+            .map(|v| star_import_directive::_T0::from_parse(v))
             .boxed();
 
         // UserDefinedValueTypeDefinition = 'type' «Identifier» 'is' ElementaryTypeWithPayable ';' ;
-        let user_defined_value_type_definition_parser = with_noise(
-            terminal("type")
-                .ignored()
-                .map(|_| FixedTerminal::<4usize>()),
-        )
-        .then(identifier_parser.clone())
-        .then(with_noise(
-            terminal("is").ignored().map(|_| FixedTerminal::<2usize>()),
-        ))
-        .then(elementary_type_with_payable_parser.clone())
-        .then(with_noise(just(';').map(|_| FixedTerminal::<1>())))
-        .map(|v| Box::new(user_defined_value_type_definition::_T0::new(v)))
-        .boxed();
+        let user_defined_value_type_definition_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("type")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<4usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(identifier_parser.clone())
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(
+                        terminal("is")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<2usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(elementary_type_with_payable_parser.clone())
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| user_defined_value_type_definition::_T0::from_parse(v))
+            .boxed();
 
         // YulExpression = YulPath | YulFunctionCall | YulLiteral ;
         yul_expression_parser.define(
             choice((
                 yul_path_parser
                     .clone()
-                    .map(|v| Box::new(yul_expression::YulExpression::YulPath(v))),
+                    .map(|v| Box::new(yul_expression::_T0::YulPath(v))),
                 yul_function_call_parser
                     .clone()
-                    .map(|v| Box::new(yul_expression::YulExpression::YulFunctionCall(v))),
+                    .map(|v| Box::new(yul_expression::_T0::YulFunctionCall(v))),
                 yul_literal_parser
                     .clone()
-                    .map(|v| Box::new(yul_expression::YulExpression::YulLiteral(v))),
+                    .map(|v| Box::new(yul_expression::_T0::YulLiteral(v))),
             ))
             .boxed(),
         );
 
         // MappingType = 'mapping' '(' ( ElementaryTypeWithoutPayable | IdentifierPath ) '=>' TypeName ')' ;
-        let mapping_type_parser = with_noise(
-            terminal("mapping")
-                .ignored()
-                .map(|_| FixedTerminal::<7usize>()),
-        )
-        .then(with_noise(just('(').map(|_| FixedTerminal::<1>())))
-        .then(choice((
-            elementary_type_without_payable_parser
-                .clone()
-                .map(|v| Box::new(mapping_type::MappingType::ElementaryTypeWithoutPayable(v))),
-            identifier_path_parser
-                .clone()
-                .map(|v| Box::new(mapping_type::MappingType::IdentifierPath(v))),
-        )))
-        .then(with_noise(
-            terminal("=>").ignored().map(|_| FixedTerminal::<2usize>()),
-        ))
-        .then(type_name_parser.clone())
-        .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
-        .map(|v| Box::new(mapping_type::_T0::new(v)))
-        .boxed();
+        let mapping_type_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("mapping")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<7usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just('(').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(choice((
+                elementary_type_without_payable_parser
+                    .clone()
+                    .map(|v| Box::new(mapping_type::_T1::ElementaryTypeWithoutPayable(v))),
+                identifier_path_parser
+                    .clone()
+                    .map(|v| Box::new(mapping_type::_T1::IdentifierPath(v))),
+            )))
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(
+                        terminal("=>")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<2usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(type_name_parser.clone())
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(')').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| mapping_type::_T0::from_parse(v))
+            .boxed();
 
         // NamedArgumentList = '{' { NamedArgument / ',' } '}' ;
-        let named_argument_list_parser = with_noise(just('{').map(|_| FixedTerminal::<1>()))
+        let named_argument_list_parser = ignore_parser
+            .clone()
+            .then(just('{').map(|_| FixedSizeTerminal::<1>()))
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
             .then(
                 named_argument_parser
                     .clone()
                     .then(
-                        with_noise(just(',').map(|_| FixedTerminal::<1>()))
+                        ignore_parser
+                            .clone()
+                            .then(just(',').map(|_| FixedSizeTerminal::<1>()))
+                            .then(ignore_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            )
                             .then(named_argument_parser.clone())
                             .repeated(),
                     )
                     .map(repetition_mapper)
-                    .map(|v| named_argument_list::_T1::new(v))
+                    .map(|(elements, separators)| named_argument_list::_T1 {
+                        elements,
+                        separators,
+                    })
                     .or_not(),
             )
-            .then(with_noise(just('}').map(|_| FixedTerminal::<1>())))
-            .map(|v| Box::new(named_argument_list::_T0::new(v)))
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just('}').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| named_argument_list::_T0::from_parse(v))
             .boxed();
 
         // NonEmptyParameterList = '(' 1…*{ ParameterDeclaration / ',' } ')' ;
-        let non_empty_parameter_list_parser = with_noise(just('(').map(|_| FixedTerminal::<1>()))
+        let non_empty_parameter_list_parser = ignore_parser
+            .clone()
+            .then(just('(').map(|_| FixedSizeTerminal::<1>()))
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
             .then(
                 parameter_declaration_parser
                     .clone()
                     .then(
-                        with_noise(just(',').map(|_| FixedTerminal::<1>()))
+                        ignore_parser
+                            .clone()
+                            .then(just(',').map(|_| FixedSizeTerminal::<1>()))
+                            .then(ignore_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            )
                             .then(parameter_declaration_parser.clone())
                             .repeated(),
                     )
                     .map(repetition_mapper)
-                    .map(|v| non_empty_parameter_list::_T1::new(v)),
+                    .map(|(elements, separators)| non_empty_parameter_list::_T1 {
+                        elements,
+                        separators,
+                    }),
             )
-            .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
-            .map(|v| Box::new(non_empty_parameter_list::_T0::new(v)))
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(')').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| non_empty_parameter_list::_T0::from_parse(v))
             .boxed();
 
         // OverrideSpecifier = 'override' [ '(' 1…1*{ IdentifierPath / ',' } ')' ] ;
-        let override_specifier_parser = with_noise(
-            terminal("override")
-                .ignored()
-                .map(|_| FixedTerminal::<8usize>()),
-        )
-        .then(
-            with_noise(just('(').map(|_| FixedTerminal::<1>()))
-                .then(
-                    identifier_path_parser
-                        .clone()
-                        .then(
-                            with_noise(just(',').map(|_| FixedTerminal::<1>()))
-                                .then(identifier_path_parser.clone())
-                                .repeated()
-                                .at_most(1usize - 1),
-                        )
-                        .map(repetition_mapper)
-                        .map(|v| override_specifier::_T2::new(v)),
-                )
-                .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
-                .map(|v| Box::new(override_specifier::_T1::new(v)))
-                .or_not(),
-        )
-        .map(|v| Box::new(override_specifier::_T0::new(v)))
-        .boxed();
+        let override_specifier_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("override")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<8usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just('(').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .then(
+                        identifier_path_parser
+                            .clone()
+                            .then(
+                                ignore_parser
+                                    .clone()
+                                    .then(just(',').map(|_| FixedSizeTerminal::<1>()))
+                                    .then(ignore_parser.clone())
+                                    .map(|((leading, content), trailing)| {
+                                        FixedSizeTerminalWithNoise {
+                                            leading,
+                                            content,
+                                            trailing,
+                                        }
+                                    })
+                                    .then(identifier_path_parser.clone())
+                                    .repeated()
+                                    .at_most(1usize - 1),
+                            )
+                            .map(repetition_mapper)
+                            .map(|(elements, separators)| override_specifier::_T2 {
+                                elements,
+                                separators,
+                            }),
+                    )
+                    .then(
+                        ignore_parser
+                            .clone()
+                            .then(just(')').map(|_| FixedSizeTerminal::<1>()))
+                            .then(ignore_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            ),
+                    )
+                    .map(|v| override_specifier::_T1::from_parse(v))
+                    .or_not(),
+            )
+            .map(|v| override_specifier::_T0::from_parse(v))
+            .boxed();
 
         // ParameterList = '(' { ParameterDeclaration / ',' } ')' ;
-        let parameter_list_parser = with_noise(just('(').map(|_| FixedTerminal::<1>()))
+        let parameter_list_parser = ignore_parser
+            .clone()
+            .then(just('(').map(|_| FixedSizeTerminal::<1>()))
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
             .then(
                 parameter_declaration_parser
                     .clone()
                     .then(
-                        with_noise(just(',').map(|_| FixedTerminal::<1>()))
+                        ignore_parser
+                            .clone()
+                            .then(just(',').map(|_| FixedSizeTerminal::<1>()))
+                            .then(ignore_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            )
                             .then(parameter_declaration_parser.clone())
                             .repeated(),
                     )
                     .map(repetition_mapper)
-                    .map(|v| parameter_list::_T1::new(v))
+                    .map(|(elements, separators)| parameter_list::_T1 {
+                        elements,
+                        separators,
+                    })
                     .or_not(),
             )
-            .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
-            .map(|v| Box::new(parameter_list::_T0::new(v)))
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(')').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| parameter_list::_T0::from_parse(v))
             .boxed();
 
         // SelectingImportDirective = '{' 1…*{ SelectedImport / ',' } '}' 'from' ImportPath ;
-        let selecting_import_directive_parser = with_noise(just('{').map(|_| FixedTerminal::<1>()))
+        let selecting_import_directive_parser = ignore_parser
+            .clone()
+            .then(just('{').map(|_| FixedSizeTerminal::<1>()))
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
             .then(
                 selected_import_parser
                     .clone()
                     .then(
-                        with_noise(just(',').map(|_| FixedTerminal::<1>()))
+                        ignore_parser
+                            .clone()
+                            .then(just(',').map(|_| FixedSizeTerminal::<1>()))
+                            .then(ignore_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            )
                             .then(selected_import_parser.clone())
                             .repeated(),
                     )
                     .map(repetition_mapper)
-                    .map(|v| selecting_import_directive::_T1::new(v)),
+                    .map(|(elements, separators)| selecting_import_directive::_T1 {
+                        elements,
+                        separators,
+                    }),
             )
-            .then(with_noise(just('}').map(|_| FixedTerminal::<1>())))
-            .then(with_noise(
-                terminal("from")
-                    .ignored()
-                    .map(|_| FixedTerminal::<4usize>()),
-            ))
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just('}').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(
+                        terminal("from")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<4usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
             .then(import_path_parser.clone())
-            .map(|v| Box::new(selecting_import_directive::_T0::new(v)))
+            .map(|v| selecting_import_directive::_T0::from_parse(v))
             .boxed();
 
         // YulAssignment = YulPath ( ':=' YulExpression | 1…*{ ',' YulPath } ':=' YulFunctionCall ) ;
         let yul_assignment_parser = yul_path_parser
             .clone()
             .then(choice((
-                with_noise(terminal(":=").ignored().map(|_| FixedTerminal::<2usize>()))
+                ignore_parser
+                    .clone()
+                    .then(
+                        terminal(":=")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<2usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
                     .then(yul_expression_parser.clone())
-                    .map(|v| Box::new(yul_assignment::_T1::new(v)))
-                    .map(|v| Box::new(yul_assignment::YulAssignment::_T1(v))),
-                with_noise(just(',').map(|_| FixedTerminal::<1>()))
+                    .map(|v| yul_assignment::_T2::from_parse(v))
+                    .map(|v| Box::new(yul_assignment::_T1::_T2(v))),
+                ignore_parser
+                    .clone()
+                    .then(just(',').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
                     .then(yul_path_parser.clone())
-                    .map(|v| Box::new(yul_assignment::_T4::new(v)))
+                    .map(|v| yul_assignment::_T5::from_parse(v))
                     .repeated()
                     .at_least(1usize)
-                    .then(with_noise(
-                        terminal(":=").ignored().map(|_| FixedTerminal::<2usize>()),
-                    ))
+                    .then(
+                        ignore_parser
+                            .clone()
+                            .then(
+                                terminal(":=")
+                                    .ignored()
+                                    .map(|_| FixedSizeTerminal::<2usize>()),
+                            )
+                            .then(ignore_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            ),
+                    )
                     .then(yul_function_call_parser.clone())
-                    .map(|v| Box::new(yul_assignment::_T2::new(v)))
-                    .map(|v| Box::new(yul_assignment::YulAssignment::_T2(v))),
+                    .map(|v| yul_assignment::_T3::from_parse(v))
+                    .map(|v| Box::new(yul_assignment::_T1::_T3(v))),
             )))
-            .map(|v| Box::new(yul_assignment::_T0::new(v)))
+            .map(|v| yul_assignment::_T0::from_parse(v))
             .boxed();
 
         // YulForStatement = 'for' YulBlock YulExpression YulBlock YulBlock ;
-        let yul_for_statement_parser =
-            with_noise(terminal("for").ignored().map(|_| FixedTerminal::<3usize>()))
-                .then(yul_block_parser.clone())
-                .then(yul_expression_parser.clone())
-                .then(yul_block_parser.clone())
-                .then(yul_block_parser.clone())
-                .map(|v| Box::new(yul_for_statement::_T0::new(v)))
-                .boxed();
+        let yul_for_statement_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("for")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<3usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(yul_block_parser.clone())
+            .then(yul_expression_parser.clone())
+            .then(yul_block_parser.clone())
+            .then(yul_block_parser.clone())
+            .map(|v| yul_for_statement::_T0::from_parse(v))
+            .boxed();
 
         // YulIfStatement = 'if' YulExpression YulBlock ;
-        let yul_if_statement_parser =
-            with_noise(terminal("if").ignored().map(|_| FixedTerminal::<2usize>()))
-                .then(yul_expression_parser.clone())
-                .then(yul_block_parser.clone())
-                .map(|v| Box::new(yul_if_statement::_T0::new(v)))
-                .boxed();
+        let yul_if_statement_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("if")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<2usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(yul_expression_parser.clone())
+            .then(yul_block_parser.clone())
+            .map(|v| yul_if_statement::_T0::from_parse(v))
+            .boxed();
 
         // YulSwitchStatement = 'switch' YulExpression ( 1…*{ 'case' YulLiteral YulBlock } [ 'default' YulBlock ] | 'default' YulBlock ) ;
-        let yul_switch_statement_parser = with_noise(
-            terminal("switch")
-                .ignored()
-                .map(|_| FixedTerminal::<6usize>()),
-        )
-        .then(yul_expression_parser.clone())
-        .then(choice((
-            with_noise(
-                terminal("case")
-                    .ignored()
-                    .map(|_| FixedTerminal::<4usize>()),
-            )
-            .then(yul_literal_parser.clone())
-            .then(yul_block_parser.clone())
-            .map(|v| Box::new(yul_switch_statement::_T3::new(v)))
-            .repeated()
-            .at_least(1usize)
+        let yul_switch_statement_parser = ignore_parser
+            .clone()
             .then(
-                with_noise(
-                    terminal("default")
-                        .ignored()
-                        .map(|_| FixedTerminal::<7usize>()),
-                )
-                .then(yul_block_parser.clone())
-                .map(|v| Box::new(yul_switch_statement::_T4::new(v)))
-                .or_not(),
-            )
-            .map(|v| Box::new(yul_switch_statement::_T1::new(v)))
-            .map(|v| Box::new(yul_switch_statement::YulSwitchStatement::_T1(v))),
-            with_noise(
-                terminal("default")
+                terminal("switch")
                     .ignored()
-                    .map(|_| FixedTerminal::<7usize>()),
+                    .map(|_| FixedSizeTerminal::<6usize>()),
             )
-            .then(yul_block_parser.clone())
-            .map(|v| Box::new(yul_switch_statement::_T5::new(v)))
-            .map(|v| Box::new(yul_switch_statement::YulSwitchStatement::_T5(v))),
-        )))
-        .map(|v| Box::new(yul_switch_statement::_T0::new(v)))
-        .boxed();
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(yul_expression_parser.clone())
+            .then(choice((
+                ignore_parser
+                    .clone()
+                    .then(
+                        terminal("case")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<4usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .then(yul_literal_parser.clone())
+                    .then(yul_block_parser.clone())
+                    .map(|v| yul_switch_statement::_T4::from_parse(v))
+                    .repeated()
+                    .at_least(1usize)
+                    .then(
+                        ignore_parser
+                            .clone()
+                            .then(
+                                terminal("default")
+                                    .ignored()
+                                    .map(|_| FixedSizeTerminal::<7usize>()),
+                            )
+                            .then(ignore_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            )
+                            .then(yul_block_parser.clone())
+                            .map(|v| yul_switch_statement::_T5::from_parse(v))
+                            .or_not(),
+                    )
+                    .map(|v| yul_switch_statement::_T2::from_parse(v))
+                    .map(|v| Box::new(yul_switch_statement::_T1::_T2(v))),
+                ignore_parser
+                    .clone()
+                    .then(
+                        terminal("default")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<7usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .then(yul_block_parser.clone())
+                    .map(|v| yul_switch_statement::_T6::from_parse(v))
+                    .map(|v| Box::new(yul_switch_statement::_T1::_T6(v))),
+            )))
+            .map(|v| yul_switch_statement::_T0::from_parse(v))
+            .boxed();
 
         // YulVariableDeclaration = 'let' «YulIdentifier» [ ':=' YulExpression | [ ',' «YulIdentifier» ] [ ':=' YulFunctionCall ] ] ;
-        let yul_variable_declaration_parser =
-            with_noise(terminal("let").ignored().map(|_| FixedTerminal::<3usize>()))
-                .then(yul_identifier_parser.clone())
-                .then(
-                    choice((
-                        with_noise(terminal(":=").ignored().map(|_| FixedTerminal::<2usize>()))
-                            .then(yul_expression_parser.clone())
-                            .map(|v| Box::new(yul_variable_declaration::_T1::new(v)))
-                            .map(|v| {
-                                Box::new(yul_variable_declaration::YulVariableDeclaration::_T1(v))
-                            }),
-                        with_noise(just(',').map(|_| FixedTerminal::<1>()))
-                            .then(yul_identifier_parser.clone())
-                            .map(|v| Box::new(yul_variable_declaration::_T3::new(v)))
-                            .or_not()
-                            .then(
-                                with_noise(
-                                    terminal(":=").ignored().map(|_| FixedTerminal::<2usize>()),
+        let yul_variable_declaration_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("let")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<3usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(yul_identifier_parser.clone())
+            .then(
+                choice((
+                    ignore_parser
+                        .clone()
+                        .then(
+                            terminal(":=")
+                                .ignored()
+                                .map(|_| FixedSizeTerminal::<2usize>()),
+                        )
+                        .then(ignore_parser.clone())
+                        .map(
+                            |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                leading,
+                                content,
+                                trailing,
+                            },
+                        )
+                        .then(yul_expression_parser.clone())
+                        .map(|v| yul_variable_declaration::_T2::from_parse(v))
+                        .map(|v| Box::new(yul_variable_declaration::_T1::_T2(v))),
+                    ignore_parser
+                        .clone()
+                        .then(just(',').map(|_| FixedSizeTerminal::<1>()))
+                        .then(ignore_parser.clone())
+                        .map(
+                            |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                leading,
+                                content,
+                                trailing,
+                            },
+                        )
+                        .then(yul_identifier_parser.clone())
+                        .map(|v| yul_variable_declaration::_T4::from_parse(v))
+                        .or_not()
+                        .then(
+                            ignore_parser
+                                .clone()
+                                .then(
+                                    terminal(":=")
+                                        .ignored()
+                                        .map(|_| FixedSizeTerminal::<2usize>()),
+                                )
+                                .then(ignore_parser.clone())
+                                .map(
+                                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                        leading,
+                                        content,
+                                        trailing,
+                                    },
                                 )
                                 .then(yul_function_call_parser.clone())
-                                .map(|v| Box::new(yul_variable_declaration::_T4::new(v)))
+                                .map(|v| yul_variable_declaration::_T5::from_parse(v))
                                 .or_not(),
-                            )
-                            .map(|v| Box::new(yul_variable_declaration::_T2::new(v)))
-                            .map(|v| {
-                                Box::new(yul_variable_declaration::YulVariableDeclaration::_T2(v))
-                            }),
-                    ))
-                    .or_not(),
-                )
-                .map(|v| Box::new(yul_variable_declaration::_T0::new(v)))
-                .boxed();
+                        )
+                        .map(|v| yul_variable_declaration::_T3::from_parse(v))
+                        .map(|v| Box::new(yul_variable_declaration::_T1::_T3(v))),
+                ))
+                .or_not(),
+            )
+            .map(|v| yul_variable_declaration::_T0::from_parse(v))
+            .boxed();
 
         // ArgumentList = '(' [ PositionalArgumentList | NamedArgumentList ] ')' ;
-        let argument_list_parser = with_noise(just('(').map(|_| FixedTerminal::<1>()))
+        let argument_list_parser = ignore_parser
+            .clone()
+            .then(just('(').map(|_| FixedSizeTerminal::<1>()))
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
             .then(
                 choice((
                     positional_argument_list_parser
                         .clone()
-                        .map(|v| Box::new(argument_list::ArgumentList::PositionalArgumentList(v))),
+                        .map(|v| Box::new(argument_list::_T1::PositionalArgumentList(v))),
                     named_argument_list_parser
                         .clone()
-                        .map(|v| Box::new(argument_list::ArgumentList::NamedArgumentList(v))),
+                        .map(|v| Box::new(argument_list::_T1::NamedArgumentList(v))),
                 ))
                 .or_not(),
             )
-            .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
-            .map(|v| Box::new(argument_list::_T0::new(v)))
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(')').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| argument_list::_T0::from_parse(v))
             .boxed();
 
         // CatchClause = 'catch' [ [ «Identifier» ] NonEmptyParameterList ] Block ;
-        let catch_clause_parser = with_noise(
-            terminal("catch")
-                .ignored()
-                .map(|_| FixedTerminal::<5usize>()),
-        )
-        .then(
-            identifier_parser
-                .clone()
-                .or_not()
-                .then(non_empty_parameter_list_parser.clone())
-                .map(|v| Box::new(catch_clause::_T1::new(v)))
-                .or_not(),
-        )
-        .then(block_parser.clone())
-        .map(|v| Box::new(catch_clause::_T0::new(v)))
-        .boxed();
+        let catch_clause_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("catch")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<5usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(
+                identifier_parser
+                    .clone()
+                    .or_not()
+                    .then(non_empty_parameter_list_parser.clone())
+                    .map(|v| catch_clause::_T1::from_parse(v))
+                    .or_not(),
+            )
+            .then(block_parser.clone())
+            .map(|v| catch_clause::_T0::from_parse(v))
+            .boxed();
 
         // FunctionType = 'function' ParameterList { VisibilitySpecifier | StateMutabilitySpecifier } [ 'returns' NonEmptyParameterList ] ;
-        let function_type_parser = with_noise(
-            terminal("function")
-                .ignored()
-                .map(|_| FixedTerminal::<8usize>()),
-        )
-        .then(parameter_list_parser.clone())
-        .then(
-            with_noise(choice::<_, ErrorType>((
-                terminal("external").map(|_| 8usize),
-                terminal("internal").map(|_| 8usize),
-                terminal("p").ignore_then(choice((
-                    terminal("ayable").map(|_| 7usize),
-                    terminal("rivate").map(|_| 7usize),
-                    terminal("u").ignore_then(choice((
-                        terminal("blic").map(|_| 6usize),
-                        terminal("re").map(|_| 4usize),
-                    ))),
-                ))),
-                terminal("view").map(|_| 4usize),
-            )))
-            .repeated(),
-        )
-        .then(
-            with_noise(
-                terminal("returns")
+        let function_type_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("function")
                     .ignored()
-                    .map(|_| FixedTerminal::<7usize>()),
+                    .map(|_| FixedSizeTerminal::<8usize>()),
             )
-            .then(non_empty_parameter_list_parser.clone())
-            .map(|v| Box::new(function_type::_T2::new(v)))
-            .or_not(),
-        )
-        .map(|v| Box::new(function_type::_T0::new(v)))
-        .boxed();
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(parameter_list_parser.clone())
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(choice::<_, ErrorType>((
+                        terminal("external").map(|_| 8usize),
+                        terminal("internal").map(|_| 8usize),
+                        terminal("p").ignore_then(choice((
+                            terminal("ayable").map(|_| 7usize),
+                            terminal("rivate").map(|_| 7usize),
+                            terminal("u").ignore_then(choice((
+                                terminal("blic").map(|_| 6usize),
+                                terminal("re").map(|_| 4usize),
+                            ))),
+                        ))),
+                        terminal("view").map(|_| 4usize),
+                    )))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .repeated(),
+            )
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(
+                        terminal("returns")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<7usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .then(non_empty_parameter_list_parser.clone())
+                    .map(|v| function_type::_T2::from_parse(v))
+                    .or_not(),
+            )
+            .map(|v| function_type::_T0::from_parse(v))
+            .boxed();
 
         // ImportDirective = 'import' ( SimpleImportDirective | StarImportDirective | SelectingImportDirective ) ';' ;
-        let import_directive_parser = with_noise(
-            terminal("import")
-                .ignored()
-                .map(|_| FixedTerminal::<6usize>()),
-        )
-        .then(choice((
-            simple_import_directive_parser
-                .clone()
-                .map(|v| Box::new(import_directive::ImportDirective::SimpleImportDirective(v))),
-            star_import_directive_parser
-                .clone()
-                .map(|v| Box::new(import_directive::ImportDirective::StarImportDirective(v))),
-            selecting_import_directive_parser.clone().map(|v| {
-                Box::new(import_directive::ImportDirective::SelectingImportDirective(
-                    v,
-                ))
-            }),
-        )))
-        .then(with_noise(just(';').map(|_| FixedTerminal::<1>())))
-        .map(|v| Box::new(import_directive::_T0::new(v)))
-        .boxed();
+        let import_directive_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("import")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<6usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(choice((
+                simple_import_directive_parser
+                    .clone()
+                    .map(|v| Box::new(import_directive::_T1::SimpleImportDirective(v))),
+                star_import_directive_parser
+                    .clone()
+                    .map(|v| Box::new(import_directive::_T1::StarImportDirective(v))),
+                selecting_import_directive_parser
+                    .clone()
+                    .map(|v| Box::new(import_directive::_T1::SelectingImportDirective(v))),
+            )))
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| import_directive::_T0::from_parse(v))
+            .boxed();
 
         // MethodAttribute = 'virtual' | OverrideSpecifier ;
         let method_attribute_parser = choice((
-            with_noise(
-                terminal("virtual")
-                    .ignored()
-                    .map(|_| FixedTerminal::<7usize>()),
-            )
-            .map(|v| Box::new(method_attribute::MethodAttribute::Virtual(v))),
+            ignore_parser
+                .clone()
+                .then(
+                    terminal("virtual")
+                        .ignored()
+                        .map(|_| FixedSizeTerminal::<7usize>()),
+                )
+                .then(ignore_parser.clone())
+                .map(
+                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(method_attribute::_T0::Virtual(v))),
             override_specifier_parser
                 .clone()
-                .map(|v| Box::new(method_attribute::MethodAttribute::OverrideSpecifier(v))),
+                .map(|v| Box::new(method_attribute::_T0::OverrideSpecifier(v))),
         ))
         .boxed();
 
         // StateVariableAttribute = 'public' | 'private' | 'internal' | 'constant' | OverrideSpecifier | 'immutable' ;
         let state_variable_attribute_parser = choice((
-            with_noise(choice::<_, ErrorType>((
-                terminal("constant").map(|_| 8usize),
-                terminal("internal").map(|_| 8usize),
-                terminal("p").ignore_then(choice((
-                    terminal("rivate").map(|_| 7usize),
-                    terminal("ublic").map(|_| 6usize),
-                ))),
-            )))
-            .map(|v| Box::new(state_variable_attribute::StateVariableAttribute::_0(v))),
-            override_specifier_parser.clone().map(|v| {
-                Box::new(state_variable_attribute::StateVariableAttribute::OverrideSpecifier(v))
-            }),
-            with_noise(
-                terminal("immutable")
-                    .ignored()
-                    .map(|_| FixedTerminal::<9usize>()),
-            )
-            .map(|v| {
-                Box::new(state_variable_attribute::StateVariableAttribute::Immutable(
-                    v,
-                ))
-            }),
+            ignore_parser
+                .clone()
+                .then(choice::<_, ErrorType>((
+                    terminal("constant").map(|_| 8usize),
+                    terminal("internal").map(|_| 8usize),
+                    terminal("p").ignore_then(choice((
+                        terminal("rivate").map(|_| 7usize),
+                        terminal("ublic").map(|_| 6usize),
+                    ))),
+                )))
+                .then(ignore_parser.clone())
+                .map(
+                    |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(state_variable_attribute::_T0::_0(v))),
+            override_specifier_parser
+                .clone()
+                .map(|v| Box::new(state_variable_attribute::_T0::OverrideSpecifier(v))),
+            ignore_parser
+                .clone()
+                .then(
+                    terminal("immutable")
+                        .ignored()
+                        .map(|_| FixedSizeTerminal::<9usize>()),
+                )
+                .then(ignore_parser.clone())
+                .map(
+                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(state_variable_attribute::_T0::Immutable(v))),
         ))
         .boxed();
 
@@ -2039,34 +3116,44 @@ impl Parsers {
         let yul_statement_parser = choice((
             yul_block_parser
                 .clone()
-                .map(|v| Box::new(yul_statement::YulStatement::YulBlock(v))),
+                .map(|v| Box::new(yul_statement::_T0::YulBlock(v))),
             yul_variable_declaration_parser
                 .clone()
-                .map(|v| Box::new(yul_statement::YulStatement::YulVariableDeclaration(v))),
+                .map(|v| Box::new(yul_statement::_T0::YulVariableDeclaration(v))),
             yul_function_definition_parser
                 .clone()
-                .map(|v| Box::new(yul_statement::YulStatement::YulFunctionDefinition(v))),
+                .map(|v| Box::new(yul_statement::_T0::YulFunctionDefinition(v))),
             yul_assignment_parser
                 .clone()
-                .map(|v| Box::new(yul_statement::YulStatement::YulAssignment(v))),
+                .map(|v| Box::new(yul_statement::_T0::YulAssignment(v))),
             yul_function_call_parser
                 .clone()
-                .map(|v| Box::new(yul_statement::YulStatement::YulFunctionCall(v))),
+                .map(|v| Box::new(yul_statement::_T0::YulFunctionCall(v))),
             yul_if_statement_parser
                 .clone()
-                .map(|v| Box::new(yul_statement::YulStatement::YulIfStatement(v))),
+                .map(|v| Box::new(yul_statement::_T0::YulIfStatement(v))),
             yul_for_statement_parser
                 .clone()
-                .map(|v| Box::new(yul_statement::YulStatement::YulForStatement(v))),
+                .map(|v| Box::new(yul_statement::_T0::YulForStatement(v))),
             yul_switch_statement_parser
                 .clone()
-                .map(|v| Box::new(yul_statement::YulStatement::YulSwitchStatement(v))),
-            with_noise(choice::<_, ErrorType>((
-                terminal("break").map(|_| 5usize),
-                terminal("continue").map(|_| 8usize),
-                terminal("leave").map(|_| 5usize),
-            )))
-            .map(|v| Box::new(yul_statement::YulStatement::_8(v))),
+                .map(|v| Box::new(yul_statement::_T0::YulSwitchStatement(v))),
+            ignore_parser
+                .clone()
+                .then(choice::<_, ErrorType>((
+                    terminal("break").map(|_| 5usize),
+                    terminal("continue").map(|_| 8usize),
+                    terminal("leave").map(|_| 5usize),
+                )))
+                .then(ignore_parser.clone())
+                .map(
+                    |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(yul_statement::_T0::_8(v))),
         ))
         .boxed();
 
@@ -2074,14 +3161,14 @@ impl Parsers {
         let inheritance_specifier_parser = identifier_path_parser
             .clone()
             .then(argument_list_parser.clone().or_not())
-            .map(|v| Box::new(inheritance_specifier::_T0::new(v)))
+            .map(|v| inheritance_specifier::_T0::from_parse(v))
             .boxed();
 
         // ModifierInvocation = IdentifierPath [ ArgumentList ] ;
         let modifier_invocation_parser = identifier_path_parser
             .clone()
             .then(argument_list_parser.clone().or_not())
-            .map(|v| Box::new(modifier_invocation::_T0::new(v)))
+            .map(|v| modifier_invocation::_T0::from_parse(v))
             .boxed();
 
         // TypeName = ( ElementaryTypeWithPayable | FunctionType | MappingType | IdentifierPath ) { '[' [ Expression ] ']' } ;
@@ -2089,69 +3176,143 @@ impl Parsers {
             choice((
                 elementary_type_with_payable_parser
                     .clone()
-                    .map(|v| Box::new(type_name::TypeName::ElementaryTypeWithPayable(v))),
+                    .map(|v| Box::new(type_name::_T1::ElementaryTypeWithPayable(v))),
                 function_type_parser
                     .clone()
-                    .map(|v| Box::new(type_name::TypeName::FunctionType(v))),
+                    .map(|v| Box::new(type_name::_T1::FunctionType(v))),
                 mapping_type_parser
                     .clone()
-                    .map(|v| Box::new(type_name::TypeName::MappingType(v))),
+                    .map(|v| Box::new(type_name::_T1::MappingType(v))),
                 identifier_path_parser
                     .clone()
-                    .map(|v| Box::new(type_name::TypeName::IdentifierPath(v))),
+                    .map(|v| Box::new(type_name::_T1::IdentifierPath(v))),
             ))
             .then(
-                with_noise(just('[').map(|_| FixedTerminal::<1>()))
+                ignore_parser
+                    .clone()
+                    .then(just('[').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
                     .then(expression_parser.clone().or_not())
-                    .then(with_noise(just(']').map(|_| FixedTerminal::<1>())))
-                    .map(|v| Box::new(type_name::_T2::new(v)))
+                    .then(
+                        ignore_parser
+                            .clone()
+                            .then(just(']').map(|_| FixedSizeTerminal::<1>()))
+                            .then(ignore_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            ),
+                    )
+                    .map(|v| type_name::_T3::from_parse(v))
                     .repeated(),
             )
-            .map(|v| Box::new(type_name::_T0::new(v)))
+            .map(|v| type_name::_T0::from_parse(v))
             .boxed(),
         );
 
         // YulBlock = '{' { YulStatement } '}' ;
         yul_block_parser.define(
-            with_noise(just('{').map(|_| FixedTerminal::<1>()))
+            ignore_parser
+                .clone()
+                .then(just('{').map(|_| FixedSizeTerminal::<1>()))
+                .then(ignore_parser.clone())
+                .map(
+                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
                 .then(yul_statement_parser.clone().repeated())
-                .then(with_noise(just('}').map(|_| FixedTerminal::<1>())))
-                .map(|v| Box::new(yul_block::_T0::new(v)))
+                .then(
+                    ignore_parser
+                        .clone()
+                        .then(just('}').map(|_| FixedSizeTerminal::<1>()))
+                        .then(ignore_parser.clone())
+                        .map(
+                            |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                leading,
+                                content,
+                                trailing,
+                            },
+                        ),
+                )
+                .map(|v| yul_block::_T0::from_parse(v))
                 .boxed(),
         );
 
         // AssemblyStatement = 'assembly' [ '"evmasm"' ] [ AssemblyFlags ] YulBlock ;
-        let assembly_statement_parser = with_noise(
-            terminal("assembly")
-                .ignored()
-                .map(|_| FixedTerminal::<8usize>()),
-        )
-        .then(
-            with_noise(
-                terminal("\"evmasm\"")
+        let assembly_statement_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("assembly")
                     .ignored()
-                    .map(|_| FixedTerminal::<8usize>()),
+                    .map(|_| FixedSizeTerminal::<8usize>()),
             )
-            .or_not(),
-        )
-        .then(assembly_flags_parser.clone().or_not())
-        .then(yul_block_parser.clone())
-        .map(|v| Box::new(assembly_statement::_T0::new(v)))
-        .boxed();
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(
+                        terminal("\"evmasm\"")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<8usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .or_not(),
+            )
+            .then(assembly_flags_parser.clone().or_not())
+            .then(yul_block_parser.clone())
+            .map(|v| assembly_statement::_T0::from_parse(v))
+            .boxed();
 
         // ConstructorAttribute = ModifierInvocation | 'payable' | 'internal' | 'public' ;
         let constructor_attribute_parser = choice((
-            modifier_invocation_parser.clone().map(|v| {
-                Box::new(constructor_attribute::ConstructorAttribute::ModifierInvocation(v))
-            }),
-            with_noise(choice::<_, ErrorType>((
-                terminal("internal").map(|_| 8usize),
-                terminal("p").ignore_then(choice((
-                    terminal("ayable").map(|_| 7usize),
-                    terminal("ublic").map(|_| 6usize),
-                ))),
-            )))
-            .map(|v| Box::new(constructor_attribute::ConstructorAttribute::_1(v))),
+            modifier_invocation_parser
+                .clone()
+                .map(|v| Box::new(constructor_attribute::_T0::ModifierInvocation(v))),
+            ignore_parser
+                .clone()
+                .then(choice::<_, ErrorType>((
+                    terminal("internal").map(|_| 8usize),
+                    terminal("p").ignore_then(choice((
+                        terminal("ayable").map(|_| 7usize),
+                        terminal("ublic").map(|_| 6usize),
+                    ))),
+                )))
+                .then(ignore_parser.clone())
+                .map(
+                    |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(constructor_attribute::_T0::_1(v))),
         ))
         .boxed();
 
@@ -2159,432 +3320,1011 @@ impl Parsers {
         let error_parameter_parser = type_name_parser
             .clone()
             .then(identifier_parser.clone().or_not())
-            .map(|v| Box::new(error_parameter::_T0::new(v)))
+            .map(|v| error_parameter::_T0::from_parse(v))
             .boxed();
 
         // EventParameter = TypeName [ 'indexed' ] [ «Identifier» ] ;
         let event_parameter_parser = type_name_parser
             .clone()
             .then(
-                with_noise(
-                    terminal("indexed")
-                        .ignored()
-                        .map(|_| FixedTerminal::<7usize>()),
-                )
-                .or_not(),
+                ignore_parser
+                    .clone()
+                    .then(
+                        terminal("indexed")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<7usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .or_not(),
             )
             .then(identifier_parser.clone().or_not())
-            .map(|v| Box::new(event_parameter::_T0::new(v)))
+            .map(|v| event_parameter::_T0::from_parse(v))
             .boxed();
 
         // FallbackFunctionAttribute = 'external' | StateMutabilitySpecifier | ModifierInvocation | 'virtual' | OverrideSpecifier ;
         let fallback_function_attribute_parser = choice((
-            with_noise(choice::<_, ErrorType>((
-                terminal("external").map(|_| 8usize),
-                terminal("p").ignore_then(choice((
-                    terminal("ayable").map(|_| 7usize),
-                    terminal("ure").map(|_| 4usize),
-                ))),
-                terminal("view").map(|_| 4usize),
-            )))
-            .map(|v| {
-                Box::new(fallback_function_attribute::FallbackFunctionAttribute::_0(
-                    v,
-                ))
-            }),
-            modifier_invocation_parser.clone().map(|v| {
-                Box::new(
-                    fallback_function_attribute::FallbackFunctionAttribute::ModifierInvocation(v),
+            ignore_parser
+                .clone()
+                .then(choice::<_, ErrorType>((
+                    terminal("external").map(|_| 8usize),
+                    terminal("p").ignore_then(choice((
+                        terminal("ayable").map(|_| 7usize),
+                        terminal("ure").map(|_| 4usize),
+                    ))),
+                    terminal("view").map(|_| 4usize),
+                )))
+                .then(ignore_parser.clone())
+                .map(
+                    |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                        leading,
+                        content,
+                        trailing,
+                    },
                 )
-            }),
-            with_noise(
-                terminal("virtual")
-                    .ignored()
-                    .map(|_| FixedTerminal::<7usize>()),
-            )
-            .map(|v| Box::new(fallback_function_attribute::FallbackFunctionAttribute::Virtual(v))),
-            override_specifier_parser.clone().map(|v| {
-                Box::new(
-                    fallback_function_attribute::FallbackFunctionAttribute::OverrideSpecifier(v),
+                .map(|v| Box::new(fallback_function_attribute::_T0::_0(v))),
+            modifier_invocation_parser
+                .clone()
+                .map(|v| Box::new(fallback_function_attribute::_T0::ModifierInvocation(v))),
+            ignore_parser
+                .clone()
+                .then(
+                    terminal("virtual")
+                        .ignored()
+                        .map(|_| FixedSizeTerminal::<7usize>()),
                 )
-            }),
+                .then(ignore_parser.clone())
+                .map(
+                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(fallback_function_attribute::_T0::Virtual(v))),
+            override_specifier_parser
+                .clone()
+                .map(|v| Box::new(fallback_function_attribute::_T0::OverrideSpecifier(v))),
         ))
         .boxed();
 
         // FunctionAttribute = VisibilitySpecifier | StateMutabilitySpecifier | ModifierInvocation | 'virtual' | OverrideSpecifier ;
         let function_attribute_parser = choice((
-            with_noise(choice::<_, ErrorType>((
-                terminal("external").map(|_| 8usize),
-                terminal("internal").map(|_| 8usize),
-                terminal("p").ignore_then(choice((
-                    terminal("ayable").map(|_| 7usize),
-                    terminal("rivate").map(|_| 7usize),
-                    terminal("u").ignore_then(choice((
-                        terminal("blic").map(|_| 6usize),
-                        terminal("re").map(|_| 4usize),
+            ignore_parser
+                .clone()
+                .then(choice::<_, ErrorType>((
+                    terminal("external").map(|_| 8usize),
+                    terminal("internal").map(|_| 8usize),
+                    terminal("p").ignore_then(choice((
+                        terminal("ayable").map(|_| 7usize),
+                        terminal("rivate").map(|_| 7usize),
+                        terminal("u").ignore_then(choice((
+                            terminal("blic").map(|_| 6usize),
+                            terminal("re").map(|_| 4usize),
+                        ))),
                     ))),
-                ))),
-                terminal("view").map(|_| 4usize),
-            )))
-            .map(|v| Box::new(function_attribute::FunctionAttribute::_0(v))),
+                    terminal("view").map(|_| 4usize),
+                )))
+                .then(ignore_parser.clone())
+                .map(
+                    |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(function_attribute::_T0::_0(v))),
             modifier_invocation_parser
                 .clone()
-                .map(|v| Box::new(function_attribute::FunctionAttribute::ModifierInvocation(v))),
-            with_noise(
-                terminal("virtual")
-                    .ignored()
-                    .map(|_| FixedTerminal::<7usize>()),
-            )
-            .map(|v| Box::new(function_attribute::FunctionAttribute::Virtual(v))),
+                .map(|v| Box::new(function_attribute::_T0::ModifierInvocation(v))),
+            ignore_parser
+                .clone()
+                .then(
+                    terminal("virtual")
+                        .ignored()
+                        .map(|_| FixedSizeTerminal::<7usize>()),
+                )
+                .then(ignore_parser.clone())
+                .map(
+                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(function_attribute::_T0::Virtual(v))),
             override_specifier_parser
                 .clone()
-                .map(|v| Box::new(function_attribute::FunctionAttribute::OverrideSpecifier(v))),
+                .map(|v| Box::new(function_attribute::_T0::OverrideSpecifier(v))),
         ))
         .boxed();
 
         // InheritanceSpecifierList = 'is' 1…*{ InheritanceSpecifier / ',' } ;
-        let inheritance_specifier_list_parser =
-            with_noise(terminal("is").ignored().map(|_| FixedTerminal::<2usize>()))
-                .then(
-                    inheritance_specifier_parser
-                        .clone()
-                        .then(
-                            with_noise(just(',').map(|_| FixedTerminal::<1>()))
-                                .then(inheritance_specifier_parser.clone())
-                                .repeated(),
-                        )
-                        .map(repetition_mapper)
-                        .map(|v| inheritance_specifier_list::_T1::new(v)),
-                )
-                .map(|v| Box::new(inheritance_specifier_list::_T0::new(v)))
-                .boxed();
+        let inheritance_specifier_list_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("is")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<2usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(
+                inheritance_specifier_parser
+                    .clone()
+                    .then(
+                        ignore_parser
+                            .clone()
+                            .then(just(',').map(|_| FixedSizeTerminal::<1>()))
+                            .then(ignore_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            )
+                            .then(inheritance_specifier_parser.clone())
+                            .repeated(),
+                    )
+                    .map(repetition_mapper)
+                    .map(|(elements, separators)| inheritance_specifier_list::_T1 {
+                        elements,
+                        separators,
+                    }),
+            )
+            .map(|v| inheritance_specifier_list::_T0::from_parse(v))
+            .boxed();
 
         // PrimaryExpression = 'payable' ArgumentList | 'type' '(' TypeName ')' | 'new' TypeName | '(' 1…*{ [ Expression ] / ',' } ')' | '[' 1…*{ Expression / ',' } ']' | «Identifier» | Literal | ElementaryTypeWithoutPayable ;
         let primary_expression_parser = choice((
-            with_noise(
-                terminal("payable")
-                    .ignored()
-                    .map(|_| FixedTerminal::<7usize>()),
-            )
-            .then(argument_list_parser.clone())
-            .map(|v| Box::new(primary_expression::_T0::new(v)))
-            .map(|v| Box::new(primary_expression::PrimaryExpression::_T0(v))),
-            with_noise(
-                terminal("type")
-                    .ignored()
-                    .map(|_| FixedTerminal::<4usize>()),
-            )
-            .then(with_noise(just('(').map(|_| FixedTerminal::<1>())))
-            .then(type_name_parser.clone())
-            .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
-            .map(|v| Box::new(primary_expression::_T1::new(v)))
-            .map(|v| Box::new(primary_expression::PrimaryExpression::_T1(v))),
-            with_noise(terminal("new").ignored().map(|_| FixedTerminal::<3usize>()))
+            ignore_parser
+                .clone()
+                .then(
+                    terminal("payable")
+                        .ignored()
+                        .map(|_| FixedSizeTerminal::<7usize>()),
+                )
+                .then(ignore_parser.clone())
+                .map(
+                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .then(argument_list_parser.clone())
+                .map(|v| primary_expression::_T1::from_parse(v))
+                .map(|v| Box::new(primary_expression::_T0::_T1(v))),
+            ignore_parser
+                .clone()
+                .then(
+                    terminal("type")
+                        .ignored()
+                        .map(|_| FixedSizeTerminal::<4usize>()),
+                )
+                .then(ignore_parser.clone())
+                .map(
+                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .then(
+                    ignore_parser
+                        .clone()
+                        .then(just('(').map(|_| FixedSizeTerminal::<1>()))
+                        .then(ignore_parser.clone())
+                        .map(
+                            |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                leading,
+                                content,
+                                trailing,
+                            },
+                        ),
+                )
                 .then(type_name_parser.clone())
-                .map(|v| Box::new(primary_expression::_T2::new(v)))
-                .map(|v| Box::new(primary_expression::PrimaryExpression::_T2(v))),
-            with_noise(just('(').map(|_| FixedTerminal::<1>()))
+                .then(
+                    ignore_parser
+                        .clone()
+                        .then(just(')').map(|_| FixedSizeTerminal::<1>()))
+                        .then(ignore_parser.clone())
+                        .map(
+                            |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                leading,
+                                content,
+                                trailing,
+                            },
+                        ),
+                )
+                .map(|v| primary_expression::_T2::from_parse(v))
+                .map(|v| Box::new(primary_expression::_T0::_T2(v))),
+            ignore_parser
+                .clone()
+                .then(
+                    terminal("new")
+                        .ignored()
+                        .map(|_| FixedSizeTerminal::<3usize>()),
+                )
+                .then(ignore_parser.clone())
+                .map(
+                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .then(type_name_parser.clone())
+                .map(|v| primary_expression::_T3::from_parse(v))
+                .map(|v| Box::new(primary_expression::_T0::_T3(v))),
+            ignore_parser
+                .clone()
+                .then(just('(').map(|_| FixedSizeTerminal::<1>()))
+                .then(ignore_parser.clone())
+                .map(
+                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
                 .then(
                     expression_parser
                         .clone()
                         .or_not()
                         .then(
-                            with_noise(just(',').map(|_| FixedTerminal::<1>()))
+                            ignore_parser
+                                .clone()
+                                .then(just(',').map(|_| FixedSizeTerminal::<1>()))
+                                .then(ignore_parser.clone())
+                                .map(
+                                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                        leading,
+                                        content,
+                                        trailing,
+                                    },
+                                )
                                 .then(expression_parser.clone().or_not())
                                 .repeated(),
                         )
                         .map(repetition_mapper)
-                        .map(|v| primary_expression::_T4::new(v)),
+                        .map(|(elements, separators)| primary_expression::_T5 {
+                            elements,
+                            separators,
+                        }),
                 )
-                .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
-                .map(|v| Box::new(primary_expression::_T3::new(v)))
-                .map(|v| Box::new(primary_expression::PrimaryExpression::_T3(v))),
-            with_noise(just('[').map(|_| FixedTerminal::<1>()))
+                .then(
+                    ignore_parser
+                        .clone()
+                        .then(just(')').map(|_| FixedSizeTerminal::<1>()))
+                        .then(ignore_parser.clone())
+                        .map(
+                            |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                leading,
+                                content,
+                                trailing,
+                            },
+                        ),
+                )
+                .map(|v| primary_expression::_T4::from_parse(v))
+                .map(|v| Box::new(primary_expression::_T0::_T4(v))),
+            ignore_parser
+                .clone()
+                .then(just('[').map(|_| FixedSizeTerminal::<1>()))
+                .then(ignore_parser.clone())
+                .map(
+                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
                 .then(
                     expression_parser
                         .clone()
                         .then(
-                            with_noise(just(',').map(|_| FixedTerminal::<1>()))
+                            ignore_parser
+                                .clone()
+                                .then(just(',').map(|_| FixedSizeTerminal::<1>()))
+                                .then(ignore_parser.clone())
+                                .map(
+                                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                        leading,
+                                        content,
+                                        trailing,
+                                    },
+                                )
                                 .then(expression_parser.clone())
                                 .repeated(),
                         )
                         .map(repetition_mapper)
-                        .map(|v| primary_expression::_T6::new(v)),
+                        .map(|(elements, separators)| primary_expression::_T7 {
+                            elements,
+                            separators,
+                        }),
                 )
-                .then(with_noise(just(']').map(|_| FixedTerminal::<1>())))
-                .map(|v| Box::new(primary_expression::_T5::new(v)))
-                .map(|v| Box::new(primary_expression::PrimaryExpression::_T5(v))),
+                .then(
+                    ignore_parser
+                        .clone()
+                        .then(just(']').map(|_| FixedSizeTerminal::<1>()))
+                        .then(ignore_parser.clone())
+                        .map(
+                            |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                leading,
+                                content,
+                                trailing,
+                            },
+                        ),
+                )
+                .map(|v| primary_expression::_T6::from_parse(v))
+                .map(|v| Box::new(primary_expression::_T0::_T6(v))),
             identifier_parser
                 .clone()
-                .map(|v| Box::new(primary_expression::PrimaryExpression::Identifier(v))),
+                .map(|v| Box::new(primary_expression::_T0::Identifier(v))),
             literal_parser
                 .clone()
-                .map(|v| Box::new(primary_expression::PrimaryExpression::Literal(v))),
-            elementary_type_without_payable_parser.clone().map(|v| {
-                Box::new(primary_expression::PrimaryExpression::ElementaryTypeWithoutPayable(v))
-            }),
+                .map(|v| Box::new(primary_expression::_T0::Literal(v))),
+            elementary_type_without_payable_parser
+                .clone()
+                .map(|v| Box::new(primary_expression::_T0::ElementaryTypeWithoutPayable(v))),
         ))
-        .map(Expression::PrimaryExpression)
+        .map(|v| Box::new(expression::Expression::PrimaryExpression(v)))
         .boxed();
 
         // ReceiveFunctionAttribute = 'external' | 'payable' | ModifierInvocation | 'virtual' | OverrideSpecifier ;
         let receive_function_attribute_parser = choice((
-            with_noise(choice::<_, ErrorType>((
-                terminal("external").map(|_| 8usize),
-                terminal("payable").map(|_| 7usize),
-            )))
-            .map(|v| Box::new(receive_function_attribute::ReceiveFunctionAttribute::_0(v))),
-            modifier_invocation_parser.clone().map(|v| {
-                Box::new(
-                    receive_function_attribute::ReceiveFunctionAttribute::ModifierInvocation(v),
+            ignore_parser
+                .clone()
+                .then(choice::<_, ErrorType>((
+                    terminal("external").map(|_| 8usize),
+                    terminal("payable").map(|_| 7usize),
+                )))
+                .then(ignore_parser.clone())
+                .map(
+                    |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                        leading,
+                        content,
+                        trailing,
+                    },
                 )
-            }),
-            with_noise(
-                terminal("virtual")
-                    .ignored()
-                    .map(|_| FixedTerminal::<7usize>()),
-            )
-            .map(|v| Box::new(receive_function_attribute::ReceiveFunctionAttribute::Virtual(v))),
-            override_specifier_parser.clone().map(|v| {
-                Box::new(receive_function_attribute::ReceiveFunctionAttribute::OverrideSpecifier(v))
-            }),
+                .map(|v| Box::new(receive_function_attribute::_T0::_0(v))),
+            modifier_invocation_parser
+                .clone()
+                .map(|v| Box::new(receive_function_attribute::_T0::ModifierInvocation(v))),
+            ignore_parser
+                .clone()
+                .then(
+                    terminal("virtual")
+                        .ignored()
+                        .map(|_| FixedSizeTerminal::<7usize>()),
+                )
+                .then(ignore_parser.clone())
+                .map(
+                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(receive_function_attribute::_T0::Virtual(v))),
+            override_specifier_parser
+                .clone()
+                .map(|v| Box::new(receive_function_attribute::_T0::OverrideSpecifier(v))),
         ))
         .boxed();
 
         // StructDefinition = 'struct' «Identifier» '{' 1…*{ TypeName «Identifier» ';' } '}' ;
-        let struct_definition_parser = with_noise(
-            terminal("struct")
-                .ignored()
-                .map(|_| FixedTerminal::<6usize>()),
-        )
-        .then(identifier_parser.clone())
-        .then(with_noise(just('{').map(|_| FixedTerminal::<1>())))
-        .then(
-            type_name_parser
-                .clone()
-                .then(identifier_parser.clone())
-                .then(with_noise(just(';').map(|_| FixedTerminal::<1>())))
-                .map(|v| Box::new(struct_definition::_T2::new(v)))
-                .repeated()
-                .at_least(1usize),
-        )
-        .then(with_noise(just('}').map(|_| FixedTerminal::<1>())))
-        .map(|v| Box::new(struct_definition::_T0::new(v)))
-        .boxed();
+        let struct_definition_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("struct")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<6usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(identifier_parser.clone())
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just('{').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(
+                type_name_parser
+                    .clone()
+                    .then(identifier_parser.clone())
+                    .then(
+                        ignore_parser
+                            .clone()
+                            .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                            .then(ignore_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            ),
+                    )
+                    .map(|v| struct_definition::_T2::from_parse(v))
+                    .repeated()
+                    .at_least(1usize),
+            )
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just('}').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| struct_definition::_T0::from_parse(v))
+            .boxed();
 
         // UsingDirective = 'using' ( IdentifierPath | '{' 1…*{ IdentifierPath / ',' } '}' ) 'for' ( '*' | TypeName ) [ 'global' ] ';' ;
-        let using_directive_parser = with_noise(
-            terminal("using")
-                .ignored()
-                .map(|_| FixedTerminal::<5usize>()),
-        )
-        .then(choice((
-            identifier_path_parser
-                .clone()
-                .map(|v| Box::new(using_directive::UsingDirective::IdentifierPath(v))),
-            with_noise(just('{').map(|_| FixedTerminal::<1>()))
-                .then(
-                    identifier_path_parser
-                        .clone()
-                        .then(
-                            with_noise(just(',').map(|_| FixedTerminal::<1>()))
-                                .then(identifier_path_parser.clone())
-                                .repeated(),
-                        )
-                        .map(repetition_mapper)
-                        .map(|v| using_directive::_T2::new(v)),
-                )
-                .then(with_noise(just('}').map(|_| FixedTerminal::<1>())))
-                .map(|v| Box::new(using_directive::_T1::new(v)))
-                .map(|v| Box::new(using_directive::UsingDirective::_T1(v))),
-        )))
-        .then(with_noise(
-            terminal("for").ignored().map(|_| FixedTerminal::<3usize>()),
-        ))
-        .then(choice((
-            with_noise(just('*').map(|_| FixedTerminal::<1>()))
-                .map(|v| Box::new(using_directive::UsingDirective::StarChar(v))),
-            type_name_parser
-                .clone()
-                .map(|v| Box::new(using_directive::UsingDirective::TypeName(v))),
-        )))
-        .then(
-            with_noise(
-                terminal("global")
+        let using_directive_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("using")
                     .ignored()
-                    .map(|_| FixedTerminal::<6usize>()),
+                    .map(|_| FixedSizeTerminal::<5usize>()),
             )
-            .or_not(),
-        )
-        .then(with_noise(just(';').map(|_| FixedTerminal::<1>())))
-        .map(|v| Box::new(using_directive::_T0::new(v)))
-        .boxed();
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(choice((
+                identifier_path_parser
+                    .clone()
+                    .map(|v| Box::new(using_directive::_T1::IdentifierPath(v))),
+                ignore_parser
+                    .clone()
+                    .then(just('{').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .then(
+                        identifier_path_parser
+                            .clone()
+                            .then(
+                                ignore_parser
+                                    .clone()
+                                    .then(just(',').map(|_| FixedSizeTerminal::<1>()))
+                                    .then(ignore_parser.clone())
+                                    .map(|((leading, content), trailing)| {
+                                        FixedSizeTerminalWithNoise {
+                                            leading,
+                                            content,
+                                            trailing,
+                                        }
+                                    })
+                                    .then(identifier_path_parser.clone())
+                                    .repeated(),
+                            )
+                            .map(repetition_mapper)
+                            .map(|(elements, separators)| using_directive::_T3 {
+                                elements,
+                                separators,
+                            }),
+                    )
+                    .then(
+                        ignore_parser
+                            .clone()
+                            .then(just('}').map(|_| FixedSizeTerminal::<1>()))
+                            .then(ignore_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            ),
+                    )
+                    .map(|v| using_directive::_T2::from_parse(v))
+                    .map(|v| Box::new(using_directive::_T1::_T2(v))),
+            )))
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(
+                        terminal("for")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<3usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(choice((
+                ignore_parser
+                    .clone()
+                    .then(just('*').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .map(|v| Box::new(using_directive::_T4::StarChar(v))),
+                type_name_parser
+                    .clone()
+                    .map(|v| Box::new(using_directive::_T4::TypeName(v))),
+            )))
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(
+                        terminal("global")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<6usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .or_not(),
+            )
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| using_directive::_T0::from_parse(v))
+            .boxed();
 
         // VariableDeclaration = TypeName [ DataLocation ] «Identifier» ;
         let variable_declaration_parser = type_name_parser
             .clone()
             .then(
-                with_noise(choice::<_, ErrorType>((
-                    terminal("calldata").map(|_| 8usize),
-                    terminal("memory").map(|_| 6usize),
-                    terminal("storage").map(|_| 7usize),
-                )))
-                .or_not(),
+                ignore_parser
+                    .clone()
+                    .then(choice::<_, ErrorType>((
+                        terminal("calldata").map(|_| 8usize),
+                        terminal("memory").map(|_| 6usize),
+                        terminal("storage").map(|_| 7usize),
+                    )))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .or_not(),
             )
             .then(identifier_parser.clone())
-            .map(|v| Box::new(variable_declaration::_T0::new(v)))
+            .map(|v| variable_declaration::_T0::from_parse(v))
             .boxed();
 
         // Directive = «PragmaDirective» | ImportDirective | UsingDirective ;
         let directive_parser = choice((
             pragma_directive_parser
                 .clone()
-                .map(|v| Box::new(directive::Directive::PragmaDirective(v))),
+                .map(|v| Box::new(directive::_T0::PragmaDirective(v))),
             import_directive_parser
                 .clone()
-                .map(|v| Box::new(directive::Directive::ImportDirective(v))),
+                .map(|v| Box::new(directive::_T0::ImportDirective(v))),
             using_directive_parser
                 .clone()
-                .map(|v| Box::new(directive::Directive::UsingDirective(v))),
+                .map(|v| Box::new(directive::_T0::UsingDirective(v))),
         ))
         .boxed();
 
         // ErrorDefinition = 'error' «Identifier» '(' { ErrorParameter / ',' } ')' ';' ;
-        let error_definition_parser = with_noise(
-            terminal("error")
-                .ignored()
-                .map(|_| FixedTerminal::<5usize>()),
-        )
-        .then(identifier_parser.clone())
-        .then(with_noise(just('(').map(|_| FixedTerminal::<1>())))
-        .then(
-            error_parameter_parser
-                .clone()
-                .then(
-                    with_noise(just(',').map(|_| FixedTerminal::<1>()))
-                        .then(error_parameter_parser.clone())
-                        .repeated(),
-                )
-                .map(repetition_mapper)
-                .map(|v| error_definition::_T1::new(v))
-                .or_not(),
-        )
-        .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
-        .then(with_noise(just(';').map(|_| FixedTerminal::<1>())))
-        .map(|v| Box::new(error_definition::_T0::new(v)))
-        .boxed();
+        let error_definition_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("error")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<5usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(identifier_parser.clone())
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just('(').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(
+                error_parameter_parser
+                    .clone()
+                    .then(
+                        ignore_parser
+                            .clone()
+                            .then(just(',').map(|_| FixedSizeTerminal::<1>()))
+                            .then(ignore_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            )
+                            .then(error_parameter_parser.clone())
+                            .repeated(),
+                    )
+                    .map(repetition_mapper)
+                    .map(|(elements, separators)| error_definition::_T1 {
+                        elements,
+                        separators,
+                    })
+                    .or_not(),
+            )
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(')').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| error_definition::_T0::from_parse(v))
+            .boxed();
 
         // EventDefinition = 'event' «Identifier» '(' { EventParameter / ',' } ')' [ 'anonymous' ] ';' ;
-        let event_definition_parser = with_noise(
-            terminal("event")
-                .ignored()
-                .map(|_| FixedTerminal::<5usize>()),
-        )
-        .then(identifier_parser.clone())
-        .then(with_noise(just('(').map(|_| FixedTerminal::<1>())))
-        .then(
-            event_parameter_parser
-                .clone()
-                .then(
-                    with_noise(just(',').map(|_| FixedTerminal::<1>()))
-                        .then(event_parameter_parser.clone())
-                        .repeated(),
-                )
-                .map(repetition_mapper)
-                .map(|v| event_definition::_T1::new(v))
-                .or_not(),
-        )
-        .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
-        .then(
-            with_noise(
-                terminal("anonymous")
+        let event_definition_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("event")
                     .ignored()
-                    .map(|_| FixedTerminal::<9usize>()),
+                    .map(|_| FixedSizeTerminal::<5usize>()),
             )
-            .or_not(),
-        )
-        .then(with_noise(just(';').map(|_| FixedTerminal::<1>())))
-        .map(|v| Box::new(event_definition::_T0::new(v)))
-        .boxed();
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(identifier_parser.clone())
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just('(').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(
+                event_parameter_parser
+                    .clone()
+                    .then(
+                        ignore_parser
+                            .clone()
+                            .then(just(',').map(|_| FixedSizeTerminal::<1>()))
+                            .then(ignore_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            )
+                            .then(event_parameter_parser.clone())
+                            .repeated(),
+                    )
+                    .map(repetition_mapper)
+                    .map(|(elements, separators)| event_definition::_T1 {
+                        elements,
+                        separators,
+                    })
+                    .or_not(),
+            )
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(')').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(
+                        terminal("anonymous")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<9usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .or_not(),
+            )
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| event_definition::_T0::from_parse(v))
+            .boxed();
 
         // IndexAccessExpression = Expression '[' [ Expression ] [ ':' [ Expression ] ] ']' ;
         let index_access_expression_parser = primary_expression_parser
+            .clone()
             .then(
-                with_noise(just('[').map(|_| FixedTerminal::<1>()))
+                ignore_parser
+                    .clone()
+                    .then(just('[').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
                     .then(expression_parser.clone().or_not())
                     .then(
-                        with_noise(just(':').map(|_| FixedTerminal::<1>()))
+                        ignore_parser
+                            .clone()
+                            .then(just(':').map(|_| FixedSizeTerminal::<1>()))
+                            .then(ignore_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            )
                             .then(expression_parser.clone().or_not())
-                            .map(|v| Box::new(index_access_expression::_T1::new(v)))
+                            .map(|v| index_access_expression::_T1::from_parse(v))
                             .or_not(),
                     )
-                    .then(with_noise(just(']').map(|_| FixedTerminal::<1>())))
-                    .map(|v| Box::new(index_access_expression::Operator::new(v)))
+                    .then(
+                        ignore_parser
+                            .clone()
+                            .then(just(']').map(|_| FixedSizeTerminal::<1>()))
+                            .then(ignore_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            ),
+                    )
+                    .map(|v| index_access_expression::Operator::from_parse(v))
                     .repeated(),
             )
             .map(|(operand, operators)| {
-                if operators.is_empty {
+                if operators.is_empty() {
                     operand
                 } else {
-                    operators.iter().fold(operand, |left, operator| {
-                        Expression::IndexAccessExpression(index_access_expression::E {
-                            left,
-                            operator,
-                        })
+                    operators.into_iter().fold(operand, |left, operator| {
+                        Box::new(expression::Expression::IndexAccessExpression(
+                            index_access_expression::E { left, operator },
+                        ))
                     })
                 }
             })
             .boxed();
 
         // VariableDeclarationTuple = '(' { ',' } VariableDeclaration { ',' [ VariableDeclaration ] } ')' ;
-        let variable_declaration_tuple_parser = with_noise(just('(').map(|_| FixedTerminal::<1>()))
+        let variable_declaration_tuple_parser = ignore_parser
+            .clone()
+            .then(just('(').map(|_| FixedSizeTerminal::<1>()))
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
             .then(
-                with_noise(just(',').map(|_| FixedTerminal::<1>()))
+                ignore_parser
+                    .clone()
+                    .then(just(',').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
                     .repeated()
                     .map(|v| v.len()),
             )
             .then(variable_declaration_parser.clone())
             .then(
-                with_noise(just(',').map(|_| FixedTerminal::<1>()))
+                ignore_parser
+                    .clone()
+                    .then(just(',').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
                     .then(variable_declaration_parser.clone().or_not())
-                    .map(|v| Box::new(variable_declaration_tuple::_T3::new(v)))
+                    .map(|v| variable_declaration_tuple::_T3::from_parse(v))
                     .repeated(),
             )
-            .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
-            .map(|v| Box::new(variable_declaration_tuple::_T0::new(v)))
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(')').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| variable_declaration_tuple::_T0::from_parse(v))
             .boxed();
 
         // MemberAccessExpression = Expression '.' ( «Identifier» | 'address' ) ;
         let member_access_expression_parser = index_access_expression_parser
+            .clone()
             .then(
-                with_noise(just('.').map(|_| FixedTerminal::<1>()))
+                ignore_parser
+                    .clone()
+                    .then(just('.').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
                     .then(choice((
-                        identifier_parser.clone().map(|v| {
-                            Box::new(
-                                member_access_expression::MemberAccessExpression::Identifier(v),
+                        identifier_parser
+                            .clone()
+                            .map(|v| Box::new(member_access_expression::_T1::Identifier(v))),
+                        ignore_parser
+                            .clone()
+                            .then(
+                                terminal("address")
+                                    .ignored()
+                                    .map(|_| FixedSizeTerminal::<7usize>()),
                             )
-                        }),
-                        with_noise(
-                            terminal("address")
-                                .ignored()
-                                .map(|_| FixedTerminal::<7usize>()),
-                        )
-                        .map(|v| {
-                            Box::new(member_access_expression::MemberAccessExpression::Address(v))
-                        }),
+                            .then(ignore_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            )
+                            .map(|v| Box::new(member_access_expression::_T1::Address(v))),
                     )))
-                    .map(|v| Box::new(member_access_expression::Operator::new(v)))
+                    .map(|v| member_access_expression::Operator::from_parse(v))
                     .repeated(),
             )
             .map(|(operand, operators)| {
-                if operators.is_empty {
+                if operators.is_empty() {
                     operand
                 } else {
-                    operators.iter().fold(operand, |left, operator| {
-                        Expression::MemberAccessExpression(member_access_expression::E {
-                            left,
-                            operator,
-                        })
+                    operators.into_iter().fold(operand, |left, operator| {
+                        Box::new(expression::Expression::MemberAccessExpression(
+                            member_access_expression::E { left, operator },
+                        ))
                     })
                 }
             })
@@ -2592,31 +4332,69 @@ impl Parsers {
 
         // FunctionCallOptionsExpression = Expression '{' 1…*{ NamedArgument / ',' } '}' ;
         let function_call_options_expression_parser = member_access_expression_parser
+            .clone()
             .then(
-                with_noise(just('{').map(|_| FixedTerminal::<1>()))
+                ignore_parser
+                    .clone()
+                    .then(just('{').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
                     .then(
                         named_argument_parser
                             .clone()
                             .then(
-                                with_noise(just(',').map(|_| FixedTerminal::<1>()))
+                                ignore_parser
+                                    .clone()
+                                    .then(just(',').map(|_| FixedSizeTerminal::<1>()))
+                                    .then(ignore_parser.clone())
+                                    .map(|((leading, content), trailing)| {
+                                        FixedSizeTerminalWithNoise {
+                                            leading,
+                                            content,
+                                            trailing,
+                                        }
+                                    })
                                     .then(named_argument_parser.clone())
                                     .repeated(),
                             )
                             .map(repetition_mapper)
-                            .map(|v| function_call_options_expression::_T1::new(v)),
+                            .map(
+                                |(elements, separators)| function_call_options_expression::_T1 {
+                                    elements,
+                                    separators,
+                                },
+                            ),
                     )
-                    .then(with_noise(just('}').map(|_| FixedTerminal::<1>())))
-                    .map(|v| Box::new(function_call_options_expression::Operator::new(v)))
+                    .then(
+                        ignore_parser
+                            .clone()
+                            .then(just('}').map(|_| FixedSizeTerminal::<1>()))
+                            .then(ignore_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            ),
+                    )
+                    .map(|v| function_call_options_expression::Operator::from_parse(v))
                     .repeated(),
             )
             .map(|(operand, operators)| {
-                if operators.is_empty {
+                if operators.is_empty() {
                     operand
                 } else {
-                    operators.iter().fold(operand, |left, operator| {
-                        Expression::FunctionCallOptionsExpression(
+                    operators.into_iter().fold(operand, |left, operator| {
+                        Box::new(expression::Expression::FunctionCallOptionsExpression(
                             function_call_options_expression::E { left, operator },
-                        )
+                        ))
                     })
                 }
             })
@@ -2624,67 +4402,89 @@ impl Parsers {
 
         // FunctionCallExpression = Expression ArgumentList ;
         let function_call_expression_parser = function_call_options_expression_parser
+            .clone()
             .then(argument_list_parser.clone().repeated())
             .map(|(operand, operators)| {
-                if operators.is_empty {
+                if operators.is_empty() {
                     operand
                 } else {
-                    operators.iter().fold(operand, |left, operator| {
-                        Expression::FunctionCallExpression(function_call_expression::E {
-                            left,
-                            operator,
-                        })
+                    operators.into_iter().fold(operand, |left, operator| {
+                        Box::new(expression::Expression::FunctionCallExpression(
+                            function_call_expression::E { left, operator },
+                        ))
                     })
                 }
             })
             .boxed();
 
         // UnaryPrefixExpression = ( '++' | '--' | '!' | '~' | 'delete' | '-' ) Expression ;
-        let unary_prefix_expression_parser = with_noise(choice::<_, ErrorType>((
-            terminal("!").map(|_| 1usize),
-            terminal("++").map(|_| 2usize),
-            terminal("-").ignore_then(choice((
-                terminal("-").map(|_| 2usize),
-                empty().map(|_| 1usize),
-            ))),
-            terminal("delete").map(|_| 6usize),
-            terminal("~").map(|_| 1usize),
-        )))
-        .repeated()
-        .then(function_call_expression_parser)
-        .map(|(mut operators, operand)| {
-            if operators.is_empty {
-                operand
-            } else {
-                operators.reverse();
-                operators.iter().fold(operand, |right, operator| {
-                    Expression::UnaryPrefixExpression(unary_prefix_expression::E {
-                        operator,
-                        right,
+        let unary_prefix_expression_parser = ignore_parser
+            .clone()
+            .then(choice::<_, ErrorType>((
+                terminal("!").map(|_| 1usize),
+                terminal("++").map(|_| 2usize),
+                terminal("-").ignore_then(choice((
+                    terminal("-").map(|_| 2usize),
+                    empty().map(|_| 1usize),
+                ))),
+                terminal("delete").map(|_| 6usize),
+                terminal("~").map(|_| 1usize),
+            )))
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .repeated()
+            .then(function_call_expression_parser.clone())
+            .map(|(mut operators, operand)| {
+                if operators.is_empty() {
+                    operand
+                } else {
+                    operators.reverse();
+                    operators.into_iter().fold(operand, |right, operator| {
+                        Box::new(expression::Expression::UnaryPrefixExpression(
+                            unary_prefix_expression::E { operator, right },
+                        ))
                     })
-                })
-            }
-        })
-        .boxed();
+                }
+            })
+            .boxed();
 
         // UnarySuffixExpression = Expression ( '++' | '--' ) ;
         let unary_suffix_expression_parser = unary_prefix_expression_parser
+            .clone()
             .then(
-                with_noise(
-                    choice::<_, ErrorType>((terminal("++").ignored(), terminal("--").ignored()))
-                        .map(|_| FixedTerminal::<2usize>()),
-                )
-                .repeated(),
+                ignore_parser
+                    .clone()
+                    .then(
+                        choice::<_, ErrorType>((
+                            terminal("++").ignored(),
+                            terminal("--").ignored(),
+                        ))
+                        .map(|_| FixedSizeTerminal::<2usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .repeated(),
             )
             .map(|(operand, operators)| {
-                if operators.is_empty {
+                if operators.is_empty() {
                     operand
                 } else {
-                    operators.iter().fold(operand, |left, operator| {
-                        Expression::UnarySuffixExpression(unary_suffix_expression::E {
-                            left,
-                            operator,
-                        })
+                    operators.into_iter().fold(operand, |left, operator| {
+                        Box::new(expression::Expression::UnarySuffixExpression(
+                            unary_suffix_expression::E { left, operator },
+                        ))
                     })
                 }
             })
@@ -2692,21 +4492,38 @@ impl Parsers {
 
         // ExponentiationExpression = Expression '**' Expression ;
         let exponentiation_expression_parser = unary_suffix_expression_parser
+            .clone()
             .then(
-                with_noise(terminal("**").ignored().map(|_| FixedTerminal::<2usize>()))
-                    .then(unary_suffix_expression_parser)
+                ignore_parser
+                    .clone()
+                    .then(
+                        terminal("**")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<2usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .then(unary_suffix_expression_parser.clone())
                     .repeated(),
             )
             .map(|(next, pairs)| {
-                if pairs.is_empty {
+                if pairs.is_empty() {
                     next
                 } else {
-                    pairs.iter().fold(next, |left, (operator, right)| {
-                        Expression::ExponentiationExpression(exponentiation_expression::E {
-                            left,
-                            operator,
-                            right,
-                        })
+                    pairs.into_iter().fold(next, |left, (operator, right)| {
+                        Box::new(expression::Expression::ExponentiationExpression(
+                            exponentiation_expression::E {
+                                left,
+                                operator,
+                                right,
+                            },
+                        ))
                     })
                 }
             })
@@ -2714,24 +4531,37 @@ impl Parsers {
 
         // MulDivModExpression = Expression ( '*' | '/' | '%' ) Expression ;
         let mul_div_mod_expression_parser = exponentiation_expression_parser
+            .clone()
             .then(
-                with_noise(
-                    filter(|&c: &char| c == '*' || c == '/' || c == '%')
-                        .map(|_| FixedTerminal::<1>()),
-                )
-                .then(exponentiation_expression_parser)
-                .repeated(),
+                ignore_parser
+                    .clone()
+                    .then(
+                        filter(|&c: &char| c == '*' || c == '/' || c == '%')
+                            .map(|_| FixedSizeTerminal::<1>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .then(exponentiation_expression_parser.clone())
+                    .repeated(),
             )
             .map(|(next, pairs)| {
-                if pairs.is_empty {
+                if pairs.is_empty() {
                     next
                 } else {
-                    pairs.iter().fold(next, |left, (operator, right)| {
-                        Expression::MulDivModExpression(mul_div_mod_expression::E {
-                            left,
-                            operator,
-                            right,
-                        })
+                    pairs.into_iter().fold(next, |left, (operator, right)| {
+                        Box::new(expression::Expression::MulDivModExpression(
+                            mul_div_mod_expression::E {
+                                left,
+                                operator,
+                                right,
+                            },
+                        ))
                     })
                 }
             })
@@ -2739,21 +4569,36 @@ impl Parsers {
 
         // AddSubExpression = Expression ( '+' | '-' ) Expression ;
         let add_sub_expression_parser = mul_div_mod_expression_parser
+            .clone()
             .then(
-                with_noise(filter(|&c: &char| c == '+' || c == '-').map(|_| FixedTerminal::<1>()))
-                    .then(mul_div_mod_expression_parser)
+                ignore_parser
+                    .clone()
+                    .then(
+                        filter(|&c: &char| c == '+' || c == '-').map(|_| FixedSizeTerminal::<1>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .then(mul_div_mod_expression_parser.clone())
                     .repeated(),
             )
             .map(|(next, pairs)| {
-                if pairs.is_empty {
+                if pairs.is_empty() {
                     next
                 } else {
-                    pairs.iter().fold(next, |left, (operator, right)| {
-                        Expression::AddSubExpression(add_sub_expression::E {
-                            left,
-                            operator,
-                            right,
-                        })
+                    pairs.into_iter().fold(next, |left, (operator, right)| {
+                        Box::new(expression::Expression::AddSubExpression(
+                            add_sub_expression::E {
+                                left,
+                                operator,
+                                right,
+                            },
+                        ))
                     })
                 }
             })
@@ -2761,27 +4606,40 @@ impl Parsers {
 
         // ShiftExpression = Expression ( '<<' | '>>' | '>>>' ) Expression ;
         let shift_expression_parser = add_sub_expression_parser
+            .clone()
             .then(
-                with_noise(choice::<_, ErrorType>((
-                    terminal("<<").map(|_| 2usize),
-                    terminal(">>").ignore_then(choice((
-                        terminal(">").map(|_| 3usize),
-                        empty().map(|_| 2usize),
-                    ))),
-                )))
-                .then(add_sub_expression_parser)
-                .repeated(),
+                ignore_parser
+                    .clone()
+                    .then(choice::<_, ErrorType>((
+                        terminal("<<").map(|_| 2usize),
+                        terminal(">>").ignore_then(choice((
+                            terminal(">").map(|_| 3usize),
+                            empty().map(|_| 2usize),
+                        ))),
+                    )))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .then(add_sub_expression_parser.clone())
+                    .repeated(),
             )
             .map(|(next, pairs)| {
-                if pairs.is_empty {
+                if pairs.is_empty() {
                     next
                 } else {
-                    pairs.iter().fold(next, |left, (operator, right)| {
-                        Expression::ShiftExpression(shift_expression::E {
-                            left,
-                            operator,
-                            right,
-                        })
+                    pairs.into_iter().fold(next, |left, (operator, right)| {
+                        Box::new(expression::Expression::ShiftExpression(
+                            shift_expression::E {
+                                left,
+                                operator,
+                                right,
+                            },
+                        ))
                     })
                 }
             })
@@ -2789,21 +4647,34 @@ impl Parsers {
 
         // BitAndExpression = Expression '&' Expression ;
         let bit_and_expression_parser = shift_expression_parser
+            .clone()
             .then(
-                with_noise(just('&').map(|_| FixedTerminal::<1>()))
-                    .then(shift_expression_parser)
+                ignore_parser
+                    .clone()
+                    .then(just('&').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .then(shift_expression_parser.clone())
                     .repeated(),
             )
             .map(|(next, pairs)| {
-                if pairs.is_empty {
+                if pairs.is_empty() {
                     next
                 } else {
-                    pairs.iter().fold(next, |left, (operator, right)| {
-                        Expression::BitAndExpression(bit_and_expression::E {
-                            left,
-                            operator,
-                            right,
-                        })
+                    pairs.into_iter().fold(next, |left, (operator, right)| {
+                        Box::new(expression::Expression::BitAndExpression(
+                            bit_and_expression::E {
+                                left,
+                                operator,
+                                right,
+                            },
+                        ))
                     })
                 }
             })
@@ -2811,21 +4682,34 @@ impl Parsers {
 
         // BitXOrExpression = Expression '^' Expression ;
         let bit_x_or_expression_parser = bit_and_expression_parser
+            .clone()
             .then(
-                with_noise(just('^').map(|_| FixedTerminal::<1>()))
-                    .then(bit_and_expression_parser)
+                ignore_parser
+                    .clone()
+                    .then(just('^').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .then(bit_and_expression_parser.clone())
                     .repeated(),
             )
             .map(|(next, pairs)| {
-                if pairs.is_empty {
+                if pairs.is_empty() {
                     next
                 } else {
-                    pairs.iter().fold(next, |left, (operator, right)| {
-                        Expression::BitXOrExpression(bit_x_or_expression::E {
-                            left,
-                            operator,
-                            right,
-                        })
+                    pairs.into_iter().fold(next, |left, (operator, right)| {
+                        Box::new(expression::Expression::BitXOrExpression(
+                            bit_x_or_expression::E {
+                                left,
+                                operator,
+                                right,
+                            },
+                        ))
                     })
                 }
             })
@@ -2833,21 +4717,34 @@ impl Parsers {
 
         // BitOrExpression = Expression '|' Expression ;
         let bit_or_expression_parser = bit_x_or_expression_parser
+            .clone()
             .then(
-                with_noise(just('|').map(|_| FixedTerminal::<1>()))
-                    .then(bit_x_or_expression_parser)
+                ignore_parser
+                    .clone()
+                    .then(just('|').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .then(bit_x_or_expression_parser.clone())
                     .repeated(),
             )
             .map(|(next, pairs)| {
-                if pairs.is_empty {
+                if pairs.is_empty() {
                     next
                 } else {
-                    pairs.iter().fold(next, |left, (operator, right)| {
-                        Expression::BitOrExpression(bit_or_expression::E {
-                            left,
-                            operator,
-                            right,
-                        })
+                    pairs.into_iter().fold(next, |left, (operator, right)| {
+                        Box::new(expression::Expression::BitOrExpression(
+                            bit_or_expression::E {
+                                left,
+                                operator,
+                                right,
+                            },
+                        ))
                     })
                 }
             })
@@ -2855,30 +4752,43 @@ impl Parsers {
 
         // OrderComparisonExpression = Expression ( '<' | '>' | '<=' | '>=' ) Expression ;
         let order_comparison_expression_parser = bit_or_expression_parser
+            .clone()
             .then(
-                with_noise(choice::<_, ErrorType>((
-                    terminal("<").ignore_then(choice((
-                        terminal("=").map(|_| 2usize),
-                        empty().map(|_| 1usize),
-                    ))),
-                    terminal(">").ignore_then(choice((
-                        terminal("=").map(|_| 2usize),
-                        empty().map(|_| 1usize),
-                    ))),
-                )))
-                .then(bit_or_expression_parser)
-                .repeated(),
+                ignore_parser
+                    .clone()
+                    .then(choice::<_, ErrorType>((
+                        terminal("<").ignore_then(choice((
+                            terminal("=").map(|_| 2usize),
+                            empty().map(|_| 1usize),
+                        ))),
+                        terminal(">").ignore_then(choice((
+                            terminal("=").map(|_| 2usize),
+                            empty().map(|_| 1usize),
+                        ))),
+                    )))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .then(bit_or_expression_parser.clone())
+                    .repeated(),
             )
             .map(|(next, pairs)| {
-                if pairs.is_empty {
+                if pairs.is_empty() {
                     next
                 } else {
-                    pairs.iter().fold(next, |left, (operator, right)| {
-                        Expression::OrderComparisonExpression(order_comparison_expression::E {
-                            left,
-                            operator,
-                            right,
-                        })
+                    pairs.into_iter().fold(next, |left, (operator, right)| {
+                        Box::new(expression::Expression::OrderComparisonExpression(
+                            order_comparison_expression::E {
+                                left,
+                                operator,
+                                right,
+                            },
+                        ))
                     })
                 }
             })
@@ -2886,26 +4796,40 @@ impl Parsers {
 
         // EqualityComparisonExpression = Expression ( '==' | '!=' ) Expression ;
         let equality_comparison_expression_parser = order_comparison_expression_parser
+            .clone()
             .then(
-                with_noise(
-                    choice::<_, ErrorType>((terminal("!=").ignored(), terminal("==").ignored()))
-                        .map(|_| FixedTerminal::<2usize>()),
-                )
-                .then(order_comparison_expression_parser)
-                .repeated(),
+                ignore_parser
+                    .clone()
+                    .then(
+                        choice::<_, ErrorType>((
+                            terminal("!=").ignored(),
+                            terminal("==").ignored(),
+                        ))
+                        .map(|_| FixedSizeTerminal::<2usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .then(order_comparison_expression_parser.clone())
+                    .repeated(),
             )
             .map(|(next, pairs)| {
-                if pairs.is_empty {
+                if pairs.is_empty() {
                     next
                 } else {
-                    pairs.iter().fold(next, |left, (operator, right)| {
-                        Expression::EqualityComparisonExpression(
+                    pairs.into_iter().fold(next, |left, (operator, right)| {
+                        Box::new(expression::Expression::EqualityComparisonExpression(
                             equality_comparison_expression::E {
                                 left,
                                 operator,
                                 right,
                             },
-                        )
+                        ))
                     })
                 }
             })
@@ -2913,21 +4837,36 @@ impl Parsers {
 
         // AndExpression = Expression '&&' Expression ;
         let and_expression_parser = equality_comparison_expression_parser
+            .clone()
             .then(
-                with_noise(terminal("&&").ignored().map(|_| FixedTerminal::<2usize>()))
-                    .then(equality_comparison_expression_parser)
+                ignore_parser
+                    .clone()
+                    .then(
+                        terminal("&&")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<2usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .then(equality_comparison_expression_parser.clone())
                     .repeated(),
             )
             .map(|(next, pairs)| {
-                if pairs.is_empty {
+                if pairs.is_empty() {
                     next
                 } else {
-                    pairs.iter().fold(next, |left, (operator, right)| {
-                        Expression::AndExpression(and_expression::E {
+                    pairs.into_iter().fold(next, |left, (operator, right)| {
+                        Box::new(expression::Expression::AndExpression(and_expression::E {
                             left,
                             operator,
                             right,
-                        })
+                        }))
                     })
                 }
             })
@@ -2935,21 +4874,36 @@ impl Parsers {
 
         // OrExpression = Expression '||' Expression ;
         let or_expression_parser = and_expression_parser
+            .clone()
             .then(
-                with_noise(terminal("||").ignored().map(|_| FixedTerminal::<2usize>()))
-                    .then(and_expression_parser)
+                ignore_parser
+                    .clone()
+                    .then(
+                        terminal("||")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<2usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .then(and_expression_parser.clone())
                     .repeated(),
             )
             .map(|(next, pairs)| {
-                if pairs.is_empty {
+                if pairs.is_empty() {
                     next
                 } else {
-                    pairs.iter().fold(next, |left, (operator, right)| {
-                        Expression::OrExpression(or_expression::E {
+                    pairs.into_iter().fold(next, |left, (operator, right)| {
+                        Box::new(expression::Expression::OrExpression(or_expression::E {
                             left,
                             operator,
                             right,
-                        })
+                        }))
                     })
                 }
             })
@@ -2957,23 +4911,45 @@ impl Parsers {
 
         // ConditionalExpression = Expression '?' Expression ':' Expression ;
         let conditional_expression_parser = or_expression_parser
+            .clone()
             .then(
-                with_noise(just('?').map(|_| FixedTerminal::<1>()))
+                ignore_parser
+                    .clone()
+                    .then(just('?').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
                     .then(expression_parser.clone())
-                    .then(with_noise(just(':').map(|_| FixedTerminal::<1>())))
+                    .then(
+                        ignore_parser
+                            .clone()
+                            .then(just(':').map(|_| FixedSizeTerminal::<1>()))
+                            .then(ignore_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            ),
+                    )
                     .then(expression_parser.clone())
-                    .map(|v| Box::new(conditional_expression::_T1::new(v)))
+                    .map(|v| conditional_expression::_T1::from_parse(v))
                     .repeated(),
             )
             .map(|(operand, operators)| {
-                if operators.is_empty {
+                if operators.is_empty() {
                     operand
                 } else {
-                    operators.iter().fold(operand, |left, operator| {
-                        Expression::ConditionalExpression(conditional_expression::E {
-                            left,
-                            operator,
-                        })
+                    operators.into_iter().fold(operand, |left, operator| {
+                        Box::new(expression::Expression::ConditionalExpression(
+                            conditional_expression::E { left, operator },
+                        ))
                     })
                 }
             })
@@ -2981,136 +4957,371 @@ impl Parsers {
 
         // AssignmentExpression = Expression ( '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ) Expression ;
         let assignment_expression_parser = conditional_expression_parser
+            .clone()
             .then(
-                with_noise(choice::<_, ErrorType>((
-                    terminal("%=").map(|_| 2usize),
-                    terminal("&=").map(|_| 2usize),
-                    terminal("*=").map(|_| 2usize),
-                    terminal("+=").map(|_| 2usize),
-                    terminal("-=").map(|_| 2usize),
-                    terminal("/=").map(|_| 2usize),
-                    terminal("<<=").map(|_| 3usize),
-                    terminal("=").map(|_| 1usize),
-                    terminal(">>").ignore_then(choice((
-                        terminal("=").map(|_| 3usize),
-                        terminal(">=").map(|_| 4usize),
-                    ))),
-                    terminal("^=").map(|_| 2usize),
-                    terminal("|=").map(|_| 2usize),
-                )))
-                .then(conditional_expression_parser)
-                .repeated(),
+                ignore_parser
+                    .clone()
+                    .then(choice::<_, ErrorType>((
+                        terminal("%=").map(|_| 2usize),
+                        terminal("&=").map(|_| 2usize),
+                        terminal("*=").map(|_| 2usize),
+                        terminal("+=").map(|_| 2usize),
+                        terminal("-=").map(|_| 2usize),
+                        terminal("/=").map(|_| 2usize),
+                        terminal("<<=").map(|_| 3usize),
+                        terminal("=").map(|_| 1usize),
+                        terminal(">>").ignore_then(choice((
+                            terminal("=").map(|_| 3usize),
+                            terminal(">=").map(|_| 4usize),
+                        ))),
+                        terminal("^=").map(|_| 2usize),
+                        terminal("|=").map(|_| 2usize),
+                    )))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .then(conditional_expression_parser.clone())
+                    .repeated(),
             )
             .map(|(next, pairs)| {
-                if pairs.is_empty {
+                if pairs.is_empty() {
                     next
                 } else {
-                    pairs.iter().fold(next, |left, (operator, right)| {
-                        Expression::AssignmentExpression(assignment_expression::E {
-                            left,
-                            operator,
-                            right,
-                        })
+                    pairs.into_iter().fold(next, |left, (operator, right)| {
+                        Box::new(expression::Expression::AssignmentExpression(
+                            assignment_expression::E {
+                                left,
+                                operator,
+                                right,
+                            },
+                        ))
                     })
                 }
             })
             .boxed();
 
         // Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnarySuffixExpression | UnaryPrefixExpression | FunctionCallExpression | FunctionCallOptionsExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
-        expression_parser.define(assignment_expression_parser.boxed());
+        expression_parser.define(assignment_expression_parser.clone().boxed());
 
         // ConstantDefinition = TypeName 'constant' «Identifier» '=' Expression ';' ;
         let constant_definition_parser = type_name_parser
             .clone()
-            .then(with_noise(
-                terminal("constant")
-                    .ignored()
-                    .map(|_| FixedTerminal::<8usize>()),
-            ))
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(
+                        terminal("constant")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<8usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
             .then(identifier_parser.clone())
-            .then(with_noise(just('=').map(|_| FixedTerminal::<1>())))
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just('=').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
             .then(expression_parser.clone())
-            .then(with_noise(just(';').map(|_| FixedTerminal::<1>())))
-            .map(|v| Box::new(constant_definition::_T0::new(v)))
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| constant_definition::_T0::from_parse(v))
             .boxed();
 
         // DoWhileStatement = 'do' Statement 'while' '(' Expression ')' ';' ;
-        let do_while_statement_parser =
-            with_noise(terminal("do").ignored().map(|_| FixedTerminal::<2usize>()))
-                .then(statement_parser.clone())
-                .then(with_noise(
-                    terminal("while")
-                        .ignored()
-                        .map(|_| FixedTerminal::<5usize>()),
-                ))
-                .then(with_noise(just('(').map(|_| FixedTerminal::<1>())))
-                .then(expression_parser.clone())
-                .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
-                .then(with_noise(just(';').map(|_| FixedTerminal::<1>())))
-                .map(|v| Box::new(do_while_statement::_T0::new(v)))
-                .boxed();
+        let do_while_statement_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("do")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<2usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(statement_parser.clone())
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(
+                        terminal("while")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<5usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just('(').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(expression_parser.clone())
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(')').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| do_while_statement::_T0::from_parse(v))
+            .boxed();
 
         // EmitStatement = 'emit' Expression ArgumentList ';' ;
-        let emit_statement_parser = with_noise(
-            terminal("emit")
-                .ignored()
-                .map(|_| FixedTerminal::<4usize>()),
-        )
-        .then(expression_parser.clone())
-        .then(argument_list_parser.clone())
-        .then(with_noise(just(';').map(|_| FixedTerminal::<1>())))
-        .map(|v| Box::new(emit_statement::_T0::new(v)))
-        .boxed();
+        let emit_statement_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("emit")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<4usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(expression_parser.clone())
+            .then(argument_list_parser.clone())
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| emit_statement::_T0::from_parse(v))
+            .boxed();
 
         // ExpressionStatement = Expression ';' ;
         let expression_statement_parser = expression_parser
             .clone()
-            .then(with_noise(just(';').map(|_| FixedTerminal::<1>())))
-            .map(|v| Box::new(expression_statement::_T0::new(v)))
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| expression_statement::_T0::from_parse(v))
             .boxed();
 
         // IfStatement = 'if' '(' Expression ')' Statement [ 'else' Statement ] ;
-        let if_statement_parser =
-            with_noise(terminal("if").ignored().map(|_| FixedTerminal::<2usize>()))
-                .then(with_noise(just('(').map(|_| FixedTerminal::<1>())))
-                .then(expression_parser.clone())
-                .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
-                .then(statement_parser.clone())
-                .then(
-                    with_noise(
+        let if_statement_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("if")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<2usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just('(').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(expression_parser.clone())
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(')').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(statement_parser.clone())
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(
                         terminal("else")
                             .ignored()
-                            .map(|_| FixedTerminal::<4usize>()),
+                            .map(|_| FixedSizeTerminal::<4usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
                     )
                     .then(statement_parser.clone())
-                    .map(|v| Box::new(if_statement::_T1::new(v)))
+                    .map(|v| if_statement::_T1::from_parse(v))
                     .or_not(),
-                )
-                .map(|v| Box::new(if_statement::_T0::new(v)))
-                .boxed();
+            )
+            .map(|v| if_statement::_T0::from_parse(v))
+            .boxed();
 
         // ReturnStatement = 'return' [ Expression ] ';' ;
-        let return_statement_parser = with_noise(
-            terminal("return")
-                .ignored()
-                .map(|_| FixedTerminal::<6usize>()),
-        )
-        .then(expression_parser.clone().or_not())
-        .then(with_noise(just(';').map(|_| FixedTerminal::<1>())))
-        .map(|v| Box::new(return_statement::_T0::new(v)))
-        .boxed();
+        let return_statement_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("return")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<6usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(expression_parser.clone().or_not())
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| return_statement::_T0::from_parse(v))
+            .boxed();
 
         // RevertStatement = 'revert' Expression ArgumentList ';' ;
-        let revert_statement_parser = with_noise(
-            terminal("revert")
-                .ignored()
-                .map(|_| FixedTerminal::<6usize>()),
-        )
-        .then(expression_parser.clone())
-        .then(argument_list_parser.clone())
-        .then(with_noise(just(';').map(|_| FixedTerminal::<1>())))
-        .map(|v| Box::new(revert_statement::_T0::new(v)))
-        .boxed();
+        let revert_statement_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("revert")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<6usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(expression_parser.clone())
+            .then(argument_list_parser.clone())
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| revert_statement::_T0::from_parse(v))
+            .boxed();
 
         // StateVariableDeclaration = TypeName { StateVariableAttribute } «Identifier» [ '=' Expression ] ';' ;
         let state_variable_declaration_parser = type_name_parser
@@ -3118,419 +5329,855 @@ impl Parsers {
             .then(state_variable_attribute_parser.clone().repeated())
             .then(identifier_parser.clone())
             .then(
-                with_noise(just('=').map(|_| FixedTerminal::<1>()))
+                ignore_parser
+                    .clone()
+                    .then(just('=').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
                     .then(expression_parser.clone())
-                    .map(|v| Box::new(state_variable_declaration::_T2::new(v)))
+                    .map(|v| state_variable_declaration::_T2::from_parse(v))
                     .or_not(),
             )
-            .then(with_noise(just(';').map(|_| FixedTerminal::<1>())))
-            .map(|v| Box::new(state_variable_declaration::_T0::new(v)))
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| state_variable_declaration::_T0::from_parse(v))
             .boxed();
 
         // TryStatement = 'try' Expression [ 'returns' NonEmptyParameterList ] Block 1…*{ CatchClause } ;
-        let try_statement_parser =
-            with_noise(terminal("try").ignored().map(|_| FixedTerminal::<3usize>()))
-                .then(expression_parser.clone())
-                .then(
-                    with_noise(
+        let try_statement_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("try")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<3usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(expression_parser.clone())
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(
                         terminal("returns")
                             .ignored()
-                            .map(|_| FixedTerminal::<7usize>()),
+                            .map(|_| FixedSizeTerminal::<7usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
                     )
                     .then(non_empty_parameter_list_parser.clone())
-                    .map(|v| Box::new(try_statement::_T1::new(v)))
+                    .map(|v| try_statement::_T1::from_parse(v))
                     .or_not(),
-                )
-                .then(block_parser.clone())
-                .then(catch_clause_parser.clone().repeated().at_least(1usize))
-                .map(|v| Box::new(try_statement::_T0::new(v)))
-                .boxed();
+            )
+            .then(block_parser.clone())
+            .then(catch_clause_parser.clone().repeated().at_least(1usize))
+            .map(|v| try_statement::_T0::from_parse(v))
+            .boxed();
 
         // VariableDeclarationStatement = ( VariableDeclaration [ '=' Expression ] | VariableDeclarationTuple '=' Expression ) ';' ;
         let variable_declaration_statement_parser = choice((
             variable_declaration_parser
                 .clone()
                 .then(
-                    with_noise(just('=').map(|_| FixedTerminal::<1>()))
+                    ignore_parser
+                        .clone()
+                        .then(just('=').map(|_| FixedSizeTerminal::<1>()))
+                        .then(ignore_parser.clone())
+                        .map(
+                            |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                leading,
+                                content,
+                                trailing,
+                            },
+                        )
                         .then(expression_parser.clone())
-                        .map(|v| Box::new(variable_declaration_statement::_T2::new(v)))
+                        .map(|v| variable_declaration_statement::_T3::from_parse(v))
                         .or_not(),
                 )
-                .map(|v| Box::new(variable_declaration_statement::_T1::new(v)))
-                .map(|v| {
-                    Box::new(variable_declaration_statement::VariableDeclarationStatement::_T1(v))
-                }),
+                .map(|v| variable_declaration_statement::_T2::from_parse(v))
+                .map(|v| Box::new(variable_declaration_statement::_T1::_T2(v))),
             variable_declaration_tuple_parser
                 .clone()
-                .then(with_noise(just('=').map(|_| FixedTerminal::<1>())))
+                .then(
+                    ignore_parser
+                        .clone()
+                        .then(just('=').map(|_| FixedSizeTerminal::<1>()))
+                        .then(ignore_parser.clone())
+                        .map(
+                            |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                leading,
+                                content,
+                                trailing,
+                            },
+                        ),
+                )
                 .then(expression_parser.clone())
-                .map(|v| Box::new(variable_declaration_statement::_T3::new(v)))
-                .map(|v| {
-                    Box::new(variable_declaration_statement::VariableDeclarationStatement::_T3(v))
-                }),
+                .map(|v| variable_declaration_statement::_T4::from_parse(v))
+                .map(|v| Box::new(variable_declaration_statement::_T1::_T4(v))),
         ))
-        .then(with_noise(just(';').map(|_| FixedTerminal::<1>())))
-        .map(|v| Box::new(variable_declaration_statement::_T0::new(v)))
+        .then(
+            ignore_parser
+                .clone()
+                .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                .then(ignore_parser.clone())
+                .map(
+                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                ),
+        )
+        .map(|v| variable_declaration_statement::_T0::from_parse(v))
         .boxed();
 
         // WhileStatement = 'while' '(' Expression ')' Statement ;
-        let while_statement_parser = with_noise(
-            terminal("while")
-                .ignored()
-                .map(|_| FixedTerminal::<5usize>()),
-        )
-        .then(with_noise(just('(').map(|_| FixedTerminal::<1>())))
-        .then(expression_parser.clone())
-        .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
-        .then(statement_parser.clone())
-        .map(|v| Box::new(while_statement::_T0::new(v)))
-        .boxed();
+        let while_statement_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("while")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<5usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just('(').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(expression_parser.clone())
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(')').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(statement_parser.clone())
+            .map(|v| while_statement::_T0::from_parse(v))
+            .boxed();
 
         // SimpleStatement = VariableDeclarationStatement | ExpressionStatement ;
         let simple_statement_parser = choice((
-            variable_declaration_statement_parser.clone().map(|v| {
-                Box::new(simple_statement::SimpleStatement::VariableDeclarationStatement(v))
-            }),
+            variable_declaration_statement_parser
+                .clone()
+                .map(|v| Box::new(simple_statement::_T0::VariableDeclarationStatement(v))),
             expression_statement_parser
                 .clone()
-                .map(|v| Box::new(simple_statement::SimpleStatement::ExpressionStatement(v))),
+                .map(|v| Box::new(simple_statement::_T0::ExpressionStatement(v))),
         ))
         .boxed();
 
         // ForStatement = 'for' '(' ( SimpleStatement | ';' ) ( ExpressionStatement | ';' ) [ Expression ] ')' Statement ;
-        let for_statement_parser =
-            with_noise(terminal("for").ignored().map(|_| FixedTerminal::<3usize>()))
-                .then(with_noise(just('(').map(|_| FixedTerminal::<1>())))
-                .then(choice((
-                    simple_statement_parser
-                        .clone()
-                        .map(|v| Box::new(for_statement::ForStatement::SimpleStatement(v))),
-                    with_noise(just(';').map(|_| FixedTerminal::<1>()))
-                        .map(|v| Box::new(for_statement::ForStatement::SemicolonChar(v))),
-                )))
-                .then(choice((
-                    expression_statement_parser
-                        .clone()
-                        .map(|v| Box::new(for_statement::ForStatement::ExpressionStatement(v))),
-                    with_noise(just(';').map(|_| FixedTerminal::<1>()))
-                        .map(|v| Box::new(for_statement::ForStatement::SemicolonChar(v))),
-                )))
-                .then(expression_parser.clone().or_not())
-                .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
-                .then(statement_parser.clone())
-                .map(|v| Box::new(for_statement::_T0::new(v)))
-                .boxed();
+        let for_statement_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("for")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<3usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just('(').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(choice((
+                simple_statement_parser
+                    .clone()
+                    .map(|v| Box::new(for_statement::_T1::SimpleStatement(v))),
+                ignore_parser
+                    .clone()
+                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .map(|v| Box::new(for_statement::_T1::SemicolonChar(v))),
+            )))
+            .then(choice((
+                expression_statement_parser
+                    .clone()
+                    .map(|v| Box::new(for_statement::_T2::ExpressionStatement(v))),
+                ignore_parser
+                    .clone()
+                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .map(|v| Box::new(for_statement::_T2::SemicolonChar(v))),
+            )))
+            .then(expression_parser.clone().or_not())
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(')').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(statement_parser.clone())
+            .map(|v| for_statement::_T0::from_parse(v))
+            .boxed();
 
         // Statement = Block | SimpleStatement | IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | TryStatement | ReturnStatement | EmitStatement | RevertStatement | AssemblyStatement ;
         statement_parser.define(
             choice((
                 block_parser
                     .clone()
-                    .map(|v| Box::new(statement::Statement::Block(v))),
+                    .map(|v| Box::new(statement::_T0::Block(v))),
                 simple_statement_parser
                     .clone()
-                    .map(|v| Box::new(statement::Statement::SimpleStatement(v))),
+                    .map(|v| Box::new(statement::_T0::SimpleStatement(v))),
                 if_statement_parser
                     .clone()
-                    .map(|v| Box::new(statement::Statement::IfStatement(v))),
+                    .map(|v| Box::new(statement::_T0::IfStatement(v))),
                 for_statement_parser
                     .clone()
-                    .map(|v| Box::new(statement::Statement::ForStatement(v))),
+                    .map(|v| Box::new(statement::_T0::ForStatement(v))),
                 while_statement_parser
                     .clone()
-                    .map(|v| Box::new(statement::Statement::WhileStatement(v))),
+                    .map(|v| Box::new(statement::_T0::WhileStatement(v))),
                 do_while_statement_parser
                     .clone()
-                    .map(|v| Box::new(statement::Statement::DoWhileStatement(v))),
+                    .map(|v| Box::new(statement::_T0::DoWhileStatement(v))),
                 continue_statement_parser
                     .clone()
-                    .map(|v| Box::new(statement::Statement::ContinueStatement(v))),
+                    .map(|v| Box::new(statement::_T0::ContinueStatement(v))),
                 break_statement_parser
                     .clone()
-                    .map(|v| Box::new(statement::Statement::BreakStatement(v))),
+                    .map(|v| Box::new(statement::_T0::BreakStatement(v))),
                 try_statement_parser
                     .clone()
-                    .map(|v| Box::new(statement::Statement::TryStatement(v))),
+                    .map(|v| Box::new(statement::_T0::TryStatement(v))),
                 return_statement_parser
                     .clone()
-                    .map(|v| Box::new(statement::Statement::ReturnStatement(v))),
+                    .map(|v| Box::new(statement::_T0::ReturnStatement(v))),
                 emit_statement_parser
                     .clone()
-                    .map(|v| Box::new(statement::Statement::EmitStatement(v))),
+                    .map(|v| Box::new(statement::_T0::EmitStatement(v))),
                 revert_statement_parser
                     .clone()
-                    .map(|v| Box::new(statement::Statement::RevertStatement(v))),
+                    .map(|v| Box::new(statement::_T0::RevertStatement(v))),
                 assembly_statement_parser
                     .clone()
-                    .map(|v| Box::new(statement::Statement::AssemblyStatement(v))),
+                    .map(|v| Box::new(statement::_T0::AssemblyStatement(v))),
             ))
             .boxed(),
         );
 
         // Block = '{' { Statement | UncheckedBlock } '}' ;
         block_parser.define(
-            with_noise(just('{').map(|_| FixedTerminal::<1>()))
+            ignore_parser
+                .clone()
+                .then(just('{').map(|_| FixedSizeTerminal::<1>()))
+                .then(ignore_parser.clone())
+                .map(
+                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
                 .then(
                     choice((
                         statement_parser
                             .clone()
-                            .map(|v| Box::new(block::Block::Statement(v))),
+                            .map(|v| Box::new(block::_T2::Statement(v))),
                         unchecked_block_parser
                             .clone()
-                            .map(|v| Box::new(block::Block::UncheckedBlock(v))),
+                            .map(|v| Box::new(block::_T2::UncheckedBlock(v))),
                     ))
                     .repeated(),
                 )
-                .then(with_noise(just('}').map(|_| FixedTerminal::<1>())))
-                .map(|v| Box::new(block::_T0::new(v)))
+                .then(
+                    ignore_parser
+                        .clone()
+                        .then(just('}').map(|_| FixedSizeTerminal::<1>()))
+                        .then(ignore_parser.clone())
+                        .map(
+                            |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                leading,
+                                content,
+                                trailing,
+                            },
+                        ),
+                )
+                .map(|v| block::_T0::from_parse(v))
                 .boxed(),
         );
 
         // ConstructorDefinition = 'constructor' ParameterList { ConstructorAttribute } Block ;
-        let constructor_definition_parser = with_noise(
-            terminal("constructor")
-                .ignored()
-                .map(|_| FixedTerminal::<11usize>()),
-        )
-        .then(parameter_list_parser.clone())
-        .then(constructor_attribute_parser.clone().repeated())
-        .then(block_parser.clone())
-        .map(|v| Box::new(constructor_definition::_T0::new(v)))
-        .boxed();
+        let constructor_definition_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("constructor")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<11usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(parameter_list_parser.clone())
+            .then(constructor_attribute_parser.clone().repeated())
+            .then(block_parser.clone())
+            .map(|v| constructor_definition::_T0::from_parse(v))
+            .boxed();
 
         // FallbackFunctionDefinition = 'fallback' ParameterList { FallbackFunctionAttribute } [ 'returns' NonEmptyParameterList ] ( ';' | Block ) ;
-        let fallback_function_definition_parser = with_noise(
-            terminal("fallback")
-                .ignored()
-                .map(|_| FixedTerminal::<8usize>()),
-        )
-        .then(parameter_list_parser.clone())
-        .then(fallback_function_attribute_parser.clone().repeated())
-        .then(
-            with_noise(
-                terminal("returns")
+        let fallback_function_definition_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("fallback")
                     .ignored()
-                    .map(|_| FixedTerminal::<7usize>()),
+                    .map(|_| FixedSizeTerminal::<8usize>()),
             )
-            .then(non_empty_parameter_list_parser.clone())
-            .map(|v| Box::new(fallback_function_definition::_T2::new(v)))
-            .or_not(),
-        )
-        .then(choice((
-            with_noise(just(';').map(|_| FixedTerminal::<1>())).map(|v| {
-                Box::new(fallback_function_definition::FallbackFunctionDefinition::SemicolonChar(v))
-            }),
-            block_parser.clone().map(|v| {
-                Box::new(fallback_function_definition::FallbackFunctionDefinition::Block(v))
-            }),
-        )))
-        .map(|v| Box::new(fallback_function_definition::_T0::new(v)))
-        .boxed();
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(parameter_list_parser.clone())
+            .then(fallback_function_attribute_parser.clone().repeated())
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(
+                        terminal("returns")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<7usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .then(non_empty_parameter_list_parser.clone())
+                    .map(|v| fallback_function_definition::_T2::from_parse(v))
+                    .or_not(),
+            )
+            .then(choice((
+                ignore_parser
+                    .clone()
+                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .map(|v| Box::new(fallback_function_definition::_T3::SemicolonChar(v))),
+                block_parser
+                    .clone()
+                    .map(|v| Box::new(fallback_function_definition::_T3::Block(v))),
+            )))
+            .map(|v| fallback_function_definition::_T0::from_parse(v))
+            .boxed();
 
         // FunctionDefinition = 'function' ( «Identifier» | 'fallback' | 'receive' ) ParameterList { FunctionAttribute } [ 'returns' NonEmptyParameterList ] ( ';' | Block ) ;
-        let function_definition_parser = with_noise(
-            terminal("function")
-                .ignored()
-                .map(|_| FixedTerminal::<8usize>()),
-        )
-        .then(choice((
-            identifier_parser
-                .clone()
-                .map(|v| Box::new(function_definition::FunctionDefinition::Identifier(v))),
-            with_noise(choice::<_, ErrorType>((
-                terminal("fallback").map(|_| 8usize),
-                terminal("receive").map(|_| 7usize),
-            )))
-            .map(|v| Box::new(function_definition::FunctionDefinition::_1(v))),
-        )))
-        .then(parameter_list_parser.clone())
-        .then(function_attribute_parser.clone().repeated())
-        .then(
-            with_noise(
-                terminal("returns")
+        let function_definition_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("function")
                     .ignored()
-                    .map(|_| FixedTerminal::<7usize>()),
+                    .map(|_| FixedSizeTerminal::<8usize>()),
             )
-            .then(non_empty_parameter_list_parser.clone())
-            .map(|v| Box::new(function_definition::_T2::new(v)))
-            .or_not(),
-        )
-        .then(choice((
-            with_noise(just(';').map(|_| FixedTerminal::<1>()))
-                .map(|v| Box::new(function_definition::FunctionDefinition::SemicolonChar(v))),
-            block_parser
-                .clone()
-                .map(|v| Box::new(function_definition::FunctionDefinition::Block(v))),
-        )))
-        .map(|v| Box::new(function_definition::_T0::new(v)))
-        .boxed();
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(choice((
+                identifier_parser
+                    .clone()
+                    .map(|v| Box::new(function_definition::_T1::Identifier(v))),
+                ignore_parser
+                    .clone()
+                    .then(choice::<_, ErrorType>((
+                        terminal("fallback").map(|_| 8usize),
+                        terminal("receive").map(|_| 7usize),
+                    )))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .map(|v| Box::new(function_definition::_T1::_1(v))),
+            )))
+            .then(parameter_list_parser.clone())
+            .then(function_attribute_parser.clone().repeated())
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(
+                        terminal("returns")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<7usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .then(non_empty_parameter_list_parser.clone())
+                    .map(|v| function_definition::_T3::from_parse(v))
+                    .or_not(),
+            )
+            .then(choice((
+                ignore_parser
+                    .clone()
+                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .map(|v| Box::new(function_definition::_T4::SemicolonChar(v))),
+                block_parser
+                    .clone()
+                    .map(|v| Box::new(function_definition::_T4::Block(v))),
+            )))
+            .map(|v| function_definition::_T0::from_parse(v))
+            .boxed();
 
         // ModifierDefinition = 'modifier' «Identifier» [ ParameterList ] { MethodAttribute } ( ';' | Block ) ;
-        let modifier_definition_parser = with_noise(
-            terminal("modifier")
-                .ignored()
-                .map(|_| FixedTerminal::<8usize>()),
-        )
-        .then(identifier_parser.clone())
-        .then(parameter_list_parser.clone().or_not())
-        .then(method_attribute_parser.clone().repeated())
-        .then(choice((
-            with_noise(just(';').map(|_| FixedTerminal::<1>()))
-                .map(|v| Box::new(modifier_definition::ModifierDefinition::SemicolonChar(v))),
-            block_parser
-                .clone()
-                .map(|v| Box::new(modifier_definition::ModifierDefinition::Block(v))),
-        )))
-        .map(|v| Box::new(modifier_definition::_T0::new(v)))
-        .boxed();
+        let modifier_definition_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("modifier")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<8usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(identifier_parser.clone())
+            .then(parameter_list_parser.clone().or_not())
+            .then(method_attribute_parser.clone().repeated())
+            .then(choice((
+                ignore_parser
+                    .clone()
+                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .map(|v| Box::new(modifier_definition::_T2::SemicolonChar(v))),
+                block_parser
+                    .clone()
+                    .map(|v| Box::new(modifier_definition::_T2::Block(v))),
+            )))
+            .map(|v| modifier_definition::_T0::from_parse(v))
+            .boxed();
 
         // ReceiveFunctionDefinition = 'receive' '(' ')' { ReceiveFunctionAttribute } ( ';' | Block ) ;
-        let receive_function_definition_parser = with_noise(
-            terminal("receive")
-                .ignored()
-                .map(|_| FixedTerminal::<7usize>()),
-        )
-        .then(with_noise(just('(').map(|_| FixedTerminal::<1>())))
-        .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
-        .then(receive_function_attribute_parser.clone().repeated())
-        .then(choice((
-            with_noise(just(';').map(|_| FixedTerminal::<1>())).map(|v| {
-                Box::new(receive_function_definition::ReceiveFunctionDefinition::SemicolonChar(v))
-            }),
-            block_parser.clone().map(|v| {
-                Box::new(receive_function_definition::ReceiveFunctionDefinition::Block(v))
-            }),
-        )))
-        .map(|v| Box::new(receive_function_definition::_T0::new(v)))
-        .boxed();
+        let receive_function_definition_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("receive")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<7usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just('(').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just(')').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(receive_function_attribute_parser.clone().repeated())
+            .then(choice((
+                ignore_parser
+                    .clone()
+                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .map(|v| Box::new(receive_function_definition::_T2::SemicolonChar(v))),
+                block_parser
+                    .clone()
+                    .map(|v| Box::new(receive_function_definition::_T2::Block(v))),
+            )))
+            .map(|v| receive_function_definition::_T0::from_parse(v))
+            .boxed();
 
         // ContractBodyElement = UsingDirective | ConstructorDefinition | FunctionDefinition | FallbackFunctionDefinition | ReceiveFunctionDefinition | ModifierDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | EventDefinition | ErrorDefinition | StateVariableDeclaration ;
         let contract_body_element_parser = choice((
-            using_directive_parser.clone().map(|v| {
-                Box::new(contract_body_element::ContractBodyElement::UsingDirective(
-                    v,
-                ))
-            }),
-            constructor_definition_parser.clone().map(|v| {
-                Box::new(contract_body_element::ContractBodyElement::ConstructorDefinition(v))
-            }),
-            function_definition_parser.clone().map(|v| {
-                Box::new(contract_body_element::ContractBodyElement::FunctionDefinition(v))
-            }),
-            fallback_function_definition_parser.clone().map(|v| {
-                Box::new(contract_body_element::ContractBodyElement::FallbackFunctionDefinition(v))
-            }),
-            receive_function_definition_parser.clone().map(|v| {
-                Box::new(contract_body_element::ContractBodyElement::ReceiveFunctionDefinition(v))
-            }),
-            modifier_definition_parser.clone().map(|v| {
-                Box::new(contract_body_element::ContractBodyElement::ModifierDefinition(v))
-            }),
+            using_directive_parser
+                .clone()
+                .map(|v| Box::new(contract_body_element::_T0::UsingDirective(v))),
+            constructor_definition_parser
+                .clone()
+                .map(|v| Box::new(contract_body_element::_T0::ConstructorDefinition(v))),
+            function_definition_parser
+                .clone()
+                .map(|v| Box::new(contract_body_element::_T0::FunctionDefinition(v))),
+            fallback_function_definition_parser
+                .clone()
+                .map(|v| Box::new(contract_body_element::_T0::FallbackFunctionDefinition(v))),
+            receive_function_definition_parser
+                .clone()
+                .map(|v| Box::new(contract_body_element::_T0::ReceiveFunctionDefinition(v))),
+            modifier_definition_parser
+                .clone()
+                .map(|v| Box::new(contract_body_element::_T0::ModifierDefinition(v))),
             struct_definition_parser
                 .clone()
-                .map(|v| Box::new(contract_body_element::ContractBodyElement::StructDefinition(v))),
-            enum_definition_parser.clone().map(|v| {
-                Box::new(contract_body_element::ContractBodyElement::EnumDefinition(
-                    v,
-                ))
-            }),
+                .map(|v| Box::new(contract_body_element::_T0::StructDefinition(v))),
+            enum_definition_parser
+                .clone()
+                .map(|v| Box::new(contract_body_element::_T0::EnumDefinition(v))),
             user_defined_value_type_definition_parser.clone().map(|v| {
-                Box::new(
-                    contract_body_element::ContractBodyElement::UserDefinedValueTypeDefinition(v),
-                )
-            }),
-            event_definition_parser.clone().map(|v| {
-                Box::new(contract_body_element::ContractBodyElement::EventDefinition(
+                Box::new(contract_body_element::_T0::UserDefinedValueTypeDefinition(
                     v,
                 ))
             }),
-            error_definition_parser.clone().map(|v| {
-                Box::new(contract_body_element::ContractBodyElement::ErrorDefinition(
-                    v,
-                ))
-            }),
-            state_variable_declaration_parser.clone().map(|v| {
-                Box::new(contract_body_element::ContractBodyElement::StateVariableDeclaration(v))
-            }),
+            event_definition_parser
+                .clone()
+                .map(|v| Box::new(contract_body_element::_T0::EventDefinition(v))),
+            error_definition_parser
+                .clone()
+                .map(|v| Box::new(contract_body_element::_T0::ErrorDefinition(v))),
+            state_variable_declaration_parser
+                .clone()
+                .map(|v| Box::new(contract_body_element::_T0::StateVariableDeclaration(v))),
         ))
         .boxed();
 
         // ContractDefinition = [ 'abstract' ] 'contract' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
-        let contract_definition_parser = with_noise(
-            terminal("abstract")
-                .ignored()
-                .map(|_| FixedTerminal::<8usize>()),
-        )
-        .or_not()
-        .then(with_noise(
-            terminal("contract")
-                .ignored()
-                .map(|_| FixedTerminal::<8usize>()),
-        ))
-        .then(identifier_parser.clone())
-        .then(inheritance_specifier_list_parser.clone().or_not())
-        .then(with_noise(just('{').map(|_| FixedTerminal::<1>())))
-        .then(contract_body_element_parser.clone().repeated())
-        .then(with_noise(just('}').map(|_| FixedTerminal::<1>())))
-        .map(|v| Box::new(contract_definition::_T0::new(v)))
-        .boxed();
+        let contract_definition_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("abstract")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<8usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .or_not()
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(
+                        terminal("contract")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<8usize>()),
+                    )
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(identifier_parser.clone())
+            .then(inheritance_specifier_list_parser.clone().or_not())
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just('{').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(contract_body_element_parser.clone().repeated())
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just('}').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| contract_definition::_T0::from_parse(v))
+            .boxed();
 
         // InterfaceDefinition = 'interface' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
-        let interface_definition_parser = with_noise(
-            terminal("interface")
-                .ignored()
-                .map(|_| FixedTerminal::<9usize>()),
-        )
-        .then(identifier_parser.clone())
-        .then(inheritance_specifier_list_parser.clone().or_not())
-        .then(with_noise(just('{').map(|_| FixedTerminal::<1>())))
-        .then(contract_body_element_parser.clone().repeated())
-        .then(with_noise(just('}').map(|_| FixedTerminal::<1>())))
-        .map(|v| Box::new(interface_definition::_T0::new(v)))
-        .boxed();
+        let interface_definition_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("interface")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<9usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(identifier_parser.clone())
+            .then(inheritance_specifier_list_parser.clone().or_not())
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just('{').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(contract_body_element_parser.clone().repeated())
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just('}').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| interface_definition::_T0::from_parse(v))
+            .boxed();
 
         // LibraryDefinition = 'library' «Identifier» '{' { ContractBodyElement } '}' ;
-        let library_definition_parser = with_noise(
-            terminal("library")
-                .ignored()
-                .map(|_| FixedTerminal::<7usize>()),
-        )
-        .then(identifier_parser.clone())
-        .then(with_noise(just('{').map(|_| FixedTerminal::<1>())))
-        .then(contract_body_element_parser.clone().repeated())
-        .then(with_noise(just('}').map(|_| FixedTerminal::<1>())))
-        .map(|v| Box::new(library_definition::_T0::new(v)))
-        .boxed();
+        let library_definition_parser = ignore_parser
+            .clone()
+            .then(
+                terminal("library")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<7usize>()),
+            )
+            .then(ignore_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(identifier_parser.clone())
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just('{').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(contract_body_element_parser.clone().repeated())
+            .then(
+                ignore_parser
+                    .clone()
+                    .then(just('}').map(|_| FixedSizeTerminal::<1>()))
+                    .then(ignore_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| library_definition::_T0::from_parse(v))
+            .boxed();
 
         // Definition = ContractDefinition | InterfaceDefinition | LibraryDefinition | FunctionDefinition | ConstantDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | ErrorDefinition ;
         let definition_parser = choice((
             contract_definition_parser
                 .clone()
-                .map(|v| Box::new(definition::Definition::ContractDefinition(v))),
+                .map(|v| Box::new(definition::_T0::ContractDefinition(v))),
             interface_definition_parser
                 .clone()
-                .map(|v| Box::new(definition::Definition::InterfaceDefinition(v))),
+                .map(|v| Box::new(definition::_T0::InterfaceDefinition(v))),
             library_definition_parser
                 .clone()
-                .map(|v| Box::new(definition::Definition::LibraryDefinition(v))),
+                .map(|v| Box::new(definition::_T0::LibraryDefinition(v))),
             function_definition_parser
                 .clone()
-                .map(|v| Box::new(definition::Definition::FunctionDefinition(v))),
+                .map(|v| Box::new(definition::_T0::FunctionDefinition(v))),
             constant_definition_parser
                 .clone()
-                .map(|v| Box::new(definition::Definition::ConstantDefinition(v))),
+                .map(|v| Box::new(definition::_T0::ConstantDefinition(v))),
             struct_definition_parser
                 .clone()
-                .map(|v| Box::new(definition::Definition::StructDefinition(v))),
+                .map(|v| Box::new(definition::_T0::StructDefinition(v))),
             enum_definition_parser
                 .clone()
-                .map(|v| Box::new(definition::Definition::EnumDefinition(v))),
+                .map(|v| Box::new(definition::_T0::EnumDefinition(v))),
             user_defined_value_type_definition_parser
                 .clone()
-                .map(|v| Box::new(definition::Definition::UserDefinedValueTypeDefinition(v))),
+                .map(|v| Box::new(definition::_T0::UserDefinedValueTypeDefinition(v))),
             error_definition_parser
                 .clone()
-                .map(|v| Box::new(definition::Definition::ErrorDefinition(v))),
+                .map(|v| Box::new(definition::_T0::ErrorDefinition(v))),
         ))
         .boxed();
 
@@ -3541,15 +6188,15 @@ impl Parsers {
                 choice((
                     directive_parser
                         .clone()
-                        .map(|v| Box::new(source_unit::SourceUnit::Directive(v))),
+                        .map(|v| Box::new(source_unit::_T2::Directive(v))),
                     definition_parser
                         .clone()
-                        .map(|v| Box::new(source_unit::SourceUnit::Definition(v))),
+                        .map(|v| Box::new(source_unit::_T2::Definition(v))),
                 ))
                 .repeated(),
             )
             .then(end())
-            .map(|v| Box::new(source_unit::_T0::new(v)))
+            .map(|v| source_unit::_T0::from_parse(v))
             .boxed();
 
         Self {
@@ -3609,7 +6256,7 @@ impl Parsers {
             simple_import_directive: simple_import_directive_parser,
             star_import_directive: star_import_directive_parser,
             user_defined_value_type_definition: user_defined_value_type_definition_parser,
-            yul_expression: yul_expression_parser,
+            yul_expression: yul_expression_parser.boxed(),
             mapping_type: mapping_type_parser,
             named_argument_list: named_argument_list_parser,
             non_empty_parameter_list: non_empty_parameter_list_parser,
@@ -3630,8 +6277,8 @@ impl Parsers {
             yul_statement: yul_statement_parser,
             inheritance_specifier: inheritance_specifier_parser,
             modifier_invocation: modifier_invocation_parser,
-            type_name: type_name_parser,
-            yul_block: yul_block_parser,
+            type_name: type_name_parser.boxed(),
+            yul_block: yul_block_parser.boxed(),
             assembly_statement: assembly_statement_parser,
             constructor_attribute: constructor_attribute_parser,
             error_parameter: error_parameter_parser,
@@ -3667,7 +6314,7 @@ impl Parsers {
             or_expression: or_expression_parser,
             conditional_expression: conditional_expression_parser,
             assignment_expression: assignment_expression_parser,
-            expression: expression_parser,
+            expression: expression_parser.boxed(),
             constant_definition: constant_definition_parser,
             do_while_statement: do_while_statement_parser,
             emit_statement: emit_statement_parser,
@@ -3681,8 +6328,8 @@ impl Parsers {
             while_statement: while_statement_parser,
             simple_statement: simple_statement_parser,
             for_statement: for_statement_parser,
-            statement: statement_parser,
-            block: block_parser,
+            statement: statement_parser.boxed(),
+            block: block_parser.boxed(),
             constructor_definition: constructor_definition_parser,
             fallback_function_definition: fallback_function_definition_parser,
             function_definition: function_definition_parser,

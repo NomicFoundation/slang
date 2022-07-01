@@ -5,39 +5,47 @@ pub trait DefaultTest {
         false
     }
 }
-#[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
-pub struct FixedTerminal<const N: usize>();
-#[derive(Clone, PartialEq, Eq, Hash, Serialize, Deserialize, Default)]
-pub struct WithNoise<T>
-where
-    T: Sized + Clone + PartialEq + Hash + Serialize + Deserialize + Default,
-{
-    leading: Ignore,
-    content: T,
-    trailing: Ignore,
+#[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct FixedSizeTerminal<const N: usize>();
+#[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct FixedSizeTerminalWithNoise<const N: usize> {
+    pub leading: Ignore,
+    pub content: FixedSizeTerminal<N>,
+    pub trailing: Ignore,
+}
+pub type VariableSizeTerminal = usize;
+#[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct VariableSizeTerminalWithNoise {
+    pub leading: Ignore,
+    pub content: VariableSizeTerminal,
+    pub trailing: Ignore,
 }
 
 /// «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
-pub type Comment = Box<comment::_T0>;
+pub type Comment = comment::_T0;
 pub mod comment {
     #[allow(unused_imports)]
     use super::*;
-    pub struct _T2 {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T3 {
         pub star_chars: usize,
-        pub _1: FixedTerminal<1>,
+        pub _1: FixedSizeTerminal<1>,
     }
-    pub enum Comment {
-        NotStarChar(FixedTerminal<1>),
-        _T2(Box<comment::_T2>),
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T2 {
+        NotStarChar(FixedSizeTerminal<1>),
+        _T3(comment::_T3),
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct Content {
-        pub comments: Vec<Box<comment::Comment>>,
+        pub _t2s: Vec<Box<comment::_T2>>,
         pub star_chars: usize,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub slash_star: FixedTerminal<2usize>,
-        pub content: Box<comment::Content>,
-        pub star_slash: FixedTerminal<2usize>,
+        pub slash_star: FixedSizeTerminal<2usize>,
+        pub content: comment::Content,
+        pub star_slash: FixedSizeTerminal<2usize>,
     }
 }
 
@@ -46,75 +54,83 @@ pub type DecimalInteger = decimal_integer::_T0;
 pub mod decimal_integer {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub elements: Vec<FixedTerminal<1>>,
-        pub separators: Vec<Option<FixedTerminal<1>>>,
+        pub elements: Vec<FixedSizeTerminal<1>>,
+        pub separators: Vec<Option<FixedSizeTerminal<1>>>,
     }
 }
 
 /// «FixedBytesType» = 'bytes' ( '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15' | '16' | '17' | '18' | '19' | '20' | '21' | '22' | '23' | '24' | '25' | '26' | '27' | '28' | '29' | '30' | '31' | '32' ) ;
-pub type FixedBytesType = Box<fixed_bytes_type::_T0>;
+pub type FixedBytesType = fixed_bytes_type::_T0;
 pub mod fixed_bytes_type {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub bytes: FixedTerminal<5usize>,
-        pub _1: usize,
+        pub bytes: FixedSizeTerminal<5usize>,
+        pub _1: VariableSizeTerminal,
     }
 }
 
 /// «FixedType» = 'fixed' [ '1'…'9' { '0'…'9' } 'x' '1'…'9' { '0'…'9' } ] ;
-pub type FixedType = Box<fixed_type::_T0>;
+pub type FixedType = fixed_type::_T0;
 pub mod fixed_type {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
-        pub _0: FixedTerminal<1>,
+        pub _0: FixedSizeTerminal<1>,
         pub _1: usize,
-        pub _2: FixedTerminal<1>,
-        pub _3: FixedTerminal<1>,
+        pub _2: FixedSizeTerminal<1>,
+        pub _3: FixedSizeTerminal<1>,
         pub _4: usize,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub fixed: FixedTerminal<5usize>,
-        pub _t1: Option<Box<fixed_type::_T1>>,
+        pub fixed: FixedSizeTerminal<5usize>,
+        pub _t1: Option<fixed_type::_T1>,
     }
 }
 
 /// «HexByteEscape» = 'x' 2…2*{ «HexCharacter» } ;
-pub type HexByteEscape = Box<hex_byte_escape::_T0>;
+pub type HexByteEscape = hex_byte_escape::_T0;
 pub mod hex_byte_escape {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub _0: FixedTerminal<1>,
+        pub _0: FixedSizeTerminal<1>,
         pub _1: usize,
     }
 }
 
 /// «HexNumber» = '0' 'x' 1…*{ «HexCharacter» / [ '_' ] } ;
-pub type HexNumber = Box<hex_number::_T0>;
+pub type HexNumber = hex_number::_T0;
 pub mod hex_number {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
-        pub elements: Vec<FixedTerminal<1>>,
-        pub separators: Vec<Option<FixedTerminal<1>>>,
+        pub elements: Vec<FixedSizeTerminal<1>>,
+        pub separators: Vec<Option<FixedSizeTerminal<1>>>,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub zero_char: FixedTerminal<1>,
-        pub _1: FixedTerminal<1>,
+        pub zero_char: FixedSizeTerminal<1>,
+        pub _1: FixedSizeTerminal<1>,
         pub _2: hex_number::_T1,
     }
 }
 
 /// «LineComment» = '//' { ¬( '\u{a}' | '\u{d}' ) } ;
-pub type LineComment = Box<line_comment::_T0>;
+pub type LineComment = line_comment::_T0;
 pub mod line_comment {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub slash_slash: FixedTerminal<2usize>,
+        pub slash_slash: FixedSizeTerminal<2usize>,
         pub _1: usize,
     }
 }
@@ -124,53 +140,58 @@ pub type PossiblySeparatedPairsOfHexDigits = possibly_separated_pairs_of_hex_dig
 pub mod possibly_separated_pairs_of_hex_digits {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub elements: Vec<usize>,
-        pub separators: Vec<Option<FixedTerminal<1>>>,
+        pub separators: Vec<Option<FixedSizeTerminal<1>>>,
     }
 }
 
 /// «PragmaDirective» = 'pragma' 1…*{ ¬';' } ';' ;
-pub type PragmaDirective = Box<pragma_directive::_T0>;
+pub type PragmaDirective = pragma_directive::_T0;
 pub mod pragma_directive {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub pragma: FixedTerminal<6usize>,
+        pub pragma: FixedSizeTerminal<6usize>,
         pub not_semicolon_chars: usize,
-        pub semicolon_char: FixedTerminal<1>,
+        pub semicolon_char: FixedSizeTerminal<1>,
     }
 }
 
 /// «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;
-pub type RawIdentifier = Box<raw_identifier::_T0>;
+pub type RawIdentifier = raw_identifier::_T0;
 pub mod raw_identifier {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub _0: FixedTerminal<1>,
+        pub _0: FixedSizeTerminal<1>,
         pub _1: usize,
     }
 }
 
 /// «SignedIntegerType» = 'int' ( '8' | '16' | '24' | '32' | '40' | '48' | '56' | '64' | '72' | '80' | '88' | '96' | '104' | '112' | '120' | '128' | '136' | '144' | '152' | '160' | '168' | '176' | '184' | '192' | '200' | '208' | '216' | '224' | '232' | '240' | '248' | '256' ) ;
-pub type SignedIntegerType = Box<signed_integer_type::_T0>;
+pub type SignedIntegerType = signed_integer_type::_T0;
 pub mod signed_integer_type {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub int: FixedTerminal<3usize>,
-        pub _1: usize,
+        pub int: FixedSizeTerminal<3usize>,
+        pub _1: VariableSizeTerminal,
     }
 }
 
 /// «UnicodeEscape» = 'u' 4…4*{ «HexCharacter» } ;
-pub type UnicodeEscape = Box<unicode_escape::_T0>;
+pub type UnicodeEscape = unicode_escape::_T0;
 pub mod unicode_escape {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub _0: FixedTerminal<1>,
+        pub _0: FixedSizeTerminal<1>,
         pub _1: usize,
     }
 }
@@ -179,102 +200,114 @@ pub mod unicode_escape {
 pub type Whitespace = usize;
 
 /// «YulDecimalNumberLiteral» = '0' | '1'…'9' { '0'…'9' } ;
-pub type YulDecimalNumberLiteral = Box<yul_decimal_number_literal::YulDecimalNumberLiteral>;
+pub type YulDecimalNumberLiteral = Box<yul_decimal_number_literal::_T0>;
 pub mod yul_decimal_number_literal {
     #[allow(unused_imports)]
     use super::*;
-    pub struct _T0 {
-        pub _0: FixedTerminal<1>,
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T1 {
+        pub _0: FixedSizeTerminal<1>,
         pub _1: usize,
     }
-    pub enum YulDecimalNumberLiteral {
-        ZeroChar(FixedTerminal<1>),
-        _T0(Box<yul_decimal_number_literal::_T0>),
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T0 {
+        ZeroChar(FixedSizeTerminal<1>),
+        _T1(yul_decimal_number_literal::_T1),
     }
 }
 
 /// «YulHexLiteral» = '0x' 1…*{ '0'…'9' | 'a'…'f' | 'A'…'F' } ;
-pub type YulHexLiteral = Box<yul_hex_literal::_T0>;
+pub type YulHexLiteral = yul_hex_literal::_T0;
 pub mod yul_hex_literal {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub zero_x: FixedTerminal<2usize>,
+        pub zero_x: FixedSizeTerminal<2usize>,
         pub _1: usize,
     }
 }
 
 /// «DecimalExponent» = ( 'e' | 'E' ) [ '-' ] «DecimalInteger» ;
-pub type DecimalExponent = Box<decimal_exponent::_T0>;
+pub type DecimalExponent = decimal_exponent::_T0;
 pub mod decimal_exponent {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub _0: FixedTerminal<1>,
-        pub minus_char: Option<FixedTerminal<1>>,
+        pub _0: FixedSizeTerminal<1>,
+        pub minus_char: Option<FixedSizeTerminal<1>>,
         pub decimal_integer: DecimalInteger,
     }
 }
 
 /// «DecimalFloat» = [ «DecimalInteger» ] '.' «DecimalInteger» ;
-pub type DecimalFloat = Box<decimal_float::_T0>;
+pub type DecimalFloat = decimal_float::_T0;
 pub mod decimal_float {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub decimal_integer_1: Option<DecimalInteger>,
-        pub period_char: FixedTerminal<1>,
+        pub period_char: FixedSizeTerminal<1>,
         pub decimal_integer_2: DecimalInteger,
     }
 }
 
 /// «EscapeSequence» = '\\' ( «AsciiEscape» | «HexByteEscape» | «UnicodeEscape» ) ;
-pub type EscapeSequence = Box<escape_sequence::_T0>;
+pub type EscapeSequence = escape_sequence::_T0;
 pub mod escape_sequence {
     #[allow(unused_imports)]
     use super::*;
-    pub enum EscapeSequence {
-        _0(FixedTerminal<1>),
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T1 {
+        _0(FixedSizeTerminal<1>),
         HexByteEscape(HexByteEscape),
         UnicodeEscape(UnicodeEscape),
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub backslash_char: FixedTerminal<1>,
-        pub escape_sequence: Box<escape_sequence::EscapeSequence>,
+        pub backslash_char: FixedSizeTerminal<1>,
+        pub _t1: Box<escape_sequence::_T1>,
     }
 }
 
 /// «HexStringLiteral» = 'hex' ( '"' [ «PossiblySeparatedPairsOfHexDigits» ] '"' | '\'' [ «PossiblySeparatedPairsOfHexDigits» ] '\'' ) ;
-pub type HexStringLiteral = Box<hex_string_literal::_T0>;
+pub type HexStringLiteral = hex_string_literal::_T0;
 pub mod hex_string_literal {
     #[allow(unused_imports)]
     use super::*;
-    pub struct _T1 {
-        pub double_quote_char_1: FixedTerminal<1>,
-        pub possibly_separated_pairs_of_hex_digits: Option<PossiblySeparatedPairsOfHexDigits>,
-        pub double_quote_char_2: FixedTerminal<1>,
-    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
-        pub quote_char_1: FixedTerminal<1>,
+        pub double_quote_char_1: FixedSizeTerminal<1>,
         pub possibly_separated_pairs_of_hex_digits: Option<PossiblySeparatedPairsOfHexDigits>,
-        pub quote_char_2: FixedTerminal<1>,
+        pub double_quote_char_2: FixedSizeTerminal<1>,
     }
-    pub enum HexStringLiteral {
-        _T1(Box<hex_string_literal::_T1>),
-        _T2(Box<hex_string_literal::_T2>),
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T3 {
+        pub quote_char_1: FixedSizeTerminal<1>,
+        pub possibly_separated_pairs_of_hex_digits: Option<PossiblySeparatedPairsOfHexDigits>,
+        pub quote_char_2: FixedSizeTerminal<1>,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T1 {
+        _T2(hex_string_literal::_T2),
+        _T3(hex_string_literal::_T3),
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub hex: FixedTerminal<3usize>,
-        pub hex_string_literal: Box<hex_string_literal::HexStringLiteral>,
+        pub hex: FixedSizeTerminal<3usize>,
+        pub _t1: Box<hex_string_literal::_T1>,
     }
 }
 
 /// «IGNORE» = { «Whitespace» | «Comment» | «LineComment» } ;
-pub type Ignore = Vec<Box<ignore::Ignore>>;
+pub type Ignore = Vec<Box<ignore::_T1>>;
 pub mod ignore {
     #[allow(unused_imports)]
     use super::*;
-    pub enum Ignore {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T1 {
         Whitespace(Whitespace),
         Comment(Comment),
         LineComment(LineComment),
@@ -282,23 +315,25 @@ pub mod ignore {
 }
 
 /// «UfixedType» = 'u' «FixedType» ;
-pub type UfixedType = Box<ufixed_type::_T0>;
+pub type UfixedType = ufixed_type::_T0;
 pub mod ufixed_type {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub _0: FixedTerminal<1>,
+        pub _0: FixedSizeTerminal<1>,
         pub fixed_type: FixedType,
     }
 }
 
 /// «UnsignedIntegerType» = 'u' «SignedIntegerType» ;
-pub type UnsignedIntegerType = Box<unsigned_integer_type::_T0>;
+pub type UnsignedIntegerType = unsigned_integer_type::_T0;
 pub mod unsigned_integer_type {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub _0: FixedTerminal<1>,
+        pub _0: FixedSizeTerminal<1>,
         pub signed_integer_type: SignedIntegerType,
     }
 }
@@ -307,83 +342,90 @@ pub mod unsigned_integer_type {
 pub type YulIdentifier = RawIdentifier;
 
 /// BreakStatement = 'break' ';' ;
-pub type BreakStatement = Box<break_statement::_T0>;
+pub type BreakStatement = break_statement::_T0;
 pub mod break_statement {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub r#break: WithNoise<FixedTerminal<5usize>>,
-        pub semicolon_char: WithNoise<FixedTerminal<1>>,
+        pub r#break: FixedSizeTerminalWithNoise<5usize>,
+        pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
 /// ContinueStatement = 'continue' ';' ;
-pub type ContinueStatement = Box<continue_statement::_T0>;
+pub type ContinueStatement = continue_statement::_T0;
 pub mod continue_statement {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub r#continue: WithNoise<FixedTerminal<8usize>>,
-        pub semicolon_char: WithNoise<FixedTerminal<1>>,
+        pub r#continue: FixedSizeTerminalWithNoise<8usize>,
+        pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
 /// «DecimalNumber» = ( «DecimalInteger» | «DecimalFloat» ) [ «DecimalExponent» ] ;
-pub type DecimalNumber = Box<decimal_number::_T0>;
+pub type DecimalNumber = decimal_number::_T0;
 pub mod decimal_number {
     #[allow(unused_imports)]
     use super::*;
-    pub enum DecimalNumber {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T1 {
         DecimalInteger(DecimalInteger),
         DecimalFloat(DecimalFloat),
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub decimal_number: Box<decimal_number::DecimalNumber>,
+        pub _t1: Box<decimal_number::_T1>,
         pub decimal_exponent: Option<DecimalExponent>,
     }
 }
 
 /// «DoubleQuotedAsciiStringLiteral» = '"' { 1…*{ '\u{20}'…'~' - ( '"' | '\\' ) } | «EscapeSequence» } '"' ;
-pub type DoubleQuotedAsciiStringLiteral = Box<double_quoted_ascii_string_literal::_T0>;
+pub type DoubleQuotedAsciiStringLiteral = double_quoted_ascii_string_literal::_T0;
 pub mod double_quoted_ascii_string_literal {
     #[allow(unused_imports)]
     use super::*;
-    pub enum DoubleQuotedAsciiStringLiteral {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum Run {
         Chars(usize),
         EscapeSequence(EscapeSequence),
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub double_quote_char_1: FixedTerminal<1>,
-        pub double_quoted_ascii_string_literals:
-            Vec<Box<double_quoted_ascii_string_literal::DoubleQuotedAsciiStringLiteral>>,
-        pub double_quote_char_2: FixedTerminal<1>,
+        pub double_quote_char_1: FixedSizeTerminal<1>,
+        pub runs: Vec<Box<double_quoted_ascii_string_literal::Run>>,
+        pub double_quote_char_2: FixedSizeTerminal<1>,
     }
 }
 
 /// «DoubleQuotedUnicodeStringLiteral» = 'unicode"' { 1…*{ ¬( '"' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '"' ;
-pub type DoubleQuotedUnicodeStringLiteral = Box<double_quoted_unicode_string_literal::_T0>;
+pub type DoubleQuotedUnicodeStringLiteral = double_quoted_unicode_string_literal::_T0;
 pub mod double_quoted_unicode_string_literal {
     #[allow(unused_imports)]
     use super::*;
-    pub enum DoubleQuotedUnicodeStringLiteral {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum Run {
         Chars(usize),
         EscapeSequence(EscapeSequence),
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub unicode_double_quote: FixedTerminal<8usize>,
-        pub double_quoted_unicode_string_literals:
-            Vec<Box<double_quoted_unicode_string_literal::DoubleQuotedUnicodeStringLiteral>>,
-        pub double_quote_char: FixedTerminal<1>,
+        pub unicode_double_quote: FixedSizeTerminal<8usize>,
+        pub runs: Vec<Box<double_quoted_unicode_string_literal::Run>>,
+        pub double_quote_char: FixedSizeTerminal<1>,
     }
 }
 
 /// ElementaryType = 'bool' | 'string' | 'bytes' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | «FixedType» | «UfixedType» ;
-pub type ElementaryType = Box<elementary_type::ElementaryType>;
+pub type ElementaryType = Box<elementary_type::_T0>;
 pub mod elementary_type {
     #[allow(unused_imports)]
     use super::*;
-    pub enum ElementaryType {
-        _0(WithNoise<usize>),
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T0 {
+        _0(VariableSizeTerminalWithNoise),
         SignedIntegerType(SignedIntegerType),
         UnsignedIntegerType(UnsignedIntegerType),
         FixedBytesType(FixedBytesType),
@@ -393,16 +435,17 @@ pub mod elementary_type {
 }
 
 /// «Keyword» = 'pragma' | 'abstract' | 'anonymous' | 'address' | 'as' | 'assembly' | 'bool' | 'break' | 'bytes' | 'calldata' | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum' | 'event' | 'external' | 'fallback' | 'false' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import' | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override' | 'payable' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct' | 'true' | 'try' | 'type' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | 'fixed' | 'ufixed' ;
-pub type Keyword = Box<keyword::Keyword>;
+pub type Keyword = Box<keyword::_T0>;
 pub mod keyword {
     #[allow(unused_imports)]
     use super::*;
-    pub enum Keyword {
-        _0(usize),
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T0 {
+        _0(VariableSizeTerminal),
         SignedIntegerType(SignedIntegerType),
         UnsignedIntegerType(UnsignedIntegerType),
         FixedBytesType(FixedBytesType),
-        _4(usize),
+        _4(VariableSizeTerminal),
     }
 }
 
@@ -411,211 +454,234 @@ pub type PositionalArgumentList = positional_argument_list::_T0;
 pub mod positional_argument_list {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub elements: Vec<Expression>,
-        pub separators: Vec<WithNoise<FixedTerminal<1>>>,
+        pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
 }
 
 /// «SingleQuotedAsciiStringLiteral» = '\'' { 1…*{ '\u{20}'…'~' - ( '\'' | '\\' ) } | «EscapeSequence» } '\'' ;
-pub type SingleQuotedAsciiStringLiteral = Box<single_quoted_ascii_string_literal::_T0>;
+pub type SingleQuotedAsciiStringLiteral = single_quoted_ascii_string_literal::_T0;
 pub mod single_quoted_ascii_string_literal {
     #[allow(unused_imports)]
     use super::*;
-    pub enum SingleQuotedAsciiStringLiteral {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum Run {
         Chars(usize),
         EscapeSequence(EscapeSequence),
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub quote_char_1: FixedTerminal<1>,
-        pub single_quoted_ascii_string_literals:
-            Vec<Box<single_quoted_ascii_string_literal::SingleQuotedAsciiStringLiteral>>,
-        pub quote_char_2: FixedTerminal<1>,
+        pub quote_char_1: FixedSizeTerminal<1>,
+        pub runs: Vec<Box<single_quoted_ascii_string_literal::Run>>,
+        pub quote_char_2: FixedSizeTerminal<1>,
     }
 }
 
 /// «SingleQuotedUnicodeStringLiteral» = 'unicode\'' { 1…*{ ¬( '\'' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '\'' ;
-pub type SingleQuotedUnicodeStringLiteral = Box<single_quoted_unicode_string_literal::_T0>;
+pub type SingleQuotedUnicodeStringLiteral = single_quoted_unicode_string_literal::_T0;
 pub mod single_quoted_unicode_string_literal {
     #[allow(unused_imports)]
     use super::*;
-    pub enum SingleQuotedUnicodeStringLiteral {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum Run {
         Chars(usize),
         EscapeSequence(EscapeSequence),
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub unicode_quote: FixedTerminal<8usize>,
-        pub single_quoted_unicode_string_literals:
-            Vec<Box<single_quoted_unicode_string_literal::SingleQuotedUnicodeStringLiteral>>,
-        pub quote_char: FixedTerminal<1>,
+        pub unicode_quote: FixedSizeTerminal<8usize>,
+        pub runs: Vec<Box<single_quoted_unicode_string_literal::Run>>,
+        pub quote_char: FixedSizeTerminal<1>,
     }
 }
 
 /// UncheckedBlock = 'unchecked' Block ;
-pub type UncheckedBlock = Box<unchecked_block::_T0>;
+pub type UncheckedBlock = unchecked_block::_T0;
 pub mod unchecked_block {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub unchecked: WithNoise<FixedTerminal<9usize>>,
+        pub unchecked: FixedSizeTerminalWithNoise<9usize>,
         pub block: Block,
     }
 }
 
 /// YulFunctionCall = ( «YulIdentifier» | «YulEVMBuiltinFunctionName» ) '(' { YulExpression / ',' } ')' ;
-pub type YulFunctionCall = Box<yul_function_call::_T0>;
+pub type YulFunctionCall = yul_function_call::_T0;
 pub mod yul_function_call {
     #[allow(unused_imports)]
     use super::*;
-    pub enum YulFunctionCall {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T1 {
         YulIdentifier(YulIdentifier),
-        _1(WithNoise<usize>),
+        _1(VariableSizeTerminalWithNoise),
     }
-    pub struct _T1 {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T2 {
         pub elements: Vec<YulExpression>,
-        pub separators: Vec<WithNoise<FixedTerminal<1>>>,
+        pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub yul_function_call: Box<yul_function_call::YulFunctionCall>,
-        pub open_paren_char: WithNoise<FixedTerminal<1>>,
-        pub yul_expressions: Option<yul_function_call::_T1>,
-        pub close_paren_char: WithNoise<FixedTerminal<1>>,
+        pub _t1: Box<yul_function_call::_T1>,
+        pub open_paren_char: FixedSizeTerminalWithNoise<1>,
+        pub yul_expressions: Option<yul_function_call::_T2>,
+        pub close_paren_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
 /// YulFunctionDefinition = 'function' «YulIdentifier» '(' { «YulIdentifier» / ',' } ')' [ '->' 1…*{ «YulIdentifier» / ',' } ] YulBlock ;
-pub type YulFunctionDefinition = Box<yul_function_definition::_T0>;
+pub type YulFunctionDefinition = yul_function_definition::_T0;
 pub mod yul_function_definition {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
         pub elements: Vec<YulIdentifier>,
-        pub separators: Vec<WithNoise<FixedTerminal<1>>>,
+        pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T3 {
         pub elements: Vec<YulIdentifier>,
-        pub separators: Vec<WithNoise<FixedTerminal<1>>>,
+        pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
-        pub minus_greater: WithNoise<FixedTerminal<2usize>>,
+        pub minus_greater: FixedSizeTerminalWithNoise<2usize>,
         pub yul_identifiers: yul_function_definition::_T3,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub function: WithNoise<FixedTerminal<8usize>>,
+        pub function: FixedSizeTerminalWithNoise<8usize>,
         pub yul_identifier: YulIdentifier,
-        pub open_paren_char: WithNoise<FixedTerminal<1>>,
+        pub open_paren_char: FixedSizeTerminalWithNoise<1>,
         pub yul_identifiers: Option<yul_function_definition::_T1>,
-        pub close_paren_char: WithNoise<FixedTerminal<1>>,
-        pub _t2: Option<Box<yul_function_definition::_T2>>,
+        pub close_paren_char: FixedSizeTerminalWithNoise<1>,
+        pub _t2: Option<yul_function_definition::_T2>,
         pub yul_block: YulBlock,
     }
 }
 
 /// YulPath = «YulIdentifier» { '.' ( «YulIdentifier» | «YulEVMBuiltinFunctionName» ) } ;
-pub type YulPath = Box<yul_path::_T0>;
+pub type YulPath = yul_path::_T0;
 pub mod yul_path {
     #[allow(unused_imports)]
     use super::*;
-    pub enum YulPath {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T3 {
         YulIdentifier(YulIdentifier),
-        _1(WithNoise<usize>),
+        _1(VariableSizeTerminalWithNoise),
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
-        pub period_char: WithNoise<FixedTerminal<1>>,
-        pub yul_path: Box<yul_path::YulPath>,
+        pub period_char: FixedSizeTerminalWithNoise<1>,
+        pub _t3: Box<yul_path::_T3>,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub yul_identifier: YulIdentifier,
-        pub _t2s: Vec<Box<yul_path::_T2>>,
+        pub _t2s: Vec<yul_path::_T2>,
     }
 }
 
 /// «AsciiStringLiteral» = «SingleQuotedAsciiStringLiteral» | «DoubleQuotedAsciiStringLiteral» ;
-pub type AsciiStringLiteral = Box<ascii_string_literal::AsciiStringLiteral>;
+pub type AsciiStringLiteral = Box<ascii_string_literal::_T0>;
 pub mod ascii_string_literal {
     #[allow(unused_imports)]
     use super::*;
-    pub enum AsciiStringLiteral {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T0 {
         SingleQuotedAsciiStringLiteral(SingleQuotedAsciiStringLiteral),
         DoubleQuotedAsciiStringLiteral(DoubleQuotedAsciiStringLiteral),
     }
 }
 
 /// AssemblyFlags = '(' 1…*{ «DoubleQuotedAsciiStringLiteral» / ',' } ')' ;
-pub type AssemblyFlags = Box<assembly_flags::_T0>;
+pub type AssemblyFlags = assembly_flags::_T0;
 pub mod assembly_flags {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
         pub elements: Vec<DoubleQuotedAsciiStringLiteral>,
-        pub separators: Vec<WithNoise<FixedTerminal<1>>>,
+        pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub open_paren_char: WithNoise<FixedTerminal<1>>,
+        pub open_paren_char: FixedSizeTerminalWithNoise<1>,
         pub double_quoted_ascii_string_literals: assembly_flags::_T1,
-        pub close_paren_char: WithNoise<FixedTerminal<1>>,
+        pub close_paren_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
 /// ElementaryTypeWithPayable = 'address' [ 'payable' ] | ElementaryType ;
-pub type ElementaryTypeWithPayable = Box<elementary_type_with_payable::ElementaryTypeWithPayable>;
+pub type ElementaryTypeWithPayable = Box<elementary_type_with_payable::_T0>;
 pub mod elementary_type_with_payable {
     #[allow(unused_imports)]
     use super::*;
-    pub struct _T0 {
-        pub address: WithNoise<FixedTerminal<7usize>>,
-        pub payable: Option<WithNoise<FixedTerminal<7usize>>>,
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T1 {
+        pub address: FixedSizeTerminalWithNoise<7usize>,
+        pub payable: Option<FixedSizeTerminalWithNoise<7usize>>,
     }
-    pub enum ElementaryTypeWithPayable {
-        _T0(Box<elementary_type_with_payable::_T0>),
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T0 {
+        _T1(elementary_type_with_payable::_T1),
         ElementaryType(ElementaryType),
     }
 }
 
 /// ElementaryTypeWithoutPayable = 'address' | ElementaryType ;
-pub type ElementaryTypeWithoutPayable =
-    Box<elementary_type_without_payable::ElementaryTypeWithoutPayable>;
+pub type ElementaryTypeWithoutPayable = Box<elementary_type_without_payable::_T0>;
 pub mod elementary_type_without_payable {
     #[allow(unused_imports)]
     use super::*;
-    pub enum ElementaryTypeWithoutPayable {
-        Address(WithNoise<FixedTerminal<7usize>>),
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T0 {
+        Address(FixedSizeTerminalWithNoise<7usize>),
         ElementaryType(ElementaryType),
     }
 }
 
 /// NumericLiteral = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
-pub type NumericLiteral = Box<numeric_literal::_T0>;
+pub type NumericLiteral = numeric_literal::_T0;
 pub mod numeric_literal {
     #[allow(unused_imports)]
     use super::*;
-    pub enum NumericLiteral {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T1 {
         DecimalNumber(DecimalNumber),
         HexNumber(HexNumber),
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub numeric_literal: Box<numeric_literal::NumericLiteral>,
-        pub _1: Option<WithNoise<usize>>,
+        pub _t1: Box<numeric_literal::_T1>,
+        pub _1: Option<VariableSizeTerminalWithNoise>,
     }
 }
 
 /// «ReservedWord» = «Keyword» | «ReservedKeyword» | «NumberUnit» | «BooleanLiteral» ;
-pub type ReservedWord = Box<reserved_word::ReservedWord>;
+pub type ReservedWord = Box<reserved_word::_T0>;
 pub mod reserved_word {
     #[allow(unused_imports)]
     use super::*;
-    pub enum ReservedWord {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T0 {
         Keyword(Keyword),
-        _1(usize),
+        _1(VariableSizeTerminal),
     }
 }
 
 /// «UnicodeStringLiteral» = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral» ;
-pub type UnicodeStringLiteral = Box<unicode_string_literal::UnicodeStringLiteral>;
+pub type UnicodeStringLiteral = Box<unicode_string_literal::_T0>;
 pub mod unicode_string_literal {
     #[allow(unused_imports)]
     use super::*;
-    pub enum UnicodeStringLiteral {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T0 {
         SingleQuotedUnicodeStringLiteral(SingleQuotedUnicodeStringLiteral),
         DoubleQuotedUnicodeStringLiteral(DoubleQuotedUnicodeStringLiteral),
     }
@@ -628,48 +694,52 @@ pub type Identifier = RawIdentifier;
 pub type ImportPath = AsciiStringLiteral;
 
 /// Literal = «AsciiStringLiteral» | «UnicodeStringLiteral» | NumericLiteral | «HexStringLiteral» | «BooleanLiteral» ;
-pub type Literal = Box<literal::Literal>;
+pub type Literal = Box<literal::_T0>;
 pub mod literal {
     #[allow(unused_imports)]
     use super::*;
-    pub enum Literal {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T0 {
         AsciiStringLiteral(AsciiStringLiteral),
         UnicodeStringLiteral(UnicodeStringLiteral),
         NumericLiteral(NumericLiteral),
         HexStringLiteral(HexStringLiteral),
-        _4(WithNoise<usize>),
+        _4(VariableSizeTerminalWithNoise),
     }
 }
 
 /// YulLiteral = «YulDecimalNumberLiteral» | «YulHexLiteral» | «AsciiStringLiteral» | «BooleanLiteral» | «HexStringLiteral» ;
-pub type YulLiteral = Box<yul_literal::YulLiteral>;
+pub type YulLiteral = Box<yul_literal::_T0>;
 pub mod yul_literal {
     #[allow(unused_imports)]
     use super::*;
-    pub enum YulLiteral {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T0 {
         YulDecimalNumberLiteral(YulDecimalNumberLiteral),
         YulHexLiteral(YulHexLiteral),
         AsciiStringLiteral(AsciiStringLiteral),
-        _3(WithNoise<usize>),
+        _3(VariableSizeTerminalWithNoise),
         HexStringLiteral(HexStringLiteral),
     }
 }
 
 /// EnumDefinition = 'enum' «Identifier» '{' 1…*{ «Identifier» / ',' } '}' ;
-pub type EnumDefinition = Box<enum_definition::_T0>;
+pub type EnumDefinition = enum_definition::_T0;
 pub mod enum_definition {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
         pub elements: Vec<Identifier>,
-        pub separators: Vec<WithNoise<FixedTerminal<1>>>,
+        pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub r#enum: WithNoise<FixedTerminal<4usize>>,
+        pub r#enum: FixedSizeTerminalWithNoise<4usize>,
         pub identifier: Identifier,
-        pub open_brace_char: WithNoise<FixedTerminal<1>>,
+        pub open_brace_char: FixedSizeTerminalWithNoise<1>,
         pub identifiers: enum_definition::_T1,
-        pub close_brace_char: WithNoise<FixedTerminal<1>>,
+        pub close_brace_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
@@ -678,100 +748,110 @@ pub type IdentifierPath = identifier_path::_T0;
 pub mod identifier_path {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub elements: Vec<Identifier>,
-        pub separators: Vec<WithNoise<FixedTerminal<1>>>,
+        pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
 }
 
 /// NamedArgument = «Identifier» ':' Expression ;
-pub type NamedArgument = Box<named_argument::_T0>;
+pub type NamedArgument = named_argument::_T0;
 pub mod named_argument {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub identifier: Identifier,
-        pub colon_char: WithNoise<FixedTerminal<1>>,
+        pub colon_char: FixedSizeTerminalWithNoise<1>,
         pub expression: Expression,
     }
 }
 
 /// ParameterDeclaration = TypeName [ DataLocation ] [ «Identifier» ] ;
-pub type ParameterDeclaration = Box<parameter_declaration::_T0>;
+pub type ParameterDeclaration = parameter_declaration::_T0;
 pub mod parameter_declaration {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub type_name: TypeName,
-        pub _1: Option<WithNoise<usize>>,
+        pub _1: Option<VariableSizeTerminalWithNoise>,
         pub identifier: Option<Identifier>,
     }
 }
 
 /// SelectedImport = «Identifier» [ 'as' «Identifier» ] ;
-pub type SelectedImport = Box<selected_import::_T0>;
+pub type SelectedImport = selected_import::_T0;
 pub mod selected_import {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
-        pub r#as: WithNoise<FixedTerminal<2usize>>,
+        pub r#as: FixedSizeTerminalWithNoise<2usize>,
         pub identifier: Identifier,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub identifier: Identifier,
-        pub _t1: Option<Box<selected_import::_T1>>,
+        pub _t1: Option<selected_import::_T1>,
     }
 }
 
 /// SimpleImportDirective = ImportPath { 'as' «Identifier» } ;
-pub type SimpleImportDirective = Box<simple_import_directive::_T0>;
+pub type SimpleImportDirective = simple_import_directive::_T0;
 pub mod simple_import_directive {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
-        pub r#as: WithNoise<FixedTerminal<2usize>>,
+        pub r#as: FixedSizeTerminalWithNoise<2usize>,
         pub identifier: Identifier,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub import_path: ImportPath,
-        pub _t2s: Vec<Box<simple_import_directive::_T2>>,
+        pub _t2s: Vec<simple_import_directive::_T2>,
     }
 }
 
 /// StarImportDirective = '*' 'as' «Identifier» 'from' ImportPath ;
-pub type StarImportDirective = Box<star_import_directive::_T0>;
+pub type StarImportDirective = star_import_directive::_T0;
 pub mod star_import_directive {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub star_char: WithNoise<FixedTerminal<1>>,
-        pub r#as: WithNoise<FixedTerminal<2usize>>,
+        pub star_char: FixedSizeTerminalWithNoise<1>,
+        pub r#as: FixedSizeTerminalWithNoise<2usize>,
         pub identifier: Identifier,
-        pub from: WithNoise<FixedTerminal<4usize>>,
+        pub from: FixedSizeTerminalWithNoise<4usize>,
         pub import_path: ImportPath,
     }
 }
 
 /// UserDefinedValueTypeDefinition = 'type' «Identifier» 'is' ElementaryTypeWithPayable ';' ;
-pub type UserDefinedValueTypeDefinition = Box<user_defined_value_type_definition::_T0>;
+pub type UserDefinedValueTypeDefinition = user_defined_value_type_definition::_T0;
 pub mod user_defined_value_type_definition {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub r#type: WithNoise<FixedTerminal<4usize>>,
+        pub r#type: FixedSizeTerminalWithNoise<4usize>,
         pub identifier: Identifier,
-        pub is: WithNoise<FixedTerminal<2usize>>,
+        pub is: FixedSizeTerminalWithNoise<2usize>,
         pub elementary_type_with_payable: ElementaryTypeWithPayable,
-        pub semicolon_char: WithNoise<FixedTerminal<1>>,
+        pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
 /// YulExpression = YulPath | YulFunctionCall | YulLiteral ;
-pub type YulExpression = Box<yul_expression::YulExpression>;
+pub type YulExpression = Box<yul_expression::_T0>;
 pub mod yul_expression {
     #[allow(unused_imports)]
     use super::*;
-    pub enum YulExpression {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T0 {
         YulPath(YulPath),
         YulFunctionCall(YulFunctionCall),
         YulLiteral(YulLiteral),
@@ -779,145 +859,164 @@ pub mod yul_expression {
 }
 
 /// MappingType = 'mapping' '(' ( ElementaryTypeWithoutPayable | IdentifierPath ) '=>' TypeName ')' ;
-pub type MappingType = Box<mapping_type::_T0>;
+pub type MappingType = mapping_type::_T0;
 pub mod mapping_type {
     #[allow(unused_imports)]
     use super::*;
-    pub enum MappingType {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T1 {
         ElementaryTypeWithoutPayable(ElementaryTypeWithoutPayable),
         IdentifierPath(IdentifierPath),
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub mapping: WithNoise<FixedTerminal<7usize>>,
-        pub open_paren_char: WithNoise<FixedTerminal<1>>,
-        pub mapping_type: Box<mapping_type::MappingType>,
-        pub equal_greater: WithNoise<FixedTerminal<2usize>>,
+        pub mapping: FixedSizeTerminalWithNoise<7usize>,
+        pub open_paren_char: FixedSizeTerminalWithNoise<1>,
+        pub _t1: Box<mapping_type::_T1>,
+        pub equal_greater: FixedSizeTerminalWithNoise<2usize>,
         pub type_name: TypeName,
-        pub close_paren_char: WithNoise<FixedTerminal<1>>,
+        pub close_paren_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
 /// NamedArgumentList = '{' { NamedArgument / ',' } '}' ;
-pub type NamedArgumentList = Box<named_argument_list::_T0>;
+pub type NamedArgumentList = named_argument_list::_T0;
 pub mod named_argument_list {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
         pub elements: Vec<NamedArgument>,
-        pub separators: Vec<WithNoise<FixedTerminal<1>>>,
+        pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub open_brace_char: WithNoise<FixedTerminal<1>>,
+        pub open_brace_char: FixedSizeTerminalWithNoise<1>,
         pub named_arguments: Option<named_argument_list::_T1>,
-        pub close_brace_char: WithNoise<FixedTerminal<1>>,
+        pub close_brace_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
 /// NonEmptyParameterList = '(' 1…*{ ParameterDeclaration / ',' } ')' ;
-pub type NonEmptyParameterList = Box<non_empty_parameter_list::_T0>;
+pub type NonEmptyParameterList = non_empty_parameter_list::_T0;
 pub mod non_empty_parameter_list {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
         pub elements: Vec<ParameterDeclaration>,
-        pub separators: Vec<WithNoise<FixedTerminal<1>>>,
+        pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub open_paren_char: WithNoise<FixedTerminal<1>>,
+        pub open_paren_char: FixedSizeTerminalWithNoise<1>,
         pub parameter_declarations: non_empty_parameter_list::_T1,
-        pub close_paren_char: WithNoise<FixedTerminal<1>>,
+        pub close_paren_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
 /// OverrideSpecifier = 'override' [ '(' 1…1*{ IdentifierPath / ',' } ')' ] ;
-pub type OverrideSpecifier = Box<override_specifier::_T0>;
+pub type OverrideSpecifier = override_specifier::_T0;
 pub mod override_specifier {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
         pub elements: Vec<IdentifierPath>,
-        pub separators: Vec<WithNoise<FixedTerminal<1>>>,
+        pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
-        pub open_paren_char: WithNoise<FixedTerminal<1>>,
+        pub open_paren_char: FixedSizeTerminalWithNoise<1>,
         pub identifier_paths: override_specifier::_T2,
-        pub close_paren_char: WithNoise<FixedTerminal<1>>,
+        pub close_paren_char: FixedSizeTerminalWithNoise<1>,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub r#override: WithNoise<FixedTerminal<8usize>>,
-        pub _t1: Option<Box<override_specifier::_T1>>,
+        pub r#override: FixedSizeTerminalWithNoise<8usize>,
+        pub _t1: Option<override_specifier::_T1>,
     }
 }
 
 /// ParameterList = '(' { ParameterDeclaration / ',' } ')' ;
-pub type ParameterList = Box<parameter_list::_T0>;
+pub type ParameterList = parameter_list::_T0;
 pub mod parameter_list {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
         pub elements: Vec<ParameterDeclaration>,
-        pub separators: Vec<WithNoise<FixedTerminal<1>>>,
+        pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub open_paren_char: WithNoise<FixedTerminal<1>>,
+        pub open_paren_char: FixedSizeTerminalWithNoise<1>,
         pub parameter_declarations: Option<parameter_list::_T1>,
-        pub close_paren_char: WithNoise<FixedTerminal<1>>,
+        pub close_paren_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
 /// SelectingImportDirective = '{' 1…*{ SelectedImport / ',' } '}' 'from' ImportPath ;
-pub type SelectingImportDirective = Box<selecting_import_directive::_T0>;
+pub type SelectingImportDirective = selecting_import_directive::_T0;
 pub mod selecting_import_directive {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
         pub elements: Vec<SelectedImport>,
-        pub separators: Vec<WithNoise<FixedTerminal<1>>>,
+        pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub open_brace_char: WithNoise<FixedTerminal<1>>,
+        pub open_brace_char: FixedSizeTerminalWithNoise<1>,
         pub selected_imports: selecting_import_directive::_T1,
-        pub close_brace_char: WithNoise<FixedTerminal<1>>,
-        pub from: WithNoise<FixedTerminal<4usize>>,
+        pub close_brace_char: FixedSizeTerminalWithNoise<1>,
+        pub from: FixedSizeTerminalWithNoise<4usize>,
         pub import_path: ImportPath,
     }
 }
 
 /// YulAssignment = YulPath ( ':=' YulExpression | 1…*{ ',' YulPath } ':=' YulFunctionCall ) ;
-pub type YulAssignment = Box<yul_assignment::_T0>;
+pub type YulAssignment = yul_assignment::_T0;
 pub mod yul_assignment {
     #[allow(unused_imports)]
     use super::*;
-    pub struct _T1 {
-        pub colon_equal: WithNoise<FixedTerminal<2usize>>,
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T2 {
+        pub colon_equal: FixedSizeTerminalWithNoise<2usize>,
         pub yul_expression: YulExpression,
     }
-    pub struct _T4 {
-        pub comma_char: WithNoise<FixedTerminal<1>>,
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T5 {
+        pub comma_char: FixedSizeTerminalWithNoise<1>,
         pub yul_path: YulPath,
     }
-    pub struct _T2 {
-        pub _t4s: Vec<Box<yul_assignment::_T4>>,
-        pub colon_equal: WithNoise<FixedTerminal<2usize>>,
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T3 {
+        pub _t5s: Vec<yul_assignment::_T5>,
+        pub colon_equal: FixedSizeTerminalWithNoise<2usize>,
         pub yul_function_call: YulFunctionCall,
     }
-    pub enum YulAssignment {
-        _T1(Box<yul_assignment::_T1>),
-        _T2(Box<yul_assignment::_T2>),
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T1 {
+        _T2(yul_assignment::_T2),
+        _T3(yul_assignment::_T3),
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub yul_path: YulPath,
-        pub yul_assignment: Box<yul_assignment::YulAssignment>,
+        pub _t1: Box<yul_assignment::_T1>,
     }
 }
 
 /// YulForStatement = 'for' YulBlock YulExpression YulBlock YulBlock ;
-pub type YulForStatement = Box<yul_for_statement::_T0>;
+pub type YulForStatement = yul_for_statement::_T0;
 pub mod yul_for_statement {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub r#for: WithNoise<FixedTerminal<3usize>>,
+        pub r#for: FixedSizeTerminalWithNoise<3usize>,
         pub yul_block_1: YulBlock,
         pub yul_expression: YulExpression,
         pub yul_block_2: YulBlock,
@@ -926,177 +1025,201 @@ pub mod yul_for_statement {
 }
 
 /// YulIfStatement = 'if' YulExpression YulBlock ;
-pub type YulIfStatement = Box<yul_if_statement::_T0>;
+pub type YulIfStatement = yul_if_statement::_T0;
 pub mod yul_if_statement {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub r#if: WithNoise<FixedTerminal<2usize>>,
+        pub r#if: FixedSizeTerminalWithNoise<2usize>,
         pub yul_expression: YulExpression,
         pub yul_block: YulBlock,
     }
 }
 
 /// YulSwitchStatement = 'switch' YulExpression ( 1…*{ 'case' YulLiteral YulBlock } [ 'default' YulBlock ] | 'default' YulBlock ) ;
-pub type YulSwitchStatement = Box<yul_switch_statement::_T0>;
+pub type YulSwitchStatement = yul_switch_statement::_T0;
 pub mod yul_switch_statement {
     #[allow(unused_imports)]
     use super::*;
-    pub struct _T3 {
-        pub case: WithNoise<FixedTerminal<4usize>>,
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T4 {
+        pub case: FixedSizeTerminalWithNoise<4usize>,
         pub yul_literal: YulLiteral,
         pub yul_block: YulBlock,
     }
-    pub struct _T4 {
-        pub default: WithNoise<FixedTerminal<7usize>>,
-        pub yul_block: YulBlock,
-    }
-    pub struct _T1 {
-        pub _t3s: Vec<Box<yul_switch_statement::_T3>>,
-        pub _t4: Option<Box<yul_switch_statement::_T4>>,
-    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T5 {
-        pub default: WithNoise<FixedTerminal<7usize>>,
+        pub default: FixedSizeTerminalWithNoise<7usize>,
         pub yul_block: YulBlock,
     }
-    pub enum YulSwitchStatement {
-        _T1(Box<yul_switch_statement::_T1>),
-        _T5(Box<yul_switch_statement::_T5>),
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T2 {
+        pub _t4s: Vec<yul_switch_statement::_T4>,
+        pub _t5: Option<yul_switch_statement::_T5>,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T6 {
+        pub default: FixedSizeTerminalWithNoise<7usize>,
+        pub yul_block: YulBlock,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T1 {
+        _T2(yul_switch_statement::_T2),
+        _T6(yul_switch_statement::_T6),
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub switch: WithNoise<FixedTerminal<6usize>>,
+        pub switch: FixedSizeTerminalWithNoise<6usize>,
         pub yul_expression: YulExpression,
-        pub yul_switch_statement: Box<yul_switch_statement::YulSwitchStatement>,
+        pub _t1: Box<yul_switch_statement::_T1>,
     }
 }
 
 /// YulVariableDeclaration = 'let' «YulIdentifier» [ ':=' YulExpression | [ ',' «YulIdentifier» ] [ ':=' YulFunctionCall ] ] ;
-pub type YulVariableDeclaration = Box<yul_variable_declaration::_T0>;
+pub type YulVariableDeclaration = yul_variable_declaration::_T0;
 pub mod yul_variable_declaration {
     #[allow(unused_imports)]
     use super::*;
-    pub struct _T1 {
-        pub colon_equal: WithNoise<FixedTerminal<2usize>>,
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T2 {
+        pub colon_equal: FixedSizeTerminalWithNoise<2usize>,
         pub yul_expression: YulExpression,
     }
-    pub struct _T3 {
-        pub comma_char: WithNoise<FixedTerminal<1>>,
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T4 {
+        pub comma_char: FixedSizeTerminalWithNoise<1>,
         pub yul_identifier: YulIdentifier,
     }
-    pub struct _T4 {
-        pub colon_equal: WithNoise<FixedTerminal<2usize>>,
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T5 {
+        pub colon_equal: FixedSizeTerminalWithNoise<2usize>,
         pub yul_function_call: YulFunctionCall,
     }
-    pub struct _T2 {
-        pub _t3: Option<Box<yul_variable_declaration::_T3>>,
-        pub _t4: Option<Box<yul_variable_declaration::_T4>>,
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T3 {
+        pub _t4: Option<yul_variable_declaration::_T4>,
+        pub _t5: Option<yul_variable_declaration::_T5>,
     }
-    pub enum YulVariableDeclaration {
-        _T1(Box<yul_variable_declaration::_T1>),
-        _T2(Box<yul_variable_declaration::_T2>),
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T1 {
+        _T2(yul_variable_declaration::_T2),
+        _T3(yul_variable_declaration::_T3),
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub r#let: WithNoise<FixedTerminal<3usize>>,
+        pub r#let: FixedSizeTerminalWithNoise<3usize>,
         pub yul_identifier: YulIdentifier,
-        pub yul_variable_declaration: Option<Box<yul_variable_declaration::YulVariableDeclaration>>,
+        pub _t1: Option<Box<yul_variable_declaration::_T1>>,
     }
 }
 
 /// ArgumentList = '(' [ PositionalArgumentList | NamedArgumentList ] ')' ;
-pub type ArgumentList = Box<argument_list::_T0>;
+pub type ArgumentList = argument_list::_T0;
 pub mod argument_list {
     #[allow(unused_imports)]
     use super::*;
-    pub enum ArgumentList {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T1 {
         PositionalArgumentList(PositionalArgumentList),
         NamedArgumentList(NamedArgumentList),
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub open_paren_char: WithNoise<FixedTerminal<1>>,
-        pub argument_list: Option<Box<argument_list::ArgumentList>>,
-        pub close_paren_char: WithNoise<FixedTerminal<1>>,
+        pub open_paren_char: FixedSizeTerminalWithNoise<1>,
+        pub _t1: Option<Box<argument_list::_T1>>,
+        pub close_paren_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
 /// CatchClause = 'catch' [ [ «Identifier» ] NonEmptyParameterList ] Block ;
-pub type CatchClause = Box<catch_clause::_T0>;
+pub type CatchClause = catch_clause::_T0;
 pub mod catch_clause {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
         pub identifier: Option<Identifier>,
         pub non_empty_parameter_list: NonEmptyParameterList,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub catch: WithNoise<FixedTerminal<5usize>>,
-        pub _t1: Option<Box<catch_clause::_T1>>,
+        pub catch: FixedSizeTerminalWithNoise<5usize>,
+        pub _t1: Option<catch_clause::_T1>,
         pub block: Block,
     }
 }
 
 /// FunctionType = 'function' ParameterList { VisibilitySpecifier | StateMutabilitySpecifier } [ 'returns' NonEmptyParameterList ] ;
-pub type FunctionType = Box<function_type::_T0>;
+pub type FunctionType = function_type::_T0;
 pub mod function_type {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
-        pub returns: WithNoise<FixedTerminal<7usize>>,
+        pub returns: FixedSizeTerminalWithNoise<7usize>,
         pub non_empty_parameter_list: NonEmptyParameterList,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub function: WithNoise<FixedTerminal<8usize>>,
+        pub function: FixedSizeTerminalWithNoise<8usize>,
         pub parameter_list: ParameterList,
-        pub _2: Vec<WithNoise<usize>>,
-        pub _t2: Option<Box<function_type::_T2>>,
+        pub _2: Vec<VariableSizeTerminalWithNoise>,
+        pub _t2: Option<function_type::_T2>,
     }
 }
 
 /// ImportDirective = 'import' ( SimpleImportDirective | StarImportDirective | SelectingImportDirective ) ';' ;
-pub type ImportDirective = Box<import_directive::_T0>;
+pub type ImportDirective = import_directive::_T0;
 pub mod import_directive {
     #[allow(unused_imports)]
     use super::*;
-    pub enum ImportDirective {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T1 {
         SimpleImportDirective(SimpleImportDirective),
         StarImportDirective(StarImportDirective),
         SelectingImportDirective(SelectingImportDirective),
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub import: WithNoise<FixedTerminal<6usize>>,
-        pub import_directive: Box<import_directive::ImportDirective>,
-        pub semicolon_char: WithNoise<FixedTerminal<1>>,
+        pub import: FixedSizeTerminalWithNoise<6usize>,
+        pub _t1: Box<import_directive::_T1>,
+        pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
 /// MethodAttribute = 'virtual' | OverrideSpecifier ;
-pub type MethodAttribute = Box<method_attribute::MethodAttribute>;
+pub type MethodAttribute = Box<method_attribute::_T0>;
 pub mod method_attribute {
     #[allow(unused_imports)]
     use super::*;
-    pub enum MethodAttribute {
-        Virtual(WithNoise<FixedTerminal<7usize>>),
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T0 {
+        Virtual(FixedSizeTerminalWithNoise<7usize>),
         OverrideSpecifier(OverrideSpecifier),
     }
 }
 
 /// StateVariableAttribute = 'public' | 'private' | 'internal' | 'constant' | OverrideSpecifier | 'immutable' ;
-pub type StateVariableAttribute = Box<state_variable_attribute::StateVariableAttribute>;
+pub type StateVariableAttribute = Box<state_variable_attribute::_T0>;
 pub mod state_variable_attribute {
     #[allow(unused_imports)]
     use super::*;
-    pub enum StateVariableAttribute {
-        _0(WithNoise<usize>),
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T0 {
+        _0(VariableSizeTerminalWithNoise),
         OverrideSpecifier(OverrideSpecifier),
-        Immutable(WithNoise<FixedTerminal<9usize>>),
+        Immutable(FixedSizeTerminalWithNoise<9usize>),
     }
 }
 
 /// YulStatement = YulBlock | YulVariableDeclaration | YulFunctionDefinition | YulAssignment | YulFunctionCall | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement ;
-pub type YulStatement = Box<yul_statement::YulStatement>;
+pub type YulStatement = Box<yul_statement::_T0>;
 pub mod yul_statement {
     #[allow(unused_imports)]
     use super::*;
-    pub enum YulStatement {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T0 {
         YulBlock(YulBlock),
         YulVariableDeclaration(YulVariableDeclaration),
         YulFunctionDefinition(YulFunctionDefinition),
@@ -1105,15 +1228,16 @@ pub mod yul_statement {
         YulIfStatement(YulIfStatement),
         YulForStatement(YulForStatement),
         YulSwitchStatement(YulSwitchStatement),
-        _8(WithNoise<usize>),
+        _8(VariableSizeTerminalWithNoise),
     }
 }
 
 /// InheritanceSpecifier = IdentifierPath [ ArgumentList ] ;
-pub type InheritanceSpecifier = Box<inheritance_specifier::_T0>;
+pub type InheritanceSpecifier = inheritance_specifier::_T0;
 pub mod inheritance_specifier {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub identifier_path: IdentifierPath,
         pub argument_list: Option<ArgumentList>,
@@ -1121,10 +1245,11 @@ pub mod inheritance_specifier {
 }
 
 /// ModifierInvocation = IdentifierPath [ ArgumentList ] ;
-pub type ModifierInvocation = Box<modifier_invocation::_T0>;
+pub type ModifierInvocation = modifier_invocation::_T0;
 pub mod modifier_invocation {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub identifier_path: IdentifierPath,
         pub argument_list: Option<ArgumentList>,
@@ -1132,68 +1257,75 @@ pub mod modifier_invocation {
 }
 
 /// TypeName = ( ElementaryTypeWithPayable | FunctionType | MappingType | IdentifierPath ) { '[' [ Expression ] ']' } ;
-pub type TypeName = Box<type_name::_T0>;
+pub type TypeName = type_name::_T0;
 pub mod type_name {
     #[allow(unused_imports)]
     use super::*;
-    pub enum TypeName {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T1 {
         ElementaryTypeWithPayable(ElementaryTypeWithPayable),
         FunctionType(FunctionType),
         MappingType(MappingType),
         IdentifierPath(IdentifierPath),
     }
-    pub struct _T2 {
-        pub open_bracket_char: WithNoise<FixedTerminal<1>>,
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T3 {
+        pub open_bracket_char: FixedSizeTerminalWithNoise<1>,
         pub expression: Option<Expression>,
-        pub close_bracket_char: WithNoise<FixedTerminal<1>>,
+        pub close_bracket_char: FixedSizeTerminalWithNoise<1>,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub type_name: Box<type_name::TypeName>,
-        pub _t2s: Vec<Box<type_name::_T2>>,
+        pub _t1: Box<type_name::_T1>,
+        pub _t3s: Vec<type_name::_T3>,
     }
 }
 
 /// YulBlock = '{' { YulStatement } '}' ;
-pub type YulBlock = Box<yul_block::_T0>;
+pub type YulBlock = yul_block::_T0;
 pub mod yul_block {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub open_brace_char: WithNoise<FixedTerminal<1>>,
+        pub open_brace_char: FixedSizeTerminalWithNoise<1>,
         pub yul_statements: Vec<YulStatement>,
-        pub close_brace_char: WithNoise<FixedTerminal<1>>,
+        pub close_brace_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
 /// AssemblyStatement = 'assembly' [ '"evmasm"' ] [ AssemblyFlags ] YulBlock ;
-pub type AssemblyStatement = Box<assembly_statement::_T0>;
+pub type AssemblyStatement = assembly_statement::_T0;
 pub mod assembly_statement {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub assembly: WithNoise<FixedTerminal<8usize>>,
-        pub double_quote_evmasm_double_quote: Option<WithNoise<FixedTerminal<8usize>>>,
+        pub assembly: FixedSizeTerminalWithNoise<8usize>,
+        pub double_quote_evmasm_double_quote: Option<FixedSizeTerminalWithNoise<8usize>>,
         pub assembly_flags: Option<AssemblyFlags>,
         pub yul_block: YulBlock,
     }
 }
 
 /// ConstructorAttribute = ModifierInvocation | 'payable' | 'internal' | 'public' ;
-pub type ConstructorAttribute = Box<constructor_attribute::ConstructorAttribute>;
+pub type ConstructorAttribute = Box<constructor_attribute::_T0>;
 pub mod constructor_attribute {
     #[allow(unused_imports)]
     use super::*;
-    pub enum ConstructorAttribute {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T0 {
         ModifierInvocation(ModifierInvocation),
-        _1(WithNoise<usize>),
+        _1(VariableSizeTerminalWithNoise),
     }
 }
 
 /// ErrorParameter = TypeName [ «Identifier» ] ;
-pub type ErrorParameter = Box<error_parameter::_T0>;
+pub type ErrorParameter = error_parameter::_T0;
 pub mod error_parameter {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub type_name: TypeName,
         pub identifier: Option<Identifier>,
@@ -1201,54 +1333,59 @@ pub mod error_parameter {
 }
 
 /// EventParameter = TypeName [ 'indexed' ] [ «Identifier» ] ;
-pub type EventParameter = Box<event_parameter::_T0>;
+pub type EventParameter = event_parameter::_T0;
 pub mod event_parameter {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub type_name: TypeName,
-        pub indexed: Option<WithNoise<FixedTerminal<7usize>>>,
+        pub indexed: Option<FixedSizeTerminalWithNoise<7usize>>,
         pub identifier: Option<Identifier>,
     }
 }
 
 /// FallbackFunctionAttribute = 'external' | StateMutabilitySpecifier | ModifierInvocation | 'virtual' | OverrideSpecifier ;
-pub type FallbackFunctionAttribute = Box<fallback_function_attribute::FallbackFunctionAttribute>;
+pub type FallbackFunctionAttribute = Box<fallback_function_attribute::_T0>;
 pub mod fallback_function_attribute {
     #[allow(unused_imports)]
     use super::*;
-    pub enum FallbackFunctionAttribute {
-        _0(WithNoise<usize>),
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T0 {
+        _0(VariableSizeTerminalWithNoise),
         ModifierInvocation(ModifierInvocation),
-        Virtual(WithNoise<FixedTerminal<7usize>>),
+        Virtual(FixedSizeTerminalWithNoise<7usize>),
         OverrideSpecifier(OverrideSpecifier),
     }
 }
 
 /// FunctionAttribute = VisibilitySpecifier | StateMutabilitySpecifier | ModifierInvocation | 'virtual' | OverrideSpecifier ;
-pub type FunctionAttribute = Box<function_attribute::FunctionAttribute>;
+pub type FunctionAttribute = Box<function_attribute::_T0>;
 pub mod function_attribute {
     #[allow(unused_imports)]
     use super::*;
-    pub enum FunctionAttribute {
-        _0(WithNoise<usize>),
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T0 {
+        _0(VariableSizeTerminalWithNoise),
         ModifierInvocation(ModifierInvocation),
-        Virtual(WithNoise<FixedTerminal<7usize>>),
+        Virtual(FixedSizeTerminalWithNoise<7usize>),
         OverrideSpecifier(OverrideSpecifier),
     }
 }
 
 /// InheritanceSpecifierList = 'is' 1…*{ InheritanceSpecifier / ',' } ;
-pub type InheritanceSpecifierList = Box<inheritance_specifier_list::_T0>;
+pub type InheritanceSpecifierList = inheritance_specifier_list::_T0;
 pub mod inheritance_specifier_list {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
         pub elements: Vec<InheritanceSpecifier>,
-        pub separators: Vec<WithNoise<FixedTerminal<1>>>,
+        pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub is: WithNoise<FixedTerminal<2usize>>,
+        pub is: FixedSizeTerminalWithNoise<2usize>,
         pub inheritance_specifiers: inheritance_specifier_list::_T1,
     }
 }
@@ -1258,133 +1395,151 @@ pub type PrimaryExpression = Expression;
 pub mod primary_expression {
     #[allow(unused_imports)]
     use super::*;
-    pub struct _T0 {
-        pub payable: WithNoise<FixedTerminal<7usize>>,
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T1 {
+        pub payable: FixedSizeTerminalWithNoise<7usize>,
         pub argument_list: ArgumentList,
     }
-    pub struct _T1 {
-        pub r#type: WithNoise<FixedTerminal<4usize>>,
-        pub open_paren_char: WithNoise<FixedTerminal<1>>,
-        pub type_name: TypeName,
-        pub close_paren_char: WithNoise<FixedTerminal<1>>,
-    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
-        pub new: WithNoise<FixedTerminal<3usize>>,
+        pub r#type: FixedSizeTerminalWithNoise<4usize>,
+        pub open_paren_char: FixedSizeTerminalWithNoise<1>,
+        pub type_name: TypeName,
+        pub close_paren_char: FixedSizeTerminalWithNoise<1>,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T3 {
+        pub new: FixedSizeTerminalWithNoise<3usize>,
         pub type_name: TypeName,
     }
-    pub struct _T4 {
-        pub elements: Vec<Option<Expression>>,
-        pub separators: Vec<WithNoise<FixedTerminal<1>>>,
-    }
-    pub struct _T3 {
-        pub open_paren_char: WithNoise<FixedTerminal<1>>,
-        pub expressions: primary_expression::_T4,
-        pub close_paren_char: WithNoise<FixedTerminal<1>>,
-    }
-    pub struct _T6 {
-        pub elements: Vec<Expression>,
-        pub separators: Vec<WithNoise<FixedTerminal<1>>>,
-    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T5 {
-        pub open_bracket_char: WithNoise<FixedTerminal<1>>,
-        pub expressions: primary_expression::_T6,
-        pub close_bracket_char: WithNoise<FixedTerminal<1>>,
+        pub elements: Vec<Option<Expression>>,
+        pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
-    pub enum PrimaryExpression {
-        _T0(Box<primary_expression::_T0>),
-        _T1(Box<primary_expression::_T1>),
-        _T2(Box<primary_expression::_T2>),
-        _T3(Box<primary_expression::_T3>),
-        _T5(Box<primary_expression::_T5>),
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T4 {
+        pub open_paren_char: FixedSizeTerminalWithNoise<1>,
+        pub expressions: primary_expression::_T5,
+        pub close_paren_char: FixedSizeTerminalWithNoise<1>,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T7 {
+        pub elements: Vec<Expression>,
+        pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T6 {
+        pub open_bracket_char: FixedSizeTerminalWithNoise<1>,
+        pub expressions: primary_expression::_T7,
+        pub close_bracket_char: FixedSizeTerminalWithNoise<1>,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T0 {
+        _T1(primary_expression::_T1),
+        _T2(primary_expression::_T2),
+        _T3(primary_expression::_T3),
+        _T4(primary_expression::_T4),
+        _T6(primary_expression::_T6),
         Identifier(Identifier),
         Literal(Literal),
         ElementaryTypeWithoutPayable(ElementaryTypeWithoutPayable),
     }
-    pub type E = Box<primary_expression::PrimaryExpression>;
+    pub type E = Box<primary_expression::_T0>;
 }
 
 /// ReceiveFunctionAttribute = 'external' | 'payable' | ModifierInvocation | 'virtual' | OverrideSpecifier ;
-pub type ReceiveFunctionAttribute = Box<receive_function_attribute::ReceiveFunctionAttribute>;
+pub type ReceiveFunctionAttribute = Box<receive_function_attribute::_T0>;
 pub mod receive_function_attribute {
     #[allow(unused_imports)]
     use super::*;
-    pub enum ReceiveFunctionAttribute {
-        _0(WithNoise<usize>),
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T0 {
+        _0(VariableSizeTerminalWithNoise),
         ModifierInvocation(ModifierInvocation),
-        Virtual(WithNoise<FixedTerminal<7usize>>),
+        Virtual(FixedSizeTerminalWithNoise<7usize>),
         OverrideSpecifier(OverrideSpecifier),
     }
 }
 
 /// StructDefinition = 'struct' «Identifier» '{' 1…*{ TypeName «Identifier» ';' } '}' ;
-pub type StructDefinition = Box<struct_definition::_T0>;
+pub type StructDefinition = struct_definition::_T0;
 pub mod struct_definition {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
         pub type_name: TypeName,
         pub identifier: Identifier,
-        pub semicolon_char: WithNoise<FixedTerminal<1>>,
+        pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub r#struct: WithNoise<FixedTerminal<6usize>>,
+        pub r#struct: FixedSizeTerminalWithNoise<6usize>,
         pub identifier: Identifier,
-        pub open_brace_char: WithNoise<FixedTerminal<1>>,
-        pub _t2s: Vec<Box<struct_definition::_T2>>,
-        pub close_brace_char: WithNoise<FixedTerminal<1>>,
+        pub open_brace_char: FixedSizeTerminalWithNoise<1>,
+        pub _t2s: Vec<struct_definition::_T2>,
+        pub close_brace_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
 /// UsingDirective = 'using' ( IdentifierPath | '{' 1…*{ IdentifierPath / ',' } '}' ) 'for' ( '*' | TypeName ) [ 'global' ] ';' ;
-pub type UsingDirective = Box<using_directive::_T0>;
+pub type UsingDirective = using_directive::_T0;
 pub mod using_directive {
     #[allow(unused_imports)]
     use super::*;
-    pub struct _T2 {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T3 {
         pub elements: Vec<IdentifierPath>,
-        pub separators: Vec<WithNoise<FixedTerminal<1>>>,
+        pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
-    pub struct _T1 {
-        pub open_brace_char: WithNoise<FixedTerminal<1>>,
-        pub identifier_paths: using_directive::_T2,
-        pub close_brace_char: WithNoise<FixedTerminal<1>>,
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T2 {
+        pub open_brace_char: FixedSizeTerminalWithNoise<1>,
+        pub identifier_paths: using_directive::_T3,
+        pub close_brace_char: FixedSizeTerminalWithNoise<1>,
     }
-    pub enum UsingDirective {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T1 {
         IdentifierPath(IdentifierPath),
-        _T1(Box<using_directive::_T1>),
+        _T2(using_directive::_T2),
     }
-    pub enum UsingDirective {
-        StarChar(WithNoise<FixedTerminal<1>>),
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T4 {
+        StarChar(FixedSizeTerminalWithNoise<1>),
         TypeName(TypeName),
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub using: WithNoise<FixedTerminal<5usize>>,
-        pub using_directive_1: Box<using_directive::UsingDirective>,
-        pub r#for: WithNoise<FixedTerminal<3usize>>,
-        pub using_directive_2: Box<using_directive::UsingDirective>,
-        pub global: Option<WithNoise<FixedTerminal<6usize>>>,
-        pub semicolon_char: WithNoise<FixedTerminal<1>>,
+        pub using: FixedSizeTerminalWithNoise<5usize>,
+        pub _t1: Box<using_directive::_T1>,
+        pub r#for: FixedSizeTerminalWithNoise<3usize>,
+        pub _t4: Box<using_directive::_T4>,
+        pub global: Option<FixedSizeTerminalWithNoise<6usize>>,
+        pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
 /// VariableDeclaration = TypeName [ DataLocation ] «Identifier» ;
-pub type VariableDeclaration = Box<variable_declaration::_T0>;
+pub type VariableDeclaration = variable_declaration::_T0;
 pub mod variable_declaration {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub type_name: TypeName,
-        pub _1: Option<WithNoise<usize>>,
+        pub _1: Option<VariableSizeTerminalWithNoise>,
         pub identifier: Identifier,
     }
 }
 
 /// Directive = «PragmaDirective» | ImportDirective | UsingDirective ;
-pub type Directive = Box<directive::Directive>;
+pub type Directive = Box<directive::_T0>;
 pub mod directive {
     #[allow(unused_imports)]
     use super::*;
-    pub enum Directive {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T0 {
         PragmaDirective(PragmaDirective),
         ImportDirective(ImportDirective),
         UsingDirective(UsingDirective),
@@ -1392,41 +1547,45 @@ pub mod directive {
 }
 
 /// ErrorDefinition = 'error' «Identifier» '(' { ErrorParameter / ',' } ')' ';' ;
-pub type ErrorDefinition = Box<error_definition::_T0>;
+pub type ErrorDefinition = error_definition::_T0;
 pub mod error_definition {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
         pub elements: Vec<ErrorParameter>,
-        pub separators: Vec<WithNoise<FixedTerminal<1>>>,
+        pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub error: WithNoise<FixedTerminal<5usize>>,
+        pub error: FixedSizeTerminalWithNoise<5usize>,
         pub identifier: Identifier,
-        pub open_paren_char: WithNoise<FixedTerminal<1>>,
+        pub open_paren_char: FixedSizeTerminalWithNoise<1>,
         pub error_parameters: Option<error_definition::_T1>,
-        pub close_paren_char: WithNoise<FixedTerminal<1>>,
-        pub semicolon_char: WithNoise<FixedTerminal<1>>,
+        pub close_paren_char: FixedSizeTerminalWithNoise<1>,
+        pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
 /// EventDefinition = 'event' «Identifier» '(' { EventParameter / ',' } ')' [ 'anonymous' ] ';' ;
-pub type EventDefinition = Box<event_definition::_T0>;
+pub type EventDefinition = event_definition::_T0;
 pub mod event_definition {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
         pub elements: Vec<EventParameter>,
-        pub separators: Vec<WithNoise<FixedTerminal<1>>>,
+        pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub event: WithNoise<FixedTerminal<5usize>>,
+        pub event: FixedSizeTerminalWithNoise<5usize>,
         pub identifier: Identifier,
-        pub open_paren_char: WithNoise<FixedTerminal<1>>,
+        pub open_paren_char: FixedSizeTerminalWithNoise<1>,
         pub event_parameters: Option<event_definition::_T1>,
-        pub close_paren_char: WithNoise<FixedTerminal<1>>,
-        pub anonymous: Option<WithNoise<FixedTerminal<9usize>>>,
-        pub semicolon_char: WithNoise<FixedTerminal<1>>,
+        pub close_paren_char: FixedSizeTerminalWithNoise<1>,
+        pub anonymous: Option<FixedSizeTerminalWithNoise<9usize>>,
+        pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
@@ -1435,37 +1594,42 @@ pub type IndexAccessExpression = Expression;
 pub mod index_access_expression {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
-        pub colon_char: WithNoise<FixedTerminal<1>>,
+        pub colon_char: FixedSizeTerminalWithNoise<1>,
         pub expression: Option<Expression>,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct Operator {
-        pub open_bracket_char: WithNoise<FixedTerminal<1>>,
+        pub open_bracket_char: FixedSizeTerminalWithNoise<1>,
         pub expression_2: Option<Expression>,
-        pub _t1: Option<Box<index_access_expression::_T1>>,
-        pub close_bracket_char: WithNoise<FixedTerminal<1>>,
+        pub _t1: Option<index_access_expression::_T1>,
+        pub close_bracket_char: FixedSizeTerminalWithNoise<1>,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
-        pub operator: Box<index_access_expression::Operator>,
+        pub operator: index_access_expression::Operator,
     }
 }
 
 /// VariableDeclarationTuple = '(' { ',' } VariableDeclaration { ',' [ VariableDeclaration ] } ')' ;
-pub type VariableDeclarationTuple = Box<variable_declaration_tuple::_T0>;
+pub type VariableDeclarationTuple = variable_declaration_tuple::_T0;
 pub mod variable_declaration_tuple {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T3 {
-        pub comma_char: WithNoise<FixedTerminal<1>>,
+        pub comma_char: FixedSizeTerminalWithNoise<1>,
         pub variable_declaration: Option<VariableDeclaration>,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub open_paren_char: WithNoise<FixedTerminal<1>>,
+        pub open_paren_char: FixedSizeTerminalWithNoise<1>,
         pub comma_chars: usize,
         pub variable_declaration: VariableDeclaration,
-        pub _t3s: Vec<Box<variable_declaration_tuple::_T3>>,
-        pub close_paren_char: WithNoise<FixedTerminal<1>>,
+        pub _t3s: Vec<variable_declaration_tuple::_T3>,
+        pub close_paren_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
@@ -1474,17 +1638,20 @@ pub type MemberAccessExpression = Expression;
 pub mod member_access_expression {
     #[allow(unused_imports)]
     use super::*;
-    pub enum MemberAccessExpression {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T1 {
         Identifier(Identifier),
-        Address(WithNoise<FixedTerminal<7usize>>),
+        Address(FixedSizeTerminalWithNoise<7usize>),
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct Operator {
-        pub period_char: WithNoise<FixedTerminal<1>>,
-        pub member_access_expression: Box<member_access_expression::MemberAccessExpression>,
+        pub period_char: FixedSizeTerminalWithNoise<1>,
+        pub _t1: Box<member_access_expression::_T1>,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
-        pub operator: Box<member_access_expression::Operator>,
+        pub operator: member_access_expression::Operator,
     }
 }
 
@@ -1493,18 +1660,21 @@ pub type FunctionCallOptionsExpression = Expression;
 pub mod function_call_options_expression {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
         pub elements: Vec<NamedArgument>,
-        pub separators: Vec<WithNoise<FixedTerminal<1>>>,
+        pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct Operator {
-        pub open_brace_char: WithNoise<FixedTerminal<1>>,
+        pub open_brace_char: FixedSizeTerminalWithNoise<1>,
         pub named_arguments: function_call_options_expression::_T1,
-        pub close_brace_char: WithNoise<FixedTerminal<1>>,
+        pub close_brace_char: FixedSizeTerminalWithNoise<1>,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
-        pub operator: Box<function_call_options_expression::Operator>,
+        pub operator: function_call_options_expression::Operator,
     }
 }
 
@@ -1513,6 +1683,7 @@ pub type FunctionCallExpression = Expression;
 pub mod function_call_expression {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
         pub operator: ArgumentList,
@@ -1524,8 +1695,9 @@ pub type UnaryPrefixExpression = Expression;
 pub mod unary_prefix_expression {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
-        pub operator: WithNoise<usize>,
+        pub operator: VariableSizeTerminalWithNoise,
         pub right: Expression,
     }
 }
@@ -1535,9 +1707,10 @@ pub type UnarySuffixExpression = Expression;
 pub mod unary_suffix_expression {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
-        pub operator: WithNoise<FixedTerminal<2usize>>,
+        pub operator: FixedSizeTerminalWithNoise<2usize>,
     }
 }
 
@@ -1546,9 +1719,10 @@ pub type ExponentiationExpression = Expression;
 pub mod exponentiation_expression {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
-        pub operator: WithNoise<FixedTerminal<2usize>>,
+        pub operator: FixedSizeTerminalWithNoise<2usize>,
         pub right: Expression,
     }
 }
@@ -1558,9 +1732,10 @@ pub type MulDivModExpression = Expression;
 pub mod mul_div_mod_expression {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
-        pub operator: WithNoise<FixedTerminal<1>>,
+        pub operator: FixedSizeTerminalWithNoise<1>,
         pub right: Expression,
     }
 }
@@ -1570,9 +1745,10 @@ pub type AddSubExpression = Expression;
 pub mod add_sub_expression {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
-        pub operator: WithNoise<FixedTerminal<1>>,
+        pub operator: FixedSizeTerminalWithNoise<1>,
         pub right: Expression,
     }
 }
@@ -1582,9 +1758,10 @@ pub type ShiftExpression = Expression;
 pub mod shift_expression {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
-        pub operator: WithNoise<usize>,
+        pub operator: VariableSizeTerminalWithNoise,
         pub right: Expression,
     }
 }
@@ -1594,9 +1771,10 @@ pub type BitAndExpression = Expression;
 pub mod bit_and_expression {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
-        pub operator: WithNoise<FixedTerminal<1>>,
+        pub operator: FixedSizeTerminalWithNoise<1>,
         pub right: Expression,
     }
 }
@@ -1606,9 +1784,10 @@ pub type BitXOrExpression = Expression;
 pub mod bit_x_or_expression {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
-        pub operator: WithNoise<FixedTerminal<1>>,
+        pub operator: FixedSizeTerminalWithNoise<1>,
         pub right: Expression,
     }
 }
@@ -1618,9 +1797,10 @@ pub type BitOrExpression = Expression;
 pub mod bit_or_expression {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
-        pub operator: WithNoise<FixedTerminal<1>>,
+        pub operator: FixedSizeTerminalWithNoise<1>,
         pub right: Expression,
     }
 }
@@ -1630,9 +1810,10 @@ pub type OrderComparisonExpression = Expression;
 pub mod order_comparison_expression {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
-        pub operator: WithNoise<usize>,
+        pub operator: VariableSizeTerminalWithNoise,
         pub right: Expression,
     }
 }
@@ -1642,9 +1823,10 @@ pub type EqualityComparisonExpression = Expression;
 pub mod equality_comparison_expression {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
-        pub operator: WithNoise<FixedTerminal<2usize>>,
+        pub operator: FixedSizeTerminalWithNoise<2usize>,
         pub right: Expression,
     }
 }
@@ -1654,9 +1836,10 @@ pub type AndExpression = Expression;
 pub mod and_expression {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
-        pub operator: WithNoise<FixedTerminal<2usize>>,
+        pub operator: FixedSizeTerminalWithNoise<2usize>,
         pub right: Expression,
     }
 }
@@ -1666,9 +1849,10 @@ pub type OrExpression = Expression;
 pub mod or_expression {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
-        pub operator: WithNoise<FixedTerminal<2usize>>,
+        pub operator: FixedSizeTerminalWithNoise<2usize>,
         pub right: Expression,
     }
 }
@@ -1678,15 +1862,17 @@ pub type ConditionalExpression = Expression;
 pub mod conditional_expression {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
-        pub question_char: WithNoise<FixedTerminal<1>>,
+        pub question_char: FixedSizeTerminalWithNoise<1>,
         pub expression_1: Expression,
-        pub colon_char: WithNoise<FixedTerminal<1>>,
+        pub colon_char: FixedSizeTerminalWithNoise<1>,
         pub expression_2: Expression,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
-        pub operator: Box<conditional_expression::_T1>,
+        pub operator: conditional_expression::_T1,
     }
 }
 
@@ -1695,9 +1881,10 @@ pub type AssignmentExpression = Expression;
 pub mod assignment_expression {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
-        pub operator: WithNoise<usize>,
+        pub operator: VariableSizeTerminalWithNoise,
         pub right: Expression,
     }
 }
@@ -1707,6 +1894,7 @@ pub type Expression = Box<expression::Expression>;
 pub mod expression {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub enum Expression {
         AssignmentExpression(assignment_expression::E),
         ConditionalExpression(conditional_expression::E),
@@ -1732,224 +1920,246 @@ pub mod expression {
 }
 
 /// ConstantDefinition = TypeName 'constant' «Identifier» '=' Expression ';' ;
-pub type ConstantDefinition = Box<constant_definition::_T0>;
+pub type ConstantDefinition = constant_definition::_T0;
 pub mod constant_definition {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub type_name: TypeName,
-        pub constant: WithNoise<FixedTerminal<8usize>>,
+        pub constant: FixedSizeTerminalWithNoise<8usize>,
         pub identifier: Identifier,
-        pub equal_char: WithNoise<FixedTerminal<1>>,
+        pub equal_char: FixedSizeTerminalWithNoise<1>,
         pub expression: Expression,
-        pub semicolon_char: WithNoise<FixedTerminal<1>>,
+        pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
 /// DoWhileStatement = 'do' Statement 'while' '(' Expression ')' ';' ;
-pub type DoWhileStatement = Box<do_while_statement::_T0>;
+pub type DoWhileStatement = do_while_statement::_T0;
 pub mod do_while_statement {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub r#do: WithNoise<FixedTerminal<2usize>>,
+        pub r#do: FixedSizeTerminalWithNoise<2usize>,
         pub statement: Statement,
-        pub r#while: WithNoise<FixedTerminal<5usize>>,
-        pub open_paren_char: WithNoise<FixedTerminal<1>>,
+        pub r#while: FixedSizeTerminalWithNoise<5usize>,
+        pub open_paren_char: FixedSizeTerminalWithNoise<1>,
         pub expression: Expression,
-        pub close_paren_char: WithNoise<FixedTerminal<1>>,
-        pub semicolon_char: WithNoise<FixedTerminal<1>>,
+        pub close_paren_char: FixedSizeTerminalWithNoise<1>,
+        pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
 /// EmitStatement = 'emit' Expression ArgumentList ';' ;
-pub type EmitStatement = Box<emit_statement::_T0>;
+pub type EmitStatement = emit_statement::_T0;
 pub mod emit_statement {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub emit: WithNoise<FixedTerminal<4usize>>,
+        pub emit: FixedSizeTerminalWithNoise<4usize>,
         pub expression: Expression,
         pub argument_list: ArgumentList,
-        pub semicolon_char: WithNoise<FixedTerminal<1>>,
+        pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
 /// ExpressionStatement = Expression ';' ;
-pub type ExpressionStatement = Box<expression_statement::_T0>;
+pub type ExpressionStatement = expression_statement::_T0;
 pub mod expression_statement {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub expression: Expression,
-        pub semicolon_char: WithNoise<FixedTerminal<1>>,
+        pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
 /// IfStatement = 'if' '(' Expression ')' Statement [ 'else' Statement ] ;
-pub type IfStatement = Box<if_statement::_T0>;
+pub type IfStatement = if_statement::_T0;
 pub mod if_statement {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
-        pub r#else: WithNoise<FixedTerminal<4usize>>,
+        pub r#else: FixedSizeTerminalWithNoise<4usize>,
         pub statement: Statement,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub r#if: WithNoise<FixedTerminal<2usize>>,
-        pub open_paren_char: WithNoise<FixedTerminal<1>>,
+        pub r#if: FixedSizeTerminalWithNoise<2usize>,
+        pub open_paren_char: FixedSizeTerminalWithNoise<1>,
         pub expression: Expression,
-        pub close_paren_char: WithNoise<FixedTerminal<1>>,
+        pub close_paren_char: FixedSizeTerminalWithNoise<1>,
         pub statement: Statement,
-        pub _t1: Option<Box<if_statement::_T1>>,
+        pub _t1: Option<if_statement::_T1>,
     }
 }
 
 /// ReturnStatement = 'return' [ Expression ] ';' ;
-pub type ReturnStatement = Box<return_statement::_T0>;
+pub type ReturnStatement = return_statement::_T0;
 pub mod return_statement {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub r#return: WithNoise<FixedTerminal<6usize>>,
+        pub r#return: FixedSizeTerminalWithNoise<6usize>,
         pub expression: Option<Expression>,
-        pub semicolon_char: WithNoise<FixedTerminal<1>>,
+        pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
 /// RevertStatement = 'revert' Expression ArgumentList ';' ;
-pub type RevertStatement = Box<revert_statement::_T0>;
+pub type RevertStatement = revert_statement::_T0;
 pub mod revert_statement {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub revert: WithNoise<FixedTerminal<6usize>>,
+        pub revert: FixedSizeTerminalWithNoise<6usize>,
         pub expression: Expression,
         pub argument_list: ArgumentList,
-        pub semicolon_char: WithNoise<FixedTerminal<1>>,
+        pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
 /// StateVariableDeclaration = TypeName { StateVariableAttribute } «Identifier» [ '=' Expression ] ';' ;
-pub type StateVariableDeclaration = Box<state_variable_declaration::_T0>;
+pub type StateVariableDeclaration = state_variable_declaration::_T0;
 pub mod state_variable_declaration {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
-        pub equal_char: WithNoise<FixedTerminal<1>>,
+        pub equal_char: FixedSizeTerminalWithNoise<1>,
         pub expression: Expression,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub type_name: TypeName,
         pub state_variable_attributes: Vec<StateVariableAttribute>,
         pub identifier: Identifier,
-        pub _t2: Option<Box<state_variable_declaration::_T2>>,
-        pub semicolon_char: WithNoise<FixedTerminal<1>>,
+        pub _t2: Option<state_variable_declaration::_T2>,
+        pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
 /// TryStatement = 'try' Expression [ 'returns' NonEmptyParameterList ] Block 1…*{ CatchClause } ;
-pub type TryStatement = Box<try_statement::_T0>;
+pub type TryStatement = try_statement::_T0;
 pub mod try_statement {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
-        pub returns: WithNoise<FixedTerminal<7usize>>,
+        pub returns: FixedSizeTerminalWithNoise<7usize>,
         pub non_empty_parameter_list: NonEmptyParameterList,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub r#try: WithNoise<FixedTerminal<3usize>>,
+        pub r#try: FixedSizeTerminalWithNoise<3usize>,
         pub expression: Expression,
-        pub _t1: Option<Box<try_statement::_T1>>,
+        pub _t1: Option<try_statement::_T1>,
         pub block: Block,
         pub catch_clauses: Vec<CatchClause>,
     }
 }
 
 /// VariableDeclarationStatement = ( VariableDeclaration [ '=' Expression ] | VariableDeclarationTuple '=' Expression ) ';' ;
-pub type VariableDeclarationStatement = Box<variable_declaration_statement::_T0>;
+pub type VariableDeclarationStatement = variable_declaration_statement::_T0;
 pub mod variable_declaration_statement {
     #[allow(unused_imports)]
     use super::*;
-    pub struct _T2 {
-        pub equal_char: WithNoise<FixedTerminal<1>>,
-        pub expression: Expression,
-    }
-    pub struct _T1 {
-        pub variable_declaration: VariableDeclaration,
-        pub _t2: Option<Box<variable_declaration_statement::_T2>>,
-    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T3 {
-        pub variable_declaration_tuple: VariableDeclarationTuple,
-        pub equal_char: WithNoise<FixedTerminal<1>>,
+        pub equal_char: FixedSizeTerminalWithNoise<1>,
         pub expression: Expression,
     }
-    pub enum VariableDeclarationStatement {
-        _T1(Box<variable_declaration_statement::_T1>),
-        _T3(Box<variable_declaration_statement::_T3>),
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T2 {
+        pub variable_declaration: VariableDeclaration,
+        pub _t3: Option<variable_declaration_statement::_T3>,
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T4 {
+        pub variable_declaration_tuple: VariableDeclarationTuple,
+        pub equal_char: FixedSizeTerminalWithNoise<1>,
+        pub expression: Expression,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T1 {
+        _T2(variable_declaration_statement::_T2),
+        _T4(variable_declaration_statement::_T4),
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub variable_declaration_statement:
-            Box<variable_declaration_statement::VariableDeclarationStatement>,
-        pub semicolon_char: WithNoise<FixedTerminal<1>>,
+        pub _t1: Box<variable_declaration_statement::_T1>,
+        pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
 /// WhileStatement = 'while' '(' Expression ')' Statement ;
-pub type WhileStatement = Box<while_statement::_T0>;
+pub type WhileStatement = while_statement::_T0;
 pub mod while_statement {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub r#while: WithNoise<FixedTerminal<5usize>>,
-        pub open_paren_char: WithNoise<FixedTerminal<1>>,
+        pub r#while: FixedSizeTerminalWithNoise<5usize>,
+        pub open_paren_char: FixedSizeTerminalWithNoise<1>,
         pub expression: Expression,
-        pub close_paren_char: WithNoise<FixedTerminal<1>>,
+        pub close_paren_char: FixedSizeTerminalWithNoise<1>,
         pub statement: Statement,
     }
 }
 
 /// SimpleStatement = VariableDeclarationStatement | ExpressionStatement ;
-pub type SimpleStatement = Box<simple_statement::SimpleStatement>;
+pub type SimpleStatement = Box<simple_statement::_T0>;
 pub mod simple_statement {
     #[allow(unused_imports)]
     use super::*;
-    pub enum SimpleStatement {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T0 {
         VariableDeclarationStatement(VariableDeclarationStatement),
         ExpressionStatement(ExpressionStatement),
     }
 }
 
 /// ForStatement = 'for' '(' ( SimpleStatement | ';' ) ( ExpressionStatement | ';' ) [ Expression ] ')' Statement ;
-pub type ForStatement = Box<for_statement::_T0>;
+pub type ForStatement = for_statement::_T0;
 pub mod for_statement {
     #[allow(unused_imports)]
     use super::*;
-    pub enum ForStatement {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T1 {
         SimpleStatement(SimpleStatement),
-        SemicolonChar(WithNoise<FixedTerminal<1>>),
+        SemicolonChar(FixedSizeTerminalWithNoise<1>),
     }
-    pub enum ForStatement {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T2 {
         ExpressionStatement(ExpressionStatement),
-        SemicolonChar(WithNoise<FixedTerminal<1>>),
+        SemicolonChar(FixedSizeTerminalWithNoise<1>),
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub r#for: WithNoise<FixedTerminal<3usize>>,
-        pub open_paren_char: WithNoise<FixedTerminal<1>>,
-        pub for_statement_1: Box<for_statement::ForStatement>,
-        pub for_statement_2: Box<for_statement::ForStatement>,
+        pub r#for: FixedSizeTerminalWithNoise<3usize>,
+        pub open_paren_char: FixedSizeTerminalWithNoise<1>,
+        pub _t1: Box<for_statement::_T1>,
+        pub _t2: Box<for_statement::_T2>,
         pub expression: Option<Expression>,
-        pub close_paren_char: WithNoise<FixedTerminal<1>>,
+        pub close_paren_char: FixedSizeTerminalWithNoise<1>,
         pub statement: Statement,
     }
 }
 
 /// Statement = Block | SimpleStatement | IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | TryStatement | ReturnStatement | EmitStatement | RevertStatement | AssemblyStatement ;
-pub type Statement = Box<statement::Statement>;
+pub type Statement = Box<statement::_T0>;
 pub mod statement {
     #[allow(unused_imports)]
     use super::*;
-    pub enum Statement {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T0 {
         Block(Block),
         SimpleStatement(SimpleStatement),
         IfStatement(IfStatement),
@@ -1967,28 +2177,31 @@ pub mod statement {
 }
 
 /// Block = '{' { Statement | UncheckedBlock } '}' ;
-pub type Block = Box<block::_T0>;
+pub type Block = block::_T0;
 pub mod block {
     #[allow(unused_imports)]
     use super::*;
-    pub enum Block {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T2 {
         Statement(Statement),
         UncheckedBlock(UncheckedBlock),
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub open_brace_char: WithNoise<FixedTerminal<1>>,
-        pub blocks: Vec<Box<block::Block>>,
-        pub close_brace_char: WithNoise<FixedTerminal<1>>,
+        pub open_brace_char: FixedSizeTerminalWithNoise<1>,
+        pub _t2s: Vec<Box<block::_T2>>,
+        pub close_brace_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
 /// ConstructorDefinition = 'constructor' ParameterList { ConstructorAttribute } Block ;
-pub type ConstructorDefinition = Box<constructor_definition::_T0>;
+pub type ConstructorDefinition = constructor_definition::_T0;
 pub mod constructor_definition {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub constructor: WithNoise<FixedTerminal<11usize>>,
+        pub constructor: FixedSizeTerminalWithNoise<11usize>,
         pub parameter_list: ParameterList,
         pub constructor_attributes: Vec<ConstructorAttribute>,
         pub block: Block,
@@ -1996,98 +2209,108 @@ pub mod constructor_definition {
 }
 
 /// FallbackFunctionDefinition = 'fallback' ParameterList { FallbackFunctionAttribute } [ 'returns' NonEmptyParameterList ] ( ';' | Block ) ;
-pub type FallbackFunctionDefinition = Box<fallback_function_definition::_T0>;
+pub type FallbackFunctionDefinition = fallback_function_definition::_T0;
 pub mod fallback_function_definition {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
-        pub returns: WithNoise<FixedTerminal<7usize>>,
+        pub returns: FixedSizeTerminalWithNoise<7usize>,
         pub non_empty_parameter_list: NonEmptyParameterList,
     }
-    pub enum FallbackFunctionDefinition {
-        SemicolonChar(WithNoise<FixedTerminal<1>>),
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T3 {
+        SemicolonChar(FixedSizeTerminalWithNoise<1>),
         Block(Block),
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub fallback: WithNoise<FixedTerminal<8usize>>,
+        pub fallback: FixedSizeTerminalWithNoise<8usize>,
         pub parameter_list: ParameterList,
         pub fallback_function_attributes: Vec<FallbackFunctionAttribute>,
-        pub _t2: Option<Box<fallback_function_definition::_T2>>,
-        pub fallback_function_definition:
-            Box<fallback_function_definition::FallbackFunctionDefinition>,
+        pub _t2: Option<fallback_function_definition::_T2>,
+        pub _t3: Box<fallback_function_definition::_T3>,
     }
 }
 
 /// FunctionDefinition = 'function' ( «Identifier» | 'fallback' | 'receive' ) ParameterList { FunctionAttribute } [ 'returns' NonEmptyParameterList ] ( ';' | Block ) ;
-pub type FunctionDefinition = Box<function_definition::_T0>;
+pub type FunctionDefinition = function_definition::_T0;
 pub mod function_definition {
     #[allow(unused_imports)]
     use super::*;
-    pub enum FunctionDefinition {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T1 {
         Identifier(Identifier),
-        _1(WithNoise<usize>),
+        _1(VariableSizeTerminalWithNoise),
     }
-    pub struct _T2 {
-        pub returns: WithNoise<FixedTerminal<7usize>>,
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T3 {
+        pub returns: FixedSizeTerminalWithNoise<7usize>,
         pub non_empty_parameter_list: NonEmptyParameterList,
     }
-    pub enum FunctionDefinition {
-        SemicolonChar(WithNoise<FixedTerminal<1>>),
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T4 {
+        SemicolonChar(FixedSizeTerminalWithNoise<1>),
         Block(Block),
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub function: WithNoise<FixedTerminal<8usize>>,
-        pub function_definition_1: Box<function_definition::FunctionDefinition>,
+        pub function: FixedSizeTerminalWithNoise<8usize>,
+        pub _t1: Box<function_definition::_T1>,
         pub parameter_list: ParameterList,
         pub function_attributes: Vec<FunctionAttribute>,
-        pub _t2: Option<Box<function_definition::_T2>>,
-        pub function_definition_2: Box<function_definition::FunctionDefinition>,
+        pub _t3: Option<function_definition::_T3>,
+        pub _t4: Box<function_definition::_T4>,
     }
 }
 
 /// ModifierDefinition = 'modifier' «Identifier» [ ParameterList ] { MethodAttribute } ( ';' | Block ) ;
-pub type ModifierDefinition = Box<modifier_definition::_T0>;
+pub type ModifierDefinition = modifier_definition::_T0;
 pub mod modifier_definition {
     #[allow(unused_imports)]
     use super::*;
-    pub enum ModifierDefinition {
-        SemicolonChar(WithNoise<FixedTerminal<1>>),
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T2 {
+        SemicolonChar(FixedSizeTerminalWithNoise<1>),
         Block(Block),
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub modifier: WithNoise<FixedTerminal<8usize>>,
+        pub modifier: FixedSizeTerminalWithNoise<8usize>,
         pub identifier: Identifier,
         pub parameter_list: Option<ParameterList>,
         pub method_attributes: Vec<MethodAttribute>,
-        pub modifier_definition: Box<modifier_definition::ModifierDefinition>,
+        pub _t2: Box<modifier_definition::_T2>,
     }
 }
 
 /// ReceiveFunctionDefinition = 'receive' '(' ')' { ReceiveFunctionAttribute } ( ';' | Block ) ;
-pub type ReceiveFunctionDefinition = Box<receive_function_definition::_T0>;
+pub type ReceiveFunctionDefinition = receive_function_definition::_T0;
 pub mod receive_function_definition {
     #[allow(unused_imports)]
     use super::*;
-    pub enum ReceiveFunctionDefinition {
-        SemicolonChar(WithNoise<FixedTerminal<1>>),
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T2 {
+        SemicolonChar(FixedSizeTerminalWithNoise<1>),
         Block(Block),
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub receive: WithNoise<FixedTerminal<7usize>>,
-        pub open_paren_char: WithNoise<FixedTerminal<1>>,
-        pub close_paren_char: WithNoise<FixedTerminal<1>>,
+        pub receive: FixedSizeTerminalWithNoise<7usize>,
+        pub open_paren_char: FixedSizeTerminalWithNoise<1>,
+        pub close_paren_char: FixedSizeTerminalWithNoise<1>,
         pub receive_function_attributes: Vec<ReceiveFunctionAttribute>,
-        pub receive_function_definition:
-            Box<receive_function_definition::ReceiveFunctionDefinition>,
+        pub _t2: Box<receive_function_definition::_T2>,
     }
 }
 
 /// ContractBodyElement = UsingDirective | ConstructorDefinition | FunctionDefinition | FallbackFunctionDefinition | ReceiveFunctionDefinition | ModifierDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | EventDefinition | ErrorDefinition | StateVariableDeclaration ;
-pub type ContractBodyElement = Box<contract_body_element::ContractBodyElement>;
+pub type ContractBodyElement = Box<contract_body_element::_T0>;
 pub mod contract_body_element {
     #[allow(unused_imports)]
     use super::*;
-    pub enum ContractBodyElement {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T0 {
         UsingDirective(UsingDirective),
         ConstructorDefinition(ConstructorDefinition),
         FunctionDefinition(FunctionDefinition),
@@ -2104,56 +2327,60 @@ pub mod contract_body_element {
 }
 
 /// ContractDefinition = [ 'abstract' ] 'contract' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
-pub type ContractDefinition = Box<contract_definition::_T0>;
+pub type ContractDefinition = contract_definition::_T0;
 pub mod contract_definition {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub r#abstract: Option<WithNoise<FixedTerminal<8usize>>>,
-        pub contract: WithNoise<FixedTerminal<8usize>>,
+        pub r#abstract: Option<FixedSizeTerminalWithNoise<8usize>>,
+        pub contract: FixedSizeTerminalWithNoise<8usize>,
         pub identifier: Identifier,
         pub inheritance_specifier_list: Option<InheritanceSpecifierList>,
-        pub open_brace_char: WithNoise<FixedTerminal<1>>,
+        pub open_brace_char: FixedSizeTerminalWithNoise<1>,
         pub contract_body_elements: Vec<ContractBodyElement>,
-        pub close_brace_char: WithNoise<FixedTerminal<1>>,
+        pub close_brace_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
 /// InterfaceDefinition = 'interface' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
-pub type InterfaceDefinition = Box<interface_definition::_T0>;
+pub type InterfaceDefinition = interface_definition::_T0;
 pub mod interface_definition {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub interface: WithNoise<FixedTerminal<9usize>>,
+        pub interface: FixedSizeTerminalWithNoise<9usize>,
         pub identifier: Identifier,
         pub inheritance_specifier_list: Option<InheritanceSpecifierList>,
-        pub open_brace_char: WithNoise<FixedTerminal<1>>,
+        pub open_brace_char: FixedSizeTerminalWithNoise<1>,
         pub contract_body_elements: Vec<ContractBodyElement>,
-        pub close_brace_char: WithNoise<FixedTerminal<1>>,
+        pub close_brace_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
 /// LibraryDefinition = 'library' «Identifier» '{' { ContractBodyElement } '}' ;
-pub type LibraryDefinition = Box<library_definition::_T0>;
+pub type LibraryDefinition = library_definition::_T0;
 pub mod library_definition {
     #[allow(unused_imports)]
     use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub library: WithNoise<FixedTerminal<7usize>>,
+        pub library: FixedSizeTerminalWithNoise<7usize>,
         pub identifier: Identifier,
-        pub open_brace_char: WithNoise<FixedTerminal<1>>,
+        pub open_brace_char: FixedSizeTerminalWithNoise<1>,
         pub contract_body_elements: Vec<ContractBodyElement>,
-        pub close_brace_char: WithNoise<FixedTerminal<1>>,
+        pub close_brace_char: FixedSizeTerminalWithNoise<1>,
     }
 }
 
 /// Definition = ContractDefinition | InterfaceDefinition | LibraryDefinition | FunctionDefinition | ConstantDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | ErrorDefinition ;
-pub type Definition = Box<definition::Definition>;
+pub type Definition = Box<definition::_T0>;
 pub mod definition {
     #[allow(unused_imports)]
     use super::*;
-    pub enum Definition {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T0 {
         ContractDefinition(ContractDefinition),
         InterfaceDefinition(InterfaceDefinition),
         LibraryDefinition(LibraryDefinition),
@@ -2167,17 +2394,19 @@ pub mod definition {
 }
 
 /// SourceUnit = «IGNORE» { Directive | Definition } $ ;
-pub type SourceUnit = Box<source_unit::_T0>;
+pub type SourceUnit = source_unit::_T0;
 pub mod source_unit {
     #[allow(unused_imports)]
     use super::*;
-    pub enum SourceUnit {
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T2 {
         Directive(Directive),
         Definition(Definition),
     }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub ignore: Ignore,
-        pub source_units: Vec<Box<source_unit::SourceUnit>>,
+        pub _t2s: Vec<Box<source_unit::_T2>>,
         pub end_marker: (),
     }
 }

@@ -54,18 +54,27 @@ impl CharacterFilterNode {
         cf_disjunction(vec![Box::new(self), other])
     }
 
-    pub fn to_generated_code(&self) -> GeneratedCode {
+    pub fn to_generated_code(&self, with_noise: bool) -> GeneratedCode {
         let mut result: GeneratedCode = Default::default();
 
-        let map = quote!(.map(|_| FixedTerminal::<1>()) );
-        if let CharacterFilterNode::Char { char } = self {
-            result.parser = quote!(just(#char)#map )
+        let map = quote!(.map(|_| FixedSizeTerminal::<1>()) );
+        let parser = if let CharacterFilterNode::Char { char } = self {
+            quote!(just(#char)#map )
         } else {
             let predicate = self.to_parser_predicate(false);
-            result.parser = quote!( filter(|&c: &char| #predicate)#map )
-        }
+            quote!( filter(|&c: &char| #predicate)#map )
+        };
 
-        result.parser_type = quote!(FixedTerminal<1>);
+        if with_noise {
+            result.parser = quote!(
+                ignore_parser.clone().then(#parser).then(ignore_parser.clone())
+                .map(|((leading, content), trailing)| FixedSizeTerminalWithNoise { leading, content, trailing })
+            );
+            result.parser_type = quote!(FixedSizeTerminalWithNoise<1>);
+        } else {
+            result.parser = parser;
+            result.parser_type = quote!(FixedSizeTerminal<1>);
+        }
 
         result
     }

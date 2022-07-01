@@ -2,6 +2,7 @@ use chumsky::prelude::{BoxedParser, Simple};
 pub type ErrorType = Simple<char>;
 pub type ParserType<T> = BoxedParser<'static, char, T, ErrorType>;
 use super::tree_interface::*;
+
 #[allow(dead_code)]
 pub struct Parsers {
     pub comment: ParserType<Comment>,

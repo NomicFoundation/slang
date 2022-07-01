@@ -1,5 +1,6 @@
 use std::{
     cell::Cell,
+    collections::BTreeSet,
     rc::{Rc, Weak},
 };
 
@@ -219,6 +220,12 @@ pub struct ProductionGeneratedCode {
 }
 
 impl CombinatorTreeRoot {
+    pub fn referenced_identifiers(&self) -> BTreeSet<String> {
+        let mut accum = BTreeSet::new();
+        self.root.collect_identifiers(&mut accum);
+        accum
+    }
+
     pub fn to_generated_code(&self, is_recursive: bool) -> ProductionGeneratedCode {
         let GeneratedCode {
             parser_type,
@@ -249,18 +256,27 @@ impl CombinatorTreeRoot {
                     #module
                 )
             },
+
             parser_field_definition: quote!( pub #field_name: ParserType<#type_name> ),
-            parser_field_initialization: quote!( #field_name: #parser_name ),
+
+            parser_field_initialization: if is_recursive {
+                quote!( #field_name: #parser_name.boxed() )
+            } else {
+                quote!( #field_name: #parser_name )
+            },
+
             parser_implementation_predeclaration: if is_recursive {
                 quote!( let mut #parser_name = Recursive::declare(); )
             } else {
                 quote!()
             },
+
             parser_implementation: if is_recursive {
                 quote!( #parser_name.define(#parser.boxed()); )
             } else {
                 quote!( let #parser_name = #parser.boxed(); )
             },
+
             tree_implementation: quote!( #(#tree_implementation)* ),
         }
     }
@@ -456,9 +472,10 @@ impl CombinatorTree {
                         .or_else(|| Some(next_parser))
                 }
 
-                result
-                    .tree_interface
-                    .push(quote!( pub struct #type_name { #(pub #field_names: #field_types),* } ));
+                result.tree_interface.push(quote!(
+                    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+                    pub struct #type_name { #(pub #field_names: #field_types),* }
+                ));
 
                 let folded_field_names = field_names
                     .clone()
@@ -470,18 +487,16 @@ impl CombinatorTree {
                     .reduce(|accum, next| quote!( (#accum, #next) ));
                 result.tree_implementation.push(quote!(
                     impl #module_name::#type_name {
-                        pub fn new(#folded_field_names: #folded_field_types) -> Self {
+                        pub fn from_parse(#folded_field_names: #folded_field_types) -> Self {
                             Self { #(#field_names),* }
                         }
                     }
                 ));
-                // TODO: serde
                 // TODO: default
 
                 let parser = parser_chain.unwrap();
-                result.parser =
-                    quote!( #parser.map(|v| Box::new(#module_name::#type_name::new(v))) );
-                result.parser_type = quote!( Box<#module_name::#type_name> );
+                result.parser = quote!( #parser.map(|v| #module_name::#type_name::from_parse(v)) );
+                result.parser_type = quote!( #module_name::#type_name );
 
                 result
             }
@@ -507,9 +522,10 @@ impl CombinatorTree {
                     );
                 }
 
-                result
-                    .tree_interface
-                    .push(quote!( pub enum #type_name { #(#fields),* } ));
+                result.tree_interface.push(quote!(
+                    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+                    pub enum #type_name { #(#fields),* }
+                ));
 
                 result.parser = quote!( choice(( #(#parsers),* )) );
                 result.parser_type = quote!( Box<#module_name::#type_name> );
@@ -553,38 +569,33 @@ impl CombinatorTree {
                 result.merge(separator);
 
                 let repetition = quote!(#separator_parser.then(#expr_parser).repeated());
-                let mapping =
-                    quote!( .map(repetition_mapper).map(|v| #module_name::#type_name::new(v)) );
-                result.parser = match (min, max) {
-                    (0, None) => {
-                        quote!( #expr_parser.then(#repetition)#mapping.or_not() )
-                    }
-                    (0, Some(max)) => {
-                        quote!( #expr_parser.then(#repetition.at_most(#max - 1))#mapping.or_not() )
-                    }
-                    (1, None) => {
-                        quote!( #expr_parser.then(#repetition)#mapping )
-                    }
-                    (1, Some(max)) => {
-                        quote!( #expr_parser.then(#repetition.at_most(#max - 1))#mapping )
-                    }
-                    (min, None) => {
-                        quote!( #expr_parser.then(#repetition.at_least(#min - 1))#mapping )
-                    }
-                    (min, Some(max)) if min == max => {
-                        quote!( #expr_parser.then(#repetition.exactly(#min - 1))#mapping )
-                    }
-                    (min, Some(max)) => {
-                        quote!( #expr_parser.then(#repetition.at_least(#min - 1).at_most(#max - 1))#mapping )
-                    }
+                let at_most = match max {
+                    None => quote!(),
+                    Some(max) => quote!( .at_most(#max - 1) ),
                 };
+                let at_least = match min {
+                    0 | 1 => quote!(),
+                    min => quote!( .at_least(#min - 1) ),
+                };
+                let mapping = quote!(
+                    .map(repetition_mapper)
+                    .map(|(elements, separators)| #module_name::#type_name { elements, separators })
+                );
+                let or_not = match min {
+                    0 => quote!( .or_not() ),
+                    _ => quote!(),
+                };
+                result.parser =
+                    quote!( #expr_parser.then(#repetition #at_most #at_least) #mapping #or_not );
 
                 result.tree_interface.push({
                     quote!(
+                        #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
                         pub struct #type_name {
                             pub elements: Vec<#expr_parser_type>,
                             pub separators: Vec<#separator_parser_type>
-                    })
+                        }
+                    )
                 });
 
                 result.parser_type = if *min == 0 {
@@ -642,12 +653,13 @@ impl CombinatorTree {
                         quote!( #tag_name(#module_name::E) )
                     })
                     .collect::<Vec<_>>();
-                result
-                    .tree_interface
-                    .push(quote!( pub enum #type_name { #(#fields),* } ));
+                result.tree_interface.push(quote!(
+                   #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+                   pub enum #type_name { #(#fields),* }
+                ));
 
                 let first_parser_name = names[0].to_parser_name_ident();
-                result.parser = quote!( #first_parser_name );
+                result.parser = quote!( #first_parser_name.clone() );
                 result.parser_type = quote!( Box<#module_name::#type_name> );
 
                 result
@@ -668,6 +680,7 @@ impl CombinatorTree {
                 let tag_name = name.to_enum_tag_ident();
                 let module_name = name.to_module_name_ident();
                 let parent_type_name = parent_name.to_type_name_ident();
+                let parent_module_name = parent_name.to_module_name_ident();
 
                 match operator_model {
                     OperatorModel::None => {
@@ -677,12 +690,14 @@ impl CombinatorTree {
                                     next_sibling_name.to_parser_name_ident();
                                 quote!(
                                     choice((
-                                        #operator_parser.map(#parent_type_name::#tag_name),
-                                        #next_sibling_parser_name
+                                        #operator_parser.map(|v| Box::new(#parent_module_name::#parent_type_name::#tag_name(v))),
+                                        #next_sibling_parser_name.clone()
                                     ))
                                 )
                             }
-                            None => quote!( #operator_parser.map(#parent_type_name::#tag_name) ),
+                            None => {
+                                quote!( #operator_parser.map(|v| Box::new(#parent_module_name::#parent_type_name::#tag_name(v))) )
+                            }
                         };
                         result
                             .tree_interface
@@ -695,6 +710,7 @@ impl CombinatorTree {
                             .expect("Cannot have binary operator as last expression member")
                             .to_parser_name_ident();
                         result.tree_interface.push(quote!(
+                            #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
                             pub struct E {
                                 pub left: #parent_type_name,
                                 pub operator: #operator_type,
@@ -703,14 +719,14 @@ impl CombinatorTree {
                         ));
 
                         result.parser = quote!(
-                           #next_sibling_parser_name
-                            .then(#operator_parser.then(#next_sibling_parser_name).repeated())
+                           #next_sibling_parser_name.clone()
+                            .then(#operator_parser.then(#next_sibling_parser_name.clone()).repeated())
                             .map(|(next, pairs)|
-                                if pairs.is_empty {
+                                if pairs.is_empty() {
                                     next
                                 } else {
-                                    pairs.iter().fold(next, |left, (operator, right)|
-                                        #parent_type_name::#tag_name(#module_name::E { left, operator, right })
+                                    pairs.into_iter().fold(next, |left, (operator, right)|
+                                        Box::new(#parent_module_name::#parent_type_name::#tag_name(#module_name::E { left, operator, right }))
                                     )
                                 }
                             )
@@ -725,6 +741,7 @@ impl CombinatorTree {
                             .expect("Cannot have unary prefix operator as last expression member")
                             .to_parser_name_ident();
                         result.tree_interface.push(quote!(
+                            #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
                             pub struct E {
                                 pub operator: #operator_type,
                                 pub right: #parent_type_name,
@@ -733,14 +750,14 @@ impl CombinatorTree {
 
                         result.parser = quote!(
                             #operator_parser.repeated()
-                            .then(#next_sibling_parser_name)
+                            .then(#next_sibling_parser_name.clone())
                             .map(|(mut operators, operand)|
-                                if operators.is_empty {
+                                if operators.is_empty() {
                                     operand
                                 } else {
                                     operators.reverse();
-                                    operators.iter().fold(operand, |right, operator|
-                                        #parent_type_name::#tag_name(#module_name::E { operator, right })
+                                    operators.into_iter().fold(operand, |right, operator|
+                                        Box::new(#parent_module_name::#parent_type_name::#tag_name(#module_name::E { operator, right }))
                                     )
                                 }
                             )
@@ -753,6 +770,7 @@ impl CombinatorTree {
                             .expect("Cannot have unary suffix operator as last expression member")
                             .to_parser_name_ident();
                         result.tree_interface.push(quote!(
+                            #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
                             pub struct E {
                                 pub left: #parent_type_name,
                                 pub operator: #operator_type,
@@ -760,14 +778,14 @@ impl CombinatorTree {
                         ));
 
                         result.parser = quote!(
-                            #next_sibling_parser_name
+                            #next_sibling_parser_name.clone()
                             .then(#operator_parser.repeated())
                             .map(|(operand, operators)|
-                                if operators.is_empty {
+                                if operators.is_empty() {
                                     operand
                                 } else {
-                                    operators.iter().fold(operand, |left, operator|
-                                        #parent_type_name::#tag_name(#module_name::E { left, operator })
+                                    operators.into_iter().fold(operand, |left, operator|
+                                        Box::new(#parent_module_name::#parent_type_name::#tag_name(#module_name::E { left, operator }))
                                     )
                                 }
                             )
@@ -796,33 +814,11 @@ impl CombinatorTree {
 
             CombinatorTree::TerminalTrie {
                 trie, with_noise, ..
-            } => {
-                let mut result = trie.to_generated_code();
-
-                if *with_noise {
-                    let parser = result.parser;
-                    result.parser = quote!( with_noise(#parser) );
-                    let parser_type = result.parser_type;
-                    result.parser_type = quote!( WithNoise<#parser_type> )
-                }
-
-                result
-            }
+            } => trie.to_generated_code(*with_noise),
 
             CombinatorTree::CharacterFilter {
                 filter, with_noise, ..
-            } => {
-                let mut result = filter.to_generated_code();
-
-                if *with_noise {
-                    let parser = result.parser;
-                    result.parser = quote!( with_noise(#parser) );
-                    let parser_type = result.parser_type;
-                    result.parser_type = quote!( WithNoise<#parser_type> )
-                }
-
-                result
-            }
+            } => filter.to_generated_code(*with_noise),
 
             CombinatorTree::End => {
                 let mut result: GeneratedCode = Default::default();
@@ -830,6 +826,64 @@ impl CombinatorTree {
                 result.parser_type = quote!(());
                 result
             }
+        }
+    }
+
+    fn collect_identifiers(&self, accum: &mut BTreeSet<String>) {
+        match self {
+            CombinatorTree::Difference {
+                minuend,
+                subtrahend,
+            } => {
+                minuend.collect_identifiers(accum);
+                subtrahend.collect_identifiers(accum)
+            }
+            CombinatorTree::Lookahead { expr, lookahead } => {
+                expr.collect_identifiers(accum);
+                lookahead.collect_identifiers(accum);
+            }
+            CombinatorTree::Sequence { elements, .. } => {
+                for (_, member) in elements {
+                    member.collect_identifiers(accum);
+                }
+            }
+            CombinatorTree::Choice { choices, .. } => {
+                for (_, member) in choices {
+                    member.collect_identifiers(accum);
+                }
+            }
+            CombinatorTree::Optional { expr } => expr.collect_identifiers(accum),
+            CombinatorTree::SeparatedBy {
+                expr, separator, ..
+            } => {
+                expr.collect_identifiers(accum);
+                separator.collect_identifiers(accum);
+            }
+            CombinatorTree::Repeated { expr, .. } => expr.collect_identifiers(accum),
+            CombinatorTree::Expression { members, .. } => {
+                for pr in members {
+                    let p = pr.upgrade().unwrap();
+                    accum.insert(p.name.clone());
+                }
+            }
+            CombinatorTree::ExpressionMember {
+                parent_name,
+                next_sibling_name,
+                operator,
+                ..
+            } => {
+                accum.insert(parent_name.raw());
+                if let Some(n) = next_sibling_name {
+                    accum.insert(n.raw());
+                }
+                operator.collect_identifiers(accum);
+            }
+            CombinatorTree::Reference { production } => {
+                accum.insert(production.upgrade().unwrap().name.clone());
+            }
+            CombinatorTree::TerminalTrie { .. }
+            | CombinatorTree::CharacterFilter { .. }
+            | CombinatorTree::End => {}
         }
     }
 }
@@ -911,6 +965,7 @@ impl ProductionRefTrait for ProductionRef {
                         (true, false) => (&elements[1..], OperatorModel::UnarySuffix),
                         (true, true) => (
                             &elements[1..elements.len() - 1],
+                            // TODO: pick up pattern for left/right associative
                             OperatorModel::BinaryLeftAssociative,
                         ),
                     };
@@ -1007,7 +1062,7 @@ impl Expression {
                     ct_separated_by(name, et, *min, *max, st)
                 }
                 EBNF::Choice(exprs) => {
-                    let name = production.slang_name();
+                    let name = self.config.slang_name();
 
                     if production.pattern == Some(ProductionPattern::Expression) {
                         let choices = exprs.iter().map(|e| {
@@ -1017,7 +1072,7 @@ impl Expression {
                                 unreachable!("Validation should have checked that pattern: Expression is only aplpied to a choice between references")
                             }
                         }).collect();
-                        return ct_expression(name, choices);
+                        return ct_expression(production.slang_name(), choices);
                     }
 
                     // Merge runs of TerminalTrees and CharacterFilters

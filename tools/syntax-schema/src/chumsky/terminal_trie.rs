@@ -33,10 +33,8 @@ impl TerminalTrie {
         }
     }
 
-    pub fn to_generated_code(&self) -> GeneratedCode {
+    pub fn to_generated_code(&self, with_noise: bool) -> GeneratedCode {
         let mut result: GeneratedCode = Default::default();
-
-        let common_size = self.common_terminal_length();
 
         fn generate_from_trie(
             node: Option<&Node<()>>,
@@ -76,20 +74,36 @@ impl TerminalTrie {
             result
         }
 
+        let common_size = self.common_terminal_length();
         let mut choices = generate_from_trie(self.0.as_ref().child(), 0, common_size.is_some());
 
-        let mut parser = if choices.len() == 1 {
+        let parser = if choices.len() == 1 {
             choices.pop().unwrap()
         } else {
             quote!( choice::<_, ErrorType>((#(#choices),*)) )
         };
-        let mut parser_type = quote!(usize);
 
-        if let Some(size) = common_size {
-            parser = quote!( #parser.map(|_| FixedTerminal::<#size>()) );
-            parser_type = quote!( FixedTerminal<#size> );
-        }
-
+        let (parser, parser_type) = match (common_size, with_noise) {
+            (None, false) => (quote!( #parser ), quote!(VariableSizeTerminal)),
+            (Some(size), false) => (
+                quote!( #parser.map(|_| FixedSizeTerminal::<#size>()) ),
+                quote!( FixedSizeTerminal<#size> ),
+            ),
+            (None, true) => (
+                quote!(
+                    ignore_parser.clone().then(#parser).then(ignore_parser.clone())
+                    .map(|((leading, content), trailing)| VariableSizeTerminalWithNoise { leading, content, trailing })
+                ),
+                quote!(VariableSizeTerminalWithNoise),
+            ),
+            (Some(size), true) => (
+                quote!(
+                    ignore_parser.clone().then(#parser.map(|_| FixedSizeTerminal::<#size>())).then(ignore_parser.clone())
+                    .map(|((leading, content), trailing)| FixedSizeTerminalWithNoise { leading, content, trailing })
+                ),
+                quote!( FixedSizeTerminalWithNoise<#size> ),
+            ),
+        };
         result.parser = parser;
         result.parser_type = parser_type;
 
