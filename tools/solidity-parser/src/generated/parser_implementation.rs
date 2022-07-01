@@ -3,6 +3,8 @@ use super::tree_interface::*;
 use chumsky::prelude::*;
 use chumsky::primitive::Just;
 use chumsky::Parser;
+use serde::{Deserialize, Serialize};
+use std::hash::Hash;
 #[allow(dead_code)]
 fn repetition_mapper<E, S>((e, es): (E, Vec<(S, E)>)) -> (Vec<E>, Vec<S>) {
     let mut expressions = vec![e];
@@ -39,11 +41,10 @@ fn terminal(str: &str) -> Just<char, &str, ErrorType> {
     just(str)
 }
 #[allow(dead_code)]
-fn with_noise<C, CO, N>(content: C) -> impl Parser<char, N, Error = ErrorType>
+fn with_noise<C, CO>(content: C) -> impl Parser<char, WithNoise<CO>, Error = ErrorType>
 where
     C: Clone + Parser<char, CO, Error = ErrorType>,
     CO: Sized + Clone + PartialEq + Eq + Hash + Serialize + Deserialize + Default,
-    N: WithNoise<CO>,
 {
     ignore_parser
         .clone()
@@ -58,26 +59,17 @@ where
 
 impl Parsers {
     pub fn new() -> Self {
-        // «AsciiEscape» = 'n' | 'r' | 't' | '\'' | '"' | '\\' | '\u{a}' | '\u{d}' ;
-        let ascii_escape_parser = filter(|&c: &char| {
-            c == 'n'
-                || c == 'r'
-                || c == 't'
-                || c == '\''
-                || c == '"'
-                || c == '\\'
-                || c == '\n'
-                || c == '\r'
-        })
-        .map(|_| FixedTerminal::<1>())
-        .boxed();
+        let mut yul_expression_parser = Recursive::declare();
 
-        // «BooleanLiteral» = 'true' | 'false' ;
-        let boolean_literal_parser = choice::<_, ErrorType>((
-            terminal("false").map(|_| 5usize),
-            terminal("true").map(|_| 4usize),
-        ))
-        .boxed();
+        let mut type_name_parser = Recursive::declare();
+
+        let mut yul_block_parser = Recursive::declare();
+
+        let mut expression_parser = Recursive::declare();
+
+        let mut statement_parser = Recursive::declare();
+
+        let mut block_parser = Recursive::declare();
 
         // «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
         let comment_parser = terminal("/*")
@@ -200,19 +192,49 @@ impl Parsers {
             .map(|v| Box::new(fixed_type::_T0::new(v)))
             .boxed();
 
-        // «HexCharacter» = '0'…'9' | 'a'…'f' | 'A'…'F' ;
-        let hex_character_parser = filter(|&c: &char| {
-            ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
-        })
-        .map(|_| FixedTerminal::<1>())
-        .boxed();
+        // «HexByteEscape» = 'x' 2…2*{ «HexCharacter» } ;
+        let hex_byte_escape_parser = just('x')
+            .map(|_| FixedTerminal::<1>())
+            .then(
+                filter(|&c: &char| {
+                    ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
+                })
+                .map(|_| FixedTerminal::<1>())
+                .repeated()
+                .exactly(2usize)
+                .map(|v| v.len()),
+            )
+            .map(|v| Box::new(hex_byte_escape::_T0::new(v)))
+            .boxed();
 
-        // «IdentifierStart» = '_' | '$' | 'a'…'z' | 'A'…'Z' ;
-        let identifier_start_parser = filter(|&c: &char| {
-            c == '_' || c == '$' || ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z')
-        })
-        .map(|_| FixedTerminal::<1>())
-        .boxed();
+        // «HexNumber» = '0' 'x' 1…*{ «HexCharacter» / [ '_' ] } ;
+        let hex_number_parser = just('0')
+            .map(|_| FixedTerminal::<1>())
+            .then(just('x').map(|_| FixedTerminal::<1>()))
+            .then(
+                filter(|&c: &char| {
+                    ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
+                })
+                .map(|_| FixedTerminal::<1>())
+                .then(
+                    just('_')
+                        .map(|_| FixedTerminal::<1>())
+                        .or_not()
+                        .then(
+                            filter(|&c: &char| {
+                                ('0' <= c && c <= '9')
+                                    || ('a' <= c && c <= 'f')
+                                    || ('A' <= c && c <= 'F')
+                            })
+                            .map(|_| FixedTerminal::<1>()),
+                        )
+                        .repeated(),
+                )
+                .map(repetition_mapper)
+                .map(|v| hex_number::_T1::new(v)),
+            )
+            .map(|v| Box::new(hex_number::_T0::new(v)))
+            .boxed();
 
         // «LineComment» = '//' { ¬( '\u{a}' | '\u{d}' ) } ;
         let line_comment_parser = terminal("//")
@@ -227,20 +249,31 @@ impl Parsers {
             .map(|v| Box::new(line_comment::_T0::new(v)))
             .boxed();
 
-        // «NumberUnit» = 'wei' | 'gwei' | 'ether' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'years' ;
-        let number_unit_parser = choice::<_, ErrorType>((
-            terminal("days").map(|_| 4usize),
-            terminal("ether").map(|_| 5usize),
-            terminal("gwei").map(|_| 4usize),
-            terminal("hours").map(|_| 5usize),
-            terminal("minutes").map(|_| 7usize),
-            terminal("seconds").map(|_| 7usize),
-            terminal("we").ignore_then(choice((
-                terminal("eks").map(|_| 5usize),
-                terminal("i").map(|_| 3usize),
-            ))),
-            terminal("years").map(|_| 5usize),
-        ))
+        // «PossiblySeparatedPairsOfHexDigits» = 1…*{ 2…2*{ «HexCharacter» } / [ '_' ] } ;
+        let possibly_separated_pairs_of_hex_digits_parser = filter(|&c: &char| {
+            ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
+        })
+        .map(|_| FixedTerminal::<1>())
+        .repeated()
+        .exactly(2usize)
+        .map(|v| v.len())
+        .then(
+            just('_')
+                .map(|_| FixedTerminal::<1>())
+                .or_not()
+                .then(
+                    filter(|&c: &char| {
+                        ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
+                    })
+                    .map(|_| FixedTerminal::<1>())
+                    .repeated()
+                    .exactly(2usize)
+                    .map(|v| v.len()),
+                )
+                .repeated(),
+        )
+        .map(repetition_mapper)
+        .map(|v| possibly_separated_pairs_of_hex_digits::_T0::new(v))
         .boxed();
 
         // «PragmaDirective» = 'pragma' 1…*{ ¬';' } ';' ;
@@ -258,62 +291,24 @@ impl Parsers {
             .map(|v| Box::new(pragma_directive::_T0::new(v)))
             .boxed();
 
-        // «ReservedKeyword» = 'after' | 'alias' | 'apply' | 'auto' | 'byte' | 'case' | 'copyof' | 'default' | 'define' | 'final' | 'implements' | 'in' | 'inline' | 'let' | 'macro' | 'match' | 'mutable' | 'null' | 'of' | 'partial' | 'promise' | 'reference' | 'relocatable' | 'sealed' | 'sizeof' | 'static' | 'supports' | 'switch' | 'typedef' | 'typeof' | 'var' ;
-        let reserved_keyword_parser = choice::<_, ErrorType>((
-            terminal("a").ignore_then(choice((
-                terminal("fter").map(|_| 5usize),
-                terminal("lias").map(|_| 5usize),
-                terminal("pply").map(|_| 5usize),
-                terminal("uto").map(|_| 4usize),
-            ))),
-            terminal("byte").map(|_| 4usize),
-            terminal("c").ignore_then(choice((
-                terminal("ase").map(|_| 4usize),
-                terminal("opyof").map(|_| 6usize),
-            ))),
-            terminal("def").ignore_then(choice((
-                terminal("ault").map(|_| 7usize),
-                terminal("ine").map(|_| 6usize),
-            ))),
-            terminal("final").map(|_| 5usize),
-            terminal("i").ignore_then(choice((
-                terminal("mplements").map(|_| 10usize),
-                terminal("n").ignore_then(choice((
-                    terminal("line").map(|_| 6usize),
-                    empty().map(|_| 2usize),
-                ))),
-            ))),
-            terminal("let").map(|_| 3usize),
-            terminal("m").ignore_then(choice((
-                terminal("a").ignore_then(choice((
-                    terminal("cro").map(|_| 5usize),
-                    terminal("tch").map(|_| 5usize),
-                ))),
-                terminal("utable").map(|_| 7usize),
-            ))),
-            terminal("null").map(|_| 4usize),
-            terminal("of").map(|_| 2usize),
-            terminal("p").ignore_then(choice((
-                terminal("artial").map(|_| 7usize),
-                terminal("romise").map(|_| 7usize),
-            ))),
-            terminal("re").ignore_then(choice((
-                terminal("ference").map(|_| 9usize),
-                terminal("locatable").map(|_| 11usize),
-            ))),
-            terminal("s").ignore_then(choice((
-                terminal("ealed").map(|_| 6usize),
-                terminal("izeof").map(|_| 6usize),
-                terminal("tatic").map(|_| 6usize),
-                terminal("upports").map(|_| 8usize),
-                terminal("witch").map(|_| 6usize),
-            ))),
-            terminal("type").ignore_then(choice((
-                terminal("def").map(|_| 7usize),
-                terminal("of").map(|_| 6usize),
-            ))),
-            terminal("var").map(|_| 3usize),
-        ))
+        // «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;
+        let raw_identifier_parser = filter(|&c: &char| {
+            c == '_' || c == '$' || ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z')
+        })
+        .map(|_| FixedTerminal::<1>())
+        .then(
+            filter(|&c: &char| {
+                c == '_'
+                    || c == '$'
+                    || ('a' <= c && c <= 'z')
+                    || ('A' <= c && c <= 'Z')
+                    || ('0' <= c && c <= '9')
+            })
+            .map(|_| FixedTerminal::<1>())
+            .repeated()
+            .map(|v| v.len()),
+        )
+        .map(|v| Box::new(raw_identifier::_T0::new(v)))
         .boxed();
 
         // «SignedIntegerType» = 'int' ( '8' | '16' | '24' | '32' | '40' | '48' | '56' | '64' | '72' | '80' | '88' | '96' | '104' | '112' | '120' | '128' | '136' | '144' | '152' | '160' | '168' | '176' | '184' | '192' | '200' | '208' | '216' | '224' | '232' | '240' | '248' | '256' ) ;
@@ -373,6 +368,21 @@ impl Parsers {
             .map(|v| Box::new(signed_integer_type::_T0::new(v)))
             .boxed();
 
+        // «UnicodeEscape» = 'u' 4…4*{ «HexCharacter» } ;
+        let unicode_escape_parser = just('u')
+            .map(|_| FixedTerminal::<1>())
+            .then(
+                filter(|&c: &char| {
+                    ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
+                })
+                .map(|_| FixedTerminal::<1>())
+                .repeated()
+                .exactly(4usize)
+                .map(|v| v.len()),
+            )
+            .map(|v| Box::new(unicode_escape::_T0::new(v)))
+            .boxed();
+
         // «Whitespace» = 1…*{ '\u{20}' | '\u{9}' | '\u{d}' | '\u{a}' } ;
         let whitespace_parser = filter(|&c: &char| c == ' ' || c == '\t' || c == '\r' || c == '\n')
             .map(|_| FixedTerminal::<1>())
@@ -399,148 +409,6 @@ impl Parsers {
         ))
         .boxed();
 
-        // «YulEVMBuiltinFunctionName» = 'stop' | 'add' | 'sub' | 'mul' | 'div' | 'sdiv' | 'mod' | 'smod' | 'exp' | 'not' | 'lt' | 'gt' | 'slt' | 'sgt' | 'eq' | 'iszero' | 'and' | 'or' | 'xor' | 'byte' | 'shl' | 'shr' | 'sar' | 'addmod' | 'mulmod' | 'signextend' | 'keccak256' | 'pop' | 'mload' | 'mstore' | 'mstore8' | 'sload' | 'sstore' | 'msize' | 'gas' | 'address' | 'balance' | 'selfbalance' | 'caller' | 'callvalue' | 'calldataload' | 'calldatasize' | 'calldatacopy' | 'extcodesize' | 'extcodecopy' | 'returndatasize' | 'returndatacopy' | 'extcodehash' | 'create' | 'create2' | 'call' | 'callcode' | 'delegatecall' | 'staticcall' | 'return' | 'revert' | 'selfdestruct' | 'invalid' | 'log0' | 'log1' | 'log2' | 'log3' | 'log4' | 'chainid' | 'origin' | 'gasprice' | 'Blockhash' | 'coinbase' | 'timestamp' | 'number' | 'difficulty' | 'gaslimit' | 'basefee' ;
-        let yul_evm_builtin_function_name_parser = choice::<_, ErrorType>((
-            terminal("Blockhash").map(|_| 9usize),
-            terminal("a").ignore_then(choice((
-                terminal("dd").ignore_then(choice((
-                    terminal("mod").map(|_| 6usize),
-                    terminal("ress").map(|_| 7usize),
-                    empty().map(|_| 3usize),
-                ))),
-                terminal("nd").map(|_| 3usize),
-            ))),
-            terminal("b").ignore_then(choice((
-                terminal("a").ignore_then(choice((
-                    terminal("lance").map(|_| 7usize),
-                    terminal("sefee").map(|_| 7usize),
-                ))),
-                terminal("yte").map(|_| 4usize),
-            ))),
-            terminal("c").ignore_then(choice((
-                terminal("all").ignore_then(choice((
-                    terminal("code").map(|_| 8usize),
-                    terminal("data").ignore_then(choice((
-                        terminal("copy").map(|_| 12usize),
-                        terminal("load").map(|_| 12usize),
-                        terminal("size").map(|_| 12usize),
-                    ))),
-                    terminal("er").map(|_| 6usize),
-                    terminal("value").map(|_| 9usize),
-                    empty().map(|_| 4usize),
-                ))),
-                terminal("hainid").map(|_| 7usize),
-                terminal("oinbase").map(|_| 8usize),
-                terminal("reate").ignore_then(choice((
-                    terminal("2").map(|_| 7usize),
-                    empty().map(|_| 6usize),
-                ))),
-            ))),
-            terminal("d").ignore_then(choice((
-                terminal("elegatecall").map(|_| 12usize),
-                terminal("i").ignore_then(choice((
-                    terminal("fficulty").map(|_| 10usize),
-                    terminal("v").map(|_| 3usize),
-                ))),
-            ))),
-            terminal("e").ignore_then(choice((
-                terminal("q").map(|_| 2usize),
-                terminal("x").ignore_then(choice((
-                    terminal("p").map(|_| 3usize),
-                    terminal("tcode").ignore_then(choice((
-                        terminal("copy").map(|_| 11usize),
-                        terminal("hash").map(|_| 11usize),
-                        terminal("size").map(|_| 11usize),
-                    ))),
-                ))),
-            ))),
-            terminal("g").ignore_then(choice((
-                terminal("as").ignore_then(choice((
-                    terminal("limit").map(|_| 8usize),
-                    terminal("price").map(|_| 8usize),
-                    empty().map(|_| 3usize),
-                ))),
-                terminal("t").map(|_| 2usize),
-            ))),
-            terminal("i").ignore_then(choice((
-                terminal("nvalid").map(|_| 7usize),
-                terminal("szero").map(|_| 6usize),
-            ))),
-            terminal("keccak256").map(|_| 9usize),
-            terminal("l").ignore_then(choice((
-                terminal("og").ignore_then(choice((
-                    terminal("0").map(|_| 4usize),
-                    terminal("1").map(|_| 4usize),
-                    terminal("2").map(|_| 4usize),
-                    terminal("3").map(|_| 4usize),
-                    terminal("4").map(|_| 4usize),
-                ))),
-                terminal("t").map(|_| 2usize),
-            ))),
-            terminal("m").ignore_then(choice((
-                terminal("load").map(|_| 5usize),
-                terminal("od").map(|_| 3usize),
-                terminal("s").ignore_then(choice((
-                    terminal("ize").map(|_| 5usize),
-                    terminal("tore").ignore_then(choice((
-                        terminal("8").map(|_| 7usize),
-                        empty().map(|_| 6usize),
-                    ))),
-                ))),
-                terminal("ul").ignore_then(choice((
-                    terminal("mod").map(|_| 6usize),
-                    empty().map(|_| 3usize),
-                ))),
-            ))),
-            terminal("n").ignore_then(choice((
-                terminal("ot").map(|_| 3usize),
-                terminal("umber").map(|_| 6usize),
-            ))),
-            terminal("or").ignore_then(choice((
-                terminal("igin").map(|_| 6usize),
-                empty().map(|_| 2usize),
-            ))),
-            terminal("pop").map(|_| 3usize),
-            terminal("re").ignore_then(choice((
-                terminal("turn").ignore_then(choice((
-                    terminal("data").ignore_then(choice((
-                        terminal("copy").map(|_| 14usize),
-                        terminal("size").map(|_| 14usize),
-                    ))),
-                    empty().map(|_| 6usize),
-                ))),
-                terminal("vert").map(|_| 6usize),
-            ))),
-            terminal("s").ignore_then(choice((
-                terminal("ar").map(|_| 3usize),
-                terminal("div").map(|_| 4usize),
-                terminal("elf").ignore_then(choice((
-                    terminal("balance").map(|_| 11usize),
-                    terminal("destruct").map(|_| 12usize),
-                ))),
-                terminal("gt").map(|_| 3usize),
-                terminal("h").ignore_then(choice((
-                    terminal("l").map(|_| 3usize),
-                    terminal("r").map(|_| 3usize),
-                ))),
-                terminal("ignextend").map(|_| 10usize),
-                terminal("l").ignore_then(choice((
-                    terminal("oad").map(|_| 5usize),
-                    terminal("t").map(|_| 3usize),
-                ))),
-                terminal("mod").map(|_| 4usize),
-                terminal("store").map(|_| 6usize),
-                terminal("t").ignore_then(choice((
-                    terminal("aticcall").map(|_| 10usize),
-                    terminal("op").map(|_| 4usize),
-                ))),
-                terminal("ub").map(|_| 3usize),
-            ))),
-            terminal("timestamp").map(|_| 9usize),
-            terminal("xor").map(|_| 3usize),
-        ))
-        .boxed();
-
         // «YulHexLiteral» = '0x' 1…*{ '0'…'9' | 'a'…'f' | 'A'…'F' } ;
         let yul_hex_literal_parser = terminal("0x")
             .ignored()
@@ -556,28 +424,6 @@ impl Parsers {
             )
             .map(|v| Box::new(yul_hex_literal::_T0::new(v)))
             .boxed();
-
-        // «YulKeyword» = 'break' | 'case' | 'continue' | 'default' | 'for' | 'function' | 'if' | 'leave' | 'let' | 'switch' | 'hex' ;
-        let yul_keyword_parser = choice::<_, ErrorType>((
-            terminal("break").map(|_| 5usize),
-            terminal("c").ignore_then(choice((
-                terminal("ase").map(|_| 4usize),
-                terminal("ontinue").map(|_| 8usize),
-            ))),
-            terminal("default").map(|_| 7usize),
-            terminal("f").ignore_then(choice((
-                terminal("or").map(|_| 3usize),
-                terminal("unction").map(|_| 8usize),
-            ))),
-            terminal("hex").map(|_| 3usize),
-            terminal("if").map(|_| 2usize),
-            terminal("le").ignore_then(choice((
-                terminal("ave").map(|_| 5usize),
-                terminal("t").map(|_| 3usize),
-            ))),
-            terminal("switch").map(|_| 6usize),
-        ))
-        .boxed();
 
         // «DecimalExponent» = ( 'e' | 'E' ) [ '-' ] «DecimalInteger» ;
         let decimal_exponent_parser = filter(|&c: &char| c == 'e' || c == 'E')
@@ -595,392 +441,6 @@ impl Parsers {
             .then(decimal_integer_parser.clone())
             .map(|v| Box::new(decimal_float::_T0::new(v)))
             .boxed();
-
-        // «HexByteEscape» = 'x' 2…2*{ «HexCharacter» } ;
-        let hex_byte_escape_parser = just('x')
-            .map(|_| FixedTerminal::<1>())
-            .then(
-                filter(|&c: &char| {
-                    ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
-                })
-                .map(|_| FixedTerminal::<1>())
-                .repeated()
-                .exactly(2usize)
-                .map(|v| v.len()),
-            )
-            .map(|v| Box::new(hex_byte_escape::_T0::new(v)))
-            .boxed();
-
-        // «HexNumber» = '0' 'x' 1…*{ «HexCharacter» / [ '_' ] } ;
-        let hex_number_parser = just('0')
-            .map(|_| FixedTerminal::<1>())
-            .then(just('x').map(|_| FixedTerminal::<1>()))
-            .then(
-                filter(|&c: &char| {
-                    ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
-                })
-                .map(|_| FixedTerminal::<1>())
-                .then(
-                    just('_')
-                        .map(|_| FixedTerminal::<1>())
-                        .or_not()
-                        .then(
-                            filter(|&c: &char| {
-                                ('0' <= c && c <= '9')
-                                    || ('a' <= c && c <= 'f')
-                                    || ('A' <= c && c <= 'F')
-                            })
-                            .map(|_| FixedTerminal::<1>()),
-                        )
-                        .repeated(),
-                )
-                .map(repetition_mapper)
-                .map(|v| hex_number::_T1::new(v)),
-            )
-            .map(|v| Box::new(hex_number::_T0::new(v)))
-            .boxed();
-
-        // «IGNORE» = { «Whitespace» | «Comment» | «LineComment» } ;
-        let ignore_parser = choice((
-            whitespace_parser
-                .clone()
-                .map(|v| Box::new(ignore::Ignore::Whitespace(v))),
-            comment_parser
-                .clone()
-                .map(|v| Box::new(ignore::Ignore::Comment(v))),
-            line_comment_parser
-                .clone()
-                .map(|v| Box::new(ignore::Ignore::LineComment(v))),
-        ))
-        .repeated()
-        .boxed();
-
-        // «IdentifierPart» = «IdentifierStart» | '0'…'9' ;
-        let identifier_part_parser = filter(|&c: &char| {
-            c == '_'
-                || c == '$'
-                || ('a' <= c && c <= 'z')
-                || ('A' <= c && c <= 'Z')
-                || ('0' <= c && c <= '9')
-        })
-        .map(|_| FixedTerminal::<1>())
-        .boxed();
-
-        // «PossiblySeparatedPairsOfHexDigits» = 1…*{ 2…2*{ «HexCharacter» } / [ '_' ] } ;
-        let possibly_separated_pairs_of_hex_digits_parser = filter(|&c: &char| {
-            ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
-        })
-        .map(|_| FixedTerminal::<1>())
-        .repeated()
-        .exactly(2usize)
-        .map(|v| v.len())
-        .then(
-            just('_')
-                .map(|_| FixedTerminal::<1>())
-                .or_not()
-                .then(
-                    filter(|&c: &char| {
-                        ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
-                    })
-                    .map(|_| FixedTerminal::<1>())
-                    .repeated()
-                    .exactly(2usize)
-                    .map(|v| v.len()),
-                )
-                .repeated(),
-        )
-        .map(repetition_mapper)
-        .map(|v| possibly_separated_pairs_of_hex_digits::_T0::new(v))
-        .boxed();
-
-        // «UfixedType» = 'u' «FixedType» ;
-        let ufixed_type_parser = just('u')
-            .map(|_| FixedTerminal::<1>())
-            .then(fixed_type_parser.clone())
-            .map(|v| Box::new(ufixed_type::_T0::new(v)))
-            .boxed();
-
-        // «UnicodeEscape» = 'u' 4…4*{ «HexCharacter» } ;
-        let unicode_escape_parser = just('u')
-            .map(|_| FixedTerminal::<1>())
-            .then(
-                filter(|&c: &char| {
-                    ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
-                })
-                .map(|_| FixedTerminal::<1>())
-                .repeated()
-                .exactly(4usize)
-                .map(|v| v.len()),
-            )
-            .map(|v| Box::new(unicode_escape::_T0::new(v)))
-            .boxed();
-
-        // «UnsignedIntegerType» = 'u' «SignedIntegerType» ;
-        let unsigned_integer_type_parser = just('u')
-            .map(|_| FixedTerminal::<1>())
-            .then(signed_integer_type_parser.clone())
-            .map(|v| Box::new(unsigned_integer_type::_T0::new(v)))
-            .boxed();
-
-        // «YulReservedWord» = «YulKeyword» | «YulEVMBuiltinFunctionName» | «BooleanLiteral» ;
-        let yul_reserved_word_parser = choice::<_, ErrorType>((
-            terminal("Blockhash").map(|_| 9usize),
-            terminal("a").ignore_then(choice((
-                terminal("dd").ignore_then(choice((
-                    terminal("mod").map(|_| 6usize),
-                    terminal("ress").map(|_| 7usize),
-                    empty().map(|_| 3usize),
-                ))),
-                terminal("nd").map(|_| 3usize),
-            ))),
-            terminal("b").ignore_then(choice((
-                terminal("a").ignore_then(choice((
-                    terminal("lance").map(|_| 7usize),
-                    terminal("sefee").map(|_| 7usize),
-                ))),
-                terminal("reak").map(|_| 5usize),
-                terminal("yte").map(|_| 4usize),
-            ))),
-            terminal("c").ignore_then(choice((
-                terminal("a").ignore_then(choice((
-                    terminal("ll").ignore_then(choice((
-                        terminal("code").map(|_| 8usize),
-                        terminal("data").ignore_then(choice((
-                            terminal("copy").map(|_| 12usize),
-                            terminal("load").map(|_| 12usize),
-                            terminal("size").map(|_| 12usize),
-                        ))),
-                        terminal("er").map(|_| 6usize),
-                        terminal("value").map(|_| 9usize),
-                        empty().map(|_| 4usize),
-                    ))),
-                    terminal("se").map(|_| 4usize),
-                ))),
-                terminal("hainid").map(|_| 7usize),
-                terminal("o").ignore_then(choice((
-                    terminal("inbase").map(|_| 8usize),
-                    terminal("ntinue").map(|_| 8usize),
-                ))),
-                terminal("reate").ignore_then(choice((
-                    terminal("2").map(|_| 7usize),
-                    empty().map(|_| 6usize),
-                ))),
-            ))),
-            terminal("d").ignore_then(choice((
-                terminal("e").ignore_then(choice((
-                    terminal("fault").map(|_| 7usize),
-                    terminal("legatecall").map(|_| 12usize),
-                ))),
-                terminal("i").ignore_then(choice((
-                    terminal("fficulty").map(|_| 10usize),
-                    terminal("v").map(|_| 3usize),
-                ))),
-            ))),
-            terminal("e").ignore_then(choice((
-                terminal("q").map(|_| 2usize),
-                terminal("x").ignore_then(choice((
-                    terminal("p").map(|_| 3usize),
-                    terminal("tcode").ignore_then(choice((
-                        terminal("copy").map(|_| 11usize),
-                        terminal("hash").map(|_| 11usize),
-                        terminal("size").map(|_| 11usize),
-                    ))),
-                ))),
-            ))),
-            terminal("f").ignore_then(choice((
-                terminal("alse").map(|_| 5usize),
-                terminal("or").map(|_| 3usize),
-                terminal("unction").map(|_| 8usize),
-            ))),
-            terminal("g").ignore_then(choice((
-                terminal("as").ignore_then(choice((
-                    terminal("limit").map(|_| 8usize),
-                    terminal("price").map(|_| 8usize),
-                    empty().map(|_| 3usize),
-                ))),
-                terminal("t").map(|_| 2usize),
-            ))),
-            terminal("hex").map(|_| 3usize),
-            terminal("i").ignore_then(choice((
-                terminal("f").map(|_| 2usize),
-                terminal("nvalid").map(|_| 7usize),
-                terminal("szero").map(|_| 6usize),
-            ))),
-            terminal("keccak256").map(|_| 9usize),
-            terminal("l").ignore_then(choice((
-                terminal("e").ignore_then(choice((
-                    terminal("ave").map(|_| 5usize),
-                    terminal("t").map(|_| 3usize),
-                ))),
-                terminal("og").ignore_then(choice((
-                    terminal("0").map(|_| 4usize),
-                    terminal("1").map(|_| 4usize),
-                    terminal("2").map(|_| 4usize),
-                    terminal("3").map(|_| 4usize),
-                    terminal("4").map(|_| 4usize),
-                ))),
-                terminal("t").map(|_| 2usize),
-            ))),
-            terminal("m").ignore_then(choice((
-                terminal("load").map(|_| 5usize),
-                terminal("od").map(|_| 3usize),
-                terminal("s").ignore_then(choice((
-                    terminal("ize").map(|_| 5usize),
-                    terminal("tore").ignore_then(choice((
-                        terminal("8").map(|_| 7usize),
-                        empty().map(|_| 6usize),
-                    ))),
-                ))),
-                terminal("ul").ignore_then(choice((
-                    terminal("mod").map(|_| 6usize),
-                    empty().map(|_| 3usize),
-                ))),
-            ))),
-            terminal("n").ignore_then(choice((
-                terminal("ot").map(|_| 3usize),
-                terminal("umber").map(|_| 6usize),
-            ))),
-            terminal("or").ignore_then(choice((
-                terminal("igin").map(|_| 6usize),
-                empty().map(|_| 2usize),
-            ))),
-            terminal("pop").map(|_| 3usize),
-            terminal("re").ignore_then(choice((
-                terminal("turn").ignore_then(choice((
-                    terminal("data").ignore_then(choice((
-                        terminal("copy").map(|_| 14usize),
-                        terminal("size").map(|_| 14usize),
-                    ))),
-                    empty().map(|_| 6usize),
-                ))),
-                terminal("vert").map(|_| 6usize),
-            ))),
-            terminal("s").ignore_then(choice((
-                terminal("ar").map(|_| 3usize),
-                terminal("div").map(|_| 4usize),
-                terminal("elf").ignore_then(choice((
-                    terminal("balance").map(|_| 11usize),
-                    terminal("destruct").map(|_| 12usize),
-                ))),
-                terminal("gt").map(|_| 3usize),
-                terminal("h").ignore_then(choice((
-                    terminal("l").map(|_| 3usize),
-                    terminal("r").map(|_| 3usize),
-                ))),
-                terminal("ignextend").map(|_| 10usize),
-                terminal("l").ignore_then(choice((
-                    terminal("oad").map(|_| 5usize),
-                    terminal("t").map(|_| 3usize),
-                ))),
-                terminal("mod").map(|_| 4usize),
-                terminal("store").map(|_| 6usize),
-                terminal("t").ignore_then(choice((
-                    terminal("aticcall").map(|_| 10usize),
-                    terminal("op").map(|_| 4usize),
-                ))),
-                terminal("ub").map(|_| 3usize),
-                terminal("witch").map(|_| 6usize),
-            ))),
-            terminal("t").ignore_then(choice((
-                terminal("imestamp").map(|_| 9usize),
-                terminal("rue").map(|_| 4usize),
-            ))),
-            terminal("xor").map(|_| 3usize),
-        ))
-        .boxed();
-
-        // AddSubExpression = Expression ( '+' | '-' ) Expression ;
-        let add_sub_expression_parser = todo!().boxed();
-
-        // AndExpression = Expression '&&' Expression ;
-        let and_expression_parser = todo!().boxed();
-
-        // AssignmentExpression = Expression ( '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ) Expression ;
-        let assignment_expression_parser = todo!().boxed();
-
-        // BitAndExpression = Expression '&' Expression ;
-        let bit_and_expression_parser = todo!().boxed();
-
-        // BitOrExpression = Expression '|' Expression ;
-        let bit_or_expression_parser = todo!().boxed();
-
-        // BitXOrExpression = Expression '^' Expression ;
-        let bit_x_or_expression_parser = todo!().boxed();
-
-        // BreakStatement = 'break' ';' ;
-        let break_statement_parser = with_noise(
-            terminal("break")
-                .ignored()
-                .map(|_| FixedTerminal::<5usize>()),
-        )
-        .then(with_noise(just(';').map(|_| FixedTerminal::<1>())))
-        .map(|v| Box::new(break_statement::_T0::new(v)))
-        .boxed();
-
-        // ConditionalExpression = Expression '?' Expression ':' Expression ;
-        let conditional_expression_parser = todo!().boxed();
-
-        // ContinueStatement = 'continue' ';' ;
-        let continue_statement_parser = with_noise(
-            terminal("continue")
-                .ignored()
-                .map(|_| FixedTerminal::<8usize>()),
-        )
-        .then(with_noise(just(';').map(|_| FixedTerminal::<1>())))
-        .map(|v| Box::new(continue_statement::_T0::new(v)))
-        .boxed();
-
-        // DataLocation = 'memory' | 'storage' | 'calldata' ;
-        let data_location_parser = with_noise(choice::<_, ErrorType>((
-            terminal("calldata").map(|_| 8usize),
-            terminal("memory").map(|_| 6usize),
-            terminal("storage").map(|_| 7usize),
-        )))
-        .boxed();
-
-        // «DecimalNumber» = ( «DecimalInteger» | «DecimalFloat» ) [ «DecimalExponent» ] ;
-        let decimal_number_parser = choice((
-            decimal_integer_parser
-                .clone()
-                .map(|v| Box::new(decimal_number::DecimalNumber::DecimalInteger(v))),
-            decimal_float_parser
-                .clone()
-                .map(|v| Box::new(decimal_number::DecimalNumber::DecimalFloat(v))),
-        ))
-        .then(decimal_exponent_parser.clone().or_not())
-        .map(|v| Box::new(decimal_number::_T0::new(v)))
-        .boxed();
-
-        // ElementaryType = 'bool' | 'string' | 'bytes' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | «FixedType» | «UfixedType» ;
-        let elementary_type_parser = choice((
-            with_noise(choice::<_, ErrorType>((
-                terminal("b").ignore_then(choice((
-                    terminal("ool").map(|_| 4usize),
-                    terminal("ytes").map(|_| 5usize),
-                ))),
-                terminal("string").map(|_| 6usize),
-            )))
-            .map(|v| Box::new(elementary_type::ElementaryType::_0(v))),
-            signed_integer_type_parser
-                .clone()
-                .map(|v| Box::new(elementary_type::ElementaryType::SignedIntegerType(v))),
-            unsigned_integer_type_parser
-                .clone()
-                .map(|v| Box::new(elementary_type::ElementaryType::UnsignedIntegerType(v))),
-            fixed_bytes_type_parser
-                .clone()
-                .map(|v| Box::new(elementary_type::ElementaryType::FixedBytesType(v))),
-            fixed_type_parser
-                .clone()
-                .map(|v| Box::new(elementary_type::ElementaryType::FixedType(v))),
-            ufixed_type_parser
-                .clone()
-                .map(|v| Box::new(elementary_type::ElementaryType::UfixedType(v))),
-        ))
-        .boxed();
-
-        // EqualityComparisonExpression = Expression ( '==' | '!=' ) Expression ;
-        let equality_comparison_expression_parser = todo!().boxed();
 
         // «EscapeSequence» = '\\' ( «AsciiEscape» | «HexByteEscape» | «UnicodeEscape» ) ;
         let escape_sequence_parser = just('\\')
@@ -1007,9 +467,6 @@ impl Parsers {
             )))
             .map(|v| Box::new(escape_sequence::_T0::new(v)))
             .boxed();
-
-        // ExponentiationExpression = Expression '**' Expression ;
-        let exponentiation_expression_parser = todo!().boxed();
 
         // «HexStringLiteral» = 'hex' ( '"' [ «PossiblySeparatedPairsOfHexDigits» ] '"' | '\'' [ «PossiblySeparatedPairsOfHexDigits» ] '\'' ) ;
         let hex_string_literal_parser = terminal("hex")
@@ -1040,417 +497,34 @@ impl Parsers {
             .map(|v| Box::new(hex_string_literal::_T0::new(v)))
             .boxed();
 
-        // IndexAccessExpression = Expression '[' [ Expression ] [ ':' [ Expression ] ] ']' ;
-        let index_access_expression_parser = todo!().boxed();
-
-        // «Keyword» = 'pragma' | 'abstract' | 'anonymous' | 'address' | 'as' | 'assembly' | 'bool' | 'break' | 'bytes' | 'calldata' | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum' | 'event' | 'external' | 'fallback' | 'false' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import' | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override' | 'payable' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct' | 'true' | 'try' | 'type' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | 'fixed' | 'ufixed' ;
-        let keyword_parser = choice((
-            choice::<_, ErrorType>((
-                terminal("a").ignore_then(choice((
-                    terminal("bstract").map(|_| 8usize),
-                    terminal("ddress").map(|_| 7usize),
-                    terminal("nonymous").map(|_| 9usize),
-                    terminal("s").ignore_then(choice((
-                        terminal("sembly").map(|_| 8usize),
-                        empty().map(|_| 2usize),
-                    ))),
-                ))),
-                terminal("b").ignore_then(choice((
-                    terminal("ool").map(|_| 4usize),
-                    terminal("reak").map(|_| 5usize),
-                    terminal("ytes").map(|_| 5usize),
-                ))),
-                terminal("c").ignore_then(choice((
-                    terminal("a").ignore_then(choice((
-                        terminal("lldata").map(|_| 8usize),
-                        terminal("tch").map(|_| 5usize),
-                    ))),
-                    terminal("on").ignore_then(choice((
-                        terminal("st").ignore_then(choice((
-                            terminal("ant").map(|_| 8usize),
-                            terminal("ructor").map(|_| 11usize),
-                        ))),
-                        terminal("t").ignore_then(choice((
-                            terminal("inue").map(|_| 8usize),
-                            terminal("ract").map(|_| 8usize),
-                        ))),
-                    ))),
-                ))),
-                terminal("d").ignore_then(choice((
-                    terminal("elete").map(|_| 6usize),
-                    terminal("o").map(|_| 2usize),
-                ))),
-                terminal("e").ignore_then(choice((
-                    terminal("lse").map(|_| 4usize),
-                    terminal("mit").map(|_| 4usize),
-                    terminal("num").map(|_| 4usize),
-                    terminal("vent").map(|_| 5usize),
-                    terminal("xternal").map(|_| 8usize),
-                ))),
-                terminal("f").ignore_then(choice((
-                    terminal("al").ignore_then(choice((
-                        terminal("lback").map(|_| 8usize),
-                        terminal("se").map(|_| 5usize),
-                    ))),
-                    terminal("or").map(|_| 3usize),
-                    terminal("unction").map(|_| 8usize),
-                ))),
-                terminal("hex").map(|_| 3usize),
-                terminal("i").ignore_then(choice((
-                    terminal("f").map(|_| 2usize),
-                    terminal("m").ignore_then(choice((
-                        terminal("mutable").map(|_| 9usize),
-                        terminal("port").map(|_| 6usize),
-                    ))),
-                    terminal("n").ignore_then(choice((
-                        terminal("dexed").map(|_| 7usize),
-                        terminal("ter").ignore_then(choice((
-                            terminal("face").map(|_| 9usize),
-                            terminal("nal").map(|_| 8usize),
-                        ))),
-                    ))),
-                    terminal("s").map(|_| 2usize),
-                ))),
-                terminal("library").map(|_| 7usize),
-                terminal("m").ignore_then(choice((
-                    terminal("apping").map(|_| 7usize),
-                    terminal("emory").map(|_| 6usize),
-                    terminal("odifier").map(|_| 8usize),
-                ))),
-                terminal("new").map(|_| 3usize),
-                terminal("override").map(|_| 8usize),
-                terminal("p").ignore_then(choice((
-                    terminal("ayable").map(|_| 7usize),
-                    terminal("r").ignore_then(choice((
-                        terminal("agma").map(|_| 6usize),
-                        terminal("ivate").map(|_| 7usize),
-                    ))),
-                    terminal("u").ignore_then(choice((
-                        terminal("blic").map(|_| 6usize),
-                        terminal("re").map(|_| 4usize),
-                    ))),
-                ))),
-                terminal("re").ignore_then(choice((
-                    terminal("ceive").map(|_| 7usize),
-                    terminal("turn").ignore_then(choice((
-                        terminal("s").map(|_| 7usize),
-                        empty().map(|_| 6usize),
-                    ))),
-                ))),
-                terminal("st").ignore_then(choice((
-                    terminal("orage").map(|_| 7usize),
-                    terminal("r").ignore_then(choice((
-                        terminal("ing").map(|_| 6usize),
-                        terminal("uct").map(|_| 6usize),
-                    ))),
-                ))),
-                terminal("t").ignore_then(choice((
-                    terminal("r").ignore_then(choice((
-                        terminal("ue").map(|_| 4usize),
-                        terminal("y").map(|_| 3usize),
-                    ))),
-                    terminal("ype").map(|_| 4usize),
-                ))),
-                terminal("u").ignore_then(choice((
-                    terminal("nchecked").map(|_| 9usize),
-                    terminal("sing").map(|_| 5usize),
-                ))),
-                terminal("vi").ignore_then(choice((
-                    terminal("ew").map(|_| 4usize),
-                    terminal("rtual").map(|_| 7usize),
-                ))),
-                terminal("while").map(|_| 5usize),
-            ))
-            .map(|v| Box::new(keyword::Keyword::_0(v))),
-            signed_integer_type_parser
+        // «IGNORE» = { «Whitespace» | «Comment» | «LineComment» } ;
+        let ignore_parser = choice((
+            whitespace_parser
                 .clone()
-                .map(|v| Box::new(keyword::Keyword::SignedIntegerType(v))),
-            unsigned_integer_type_parser
+                .map(|v| Box::new(ignore::Ignore::Whitespace(v))),
+            comment_parser
                 .clone()
-                .map(|v| Box::new(keyword::Keyword::UnsignedIntegerType(v))),
-            fixed_bytes_type_parser
+                .map(|v| Box::new(ignore::Ignore::Comment(v))),
+            line_comment_parser
                 .clone()
-                .map(|v| Box::new(keyword::Keyword::FixedBytesType(v))),
-            choice::<_, ErrorType>((
-                terminal("fixed").map(|_| 5usize),
-                terminal("ufixed").map(|_| 6usize),
-            ))
-            .map(|v| Box::new(keyword::Keyword::_4(v))),
+                .map(|v| Box::new(ignore::Ignore::LineComment(v))),
         ))
+        .repeated()
         .boxed();
 
-        // MulDivModExpression = Expression ( '*' | '/' | '%' ) Expression ;
-        let mul_div_mod_expression_parser = todo!().boxed();
-
-        // OrExpression = Expression '||' Expression ;
-        let or_expression_parser = todo!().boxed();
-
-        // OrderComparisonExpression = Expression ( '<' | '>' | '<=' | '>=' ) Expression ;
-        let order_comparison_expression_parser = todo!().boxed();
-
-        // PositionalArgumentList = 1…*{ Expression / ',' } ;
-        let positional_argument_list_parser = expression_parser
-            .clone()
-            .then(
-                with_noise(just(',').map(|_| FixedTerminal::<1>()))
-                    .then(expression_parser.clone())
-                    .repeated(),
-            )
-            .map(repetition_mapper)
-            .map(|v| positional_argument_list::_T0::new(v))
+        // «UfixedType» = 'u' «FixedType» ;
+        let ufixed_type_parser = just('u')
+            .map(|_| FixedTerminal::<1>())
+            .then(fixed_type_parser.clone())
+            .map(|v| Box::new(ufixed_type::_T0::new(v)))
             .boxed();
 
-        // «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;
-        let raw_identifier_parser = filter(|&c: &char| {
-            c == '_' || c == '$' || ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z')
-        })
-        .map(|_| FixedTerminal::<1>())
-        .then(
-            filter(|&c: &char| {
-                c == '_'
-                    || c == '$'
-                    || ('a' <= c && c <= 'z')
-                    || ('A' <= c && c <= 'Z')
-                    || ('0' <= c && c <= '9')
-            })
+        // «UnsignedIntegerType» = 'u' «SignedIntegerType» ;
+        let unsigned_integer_type_parser = just('u')
             .map(|_| FixedTerminal::<1>())
-            .repeated()
-            .map(|v| v.len()),
-        )
-        .map(|v| Box::new(raw_identifier::_T0::new(v)))
-        .boxed();
-
-        // ShiftExpression = Expression ( '<<' | '>>' | '>>>' ) Expression ;
-        let shift_expression_parser = todo!().boxed();
-
-        // StateMutabilitySpecifier = 'pure' | 'view' | 'payable' ;
-        let state_mutability_specifier_parser = with_noise(choice::<_, ErrorType>((
-            terminal("p").ignore_then(choice((
-                terminal("ayable").map(|_| 7usize),
-                terminal("ure").map(|_| 4usize),
-            ))),
-            terminal("view").map(|_| 4usize),
-        )))
-        .boxed();
-
-        // UnaryPrefixExpression = ( '++' | '--' | '!' | '~' | 'delete' | '-' ) Expression ;
-        let unary_prefix_expression_parser = todo!().boxed();
-
-        // UnarySuffixExpression = Expression ( '++' | '--' ) ;
-        let unary_suffix_expression_parser = todo!().boxed();
-
-        // UncheckedBlock = 'unchecked' Block ;
-        let unchecked_block_parser = with_noise(
-            terminal("unchecked")
-                .ignored()
-                .map(|_| FixedTerminal::<9usize>()),
-        )
-        .then(block_parser.clone())
-        .map(|v| Box::new(unchecked_block::_T0::new(v)))
-        .boxed();
-
-        // VisibilitySpecifier = 'internal' | 'external' | 'private' | 'public' ;
-        let visibility_specifier_parser = with_noise(choice::<_, ErrorType>((
-            terminal("external").map(|_| 8usize),
-            terminal("internal").map(|_| 8usize),
-            terminal("p").ignore_then(choice((
-                terminal("rivate").map(|_| 7usize),
-                terminal("ublic").map(|_| 6usize),
-            ))),
-        )))
-        .boxed();
-
-        // YulBreakStatement = 'break' ;
-        let yul_break_statement_parser = with_noise(
-            terminal("break")
-                .ignored()
-                .map(|_| FixedTerminal::<5usize>()),
-        )
-        .boxed();
-
-        // YulContinueStatement = 'continue' ;
-        let yul_continue_statement_parser = with_noise(
-            terminal("continue")
-                .ignored()
-                .map(|_| FixedTerminal::<8usize>()),
-        )
-        .boxed();
-
-        // YulLeaveStatement = 'leave' ;
-        let yul_leave_statement_parser = with_noise(
-            terminal("leave")
-                .ignored()
-                .map(|_| FixedTerminal::<5usize>()),
-        )
-        .boxed();
-
-        // «DoubleQuotedAsciiStringLiteral» = '"' { 1…*{ '\u{20}'…'~' - ( '"' | '\\' ) } | «EscapeSequence» } '"' ;
-        let double_quoted_ascii_string_literal_parser = just ('"') . map (| _ | FixedTerminal :: < 1 > ()) . then (choice ((filter (| & c : & char | (' ' <= c && c <= '~') && c != '"' && c != '\\') . map (| _ | FixedTerminal :: < 1 > ()) . repeated () . at_least (1usize) . map (| v | v . len ()) . map (| v | Box :: new (double_quoted_ascii_string_literal :: DoubleQuotedAsciiStringLiteral :: Chars (v))) , escape_sequence_parser . clone () . map (| v | Box :: new (double_quoted_ascii_string_literal :: DoubleQuotedAsciiStringLiteral :: EscapeSequence (v))))) . repeated ()) . then (just ('"') . map (| _ | FixedTerminal :: < 1 > ())) . map (| v | Box :: new (double_quoted_ascii_string_literal :: _T0 :: new (v))) . boxed () ;
-
-        // «DoubleQuotedUnicodeStringLiteral» = 'unicode"' { 1…*{ ¬( '"' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '"' ;
-        let double_quoted_unicode_string_literal_parser = terminal ("unicode\"") . ignored () . map (| _ | FixedTerminal :: < 8usize > ()) . then (choice ((filter (| & c : & char | c != '"' && c != '\\' && c != '\n' && c != '\r') . map (| _ | FixedTerminal :: < 1 > ()) . repeated () . at_least (1usize) . map (| v | v . len ()) . map (| v | Box :: new (double_quoted_unicode_string_literal :: DoubleQuotedUnicodeStringLiteral :: Chars (v))) , escape_sequence_parser . clone () . map (| v | Box :: new (double_quoted_unicode_string_literal :: DoubleQuotedUnicodeStringLiteral :: EscapeSequence (v))))) . repeated ()) . then (just ('"') . map (| _ | FixedTerminal :: < 1 > ())) . map (| v | Box :: new (double_quoted_unicode_string_literal :: _T0 :: new (v))) . boxed () ;
-
-        // ElementaryTypeWithPayable = 'address' [ 'payable' ] | ElementaryType ;
-        let elementary_type_with_payable_parser = choice((
-            with_noise(
-                terminal("address")
-                    .ignored()
-                    .map(|_| FixedTerminal::<7usize>()),
-            )
-            .then(
-                with_noise(
-                    terminal("payable")
-                        .ignored()
-                        .map(|_| FixedTerminal::<7usize>()),
-                )
-                .or_not(),
-            )
-            .map(|v| Box::new(elementary_type_with_payable::_T0::new(v)))
-            .map(|v| Box::new(elementary_type_with_payable::ElementaryTypeWithPayable::_T0(v))),
-            elementary_type_parser.clone().map(|v| {
-                Box::new(elementary_type_with_payable::ElementaryTypeWithPayable::ElementaryType(v))
-            }),
-        ))
-        .boxed();
-
-        // ElementaryTypeWithoutPayable = 'address' | ElementaryType ;
-        let elementary_type_without_payable_parser = choice((
-            with_noise(
-                terminal("address")
-                    .ignored()
-                    .map(|_| FixedTerminal::<7usize>()),
-            )
-            .map(|v| {
-                Box::new(elementary_type_without_payable::ElementaryTypeWithoutPayable::Address(v))
-            }),
-            elementary_type_parser.clone().map(|v| {
-                Box::new(
-                    elementary_type_without_payable::ElementaryTypeWithoutPayable::ElementaryType(
-                        v,
-                    ),
-                )
-            }),
-        ))
-        .boxed();
-
-        // NumericLiteral = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
-        let numeric_literal_parser = choice((
-            decimal_number_parser
-                .clone()
-                .map(|v| Box::new(numeric_literal::NumericLiteral::DecimalNumber(v))),
-            hex_number_parser
-                .clone()
-                .map(|v| Box::new(numeric_literal::NumericLiteral::HexNumber(v))),
-        ))
-        .then(
-            with_noise(choice::<_, ErrorType>((
-                terminal("days").map(|_| 4usize),
-                terminal("ether").map(|_| 5usize),
-                terminal("gwei").map(|_| 4usize),
-                terminal("hours").map(|_| 5usize),
-                terminal("minutes").map(|_| 7usize),
-                terminal("seconds").map(|_| 7usize),
-                terminal("we").ignore_then(choice((
-                    terminal("eks").map(|_| 5usize),
-                    terminal("i").map(|_| 3usize),
-                ))),
-                terminal("years").map(|_| 5usize),
-            )))
-            .or_not(),
-        )
-        .map(|v| Box::new(numeric_literal::_T0::new(v)))
-        .boxed();
-
-        // «ReservedWord» = «Keyword» | «ReservedKeyword» | «NumberUnit» | «BooleanLiteral» ;
-        let reserved_word_parser = choice((
-            keyword_parser
-                .clone()
-                .map(|v| Box::new(reserved_word::ReservedWord::Keyword(v))),
-            choice::<_, ErrorType>((
-                terminal("a").ignore_then(choice((
-                    terminal("fter").map(|_| 5usize),
-                    terminal("lias").map(|_| 5usize),
-                    terminal("pply").map(|_| 5usize),
-                    terminal("uto").map(|_| 4usize),
-                ))),
-                terminal("byte").map(|_| 4usize),
-                terminal("c").ignore_then(choice((
-                    terminal("ase").map(|_| 4usize),
-                    terminal("opyof").map(|_| 6usize),
-                ))),
-                terminal("d").ignore_then(choice((
-                    terminal("ays").map(|_| 4usize),
-                    terminal("ef").ignore_then(choice((
-                        terminal("ault").map(|_| 7usize),
-                        terminal("ine").map(|_| 6usize),
-                    ))),
-                ))),
-                terminal("ether").map(|_| 5usize),
-                terminal("f").ignore_then(choice((
-                    terminal("alse").map(|_| 5usize),
-                    terminal("inal").map(|_| 5usize),
-                ))),
-                terminal("gwei").map(|_| 4usize),
-                terminal("hours").map(|_| 5usize),
-                terminal("i").ignore_then(choice((
-                    terminal("mplements").map(|_| 10usize),
-                    terminal("n").ignore_then(choice((
-                        terminal("line").map(|_| 6usize),
-                        empty().map(|_| 2usize),
-                    ))),
-                ))),
-                terminal("let").map(|_| 3usize),
-                terminal("m").ignore_then(choice((
-                    terminal("a").ignore_then(choice((
-                        terminal("cro").map(|_| 5usize),
-                        terminal("tch").map(|_| 5usize),
-                    ))),
-                    terminal("inutes").map(|_| 7usize),
-                    terminal("utable").map(|_| 7usize),
-                ))),
-                terminal("null").map(|_| 4usize),
-                terminal("of").map(|_| 2usize),
-                terminal("p").ignore_then(choice((
-                    terminal("artial").map(|_| 7usize),
-                    terminal("romise").map(|_| 7usize),
-                ))),
-                terminal("re").ignore_then(choice((
-                    terminal("ference").map(|_| 9usize),
-                    terminal("locatable").map(|_| 11usize),
-                ))),
-                terminal("s").ignore_then(choice((
-                    terminal("e").ignore_then(choice((
-                        terminal("aled").map(|_| 6usize),
-                        terminal("conds").map(|_| 7usize),
-                    ))),
-                    terminal("izeof").map(|_| 6usize),
-                    terminal("tatic").map(|_| 6usize),
-                    terminal("upports").map(|_| 8usize),
-                    terminal("witch").map(|_| 6usize),
-                ))),
-                terminal("t").ignore_then(choice((
-                    terminal("rue").map(|_| 4usize),
-                    terminal("ype").ignore_then(choice((
-                        terminal("def").map(|_| 7usize),
-                        terminal("of").map(|_| 6usize),
-                    ))),
-                ))),
-                terminal("var").map(|_| 3usize),
-                terminal("we").ignore_then(choice((
-                    terminal("eks").map(|_| 5usize),
-                    terminal("i").map(|_| 3usize),
-                ))),
-                terminal("years").map(|_| 5usize),
-            ))
-            .map(|v| Box::new(reserved_word::ReservedWord::_1(v))),
-        ))
-        .boxed();
-
-        // «SingleQuotedAsciiStringLiteral» = '\'' { 1…*{ '\u{20}'…'~' - ( '\'' | '\\' ) } | «EscapeSequence» } '\'' ;
-        let single_quoted_ascii_string_literal_parser = just ('\'') . map (| _ | FixedTerminal :: < 1 > ()) . then (choice ((filter (| & c : & char | (' ' <= c && c <= '~') && c != '\'' && c != '\\') . map (| _ | FixedTerminal :: < 1 > ()) . repeated () . at_least (1usize) . map (| v | v . len ()) . map (| v | Box :: new (single_quoted_ascii_string_literal :: SingleQuotedAsciiStringLiteral :: Chars (v))) , escape_sequence_parser . clone () . map (| v | Box :: new (single_quoted_ascii_string_literal :: SingleQuotedAsciiStringLiteral :: EscapeSequence (v))))) . repeated ()) . then (just ('\'') . map (| _ | FixedTerminal :: < 1 > ())) . map (| v | Box :: new (single_quoted_ascii_string_literal :: _T0 :: new (v))) . boxed () ;
-
-        // «SingleQuotedUnicodeStringLiteral» = 'unicode\'' { 1…*{ ¬( '\'' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '\'' ;
-        let single_quoted_unicode_string_literal_parser = terminal ("unicode'") . ignored () . map (| _ | FixedTerminal :: < 8usize > ()) . then (choice ((filter (| & c : & char | c != '\'' && c != '\\' && c != '\n' && c != '\r') . map (| _ | FixedTerminal :: < 1 > ()) . repeated () . at_least (1usize) . map (| v | v . len ()) . map (| v | Box :: new (single_quoted_unicode_string_literal :: SingleQuotedUnicodeStringLiteral :: Chars (v))) , escape_sequence_parser . clone () . map (| v | Box :: new (single_quoted_unicode_string_literal :: SingleQuotedUnicodeStringLiteral :: EscapeSequence (v))))) . repeated ()) . then (just ('\'') . map (| _ | FixedTerminal :: < 1 > ())) . map (| v | Box :: new (single_quoted_unicode_string_literal :: _T0 :: new (v))) . boxed () ;
+            .then(signed_integer_type_parser.clone())
+            .map(|v| Box::new(unsigned_integer_type::_T0::new(v)))
+            .boxed();
 
         // «YulIdentifier» = «RawIdentifier» - «YulReservedWord» ;
         let yul_identifier_parser = difference(
@@ -1622,44 +696,236 @@ impl Parsers {
         )
         .boxed();
 
-        // «AsciiStringLiteral» = «SingleQuotedAsciiStringLiteral» | «DoubleQuotedAsciiStringLiteral» ;
-        let ascii_string_literal_parser = choice((
-            single_quoted_ascii_string_literal_parser.clone().map(|v| {
-                Box::new(
-                    ascii_string_literal::AsciiStringLiteral::SingleQuotedAsciiStringLiteral(v),
-                )
-            }),
-            double_quoted_ascii_string_literal_parser.clone().map(|v| {
-                Box::new(
-                    ascii_string_literal::AsciiStringLiteral::DoubleQuotedAsciiStringLiteral(v),
-                )
-            }),
+        // BreakStatement = 'break' ';' ;
+        let break_statement_parser = with_noise(
+            terminal("break")
+                .ignored()
+                .map(|_| FixedTerminal::<5usize>()),
+        )
+        .then(with_noise(just(';').map(|_| FixedTerminal::<1>())))
+        .map(|v| Box::new(break_statement::_T0::new(v)))
+        .boxed();
+
+        // ContinueStatement = 'continue' ';' ;
+        let continue_statement_parser = with_noise(
+            terminal("continue")
+                .ignored()
+                .map(|_| FixedTerminal::<8usize>()),
+        )
+        .then(with_noise(just(';').map(|_| FixedTerminal::<1>())))
+        .map(|v| Box::new(continue_statement::_T0::new(v)))
+        .boxed();
+
+        // «DecimalNumber» = ( «DecimalInteger» | «DecimalFloat» ) [ «DecimalExponent» ] ;
+        let decimal_number_parser = choice((
+            decimal_integer_parser
+                .clone()
+                .map(|v| Box::new(decimal_number::DecimalNumber::DecimalInteger(v))),
+            decimal_float_parser
+                .clone()
+                .map(|v| Box::new(decimal_number::DecimalNumber::DecimalFloat(v))),
+        ))
+        .then(decimal_exponent_parser.clone().or_not())
+        .map(|v| Box::new(decimal_number::_T0::new(v)))
+        .boxed();
+
+        // «DoubleQuotedAsciiStringLiteral» = '"' { 1…*{ '\u{20}'…'~' - ( '"' | '\\' ) } | «EscapeSequence» } '"' ;
+        let double_quoted_ascii_string_literal_parser = just ('"') . map (| _ | FixedTerminal :: < 1 > ()) . then (choice ((filter (| & c : & char | (' ' <= c && c <= '~') && c != '"' && c != '\\') . map (| _ | FixedTerminal :: < 1 > ()) . repeated () . at_least (1usize) . map (| v | v . len ()) . map (| v | Box :: new (double_quoted_ascii_string_literal :: DoubleQuotedAsciiStringLiteral :: Chars (v))) , escape_sequence_parser . clone () . map (| v | Box :: new (double_quoted_ascii_string_literal :: DoubleQuotedAsciiStringLiteral :: EscapeSequence (v))))) . repeated ()) . then (just ('"') . map (| _ | FixedTerminal :: < 1 > ())) . map (| v | Box :: new (double_quoted_ascii_string_literal :: _T0 :: new (v))) . boxed () ;
+
+        // «DoubleQuotedUnicodeStringLiteral» = 'unicode"' { 1…*{ ¬( '"' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '"' ;
+        let double_quoted_unicode_string_literal_parser = terminal ("unicode\"") . ignored () . map (| _ | FixedTerminal :: < 8usize > ()) . then (choice ((filter (| & c : & char | c != '"' && c != '\\' && c != '\n' && c != '\r') . map (| _ | FixedTerminal :: < 1 > ()) . repeated () . at_least (1usize) . map (| v | v . len ()) . map (| v | Box :: new (double_quoted_unicode_string_literal :: DoubleQuotedUnicodeStringLiteral :: Chars (v))) , escape_sequence_parser . clone () . map (| v | Box :: new (double_quoted_unicode_string_literal :: DoubleQuotedUnicodeStringLiteral :: EscapeSequence (v))))) . repeated ()) . then (just ('"') . map (| _ | FixedTerminal :: < 1 > ())) . map (| v | Box :: new (double_quoted_unicode_string_literal :: _T0 :: new (v))) . boxed () ;
+
+        // ElementaryType = 'bool' | 'string' | 'bytes' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | «FixedType» | «UfixedType» ;
+        let elementary_type_parser = choice((
+            with_noise(choice::<_, ErrorType>((
+                terminal("b").ignore_then(choice((
+                    terminal("ool").map(|_| 4usize),
+                    terminal("ytes").map(|_| 5usize),
+                ))),
+                terminal("string").map(|_| 6usize),
+            )))
+            .map(|v| Box::new(elementary_type::ElementaryType::_0(v))),
+            signed_integer_type_parser
+                .clone()
+                .map(|v| Box::new(elementary_type::ElementaryType::SignedIntegerType(v))),
+            unsigned_integer_type_parser
+                .clone()
+                .map(|v| Box::new(elementary_type::ElementaryType::UnsignedIntegerType(v))),
+            fixed_bytes_type_parser
+                .clone()
+                .map(|v| Box::new(elementary_type::ElementaryType::FixedBytesType(v))),
+            fixed_type_parser
+                .clone()
+                .map(|v| Box::new(elementary_type::ElementaryType::FixedType(v))),
+            ufixed_type_parser
+                .clone()
+                .map(|v| Box::new(elementary_type::ElementaryType::UfixedType(v))),
         ))
         .boxed();
 
-        // AssemblyFlags = '(' 1…*{ «DoubleQuotedAsciiStringLiteral» / ',' } ')' ;
-        let assembly_flags_parser = with_noise(just('(').map(|_| FixedTerminal::<1>()))
+        // «Keyword» = 'pragma' | 'abstract' | 'anonymous' | 'address' | 'as' | 'assembly' | 'bool' | 'break' | 'bytes' | 'calldata' | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum' | 'event' | 'external' | 'fallback' | 'false' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import' | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override' | 'payable' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct' | 'true' | 'try' | 'type' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | 'fixed' | 'ufixed' ;
+        let keyword_parser = choice((
+            choice::<_, ErrorType>((
+                terminal("a").ignore_then(choice((
+                    terminal("bstract").map(|_| 8usize),
+                    terminal("ddress").map(|_| 7usize),
+                    terminal("nonymous").map(|_| 9usize),
+                    terminal("s").ignore_then(choice((
+                        terminal("sembly").map(|_| 8usize),
+                        empty().map(|_| 2usize),
+                    ))),
+                ))),
+                terminal("b").ignore_then(choice((
+                    terminal("ool").map(|_| 4usize),
+                    terminal("reak").map(|_| 5usize),
+                    terminal("ytes").map(|_| 5usize),
+                ))),
+                terminal("c").ignore_then(choice((
+                    terminal("a").ignore_then(choice((
+                        terminal("lldata").map(|_| 8usize),
+                        terminal("tch").map(|_| 5usize),
+                    ))),
+                    terminal("on").ignore_then(choice((
+                        terminal("st").ignore_then(choice((
+                            terminal("ant").map(|_| 8usize),
+                            terminal("ructor").map(|_| 11usize),
+                        ))),
+                        terminal("t").ignore_then(choice((
+                            terminal("inue").map(|_| 8usize),
+                            terminal("ract").map(|_| 8usize),
+                        ))),
+                    ))),
+                ))),
+                terminal("d").ignore_then(choice((
+                    terminal("elete").map(|_| 6usize),
+                    terminal("o").map(|_| 2usize),
+                ))),
+                terminal("e").ignore_then(choice((
+                    terminal("lse").map(|_| 4usize),
+                    terminal("mit").map(|_| 4usize),
+                    terminal("num").map(|_| 4usize),
+                    terminal("vent").map(|_| 5usize),
+                    terminal("xternal").map(|_| 8usize),
+                ))),
+                terminal("f").ignore_then(choice((
+                    terminal("al").ignore_then(choice((
+                        terminal("lback").map(|_| 8usize),
+                        terminal("se").map(|_| 5usize),
+                    ))),
+                    terminal("or").map(|_| 3usize),
+                    terminal("unction").map(|_| 8usize),
+                ))),
+                terminal("hex").map(|_| 3usize),
+                terminal("i").ignore_then(choice((
+                    terminal("f").map(|_| 2usize),
+                    terminal("m").ignore_then(choice((
+                        terminal("mutable").map(|_| 9usize),
+                        terminal("port").map(|_| 6usize),
+                    ))),
+                    terminal("n").ignore_then(choice((
+                        terminal("dexed").map(|_| 7usize),
+                        terminal("ter").ignore_then(choice((
+                            terminal("face").map(|_| 9usize),
+                            terminal("nal").map(|_| 8usize),
+                        ))),
+                    ))),
+                    terminal("s").map(|_| 2usize),
+                ))),
+                terminal("library").map(|_| 7usize),
+                terminal("m").ignore_then(choice((
+                    terminal("apping").map(|_| 7usize),
+                    terminal("emory").map(|_| 6usize),
+                    terminal("odifier").map(|_| 8usize),
+                ))),
+                terminal("new").map(|_| 3usize),
+                terminal("override").map(|_| 8usize),
+                terminal("p").ignore_then(choice((
+                    terminal("ayable").map(|_| 7usize),
+                    terminal("r").ignore_then(choice((
+                        terminal("agma").map(|_| 6usize),
+                        terminal("ivate").map(|_| 7usize),
+                    ))),
+                    terminal("u").ignore_then(choice((
+                        terminal("blic").map(|_| 6usize),
+                        terminal("re").map(|_| 4usize),
+                    ))),
+                ))),
+                terminal("re").ignore_then(choice((
+                    terminal("ceive").map(|_| 7usize),
+                    terminal("turn").ignore_then(choice((
+                        terminal("s").map(|_| 7usize),
+                        empty().map(|_| 6usize),
+                    ))),
+                ))),
+                terminal("st").ignore_then(choice((
+                    terminal("orage").map(|_| 7usize),
+                    terminal("r").ignore_then(choice((
+                        terminal("ing").map(|_| 6usize),
+                        terminal("uct").map(|_| 6usize),
+                    ))),
+                ))),
+                terminal("t").ignore_then(choice((
+                    terminal("r").ignore_then(choice((
+                        terminal("ue").map(|_| 4usize),
+                        terminal("y").map(|_| 3usize),
+                    ))),
+                    terminal("ype").map(|_| 4usize),
+                ))),
+                terminal("u").ignore_then(choice((
+                    terminal("nchecked").map(|_| 9usize),
+                    terminal("sing").map(|_| 5usize),
+                ))),
+                terminal("vi").ignore_then(choice((
+                    terminal("ew").map(|_| 4usize),
+                    terminal("rtual").map(|_| 7usize),
+                ))),
+                terminal("while").map(|_| 5usize),
+            ))
+            .map(|v| Box::new(keyword::Keyword::_0(v))),
+            signed_integer_type_parser
+                .clone()
+                .map(|v| Box::new(keyword::Keyword::SignedIntegerType(v))),
+            unsigned_integer_type_parser
+                .clone()
+                .map(|v| Box::new(keyword::Keyword::UnsignedIntegerType(v))),
+            fixed_bytes_type_parser
+                .clone()
+                .map(|v| Box::new(keyword::Keyword::FixedBytesType(v))),
+            choice::<_, ErrorType>((
+                terminal("fixed").map(|_| 5usize),
+                terminal("ufixed").map(|_| 6usize),
+            ))
+            .map(|v| Box::new(keyword::Keyword::_4(v))),
+        ))
+        .boxed();
+
+        // PositionalArgumentList = 1…*{ Expression / ',' } ;
+        let positional_argument_list_parser = expression_parser
+            .clone()
             .then(
-                double_quoted_ascii_string_literal_parser
-                    .clone()
-                    .then(
-                        with_noise(just(',').map(|_| FixedTerminal::<1>()))
-                            .then(double_quoted_ascii_string_literal_parser.clone())
-                            .repeated(),
-                    )
-                    .map(repetition_mapper)
-                    .map(|v| assembly_flags::_T1::new(v)),
+                with_noise(just(',').map(|_| FixedTerminal::<1>()))
+                    .then(expression_parser.clone())
+                    .repeated(),
             )
-            .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
-            .map(|v| Box::new(assembly_flags::_T0::new(v)))
+            .map(repetition_mapper)
+            .map(|v| positional_argument_list::_T0::new(v))
             .boxed();
 
-        // «Identifier» = «RawIdentifier» - «ReservedWord» ;
-        let identifier_parser =
-            difference(raw_identifier_parser.clone(), reserved_word_parser.clone()).boxed();
+        // «SingleQuotedAsciiStringLiteral» = '\'' { 1…*{ '\u{20}'…'~' - ( '\'' | '\\' ) } | «EscapeSequence» } '\'' ;
+        let single_quoted_ascii_string_literal_parser = just ('\'') . map (| _ | FixedTerminal :: < 1 > ()) . then (choice ((filter (| & c : & char | (' ' <= c && c <= '~') && c != '\'' && c != '\\') . map (| _ | FixedTerminal :: < 1 > ()) . repeated () . at_least (1usize) . map (| v | v . len ()) . map (| v | Box :: new (single_quoted_ascii_string_literal :: SingleQuotedAsciiStringLiteral :: Chars (v))) , escape_sequence_parser . clone () . map (| v | Box :: new (single_quoted_ascii_string_literal :: SingleQuotedAsciiStringLiteral :: EscapeSequence (v))))) . repeated ()) . then (just ('\'') . map (| _ | FixedTerminal :: < 1 > ())) . map (| v | Box :: new (single_quoted_ascii_string_literal :: _T0 :: new (v))) . boxed () ;
 
-        // «UnicodeStringLiteral» = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral» ;
-        let unicode_string_literal_parser = choice ((single_quoted_unicode_string_literal_parser . clone () . map (| v | Box :: new (unicode_string_literal :: UnicodeStringLiteral :: SingleQuotedUnicodeStringLiteral (v))) , double_quoted_unicode_string_literal_parser . clone () . map (| v | Box :: new (unicode_string_literal :: UnicodeStringLiteral :: DoubleQuotedUnicodeStringLiteral (v))))) . boxed () ;
+        // «SingleQuotedUnicodeStringLiteral» = 'unicode\'' { 1…*{ ¬( '\'' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '\'' ;
+        let single_quoted_unicode_string_literal_parser = terminal ("unicode'") . ignored () . map (| _ | FixedTerminal :: < 8usize > ()) . then (choice ((filter (| & c : & char | c != '\'' && c != '\\' && c != '\n' && c != '\r') . map (| _ | FixedTerminal :: < 1 > ()) . repeated () . at_least (1usize) . map (| v | v . len ()) . map (| v | Box :: new (single_quoted_unicode_string_literal :: SingleQuotedUnicodeStringLiteral :: Chars (v))) , escape_sequence_parser . clone () . map (| v | Box :: new (single_quoted_unicode_string_literal :: SingleQuotedUnicodeStringLiteral :: EscapeSequence (v))))) . repeated ()) . then (just ('\'') . map (| _ | FixedTerminal :: < 1 > ())) . map (| v | Box :: new (single_quoted_unicode_string_literal :: _T0 :: new (v))) . boxed () ;
+
+        // UncheckedBlock = 'unchecked' Block ;
+        let unchecked_block_parser = with_noise(
+            terminal("unchecked")
+                .ignored()
+                .map(|_| FixedTerminal::<9usize>()),
+        )
+        .then(block_parser.clone())
+        .map(|v| Box::new(unchecked_block::_T0::new(v)))
+        .boxed();
 
         // YulFunctionCall = ( «YulIdentifier» | «YulEVMBuiltinFunctionName» ) '(' { YulExpression / ',' } ')' ;
         let yul_function_call_parser = choice((
@@ -2021,6 +1287,248 @@ impl Parsers {
             .map(|v| Box::new(yul_path::_T0::new(v)))
             .boxed();
 
+        // «AsciiStringLiteral» = «SingleQuotedAsciiStringLiteral» | «DoubleQuotedAsciiStringLiteral» ;
+        let ascii_string_literal_parser = choice((
+            single_quoted_ascii_string_literal_parser.clone().map(|v| {
+                Box::new(
+                    ascii_string_literal::AsciiStringLiteral::SingleQuotedAsciiStringLiteral(v),
+                )
+            }),
+            double_quoted_ascii_string_literal_parser.clone().map(|v| {
+                Box::new(
+                    ascii_string_literal::AsciiStringLiteral::DoubleQuotedAsciiStringLiteral(v),
+                )
+            }),
+        ))
+        .boxed();
+
+        // AssemblyFlags = '(' 1…*{ «DoubleQuotedAsciiStringLiteral» / ',' } ')' ;
+        let assembly_flags_parser = with_noise(just('(').map(|_| FixedTerminal::<1>()))
+            .then(
+                double_quoted_ascii_string_literal_parser
+                    .clone()
+                    .then(
+                        with_noise(just(',').map(|_| FixedTerminal::<1>()))
+                            .then(double_quoted_ascii_string_literal_parser.clone())
+                            .repeated(),
+                    )
+                    .map(repetition_mapper)
+                    .map(|v| assembly_flags::_T1::new(v)),
+            )
+            .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
+            .map(|v| Box::new(assembly_flags::_T0::new(v)))
+            .boxed();
+
+        // ElementaryTypeWithPayable = 'address' [ 'payable' ] | ElementaryType ;
+        let elementary_type_with_payable_parser = choice((
+            with_noise(
+                terminal("address")
+                    .ignored()
+                    .map(|_| FixedTerminal::<7usize>()),
+            )
+            .then(
+                with_noise(
+                    terminal("payable")
+                        .ignored()
+                        .map(|_| FixedTerminal::<7usize>()),
+                )
+                .or_not(),
+            )
+            .map(|v| Box::new(elementary_type_with_payable::_T0::new(v)))
+            .map(|v| Box::new(elementary_type_with_payable::ElementaryTypeWithPayable::_T0(v))),
+            elementary_type_parser.clone().map(|v| {
+                Box::new(elementary_type_with_payable::ElementaryTypeWithPayable::ElementaryType(v))
+            }),
+        ))
+        .boxed();
+
+        // ElementaryTypeWithoutPayable = 'address' | ElementaryType ;
+        let elementary_type_without_payable_parser = choice((
+            with_noise(
+                terminal("address")
+                    .ignored()
+                    .map(|_| FixedTerminal::<7usize>()),
+            )
+            .map(|v| {
+                Box::new(elementary_type_without_payable::ElementaryTypeWithoutPayable::Address(v))
+            }),
+            elementary_type_parser.clone().map(|v| {
+                Box::new(
+                    elementary_type_without_payable::ElementaryTypeWithoutPayable::ElementaryType(
+                        v,
+                    ),
+                )
+            }),
+        ))
+        .boxed();
+
+        // NumericLiteral = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
+        let numeric_literal_parser = choice((
+            decimal_number_parser
+                .clone()
+                .map(|v| Box::new(numeric_literal::NumericLiteral::DecimalNumber(v))),
+            hex_number_parser
+                .clone()
+                .map(|v| Box::new(numeric_literal::NumericLiteral::HexNumber(v))),
+        ))
+        .then(
+            with_noise(choice::<_, ErrorType>((
+                terminal("days").map(|_| 4usize),
+                terminal("ether").map(|_| 5usize),
+                terminal("gwei").map(|_| 4usize),
+                terminal("hours").map(|_| 5usize),
+                terminal("minutes").map(|_| 7usize),
+                terminal("seconds").map(|_| 7usize),
+                terminal("we").ignore_then(choice((
+                    terminal("eks").map(|_| 5usize),
+                    terminal("i").map(|_| 3usize),
+                ))),
+                terminal("years").map(|_| 5usize),
+            )))
+            .or_not(),
+        )
+        .map(|v| Box::new(numeric_literal::_T0::new(v)))
+        .boxed();
+
+        // «ReservedWord» = «Keyword» | «ReservedKeyword» | «NumberUnit» | «BooleanLiteral» ;
+        let reserved_word_parser = choice((
+            keyword_parser
+                .clone()
+                .map(|v| Box::new(reserved_word::ReservedWord::Keyword(v))),
+            choice::<_, ErrorType>((
+                terminal("a").ignore_then(choice((
+                    terminal("fter").map(|_| 5usize),
+                    terminal("lias").map(|_| 5usize),
+                    terminal("pply").map(|_| 5usize),
+                    terminal("uto").map(|_| 4usize),
+                ))),
+                terminal("byte").map(|_| 4usize),
+                terminal("c").ignore_then(choice((
+                    terminal("ase").map(|_| 4usize),
+                    terminal("opyof").map(|_| 6usize),
+                ))),
+                terminal("d").ignore_then(choice((
+                    terminal("ays").map(|_| 4usize),
+                    terminal("ef").ignore_then(choice((
+                        terminal("ault").map(|_| 7usize),
+                        terminal("ine").map(|_| 6usize),
+                    ))),
+                ))),
+                terminal("ether").map(|_| 5usize),
+                terminal("f").ignore_then(choice((
+                    terminal("alse").map(|_| 5usize),
+                    terminal("inal").map(|_| 5usize),
+                ))),
+                terminal("gwei").map(|_| 4usize),
+                terminal("hours").map(|_| 5usize),
+                terminal("i").ignore_then(choice((
+                    terminal("mplements").map(|_| 10usize),
+                    terminal("n").ignore_then(choice((
+                        terminal("line").map(|_| 6usize),
+                        empty().map(|_| 2usize),
+                    ))),
+                ))),
+                terminal("let").map(|_| 3usize),
+                terminal("m").ignore_then(choice((
+                    terminal("a").ignore_then(choice((
+                        terminal("cro").map(|_| 5usize),
+                        terminal("tch").map(|_| 5usize),
+                    ))),
+                    terminal("inutes").map(|_| 7usize),
+                    terminal("utable").map(|_| 7usize),
+                ))),
+                terminal("null").map(|_| 4usize),
+                terminal("of").map(|_| 2usize),
+                terminal("p").ignore_then(choice((
+                    terminal("artial").map(|_| 7usize),
+                    terminal("romise").map(|_| 7usize),
+                ))),
+                terminal("re").ignore_then(choice((
+                    terminal("ference").map(|_| 9usize),
+                    terminal("locatable").map(|_| 11usize),
+                ))),
+                terminal("s").ignore_then(choice((
+                    terminal("e").ignore_then(choice((
+                        terminal("aled").map(|_| 6usize),
+                        terminal("conds").map(|_| 7usize),
+                    ))),
+                    terminal("izeof").map(|_| 6usize),
+                    terminal("tatic").map(|_| 6usize),
+                    terminal("upports").map(|_| 8usize),
+                    terminal("witch").map(|_| 6usize),
+                ))),
+                terminal("t").ignore_then(choice((
+                    terminal("rue").map(|_| 4usize),
+                    terminal("ype").ignore_then(choice((
+                        terminal("def").map(|_| 7usize),
+                        terminal("of").map(|_| 6usize),
+                    ))),
+                ))),
+                terminal("var").map(|_| 3usize),
+                terminal("we").ignore_then(choice((
+                    terminal("eks").map(|_| 5usize),
+                    terminal("i").map(|_| 3usize),
+                ))),
+                terminal("years").map(|_| 5usize),
+            ))
+            .map(|v| Box::new(reserved_word::ReservedWord::_1(v))),
+        ))
+        .boxed();
+
+        // «UnicodeStringLiteral» = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral» ;
+        let unicode_string_literal_parser = choice ((single_quoted_unicode_string_literal_parser . clone () . map (| v | Box :: new (unicode_string_literal :: UnicodeStringLiteral :: SingleQuotedUnicodeStringLiteral (v))) , double_quoted_unicode_string_literal_parser . clone () . map (| v | Box :: new (unicode_string_literal :: UnicodeStringLiteral :: DoubleQuotedUnicodeStringLiteral (v))))) . boxed () ;
+
+        // «Identifier» = «RawIdentifier» - «ReservedWord» ;
+        let identifier_parser =
+            difference(raw_identifier_parser.clone(), reserved_word_parser.clone()).boxed();
+
+        // ImportPath = «AsciiStringLiteral» ;
+        let import_path_parser = ascii_string_literal_parser.clone().boxed();
+
+        // Literal = «AsciiStringLiteral» | «UnicodeStringLiteral» | NumericLiteral | «HexStringLiteral» | «BooleanLiteral» ;
+        let literal_parser = choice((
+            ascii_string_literal_parser
+                .clone()
+                .map(|v| Box::new(literal::Literal::AsciiStringLiteral(v))),
+            unicode_string_literal_parser
+                .clone()
+                .map(|v| Box::new(literal::Literal::UnicodeStringLiteral(v))),
+            numeric_literal_parser
+                .clone()
+                .map(|v| Box::new(literal::Literal::NumericLiteral(v))),
+            hex_string_literal_parser
+                .clone()
+                .map(|v| Box::new(literal::Literal::HexStringLiteral(v))),
+            with_noise(choice::<_, ErrorType>((
+                terminal("false").map(|_| 5usize),
+                terminal("true").map(|_| 4usize),
+            )))
+            .map(|v| Box::new(literal::Literal::_4(v))),
+        ))
+        .boxed();
+
+        // YulLiteral = «YulDecimalNumberLiteral» | «YulHexLiteral» | «AsciiStringLiteral» | «BooleanLiteral» | «HexStringLiteral» ;
+        let yul_literal_parser = choice((
+            yul_decimal_number_literal_parser
+                .clone()
+                .map(|v| Box::new(yul_literal::YulLiteral::YulDecimalNumberLiteral(v))),
+            yul_hex_literal_parser
+                .clone()
+                .map(|v| Box::new(yul_literal::YulLiteral::YulHexLiteral(v))),
+            ascii_string_literal_parser
+                .clone()
+                .map(|v| Box::new(yul_literal::YulLiteral::AsciiStringLiteral(v))),
+            with_noise(choice::<_, ErrorType>((
+                terminal("false").map(|_| 5usize),
+                terminal("true").map(|_| 4usize),
+            )))
+            .map(|v| Box::new(yul_literal::YulLiteral::_3(v))),
+            hex_string_literal_parser
+                .clone()
+                .map(|v| Box::new(yul_literal::YulLiteral::HexStringLiteral(v))),
+        ))
+        .boxed();
+
         // EnumDefinition = 'enum' «Identifier» '{' 1…*{ «Identifier» / ',' } '}' ;
         let enum_definition_parser = with_noise(
             terminal("enum")
@@ -2055,34 +1563,6 @@ impl Parsers {
             .map(repetition_mapper)
             .map(|v| identifier_path::_T0::new(v))
             .boxed();
-
-        // ImportPath = «AsciiStringLiteral» ;
-        let import_path_parser = ascii_string_literal_parser.clone().boxed();
-
-        // Literal = «AsciiStringLiteral» | «UnicodeStringLiteral» | NumericLiteral | «HexStringLiteral» | «BooleanLiteral» ;
-        let literal_parser = choice((
-            ascii_string_literal_parser
-                .clone()
-                .map(|v| Box::new(literal::Literal::AsciiStringLiteral(v))),
-            unicode_string_literal_parser
-                .clone()
-                .map(|v| Box::new(literal::Literal::UnicodeStringLiteral(v))),
-            numeric_literal_parser
-                .clone()
-                .map(|v| Box::new(literal::Literal::NumericLiteral(v))),
-            hex_string_literal_parser
-                .clone()
-                .map(|v| Box::new(literal::Literal::HexStringLiteral(v))),
-            with_noise(choice::<_, ErrorType>((
-                terminal("false").map(|_| 5usize),
-                terminal("true").map(|_| 4usize),
-            )))
-            .map(|v| Box::new(literal::Literal::_4(v))),
-        ))
-        .boxed();
-
-        // MemberAccessExpression = Expression '.' ( «Identifier» | 'address' ) ;
-        let member_access_expression_parser = todo!().boxed();
 
         // NamedArgument = «Identifier» ':' Expression ;
         let named_argument_parser = identifier_parser
@@ -2119,6 +1599,33 @@ impl Parsers {
             .map(|v| Box::new(selected_import::_T0::new(v)))
             .boxed();
 
+        // SimpleImportDirective = ImportPath { 'as' «Identifier» } ;
+        let simple_import_directive_parser = import_path_parser
+            .clone()
+            .then(
+                with_noise(terminal("as").ignored().map(|_| FixedTerminal::<2usize>()))
+                    .then(identifier_parser.clone())
+                    .map(|v| Box::new(simple_import_directive::_T2::new(v)))
+                    .repeated(),
+            )
+            .map(|v| Box::new(simple_import_directive::_T0::new(v)))
+            .boxed();
+
+        // StarImportDirective = '*' 'as' «Identifier» 'from' ImportPath ;
+        let star_import_directive_parser = with_noise(just('*').map(|_| FixedTerminal::<1>()))
+            .then(with_noise(
+                terminal("as").ignored().map(|_| FixedTerminal::<2usize>()),
+            ))
+            .then(identifier_parser.clone())
+            .then(with_noise(
+                terminal("from")
+                    .ignored()
+                    .map(|_| FixedTerminal::<4usize>()),
+            ))
+            .then(import_path_parser.clone())
+            .map(|v| Box::new(star_import_directive::_T0::new(v)))
+            .boxed();
+
         // UserDefinedValueTypeDefinition = 'type' «Identifier» 'is' ElementaryTypeWithPayable ';' ;
         let user_defined_value_type_definition_parser = with_noise(
             terminal("type")
@@ -2134,30 +1641,21 @@ impl Parsers {
         .map(|v| Box::new(user_defined_value_type_definition::_T0::new(v)))
         .boxed();
 
-        // YulLiteral = «YulDecimalNumberLiteral» | «YulHexLiteral» | «AsciiStringLiteral» | «BooleanLiteral» | «HexStringLiteral» ;
-        let yul_literal_parser = choice((
-            yul_decimal_number_literal_parser
-                .clone()
-                .map(|v| Box::new(yul_literal::YulLiteral::YulDecimalNumberLiteral(v))),
-            yul_hex_literal_parser
-                .clone()
-                .map(|v| Box::new(yul_literal::YulLiteral::YulHexLiteral(v))),
-            ascii_string_literal_parser
-                .clone()
-                .map(|v| Box::new(yul_literal::YulLiteral::AsciiStringLiteral(v))),
-            with_noise(choice::<_, ErrorType>((
-                terminal("false").map(|_| 5usize),
-                terminal("true").map(|_| 4usize),
-            )))
-            .map(|v| Box::new(yul_literal::YulLiteral::_3(v))),
-            hex_string_literal_parser
-                .clone()
-                .map(|v| Box::new(yul_literal::YulLiteral::HexStringLiteral(v))),
-        ))
-        .boxed();
-
-        // FunctionCallOptionsExpression = Expression '{' 1…*{ NamedArgument / ',' } '}' ;
-        let function_call_options_expression_parser = todo!().boxed();
+        // YulExpression = YulPath | YulFunctionCall | YulLiteral ;
+        yul_expression_parser.define(
+            choice((
+                yul_path_parser
+                    .clone()
+                    .map(|v| Box::new(yul_expression::YulExpression::YulPath(v))),
+                yul_function_call_parser
+                    .clone()
+                    .map(|v| Box::new(yul_expression::YulExpression::YulFunctionCall(v))),
+                yul_literal_parser
+                    .clone()
+                    .map(|v| Box::new(yul_expression::YulExpression::YulLiteral(v))),
+            ))
+            .boxed(),
+        );
 
         // MappingType = 'mapping' '(' ( ElementaryTypeWithoutPayable | IdentifierPath ) '=>' TypeName ')' ;
         let mapping_type_parser = with_noise(
@@ -2285,48 +1783,122 @@ impl Parsers {
             .map(|v| Box::new(selecting_import_directive::_T0::new(v)))
             .boxed();
 
-        // SimpleImportDirective = ImportPath { 'as' «Identifier» } ;
-        let simple_import_directive_parser = import_path_parser
+        // YulAssignment = YulPath ( ':=' YulExpression | 1…*{ ',' YulPath } ':=' YulFunctionCall ) ;
+        let yul_assignment_parser = yul_path_parser
             .clone()
-            .then(
-                with_noise(terminal("as").ignored().map(|_| FixedTerminal::<2usize>()))
-                    .then(identifier_parser.clone())
-                    .map(|v| Box::new(simple_import_directive::_T2::new(v)))
-                    .repeated(),
-            )
-            .map(|v| Box::new(simple_import_directive::_T0::new(v)))
+            .then(choice((
+                with_noise(terminal(":=").ignored().map(|_| FixedTerminal::<2usize>()))
+                    .then(yul_expression_parser.clone())
+                    .map(|v| Box::new(yul_assignment::_T1::new(v)))
+                    .map(|v| Box::new(yul_assignment::YulAssignment::_T1(v))),
+                with_noise(just(',').map(|_| FixedTerminal::<1>()))
+                    .then(yul_path_parser.clone())
+                    .map(|v| Box::new(yul_assignment::_T4::new(v)))
+                    .repeated()
+                    .at_least(1usize)
+                    .then(with_noise(
+                        terminal(":=").ignored().map(|_| FixedTerminal::<2usize>()),
+                    ))
+                    .then(yul_function_call_parser.clone())
+                    .map(|v| Box::new(yul_assignment::_T2::new(v)))
+                    .map(|v| Box::new(yul_assignment::YulAssignment::_T2(v))),
+            )))
+            .map(|v| Box::new(yul_assignment::_T0::new(v)))
             .boxed();
 
-        // StarImportDirective = '*' 'as' «Identifier» 'from' ImportPath ;
-        let star_import_directive_parser = with_noise(just('*').map(|_| FixedTerminal::<1>()))
-            .then(with_noise(
-                terminal("as").ignored().map(|_| FixedTerminal::<2usize>()),
-            ))
-            .then(identifier_parser.clone())
-            .then(with_noise(
-                terminal("from")
+        // YulForStatement = 'for' YulBlock YulExpression YulBlock YulBlock ;
+        let yul_for_statement_parser =
+            with_noise(terminal("for").ignored().map(|_| FixedTerminal::<3usize>()))
+                .then(yul_block_parser.clone())
+                .then(yul_expression_parser.clone())
+                .then(yul_block_parser.clone())
+                .then(yul_block_parser.clone())
+                .map(|v| Box::new(yul_for_statement::_T0::new(v)))
+                .boxed();
+
+        // YulIfStatement = 'if' YulExpression YulBlock ;
+        let yul_if_statement_parser =
+            with_noise(terminal("if").ignored().map(|_| FixedTerminal::<2usize>()))
+                .then(yul_expression_parser.clone())
+                .then(yul_block_parser.clone())
+                .map(|v| Box::new(yul_if_statement::_T0::new(v)))
+                .boxed();
+
+        // YulSwitchStatement = 'switch' YulExpression ( 1…*{ 'case' YulLiteral YulBlock } [ 'default' YulBlock ] | 'default' YulBlock ) ;
+        let yul_switch_statement_parser = with_noise(
+            terminal("switch")
+                .ignored()
+                .map(|_| FixedTerminal::<6usize>()),
+        )
+        .then(yul_expression_parser.clone())
+        .then(choice((
+            with_noise(
+                terminal("case")
                     .ignored()
                     .map(|_| FixedTerminal::<4usize>()),
-            ))
-            .then(import_path_parser.clone())
-            .map(|v| Box::new(star_import_directive::_T0::new(v)))
-            .boxed();
+            )
+            .then(yul_literal_parser.clone())
+            .then(yul_block_parser.clone())
+            .map(|v| Box::new(yul_switch_statement::_T3::new(v)))
+            .repeated()
+            .at_least(1usize)
+            .then(
+                with_noise(
+                    terminal("default")
+                        .ignored()
+                        .map(|_| FixedTerminal::<7usize>()),
+                )
+                .then(yul_block_parser.clone())
+                .map(|v| Box::new(yul_switch_statement::_T4::new(v)))
+                .or_not(),
+            )
+            .map(|v| Box::new(yul_switch_statement::_T1::new(v)))
+            .map(|v| Box::new(yul_switch_statement::YulSwitchStatement::_T1(v))),
+            with_noise(
+                terminal("default")
+                    .ignored()
+                    .map(|_| FixedTerminal::<7usize>()),
+            )
+            .then(yul_block_parser.clone())
+            .map(|v| Box::new(yul_switch_statement::_T5::new(v)))
+            .map(|v| Box::new(yul_switch_statement::YulSwitchStatement::_T5(v))),
+        )))
+        .map(|v| Box::new(yul_switch_statement::_T0::new(v)))
+        .boxed();
 
-        // YulExpression = YulPath | YulFunctionCall | YulLiteral ;
-        yul_expression_parser.define(
-            choice((
-                yul_path_parser
-                    .clone()
-                    .map(|v| Box::new(yul_expression::YulExpression::YulPath(v))),
-                yul_function_call_parser
-                    .clone()
-                    .map(|v| Box::new(yul_expression::YulExpression::YulFunctionCall(v))),
-                yul_literal_parser
-                    .clone()
-                    .map(|v| Box::new(yul_expression::YulExpression::YulLiteral(v))),
-            ))
-            .boxed(),
-        );
+        // YulVariableDeclaration = 'let' «YulIdentifier» [ ':=' YulExpression | [ ',' «YulIdentifier» ] [ ':=' YulFunctionCall ] ] ;
+        let yul_variable_declaration_parser =
+            with_noise(terminal("let").ignored().map(|_| FixedTerminal::<3usize>()))
+                .then(yul_identifier_parser.clone())
+                .then(
+                    choice((
+                        with_noise(terminal(":=").ignored().map(|_| FixedTerminal::<2usize>()))
+                            .then(yul_expression_parser.clone())
+                            .map(|v| Box::new(yul_variable_declaration::_T1::new(v)))
+                            .map(|v| {
+                                Box::new(yul_variable_declaration::YulVariableDeclaration::_T1(v))
+                            }),
+                        with_noise(just(',').map(|_| FixedTerminal::<1>()))
+                            .then(yul_identifier_parser.clone())
+                            .map(|v| Box::new(yul_variable_declaration::_T3::new(v)))
+                            .or_not()
+                            .then(
+                                with_noise(
+                                    terminal(":=").ignored().map(|_| FixedTerminal::<2usize>()),
+                                )
+                                .then(yul_function_call_parser.clone())
+                                .map(|v| Box::new(yul_variable_declaration::_T4::new(v)))
+                                .or_not(),
+                            )
+                            .map(|v| Box::new(yul_variable_declaration::_T2::new(v)))
+                            .map(|v| {
+                                Box::new(yul_variable_declaration::YulVariableDeclaration::_T2(v))
+                            }),
+                    ))
+                    .or_not(),
+                )
+                .map(|v| Box::new(yul_variable_declaration::_T0::new(v)))
+                .boxed();
 
         // ArgumentList = '(' [ PositionalArgumentList | NamedArgumentList ] ')' ;
         let argument_list_parser = with_noise(just('(').map(|_| FixedTerminal::<1>()))
@@ -2463,125 +2035,40 @@ impl Parsers {
         ))
         .boxed();
 
-        // YulAssignment = YulPath ( ':=' YulExpression | 1…*{ ',' YulPath } ':=' YulFunctionCall ) ;
-        let yul_assignment_parser = yul_path_parser
-            .clone()
-            .then(choice((
-                with_noise(terminal(":=").ignored().map(|_| FixedTerminal::<2usize>()))
-                    .then(yul_expression_parser.clone())
-                    .map(|v| Box::new(yul_assignment::_T1::new(v)))
-                    .map(|v| Box::new(yul_assignment::YulAssignment::_T1(v))),
-                with_noise(just(',').map(|_| FixedTerminal::<1>()))
-                    .then(yul_path_parser.clone())
-                    .map(|v| Box::new(yul_assignment::_T4::new(v)))
-                    .repeated()
-                    .at_least(1usize)
-                    .then(with_noise(
-                        terminal(":=").ignored().map(|_| FixedTerminal::<2usize>()),
-                    ))
-                    .then(yul_function_call_parser.clone())
-                    .map(|v| Box::new(yul_assignment::_T2::new(v)))
-                    .map(|v| Box::new(yul_assignment::YulAssignment::_T2(v))),
+        // YulStatement = YulBlock | YulVariableDeclaration | YulFunctionDefinition | YulAssignment | YulFunctionCall | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement ;
+        let yul_statement_parser = choice((
+            yul_block_parser
+                .clone()
+                .map(|v| Box::new(yul_statement::YulStatement::YulBlock(v))),
+            yul_variable_declaration_parser
+                .clone()
+                .map(|v| Box::new(yul_statement::YulStatement::YulVariableDeclaration(v))),
+            yul_function_definition_parser
+                .clone()
+                .map(|v| Box::new(yul_statement::YulStatement::YulFunctionDefinition(v))),
+            yul_assignment_parser
+                .clone()
+                .map(|v| Box::new(yul_statement::YulStatement::YulAssignment(v))),
+            yul_function_call_parser
+                .clone()
+                .map(|v| Box::new(yul_statement::YulStatement::YulFunctionCall(v))),
+            yul_if_statement_parser
+                .clone()
+                .map(|v| Box::new(yul_statement::YulStatement::YulIfStatement(v))),
+            yul_for_statement_parser
+                .clone()
+                .map(|v| Box::new(yul_statement::YulStatement::YulForStatement(v))),
+            yul_switch_statement_parser
+                .clone()
+                .map(|v| Box::new(yul_statement::YulStatement::YulSwitchStatement(v))),
+            with_noise(choice::<_, ErrorType>((
+                terminal("break").map(|_| 5usize),
+                terminal("continue").map(|_| 8usize),
+                terminal("leave").map(|_| 5usize),
             )))
-            .map(|v| Box::new(yul_assignment::_T0::new(v)))
-            .boxed();
-
-        // YulForStatement = 'for' YulBlock YulExpression YulBlock YulBlock ;
-        let yul_for_statement_parser =
-            with_noise(terminal("for").ignored().map(|_| FixedTerminal::<3usize>()))
-                .then(yul_block_parser.clone())
-                .then(yul_expression_parser.clone())
-                .then(yul_block_parser.clone())
-                .then(yul_block_parser.clone())
-                .map(|v| Box::new(yul_for_statement::_T0::new(v)))
-                .boxed();
-
-        // YulIfStatement = 'if' YulExpression YulBlock ;
-        let yul_if_statement_parser =
-            with_noise(terminal("if").ignored().map(|_| FixedTerminal::<2usize>()))
-                .then(yul_expression_parser.clone())
-                .then(yul_block_parser.clone())
-                .map(|v| Box::new(yul_if_statement::_T0::new(v)))
-                .boxed();
-
-        // YulSwitchStatement = 'switch' YulExpression ( 1…*{ 'case' YulLiteral YulBlock } [ 'default' YulBlock ] | 'default' YulBlock ) ;
-        let yul_switch_statement_parser = with_noise(
-            terminal("switch")
-                .ignored()
-                .map(|_| FixedTerminal::<6usize>()),
-        )
-        .then(yul_expression_parser.clone())
-        .then(choice((
-            with_noise(
-                terminal("case")
-                    .ignored()
-                    .map(|_| FixedTerminal::<4usize>()),
-            )
-            .then(yul_literal_parser.clone())
-            .then(yul_block_parser.clone())
-            .map(|v| Box::new(yul_switch_statement::_T3::new(v)))
-            .repeated()
-            .at_least(1usize)
-            .then(
-                with_noise(
-                    terminal("default")
-                        .ignored()
-                        .map(|_| FixedTerminal::<7usize>()),
-                )
-                .then(yul_block_parser.clone())
-                .map(|v| Box::new(yul_switch_statement::_T4::new(v)))
-                .or_not(),
-            )
-            .map(|v| Box::new(yul_switch_statement::_T1::new(v)))
-            .map(|v| Box::new(yul_switch_statement::YulSwitchStatement::_T1(v))),
-            with_noise(
-                terminal("default")
-                    .ignored()
-                    .map(|_| FixedTerminal::<7usize>()),
-            )
-            .then(yul_block_parser.clone())
-            .map(|v| Box::new(yul_switch_statement::_T5::new(v)))
-            .map(|v| Box::new(yul_switch_statement::YulSwitchStatement::_T5(v))),
-        )))
-        .map(|v| Box::new(yul_switch_statement::_T0::new(v)))
+            .map(|v| Box::new(yul_statement::YulStatement::_8(v))),
+        ))
         .boxed();
-
-        // YulVariableDeclaration = 'let' «YulIdentifier» [ ':=' YulExpression | [ ',' «YulIdentifier» ] [ ':=' YulFunctionCall ] ] ;
-        let yul_variable_declaration_parser =
-            with_noise(terminal("let").ignored().map(|_| FixedTerminal::<3usize>()))
-                .then(yul_identifier_parser.clone())
-                .then(
-                    choice((
-                        with_noise(terminal(":=").ignored().map(|_| FixedTerminal::<2usize>()))
-                            .then(yul_expression_parser.clone())
-                            .map(|v| Box::new(yul_variable_declaration::_T1::new(v)))
-                            .map(|v| {
-                                Box::new(yul_variable_declaration::YulVariableDeclaration::_T1(v))
-                            }),
-                        with_noise(just(',').map(|_| FixedTerminal::<1>()))
-                            .then(yul_identifier_parser.clone())
-                            .map(|v| Box::new(yul_variable_declaration::_T3::new(v)))
-                            .or_not()
-                            .then(
-                                with_noise(
-                                    terminal(":=").ignored().map(|_| FixedTerminal::<2usize>()),
-                                )
-                                .then(yul_function_call_parser.clone())
-                                .map(|v| Box::new(yul_variable_declaration::_T4::new(v)))
-                                .or_not(),
-                            )
-                            .map(|v| Box::new(yul_variable_declaration::_T2::new(v)))
-                            .map(|v| {
-                                Box::new(yul_variable_declaration::YulVariableDeclaration::_T2(v))
-                            }),
-                    ))
-                    .or_not(),
-                )
-                .map(|v| Box::new(yul_variable_declaration::_T0::new(v)))
-                .boxed();
-
-        // FunctionCallExpression = Expression ArgumentList ;
-        let function_call_expression_parser = todo!().boxed();
 
         // InheritanceSpecifier = IdentifierPath [ ArgumentList ] ;
         let inheritance_specifier_parser = identifier_path_parser
@@ -2624,39 +2111,32 @@ impl Parsers {
             .boxed(),
         );
 
-        // YulStatement = YulBlock | YulVariableDeclaration | YulFunctionDefinition | YulAssignment | YulFunctionCall | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement ;
-        let yul_statement_parser = choice((
-            yul_block_parser
-                .clone()
-                .map(|v| Box::new(yul_statement::YulStatement::YulBlock(v))),
-            yul_variable_declaration_parser
-                .clone()
-                .map(|v| Box::new(yul_statement::YulStatement::YulVariableDeclaration(v))),
-            yul_function_definition_parser
-                .clone()
-                .map(|v| Box::new(yul_statement::YulStatement::YulFunctionDefinition(v))),
-            yul_assignment_parser
-                .clone()
-                .map(|v| Box::new(yul_statement::YulStatement::YulAssignment(v))),
-            yul_function_call_parser
-                .clone()
-                .map(|v| Box::new(yul_statement::YulStatement::YulFunctionCall(v))),
-            yul_if_statement_parser
-                .clone()
-                .map(|v| Box::new(yul_statement::YulStatement::YulIfStatement(v))),
-            yul_for_statement_parser
-                .clone()
-                .map(|v| Box::new(yul_statement::YulStatement::YulForStatement(v))),
-            yul_switch_statement_parser
-                .clone()
-                .map(|v| Box::new(yul_statement::YulStatement::YulSwitchStatement(v))),
-            with_noise(choice::<_, ErrorType>((
-                terminal("break").map(|_| 5usize),
-                terminal("continue").map(|_| 8usize),
-                terminal("leave").map(|_| 5usize),
-            )))
-            .map(|v| Box::new(yul_statement::YulStatement::_8(v))),
-        ))
+        // YulBlock = '{' { YulStatement } '}' ;
+        yul_block_parser.define(
+            with_noise(just('{').map(|_| FixedTerminal::<1>()))
+                .then(yul_statement_parser.clone().repeated())
+                .then(with_noise(just('}').map(|_| FixedTerminal::<1>())))
+                .map(|v| Box::new(yul_block::_T0::new(v)))
+                .boxed(),
+        );
+
+        // AssemblyStatement = 'assembly' [ '"evmasm"' ] [ AssemblyFlags ] YulBlock ;
+        let assembly_statement_parser = with_noise(
+            terminal("assembly")
+                .ignored()
+                .map(|_| FixedTerminal::<8usize>()),
+        )
+        .then(
+            with_noise(
+                terminal("\"evmasm\"")
+                    .ignored()
+                    .map(|_| FixedTerminal::<8usize>()),
+            )
+            .or_not(),
+        )
+        .then(assembly_flags_parser.clone().or_not())
+        .then(yul_block_parser.clone())
+        .map(|v| Box::new(assembly_statement::_T0::new(v)))
         .boxed();
 
         // ConstructorAttribute = ModifierInvocation | 'payable' | 'internal' | 'public' ;
@@ -2780,7 +2260,72 @@ impl Parsers {
                 .boxed();
 
         // PrimaryExpression = 'payable' ArgumentList | 'type' '(' TypeName ')' | 'new' TypeName | '(' 1…*{ [ Expression ] / ',' } ')' | '[' 1…*{ Expression / ',' } ']' | «Identifier» | Literal | ElementaryTypeWithoutPayable ;
-        let primary_expression_parser = todo!().boxed();
+        let primary_expression_parser = choice((
+            with_noise(
+                terminal("payable")
+                    .ignored()
+                    .map(|_| FixedTerminal::<7usize>()),
+            )
+            .then(argument_list_parser.clone())
+            .map(|v| Box::new(primary_expression::_T0::new(v)))
+            .map(|v| Box::new(primary_expression::PrimaryExpression::_T0(v))),
+            with_noise(
+                terminal("type")
+                    .ignored()
+                    .map(|_| FixedTerminal::<4usize>()),
+            )
+            .then(with_noise(just('(').map(|_| FixedTerminal::<1>())))
+            .then(type_name_parser.clone())
+            .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
+            .map(|v| Box::new(primary_expression::_T1::new(v)))
+            .map(|v| Box::new(primary_expression::PrimaryExpression::_T1(v))),
+            with_noise(terminal("new").ignored().map(|_| FixedTerminal::<3usize>()))
+                .then(type_name_parser.clone())
+                .map(|v| Box::new(primary_expression::_T2::new(v)))
+                .map(|v| Box::new(primary_expression::PrimaryExpression::_T2(v))),
+            with_noise(just('(').map(|_| FixedTerminal::<1>()))
+                .then(
+                    expression_parser
+                        .clone()
+                        .or_not()
+                        .then(
+                            with_noise(just(',').map(|_| FixedTerminal::<1>()))
+                                .then(expression_parser.clone().or_not())
+                                .repeated(),
+                        )
+                        .map(repetition_mapper)
+                        .map(|v| primary_expression::_T4::new(v)),
+                )
+                .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
+                .map(|v| Box::new(primary_expression::_T3::new(v)))
+                .map(|v| Box::new(primary_expression::PrimaryExpression::_T3(v))),
+            with_noise(just('[').map(|_| FixedTerminal::<1>()))
+                .then(
+                    expression_parser
+                        .clone()
+                        .then(
+                            with_noise(just(',').map(|_| FixedTerminal::<1>()))
+                                .then(expression_parser.clone())
+                                .repeated(),
+                        )
+                        .map(repetition_mapper)
+                        .map(|v| primary_expression::_T6::new(v)),
+                )
+                .then(with_noise(just(']').map(|_| FixedTerminal::<1>())))
+                .map(|v| Box::new(primary_expression::_T5::new(v)))
+                .map(|v| Box::new(primary_expression::PrimaryExpression::_T5(v))),
+            identifier_parser
+                .clone()
+                .map(|v| Box::new(primary_expression::PrimaryExpression::Identifier(v))),
+            literal_parser
+                .clone()
+                .map(|v| Box::new(primary_expression::PrimaryExpression::Literal(v))),
+            elementary_type_without_payable_parser.clone().map(|v| {
+                Box::new(primary_expression::PrimaryExpression::ElementaryTypeWithoutPayable(v))
+            }),
+        ))
+        .map(Expression::PrimaryExpression)
+        .boxed();
 
         // ReceiveFunctionAttribute = 'external' | 'payable' | ModifierInvocation | 'virtual' | OverrideSpecifier ;
         let receive_function_attribute_parser = choice((
@@ -2890,34 +2435,6 @@ impl Parsers {
             .map(|v| Box::new(variable_declaration::_T0::new(v)))
             .boxed();
 
-        // YulBlock = '{' { YulStatement } '}' ;
-        yul_block_parser.define(
-            with_noise(just('{').map(|_| FixedTerminal::<1>()))
-                .then(yul_statement_parser.clone().repeated())
-                .then(with_noise(just('}').map(|_| FixedTerminal::<1>())))
-                .map(|v| Box::new(yul_block::_T0::new(v)))
-                .boxed(),
-        );
-
-        // AssemblyStatement = 'assembly' [ '"evmasm"' ] [ AssemblyFlags ] YulBlock ;
-        let assembly_statement_parser = with_noise(
-            terminal("assembly")
-                .ignored()
-                .map(|_| FixedTerminal::<8usize>()),
-        )
-        .then(
-            with_noise(
-                terminal("\"evmasm\"")
-                    .ignored()
-                    .map(|_| FixedTerminal::<8usize>()),
-            )
-            .or_not(),
-        )
-        .then(assembly_flags_parser.clone().or_not())
-        .then(yul_block_parser.clone())
-        .map(|v| Box::new(assembly_statement::_T0::new(v)))
-        .boxed();
-
         // Directive = «PragmaDirective» | ImportDirective | UsingDirective ;
         let directive_parser = choice((
             pragma_directive_parser
@@ -2990,8 +2507,34 @@ impl Parsers {
         .map(|v| Box::new(event_definition::_T0::new(v)))
         .boxed();
 
-        // Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnarySuffixExpression | UnaryPrefixExpression | FunctionCallExpression | FunctionCallOptionsExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
-        expression_parser.define(assignment_expression_parser.boxed());
+        // IndexAccessExpression = Expression '[' [ Expression ] [ ':' [ Expression ] ] ']' ;
+        let index_access_expression_parser = primary_expression_parser
+            .then(
+                with_noise(just('[').map(|_| FixedTerminal::<1>()))
+                    .then(expression_parser.clone().or_not())
+                    .then(
+                        with_noise(just(':').map(|_| FixedTerminal::<1>()))
+                            .then(expression_parser.clone().or_not())
+                            .map(|v| Box::new(index_access_expression::_T1::new(v)))
+                            .or_not(),
+                    )
+                    .then(with_noise(just(']').map(|_| FixedTerminal::<1>())))
+                    .map(|v| Box::new(index_access_expression::Operator::new(v)))
+                    .repeated(),
+            )
+            .map(|(operand, operators)| {
+                if operators.is_empty {
+                    operand
+                } else {
+                    operators.iter().fold(operand, |left, operator| {
+                        Expression::IndexAccessExpression(index_access_expression::E {
+                            left,
+                            operator,
+                        })
+                    })
+                }
+            })
+            .boxed();
 
         // VariableDeclarationTuple = '(' { ',' } VariableDeclaration { ',' [ VariableDeclaration ] } ')' ;
         let variable_declaration_tuple_parser = with_noise(just('(').map(|_| FixedTerminal::<1>()))
@@ -3010,6 +2553,471 @@ impl Parsers {
             .then(with_noise(just(')').map(|_| FixedTerminal::<1>())))
             .map(|v| Box::new(variable_declaration_tuple::_T0::new(v)))
             .boxed();
+
+        // MemberAccessExpression = Expression '.' ( «Identifier» | 'address' ) ;
+        let member_access_expression_parser = index_access_expression_parser
+            .then(
+                with_noise(just('.').map(|_| FixedTerminal::<1>()))
+                    .then(choice((
+                        identifier_parser.clone().map(|v| {
+                            Box::new(
+                                member_access_expression::MemberAccessExpression::Identifier(v),
+                            )
+                        }),
+                        with_noise(
+                            terminal("address")
+                                .ignored()
+                                .map(|_| FixedTerminal::<7usize>()),
+                        )
+                        .map(|v| {
+                            Box::new(member_access_expression::MemberAccessExpression::Address(v))
+                        }),
+                    )))
+                    .map(|v| Box::new(member_access_expression::Operator::new(v)))
+                    .repeated(),
+            )
+            .map(|(operand, operators)| {
+                if operators.is_empty {
+                    operand
+                } else {
+                    operators.iter().fold(operand, |left, operator| {
+                        Expression::MemberAccessExpression(member_access_expression::E {
+                            left,
+                            operator,
+                        })
+                    })
+                }
+            })
+            .boxed();
+
+        // FunctionCallOptionsExpression = Expression '{' 1…*{ NamedArgument / ',' } '}' ;
+        let function_call_options_expression_parser = member_access_expression_parser
+            .then(
+                with_noise(just('{').map(|_| FixedTerminal::<1>()))
+                    .then(
+                        named_argument_parser
+                            .clone()
+                            .then(
+                                with_noise(just(',').map(|_| FixedTerminal::<1>()))
+                                    .then(named_argument_parser.clone())
+                                    .repeated(),
+                            )
+                            .map(repetition_mapper)
+                            .map(|v| function_call_options_expression::_T1::new(v)),
+                    )
+                    .then(with_noise(just('}').map(|_| FixedTerminal::<1>())))
+                    .map(|v| Box::new(function_call_options_expression::Operator::new(v)))
+                    .repeated(),
+            )
+            .map(|(operand, operators)| {
+                if operators.is_empty {
+                    operand
+                } else {
+                    operators.iter().fold(operand, |left, operator| {
+                        Expression::FunctionCallOptionsExpression(
+                            function_call_options_expression::E { left, operator },
+                        )
+                    })
+                }
+            })
+            .boxed();
+
+        // FunctionCallExpression = Expression ArgumentList ;
+        let function_call_expression_parser = function_call_options_expression_parser
+            .then(argument_list_parser.clone().repeated())
+            .map(|(operand, operators)| {
+                if operators.is_empty {
+                    operand
+                } else {
+                    operators.iter().fold(operand, |left, operator| {
+                        Expression::FunctionCallExpression(function_call_expression::E {
+                            left,
+                            operator,
+                        })
+                    })
+                }
+            })
+            .boxed();
+
+        // UnaryPrefixExpression = ( '++' | '--' | '!' | '~' | 'delete' | '-' ) Expression ;
+        let unary_prefix_expression_parser = with_noise(choice::<_, ErrorType>((
+            terminal("!").map(|_| 1usize),
+            terminal("++").map(|_| 2usize),
+            terminal("-").ignore_then(choice((
+                terminal("-").map(|_| 2usize),
+                empty().map(|_| 1usize),
+            ))),
+            terminal("delete").map(|_| 6usize),
+            terminal("~").map(|_| 1usize),
+        )))
+        .repeated()
+        .then(function_call_expression_parser)
+        .map(|(mut operators, operand)| {
+            if operators.is_empty {
+                operand
+            } else {
+                operators.reverse();
+                operators.iter().fold(operand, |right, operator| {
+                    Expression::UnaryPrefixExpression(unary_prefix_expression::E {
+                        operator,
+                        right,
+                    })
+                })
+            }
+        })
+        .boxed();
+
+        // UnarySuffixExpression = Expression ( '++' | '--' ) ;
+        let unary_suffix_expression_parser = unary_prefix_expression_parser
+            .then(
+                with_noise(
+                    choice::<_, ErrorType>((terminal("++").ignored(), terminal("--").ignored()))
+                        .map(|_| FixedTerminal::<2usize>()),
+                )
+                .repeated(),
+            )
+            .map(|(operand, operators)| {
+                if operators.is_empty {
+                    operand
+                } else {
+                    operators.iter().fold(operand, |left, operator| {
+                        Expression::UnarySuffixExpression(unary_suffix_expression::E {
+                            left,
+                            operator,
+                        })
+                    })
+                }
+            })
+            .boxed();
+
+        // ExponentiationExpression = Expression '**' Expression ;
+        let exponentiation_expression_parser = unary_suffix_expression_parser
+            .then(
+                with_noise(terminal("**").ignored().map(|_| FixedTerminal::<2usize>()))
+                    .then(unary_suffix_expression_parser)
+                    .repeated(),
+            )
+            .map(|(next, pairs)| {
+                if pairs.is_empty {
+                    next
+                } else {
+                    pairs.iter().fold(next, |left, (operator, right)| {
+                        Expression::ExponentiationExpression(exponentiation_expression::E {
+                            left,
+                            operator,
+                            right,
+                        })
+                    })
+                }
+            })
+            .boxed();
+
+        // MulDivModExpression = Expression ( '*' | '/' | '%' ) Expression ;
+        let mul_div_mod_expression_parser = exponentiation_expression_parser
+            .then(
+                with_noise(
+                    filter(|&c: &char| c == '*' || c == '/' || c == '%')
+                        .map(|_| FixedTerminal::<1>()),
+                )
+                .then(exponentiation_expression_parser)
+                .repeated(),
+            )
+            .map(|(next, pairs)| {
+                if pairs.is_empty {
+                    next
+                } else {
+                    pairs.iter().fold(next, |left, (operator, right)| {
+                        Expression::MulDivModExpression(mul_div_mod_expression::E {
+                            left,
+                            operator,
+                            right,
+                        })
+                    })
+                }
+            })
+            .boxed();
+
+        // AddSubExpression = Expression ( '+' | '-' ) Expression ;
+        let add_sub_expression_parser = mul_div_mod_expression_parser
+            .then(
+                with_noise(filter(|&c: &char| c == '+' || c == '-').map(|_| FixedTerminal::<1>()))
+                    .then(mul_div_mod_expression_parser)
+                    .repeated(),
+            )
+            .map(|(next, pairs)| {
+                if pairs.is_empty {
+                    next
+                } else {
+                    pairs.iter().fold(next, |left, (operator, right)| {
+                        Expression::AddSubExpression(add_sub_expression::E {
+                            left,
+                            operator,
+                            right,
+                        })
+                    })
+                }
+            })
+            .boxed();
+
+        // ShiftExpression = Expression ( '<<' | '>>' | '>>>' ) Expression ;
+        let shift_expression_parser = add_sub_expression_parser
+            .then(
+                with_noise(choice::<_, ErrorType>((
+                    terminal("<<").map(|_| 2usize),
+                    terminal(">>").ignore_then(choice((
+                        terminal(">").map(|_| 3usize),
+                        empty().map(|_| 2usize),
+                    ))),
+                )))
+                .then(add_sub_expression_parser)
+                .repeated(),
+            )
+            .map(|(next, pairs)| {
+                if pairs.is_empty {
+                    next
+                } else {
+                    pairs.iter().fold(next, |left, (operator, right)| {
+                        Expression::ShiftExpression(shift_expression::E {
+                            left,
+                            operator,
+                            right,
+                        })
+                    })
+                }
+            })
+            .boxed();
+
+        // BitAndExpression = Expression '&' Expression ;
+        let bit_and_expression_parser = shift_expression_parser
+            .then(
+                with_noise(just('&').map(|_| FixedTerminal::<1>()))
+                    .then(shift_expression_parser)
+                    .repeated(),
+            )
+            .map(|(next, pairs)| {
+                if pairs.is_empty {
+                    next
+                } else {
+                    pairs.iter().fold(next, |left, (operator, right)| {
+                        Expression::BitAndExpression(bit_and_expression::E {
+                            left,
+                            operator,
+                            right,
+                        })
+                    })
+                }
+            })
+            .boxed();
+
+        // BitXOrExpression = Expression '^' Expression ;
+        let bit_x_or_expression_parser = bit_and_expression_parser
+            .then(
+                with_noise(just('^').map(|_| FixedTerminal::<1>()))
+                    .then(bit_and_expression_parser)
+                    .repeated(),
+            )
+            .map(|(next, pairs)| {
+                if pairs.is_empty {
+                    next
+                } else {
+                    pairs.iter().fold(next, |left, (operator, right)| {
+                        Expression::BitXOrExpression(bit_x_or_expression::E {
+                            left,
+                            operator,
+                            right,
+                        })
+                    })
+                }
+            })
+            .boxed();
+
+        // BitOrExpression = Expression '|' Expression ;
+        let bit_or_expression_parser = bit_x_or_expression_parser
+            .then(
+                with_noise(just('|').map(|_| FixedTerminal::<1>()))
+                    .then(bit_x_or_expression_parser)
+                    .repeated(),
+            )
+            .map(|(next, pairs)| {
+                if pairs.is_empty {
+                    next
+                } else {
+                    pairs.iter().fold(next, |left, (operator, right)| {
+                        Expression::BitOrExpression(bit_or_expression::E {
+                            left,
+                            operator,
+                            right,
+                        })
+                    })
+                }
+            })
+            .boxed();
+
+        // OrderComparisonExpression = Expression ( '<' | '>' | '<=' | '>=' ) Expression ;
+        let order_comparison_expression_parser = bit_or_expression_parser
+            .then(
+                with_noise(choice::<_, ErrorType>((
+                    terminal("<").ignore_then(choice((
+                        terminal("=").map(|_| 2usize),
+                        empty().map(|_| 1usize),
+                    ))),
+                    terminal(">").ignore_then(choice((
+                        terminal("=").map(|_| 2usize),
+                        empty().map(|_| 1usize),
+                    ))),
+                )))
+                .then(bit_or_expression_parser)
+                .repeated(),
+            )
+            .map(|(next, pairs)| {
+                if pairs.is_empty {
+                    next
+                } else {
+                    pairs.iter().fold(next, |left, (operator, right)| {
+                        Expression::OrderComparisonExpression(order_comparison_expression::E {
+                            left,
+                            operator,
+                            right,
+                        })
+                    })
+                }
+            })
+            .boxed();
+
+        // EqualityComparisonExpression = Expression ( '==' | '!=' ) Expression ;
+        let equality_comparison_expression_parser = order_comparison_expression_parser
+            .then(
+                with_noise(
+                    choice::<_, ErrorType>((terminal("!=").ignored(), terminal("==").ignored()))
+                        .map(|_| FixedTerminal::<2usize>()),
+                )
+                .then(order_comparison_expression_parser)
+                .repeated(),
+            )
+            .map(|(next, pairs)| {
+                if pairs.is_empty {
+                    next
+                } else {
+                    pairs.iter().fold(next, |left, (operator, right)| {
+                        Expression::EqualityComparisonExpression(
+                            equality_comparison_expression::E {
+                                left,
+                                operator,
+                                right,
+                            },
+                        )
+                    })
+                }
+            })
+            .boxed();
+
+        // AndExpression = Expression '&&' Expression ;
+        let and_expression_parser = equality_comparison_expression_parser
+            .then(
+                with_noise(terminal("&&").ignored().map(|_| FixedTerminal::<2usize>()))
+                    .then(equality_comparison_expression_parser)
+                    .repeated(),
+            )
+            .map(|(next, pairs)| {
+                if pairs.is_empty {
+                    next
+                } else {
+                    pairs.iter().fold(next, |left, (operator, right)| {
+                        Expression::AndExpression(and_expression::E {
+                            left,
+                            operator,
+                            right,
+                        })
+                    })
+                }
+            })
+            .boxed();
+
+        // OrExpression = Expression '||' Expression ;
+        let or_expression_parser = and_expression_parser
+            .then(
+                with_noise(terminal("||").ignored().map(|_| FixedTerminal::<2usize>()))
+                    .then(and_expression_parser)
+                    .repeated(),
+            )
+            .map(|(next, pairs)| {
+                if pairs.is_empty {
+                    next
+                } else {
+                    pairs.iter().fold(next, |left, (operator, right)| {
+                        Expression::OrExpression(or_expression::E {
+                            left,
+                            operator,
+                            right,
+                        })
+                    })
+                }
+            })
+            .boxed();
+
+        // ConditionalExpression = Expression '?' Expression ':' Expression ;
+        let conditional_expression_parser = or_expression_parser
+            .then(
+                with_noise(just('?').map(|_| FixedTerminal::<1>()))
+                    .then(expression_parser.clone())
+                    .then(with_noise(just(':').map(|_| FixedTerminal::<1>())))
+                    .then(expression_parser.clone())
+                    .map(|v| Box::new(conditional_expression::_T1::new(v)))
+                    .repeated(),
+            )
+            .map(|(operand, operators)| {
+                if operators.is_empty {
+                    operand
+                } else {
+                    operators.iter().fold(operand, |left, operator| {
+                        Expression::ConditionalExpression(conditional_expression::E {
+                            left,
+                            operator,
+                        })
+                    })
+                }
+            })
+            .boxed();
+
+        // AssignmentExpression = Expression ( '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ) Expression ;
+        let assignment_expression_parser = conditional_expression_parser
+            .then(
+                with_noise(choice::<_, ErrorType>((
+                    terminal("%=").map(|_| 2usize),
+                    terminal("&=").map(|_| 2usize),
+                    terminal("*=").map(|_| 2usize),
+                    terminal("+=").map(|_| 2usize),
+                    terminal("-=").map(|_| 2usize),
+                    terminal("/=").map(|_| 2usize),
+                    terminal("<<=").map(|_| 3usize),
+                    terminal("=").map(|_| 1usize),
+                    terminal(">>").ignore_then(choice((
+                        terminal("=").map(|_| 3usize),
+                        terminal(">=").map(|_| 4usize),
+                    ))),
+                    terminal("^=").map(|_| 2usize),
+                    terminal("|=").map(|_| 2usize),
+                )))
+                .then(conditional_expression_parser)
+                .repeated(),
+            )
+            .map(|(next, pairs)| {
+                if pairs.is_empty {
+                    next
+                } else {
+                    pairs.iter().fold(next, |left, (operator, right)| {
+                        Expression::AssignmentExpression(assignment_expression::E {
+                            left,
+                            operator,
+                            right,
+                        })
+                    })
+                }
+            })
+            .boxed();
+
+        // Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnarySuffixExpression | UnaryPrefixExpression | FunctionCallExpression | FunctionCallOptionsExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
+        expression_parser.define(assignment_expression_parser.boxed());
 
         // ConstantDefinition = TypeName 'constant' «Identifier» '=' Expression ';' ;
         let constant_definition_parser = type_name_parser
@@ -3545,119 +3553,86 @@ impl Parsers {
             .boxed();
 
         Self {
-            ascii_escape: ascii_escape_parser,
-            boolean_literal: boolean_literal_parser,
             comment: comment_parser,
             decimal_integer: decimal_integer_parser,
             fixed_bytes_type: fixed_bytes_type_parser,
             fixed_type: fixed_type_parser,
-            hex_character: hex_character_parser,
-            identifier_start: identifier_start_parser,
-            line_comment: line_comment_parser,
-            number_unit: number_unit_parser,
-            pragma_directive: pragma_directive_parser,
-            reserved_keyword: reserved_keyword_parser,
-            signed_integer_type: signed_integer_type_parser,
-            whitespace: whitespace_parser,
-            yul_decimal_number_literal: yul_decimal_number_literal_parser,
-            yul_evm_builtin_function_name: yul_evm_builtin_function_name_parser,
-            yul_hex_literal: yul_hex_literal_parser,
-            yul_keyword: yul_keyword_parser,
-            decimal_exponent: decimal_exponent_parser,
-            decimal_float: decimal_float_parser,
             hex_byte_escape: hex_byte_escape_parser,
             hex_number: hex_number_parser,
-            ignore: ignore_parser,
-            identifier_part: identifier_part_parser,
+            line_comment: line_comment_parser,
             possibly_separated_pairs_of_hex_digits: possibly_separated_pairs_of_hex_digits_parser,
-            ufixed_type: ufixed_type_parser,
-            unicode_escape: unicode_escape_parser,
-            unsigned_integer_type: unsigned_integer_type_parser,
-            yul_reserved_word: yul_reserved_word_parser,
-            add_sub_expression: add_sub_expression_parser,
-            and_expression: and_expression_parser,
-            assignment_expression: assignment_expression_parser,
-            bit_and_expression: bit_and_expression_parser,
-            bit_or_expression: bit_or_expression_parser,
-            bit_x_or_expression: bit_x_or_expression_parser,
-            break_statement: break_statement_parser,
-            conditional_expression: conditional_expression_parser,
-            continue_statement: continue_statement_parser,
-            data_location: data_location_parser,
-            decimal_number: decimal_number_parser,
-            elementary_type: elementary_type_parser,
-            equality_comparison_expression: equality_comparison_expression_parser,
-            escape_sequence: escape_sequence_parser,
-            exponentiation_expression: exponentiation_expression_parser,
-            hex_string_literal: hex_string_literal_parser,
-            index_access_expression: index_access_expression_parser,
-            keyword: keyword_parser,
-            mul_div_mod_expression: mul_div_mod_expression_parser,
-            or_expression: or_expression_parser,
-            order_comparison_expression: order_comparison_expression_parser,
-            positional_argument_list: positional_argument_list_parser,
+            pragma_directive: pragma_directive_parser,
             raw_identifier: raw_identifier_parser,
-            shift_expression: shift_expression_parser,
-            state_mutability_specifier: state_mutability_specifier_parser,
-            unary_prefix_expression: unary_prefix_expression_parser,
-            unary_suffix_expression: unary_suffix_expression_parser,
-            unchecked_block: unchecked_block_parser,
-            visibility_specifier: visibility_specifier_parser,
-            yul_break_statement: yul_break_statement_parser,
-            yul_continue_statement: yul_continue_statement_parser,
-            yul_leave_statement: yul_leave_statement_parser,
+            signed_integer_type: signed_integer_type_parser,
+            unicode_escape: unicode_escape_parser,
+            whitespace: whitespace_parser,
+            yul_decimal_number_literal: yul_decimal_number_literal_parser,
+            yul_hex_literal: yul_hex_literal_parser,
+            decimal_exponent: decimal_exponent_parser,
+            decimal_float: decimal_float_parser,
+            escape_sequence: escape_sequence_parser,
+            hex_string_literal: hex_string_literal_parser,
+            ignore: ignore_parser,
+            ufixed_type: ufixed_type_parser,
+            unsigned_integer_type: unsigned_integer_type_parser,
+            yul_identifier: yul_identifier_parser,
+            break_statement: break_statement_parser,
+            continue_statement: continue_statement_parser,
+            decimal_number: decimal_number_parser,
             double_quoted_ascii_string_literal: double_quoted_ascii_string_literal_parser,
             double_quoted_unicode_string_literal: double_quoted_unicode_string_literal_parser,
+            elementary_type: elementary_type_parser,
+            keyword: keyword_parser,
+            positional_argument_list: positional_argument_list_parser,
+            single_quoted_ascii_string_literal: single_quoted_ascii_string_literal_parser,
+            single_quoted_unicode_string_literal: single_quoted_unicode_string_literal_parser,
+            unchecked_block: unchecked_block_parser,
+            yul_function_call: yul_function_call_parser,
+            yul_function_definition: yul_function_definition_parser,
+            yul_path: yul_path_parser,
+            ascii_string_literal: ascii_string_literal_parser,
+            assembly_flags: assembly_flags_parser,
             elementary_type_with_payable: elementary_type_with_payable_parser,
             elementary_type_without_payable: elementary_type_without_payable_parser,
             numeric_literal: numeric_literal_parser,
             reserved_word: reserved_word_parser,
-            single_quoted_ascii_string_literal: single_quoted_ascii_string_literal_parser,
-            single_quoted_unicode_string_literal: single_quoted_unicode_string_literal_parser,
-            yul_identifier: yul_identifier_parser,
-            ascii_string_literal: ascii_string_literal_parser,
-            assembly_flags: assembly_flags_parser,
-            identifier: identifier_parser,
             unicode_string_literal: unicode_string_literal_parser,
-            yul_function_call: yul_function_call_parser,
-            yul_function_definition: yul_function_definition_parser,
-            yul_path: yul_path_parser,
-            enum_definition: enum_definition_parser,
-            identifier_path: identifier_path_parser,
+            identifier: identifier_parser,
             import_path: import_path_parser,
             literal: literal_parser,
-            member_access_expression: member_access_expression_parser,
+            yul_literal: yul_literal_parser,
+            enum_definition: enum_definition_parser,
+            identifier_path: identifier_path_parser,
             named_argument: named_argument_parser,
             parameter_declaration: parameter_declaration_parser,
             selected_import: selected_import_parser,
+            simple_import_directive: simple_import_directive_parser,
+            star_import_directive: star_import_directive_parser,
             user_defined_value_type_definition: user_defined_value_type_definition_parser,
-            yul_literal: yul_literal_parser,
-            function_call_options_expression: function_call_options_expression_parser,
+            yul_expression: yul_expression_parser,
             mapping_type: mapping_type_parser,
             named_argument_list: named_argument_list_parser,
             non_empty_parameter_list: non_empty_parameter_list_parser,
             override_specifier: override_specifier_parser,
             parameter_list: parameter_list_parser,
             selecting_import_directive: selecting_import_directive_parser,
-            simple_import_directive: simple_import_directive_parser,
-            star_import_directive: star_import_directive_parser,
-            yul_expression: yul_expression_parser,
+            yul_assignment: yul_assignment_parser,
+            yul_for_statement: yul_for_statement_parser,
+            yul_if_statement: yul_if_statement_parser,
+            yul_switch_statement: yul_switch_statement_parser,
+            yul_variable_declaration: yul_variable_declaration_parser,
             argument_list: argument_list_parser,
             catch_clause: catch_clause_parser,
             function_type: function_type_parser,
             import_directive: import_directive_parser,
             method_attribute: method_attribute_parser,
             state_variable_attribute: state_variable_attribute_parser,
-            yul_assignment: yul_assignment_parser,
-            yul_for_statement: yul_for_statement_parser,
-            yul_if_statement: yul_if_statement_parser,
-            yul_switch_statement: yul_switch_statement_parser,
-            yul_variable_declaration: yul_variable_declaration_parser,
-            function_call_expression: function_call_expression_parser,
+            yul_statement: yul_statement_parser,
             inheritance_specifier: inheritance_specifier_parser,
             modifier_invocation: modifier_invocation_parser,
             type_name: type_name_parser,
-            yul_statement: yul_statement_parser,
+            yul_block: yul_block_parser,
+            assembly_statement: assembly_statement_parser,
             constructor_attribute: constructor_attribute_parser,
             error_parameter: error_parameter_parser,
             event_parameter: event_parameter_parser,
@@ -3669,13 +3644,30 @@ impl Parsers {
             struct_definition: struct_definition_parser,
             using_directive: using_directive_parser,
             variable_declaration: variable_declaration_parser,
-            yul_block: yul_block_parser,
-            assembly_statement: assembly_statement_parser,
             directive: directive_parser,
             error_definition: error_definition_parser,
             event_definition: event_definition_parser,
-            expression: expression_parser,
+            index_access_expression: index_access_expression_parser,
             variable_declaration_tuple: variable_declaration_tuple_parser,
+            member_access_expression: member_access_expression_parser,
+            function_call_options_expression: function_call_options_expression_parser,
+            function_call_expression: function_call_expression_parser,
+            unary_prefix_expression: unary_prefix_expression_parser,
+            unary_suffix_expression: unary_suffix_expression_parser,
+            exponentiation_expression: exponentiation_expression_parser,
+            mul_div_mod_expression: mul_div_mod_expression_parser,
+            add_sub_expression: add_sub_expression_parser,
+            shift_expression: shift_expression_parser,
+            bit_and_expression: bit_and_expression_parser,
+            bit_x_or_expression: bit_x_or_expression_parser,
+            bit_or_expression: bit_or_expression_parser,
+            order_comparison_expression: order_comparison_expression_parser,
+            equality_comparison_expression: equality_comparison_expression_parser,
+            and_expression: and_expression_parser,
+            or_expression: or_expression_parser,
+            conditional_expression: conditional_expression_parser,
+            assignment_expression: assignment_expression_parser,
+            expression: expression_parser,
             constant_definition: constant_definition_parser,
             do_while_statement: do_while_statement_parser,
             emit_statement: emit_statement_parser,

@@ -17,12 +17,6 @@ where
     trailing: Ignore,
 }
 
-/// «AsciiEscape» = 'n' | 'r' | 't' | '\'' | '"' | '\\' | '\u{a}' | '\u{d}' ;
-pub type AsciiEscape = FixedTerminal<1>;
-
-/// «BooleanLiteral» = 'true' | 'false' ;
-pub type BooleanLiteral = usize;
-
 /// «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
 pub type Comment = Box<comment::_T0>;
 pub mod comment {
@@ -87,111 +81,6 @@ pub mod fixed_type {
     }
 }
 
-/// «HexCharacter» = '0'…'9' | 'a'…'f' | 'A'…'F' ;
-pub type HexCharacter = FixedTerminal<1>;
-
-/// «IdentifierStart» = '_' | '$' | 'a'…'z' | 'A'…'Z' ;
-pub type IdentifierStart = FixedTerminal<1>;
-
-/// «LineComment» = '//' { ¬( '\u{a}' | '\u{d}' ) } ;
-pub type LineComment = Box<line_comment::_T0>;
-pub mod line_comment {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct _T0 {
-        pub slash_slash: FixedTerminal<2usize>,
-        pub _1: usize,
-    }
-}
-
-/// «NumberUnit» = 'wei' | 'gwei' | 'ether' | 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'years' ;
-pub type NumberUnit = usize;
-
-/// «PragmaDirective» = 'pragma' 1…*{ ¬';' } ';' ;
-pub type PragmaDirective = Box<pragma_directive::_T0>;
-pub mod pragma_directive {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct _T0 {
-        pub pragma: FixedTerminal<6usize>,
-        pub not_semicolon_chars: usize,
-        pub semicolon_char: FixedTerminal<1>,
-    }
-}
-
-/// «ReservedKeyword» = 'after' | 'alias' | 'apply' | 'auto' | 'byte' | 'case' | 'copyof' | 'default' | 'define' | 'final' | 'implements' | 'in' | 'inline' | 'let' | 'macro' | 'match' | 'mutable' | 'null' | 'of' | 'partial' | 'promise' | 'reference' | 'relocatable' | 'sealed' | 'sizeof' | 'static' | 'supports' | 'switch' | 'typedef' | 'typeof' | 'var' ;
-pub type ReservedKeyword = usize;
-
-/// «SignedIntegerType» = 'int' ( '8' | '16' | '24' | '32' | '40' | '48' | '56' | '64' | '72' | '80' | '88' | '96' | '104' | '112' | '120' | '128' | '136' | '144' | '152' | '160' | '168' | '176' | '184' | '192' | '200' | '208' | '216' | '224' | '232' | '240' | '248' | '256' ) ;
-pub type SignedIntegerType = Box<signed_integer_type::_T0>;
-pub mod signed_integer_type {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct _T0 {
-        pub int: FixedTerminal<3usize>,
-        pub _1: usize,
-    }
-}
-
-/// «Whitespace» = 1…*{ '\u{20}' | '\u{9}' | '\u{d}' | '\u{a}' } ;
-pub type Whitespace = usize;
-
-/// «YulDecimalNumberLiteral» = '0' | '1'…'9' { '0'…'9' } ;
-pub type YulDecimalNumberLiteral = Box<yul_decimal_number_literal::YulDecimalNumberLiteral>;
-pub mod yul_decimal_number_literal {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct _T0 {
-        pub _0: FixedTerminal<1>,
-        pub _1: usize,
-    }
-    pub enum YulDecimalNumberLiteral {
-        ZeroChar(FixedTerminal<1>),
-        _T0(Box<yul_decimal_number_literal::_T0>),
-    }
-}
-
-/// «YulEVMBuiltinFunctionName» = 'stop' | 'add' | 'sub' | 'mul' | 'div' | 'sdiv' | 'mod' | 'smod' | 'exp' | 'not' | 'lt' | 'gt' | 'slt' | 'sgt' | 'eq' | 'iszero' | 'and' | 'or' | 'xor' | 'byte' | 'shl' | 'shr' | 'sar' | 'addmod' | 'mulmod' | 'signextend' | 'keccak256' | 'pop' | 'mload' | 'mstore' | 'mstore8' | 'sload' | 'sstore' | 'msize' | 'gas' | 'address' | 'balance' | 'selfbalance' | 'caller' | 'callvalue' | 'calldataload' | 'calldatasize' | 'calldatacopy' | 'extcodesize' | 'extcodecopy' | 'returndatasize' | 'returndatacopy' | 'extcodehash' | 'create' | 'create2' | 'call' | 'callcode' | 'delegatecall' | 'staticcall' | 'return' | 'revert' | 'selfdestruct' | 'invalid' | 'log0' | 'log1' | 'log2' | 'log3' | 'log4' | 'chainid' | 'origin' | 'gasprice' | 'Blockhash' | 'coinbase' | 'timestamp' | 'number' | 'difficulty' | 'gaslimit' | 'basefee' ;
-pub type YulEvmBuiltinFunctionName = usize;
-
-/// «YulHexLiteral» = '0x' 1…*{ '0'…'9' | 'a'…'f' | 'A'…'F' } ;
-pub type YulHexLiteral = Box<yul_hex_literal::_T0>;
-pub mod yul_hex_literal {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct _T0 {
-        pub zero_x: FixedTerminal<2usize>,
-        pub _1: usize,
-    }
-}
-
-/// «YulKeyword» = 'break' | 'case' | 'continue' | 'default' | 'for' | 'function' | 'if' | 'leave' | 'let' | 'switch' | 'hex' ;
-pub type YulKeyword = usize;
-
-/// «DecimalExponent» = ( 'e' | 'E' ) [ '-' ] «DecimalInteger» ;
-pub type DecimalExponent = Box<decimal_exponent::_T0>;
-pub mod decimal_exponent {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct _T0 {
-        pub _0: FixedTerminal<1>,
-        pub minus_char: Option<FixedTerminal<1>>,
-        pub decimal_integer: DecimalInteger,
-    }
-}
-
-/// «DecimalFloat» = [ «DecimalInteger» ] '.' «DecimalInteger» ;
-pub type DecimalFloat = Box<decimal_float::_T0>;
-pub mod decimal_float {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct _T0 {
-        pub decimal_integer_1: Option<DecimalInteger>,
-        pub period_char: FixedTerminal<1>,
-        pub decimal_integer_2: DecimalInteger,
-    }
-}
-
 /// «HexByteEscape» = 'x' 2…2*{ «HexCharacter» } ;
 pub type HexByteEscape = Box<hex_byte_escape::_T0>;
 pub mod hex_byte_escape {
@@ -219,20 +108,16 @@ pub mod hex_number {
     }
 }
 
-/// «IGNORE» = { «Whitespace» | «Comment» | «LineComment» } ;
-pub type Ignore = Vec<Box<ignore::Ignore>>;
-pub mod ignore {
+/// «LineComment» = '//' { ¬( '\u{a}' | '\u{d}' ) } ;
+pub type LineComment = Box<line_comment::_T0>;
+pub mod line_comment {
     #[allow(unused_imports)]
     use super::*;
-    pub enum Ignore {
-        Whitespace(Whitespace),
-        Comment(Comment),
-        LineComment(LineComment),
+    pub struct _T0 {
+        pub slash_slash: FixedTerminal<2usize>,
+        pub _1: usize,
     }
 }
-
-/// «IdentifierPart» = «IdentifierStart» | '0'…'9' ;
-pub type IdentifierPart = FixedTerminal<1>;
 
 /// «PossiblySeparatedPairsOfHexDigits» = 1…*{ 2…2*{ «HexCharacter» } / [ '_' ] } ;
 pub type PossiblySeparatedPairsOfHexDigits = possibly_separated_pairs_of_hex_digits::_T0;
@@ -245,14 +130,37 @@ pub mod possibly_separated_pairs_of_hex_digits {
     }
 }
 
-/// «UfixedType» = 'u' «FixedType» ;
-pub type UfixedType = Box<ufixed_type::_T0>;
-pub mod ufixed_type {
+/// «PragmaDirective» = 'pragma' 1…*{ ¬';' } ';' ;
+pub type PragmaDirective = Box<pragma_directive::_T0>;
+pub mod pragma_directive {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct _T0 {
+        pub pragma: FixedTerminal<6usize>,
+        pub not_semicolon_chars: usize,
+        pub semicolon_char: FixedTerminal<1>,
+    }
+}
+
+/// «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;
+pub type RawIdentifier = Box<raw_identifier::_T0>;
+pub mod raw_identifier {
     #[allow(unused_imports)]
     use super::*;
     pub struct _T0 {
         pub _0: FixedTerminal<1>,
-        pub fixed_type: FixedType,
+        pub _1: usize,
+    }
+}
+
+/// «SignedIntegerType» = 'int' ( '8' | '16' | '24' | '32' | '40' | '48' | '56' | '64' | '72' | '80' | '88' | '96' | '104' | '112' | '120' | '128' | '136' | '144' | '152' | '160' | '168' | '176' | '184' | '192' | '200' | '208' | '216' | '224' | '232' | '240' | '248' | '256' ) ;
+pub type SignedIntegerType = Box<signed_integer_type::_T0>;
+pub mod signed_integer_type {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct _T0 {
+        pub int: FixedTerminal<3usize>,
+        pub _1: usize,
     }
 }
 
@@ -267,173 +175,56 @@ pub mod unicode_escape {
     }
 }
 
-/// «UnsignedIntegerType» = 'u' «SignedIntegerType» ;
-pub type UnsignedIntegerType = Box<unsigned_integer_type::_T0>;
-pub mod unsigned_integer_type {
+/// «Whitespace» = 1…*{ '\u{20}' | '\u{9}' | '\u{d}' | '\u{a}' } ;
+pub type Whitespace = usize;
+
+/// «YulDecimalNumberLiteral» = '0' | '1'…'9' { '0'…'9' } ;
+pub type YulDecimalNumberLiteral = Box<yul_decimal_number_literal::YulDecimalNumberLiteral>;
+pub mod yul_decimal_number_literal {
     #[allow(unused_imports)]
     use super::*;
     pub struct _T0 {
         pub _0: FixedTerminal<1>,
-        pub signed_integer_type: SignedIntegerType,
+        pub _1: usize,
+    }
+    pub enum YulDecimalNumberLiteral {
+        ZeroChar(FixedTerminal<1>),
+        _T0(Box<yul_decimal_number_literal::_T0>),
     }
 }
 
-/// «YulReservedWord» = «YulKeyword» | «YulEVMBuiltinFunctionName» | «BooleanLiteral» ;
-pub type YulReservedWord = usize;
-
-/// AddSubExpression = Expression ( '+' | '-' ) Expression ;
-pub type AddSubExpression = Expression;
-pub mod add_sub_expression {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct E {
-        pub left: Expression,
-        pub operator: WithNoise<FixedTerminal<1>>,
-        pub right: Expression,
-    }
-}
-
-/// AndExpression = Expression '&&' Expression ;
-pub type AndExpression = Expression;
-pub mod and_expression {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct E {
-        pub left: Expression,
-        pub operator: WithNoise<FixedTerminal<2usize>>,
-        pub right: Expression,
-    }
-}
-
-/// AssignmentExpression = Expression ( '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ) Expression ;
-pub type AssignmentExpression = Expression;
-pub mod assignment_expression {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct E {
-        pub left: Expression,
-        pub operator: WithNoise<usize>,
-        pub right: Expression,
-    }
-}
-
-/// BitAndExpression = Expression '&' Expression ;
-pub type BitAndExpression = Expression;
-pub mod bit_and_expression {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct E {
-        pub left: Expression,
-        pub operator: WithNoise<FixedTerminal<1>>,
-        pub right: Expression,
-    }
-}
-
-/// BitOrExpression = Expression '|' Expression ;
-pub type BitOrExpression = Expression;
-pub mod bit_or_expression {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct E {
-        pub left: Expression,
-        pub operator: WithNoise<FixedTerminal<1>>,
-        pub right: Expression,
-    }
-}
-
-/// BitXOrExpression = Expression '^' Expression ;
-pub type BitXOrExpression = Expression;
-pub mod bit_x_or_expression {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct E {
-        pub left: Expression,
-        pub operator: WithNoise<FixedTerminal<1>>,
-        pub right: Expression,
-    }
-}
-
-/// BreakStatement = 'break' ';' ;
-pub type BreakStatement = Box<break_statement::_T0>;
-pub mod break_statement {
+/// «YulHexLiteral» = '0x' 1…*{ '0'…'9' | 'a'…'f' | 'A'…'F' } ;
+pub type YulHexLiteral = Box<yul_hex_literal::_T0>;
+pub mod yul_hex_literal {
     #[allow(unused_imports)]
     use super::*;
     pub struct _T0 {
-        pub r#break: WithNoise<FixedTerminal<5usize>>,
-        pub semicolon_char: WithNoise<FixedTerminal<1>>,
+        pub zero_x: FixedTerminal<2usize>,
+        pub _1: usize,
     }
 }
 
-/// ConditionalExpression = Expression '?' Expression ':' Expression ;
-pub type ConditionalExpression = Expression;
-pub mod conditional_expression {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct _T1 {
-        pub question_char: WithNoise<FixedTerminal<1>>,
-        pub expression_1: Expression,
-        pub colon_char: WithNoise<FixedTerminal<1>>,
-        pub expression_2: Expression,
-    }
-    pub struct E {
-        pub left: Expression,
-        pub operator: Box<conditional_expression::_T1>,
-    }
-}
-
-/// ContinueStatement = 'continue' ';' ;
-pub type ContinueStatement = Box<continue_statement::_T0>;
-pub mod continue_statement {
+/// «DecimalExponent» = ( 'e' | 'E' ) [ '-' ] «DecimalInteger» ;
+pub type DecimalExponent = Box<decimal_exponent::_T0>;
+pub mod decimal_exponent {
     #[allow(unused_imports)]
     use super::*;
     pub struct _T0 {
-        pub r#continue: WithNoise<FixedTerminal<8usize>>,
-        pub semicolon_char: WithNoise<FixedTerminal<1>>,
+        pub _0: FixedTerminal<1>,
+        pub minus_char: Option<FixedTerminal<1>>,
+        pub decimal_integer: DecimalInteger,
     }
 }
 
-/// DataLocation = 'memory' | 'storage' | 'calldata' ;
-pub type DataLocation = WithNoise<usize>;
-
-/// «DecimalNumber» = ( «DecimalInteger» | «DecimalFloat» ) [ «DecimalExponent» ] ;
-pub type DecimalNumber = Box<decimal_number::_T0>;
-pub mod decimal_number {
+/// «DecimalFloat» = [ «DecimalInteger» ] '.' «DecimalInteger» ;
+pub type DecimalFloat = Box<decimal_float::_T0>;
+pub mod decimal_float {
     #[allow(unused_imports)]
     use super::*;
-    pub enum DecimalNumber {
-        DecimalInteger(DecimalInteger),
-        DecimalFloat(DecimalFloat),
-    }
     pub struct _T0 {
-        pub decimal_number: Box<decimal_number::DecimalNumber>,
-        pub decimal_exponent: Option<DecimalExponent>,
-    }
-}
-
-/// ElementaryType = 'bool' | 'string' | 'bytes' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | «FixedType» | «UfixedType» ;
-pub type ElementaryType = Box<elementary_type::ElementaryType>;
-pub mod elementary_type {
-    #[allow(unused_imports)]
-    use super::*;
-    pub enum ElementaryType {
-        _0(WithNoise<usize>),
-        SignedIntegerType(SignedIntegerType),
-        UnsignedIntegerType(UnsignedIntegerType),
-        FixedBytesType(FixedBytesType),
-        FixedType(FixedType),
-        UfixedType(UfixedType),
-    }
-}
-
-/// EqualityComparisonExpression = Expression ( '==' | '!=' ) Expression ;
-pub type EqualityComparisonExpression = Expression;
-pub mod equality_comparison_expression {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct E {
-        pub left: Expression,
-        pub operator: WithNoise<FixedTerminal<2usize>>,
-        pub right: Expression,
+        pub decimal_integer_1: Option<DecimalInteger>,
+        pub period_char: FixedTerminal<1>,
+        pub decimal_integer_2: DecimalInteger,
     }
 }
 
@@ -450,18 +241,6 @@ pub mod escape_sequence {
     pub struct _T0 {
         pub backslash_char: FixedTerminal<1>,
         pub escape_sequence: Box<escape_sequence::EscapeSequence>,
-    }
-}
-
-/// ExponentiationExpression = Expression '**' Expression ;
-pub type ExponentiationExpression = Expression;
-pub mod exponentiation_expression {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct E {
-        pub left: Expression,
-        pub operator: WithNoise<FixedTerminal<2usize>>,
-        pub right: Expression,
     }
 }
 
@@ -490,158 +269,79 @@ pub mod hex_string_literal {
     }
 }
 
-/// IndexAccessExpression = Expression '[' [ Expression ] [ ':' [ Expression ] ] ']' ;
-pub type IndexAccessExpression = Expression;
-pub mod index_access_expression {
+/// «IGNORE» = { «Whitespace» | «Comment» | «LineComment» } ;
+pub type Ignore = Vec<Box<ignore::Ignore>>;
+pub mod ignore {
     #[allow(unused_imports)]
     use super::*;
-    pub struct _T1 {
-        pub colon_char: WithNoise<FixedTerminal<1>>,
-        pub expression: Option<Expression>,
-    }
-    pub struct Operator {
-        pub open_bracket_char: WithNoise<FixedTerminal<1>>,
-        pub expression_2: Option<Expression>,
-        pub _t1: Option<Box<index_access_expression::_T1>>,
-        pub close_bracket_char: WithNoise<FixedTerminal<1>>,
-    }
-    pub struct E {
-        pub left: Expression,
-        pub operator: Box<index_access_expression::Operator>,
+    pub enum Ignore {
+        Whitespace(Whitespace),
+        Comment(Comment),
+        LineComment(LineComment),
     }
 }
 
-/// «Keyword» = 'pragma' | 'abstract' | 'anonymous' | 'address' | 'as' | 'assembly' | 'bool' | 'break' | 'bytes' | 'calldata' | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum' | 'event' | 'external' | 'fallback' | 'false' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import' | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override' | 'payable' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct' | 'true' | 'try' | 'type' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | 'fixed' | 'ufixed' ;
-pub type Keyword = Box<keyword::Keyword>;
-pub mod keyword {
-    #[allow(unused_imports)]
-    use super::*;
-    pub enum Keyword {
-        _0(usize),
-        SignedIntegerType(SignedIntegerType),
-        UnsignedIntegerType(UnsignedIntegerType),
-        FixedBytesType(FixedBytesType),
-        _4(usize),
-    }
-}
-
-/// MulDivModExpression = Expression ( '*' | '/' | '%' ) Expression ;
-pub type MulDivModExpression = Expression;
-pub mod mul_div_mod_expression {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct E {
-        pub left: Expression,
-        pub operator: WithNoise<FixedTerminal<1>>,
-        pub right: Expression,
-    }
-}
-
-/// OrExpression = Expression '||' Expression ;
-pub type OrExpression = Expression;
-pub mod or_expression {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct E {
-        pub left: Expression,
-        pub operator: WithNoise<FixedTerminal<2usize>>,
-        pub right: Expression,
-    }
-}
-
-/// OrderComparisonExpression = Expression ( '<' | '>' | '<=' | '>=' ) Expression ;
-pub type OrderComparisonExpression = Expression;
-pub mod order_comparison_expression {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct E {
-        pub left: Expression,
-        pub operator: WithNoise<usize>,
-        pub right: Expression,
-    }
-}
-
-/// PositionalArgumentList = 1…*{ Expression / ',' } ;
-pub type PositionalArgumentList = positional_argument_list::_T0;
-pub mod positional_argument_list {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct _T0 {
-        pub elements: Vec<Expression>,
-        pub separators: Vec<WithNoise<FixedTerminal<1>>>,
-    }
-}
-
-/// «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;
-pub type RawIdentifier = Box<raw_identifier::_T0>;
-pub mod raw_identifier {
+/// «UfixedType» = 'u' «FixedType» ;
+pub type UfixedType = Box<ufixed_type::_T0>;
+pub mod ufixed_type {
     #[allow(unused_imports)]
     use super::*;
     pub struct _T0 {
         pub _0: FixedTerminal<1>,
-        pub _1: usize,
+        pub fixed_type: FixedType,
     }
 }
 
-/// ShiftExpression = Expression ( '<<' | '>>' | '>>>' ) Expression ;
-pub type ShiftExpression = Expression;
-pub mod shift_expression {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct E {
-        pub left: Expression,
-        pub operator: WithNoise<usize>,
-        pub right: Expression,
-    }
-}
-
-/// StateMutabilitySpecifier = 'pure' | 'view' | 'payable' ;
-pub type StateMutabilitySpecifier = WithNoise<usize>;
-
-/// UnaryPrefixExpression = ( '++' | '--' | '!' | '~' | 'delete' | '-' ) Expression ;
-pub type UnaryPrefixExpression = Expression;
-pub mod unary_prefix_expression {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct E {
-        pub operator: WithNoise<usize>,
-        pub right: Expression,
-    }
-}
-
-/// UnarySuffixExpression = Expression ( '++' | '--' ) ;
-pub type UnarySuffixExpression = Expression;
-pub mod unary_suffix_expression {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct E {
-        pub left: Expression,
-        pub operator: WithNoise<FixedTerminal<2usize>>,
-    }
-}
-
-/// UncheckedBlock = 'unchecked' Block ;
-pub type UncheckedBlock = Box<unchecked_block::_T0>;
-pub mod unchecked_block {
+/// «UnsignedIntegerType» = 'u' «SignedIntegerType» ;
+pub type UnsignedIntegerType = Box<unsigned_integer_type::_T0>;
+pub mod unsigned_integer_type {
     #[allow(unused_imports)]
     use super::*;
     pub struct _T0 {
-        pub unchecked: WithNoise<FixedTerminal<9usize>>,
-        pub block: Block,
+        pub _0: FixedTerminal<1>,
+        pub signed_integer_type: SignedIntegerType,
     }
 }
 
-/// VisibilitySpecifier = 'internal' | 'external' | 'private' | 'public' ;
-pub type VisibilitySpecifier = WithNoise<usize>;
+/// «YulIdentifier» = «RawIdentifier» - «YulReservedWord» ;
+pub type YulIdentifier = RawIdentifier;
 
-/// YulBreakStatement = 'break' ;
-pub type YulBreakStatement = WithNoise<FixedTerminal<5usize>>;
+/// BreakStatement = 'break' ';' ;
+pub type BreakStatement = Box<break_statement::_T0>;
+pub mod break_statement {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct _T0 {
+        pub r#break: WithNoise<FixedTerminal<5usize>>,
+        pub semicolon_char: WithNoise<FixedTerminal<1>>,
+    }
+}
 
-/// YulContinueStatement = 'continue' ;
-pub type YulContinueStatement = WithNoise<FixedTerminal<8usize>>;
+/// ContinueStatement = 'continue' ';' ;
+pub type ContinueStatement = Box<continue_statement::_T0>;
+pub mod continue_statement {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct _T0 {
+        pub r#continue: WithNoise<FixedTerminal<8usize>>,
+        pub semicolon_char: WithNoise<FixedTerminal<1>>,
+    }
+}
 
-/// YulLeaveStatement = 'leave' ;
-pub type YulLeaveStatement = WithNoise<FixedTerminal<5usize>>;
+/// «DecimalNumber» = ( «DecimalInteger» | «DecimalFloat» ) [ «DecimalExponent» ] ;
+pub type DecimalNumber = Box<decimal_number::_T0>;
+pub mod decimal_number {
+    #[allow(unused_imports)]
+    use super::*;
+    pub enum DecimalNumber {
+        DecimalInteger(DecimalInteger),
+        DecimalFloat(DecimalFloat),
+    }
+    pub struct _T0 {
+        pub decimal_number: Box<decimal_number::DecimalNumber>,
+        pub decimal_exponent: Option<DecimalExponent>,
+    }
+}
 
 /// «DoubleQuotedAsciiStringLiteral» = '"' { 1…*{ '\u{20}'…'~' - ( '"' | '\\' ) } | «EscapeSequence» } '"' ;
 pub type DoubleQuotedAsciiStringLiteral = Box<double_quoted_ascii_string_literal::_T0>;
@@ -677,56 +377,43 @@ pub mod double_quoted_unicode_string_literal {
     }
 }
 
-/// ElementaryTypeWithPayable = 'address' [ 'payable' ] | ElementaryType ;
-pub type ElementaryTypeWithPayable = Box<elementary_type_with_payable::ElementaryTypeWithPayable>;
-pub mod elementary_type_with_payable {
+/// ElementaryType = 'bool' | 'string' | 'bytes' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | «FixedType» | «UfixedType» ;
+pub type ElementaryType = Box<elementary_type::ElementaryType>;
+pub mod elementary_type {
+    #[allow(unused_imports)]
+    use super::*;
+    pub enum ElementaryType {
+        _0(WithNoise<usize>),
+        SignedIntegerType(SignedIntegerType),
+        UnsignedIntegerType(UnsignedIntegerType),
+        FixedBytesType(FixedBytesType),
+        FixedType(FixedType),
+        UfixedType(UfixedType),
+    }
+}
+
+/// «Keyword» = 'pragma' | 'abstract' | 'anonymous' | 'address' | 'as' | 'assembly' | 'bool' | 'break' | 'bytes' | 'calldata' | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum' | 'event' | 'external' | 'fallback' | 'false' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import' | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override' | 'payable' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct' | 'true' | 'try' | 'type' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | 'fixed' | 'ufixed' ;
+pub type Keyword = Box<keyword::Keyword>;
+pub mod keyword {
+    #[allow(unused_imports)]
+    use super::*;
+    pub enum Keyword {
+        _0(usize),
+        SignedIntegerType(SignedIntegerType),
+        UnsignedIntegerType(UnsignedIntegerType),
+        FixedBytesType(FixedBytesType),
+        _4(usize),
+    }
+}
+
+/// PositionalArgumentList = 1…*{ Expression / ',' } ;
+pub type PositionalArgumentList = positional_argument_list::_T0;
+pub mod positional_argument_list {
     #[allow(unused_imports)]
     use super::*;
     pub struct _T0 {
-        pub address: WithNoise<FixedTerminal<7usize>>,
-        pub payable: Option<WithNoise<FixedTerminal<7usize>>>,
-    }
-    pub enum ElementaryTypeWithPayable {
-        _T0(Box<elementary_type_with_payable::_T0>),
-        ElementaryType(ElementaryType),
-    }
-}
-
-/// ElementaryTypeWithoutPayable = 'address' | ElementaryType ;
-pub type ElementaryTypeWithoutPayable =
-    Box<elementary_type_without_payable::ElementaryTypeWithoutPayable>;
-pub mod elementary_type_without_payable {
-    #[allow(unused_imports)]
-    use super::*;
-    pub enum ElementaryTypeWithoutPayable {
-        Address(WithNoise<FixedTerminal<7usize>>),
-        ElementaryType(ElementaryType),
-    }
-}
-
-/// NumericLiteral = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
-pub type NumericLiteral = Box<numeric_literal::_T0>;
-pub mod numeric_literal {
-    #[allow(unused_imports)]
-    use super::*;
-    pub enum NumericLiteral {
-        DecimalNumber(DecimalNumber),
-        HexNumber(HexNumber),
-    }
-    pub struct _T0 {
-        pub numeric_literal: Box<numeric_literal::NumericLiteral>,
-        pub _1: Option<WithNoise<usize>>,
-    }
-}
-
-/// «ReservedWord» = «Keyword» | «ReservedKeyword» | «NumberUnit» | «BooleanLiteral» ;
-pub type ReservedWord = Box<reserved_word::ReservedWord>;
-pub mod reserved_word {
-    #[allow(unused_imports)]
-    use super::*;
-    pub enum ReservedWord {
-        Keyword(Keyword),
-        _1(usize),
+        pub elements: Vec<Expression>,
+        pub separators: Vec<WithNoise<FixedTerminal<1>>>,
     }
 }
 
@@ -764,47 +451,14 @@ pub mod single_quoted_unicode_string_literal {
     }
 }
 
-/// «YulIdentifier» = «RawIdentifier» - «YulReservedWord» ;
-pub type YulIdentifier = RawIdentifier;
-
-/// «AsciiStringLiteral» = «SingleQuotedAsciiStringLiteral» | «DoubleQuotedAsciiStringLiteral» ;
-pub type AsciiStringLiteral = Box<ascii_string_literal::AsciiStringLiteral>;
-pub mod ascii_string_literal {
+/// UncheckedBlock = 'unchecked' Block ;
+pub type UncheckedBlock = Box<unchecked_block::_T0>;
+pub mod unchecked_block {
     #[allow(unused_imports)]
     use super::*;
-    pub enum AsciiStringLiteral {
-        SingleQuotedAsciiStringLiteral(SingleQuotedAsciiStringLiteral),
-        DoubleQuotedAsciiStringLiteral(DoubleQuotedAsciiStringLiteral),
-    }
-}
-
-/// AssemblyFlags = '(' 1…*{ «DoubleQuotedAsciiStringLiteral» / ',' } ')' ;
-pub type AssemblyFlags = Box<assembly_flags::_T0>;
-pub mod assembly_flags {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct _T1 {
-        pub elements: Vec<DoubleQuotedAsciiStringLiteral>,
-        pub separators: Vec<WithNoise<FixedTerminal<1>>>,
-    }
     pub struct _T0 {
-        pub open_paren_char: WithNoise<FixedTerminal<1>>,
-        pub double_quoted_ascii_string_literals: assembly_flags::_T1,
-        pub close_paren_char: WithNoise<FixedTerminal<1>>,
-    }
-}
-
-/// «Identifier» = «RawIdentifier» - «ReservedWord» ;
-pub type Identifier = RawIdentifier;
-
-/// «UnicodeStringLiteral» = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral» ;
-pub type UnicodeStringLiteral = Box<unicode_string_literal::UnicodeStringLiteral>;
-pub mod unicode_string_literal {
-    #[allow(unused_imports)]
-    use super::*;
-    pub enum UnicodeStringLiteral {
-        SingleQuotedUnicodeStringLiteral(SingleQuotedUnicodeStringLiteral),
-        DoubleQuotedUnicodeStringLiteral(DoubleQuotedUnicodeStringLiteral),
+        pub unchecked: WithNoise<FixedTerminal<9usize>>,
+        pub block: Block,
     }
 }
 
@@ -876,6 +530,131 @@ pub mod yul_path {
     }
 }
 
+/// «AsciiStringLiteral» = «SingleQuotedAsciiStringLiteral» | «DoubleQuotedAsciiStringLiteral» ;
+pub type AsciiStringLiteral = Box<ascii_string_literal::AsciiStringLiteral>;
+pub mod ascii_string_literal {
+    #[allow(unused_imports)]
+    use super::*;
+    pub enum AsciiStringLiteral {
+        SingleQuotedAsciiStringLiteral(SingleQuotedAsciiStringLiteral),
+        DoubleQuotedAsciiStringLiteral(DoubleQuotedAsciiStringLiteral),
+    }
+}
+
+/// AssemblyFlags = '(' 1…*{ «DoubleQuotedAsciiStringLiteral» / ',' } ')' ;
+pub type AssemblyFlags = Box<assembly_flags::_T0>;
+pub mod assembly_flags {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct _T1 {
+        pub elements: Vec<DoubleQuotedAsciiStringLiteral>,
+        pub separators: Vec<WithNoise<FixedTerminal<1>>>,
+    }
+    pub struct _T0 {
+        pub open_paren_char: WithNoise<FixedTerminal<1>>,
+        pub double_quoted_ascii_string_literals: assembly_flags::_T1,
+        pub close_paren_char: WithNoise<FixedTerminal<1>>,
+    }
+}
+
+/// ElementaryTypeWithPayable = 'address' [ 'payable' ] | ElementaryType ;
+pub type ElementaryTypeWithPayable = Box<elementary_type_with_payable::ElementaryTypeWithPayable>;
+pub mod elementary_type_with_payable {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct _T0 {
+        pub address: WithNoise<FixedTerminal<7usize>>,
+        pub payable: Option<WithNoise<FixedTerminal<7usize>>>,
+    }
+    pub enum ElementaryTypeWithPayable {
+        _T0(Box<elementary_type_with_payable::_T0>),
+        ElementaryType(ElementaryType),
+    }
+}
+
+/// ElementaryTypeWithoutPayable = 'address' | ElementaryType ;
+pub type ElementaryTypeWithoutPayable =
+    Box<elementary_type_without_payable::ElementaryTypeWithoutPayable>;
+pub mod elementary_type_without_payable {
+    #[allow(unused_imports)]
+    use super::*;
+    pub enum ElementaryTypeWithoutPayable {
+        Address(WithNoise<FixedTerminal<7usize>>),
+        ElementaryType(ElementaryType),
+    }
+}
+
+/// NumericLiteral = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
+pub type NumericLiteral = Box<numeric_literal::_T0>;
+pub mod numeric_literal {
+    #[allow(unused_imports)]
+    use super::*;
+    pub enum NumericLiteral {
+        DecimalNumber(DecimalNumber),
+        HexNumber(HexNumber),
+    }
+    pub struct _T0 {
+        pub numeric_literal: Box<numeric_literal::NumericLiteral>,
+        pub _1: Option<WithNoise<usize>>,
+    }
+}
+
+/// «ReservedWord» = «Keyword» | «ReservedKeyword» | «NumberUnit» | «BooleanLiteral» ;
+pub type ReservedWord = Box<reserved_word::ReservedWord>;
+pub mod reserved_word {
+    #[allow(unused_imports)]
+    use super::*;
+    pub enum ReservedWord {
+        Keyword(Keyword),
+        _1(usize),
+    }
+}
+
+/// «UnicodeStringLiteral» = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral» ;
+pub type UnicodeStringLiteral = Box<unicode_string_literal::UnicodeStringLiteral>;
+pub mod unicode_string_literal {
+    #[allow(unused_imports)]
+    use super::*;
+    pub enum UnicodeStringLiteral {
+        SingleQuotedUnicodeStringLiteral(SingleQuotedUnicodeStringLiteral),
+        DoubleQuotedUnicodeStringLiteral(DoubleQuotedUnicodeStringLiteral),
+    }
+}
+
+/// «Identifier» = «RawIdentifier» - «ReservedWord» ;
+pub type Identifier = RawIdentifier;
+
+/// ImportPath = «AsciiStringLiteral» ;
+pub type ImportPath = AsciiStringLiteral;
+
+/// Literal = «AsciiStringLiteral» | «UnicodeStringLiteral» | NumericLiteral | «HexStringLiteral» | «BooleanLiteral» ;
+pub type Literal = Box<literal::Literal>;
+pub mod literal {
+    #[allow(unused_imports)]
+    use super::*;
+    pub enum Literal {
+        AsciiStringLiteral(AsciiStringLiteral),
+        UnicodeStringLiteral(UnicodeStringLiteral),
+        NumericLiteral(NumericLiteral),
+        HexStringLiteral(HexStringLiteral),
+        _4(WithNoise<usize>),
+    }
+}
+
+/// YulLiteral = «YulDecimalNumberLiteral» | «YulHexLiteral» | «AsciiStringLiteral» | «BooleanLiteral» | «HexStringLiteral» ;
+pub type YulLiteral = Box<yul_literal::YulLiteral>;
+pub mod yul_literal {
+    #[allow(unused_imports)]
+    use super::*;
+    pub enum YulLiteral {
+        YulDecimalNumberLiteral(YulDecimalNumberLiteral),
+        YulHexLiteral(YulHexLiteral),
+        AsciiStringLiteral(AsciiStringLiteral),
+        _3(WithNoise<usize>),
+        HexStringLiteral(HexStringLiteral),
+    }
+}
+
 /// EnumDefinition = 'enum' «Identifier» '{' 1…*{ «Identifier» / ',' } '}' ;
 pub type EnumDefinition = Box<enum_definition::_T0>;
 pub mod enum_definition {
@@ -902,42 +681,6 @@ pub mod identifier_path {
     pub struct _T0 {
         pub elements: Vec<Identifier>,
         pub separators: Vec<WithNoise<FixedTerminal<1>>>,
-    }
-}
-
-/// ImportPath = «AsciiStringLiteral» ;
-pub type ImportPath = AsciiStringLiteral;
-
-/// Literal = «AsciiStringLiteral» | «UnicodeStringLiteral» | NumericLiteral | «HexStringLiteral» | «BooleanLiteral» ;
-pub type Literal = Box<literal::Literal>;
-pub mod literal {
-    #[allow(unused_imports)]
-    use super::*;
-    pub enum Literal {
-        AsciiStringLiteral(AsciiStringLiteral),
-        UnicodeStringLiteral(UnicodeStringLiteral),
-        NumericLiteral(NumericLiteral),
-        HexStringLiteral(HexStringLiteral),
-        _4(WithNoise<usize>),
-    }
-}
-
-/// MemberAccessExpression = Expression '.' ( «Identifier» | 'address' ) ;
-pub type MemberAccessExpression = Expression;
-pub mod member_access_expression {
-    #[allow(unused_imports)]
-    use super::*;
-    pub enum MemberAccessExpression {
-        Identifier(Identifier),
-        Address(WithNoise<FixedTerminal<7usize>>),
-    }
-    pub struct Operator {
-        pub period_char: WithNoise<FixedTerminal<1>>,
-        pub member_access_expression: Box<member_access_expression::MemberAccessExpression>,
-    }
-    pub struct E {
-        pub left: Expression,
-        pub operator: Box<member_access_expression::Operator>,
     }
 }
 
@@ -980,6 +723,35 @@ pub mod selected_import {
     }
 }
 
+/// SimpleImportDirective = ImportPath { 'as' «Identifier» } ;
+pub type SimpleImportDirective = Box<simple_import_directive::_T0>;
+pub mod simple_import_directive {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct _T2 {
+        pub r#as: WithNoise<FixedTerminal<2usize>>,
+        pub identifier: Identifier,
+    }
+    pub struct _T0 {
+        pub import_path: ImportPath,
+        pub _t2s: Vec<Box<simple_import_directive::_T2>>,
+    }
+}
+
+/// StarImportDirective = '*' 'as' «Identifier» 'from' ImportPath ;
+pub type StarImportDirective = Box<star_import_directive::_T0>;
+pub mod star_import_directive {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct _T0 {
+        pub star_char: WithNoise<FixedTerminal<1>>,
+        pub r#as: WithNoise<FixedTerminal<2usize>>,
+        pub identifier: Identifier,
+        pub from: WithNoise<FixedTerminal<4usize>>,
+        pub import_path: ImportPath,
+    }
+}
+
 /// UserDefinedValueTypeDefinition = 'type' «Identifier» 'is' ElementaryTypeWithPayable ';' ;
 pub type UserDefinedValueTypeDefinition = Box<user_defined_value_type_definition::_T0>;
 pub mod user_defined_value_type_definition {
@@ -994,37 +766,15 @@ pub mod user_defined_value_type_definition {
     }
 }
 
-/// YulLiteral = «YulDecimalNumberLiteral» | «YulHexLiteral» | «AsciiStringLiteral» | «BooleanLiteral» | «HexStringLiteral» ;
-pub type YulLiteral = Box<yul_literal::YulLiteral>;
-pub mod yul_literal {
+/// YulExpression = YulPath | YulFunctionCall | YulLiteral ;
+pub type YulExpression = Box<yul_expression::YulExpression>;
+pub mod yul_expression {
     #[allow(unused_imports)]
     use super::*;
-    pub enum YulLiteral {
-        YulDecimalNumberLiteral(YulDecimalNumberLiteral),
-        YulHexLiteral(YulHexLiteral),
-        AsciiStringLiteral(AsciiStringLiteral),
-        _3(WithNoise<usize>),
-        HexStringLiteral(HexStringLiteral),
-    }
-}
-
-/// FunctionCallOptionsExpression = Expression '{' 1…*{ NamedArgument / ',' } '}' ;
-pub type FunctionCallOptionsExpression = Expression;
-pub mod function_call_options_expression {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct _T1 {
-        pub elements: Vec<NamedArgument>,
-        pub separators: Vec<WithNoise<FixedTerminal<1>>>,
-    }
-    pub struct Operator {
-        pub open_brace_char: WithNoise<FixedTerminal<1>>,
-        pub named_arguments: function_call_options_expression::_T1,
-        pub close_brace_char: WithNoise<FixedTerminal<1>>,
-    }
-    pub struct E {
-        pub left: Expression,
-        pub operator: Box<function_call_options_expression::Operator>,
+    pub enum YulExpression {
+        YulPath(YulPath),
+        YulFunctionCall(YulFunctionCall),
+        YulLiteral(YulLiteral),
     }
 }
 
@@ -1130,136 +880,6 @@ pub mod selecting_import_directive {
         pub close_brace_char: WithNoise<FixedTerminal<1>>,
         pub from: WithNoise<FixedTerminal<4usize>>,
         pub import_path: ImportPath,
-    }
-}
-
-/// SimpleImportDirective = ImportPath { 'as' «Identifier» } ;
-pub type SimpleImportDirective = Box<simple_import_directive::_T0>;
-pub mod simple_import_directive {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct _T2 {
-        pub r#as: WithNoise<FixedTerminal<2usize>>,
-        pub identifier: Identifier,
-    }
-    pub struct _T0 {
-        pub import_path: ImportPath,
-        pub _t2s: Vec<Box<simple_import_directive::_T2>>,
-    }
-}
-
-/// StarImportDirective = '*' 'as' «Identifier» 'from' ImportPath ;
-pub type StarImportDirective = Box<star_import_directive::_T0>;
-pub mod star_import_directive {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct _T0 {
-        pub star_char: WithNoise<FixedTerminal<1>>,
-        pub r#as: WithNoise<FixedTerminal<2usize>>,
-        pub identifier: Identifier,
-        pub from: WithNoise<FixedTerminal<4usize>>,
-        pub import_path: ImportPath,
-    }
-}
-
-/// YulExpression = YulPath | YulFunctionCall | YulLiteral ;
-pub type YulExpression = Box<yul_expression::YulExpression>;
-pub mod yul_expression {
-    #[allow(unused_imports)]
-    use super::*;
-    pub enum YulExpression {
-        YulPath(YulPath),
-        YulFunctionCall(YulFunctionCall),
-        YulLiteral(YulLiteral),
-    }
-}
-
-/// ArgumentList = '(' [ PositionalArgumentList | NamedArgumentList ] ')' ;
-pub type ArgumentList = Box<argument_list::_T0>;
-pub mod argument_list {
-    #[allow(unused_imports)]
-    use super::*;
-    pub enum ArgumentList {
-        PositionalArgumentList(PositionalArgumentList),
-        NamedArgumentList(NamedArgumentList),
-    }
-    pub struct _T0 {
-        pub open_paren_char: WithNoise<FixedTerminal<1>>,
-        pub argument_list: Option<Box<argument_list::ArgumentList>>,
-        pub close_paren_char: WithNoise<FixedTerminal<1>>,
-    }
-}
-
-/// CatchClause = 'catch' [ [ «Identifier» ] NonEmptyParameterList ] Block ;
-pub type CatchClause = Box<catch_clause::_T0>;
-pub mod catch_clause {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct _T1 {
-        pub identifier: Option<Identifier>,
-        pub non_empty_parameter_list: NonEmptyParameterList,
-    }
-    pub struct _T0 {
-        pub catch: WithNoise<FixedTerminal<5usize>>,
-        pub _t1: Option<Box<catch_clause::_T1>>,
-        pub block: Block,
-    }
-}
-
-/// FunctionType = 'function' ParameterList { VisibilitySpecifier | StateMutabilitySpecifier } [ 'returns' NonEmptyParameterList ] ;
-pub type FunctionType = Box<function_type::_T0>;
-pub mod function_type {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct _T2 {
-        pub returns: WithNoise<FixedTerminal<7usize>>,
-        pub non_empty_parameter_list: NonEmptyParameterList,
-    }
-    pub struct _T0 {
-        pub function: WithNoise<FixedTerminal<8usize>>,
-        pub parameter_list: ParameterList,
-        pub _2: Vec<WithNoise<usize>>,
-        pub _t2: Option<Box<function_type::_T2>>,
-    }
-}
-
-/// ImportDirective = 'import' ( SimpleImportDirective | StarImportDirective | SelectingImportDirective ) ';' ;
-pub type ImportDirective = Box<import_directive::_T0>;
-pub mod import_directive {
-    #[allow(unused_imports)]
-    use super::*;
-    pub enum ImportDirective {
-        SimpleImportDirective(SimpleImportDirective),
-        StarImportDirective(StarImportDirective),
-        SelectingImportDirective(SelectingImportDirective),
-    }
-    pub struct _T0 {
-        pub import: WithNoise<FixedTerminal<6usize>>,
-        pub import_directive: Box<import_directive::ImportDirective>,
-        pub semicolon_char: WithNoise<FixedTerminal<1>>,
-    }
-}
-
-/// MethodAttribute = 'virtual' | OverrideSpecifier ;
-pub type MethodAttribute = Box<method_attribute::MethodAttribute>;
-pub mod method_attribute {
-    #[allow(unused_imports)]
-    use super::*;
-    pub enum MethodAttribute {
-        Virtual(WithNoise<FixedTerminal<7usize>>),
-        OverrideSpecifier(OverrideSpecifier),
-    }
-}
-
-/// StateVariableAttribute = 'public' | 'private' | 'internal' | 'constant' | OverrideSpecifier | 'immutable' ;
-pub type StateVariableAttribute = Box<state_variable_attribute::StateVariableAttribute>;
-pub mod state_variable_attribute {
-    #[allow(unused_imports)]
-    use super::*;
-    pub enum StateVariableAttribute {
-        _0(WithNoise<usize>),
-        OverrideSpecifier(OverrideSpecifier),
-        Immutable(WithNoise<FixedTerminal<9usize>>),
     }
 }
 
@@ -1382,14 +1002,110 @@ pub mod yul_variable_declaration {
     }
 }
 
-/// FunctionCallExpression = Expression ArgumentList ;
-pub type FunctionCallExpression = Expression;
-pub mod function_call_expression {
+/// ArgumentList = '(' [ PositionalArgumentList | NamedArgumentList ] ')' ;
+pub type ArgumentList = Box<argument_list::_T0>;
+pub mod argument_list {
     #[allow(unused_imports)]
     use super::*;
-    pub struct E {
-        pub left: Expression,
-        pub operator: ArgumentList,
+    pub enum ArgumentList {
+        PositionalArgumentList(PositionalArgumentList),
+        NamedArgumentList(NamedArgumentList),
+    }
+    pub struct _T0 {
+        pub open_paren_char: WithNoise<FixedTerminal<1>>,
+        pub argument_list: Option<Box<argument_list::ArgumentList>>,
+        pub close_paren_char: WithNoise<FixedTerminal<1>>,
+    }
+}
+
+/// CatchClause = 'catch' [ [ «Identifier» ] NonEmptyParameterList ] Block ;
+pub type CatchClause = Box<catch_clause::_T0>;
+pub mod catch_clause {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct _T1 {
+        pub identifier: Option<Identifier>,
+        pub non_empty_parameter_list: NonEmptyParameterList,
+    }
+    pub struct _T0 {
+        pub catch: WithNoise<FixedTerminal<5usize>>,
+        pub _t1: Option<Box<catch_clause::_T1>>,
+        pub block: Block,
+    }
+}
+
+/// FunctionType = 'function' ParameterList { VisibilitySpecifier | StateMutabilitySpecifier } [ 'returns' NonEmptyParameterList ] ;
+pub type FunctionType = Box<function_type::_T0>;
+pub mod function_type {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct _T2 {
+        pub returns: WithNoise<FixedTerminal<7usize>>,
+        pub non_empty_parameter_list: NonEmptyParameterList,
+    }
+    pub struct _T0 {
+        pub function: WithNoise<FixedTerminal<8usize>>,
+        pub parameter_list: ParameterList,
+        pub _2: Vec<WithNoise<usize>>,
+        pub _t2: Option<Box<function_type::_T2>>,
+    }
+}
+
+/// ImportDirective = 'import' ( SimpleImportDirective | StarImportDirective | SelectingImportDirective ) ';' ;
+pub type ImportDirective = Box<import_directive::_T0>;
+pub mod import_directive {
+    #[allow(unused_imports)]
+    use super::*;
+    pub enum ImportDirective {
+        SimpleImportDirective(SimpleImportDirective),
+        StarImportDirective(StarImportDirective),
+        SelectingImportDirective(SelectingImportDirective),
+    }
+    pub struct _T0 {
+        pub import: WithNoise<FixedTerminal<6usize>>,
+        pub import_directive: Box<import_directive::ImportDirective>,
+        pub semicolon_char: WithNoise<FixedTerminal<1>>,
+    }
+}
+
+/// MethodAttribute = 'virtual' | OverrideSpecifier ;
+pub type MethodAttribute = Box<method_attribute::MethodAttribute>;
+pub mod method_attribute {
+    #[allow(unused_imports)]
+    use super::*;
+    pub enum MethodAttribute {
+        Virtual(WithNoise<FixedTerminal<7usize>>),
+        OverrideSpecifier(OverrideSpecifier),
+    }
+}
+
+/// StateVariableAttribute = 'public' | 'private' | 'internal' | 'constant' | OverrideSpecifier | 'immutable' ;
+pub type StateVariableAttribute = Box<state_variable_attribute::StateVariableAttribute>;
+pub mod state_variable_attribute {
+    #[allow(unused_imports)]
+    use super::*;
+    pub enum StateVariableAttribute {
+        _0(WithNoise<usize>),
+        OverrideSpecifier(OverrideSpecifier),
+        Immutable(WithNoise<FixedTerminal<9usize>>),
+    }
+}
+
+/// YulStatement = YulBlock | YulVariableDeclaration | YulFunctionDefinition | YulAssignment | YulFunctionCall | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement ;
+pub type YulStatement = Box<yul_statement::YulStatement>;
+pub mod yul_statement {
+    #[allow(unused_imports)]
+    use super::*;
+    pub enum YulStatement {
+        YulBlock(YulBlock),
+        YulVariableDeclaration(YulVariableDeclaration),
+        YulFunctionDefinition(YulFunctionDefinition),
+        YulAssignment(YulAssignment),
+        YulFunctionCall(YulFunctionCall),
+        YulIfStatement(YulIfStatement),
+        YulForStatement(YulForStatement),
+        YulSwitchStatement(YulSwitchStatement),
+        _8(WithNoise<usize>),
     }
 }
 
@@ -1437,21 +1153,28 @@ pub mod type_name {
     }
 }
 
-/// YulStatement = YulBlock | YulVariableDeclaration | YulFunctionDefinition | YulAssignment | YulFunctionCall | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement ;
-pub type YulStatement = Box<yul_statement::YulStatement>;
-pub mod yul_statement {
+/// YulBlock = '{' { YulStatement } '}' ;
+pub type YulBlock = Box<yul_block::_T0>;
+pub mod yul_block {
     #[allow(unused_imports)]
     use super::*;
-    pub enum YulStatement {
-        YulBlock(YulBlock),
-        YulVariableDeclaration(YulVariableDeclaration),
-        YulFunctionDefinition(YulFunctionDefinition),
-        YulAssignment(YulAssignment),
-        YulFunctionCall(YulFunctionCall),
-        YulIfStatement(YulIfStatement),
-        YulForStatement(YulForStatement),
-        YulSwitchStatement(YulSwitchStatement),
-        _8(WithNoise<usize>),
+    pub struct _T0 {
+        pub open_brace_char: WithNoise<FixedTerminal<1>>,
+        pub yul_statements: Vec<YulStatement>,
+        pub close_brace_char: WithNoise<FixedTerminal<1>>,
+    }
+}
+
+/// AssemblyStatement = 'assembly' [ '"evmasm"' ] [ AssemblyFlags ] YulBlock ;
+pub type AssemblyStatement = Box<assembly_statement::_T0>;
+pub mod assembly_statement {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct _T0 {
+        pub assembly: WithNoise<FixedTerminal<8usize>>,
+        pub double_quote_evmasm_double_quote: Option<WithNoise<FixedTerminal<8usize>>>,
+        pub assembly_flags: Option<AssemblyFlags>,
+        pub yul_block: YulBlock,
     }
 }
 
@@ -1656,31 +1379,6 @@ pub mod variable_declaration {
     }
 }
 
-/// YulBlock = '{' { YulStatement } '}' ;
-pub type YulBlock = Box<yul_block::_T0>;
-pub mod yul_block {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct _T0 {
-        pub open_brace_char: WithNoise<FixedTerminal<1>>,
-        pub yul_statements: Vec<YulStatement>,
-        pub close_brace_char: WithNoise<FixedTerminal<1>>,
-    }
-}
-
-/// AssemblyStatement = 'assembly' [ '"evmasm"' ] [ AssemblyFlags ] YulBlock ;
-pub type AssemblyStatement = Box<assembly_statement::_T0>;
-pub mod assembly_statement {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct _T0 {
-        pub assembly: WithNoise<FixedTerminal<8usize>>,
-        pub double_quote_evmasm_double_quote: Option<WithNoise<FixedTerminal<8usize>>>,
-        pub assembly_flags: Option<AssemblyFlags>,
-        pub yul_block: YulBlock,
-    }
-}
-
 /// Directive = «PragmaDirective» | ImportDirective | UsingDirective ;
 pub type Directive = Box<directive::Directive>;
 pub mod directive {
@@ -1732,6 +1430,278 @@ pub mod event_definition {
     }
 }
 
+/// IndexAccessExpression = Expression '[' [ Expression ] [ ':' [ Expression ] ] ']' ;
+pub type IndexAccessExpression = Expression;
+pub mod index_access_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct _T1 {
+        pub colon_char: WithNoise<FixedTerminal<1>>,
+        pub expression: Option<Expression>,
+    }
+    pub struct Operator {
+        pub open_bracket_char: WithNoise<FixedTerminal<1>>,
+        pub expression_2: Option<Expression>,
+        pub _t1: Option<Box<index_access_expression::_T1>>,
+        pub close_bracket_char: WithNoise<FixedTerminal<1>>,
+    }
+    pub struct E {
+        pub left: Expression,
+        pub operator: Box<index_access_expression::Operator>,
+    }
+}
+
+/// VariableDeclarationTuple = '(' { ',' } VariableDeclaration { ',' [ VariableDeclaration ] } ')' ;
+pub type VariableDeclarationTuple = Box<variable_declaration_tuple::_T0>;
+pub mod variable_declaration_tuple {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct _T3 {
+        pub comma_char: WithNoise<FixedTerminal<1>>,
+        pub variable_declaration: Option<VariableDeclaration>,
+    }
+    pub struct _T0 {
+        pub open_paren_char: WithNoise<FixedTerminal<1>>,
+        pub comma_chars: usize,
+        pub variable_declaration: VariableDeclaration,
+        pub _t3s: Vec<Box<variable_declaration_tuple::_T3>>,
+        pub close_paren_char: WithNoise<FixedTerminal<1>>,
+    }
+}
+
+/// MemberAccessExpression = Expression '.' ( «Identifier» | 'address' ) ;
+pub type MemberAccessExpression = Expression;
+pub mod member_access_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub enum MemberAccessExpression {
+        Identifier(Identifier),
+        Address(WithNoise<FixedTerminal<7usize>>),
+    }
+    pub struct Operator {
+        pub period_char: WithNoise<FixedTerminal<1>>,
+        pub member_access_expression: Box<member_access_expression::MemberAccessExpression>,
+    }
+    pub struct E {
+        pub left: Expression,
+        pub operator: Box<member_access_expression::Operator>,
+    }
+}
+
+/// FunctionCallOptionsExpression = Expression '{' 1…*{ NamedArgument / ',' } '}' ;
+pub type FunctionCallOptionsExpression = Expression;
+pub mod function_call_options_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct _T1 {
+        pub elements: Vec<NamedArgument>,
+        pub separators: Vec<WithNoise<FixedTerminal<1>>>,
+    }
+    pub struct Operator {
+        pub open_brace_char: WithNoise<FixedTerminal<1>>,
+        pub named_arguments: function_call_options_expression::_T1,
+        pub close_brace_char: WithNoise<FixedTerminal<1>>,
+    }
+    pub struct E {
+        pub left: Expression,
+        pub operator: Box<function_call_options_expression::Operator>,
+    }
+}
+
+/// FunctionCallExpression = Expression ArgumentList ;
+pub type FunctionCallExpression = Expression;
+pub mod function_call_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub left: Expression,
+        pub operator: ArgumentList,
+    }
+}
+
+/// UnaryPrefixExpression = ( '++' | '--' | '!' | '~' | 'delete' | '-' ) Expression ;
+pub type UnaryPrefixExpression = Expression;
+pub mod unary_prefix_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub operator: WithNoise<usize>,
+        pub right: Expression,
+    }
+}
+
+/// UnarySuffixExpression = Expression ( '++' | '--' ) ;
+pub type UnarySuffixExpression = Expression;
+pub mod unary_suffix_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub left: Expression,
+        pub operator: WithNoise<FixedTerminal<2usize>>,
+    }
+}
+
+/// ExponentiationExpression = Expression '**' Expression ;
+pub type ExponentiationExpression = Expression;
+pub mod exponentiation_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub left: Expression,
+        pub operator: WithNoise<FixedTerminal<2usize>>,
+        pub right: Expression,
+    }
+}
+
+/// MulDivModExpression = Expression ( '*' | '/' | '%' ) Expression ;
+pub type MulDivModExpression = Expression;
+pub mod mul_div_mod_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub left: Expression,
+        pub operator: WithNoise<FixedTerminal<1>>,
+        pub right: Expression,
+    }
+}
+
+/// AddSubExpression = Expression ( '+' | '-' ) Expression ;
+pub type AddSubExpression = Expression;
+pub mod add_sub_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub left: Expression,
+        pub operator: WithNoise<FixedTerminal<1>>,
+        pub right: Expression,
+    }
+}
+
+/// ShiftExpression = Expression ( '<<' | '>>' | '>>>' ) Expression ;
+pub type ShiftExpression = Expression;
+pub mod shift_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub left: Expression,
+        pub operator: WithNoise<usize>,
+        pub right: Expression,
+    }
+}
+
+/// BitAndExpression = Expression '&' Expression ;
+pub type BitAndExpression = Expression;
+pub mod bit_and_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub left: Expression,
+        pub operator: WithNoise<FixedTerminal<1>>,
+        pub right: Expression,
+    }
+}
+
+/// BitXOrExpression = Expression '^' Expression ;
+pub type BitXOrExpression = Expression;
+pub mod bit_x_or_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub left: Expression,
+        pub operator: WithNoise<FixedTerminal<1>>,
+        pub right: Expression,
+    }
+}
+
+/// BitOrExpression = Expression '|' Expression ;
+pub type BitOrExpression = Expression;
+pub mod bit_or_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub left: Expression,
+        pub operator: WithNoise<FixedTerminal<1>>,
+        pub right: Expression,
+    }
+}
+
+/// OrderComparisonExpression = Expression ( '<' | '>' | '<=' | '>=' ) Expression ;
+pub type OrderComparisonExpression = Expression;
+pub mod order_comparison_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub left: Expression,
+        pub operator: WithNoise<usize>,
+        pub right: Expression,
+    }
+}
+
+/// EqualityComparisonExpression = Expression ( '==' | '!=' ) Expression ;
+pub type EqualityComparisonExpression = Expression;
+pub mod equality_comparison_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub left: Expression,
+        pub operator: WithNoise<FixedTerminal<2usize>>,
+        pub right: Expression,
+    }
+}
+
+/// AndExpression = Expression '&&' Expression ;
+pub type AndExpression = Expression;
+pub mod and_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub left: Expression,
+        pub operator: WithNoise<FixedTerminal<2usize>>,
+        pub right: Expression,
+    }
+}
+
+/// OrExpression = Expression '||' Expression ;
+pub type OrExpression = Expression;
+pub mod or_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub left: Expression,
+        pub operator: WithNoise<FixedTerminal<2usize>>,
+        pub right: Expression,
+    }
+}
+
+/// ConditionalExpression = Expression '?' Expression ':' Expression ;
+pub type ConditionalExpression = Expression;
+pub mod conditional_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct _T1 {
+        pub question_char: WithNoise<FixedTerminal<1>>,
+        pub expression_1: Expression,
+        pub colon_char: WithNoise<FixedTerminal<1>>,
+        pub expression_2: Expression,
+    }
+    pub struct E {
+        pub left: Expression,
+        pub operator: Box<conditional_expression::_T1>,
+    }
+}
+
+/// AssignmentExpression = Expression ( '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ) Expression ;
+pub type AssignmentExpression = Expression;
+pub mod assignment_expression {
+    #[allow(unused_imports)]
+    use super::*;
+    pub struct E {
+        pub left: Expression,
+        pub operator: WithNoise<usize>,
+        pub right: Expression,
+    }
+}
+
 /// Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnarySuffixExpression | UnaryPrefixExpression | FunctionCallExpression | FunctionCallOptionsExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
 pub type Expression = Box<expression::Expression>;
 pub mod expression {
@@ -1758,24 +1728,6 @@ pub mod expression {
         MemberAccessExpression(member_access_expression::E),
         IndexAccessExpression(index_access_expression::E),
         PrimaryExpression(primary_expression::E),
-    }
-}
-
-/// VariableDeclarationTuple = '(' { ',' } VariableDeclaration { ',' [ VariableDeclaration ] } ')' ;
-pub type VariableDeclarationTuple = Box<variable_declaration_tuple::_T0>;
-pub mod variable_declaration_tuple {
-    #[allow(unused_imports)]
-    use super::*;
-    pub struct _T3 {
-        pub comma_char: WithNoise<FixedTerminal<1>>,
-        pub variable_declaration: Option<VariableDeclaration>,
-    }
-    pub struct _T0 {
-        pub open_paren_char: WithNoise<FixedTerminal<1>>,
-        pub comma_chars: usize,
-        pub variable_declaration: VariableDeclaration,
-        pub _t3s: Vec<Box<variable_declaration_tuple::_T3>>,
-        pub close_paren_char: WithNoise<FixedTerminal<1>>,
     }
 }
 

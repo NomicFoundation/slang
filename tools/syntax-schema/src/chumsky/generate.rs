@@ -6,7 +6,10 @@ use std::{
 
 use quote::quote;
 
-use super::{combinator_tree::ProductionGeneratedCode, rustfmt::rustfmt};
+use super::{
+    combinator_tree::{CombinatorTree, CombinatorTreeRoot, ProductionGeneratedCode},
+    rustfmt::rustfmt,
+};
 use crate::schema::*;
 
 pub struct GenerationContext {
@@ -67,8 +70,7 @@ impl Grammar {
             let mut order = 0;
             ordering.insert(name.clone(), 0);
             let production = grammar.get_production(name);
-            let expr = production.expression_to_generate();
-            let mut identifiers = expr.referenced_identifiers();
+            let mut identifiers = production.combinator_tree().referenced_identifiers();
             if !production.is_token() {
                 identifiers.insert("IGNORE".to_owned());
             }
@@ -100,7 +102,7 @@ impl Grammar {
 
         for (name, order) in ordering {
             let production = self.get_production(name);
-            let mut identifiers = production.expression_to_generate().referenced_identifiers();
+            let mut identifiers = production.combinator_tree().referenced_identifiers();
             if !production.is_token() {
                 identifiers.insert("IGNORE".to_owned());
             }
@@ -156,7 +158,8 @@ impl Production {
 
             parser_field_definitions.push(parser_field_definition);
             parser_field_initializations.push(parser_field_initialization);
-            parser_implementation_predeclarations.push(parser_implementation_predeclaration);
+            parser_implementation_predeclarations
+                .push(parser_implementation_predeclaration.to_string());
 
             let ebnf_comment = production
                 .generate_ebnf(grammar)
@@ -277,6 +280,8 @@ impl Production {
                     use chumsky::Parser;
                     use chumsky::prelude::*;
                     use chumsky::primitive::Just;
+                    use serde::{Serialize, Deserialize};
+                    use std::hash::Hash;
 
                     use super::parser_interface::*;
                     use super::tree_interface::*;
@@ -326,7 +331,9 @@ impl Production {
                     }
 
                     #[allow(dead_code)]
-                    fn with_noise<C, CO, N>(content: C) -> impl Parser<char, N, Error = ErrorType>
+                    fn with_noise<C, CO>(
+                        content: C,
+                    ) -> impl Parser<char, WithNoise<CO>, Error = ErrorType>
                     where
                         C: Clone + Parser<char, CO, Error = ErrorType>,
                         CO: Sized
@@ -337,7 +344,6 @@ impl Production {
                             + Serialize
                             + Deserialize
                             + Default,
-                        N: WithNoise<CO>,
                     {
                         ignore_parser
                             .clone()
@@ -352,6 +358,7 @@ impl Production {
                 )
                 .to_string(),
                 "impl Parsers { pub fn new() -> Self {".to_owned(),
+                parser_implementation_predeclarations.join("\n\n"),
                 parser_implementations.join("\n\n"),
                 quote!(
                     Self {
@@ -382,7 +389,13 @@ impl Production {
     }
 }
 
-impl Expression {
+impl CombinatorTreeRoot {
+    fn referenced_identifiers(&self) -> BTreeSet<String> {
+        self.root.referenced_identifiers()
+    }
+}
+
+impl CombinatorTree {
     fn referenced_identifiers(&self) -> BTreeSet<String> {
         let mut accum = BTreeSet::new();
         self.collect_identifiers(&mut accum);
@@ -390,34 +403,60 @@ impl Expression {
     }
 
     fn collect_identifiers(&self, accum: &mut BTreeSet<String>) {
-        match &self.ebnf {
-            EBNF::Choice(exprs) | EBNF::Sequence(exprs) => {
-                exprs.iter().for_each(|p| {
-                    p.collect_identifiers(accum);
-                });
-            }
-            EBNF::Not(expr) => {
-                expr.collect_identifiers(accum);
-            }
-            EBNF::Repeat(EBNFRepeat {
-                expr, separator, ..
-            }) => {
-                expr.collect_identifiers(accum);
-                if let Some(separator) = separator {
-                    separator.collect_identifiers(accum);
-                }
-            }
-            EBNF::Difference(EBNFDifference {
+        match self {
+            CombinatorTree::Difference {
                 minuend,
                 subtrahend,
-            }) => {
+            } => {
                 minuend.collect_identifiers(accum);
-                subtrahend.collect_identifiers(accum);
+                subtrahend.collect_identifiers(accum)
             }
-            EBNF::Reference(name) => {
-                accum.insert(name.clone());
+            CombinatorTree::Lookahead { expr, lookahead } => {
+                expr.collect_identifiers(accum);
+                lookahead.collect_identifiers(accum);
             }
-            EBNF::Terminal(_) | EBNF::End | EBNF::Range(_) => (),
-        };
+            CombinatorTree::Sequence { elements, .. } => {
+                for (_, member) in elements {
+                    member.collect_identifiers(accum);
+                }
+            }
+            CombinatorTree::Choice { choices, .. } => {
+                for (_, member) in choices {
+                    member.collect_identifiers(accum);
+                }
+            }
+            CombinatorTree::Optional { expr } => expr.collect_identifiers(accum),
+            CombinatorTree::SeparatedBy {
+                expr, separator, ..
+            } => {
+                expr.collect_identifiers(accum);
+                separator.collect_identifiers(accum);
+            }
+            CombinatorTree::Repeated { expr, .. } => expr.collect_identifiers(accum),
+            CombinatorTree::Expression { members, .. } => {
+                for pr in members {
+                    let p = pr.upgrade().unwrap();
+                    accum.insert(p.name.clone());
+                }
+            }
+            CombinatorTree::ExpressionMember {
+                parent_name,
+                next_sibling_name,
+                operator,
+                ..
+            } => {
+                accum.insert(parent_name.raw());
+                if let Some(n) = next_sibling_name {
+                    accum.insert(n.raw());
+                }
+                operator.collect_identifiers(accum);
+            }
+            CombinatorTree::Reference { production } => {
+                accum.insert(production.upgrade().unwrap().name.clone());
+            }
+            CombinatorTree::TerminalTrie { .. }
+            | CombinatorTree::CharacterFilter { .. }
+            | CombinatorTree::End => {}
+        }
     }
 }

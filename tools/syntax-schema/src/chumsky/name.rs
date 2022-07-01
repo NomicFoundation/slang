@@ -10,7 +10,7 @@ use crate::schema::ExpressionConfig;
 pub enum Name {
     Anonymous,
     String {
-        text: String, // stored in snake case
+        text: String,
         plural: bool,
         negated: bool,
         suffix: usize,
@@ -26,13 +26,20 @@ pub enum Name {
 }
 
 impl Name {
+    pub fn raw(&self) -> String {
+        match self {
+            Name::Anonymous => "__anonymous__".to_owned(),
+            Name::String { text, .. } => text.clone(),
+            Name::Numbered { .. } | Name::Positional { .. } => self.to_pascal_case_string(),
+        }
+    }
+
     pub fn anonymous() -> Self {
         Self::Anonymous
     }
 
     pub fn from_string(s: &str) -> Self {
         let text: String = s.into();
-        let text = text.to_snake_case();
         Self::String {
             text,
             plural: false,
@@ -204,6 +211,7 @@ impl Name {
                 negated,
                 suffix,
             } => {
+                let text = text.to_snake_case();
                 let text = if *negated {
                     format!("not_{}", text)
                 } else {
@@ -242,6 +250,7 @@ impl Name {
                 negated,
                 suffix,
             } => {
+                let text = text.to_snake_case();
                 let text = if *negated {
                     format!("not_{}", text)
                 } else {

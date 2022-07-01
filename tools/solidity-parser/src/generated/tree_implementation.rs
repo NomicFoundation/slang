@@ -83,6 +83,20 @@ impl fixed_type::_T0 {
     }
 }
 
+impl hex_byte_escape::_T0 {
+    pub fn new((_0, _1): (FixedTerminal<1>, usize)) -> Self {
+        Self { _0, _1 }
+    }
+}
+
+impl hex_number::_T0 {
+    pub fn new(
+        ((zero_char, _1), _2): ((FixedTerminal<1>, FixedTerminal<1>), hex_number::_T1),
+    ) -> Self {
+        Self { zero_char, _1, _2 }
+    }
+}
+
 impl line_comment::_T0 {
     pub fn new((slash_slash, _1): (FixedTerminal<2usize>, usize)) -> Self {
         Self { slash_slash, _1 }
@@ -104,9 +118,21 @@ impl pragma_directive::_T0 {
     }
 }
 
+impl raw_identifier::_T0 {
+    pub fn new((_0, _1): (FixedTerminal<1>, usize)) -> Self {
+        Self { _0, _1 }
+    }
+}
+
 impl signed_integer_type::_T0 {
     pub fn new((int, _1): (FixedTerminal<3usize>, usize)) -> Self {
         Self { int, _1 }
+    }
+}
+
+impl unicode_escape::_T0 {
+    pub fn new((_0, _1): (FixedTerminal<1>, usize)) -> Self {
+        Self { _0, _1 }
     }
 }
 
@@ -148,102 +174,6 @@ impl decimal_float::_T0 {
             decimal_integer_1,
             period_char,
             decimal_integer_2,
-        }
-    }
-}
-
-impl hex_byte_escape::_T0 {
-    pub fn new((_0, _1): (FixedTerminal<1>, usize)) -> Self {
-        Self { _0, _1 }
-    }
-}
-
-impl hex_number::_T0 {
-    pub fn new(
-        ((zero_char, _1), _2): ((FixedTerminal<1>, FixedTerminal<1>), hex_number::_T1),
-    ) -> Self {
-        Self { zero_char, _1, _2 }
-    }
-}
-
-impl ufixed_type::_T0 {
-    pub fn new((_0, fixed_type): (FixedTerminal<1>, FixedType)) -> Self {
-        Self { _0, fixed_type }
-    }
-}
-
-impl unicode_escape::_T0 {
-    pub fn new((_0, _1): (FixedTerminal<1>, usize)) -> Self {
-        Self { _0, _1 }
-    }
-}
-
-impl unsigned_integer_type::_T0 {
-    pub fn new((_0, signed_integer_type): (FixedTerminal<1>, SignedIntegerType)) -> Self {
-        Self {
-            _0,
-            signed_integer_type,
-        }
-    }
-}
-
-impl break_statement::_T0 {
-    pub fn new(
-        (r#break, semicolon_char): (
-            WithNoise<FixedTerminal<5usize>>,
-            WithNoise<FixedTerminal<1>>,
-        ),
-    ) -> Self {
-        Self {
-            r#break,
-            semicolon_char,
-        }
-    }
-}
-
-impl conditional_expression::_T1 {
-    pub fn new(
-        (((question_char, expression_1), colon_char), expression_2): (
-            (
-                (WithNoise<FixedTerminal<1>>, Expression),
-                WithNoise<FixedTerminal<1>>,
-            ),
-            Expression,
-        ),
-    ) -> Self {
-        Self {
-            question_char,
-            expression_1,
-            colon_char,
-            expression_2,
-        }
-    }
-}
-
-impl continue_statement::_T0 {
-    pub fn new(
-        (r#continue, semicolon_char): (
-            WithNoise<FixedTerminal<8usize>>,
-            WithNoise<FixedTerminal<1>>,
-        ),
-    ) -> Self {
-        Self {
-            r#continue,
-            semicolon_char,
-        }
-    }
-}
-
-impl decimal_number::_T0 {
-    pub fn new(
-        (decimal_number, decimal_exponent): (
-            Box<decimal_number::DecimalNumber>,
-            Option<DecimalExponent>,
-        ),
-    ) -> Self {
-        Self {
-            decimal_number,
-            decimal_exponent,
         }
     }
 }
@@ -301,44 +231,60 @@ impl hex_string_literal::_T0 {
     }
 }
 
-impl index_access_expression::_T1 {
-    pub fn new(
-        (colon_char, expression): (WithNoise<FixedTerminal<1>>, Option<Expression>),
-    ) -> Self {
+impl ufixed_type::_T0 {
+    pub fn new((_0, fixed_type): (FixedTerminal<1>, FixedType)) -> Self {
+        Self { _0, fixed_type }
+    }
+}
+
+impl unsigned_integer_type::_T0 {
+    pub fn new((_0, signed_integer_type): (FixedTerminal<1>, SignedIntegerType)) -> Self {
         Self {
-            colon_char,
-            expression,
+            _0,
+            signed_integer_type,
         }
     }
 }
-impl index_access_expression::Operator {
+
+impl break_statement::_T0 {
     pub fn new(
-        (((open_bracket_char, expression_2), _t1), close_bracket_char): (
-            (
-                (WithNoise<FixedTerminal<1>>, Option<Expression>),
-                Option<Box<index_access_expression::_T1>>,
-            ),
+        (r#break, semicolon_char): (
+            WithNoise<FixedTerminal<5usize>>,
             WithNoise<FixedTerminal<1>>,
         ),
     ) -> Self {
         Self {
-            open_bracket_char,
-            expression_2,
-            _t1,
-            close_bracket_char,
+            r#break,
+            semicolon_char,
         }
     }
 }
 
-impl raw_identifier::_T0 {
-    pub fn new((_0, _1): (FixedTerminal<1>, usize)) -> Self {
-        Self { _0, _1 }
+impl continue_statement::_T0 {
+    pub fn new(
+        (r#continue, semicolon_char): (
+            WithNoise<FixedTerminal<8usize>>,
+            WithNoise<FixedTerminal<1>>,
+        ),
+    ) -> Self {
+        Self {
+            r#continue,
+            semicolon_char,
+        }
     }
 }
 
-impl unchecked_block::_T0 {
-    pub fn new((unchecked, block): (WithNoise<FixedTerminal<9usize>>, Block)) -> Self {
-        Self { unchecked, block }
+impl decimal_number::_T0 {
+    pub fn new(
+        (decimal_number, decimal_exponent): (
+            Box<decimal_number::DecimalNumber>,
+            Option<DecimalExponent>,
+        ),
+    ) -> Self {
+        Self {
+            decimal_number,
+            decimal_exponent,
+        }
     }
 }
 
@@ -374,31 +320,6 @@ impl double_quoted_unicode_string_literal::_T0 {
             unicode_double_quote,
             double_quoted_unicode_string_literals,
             double_quote_char,
-        }
-    }
-}
-
-impl elementary_type_with_payable::_T0 {
-    pub fn new(
-        (address, payable): (
-            WithNoise<FixedTerminal<7usize>>,
-            Option<WithNoise<FixedTerminal<7usize>>>,
-        ),
-    ) -> Self {
-        Self { address, payable }
-    }
-}
-
-impl numeric_literal::_T0 {
-    pub fn new(
-        (numeric_literal, _1): (
-            Box<numeric_literal::NumericLiteral>,
-            Option<WithNoise<usize>>,
-        ),
-    ) -> Self {
-        Self {
-            numeric_literal,
-            _1,
         }
     }
 }
@@ -439,18 +360,9 @@ impl single_quoted_unicode_string_literal::_T0 {
     }
 }
 
-impl assembly_flags::_T0 {
-    pub fn new(
-        ((open_paren_char, double_quoted_ascii_string_literals), close_paren_char): (
-            (WithNoise<FixedTerminal<1>>, assembly_flags::_T1),
-            WithNoise<FixedTerminal<1>>,
-        ),
-    ) -> Self {
-        Self {
-            open_paren_char,
-            double_quoted_ascii_string_literals,
-            close_paren_char,
-        }
+impl unchecked_block::_T0 {
+    pub fn new((unchecked, block): (WithNoise<FixedTerminal<9usize>>, Block)) -> Self {
+        Self { unchecked, block }
     }
 }
 
@@ -548,6 +460,46 @@ impl yul_path::_T0 {
     }
 }
 
+impl assembly_flags::_T0 {
+    pub fn new(
+        ((open_paren_char, double_quoted_ascii_string_literals), close_paren_char): (
+            (WithNoise<FixedTerminal<1>>, assembly_flags::_T1),
+            WithNoise<FixedTerminal<1>>,
+        ),
+    ) -> Self {
+        Self {
+            open_paren_char,
+            double_quoted_ascii_string_literals,
+            close_paren_char,
+        }
+    }
+}
+
+impl elementary_type_with_payable::_T0 {
+    pub fn new(
+        (address, payable): (
+            WithNoise<FixedTerminal<7usize>>,
+            Option<WithNoise<FixedTerminal<7usize>>>,
+        ),
+    ) -> Self {
+        Self { address, payable }
+    }
+}
+
+impl numeric_literal::_T0 {
+    pub fn new(
+        (numeric_literal, _1): (
+            Box<numeric_literal::NumericLiteral>,
+            Option<WithNoise<usize>>,
+        ),
+    ) -> Self {
+        Self {
+            numeric_literal,
+            _1,
+        }
+    }
+}
+
 impl enum_definition::_T0 {
     pub fn new(
         ((((r#enum, identifier), open_brace_char), identifiers), close_brace_char): (
@@ -567,20 +519,6 @@ impl enum_definition::_T0 {
             open_brace_char,
             identifiers,
             close_brace_char,
-        }
-    }
-}
-
-impl member_access_expression::Operator {
-    pub fn new(
-        (period_char, member_access_expression): (
-            WithNoise<FixedTerminal<1>>,
-            Box<member_access_expression::MemberAccessExpression>,
-        ),
-    ) -> Self {
-        Self {
-            period_char,
-            member_access_expression,
         }
     }
 }
@@ -623,6 +561,43 @@ impl selected_import::_T0 {
     }
 }
 
+impl simple_import_directive::_T2 {
+    pub fn new((r#as, identifier): (WithNoise<FixedTerminal<2usize>>, Identifier)) -> Self {
+        Self { r#as, identifier }
+    }
+}
+impl simple_import_directive::_T0 {
+    pub fn new((import_path, _t2s): (ImportPath, Vec<Box<simple_import_directive::_T2>>)) -> Self {
+        Self { import_path, _t2s }
+    }
+}
+
+impl star_import_directive::_T0 {
+    pub fn new(
+        ((((star_char, r#as), identifier), from), import_path): (
+            (
+                (
+                    (
+                        WithNoise<FixedTerminal<1>>,
+                        WithNoise<FixedTerminal<2usize>>,
+                    ),
+                    Identifier,
+                ),
+                WithNoise<FixedTerminal<4usize>>,
+            ),
+            ImportPath,
+        ),
+    ) -> Self {
+        Self {
+            star_char,
+            r#as,
+            identifier,
+            from,
+            import_path,
+        }
+    }
+}
+
 impl user_defined_value_type_definition::_T0 {
     pub fn new(
         ((((r#type, identifier), is), elementary_type_with_payable), semicolon_char): (
@@ -642,24 +617,6 @@ impl user_defined_value_type_definition::_T0 {
             is,
             elementary_type_with_payable,
             semicolon_char,
-        }
-    }
-}
-
-impl function_call_options_expression::Operator {
-    pub fn new(
-        ((open_brace_char, named_arguments), close_brace_char): (
-            (
-                WithNoise<FixedTerminal<1>>,
-                function_call_options_expression::_T1,
-            ),
-            WithNoise<FixedTerminal<1>>,
-        ),
-    ) -> Self {
-        Self {
-            open_brace_char,
-            named_arguments,
-            close_brace_char,
         }
     }
 }
@@ -789,135 +746,6 @@ impl selecting_import_directive::_T0 {
             close_brace_char,
             from,
             import_path,
-        }
-    }
-}
-
-impl simple_import_directive::_T2 {
-    pub fn new((r#as, identifier): (WithNoise<FixedTerminal<2usize>>, Identifier)) -> Self {
-        Self { r#as, identifier }
-    }
-}
-impl simple_import_directive::_T0 {
-    pub fn new((import_path, _t2s): (ImportPath, Vec<Box<simple_import_directive::_T2>>)) -> Self {
-        Self { import_path, _t2s }
-    }
-}
-
-impl star_import_directive::_T0 {
-    pub fn new(
-        ((((star_char, r#as), identifier), from), import_path): (
-            (
-                (
-                    (
-                        WithNoise<FixedTerminal<1>>,
-                        WithNoise<FixedTerminal<2usize>>,
-                    ),
-                    Identifier,
-                ),
-                WithNoise<FixedTerminal<4usize>>,
-            ),
-            ImportPath,
-        ),
-    ) -> Self {
-        Self {
-            star_char,
-            r#as,
-            identifier,
-            from,
-            import_path,
-        }
-    }
-}
-
-impl argument_list::_T0 {
-    pub fn new(
-        ((open_paren_char, argument_list), close_paren_char): (
-            (
-                WithNoise<FixedTerminal<1>>,
-                Option<Box<argument_list::ArgumentList>>,
-            ),
-            WithNoise<FixedTerminal<1>>,
-        ),
-    ) -> Self {
-        Self {
-            open_paren_char,
-            argument_list,
-            close_paren_char,
-        }
-    }
-}
-
-impl catch_clause::_T1 {
-    pub fn new(
-        (identifier, non_empty_parameter_list): (Option<Identifier>, NonEmptyParameterList),
-    ) -> Self {
-        Self {
-            identifier,
-            non_empty_parameter_list,
-        }
-    }
-}
-impl catch_clause::_T0 {
-    pub fn new(
-        ((catch, _t1), block): (
-            (
-                WithNoise<FixedTerminal<5usize>>,
-                Option<Box<catch_clause::_T1>>,
-            ),
-            Block,
-        ),
-    ) -> Self {
-        Self { catch, _t1, block }
-    }
-}
-
-impl function_type::_T2 {
-    pub fn new(
-        (returns, non_empty_parameter_list): (
-            WithNoise<FixedTerminal<7usize>>,
-            NonEmptyParameterList,
-        ),
-    ) -> Self {
-        Self {
-            returns,
-            non_empty_parameter_list,
-        }
-    }
-}
-impl function_type::_T0 {
-    pub fn new(
-        (((function, parameter_list), _2), _t2): (
-            (
-                (WithNoise<FixedTerminal<8usize>>, ParameterList),
-                Vec<WithNoise<usize>>,
-            ),
-            Option<Box<function_type::_T2>>,
-        ),
-    ) -> Self {
-        Self {
-            function,
-            parameter_list,
-            _2,
-            _t2,
-        }
-    }
-}
-
-impl import_directive::_T0 {
-    pub fn new(
-        ((import, import_directive), semicolon_char): (
-            (
-                WithNoise<FixedTerminal<6usize>>,
-                Box<import_directive::ImportDirective>,
-            ),
-            WithNoise<FixedTerminal<1>>,
-        ),
-    ) -> Self {
-        Self {
-            import,
-            import_directive,
-            semicolon_char,
         }
     }
 }
@@ -1103,6 +931,98 @@ impl yul_variable_declaration::_T0 {
     }
 }
 
+impl argument_list::_T0 {
+    pub fn new(
+        ((open_paren_char, argument_list), close_paren_char): (
+            (
+                WithNoise<FixedTerminal<1>>,
+                Option<Box<argument_list::ArgumentList>>,
+            ),
+            WithNoise<FixedTerminal<1>>,
+        ),
+    ) -> Self {
+        Self {
+            open_paren_char,
+            argument_list,
+            close_paren_char,
+        }
+    }
+}
+
+impl catch_clause::_T1 {
+    pub fn new(
+        (identifier, non_empty_parameter_list): (Option<Identifier>, NonEmptyParameterList),
+    ) -> Self {
+        Self {
+            identifier,
+            non_empty_parameter_list,
+        }
+    }
+}
+impl catch_clause::_T0 {
+    pub fn new(
+        ((catch, _t1), block): (
+            (
+                WithNoise<FixedTerminal<5usize>>,
+                Option<Box<catch_clause::_T1>>,
+            ),
+            Block,
+        ),
+    ) -> Self {
+        Self { catch, _t1, block }
+    }
+}
+
+impl function_type::_T2 {
+    pub fn new(
+        (returns, non_empty_parameter_list): (
+            WithNoise<FixedTerminal<7usize>>,
+            NonEmptyParameterList,
+        ),
+    ) -> Self {
+        Self {
+            returns,
+            non_empty_parameter_list,
+        }
+    }
+}
+impl function_type::_T0 {
+    pub fn new(
+        (((function, parameter_list), _2), _t2): (
+            (
+                (WithNoise<FixedTerminal<8usize>>, ParameterList),
+                Vec<WithNoise<usize>>,
+            ),
+            Option<Box<function_type::_T2>>,
+        ),
+    ) -> Self {
+        Self {
+            function,
+            parameter_list,
+            _2,
+            _t2,
+        }
+    }
+}
+
+impl import_directive::_T0 {
+    pub fn new(
+        ((import, import_directive), semicolon_char): (
+            (
+                WithNoise<FixedTerminal<6usize>>,
+                Box<import_directive::ImportDirective>,
+            ),
+            WithNoise<FixedTerminal<1>>,
+        ),
+    ) -> Self {
+        Self {
+            import,
+            import_directive,
+            semicolon_char,
+        }
+    }
+}
+
 impl inheritance_specifier::_T0 {
     pub fn new((identifier_path, argument_list): (IdentifierPath, Option<ArgumentList>)) -> Self {
         Self {
@@ -1138,6 +1058,43 @@ impl type_name::_T2 {
 impl type_name::_T0 {
     pub fn new((type_name, _t2s): (Box<type_name::TypeName>, Vec<Box<type_name::_T2>>)) -> Self {
         Self { type_name, _t2s }
+    }
+}
+
+impl yul_block::_T0 {
+    pub fn new(
+        ((open_brace_char, yul_statements), close_brace_char): (
+            (WithNoise<FixedTerminal<1>>, Vec<YulStatement>),
+            WithNoise<FixedTerminal<1>>,
+        ),
+    ) -> Self {
+        Self {
+            open_brace_char,
+            yul_statements,
+            close_brace_char,
+        }
+    }
+}
+
+impl assembly_statement::_T0 {
+    pub fn new(
+        (((assembly, double_quote_evmasm_double_quote), assembly_flags), yul_block): (
+            (
+                (
+                    WithNoise<FixedTerminal<8usize>>,
+                    Option<WithNoise<FixedTerminal<8usize>>>,
+                ),
+                Option<AssemblyFlags>,
+            ),
+            YulBlock,
+        ),
+    ) -> Self {
+        Self {
+            assembly,
+            double_quote_evmasm_double_quote,
+            assembly_flags,
+            yul_block,
+        }
     }
 }
 
@@ -1335,43 +1292,6 @@ impl variable_declaration::_T0 {
     }
 }
 
-impl yul_block::_T0 {
-    pub fn new(
-        ((open_brace_char, yul_statements), close_brace_char): (
-            (WithNoise<FixedTerminal<1>>, Vec<YulStatement>),
-            WithNoise<FixedTerminal<1>>,
-        ),
-    ) -> Self {
-        Self {
-            open_brace_char,
-            yul_statements,
-            close_brace_char,
-        }
-    }
-}
-
-impl assembly_statement::_T0 {
-    pub fn new(
-        (((assembly, double_quote_evmasm_double_quote), assembly_flags), yul_block): (
-            (
-                (
-                    WithNoise<FixedTerminal<8usize>>,
-                    Option<WithNoise<FixedTerminal<8usize>>>,
-                ),
-                Option<AssemblyFlags>,
-            ),
-            YulBlock,
-        ),
-    ) -> Self {
-        Self {
-            assembly,
-            double_quote_evmasm_double_quote,
-            assembly_flags,
-            yul_block,
-        }
-    }
-}
-
 impl error_definition::_T0 {
     pub fn new(
         (
@@ -1439,6 +1359,35 @@ impl event_definition::_T0 {
     }
 }
 
+impl index_access_expression::_T1 {
+    pub fn new(
+        (colon_char, expression): (WithNoise<FixedTerminal<1>>, Option<Expression>),
+    ) -> Self {
+        Self {
+            colon_char,
+            expression,
+        }
+    }
+}
+impl index_access_expression::Operator {
+    pub fn new(
+        (((open_bracket_char, expression_2), _t1), close_bracket_char): (
+            (
+                (WithNoise<FixedTerminal<1>>, Option<Expression>),
+                Option<Box<index_access_expression::_T1>>,
+            ),
+            WithNoise<FixedTerminal<1>>,
+        ),
+    ) -> Self {
+        Self {
+            open_bracket_char,
+            expression_2,
+            _t1,
+            close_bracket_char,
+        }
+    }
+}
+
 impl variable_declaration_tuple::_T3 {
     pub fn new(
         (comma_char, variable_declaration): (
@@ -1468,6 +1417,57 @@ impl variable_declaration_tuple::_T0 {
             variable_declaration,
             _t3s,
             close_paren_char,
+        }
+    }
+}
+
+impl member_access_expression::Operator {
+    pub fn new(
+        (period_char, member_access_expression): (
+            WithNoise<FixedTerminal<1>>,
+            Box<member_access_expression::MemberAccessExpression>,
+        ),
+    ) -> Self {
+        Self {
+            period_char,
+            member_access_expression,
+        }
+    }
+}
+
+impl function_call_options_expression::Operator {
+    pub fn new(
+        ((open_brace_char, named_arguments), close_brace_char): (
+            (
+                WithNoise<FixedTerminal<1>>,
+                function_call_options_expression::_T1,
+            ),
+            WithNoise<FixedTerminal<1>>,
+        ),
+    ) -> Self {
+        Self {
+            open_brace_char,
+            named_arguments,
+            close_brace_char,
+        }
+    }
+}
+
+impl conditional_expression::_T1 {
+    pub fn new(
+        (((question_char, expression_1), colon_char), expression_2): (
+            (
+                (WithNoise<FixedTerminal<1>>, Expression),
+                WithNoise<FixedTerminal<1>>,
+            ),
+            Expression,
+        ),
+    ) -> Self {
+        Self {
+            question_char,
+            expression_1,
+            colon_char,
+            expression_2,
         }
     }
 }
