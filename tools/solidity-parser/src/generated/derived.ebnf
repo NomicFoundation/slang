@@ -6,7 +6,7 @@
  * First Section: Trivia
  *)
 
-«IGNORE» = { «Whitespace» | «Comment» | «LineComment» } ;
+«LeadingTrivia» = { «Whitespace» | «EOL» | «Comment» | «LineComment» } ;
 
 «TrailingTrivia» = [ { «Whitespace» | «Comment» } ( «EOL» | «LineComment» ) ] ;
 
@@ -24,7 +24,7 @@
  * First Section: Solidity File
  *)
 
-SourceUnit = «IGNORE» { Directive | Definition } $ ;
+SourceUnit = «LeadingTrivia» { Directive | Definition } «EOFTrivia» $ ;
 
 Directive = «PragmaDirective» | ImportDirective | UsingDirective ;
 

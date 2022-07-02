@@ -102,8 +102,13 @@ fn validate_definitions(grammar: &Grammar) -> HashSet<String> {
     );
 
     assert!(
-        defined.contains("IGNORE"),
-        "Grammar must contain an 'IGNORE' production for trivia."
+        defined.contains("LeadingTrivia"),
+        "Grammar must contain a 'LeadingTrivia' production for trivia."
+    );
+
+    assert!(
+        defined.contains("TrailingTrivia"),
+        "Grammar must contain a 'TrailingTrivia' production for trivia."
     );
 
     return defined;
@@ -129,7 +134,10 @@ fn validate_usages(grammar: &Grammar, defined: &HashSet<String>) -> HashSet<Stri
 
 fn validate_orphaned_nodes(grammar: &Grammar, defined: HashSet<String>, used: HashSet<String>) {
     defined.iter().for_each(|name| {
-        if name != &grammar.manifest.root_production {
+        if name != &grammar.manifest.root_production
+            && name != "TrailingTrivia"
+            && name != "LeadingTrivia"
+        {
             assert!(
                 used.contains(name),
                 "Production '{}' is defined but not referenced anywhere",

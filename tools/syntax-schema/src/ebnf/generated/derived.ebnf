@@ -6,7 +6,7 @@
  * Productions: Productions
  *)
 
-grammar = «IGNORE» { production } $ ;
+grammar = «LeadingTrivia» { production } «TrailingTrivia» $ ;
 
 production = «Identifier» '=' expression ';' ;
 
@@ -54,7 +54,9 @@ charRange = «SingleCharString» '…' «SingleCharString» ;
 
 «IdentifierFollow» = «IdentifierStart» | '0'…'9' ;
 
-«IGNORE» = { «Whitespace» | «Comment» } ;
+«LeadingTrivia» = { «Whitespace» | «Comment» } ;
+
+«TrailingTrivia» = { «Whitespace» | «Comment» } ;
 
 «Comment» = '(*' { ¬'*' | 1…*{ '*' } ¬( '*' | ')' ) } { '*' } '*)' ;
 

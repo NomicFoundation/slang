@@ -2,9 +2,10 @@
 
 - name: grammar
   sequence:
-    - reference: IGNORE
+    - reference: LeadingTrivia
     - zeroOrMore:
         reference: production
+    - reference: TrailingTrivia
     - end: ~
 
 - name: production
@@ -196,7 +197,14 @@
         from: "0"
         to: "9"
 
-- name: IGNORE
+- name: LeadingTrivia
+  pattern: Token
+  zeroOrMore:
+    choice:
+      - reference: Whitespace
+      - reference: Comment
+
+- name: TrailingTrivia
   pattern: Token
   zeroOrMore:
     choice:
