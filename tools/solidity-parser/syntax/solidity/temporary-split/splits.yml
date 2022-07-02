@@ -2,8 +2,11 @@
     - trivia:
         notes: specification/notes/01-first-section/01-trivia/index.md
         productions:
-          - IGNORE
+          - LeadingTrivia
+          - TrailingTrivia
+          - EOFTrivia
           - Whitespace
+          - EOL
           - Comment
           - LineComment
     - solidity-file:

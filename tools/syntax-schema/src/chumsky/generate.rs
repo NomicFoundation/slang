@@ -67,10 +67,7 @@ impl Grammar {
             let mut order = 0;
             ordering.insert(name.clone(), 0);
             let production = grammar.get_production(name);
-            let mut identifiers = production.combinator_tree().referenced_identifiers();
-            if !production.is_token() {
-                identifiers.insert("IGNORE".to_owned());
-            }
+            let identifiers = production.combinator_tree().referenced_identifiers();
             for name in identifiers {
                 let child_order = if let Some(child_order) = ordering.get(&name) {
                     *child_order
@@ -99,10 +96,7 @@ impl Grammar {
 
         for (name, order) in ordering {
             let production = self.get_production(name);
-            let mut identifiers = production.combinator_tree().referenced_identifiers();
-            if !production.is_token() {
-                identifiers.insert("IGNORE".to_owned());
-            }
+            let identifiers = production.combinator_tree().referenced_identifiers();
             for name in identifiers {
                 if ordering[&name] >= *order {
                     backlinked.insert(name.clone());
@@ -253,26 +247,26 @@ mod boilerplate {
             pub struct FixedSizeTerminal<const N: usize>();
 
             #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
-            pub struct FixedSizeTerminalWithNoise<const N: usize> {
+            pub struct FixedSizeTerminalWithTrivia<const N: usize> {
                 #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-                pub leading: Ignore,
+                pub leading: LeadingTrivia,
                 #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
                 pub content: FixedSizeTerminal<N>,
                 #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-                pub trailing: Ignore,
+                pub trailing: TrailingTrivia,
             }
 
             #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
             pub struct VariableSizeTerminal(pub usize);
 
             #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
-            pub struct VariableSizeTerminalWithNoise {
+            pub struct VariableSizeTerminalWithTrivia {
                 #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-                pub leading: Ignore,
+                pub leading: LeadingTrivia,
                 #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
                 pub content: VariableSizeTerminal,
                 #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-                pub trailing: Ignore,
+                pub trailing: TrailingTrivia,
             }
         )
     }
@@ -310,7 +304,7 @@ mod boilerplate {
                 }
             }
 
-            impl DefaultTest for VariableSizeTerminalWithNoise {
+            impl DefaultTest for VariableSizeTerminalWithTrivia {
                 fn is_default(&self) -> bool {
                     self.content.is_default() && self.leading.is_default() && self.trailing.is_default()
                 }
@@ -322,9 +316,9 @@ mod boilerplate {
                 }
             }
 
-            impl<const N: usize> DefaultTest for FixedSizeTerminalWithNoise<N> {
+            impl<const N: usize> DefaultTest for FixedSizeTerminalWithTrivia<N> {
                 fn is_default(&self) -> bool {
-                    self.leading.is_empty() && self.trailing.is_empty()
+                    self.leading.is_default() && self.trailing.is_default()
                 }
             }
         )

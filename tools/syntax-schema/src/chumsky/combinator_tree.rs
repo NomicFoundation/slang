@@ -22,16 +22,6 @@ type CombinatorTreeRef = Rc<CombinatorTree>;
 
 type NamedCombinatorTreeRef = (Name, CombinatorTreeRef);
 
-impl CombinatorTreeRoot {
-    pub fn production(&self) -> ProductionRef {
-        self.production.upgrade().unwrap()
-    }
-
-    pub fn slang_name(&self) -> Name {
-        self.production().slang_name()
-    }
-}
-
 #[derive(Clone, Debug)]
 pub enum CombinatorTree {
     Difference {
@@ -83,12 +73,10 @@ pub enum CombinatorTree {
     TerminalTrie {
         name: Name,
         trie: TerminalTrie,
-        with_noise: bool,
     },
     CharacterFilter {
         name: Name,
         filter: CharacterFilter,
-        with_noise: bool,
     },
     End,
 }
@@ -188,20 +176,12 @@ fn ct_reference(production: ProductionWeakRef) -> CombinatorTreeRef {
     Rc::new(CombinatorTree::Reference { production })
 }
 
-fn ct_terminal_trie(name: Name, trie: TerminalTrie, with_noise: bool) -> CombinatorTreeRef {
-    Rc::new(CombinatorTree::TerminalTrie {
-        name,
-        trie,
-        with_noise,
-    })
+fn ct_terminal_trie(name: Name, trie: TerminalTrie) -> CombinatorTreeRef {
+    Rc::new(CombinatorTree::TerminalTrie { name, trie })
 }
 
-fn ct_character_filter(name: Name, filter: CharacterFilter, with_noise: bool) -> CombinatorTreeRef {
-    Rc::new(CombinatorTree::CharacterFilter {
-        name,
-        filter,
-        with_noise,
-    })
+fn ct_character_filter(name: Name, filter: CharacterFilter) -> CombinatorTreeRef {
+    Rc::new(CombinatorTree::CharacterFilter { name, filter })
 }
 
 fn ct_end() -> CombinatorTreeRef {
@@ -220,9 +200,21 @@ pub struct ProductionGeneratedCode {
 }
 
 impl CombinatorTreeRoot {
+    pub fn production(&self) -> ProductionRef {
+        self.production.upgrade().unwrap()
+    }
+
+    pub fn slang_name(&self) -> Name {
+        self.production().slang_name()
+    }
+
     pub fn referenced_identifiers(&self) -> BTreeSet<String> {
         let mut accum = BTreeSet::new();
         self.root.collect_identifiers(&mut accum);
+        if !self.production().is_token() {
+            accum.insert("LeadingTrivia".to_owned());
+            accum.insert("TrailingTrivia".to_owned());
+        }
         accum
     }
 
@@ -230,14 +222,49 @@ impl CombinatorTreeRoot {
         let GeneratedCode {
             parser_type,
             parser,
-            tree_interface,
-            tree_implementation,
+            mut tree_interface,
+            mut tree_implementation,
         } = self.root.to_generated_code(self);
 
         let module_name = self.slang_name().to_module_name_ident();
         let type_name = self.slang_name().to_type_name_ident();
         let parser_name = self.slang_name().to_parser_name_ident();
         let field_name = self.slang_name().to_field_name_ident();
+
+        if self.production().is_token() {
+            let parser_type = parser_type.clone();
+            if self.root.has_default() {
+                tree_interface.push(quote!(
+                    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+                    pub struct WithTrivia {
+                        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+                        pub leading: LeadingTrivia,
+                        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+                        pub content: #parser_type,
+                        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+                        pub trailing: TrailingTrivia,
+                    }
+                ));
+                tree_implementation.push(quote!(
+                    impl DefaultTest for #module_name::WithTrivia {
+                        fn is_default(&self) -> bool {
+                            self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
+                        }
+                    }
+                ))
+            } else {
+                tree_interface.push(quote!(
+                    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+                    pub struct WithTrivia {
+                        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+                        pub leading: LeadingTrivia,
+                        pub content: #parser_type,
+                        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+                        pub trailing: TrailingTrivia,
+                    }
+                ));
+            }
+        }
 
         ProductionGeneratedCode {
             tree_interface: {
@@ -893,25 +920,37 @@ impl CombinatorTree {
 
             CombinatorTree::Reference { production } => {
                 let mut result: GeneratedCode = Default::default();
+                let production = production.upgrade().unwrap();
 
-                let name = production.upgrade().unwrap().slang_name();
+                let name = production.slang_name();
+                let production_parser_name = name.to_parser_name_ident();
+                let production_type_name = name.to_type_name_ident();
 
-                let parser_name = name.to_parser_name_ident();
-                result.parser = quote!( #parser_name.clone() );
-
-                let type_name = name.to_type_name_ident();
-                result.parser_type = quote!( #type_name );
+                if !tree.production().is_token() && production.is_token() {
+                    let production_module_name = name.to_module_name_ident();
+                    result.parser = quote!(
+                        leading_trivia_parser.clone()
+                        .then(#production_parser_name.clone())
+                        .then(trailing_trivia_parser.clone())
+                        .map(|((leading, content), trailing)|
+                            #production_module_name::WithTrivia { leading, content, trailing })
+                    );
+                    result.parser_type = quote!( #production_module_name::WithTrivia );
+                } else {
+                    result.parser = quote!( #production_parser_name.clone() );
+                    result.parser_type = quote!( #production_type_name );
+                }
 
                 result
             }
 
-            CombinatorTree::TerminalTrie {
-                trie, with_noise, ..
-            } => trie.to_generated_code(*with_noise),
+            CombinatorTree::TerminalTrie { trie, .. } => {
+                trie.to_generated_code(!tree.production().is_token())
+            }
 
-            CombinatorTree::CharacterFilter {
-                filter, with_noise, ..
-            } => filter.to_generated_code(*with_noise),
+            CombinatorTree::CharacterFilter { filter, .. } => {
+                filter.to_generated_code(!tree.production().is_token())
+            }
 
             CombinatorTree::End => {
                 let mut result: GeneratedCode = Default::default();
@@ -1107,13 +1146,13 @@ impl Expression {
                 .config
                 .slang_name()
                 .self_or_else(|| filter.slang_name());
-            return ct_character_filter(name, filter, !production.is_token());
+            return ct_character_filter(name, filter);
         } else if let Some(terminal_trie) = self.to_terminal_trie(grammar) {
             let name = self
                 .config
                 .slang_name()
                 .self_or_else(|| terminal_trie.slang_name());
-            return ct_terminal_trie(name, terminal_trie, !production.is_token());
+            return ct_terminal_trie(name, terminal_trie);
         } else {
             match &self.ebnf {
                 EBNF::End => ct_end(),
@@ -1181,11 +1220,7 @@ impl Expression {
                                     if let Some(ctt) = current_terminal_tree {
                                         choices.push((
                                             ctt.slang_name(),
-                                            ct_terminal_trie(
-                                                ctt.slang_name(),
-                                                ctt,
-                                                !production.is_token(),
-                                            ),
+                                            ct_terminal_trie(ctt.slang_name(), ctt),
                                         ));
                                         current_terminal_tree = None
                                     };
@@ -1200,11 +1235,7 @@ impl Expression {
                                     if let Some(ccf) = current_character_filter {
                                         choices.push((
                                             ccf.slang_name(),
-                                            ct_character_filter(
-                                                ccf.slang_name(),
-                                                ccf,
-                                                !production.is_token(),
-                                            ),
+                                            ct_character_filter(ccf.slang_name(), ccf),
                                         ));
                                         current_character_filter = None
                                     };
@@ -1220,11 +1251,7 @@ impl Expression {
                             if let Some(ccf) = current_character_filter {
                                 choices.push((
                                     ccf.slang_name(),
-                                    ct_character_filter(
-                                        ccf.slang_name(),
-                                        ccf,
-                                        !production.is_token(),
-                                    ),
+                                    ct_character_filter(ccf.slang_name(), ccf),
                                 ));
                                 current_character_filter = None
                             };
@@ -1232,7 +1259,7 @@ impl Expression {
                             if let Some(ctt) = current_terminal_tree {
                                 choices.push((
                                     ctt.slang_name(),
-                                    ct_terminal_trie(ctt.slang_name(), ctt, !production.is_token()),
+                                    ct_terminal_trie(ctt.slang_name(), ctt),
                                 ));
                                 current_terminal_tree = None
                             };
@@ -1246,15 +1273,13 @@ impl Expression {
                         if let Some(ccf) = current_character_filter {
                             choices.push((
                                 ccf.slang_name(),
-                                ct_character_filter(ccf.slang_name(), ccf, !production.is_token()),
+                                ct_character_filter(ccf.slang_name(), ccf),
                             ));
                         };
 
                         if let Some(ctt) = current_terminal_tree {
-                            choices.push((
-                                ctt.slang_name(),
-                                ct_terminal_trie(ctt.slang_name(), ctt, !production.is_token()),
-                            ));
+                            choices
+                                .push((ctt.slang_name(), ct_terminal_trie(ctt.slang_name(), ctt)));
                         };
                     }
 

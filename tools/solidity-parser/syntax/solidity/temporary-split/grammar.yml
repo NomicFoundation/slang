@@ -1,20 +1,48 @@
 # yaml-language-server: $schema=../../../../syntax-schema/syntax/schema/topic.schema.json
 
-- name: IGNORE
+- name: LeadingTrivia
+  pattern: Token
+  zeroOrMore:
+    choice:
+      - reference: Whitespace
+      - reference: EOL
+      - reference: Comment
+      - reference: LineComment
+
+- name: TrailingTrivia
+  pattern: Token
+  optional:
+    sequence:
+      - zeroOrMore:
+          choice:
+            - reference: Whitespace
+            - reference: Comment
+      - choice:
+          - reference: EOL
+          - reference: LineComment
+
+- name: EOFTrivia
   pattern: Token
   zeroOrMore:
     choice:
       - reference: Whitespace
       - reference: Comment
       - reference: LineComment
+
 - name: Whitespace
   pattern: Token
   oneOrMore:
     choice:
       - terminal: " "
       - terminal: "\t"
+
+- name: EOL
+  pattern: Token
+  oneOrMore:
+    choice:
       - terminal: "\r"
       - terminal: "\n"
+
 - name: Comment
   pattern: Token
   sequence:
@@ -35,6 +63,7 @@
         - zeroOrMore:
             terminal: "*"
     - terminal: "*/"
+
 - name: LineComment
   pattern: Token
   sequence:
@@ -42,15 +71,17 @@
     - zeroOrMore:
         not:
           choice:
-            - terminal: "\n"
             - terminal: "\r"
+            - terminal: "\n"
+
 - name: SourceUnit
   sequence:
-    - reference: IGNORE
+    - reference: LeadingTrivia
     - zeroOrMore:
         choice:
           - reference: Directive
           - reference: Definition
+    - reference: EOFTrivia
     - end: ~
 - name: Directive
   choice:

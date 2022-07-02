@@ -111,6 +111,14 @@ impl Parsers {
             })
             .boxed();
 
+        // «EOL» = 1…*{ '\u{d}' | '\u{a}' } ;
+        let eol_parser = filter(|&c: &char| c == '\r' || c == '\n')
+            .map(|_| FixedSizeTerminal::<1>())
+            .repeated()
+            .at_least(1usize)
+            .map(|v| VariableSizeTerminal(v.len()))
+            .boxed();
+
         // «FixedBytesType» = 'bytes' ( '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15' | '16' | '17' | '18' | '19' | '20' | '21' | '22' | '23' | '24' | '25' | '26' | '27' | '28' | '29' | '30' | '31' | '32' ) ;
         let fixed_bytes_type_parser = terminal("bytes")
             .ignored()
@@ -238,12 +246,12 @@ impl Parsers {
             .map(|v| hex_number::_T0::from_parse(v))
             .boxed();
 
-        // «LineComment» = '//' { ¬( '\u{a}' | '\u{d}' ) } ;
+        // «LineComment» = '//' { ¬( '\u{d}' | '\u{a}' ) } ;
         let line_comment_parser = terminal("//")
             .ignored()
             .map(|_| FixedSizeTerminal::<2usize>())
             .then(
-                filter(|&c: &char| c != '\n' && c != '\r')
+                filter(|&c: &char| c != '\r' && c != '\n')
                     .map(|_| FixedSizeTerminal::<1>())
                     .repeated()
                     .map(|v| VariableSizeTerminal(v.len())),
@@ -393,8 +401,8 @@ impl Parsers {
             .map(|v| unicode_escape::_T0::from_parse(v))
             .boxed();
 
-        // «Whitespace» = 1…*{ '\u{20}' | '\u{9}' | '\u{d}' | '\u{a}' } ;
-        let whitespace_parser = filter(|&c: &char| c == ' ' || c == '\t' || c == '\r' || c == '\n')
+        // «Whitespace» = 1…*{ '\u{20}' | '\u{9}' } ;
+        let whitespace_parser = filter(|&c: &char| c == ' ' || c == '\t')
             .map(|_| FixedSizeTerminal::<1>())
             .repeated()
             .at_least(1usize)
@@ -452,6 +460,21 @@ impl Parsers {
             .map(|v| decimal_float::_T0::from_parse(v))
             .boxed();
 
+        // «EOFTrivia» = { «Whitespace» | «Comment» | «LineComment» } ;
+        let eof_trivia_parser = choice((
+            whitespace_parser
+                .clone()
+                .map(|v| Box::new(eof_trivia::_T1::Whitespace(v))),
+            comment_parser
+                .clone()
+                .map(|v| Box::new(eof_trivia::_T1::Comment(v))),
+            line_comment_parser
+                .clone()
+                .map(|v| Box::new(eof_trivia::_T1::LineComment(v))),
+        ))
+        .repeated()
+        .boxed();
+
         // «EscapeSequence» = '\\' ( «AsciiEscape» | «HexByteEscape» | «UnicodeEscape» ) ;
         let escape_sequence_parser = just('\\')
             .map(|_| FixedSizeTerminal::<1>())
@@ -507,19 +530,44 @@ impl Parsers {
             .map(|v| hex_string_literal::_T0::from_parse(v))
             .boxed();
 
-        // «IGNORE» = { «Whitespace» | «Comment» | «LineComment» } ;
-        let ignore_parser = choice((
+        // «LeadingTrivia» = { «Whitespace» | «EOL» | «Comment» | «LineComment» } ;
+        let leading_trivia_parser = choice((
             whitespace_parser
                 .clone()
-                .map(|v| Box::new(ignore::_T1::Whitespace(v))),
+                .map(|v| Box::new(leading_trivia::_T1::Whitespace(v))),
+            eol_parser
+                .clone()
+                .map(|v| Box::new(leading_trivia::_T1::Eol(v))),
             comment_parser
                 .clone()
-                .map(|v| Box::new(ignore::_T1::Comment(v))),
+                .map(|v| Box::new(leading_trivia::_T1::Comment(v))),
             line_comment_parser
                 .clone()
-                .map(|v| Box::new(ignore::_T1::LineComment(v))),
+                .map(|v| Box::new(leading_trivia::_T1::LineComment(v))),
         ))
         .repeated()
+        .boxed();
+
+        // «TrailingTrivia» = [ { «Whitespace» | «Comment» } ( «EOL» | «LineComment» ) ] ;
+        let trailing_trivia_parser = choice((
+            whitespace_parser
+                .clone()
+                .map(|v| Box::new(trailing_trivia::_T2::Whitespace(v))),
+            comment_parser
+                .clone()
+                .map(|v| Box::new(trailing_trivia::_T2::Comment(v))),
+        ))
+        .repeated()
+        .then(choice((
+            eol_parser
+                .clone()
+                .map(|v| Box::new(trailing_trivia::_T3::Eol(v))),
+            line_comment_parser
+                .clone()
+                .map(|v| Box::new(trailing_trivia::_T3::LineComment(v))),
+        )))
+        .map(|v| trailing_trivia::_T0::from_parse(v))
+        .or_not()
         .boxed();
 
         // «UfixedType» = 'u' «FixedType» ;
@@ -708,28 +756,28 @@ impl Parsers {
         .boxed();
 
         // BreakStatement = 'break' ';' ;
-        let break_statement_parser = ignore_parser
+        let break_statement_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("break")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<5usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
                 },
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(';').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -740,28 +788,28 @@ impl Parsers {
             .boxed();
 
         // ContinueStatement = 'continue' ';' ;
-        let continue_statement_parser = ignore_parser
+        let continue_statement_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("continue")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<8usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
                 },
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(';').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -829,7 +877,7 @@ impl Parsers {
 
         // ElementaryType = 'bool' | 'string' | 'bytes' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | «FixedType» | «UfixedType» ;
         let elementary_type_parser = choice((
-            ignore_parser
+            leading_trivia_parser
                 .clone()
                 .then(choice::<_, ErrorType>((
                     terminal("b").ignore_then(choice((
@@ -838,29 +886,70 @@ impl Parsers {
                     ))),
                     terminal("string").map(|_| 6usize),
                 )))
-                .then(ignore_parser.clone())
+                .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                    |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
                         leading,
                         content: VariableSizeTerminal(content),
                         trailing,
                     },
                 )
                 .map(|v| Box::new(elementary_type::_T0::_0(v))),
-            signed_integer_type_parser
+            leading_trivia_parser
                 .clone()
+                .then(signed_integer_type_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| signed_integer_type::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
                 .map(|v| Box::new(elementary_type::_T0::SignedIntegerType(v))),
-            unsigned_integer_type_parser
+            leading_trivia_parser
                 .clone()
+                .then(unsigned_integer_type_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| unsigned_integer_type::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
                 .map(|v| Box::new(elementary_type::_T0::UnsignedIntegerType(v))),
-            fixed_bytes_type_parser
+            leading_trivia_parser
                 .clone()
+                .then(fixed_bytes_type_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| fixed_bytes_type::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
                 .map(|v| Box::new(elementary_type::_T0::FixedBytesType(v))),
-            fixed_type_parser
+            leading_trivia_parser
                 .clone()
+                .then(fixed_type_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(|((leading, content), trailing)| fixed_type::WithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                })
                 .map(|v| Box::new(elementary_type::_T0::FixedType(v))),
-            ufixed_type_parser
+            leading_trivia_parser
                 .clone()
+                .then(ufixed_type_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(|((leading, content), trailing)| ufixed_type::WithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                })
                 .map(|v| Box::new(elementary_type::_T0::UfixedType(v))),
         ))
         .boxed();
@@ -1007,12 +1096,12 @@ impl Parsers {
         let positional_argument_list_parser = expression_parser
             .clone()
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -1072,16 +1161,16 @@ impl Parsers {
             .boxed();
 
         // UncheckedBlock = 'unchecked' Block ;
-        let unchecked_block_parser = ignore_parser
+        let unchecked_block_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("unchecked")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<9usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
@@ -1093,10 +1182,19 @@ impl Parsers {
 
         // YulFunctionCall = ( «YulIdentifier» | «YulEVMBuiltinFunctionName» ) '(' { YulExpression / ',' } ')' ;
         let yul_function_call_parser = choice((
-            yul_identifier_parser
+            leading_trivia_parser
                 .clone()
+                .then(yul_identifier_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| yul_identifier::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
                 .map(|v| Box::new(yul_function_call::_T1::YulIdentifier(v))),
-            ignore_parser
+            leading_trivia_parser
                 .clone()
                 .then(choice::<_, ErrorType>((
                     terminal("Blockhash").map(|_| 9usize),
@@ -1237,9 +1335,9 @@ impl Parsers {
                     terminal("timestamp").map(|_| 9usize),
                     terminal("xor").map(|_| 3usize),
                 )))
-                .then(ignore_parser.clone())
+                .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                    |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
                         leading,
                         content: VariableSizeTerminal(content),
                         trailing,
@@ -1248,12 +1346,12 @@ impl Parsers {
                 .map(|v| Box::new(yul_function_call::_T1::_1(v))),
         ))
         .then(
-            ignore_parser
+            leading_trivia_parser
                 .clone()
                 .then(just('(').map(|_| FixedSizeTerminal::<1>()))
-                .then(ignore_parser.clone())
+                .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                         leading,
                         content,
                         trailing,
@@ -1264,12 +1362,12 @@ impl Parsers {
             yul_expression_parser
                 .clone()
                 .then(
-                    ignore_parser
+                    leading_trivia_parser
                         .clone()
                         .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                        .then(ignore_parser.clone())
+                        .then(trailing_trivia_parser.clone())
                         .map(
-                            |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                 leading,
                                 content,
                                 trailing,
@@ -1286,12 +1384,12 @@ impl Parsers {
                 .or_not(),
         )
         .then(
-            ignore_parser
+            leading_trivia_parser
                 .clone()
                 .then(just(')').map(|_| FixedSizeTerminal::<1>()))
-                .then(ignore_parser.clone())
+                .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                         leading,
                         content,
                         trailing,
@@ -1302,29 +1400,28 @@ impl Parsers {
         .boxed();
 
         // YulFunctionDefinition = 'function' «YulIdentifier» '(' { «YulIdentifier» / ',' } ')' [ '->' 1…*{ «YulIdentifier» / ',' } ] YulBlock ;
-        let yul_function_definition_parser = ignore_parser
+        let yul_function_definition_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("function")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<8usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
                 },
             )
-            .then(yul_identifier_parser.clone())
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
-                    .then(just('(').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(yul_identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| yul_identifier::WithTrivia {
                             leading,
                             content,
                             trailing,
@@ -1332,21 +1429,55 @@ impl Parsers {
                     ),
             )
             .then(
-                yul_identifier_parser
+                leading_trivia_parser
                     .clone()
+                    .then(just('(').map(|_| FixedSizeTerminal::<1>()))
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(yul_identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| yul_identifier::WithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
                     .then(
-                        ignore_parser
+                        leading_trivia_parser
                             .clone()
                             .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                            .then(ignore_parser.clone())
+                            .then(trailing_trivia_parser.clone())
                             .map(
-                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                     leading,
                                     content,
                                     trailing,
                                 },
                             )
-                            .then(yul_identifier_parser.clone())
+                            .then(
+                                leading_trivia_parser
+                                    .clone()
+                                    .then(yul_identifier_parser.clone())
+                                    .then(trailing_trivia_parser.clone())
+                                    .map(|((leading, content), trailing)| {
+                                        yul_identifier::WithTrivia {
+                                            leading,
+                                            content,
+                                            trailing,
+                                        }
+                                    }),
+                            )
                             .repeated(),
                     )
                     .map(repetition_mapper)
@@ -1357,12 +1488,12 @@ impl Parsers {
                     .or_not(),
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(')').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -1370,37 +1501,58 @@ impl Parsers {
                     ),
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         terminal("->")
                             .ignored()
                             .map(|_| FixedSizeTerminal::<2usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
                         },
                     )
                     .then(
-                        yul_identifier_parser
+                        leading_trivia_parser
                             .clone()
+                            .then(yul_identifier_parser.clone())
+                            .then(trailing_trivia_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| yul_identifier::WithTrivia {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            )
                             .then(
-                                ignore_parser
+                                leading_trivia_parser
                                     .clone()
                                     .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                                    .then(ignore_parser.clone())
+                                    .then(trailing_trivia_parser.clone())
                                     .map(|((leading, content), trailing)| {
-                                        FixedSizeTerminalWithNoise {
+                                        FixedSizeTerminalWithTrivia {
                                             leading,
                                             content,
                                             trailing,
                                         }
                                     })
-                                    .then(yul_identifier_parser.clone())
+                                    .then(
+                                        leading_trivia_parser
+                                            .clone()
+                                            .then(yul_identifier_parser.clone())
+                                            .then(trailing_trivia_parser.clone())
+                                            .map(|((leading, content), trailing)| {
+                                                yul_identifier::WithTrivia {
+                                                    leading,
+                                                    content,
+                                                    trailing,
+                                                }
+                                            }),
+                                    )
                                     .repeated(),
                             )
                             .map(repetition_mapper)
@@ -1417,25 +1569,43 @@ impl Parsers {
             .boxed();
 
         // YulPath = «YulIdentifier» { '.' ( «YulIdentifier» | «YulEVMBuiltinFunctionName» ) } ;
-        let yul_path_parser = yul_identifier_parser
+        let yul_path_parser = leading_trivia_parser
             .clone()
+            .then(yul_identifier_parser.clone())
+            .then(trailing_trivia_parser.clone())
+            .map(
+                |((leading, content), trailing)| yul_identifier::WithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just('.').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
                         },
                     )
                     .then(choice((
-                        yul_identifier_parser
+                        leading_trivia_parser
                             .clone()
+                            .then(yul_identifier_parser.clone())
+                            .then(trailing_trivia_parser.clone())
+                            .map(
+                                |((leading, content), trailing)| yul_identifier::WithTrivia {
+                                    leading,
+                                    content,
+                                    trailing,
+                                },
+                            )
                             .map(|v| Box::new(yul_path::_T3::YulIdentifier(v))),
-                        ignore_parser
+                        leading_trivia_parser
                             .clone()
                             .then(choice::<_, ErrorType>((
                                 terminal("Blockhash").map(|_| 9usize),
@@ -1576,9 +1746,9 @@ impl Parsers {
                                 terminal("timestamp").map(|_| 9usize),
                                 terminal("xor").map(|_| 3usize),
                             )))
-                            .then(ignore_parser.clone())
+                            .then(trailing_trivia_parser.clone())
                             .map(
-                                |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                                |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
                                     leading,
                                     content: VariableSizeTerminal(content),
                                     trailing,
@@ -1604,33 +1774,54 @@ impl Parsers {
         .boxed();
 
         // AssemblyFlags = '(' 1…*{ «DoubleQuotedAsciiStringLiteral» / ',' } ')' ;
-        let assembly_flags_parser = ignore_parser
+        let assembly_flags_parser = leading_trivia_parser
             .clone()
             .then(just('(').map(|_| FixedSizeTerminal::<1>()))
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
                 },
             )
             .then(
-                double_quoted_ascii_string_literal_parser
+                leading_trivia_parser
                     .clone()
+                    .then(double_quoted_ascii_string_literal_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| {
+                        double_quoted_ascii_string_literal::WithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        }
+                    })
                     .then(
-                        ignore_parser
+                        leading_trivia_parser
                             .clone()
                             .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                            .then(ignore_parser.clone())
+                            .then(trailing_trivia_parser.clone())
                             .map(
-                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                     leading,
                                     content,
                                     trailing,
                                 },
                             )
-                            .then(double_quoted_ascii_string_literal_parser.clone())
+                            .then(
+                                leading_trivia_parser
+                                    .clone()
+                                    .then(double_quoted_ascii_string_literal_parser.clone())
+                                    .then(trailing_trivia_parser.clone())
+                                    .map(|((leading, content), trailing)| {
+                                        double_quoted_ascii_string_literal::WithTrivia {
+                                            leading,
+                                            content,
+                                            trailing,
+                                        }
+                                    }),
+                            )
                             .repeated(),
                     )
                     .map(repetition_mapper)
@@ -1640,12 +1831,12 @@ impl Parsers {
                     }),
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(')').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -1657,32 +1848,32 @@ impl Parsers {
 
         // ElementaryTypeWithPayable = 'address' [ 'payable' ] | ElementaryType ;
         let elementary_type_with_payable_parser = choice((
-            ignore_parser
+            leading_trivia_parser
                 .clone()
                 .then(
                     terminal("address")
                         .ignored()
                         .map(|_| FixedSizeTerminal::<7usize>()),
                 )
-                .then(ignore_parser.clone())
+                .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                         leading,
                         content,
                         trailing,
                     },
                 )
                 .then(
-                    ignore_parser
+                    leading_trivia_parser
                         .clone()
                         .then(
                             terminal("payable")
                                 .ignored()
                                 .map(|_| FixedSizeTerminal::<7usize>()),
                         )
-                        .then(ignore_parser.clone())
+                        .then(trailing_trivia_parser.clone())
                         .map(
-                            |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                 leading,
                                 content,
                                 trailing,
@@ -1700,16 +1891,16 @@ impl Parsers {
 
         // ElementaryTypeWithoutPayable = 'address' | ElementaryType ;
         let elementary_type_without_payable_parser = choice((
-            ignore_parser
+            leading_trivia_parser
                 .clone()
                 .then(
                     terminal("address")
                         .ignored()
                         .map(|_| FixedSizeTerminal::<7usize>()),
                 )
-                .then(ignore_parser.clone())
+                .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                         leading,
                         content,
                         trailing,
@@ -1724,15 +1915,31 @@ impl Parsers {
 
         // NumericLiteral = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
         let numeric_literal_parser = choice((
-            decimal_number_parser
+            leading_trivia_parser
                 .clone()
+                .then(decimal_number_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| decimal_number::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
                 .map(|v| Box::new(numeric_literal::_T1::DecimalNumber(v))),
-            hex_number_parser
+            leading_trivia_parser
                 .clone()
+                .then(hex_number_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(|((leading, content), trailing)| hex_number::WithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                })
                 .map(|v| Box::new(numeric_literal::_T1::HexNumber(v))),
         ))
         .then(
-            ignore_parser
+            leading_trivia_parser
                 .clone()
                 .then(choice::<_, ErrorType>((
                     terminal("days").map(|_| 4usize),
@@ -1747,9 +1954,9 @@ impl Parsers {
                     ))),
                     terminal("years").map(|_| 5usize),
                 )))
-                .then(ignore_parser.clone())
+                .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                    |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
                         leading,
                         content: VariableSizeTerminal(content),
                         trailing,
@@ -1866,31 +2073,69 @@ impl Parsers {
             difference(raw_identifier_parser.clone(), reserved_word_parser.clone()).boxed();
 
         // ImportPath = «AsciiStringLiteral» ;
-        let import_path_parser = ascii_string_literal_parser.clone().boxed();
+        let import_path_parser = leading_trivia_parser
+            .clone()
+            .then(ascii_string_literal_parser.clone())
+            .then(trailing_trivia_parser.clone())
+            .map(
+                |((leading, content), trailing)| ascii_string_literal::WithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .boxed();
 
         // Literal = «AsciiStringLiteral» | «UnicodeStringLiteral» | NumericLiteral | «HexStringLiteral» | «BooleanLiteral» ;
         let literal_parser = choice((
-            ascii_string_literal_parser
+            leading_trivia_parser
                 .clone()
+                .then(ascii_string_literal_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| ascii_string_literal::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
                 .map(|v| Box::new(literal::_T0::AsciiStringLiteral(v))),
-            unicode_string_literal_parser
+            leading_trivia_parser
                 .clone()
+                .then(unicode_string_literal_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| unicode_string_literal::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
                 .map(|v| Box::new(literal::_T0::UnicodeStringLiteral(v))),
             numeric_literal_parser
                 .clone()
                 .map(|v| Box::new(literal::_T0::NumericLiteral(v))),
-            hex_string_literal_parser
+            leading_trivia_parser
                 .clone()
+                .then(hex_string_literal_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| hex_string_literal::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
                 .map(|v| Box::new(literal::_T0::HexStringLiteral(v))),
-            ignore_parser
+            leading_trivia_parser
                 .clone()
                 .then(choice::<_, ErrorType>((
                     terminal("false").map(|_| 5usize),
                     terminal("true").map(|_| 4usize),
                 )))
-                .then(ignore_parser.clone())
+                .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                    |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
                         leading,
                         content: VariableSizeTerminal(content),
                         trailing,
@@ -1902,60 +2147,106 @@ impl Parsers {
 
         // YulLiteral = «YulDecimalNumberLiteral» | «YulHexLiteral» | «AsciiStringLiteral» | «BooleanLiteral» | «HexStringLiteral» ;
         let yul_literal_parser = choice((
-            yul_decimal_number_literal_parser
+            leading_trivia_parser
                 .clone()
+                .then(yul_decimal_number_literal_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| yul_decimal_number_literal::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
                 .map(|v| Box::new(yul_literal::_T0::YulDecimalNumberLiteral(v))),
-            yul_hex_literal_parser
+            leading_trivia_parser
                 .clone()
+                .then(yul_hex_literal_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| yul_hex_literal::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
                 .map(|v| Box::new(yul_literal::_T0::YulHexLiteral(v))),
-            ascii_string_literal_parser
+            leading_trivia_parser
                 .clone()
+                .then(ascii_string_literal_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| ascii_string_literal::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
                 .map(|v| Box::new(yul_literal::_T0::AsciiStringLiteral(v))),
-            ignore_parser
+            leading_trivia_parser
                 .clone()
                 .then(choice::<_, ErrorType>((
                     terminal("false").map(|_| 5usize),
                     terminal("true").map(|_| 4usize),
                 )))
-                .then(ignore_parser.clone())
+                .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                    |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
                         leading,
                         content: VariableSizeTerminal(content),
                         trailing,
                     },
                 )
                 .map(|v| Box::new(yul_literal::_T0::_3(v))),
-            hex_string_literal_parser
+            leading_trivia_parser
                 .clone()
+                .then(hex_string_literal_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| hex_string_literal::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
                 .map(|v| Box::new(yul_literal::_T0::HexStringLiteral(v))),
         ))
         .boxed();
 
         // EnumDefinition = 'enum' «Identifier» '{' 1…*{ «Identifier» / ',' } '}' ;
-        let enum_definition_parser = ignore_parser
+        let enum_definition_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("enum")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<4usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
                 },
             )
-            .then(identifier_parser.clone())
             .then(
-                ignore_parser
+                leading_trivia_parser
+                    .clone()
+                    .then(identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| identifier::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    }),
+            )
+            .then(
+                leading_trivia_parser
                     .clone()
                     .then(just('{').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -1963,21 +2254,38 @@ impl Parsers {
                     ),
             )
             .then(
-                identifier_parser
+                leading_trivia_parser
                     .clone()
+                    .then(identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| identifier::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    })
                     .then(
-                        ignore_parser
+                        leading_trivia_parser
                             .clone()
                             .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                            .then(ignore_parser.clone())
+                            .then(trailing_trivia_parser.clone())
                             .map(
-                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                     leading,
                                     content,
                                     trailing,
                                 },
                             )
-                            .then(identifier_parser.clone())
+                            .then(
+                                leading_trivia_parser
+                                    .clone()
+                                    .then(identifier_parser.clone())
+                                    .then(trailing_trivia_parser.clone())
+                                    .map(|((leading, content), trailing)| identifier::WithTrivia {
+                                        leading,
+                                        content,
+                                        trailing,
+                                    }),
+                            )
                             .repeated(),
                     )
                     .map(repetition_mapper)
@@ -1987,12 +2295,12 @@ impl Parsers {
                     }),
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just('}').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -2003,21 +2311,38 @@ impl Parsers {
             .boxed();
 
         // IdentifierPath = 1…*{ «Identifier» / '.' } ;
-        let identifier_path_parser = identifier_parser
+        let identifier_path_parser = leading_trivia_parser
             .clone()
+            .then(identifier_parser.clone())
+            .then(trailing_trivia_parser.clone())
+            .map(|((leading, content), trailing)| identifier::WithTrivia {
+                leading,
+                content,
+                trailing,
+            })
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just('.').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
                         },
                     )
-                    .then(identifier_parser.clone())
+                    .then(
+                        leading_trivia_parser
+                            .clone()
+                            .then(identifier_parser.clone())
+                            .then(trailing_trivia_parser.clone())
+                            .map(|((leading, content), trailing)| identifier::WithTrivia {
+                                leading,
+                                content,
+                                trailing,
+                            }),
+                    )
                     .repeated(),
             )
             .map(repetition_mapper)
@@ -2028,15 +2353,22 @@ impl Parsers {
             .boxed();
 
         // NamedArgument = «Identifier» ':' Expression ;
-        let named_argument_parser = identifier_parser
+        let named_argument_parser = leading_trivia_parser
             .clone()
+            .then(identifier_parser.clone())
+            .then(trailing_trivia_parser.clone())
+            .map(|((leading, content), trailing)| identifier::WithTrivia {
+                leading,
+                content,
+                trailing,
+            })
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(':').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -2051,16 +2383,16 @@ impl Parsers {
         let parameter_declaration_parser = type_name_parser
             .clone()
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(choice::<_, ErrorType>((
                         terminal("calldata").map(|_| 8usize),
                         terminal("memory").map(|_| 6usize),
                         terminal("storage").map(|_| 7usize),
                     )))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                        |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
                             leading,
                             content: VariableSizeTerminal(content),
                             trailing,
@@ -2068,30 +2400,58 @@ impl Parsers {
                     )
                     .or_not(),
             )
-            .then(identifier_parser.clone().or_not())
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| identifier::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    })
+                    .or_not(),
+            )
             .map(|v| parameter_declaration::_T0::from_parse(v))
             .boxed();
 
         // SelectedImport = «Identifier» [ 'as' «Identifier» ] ;
-        let selected_import_parser = identifier_parser
+        let selected_import_parser = leading_trivia_parser
             .clone()
+            .then(identifier_parser.clone())
+            .then(trailing_trivia_parser.clone())
+            .map(|((leading, content), trailing)| identifier::WithTrivia {
+                leading,
+                content,
+                trailing,
+            })
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         terminal("as")
                             .ignored()
                             .map(|_| FixedSizeTerminal::<2usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
                         },
                     )
-                    .then(identifier_parser.clone())
+                    .then(
+                        leading_trivia_parser
+                            .clone()
+                            .then(identifier_parser.clone())
+                            .then(trailing_trivia_parser.clone())
+                            .map(|((leading, content), trailing)| identifier::WithTrivia {
+                                leading,
+                                content,
+                                trailing,
+                            }),
+                    )
                     .map(|v| selected_import::_T1::from_parse(v))
                     .or_not(),
             )
@@ -2102,22 +2462,32 @@ impl Parsers {
         let simple_import_directive_parser = import_path_parser
             .clone()
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         terminal("as")
                             .ignored()
                             .map(|_| FixedSizeTerminal::<2usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
                         },
                     )
-                    .then(identifier_parser.clone())
+                    .then(
+                        leading_trivia_parser
+                            .clone()
+                            .then(identifier_parser.clone())
+                            .then(trailing_trivia_parser.clone())
+                            .map(|((leading, content), trailing)| identifier::WithTrivia {
+                                leading,
+                                content,
+                                trailing,
+                            }),
+                    )
                     .map(|v| simple_import_directive::_T2::from_parse(v))
                     .repeated(),
             )
@@ -2125,46 +2495,56 @@ impl Parsers {
             .boxed();
 
         // StarImportDirective = '*' 'as' «Identifier» 'from' ImportPath ;
-        let star_import_directive_parser = ignore_parser
+        let star_import_directive_parser = leading_trivia_parser
             .clone()
             .then(just('*').map(|_| FixedSizeTerminal::<1>()))
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
                 },
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         terminal("as")
                             .ignored()
                             .map(|_| FixedSizeTerminal::<2usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
                         },
                     ),
             )
-            .then(identifier_parser.clone())
             .then(
-                ignore_parser
+                leading_trivia_parser
+                    .clone()
+                    .then(identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| identifier::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    }),
+            )
+            .then(
+                leading_trivia_parser
                     .clone()
                     .then(
                         terminal("from")
                             .ignored()
                             .map(|_| FixedSizeTerminal::<4usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -2176,33 +2556,43 @@ impl Parsers {
             .boxed();
 
         // UserDefinedValueTypeDefinition = 'type' «Identifier» 'is' ElementaryTypeWithPayable ';' ;
-        let user_defined_value_type_definition_parser = ignore_parser
+        let user_defined_value_type_definition_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("type")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<4usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
                 },
             )
-            .then(identifier_parser.clone())
             .then(
-                ignore_parser
+                leading_trivia_parser
+                    .clone()
+                    .then(identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| identifier::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    }),
+            )
+            .then(
+                leading_trivia_parser
                     .clone()
                     .then(
                         terminal("is")
                             .ignored()
                             .map(|_| FixedSizeTerminal::<2usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -2211,12 +2601,12 @@ impl Parsers {
             )
             .then(elementary_type_with_payable_parser.clone())
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(';').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -2243,28 +2633,28 @@ impl Parsers {
         );
 
         // MappingType = 'mapping' '(' ( ElementaryTypeWithoutPayable | IdentifierPath ) '=>' TypeName ')' ;
-        let mapping_type_parser = ignore_parser
+        let mapping_type_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("mapping")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<7usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
                 },
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just('(').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -2280,16 +2670,16 @@ impl Parsers {
                     .map(|v| Box::new(mapping_type::_T1::IdentifierPath(v))),
             )))
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         terminal("=>")
                             .ignored()
                             .map(|_| FixedSizeTerminal::<2usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -2298,12 +2688,12 @@ impl Parsers {
             )
             .then(type_name_parser.clone())
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(')').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -2314,12 +2704,12 @@ impl Parsers {
             .boxed();
 
         // NamedArgumentList = '{' { NamedArgument / ',' } '}' ;
-        let named_argument_list_parser = ignore_parser
+        let named_argument_list_parser = leading_trivia_parser
             .clone()
             .then(just('{').map(|_| FixedSizeTerminal::<1>()))
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
@@ -2329,12 +2719,12 @@ impl Parsers {
                 named_argument_parser
                     .clone()
                     .then(
-                        ignore_parser
+                        leading_trivia_parser
                             .clone()
                             .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                            .then(ignore_parser.clone())
+                            .then(trailing_trivia_parser.clone())
                             .map(
-                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                     leading,
                                     content,
                                     trailing,
@@ -2351,12 +2741,12 @@ impl Parsers {
                     .or_not(),
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just('}').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -2367,12 +2757,12 @@ impl Parsers {
             .boxed();
 
         // NonEmptyParameterList = '(' 1…*{ ParameterDeclaration / ',' } ')' ;
-        let non_empty_parameter_list_parser = ignore_parser
+        let non_empty_parameter_list_parser = leading_trivia_parser
             .clone()
             .then(just('(').map(|_| FixedSizeTerminal::<1>()))
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
@@ -2382,12 +2772,12 @@ impl Parsers {
                 parameter_declaration_parser
                     .clone()
                     .then(
-                        ignore_parser
+                        leading_trivia_parser
                             .clone()
                             .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                            .then(ignore_parser.clone())
+                            .then(trailing_trivia_parser.clone())
                             .map(
-                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                     leading,
                                     content,
                                     trailing,
@@ -2403,12 +2793,12 @@ impl Parsers {
                     }),
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(')').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -2419,28 +2809,28 @@ impl Parsers {
             .boxed();
 
         // OverrideSpecifier = 'override' [ '(' 1…1*{ IdentifierPath / ',' } ')' ] ;
-        let override_specifier_parser = ignore_parser
+        let override_specifier_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("override")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<8usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
                 },
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just('(').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -2450,12 +2840,12 @@ impl Parsers {
                         identifier_path_parser
                             .clone()
                             .then(
-                                ignore_parser
+                                leading_trivia_parser
                                     .clone()
                                     .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                                    .then(ignore_parser.clone())
+                                    .then(trailing_trivia_parser.clone())
                                     .map(|((leading, content), trailing)| {
-                                        FixedSizeTerminalWithNoise {
+                                        FixedSizeTerminalWithTrivia {
                                             leading,
                                             content,
                                             trailing,
@@ -2472,12 +2862,12 @@ impl Parsers {
                             }),
                     )
                     .then(
-                        ignore_parser
+                        leading_trivia_parser
                             .clone()
                             .then(just(')').map(|_| FixedSizeTerminal::<1>()))
-                            .then(ignore_parser.clone())
+                            .then(trailing_trivia_parser.clone())
                             .map(
-                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                     leading,
                                     content,
                                     trailing,
@@ -2491,12 +2881,12 @@ impl Parsers {
             .boxed();
 
         // ParameterList = '(' { ParameterDeclaration / ',' } ')' ;
-        let parameter_list_parser = ignore_parser
+        let parameter_list_parser = leading_trivia_parser
             .clone()
             .then(just('(').map(|_| FixedSizeTerminal::<1>()))
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
@@ -2506,12 +2896,12 @@ impl Parsers {
                 parameter_declaration_parser
                     .clone()
                     .then(
-                        ignore_parser
+                        leading_trivia_parser
                             .clone()
                             .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                            .then(ignore_parser.clone())
+                            .then(trailing_trivia_parser.clone())
                             .map(
-                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                     leading,
                                     content,
                                     trailing,
@@ -2528,12 +2918,12 @@ impl Parsers {
                     .or_not(),
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(')').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -2544,12 +2934,12 @@ impl Parsers {
             .boxed();
 
         // SelectingImportDirective = '{' 1…*{ SelectedImport / ',' } '}' 'from' ImportPath ;
-        let selecting_import_directive_parser = ignore_parser
+        let selecting_import_directive_parser = leading_trivia_parser
             .clone()
             .then(just('{').map(|_| FixedSizeTerminal::<1>()))
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
@@ -2559,12 +2949,12 @@ impl Parsers {
                 selected_import_parser
                     .clone()
                     .then(
-                        ignore_parser
+                        leading_trivia_parser
                             .clone()
                             .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                            .then(ignore_parser.clone())
+                            .then(trailing_trivia_parser.clone())
                             .map(
-                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                     leading,
                                     content,
                                     trailing,
@@ -2580,12 +2970,12 @@ impl Parsers {
                     }),
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just('}').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -2593,16 +2983,16 @@ impl Parsers {
                     ),
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         terminal("from")
                             .ignored()
                             .map(|_| FixedSizeTerminal::<4usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -2617,16 +3007,16 @@ impl Parsers {
         let yul_assignment_parser = yul_path_parser
             .clone()
             .then(choice((
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         terminal(":=")
                             .ignored()
                             .map(|_| FixedSizeTerminal::<2usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -2635,12 +3025,12 @@ impl Parsers {
                     .then(yul_expression_parser.clone())
                     .map(|v| yul_assignment::_T2::from_parse(v))
                     .map(|v| Box::new(yul_assignment::_T1::_T2(v))),
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -2651,16 +3041,16 @@ impl Parsers {
                     .repeated()
                     .at_least(1usize)
                     .then(
-                        ignore_parser
+                        leading_trivia_parser
                             .clone()
                             .then(
                                 terminal(":=")
                                     .ignored()
                                     .map(|_| FixedSizeTerminal::<2usize>()),
                             )
-                            .then(ignore_parser.clone())
+                            .then(trailing_trivia_parser.clone())
                             .map(
-                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                     leading,
                                     content,
                                     trailing,
@@ -2675,16 +3065,16 @@ impl Parsers {
             .boxed();
 
         // YulForStatement = 'for' YulBlock YulExpression YulBlock YulBlock ;
-        let yul_for_statement_parser = ignore_parser
+        let yul_for_statement_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("for")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<3usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
@@ -2698,16 +3088,16 @@ impl Parsers {
             .boxed();
 
         // YulIfStatement = 'if' YulExpression YulBlock ;
-        let yul_if_statement_parser = ignore_parser
+        let yul_if_statement_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("if")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<2usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
@@ -2719,16 +3109,16 @@ impl Parsers {
             .boxed();
 
         // YulSwitchStatement = 'switch' YulExpression ( 1…*{ 'case' YulLiteral YulBlock } [ 'default' YulBlock ] | 'default' YulBlock ) ;
-        let yul_switch_statement_parser = ignore_parser
+        let yul_switch_statement_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("switch")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<6usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
@@ -2736,16 +3126,16 @@ impl Parsers {
             )
             .then(yul_expression_parser.clone())
             .then(choice((
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         terminal("case")
                             .ignored()
                             .map(|_| FixedSizeTerminal::<4usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -2757,16 +3147,16 @@ impl Parsers {
                     .repeated()
                     .at_least(1usize)
                     .then(
-                        ignore_parser
+                        leading_trivia_parser
                             .clone()
                             .then(
                                 terminal("default")
                                     .ignored()
                                     .map(|_| FixedSizeTerminal::<7usize>()),
                             )
-                            .then(ignore_parser.clone())
+                            .then(trailing_trivia_parser.clone())
                             .map(
-                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                     leading,
                                     content,
                                     trailing,
@@ -2778,16 +3168,16 @@ impl Parsers {
                     )
                     .map(|v| yul_switch_statement::_T2::from_parse(v))
                     .map(|v| Box::new(yul_switch_statement::_T1::_T2(v))),
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         terminal("default")
                             .ignored()
                             .map(|_| FixedSizeTerminal::<7usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -2801,34 +3191,46 @@ impl Parsers {
             .boxed();
 
         // YulVariableDeclaration = 'let' «YulIdentifier» [ ':=' YulExpression | [ ',' «YulIdentifier» ] [ ':=' YulFunctionCall ] ] ;
-        let yul_variable_declaration_parser = ignore_parser
+        let yul_variable_declaration_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("let")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<3usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
                 },
             )
-            .then(yul_identifier_parser.clone())
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(yul_identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| yul_identifier::WithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
             .then(
                 choice((
-                    ignore_parser
+                    leading_trivia_parser
                         .clone()
                         .then(
                             terminal(":=")
                                 .ignored()
                                 .map(|_| FixedSizeTerminal::<2usize>()),
                         )
-                        .then(ignore_parser.clone())
+                        .then(trailing_trivia_parser.clone())
                         .map(
-                            |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                 leading,
                                 content,
                                 trailing,
@@ -2837,31 +3239,43 @@ impl Parsers {
                         .then(yul_expression_parser.clone())
                         .map(|v| yul_variable_declaration::_T2::from_parse(v))
                         .map(|v| Box::new(yul_variable_declaration::_T1::_T2(v))),
-                    ignore_parser
+                    leading_trivia_parser
                         .clone()
                         .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                        .then(ignore_parser.clone())
+                        .then(trailing_trivia_parser.clone())
                         .map(
-                            |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                 leading,
                                 content,
                                 trailing,
                             },
                         )
-                        .then(yul_identifier_parser.clone())
+                        .then(
+                            leading_trivia_parser
+                                .clone()
+                                .then(yul_identifier_parser.clone())
+                                .then(trailing_trivia_parser.clone())
+                                .map(
+                                    |((leading, content), trailing)| yul_identifier::WithTrivia {
+                                        leading,
+                                        content,
+                                        trailing,
+                                    },
+                                ),
+                        )
                         .map(|v| yul_variable_declaration::_T4::from_parse(v))
                         .or_not()
                         .then(
-                            ignore_parser
+                            leading_trivia_parser
                                 .clone()
                                 .then(
                                     terminal(":=")
                                         .ignored()
                                         .map(|_| FixedSizeTerminal::<2usize>()),
                                 )
-                                .then(ignore_parser.clone())
+                                .then(trailing_trivia_parser.clone())
                                 .map(
-                                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                         leading,
                                         content,
                                         trailing,
@@ -2880,12 +3294,12 @@ impl Parsers {
             .boxed();
 
         // ArgumentList = '(' [ PositionalArgumentList | NamedArgumentList ] ')' ;
-        let argument_list_parser = ignore_parser
+        let argument_list_parser = leading_trivia_parser
             .clone()
             .then(just('(').map(|_| FixedSizeTerminal::<1>()))
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
@@ -2903,12 +3317,12 @@ impl Parsers {
                 .or_not(),
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(')').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -2919,24 +3333,31 @@ impl Parsers {
             .boxed();
 
         // CatchClause = 'catch' [ [ «Identifier» ] NonEmptyParameterList ] Block ;
-        let catch_clause_parser = ignore_parser
+        let catch_clause_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("catch")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<5usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
                 },
             )
             .then(
-                identifier_parser
+                leading_trivia_parser
                     .clone()
+                    .then(identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| identifier::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    })
                     .or_not()
                     .then(non_empty_parameter_list_parser.clone())
                     .map(|v| catch_clause::_T1::from_parse(v))
@@ -2947,16 +3368,16 @@ impl Parsers {
             .boxed();
 
         // FunctionType = 'function' ParameterList { VisibilitySpecifier | StateMutabilitySpecifier } [ 'returns' NonEmptyParameterList ] ;
-        let function_type_parser = ignore_parser
+        let function_type_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("function")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<8usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
@@ -2964,7 +3385,7 @@ impl Parsers {
             )
             .then(parameter_list_parser.clone())
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(choice::<_, ErrorType>((
                         terminal("external").map(|_| 8usize),
@@ -2979,9 +3400,9 @@ impl Parsers {
                         ))),
                         terminal("view").map(|_| 4usize),
                     )))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                        |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
                             leading,
                             content: VariableSizeTerminal(content),
                             trailing,
@@ -2990,16 +3411,16 @@ impl Parsers {
                     .repeated(),
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         terminal("returns")
                             .ignored()
                             .map(|_| FixedSizeTerminal::<7usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -3013,16 +3434,16 @@ impl Parsers {
             .boxed();
 
         // ImportDirective = 'import' ( SimpleImportDirective | StarImportDirective | SelectingImportDirective ) ';' ;
-        let import_directive_parser = ignore_parser
+        let import_directive_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("import")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<6usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
@@ -3040,12 +3461,12 @@ impl Parsers {
                     .map(|v| Box::new(import_directive::_T1::SelectingImportDirective(v))),
             )))
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(';').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -3057,16 +3478,16 @@ impl Parsers {
 
         // MethodAttribute = 'virtual' | OverrideSpecifier ;
         let method_attribute_parser = choice((
-            ignore_parser
+            leading_trivia_parser
                 .clone()
                 .then(
                     terminal("virtual")
                         .ignored()
                         .map(|_| FixedSizeTerminal::<7usize>()),
                 )
-                .then(ignore_parser.clone())
+                .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                         leading,
                         content,
                         trailing,
@@ -3081,7 +3502,7 @@ impl Parsers {
 
         // StateVariableAttribute = 'public' | 'private' | 'internal' | 'constant' | OverrideSpecifier | 'immutable' ;
         let state_variable_attribute_parser = choice((
-            ignore_parser
+            leading_trivia_parser
                 .clone()
                 .then(choice::<_, ErrorType>((
                     terminal("constant").map(|_| 8usize),
@@ -3091,9 +3512,9 @@ impl Parsers {
                         terminal("ublic").map(|_| 6usize),
                     ))),
                 )))
-                .then(ignore_parser.clone())
+                .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                    |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
                         leading,
                         content: VariableSizeTerminal(content),
                         trailing,
@@ -3103,16 +3524,16 @@ impl Parsers {
             override_specifier_parser
                 .clone()
                 .map(|v| Box::new(state_variable_attribute::_T0::OverrideSpecifier(v))),
-            ignore_parser
+            leading_trivia_parser
                 .clone()
                 .then(
                     terminal("immutable")
                         .ignored()
                         .map(|_| FixedSizeTerminal::<9usize>()),
                 )
-                .then(ignore_parser.clone())
+                .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                         leading,
                         content,
                         trailing,
@@ -3148,16 +3569,16 @@ impl Parsers {
             yul_switch_statement_parser
                 .clone()
                 .map(|v| Box::new(yul_statement::_T0::YulSwitchStatement(v))),
-            ignore_parser
+            leading_trivia_parser
                 .clone()
                 .then(choice::<_, ErrorType>((
                     terminal("break").map(|_| 5usize),
                     terminal("continue").map(|_| 8usize),
                     terminal("leave").map(|_| 5usize),
                 )))
-                .then(ignore_parser.clone())
+                .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                    |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
                         leading,
                         content: VariableSizeTerminal(content),
                         trailing,
@@ -3198,12 +3619,12 @@ impl Parsers {
                     .map(|v| Box::new(type_name::_T1::IdentifierPath(v))),
             ))
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just('[').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -3211,12 +3632,12 @@ impl Parsers {
                     )
                     .then(expression_parser.clone().or_not())
                     .then(
-                        ignore_parser
+                        leading_trivia_parser
                             .clone()
                             .then(just(']').map(|_| FixedSizeTerminal::<1>()))
-                            .then(ignore_parser.clone())
+                            .then(trailing_trivia_parser.clone())
                             .map(
-                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                     leading,
                                     content,
                                     trailing,
@@ -3232,12 +3653,12 @@ impl Parsers {
 
         // YulBlock = '{' { YulStatement } '}' ;
         yul_block_parser.define(
-            ignore_parser
+            leading_trivia_parser
                 .clone()
                 .then(just('{').map(|_| FixedSizeTerminal::<1>()))
-                .then(ignore_parser.clone())
+                .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                         leading,
                         content,
                         trailing,
@@ -3245,12 +3666,12 @@ impl Parsers {
                 )
                 .then(yul_statement_parser.clone().repeated())
                 .then(
-                    ignore_parser
+                    leading_trivia_parser
                         .clone()
                         .then(just('}').map(|_| FixedSizeTerminal::<1>()))
-                        .then(ignore_parser.clone())
+                        .then(trailing_trivia_parser.clone())
                         .map(
-                            |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                 leading,
                                 content,
                                 trailing,
@@ -3262,32 +3683,32 @@ impl Parsers {
         );
 
         // AssemblyStatement = 'assembly' [ '"evmasm"' ] [ AssemblyFlags ] YulBlock ;
-        let assembly_statement_parser = ignore_parser
+        let assembly_statement_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("assembly")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<8usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
                 },
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         terminal("\"evmasm\"")
                             .ignored()
                             .map(|_| FixedSizeTerminal::<8usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -3305,7 +3726,7 @@ impl Parsers {
             modifier_invocation_parser
                 .clone()
                 .map(|v| Box::new(constructor_attribute::_T0::ModifierInvocation(v))),
-            ignore_parser
+            leading_trivia_parser
                 .clone()
                 .then(choice::<_, ErrorType>((
                     terminal("internal").map(|_| 8usize),
@@ -3314,9 +3735,9 @@ impl Parsers {
                         terminal("ublic").map(|_| 6usize),
                     ))),
                 )))
-                .then(ignore_parser.clone())
+                .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                    |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
                         leading,
                         content: VariableSizeTerminal(content),
                         trailing,
@@ -3329,7 +3750,18 @@ impl Parsers {
         // ErrorParameter = TypeName [ «Identifier» ] ;
         let error_parameter_parser = type_name_parser
             .clone()
-            .then(identifier_parser.clone().or_not())
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| identifier::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    })
+                    .or_not(),
+            )
             .map(|v| error_parameter::_T0::from_parse(v))
             .boxed();
 
@@ -3337,16 +3769,16 @@ impl Parsers {
         let event_parameter_parser = type_name_parser
             .clone()
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         terminal("indexed")
                             .ignored()
                             .map(|_| FixedSizeTerminal::<7usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -3354,13 +3786,24 @@ impl Parsers {
                     )
                     .or_not(),
             )
-            .then(identifier_parser.clone().or_not())
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| identifier::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    })
+                    .or_not(),
+            )
             .map(|v| event_parameter::_T0::from_parse(v))
             .boxed();
 
         // FallbackFunctionAttribute = 'external' | StateMutabilitySpecifier | ModifierInvocation | 'virtual' | OverrideSpecifier ;
         let fallback_function_attribute_parser = choice((
-            ignore_parser
+            leading_trivia_parser
                 .clone()
                 .then(choice::<_, ErrorType>((
                     terminal("external").map(|_| 8usize),
@@ -3370,9 +3813,9 @@ impl Parsers {
                     ))),
                     terminal("view").map(|_| 4usize),
                 )))
-                .then(ignore_parser.clone())
+                .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                    |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
                         leading,
                         content: VariableSizeTerminal(content),
                         trailing,
@@ -3382,16 +3825,16 @@ impl Parsers {
             modifier_invocation_parser
                 .clone()
                 .map(|v| Box::new(fallback_function_attribute::_T0::ModifierInvocation(v))),
-            ignore_parser
+            leading_trivia_parser
                 .clone()
                 .then(
                     terminal("virtual")
                         .ignored()
                         .map(|_| FixedSizeTerminal::<7usize>()),
                 )
-                .then(ignore_parser.clone())
+                .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                         leading,
                         content,
                         trailing,
@@ -3406,7 +3849,7 @@ impl Parsers {
 
         // FunctionAttribute = VisibilitySpecifier | StateMutabilitySpecifier | ModifierInvocation | 'virtual' | OverrideSpecifier ;
         let function_attribute_parser = choice((
-            ignore_parser
+            leading_trivia_parser
                 .clone()
                 .then(choice::<_, ErrorType>((
                     terminal("external").map(|_| 8usize),
@@ -3421,9 +3864,9 @@ impl Parsers {
                     ))),
                     terminal("view").map(|_| 4usize),
                 )))
-                .then(ignore_parser.clone())
+                .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                    |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
                         leading,
                         content: VariableSizeTerminal(content),
                         trailing,
@@ -3433,16 +3876,16 @@ impl Parsers {
             modifier_invocation_parser
                 .clone()
                 .map(|v| Box::new(function_attribute::_T0::ModifierInvocation(v))),
-            ignore_parser
+            leading_trivia_parser
                 .clone()
                 .then(
                     terminal("virtual")
                         .ignored()
                         .map(|_| FixedSizeTerminal::<7usize>()),
                 )
-                .then(ignore_parser.clone())
+                .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                         leading,
                         content,
                         trailing,
@@ -3456,16 +3899,16 @@ impl Parsers {
         .boxed();
 
         // InheritanceSpecifierList = 'is' 1…*{ InheritanceSpecifier / ',' } ;
-        let inheritance_specifier_list_parser = ignore_parser
+        let inheritance_specifier_list_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("is")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<2usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
@@ -3475,12 +3918,12 @@ impl Parsers {
                 inheritance_specifier_parser
                     .clone()
                     .then(
-                        ignore_parser
+                        leading_trivia_parser
                             .clone()
                             .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                            .then(ignore_parser.clone())
+                            .then(trailing_trivia_parser.clone())
                             .map(
-                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                     leading,
                                     content,
                                     trailing,
@@ -3500,16 +3943,16 @@ impl Parsers {
 
         // PrimaryExpression = 'payable' ArgumentList | 'type' '(' TypeName ')' | 'new' TypeName | '(' 1…*{ [ Expression ] / ',' } ')' | '[' 1…*{ Expression / ',' } ']' | «Identifier» | Literal | ElementaryTypeWithoutPayable ;
         let primary_expression_parser = choice((
-            ignore_parser
+            leading_trivia_parser
                 .clone()
                 .then(
                     terminal("payable")
                         .ignored()
                         .map(|_| FixedSizeTerminal::<7usize>()),
                 )
-                .then(ignore_parser.clone())
+                .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                         leading,
                         content,
                         trailing,
@@ -3518,28 +3961,28 @@ impl Parsers {
                 .then(argument_list_parser.clone())
                 .map(|v| primary_expression::_T1::from_parse(v))
                 .map(|v| Box::new(primary_expression::_T0::_T1(v))),
-            ignore_parser
+            leading_trivia_parser
                 .clone()
                 .then(
                     terminal("type")
                         .ignored()
                         .map(|_| FixedSizeTerminal::<4usize>()),
                 )
-                .then(ignore_parser.clone())
+                .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                         leading,
                         content,
                         trailing,
                     },
                 )
                 .then(
-                    ignore_parser
+                    leading_trivia_parser
                         .clone()
                         .then(just('(').map(|_| FixedSizeTerminal::<1>()))
-                        .then(ignore_parser.clone())
+                        .then(trailing_trivia_parser.clone())
                         .map(
-                            |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                 leading,
                                 content,
                                 trailing,
@@ -3548,12 +3991,12 @@ impl Parsers {
                 )
                 .then(type_name_parser.clone())
                 .then(
-                    ignore_parser
+                    leading_trivia_parser
                         .clone()
                         .then(just(')').map(|_| FixedSizeTerminal::<1>()))
-                        .then(ignore_parser.clone())
+                        .then(trailing_trivia_parser.clone())
                         .map(
-                            |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                 leading,
                                 content,
                                 trailing,
@@ -3562,16 +4005,16 @@ impl Parsers {
                 )
                 .map(|v| primary_expression::_T2::from_parse(v))
                 .map(|v| Box::new(primary_expression::_T0::_T2(v))),
-            ignore_parser
+            leading_trivia_parser
                 .clone()
                 .then(
                     terminal("new")
                         .ignored()
                         .map(|_| FixedSizeTerminal::<3usize>()),
                 )
-                .then(ignore_parser.clone())
+                .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                         leading,
                         content,
                         trailing,
@@ -3580,12 +4023,12 @@ impl Parsers {
                 .then(type_name_parser.clone())
                 .map(|v| primary_expression::_T3::from_parse(v))
                 .map(|v| Box::new(primary_expression::_T0::_T3(v))),
-            ignore_parser
+            leading_trivia_parser
                 .clone()
                 .then(just('(').map(|_| FixedSizeTerminal::<1>()))
-                .then(ignore_parser.clone())
+                .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                         leading,
                         content,
                         trailing,
@@ -3596,12 +4039,12 @@ impl Parsers {
                         .clone()
                         .or_not()
                         .then(
-                            ignore_parser
+                            leading_trivia_parser
                                 .clone()
                                 .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                                .then(ignore_parser.clone())
+                                .then(trailing_trivia_parser.clone())
                                 .map(
-                                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                         leading,
                                         content,
                                         trailing,
@@ -3617,12 +4060,12 @@ impl Parsers {
                         }),
                 )
                 .then(
-                    ignore_parser
+                    leading_trivia_parser
                         .clone()
                         .then(just(')').map(|_| FixedSizeTerminal::<1>()))
-                        .then(ignore_parser.clone())
+                        .then(trailing_trivia_parser.clone())
                         .map(
-                            |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                 leading,
                                 content,
                                 trailing,
@@ -3631,12 +4074,12 @@ impl Parsers {
                 )
                 .map(|v| primary_expression::_T4::from_parse(v))
                 .map(|v| Box::new(primary_expression::_T0::_T4(v))),
-            ignore_parser
+            leading_trivia_parser
                 .clone()
                 .then(just('[').map(|_| FixedSizeTerminal::<1>()))
-                .then(ignore_parser.clone())
+                .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                         leading,
                         content,
                         trailing,
@@ -3646,12 +4089,12 @@ impl Parsers {
                     expression_parser
                         .clone()
                         .then(
-                            ignore_parser
+                            leading_trivia_parser
                                 .clone()
                                 .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                                .then(ignore_parser.clone())
+                                .then(trailing_trivia_parser.clone())
                                 .map(
-                                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                         leading,
                                         content,
                                         trailing,
@@ -3667,12 +4110,12 @@ impl Parsers {
                         }),
                 )
                 .then(
-                    ignore_parser
+                    leading_trivia_parser
                         .clone()
                         .then(just(']').map(|_| FixedSizeTerminal::<1>()))
-                        .then(ignore_parser.clone())
+                        .then(trailing_trivia_parser.clone())
                         .map(
-                            |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                 leading,
                                 content,
                                 trailing,
@@ -3681,8 +4124,15 @@ impl Parsers {
                 )
                 .map(|v| primary_expression::_T6::from_parse(v))
                 .map(|v| Box::new(primary_expression::_T0::_T6(v))),
-            identifier_parser
+            leading_trivia_parser
                 .clone()
+                .then(identifier_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(|((leading, content), trailing)| identifier::WithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                })
                 .map(|v| Box::new(primary_expression::_T0::Identifier(v))),
             literal_parser
                 .clone()
@@ -3696,15 +4146,15 @@ impl Parsers {
 
         // ReceiveFunctionAttribute = 'external' | 'payable' | ModifierInvocation | 'virtual' | OverrideSpecifier ;
         let receive_function_attribute_parser = choice((
-            ignore_parser
+            leading_trivia_parser
                 .clone()
                 .then(choice::<_, ErrorType>((
                     terminal("external").map(|_| 8usize),
                     terminal("payable").map(|_| 7usize),
                 )))
-                .then(ignore_parser.clone())
+                .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                    |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
                         leading,
                         content: VariableSizeTerminal(content),
                         trailing,
@@ -3714,16 +4164,16 @@ impl Parsers {
             modifier_invocation_parser
                 .clone()
                 .map(|v| Box::new(receive_function_attribute::_T0::ModifierInvocation(v))),
-            ignore_parser
+            leading_trivia_parser
                 .clone()
                 .then(
                     terminal("virtual")
                         .ignored()
                         .map(|_| FixedSizeTerminal::<7usize>()),
                 )
-                .then(ignore_parser.clone())
+                .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                         leading,
                         content,
                         trailing,
@@ -3737,29 +4187,39 @@ impl Parsers {
         .boxed();
 
         // StructDefinition = 'struct' «Identifier» '{' 1…*{ TypeName «Identifier» ';' } '}' ;
-        let struct_definition_parser = ignore_parser
+        let struct_definition_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("struct")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<6usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
                 },
             )
-            .then(identifier_parser.clone())
             .then(
-                ignore_parser
+                leading_trivia_parser
+                    .clone()
+                    .then(identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| identifier::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    }),
+            )
+            .then(
+                leading_trivia_parser
                     .clone()
                     .then(just('{').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -3769,14 +4229,24 @@ impl Parsers {
             .then(
                 type_name_parser
                     .clone()
-                    .then(identifier_parser.clone())
                     .then(
-                        ignore_parser
+                        leading_trivia_parser
+                            .clone()
+                            .then(identifier_parser.clone())
+                            .then(trailing_trivia_parser.clone())
+                            .map(|((leading, content), trailing)| identifier::WithTrivia {
+                                leading,
+                                content,
+                                trailing,
+                            }),
+                    )
+                    .then(
+                        leading_trivia_parser
                             .clone()
                             .then(just(';').map(|_| FixedSizeTerminal::<1>()))
-                            .then(ignore_parser.clone())
+                            .then(trailing_trivia_parser.clone())
                             .map(
-                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                     leading,
                                     content,
                                     trailing,
@@ -3788,12 +4258,12 @@ impl Parsers {
                     .at_least(1usize),
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just('}').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -3804,16 +4274,16 @@ impl Parsers {
             .boxed();
 
         // UsingDirective = 'using' ( IdentifierPath | '{' 1…*{ IdentifierPath / ',' } '}' ) 'for' ( '*' | TypeName ) [ 'global' ] ';' ;
-        let using_directive_parser = ignore_parser
+        let using_directive_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("using")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<5usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
@@ -3823,12 +4293,12 @@ impl Parsers {
                 identifier_path_parser
                     .clone()
                     .map(|v| Box::new(using_directive::_T1::IdentifierPath(v))),
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just('{').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -3838,12 +4308,12 @@ impl Parsers {
                         identifier_path_parser
                             .clone()
                             .then(
-                                ignore_parser
+                                leading_trivia_parser
                                     .clone()
                                     .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                                    .then(ignore_parser.clone())
+                                    .then(trailing_trivia_parser.clone())
                                     .map(|((leading, content), trailing)| {
-                                        FixedSizeTerminalWithNoise {
+                                        FixedSizeTerminalWithTrivia {
                                             leading,
                                             content,
                                             trailing,
@@ -3859,12 +4329,12 @@ impl Parsers {
                             }),
                     )
                     .then(
-                        ignore_parser
+                        leading_trivia_parser
                             .clone()
                             .then(just('}').map(|_| FixedSizeTerminal::<1>()))
-                            .then(ignore_parser.clone())
+                            .then(trailing_trivia_parser.clone())
                             .map(
-                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                     leading,
                                     content,
                                     trailing,
@@ -3875,16 +4345,16 @@ impl Parsers {
                     .map(|v| Box::new(using_directive::_T1::_T2(v))),
             )))
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         terminal("for")
                             .ignored()
                             .map(|_| FixedSizeTerminal::<3usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -3892,12 +4362,12 @@ impl Parsers {
                     ),
             )
             .then(choice((
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just('*').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -3909,16 +4379,16 @@ impl Parsers {
                     .map(|v| Box::new(using_directive::_T4::TypeName(v))),
             )))
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         terminal("global")
                             .ignored()
                             .map(|_| FixedSizeTerminal::<6usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -3927,12 +4397,12 @@ impl Parsers {
                     .or_not(),
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(';').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -3946,16 +4416,16 @@ impl Parsers {
         let variable_declaration_parser = type_name_parser
             .clone()
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(choice::<_, ErrorType>((
                         terminal("calldata").map(|_| 8usize),
                         terminal("memory").map(|_| 6usize),
                         terminal("storage").map(|_| 7usize),
                     )))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                        |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
                             leading,
                             content: VariableSizeTerminal(content),
                             trailing,
@@ -3963,14 +4433,33 @@ impl Parsers {
                     )
                     .or_not(),
             )
-            .then(identifier_parser.clone())
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| identifier::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    }),
+            )
             .map(|v| variable_declaration::_T0::from_parse(v))
             .boxed();
 
         // Directive = «PragmaDirective» | ImportDirective | UsingDirective ;
         let directive_parser = choice((
-            pragma_directive_parser
+            leading_trivia_parser
                 .clone()
+                .then(pragma_directive_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| pragma_directive::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
                 .map(|v| Box::new(directive::_T0::PragmaDirective(v))),
             import_directive_parser
                 .clone()
@@ -3982,29 +4471,39 @@ impl Parsers {
         .boxed();
 
         // ErrorDefinition = 'error' «Identifier» '(' { ErrorParameter / ',' } ')' ';' ;
-        let error_definition_parser = ignore_parser
+        let error_definition_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("error")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<5usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
                 },
             )
-            .then(identifier_parser.clone())
             .then(
-                ignore_parser
+                leading_trivia_parser
+                    .clone()
+                    .then(identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| identifier::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    }),
+            )
+            .then(
+                leading_trivia_parser
                     .clone()
                     .then(just('(').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -4015,12 +4514,12 @@ impl Parsers {
                 error_parameter_parser
                     .clone()
                     .then(
-                        ignore_parser
+                        leading_trivia_parser
                             .clone()
                             .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                            .then(ignore_parser.clone())
+                            .then(trailing_trivia_parser.clone())
                             .map(
-                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                     leading,
                                     content,
                                     trailing,
@@ -4037,12 +4536,12 @@ impl Parsers {
                     .or_not(),
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(')').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -4050,12 +4549,12 @@ impl Parsers {
                     ),
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(';').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -4066,29 +4565,39 @@ impl Parsers {
             .boxed();
 
         // EventDefinition = 'event' «Identifier» '(' { EventParameter / ',' } ')' [ 'anonymous' ] ';' ;
-        let event_definition_parser = ignore_parser
+        let event_definition_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("event")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<5usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
                 },
             )
-            .then(identifier_parser.clone())
             .then(
-                ignore_parser
+                leading_trivia_parser
+                    .clone()
+                    .then(identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| identifier::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    }),
+            )
+            .then(
+                leading_trivia_parser
                     .clone()
                     .then(just('(').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -4099,12 +4608,12 @@ impl Parsers {
                 event_parameter_parser
                     .clone()
                     .then(
-                        ignore_parser
+                        leading_trivia_parser
                             .clone()
                             .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                            .then(ignore_parser.clone())
+                            .then(trailing_trivia_parser.clone())
                             .map(
-                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                     leading,
                                     content,
                                     trailing,
@@ -4121,12 +4630,12 @@ impl Parsers {
                     .or_not(),
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(')').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -4134,16 +4643,16 @@ impl Parsers {
                     ),
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         terminal("anonymous")
                             .ignored()
                             .map(|_| FixedSizeTerminal::<9usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -4152,12 +4661,12 @@ impl Parsers {
                     .or_not(),
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(';').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -4171,12 +4680,12 @@ impl Parsers {
         let index_access_expression_parser = primary_expression_parser
             .clone()
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just('[').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -4184,12 +4693,12 @@ impl Parsers {
                     )
                     .then(expression_parser.clone().or_not())
                     .then(
-                        ignore_parser
+                        leading_trivia_parser
                             .clone()
                             .then(just(':').map(|_| FixedSizeTerminal::<1>()))
-                            .then(ignore_parser.clone())
+                            .then(trailing_trivia_parser.clone())
                             .map(
-                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                     leading,
                                     content,
                                     trailing,
@@ -4200,12 +4709,12 @@ impl Parsers {
                             .or_not(),
                     )
                     .then(
-                        ignore_parser
+                        leading_trivia_parser
                             .clone()
                             .then(just(']').map(|_| FixedSizeTerminal::<1>()))
-                            .then(ignore_parser.clone())
+                            .then(trailing_trivia_parser.clone())
                             .map(
-                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                     leading,
                                     content,
                                     trailing,
@@ -4229,24 +4738,24 @@ impl Parsers {
             .boxed();
 
         // VariableDeclarationTuple = '(' { ',' } VariableDeclaration { ',' [ VariableDeclaration ] } ')' ;
-        let variable_declaration_tuple_parser = ignore_parser
+        let variable_declaration_tuple_parser = leading_trivia_parser
             .clone()
             .then(just('(').map(|_| FixedSizeTerminal::<1>()))
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
                 },
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -4257,12 +4766,12 @@ impl Parsers {
             )
             .then(variable_declaration_parser.clone())
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -4273,12 +4782,12 @@ impl Parsers {
                     .repeated(),
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(')').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -4292,31 +4801,38 @@ impl Parsers {
         let member_access_expression_parser = index_access_expression_parser
             .clone()
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just('.').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
                         },
                     )
                     .then(choice((
-                        identifier_parser
+                        leading_trivia_parser
                             .clone()
+                            .then(identifier_parser.clone())
+                            .then(trailing_trivia_parser.clone())
+                            .map(|((leading, content), trailing)| identifier::WithTrivia {
+                                leading,
+                                content,
+                                trailing,
+                            })
                             .map(|v| Box::new(member_access_expression::_T1::Identifier(v))),
-                        ignore_parser
+                        leading_trivia_parser
                             .clone()
                             .then(
                                 terminal("address")
                                     .ignored()
                                     .map(|_| FixedSizeTerminal::<7usize>()),
                             )
-                            .then(ignore_parser.clone())
+                            .then(trailing_trivia_parser.clone())
                             .map(
-                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                     leading,
                                     content,
                                     trailing,
@@ -4344,12 +4860,12 @@ impl Parsers {
         let function_call_options_expression_parser = member_access_expression_parser
             .clone()
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just('{').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -4359,12 +4875,12 @@ impl Parsers {
                         named_argument_parser
                             .clone()
                             .then(
-                                ignore_parser
+                                leading_trivia_parser
                                     .clone()
                                     .then(just(',').map(|_| FixedSizeTerminal::<1>()))
-                                    .then(ignore_parser.clone())
+                                    .then(trailing_trivia_parser.clone())
                                     .map(|((leading, content), trailing)| {
-                                        FixedSizeTerminalWithNoise {
+                                        FixedSizeTerminalWithTrivia {
                                             leading,
                                             content,
                                             trailing,
@@ -4382,12 +4898,12 @@ impl Parsers {
                             ),
                     )
                     .then(
-                        ignore_parser
+                        leading_trivia_parser
                             .clone()
                             .then(just('}').map(|_| FixedSizeTerminal::<1>()))
-                            .then(ignore_parser.clone())
+                            .then(trailing_trivia_parser.clone())
                             .map(
-                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                     leading,
                                     content,
                                     trailing,
@@ -4428,7 +4944,7 @@ impl Parsers {
             .boxed();
 
         // UnaryPrefixExpression = ( '++' | '--' | '!' | '~' | 'delete' | '-' ) Expression ;
-        let unary_prefix_expression_parser = ignore_parser
+        let unary_prefix_expression_parser = leading_trivia_parser
             .clone()
             .then(choice::<_, ErrorType>((
                 terminal("!").map(|_| 1usize),
@@ -4440,9 +4956,9 @@ impl Parsers {
                 terminal("delete").map(|_| 6usize),
                 terminal("~").map(|_| 1usize),
             )))
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
                     leading,
                     content: VariableSizeTerminal(content),
                     trailing,
@@ -4468,7 +4984,7 @@ impl Parsers {
         let unary_suffix_expression_parser = unary_prefix_expression_parser
             .clone()
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         choice::<_, ErrorType>((
@@ -4477,9 +4993,9 @@ impl Parsers {
                         ))
                         .map(|_| FixedSizeTerminal::<2usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -4504,16 +5020,16 @@ impl Parsers {
         let exponentiation_expression_parser = unary_suffix_expression_parser
             .clone()
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         terminal("**")
                             .ignored()
                             .map(|_| FixedSizeTerminal::<2usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -4543,15 +5059,15 @@ impl Parsers {
         let mul_div_mod_expression_parser = exponentiation_expression_parser
             .clone()
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         filter(|&c: &char| c == '*' || c == '/' || c == '%')
                             .map(|_| FixedSizeTerminal::<1>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -4581,14 +5097,14 @@ impl Parsers {
         let add_sub_expression_parser = mul_div_mod_expression_parser
             .clone()
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         filter(|&c: &char| c == '+' || c == '-').map(|_| FixedSizeTerminal::<1>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -4618,7 +5134,7 @@ impl Parsers {
         let shift_expression_parser = add_sub_expression_parser
             .clone()
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(choice::<_, ErrorType>((
                         terminal("<<").map(|_| 2usize),
@@ -4627,9 +5143,9 @@ impl Parsers {
                             empty().map(|_| 2usize),
                         ))),
                     )))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                        |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
                             leading,
                             content: VariableSizeTerminal(content),
                             trailing,
@@ -4659,12 +5175,12 @@ impl Parsers {
         let bit_and_expression_parser = shift_expression_parser
             .clone()
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just('&').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -4694,12 +5210,12 @@ impl Parsers {
         let bit_x_or_expression_parser = bit_and_expression_parser
             .clone()
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just('^').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -4729,12 +5245,12 @@ impl Parsers {
         let bit_or_expression_parser = bit_x_or_expression_parser
             .clone()
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just('|').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -4764,7 +5280,7 @@ impl Parsers {
         let order_comparison_expression_parser = bit_or_expression_parser
             .clone()
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(choice::<_, ErrorType>((
                         terminal("<").ignore_then(choice((
@@ -4776,9 +5292,9 @@ impl Parsers {
                             empty().map(|_| 1usize),
                         ))),
                     )))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                        |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
                             leading,
                             content: VariableSizeTerminal(content),
                             trailing,
@@ -4808,7 +5324,7 @@ impl Parsers {
         let equality_comparison_expression_parser = order_comparison_expression_parser
             .clone()
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         choice::<_, ErrorType>((
@@ -4817,9 +5333,9 @@ impl Parsers {
                         ))
                         .map(|_| FixedSizeTerminal::<2usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -4849,16 +5365,16 @@ impl Parsers {
         let and_expression_parser = equality_comparison_expression_parser
             .clone()
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         terminal("&&")
                             .ignored()
                             .map(|_| FixedSizeTerminal::<2usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -4886,16 +5402,16 @@ impl Parsers {
         let or_expression_parser = and_expression_parser
             .clone()
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         terminal("||")
                             .ignored()
                             .map(|_| FixedSizeTerminal::<2usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -4923,12 +5439,12 @@ impl Parsers {
         let conditional_expression_parser = or_expression_parser
             .clone()
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just('?').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -4936,12 +5452,12 @@ impl Parsers {
                     )
                     .then(expression_parser.clone())
                     .then(
-                        ignore_parser
+                        leading_trivia_parser
                             .clone()
                             .then(just(':').map(|_| FixedSizeTerminal::<1>()))
-                            .then(ignore_parser.clone())
+                            .then(trailing_trivia_parser.clone())
                             .map(
-                                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                     leading,
                                     content,
                                     trailing,
@@ -4969,7 +5485,7 @@ impl Parsers {
         let assignment_expression_parser = conditional_expression_parser
             .clone()
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(choice::<_, ErrorType>((
                         terminal("%=").map(|_| 2usize),
@@ -4987,9 +5503,9 @@ impl Parsers {
                         terminal("^=").map(|_| 2usize),
                         terminal("|=").map(|_| 2usize),
                     )))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                        |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
                             leading,
                             content: VariableSizeTerminal(content),
                             trailing,
@@ -5022,30 +5538,40 @@ impl Parsers {
         let constant_definition_parser = type_name_parser
             .clone()
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         terminal("constant")
                             .ignored()
                             .map(|_| FixedSizeTerminal::<8usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
                         },
                     ),
             )
-            .then(identifier_parser.clone())
             .then(
-                ignore_parser
+                leading_trivia_parser
+                    .clone()
+                    .then(identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| identifier::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    }),
+            )
+            .then(
+                leading_trivia_parser
                     .clone()
                     .then(just('=').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5054,12 +5580,12 @@ impl Parsers {
             )
             .then(expression_parser.clone())
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(';').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5070,16 +5596,16 @@ impl Parsers {
             .boxed();
 
         // DoWhileStatement = 'do' Statement 'while' '(' Expression ')' ';' ;
-        let do_while_statement_parser = ignore_parser
+        let do_while_statement_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("do")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<2usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
@@ -5087,16 +5613,16 @@ impl Parsers {
             )
             .then(statement_parser.clone())
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         terminal("while")
                             .ignored()
                             .map(|_| FixedSizeTerminal::<5usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5104,12 +5630,12 @@ impl Parsers {
                     ),
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just('(').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5118,12 +5644,12 @@ impl Parsers {
             )
             .then(expression_parser.clone())
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(')').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5131,12 +5657,12 @@ impl Parsers {
                     ),
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(';').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5147,16 +5673,16 @@ impl Parsers {
             .boxed();
 
         // EmitStatement = 'emit' Expression ArgumentList ';' ;
-        let emit_statement_parser = ignore_parser
+        let emit_statement_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("emit")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<4usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
@@ -5165,12 +5691,12 @@ impl Parsers {
             .then(expression_parser.clone())
             .then(argument_list_parser.clone())
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(';').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5184,12 +5710,12 @@ impl Parsers {
         let expression_statement_parser = expression_parser
             .clone()
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(';').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5200,28 +5726,28 @@ impl Parsers {
             .boxed();
 
         // IfStatement = 'if' '(' Expression ')' Statement [ 'else' Statement ] ;
-        let if_statement_parser = ignore_parser
+        let if_statement_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("if")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<2usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
                 },
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just('(').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5230,12 +5756,12 @@ impl Parsers {
             )
             .then(expression_parser.clone())
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(')').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5244,16 +5770,16 @@ impl Parsers {
             )
             .then(statement_parser.clone())
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         terminal("else")
                             .ignored()
                             .map(|_| FixedSizeTerminal::<4usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5267,16 +5793,16 @@ impl Parsers {
             .boxed();
 
         // ReturnStatement = 'return' [ Expression ] ';' ;
-        let return_statement_parser = ignore_parser
+        let return_statement_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("return")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<6usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
@@ -5284,12 +5810,12 @@ impl Parsers {
             )
             .then(expression_parser.clone().or_not())
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(';').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5300,16 +5826,16 @@ impl Parsers {
             .boxed();
 
         // RevertStatement = 'revert' Expression ArgumentList ';' ;
-        let revert_statement_parser = ignore_parser
+        let revert_statement_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("revert")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<6usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
@@ -5318,12 +5844,12 @@ impl Parsers {
             .then(expression_parser.clone())
             .then(argument_list_parser.clone())
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(';').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5337,14 +5863,24 @@ impl Parsers {
         let state_variable_declaration_parser = type_name_parser
             .clone()
             .then(state_variable_attribute_parser.clone().repeated())
-            .then(identifier_parser.clone())
             .then(
-                ignore_parser
+                leading_trivia_parser
+                    .clone()
+                    .then(identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| identifier::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    }),
+            )
+            .then(
+                leading_trivia_parser
                     .clone()
                     .then(just('=').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5355,12 +5891,12 @@ impl Parsers {
                     .or_not(),
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(';').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5371,16 +5907,16 @@ impl Parsers {
             .boxed();
 
         // TryStatement = 'try' Expression [ 'returns' NonEmptyParameterList ] Block 1…*{ CatchClause } ;
-        let try_statement_parser = ignore_parser
+        let try_statement_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("try")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<3usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
@@ -5388,16 +5924,16 @@ impl Parsers {
             )
             .then(expression_parser.clone())
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         terminal("returns")
                             .ignored()
                             .map(|_| FixedSizeTerminal::<7usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5417,12 +5953,12 @@ impl Parsers {
             variable_declaration_parser
                 .clone()
                 .then(
-                    ignore_parser
+                    leading_trivia_parser
                         .clone()
                         .then(just('=').map(|_| FixedSizeTerminal::<1>()))
-                        .then(ignore_parser.clone())
+                        .then(trailing_trivia_parser.clone())
                         .map(
-                            |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                 leading,
                                 content,
                                 trailing,
@@ -5437,12 +5973,12 @@ impl Parsers {
             variable_declaration_tuple_parser
                 .clone()
                 .then(
-                    ignore_parser
+                    leading_trivia_parser
                         .clone()
                         .then(just('=').map(|_| FixedSizeTerminal::<1>()))
-                        .then(ignore_parser.clone())
+                        .then(trailing_trivia_parser.clone())
                         .map(
-                            |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                 leading,
                                 content,
                                 trailing,
@@ -5454,12 +5990,12 @@ impl Parsers {
                 .map(|v| Box::new(variable_declaration_statement::_T1::_T4(v))),
         ))
         .then(
-            ignore_parser
+            leading_trivia_parser
                 .clone()
                 .then(just(';').map(|_| FixedSizeTerminal::<1>()))
-                .then(ignore_parser.clone())
+                .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                         leading,
                         content,
                         trailing,
@@ -5470,28 +6006,28 @@ impl Parsers {
         .boxed();
 
         // WhileStatement = 'while' '(' Expression ')' Statement ;
-        let while_statement_parser = ignore_parser
+        let while_statement_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("while")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<5usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
                 },
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just('(').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5500,12 +6036,12 @@ impl Parsers {
             )
             .then(expression_parser.clone())
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(')').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5528,28 +6064,28 @@ impl Parsers {
         .boxed();
 
         // ForStatement = 'for' '(' ( SimpleStatement | ';' ) ( ExpressionStatement | ';' ) [ Expression ] ')' Statement ;
-        let for_statement_parser = ignore_parser
+        let for_statement_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("for")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<3usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
                 },
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just('(').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5560,12 +6096,12 @@ impl Parsers {
                 simple_statement_parser
                     .clone()
                     .map(|v| Box::new(for_statement::_T1::SimpleStatement(v))),
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(';').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5577,12 +6113,12 @@ impl Parsers {
                 expression_statement_parser
                     .clone()
                     .map(|v| Box::new(for_statement::_T2::ExpressionStatement(v))),
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(';').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5592,12 +6128,12 @@ impl Parsers {
             )))
             .then(expression_parser.clone().or_not())
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(')').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5656,12 +6192,12 @@ impl Parsers {
 
         // Block = '{' { Statement | UncheckedBlock } '}' ;
         block_parser.define(
-            ignore_parser
+            leading_trivia_parser
                 .clone()
                 .then(just('{').map(|_| FixedSizeTerminal::<1>()))
-                .then(ignore_parser.clone())
+                .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                         leading,
                         content,
                         trailing,
@@ -5679,12 +6215,12 @@ impl Parsers {
                     .repeated(),
                 )
                 .then(
-                    ignore_parser
+                    leading_trivia_parser
                         .clone()
                         .then(just('}').map(|_| FixedSizeTerminal::<1>()))
-                        .then(ignore_parser.clone())
+                        .then(trailing_trivia_parser.clone())
                         .map(
-                            |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                            |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                                 leading,
                                 content,
                                 trailing,
@@ -5696,16 +6232,16 @@ impl Parsers {
         );
 
         // ConstructorDefinition = 'constructor' ParameterList { ConstructorAttribute } Block ;
-        let constructor_definition_parser = ignore_parser
+        let constructor_definition_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("constructor")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<11usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
@@ -5718,16 +6254,16 @@ impl Parsers {
             .boxed();
 
         // FallbackFunctionDefinition = 'fallback' ParameterList { FallbackFunctionAttribute } [ 'returns' NonEmptyParameterList ] ( ';' | Block ) ;
-        let fallback_function_definition_parser = ignore_parser
+        let fallback_function_definition_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("fallback")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<8usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
@@ -5736,16 +6272,16 @@ impl Parsers {
             .then(parameter_list_parser.clone())
             .then(fallback_function_attribute_parser.clone().repeated())
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         terminal("returns")
                             .ignored()
                             .map(|_| FixedSizeTerminal::<7usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5756,12 +6292,12 @@ impl Parsers {
                     .or_not(),
             )
             .then(choice((
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(';').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5776,34 +6312,41 @@ impl Parsers {
             .boxed();
 
         // FunctionDefinition = 'function' ( «Identifier» | 'fallback' | 'receive' ) ParameterList { FunctionAttribute } [ 'returns' NonEmptyParameterList ] ( ';' | Block ) ;
-        let function_definition_parser = ignore_parser
+        let function_definition_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("function")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<8usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
                 },
             )
             .then(choice((
-                identifier_parser
+                leading_trivia_parser
                     .clone()
+                    .then(identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| identifier::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    })
                     .map(|v| Box::new(function_definition::_T1::Identifier(v))),
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(choice::<_, ErrorType>((
                         terminal("fallback").map(|_| 8usize),
                         terminal("receive").map(|_| 7usize),
                     )))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| VariableSizeTerminalWithNoise {
+                        |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
                             leading,
                             content: VariableSizeTerminal(content),
                             trailing,
@@ -5814,16 +6357,16 @@ impl Parsers {
             .then(parameter_list_parser.clone())
             .then(function_attribute_parser.clone().repeated())
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         terminal("returns")
                             .ignored()
                             .map(|_| FixedSizeTerminal::<7usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5834,12 +6377,12 @@ impl Parsers {
                     .or_not(),
             )
             .then(choice((
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(';').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5854,31 +6397,41 @@ impl Parsers {
             .boxed();
 
         // ModifierDefinition = 'modifier' «Identifier» [ ParameterList ] { MethodAttribute } ( ';' | Block ) ;
-        let modifier_definition_parser = ignore_parser
+        let modifier_definition_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("modifier")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<8usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
                 },
             )
-            .then(identifier_parser.clone())
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| identifier::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    }),
+            )
             .then(parameter_list_parser.clone().or_not())
             .then(method_attribute_parser.clone().repeated())
             .then(choice((
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(';').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5893,28 +6446,28 @@ impl Parsers {
             .boxed();
 
         // ReceiveFunctionDefinition = 'receive' '(' ')' { ReceiveFunctionAttribute } ( ';' | Block ) ;
-        let receive_function_definition_parser = ignore_parser
+        let receive_function_definition_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("receive")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<7usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
                 },
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just('(').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5922,12 +6475,12 @@ impl Parsers {
                     ),
             )
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(')').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5936,12 +6489,12 @@ impl Parsers {
             )
             .then(receive_function_attribute_parser.clone().repeated())
             .then(choice((
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just(';').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -5999,16 +6552,16 @@ impl Parsers {
         .boxed();
 
         // ContractDefinition = [ 'abstract' ] 'contract' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
-        let contract_definition_parser = ignore_parser
+        let contract_definition_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("abstract")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<8usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
@@ -6016,31 +6569,41 @@ impl Parsers {
             )
             .or_not()
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(
                         terminal("contract")
                             .ignored()
                             .map(|_| FixedSizeTerminal::<8usize>()),
                     )
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
                         },
                     ),
             )
-            .then(identifier_parser.clone())
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| identifier::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    }),
+            )
             .then(inheritance_specifier_list_parser.clone().or_not())
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just('{').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -6049,12 +6612,12 @@ impl Parsers {
             )
             .then(contract_body_element_parser.clone().repeated())
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just('}').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -6065,30 +6628,40 @@ impl Parsers {
             .boxed();
 
         // InterfaceDefinition = 'interface' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
-        let interface_definition_parser = ignore_parser
+        let interface_definition_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("interface")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<9usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
                 },
             )
-            .then(identifier_parser.clone())
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| identifier::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    }),
+            )
             .then(inheritance_specifier_list_parser.clone().or_not())
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just('{').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -6097,12 +6670,12 @@ impl Parsers {
             )
             .then(contract_body_element_parser.clone().repeated())
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just('}').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -6113,29 +6686,39 @@ impl Parsers {
             .boxed();
 
         // LibraryDefinition = 'library' «Identifier» '{' { ContractBodyElement } '}' ;
-        let library_definition_parser = ignore_parser
+        let library_definition_parser = leading_trivia_parser
             .clone()
             .then(
                 terminal("library")
                     .ignored()
                     .map(|_| FixedSizeTerminal::<7usize>()),
             )
-            .then(ignore_parser.clone())
+            .then(trailing_trivia_parser.clone())
             .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                     leading,
                     content,
                     trailing,
                 },
             )
-            .then(identifier_parser.clone())
             .then(
-                ignore_parser
+                leading_trivia_parser
+                    .clone()
+                    .then(identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| identifier::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    }),
+            )
+            .then(
+                leading_trivia_parser
                     .clone()
                     .then(just('{').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -6144,12 +6727,12 @@ impl Parsers {
             )
             .then(contract_body_element_parser.clone().repeated())
             .then(
-                ignore_parser
+                leading_trivia_parser
                     .clone()
                     .then(just('}').map(|_| FixedSizeTerminal::<1>()))
-                    .then(ignore_parser.clone())
+                    .then(trailing_trivia_parser.clone())
                     .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithNoise {
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
                             leading,
                             content,
                             trailing,
@@ -6191,9 +6774,18 @@ impl Parsers {
         ))
         .boxed();
 
-        // SourceUnit = «IGNORE» { Directive | Definition } $ ;
-        let source_unit_parser = ignore_parser
+        // SourceUnit = «LeadingTrivia» { Directive | Definition } «EOFTrivia» $ ;
+        let source_unit_parser = leading_trivia_parser
             .clone()
+            .then(leading_trivia_parser.clone())
+            .then(trailing_trivia_parser.clone())
+            .map(
+                |((leading, content), trailing)| leading_trivia::WithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
             .then(
                 choice((
                     directive_parser
@@ -6205,6 +6797,17 @@ impl Parsers {
                 ))
                 .repeated(),
             )
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(eof_trivia_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| eof_trivia::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    }),
+            )
             .then(end())
             .map(|v| source_unit::_T0::from_parse(v))
             .boxed();
@@ -6212,6 +6815,7 @@ impl Parsers {
         Self {
             comment: comment_parser,
             decimal_integer: decimal_integer_parser,
+            eol: eol_parser,
             fixed_bytes_type: fixed_bytes_type_parser,
             fixed_type: fixed_type_parser,
             hex_byte_escape: hex_byte_escape_parser,
@@ -6227,9 +6831,11 @@ impl Parsers {
             yul_hex_literal: yul_hex_literal_parser,
             decimal_exponent: decimal_exponent_parser,
             decimal_float: decimal_float_parser,
+            eof_trivia: eof_trivia_parser,
             escape_sequence: escape_sequence_parser,
             hex_string_literal: hex_string_literal_parser,
-            ignore: ignore_parser,
+            leading_trivia: leading_trivia_parser,
+            trailing_trivia: trailing_trivia_parser,
             ufixed_type: ufixed_type_parser,
             unsigned_integer_type: unsigned_integer_type_parser,
             yul_identifier: yul_identifier_parser,

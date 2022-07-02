@@ -24,7 +24,7 @@ impl DefaultTest for VariableSizeTerminal {
         self.0 == 0
     }
 }
-impl DefaultTest for VariableSizeTerminalWithNoise {
+impl DefaultTest for VariableSizeTerminalWithTrivia {
     fn is_default(&self) -> bool {
         self.content.is_default() && self.leading.is_default() && self.trailing.is_default()
     }
@@ -34,9 +34,9 @@ impl<const N: usize> DefaultTest for FixedSizeTerminal<N> {
         true
     }
 }
-impl<const N: usize> DefaultTest for FixedSizeTerminalWithNoise<N> {
+impl<const N: usize> DefaultTest for FixedSizeTerminalWithTrivia<N> {
     fn is_default(&self) -> bool {
-        self.leading.is_empty() && self.trailing.is_empty()
+        self.leading.is_default() && self.trailing.is_default()
     }
 }
 
@@ -104,6 +104,11 @@ impl DefaultTest for comment::_T0 {
         self.slash_star.is_default() && self.content.is_default() && self.star_slash.is_default()
     }
 }
+impl DefaultTest for comment::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
+    }
+}
 
 impl Default for decimal_integer::_T0 {
     fn default() -> Self {
@@ -116,6 +121,17 @@ impl Default for decimal_integer::_T0 {
 impl DefaultTest for decimal_integer::_T0 {
     fn is_default(&self) -> bool {
         self.elements.is_default() && self.separators.is_default()
+    }
+}
+impl DefaultTest for decimal_integer::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
+    }
+}
+
+impl DefaultTest for eol::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
     }
 }
 
@@ -135,6 +151,11 @@ impl Default for fixed_bytes_type::_T0 {
 impl DefaultTest for fixed_bytes_type::_T0 {
     fn is_default(&self) -> bool {
         self.bytes.is_default() && self._1.is_default()
+    }
+}
+impl DefaultTest for fixed_bytes_type::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
     }
 }
 
@@ -192,6 +213,11 @@ impl DefaultTest for fixed_type::_T0 {
         self.fixed.is_default() && self._t1.is_default()
     }
 }
+impl DefaultTest for fixed_type::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
+    }
+}
 
 impl hex_byte_escape::_T0 {
     pub fn from_parse((_0, _1): (FixedSizeTerminal<1>, VariableSizeTerminal)) -> Self {
@@ -209,6 +235,11 @@ impl Default for hex_byte_escape::_T0 {
 impl DefaultTest for hex_byte_escape::_T0 {
     fn is_default(&self) -> bool {
         self._0.is_default() && self._1.is_default()
+    }
+}
+impl DefaultTest for hex_byte_escape::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
     }
 }
 
@@ -249,6 +280,11 @@ impl DefaultTest for hex_number::_T0 {
         self.zero_char.is_default() && self._1.is_default() && self._2.is_default()
     }
 }
+impl DefaultTest for hex_number::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
+    }
+}
 
 impl line_comment::_T0 {
     pub fn from_parse(
@@ -270,6 +306,11 @@ impl DefaultTest for line_comment::_T0 {
         self.slash_slash.is_default() && self._1.is_default()
     }
 }
+impl DefaultTest for line_comment::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
+    }
+}
 
 impl Default for possibly_separated_pairs_of_hex_digits::_T0 {
     fn default() -> Self {
@@ -282,6 +323,11 @@ impl Default for possibly_separated_pairs_of_hex_digits::_T0 {
 impl DefaultTest for possibly_separated_pairs_of_hex_digits::_T0 {
     fn is_default(&self) -> bool {
         self.elements.is_default() && self.separators.is_default()
+    }
+}
+impl DefaultTest for possibly_separated_pairs_of_hex_digits::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
     }
 }
 
@@ -315,6 +361,11 @@ impl DefaultTest for pragma_directive::_T0 {
             && self.semicolon_char.is_default()
     }
 }
+impl DefaultTest for pragma_directive::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
+    }
+}
 
 impl raw_identifier::_T0 {
     pub fn from_parse((_0, _1): (FixedSizeTerminal<1>, VariableSizeTerminal)) -> Self {
@@ -332,6 +383,11 @@ impl Default for raw_identifier::_T0 {
 impl DefaultTest for raw_identifier::_T0 {
     fn is_default(&self) -> bool {
         self._0.is_default() && self._1.is_default()
+    }
+}
+impl DefaultTest for raw_identifier::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
     }
 }
 
@@ -353,6 +409,11 @@ impl DefaultTest for signed_integer_type::_T0 {
         self.int.is_default() && self._1.is_default()
     }
 }
+impl DefaultTest for signed_integer_type::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
+    }
+}
 
 impl unicode_escape::_T0 {
     pub fn from_parse((_0, _1): (FixedSizeTerminal<1>, VariableSizeTerminal)) -> Self {
@@ -370,6 +431,17 @@ impl Default for unicode_escape::_T0 {
 impl DefaultTest for unicode_escape::_T0 {
     fn is_default(&self) -> bool {
         self._0.is_default() && self._1.is_default()
+    }
+}
+impl DefaultTest for unicode_escape::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
+    }
+}
+
+impl DefaultTest for whitespace::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
     }
 }
 
@@ -410,6 +482,11 @@ impl DefaultTest for yul_hex_literal::_T0 {
         self.zero_x.is_default() && self._1.is_default()
     }
 }
+impl DefaultTest for yul_hex_literal::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
+    }
+}
 
 impl decimal_exponent::_T0 {
     pub fn from_parse(
@@ -437,6 +514,11 @@ impl Default for decimal_exponent::_T0 {
 impl DefaultTest for decimal_exponent::_T0 {
     fn is_default(&self) -> bool {
         self._0.is_default() && self.minus_char.is_default() && self.decimal_integer.is_default()
+    }
+}
+impl DefaultTest for decimal_exponent::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
     }
 }
 
@@ -468,6 +550,17 @@ impl DefaultTest for decimal_float::_T0 {
         self.decimal_integer_1.is_default()
             && self.period_char.is_default()
             && self.decimal_integer_2.is_default()
+    }
+}
+impl DefaultTest for decimal_float::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
+    }
+}
+
+impl DefaultTest for eof_trivia::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
     }
 }
 
@@ -556,6 +649,25 @@ impl hex_string_literal::_T0 {
     }
 }
 
+impl DefaultTest for leading_trivia::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
+    }
+}
+
+impl trailing_trivia::_T0 {
+    pub fn from_parse(
+        (_t2s, _t3): (Vec<Box<trailing_trivia::_T2>>, Box<trailing_trivia::_T3>),
+    ) -> Self {
+        Self { _t2s, _t3 }
+    }
+}
+impl DefaultTest for trailing_trivia::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
+    }
+}
+
 impl ufixed_type::_T0 {
     pub fn from_parse((_0, fixed_type): (FixedSizeTerminal<1>, FixedType)) -> Self {
         Self { _0, fixed_type }
@@ -572,6 +684,11 @@ impl Default for ufixed_type::_T0 {
 impl DefaultTest for ufixed_type::_T0 {
     fn is_default(&self) -> bool {
         self._0.is_default() && self.fixed_type.is_default()
+    }
+}
+impl DefaultTest for ufixed_type::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
     }
 }
 
@@ -598,12 +715,23 @@ impl DefaultTest for unsigned_integer_type::_T0 {
         self._0.is_default() && self.signed_integer_type.is_default()
     }
 }
+impl DefaultTest for unsigned_integer_type::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
+    }
+}
+
+impl DefaultTest for yul_identifier::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
+    }
+}
 
 impl break_statement::_T0 {
     pub fn from_parse(
         (r#break, semicolon_char): (
-            FixedSizeTerminalWithNoise<5usize>,
-            FixedSizeTerminalWithNoise<1>,
+            FixedSizeTerminalWithTrivia<5usize>,
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -629,8 +757,8 @@ impl DefaultTest for break_statement::_T0 {
 impl continue_statement::_T0 {
     pub fn from_parse(
         (r#continue, semicolon_char): (
-            FixedSizeTerminalWithNoise<8usize>,
-            FixedSizeTerminalWithNoise<1>,
+            FixedSizeTerminalWithTrivia<8usize>,
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -697,6 +825,11 @@ impl DefaultTest for double_quoted_ascii_string_literal::_T0 {
             && self.double_quote_char_2.is_default()
     }
 }
+impl DefaultTest for double_quoted_ascii_string_literal::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
+    }
+}
 
 impl double_quoted_unicode_string_literal::_T0 {
     pub fn from_parse(
@@ -729,6 +862,11 @@ impl DefaultTest for double_quoted_unicode_string_literal::_T0 {
         self.unicode_double_quote.is_default()
             && self.runs.is_default()
             && self.double_quote_char.is_default()
+    }
+}
+impl DefaultTest for double_quoted_unicode_string_literal::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
     }
 }
 
@@ -777,6 +915,11 @@ impl DefaultTest for single_quoted_ascii_string_literal::_T0 {
         self.quote_char_1.is_default() && self.runs.is_default() && self.quote_char_2.is_default()
     }
 }
+impl DefaultTest for single_quoted_ascii_string_literal::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
+    }
+}
 
 impl single_quoted_unicode_string_literal::_T0 {
     pub fn from_parse(
@@ -809,9 +952,14 @@ impl DefaultTest for single_quoted_unicode_string_literal::_T0 {
         self.unicode_quote.is_default() && self.runs.is_default() && self.quote_char.is_default()
     }
 }
+impl DefaultTest for single_quoted_unicode_string_literal::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
+    }
+}
 
 impl unchecked_block::_T0 {
-    pub fn from_parse((unchecked, block): (FixedSizeTerminalWithNoise<9usize>, Block)) -> Self {
+    pub fn from_parse((unchecked, block): (FixedSizeTerminalWithTrivia<9usize>, Block)) -> Self {
         Self { unchecked, block }
     }
 }
@@ -846,10 +994,10 @@ impl yul_function_call::_T0 {
     pub fn from_parse(
         (((_t1, open_paren_char), yul_expressions), close_paren_char): (
             (
-                (Box<yul_function_call::_T1>, FixedSizeTerminalWithNoise<1>),
+                (Box<yul_function_call::_T1>, FixedSizeTerminalWithTrivia<1>),
                 Option<yul_function_call::_T2>,
             ),
-            FixedSizeTerminalWithNoise<1>,
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -890,7 +1038,7 @@ impl DefaultTest for yul_function_definition::_T3 {
 impl yul_function_definition::_T2 {
     pub fn from_parse(
         (minus_greater, yul_identifiers): (
-            FixedSizeTerminalWithNoise<2usize>,
+            FixedSizeTerminalWithTrivia<2usize>,
             yul_function_definition::_T3,
         ),
     ) -> Self {
@@ -929,12 +1077,15 @@ impl yul_function_definition::_T0 {
                 (
                     (
                         (
-                            (FixedSizeTerminalWithNoise<8usize>, YulIdentifier),
-                            FixedSizeTerminalWithNoise<1>,
+                            (
+                                FixedSizeTerminalWithTrivia<8usize>,
+                                yul_identifier::WithTrivia,
+                            ),
+                            FixedSizeTerminalWithTrivia<1>,
                         ),
                         Option<yul_function_definition::_T1>,
                     ),
-                    FixedSizeTerminalWithNoise<1>,
+                    FixedSizeTerminalWithTrivia<1>,
                 ),
                 Option<yul_function_definition::_T2>,
             ),
@@ -979,13 +1130,15 @@ impl DefaultTest for yul_function_definition::_T0 {
 
 impl yul_path::_T2 {
     pub fn from_parse(
-        (period_char, _t3): (FixedSizeTerminalWithNoise<1>, Box<yul_path::_T3>),
+        (period_char, _t3): (FixedSizeTerminalWithTrivia<1>, Box<yul_path::_T3>),
     ) -> Self {
         Self { period_char, _t3 }
     }
 }
 impl yul_path::_T0 {
-    pub fn from_parse((yul_identifier, _t2s): (YulIdentifier, Vec<yul_path::_T2>)) -> Self {
+    pub fn from_parse(
+        (yul_identifier, _t2s): (yul_identifier::WithTrivia, Vec<yul_path::_T2>),
+    ) -> Self {
         Self {
             yul_identifier,
             _t2s,
@@ -1022,8 +1175,8 @@ impl DefaultTest for assembly_flags::_T1 {
 impl assembly_flags::_T0 {
     pub fn from_parse(
         ((open_paren_char, double_quoted_ascii_string_literals), close_paren_char): (
-            (FixedSizeTerminalWithNoise<1>, assembly_flags::_T1),
-            FixedSizeTerminalWithNoise<1>,
+            (FixedSizeTerminalWithTrivia<1>, assembly_flags::_T1),
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -1053,8 +1206,8 @@ impl DefaultTest for assembly_flags::_T0 {
 impl elementary_type_with_payable::_T1 {
     pub fn from_parse(
         (address, payable): (
-            FixedSizeTerminalWithNoise<7usize>,
-            Option<FixedSizeTerminalWithNoise<7usize>>,
+            FixedSizeTerminalWithTrivia<7usize>,
+            Option<FixedSizeTerminalWithTrivia<7usize>>,
         ),
     ) -> Self {
         Self { address, payable }
@@ -1078,10 +1231,16 @@ impl numeric_literal::_T0 {
     pub fn from_parse(
         (_t1, _1): (
             Box<numeric_literal::_T1>,
-            Option<VariableSizeTerminalWithNoise>,
+            Option<VariableSizeTerminalWithTrivia>,
         ),
     ) -> Self {
         Self { _t1, _1 }
+    }
+}
+
+impl DefaultTest for identifier::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
     }
 }
 
@@ -1103,12 +1262,12 @@ impl enum_definition::_T0 {
         ((((r#enum, identifier), open_brace_char), identifiers), close_brace_char): (
             (
                 (
-                    (FixedSizeTerminalWithNoise<4usize>, Identifier),
-                    FixedSizeTerminalWithNoise<1>,
+                    (FixedSizeTerminalWithTrivia<4usize>, identifier::WithTrivia),
+                    FixedSizeTerminalWithTrivia<1>,
                 ),
                 enum_definition::_T1,
             ),
-            FixedSizeTerminalWithNoise<1>,
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -1158,7 +1317,7 @@ impl DefaultTest for identifier_path::_T0 {
 impl named_argument::_T0 {
     pub fn from_parse(
         ((identifier, colon_char), expression): (
-            (Identifier, FixedSizeTerminalWithNoise<1>),
+            (identifier::WithTrivia, FixedSizeTerminalWithTrivia<1>),
             Expression,
         ),
     ) -> Self {
@@ -1173,8 +1332,8 @@ impl named_argument::_T0 {
 impl parameter_declaration::_T0 {
     pub fn from_parse(
         ((type_name, _1), identifier): (
-            (TypeName, Option<VariableSizeTerminalWithNoise>),
-            Option<Identifier>,
+            (TypeName, Option<VariableSizeTerminalWithTrivia>),
+            Option<identifier::WithTrivia>,
         ),
     ) -> Self {
         Self {
@@ -1187,7 +1346,7 @@ impl parameter_declaration::_T0 {
 
 impl selected_import::_T1 {
     pub fn from_parse(
-        (r#as, identifier): (FixedSizeTerminalWithNoise<2usize>, Identifier),
+        (r#as, identifier): (FixedSizeTerminalWithTrivia<2usize>, identifier::WithTrivia),
     ) -> Self {
         Self { r#as, identifier }
     }
@@ -1206,7 +1365,9 @@ impl DefaultTest for selected_import::_T1 {
     }
 }
 impl selected_import::_T0 {
-    pub fn from_parse((identifier, _t1): (Identifier, Option<selected_import::_T1>)) -> Self {
+    pub fn from_parse(
+        (identifier, _t1): (identifier::WithTrivia, Option<selected_import::_T1>),
+    ) -> Self {
         Self { identifier, _t1 }
     }
 }
@@ -1226,7 +1387,7 @@ impl DefaultTest for selected_import::_T0 {
 
 impl simple_import_directive::_T2 {
     pub fn from_parse(
-        (r#as, identifier): (FixedSizeTerminalWithNoise<2usize>, Identifier),
+        (r#as, identifier): (FixedSizeTerminalWithTrivia<2usize>, identifier::WithTrivia),
     ) -> Self {
         Self { r#as, identifier }
     }
@@ -1258,12 +1419,12 @@ impl star_import_directive::_T0 {
             (
                 (
                     (
-                        FixedSizeTerminalWithNoise<1>,
-                        FixedSizeTerminalWithNoise<2usize>,
+                        FixedSizeTerminalWithTrivia<1>,
+                        FixedSizeTerminalWithTrivia<2usize>,
                     ),
-                    Identifier,
+                    identifier::WithTrivia,
                 ),
-                FixedSizeTerminalWithNoise<4usize>,
+                FixedSizeTerminalWithTrivia<4usize>,
             ),
             ImportPath,
         ),
@@ -1283,12 +1444,12 @@ impl user_defined_value_type_definition::_T0 {
         ((((r#type, identifier), is), elementary_type_with_payable), semicolon_char): (
             (
                 (
-                    (FixedSizeTerminalWithNoise<4usize>, Identifier),
-                    FixedSizeTerminalWithNoise<2usize>,
+                    (FixedSizeTerminalWithTrivia<4usize>, identifier::WithTrivia),
+                    FixedSizeTerminalWithTrivia<2usize>,
                 ),
                 ElementaryTypeWithPayable,
             ),
-            FixedSizeTerminalWithNoise<1>,
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -1308,16 +1469,16 @@ impl mapping_type::_T0 {
                 (
                     (
                         (
-                            FixedSizeTerminalWithNoise<7usize>,
-                            FixedSizeTerminalWithNoise<1>,
+                            FixedSizeTerminalWithTrivia<7usize>,
+                            FixedSizeTerminalWithTrivia<1>,
                         ),
                         Box<mapping_type::_T1>,
                     ),
-                    FixedSizeTerminalWithNoise<2usize>,
+                    FixedSizeTerminalWithTrivia<2usize>,
                 ),
                 TypeName,
             ),
-            FixedSizeTerminalWithNoise<1>,
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -1348,10 +1509,10 @@ impl named_argument_list::_T0 {
     pub fn from_parse(
         ((open_brace_char, named_arguments), close_brace_char): (
             (
-                FixedSizeTerminalWithNoise<1>,
+                FixedSizeTerminalWithTrivia<1>,
                 Option<named_argument_list::_T1>,
             ),
-            FixedSizeTerminalWithNoise<1>,
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -1394,8 +1555,11 @@ impl DefaultTest for non_empty_parameter_list::_T1 {
 impl non_empty_parameter_list::_T0 {
     pub fn from_parse(
         ((open_paren_char, parameter_declarations), close_paren_char): (
-            (FixedSizeTerminalWithNoise<1>, non_empty_parameter_list::_T1),
-            FixedSizeTerminalWithNoise<1>,
+            (
+                FixedSizeTerminalWithTrivia<1>,
+                non_empty_parameter_list::_T1,
+            ),
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -1438,8 +1602,8 @@ impl DefaultTest for override_specifier::_T2 {
 impl override_specifier::_T1 {
     pub fn from_parse(
         ((open_paren_char, identifier_paths), close_paren_char): (
-            (FixedSizeTerminalWithNoise<1>, override_specifier::_T2),
-            FixedSizeTerminalWithNoise<1>,
+            (FixedSizeTerminalWithTrivia<1>, override_specifier::_T2),
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -1468,7 +1632,7 @@ impl DefaultTest for override_specifier::_T1 {
 impl override_specifier::_T0 {
     pub fn from_parse(
         (r#override, _t1): (
-            FixedSizeTerminalWithNoise<8usize>,
+            FixedSizeTerminalWithTrivia<8usize>,
             Option<override_specifier::_T1>,
         ),
     ) -> Self {
@@ -1505,8 +1669,8 @@ impl DefaultTest for parameter_list::_T1 {
 impl parameter_list::_T0 {
     pub fn from_parse(
         ((open_paren_char, parameter_declarations), close_paren_char): (
-            (FixedSizeTerminalWithNoise<1>, Option<parameter_list::_T1>),
-            FixedSizeTerminalWithNoise<1>,
+            (FixedSizeTerminalWithTrivia<1>, Option<parameter_list::_T1>),
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -1552,12 +1716,12 @@ impl selecting_import_directive::_T0 {
             (
                 (
                     (
-                        FixedSizeTerminalWithNoise<1>,
+                        FixedSizeTerminalWithTrivia<1>,
                         selecting_import_directive::_T1,
                     ),
-                    FixedSizeTerminalWithNoise<1>,
+                    FixedSizeTerminalWithTrivia<1>,
                 ),
-                FixedSizeTerminalWithNoise<4usize>,
+                FixedSizeTerminalWithTrivia<4usize>,
             ),
             ImportPath,
         ),
@@ -1574,7 +1738,7 @@ impl selecting_import_directive::_T0 {
 
 impl yul_assignment::_T2 {
     pub fn from_parse(
-        (colon_equal, yul_expression): (FixedSizeTerminalWithNoise<2usize>, YulExpression),
+        (colon_equal, yul_expression): (FixedSizeTerminalWithTrivia<2usize>, YulExpression),
     ) -> Self {
         Self {
             colon_equal,
@@ -1583,7 +1747,7 @@ impl yul_assignment::_T2 {
     }
 }
 impl yul_assignment::_T5 {
-    pub fn from_parse((comma_char, yul_path): (FixedSizeTerminalWithNoise<1>, YulPath)) -> Self {
+    pub fn from_parse((comma_char, yul_path): (FixedSizeTerminalWithTrivia<1>, YulPath)) -> Self {
         Self {
             comma_char,
             yul_path,
@@ -1606,7 +1770,10 @@ impl DefaultTest for yul_assignment::_T5 {
 impl yul_assignment::_T3 {
     pub fn from_parse(
         ((_t5s, colon_equal), yul_function_call): (
-            (Vec<yul_assignment::_T5>, FixedSizeTerminalWithNoise<2usize>),
+            (
+                Vec<yul_assignment::_T5>,
+                FixedSizeTerminalWithTrivia<2usize>,
+            ),
             YulFunctionCall,
         ),
     ) -> Self {
@@ -1628,7 +1795,7 @@ impl yul_for_statement::_T0 {
         ((((r#for, yul_block_1), yul_expression), yul_block_2), yul_block_3): (
             (
                 (
-                    (FixedSizeTerminalWithNoise<3usize>, YulBlock),
+                    (FixedSizeTerminalWithTrivia<3usize>, YulBlock),
                     YulExpression,
                 ),
                 YulBlock,
@@ -1649,7 +1816,7 @@ impl yul_for_statement::_T0 {
 impl yul_if_statement::_T0 {
     pub fn from_parse(
         ((r#if, yul_expression), yul_block): (
-            (FixedSizeTerminalWithNoise<2usize>, YulExpression),
+            (FixedSizeTerminalWithTrivia<2usize>, YulExpression),
             YulBlock,
         ),
     ) -> Self {
@@ -1664,7 +1831,7 @@ impl yul_if_statement::_T0 {
 impl yul_switch_statement::_T4 {
     pub fn from_parse(
         ((case, yul_literal), yul_block): (
-            (FixedSizeTerminalWithNoise<4usize>, YulLiteral),
+            (FixedSizeTerminalWithTrivia<4usize>, YulLiteral),
             YulBlock,
         ),
     ) -> Self {
@@ -1677,7 +1844,7 @@ impl yul_switch_statement::_T4 {
 }
 impl yul_switch_statement::_T5 {
     pub fn from_parse(
-        (default, yul_block): (FixedSizeTerminalWithNoise<7usize>, YulBlock),
+        (default, yul_block): (FixedSizeTerminalWithTrivia<7usize>, YulBlock),
     ) -> Self {
         Self { default, yul_block }
     }
@@ -1720,7 +1887,7 @@ impl DefaultTest for yul_switch_statement::_T2 {
 }
 impl yul_switch_statement::_T6 {
     pub fn from_parse(
-        (default, yul_block): (FixedSizeTerminalWithNoise<7usize>, YulBlock),
+        (default, yul_block): (FixedSizeTerminalWithTrivia<7usize>, YulBlock),
     ) -> Self {
         Self { default, yul_block }
     }
@@ -1741,7 +1908,7 @@ impl DefaultTest for yul_switch_statement::_T6 {
 impl yul_switch_statement::_T0 {
     pub fn from_parse(
         ((switch, yul_expression), _t1): (
-            (FixedSizeTerminalWithNoise<6usize>, YulExpression),
+            (FixedSizeTerminalWithTrivia<6usize>, YulExpression),
             Box<yul_switch_statement::_T1>,
         ),
     ) -> Self {
@@ -1755,7 +1922,7 @@ impl yul_switch_statement::_T0 {
 
 impl yul_variable_declaration::_T2 {
     pub fn from_parse(
-        (colon_equal, yul_expression): (FixedSizeTerminalWithNoise<2usize>, YulExpression),
+        (colon_equal, yul_expression): (FixedSizeTerminalWithTrivia<2usize>, YulExpression),
     ) -> Self {
         Self {
             colon_equal,
@@ -1765,7 +1932,7 @@ impl yul_variable_declaration::_T2 {
 }
 impl yul_variable_declaration::_T4 {
     pub fn from_parse(
-        (comma_char, yul_identifier): (FixedSizeTerminalWithNoise<1>, YulIdentifier),
+        (comma_char, yul_identifier): (FixedSizeTerminalWithTrivia<1>, yul_identifier::WithTrivia),
     ) -> Self {
         Self {
             comma_char,
@@ -1788,7 +1955,7 @@ impl DefaultTest for yul_variable_declaration::_T4 {
 }
 impl yul_variable_declaration::_T5 {
     pub fn from_parse(
-        (colon_equal, yul_function_call): (FixedSizeTerminalWithNoise<2usize>, YulFunctionCall),
+        (colon_equal, yul_function_call): (FixedSizeTerminalWithTrivia<2usize>, YulFunctionCall),
     ) -> Self {
         Self {
             colon_equal,
@@ -1822,7 +1989,10 @@ impl DefaultTest for yul_variable_declaration::_T3 {
 impl yul_variable_declaration::_T0 {
     pub fn from_parse(
         ((r#let, yul_identifier), _t1): (
-            (FixedSizeTerminalWithNoise<3usize>, YulIdentifier),
+            (
+                FixedSizeTerminalWithTrivia<3usize>,
+                yul_identifier::WithTrivia,
+            ),
             Option<Box<yul_variable_declaration::_T1>>,
         ),
     ) -> Self {
@@ -1852,10 +2022,10 @@ impl argument_list::_T0 {
     pub fn from_parse(
         ((open_paren_char, _t1), close_paren_char): (
             (
-                FixedSizeTerminalWithNoise<1>,
+                FixedSizeTerminalWithTrivia<1>,
                 Option<Box<argument_list::_T1>>,
             ),
-            FixedSizeTerminalWithNoise<1>,
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -1884,7 +2054,10 @@ impl DefaultTest for argument_list::_T0 {
 
 impl catch_clause::_T1 {
     pub fn from_parse(
-        (identifier, non_empty_parameter_list): (Option<Identifier>, NonEmptyParameterList),
+        (identifier, non_empty_parameter_list): (
+            Option<identifier::WithTrivia>,
+            NonEmptyParameterList,
+        ),
     ) -> Self {
         Self {
             identifier,
@@ -1909,7 +2082,7 @@ impl catch_clause::_T0 {
     pub fn from_parse(
         ((catch, _t1), block): (
             (
-                FixedSizeTerminalWithNoise<5usize>,
+                FixedSizeTerminalWithTrivia<5usize>,
                 Option<catch_clause::_T1>,
             ),
             Block,
@@ -1936,7 +2109,7 @@ impl DefaultTest for catch_clause::_T0 {
 impl function_type::_T2 {
     pub fn from_parse(
         (returns, non_empty_parameter_list): (
-            FixedSizeTerminalWithNoise<7usize>,
+            FixedSizeTerminalWithTrivia<7usize>,
             NonEmptyParameterList,
         ),
     ) -> Self {
@@ -1963,8 +2136,8 @@ impl function_type::_T0 {
     pub fn from_parse(
         (((function, parameter_list), _2), _t2): (
             (
-                (FixedSizeTerminalWithNoise<8usize>, ParameterList),
-                Vec<VariableSizeTerminalWithNoise>,
+                (FixedSizeTerminalWithTrivia<8usize>, ParameterList),
+                Vec<VariableSizeTerminalWithTrivia>,
             ),
             Option<function_type::_T2>,
         ),
@@ -2000,10 +2173,10 @@ impl import_directive::_T0 {
     pub fn from_parse(
         ((import, _t1), semicolon_char): (
             (
-                FixedSizeTerminalWithNoise<6usize>,
+                FixedSizeTerminalWithTrivia<6usize>,
                 Box<import_directive::_T1>,
             ),
-            FixedSizeTerminalWithNoise<1>,
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -2065,8 +2238,8 @@ impl DefaultTest for modifier_invocation::_T0 {
 impl type_name::_T3 {
     pub fn from_parse(
         ((open_bracket_char, expression), close_bracket_char): (
-            (FixedSizeTerminalWithNoise<1>, Option<Expression>),
-            FixedSizeTerminalWithNoise<1>,
+            (FixedSizeTerminalWithTrivia<1>, Option<Expression>),
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -2101,8 +2274,8 @@ impl type_name::_T0 {
 impl yul_block::_T0 {
     pub fn from_parse(
         ((open_brace_char, yul_statements), close_brace_char): (
-            (FixedSizeTerminalWithNoise<1>, Vec<YulStatement>),
-            FixedSizeTerminalWithNoise<1>,
+            (FixedSizeTerminalWithTrivia<1>, Vec<YulStatement>),
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -2134,8 +2307,8 @@ impl assembly_statement::_T0 {
         (((assembly, double_quote_evmasm_double_quote), assembly_flags), yul_block): (
             (
                 (
-                    FixedSizeTerminalWithNoise<8usize>,
-                    Option<FixedSizeTerminalWithNoise<8usize>>,
+                    FixedSizeTerminalWithTrivia<8usize>,
+                    Option<FixedSizeTerminalWithTrivia<8usize>>,
                 ),
                 Option<AssemblyFlags>,
             ),
@@ -2170,7 +2343,7 @@ impl DefaultTest for assembly_statement::_T0 {
 }
 
 impl error_parameter::_T0 {
-    pub fn from_parse((type_name, identifier): (TypeName, Option<Identifier>)) -> Self {
+    pub fn from_parse((type_name, identifier): (TypeName, Option<identifier::WithTrivia>)) -> Self {
         Self {
             type_name,
             identifier,
@@ -2181,8 +2354,8 @@ impl error_parameter::_T0 {
 impl event_parameter::_T0 {
     pub fn from_parse(
         ((type_name, indexed), identifier): (
-            (TypeName, Option<FixedSizeTerminalWithNoise<7usize>>),
-            Option<Identifier>,
+            (TypeName, Option<FixedSizeTerminalWithTrivia<7usize>>),
+            Option<identifier::WithTrivia>,
         ),
     ) -> Self {
         Self {
@@ -2209,7 +2382,7 @@ impl DefaultTest for inheritance_specifier_list::_T1 {
 impl inheritance_specifier_list::_T0 {
     pub fn from_parse(
         (is, inheritance_specifiers): (
-            FixedSizeTerminalWithNoise<2usize>,
+            FixedSizeTerminalWithTrivia<2usize>,
             inheritance_specifier_list::_T1,
         ),
     ) -> Self {
@@ -2235,7 +2408,7 @@ impl DefaultTest for inheritance_specifier_list::_T0 {
 
 impl primary_expression::_T1 {
     pub fn from_parse(
-        (payable, argument_list): (FixedSizeTerminalWithNoise<7usize>, ArgumentList),
+        (payable, argument_list): (FixedSizeTerminalWithTrivia<7usize>, ArgumentList),
     ) -> Self {
         Self {
             payable,
@@ -2261,12 +2434,12 @@ impl primary_expression::_T2 {
         (((r#type, open_paren_char), type_name), close_paren_char): (
             (
                 (
-                    FixedSizeTerminalWithNoise<4usize>,
-                    FixedSizeTerminalWithNoise<1>,
+                    FixedSizeTerminalWithTrivia<4usize>,
+                    FixedSizeTerminalWithTrivia<1>,
                 ),
                 TypeName,
             ),
-            FixedSizeTerminalWithNoise<1>,
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -2278,7 +2451,7 @@ impl primary_expression::_T2 {
     }
 }
 impl primary_expression::_T3 {
-    pub fn from_parse((new, type_name): (FixedSizeTerminalWithNoise<3usize>, TypeName)) -> Self {
+    pub fn from_parse((new, type_name): (FixedSizeTerminalWithTrivia<3usize>, TypeName)) -> Self {
         Self { new, type_name }
     }
 }
@@ -2298,8 +2471,8 @@ impl DefaultTest for primary_expression::_T5 {
 impl primary_expression::_T4 {
     pub fn from_parse(
         ((open_paren_char, expressions), close_paren_char): (
-            (FixedSizeTerminalWithNoise<1>, primary_expression::_T5),
-            FixedSizeTerminalWithNoise<1>,
+            (FixedSizeTerminalWithTrivia<1>, primary_expression::_T5),
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -2341,8 +2514,8 @@ impl DefaultTest for primary_expression::_T7 {
 impl primary_expression::_T6 {
     pub fn from_parse(
         ((open_bracket_char, expressions), close_bracket_char): (
-            (FixedSizeTerminalWithNoise<1>, primary_expression::_T7),
-            FixedSizeTerminalWithNoise<1>,
+            (FixedSizeTerminalWithTrivia<1>, primary_expression::_T7),
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -2372,8 +2545,8 @@ impl DefaultTest for primary_expression::_T6 {
 impl struct_definition::_T2 {
     pub fn from_parse(
         ((type_name, identifier), semicolon_char): (
-            (TypeName, Identifier),
-            FixedSizeTerminalWithNoise<1>,
+            (TypeName, identifier::WithTrivia),
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -2388,12 +2561,12 @@ impl struct_definition::_T0 {
         ((((r#struct, identifier), open_brace_char), _t2s), close_brace_char): (
             (
                 (
-                    (FixedSizeTerminalWithNoise<6usize>, Identifier),
-                    FixedSizeTerminalWithNoise<1>,
+                    (FixedSizeTerminalWithTrivia<6usize>, identifier::WithTrivia),
+                    FixedSizeTerminalWithTrivia<1>,
                 ),
                 Vec<struct_definition::_T2>,
             ),
-            FixedSizeTerminalWithNoise<1>,
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -2442,8 +2615,8 @@ impl DefaultTest for using_directive::_T3 {
 impl using_directive::_T2 {
     pub fn from_parse(
         ((open_brace_char, identifier_paths), close_brace_char): (
-            (FixedSizeTerminalWithNoise<1>, using_directive::_T3),
-            FixedSizeTerminalWithNoise<1>,
+            (FixedSizeTerminalWithTrivia<1>, using_directive::_T3),
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -2476,16 +2649,16 @@ impl using_directive::_T0 {
                 (
                     (
                         (
-                            FixedSizeTerminalWithNoise<5usize>,
+                            FixedSizeTerminalWithTrivia<5usize>,
                             Box<using_directive::_T1>,
                         ),
-                        FixedSizeTerminalWithNoise<3usize>,
+                        FixedSizeTerminalWithTrivia<3usize>,
                     ),
                     Box<using_directive::_T4>,
                 ),
-                Option<FixedSizeTerminalWithNoise<6usize>>,
+                Option<FixedSizeTerminalWithTrivia<6usize>>,
             ),
-            FixedSizeTerminalWithNoise<1>,
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -2502,8 +2675,8 @@ impl using_directive::_T0 {
 impl variable_declaration::_T0 {
     pub fn from_parse(
         ((type_name, _1), identifier): (
-            (TypeName, Option<VariableSizeTerminalWithNoise>),
-            Identifier,
+            (TypeName, Option<VariableSizeTerminalWithTrivia>),
+            identifier::WithTrivia,
         ),
     ) -> Self {
         Self {
@@ -2536,14 +2709,14 @@ impl error_definition::_T0 {
             (
                 (
                     (
-                        (FixedSizeTerminalWithNoise<5usize>, Identifier),
-                        FixedSizeTerminalWithNoise<1>,
+                        (FixedSizeTerminalWithTrivia<5usize>, identifier::WithTrivia),
+                        FixedSizeTerminalWithTrivia<1>,
                     ),
                     Option<error_definition::_T1>,
                 ),
-                FixedSizeTerminalWithNoise<1>,
+                FixedSizeTerminalWithTrivia<1>,
             ),
-            FixedSizeTerminalWithNoise<1>,
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -2605,16 +2778,16 @@ impl event_definition::_T0 {
                 (
                     (
                         (
-                            (FixedSizeTerminalWithNoise<5usize>, Identifier),
-                            FixedSizeTerminalWithNoise<1>,
+                            (FixedSizeTerminalWithTrivia<5usize>, identifier::WithTrivia),
+                            FixedSizeTerminalWithTrivia<1>,
                         ),
                         Option<event_definition::_T1>,
                     ),
-                    FixedSizeTerminalWithNoise<1>,
+                    FixedSizeTerminalWithTrivia<1>,
                 ),
-                Option<FixedSizeTerminalWithNoise<9usize>>,
+                Option<FixedSizeTerminalWithTrivia<9usize>>,
             ),
-            FixedSizeTerminalWithNoise<1>,
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -2655,7 +2828,7 @@ impl DefaultTest for event_definition::_T0 {
 
 impl index_access_expression::_T1 {
     pub fn from_parse(
-        (colon_char, expression): (FixedSizeTerminalWithNoise<1>, Option<Expression>),
+        (colon_char, expression): (FixedSizeTerminalWithTrivia<1>, Option<Expression>),
     ) -> Self {
         Self {
             colon_char,
@@ -2680,10 +2853,10 @@ impl index_access_expression::Operator {
     pub fn from_parse(
         (((open_bracket_char, expression_2), _t1), close_bracket_char): (
             (
-                (FixedSizeTerminalWithNoise<1>, Option<Expression>),
+                (FixedSizeTerminalWithTrivia<1>, Option<Expression>),
                 Option<index_access_expression::_T1>,
             ),
-            FixedSizeTerminalWithNoise<1>,
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -2716,7 +2889,7 @@ impl DefaultTest for index_access_expression::Operator {
 impl variable_declaration_tuple::_T3 {
     pub fn from_parse(
         (comma_char, variable_declaration): (
-            FixedSizeTerminalWithNoise<1>,
+            FixedSizeTerminalWithTrivia<1>,
             Option<VariableDeclaration>,
         ),
     ) -> Self {
@@ -2744,12 +2917,12 @@ impl variable_declaration_tuple::_T0 {
         ((((open_paren_char, comma_chars), variable_declaration), _t3s), close_paren_char): (
             (
                 (
-                    (FixedSizeTerminalWithNoise<1>, VariableSizeTerminal),
+                    (FixedSizeTerminalWithTrivia<1>, VariableSizeTerminal),
                     VariableDeclaration,
                 ),
                 Vec<variable_declaration_tuple::_T3>,
             ),
-            FixedSizeTerminalWithNoise<1>,
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -2765,7 +2938,7 @@ impl variable_declaration_tuple::_T0 {
 impl member_access_expression::Operator {
     pub fn from_parse(
         (period_char, _t1): (
-            FixedSizeTerminalWithNoise<1>,
+            FixedSizeTerminalWithTrivia<1>,
             Box<member_access_expression::_T1>,
         ),
     ) -> Self {
@@ -2790,10 +2963,10 @@ impl function_call_options_expression::Operator {
     pub fn from_parse(
         ((open_brace_char, named_arguments), close_brace_char): (
             (
-                FixedSizeTerminalWithNoise<1>,
+                FixedSizeTerminalWithTrivia<1>,
                 function_call_options_expression::_T1,
             ),
-            FixedSizeTerminalWithNoise<1>,
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -2824,8 +2997,8 @@ impl conditional_expression::_T1 {
     pub fn from_parse(
         (((question_char, expression_1), colon_char), expression_2): (
             (
-                (FixedSizeTerminalWithNoise<1>, Expression),
-                FixedSizeTerminalWithNoise<1>,
+                (FixedSizeTerminalWithTrivia<1>, Expression),
+                FixedSizeTerminalWithTrivia<1>,
             ),
             Expression,
         ),
@@ -2844,12 +3017,15 @@ impl constant_definition::_T0 {
         (((((type_name, constant), identifier), equal_char), expression), semicolon_char): (
             (
                 (
-                    ((TypeName, FixedSizeTerminalWithNoise<8usize>), Identifier),
-                    FixedSizeTerminalWithNoise<1>,
+                    (
+                        (TypeName, FixedSizeTerminalWithTrivia<8usize>),
+                        identifier::WithTrivia,
+                    ),
+                    FixedSizeTerminalWithTrivia<1>,
                 ),
                 Expression,
             ),
-            FixedSizeTerminalWithNoise<1>,
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -2873,16 +3049,16 @@ impl do_while_statement::_T0 {
                 (
                     (
                         (
-                            (FixedSizeTerminalWithNoise<2usize>, Statement),
-                            FixedSizeTerminalWithNoise<5usize>,
+                            (FixedSizeTerminalWithTrivia<2usize>, Statement),
+                            FixedSizeTerminalWithTrivia<5usize>,
                         ),
-                        FixedSizeTerminalWithNoise<1>,
+                        FixedSizeTerminalWithTrivia<1>,
                     ),
                     Expression,
                 ),
-                FixedSizeTerminalWithNoise<1>,
+                FixedSizeTerminalWithTrivia<1>,
             ),
-            FixedSizeTerminalWithNoise<1>,
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -2901,10 +3077,10 @@ impl emit_statement::_T0 {
     pub fn from_parse(
         (((emit, expression), argument_list), semicolon_char): (
             (
-                (FixedSizeTerminalWithNoise<4usize>, Expression),
+                (FixedSizeTerminalWithTrivia<4usize>, Expression),
                 ArgumentList,
             ),
-            FixedSizeTerminalWithNoise<1>,
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -2918,7 +3094,7 @@ impl emit_statement::_T0 {
 
 impl expression_statement::_T0 {
     pub fn from_parse(
-        (expression, semicolon_char): (Expression, FixedSizeTerminalWithNoise<1>),
+        (expression, semicolon_char): (Expression, FixedSizeTerminalWithTrivia<1>),
     ) -> Self {
         Self {
             expression,
@@ -2929,7 +3105,7 @@ impl expression_statement::_T0 {
 
 impl if_statement::_T1 {
     pub fn from_parse(
-        (r#else, statement): (FixedSizeTerminalWithNoise<4usize>, Statement),
+        (r#else, statement): (FixedSizeTerminalWithTrivia<4usize>, Statement),
     ) -> Self {
         Self { r#else, statement }
     }
@@ -2941,12 +3117,12 @@ impl if_statement::_T0 {
                 (
                     (
                         (
-                            FixedSizeTerminalWithNoise<2usize>,
-                            FixedSizeTerminalWithNoise<1>,
+                            FixedSizeTerminalWithTrivia<2usize>,
+                            FixedSizeTerminalWithTrivia<1>,
                         ),
                         Expression,
                     ),
-                    FixedSizeTerminalWithNoise<1>,
+                    FixedSizeTerminalWithTrivia<1>,
                 ),
                 Statement,
             ),
@@ -2967,8 +3143,8 @@ impl if_statement::_T0 {
 impl return_statement::_T0 {
     pub fn from_parse(
         ((r#return, expression), semicolon_char): (
-            (FixedSizeTerminalWithNoise<6usize>, Option<Expression>),
-            FixedSizeTerminalWithNoise<1>,
+            (FixedSizeTerminalWithTrivia<6usize>, Option<Expression>),
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -2999,10 +3175,10 @@ impl revert_statement::_T0 {
     pub fn from_parse(
         (((revert, expression), argument_list), semicolon_char): (
             (
-                (FixedSizeTerminalWithNoise<6usize>, Expression),
+                (FixedSizeTerminalWithTrivia<6usize>, Expression),
                 ArgumentList,
             ),
-            FixedSizeTerminalWithNoise<1>,
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -3016,7 +3192,7 @@ impl revert_statement::_T0 {
 
 impl state_variable_declaration::_T2 {
     pub fn from_parse(
-        (equal_char, expression): (FixedSizeTerminalWithNoise<1>, Expression),
+        (equal_char, expression): (FixedSizeTerminalWithTrivia<1>, Expression),
     ) -> Self {
         Self {
             equal_char,
@@ -3028,10 +3204,13 @@ impl state_variable_declaration::_T0 {
     pub fn from_parse(
         ((((type_name, state_variable_attributes), identifier), _t2), semicolon_char): (
             (
-                ((TypeName, Vec<StateVariableAttribute>), Identifier),
+                (
+                    (TypeName, Vec<StateVariableAttribute>),
+                    identifier::WithTrivia,
+                ),
                 Option<state_variable_declaration::_T2>,
             ),
-            FixedSizeTerminalWithNoise<1>,
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -3047,7 +3226,7 @@ impl state_variable_declaration::_T0 {
 impl try_statement::_T1 {
     pub fn from_parse(
         (returns, non_empty_parameter_list): (
-            FixedSizeTerminalWithNoise<7usize>,
+            FixedSizeTerminalWithTrivia<7usize>,
             NonEmptyParameterList,
         ),
     ) -> Self {
@@ -3075,7 +3254,7 @@ impl try_statement::_T0 {
         ((((r#try, expression), _t1), block), catch_clauses): (
             (
                 (
-                    (FixedSizeTerminalWithNoise<3usize>, Expression),
+                    (FixedSizeTerminalWithTrivia<3usize>, Expression),
                     Option<try_statement::_T1>,
                 ),
                 Block,
@@ -3095,7 +3274,7 @@ impl try_statement::_T0 {
 
 impl variable_declaration_statement::_T3 {
     pub fn from_parse(
-        (equal_char, expression): (FixedSizeTerminalWithNoise<1>, Expression),
+        (equal_char, expression): (FixedSizeTerminalWithTrivia<1>, Expression),
     ) -> Self {
         Self {
             equal_char,
@@ -3119,7 +3298,7 @@ impl variable_declaration_statement::_T2 {
 impl variable_declaration_statement::_T4 {
     pub fn from_parse(
         ((variable_declaration_tuple, equal_char), expression): (
-            (VariableDeclarationTuple, FixedSizeTerminalWithNoise<1>),
+            (VariableDeclarationTuple, FixedSizeTerminalWithTrivia<1>),
             Expression,
         ),
     ) -> Self {
@@ -3134,7 +3313,7 @@ impl variable_declaration_statement::_T0 {
     pub fn from_parse(
         (_t1, semicolon_char): (
             Box<variable_declaration_statement::_T1>,
-            FixedSizeTerminalWithNoise<1>,
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -3150,12 +3329,12 @@ impl while_statement::_T0 {
             (
                 (
                     (
-                        FixedSizeTerminalWithNoise<5usize>,
-                        FixedSizeTerminalWithNoise<1>,
+                        FixedSizeTerminalWithTrivia<5usize>,
+                        FixedSizeTerminalWithTrivia<1>,
                     ),
                     Expression,
                 ),
-                FixedSizeTerminalWithNoise<1>,
+                FixedSizeTerminalWithTrivia<1>,
             ),
             Statement,
         ),
@@ -3178,8 +3357,8 @@ impl for_statement::_T0 {
                     (
                         (
                             (
-                                FixedSizeTerminalWithNoise<3usize>,
-                                FixedSizeTerminalWithNoise<1>,
+                                FixedSizeTerminalWithTrivia<3usize>,
+                                FixedSizeTerminalWithTrivia<1>,
                             ),
                             Box<for_statement::_T1>,
                         ),
@@ -3187,7 +3366,7 @@ impl for_statement::_T0 {
                     ),
                     Option<Expression>,
                 ),
-                FixedSizeTerminalWithNoise<1>,
+                FixedSizeTerminalWithTrivia<1>,
             ),
             Statement,
         ),
@@ -3207,8 +3386,8 @@ impl for_statement::_T0 {
 impl block::_T0 {
     pub fn from_parse(
         ((open_brace_char, _t2s), close_brace_char): (
-            (FixedSizeTerminalWithNoise<1>, Vec<Box<block::_T2>>),
-            FixedSizeTerminalWithNoise<1>,
+            (FixedSizeTerminalWithTrivia<1>, Vec<Box<block::_T2>>),
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -3239,7 +3418,7 @@ impl constructor_definition::_T0 {
     pub fn from_parse(
         (((constructor, parameter_list), constructor_attributes), block): (
             (
-                (FixedSizeTerminalWithNoise<11usize>, ParameterList),
+                (FixedSizeTerminalWithTrivia<11usize>, ParameterList),
                 Vec<ConstructorAttribute>,
             ),
             Block,
@@ -3275,7 +3454,7 @@ impl DefaultTest for constructor_definition::_T0 {
 impl fallback_function_definition::_T2 {
     pub fn from_parse(
         (returns, non_empty_parameter_list): (
-            FixedSizeTerminalWithNoise<7usize>,
+            FixedSizeTerminalWithTrivia<7usize>,
             NonEmptyParameterList,
         ),
     ) -> Self {
@@ -3303,7 +3482,7 @@ impl fallback_function_definition::_T0 {
         ((((fallback, parameter_list), fallback_function_attributes), _t2), _t3): (
             (
                 (
-                    (FixedSizeTerminalWithNoise<8usize>, ParameterList),
+                    (FixedSizeTerminalWithTrivia<8usize>, ParameterList),
                     Vec<FallbackFunctionAttribute>,
                 ),
                 Option<fallback_function_definition::_T2>,
@@ -3324,7 +3503,7 @@ impl fallback_function_definition::_T0 {
 impl function_definition::_T3 {
     pub fn from_parse(
         (returns, non_empty_parameter_list): (
-            FixedSizeTerminalWithNoise<7usize>,
+            FixedSizeTerminalWithTrivia<7usize>,
             NonEmptyParameterList,
         ),
     ) -> Self {
@@ -3354,7 +3533,7 @@ impl function_definition::_T0 {
                 (
                     (
                         (
-                            FixedSizeTerminalWithNoise<8usize>,
+                            FixedSizeTerminalWithTrivia<8usize>,
                             Box<function_definition::_T1>,
                         ),
                         ParameterList,
@@ -3382,7 +3561,7 @@ impl modifier_definition::_T0 {
         ((((modifier, identifier), parameter_list), method_attributes), _t2): (
             (
                 (
-                    (FixedSizeTerminalWithNoise<8usize>, Identifier),
+                    (FixedSizeTerminalWithTrivia<8usize>, identifier::WithTrivia),
                     Option<ParameterList>,
                 ),
                 Vec<MethodAttribute>,
@@ -3406,10 +3585,10 @@ impl receive_function_definition::_T0 {
             (
                 (
                     (
-                        FixedSizeTerminalWithNoise<7usize>,
-                        FixedSizeTerminalWithNoise<1>,
+                        FixedSizeTerminalWithTrivia<7usize>,
+                        FixedSizeTerminalWithTrivia<1>,
                     ),
-                    FixedSizeTerminalWithNoise<1>,
+                    FixedSizeTerminalWithTrivia<1>,
                 ),
                 Vec<ReceiveFunctionAttribute>,
             ),
@@ -3443,18 +3622,18 @@ impl contract_definition::_T0 {
                     (
                         (
                             (
-                                Option<FixedSizeTerminalWithNoise<8usize>>,
-                                FixedSizeTerminalWithNoise<8usize>,
+                                Option<FixedSizeTerminalWithTrivia<8usize>>,
+                                FixedSizeTerminalWithTrivia<8usize>,
                             ),
-                            Identifier,
+                            identifier::WithTrivia,
                         ),
                         Option<InheritanceSpecifierList>,
                     ),
-                    FixedSizeTerminalWithNoise<1>,
+                    FixedSizeTerminalWithTrivia<1>,
                 ),
                 Vec<ContractBodyElement>,
             ),
-            FixedSizeTerminalWithNoise<1>,
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -3505,14 +3684,14 @@ impl interface_definition::_T0 {
             (
                 (
                     (
-                        (FixedSizeTerminalWithNoise<9usize>, Identifier),
+                        (FixedSizeTerminalWithTrivia<9usize>, identifier::WithTrivia),
                         Option<InheritanceSpecifierList>,
                     ),
-                    FixedSizeTerminalWithNoise<1>,
+                    FixedSizeTerminalWithTrivia<1>,
                 ),
                 Vec<ContractBodyElement>,
             ),
-            FixedSizeTerminalWithNoise<1>,
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -3553,12 +3732,12 @@ impl library_definition::_T0 {
         ((((library, identifier), open_brace_char), contract_body_elements), close_brace_char): (
             (
                 (
-                    (FixedSizeTerminalWithNoise<7usize>, Identifier),
-                    FixedSizeTerminalWithNoise<1>,
+                    (FixedSizeTerminalWithTrivia<7usize>, identifier::WithTrivia),
+                    FixedSizeTerminalWithTrivia<1>,
                 ),
                 Vec<ContractBodyElement>,
             ),
-            FixedSizeTerminalWithNoise<1>,
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
@@ -3593,11 +3772,18 @@ impl DefaultTest for library_definition::_T0 {
 
 impl source_unit::_T0 {
     pub fn from_parse(
-        ((ignore, _t2s), end_marker): ((Ignore, Vec<Box<source_unit::_T2>>), ()),
+        (((leading_trivia, _t2s), eof_trivia), end_marker): (
+            (
+                (leading_trivia::WithTrivia, Vec<Box<source_unit::_T2>>),
+                eof_trivia::WithTrivia,
+            ),
+            (),
+        ),
     ) -> Self {
         Self {
-            ignore,
+            leading_trivia,
             _t2s,
+            eof_trivia,
             end_marker,
         }
     }
@@ -3605,14 +3791,18 @@ impl source_unit::_T0 {
 impl Default for source_unit::_T0 {
     fn default() -> Self {
         Self {
-            ignore: Default::default(),
+            leading_trivia: Default::default(),
             _t2s: Default::default(),
+            eof_trivia: Default::default(),
             end_marker: Default::default(),
         }
     }
 }
 impl DefaultTest for source_unit::_T0 {
     fn is_default(&self) -> bool {
-        self.ignore.is_default() && self._t2s.is_default() && self.end_marker.is_default()
+        self.leading_trivia.is_default()
+            && self._t2s.is_default()
+            && self.eof_trivia.is_default()
+            && self.end_marker.is_default()
     }
 }

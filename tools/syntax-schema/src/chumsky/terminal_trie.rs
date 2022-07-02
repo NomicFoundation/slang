@@ -33,7 +33,7 @@ impl TerminalTrie {
         }
     }
 
-    pub fn to_generated_code(&self, with_noise: bool) -> GeneratedCode {
+    pub fn to_generated_code(&self, with_trivia: bool) -> GeneratedCode {
         let mut result: GeneratedCode = Default::default();
 
         fn generate_from_trie(
@@ -83,7 +83,7 @@ impl TerminalTrie {
             quote!( choice::<_, ErrorType>((#(#choices),*)) )
         };
 
-        let (parser, parser_type) = match (common_size, with_noise) {
+        let (parser, parser_type) = match (common_size, with_trivia) {
             (None, false) => (
                 quote!( #parser.map(VariableSizeTerminal) ),
                 quote!(VariableSizeTerminal),
@@ -94,18 +94,18 @@ impl TerminalTrie {
             ),
             (None, true) => (
                 quote!(
-                    ignore_parser.clone().then(#parser).then(ignore_parser.clone())
+                    leading_trivia_parser.clone().then(#parser).then(trailing_trivia_parser.clone())
                     .map(|((leading, content), trailing)|
-                        VariableSizeTerminalWithNoise { leading, content: VariableSizeTerminal(content), trailing })
+                        VariableSizeTerminalWithTrivia { leading, content: VariableSizeTerminal(content), trailing })
                 ),
-                quote!(VariableSizeTerminalWithNoise),
+                quote!(VariableSizeTerminalWithTrivia),
             ),
             (Some(size), true) => (
                 quote!(
-                    ignore_parser.clone().then(#parser.map(|_| FixedSizeTerminal::<#size>())).then(ignore_parser.clone())
-                    .map(|((leading, content), trailing)| FixedSizeTerminalWithNoise { leading, content, trailing })
+                    leading_trivia_parser.clone().then(#parser.map(|_| FixedSizeTerminal::<#size>())).then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| FixedSizeTerminalWithTrivia { leading, content, trailing })
                 ),
-                quote!( FixedSizeTerminalWithNoise<#size> ),
+                quote!( FixedSizeTerminalWithTrivia<#size> ),
             ),
         };
         result.parser = parser;

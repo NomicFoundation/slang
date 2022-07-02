@@ -8,11 +8,17 @@
 
 «IGNORE» = { «Whitespace» | «Comment» | «LineComment» } ;
 
-«Whitespace» = 1…*{ '\u{20}' | '\u{9}' | '\u{d}' | '\u{a}' } ;
+«TrailingTrivia» = [ { «Whitespace» | «Comment» } ( «EOL» | «LineComment» ) ] ;
+
+«EOFTrivia» = { «Whitespace» | «Comment» | «LineComment» } ;
+
+«Whitespace» = 1…*{ '\u{20}' | '\u{9}' } ;
+
+«EOL» = 1…*{ '\u{d}' | '\u{a}' } ;
 
 «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
 
-«LineComment» = '//' { ¬( '\u{a}' | '\u{d}' ) } ;
+«LineComment» = '//' { ¬( '\u{d}' | '\u{a}' ) } ;
 
 (*
  * First Section: Solidity File
