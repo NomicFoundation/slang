@@ -424,10 +424,6 @@
     - terminal: memory
     - terminal: storage
     - terminal: calldata
-#
-# Start of Expressions
-#
-
 
 - name: Expression
   pattern: Expression
@@ -453,7 +449,6 @@
     - reference: IndexAccessExpression
     - reference: PrimaryExpression
 
-
 - name: AssignmentExpression
   config: { pattern: FoldLeft }
   sequence:
@@ -473,16 +468,14 @@
         - terminal: "%="
     - reference: Expression
 
-
 - name: ConditionalExpression
   sequence:
     - reference: Expression
-    - sequence: # Has this subsequence gives the correct form to the AST
+    - sequence: # This subsequence gives the correct form to the AST
         - terminal: "?"
         - reference: Expression
         - terminal: ":"
         - reference: Expression
-
 
 - name: OrExpression
   config: { pattern: FoldLeft }
@@ -491,14 +484,12 @@
     - terminal: "||"
     - reference: Expression
 
-
 - name: AndExpression
   config: { pattern: FoldLeft }
   sequence:
     - reference: Expression
     - terminal: "&&"
     - reference: Expression
-
 
 - name: EqualityComparisonExpression
   config: { pattern: FoldLeft }
@@ -508,7 +499,6 @@
         - terminal: "=="
         - terminal: "!="
     - reference: Expression
-
 
 - name: OrderComparisonExpression
   config: { pattern: FoldLeft }
@@ -521,14 +511,12 @@
         - terminal: ">="
     - reference: Expression
 
-
 - name: BitOrExpression
   config: { pattern: FoldLeft }
   sequence:
     - reference: Expression
     - terminal: "|"
     - reference: Expression
-
 
 - name: BitXOrExpression
   config: { pattern: FoldLeft }
@@ -537,14 +525,12 @@
     - terminal: "^"
     - reference: Expression
 
-
 - name: BitAndExpression
   config: { pattern: FoldLeft }
   sequence:
     - reference: Expression
     - terminal: "&"
     - reference: Expression
-
 
 - name: ShiftExpression
   config: { pattern: FoldLeft }
@@ -556,7 +542,6 @@
         - terminal: ">>>"
     - reference: Expression
 
-
 - name: AddSubExpression
   config: { pattern: FoldLeft }
   sequence:
@@ -565,7 +550,6 @@
         - terminal: +
         - terminal: "-"
     - reference: Expression
-
 
 - name: MulDivModExpression
   config: { pattern: FoldLeft }
@@ -577,7 +561,6 @@
         - terminal: "%"
     - reference: Expression
 
-
 - name: ExponentiationExpression
   config: { pattern: FoldRight }
   sequence:
@@ -585,14 +568,12 @@
     - terminal: "**"
     - reference: Expression
 
-
 - name: UnarySuffixExpression
   sequence:
     - reference: Expression
     - choice:
         - terminal: ++
         - terminal: "--"
-
 
 - name: UnaryPrefixExpression
   sequence:
@@ -605,12 +586,10 @@
         - terminal: "-"
     - reference: Expression
 
-
 - name: FunctionCallExpression
   sequence:
     - reference: Expression
     - reference: ArgumentList
-
 
 - name: FunctionCallOptionsExpression
   sequence:
@@ -622,7 +601,6 @@
           terminal: ","
     - terminal: "}"
 
-
 - name: MemberAccessExpression
   sequence:
     - reference: Expression
@@ -630,7 +608,6 @@
     - choice:
         - reference: Identifier
         - terminal: address
-
 
 - name: IndexAccessExpression
   config: { pattern: FoldLeft }
@@ -645,7 +622,6 @@
           - optional:
               reference: Expression
     - terminal: "]"
-
 
 - name: PrimaryExpression
   choice:
@@ -678,11 +654,6 @@
     - reference: Identifier
     - reference: Literal
     - reference: ElementaryTypeWithoutPayable
-
-#
-# End of Expressions
-#
-
 
 - name: Literal
   choice:

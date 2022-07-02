@@ -9,7 +9,6 @@
       - reference: Comment
       - reference: LineComment
 
-
 - name: TrailingTrivia
   pattern: Token
   optional:
@@ -22,7 +21,6 @@
           - reference: EOL
           - reference: LineComment
 
-
 - name: EOFTrivia
   pattern: Token
   zeroOrMore:
@@ -31,7 +29,6 @@
       - reference: Comment
       - reference: LineComment
 
-
 - name: Whitespace
   pattern: Token
   oneOrMore:
@@ -39,14 +36,12 @@
       - terminal: " "
       - terminal: "\t"
 
-
 - name: EOL
   pattern: Token
   oneOrMore:
     choice:
       - terminal: "\r"
       - terminal: "\n"
-
 
 - name: Comment
   pattern: Token
@@ -69,7 +64,6 @@
             terminal: "*"
     - terminal: "*/"
 
-
 - name: LineComment
   pattern: Token
   sequence:
@@ -79,4 +73,3 @@
           choice:
             - terminal: "\r"
             - terminal: "\n"
-
