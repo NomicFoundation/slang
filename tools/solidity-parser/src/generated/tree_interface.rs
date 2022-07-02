@@ -9,15 +9,22 @@ pub trait DefaultTest {
 pub struct FixedSizeTerminal<const N: usize>();
 #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct FixedSizeTerminalWithNoise<const N: usize> {
+    #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
     pub leading: Ignore,
+    #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
     pub content: FixedSizeTerminal<N>,
+    #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
     pub trailing: Ignore,
 }
-pub type VariableSizeTerminal = usize;
+#[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct VariableSizeTerminal(pub usize);
 #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct VariableSizeTerminalWithNoise {
+    #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
     pub leading: Ignore,
+    #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
     pub content: VariableSizeTerminal,
+    #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
     pub trailing: Ignore,
 }
 
@@ -28,7 +35,9 @@ pub mod comment {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T3 {
-        pub star_chars: usize,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub star_chars: VariableSizeTerminal,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _1: FixedSizeTerminal<1>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -38,13 +47,18 @@ pub mod comment {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct Content {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t2s: Vec<Box<comment::_T2>>,
-        pub star_chars: usize,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub star_chars: VariableSizeTerminal,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub slash_star: FixedSizeTerminal<2usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub content: comment::Content,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub star_slash: FixedSizeTerminal<2usize>,
     }
 }
@@ -56,7 +70,9 @@ pub mod decimal_integer {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<FixedSizeTerminal<1>>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub separators: Vec<Option<FixedSizeTerminal<1>>>,
     }
 }
@@ -68,7 +84,9 @@ pub mod fixed_bytes_type {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub bytes: FixedSizeTerminal<5usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _1: VariableSizeTerminal,
     }
 }
@@ -80,15 +98,22 @@ pub mod fixed_type {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _0: FixedSizeTerminal<1>,
-        pub _1: usize,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _1: VariableSizeTerminal,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _2: FixedSizeTerminal<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _3: FixedSizeTerminal<1>,
-        pub _4: usize,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _4: VariableSizeTerminal,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub fixed: FixedSizeTerminal<5usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t1: Option<fixed_type::_T1>,
     }
 }
@@ -100,8 +125,10 @@ pub mod hex_byte_escape {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _0: FixedSizeTerminal<1>,
-        pub _1: usize,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _1: VariableSizeTerminal,
     }
 }
 
@@ -112,13 +139,18 @@ pub mod hex_number {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<FixedSizeTerminal<1>>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub separators: Vec<Option<FixedSizeTerminal<1>>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub zero_char: FixedSizeTerminal<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _1: FixedSizeTerminal<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _2: hex_number::_T1,
     }
 }
@@ -130,8 +162,10 @@ pub mod line_comment {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub slash_slash: FixedSizeTerminal<2usize>,
-        pub _1: usize,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _1: VariableSizeTerminal,
     }
 }
 
@@ -142,7 +176,9 @@ pub mod possibly_separated_pairs_of_hex_digits {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub elements: Vec<usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub elements: Vec<VariableSizeTerminal>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub separators: Vec<Option<FixedSizeTerminal<1>>>,
     }
 }
@@ -154,8 +190,11 @@ pub mod pragma_directive {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub pragma: FixedSizeTerminal<6usize>,
-        pub not_semicolon_chars: usize,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub not_semicolon_chars: VariableSizeTerminal,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub semicolon_char: FixedSizeTerminal<1>,
     }
 }
@@ -167,8 +206,10 @@ pub mod raw_identifier {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _0: FixedSizeTerminal<1>,
-        pub _1: usize,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _1: VariableSizeTerminal,
     }
 }
 
@@ -179,7 +220,9 @@ pub mod signed_integer_type {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub int: FixedSizeTerminal<3usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _1: VariableSizeTerminal,
     }
 }
@@ -191,13 +234,15 @@ pub mod unicode_escape {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _0: FixedSizeTerminal<1>,
-        pub _1: usize,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _1: VariableSizeTerminal,
     }
 }
 
 /// «Whitespace» = 1…*{ '\u{20}' | '\u{9}' | '\u{d}' | '\u{a}' } ;
-pub type Whitespace = usize;
+pub type Whitespace = VariableSizeTerminal;
 
 /// «YulDecimalNumberLiteral» = '0' | '1'…'9' { '0'…'9' } ;
 pub type YulDecimalNumberLiteral = Box<yul_decimal_number_literal::_T0>;
@@ -206,8 +251,10 @@ pub mod yul_decimal_number_literal {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _0: FixedSizeTerminal<1>,
-        pub _1: usize,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _1: VariableSizeTerminal,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub enum _T0 {
@@ -223,8 +270,10 @@ pub mod yul_hex_literal {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub zero_x: FixedSizeTerminal<2usize>,
-        pub _1: usize,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _1: VariableSizeTerminal,
     }
 }
 
@@ -235,8 +284,11 @@ pub mod decimal_exponent {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _0: FixedSizeTerminal<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub minus_char: Option<FixedSizeTerminal<1>>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub decimal_integer: DecimalInteger,
     }
 }
@@ -248,8 +300,11 @@ pub mod decimal_float {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub decimal_integer_1: Option<DecimalInteger>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub period_char: FixedSizeTerminal<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub decimal_integer_2: DecimalInteger,
     }
 }
@@ -267,6 +322,7 @@ pub mod escape_sequence {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub backslash_char: FixedSizeTerminal<1>,
         pub _t1: Box<escape_sequence::_T1>,
     }
@@ -279,14 +335,20 @@ pub mod hex_string_literal {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub double_quote_char_1: FixedSizeTerminal<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub possibly_separated_pairs_of_hex_digits: Option<PossiblySeparatedPairsOfHexDigits>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub double_quote_char_2: FixedSizeTerminal<1>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T3 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub quote_char_1: FixedSizeTerminal<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub possibly_separated_pairs_of_hex_digits: Option<PossiblySeparatedPairsOfHexDigits>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub quote_char_2: FixedSizeTerminal<1>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -296,6 +358,7 @@ pub mod hex_string_literal {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub hex: FixedSizeTerminal<3usize>,
         pub _t1: Box<hex_string_literal::_T1>,
     }
@@ -321,7 +384,9 @@ pub mod ufixed_type {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _0: FixedSizeTerminal<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub fixed_type: FixedType,
     }
 }
@@ -333,7 +398,9 @@ pub mod unsigned_integer_type {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _0: FixedSizeTerminal<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub signed_integer_type: SignedIntegerType,
     }
 }
@@ -348,7 +415,9 @@ pub mod break_statement {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub r#break: FixedSizeTerminalWithNoise<5usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -360,7 +429,9 @@ pub mod continue_statement {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub r#continue: FixedSizeTerminalWithNoise<8usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -378,6 +449,7 @@ pub mod decimal_number {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub _t1: Box<decimal_number::_T1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub decimal_exponent: Option<DecimalExponent>,
     }
 }
@@ -389,13 +461,16 @@ pub mod double_quoted_ascii_string_literal {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub enum Run {
-        Chars(usize),
+        Chars(VariableSizeTerminal),
         EscapeSequence(EscapeSequence),
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub double_quote_char_1: FixedSizeTerminal<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub runs: Vec<Box<double_quoted_ascii_string_literal::Run>>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub double_quote_char_2: FixedSizeTerminal<1>,
     }
 }
@@ -407,13 +482,16 @@ pub mod double_quoted_unicode_string_literal {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub enum Run {
-        Chars(usize),
+        Chars(VariableSizeTerminal),
         EscapeSequence(EscapeSequence),
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub unicode_double_quote: FixedSizeTerminal<8usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub runs: Vec<Box<double_quoted_unicode_string_literal::Run>>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub double_quote_char: FixedSizeTerminal<1>,
     }
 }
@@ -456,7 +534,9 @@ pub mod positional_argument_list {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<Expression>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
 }
@@ -468,13 +548,16 @@ pub mod single_quoted_ascii_string_literal {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub enum Run {
-        Chars(usize),
+        Chars(VariableSizeTerminal),
         EscapeSequence(EscapeSequence),
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub quote_char_1: FixedSizeTerminal<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub runs: Vec<Box<single_quoted_ascii_string_literal::Run>>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub quote_char_2: FixedSizeTerminal<1>,
     }
 }
@@ -486,13 +569,16 @@ pub mod single_quoted_unicode_string_literal {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub enum Run {
-        Chars(usize),
+        Chars(VariableSizeTerminal),
         EscapeSequence(EscapeSequence),
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub unicode_quote: FixedSizeTerminal<8usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub runs: Vec<Box<single_quoted_unicode_string_literal::Run>>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub quote_char: FixedSizeTerminal<1>,
     }
 }
@@ -504,7 +590,9 @@ pub mod unchecked_block {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub unchecked: FixedSizeTerminalWithNoise<9usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub block: Block,
     }
 }
@@ -521,14 +609,19 @@ pub mod yul_function_call {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<YulExpression>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub _t1: Box<yul_function_call::_T1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_paren_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub yul_expressions: Option<yul_function_call::_T2>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_paren_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -540,27 +633,40 @@ pub mod yul_function_definition {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<YulIdentifier>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T3 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<YulIdentifier>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub minus_greater: FixedSizeTerminalWithNoise<2usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub yul_identifiers: yul_function_definition::_T3,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub function: FixedSizeTerminalWithNoise<8usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub yul_identifier: YulIdentifier,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_paren_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub yul_identifiers: Option<yul_function_definition::_T1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_paren_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t2: Option<yul_function_definition::_T2>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub yul_block: YulBlock,
     }
 }
@@ -577,12 +683,15 @@ pub mod yul_path {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub period_char: FixedSizeTerminalWithNoise<1>,
         pub _t3: Box<yul_path::_T3>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub yul_identifier: YulIdentifier,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t2s: Vec<yul_path::_T2>,
     }
 }
@@ -606,13 +715,18 @@ pub mod assembly_flags {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<DoubleQuotedAsciiStringLiteral>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_paren_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub double_quoted_ascii_string_literals: assembly_flags::_T1,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_paren_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -624,7 +738,9 @@ pub mod elementary_type_with_payable {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub address: FixedSizeTerminalWithNoise<7usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub payable: Option<FixedSizeTerminalWithNoise<7usize>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -659,6 +775,7 @@ pub mod numeric_literal {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub _t1: Box<numeric_literal::_T1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _1: Option<VariableSizeTerminalWithNoise>,
     }
 }
@@ -730,15 +847,22 @@ pub mod enum_definition {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<Identifier>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub r#enum: FixedSizeTerminalWithNoise<4usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub identifier: Identifier,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_brace_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub identifiers: enum_definition::_T1,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_brace_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -750,7 +874,9 @@ pub mod identifier_path {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<Identifier>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
 }
@@ -762,7 +888,9 @@ pub mod named_argument {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub identifier: Identifier,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub colon_char: FixedSizeTerminalWithNoise<1>,
         pub expression: Expression,
     }
@@ -776,7 +904,9 @@ pub mod parameter_declaration {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub type_name: TypeName,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _1: Option<VariableSizeTerminalWithNoise>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub identifier: Option<Identifier>,
     }
 }
@@ -788,12 +918,16 @@ pub mod selected_import {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub r#as: FixedSizeTerminalWithNoise<2usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub identifier: Identifier,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub identifier: Identifier,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t1: Option<selected_import::_T1>,
     }
 }
@@ -805,12 +939,15 @@ pub mod simple_import_directive {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub r#as: FixedSizeTerminalWithNoise<2usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub identifier: Identifier,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub import_path: ImportPath,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t2s: Vec<simple_import_directive::_T2>,
     }
 }
@@ -822,9 +959,13 @@ pub mod star_import_directive {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub star_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub r#as: FixedSizeTerminalWithNoise<2usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub identifier: Identifier,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub from: FixedSizeTerminalWithNoise<4usize>,
         pub import_path: ImportPath,
     }
@@ -837,10 +978,14 @@ pub mod user_defined_value_type_definition {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub r#type: FixedSizeTerminalWithNoise<4usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub identifier: Identifier,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub is: FixedSizeTerminalWithNoise<2usize>,
         pub elementary_type_with_payable: ElementaryTypeWithPayable,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -870,11 +1015,15 @@ pub mod mapping_type {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub mapping: FixedSizeTerminalWithNoise<7usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_paren_char: FixedSizeTerminalWithNoise<1>,
         pub _t1: Box<mapping_type::_T1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub equal_greater: FixedSizeTerminalWithNoise<2usize>,
         pub type_name: TypeName,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_paren_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -886,13 +1035,18 @@ pub mod named_argument_list {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<NamedArgument>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_brace_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub named_arguments: Option<named_argument_list::_T1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_brace_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -904,13 +1058,18 @@ pub mod non_empty_parameter_list {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<ParameterDeclaration>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_paren_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub parameter_declarations: non_empty_parameter_list::_T1,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_paren_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -922,18 +1081,25 @@ pub mod override_specifier {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<IdentifierPath>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_paren_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub identifier_paths: override_specifier::_T2,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_paren_char: FixedSizeTerminalWithNoise<1>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub r#override: FixedSizeTerminalWithNoise<8usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t1: Option<override_specifier::_T1>,
     }
 }
@@ -945,13 +1111,18 @@ pub mod parameter_list {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<ParameterDeclaration>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_paren_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub parameter_declarations: Option<parameter_list::_T1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_paren_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -963,14 +1134,20 @@ pub mod selecting_import_directive {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<SelectedImport>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_brace_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub selected_imports: selecting_import_directive::_T1,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_brace_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub from: FixedSizeTerminalWithNoise<4usize>,
         pub import_path: ImportPath,
     }
@@ -983,17 +1160,22 @@ pub mod yul_assignment {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub colon_equal: FixedSizeTerminalWithNoise<2usize>,
         pub yul_expression: YulExpression,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T5 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub comma_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub yul_path: YulPath,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T3 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t5s: Vec<yul_assignment::_T5>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub colon_equal: FixedSizeTerminalWithNoise<2usize>,
         pub yul_function_call: YulFunctionCall,
     }
@@ -1004,6 +1186,7 @@ pub mod yul_assignment {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub yul_path: YulPath,
         pub _t1: Box<yul_assignment::_T1>,
     }
@@ -1016,10 +1199,14 @@ pub mod yul_for_statement {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub r#for: FixedSizeTerminalWithNoise<3usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub yul_block_1: YulBlock,
         pub yul_expression: YulExpression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub yul_block_2: YulBlock,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub yul_block_3: YulBlock,
     }
 }
@@ -1031,8 +1218,10 @@ pub mod yul_if_statement {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub r#if: FixedSizeTerminalWithNoise<2usize>,
         pub yul_expression: YulExpression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub yul_block: YulBlock,
     }
 }
@@ -1044,23 +1233,31 @@ pub mod yul_switch_statement {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T4 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub case: FixedSizeTerminalWithNoise<4usize>,
         pub yul_literal: YulLiteral,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub yul_block: YulBlock,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T5 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub default: FixedSizeTerminalWithNoise<7usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub yul_block: YulBlock,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t4s: Vec<yul_switch_statement::_T4>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t5: Option<yul_switch_statement::_T5>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T6 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub default: FixedSizeTerminalWithNoise<7usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub yul_block: YulBlock,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -1070,6 +1267,7 @@ pub mod yul_switch_statement {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub switch: FixedSizeTerminalWithNoise<6usize>,
         pub yul_expression: YulExpression,
         pub _t1: Box<yul_switch_statement::_T1>,
@@ -1083,22 +1281,28 @@ pub mod yul_variable_declaration {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub colon_equal: FixedSizeTerminalWithNoise<2usize>,
         pub yul_expression: YulExpression,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T4 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub comma_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub yul_identifier: YulIdentifier,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T5 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub colon_equal: FixedSizeTerminalWithNoise<2usize>,
         pub yul_function_call: YulFunctionCall,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T3 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t4: Option<yul_variable_declaration::_T4>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t5: Option<yul_variable_declaration::_T5>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -1108,8 +1312,11 @@ pub mod yul_variable_declaration {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub r#let: FixedSizeTerminalWithNoise<3usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub yul_identifier: YulIdentifier,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t1: Option<Box<yul_variable_declaration::_T1>>,
     }
 }
@@ -1126,8 +1333,11 @@ pub mod argument_list {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_paren_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t1: Option<Box<argument_list::_T1>>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_paren_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -1139,13 +1349,18 @@ pub mod catch_clause {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub identifier: Option<Identifier>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub non_empty_parameter_list: NonEmptyParameterList,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub catch: FixedSizeTerminalWithNoise<5usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t1: Option<catch_clause::_T1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub block: Block,
     }
 }
@@ -1157,14 +1372,20 @@ pub mod function_type {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub returns: FixedSizeTerminalWithNoise<7usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub non_empty_parameter_list: NonEmptyParameterList,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub function: FixedSizeTerminalWithNoise<8usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub parameter_list: ParameterList,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _2: Vec<VariableSizeTerminalWithNoise>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t2: Option<function_type::_T2>,
     }
 }
@@ -1182,8 +1403,10 @@ pub mod import_directive {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub import: FixedSizeTerminalWithNoise<6usize>,
         pub _t1: Box<import_directive::_T1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -1239,7 +1462,9 @@ pub mod inheritance_specifier {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub identifier_path: IdentifierPath,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub argument_list: Option<ArgumentList>,
     }
 }
@@ -1251,7 +1476,9 @@ pub mod modifier_invocation {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub identifier_path: IdentifierPath,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub argument_list: Option<ArgumentList>,
     }
 }
@@ -1270,13 +1497,17 @@ pub mod type_name {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T3 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_bracket_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub expression: Option<Expression>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_bracket_char: FixedSizeTerminalWithNoise<1>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub _t1: Box<type_name::_T1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t3s: Vec<type_name::_T3>,
     }
 }
@@ -1288,8 +1519,11 @@ pub mod yul_block {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_brace_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub yul_statements: Vec<YulStatement>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_brace_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -1301,9 +1535,13 @@ pub mod assembly_statement {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub assembly: FixedSizeTerminalWithNoise<8usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub double_quote_evmasm_double_quote: Option<FixedSizeTerminalWithNoise<8usize>>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub assembly_flags: Option<AssemblyFlags>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub yul_block: YulBlock,
     }
 }
@@ -1328,6 +1566,7 @@ pub mod error_parameter {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub type_name: TypeName,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub identifier: Option<Identifier>,
     }
 }
@@ -1340,7 +1579,9 @@ pub mod event_parameter {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub type_name: TypeName,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub indexed: Option<FixedSizeTerminalWithNoise<7usize>>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub identifier: Option<Identifier>,
     }
 }
@@ -1380,12 +1621,16 @@ pub mod inheritance_specifier_list {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<InheritanceSpecifier>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub is: FixedSizeTerminalWithNoise<2usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub inheritance_specifiers: inheritance_specifier_list::_T1,
     }
 }
@@ -1397,41 +1642,57 @@ pub mod primary_expression {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub payable: FixedSizeTerminalWithNoise<7usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub argument_list: ArgumentList,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub r#type: FixedSizeTerminalWithNoise<4usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_paren_char: FixedSizeTerminalWithNoise<1>,
         pub type_name: TypeName,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_paren_char: FixedSizeTerminalWithNoise<1>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T3 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub new: FixedSizeTerminalWithNoise<3usize>,
         pub type_name: TypeName,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T5 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<Option<Expression>>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T4 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_paren_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub expressions: primary_expression::_T5,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_paren_char: FixedSizeTerminalWithNoise<1>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T7 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<Expression>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T6 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_bracket_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub expressions: primary_expression::_T7,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_bracket_char: FixedSizeTerminalWithNoise<1>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -1470,15 +1731,22 @@ pub mod struct_definition {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
         pub type_name: TypeName,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub identifier: Identifier,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub r#struct: FixedSizeTerminalWithNoise<6usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub identifier: Identifier,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_brace_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t2s: Vec<struct_definition::_T2>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_brace_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -1490,13 +1758,18 @@ pub mod using_directive {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T3 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<IdentifierPath>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_brace_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub identifier_paths: using_directive::_T3,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_brace_char: FixedSizeTerminalWithNoise<1>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -1511,11 +1784,15 @@ pub mod using_directive {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub using: FixedSizeTerminalWithNoise<5usize>,
         pub _t1: Box<using_directive::_T1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub r#for: FixedSizeTerminalWithNoise<3usize>,
         pub _t4: Box<using_directive::_T4>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub global: Option<FixedSizeTerminalWithNoise<6usize>>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -1528,7 +1805,9 @@ pub mod variable_declaration {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub type_name: TypeName,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _1: Option<VariableSizeTerminalWithNoise>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub identifier: Identifier,
     }
 }
@@ -1553,16 +1832,24 @@ pub mod error_definition {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<ErrorParameter>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub error: FixedSizeTerminalWithNoise<5usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub identifier: Identifier,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_paren_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub error_parameters: Option<error_definition::_T1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_paren_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -1574,17 +1861,26 @@ pub mod event_definition {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<EventParameter>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub event: FixedSizeTerminalWithNoise<5usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub identifier: Identifier,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_paren_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub event_parameters: Option<event_definition::_T1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_paren_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub anonymous: Option<FixedSizeTerminalWithNoise<9usize>>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -1596,19 +1892,26 @@ pub mod index_access_expression {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub colon_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub expression: Option<Expression>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct Operator {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_bracket_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub expression_2: Option<Expression>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t1: Option<index_access_expression::_T1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_bracket_char: FixedSizeTerminalWithNoise<1>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: index_access_expression::Operator,
     }
 }
@@ -1620,15 +1923,21 @@ pub mod variable_declaration_tuple {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T3 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub comma_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub variable_declaration: Option<VariableDeclaration>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_paren_char: FixedSizeTerminalWithNoise<1>,
-        pub comma_chars: usize,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub comma_chars: VariableSizeTerminal,
         pub variable_declaration: VariableDeclaration,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t3s: Vec<variable_declaration_tuple::_T3>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_paren_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -1645,6 +1954,7 @@ pub mod member_access_expression {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct Operator {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub period_char: FixedSizeTerminalWithNoise<1>,
         pub _t1: Box<member_access_expression::_T1>,
     }
@@ -1662,18 +1972,24 @@ pub mod function_call_options_expression {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<NamedArgument>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub separators: Vec<FixedSizeTerminalWithNoise<1>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct Operator {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_brace_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub named_arguments: function_call_options_expression::_T1,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_brace_char: FixedSizeTerminalWithNoise<1>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: function_call_options_expression::Operator,
     }
 }
@@ -1686,6 +2002,7 @@ pub mod function_call_expression {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: ArgumentList,
     }
 }
@@ -1697,6 +2014,7 @@ pub mod unary_prefix_expression {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: VariableSizeTerminalWithNoise,
         pub right: Expression,
     }
@@ -1710,6 +2028,7 @@ pub mod unary_suffix_expression {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: FixedSizeTerminalWithNoise<2usize>,
     }
 }
@@ -1722,6 +2041,7 @@ pub mod exponentiation_expression {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: FixedSizeTerminalWithNoise<2usize>,
         pub right: Expression,
     }
@@ -1735,6 +2055,7 @@ pub mod mul_div_mod_expression {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: FixedSizeTerminalWithNoise<1>,
         pub right: Expression,
     }
@@ -1748,6 +2069,7 @@ pub mod add_sub_expression {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: FixedSizeTerminalWithNoise<1>,
         pub right: Expression,
     }
@@ -1761,6 +2083,7 @@ pub mod shift_expression {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: VariableSizeTerminalWithNoise,
         pub right: Expression,
     }
@@ -1774,6 +2097,7 @@ pub mod bit_and_expression {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: FixedSizeTerminalWithNoise<1>,
         pub right: Expression,
     }
@@ -1787,6 +2111,7 @@ pub mod bit_x_or_expression {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: FixedSizeTerminalWithNoise<1>,
         pub right: Expression,
     }
@@ -1800,6 +2125,7 @@ pub mod bit_or_expression {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: FixedSizeTerminalWithNoise<1>,
         pub right: Expression,
     }
@@ -1813,6 +2139,7 @@ pub mod order_comparison_expression {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: VariableSizeTerminalWithNoise,
         pub right: Expression,
     }
@@ -1826,6 +2153,7 @@ pub mod equality_comparison_expression {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: FixedSizeTerminalWithNoise<2usize>,
         pub right: Expression,
     }
@@ -1839,6 +2167,7 @@ pub mod and_expression {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: FixedSizeTerminalWithNoise<2usize>,
         pub right: Expression,
     }
@@ -1852,6 +2181,7 @@ pub mod or_expression {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: FixedSizeTerminalWithNoise<2usize>,
         pub right: Expression,
     }
@@ -1864,8 +2194,10 @@ pub mod conditional_expression {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub question_char: FixedSizeTerminalWithNoise<1>,
         pub expression_1: Expression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub colon_char: FixedSizeTerminalWithNoise<1>,
         pub expression_2: Expression,
     }
@@ -1884,6 +2216,7 @@ pub mod assignment_expression {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left: Expression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: VariableSizeTerminalWithNoise,
         pub right: Expression,
     }
@@ -1927,10 +2260,14 @@ pub mod constant_definition {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub type_name: TypeName,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub constant: FixedSizeTerminalWithNoise<8usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub identifier: Identifier,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub equal_char: FixedSizeTerminalWithNoise<1>,
         pub expression: Expression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -1942,12 +2279,17 @@ pub mod do_while_statement {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub r#do: FixedSizeTerminalWithNoise<2usize>,
         pub statement: Statement,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub r#while: FixedSizeTerminalWithNoise<5usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_paren_char: FixedSizeTerminalWithNoise<1>,
         pub expression: Expression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_paren_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -1959,9 +2301,12 @@ pub mod emit_statement {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub emit: FixedSizeTerminalWithNoise<4usize>,
         pub expression: Expression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub argument_list: ArgumentList,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -1974,6 +2319,7 @@ pub mod expression_statement {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub expression: Expression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -1985,16 +2331,21 @@ pub mod if_statement {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub r#else: FixedSizeTerminalWithNoise<4usize>,
         pub statement: Statement,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub r#if: FixedSizeTerminalWithNoise<2usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_paren_char: FixedSizeTerminalWithNoise<1>,
         pub expression: Expression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_paren_char: FixedSizeTerminalWithNoise<1>,
         pub statement: Statement,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t1: Option<if_statement::_T1>,
     }
 }
@@ -2006,8 +2357,11 @@ pub mod return_statement {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub r#return: FixedSizeTerminalWithNoise<6usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub expression: Option<Expression>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -2019,9 +2373,12 @@ pub mod revert_statement {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub revert: FixedSizeTerminalWithNoise<6usize>,
         pub expression: Expression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub argument_list: ArgumentList,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -2033,15 +2390,20 @@ pub mod state_variable_declaration {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub equal_char: FixedSizeTerminalWithNoise<1>,
         pub expression: Expression,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub type_name: TypeName,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub state_variable_attributes: Vec<StateVariableAttribute>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub identifier: Identifier,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t2: Option<state_variable_declaration::_T2>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -2053,15 +2415,21 @@ pub mod try_statement {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub returns: FixedSizeTerminalWithNoise<7usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub non_empty_parameter_list: NonEmptyParameterList,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub r#try: FixedSizeTerminalWithNoise<3usize>,
         pub expression: Expression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t1: Option<try_statement::_T1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub block: Block,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub catch_clauses: Vec<CatchClause>,
     }
 }
@@ -2073,17 +2441,20 @@ pub mod variable_declaration_statement {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T3 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub equal_char: FixedSizeTerminalWithNoise<1>,
         pub expression: Expression,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
         pub variable_declaration: VariableDeclaration,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t3: Option<variable_declaration_statement::_T3>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T4 {
         pub variable_declaration_tuple: VariableDeclarationTuple,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub equal_char: FixedSizeTerminalWithNoise<1>,
         pub expression: Expression,
     }
@@ -2095,6 +2466,7 @@ pub mod variable_declaration_statement {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         pub _t1: Box<variable_declaration_statement::_T1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub semicolon_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -2106,9 +2478,12 @@ pub mod while_statement {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub r#while: FixedSizeTerminalWithNoise<5usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_paren_char: FixedSizeTerminalWithNoise<1>,
         pub expression: Expression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_paren_char: FixedSizeTerminalWithNoise<1>,
         pub statement: Statement,
     }
@@ -2143,11 +2518,15 @@ pub mod for_statement {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub r#for: FixedSizeTerminalWithNoise<3usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_paren_char: FixedSizeTerminalWithNoise<1>,
         pub _t1: Box<for_statement::_T1>,
         pub _t2: Box<for_statement::_T2>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub expression: Option<Expression>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_paren_char: FixedSizeTerminalWithNoise<1>,
         pub statement: Statement,
     }
@@ -2188,8 +2567,11 @@ pub mod block {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_brace_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t2s: Vec<Box<block::_T2>>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_brace_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -2201,9 +2583,13 @@ pub mod constructor_definition {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub constructor: FixedSizeTerminalWithNoise<11usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub parameter_list: ParameterList,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub constructor_attributes: Vec<ConstructorAttribute>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub block: Block,
     }
 }
@@ -2215,7 +2601,9 @@ pub mod fallback_function_definition {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub returns: FixedSizeTerminalWithNoise<7usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub non_empty_parameter_list: NonEmptyParameterList,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -2225,9 +2613,13 @@ pub mod fallback_function_definition {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub fallback: FixedSizeTerminalWithNoise<8usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub parameter_list: ParameterList,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub fallback_function_attributes: Vec<FallbackFunctionAttribute>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t2: Option<fallback_function_definition::_T2>,
         pub _t3: Box<fallback_function_definition::_T3>,
     }
@@ -2245,7 +2637,9 @@ pub mod function_definition {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T3 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub returns: FixedSizeTerminalWithNoise<7usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub non_empty_parameter_list: NonEmptyParameterList,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -2255,10 +2649,14 @@ pub mod function_definition {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub function: FixedSizeTerminalWithNoise<8usize>,
         pub _t1: Box<function_definition::_T1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub parameter_list: ParameterList,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub function_attributes: Vec<FunctionAttribute>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t3: Option<function_definition::_T3>,
         pub _t4: Box<function_definition::_T4>,
     }
@@ -2276,9 +2674,13 @@ pub mod modifier_definition {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub modifier: FixedSizeTerminalWithNoise<8usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub identifier: Identifier,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub parameter_list: Option<ParameterList>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub method_attributes: Vec<MethodAttribute>,
         pub _t2: Box<modifier_definition::_T2>,
     }
@@ -2296,9 +2698,13 @@ pub mod receive_function_definition {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub receive: FixedSizeTerminalWithNoise<7usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_paren_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_paren_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub receive_function_attributes: Vec<ReceiveFunctionAttribute>,
         pub _t2: Box<receive_function_definition::_T2>,
     }
@@ -2333,12 +2739,19 @@ pub mod contract_definition {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub r#abstract: Option<FixedSizeTerminalWithNoise<8usize>>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub contract: FixedSizeTerminalWithNoise<8usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub identifier: Identifier,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub inheritance_specifier_list: Option<InheritanceSpecifierList>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_brace_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub contract_body_elements: Vec<ContractBodyElement>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_brace_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -2350,11 +2763,17 @@ pub mod interface_definition {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub interface: FixedSizeTerminalWithNoise<9usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub identifier: Identifier,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub inheritance_specifier_list: Option<InheritanceSpecifierList>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_brace_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub contract_body_elements: Vec<ContractBodyElement>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_brace_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -2366,10 +2785,15 @@ pub mod library_definition {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub library: FixedSizeTerminalWithNoise<7usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub identifier: Identifier,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub open_brace_char: FixedSizeTerminalWithNoise<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub contract_body_elements: Vec<ContractBodyElement>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_brace_char: FixedSizeTerminalWithNoise<1>,
     }
 }
@@ -2405,8 +2829,11 @@ pub mod source_unit {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub ignore: Ignore,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t2s: Vec<Box<source_unit::_T2>>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub end_marker: (),
     }
 }

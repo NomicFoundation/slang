@@ -66,7 +66,7 @@ impl Parsers {
                         .map(|_| FixedSizeTerminal::<1>())
                         .repeated()
                         .at_least(1usize)
-                        .map(|v| v.len())
+                        .map(|v| VariableSizeTerminal(v.len()))
                         .then(
                             filter(|&c: &char| c != '*' && c != '/')
                                 .map(|_| FixedSizeTerminal::<1>()),
@@ -79,7 +79,7 @@ impl Parsers {
                     just('*')
                         .map(|_| FixedSizeTerminal::<1>())
                         .repeated()
-                        .map(|v| v.len()),
+                        .map(|v| VariableSizeTerminal(v.len())),
                 )
                 .map(|v| comment::Content::from_parse(v)),
             )
@@ -115,46 +115,49 @@ impl Parsers {
         let fixed_bytes_type_parser = terminal("bytes")
             .ignored()
             .map(|_| FixedSizeTerminal::<5usize>())
-            .then(choice::<_, ErrorType>((
-                terminal("1").ignore_then(choice((
-                    terminal("0").map(|_| 2usize),
-                    terminal("1").map(|_| 2usize),
-                    terminal("2").map(|_| 2usize),
-                    terminal("3").map(|_| 2usize),
-                    terminal("4").map(|_| 2usize),
-                    terminal("5").map(|_| 2usize),
-                    terminal("6").map(|_| 2usize),
-                    terminal("7").map(|_| 2usize),
-                    terminal("8").map(|_| 2usize),
-                    terminal("9").map(|_| 2usize),
-                    empty().map(|_| 1usize),
-                ))),
-                terminal("2").ignore_then(choice((
-                    terminal("0").map(|_| 2usize),
-                    terminal("1").map(|_| 2usize),
-                    terminal("2").map(|_| 2usize),
-                    terminal("3").map(|_| 2usize),
-                    terminal("4").map(|_| 2usize),
-                    terminal("5").map(|_| 2usize),
-                    terminal("6").map(|_| 2usize),
-                    terminal("7").map(|_| 2usize),
-                    terminal("8").map(|_| 2usize),
-                    terminal("9").map(|_| 2usize),
-                    empty().map(|_| 1usize),
-                ))),
-                terminal("3").ignore_then(choice((
-                    terminal("0").map(|_| 2usize),
-                    terminal("1").map(|_| 2usize),
-                    terminal("2").map(|_| 2usize),
-                    empty().map(|_| 1usize),
-                ))),
-                terminal("4").map(|_| 1usize),
-                terminal("5").map(|_| 1usize),
-                terminal("6").map(|_| 1usize),
-                terminal("7").map(|_| 1usize),
-                terminal("8").map(|_| 1usize),
-                terminal("9").map(|_| 1usize),
-            )))
+            .then(
+                choice::<_, ErrorType>((
+                    terminal("1").ignore_then(choice((
+                        terminal("0").map(|_| 2usize),
+                        terminal("1").map(|_| 2usize),
+                        terminal("2").map(|_| 2usize),
+                        terminal("3").map(|_| 2usize),
+                        terminal("4").map(|_| 2usize),
+                        terminal("5").map(|_| 2usize),
+                        terminal("6").map(|_| 2usize),
+                        terminal("7").map(|_| 2usize),
+                        terminal("8").map(|_| 2usize),
+                        terminal("9").map(|_| 2usize),
+                        empty().map(|_| 1usize),
+                    ))),
+                    terminal("2").ignore_then(choice((
+                        terminal("0").map(|_| 2usize),
+                        terminal("1").map(|_| 2usize),
+                        terminal("2").map(|_| 2usize),
+                        terminal("3").map(|_| 2usize),
+                        terminal("4").map(|_| 2usize),
+                        terminal("5").map(|_| 2usize),
+                        terminal("6").map(|_| 2usize),
+                        terminal("7").map(|_| 2usize),
+                        terminal("8").map(|_| 2usize),
+                        terminal("9").map(|_| 2usize),
+                        empty().map(|_| 1usize),
+                    ))),
+                    terminal("3").ignore_then(choice((
+                        terminal("0").map(|_| 2usize),
+                        terminal("1").map(|_| 2usize),
+                        terminal("2").map(|_| 2usize),
+                        empty().map(|_| 1usize),
+                    ))),
+                    terminal("4").map(|_| 1usize),
+                    terminal("5").map(|_| 1usize),
+                    terminal("6").map(|_| 1usize),
+                    terminal("7").map(|_| 1usize),
+                    terminal("8").map(|_| 1usize),
+                    terminal("9").map(|_| 1usize),
+                ))
+                .map(VariableSizeTerminal),
+            )
             .map(|v| fixed_bytes_type::_T0::from_parse(v))
             .boxed();
 
@@ -169,7 +172,7 @@ impl Parsers {
                         filter(|&c: &char| ('0' <= c && c <= '9'))
                             .map(|_| FixedSizeTerminal::<1>())
                             .repeated()
-                            .map(|v| v.len()),
+                            .map(|v| VariableSizeTerminal(v.len())),
                     )
                     .then(just('x').map(|_| FixedSizeTerminal::<1>()))
                     .then(
@@ -180,7 +183,7 @@ impl Parsers {
                         filter(|&c: &char| ('0' <= c && c <= '9'))
                             .map(|_| FixedSizeTerminal::<1>())
                             .repeated()
-                            .map(|v| v.len()),
+                            .map(|v| VariableSizeTerminal(v.len())),
                     )
                     .map(|v| fixed_type::_T1::from_parse(v))
                     .or_not(),
@@ -198,7 +201,7 @@ impl Parsers {
                 .map(|_| FixedSizeTerminal::<1>())
                 .repeated()
                 .exactly(2usize)
-                .map(|v| v.len()),
+                .map(|v| VariableSizeTerminal(v.len())),
             )
             .map(|v| hex_byte_escape::_T0::from_parse(v))
             .boxed();
@@ -243,7 +246,7 @@ impl Parsers {
                 filter(|&c: &char| c != '\n' && c != '\r')
                     .map(|_| FixedSizeTerminal::<1>())
                     .repeated()
-                    .map(|v| v.len()),
+                    .map(|v| VariableSizeTerminal(v.len())),
             )
             .map(|v| line_comment::_T0::from_parse(v))
             .boxed();
@@ -255,7 +258,7 @@ impl Parsers {
         .map(|_| FixedSizeTerminal::<1>())
         .repeated()
         .exactly(2usize)
-        .map(|v| v.len())
+        .map(|v| VariableSizeTerminal(v.len()))
         .then(
             just('_')
                 .map(|_| FixedSizeTerminal::<1>())
@@ -267,7 +270,7 @@ impl Parsers {
                     .map(|_| FixedSizeTerminal::<1>())
                     .repeated()
                     .exactly(2usize)
-                    .map(|v| v.len()),
+                    .map(|v| VariableSizeTerminal(v.len())),
                 )
                 .repeated(),
         )
@@ -289,7 +292,7 @@ impl Parsers {
                     .map(|_| FixedSizeTerminal::<1>())
                     .repeated()
                     .at_least(1usize)
-                    .map(|v| v.len()),
+                    .map(|v| VariableSizeTerminal(v.len())),
             )
             .then(just(';').map(|_| FixedSizeTerminal::<1>()))
             .map(|v| pragma_directive::_T0::from_parse(v))
@@ -310,7 +313,7 @@ impl Parsers {
             })
             .map(|_| FixedSizeTerminal::<1>())
             .repeated()
-            .map(|v| v.len()),
+            .map(|v| VariableSizeTerminal(v.len())),
         )
         .map(|v| raw_identifier::_T0::from_parse(v))
         .boxed();
@@ -319,56 +322,59 @@ impl Parsers {
         let signed_integer_type_parser = terminal("int")
             .ignored()
             .map(|_| FixedSizeTerminal::<3usize>())
-            .then(choice::<_, ErrorType>((
-                terminal("1").ignore_then(choice((
-                    terminal("04").map(|_| 3usize),
-                    terminal("12").map(|_| 3usize),
+            .then(
+                choice::<_, ErrorType>((
+                    terminal("1").ignore_then(choice((
+                        terminal("04").map(|_| 3usize),
+                        terminal("12").map(|_| 3usize),
+                        terminal("2").ignore_then(choice((
+                            terminal("0").map(|_| 3usize),
+                            terminal("8").map(|_| 3usize),
+                        ))),
+                        terminal("36").map(|_| 3usize),
+                        terminal("44").map(|_| 3usize),
+                        terminal("52").map(|_| 3usize),
+                        terminal("6").ignore_then(choice((
+                            terminal("0").map(|_| 3usize),
+                            terminal("8").map(|_| 3usize),
+                            empty().map(|_| 2usize),
+                        ))),
+                        terminal("76").map(|_| 3usize),
+                        terminal("84").map(|_| 3usize),
+                        terminal("92").map(|_| 3usize),
+                    ))),
                     terminal("2").ignore_then(choice((
-                        terminal("0").map(|_| 3usize),
-                        terminal("8").map(|_| 3usize),
+                        terminal("0").ignore_then(choice((
+                            terminal("0").map(|_| 3usize),
+                            terminal("8").map(|_| 3usize),
+                        ))),
+                        terminal("16").map(|_| 3usize),
+                        terminal("24").map(|_| 3usize),
+                        terminal("32").map(|_| 3usize),
+                        terminal("4").ignore_then(choice((
+                            terminal("0").map(|_| 3usize),
+                            terminal("8").map(|_| 3usize),
+                            empty().map(|_| 2usize),
+                        ))),
+                        terminal("56").map(|_| 3usize),
                     ))),
-                    terminal("36").map(|_| 3usize),
-                    terminal("44").map(|_| 3usize),
-                    terminal("52").map(|_| 3usize),
-                    terminal("6").ignore_then(choice((
-                        terminal("0").map(|_| 3usize),
-                        terminal("8").map(|_| 3usize),
-                        empty().map(|_| 2usize),
-                    ))),
-                    terminal("76").map(|_| 3usize),
-                    terminal("84").map(|_| 3usize),
-                    terminal("92").map(|_| 3usize),
-                ))),
-                terminal("2").ignore_then(choice((
-                    terminal("0").ignore_then(choice((
-                        terminal("0").map(|_| 3usize),
-                        terminal("8").map(|_| 3usize),
-                    ))),
-                    terminal("16").map(|_| 3usize),
-                    terminal("24").map(|_| 3usize),
-                    terminal("32").map(|_| 3usize),
+                    terminal("32").map(|_| 2usize),
                     terminal("4").ignore_then(choice((
-                        terminal("0").map(|_| 3usize),
-                        terminal("8").map(|_| 3usize),
-                        empty().map(|_| 2usize),
+                        terminal("0").map(|_| 2usize),
+                        terminal("8").map(|_| 2usize),
                     ))),
-                    terminal("56").map(|_| 3usize),
-                ))),
-                terminal("32").map(|_| 2usize),
-                terminal("4").ignore_then(choice((
-                    terminal("0").map(|_| 2usize),
-                    terminal("8").map(|_| 2usize),
-                ))),
-                terminal("56").map(|_| 2usize),
-                terminal("64").map(|_| 2usize),
-                terminal("72").map(|_| 2usize),
-                terminal("8").ignore_then(choice((
-                    terminal("0").map(|_| 2usize),
-                    terminal("8").map(|_| 2usize),
-                    empty().map(|_| 1usize),
-                ))),
-                terminal("96").map(|_| 2usize),
-            )))
+                    terminal("56").map(|_| 2usize),
+                    terminal("64").map(|_| 2usize),
+                    terminal("72").map(|_| 2usize),
+                    terminal("8").ignore_then(choice((
+                        terminal("0").map(|_| 2usize),
+                        terminal("8").map(|_| 2usize),
+                        empty().map(|_| 1usize),
+                    ))),
+                    terminal("96").map(|_| 2usize),
+                ))
+                .map(VariableSizeTerminal),
+            )
             .map(|v| signed_integer_type::_T0::from_parse(v))
             .boxed();
 
@@ -382,7 +388,7 @@ impl Parsers {
                 .map(|_| FixedSizeTerminal::<1>())
                 .repeated()
                 .exactly(4usize)
-                .map(|v| v.len()),
+                .map(|v| VariableSizeTerminal(v.len())),
             )
             .map(|v| unicode_escape::_T0::from_parse(v))
             .boxed();
@@ -392,7 +398,7 @@ impl Parsers {
             .map(|_| FixedSizeTerminal::<1>())
             .repeated()
             .at_least(1usize)
-            .map(|v| v.len())
+            .map(|v| VariableSizeTerminal(v.len()))
             .boxed();
 
         // «YulDecimalNumberLiteral» = '0' | '1'…'9' { '0'…'9' } ;
@@ -406,7 +412,7 @@ impl Parsers {
                     filter(|&c: &char| ('0' <= c && c <= '9'))
                         .map(|_| FixedSizeTerminal::<1>())
                         .repeated()
-                        .map(|v| v.len()),
+                        .map(|v| VariableSizeTerminal(v.len())),
                 )
                 .map(|v| yul_decimal_number_literal::_T1::from_parse(v))
                 .map(|v| Box::new(yul_decimal_number_literal::_T0::_T1(v))),
@@ -424,7 +430,7 @@ impl Parsers {
                 .map(|_| FixedSizeTerminal::<1>())
                 .repeated()
                 .at_least(1usize)
-                .map(|v| v.len()),
+                .map(|v| VariableSizeTerminal(v.len())),
             )
             .map(|v| yul_hex_literal::_T0::from_parse(v))
             .boxed();
@@ -696,7 +702,8 @@ impl Parsers {
                     terminal("rue").map(|_| 4usize),
                 ))),
                 terminal("xor").map(|_| 3usize),
-            )),
+            ))
+            .map(VariableSizeTerminal),
         )
         .boxed();
 
@@ -786,7 +793,7 @@ impl Parsers {
                         .map(|_| FixedSizeTerminal::<1>())
                         .repeated()
                         .at_least(1usize)
-                        .map(|v| v.len())
+                        .map(|v| VariableSizeTerminal(v.len()))
                         .map(|v| Box::new(double_quoted_ascii_string_literal::Run::Chars(v))),
                     escape_sequence_parser.clone().map(|v| {
                         Box::new(double_quoted_ascii_string_literal::Run::EscapeSequence(v))
@@ -808,7 +815,7 @@ impl Parsers {
                         .map(|_| FixedSizeTerminal::<1>())
                         .repeated()
                         .at_least(1usize)
-                        .map(|v| v.len())
+                        .map(|v| VariableSizeTerminal(v.len()))
                         .map(|v| Box::new(double_quoted_unicode_string_literal::Run::Chars(v))),
                     escape_sequence_parser.clone().map(|v| {
                         Box::new(double_quoted_unicode_string_literal::Run::EscapeSequence(v))
@@ -835,7 +842,7 @@ impl Parsers {
                 .map(
                     |((leading, content), trailing)| VariableSizeTerminalWithNoise {
                         leading,
-                        content,
+                        content: VariableSizeTerminal(content),
                         trailing,
                     },
                 )
@@ -976,6 +983,7 @@ impl Parsers {
                 ))),
                 terminal("while").map(|_| 5usize),
             ))
+            .map(VariableSizeTerminal)
             .map(|v| Box::new(keyword::_T0::_0(v))),
             signed_integer_type_parser
                 .clone()
@@ -990,6 +998,7 @@ impl Parsers {
                 terminal("fixed").map(|_| 5usize),
                 terminal("ufixed").map(|_| 6usize),
             ))
+            .map(VariableSizeTerminal)
             .map(|v| Box::new(keyword::_T0::_4(v))),
         ))
         .boxed();
@@ -1028,7 +1037,7 @@ impl Parsers {
                         .map(|_| FixedSizeTerminal::<1>())
                         .repeated()
                         .at_least(1usize)
-                        .map(|v| v.len())
+                        .map(|v| VariableSizeTerminal(v.len()))
                         .map(|v| Box::new(single_quoted_ascii_string_literal::Run::Chars(v))),
                     escape_sequence_parser.clone().map(|v| {
                         Box::new(single_quoted_ascii_string_literal::Run::EscapeSequence(v))
@@ -1050,7 +1059,7 @@ impl Parsers {
                         .map(|_| FixedSizeTerminal::<1>())
                         .repeated()
                         .at_least(1usize)
-                        .map(|v| v.len())
+                        .map(|v| VariableSizeTerminal(v.len()))
                         .map(|v| Box::new(single_quoted_unicode_string_literal::Run::Chars(v))),
                     escape_sequence_parser.clone().map(|v| {
                         Box::new(single_quoted_unicode_string_literal::Run::EscapeSequence(v))
@@ -1232,7 +1241,7 @@ impl Parsers {
                 .map(
                     |((leading, content), trailing)| VariableSizeTerminalWithNoise {
                         leading,
-                        content,
+                        content: VariableSizeTerminal(content),
                         trailing,
                     },
                 )
@@ -1571,7 +1580,7 @@ impl Parsers {
                             .map(
                                 |((leading, content), trailing)| VariableSizeTerminalWithNoise {
                                     leading,
-                                    content,
+                                    content: VariableSizeTerminal(content),
                                     trailing,
                                 },
                             )
@@ -1742,7 +1751,7 @@ impl Parsers {
                 .map(
                     |((leading, content), trailing)| VariableSizeTerminalWithNoise {
                         leading,
-                        content,
+                        content: VariableSizeTerminal(content),
                         trailing,
                     },
                 )
@@ -1832,6 +1841,7 @@ impl Parsers {
                 ))),
                 terminal("years").map(|_| 5usize),
             ))
+            .map(VariableSizeTerminal)
             .map(|v| Box::new(reserved_word::_T0::_1(v))),
         ))
         .boxed();
@@ -1882,7 +1892,7 @@ impl Parsers {
                 .map(
                     |((leading, content), trailing)| VariableSizeTerminalWithNoise {
                         leading,
-                        content,
+                        content: VariableSizeTerminal(content),
                         trailing,
                     },
                 )
@@ -1911,7 +1921,7 @@ impl Parsers {
                 .map(
                     |((leading, content), trailing)| VariableSizeTerminalWithNoise {
                         leading,
-                        content,
+                        content: VariableSizeTerminal(content),
                         trailing,
                     },
                 )
@@ -2052,7 +2062,7 @@ impl Parsers {
                     .map(
                         |((leading, content), trailing)| VariableSizeTerminalWithNoise {
                             leading,
-                            content,
+                            content: VariableSizeTerminal(content),
                             trailing,
                         },
                     )
@@ -2973,7 +2983,7 @@ impl Parsers {
                     .map(
                         |((leading, content), trailing)| VariableSizeTerminalWithNoise {
                             leading,
-                            content,
+                            content: VariableSizeTerminal(content),
                             trailing,
                         },
                     )
@@ -3085,7 +3095,7 @@ impl Parsers {
                 .map(
                     |((leading, content), trailing)| VariableSizeTerminalWithNoise {
                         leading,
-                        content,
+                        content: VariableSizeTerminal(content),
                         trailing,
                     },
                 )
@@ -3149,7 +3159,7 @@ impl Parsers {
                 .map(
                     |((leading, content), trailing)| VariableSizeTerminalWithNoise {
                         leading,
-                        content,
+                        content: VariableSizeTerminal(content),
                         trailing,
                     },
                 )
@@ -3308,7 +3318,7 @@ impl Parsers {
                 .map(
                     |((leading, content), trailing)| VariableSizeTerminalWithNoise {
                         leading,
-                        content,
+                        content: VariableSizeTerminal(content),
                         trailing,
                     },
                 )
@@ -3364,7 +3374,7 @@ impl Parsers {
                 .map(
                     |((leading, content), trailing)| VariableSizeTerminalWithNoise {
                         leading,
-                        content,
+                        content: VariableSizeTerminal(content),
                         trailing,
                     },
                 )
@@ -3415,7 +3425,7 @@ impl Parsers {
                 .map(
                     |((leading, content), trailing)| VariableSizeTerminalWithNoise {
                         leading,
-                        content,
+                        content: VariableSizeTerminal(content),
                         trailing,
                     },
                 )
@@ -3696,7 +3706,7 @@ impl Parsers {
                 .map(
                     |((leading, content), trailing)| VariableSizeTerminalWithNoise {
                         leading,
-                        content,
+                        content: VariableSizeTerminal(content),
                         trailing,
                     },
                 )
@@ -3947,7 +3957,7 @@ impl Parsers {
                     .map(
                         |((leading, content), trailing)| VariableSizeTerminalWithNoise {
                             leading,
-                            content,
+                            content: VariableSizeTerminal(content),
                             trailing,
                         },
                     )
@@ -4243,7 +4253,7 @@ impl Parsers {
                         },
                     )
                     .repeated()
-                    .map(|v| v.len()),
+                    .map(|v| VariableSizeTerminal(v.len())),
             )
             .then(variable_declaration_parser.clone())
             .then(
@@ -4434,7 +4444,7 @@ impl Parsers {
             .map(
                 |((leading, content), trailing)| VariableSizeTerminalWithNoise {
                     leading,
-                    content,
+                    content: VariableSizeTerminal(content),
                     trailing,
                 },
             )
@@ -4621,7 +4631,7 @@ impl Parsers {
                     .map(
                         |((leading, content), trailing)| VariableSizeTerminalWithNoise {
                             leading,
-                            content,
+                            content: VariableSizeTerminal(content),
                             trailing,
                         },
                     )
@@ -4770,7 +4780,7 @@ impl Parsers {
                     .map(
                         |((leading, content), trailing)| VariableSizeTerminalWithNoise {
                             leading,
-                            content,
+                            content: VariableSizeTerminal(content),
                             trailing,
                         },
                     )
@@ -4981,7 +4991,7 @@ impl Parsers {
                     .map(
                         |((leading, content), trailing)| VariableSizeTerminalWithNoise {
                             leading,
-                            content,
+                            content: VariableSizeTerminal(content),
                             trailing,
                         },
                     )
@@ -5795,7 +5805,7 @@ impl Parsers {
                     .map(
                         |((leading, content), trailing)| VariableSizeTerminalWithNoise {
                             leading,
-                            content,
+                            content: VariableSizeTerminal(content),
                             trailing,
                         },
                     )

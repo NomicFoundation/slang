@@ -421,6 +421,35 @@ impl CombinatorTree {
         }
     }
 
+    fn has_default(&self) -> bool {
+        match self {
+            CombinatorTree::Difference { minuend, .. } => minuend.has_default(),
+            CombinatorTree::Lookahead { expr, .. } => expr.has_default(),
+            CombinatorTree::Sequence { elements, .. } => {
+                elements.iter().all(|(_, e)| e.has_default())
+            }
+            CombinatorTree::Choice { .. } => false,
+            CombinatorTree::Optional { .. } => true,
+            CombinatorTree::SeparatedBy { .. } => true,
+            CombinatorTree::Repeated { .. } => true,
+            CombinatorTree::Expression { .. } => false,
+            CombinatorTree::ExpressionMember {
+                operator,
+                operator_model,
+                ..
+            } => *operator_model == OperatorModel::None && operator.has_default(),
+            CombinatorTree::Reference { production } => production
+                .upgrade()
+                .unwrap()
+                .combinator_tree()
+                .root
+                .has_default(),
+            CombinatorTree::TerminalTrie { .. } => true,
+            CombinatorTree::CharacterFilter { .. } => true,
+            CombinatorTree::End => true,
+        }
+    }
+
     fn to_generated_code(&self, tree: &CombinatorTreeRoot) -> GeneratedCode {
         match self {
             CombinatorTree::Difference {
@@ -454,11 +483,18 @@ impl CombinatorTree {
                 let module_name = tree.slang_name().to_module_name_ident();
                 let type_name = name.to_type_name_ident();
 
+                let mut field_annotations = vec![];
                 let mut field_names = vec![];
                 let mut field_types = vec![];
                 let mut parser_chain = None;
                 for (name, element) in elements {
                     result.merge(element.to_generated_code(tree));
+
+                    field_annotations.push(if element.has_default() {
+                        quote!( #[serde(default, skip_serializing_if="DefaultTest::is_default")] )
+                    } else {
+                        quote!()
+                    });
 
                     let name = name.to_field_name_ident();
                     field_names.push(quote!( #name ));
@@ -474,7 +510,12 @@ impl CombinatorTree {
 
                 result.tree_interface.push(quote!(
                     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-                    pub struct #type_name { #(pub #field_names: #field_types),* }
+                    pub struct #type_name {
+                        #(
+                            #field_annotations
+                            pub #field_names: #field_types
+                        ),*
+                    }
                 ));
 
                 let folded_field_names = field_names
@@ -492,7 +533,23 @@ impl CombinatorTree {
                         }
                     }
                 ));
-                // TODO: default
+
+                if self.has_default() {
+                    result.tree_implementation.push(quote!(
+                        impl Default for #module_name::#type_name {
+                            fn default() -> Self {
+                                Self {
+                                    #(#field_names: Default::default()),*
+                                }
+                            }
+                        }
+                        impl DefaultTest for #module_name::#type_name {
+                            fn is_default(&self) -> bool {
+                                #(self. #field_names .is_default())&&*
+                            }
+                        }
+                    ));
+                }
 
                 let parser = parser_chain.unwrap();
                 result.parser = quote!( #parser.map(|v| #module_name::#type_name::from_parse(v)) );
@@ -592,11 +649,29 @@ impl CombinatorTree {
                     quote!(
                         #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
                         pub struct #type_name {
+                            #[serde(default, skip_serializing_if="DefaultTest::is_default")]
                             pub elements: Vec<#expr_parser_type>,
+                            #[serde(default, skip_serializing_if="DefaultTest::is_default")]
                             pub separators: Vec<#separator_parser_type>
                         }
                     )
                 });
+
+                result.tree_implementation.push(quote!(
+                    impl Default for #module_name::#type_name {
+                        fn default() -> Self {
+                            Self {
+                                elements: Default::default(),
+                                separators: Default::default(),
+                            }
+                        }
+                    }
+                    impl DefaultTest for #module_name::#type_name {
+                        fn is_default(&self) -> bool {
+                            self.elements.is_default() && self.separators.is_default()
+                        }
+                    }
+                ));
 
                 result.parser_type = if *min == 0 {
                     quote!( Option<#module_name::#type_name> )
@@ -621,9 +696,9 @@ impl CombinatorTree {
                 };
 
                 if matches!(**expr, Self::CharacterFilter { .. }) {
-                    // Vec<()> -> usize
-                    parser = quote!( #parser.map(|v| v.len()) );
-                    result.parser_type = quote!(usize);
+                    // Vec<()> -> VeriableSizeTerminal
+                    parser = quote!( #parser.map(|v| VariableSizeTerminal(v.len())) );
+                    result.parser_type = quote!(VariableSizeTerminal);
                 } else {
                     let parser_type = result.parser_type;
                     result.parser_type = quote!( Vec<#parser_type> );
@@ -709,10 +784,16 @@ impl CombinatorTree {
                             .clone()
                             .expect("Cannot have binary operator as last expression member")
                             .to_parser_name_ident();
+                        let annotation = if operator.has_default() {
+                            quote!( #[serde(default, skip_serializing_if="DefaultTest::is_default")] )
+                        } else {
+                            quote!()
+                        };
                         result.tree_interface.push(quote!(
                             #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
                             pub struct E {
                                 pub left: #parent_type_name,
+                                #annotation
                                 pub operator: #operator_type,
                                 pub right: #parent_type_name,
                             }
@@ -740,9 +821,15 @@ impl CombinatorTree {
                             .clone()
                             .expect("Cannot have unary prefix operator as last expression member")
                             .to_parser_name_ident();
+                        let annotation = if operator.has_default() {
+                            quote!( #[serde(default, skip_serializing_if="DefaultTest::is_default")] )
+                        } else {
+                            quote!()
+                        };
                         result.tree_interface.push(quote!(
                             #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
                             pub struct E {
+                                #annotation
                                 pub operator: #operator_type,
                                 pub right: #parent_type_name,
                             }
@@ -769,10 +856,16 @@ impl CombinatorTree {
                             .clone()
                             .expect("Cannot have unary suffix operator as last expression member")
                             .to_parser_name_ident();
+                        let annotation = if operator.has_default() {
+                            quote!( #[serde(default, skip_serializing_if="DefaultTest::is_default")] )
+                        } else {
+                            quote!()
+                        };
                         result.tree_interface.push(quote!(
                             #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
                             pub struct E {
                                 pub left: #parent_type_name,
+                                #annotation
                                 pub operator: #operator_type,
                             }
                         ));

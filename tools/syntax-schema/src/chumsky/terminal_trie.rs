@@ -84,7 +84,10 @@ impl TerminalTrie {
         };
 
         let (parser, parser_type) = match (common_size, with_noise) {
-            (None, false) => (quote!( #parser ), quote!(VariableSizeTerminal)),
+            (None, false) => (
+                quote!( #parser.map(VariableSizeTerminal) ),
+                quote!(VariableSizeTerminal),
+            ),
             (Some(size), false) => (
                 quote!( #parser.map(|_| FixedSizeTerminal::<#size>()) ),
                 quote!( FixedSizeTerminal<#size> ),
@@ -92,7 +95,8 @@ impl TerminalTrie {
             (None, true) => (
                 quote!(
                     ignore_parser.clone().then(#parser).then(ignore_parser.clone())
-                    .map(|((leading, content), trailing)| VariableSizeTerminalWithNoise { leading, content, trailing })
+                    .map(|((leading, content), trailing)|
+                        VariableSizeTerminalWithNoise { leading, content: VariableSizeTerminal(content), trailing })
                 ),
                 quote!(VariableSizeTerminalWithNoise),
             ),
@@ -138,7 +142,7 @@ impl Expression {
                 .get_production(name)
                 .expression_to_generate()
                 .collect_terminals(grammar, accum),
-            EBNF::Sequence(_) => false, // TODO: special case this
+            EBNF::Sequence(_) => false, // TODO: special case this i.e. 'multiply' the sequence elements?
             EBNF::End | EBNF::Repeat(_) | EBNF::Not(_) | EBNF::Difference(_) | EBNF::Range(_) => {
                 false
             }

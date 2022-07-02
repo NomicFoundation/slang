@@ -254,17 +254,24 @@ mod boilerplate {
 
             #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
             pub struct FixedSizeTerminalWithNoise<const N: usize> {
+                #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
                 pub leading: Ignore,
+                #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
                 pub content: FixedSizeTerminal<N>,
+                #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
                 pub trailing: Ignore,
             }
 
-            pub type VariableSizeTerminal = usize;
+            #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+            pub struct VariableSizeTerminal(pub usize);
 
             #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
             pub struct VariableSizeTerminalWithNoise {
+                #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
                 pub leading: Ignore,
+                #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
                 pub content: VariableSizeTerminal,
+                #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
                 pub trailing: Ignore,
             }
         )
@@ -299,13 +306,25 @@ mod boilerplate {
 
             impl DefaultTest for VariableSizeTerminal {
                 fn is_default(&self) -> bool {
-                    *self == 0
+                    self.0 == 0
+                }
+            }
+
+            impl DefaultTest for VariableSizeTerminalWithNoise {
+                fn is_default(&self) -> bool {
+                    self.content.is_default() && self.leading.is_default() && self.trailing.is_default()
                 }
             }
 
             impl<const N: usize> DefaultTest for FixedSizeTerminal<N> {
                 fn is_default(&self) -> bool {
                     true
+                }
+            }
+
+            impl<const N: usize> DefaultTest for FixedSizeTerminalWithNoise<N> {
+                fn is_default(&self) -> bool {
+                    self.leading.is_empty() && self.trailing.is_empty()
                 }
             }
         )
