@@ -5,7 +5,7 @@
   zeroOrMore:
     choice:
       - reference: Whitespace
-      - reference: EOL
+      - reference: EndOfLine
       - reference: Comment
       - reference: LineComment
 - name: TrailingTrivia
@@ -17,9 +17,9 @@
             - reference: Whitespace
             - reference: Comment
       - choice:
-          - reference: EOL
+          - reference: EndOfLine
           - reference: LineComment
-- name: EOFTrivia
+- name: EndOfFileTrivia
   pattern: Token
   zeroOrMore:
     choice:
@@ -32,7 +32,7 @@
     choice:
       - terminal: " "
       - terminal: "\t"
-- name: EOL
+- name: EndOfLine
   pattern: Token
   oneOrMore:
     choice:
@@ -74,7 +74,7 @@
         choice:
           - reference: Directive
           - reference: Definition
-    - reference: EOFTrivia
+    - reference: EndOfFileTrivia
     - end: ~
 - name: Directive
   choice:
