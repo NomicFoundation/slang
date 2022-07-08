@@ -30,7 +30,10 @@ impl Grammar {
                 return production.clone();
             }
         }
-        panic!("Cannot find {} production", name)
+        panic!(
+            "Cannot find {} production, should have been caught in validation pass",
+            name
+        )
     }
 }
 
@@ -62,16 +65,17 @@ pub struct Topic {
 #[derive(Clone, Debug)]
 pub struct Production {
     pub name: String,
-    pub pattern: Option<ProductionPattern>,
+    pub kind: Option<ProductionKind>,
     pub title: Option<String>,
     pub versions: BTreeMap<Version, ExpressionRef>,
     pub combinator_tree: RefCell<CombinatorTreeRoot>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
-pub enum ProductionPattern {
+pub enum ProductionKind {
+    Rule,
     Token,
-    Expression,
+    ExpressionRule,
 }
 
 pub type ProductionRef = Rc<Production>;
@@ -79,13 +83,13 @@ pub type ProductionWeakRef = Weak<Production>;
 
 impl Production {
     pub fn is_token(&self) -> bool {
-        self.pattern == Some(ProductionPattern::Token)
+        self.kind == Some(ProductionKind::Token)
     }
 
     fn serialize_in_map<S: Serializer>(&self, state: &mut S::SerializeMap) -> Result<(), S::Error> {
         state.serialize_entry("name", &self.name)?;
-        if let Some(pattern) = self.pattern {
-            state.serialize_entry("pattern", &pattern)?;
+        if let Some(kind) = self.kind {
+            state.serialize_entry("kind", &kind)?;
         }
         if let Some(title) = &self.title {
             state.serialize_entry("title", title)?;
@@ -124,7 +128,7 @@ impl<'de> Deserialize<'de> for Production {
         #[serde(field_identifier, rename_all = "camelCase")]
         enum Field {
             Name,
-            Pattern,
+            Kind,
             Title,
             Versions,
             Config,
@@ -160,7 +164,7 @@ impl<'de> Deserialize<'de> for Production {
                 let mut versions = None;
                 let mut config = None;
                 let mut ebnf = None;
-                let mut pattern = None;
+                let mut kind = None;
 
                 while let Some(key) = map.next_key()? {
                     match key {
@@ -169,9 +173,9 @@ impl<'de> Deserialize<'de> for Production {
                                 return Err(de::Error::duplicate_field("name"));
                             }
                         }
-                        Field::Pattern => {
-                            if pattern.is_some() {
-                                return Err(de::Error::duplicate_field("pattern"));
+                        Field::Kind => {
+                            if kind.is_some() {
+                                return Err(de::Error::duplicate_field("kind"));
                             }
                         }
                         Field::Title => {
@@ -226,7 +230,7 @@ impl<'de> Deserialize<'de> for Production {
 
                     match key {
                         Field::Name => name = Some(map.next_value()?),
-                        Field::Pattern => pattern = Some(map.next_value()?),
+                        Field::Kind => kind = Some(map.next_value()?),
                         Field::Title => title = Some(map.next_value()?),
                         Field::Versions => versions = Some(map.next_value()?),
                         Field::Config => config = Some(map.next_value()?),
@@ -286,7 +290,7 @@ impl<'de> Deserialize<'de> for Production {
 
                 Ok(Production {
                     name,
-                    pattern,
+                    kind,
                     title,
                     versions,
                     combinator_tree: Default::default(),
@@ -296,7 +300,7 @@ impl<'de> Deserialize<'de> for Production {
 
         const FIELDS: &'static [&'static str] = &[
             "name",
-            "pattern",
+            "kind",
             "title",
             "versions",
             "config",
@@ -584,7 +588,7 @@ pub struct ExpressionConfig {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub prelude: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub pattern: Option<ExpressionPattern>,
+    pub associativity: Option<ExpressionAssociativity>,
 }
 
 impl ExpressionConfig {
@@ -599,15 +603,15 @@ impl Default for ExpressionConfig {
             name: None,
             lookahead: None,
             prelude: None,
-            pattern: None,
+            associativity: None,
         }
     }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, Hash)]
-pub enum ExpressionPattern {
-    FoldLeft,
-    FoldRight,
+pub enum ExpressionAssociativity {
+    Left,
+    Right,
 }
 
 impl Grammar {

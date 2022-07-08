@@ -103,16 +103,16 @@
 # Tokens
 
 - name: EOF
-  pattern: Token
+  kind: Token
   terminal: $
 
 - name: Number
-  pattern: Token
+  kind: Token
   oneOrMore:
     range: { from: "0", to: "9" }
 
 - name: String
-  pattern: Token
+  kind: Token
   sequence:
     - terminal: "'"
     - zeroOrMore:
@@ -120,7 +120,7 @@
     - terminal: "'"
 
 - name: StringChar
-  pattern: Token
+  kind: Token
   choice:
     - not:
         choice:
@@ -143,14 +143,14 @@
       config: { name: Escape }
 
 - name: SingleCharString
-  pattern: Token
+  kind: Token
   sequence:
     - terminal: "'"
     - reference: StringChar
     - terminal: "'"
 
 - name: HexDigit
-  pattern: Token
+  kind: Token
   choice:
     - range:
         from: "0"
@@ -163,7 +163,7 @@
         to: F
 
 - name: Identifier
-  pattern: Token
+  kind: Token
   choice:
     - sequence:
         - terminal: «
@@ -172,14 +172,14 @@
     - reference: RawIdentifier
 
 - name: RawIdentifier
-  pattern: Token
+  kind: Token
   sequence:
     - reference: IdentifierStart
     - zeroOrMore:
         reference: IdentifierFollow
 
 - name: IdentifierStart
-  pattern: Token
+  kind: Token
   choice:
     - terminal: _
     - range:
@@ -190,7 +190,7 @@
         to: Z
 
 - name: IdentifierFollow
-  pattern: Token
+  kind: Token
   choice:
     - reference: IdentifierStart
     - range:
@@ -198,21 +198,21 @@
         to: "9"
 
 - name: LeadingTrivia
-  pattern: Token
+  kind: Token
   zeroOrMore:
     choice:
       - reference: Whitespace
       - reference: Comment
 
 - name: TrailingTrivia
-  pattern: Token
+  kind: Token
   zeroOrMore:
     choice:
       - reference: Whitespace
       - reference: Comment
 
 - name: Comment
-  pattern: Token
+  kind: Token
   sequence:
     - terminal: (*
     - sequence:
@@ -233,7 +233,7 @@
     - terminal: "*)"
 
 - name: Whitespace
-  pattern: Token
+  kind: Token
   oneOrMore:
     choice:
       - terminal: "\t"

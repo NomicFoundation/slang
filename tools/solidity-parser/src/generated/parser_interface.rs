@@ -7,7 +7,7 @@ use super::tree_interface::*;
 pub struct Parsers {
     pub comment: ParserType<Comment>,
     pub decimal_integer: ParserType<DecimalInteger>,
-    pub eol: ParserType<Eol>,
+    pub end_of_line: ParserType<EndOfLine>,
     pub fixed_bytes_type: ParserType<FixedBytesType>,
     pub fixed_type: ParserType<FixedType>,
     pub hex_byte_escape: ParserType<HexByteEscape>,
@@ -23,7 +23,7 @@ pub struct Parsers {
     pub yul_hex_literal: ParserType<YulHexLiteral>,
     pub decimal_exponent: ParserType<DecimalExponent>,
     pub decimal_float: ParserType<DecimalFloat>,
-    pub eof_trivia: ParserType<EofTrivia>,
+    pub end_of_file_trivia: ParserType<EndOfFileTrivia>,
     pub escape_sequence: ParserType<EscapeSequence>,
     pub hex_string_literal: ParserType<HexStringLiteral>,
     pub leading_trivia: ParserType<LeadingTrivia>,

@@ -14,7 +14,7 @@ fn ref_from_ebnf(ebnf: EBNF) -> ExpressionRef {
 pub fn production(((name, _is_token), ebnf): ((String, bool), EBNF)) -> Production {
     Production {
         name,
-        pattern: None,
+        kind: None,
         title: None,
         versions: BTreeMap::from([(Version::parse("0.0.0").unwrap(), ref_from_ebnf(ebnf))]),
         combinator_tree: Default::default(),

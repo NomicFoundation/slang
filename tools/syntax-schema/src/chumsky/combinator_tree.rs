@@ -1032,7 +1032,7 @@ impl Grammar {
             production.create_combinator_tree(self);
         }
         for production in &all_productions {
-            if production.pattern == Some(ProductionPattern::Expression) {
+            if production.kind == Some(ProductionKind::ExpressionRule) {
                 production.transform_expression_members();
             }
         }
@@ -1196,7 +1196,7 @@ impl Expression {
                 EBNF::Choice(exprs) => {
                     let name = self.config.slang_name();
 
-                    if production.pattern == Some(ProductionPattern::Expression) {
+                    if production.kind == Some(ProductionKind::ExpressionRule) {
                         let choices = exprs.iter().map(|e| {
                             if let EBNF::Reference(prod_name) = &e.ebnf {
                                Rc::downgrade(&grammar.get_production(prod_name))

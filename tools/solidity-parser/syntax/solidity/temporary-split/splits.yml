@@ -4,9 +4,9 @@
         productions:
           - LeadingTrivia
           - TrailingTrivia
-          - EOFTrivia
+          - EndOfFileTrivia
           - Whitespace
-          - EOL
+          - EndOfLine
           - Comment
           - LineComment
     - solidity-file:

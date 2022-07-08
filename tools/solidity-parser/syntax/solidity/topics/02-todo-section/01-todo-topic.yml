@@ -426,7 +426,7 @@
     - terminal: calldata
 
 - name: Expression
-  pattern: Expression
+  kind: ExpressionRule
   choice:
     - reference: AssignmentExpression
     - reference: ConditionalExpression
@@ -450,7 +450,7 @@
     - reference: PrimaryExpression
 
 - name: AssignmentExpression
-  config: { pattern: FoldLeft }
+  config: { associativity: Left }
   sequence:
     - reference: Expression
     - choice:
@@ -478,21 +478,21 @@
         - reference: Expression
 
 - name: OrExpression
-  config: { pattern: FoldLeft }
+  config: { associativity: Left }
   sequence:
     - reference: Expression
     - terminal: "||"
     - reference: Expression
 
 - name: AndExpression
-  config: { pattern: FoldLeft }
+  config: { associativity: Left }
   sequence:
     - reference: Expression
     - terminal: "&&"
     - reference: Expression
 
 - name: EqualityComparisonExpression
-  config: { pattern: FoldLeft }
+  config: { associativity: Left }
   sequence:
     - reference: Expression
     - choice:
@@ -501,7 +501,7 @@
     - reference: Expression
 
 - name: OrderComparisonExpression
-  config: { pattern: FoldLeft }
+  config: { associativity: Left }
   sequence:
     - reference: Expression
     - choice:
@@ -512,28 +512,28 @@
     - reference: Expression
 
 - name: BitOrExpression
-  config: { pattern: FoldLeft }
+  config: { associativity: Left }
   sequence:
     - reference: Expression
     - terminal: "|"
     - reference: Expression
 
 - name: BitXOrExpression
-  config: { pattern: FoldLeft }
+  config: { associativity: Left }
   sequence:
     - reference: Expression
     - terminal: "^"
     - reference: Expression
 
 - name: BitAndExpression
-  config: { pattern: FoldLeft }
+  config: { associativity: Left }
   sequence:
     - reference: Expression
     - terminal: "&"
     - reference: Expression
 
 - name: ShiftExpression
-  config: { pattern: FoldLeft }
+  config: { associativity: Left }
   sequence:
     - reference: Expression
     - choice:
@@ -543,7 +543,7 @@
     - reference: Expression
 
 - name: AddSubExpression
-  config: { pattern: FoldLeft }
+  config: { associativity: Left }
   sequence:
     - reference: Expression
     - choice:
@@ -552,7 +552,7 @@
     - reference: Expression
 
 - name: MulDivModExpression
-  config: { pattern: FoldLeft }
+  config: { associativity: Left }
   sequence:
     - reference: Expression
     - choice:
@@ -562,7 +562,7 @@
     - reference: Expression
 
 - name: ExponentiationExpression
-  config: { pattern: FoldRight }
+  config: { associativity: Right }
   sequence:
     - reference: Expression
     - terminal: "**"
@@ -610,7 +610,7 @@
         - terminal: address
 
 - name: IndexAccessExpression
-  config: { pattern: FoldLeft }
+  config: { associativity: Left }
   sequence:
     - reference: Expression
     - terminal: "["
@@ -863,7 +863,7 @@
     - terminal: )
 
 - name: Identifier
-  pattern: Token
+  kind: Token
   difference:
     minuend:
       reference: RawIdentifier
@@ -871,7 +871,7 @@
       reference: ReservedWord
 
 - name: ReservedWord
-  pattern: Token
+  kind: Token
   choice:
     - reference: Keyword
     - reference: ReservedKeyword
@@ -879,7 +879,7 @@
     - reference: BooleanLiteral
 
 - name: Keyword
-  pattern: Token
+  kind: Token
   choice:
     - terminal: pragma
     - terminal: abstract
@@ -946,7 +946,7 @@
     - terminal: ufixed
 
 - name: ReservedKeyword
-  pattern: Token
+  kind: Token
   choice:
     - terminal: after
     - terminal: alias
@@ -981,7 +981,7 @@
     - terminal: var
 
 - name: PragmaDirective
-  pattern: Token
+  kind: Token
   sequence:
     - terminal: pragma
     - oneOrMore:
@@ -990,14 +990,14 @@
     - terminal: ;
 
 - name: RawIdentifier
-  pattern: Token
+  kind: Token
   sequence:
     - reference: IdentifierStart
     - zeroOrMore:
         reference: IdentifierPart
 
 - name: IdentifierStart
-  pattern: Token
+  kind: Token
   choice:
     - terminal: _
     - terminal: $
@@ -1009,7 +1009,7 @@
         to: Z
 
 - name: IdentifierPart
-  pattern: Token
+  kind: Token
   choice:
     - reference: IdentifierStart
     - range:
@@ -1017,7 +1017,7 @@
         to: "9"
 
 - name: SignedIntegerType
-  pattern: Token
+  kind: Token
   sequence:
     - terminal: int
     - choice:
@@ -1058,13 +1058,13 @@
         lookahead: { not: { range: { from: "0", to: "9" } } }
 
 - name: UnsignedIntegerType
-  pattern: Token
+  kind: Token
   sequence:
     - terminal: u
     - reference: SignedIntegerType
 
 - name: FixedBytesType
-  pattern: Token
+  kind: Token
   sequence:
     - terminal: bytes
     - choice:
@@ -1105,7 +1105,7 @@
         lookahead: { not: { range: { from: "0", to: "9" } } }
 
 - name: FixedType
-  pattern: Token
+  kind: Token
   sequence:
     - terminal: fixed
     - optional:
@@ -1127,19 +1127,19 @@
                 to: "9"
 
 - name: UfixedType
-  pattern: Token
+  kind: Token
   sequence:
     - terminal: u
     - reference: FixedType
 
 - name: BooleanLiteral
-  pattern: Token
+  kind: Token
   choice:
     - terminal: "true"
     - terminal: "false"
 
 - name: DecimalNumber
-  pattern: Token
+  kind: Token
   sequence:
     - choice:
         - reference: DecimalInteger
@@ -1148,7 +1148,7 @@
         reference: DecimalExponent
 
 - name: DecimalInteger
-  pattern: Token
+  kind: Token
   oneOrMore:
     range:
       from: "0"
@@ -1158,7 +1158,7 @@
         terminal: _
 
 - name: DecimalFloat
-  pattern: Token
+  kind: Token
   sequence:
     - optional:
         reference: DecimalInteger
@@ -1166,7 +1166,7 @@
     - reference: DecimalInteger
 
 - name: DecimalExponent
-  pattern: Token
+  kind: Token
   sequence:
     - choice:
         - terminal: e
@@ -1176,7 +1176,7 @@
     - reference: DecimalInteger
 
 - name: HexNumber
-  pattern: Token
+  kind: Token
   sequence:
     - terminal: "0"
     - terminal: x
@@ -1187,7 +1187,7 @@
             terminal: _
 
 - name: NumberUnit
-  pattern: Token
+  kind: Token
   choice:
     - terminal: wei
     - terminal: gwei
@@ -1200,7 +1200,7 @@
     - terminal: years
 
 - name: HexStringLiteral
-  pattern: Token
+  kind: Token
   sequence:
     - terminal: hex
     - choice:
@@ -1216,7 +1216,7 @@
             - terminal: "'"
 
 - name: PossiblySeparatedPairsOfHexDigits
-  pattern: Token
+  kind: Token
   oneOrMore:
     repeat:
       min: 2
@@ -1227,7 +1227,7 @@
         terminal: _
 
 - name: HexCharacter
-  pattern: Token
+  kind: Token
   choice:
     - range:
         from: "0"
@@ -1240,13 +1240,13 @@
         to: F
 
 - name: AsciiStringLiteral
-  pattern: Token
+  kind: Token
   choice:
     - reference: SingleQuotedAsciiStringLiteral
     - reference: DoubleQuotedAsciiStringLiteral
 
 - name: SingleQuotedAsciiStringLiteral
-  pattern: Token
+  kind: Token
   sequence:
     - terminal: "'"
     - zeroOrMore:
@@ -1267,7 +1267,7 @@
     - terminal: "'"
 
 - name: DoubleQuotedAsciiStringLiteral
-  pattern: Token
+  kind: Token
   sequence:
     - terminal: '"'
     - zeroOrMore:
@@ -1288,13 +1288,13 @@
     - terminal: '"'
 
 - name: UnicodeStringLiteral
-  pattern: Token
+  kind: Token
   choice:
     - reference: SingleQuotedUnicodeStringLiteral
     - reference: DoubleQuotedUnicodeStringLiteral
 
 - name: SingleQuotedUnicodeStringLiteral
-  pattern: Token
+  kind: Token
   sequence:
     - terminal: "unicode'"
     - zeroOrMore:
@@ -1312,7 +1312,7 @@
     - terminal: "'"
 
 - name: DoubleQuotedUnicodeStringLiteral
-  pattern: Token
+  kind: Token
   sequence:
     - terminal: 'unicode"'
     - zeroOrMore:
@@ -1330,7 +1330,7 @@
     - terminal: '"'
 
 - name: EscapeSequence
-  pattern: Token
+  kind: Token
   sequence:
     - terminal: "\\"
     - choice:
@@ -1339,7 +1339,7 @@
         - reference: UnicodeEscape
 
 - name: AsciiEscape
-  pattern: Token
+  kind: Token
   choice:
     - terminal: n
     - terminal: r
@@ -1351,7 +1351,7 @@
     - terminal: "\r"
 
 - name: HexByteEscape
-  pattern: Token
+  kind: Token
   sequence:
     - terminal: x
     - repeat:
@@ -1360,7 +1360,7 @@
         reference: HexCharacter
 
 - name: UnicodeEscape
-  pattern: Token
+  kind: Token
   sequence:
     - terminal: u
     - repeat:
@@ -1521,7 +1521,7 @@
     - reference: HexStringLiteral
 
 - name: YulIdentifier
-  pattern: Token
+  kind: Token
   difference:
     minuend:
       reference: RawIdentifier
@@ -1529,14 +1529,14 @@
       reference: YulReservedWord
 
 - name: YulReservedWord
-  pattern: Token
+  kind: Token
   choice:
     - reference: YulKeyword
     - reference: YulEVMBuiltinFunctionName
     - reference: BooleanLiteral
 
 - name: YulKeyword
-  pattern: Token
+  kind: Token
   choice:
     - terminal: break
     - terminal: case
@@ -1551,7 +1551,7 @@
     - terminal: hex
 
 - name: YulEVMBuiltinFunctionName
-  pattern: Token
+  kind: Token
   choice:
     - terminal: stop
     - terminal: add
@@ -1628,7 +1628,7 @@
     - terminal: basefee
 
 - name: YulDecimalNumberLiteral
-  pattern: Token
+  kind: Token
   choice:
     - terminal: "0"
     - sequence:
@@ -1641,7 +1641,7 @@
               to: "9"
 
 - name: YulHexLiteral
-  pattern: Token
+  kind: Token
   sequence:
     - terminal: "0x"
     - oneOrMore:

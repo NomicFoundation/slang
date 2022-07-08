@@ -7,6 +7,8 @@ use regex::Regex;
 use semver::Version;
 use std::{collections::HashSet, path::PathBuf};
 
+static REQUIRED_PRODUCTIONS: [&str; 2] = ["LeadingTrivia", "TrailingTrivia"];
+
 impl Grammar {
     pub fn validate(&self, manifest_path: &PathBuf) {
         validate_topics(self);
@@ -101,15 +103,13 @@ fn validate_definitions(grammar: &Grammar) -> HashSet<String> {
         grammar.manifest.root_production
     );
 
-    assert!(
-        defined.contains("LeadingTrivia"),
-        "Grammar must contain a 'LeadingTrivia' production for trivia."
-    );
-
-    assert!(
-        defined.contains("TrailingTrivia"),
-        "Grammar must contain a 'TrailingTrivia' production for trivia."
-    );
+    for production_name in REQUIRED_PRODUCTIONS {
+        assert!(
+            defined.contains(production_name),
+            "Grammar must contain a '{}' production",
+            production_name
+        );
+    }
 
     return defined;
 }
@@ -135,8 +135,7 @@ fn validate_usages(grammar: &Grammar, defined: &HashSet<String>) -> HashSet<Stri
 fn validate_orphaned_nodes(grammar: &Grammar, defined: HashSet<String>, used: HashSet<String>) {
     defined.iter().for_each(|name| {
         if name != &grammar.manifest.root_production
-            && name != "TrailingTrivia"
-            && name != "LeadingTrivia"
+            && !REQUIRED_PRODUCTIONS.contains(&name.as_str())
         {
             assert!(
                 used.contains(name),

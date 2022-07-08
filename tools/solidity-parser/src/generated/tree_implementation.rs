@@ -129,7 +129,7 @@ impl DefaultTest for decimal_integer::WithTrivia {
     }
 }
 
-impl DefaultTest for eol::WithTrivia {
+impl DefaultTest for end_of_line::WithTrivia {
     fn is_default(&self) -> bool {
         self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
     }
@@ -558,7 +558,7 @@ impl DefaultTest for decimal_float::WithTrivia {
     }
 }
 
-impl DefaultTest for eof_trivia::WithTrivia {
+impl DefaultTest for end_of_file_trivia::WithTrivia {
     fn is_default(&self) -> bool {
         self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
     }
@@ -3772,10 +3772,10 @@ impl DefaultTest for library_definition::_T0 {
 
 impl source_unit::_T0 {
     pub fn from_parse(
-        (((leading_trivia, _t2s), eof_trivia), end_marker): (
+        (((leading_trivia, _t2s), end_of_file_trivia), end_marker): (
             (
                 (leading_trivia::WithTrivia, Vec<Box<source_unit::_T2>>),
-                eof_trivia::WithTrivia,
+                end_of_file_trivia::WithTrivia,
             ),
             (),
         ),
@@ -3783,7 +3783,7 @@ impl source_unit::_T0 {
         Self {
             leading_trivia,
             _t2s,
-            eof_trivia,
+            end_of_file_trivia,
             end_marker,
         }
     }
@@ -3793,7 +3793,7 @@ impl Default for source_unit::_T0 {
         Self {
             leading_trivia: Default::default(),
             _t2s: Default::default(),
-            eof_trivia: Default::default(),
+            end_of_file_trivia: Default::default(),
             end_marker: Default::default(),
         }
     }
@@ -3802,7 +3802,7 @@ impl DefaultTest for source_unit::_T0 {
     fn is_default(&self) -> bool {
         self.leading_trivia.is_default()
             && self._t2s.is_default()
-            && self.eof_trivia.is_default()
+            && self.end_of_file_trivia.is_default()
             && self.end_marker.is_default()
     }
 }

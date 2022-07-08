@@ -111,8 +111,8 @@ impl Parsers {
             })
             .boxed();
 
-        // «EOL» = 1…*{ '\u{d}' | '\u{a}' } ;
-        let eol_parser = filter(|&c: &char| c == '\r' || c == '\n')
+        // «EndOfLine» = 1…*{ '\u{d}' | '\u{a}' } ;
+        let end_of_line_parser = filter(|&c: &char| c == '\r' || c == '\n')
             .map(|_| FixedSizeTerminal::<1>())
             .repeated()
             .at_least(1usize)
@@ -460,17 +460,17 @@ impl Parsers {
             .map(|v| decimal_float::_T0::from_parse(v))
             .boxed();
 
-        // «EOFTrivia» = { «Whitespace» | «Comment» | «LineComment» } ;
-        let eof_trivia_parser = choice((
+        // «EndOfFileTrivia» = { «Whitespace» | «Comment» | «LineComment» } ;
+        let end_of_file_trivia_parser = choice((
             whitespace_parser
                 .clone()
-                .map(|v| Box::new(eof_trivia::_T1::Whitespace(v))),
+                .map(|v| Box::new(end_of_file_trivia::_T1::Whitespace(v))),
             comment_parser
                 .clone()
-                .map(|v| Box::new(eof_trivia::_T1::Comment(v))),
+                .map(|v| Box::new(end_of_file_trivia::_T1::Comment(v))),
             line_comment_parser
                 .clone()
-                .map(|v| Box::new(eof_trivia::_T1::LineComment(v))),
+                .map(|v| Box::new(end_of_file_trivia::_T1::LineComment(v))),
         ))
         .repeated()
         .boxed();
@@ -530,14 +530,14 @@ impl Parsers {
             .map(|v| hex_string_literal::_T0::from_parse(v))
             .boxed();
 
-        // «LeadingTrivia» = { «Whitespace» | «EOL» | «Comment» | «LineComment» } ;
+        // «LeadingTrivia» = { «Whitespace» | «EndOfLine» | «Comment» | «LineComment» } ;
         let leading_trivia_parser = choice((
             whitespace_parser
                 .clone()
                 .map(|v| Box::new(leading_trivia::_T1::Whitespace(v))),
-            eol_parser
+            end_of_line_parser
                 .clone()
-                .map(|v| Box::new(leading_trivia::_T1::Eol(v))),
+                .map(|v| Box::new(leading_trivia::_T1::EndOfLine(v))),
             comment_parser
                 .clone()
                 .map(|v| Box::new(leading_trivia::_T1::Comment(v))),
@@ -548,7 +548,7 @@ impl Parsers {
         .repeated()
         .boxed();
 
-        // «TrailingTrivia» = [ { «Whitespace» | «Comment» } ( «EOL» | «LineComment» ) ] ;
+        // «TrailingTrivia» = [ { «Whitespace» | «Comment» } ( «EndOfLine» | «LineComment» ) ] ;
         let trailing_trivia_parser = choice((
             whitespace_parser
                 .clone()
@@ -559,9 +559,9 @@ impl Parsers {
         ))
         .repeated()
         .then(choice((
-            eol_parser
+            end_of_line_parser
                 .clone()
-                .map(|v| Box::new(trailing_trivia::_T3::Eol(v))),
+                .map(|v| Box::new(trailing_trivia::_T3::EndOfLine(v))),
             line_comment_parser
                 .clone()
                 .map(|v| Box::new(trailing_trivia::_T3::LineComment(v))),
@@ -6774,7 +6774,7 @@ impl Parsers {
         ))
         .boxed();
 
-        // SourceUnit = «LeadingTrivia» { Directive | Definition } «EOFTrivia» $ ;
+        // SourceUnit = «LeadingTrivia» { Directive | Definition } «EndOfFileTrivia» $ ;
         let source_unit_parser = leading_trivia_parser
             .clone()
             .then(leading_trivia_parser.clone())
@@ -6800,13 +6800,15 @@ impl Parsers {
             .then(
                 leading_trivia_parser
                     .clone()
-                    .then(eof_trivia_parser.clone())
+                    .then(end_of_file_trivia_parser.clone())
                     .then(trailing_trivia_parser.clone())
-                    .map(|((leading, content), trailing)| eof_trivia::WithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    }),
+                    .map(
+                        |((leading, content), trailing)| end_of_file_trivia::WithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
             )
             .then(end())
             .map(|v| source_unit::_T0::from_parse(v))
@@ -6815,7 +6817,7 @@ impl Parsers {
         Self {
             comment: comment_parser,
             decimal_integer: decimal_integer_parser,
-            eol: eol_parser,
+            end_of_line: end_of_line_parser,
             fixed_bytes_type: fixed_bytes_type_parser,
             fixed_type: fixed_type_parser,
             hex_byte_escape: hex_byte_escape_parser,
@@ -6831,7 +6833,7 @@ impl Parsers {
             yul_hex_literal: yul_hex_literal_parser,
             decimal_exponent: decimal_exponent_parser,
             decimal_float: decimal_float_parser,
-            eof_trivia: eof_trivia_parser,
+            end_of_file_trivia: end_of_file_trivia_parser,
             escape_sequence: escape_sequence_parser,
             hex_string_literal: hex_string_literal_parser,
             leading_trivia: leading_trivia_parser,

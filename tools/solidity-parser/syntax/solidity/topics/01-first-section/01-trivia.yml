@@ -1,16 +1,16 @@
 # yaml-language-server: $schema=../../../../../syntax-schema/syntax/schema/topic.schema.json
 
 - name: LeadingTrivia
-  pattern: Token
+  kind: Token
   zeroOrMore:
     choice:
       - reference: Whitespace
-      - reference: EOL
+      - reference: EndOfLine
       - reference: Comment
       - reference: LineComment
 
 - name: TrailingTrivia
-  pattern: Token
+  kind: Token
   optional:
     sequence:
       - zeroOrMore:
@@ -18,11 +18,11 @@
             - reference: Whitespace
             - reference: Comment
       - choice:
-          - reference: EOL
+          - reference: EndOfLine
           - reference: LineComment
 
-- name: EOFTrivia
-  pattern: Token
+- name: EndOfFileTrivia
+  kind: Token
   zeroOrMore:
     choice:
       - reference: Whitespace
@@ -30,21 +30,21 @@
       - reference: LineComment
 
 - name: Whitespace
-  pattern: Token
+  kind: Token
   oneOrMore:
     choice:
       - terminal: " "
       - terminal: "\t"
 
-- name: EOL
-  pattern: Token
+- name: EndOfLine
+  kind: Token
   oneOrMore:
     choice:
       - terminal: "\r"
       - terminal: "\n"
 
 - name: Comment
-  pattern: Token
+  kind: Token
   sequence:
     - terminal: /*
     - config: { name: content }
@@ -65,7 +65,7 @@
     - terminal: "*/"
 
 - name: LineComment
-  pattern: Token
+  kind: Token
   sequence:
     - terminal: //
     - zeroOrMore:

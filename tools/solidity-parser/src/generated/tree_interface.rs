@@ -6,27 +6,20 @@ pub trait DefaultTest {
     }
 }
 #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
-pub struct FixedSizeTerminal<const N: usize>();
-#[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
-pub struct FixedSizeTerminalWithTrivia<const N: usize> {
+pub struct WithTrivia<T: Default + DefaultTest> {
     #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
     pub leading: LeadingTrivia,
     #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-    pub content: FixedSizeTerminal<N>,
+    pub content: T,
     #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
     pub trailing: TrailingTrivia,
 }
+#[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct FixedSizeTerminal<const N: usize>();
+pub type VariableSizeTerminalWithTrivia<const N: usize> = WithTrivia<FixedSizedTerminal<N>>;
 #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct VariableSizeTerminal(pub usize);
-#[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
-pub struct VariableSizeTerminalWithTrivia {
-    #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-    pub leading: LeadingTrivia,
-    #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-    pub content: VariableSizeTerminal,
-    #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-    pub trailing: TrailingTrivia,
-}
+pub type VariableSizeTerminalWithTrivia = WithTrivia<VariableSizeTerminal>;
 
 /// «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
 pub type Comment = comment::_T0;
@@ -95,9 +88,9 @@ pub mod decimal_integer {
     }
 }
 
-/// «EOL» = 1…*{ '\u{d}' | '\u{a}' } ;
-pub type Eol = VariableSizeTerminal;
-pub mod eol {
+/// «EndOfLine» = 1…*{ '\u{d}' | '\u{a}' } ;
+pub type EndOfLine = VariableSizeTerminal;
+pub mod end_of_line {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
@@ -481,9 +474,9 @@ pub mod decimal_float {
     }
 }
 
-/// «EOFTrivia» = { «Whitespace» | «Comment» | «LineComment» } ;
-pub type EofTrivia = Vec<Box<eof_trivia::_T1>>;
-pub mod eof_trivia {
+/// «EndOfFileTrivia» = { «Whitespace» | «Comment» | «LineComment» } ;
+pub type EndOfFileTrivia = Vec<Box<end_of_file_trivia::_T1>>;
+pub mod end_of_file_trivia {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -497,7 +490,7 @@ pub mod eof_trivia {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub leading: LeadingTrivia,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub content: Vec<Box<eof_trivia::_T1>>,
+        pub content: Vec<Box<end_of_file_trivia::_T1>>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub trailing: TrailingTrivia,
     }
@@ -574,7 +567,7 @@ pub mod hex_string_literal {
     }
 }
 
-/// «LeadingTrivia» = { «Whitespace» | «EOL» | «Comment» | «LineComment» } ;
+/// «LeadingTrivia» = { «Whitespace» | «EndOfLine» | «Comment» | «LineComment» } ;
 pub type LeadingTrivia = Vec<Box<leading_trivia::_T1>>;
 pub mod leading_trivia {
     #[allow(unused_imports)]
@@ -582,7 +575,7 @@ pub mod leading_trivia {
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub enum _T1 {
         Whitespace(Whitespace),
-        Eol(Eol),
+        EndOfLine(EndOfLine),
         Comment(Comment),
         LineComment(LineComment),
     }
@@ -597,7 +590,7 @@ pub mod leading_trivia {
     }
 }
 
-/// «TrailingTrivia» = [ { «Whitespace» | «Comment» } ( «EOL» | «LineComment» ) ] ;
+/// «TrailingTrivia» = [ { «Whitespace» | «Comment» } ( «EndOfLine» | «LineComment» ) ] ;
 pub type TrailingTrivia = Option<trailing_trivia::_T0>;
 pub mod trailing_trivia {
     #[allow(unused_imports)]
@@ -609,7 +602,7 @@ pub mod trailing_trivia {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub enum _T3 {
-        Eol(Eol),
+        EndOfLine(EndOfLine),
         LineComment(LineComment),
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -3189,7 +3182,7 @@ pub mod definition {
     }
 }
 
-/// SourceUnit = «LeadingTrivia» { Directive | Definition } «EOFTrivia» $ ;
+/// SourceUnit = «LeadingTrivia» { Directive | Definition } «EndOfFileTrivia» $ ;
 pub type SourceUnit = source_unit::_T0;
 pub mod source_unit {
     #[allow(unused_imports)]
@@ -3206,7 +3199,7 @@ pub mod source_unit {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t2s: Vec<Box<source_unit::_T2>>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub eof_trivia: eof_trivia::WithTrivia,
+        pub end_of_file_trivia: end_of_file_trivia::WithTrivia,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub end_marker: (),
     }

@@ -7,7 +7,7 @@
         choice:
           - reference: Directive
           - reference: Definition
-    - reference: EOFTrivia
+    - reference: EndOfFileTrivia
     - end: ~
 
 - name: Directive
