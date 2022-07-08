@@ -6,20 +6,27 @@ pub trait DefaultTest {
     }
 }
 #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
-pub struct WithTrivia<T: Default + DefaultTest> {
+pub struct FixedSizeTerminal<const N: usize>();
+#[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct FixedSizeTerminalWithTrivia<const N: usize> {
     #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
     pub leading: LeadingTrivia,
     #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-    pub content: T,
+    pub content: FixedSizeTerminal<N>,
     #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
     pub trailing: TrailingTrivia,
 }
 #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
-pub struct FixedSizeTerminal<const N: usize>();
-pub type VariableSizeTerminalWithTrivia<const N: usize> = WithTrivia<FixedSizedTerminal<N>>;
-#[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct VariableSizeTerminal(pub usize);
-pub type VariableSizeTerminalWithTrivia = WithTrivia<VariableSizeTerminal>;
+#[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub struct VariableSizeTerminalWithTrivia {
+    #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+    pub leading: LeadingTrivia,
+    #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+    pub content: VariableSizeTerminal,
+    #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+    pub trailing: TrailingTrivia,
+}
 
 /// «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
 pub type Comment = comment::_T0;
