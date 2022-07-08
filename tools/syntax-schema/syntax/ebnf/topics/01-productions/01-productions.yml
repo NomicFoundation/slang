@@ -2,9 +2,10 @@
 
 - name: grammar
   sequence:
-    - reference: IGNORE
+    - reference: LeadingTrivia
     - zeroOrMore:
         reference: production
+    - reference: TrailingTrivia
     - end: ~
 
 - name: production
@@ -102,16 +103,16 @@
 # Tokens
 
 - name: EOF
-  isToken: true
+  kind: Token
   terminal: $
 
 - name: Number
-  isToken: true
+  kind: Token
   oneOrMore:
     range: { from: "0", to: "9" }
 
 - name: String
-  isToken: true
+  kind: Token
   sequence:
     - terminal: "'"
     - zeroOrMore:
@@ -119,7 +120,7 @@
     - terminal: "'"
 
 - name: StringChar
-  isToken: true
+  kind: Token
   choice:
     - not:
         choice:
@@ -142,14 +143,14 @@
       config: { name: Escape }
 
 - name: SingleCharString
-  isToken: true
+  kind: Token
   sequence:
     - terminal: "'"
     - reference: StringChar
     - terminal: "'"
 
 - name: HexDigit
-  isToken: true
+  kind: Token
   choice:
     - range:
         from: "0"
@@ -162,7 +163,7 @@
         to: F
 
 - name: Identifier
-  isToken: true
+  kind: Token
   choice:
     - sequence:
         - terminal: «
@@ -171,14 +172,14 @@
     - reference: RawIdentifier
 
 - name: RawIdentifier
-  isToken: true
+  kind: Token
   sequence:
     - reference: IdentifierStart
     - zeroOrMore:
         reference: IdentifierFollow
 
 - name: IdentifierStart
-  isToken: true
+  kind: Token
   choice:
     - terminal: _
     - range:
@@ -189,22 +190,29 @@
         to: Z
 
 - name: IdentifierFollow
-  isToken: true
+  kind: Token
   choice:
     - reference: IdentifierStart
     - range:
         from: "0"
         to: "9"
 
-- name: IGNORE
-  isToken: true
+- name: LeadingTrivia
+  kind: Token
+  zeroOrMore:
+    choice:
+      - reference: Whitespace
+      - reference: Comment
+
+- name: TrailingTrivia
+  kind: Token
   zeroOrMore:
     choice:
       - reference: Whitespace
       - reference: Comment
 
 - name: Comment
-  isToken: true
+  kind: Token
   sequence:
     - terminal: (*
     - sequence:
@@ -225,7 +233,7 @@
     - terminal: "*)"
 
 - name: Whitespace
-  isToken: true
+  kind: Token
   oneOrMore:
     choice:
       - terminal: "\t"

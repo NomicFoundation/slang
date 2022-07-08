@@ -6,19 +6,25 @@
  * First Section: Trivia
  *)
 
-«IGNORE» = { «Whitespace» | «Comment» | «LineComment» } ;
+«LeadingTrivia» = { «Whitespace» | «EndOfLine» | «Comment» | «LineComment» } ;
 
-«Whitespace» = 1…*{ '\u{20}' | '\u{9}' | '\u{d}' | '\u{a}' } ;
+«TrailingTrivia» = [ { «Whitespace» | «Comment» } ( «EndOfLine» | «LineComment» ) ] ;
+
+«EndOfFileTrivia» = { «Whitespace» | «Comment» | «LineComment» } ;
+
+«Whitespace» = 1…*{ '\u{20}' | '\u{9}' } ;
+
+«EndOfLine» = 1…*{ '\u{d}' | '\u{a}' } ;
 
 «Comment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
 
-«LineComment» = '//' { ¬( '\u{a}' | '\u{d}' ) } ;
+«LineComment» = '//' { ¬( '\u{d}' | '\u{a}' ) } ;
 
 (*
  * First Section: Solidity File
  *)
 
-SourceUnit = «IGNORE» { Directive | Definition } $ ;
+SourceUnit = «LeadingTrivia» { Directive | Definition } «EndOfFileTrivia» $ ;
 
 Directive = «PragmaDirective» | ImportDirective | UsingDirective ;
 
@@ -132,61 +138,45 @@ MappingType = 'mapping' '(' ( ElementaryTypeWithoutPayable | IdentifierPath ) '=
 
 DataLocation = 'memory' | 'storage' | 'calldata' ;
 
-Expression = AssignmentExpression ;
+Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnarySuffixExpression | UnaryPrefixExpression | FunctionCallExpression | FunctionCallOptionsExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
 
-AssignmentExpression = ConditionalExpression { AssignmentOperator Expression } ;
+AssignmentExpression = Expression ( '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ) Expression ;
 
-AssignmentOperator = '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ;
+ConditionalExpression = Expression '?' Expression ':' Expression ;
 
-ConditionalExpression = OrExpression [ '?' Expression ':' Expression ] ;
+OrExpression = Expression '||' Expression ;
 
-OrExpression = AndExpression { '||' AndExpression } ;
+AndExpression = Expression '&&' Expression ;
 
-AndExpression = EqualityComparisonExpression { '&&' EqualityComparisonExpression } ;
+EqualityComparisonExpression = Expression ( '==' | '!=' ) Expression ;
 
-EqualityComparisonExpression = OrderComparisonExpression { EqualityComparisonOperator OrderComparisonExpression } ;
+OrderComparisonExpression = Expression ( '<' | '>' | '<=' | '>=' ) Expression ;
 
-EqualityComparisonOperator = '==' | '!=' ;
+BitOrExpression = Expression '|' Expression ;
 
-OrderComparisonExpression = BitOrExpression { OrderComparisonOperator BitOrExpression } ;
+BitXOrExpression = Expression '^' Expression ;
 
-OrderComparisonOperator = '<' | '>' | '<=' | '>=' ;
+BitAndExpression = Expression '&' Expression ;
 
-BitOrExpression = BitXOrExpression { '|' BitXOrExpression } ;
+ShiftExpression = Expression ( '<<' | '>>' | '>>>' ) Expression ;
 
-BitXOrExpression = BitAndExpression { '^' BitAndExpression } ;
+AddSubExpression = Expression ( '+' | '-' ) Expression ;
 
-BitAndExpression = ShiftExpression { '&' ShiftExpression } ;
+MulDivModExpression = Expression ( '*' | '/' | '%' ) Expression ;
 
-ShiftExpression = AddSubExpression { ShiftOperator AddSubExpression } ;
+ExponentiationExpression = Expression '**' Expression ;
 
-ShiftOperator = '<<' | '>>' | '>>>' ;
+UnarySuffixExpression = Expression ( '++' | '--' ) ;
 
-AddSubExpression = MulDivModExpression { AddSubOperator MulDivModExpression } ;
+UnaryPrefixExpression = ( '++' | '--' | '!' | '~' | 'delete' | '-' ) Expression ;
 
-AddSubOperator = '+' | '-' ;
+FunctionCallExpression = Expression ArgumentList ;
 
-MulDivModExpression = ExpExpression { MulDivModOperator ExpExpression } ;
+FunctionCallOptionsExpression = Expression '{' 1…*{ NamedArgument / ',' } '}' ;
 
-MulDivModOperator = '*' | '/' | '%' ;
+MemberAccessExpression = Expression '.' ( «Identifier» | 'address' ) ;
 
-ExpExpression = UnarySuffixExpression { '**' Expression } ;
-
-UnarySuffixExpression = UnaryPrefixExpression [ UnarySuffixOperator ] ;
-
-UnarySuffixOperator = '++' | '--' ;
-
-UnaryPrefixExpression = [ UnaryPrefixOperator ] FunctionCallExpression ;
-
-UnaryPrefixOperator = '++' | '--' | '!' | '~' | 'delete' | '-' ;
-
-FunctionCallExpression = FunctionCallOptionsExpression { ArgumentList } ;
-
-FunctionCallOptionsExpression = MemberAccessExpression { '{' 1…*{ NamedArgument / ',' } '}' } ;
-
-MemberAccessExpression = IndexAccessExpression { '.' ( «Identifier» | 'address' ) } ;
-
-IndexAccessExpression = PrimaryExpression { '[' [ Expression ] [ ':' [ Expression ] ] ']' } ;
+IndexAccessExpression = Expression '[' [ Expression ] [ ':' [ Expression ] ] ']' ;
 
 PrimaryExpression = 'payable' ArgumentList | 'type' '(' TypeName ')' | 'new' TypeName | '(' 1…*{ [ Expression ] / ',' } ')' | '[' 1…*{ Expression / ',' } ']' | «Identifier» | Literal | ElementaryTypeWithoutPayable ;
 
@@ -214,7 +204,7 @@ ContinueStatement = 'continue' ';' ;
 
 BreakStatement = 'break' ';' ;
 
-TryStatement = 'try' Expression [ 'returns' NonEmptyParameterList ] Block CatchClause { CatchClause } ;
+TryStatement = 'try' Expression [ 'returns' NonEmptyParameterList ] Block 1…*{ CatchClause } ;
 
 CatchClause = 'catch' [ [ «Identifier» ] NonEmptyParameterList ] Block ;
 
@@ -342,4 +332,4 @@ YulLiteral = «YulDecimalNumberLiteral» | «YulHexLiteral» | «AsciiStringLite
 
 «YulDecimalNumberLiteral» = '0' | '1'…'9' { '0'…'9' } ;
 
-«YulHexLiteral» = '0x' ( '0'…'9' | 'a'…'f' | 'A'…'F' ) { '0'…'9' | 'a'…'f' | 'A'…'F' } ;
+«YulHexLiteral» = '0x' 1…*{ '0'…'9' | 'a'…'f' | 'A'…'F' } ;

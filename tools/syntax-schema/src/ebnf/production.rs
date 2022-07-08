@@ -6,7 +6,7 @@ use std::fmt::Write;
 
 impl Production {
     pub(crate) fn ebnf_display_name(&self) -> String {
-        if self.is_token {
+        if self.is_token() {
             format!("«{}»", self.name)
         } else {
             self.name.clone()

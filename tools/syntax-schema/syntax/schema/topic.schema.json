@@ -12,6 +12,7 @@
       "properties": {
         "name": { "type": "string", "minLength": 1 },
         "title": { "type": "string", "minLength": 1 },
+        "kind": { "enum": ["Rule", "Token", "ExpressionRule"] },
         "config": {
           "$ref": "#/$defs/Config",
           "$comment": "How to model this constraint structurally?",
@@ -37,12 +38,10 @@
     "Config": {
       "type": "object",
       "properties": {
-        "ignore": { "type": "boolean", "default": true },
-        "nomap": { "type": "boolean", "default": true },
-        "unwrap": { "type": "boolean", "default": true },
-        "chain": { "type": "boolean", "default": true },
-        "map": { "type": "string", "minLength": 1 },
-        "lookahead": { "$ref": "#/$defs/Expression" }
+        "name": { "type": "string", "minLength": 1 },
+        "lookahead": { "$ref": "#/$defs/Expression" },
+        "prelude": { "type": "string" },
+        "associativity": { "enum": ["Left", "Right"] }
       }
     },
     "Versions": {

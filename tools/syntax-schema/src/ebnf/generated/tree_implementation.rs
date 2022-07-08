@@ -19,22 +19,68 @@ impl DefaultTest for () {
         true
     }
 }
-impl DefaultTest for usize {
+impl DefaultTest for VariableSizeTerminal {
     fn is_default(&self) -> bool {
-        *self == 0
+        self.0 == 0
     }
 }
-impl<const N: usize> DefaultTest for FixedTerminal<N> {
+impl DefaultTest for VariableSizeTerminalWithTrivia {
+    fn is_default(&self) -> bool {
+        self.content.is_default() && self.leading.is_default() && self.trailing.is_default()
+    }
+}
+impl<const N: usize> DefaultTest for FixedSizeTerminal<N> {
     fn is_default(&self) -> bool {
         true
     }
 }
+impl<const N: usize> DefaultTest for FixedSizeTerminalWithTrivia<N> {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.trailing.is_default()
+    }
+}
 
-impl comment::_S0 {
-    pub fn new(
+impl comment::_T3 {
+    pub fn from_parse((star_chars, _1): (VariableSizeTerminal, FixedSizeTerminal<1>)) -> Self {
+        Self { star_chars, _1 }
+    }
+}
+impl Default for comment::_T3 {
+    fn default() -> Self {
+        Self {
+            star_chars: Default::default(),
+            _1: Default::default(),
+        }
+    }
+}
+impl DefaultTest for comment::_T3 {
+    fn is_default(&self) -> bool {
+        self.star_chars.is_default() && self._1.is_default()
+    }
+}
+impl comment::Content {
+    pub fn from_parse((_t2s, star_chars): (Vec<Box<comment::_T2>>, VariableSizeTerminal)) -> Self {
+        Self { _t2s, star_chars }
+    }
+}
+impl Default for comment::Content {
+    fn default() -> Self {
+        Self {
+            _t2s: Default::default(),
+            star_chars: Default::default(),
+        }
+    }
+}
+impl DefaultTest for comment::Content {
+    fn is_default(&self) -> bool {
+        self._t2s.is_default() && self.star_chars.is_default()
+    }
+}
+impl comment::_T0 {
+    pub fn from_parse(
         ((open_paren_star, content), star_close_paren): (
-            (FixedTerminal<2usize>, Box<comment::Content>),
-            FixedTerminal<2usize>,
+            (FixedSizeTerminal<2usize>, comment::Content),
+            FixedSizeTerminal<2usize>,
         ),
     ) -> Self {
         Self {
@@ -44,127 +90,90 @@ impl comment::_S0 {
         }
     }
 }
-
-impl DefaultTest for comment::_S0 {
+impl Default for comment::_T0 {
+    fn default() -> Self {
+        Self {
+            open_paren_star: Default::default(),
+            content: Default::default(),
+            star_close_paren: Default::default(),
+        }
+    }
+}
+impl DefaultTest for comment::_T0 {
     fn is_default(&self) -> bool {
         self.open_paren_star.is_default()
             && self.content.is_default()
             && self.star_close_paren.is_default()
     }
 }
-
-impl comment::Content {
-    pub fn new((_c2s, star_chars): (Vec<Box<comment::_C2>>, usize)) -> Self {
-        Self { _c2s, star_chars }
-    }
-}
-
-impl DefaultTest for comment::Content {
+impl DefaultTest for comment::WithTrivia {
     fn is_default(&self) -> bool {
-        self._c2s.is_default() && self.star_chars.is_default()
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
     }
 }
 
-impl DefaultTest for comment::_C2 {}
-
-impl comment::_S3 {
-    pub fn new((star_chars, _1): (usize, FixedTerminal<1usize>)) -> Self {
-        Self { star_chars, _1 }
-    }
-}
-
-impl DefaultTest for comment::_S3 {
+impl DefaultTest for number::WithTrivia {
     fn is_default(&self) -> bool {
-        self.star_chars.is_default() && self._1.is_default()
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
     }
 }
 
-impl grouped::_S0 {
-    pub fn new(
-        ((((open_paren_char, ignore_0), expression), ignore_1), close_paren_char): (
-            (
-                ((FixedTerminal<1usize>, ignore::N), expression::N),
-                ignore::N,
-            ),
-            FixedTerminal<1usize>,
+impl raw_identifier::_T0 {
+    pub fn from_parse((_0, _1): (FixedSizeTerminal<1>, VariableSizeTerminal)) -> Self {
+        Self { _0, _1 }
+    }
+}
+impl Default for raw_identifier::_T0 {
+    fn default() -> Self {
+        Self {
+            _0: Default::default(),
+            _1: Default::default(),
+        }
+    }
+}
+impl DefaultTest for raw_identifier::_T0 {
+    fn is_default(&self) -> bool {
+        self._0.is_default() && self._1.is_default()
+    }
+}
+impl DefaultTest for raw_identifier::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
+    }
+}
+
+impl string_char::_T1 {
+    pub fn from_parse(
+        ((u_open_brace, _1), close_brace_char): (
+            (FixedSizeTerminal<2usize>, VariableSizeTerminal),
+            FixedSizeTerminal<1>,
         ),
     ) -> Self {
         Self {
-            open_paren_char,
-            ignore_0,
-            expression,
-            ignore_1,
-            close_paren_char,
+            u_open_brace,
+            _1,
+            close_brace_char,
         }
     }
 }
-
-impl DefaultTest for grouped::_S0 {
-    fn is_default(&self) -> bool {
-        self.open_paren_char.is_default()
-            && self.ignore_0.is_default()
-            && self.expression.is_default()
-            && self.ignore_1.is_default()
-            && self.close_paren_char.is_default()
-    }
-}
-
-impl optional::_S0 {
-    pub fn new(
-        ((((open_bracket_char, ignore_0), expression), ignore_1), close_bracket_char): (
-            (
-                ((FixedTerminal<1usize>, ignore::N), expression::N),
-                ignore::N,
-            ),
-            FixedTerminal<1usize>,
-        ),
-    ) -> Self {
+impl Default for string_char::_T1 {
+    fn default() -> Self {
         Self {
-            open_bracket_char,
-            ignore_0,
-            expression,
-            ignore_1,
-            close_bracket_char,
+            u_open_brace: Default::default(),
+            _1: Default::default(),
+            close_brace_char: Default::default(),
         }
     }
 }
-
-impl DefaultTest for optional::_S0 {
+impl DefaultTest for string_char::_T1 {
     fn is_default(&self) -> bool {
-        self.open_bracket_char.is_default()
-            && self.ignore_0.is_default()
-            && self.expression.is_default()
-            && self.ignore_1.is_default()
-            && self.close_bracket_char.is_default()
+        self.u_open_brace.is_default() && self._1.is_default() && self.close_brace_char.is_default()
     }
 }
-
-impl repetition_separator::_S0 {
-    pub fn new(
-        ((slash_char, ignore), expression): ((FixedTerminal<1usize>, ignore::N), expression::N),
-    ) -> Self {
-        Self {
-            slash_char,
-            ignore,
-            expression,
-        }
-    }
-}
-
-impl DefaultTest for repetition_separator::_S0 {
-    fn is_default(&self) -> bool {
-        self.slash_char.is_default() && self.ignore.is_default() && self.expression.is_default()
-    }
-}
-
-impl DefaultTest for ignore::_C1 {}
-
-impl DefaultTest for string_char::_C0 {}
-
 impl string_char::Escape {
-    pub fn new(
+    pub fn from_parse(
         (backslash_char, quote_or_backslash_or_hex_escape): (
-            FixedTerminal<1usize>,
+            FixedSizeTerminal<1>,
             Box<string_char::QuoteOrBackslashOrHexEscape>,
         ),
     ) -> Self {
@@ -175,228 +184,17 @@ impl string_char::Escape {
     }
 }
 
-impl DefaultTest for string_char::Escape {}
-
-impl DefaultTest for string_char::QuoteOrBackslashOrHexEscape {}
-
-impl string_char::_S1 {
-    pub fn new(
-        ((u_open_brace, _1), close_brace_char): (
-            (FixedTerminal<2usize>, usize),
-            FixedTerminal<1usize>,
-        ),
-    ) -> Self {
-        Self {
-            u_open_brace,
-            _1,
-            close_brace_char,
-        }
-    }
-}
-
-impl DefaultTest for string_char::_S1 {
+impl DefaultTest for whitespace::WithTrivia {
     fn is_default(&self) -> bool {
-        self.u_open_brace.is_default() && self._1.is_default() && self.close_brace_char.is_default()
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
     }
 }
 
-impl repetition_prefix::_S0 {
-    pub fn new(
-        ((_c1, ignore), star_char): (
-            (Box<repetition_prefix::_C1>, ignore::N),
-            FixedTerminal<1usize>,
-        ),
-    ) -> Self {
-        Self {
-            _c1,
-            ignore,
-            star_char,
-        }
-    }
-}
-
-impl DefaultTest for repetition_prefix::_S0 {}
-
-impl DefaultTest for repetition_prefix::_C1 {}
-
-impl repetition_prefix::_S6 {
-    pub fn new(
-        ((ellipsis_char, ignore), number): ((FixedTerminal<1usize>, ignore::N), number::N),
-    ) -> Self {
-        Self {
-            ellipsis_char,
-            ignore,
-            number,
-        }
-    }
-}
-
-impl DefaultTest for repetition_prefix::_S6 {
-    fn is_default(&self) -> bool {
-        self.ellipsis_char.is_default() && self.ignore.is_default() && self.number.is_default()
-    }
-}
-
-impl repetition_prefix::_S2 {
-    pub fn new(
-        ((number, ignore), _s4): ((number::N, ignore::N), Option<Box<repetition_prefix::_S4>>),
-    ) -> Self {
-        Self {
-            number,
-            ignore,
-            _s4,
-        }
-    }
-}
-
-impl DefaultTest for repetition_prefix::_S2 {
-    fn is_default(&self) -> bool {
-        self.number.is_default() && self.ignore.is_default() && self._s4.is_default()
-    }
-}
-
-impl repetition_prefix::_S4 {
-    pub fn new(
-        ((ellipsis_char, ignore), number): ((FixedTerminal<1usize>, ignore::N), Option<number::N>),
-    ) -> Self {
-        Self {
-            ellipsis_char,
-            ignore,
-            number,
-        }
-    }
-}
-
-impl DefaultTest for repetition_prefix::_S4 {
-    fn is_default(&self) -> bool {
-        self.ellipsis_char.is_default() && self.ignore.is_default() && self.number.is_default()
-    }
-}
-
-impl raw_identifier::_S0 {
-    pub fn new((_0, _1): (FixedTerminal<1usize>, usize)) -> Self {
-        Self { _0, _1 }
-    }
-}
-
-impl DefaultTest for raw_identifier::_S0 {
-    fn is_default(&self) -> bool {
-        self._0.is_default() && self._1.is_default()
-    }
-}
-
-impl single_char_string::_S0 {
-    pub fn new(
-        ((quote_char_0, string_char), quote_char_1): (
-            (FixedTerminal<1usize>, string_char::N),
-            FixedTerminal<1usize>,
-        ),
-    ) -> Self {
-        Self {
-            quote_char_0,
-            string_char,
-            quote_char_1,
-        }
-    }
-}
-
-impl DefaultTest for single_char_string::_S0 {}
-
-impl string::_S0 {
-    pub fn new(
-        ((quote_char_0, string_chars), quote_char_1): (
-            (FixedTerminal<1usize>, Vec<string_char::N>),
-            FixedTerminal<1usize>,
-        ),
-    ) -> Self {
-        Self {
-            quote_char_0,
-            string_chars,
-            quote_char_1,
-        }
-    }
-}
-
-impl DefaultTest for string::_S0 {
-    fn is_default(&self) -> bool {
-        self.quote_char_0.is_default()
-            && self.string_chars.is_default()
-            && self.quote_char_1.is_default()
-    }
-}
-
-impl repeated::_S0 {
-    pub fn new(
-        (
-            (
-                (
-                    (
-                        ((((repetition_prefix, ignore_0), open_brace_char), ignore_1), expression),
-                        ignore_2,
-                    ),
-                    repetition_separator,
-                ),
-                ignore_3,
-            ),
-            close_brace_char,
-        ): (
-            (
-                (
-                    (
-                        (
-                            (
-                                (
-                                    (Option<repetition_prefix::N>, ignore::N),
-                                    FixedTerminal<1usize>,
-                                ),
-                                ignore::N,
-                            ),
-                            expression::N,
-                        ),
-                        ignore::N,
-                    ),
-                    Option<repetition_separator::N>,
-                ),
-                ignore::N,
-            ),
-            FixedTerminal<1usize>,
-        ),
-    ) -> Self {
-        Self {
-            repetition_prefix,
-            ignore_0,
-            open_brace_char,
-            ignore_1,
-            expression,
-            ignore_2,
-            repetition_separator,
-            ignore_3,
-            close_brace_char,
-        }
-    }
-}
-
-impl DefaultTest for repeated::_S0 {
-    fn is_default(&self) -> bool {
-        self.repetition_prefix.is_default()
-            && self.ignore_0.is_default()
-            && self.open_brace_char.is_default()
-            && self.ignore_1.is_default()
-            && self.expression.is_default()
-            && self.ignore_2.is_default()
-            && self.repetition_separator.is_default()
-            && self.ignore_3.is_default()
-            && self.close_brace_char.is_default()
-    }
-}
-
-impl DefaultTest for identifier::_C0 {}
-
-impl identifier::_S1 {
-    pub fn new(
+impl identifier::_T1 {
+    pub fn from_parse(
         ((open_double_angle_char, raw_identifier), close_double_angle_char): (
-            (FixedTerminal<1usize>, raw_identifier::N),
-            FixedTerminal<1usize>,
+            (FixedSizeTerminal<1>, RawIdentifier),
+            FixedSizeTerminal<1>,
         ),
     ) -> Self {
         Self {
@@ -406,8 +204,16 @@ impl identifier::_S1 {
         }
     }
 }
-
-impl DefaultTest for identifier::_S1 {
+impl Default for identifier::_T1 {
+    fn default() -> Self {
+        Self {
+            open_double_angle_char: Default::default(),
+            raw_identifier: Default::default(),
+            close_double_angle_char: Default::default(),
+        }
+    }
+}
+impl DefaultTest for identifier::_T1 {
     fn is_default(&self) -> bool {
         self.open_double_angle_char.is_default()
             && self.raw_identifier.is_default()
@@ -415,180 +221,379 @@ impl DefaultTest for identifier::_S1 {
     }
 }
 
-impl char_range::_S0 {
-    pub fn new(
-        ((((single_char_string_0, ignore_0), ellipsis_char), ignore_1), single_char_string_1): (
-            (
-                ((single_char_string::N, ignore::N), FixedTerminal<1usize>),
-                ignore::N,
-            ),
-            single_char_string::N,
+impl DefaultTest for leading_trivia::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
+    }
+}
+
+impl single_char_string::_T0 {
+    pub fn from_parse(
+        ((quote_char_1, string_char), quote_char_2): (
+            (FixedSizeTerminal<1>, StringChar),
+            FixedSizeTerminal<1>,
         ),
     ) -> Self {
         Self {
-            single_char_string_0,
-            ignore_0,
-            ellipsis_char,
-            ignore_1,
+            quote_char_1,
+            string_char,
+            quote_char_2,
+        }
+    }
+}
+
+impl string::_T0 {
+    pub fn from_parse(
+        ((quote_char_1, string_chars), quote_char_2): (
+            (FixedSizeTerminal<1>, Vec<StringChar>),
+            FixedSizeTerminal<1>,
+        ),
+    ) -> Self {
+        Self {
+            quote_char_1,
+            string_chars,
+            quote_char_2,
+        }
+    }
+}
+impl Default for string::_T0 {
+    fn default() -> Self {
+        Self {
+            quote_char_1: Default::default(),
+            string_chars: Default::default(),
+            quote_char_2: Default::default(),
+        }
+    }
+}
+impl DefaultTest for string::_T0 {
+    fn is_default(&self) -> bool {
+        self.quote_char_1.is_default()
+            && self.string_chars.is_default()
+            && self.quote_char_2.is_default()
+    }
+}
+impl DefaultTest for string::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
+    }
+}
+
+impl DefaultTest for trailing_trivia::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
+    }
+}
+
+impl char_range::_T0 {
+    pub fn from_parse(
+        ((single_char_string_1, ellipsis_char), single_char_string_2): (
+            (
+                single_char_string::WithTrivia,
+                FixedSizeTerminalWithTrivia<1>,
+            ),
+            single_char_string::WithTrivia,
+        ),
+    ) -> Self {
+        Self {
             single_char_string_1,
+            ellipsis_char,
+            single_char_string_2,
         }
     }
 }
 
-impl DefaultTest for char_range::_S0 {}
-
-impl DefaultTest for primary::_C0 {}
-
-impl negation::_S0 {
-    pub fn new(
-        ((not_char, ignore), primary): ((Option<FixedTerminal<1usize>>, ignore::N), primary::N),
+impl grouped::_T0 {
+    pub fn from_parse(
+        ((open_paren_char, expression), close_paren_char): (
+            (FixedSizeTerminalWithTrivia<1>, Expression),
+            FixedSizeTerminalWithTrivia<1>,
+        ),
     ) -> Self {
         Self {
-            not_char,
-            ignore,
-            primary,
+            open_paren_char,
+            expression,
+            close_paren_char,
         }
     }
 }
+impl Default for grouped::_T0 {
+    fn default() -> Self {
+        Self {
+            open_paren_char: Default::default(),
+            expression: Default::default(),
+            close_paren_char: Default::default(),
+        }
+    }
+}
+impl DefaultTest for grouped::_T0 {
+    fn is_default(&self) -> bool {
+        self.open_paren_char.is_default()
+            && self.expression.is_default()
+            && self.close_paren_char.is_default()
+    }
+}
 
-impl DefaultTest for negation::_S0 {}
-
-impl difference::_S0 {
-    pub fn new(
-        ((negation, ignore), _s2): ((negation::N, ignore::N), Option<Box<difference::_S2>>),
+impl optional::_T0 {
+    pub fn from_parse(
+        ((open_bracket_char, expression), close_bracket_char): (
+            (FixedSizeTerminalWithTrivia<1>, Expression),
+            FixedSizeTerminalWithTrivia<1>,
+        ),
     ) -> Self {
         Self {
-            negation,
-            ignore,
-            _s2,
+            open_bracket_char,
+            expression,
+            close_bracket_char,
         }
     }
 }
+impl Default for optional::_T0 {
+    fn default() -> Self {
+        Self {
+            open_bracket_char: Default::default(),
+            expression: Default::default(),
+            close_bracket_char: Default::default(),
+        }
+    }
+}
+impl DefaultTest for optional::_T0 {
+    fn is_default(&self) -> bool {
+        self.open_bracket_char.is_default()
+            && self.expression.is_default()
+            && self.close_bracket_char.is_default()
+    }
+}
 
-impl DefaultTest for difference::_S0 {}
-
-impl difference::_S2 {
-    pub fn new(
-        ((minus_char, ignore), negation): ((FixedTerminal<1usize>, ignore::N), negation::N),
+impl repetition_prefix::_T3 {
+    pub fn from_parse(
+        (ellipsis_char, number): (FixedSizeTerminalWithTrivia<1>, Option<number::WithTrivia>),
     ) -> Self {
         Self {
-            minus_char,
-            ignore,
-            negation,
+            ellipsis_char,
+            number,
         }
     }
 }
-
-impl DefaultTest for difference::_S2 {}
-
-impl sequence::_S1 {
-    pub fn new((difference, ignore): (difference::N, ignore::N)) -> Self {
-        Self { difference, ignore }
+impl Default for repetition_prefix::_T3 {
+    fn default() -> Self {
+        Self {
+            ellipsis_char: Default::default(),
+            number: Default::default(),
+        }
     }
 }
-
-impl DefaultTest for sequence::_S1 {}
-
-impl expression::_S0 {
-    pub fn new((_s1s, _s2s): (Vec<Box<expression::_S1>>, Vec<Box<expression::_S2>>)) -> Self {
-        Self { _s1s, _s2s }
-    }
-}
-
-impl DefaultTest for expression::_S0 {
+impl DefaultTest for repetition_prefix::_T3 {
     fn is_default(&self) -> bool {
-        self._s1s.is_default() && self._s2s.is_default()
+        self.ellipsis_char.is_default() && self.number.is_default()
     }
 }
-
-impl expression::_S2 {
-    pub fn new((bar_char, ignore): (FixedTerminal<1usize>, ignore::N)) -> Self {
-        Self { bar_char, ignore }
+impl repetition_prefix::_T2 {
+    pub fn from_parse((number, _t3): (number::WithTrivia, Option<repetition_prefix::_T3>)) -> Self {
+        Self { number, _t3 }
     }
 }
-
-impl DefaultTest for expression::_S2 {
+impl Default for repetition_prefix::_T2 {
+    fn default() -> Self {
+        Self {
+            number: Default::default(),
+            _t3: Default::default(),
+        }
+    }
+}
+impl DefaultTest for repetition_prefix::_T2 {
     fn is_default(&self) -> bool {
-        self.bar_char.is_default() && self.ignore.is_default()
+        self.number.is_default() && self._t3.is_default()
     }
 }
-
-impl expression::_S1 {
-    pub fn new((sequence, ignore): (sequence::N, ignore::N)) -> Self {
-        Self { sequence, ignore }
+impl repetition_prefix::_T4 {
+    pub fn from_parse(
+        (ellipsis_char, number): (FixedSizeTerminalWithTrivia<1>, number::WithTrivia),
+    ) -> Self {
+        Self {
+            ellipsis_char,
+            number,
+        }
     }
 }
-
-impl DefaultTest for expression::_S1 {
+impl Default for repetition_prefix::_T4 {
+    fn default() -> Self {
+        Self {
+            ellipsis_char: Default::default(),
+            number: Default::default(),
+        }
+    }
+}
+impl DefaultTest for repetition_prefix::_T4 {
     fn is_default(&self) -> bool {
-        self.sequence.is_default() && self.ignore.is_default()
+        self.ellipsis_char.is_default() && self.number.is_default()
+    }
+}
+impl repetition_prefix::_T0 {
+    pub fn from_parse(
+        (_t1, star_char): (Box<repetition_prefix::_T1>, FixedSizeTerminalWithTrivia<1>),
+    ) -> Self {
+        Self { _t1, star_char }
     }
 }
 
-impl production::_S0 {
-    pub fn new(
+impl repetition_separator::_T0 {
+    pub fn from_parse(
+        (slash_char, expression): (FixedSizeTerminalWithTrivia<1>, Expression),
+    ) -> Self {
+        Self {
+            slash_char,
+            expression,
+        }
+    }
+}
+impl Default for repetition_separator::_T0 {
+    fn default() -> Self {
+        Self {
+            slash_char: Default::default(),
+            expression: Default::default(),
+        }
+    }
+}
+impl DefaultTest for repetition_separator::_T0 {
+    fn is_default(&self) -> bool {
+        self.slash_char.is_default() && self.expression.is_default()
+    }
+}
+
+impl repeated::_T0 {
+    pub fn from_parse(
         (
-            (((((identifier, ignore_0), equal_char), ignore_1), expression), ignore_2),
-            semicolon_char,
+            (((repetition_prefix, open_brace_char), expression), repetition_separator),
+            close_brace_char,
         ): (
             (
                 (
-                    (
-                        ((identifier::N, ignore::N), FixedTerminal<1usize>),
-                        ignore::N,
-                    ),
-                    expression::N,
+                    (Option<RepetitionPrefix>, FixedSizeTerminalWithTrivia<1>),
+                    Expression,
                 ),
-                ignore::N,
+                Option<RepetitionSeparator>,
             ),
-            FixedTerminal<1usize>,
+            FixedSizeTerminalWithTrivia<1>,
+        ),
+    ) -> Self {
+        Self {
+            repetition_prefix,
+            open_brace_char,
+            expression,
+            repetition_separator,
+            close_brace_char,
+        }
+    }
+}
+impl Default for repeated::_T0 {
+    fn default() -> Self {
+        Self {
+            repetition_prefix: Default::default(),
+            open_brace_char: Default::default(),
+            expression: Default::default(),
+            repetition_separator: Default::default(),
+            close_brace_char: Default::default(),
+        }
+    }
+}
+impl DefaultTest for repeated::_T0 {
+    fn is_default(&self) -> bool {
+        self.repetition_prefix.is_default()
+            && self.open_brace_char.is_default()
+            && self.expression.is_default()
+            && self.repetition_separator.is_default()
+            && self.close_brace_char.is_default()
+    }
+}
+
+impl negation::_T0 {
+    pub fn from_parse(
+        (not_char, primary): (Option<FixedSizeTerminalWithTrivia<1>>, Primary),
+    ) -> Self {
+        Self { not_char, primary }
+    }
+}
+
+impl difference::_T1 {
+    pub fn from_parse((minus_char, negation): (FixedSizeTerminalWithTrivia<1>, Negation)) -> Self {
+        Self {
+            minus_char,
+            negation,
+        }
+    }
+}
+impl difference::_T0 {
+    pub fn from_parse((negation, _t1): (Negation, Option<difference::_T1>)) -> Self {
+        Self { negation, _t1 }
+    }
+}
+
+impl Default for expression::_T0 {
+    fn default() -> Self {
+        Self {
+            elements: Default::default(),
+            separators: Default::default(),
+        }
+    }
+}
+impl DefaultTest for expression::_T0 {
+    fn is_default(&self) -> bool {
+        self.elements.is_default() && self.separators.is_default()
+    }
+}
+
+impl production::_T0 {
+    pub fn from_parse(
+        (((identifier, equal_char), expression), semicolon_char): (
+            (
+                (identifier::WithTrivia, FixedSizeTerminalWithTrivia<1>),
+                Expression,
+            ),
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
             identifier,
-            ignore_0,
             equal_char,
-            ignore_1,
             expression,
-            ignore_2,
             semicolon_char,
         }
     }
 }
 
-impl DefaultTest for production::_S0 {}
-
-impl grammar::_S0 {
-    pub fn new(
-        ((((ignore_0, ignore_1), _s2s), ignore_2), end_marker): (
-            (((ignore::N, ignore::N), Vec<Box<grammar::_S2>>), ignore::N),
+impl grammar::_T0 {
+    pub fn from_parse(
+        (((leading_trivia, productions), trailing_trivia), end_marker): (
+            (
+                (leading_trivia::WithTrivia, Vec<Production>),
+                trailing_trivia::WithTrivia,
+            ),
             (),
         ),
     ) -> Self {
         Self {
-            ignore_0,
-            ignore_1,
-            _s2s,
-            ignore_2,
+            leading_trivia,
+            productions,
+            trailing_trivia,
             end_marker,
         }
     }
 }
-
-impl DefaultTest for grammar::_S0 {
+impl Default for grammar::_T0 {
+    fn default() -> Self {
+        Self {
+            leading_trivia: Default::default(),
+            productions: Default::default(),
+            trailing_trivia: Default::default(),
+            end_marker: Default::default(),
+        }
+    }
+}
+impl DefaultTest for grammar::_T0 {
     fn is_default(&self) -> bool {
-        self.ignore_0.is_default()
-            && self.ignore_1.is_default()
-            && self._s2s.is_default()
-            && self.ignore_2.is_default()
+        self.leading_trivia.is_default()
+            && self.productions.is_default()
+            && self.trailing_trivia.is_default()
             && self.end_marker.is_default()
     }
 }
-
-impl grammar::_S2 {
-    pub fn new((production, ignore): (production::N, ignore::N)) -> Self {
-        Self { production, ignore }
-    }
-}
-
-impl DefaultTest for grammar::_S2 {}

@@ -1,7 +1,28 @@
 # yaml-language-server: $schema=../../../../../syntax-schema/syntax/schema/topic.schema.json
 
-- name: IGNORE
-  isToken: true
+- name: LeadingTrivia
+  kind: Token
+  zeroOrMore:
+    choice:
+      - reference: Whitespace
+      - reference: EndOfLine
+      - reference: Comment
+      - reference: LineComment
+
+- name: TrailingTrivia
+  kind: Token
+  optional:
+    sequence:
+      - zeroOrMore:
+          choice:
+            - reference: Whitespace
+            - reference: Comment
+      - choice:
+          - reference: EndOfLine
+          - reference: LineComment
+
+- name: EndOfFileTrivia
+  kind: Token
   zeroOrMore:
     choice:
       - reference: Whitespace
@@ -9,39 +30,46 @@
       - reference: LineComment
 
 - name: Whitespace
-  isToken: true
+  kind: Token
   oneOrMore:
     choice:
       - terminal: " "
       - terminal: "\t"
+
+- name: EndOfLine
+  kind: Token
+  oneOrMore:
+    choice:
       - terminal: "\r"
       - terminal: "\n"
 
 - name: Comment
-  isToken: true
+  kind: Token
   sequence:
     - terminal: /*
-    - zeroOrMore:
-        choice:
-          - not:
-              terminal: "*"
-          - sequence:
-              - oneOrMore:
-                  terminal: "*"
+    - config: { name: content }
+      sequence:
+        - zeroOrMore:
+            choice:
               - not:
-                  choice:
-                    - terminal: "*"
-                    - terminal: /
-    - zeroOrMore:
-        terminal: "*"
+                  terminal: "*"
+              - sequence:
+                  - oneOrMore:
+                      terminal: "*"
+                  - not:
+                      choice:
+                        - terminal: "*"
+                        - terminal: /
+        - zeroOrMore:
+            terminal: "*"
     - terminal: "*/"
 
 - name: LineComment
-  isToken: true
+  kind: Token
   sequence:
     - terminal: //
     - zeroOrMore:
         not:
           choice:
-            - terminal: "\n"
             - terminal: "\r"
+            - terminal: "\n"

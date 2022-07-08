@@ -2,8 +2,11 @@
     - trivia:
         notes: specification/notes/01-first-section/01-trivia/index.md
         productions:
-          - IGNORE
+          - LeadingTrivia
+          - TrailingTrivia
+          - EndOfFileTrivia
           - Whitespace
+          - EndOfLine
           - Comment
           - LineComment
     - solidity-file:
@@ -71,28 +74,20 @@
           - DataLocation
           - Expression
           - AssignmentExpression
-          - AssignmentOperator
           - ConditionalExpression
           - OrExpression
           - AndExpression
           - EqualityComparisonExpression
-          - EqualityComparisonOperator
           - OrderComparisonExpression
-          - OrderComparisonOperator
           - BitOrExpression
           - BitXOrExpression
           - BitAndExpression
           - ShiftExpression
-          - ShiftOperator
           - AddSubExpression
-          - AddSubOperator
           - MulDivModExpression
-          - MulDivModOperator
-          - ExpExpression
+          - ExponentiationExpression
           - UnarySuffixExpression
-          - UnarySuffixOperator
           - UnaryPrefixExpression
-          - UnaryPrefixOperator
           - FunctionCallExpression
           - FunctionCallOptionsExpression
           - MemberAccessExpression

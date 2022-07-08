@@ -4,19 +4,19 @@ use quote::quote;
 
 use crate::schema::*;
 
-use super::slang_name::SlangName;
+use super::{combinator_tree::GeneratedCode, name::Name};
 
 #[derive(Clone, Debug)]
 pub struct TerminalTrie(PatriciaSet);
 
 impl TerminalTrie {
-    pub fn slang_name(&self) -> Option<SlangName> {
+    pub fn slang_name(&self) -> Name {
         if self.0.len() == 1 {
             let node = self.0.as_ref().child().unwrap();
             let name = String::from_utf8_lossy(node.label()).to_string();
-            Some(SlangName::from_terminal(&name))
+            Name::from_terminal(&name)
         } else {
-            None
+            Name::anonymous()
         }
     }
 
@@ -33,8 +33,8 @@ impl TerminalTrie {
         }
     }
 
-    pub fn to_parser_combinator_code(&self) -> TokenStream {
-        let common_size = self.common_terminal_length();
+    pub fn to_generated_code(&self, with_trivia: bool) -> GeneratedCode {
+        let mut result: GeneratedCode = Default::default();
 
         fn generate_from_trie(
             node: Option<&Node<()>>,
@@ -70,22 +70,48 @@ impl TerminalTrie {
                 }
                 n = node.sibling()
             }
+
             result
         }
 
+        let common_size = self.common_terminal_length();
         let mut choices = generate_from_trie(self.0.as_ref().child(), 0, common_size.is_some());
 
-        let code = if choices.len() == 1 {
+        let parser = if choices.len() == 1 {
             choices.pop().unwrap()
         } else {
             quote!( choice::<_, ErrorType>((#(#choices),*)) )
         };
 
-        if let Some(size) = common_size {
-            quote!( #code.map(|_| FixedTerminal::<#size>()) )
-        } else {
-            code
-        }
+        let (parser, parser_type) = match (common_size, with_trivia) {
+            (None, false) => (
+                quote!( #parser.map(VariableSizeTerminal) ),
+                quote!(VariableSizeTerminal),
+            ),
+            (Some(size), false) => (
+                quote!( #parser.map(|_| FixedSizeTerminal::<#size>()) ),
+                quote!( FixedSizeTerminal<#size> ),
+            ),
+            (None, true) => (
+                quote!(
+                    leading_trivia_parser.clone().then(#parser).then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)|
+                        VariableSizeTerminalWithTrivia { leading, content: VariableSizeTerminal(content), trailing })
+                ),
+                quote!(VariableSizeTerminalWithTrivia),
+            ),
+            (Some(size), true) => (
+                quote!(
+                    leading_trivia_parser.clone().then(#parser.map(|_| FixedSizeTerminal::<#size>())).then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| FixedSizeTerminalWithTrivia { leading, content, trailing })
+                ),
+                quote!( FixedSizeTerminalWithTrivia<#size> ),
+            ),
+        };
+        result.parser = parser;
+        result.parser_type = parser_type;
+
+        result
     }
 
     pub fn merge_with(&mut self, other: Self) {
@@ -114,9 +140,9 @@ impl Expression {
             EBNF::Choice(exprs) => exprs.iter().all(|e| e.collect_terminals(grammar, accum)),
             EBNF::Reference(name) => grammar
                 .get_production(name)
-                .map(|p| p.expression_to_generate().collect_terminals(grammar, accum))
-                .unwrap_or(false),
-            EBNF::Sequence(_) => false, // TODO: special case this
+                .expression_to_generate()
+                .collect_terminals(grammar, accum),
+            EBNF::Sequence(_) => false, // TODO: special case this i.e. 'multiply' the sequence elements?
             EBNF::End | EBNF::Repeat(_) | EBNF::Not(_) | EBNF::Difference(_) | EBNF::Range(_) => {
                 false
             }

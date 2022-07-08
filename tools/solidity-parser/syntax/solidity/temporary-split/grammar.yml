@@ -1,54 +1,80 @@
 # yaml-language-server: $schema=../../../../syntax-schema/syntax/schema/topic.schema.json
 
-- name: IGNORE
-  isToken: true
+- name: LeadingTrivia
+  kind: Token
+  zeroOrMore:
+    choice:
+      - reference: Whitespace
+      - reference: EndOfLine
+      - reference: Comment
+      - reference: LineComment
+- name: TrailingTrivia
+  kind: Token
+  optional:
+    sequence:
+      - zeroOrMore:
+          choice:
+            - reference: Whitespace
+            - reference: Comment
+      - choice:
+          - reference: EndOfLine
+          - reference: LineComment
+- name: EndOfFileTrivia
+  kind: Token
   zeroOrMore:
     choice:
       - reference: Whitespace
       - reference: Comment
       - reference: LineComment
 - name: Whitespace
-  isToken: true
+  kind: Token
   oneOrMore:
     choice:
       - terminal: " "
       - terminal: "\t"
+- name: EndOfLine
+  kind: Token
+  oneOrMore:
+    choice:
       - terminal: "\r"
       - terminal: "\n"
 - name: Comment
-  isToken: true
+  kind: Token
   sequence:
     - terminal: /*
-    - zeroOrMore:
-        choice:
-          - not:
-              terminal: "*"
-          - sequence:
-              - oneOrMore:
-                  terminal: "*"
+    - config: { name: content }
+      sequence:
+        - zeroOrMore:
+            choice:
               - not:
-                  choice:
-                    - terminal: "*"
-                    - terminal: /
-    - zeroOrMore:
-        terminal: "*"
+                  terminal: "*"
+              - sequence:
+                  - oneOrMore:
+                      terminal: "*"
+                  - not:
+                      choice:
+                        - terminal: "*"
+                        - terminal: /
+        - zeroOrMore:
+            terminal: "*"
     - terminal: "*/"
 - name: LineComment
-  isToken: true
+  kind: Token
   sequence:
     - terminal: //
     - zeroOrMore:
         not:
           choice:
-            - terminal: "\n"
             - terminal: "\r"
+            - terminal: "\n"
 - name: SourceUnit
   sequence:
-    - reference: IGNORE
+    - reference: LeadingTrivia
     - zeroOrMore:
         choice:
           - reference: Directive
           - reference: Definition
+    - reference: EndOfFileTrivia
     - end: ~
 - name: Directive
   choice:
@@ -507,199 +533,183 @@
     - terminal: storage
     - terminal: calldata
 - name: Expression
-  reference: AssignmentExpression
-- name: AssignmentExpression
-  sequence:
-    - reference: ConditionalExpression
-    - zeroOrMore:
-        sequence:
-          - reference: AssignmentOperator
-          - reference: Expression
-- name: AssignmentOperator
+  kind: ExpressionRule
   choice:
-    - terminal: "="
-    - terminal: "|="
-    - terminal: ^=
-    - terminal: "&="
-    - terminal: "<<="
-    - terminal: ">>="
-    - terminal: ">>>="
-    - terminal: +=
-    - terminal: "-="
-    - terminal: "*="
-    - terminal: /=
-    - terminal: "%="
+    - reference: AssignmentExpression
+    - reference: ConditionalExpression
+    - reference: OrExpression
+    - reference: AndExpression
+    - reference: EqualityComparisonExpression
+    - reference: OrderComparisonExpression
+    - reference: BitOrExpression
+    - reference: BitXOrExpression
+    - reference: BitAndExpression
+    - reference: ShiftExpression
+    - reference: AddSubExpression
+    - reference: MulDivModExpression
+    - reference: ExponentiationExpression
+    - reference: UnarySuffixExpression
+    - reference: UnaryPrefixExpression
+    - reference: FunctionCallExpression
+    - reference: FunctionCallOptionsExpression
+    - reference: MemberAccessExpression
+    - reference: IndexAccessExpression
+    - reference: PrimaryExpression
+- name: AssignmentExpression
+  config: { associativity: Left }
+  sequence:
+    - reference: Expression
+    - choice:
+        - terminal: "="
+        - terminal: "|="
+        - terminal: ^=
+        - terminal: "&="
+        - terminal: "<<="
+        - terminal: ">>="
+        - terminal: ">>>="
+        - terminal: +=
+        - terminal: "-="
+        - terminal: "*="
+        - terminal: /=
+        - terminal: "%="
+    - reference: Expression
 - name: ConditionalExpression
   sequence:
-    - reference: OrExpression
-    - optional:
-        sequence:
-          - terminal: "?"
-          - reference: Expression
-          - terminal: ":"
-          - reference: Expression
+    - reference: Expression
+    - sequence: # This subsequence gives the correct form to the AST
+        - terminal: "?"
+        - reference: Expression
+        - terminal: ":"
+        - reference: Expression
 - name: OrExpression
+  config: { associativity: Left }
   sequence:
-    - reference: AndExpression
-    - zeroOrMore:
-        sequence:
-          - terminal: "||"
-          - reference: AndExpression
+    - reference: Expression
+    - terminal: "||"
+    - reference: Expression
 - name: AndExpression
+  config: { associativity: Left }
   sequence:
-    - reference: EqualityComparisonExpression
-    - zeroOrMore:
-        sequence:
-          - terminal: "&&"
-          - reference: EqualityComparisonExpression
+    - reference: Expression
+    - terminal: "&&"
+    - reference: Expression
 - name: EqualityComparisonExpression
+  config: { associativity: Left }
   sequence:
-    - reference: OrderComparisonExpression
-    - zeroOrMore:
-        sequence:
-          - reference: EqualityComparisonOperator
-          - reference: OrderComparisonExpression
-- name: EqualityComparisonOperator
-  choice:
-    - terminal: "=="
-    - terminal: "!="
+    - reference: Expression
+    - choice:
+        - terminal: "=="
+        - terminal: "!="
+    - reference: Expression
 - name: OrderComparisonExpression
+  config: { associativity: Left }
   sequence:
-    - reference: BitOrExpression
-    - zeroOrMore:
-        sequence:
-          - reference: OrderComparisonOperator
-          - reference: BitOrExpression
-- name: OrderComparisonOperator
-  choice:
-    - terminal: "<"
-    - terminal: ">"
-    - terminal: "<="
-    - terminal: ">="
+    - reference: Expression
+    - choice:
+        - terminal: "<"
+        - terminal: ">"
+        - terminal: "<="
+        - terminal: ">="
+    - reference: Expression
 - name: BitOrExpression
+  config: { associativity: Left }
   sequence:
-    - reference: BitXOrExpression
-    - zeroOrMore:
-        sequence:
-          - terminal: "|"
-          - reference: BitXOrExpression
+    - reference: Expression
+    - terminal: "|"
+    - reference: Expression
 - name: BitXOrExpression
+  config: { associativity: Left }
   sequence:
-    - reference: BitAndExpression
-    - zeroOrMore:
-        sequence:
-          - terminal: ^
-          - reference: BitAndExpression
+    - reference: Expression
+    - terminal: "^"
+    - reference: Expression
 - name: BitAndExpression
+  config: { associativity: Left }
   sequence:
-    - reference: ShiftExpression
-    - zeroOrMore:
-        sequence:
-          - terminal: "&"
-          - reference: ShiftExpression
+    - reference: Expression
+    - terminal: "&"
+    - reference: Expression
 - name: ShiftExpression
+  config: { associativity: Left }
   sequence:
-    - reference: AddSubExpression
-    - zeroOrMore:
-        sequence:
-          - reference: ShiftOperator
-          - reference: AddSubExpression
-- name: ShiftOperator
-  choice:
-    - terminal: "<<"
-    - terminal: ">>"
-    - terminal: ">>>"
+    - reference: Expression
+    - choice:
+        - terminal: "<<"
+        - terminal: ">>"
+        - terminal: ">>>"
+    - reference: Expression
 - name: AddSubExpression
+  config: { associativity: Left }
   sequence:
-    - reference: MulDivModExpression
-    - zeroOrMore:
-        sequence:
-          - reference: AddSubOperator
-          - reference: MulDivModExpression
-- name: AddSubOperator
-  choice:
-    - terminal: +
-    - terminal: "-"
+    - reference: Expression
+    - choice:
+        - terminal: +
+        - terminal: "-"
+    - reference: Expression
 - name: MulDivModExpression
+  config: { associativity: Left }
   sequence:
-    - reference: ExpExpression
-    - zeroOrMore:
-        sequence:
-          - reference: MulDivModOperator
-          - reference: ExpExpression
-- name: MulDivModOperator
-  choice:
-    - terminal: "*"
-    - terminal: /
-    - terminal: "%"
-- name: ExpExpression
+    - reference: Expression
+    - choice:
+        - terminal: "*"
+        - terminal: /
+        - terminal: "%"
+    - reference: Expression
+- name: ExponentiationExpression
+  config: { associativity: Right }
   sequence:
-    - reference: UnarySuffixExpression
-    - zeroOrMore:
-        sequence:
-          - terminal: "**"
-          - reference: Expression
+    - reference: Expression
+    - terminal: "**"
+    - reference: Expression
 - name: UnarySuffixExpression
   sequence:
-    - reference: UnaryPrefixExpression
-    - optional:
-        reference: UnarySuffixOperator
-- name: UnarySuffixOperator
-  choice:
-    - terminal: ++
-    - terminal: "--"
+    - reference: Expression
+    - choice:
+        - terminal: ++
+        - terminal: "--"
 - name: UnaryPrefixExpression
   sequence:
-    - optional:
-        reference: UnaryPrefixOperator
-    - reference: FunctionCallExpression
-- name: UnaryPrefixOperator
-  choice:
-    - terminal: ++
-    - terminal: "--"
-    - terminal: "!"
-    - terminal: "~"
-    - terminal: delete
-    - terminal: "-"
+    - choice:
+        - terminal: ++
+        - terminal: "--"
+        - terminal: "!"
+        - terminal: "~"
+        - terminal: delete
+        - terminal: "-"
+    - reference: Expression
 - name: FunctionCallExpression
   sequence:
-    - reference: FunctionCallOptionsExpression
-    - zeroOrMore:
-        reference: ArgumentList
+    - reference: Expression
+    - reference: ArgumentList
 - name: FunctionCallOptionsExpression
   sequence:
-    - reference: MemberAccessExpression
-    - zeroOrMore:
-        sequence:
-          - terminal: "{"
-          - oneOrMore:
-              reference: NamedArgument
-              separator:
-                terminal: ","
-          - terminal: "}"
+    - reference: Expression
+    - terminal: "{"
+    - oneOrMore:
+        reference: NamedArgument
+        separator:
+          terminal: ","
+    - terminal: "}"
 - name: MemberAccessExpression
   sequence:
-    - reference: IndexAccessExpression
-    - zeroOrMore:
-        sequence:
-          - terminal: "."
-          - choice:
-              - reference: Identifier
-              - terminal: address
+    - reference: Expression
+    - terminal: "."
+    - choice:
+        - reference: Identifier
+        - terminal: address
 - name: IndexAccessExpression
+  config: { associativity: Left }
   sequence:
-    - reference: PrimaryExpression
-    - zeroOrMore:
+    - reference: Expression
+    - terminal: "["
+    - optional:
+        reference: Expression
+    - optional:
         sequence:
-          - terminal: "["
+          - terminal: ":"
           - optional:
               reference: Expression
-          - optional:
-              sequence:
-                - terminal: ":"
-                - optional:
-                    reference: Expression
-          - terminal: "]"
+    - terminal: "]"
 - name: PrimaryExpression
   choice:
     - sequence:
@@ -834,8 +844,7 @@
           - terminal: returns
           - reference: NonEmptyParameterList
     - reference: Block
-    - reference: CatchClause
-    - zeroOrMore:
+    - oneOrMore:
         reference: CatchClause
 - name: CatchClause
   sequence:
@@ -917,21 +926,21 @@
           terminal: ","
     - terminal: )
 - name: Identifier
-  isToken: true
+  kind: Token
   difference:
     minuend:
       reference: RawIdentifier
     subtrahend:
       reference: ReservedWord
 - name: ReservedWord
-  isToken: true
+  kind: Token
   choice:
     - reference: Keyword
     - reference: ReservedKeyword
     - reference: NumberUnit
     - reference: BooleanLiteral
 - name: Keyword
-  isToken: true
+  kind: Token
   choice:
     - terminal: pragma
     - terminal: abstract
@@ -997,7 +1006,7 @@
     - terminal: fixed
     - terminal: ufixed
 - name: ReservedKeyword
-  isToken: true
+  kind: Token
   choice:
     - terminal: after
     - terminal: alias
@@ -1031,7 +1040,7 @@
     - terminal: typeof
     - terminal: var
 - name: PragmaDirective
-  isToken: true
+  kind: Token
   sequence:
     - terminal: pragma
     - oneOrMore:
@@ -1039,13 +1048,13 @@
           terminal: ;
     - terminal: ;
 - name: RawIdentifier
-  isToken: true
+  kind: Token
   sequence:
     - reference: IdentifierStart
     - zeroOrMore:
         reference: IdentifierPart
 - name: IdentifierStart
-  isToken: true
+  kind: Token
   choice:
     - terminal: _
     - terminal: $
@@ -1056,14 +1065,14 @@
         from: A
         to: Z
 - name: IdentifierPart
-  isToken: true
+  kind: Token
   choice:
     - reference: IdentifierStart
     - range:
         from: "0"
         to: "9"
 - name: SignedIntegerType
-  isToken: true
+  kind: Token
   sequence:
     - terminal: int
     - choice:
@@ -1103,12 +1112,12 @@
         # Makes the likely errors clearer?
         lookahead: { not: { range: { from: "0", to: "9" } } }
 - name: UnsignedIntegerType
-  isToken: true
+  kind: Token
   sequence:
     - terminal: u
     - reference: SignedIntegerType
 - name: FixedBytesType
-  isToken: true
+  kind: Token
   sequence:
     - terminal: bytes
     - choice:
@@ -1148,7 +1157,7 @@
         # Makes the likely errors clearer?
         lookahead: { not: { range: { from: "0", to: "9" } } }
 - name: FixedType
-  isToken: true
+  kind: Token
   sequence:
     - terminal: fixed
     - optional:
@@ -1169,17 +1178,17 @@
                 from: "0"
                 to: "9"
 - name: UfixedType
-  isToken: true
+  kind: Token
   sequence:
     - terminal: u
     - reference: FixedType
 - name: BooleanLiteral
-  isToken: true
+  kind: Token
   choice:
     - terminal: "true"
     - terminal: "false"
 - name: DecimalNumber
-  isToken: true
+  kind: Token
   sequence:
     - choice:
         - reference: DecimalInteger
@@ -1187,7 +1196,7 @@
     - optional:
         reference: DecimalExponent
 - name: DecimalInteger
-  isToken: true
+  kind: Token
   oneOrMore:
     range:
       from: "0"
@@ -1196,14 +1205,14 @@
       optional:
         terminal: _
 - name: DecimalFloat
-  isToken: true
+  kind: Token
   sequence:
     - optional:
         reference: DecimalInteger
     - terminal: "."
     - reference: DecimalInteger
 - name: DecimalExponent
-  isToken: true
+  kind: Token
   sequence:
     - choice:
         - terminal: e
@@ -1212,7 +1221,7 @@
         terminal: "-"
     - reference: DecimalInteger
 - name: HexNumber
-  isToken: true
+  kind: Token
   sequence:
     - terminal: "0"
     - terminal: x
@@ -1222,7 +1231,7 @@
           optional:
             terminal: _
 - name: NumberUnit
-  isToken: true
+  kind: Token
   choice:
     - terminal: wei
     - terminal: gwei
@@ -1234,7 +1243,7 @@
     - terminal: weeks
     - terminal: years
 - name: HexStringLiteral
-  isToken: true
+  kind: Token
   sequence:
     - terminal: hex
     - choice:
@@ -1249,7 +1258,7 @@
                 reference: PossiblySeparatedPairsOfHexDigits
             - terminal: "'"
 - name: PossiblySeparatedPairsOfHexDigits
-  isToken: true
+  kind: Token
   oneOrMore:
     repeat:
       min: 2
@@ -1259,7 +1268,7 @@
       optional:
         terminal: _
 - name: HexCharacter
-  isToken: true
+  kind: Token
   choice:
     - range:
         from: "0"
@@ -1271,12 +1280,12 @@
         from: A
         to: F
 - name: AsciiStringLiteral
-  isToken: true
+  kind: Token
   choice:
     - reference: SingleQuotedAsciiStringLiteral
     - reference: DoubleQuotedAsciiStringLiteral
 - name: SingleQuotedAsciiStringLiteral
-  isToken: true
+  kind: Token
   sequence:
     - terminal: "'"
     - zeroOrMore:
@@ -1296,7 +1305,7 @@
           - reference: EscapeSequence
     - terminal: "'"
 - name: DoubleQuotedAsciiStringLiteral
-  isToken: true
+  kind: Token
   sequence:
     - terminal: '"'
     - zeroOrMore:
@@ -1316,12 +1325,12 @@
           - reference: EscapeSequence
     - terminal: '"'
 - name: UnicodeStringLiteral
-  isToken: true
+  kind: Token
   choice:
     - reference: SingleQuotedUnicodeStringLiteral
     - reference: DoubleQuotedUnicodeStringLiteral
 - name: SingleQuotedUnicodeStringLiteral
-  isToken: true
+  kind: Token
   sequence:
     - terminal: "unicode'"
     - zeroOrMore:
@@ -1338,7 +1347,7 @@
           - reference: EscapeSequence
     - terminal: "'"
 - name: DoubleQuotedUnicodeStringLiteral
-  isToken: true
+  kind: Token
   sequence:
     - terminal: 'unicode"'
     - zeroOrMore:
@@ -1355,7 +1364,7 @@
           - reference: EscapeSequence
     - terminal: '"'
 - name: EscapeSequence
-  isToken: true
+  kind: Token
   sequence:
     - terminal: "\\"
     - choice:
@@ -1363,7 +1372,7 @@
         - reference: HexByteEscape
         - reference: UnicodeEscape
 - name: AsciiEscape
-  isToken: true
+  kind: Token
   choice:
     - terminal: n
     - terminal: r
@@ -1374,7 +1383,7 @@
     - terminal: "\n"
     - terminal: "\r"
 - name: HexByteEscape
-  isToken: true
+  kind: Token
   sequence:
     - terminal: x
     - repeat:
@@ -1382,7 +1391,7 @@
         max: 2
         reference: HexCharacter
 - name: UnicodeEscape
-  isToken: true
+  kind: Token
   sequence:
     - terminal: u
     - repeat:
@@ -1527,20 +1536,20 @@
     - reference: BooleanLiteral
     - reference: HexStringLiteral
 - name: YulIdentifier
-  isToken: true
+  kind: Token
   difference:
     minuend:
       reference: RawIdentifier
     subtrahend:
       reference: YulReservedWord
 - name: YulReservedWord
-  isToken: true
+  kind: Token
   choice:
     - reference: YulKeyword
     - reference: YulEVMBuiltinFunctionName
     - reference: BooleanLiteral
 - name: YulKeyword
-  isToken: true
+  kind: Token
   choice:
     - terminal: break
     - terminal: case
@@ -1554,7 +1563,7 @@
     - terminal: switch
     - terminal: hex
 - name: YulEVMBuiltinFunctionName
-  isToken: true
+  kind: Token
   choice:
     - terminal: stop
     - terminal: add
@@ -1630,7 +1639,7 @@
     - terminal: gaslimit
     - terminal: basefee
 - name: YulDecimalNumberLiteral
-  isToken: true
+  kind: Token
   choice:
     - terminal: "0"
     - sequence:
@@ -1642,20 +1651,10 @@
               from: "0"
               to: "9"
 - name: YulHexLiteral
-  isToken: true
+  kind: Token
   sequence:
     - terminal: "0x"
-    - choice:
-        - range:
-            from: "0"
-            to: "9"
-        - range:
-            from: a
-            to: f
-        - range:
-            from: A
-            to: F
-    - zeroOrMore:
+    - oneOrMore:
         choice:
           - range:
               from: "0"

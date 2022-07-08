@@ -1,7 +1,6 @@
 pub mod character_filter;
 pub mod combinator_tree;
 pub mod generate;
+pub mod name;
 pub mod rustfmt;
-pub mod slang_name;
 pub mod terminal_trie;
-pub mod type_tree;

@@ -3,7 +3,7 @@ use quote::quote;
 
 use crate::schema::*;
 
-use super::slang_name::SlangName;
+use super::{combinator_tree::GeneratedCode, name::Name};
 
 #[derive(Clone, Debug)]
 pub enum CharacterFilterNode {
@@ -40,26 +40,43 @@ fn cf_conjunction(nodes: Vec<CharacterFilter>) -> CharacterFilter {
 }
 
 impl CharacterFilterNode {
-    pub fn slang_name(&self) -> Option<SlangName> {
+    pub fn slang_name(&self) -> Name {
         if let Self::Negation { child } = self {
-            child
-                .slang_name()
-                .map(|s| SlangName::from_string(&format!("not_{}", s.as_str())))
+            child.slang_name().negate()
         } else if let Self::Char { char, .. } = self {
-            SlangName::from_terminal_char(*char)
+            Name::from_terminal_char(*char)
         } else {
-            None
+            Name::anonymous()
         }
     }
 
-    pub fn to_parser_combinator_code(&self) -> TokenStream {
-        let map = quote!(.map(|_| FixedTerminal::<1>()) );
-        if let CharacterFilterNode::Char { char } = self {
+    pub fn merged_with(self, other: CharacterFilter) -> CharacterFilter {
+        cf_disjunction(vec![Box::new(self), other])
+    }
+
+    pub fn to_generated_code(&self, with_trivia: bool) -> GeneratedCode {
+        let mut result: GeneratedCode = Default::default();
+
+        let map = quote!(.map(|_| FixedSizeTerminal::<1>()) );
+        let parser = if let CharacterFilterNode::Char { char } = self {
             quote!(just(#char)#map )
         } else {
             let predicate = self.to_parser_predicate(false);
             quote!( filter(|&c: &char| #predicate)#map )
+        };
+
+        if with_trivia {
+            result.parser = quote!(
+                leading_trivia_parser.clone().then(#parser).then(trailing_trivia_parser.clone())
+                .map(|((leading, content), trailing)| FixedSizeTerminalWithTrivia { leading, content, trailing })
+            );
+            result.parser_type = quote!(FixedSizeTerminalWithTrivia<1>);
+        } else {
+            result.parser = parser;
+            result.parser_type = quote!(FixedSizeTerminal<1>);
         }
+
+        result
     }
 
     fn to_parser_predicate(&self, negated: bool) -> TokenStream {
@@ -122,15 +139,10 @@ impl Expression {
                 }
             }
             EBNF::Range(EBNFRange { from, to }) => Some(cf_range(*from, *to)),
-            EBNF::Reference(name) => {
-                if let Some(production) = grammar.get_production(name) {
-                    production
-                        .expression_to_generate()
-                        .to_character_filter(grammar)
-                } else {
-                    None
-                }
-            }
+            EBNF::Reference(name) => grammar
+                .get_production(name)
+                .expression_to_generate()
+                .to_character_filter(grammar),
             EBNF::Difference(EBNFDifference {
                 minuend,
                 subtrahend,
