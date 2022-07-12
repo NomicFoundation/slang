@@ -5042,7 +5042,13 @@ impl Parsers {
                 if pairs.is_empty() {
                     next
                 } else {
-                    pairs.into_iter().fold(next, |left, (operator, right)| {
+                    let mut state = next;
+                    let mut result = vec![];
+                    for (operator, right) in pairs.into_iter() {
+                        let left = std::mem::replace(&mut state, right);
+                        result.push((left, operator))
+                    }
+                    result.into_iter().rfold(state, |right, (left, operator)| {
                         Box::new(expression::Expression::ExponentiationExpression(
                             exponentiation_expression::E {
                                 left,
