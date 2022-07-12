@@ -45,9 +45,9 @@ pub enum CombinatorTree {
     },
     DelimitedBy {
         name: Name,
-        open: NamedCombinatorTreeRef,
+        open: String,
         expr: NamedCombinatorTreeRef,
-        close: NamedCombinatorTreeRef,
+        close: String,
     },
     SeparatedBy {
         name: Name,
@@ -124,9 +124,9 @@ fn ct_optional(expr: CombinatorTreeRef) -> CombinatorTreeRef {
 
 fn ct_delimited_by(
     name: Name,
-    open: NamedCombinatorTreeRef,
+    open: String,
     expr: NamedCombinatorTreeRef,
-    close: NamedCombinatorTreeRef,
+    close: String,
 ) -> CombinatorTreeRef {
     Rc::new(CombinatorTree::DelimitedBy {
         name,
@@ -353,21 +353,7 @@ impl CombinatorTreeNodeTrait for CombinatorTreeRef {
                 close,
             } => {
                 let name = name.clone().self_or_numbered(index);
-                let mut elements = disambiguate_structure_names(
-                    vec![open, expr, close]
-                        .into_iter()
-                        .enumerate()
-                        .map(|(i, (n, e))| {
-                            let e = e.with_unambiguous_named_types(index);
-                            let n = n.clone().self_or_else(|| e.name()).self_or_positional(i);
-                            (n, e)
-                        })
-                        .collect(),
-                );
-                let close = elements.pop().unwrap();
-                let expr = elements.pop().unwrap();
-                let open = elements.pop().unwrap();
-                ct_delimited_by(name, open, expr, close)
+                ct_delimited_by(name, open.clone(), expr.clone(), close.clone())
             }
             CombinatorTree::Lookahead { expr, lookahead } => ct_lookahead(
                 expr.with_unambiguous_named_types(index),
@@ -492,7 +478,7 @@ impl CombinatorTree {
             CombinatorTree::Lookahead { expr, .. } => expr.has_default(),
             CombinatorTree::DelimitedBy {
                 open, expr, close, ..
-            } => open.1.has_default() && expr.1.has_default() && close.1.has_default(),
+            } => expr.1.has_default(),
             CombinatorTree::Sequence { elements, .. } => {
                 elements.iter().all(|(_, e)| e.has_default())
             }
@@ -1142,12 +1128,8 @@ impl CombinatorTree {
                 minuend.collect_identifiers(accum);
                 subtrahend.collect_identifiers(accum)
             }
-            CombinatorTree::DelimitedBy {
-                open, expr, close, ..
-            } => {
-                open.1.collect_identifiers(accum);
+            CombinatorTree::DelimitedBy { expr, .. } => {
                 expr.1.collect_identifiers(accum);
-                close.1.collect_identifiers(accum);
             }
             CombinatorTree::Lookahead { expr, lookahead } => {
                 expr.collect_identifiers(accum);
@@ -1349,15 +1331,8 @@ impl Expression {
                 ),
                 EBNF::DelimitedBy(EBNFDelimitedBy { open, expr, close }) => {
                     let name = self.config.slang_name();
-                    let open = open.to_combinator_tree_node(production, grammar);
                     let expr = expr.to_combinator_tree_node(production, grammar);
-                    let close = close.to_combinator_tree_node(production, grammar);
-                    ct_delimited_by(
-                        name,
-                        (open.name(), open),
-                        (expr.name(), expr),
-                        (close.name(), close),
-                    )
+                    ct_delimited_by(name, open.clone(), (expr.name(), expr), close.clone())
                 }
                 EBNF::Repeat(EBNFRepeat {
                     expr,

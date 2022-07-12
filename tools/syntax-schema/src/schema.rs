@@ -575,10 +575,10 @@ pub struct EBNFRepeat {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, Hash)]
 #[serde(deny_unknown_fields)]
 pub struct EBNFDelimitedBy {
-    pub open: ExpressionRef,
+    pub open: String,
     #[serde(flatten)]
     pub expr: ExpressionRef,
-    pub close: ExpressionRef,
+    pub close: String,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]

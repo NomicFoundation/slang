@@ -36,27 +36,27 @@ SimpleImportDirective = ImportPath { 'as' «Identifier» } ;
 
 StarImportDirective = '*' 'as' «Identifier» 'from' ImportPath ;
 
-SelectingImportDirective = '{' 1…*{ SelectedImport / ',' } '}' 'from' ImportPath ;
+SelectingImportDirective = { 1…*{ SelectedImport / ',' } } 'from' ImportPath ;
 
 SelectedImport = «Identifier» [ 'as' «Identifier» ] ;
 
 ImportPath = «AsciiStringLiteral» ;
 
-UsingDirective = 'using' ( IdentifierPath | '{' 1…*{ IdentifierPath / ',' } '}' ) 'for' ( '*' | TypeName ) [ 'global' ] ';' ;
+UsingDirective = 'using' ( IdentifierPath | { 1…*{ IdentifierPath / ',' } } ) 'for' ( '*' | TypeName ) [ 'global' ] ';' ;
 
 (*
  * Todo Section: Todo Topic
  *)
 
-ContractDefinition = [ 'abstract' ] 'contract' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
+ContractDefinition = [ 'abstract' ] 'contract' «Identifier» [ InheritanceSpecifierList ] { { ContractBodyElement } } ;
 
-InterfaceDefinition = 'interface' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
+InterfaceDefinition = 'interface' «Identifier» [ InheritanceSpecifierList ] { { ContractBodyElement } } ;
 
 InheritanceSpecifierList = 'is' 1…*{ InheritanceSpecifier / ',' } ;
 
 InheritanceSpecifier = IdentifierPath [ ArgumentList ] ;
 
-LibraryDefinition = 'library' «Identifier» '{' { ContractBodyElement } '}' ;
+LibraryDefinition = 'library' «Identifier» { { ContractBodyElement } } ;
 
 FunctionDefinition = 'function' ( «Identifier» | 'fallback' | 'receive' ) ParameterList { FunctionAttribute } [ 'returns' ParameterList ] ( ';' | Block ) ;
 
@@ -68,15 +68,15 @@ StructDefinition = 'struct' «Identifier» '{' 1…*{ StructMember } '}' ;
 
 StructMember = TypeName «Identifier» ';' ;
 
-EnumDefinition = 'enum' «Identifier» '{' 1…*{ «Identifier» / ',' } '}' ;
+EnumDefinition = 'enum' «Identifier» { 1…*{ «Identifier» / ',' } } ;
 
 UserDefinedValueTypeDefinition = 'type' «Identifier» 'is' ElementaryType ';' ;
 
-EventDefinition = 'event' «Identifier» '(' { EventParameter / ',' } ')' [ 'anonymous' ] ';' ;
+EventDefinition = 'event' «Identifier» ( { EventParameter / ',' } ) [ 'anonymous' ] ';' ;
 
 EventParameter = TypeName [ 'indexed' ] [ «Identifier» ] ;
 
-ErrorDefinition = 'error' «Identifier» '(' { ErrorParameter / ',' } ')' ';' ;
+ErrorDefinition = 'error' «Identifier» ( { ErrorParameter / ',' } ) ';' ;
 
 ErrorParameter = TypeName [ «Identifier» ] ;
 
@@ -102,17 +102,17 @@ StateVariableDeclaration = TypeName { StateVariableAttribute } «Identifier» [ 
 
 StateVariableAttribute = OverrideSpecifier | 'constant' | 'immutable' | 'internal' | 'private' | 'public' ;
 
-ArgumentList = '(' [ PositionalArgumentList | NamedArgumentList ] ')' ;
+ArgumentList = ( [ PositionalArgumentList | NamedArgumentList ] ) ;
 
 PositionalArgumentList = 1…*{ Expression / ',' } ;
 
-NamedArgumentList = '{' { NamedArgument / ',' } '}' ;
+NamedArgumentList = { { NamedArgument / ',' } } ;
 
 NamedArgument = «Identifier» ':' Expression ;
 
 ModifierInvocation = IdentifierPath [ ArgumentList ] ;
 
-ParameterList = '(' { ParameterDeclaration / ',' } ')' ;
+ParameterList = ( { ParameterDeclaration / ',' } ) ;
 
 ParameterDeclaration = TypeName [ DataLocation ] [ «Identifier» ] ;
 
@@ -166,11 +166,11 @@ UnaryPrefixExpression = ( '++' | '--' | '!' | '~' | '-' ) Expression ;
 
 FunctionCallExpression = Expression ArgumentList ;
 
-FunctionCallOptionsExpression = Expression '{' 1…*{ NamedArgument / ',' } '}' ;
+FunctionCallOptionsExpression = Expression { 1…*{ NamedArgument / ',' } } ;
 
 MemberAccessExpression = Expression '.' ( «Identifier» | 'address' ) ;
 
-IndexAccessExpression = Expression '[' [ Expression ] [ ':' [ Expression ] ] ']' ;
+IndexAccessExpression = Expression [ [ Expression ] [ ':' [ Expression ] ] ] ;
 
 PrimaryExpression = PayableExpression | TypeExpression | NewExpression | ParenthesisExpression | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | «NumericLiteral» | «BooleanLiteral» | «Identifier» ;
 
@@ -186,7 +186,7 @@ ArrayLiteral = '[' 1…*{ Expression / ',' } ']' ;
 
 «NumericLiteral» = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
 
-Block = '{' { Statement | UncheckedBlock } '}' ;
+Block = { { Statement | UncheckedBlock } } ;
 
 UncheckedBlock = 'unchecked' Block ;
 
@@ -194,13 +194,13 @@ Statement = Block | SimpleStatement | IfStatement | ForStatement | WhileStatemen
 
 SimpleStatement = TupleDeconstructionStatement | VariableDeclarationStatement | ExpressionStatement ;
 
-IfStatement = 'if' '(' Expression ')' Statement [ 'else' Statement ] ;
+IfStatement = 'if' ( Expression ) Statement [ 'else' Statement ] ;
 
-ForStatement = 'for' '(' ( SimpleStatement | ';' ) ( ExpressionStatement | ';' ) [ Expression ] ')' Statement ;
+ForStatement = 'for' ( ( SimpleStatement | ';' ) ( ExpressionStatement | ';' ) [ Expression ] ) Statement ;
 
-WhileStatement = 'while' '(' Expression ')' Statement ;
+WhileStatement = 'while' ( Expression ) Statement ;
 
-DoWhileStatement = 'do' Statement 'while' '(' Expression ')' ';' ;
+DoWhileStatement = 'do' Statement 'while' ( Expression ) ';' ;
 
 ContinueStatement = 'continue' ';' ;
 
@@ -226,7 +226,7 @@ ExpressionStatement = Expression ';' ;
 
 AssemblyStatement = 'assembly' [ '"evmasm"' ] [ AssemblyFlags ] YulBlock ;
 
-AssemblyFlags = '(' 1…*{ «DoubleQuotedAsciiStringLiteral» / ',' } ')' ;
+AssemblyFlags = ( 1…*{ «DoubleQuotedAsciiStringLiteral» / ',' } ) ;
 
 «Identifier» = «RawIdentifier» - «Keyword» ;
 
@@ -276,7 +276,7 @@ ExperimentalPragmaSpecifier = 'experimental' «Identifier» ;
 
 «NumberUnit» = 'days' | 'ether' | 'finney' | 'gwei' | 'hours' | 'minutes' | 'seconds' | 'szabo' | 'weeks' | 'wei' | 'years' ;
 
-«HexStringLiteral» = 'hex' ( '"' [ «PossiblySeparatedPairsOfHexDigits» ] '"' | '\'' [ «PossiblySeparatedPairsOfHexDigits» ] '\'' ) ;
+«HexStringLiteral» = 'hex' ( " [ «PossiblySeparatedPairsOfHexDigits» ] " | ' [ «PossiblySeparatedPairsOfHexDigits» ] ' ) ;
 
 «PossiblySeparatedPairsOfHexDigits» = 1…*{ 2…2*{ «HexCharacter» } / [ '_' ] } ;
 
@@ -284,15 +284,15 @@ ExperimentalPragmaSpecifier = 'experimental' «Identifier» ;
 
 «AsciiStringLiteral» = «SingleQuotedAsciiStringLiteral» | «DoubleQuotedAsciiStringLiteral» ;
 
-«SingleQuotedAsciiStringLiteral» = '\'' { 1…*{ '\u{20}'…'~' - ( '\'' | '\\' ) } | «EscapeSequence» } '\'' ;
+«SingleQuotedAsciiStringLiteral» = ' { 1…*{ '\u{20}'…'~' - ( '\'' | '\\' ) } | «EscapeSequence» } ' ;
 
-«DoubleQuotedAsciiStringLiteral» = '"' { 1…*{ '\u{20}'…'~' - ( '"' | '\\' ) } | «EscapeSequence» } '"' ;
+«DoubleQuotedAsciiStringLiteral» = " { 1…*{ '\u{20}'…'~' - ( '"' | '\\' ) } | «EscapeSequence» } " ;
 
 «UnicodeStringLiteral» = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral» ;
 
-«SingleQuotedUnicodeStringLiteral» = 'unicode\'' { 1…*{ ¬( '\'' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '\'' ;
+«SingleQuotedUnicodeStringLiteral» = unicode' { 1…*{ ¬( '\'' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } ' ;
 
-«DoubleQuotedUnicodeStringLiteral» = 'unicode"' { 1…*{ ¬( '"' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '"' ;
+«DoubleQuotedUnicodeStringLiteral» = unicode" { 1…*{ ¬( '"' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } " ;
 
 «EscapeSequence» = '\\' ( «AsciiEscape» | «HexByteEscape» | «UnicodeEscape» ) ;
 
@@ -302,13 +302,13 @@ ExperimentalPragmaSpecifier = 'experimental' «Identifier» ;
 
 «UnicodeEscape» = 'u' 4…4*{ «HexCharacter» } ;
 
-YulBlock = '{' { YulStatement } '}' ;
+YulBlock = { { YulStatement } } ;
 
 YulStatement = YulBlock | YulVariableDeclaration | YulFunctionDefinition | YulAssignmentStatement | YulFunctionCall | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement ;
 
 YulVariableDeclaration = 'let' 1…*{ YulIdentifierPath / ',' } [ ':=' YulExpression ] ;
 
-YulFunctionDefinition = 'function' «YulIdentifier» '(' { «YulIdentifier» / ',' } ')' [ '->' 1…*{ «YulIdentifier» / ',' } ] YulBlock ;
+YulFunctionDefinition = 'function' «YulIdentifier» ( { «YulIdentifier» / ',' } ) [ '->' 1…*{ «YulIdentifier» / ',' } ] YulBlock ;
 
 YulAssignmentStatement = 1…*{ YulIdentifierPath / ',' } ':=' YulExpression ;
 

@@ -98,9 +98,9 @@ impl Expression {
             }
 
             EBNF::DelimitedBy(EBNFDelimitedBy { open, expr, close }) => {
-                self.generate_ebnf_subexpression(grammar, w, open);
+                write!(w, "{} ", open).unwrap();
                 self.generate_ebnf_subexpression(grammar, w, expr);
-                self.generate_ebnf_subexpression(grammar, w, close);
+                write!(w, "{} ", close).unwrap();
             }
 
             EBNF::Difference(EBNFDifference {

@@ -117,12 +117,12 @@
 - name: SelectingImportDirective
   sequence:
     - delimitedBy:
-        open: { terminal: "{" }
+        open: "{"
         oneOrMore:
           reference: SelectedImport
           separator:
             terminal: ","
-        close: { terminal: "}" }
+        close: "}"
     - terminal: from
     - reference: ImportPath
 - name: SelectedImport
@@ -140,12 +140,12 @@
     - choice:
         - reference: IdentifierPath
         - delimitedBy:
-            open: { terminal: "{" }
+            open: "{"
             oneOrMore:
               reference: IdentifierPath
               separator:
                 terminal: ","
-            close: { terminal: "}" }
+            close: "}"
     - terminal: for
     - choice:
         - terminal: "*"
@@ -162,10 +162,10 @@
     - optional:
         reference: InheritanceSpecifierList
     - delimitedBy:
-        open: { terminal: "{" }
+        open: "{"
         zeroOrMore:
           reference: ContractBodyElement
-        close: { terminal: "}" }
+        close: "}"
 - name: InterfaceDefinition
   sequence:
     - terminal: interface
@@ -173,10 +173,10 @@
     - optional:
         reference: InheritanceSpecifierList
     - delimitedBy:
-        open: { terminal: "{" }
+        open: "{"
         zeroOrMore:
           reference: ContractBodyElement
-        close: { terminal: "}" }
+        close: "}"
 - name: InheritanceSpecifierList
   sequence:
     - terminal: is
@@ -194,10 +194,10 @@
     - terminal: library
     - reference: Identifier
     - delimitedBy:
-        open: { terminal: "{" }
+        open: "{"
         zeroOrMore:
           reference: ContractBodyElement
-        close: { terminal: "}" }
+        close: "}"
 - name: FunctionDefinition
   sequence:
     - terminal: function
@@ -253,12 +253,12 @@
     - terminal: enum
     - reference: Identifier
     - delimitedBy:
-        open: { terminal: "{" }
+        open: "{"
         oneOrMore:
           reference: Identifier
           separator:
             terminal: ","
-        close: { terminal: "}" }
+        close: "}"
 - name: UserDefinedValueTypeDefinition
   sequence:
     - terminal: type
@@ -271,12 +271,12 @@
     - terminal: event
     - reference: Identifier
     - delimitedBy:
-        open: { terminal: ( }
+        open: (
         zeroOrMore:
           reference: EventParameter
           separator:
             terminal: ","
-        close: { terminal: ) }
+        close: )
     - optional:
         terminal: anonymous
     - terminal: ;
@@ -292,12 +292,12 @@
     - terminal: error
     - reference: Identifier
     - delimitedBy:
-        open: { terminal: ( }
+        open: (
         zeroOrMore:
           reference: ErrorParameter
           separator:
             terminal: ","
-        close: { terminal: ) }
+        close: )
     - terminal: ;
 - name: ErrorParameter
   sequence:
@@ -405,12 +405,12 @@
     - terminal: public
 - name: ArgumentList
   delimitedBy:
-    open: { terminal: ( }
+    open: (
     optional:
       choice:
         - reference: PositionalArgumentList
         - reference: NamedArgumentList
-    close: { terminal: ) }
+    close: )
 - name: PositionalArgumentList
   oneOrMore:
     reference: Expression
@@ -418,12 +418,12 @@
       terminal: ","
 - name: NamedArgumentList
   delimitedBy:
-    open: { terminal: "{" }
+    open: "{"
     zeroOrMore:
       reference: NamedArgument
       separator:
         terminal: ","
-    close: { terminal: "}" }
+    close: "}"
 - name: NamedArgument
   sequence:
     - reference: Identifier
@@ -678,12 +678,12 @@
   sequence:
     - reference: Expression
     - delimitedBy:
-        open: { terminal: "{" }
+        open: "{"
         oneOrMore:
           reference: NamedArgument
           separator:
             terminal: ","
-        close: { terminal: "}" }
+        close: "}"
 - name: MemberAccessExpression
   sequence:
     - reference: Expression
@@ -696,7 +696,7 @@
   sequence:
     - reference: Expression
     - delimitedBy:
-        open: { terminal: "[" }
+        open: "["
         sequence:
           - optional:
               reference: Expression
@@ -705,7 +705,7 @@
                 - terminal: ":"
                 - optional:
                     reference: Expression
-        close: { terminal: "]" }
+        close: "]"
 - name: PrimaryExpression
   choice:
     - reference: PayableExpression
@@ -761,12 +761,12 @@
         reference: NumberUnit
 - name: Block
   delimitedBy:
-    open: { terminal: "{" }
+    open: "{"
     zeroOrMore:
       choice:
         - reference: Statement
         - reference: UncheckedBlock
-    close: { terminal: "}" }
+    close: "}"
 - name: UncheckedBlock
   sequence:
     - terminal: unchecked
@@ -796,9 +796,9 @@
   sequence:
     - terminal: if
     - delimitedBy:
-        open: { terminal: ( }
+        open: (
         reference: Expression
-        close: { terminal: ) }
+        close: )
     - reference: Statement
     - optional:
         sequence:
@@ -808,7 +808,7 @@
   sequence:
     - terminal: for
     - delimitedBy:
-        open: { terminal: ( }
+        open: (
         sequence:
           - choice:
               - reference: SimpleStatement
@@ -818,15 +818,15 @@
               - terminal: ;
           - optional:
               reference: Expression
-        close: { terminal: ) }
+        close: )
     - reference: Statement
 - name: WhileStatement
   sequence:
     - terminal: while
     - delimitedBy:
-        open: { terminal: ( }
+        open: (
         reference: Expression
-        close: { terminal: ) }
+        close: )
     - reference: Statement
 - name: DoWhileStatement
   sequence:
@@ -834,9 +834,9 @@
     - reference: Statement
     - terminal: while
     - delimitedBy:
-        open: { terminal: ( }
+        open: (
         reference: Expression
-        close: { terminal: ) }
+        close: )
     - terminal: ;
 - name: ContinueStatement
   sequence:
@@ -930,12 +930,12 @@
     - reference: YulBlock
 - name: AssemblyFlags
   delimitedBy:
-    open: { terminal: ( }
+    open: (
     oneOrMore:
       reference: DoubleQuotedAsciiStringLiteral
       separator:
         terminal: ","
-    close: { terminal: ) }
+    close: )
 - name: Identifier
   kind: Token
   difference:
@@ -1283,15 +1283,15 @@
     - terminal: hex
     - choice:
         - delimitedBy:
-            open: { terminal: '"' }
+            open: '"'
             optional:
               reference: PossiblySeparatedPairsOfHexDigits
-            close: { terminal: '"' }
+            close: '"'
         - delimitedBy:
-            open: { terminal: "'" }
+            open: "'"
             optional:
               reference: PossiblySeparatedPairsOfHexDigits
-            close: { terminal: "'" }
+            close: "'"
 - name: PossiblySeparatedPairsOfHexDigits
   kind: Token
   oneOrMore:
@@ -1322,7 +1322,7 @@
 - name: SingleQuotedAsciiStringLiteral
   kind: Token
   delimitedBy:
-    open: { terminal: "'" }
+    open: "'"
     zeroOrMore:
       config: { name: Run }
       choice:
@@ -1338,11 +1338,11 @@
                   - terminal: "'"
                   - terminal: "\\"
         - reference: EscapeSequence
-    close: { terminal: "'" }
+    close: "'"
 - name: DoubleQuotedAsciiStringLiteral
   kind: Token
   delimitedBy:
-    open: { terminal: '"' }
+    open: '"'
     zeroOrMore:
       config: { name: Run }
       choice:
@@ -1358,7 +1358,7 @@
                   - terminal: '"'
                   - terminal: "\\"
         - reference: EscapeSequence
-    close: { terminal: '"' }
+    close: '"'
 - name: UnicodeStringLiteral
   kind: Token
   choice:
@@ -1367,7 +1367,7 @@
 - name: SingleQuotedUnicodeStringLiteral
   kind: Token
   delimitedBy:
-    open: { terminal: "unicode'" }
+    open: "unicode'"
     zeroOrMore:
       config: { name: Run }
       choice:
@@ -1380,11 +1380,11 @@
                 - terminal: "\n"
                 - terminal: "\r"
         - reference: EscapeSequence
-    close: { terminal: "'" }
+    close: "'"
 - name: DoubleQuotedUnicodeStringLiteral
   kind: Token
   delimitedBy:
-    open: { terminal: 'unicode"' }
+    open: 'unicode"'
     zeroOrMore:
       config: { name: Run }
       choice:
@@ -1397,7 +1397,7 @@
                 - terminal: "\n"
                 - terminal: "\r"
         - reference: EscapeSequence
-    close: { terminal: '"' }
+    close: '"'
 - name: EscapeSequence
   kind: Token
   sequence:
@@ -1435,10 +1435,10 @@
         reference: HexCharacter
 - name: YulBlock
   delimitedBy:
-    open: { terminal: "{" }
+    open: "{"
     zeroOrMore:
       reference: YulStatement
-    close: { terminal: "}" }
+    close: "}"
 - name: YulStatement
   choice:
     - reference: YulBlock
@@ -1468,12 +1468,12 @@
     - terminal: function
     - reference: YulIdentifier
     - delimitedBy:
-        open: { terminal: ( }
+        open: (
         zeroOrMore:
           reference: YulIdentifier
           separator:
             terminal: ","
-        close: { terminal: ) }
+        close: )
     - optional:
         sequence:
           - terminal: "->"

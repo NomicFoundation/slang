@@ -10,6 +10,12 @@ use super::{combinator_tree::GeneratedCode, name::Name};
 pub struct TerminalTrie(PatriciaSet);
 
 impl TerminalTrie {
+    pub fn from_string(string: &String) -> Self {
+        let mut set = PatriciaSet::new();
+        set.insert(string);
+        Self(set)
+    }
+
     pub fn slang_name(&self) -> Name {
         if self.0.len() == 1 {
             let node = self.0.as_ref().child().unwrap();

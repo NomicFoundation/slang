@@ -46,7 +46,7 @@
 - name: MultilineComment
   kind: Token
   delimitedBy:
-    open: { terminal: /* }
+    open: /*
     config: { name: content }
     sequence:
       - zeroOrMore:
@@ -62,7 +62,7 @@
                       - terminal: /
       - zeroOrMore:
           terminal: "*"
-    close: { terminal: "*/" }
+    close: "*/"
 
 - name: SingleLineComment
   kind: Token

@@ -56,12 +56,12 @@
 - name: SelectingImportDirective
   sequence:
     - delimitedBy:
-        open: { terminal: "{" }
+        open: "{"
         oneOrMore:
           reference: SelectedImport
           separator:
             terminal: ","
-        close: { terminal: "}" }
+        close: "}"
     - terminal: from
     - reference: ImportPath
 
@@ -82,12 +82,12 @@
     - choice:
         - reference: IdentifierPath
         - delimitedBy:
-            open: { terminal: "{" }
+            open: "{"
             oneOrMore:
               reference: IdentifierPath
               separator:
                 terminal: ","
-            close: { terminal: "}" }
+            close: "}"
     - terminal: for
     - choice:
         - terminal: "*"

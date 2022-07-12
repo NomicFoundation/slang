@@ -115,11 +115,11 @@ fn write_expression<T: Write>(w: &mut T, expr: &Expression, context: &SpecProduc
         }
 
         EBNF::DelimitedBy(EBNFDelimitedBy { open, expr, close }) => {
-            write_subexpression(w, expr, open, context);
+            write_token(w, TokenKind::string, &format_string_literal(open));
             write_token(w, TokenKind::operator, " ");
             write_subexpression(w, expr, expr, context);
             write_token(w, TokenKind::operator, " ");
-            write_subexpression(w, expr, close, context);
+            write_token(w, TokenKind::string, &format_string_literal(close));
         }
 
         EBNF::Sequence(sub_exprs) => {
