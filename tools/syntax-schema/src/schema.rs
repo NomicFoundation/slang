@@ -127,23 +127,24 @@ impl<'de> Deserialize<'de> for Production {
         #[derive(Deserialize)]
         #[serde(field_identifier, rename_all = "camelCase")]
         enum Field {
-            Name,
-            Kind,
-            Title,
-            Versions,
-            Config,
-            End,
-            ZeroOrMore,
-            OneOrMore,
-            Repeat,
-            Optional,
-            Not,
             Choice,
+            Config,
+            DelimitedBy,
+            Difference,
+            End,
+            Kind,
+            Name,
+            Not,
+            OneOrMore,
+            Optional,
+            Range,
+            Reference,
+            Repeat,
             Sequence,
             Terminal,
-            Reference,
-            Difference,
-            Range,
+            Title,
+            Versions,
+            ZeroOrMore,
         }
 
         struct ProductionVisitor;
@@ -216,6 +217,7 @@ impl<'de> Deserialize<'de> for Production {
                         | Field::Terminal
                         | Field::Reference
                         | Field::Difference
+                        | Field::DelimitedBy
                         | Field::Range => {
                             if ebnf.is_some() {
                                 return Err(de::Error::duplicate_field("ebnf element"));
@@ -265,6 +267,7 @@ impl<'de> Deserialize<'de> for Production {
                         Field::Sequence => ebnf = Some(EBNF::Sequence(map.next_value()?)),
                         Field::Terminal => ebnf = Some(EBNF::Terminal(map.next_value()?)),
                         Field::Reference => ebnf = Some(EBNF::Reference(map.next_value()?)),
+                        Field::DelimitedBy => ebnf = Some(EBNF::DelimitedBy(map.next_value()?)),
                         Field::Difference => ebnf = Some(EBNF::Difference(map.next_value()?)),
                         Field::Range => ebnf = Some(EBNF::Range(map.next_value()?)),
                     }
@@ -299,23 +302,24 @@ impl<'de> Deserialize<'de> for Production {
         }
 
         const FIELDS: &'static [&'static str] = &[
-            "name",
+            "choice",
+            "config",
+            "delimitedBy",
+            "difference",
+            "end",
             "kind",
+            "name",
+            "not",
+            "oneOrMore",
+            "optional",
+            "range",
+            "reference",
+            "repeat",
+            "sequence",
+            "terminal",
             "title",
             "versions",
-            "config",
-            "end",
             "zeroOrMore",
-            "oneOrMore",
-            "repeat",
-            "optional",
-            "not",
-            "choice",
-            "sequence",
-            "difference",
-            "terminal",
-            "reference",
-            "range",
         ];
         deserializer.deserialize_struct("Production", FIELDS, ProductionVisitor)
     }
@@ -337,7 +341,7 @@ impl Expression {
             | EBNF::Range { .. } => 0,
             EBNF::Not(..) => 1,
             EBNF::Difference { .. } => 2,
-            EBNF::Sequence(..) => 3,
+            EBNF::DelimitedBy(..) | EBNF::Sequence(..) => 3,
             EBNF::Choice(..) => 4,
         }
     }
@@ -391,6 +395,7 @@ impl Expression {
             EBNF::Sequence(exprs) => state.serialize_entry("sequence", &exprs),
             EBNF::Terminal(string) => state.serialize_entry("terminal", &string),
             EBNF::Reference(name) => state.serialize_entry("reference", &name),
+            EBNF::DelimitedBy(delimited_by) => state.serialize_entry("delimitedBy", &delimited_by),
             EBNF::Difference(difference) => state.serialize_entry("difference", &difference),
             EBNF::Range(range) => state.serialize_entry("range", &range),
         }?;
@@ -420,19 +425,20 @@ impl<'de> Deserialize<'de> for Expression {
         #[derive(Deserialize, Debug)]
         #[serde(field_identifier, rename_all = "camelCase")]
         enum Field {
-            Config,
-            End,
-            ZeroOrMore,
-            OneOrMore,
-            Repeat,
-            Optional,
-            Not,
             Choice,
+            Config,
+            DelimitedBy,
+            Difference,
+            End,
+            Not,
+            OneOrMore,
+            Optional,
+            Range,
+            Reference,
+            Repeat,
             Sequence,
             Terminal,
-            Reference,
-            Difference,
-            Range,
+            ZeroOrMore,
         }
 
         struct ExpressionVisitor;
@@ -468,6 +474,7 @@ impl<'de> Deserialize<'de> for Expression {
                         | Field::Terminal
                         | Field::Reference
                         | Field::Difference
+                        | Field::DelimitedBy
                         | Field::Range => {
                             if ebnf.is_some() {
                                 return Err(de::Error::duplicate_field("ebnf element"));
@@ -507,6 +514,7 @@ impl<'de> Deserialize<'de> for Expression {
                         Field::Sequence => ebnf = Some(EBNF::Sequence(map.next_value()?)),
                         Field::Terminal => ebnf = Some(EBNF::Terminal(map.next_value()?)),
                         Field::Reference => ebnf = Some(EBNF::Reference(map.next_value()?)),
+                        Field::DelimitedBy => ebnf = Some(EBNF::DelimitedBy(map.next_value()?)),
                         Field::Difference => ebnf = Some(EBNF::Difference(map.next_value()?)),
                         Field::Range => ebnf = Some(EBNF::Range(map.next_value()?)),
                     }
@@ -518,19 +526,20 @@ impl<'de> Deserialize<'de> for Expression {
         }
 
         const FIELDS: &'static [&'static str] = &[
-            "config",
-            "end",
-            "zeroOrMore",
-            "oneOrMore",
-            "repeat",
-            "optional",
-            "not",
             "choice",
-            "sequence",
+            "config",
+            "delimitedBy",
             "difference",
-            "terminal",
-            "reference",
+            "end",
+            "not",
+            "oneOrMore",
+            "optional",
             "range",
+            "reference",
+            "repeat",
+            "sequence",
+            "terminal",
+            "zeroOrMore",
         ];
         deserializer.deserialize_struct("Expression", FIELDS, ExpressionVisitor)
     }
@@ -563,11 +572,21 @@ pub struct EBNFRepeat {
     pub separator: Option<ExpressionRef>,
 }
 
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, Hash)]
+#[serde(deny_unknown_fields)]
+pub struct EBNFDelimitedBy {
+    pub open: ExpressionRef,
+    #[serde(flatten)]
+    pub expr: ExpressionRef,
+    pub close: ExpressionRef,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum EBNF {
     End,
     Repeat(EBNFRepeat),
     Not(ExpressionRef),
+    DelimitedBy(EBNFDelimitedBy),
     Choice(Vec<ExpressionRef>),
     Sequence(Vec<ExpressionRef>),
     Terminal(String),

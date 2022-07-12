@@ -143,9 +143,12 @@ impl Expression {
                 .expression_to_generate()
                 .collect_terminals(grammar, accum),
             EBNF::Sequence(_) => false, // TODO: special case this i.e. 'multiply' the sequence elements?
-            EBNF::End | EBNF::Repeat(_) | EBNF::Not(_) | EBNF::Difference(_) | EBNF::Range(_) => {
-                false
-            }
+            EBNF::DelimitedBy(_)
+            | EBNF::End
+            | EBNF::Repeat(_)
+            | EBNF::Not(_)
+            | EBNF::Difference(_)
+            | EBNF::Range(_) => false,
         }
     }
 }

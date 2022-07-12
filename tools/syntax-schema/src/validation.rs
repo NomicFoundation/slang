@@ -161,6 +161,11 @@ fn validate_expression(
             validate_expression(&difference.minuend, defined, used);
             validate_expression(&difference.subtrahend, defined, used);
         }
+        EBNF::DelimitedBy(delimited_by) => {
+            validate_expression(&delimited_by.open, defined, used);
+            validate_expression(&delimited_by.expr, defined, used);
+            validate_expression(&delimited_by.close, defined, used);
+        }
         EBNF::End => {}
         EBNF::Not(sub_expression) => {
             validate_expression(&sub_expression, defined, used);

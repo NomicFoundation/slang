@@ -1,5 +1,6 @@
 use crate::schema::{
-    EBNFDifference, EBNFRange, EBNFRepeat, Expression, ExpressionRef, Grammar, Production, EBNF,
+    EBNFDelimitedBy, EBNFDifference, EBNFRange, EBNFRepeat, Expression, ExpressionRef, Grammar,
+    Production, EBNF,
 };
 use itertools::Itertools;
 use semver::Version;
@@ -111,6 +112,14 @@ fn write_expression<T: Write>(w: &mut T, expr: &Expression, context: &SpecProduc
                 }
                 write_subexpression(w, expr, sub_expr, context);
             }
+        }
+
+        EBNF::DelimitedBy(EBNFDelimitedBy { open, expr, close }) => {
+            write_subexpression(w, expr, open, context);
+            write_token(w, TokenKind::operator, " ");
+            write_subexpression(w, expr, expr, context);
+            write_token(w, TokenKind::operator, " ");
+            write_subexpression(w, expr, close, context);
         }
 
         EBNF::Sequence(sub_exprs) => {

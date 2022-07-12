@@ -45,24 +45,24 @@
 
 - name: MultilineComment
   kind: Token
-  sequence:
-    - terminal: /*
-    - config: { name: content }
-      sequence:
-        - zeroOrMore:
-            choice:
-              - not:
-                  terminal: "*"
-              - sequence:
-                  - oneOrMore:
-                      terminal: "*"
-                  - not:
-                      choice:
-                        - terminal: "*"
-                        - terminal: /
-        - zeroOrMore:
-            terminal: "*"
-    - terminal: "*/"
+  delimitedBy:
+    open: { terminal: /* }
+    config: { name: content }
+    sequence:
+      - zeroOrMore:
+          choice:
+            - not:
+                terminal: "*"
+            - sequence:
+                - oneOrMore:
+                    terminal: "*"
+                - not:
+                    choice:
+                      - terminal: "*"
+                      - terminal: /
+      - zeroOrMore:
+          terminal: "*"
+    close: { terminal: "*/" }
 
 - name: SingleLineComment
   kind: Token

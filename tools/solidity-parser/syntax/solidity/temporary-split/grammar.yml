@@ -116,12 +116,13 @@
     - reference: ImportPath
 - name: SelectingImportDirective
   sequence:
-    - terminal: "{"
-    - oneOrMore:
-        reference: SelectedImport
-        separator:
-          terminal: ","
-    - terminal: "}"
+    - delimitedBy:
+        open: { terminal: "{" }
+        oneOrMore:
+          reference: SelectedImport
+          separator:
+            terminal: ","
+        close: { terminal: "}" }
     - terminal: from
     - reference: ImportPath
 - name: SelectedImport
@@ -138,13 +139,13 @@
     - terminal: using
     - choice:
         - reference: IdentifierPath
-        - sequence:
-            - terminal: "{"
-            - oneOrMore:
-                reference: IdentifierPath
-                separator:
-                  terminal: ","
-            - terminal: "}"
+        - delimitedBy:
+            open: { terminal: "{" }
+            oneOrMore:
+              reference: IdentifierPath
+              separator:
+                terminal: ","
+            close: { terminal: "}" }
     - terminal: for
     - choice:
         - terminal: "*"
@@ -160,20 +161,22 @@
     - reference: Identifier
     - optional:
         reference: InheritanceSpecifierList
-    - terminal: "{"
-    - zeroOrMore:
-        reference: ContractBodyElement
-    - terminal: "}"
+    - delimitedBy:
+        open: { terminal: "{" }
+        zeroOrMore:
+          reference: ContractBodyElement
+        close: { terminal: "}" }
 - name: InterfaceDefinition
   sequence:
     - terminal: interface
     - reference: Identifier
     - optional:
         reference: InheritanceSpecifierList
-    - terminal: "{"
-    - zeroOrMore:
-        reference: ContractBodyElement
-    - terminal: "}"
+    - delimitedBy:
+        open: { terminal: "{" }
+        zeroOrMore:
+          reference: ContractBodyElement
+        close: { terminal: "}" }
 - name: InheritanceSpecifierList
   sequence:
     - terminal: is
@@ -190,10 +193,11 @@
   sequence:
     - terminal: library
     - reference: Identifier
-    - terminal: "{"
-    - zeroOrMore:
-        reference: ContractBodyElement
-    - terminal: "}"
+    - delimitedBy:
+        open: { terminal: "{" }
+        zeroOrMore:
+          reference: ContractBodyElement
+        close: { terminal: "}" }
 - name: FunctionDefinition
   sequence:
     - terminal: function
@@ -248,12 +252,13 @@
   sequence:
     - terminal: enum
     - reference: Identifier
-    - terminal: "{"
-    - oneOrMore:
-        reference: Identifier
-        separator:
-          terminal: ","
-    - terminal: "}"
+    - delimitedBy:
+        open: { terminal: "{" }
+        oneOrMore:
+          reference: Identifier
+          separator:
+            terminal: ","
+        close: { terminal: "}" }
 - name: UserDefinedValueTypeDefinition
   sequence:
     - terminal: type
@@ -265,12 +270,13 @@
   sequence:
     - terminal: event
     - reference: Identifier
-    - terminal: (
-    - zeroOrMore:
-        reference: EventParameter
-        separator:
-          terminal: ","
-    - terminal: )
+    - delimitedBy:
+        open: { terminal: ( }
+        zeroOrMore:
+          reference: EventParameter
+          separator:
+            terminal: ","
+        close: { terminal: ) }
     - optional:
         terminal: anonymous
     - terminal: ;
@@ -285,12 +291,13 @@
   sequence:
     - terminal: error
     - reference: Identifier
-    - terminal: (
-    - zeroOrMore:
-        reference: ErrorParameter
-        separator:
-          terminal: ","
-    - terminal: )
+    - delimitedBy:
+        open: { terminal: ( }
+        zeroOrMore:
+          reference: ErrorParameter
+          separator:
+            terminal: ","
+        close: { terminal: ) }
     - terminal: ;
 - name: ErrorParameter
   sequence:
@@ -397,26 +404,26 @@
     - terminal: private
     - terminal: public
 - name: ArgumentList
-  sequence:
-    - terminal: (
-    - optional:
-        choice:
-          - reference: PositionalArgumentList
-          - reference: NamedArgumentList
-    - terminal: )
+  delimitedBy:
+    open: { terminal: ( }
+    optional:
+      choice:
+        - reference: PositionalArgumentList
+        - reference: NamedArgumentList
+    close: { terminal: ) }
 - name: PositionalArgumentList
   oneOrMore:
     reference: Expression
     separator:
       terminal: ","
 - name: NamedArgumentList
-  sequence:
-    - terminal: "{"
-    - zeroOrMore:
-        reference: NamedArgument
-        separator:
-          terminal: ","
-    - terminal: "}"
+  delimitedBy:
+    open: { terminal: "{" }
+    zeroOrMore:
+      reference: NamedArgument
+      separator:
+        terminal: ","
+    close: { terminal: "}" }
 - name: NamedArgument
   sequence:
     - reference: Identifier
@@ -670,12 +677,13 @@
 - name: FunctionCallOptionsExpression
   sequence:
     - reference: Expression
-    - terminal: "{"
-    - oneOrMore:
-        reference: NamedArgument
-        separator:
-          terminal: ","
-    - terminal: "}"
+    - delimitedBy:
+        open: { terminal: "{" }
+        oneOrMore:
+          reference: NamedArgument
+          separator:
+            terminal: ","
+        close: { terminal: "}" }
 - name: MemberAccessExpression
   sequence:
     - reference: Expression
@@ -687,15 +695,17 @@
   config: { associativity: Left }
   sequence:
     - reference: Expression
-    - terminal: "["
-    - optional:
-        reference: Expression
-    - optional:
+    - delimitedBy:
+        open: { terminal: "[" }
         sequence:
-          - terminal: ":"
           - optional:
               reference: Expression
-    - terminal: "]"
+          - optional:
+              sequence:
+                - terminal: ":"
+                - optional:
+                    reference: Expression
+        close: { terminal: "]" }
 - name: PrimaryExpression
   choice:
     - reference: PayableExpression
@@ -750,13 +760,13 @@
     - optional:
         reference: NumberUnit
 - name: Block
-  sequence:
-    - terminal: "{"
-    - zeroOrMore:
-        choice:
-          - reference: Statement
-          - reference: UncheckedBlock
-    - terminal: "}"
+  delimitedBy:
+    open: { terminal: "{" }
+    zeroOrMore:
+      choice:
+        - reference: Statement
+        - reference: UncheckedBlock
+    close: { terminal: "}" }
 - name: UncheckedBlock
   sequence:
     - terminal: unchecked
@@ -785,9 +795,10 @@
 - name: IfStatement
   sequence:
     - terminal: if
-    - terminal: (
-    - reference: Expression
-    - terminal: )
+    - delimitedBy:
+        open: { terminal: ( }
+        reference: Expression
+        close: { terminal: ) }
     - reference: Statement
     - optional:
         sequence:
@@ -796,32 +807,36 @@
 - name: ForStatement
   sequence:
     - terminal: for
-    - terminal: (
-    - choice:
-        - reference: SimpleStatement
-        - terminal: ;
-    - choice:
-        - reference: ExpressionStatement
-        - terminal: ;
-    - optional:
-        reference: Expression
-    - terminal: )
+    - delimitedBy:
+        open: { terminal: ( }
+        sequence:
+          - choice:
+              - reference: SimpleStatement
+              - terminal: ;
+          - choice:
+              - reference: ExpressionStatement
+              - terminal: ;
+          - optional:
+              reference: Expression
+        close: { terminal: ) }
     - reference: Statement
 - name: WhileStatement
   sequence:
     - terminal: while
-    - terminal: (
-    - reference: Expression
-    - terminal: )
+    - delimitedBy:
+        open: { terminal: ( }
+        reference: Expression
+        close: { terminal: ) }
     - reference: Statement
 - name: DoWhileStatement
   sequence:
     - terminal: do
     - reference: Statement
     - terminal: while
-    - terminal: (
-    - reference: Expression
-    - terminal: )
+    - delimitedBy:
+        open: { terminal: ( }
+        reference: Expression
+        close: { terminal: ) }
     - terminal: ;
 - name: ContinueStatement
   sequence:
@@ -914,13 +929,13 @@
         reference: AssemblyFlags
     - reference: YulBlock
 - name: AssemblyFlags
-  sequence:
-    - terminal: (
-    - oneOrMore:
-        reference: DoubleQuotedAsciiStringLiteral
-        separator:
-          terminal: ","
-    - terminal: )
+  delimitedBy:
+    open: { terminal: ( }
+    oneOrMore:
+      reference: DoubleQuotedAsciiStringLiteral
+      separator:
+        terminal: ","
+    close: { terminal: ) }
 - name: Identifier
   kind: Token
   difference:
@@ -1267,16 +1282,16 @@
   sequence:
     - terminal: hex
     - choice:
-        - sequence:
-            - terminal: '"'
-            - optional:
-                reference: PossiblySeparatedPairsOfHexDigits
-            - terminal: '"'
-        - sequence:
-            - terminal: "'"
-            - optional:
-                reference: PossiblySeparatedPairsOfHexDigits
-            - terminal: "'"
+        - delimitedBy:
+            open: { terminal: '"' }
+            optional:
+              reference: PossiblySeparatedPairsOfHexDigits
+            close: { terminal: '"' }
+        - delimitedBy:
+            open: { terminal: "'" }
+            optional:
+              reference: PossiblySeparatedPairsOfHexDigits
+            close: { terminal: "'" }
 - name: PossiblySeparatedPairsOfHexDigits
   kind: Token
   oneOrMore:
@@ -1306,44 +1321,44 @@
     - reference: DoubleQuotedAsciiStringLiteral
 - name: SingleQuotedAsciiStringLiteral
   kind: Token
-  sequence:
-    - terminal: "'"
-    - zeroOrMore:
-        config: { name: Run }
-        choice:
-          - oneOrMore:
-              config: { name: Char }
-              difference:
-                minuend:
-                  range:
-                    from: " "
-                    to: "~"
-                subtrahend:
-                  choice:
-                    - terminal: "'"
-                    - terminal: "\\"
-          - reference: EscapeSequence
-    - terminal: "'"
+  delimitedBy:
+    open: { terminal: "'" }
+    zeroOrMore:
+      config: { name: Run }
+      choice:
+        - oneOrMore:
+            config: { name: Char }
+            difference:
+              minuend:
+                range:
+                  from: " "
+                  to: "~"
+              subtrahend:
+                choice:
+                  - terminal: "'"
+                  - terminal: "\\"
+        - reference: EscapeSequence
+    close: { terminal: "'" }
 - name: DoubleQuotedAsciiStringLiteral
   kind: Token
-  sequence:
-    - terminal: '"'
-    - zeroOrMore:
-        config: { name: Run }
-        choice:
-          - oneOrMore:
-              config: { name: Char }
-              difference:
-                minuend:
-                  range:
-                    from: " "
-                    to: "~"
-                subtrahend:
-                  choice:
-                    - terminal: '"'
-                    - terminal: "\\"
-          - reference: EscapeSequence
-    - terminal: '"'
+  delimitedBy:
+    open: { terminal: '"' }
+    zeroOrMore:
+      config: { name: Run }
+      choice:
+        - oneOrMore:
+            config: { name: Char }
+            difference:
+              minuend:
+                range:
+                  from: " "
+                  to: "~"
+              subtrahend:
+                choice:
+                  - terminal: '"'
+                  - terminal: "\\"
+        - reference: EscapeSequence
+    close: { terminal: '"' }
 - name: UnicodeStringLiteral
   kind: Token
   choice:
@@ -1351,38 +1366,38 @@
     - reference: DoubleQuotedUnicodeStringLiteral
 - name: SingleQuotedUnicodeStringLiteral
   kind: Token
-  sequence:
-    - terminal: "unicode'"
-    - zeroOrMore:
-        config: { name: Run }
-        choice:
-          - oneOrMore:
-              config: { name: Char }
-              not:
-                choice:
-                  - terminal: "'"
-                  - terminal: "\\"
-                  - terminal: "\n"
-                  - terminal: "\r"
-          - reference: EscapeSequence
-    - terminal: "'"
+  delimitedBy:
+    open: { terminal: "unicode'" }
+    zeroOrMore:
+      config: { name: Run }
+      choice:
+        - oneOrMore:
+            config: { name: Char }
+            not:
+              choice:
+                - terminal: "'"
+                - terminal: "\\"
+                - terminal: "\n"
+                - terminal: "\r"
+        - reference: EscapeSequence
+    close: { terminal: "'" }
 - name: DoubleQuotedUnicodeStringLiteral
   kind: Token
-  sequence:
-    - terminal: 'unicode"'
-    - zeroOrMore:
-        config: { name: Run }
-        choice:
-          - oneOrMore:
-              config: { name: Char }
-              not:
-                choice:
-                  - terminal: '"'
-                  - terminal: "\\"
-                  - terminal: "\n"
-                  - terminal: "\r"
-          - reference: EscapeSequence
-    - terminal: '"'
+  delimitedBy:
+    open: { terminal: 'unicode"' }
+    zeroOrMore:
+      config: { name: Run }
+      choice:
+        - oneOrMore:
+            config: { name: Char }
+            not:
+              choice:
+                - terminal: '"'
+                - terminal: "\\"
+                - terminal: "\n"
+                - terminal: "\r"
+        - reference: EscapeSequence
+    close: { terminal: '"' }
 - name: EscapeSequence
   kind: Token
   sequence:
@@ -1419,11 +1434,11 @@
         max: 4
         reference: HexCharacter
 - name: YulBlock
-  sequence:
-    - terminal: "{"
-    - zeroOrMore:
-        reference: YulStatement
-    - terminal: "}"
+  delimitedBy:
+    open: { terminal: "{" }
+    zeroOrMore:
+      reference: YulStatement
+    close: { terminal: "}" }
 - name: YulStatement
   choice:
     - reference: YulBlock
@@ -1452,12 +1467,13 @@
   sequence:
     - terminal: function
     - reference: YulIdentifier
-    - terminal: (
-    - zeroOrMore:
-        reference: YulIdentifier
-        separator:
-          terminal: ","
-    - terminal: )
+    - delimitedBy:
+        open: { terminal: ( }
+        zeroOrMore:
+          reference: YulIdentifier
+          separator:
+            terminal: ","
+        close: { terminal: ) }
     - optional:
         sequence:
           - terminal: "->"

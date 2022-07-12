@@ -97,6 +97,12 @@ impl Expression {
                 write!(w, "' ").unwrap();
             }
 
+            EBNF::DelimitedBy(EBNFDelimitedBy { open, expr, close }) => {
+                self.generate_ebnf_subexpression(grammar, w, open);
+                self.generate_ebnf_subexpression(grammar, w, expr);
+                self.generate_ebnf_subexpression(grammar, w, close);
+            }
+
             EBNF::Difference(EBNFDifference {
                 minuend,
                 subtrahend,
@@ -140,7 +146,7 @@ impl Expression {
             | EBNF::Range { .. } => 0,
             EBNF::Not(..) => 1,
             EBNF::Difference { .. } => 2,
-            EBNF::Sequence(..) => 3,
+            EBNF::Sequence(..) | EBNF::DelimitedBy(..) => 3,
             EBNF::Choice(..) => 4,
         }
     }
