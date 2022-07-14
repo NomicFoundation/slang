@@ -813,23 +813,23 @@ impl CombinatorTree {
                         result.tree_interface.push(quote!(
                             #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
                             pub struct E {
-                                pub left: #parent_type_name,
+                                pub left_operand: #parent_type_name,
                                 #annotation
                                 pub operator: #operator_type,
-                                pub right: #parent_type_name,
+                                pub right_operand: #parent_type_name,
                             }
                         ));
 
                         result.parser = quote!(
                            #next_sibling_parser_name.clone()
                             .then(#operator_parser.then(#next_sibling_parser_name.clone()).repeated())
-                            .map(|(next, pairs)|
-                                if pairs.is_empty() {
-                                    next
+                            .map(|(first_operand, operator_operand_pairs)|
+                                if operator_operand_pairs.is_empty() {
+                                    first_operand
                                 } else {
                                     // a [ (X b) (Y c) (Z d) ] => { { { a X b } Y c } Z d }
-                                    pairs.into_iter().fold(next, |left, (operator, right)|
-                                        Box::new(#parent_module_name::#parent_type_name::#tag_name(#module_name::E { left, operator, right }))
+                                    operator_operand_pairs.into_iter().fold(first_operand, |left_operand, (operator, right_operand)|
+                                        Box::new(#parent_module_name::#parent_type_name::#tag_name(#module_name::E { left_operand, operator, right_operand }))
                                     )
                                 }
                             )
@@ -849,30 +849,30 @@ impl CombinatorTree {
                         result.tree_interface.push(quote!(
                             #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
                             pub struct E {
-                                pub left: #parent_type_name,
+                                pub left_operand: #parent_type_name,
                                 #annotation
                                 pub operator: #operator_type,
-                                pub right: #parent_type_name,
+                                pub right_operand: #parent_type_name,
                             }
                         ));
 
                         result.parser = quote!(
                            #next_sibling_parser_name.clone()
                             .then(#operator_parser.then(#next_sibling_parser_name.clone()).repeated())
-                            .map(|(next, pairs)|
-                                if pairs.is_empty() {
-                                    next
+                            .map(|(first_operand, operator_operand_pairs)|
+                                if operator_operand_pairs.is_empty() {
+                                    first_operand
                                 } else {
                                     // a [ (X b) (Y c) (Z d) ] => [ (a X) (b Y) (c Z) ] d
-                                    let mut state = next;
-                                    let mut result = vec![];
-                                    for (operator, right) in pairs.into_iter() {
-                                        let left = std::mem::replace(&mut state, right);
-                                        result.push((left, operator))
+                                    let mut last_operand = first_operand;
+                                    let mut operand_operator_pairs = vec![];
+                                    for (operator, right_operand) in operator_operand_pairs.into_iter() {
+                                        let left_operand = std::mem::replace(&mut last_operand, right_operand);
+                                        operand_operator_pairs.push((left_operand, operator))
                                     }
                                     // [ (a X) (b Y) (c Z) ] d => { a X { b Y { c Z d } } }
-                                    result.into_iter().rfold(state, |right, (left, operator)|
-                                        Box::new(#parent_module_name::#parent_type_name::#tag_name(#module_name::E { left, operator, right }))
+                                    operand_operator_pairs.into_iter().rfold(last_operand, |right_operand, (left_operand, operator)|
+                                        Box::new(#parent_module_name::#parent_type_name::#tag_name(#module_name::E { left_operand, operator, right_operand }))
                                     )
                                 }
                             )
@@ -894,7 +894,7 @@ impl CombinatorTree {
                             pub struct E {
                                 #annotation
                                 pub operator: #operator_type,
-                                pub right: #parent_type_name,
+                                pub right_operand: #parent_type_name,
                             }
                         ));
 
@@ -906,8 +906,8 @@ impl CombinatorTree {
                                     operand
                                 } else {
                                     operators.reverse();
-                                    operators.into_iter().fold(operand, |right, operator|
-                                        Box::new(#parent_module_name::#parent_type_name::#tag_name(#module_name::E { operator, right }))
+                                    operators.into_iter().fold(operand, |right_operand, operator|
+                                        Box::new(#parent_module_name::#parent_type_name::#tag_name(#module_name::E { operator, right_operand }))
                                     )
                                 }
                             )
@@ -927,7 +927,7 @@ impl CombinatorTree {
                         result.tree_interface.push(quote!(
                             #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
                             pub struct E {
-                                pub left: #parent_type_name,
+                                pub left_operand: #parent_type_name,
                                 #annotation
                                 pub operator: #operator_type,
                             }
@@ -940,8 +940,8 @@ impl CombinatorTree {
                                 if operators.is_empty() {
                                     operand
                                 } else {
-                                    operators.into_iter().fold(operand, |left, operator|
-                                        Box::new(#parent_module_name::#parent_type_name::#tag_name(#module_name::E { left, operator }))
+                                    operators.into_iter().fold(operand, |left_operand, operator|
+                                        Box::new(#parent_module_name::#parent_type_name::#tag_name(#module_name::E { left_operand, operator }))
                                     )
                                 }
                             )
