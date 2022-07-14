@@ -548,6 +548,22 @@ impl escape_sequence::_T0 {
     }
 }
 
+impl Default for hex_string_literal::_T2 {
+    fn default() -> Self {
+        Self {
+            double_quote_1: Default::default(),
+            possibly_separated_pairs_of_hex_digits: Default::default(),
+            double_quote_2: Default::default(),
+        }
+    }
+}
+impl DefaultTest for hex_string_literal::_T2 {
+    fn is_default(&self) -> bool {
+        self.double_quote_1.is_default()
+            && self.possibly_separated_pairs_of_hex_digits.is_default()
+            && self.double_quote_2.is_default()
+    }
+}
 impl hex_string_literal::_T2 {
     pub fn from_parse(
         ((double_quote_1, possibly_separated_pairs_of_hex_digits), double_quote_2): (
@@ -565,20 +581,20 @@ impl hex_string_literal::_T2 {
         }
     }
 }
-impl Default for hex_string_literal::_T2 {
+impl Default for hex_string_literal::_T3 {
     fn default() -> Self {
         Self {
-            double_quote_1: Default::default(),
+            quote_1: Default::default(),
             possibly_separated_pairs_of_hex_digits: Default::default(),
-            double_quote_2: Default::default(),
+            quote_2: Default::default(),
         }
     }
 }
-impl DefaultTest for hex_string_literal::_T2 {
+impl DefaultTest for hex_string_literal::_T3 {
     fn is_default(&self) -> bool {
-        self.double_quote_1.is_default()
+        self.quote_1.is_default()
             && self.possibly_separated_pairs_of_hex_digits.is_default()
-            && self.double_quote_2.is_default()
+            && self.quote_2.is_default()
     }
 }
 impl hex_string_literal::_T3 {
@@ -596,22 +612,6 @@ impl hex_string_literal::_T3 {
             possibly_separated_pairs_of_hex_digits,
             quote_2,
         }
-    }
-}
-impl Default for hex_string_literal::_T3 {
-    fn default() -> Self {
-        Self {
-            quote_1: Default::default(),
-            possibly_separated_pairs_of_hex_digits: Default::default(),
-            quote_2: Default::default(),
-        }
-    }
-}
-impl DefaultTest for hex_string_literal::_T3 {
-    fn is_default(&self) -> bool {
-        self.quote_1.is_default()
-            && self.possibly_separated_pairs_of_hex_digits.is_default()
-            && self.quote_2.is_default()
     }
 }
 impl hex_string_literal::_T0 {
@@ -836,6 +836,22 @@ impl decimal_number::_T0 {
     }
 }
 
+impl Default for double_quoted_ascii_string_literal::_T0 {
+    fn default() -> Self {
+        Self {
+            double_quote_1: Default::default(),
+            runs: Default::default(),
+            double_quote_2: Default::default(),
+        }
+    }
+}
+impl DefaultTest for double_quoted_ascii_string_literal::_T0 {
+    fn is_default(&self) -> bool {
+        self.double_quote_1.is_default()
+            && self.runs.is_default()
+            && self.double_quote_2.is_default()
+    }
+}
 impl double_quoted_ascii_string_literal::_T0 {
     pub fn from_parse(
         ((double_quote_1, runs), double_quote_2): (
@@ -853,28 +869,28 @@ impl double_quoted_ascii_string_literal::_T0 {
         }
     }
 }
-impl Default for double_quoted_ascii_string_literal::_T0 {
-    fn default() -> Self {
-        Self {
-            double_quote_1: Default::default(),
-            runs: Default::default(),
-            double_quote_2: Default::default(),
-        }
-    }
-}
-impl DefaultTest for double_quoted_ascii_string_literal::_T0 {
-    fn is_default(&self) -> bool {
-        self.double_quote_1.is_default()
-            && self.runs.is_default()
-            && self.double_quote_2.is_default()
-    }
-}
 impl DefaultTest for double_quoted_ascii_string_literal::WithTrivia {
     fn is_default(&self) -> bool {
         self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
     }
 }
 
+impl Default for double_quoted_unicode_string_literal::_T0 {
+    fn default() -> Self {
+        Self {
+            unicode_double_quote: Default::default(),
+            runs: Default::default(),
+            double_quote: Default::default(),
+        }
+    }
+}
+impl DefaultTest for double_quoted_unicode_string_literal::_T0 {
+    fn is_default(&self) -> bool {
+        self.unicode_double_quote.is_default()
+            && self.runs.is_default()
+            && self.double_quote.is_default()
+    }
+}
 impl double_quoted_unicode_string_literal::_T0 {
     pub fn from_parse(
         ((unicode_double_quote, runs), double_quote): (
@@ -890,22 +906,6 @@ impl double_quoted_unicode_string_literal::_T0 {
             runs,
             double_quote,
         }
-    }
-}
-impl Default for double_quoted_unicode_string_literal::_T0 {
-    fn default() -> Self {
-        Self {
-            unicode_double_quote: Default::default(),
-            runs: Default::default(),
-            double_quote: Default::default(),
-        }
-    }
-}
-impl DefaultTest for double_quoted_unicode_string_literal::_T0 {
-    fn is_default(&self) -> bool {
-        self.unicode_double_quote.is_default()
-            && self.runs.is_default()
-            && self.double_quote.is_default()
     }
 }
 impl DefaultTest for double_quoted_unicode_string_literal::WithTrivia {
@@ -972,6 +972,20 @@ impl DefaultTest for positional_argument_list::_T0 {
     }
 }
 
+impl Default for single_quoted_ascii_string_literal::_T0 {
+    fn default() -> Self {
+        Self {
+            quote_1: Default::default(),
+            runs: Default::default(),
+            quote_2: Default::default(),
+        }
+    }
+}
+impl DefaultTest for single_quoted_ascii_string_literal::_T0 {
+    fn is_default(&self) -> bool {
+        self.quote_1.is_default() && self.runs.is_default() && self.quote_2.is_default()
+    }
+}
 impl single_quoted_ascii_string_literal::_T0 {
     pub fn from_parse(
         ((quote_1, runs), quote_2): (
@@ -989,26 +1003,26 @@ impl single_quoted_ascii_string_literal::_T0 {
         }
     }
 }
-impl Default for single_quoted_ascii_string_literal::_T0 {
-    fn default() -> Self {
-        Self {
-            quote_1: Default::default(),
-            runs: Default::default(),
-            quote_2: Default::default(),
-        }
-    }
-}
-impl DefaultTest for single_quoted_ascii_string_literal::_T0 {
-    fn is_default(&self) -> bool {
-        self.quote_1.is_default() && self.runs.is_default() && self.quote_2.is_default()
-    }
-}
 impl DefaultTest for single_quoted_ascii_string_literal::WithTrivia {
     fn is_default(&self) -> bool {
         self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
     }
 }
 
+impl Default for single_quoted_unicode_string_literal::_T0 {
+    fn default() -> Self {
+        Self {
+            unicode_quote: Default::default(),
+            runs: Default::default(),
+            quote: Default::default(),
+        }
+    }
+}
+impl DefaultTest for single_quoted_unicode_string_literal::_T0 {
+    fn is_default(&self) -> bool {
+        self.unicode_quote.is_default() && self.runs.is_default() && self.quote.is_default()
+    }
+}
 impl single_quoted_unicode_string_literal::_T0 {
     pub fn from_parse(
         ((unicode_quote, runs), quote): (
@@ -1024,20 +1038,6 @@ impl single_quoted_unicode_string_literal::_T0 {
             runs,
             quote,
         }
-    }
-}
-impl Default for single_quoted_unicode_string_literal::_T0 {
-    fn default() -> Self {
-        Self {
-            unicode_quote: Default::default(),
-            runs: Default::default(),
-            quote: Default::default(),
-        }
-    }
-}
-impl DefaultTest for single_quoted_unicode_string_literal::_T0 {
-    fn is_default(&self) -> bool {
-        self.unicode_quote.is_default() && self.runs.is_default() && self.quote.is_default()
     }
 }
 impl DefaultTest for single_quoted_unicode_string_literal::WithTrivia {
@@ -1128,6 +1128,22 @@ impl DefaultTest for yul_function_call::_T1 {
         self.elements.is_default() && self.separators.is_default()
     }
 }
+impl Default for yul_function_call::_T2 {
+    fn default() -> Self {
+        Self {
+            open_paren: Default::default(),
+            yul_expressions: Default::default(),
+            close_paren: Default::default(),
+        }
+    }
+}
+impl DefaultTest for yul_function_call::_T2 {
+    fn is_default(&self) -> bool {
+        self.open_paren.is_default()
+            && self.yul_expressions.is_default()
+            && self.close_paren.is_default()
+    }
+}
 impl yul_function_call::_T2 {
     pub fn from_parse(
         (((yul_identifier, open_paren_char), yul_expressions), close_paren_char): (
@@ -1178,6 +1194,22 @@ impl DefaultTest for yul_function_definition::_T2 {
         self.elements.is_default() && self.separators.is_default()
     }
 }
+impl Default for yul_function_definition::_T1 {
+    fn default() -> Self {
+        Self {
+            open_paren: Default::default(),
+            yul_identifiers: Default::default(),
+            close_paren: Default::default(),
+        }
+    }
+}
+impl DefaultTest for yul_function_definition::_T1 {
+    fn is_default(&self) -> bool {
+        self.open_paren.is_default()
+            && self.yul_identifiers.is_default()
+            && self.close_paren.is_default()
+    }
+}
 impl yul_function_definition::_T1 {
     pub fn from_parse(
         ((open_paren, yul_identifiers), close_paren): (
@@ -1193,22 +1225,6 @@ impl yul_function_definition::_T1 {
             yul_identifiers,
             close_paren,
         }
-    }
-}
-impl Default for yul_function_definition::_T1 {
-    fn default() -> Self {
-        Self {
-            open_paren: Default::default(),
-            yul_identifiers: Default::default(),
-            close_paren: Default::default(),
-        }
-    }
-}
-impl DefaultTest for yul_function_definition::_T1 {
-    fn is_default(&self) -> bool {
-        self.open_paren.is_default()
-            && self.yul_identifiers.is_default()
-            && self.close_paren.is_default()
     }
 }
 impl Default for yul_function_definition::_T4 {
@@ -1323,20 +1339,6 @@ impl DefaultTest for assembly_flags::_T1 {
         self.elements.is_default() && self.separators.is_default()
     }
 }
-impl assembly_flags::_T0 {
-    pub fn from_parse(
-        ((open_paren, double_quoted_ascii_string_literals), close_paren): (
-            (FixedSizeTerminalWithTrivia<1usize>, assembly_flags::_T1),
-            FixedSizeTerminalWithTrivia<1usize>,
-        ),
-    ) -> Self {
-        Self {
-            open_paren,
-            double_quoted_ascii_string_literals,
-            close_paren,
-        }
-    }
-}
 impl Default for assembly_flags::_T0 {
     fn default() -> Self {
         Self {
@@ -1434,20 +1436,6 @@ impl DefaultTest for enum_definition::_T2 {
         self.elements.is_default() && self.separators.is_default()
     }
 }
-impl enum_definition::_T1 {
-    pub fn from_parse(
-        ((open_brace, identifiers), close_brace): (
-            (FixedSizeTerminalWithTrivia<1usize>, enum_definition::_T2),
-            FixedSizeTerminalWithTrivia<1usize>,
-        ),
-    ) -> Self {
-        Self {
-            open_brace,
-            identifiers,
-            close_brace,
-        }
-    }
-}
 impl Default for enum_definition::_T1 {
     fn default() -> Self {
         Self {
@@ -1462,6 +1450,20 @@ impl DefaultTest for enum_definition::_T1 {
         self.open_brace.is_default()
             && self.identifiers.is_default()
             && self.close_brace.is_default()
+    }
+}
+impl enum_definition::_T1 {
+    pub fn from_parse(
+        ((open_brace, identifiers), close_brace): (
+            (FixedSizeTerminalWithTrivia<1usize>, enum_definition::_T2),
+            FixedSizeTerminalWithTrivia<1usize>,
+        ),
+    ) -> Self {
+        Self {
+            open_brace,
+            identifiers,
+            close_brace,
+        }
     }
 }
 impl enum_definition::_T0 {
@@ -1674,6 +1676,22 @@ impl DefaultTest for named_argument_list::_T1 {
         self.elements.is_default() && self.separators.is_default()
     }
 }
+impl Default for named_argument_list::_T0 {
+    fn default() -> Self {
+        Self {
+            open_brace: Default::default(),
+            named_arguments: Default::default(),
+            close_brace: Default::default(),
+        }
+    }
+}
+impl DefaultTest for named_argument_list::_T0 {
+    fn is_default(&self) -> bool {
+        self.open_brace.is_default()
+            && self.named_arguments.is_default()
+            && self.close_brace.is_default()
+    }
+}
 impl named_argument_list::_T0 {
     pub fn from_parse(
         ((open_brace, named_arguments), close_brace): (
@@ -1691,20 +1709,18 @@ impl named_argument_list::_T0 {
         }
     }
 }
-impl Default for named_argument_list::_T0 {
+
+impl Default for non_empty_parameter_list::_T1 {
     fn default() -> Self {
         Self {
-            open_brace: Default::default(),
-            named_arguments: Default::default(),
-            close_brace: Default::default(),
+            elements: Default::default(),
+            separators: Default::default(),
         }
     }
 }
-impl DefaultTest for named_argument_list::_T0 {
+impl DefaultTest for non_empty_parameter_list::_T1 {
     fn is_default(&self) -> bool {
-        self.open_brace.is_default()
-            && self.named_arguments.is_default()
-            && self.close_brace.is_default()
+        self.elements.is_default() && self.separators.is_default()
     }
 }
 
@@ -1721,20 +1737,6 @@ impl DefaultTest for override_specifier::_T2 {
         self.elements.is_default() && self.separators.is_default()
     }
 }
-impl override_specifier::_T1 {
-    pub fn from_parse(
-        ((open_paren, identifier_paths), close_paren): (
-            (FixedSizeTerminalWithTrivia<1usize>, override_specifier::_T2),
-            FixedSizeTerminalWithTrivia<1usize>,
-        ),
-    ) -> Self {
-        Self {
-            open_paren,
-            identifier_paths,
-            close_paren,
-        }
-    }
-}
 impl Default for override_specifier::_T1 {
     fn default() -> Self {
         Self {
@@ -1749,6 +1751,20 @@ impl DefaultTest for override_specifier::_T1 {
         self.open_paren.is_default()
             && self.identifier_paths.is_default()
             && self.close_paren.is_default()
+    }
+}
+impl override_specifier::_T1 {
+    pub fn from_parse(
+        ((open_paren, identifier_paths), close_paren): (
+            (FixedSizeTerminalWithTrivia<1usize>, override_specifier::_T2),
+            FixedSizeTerminalWithTrivia<1usize>,
+        ),
+    ) -> Self {
+        Self {
+            open_paren,
+            identifier_paths,
+            close_paren,
+        }
     }
 }
 impl override_specifier::_T0 {
@@ -1788,6 +1804,22 @@ impl DefaultTest for parameter_list::_T1 {
         self.elements.is_default() && self.separators.is_default()
     }
 }
+impl Default for parameter_list::_T0 {
+    fn default() -> Self {
+        Self {
+            open_paren: Default::default(),
+            parameter_declarations: Default::default(),
+            close_paren: Default::default(),
+        }
+    }
+}
+impl DefaultTest for parameter_list::_T0 {
+    fn is_default(&self) -> bool {
+        self.open_paren.is_default()
+            && self.parameter_declarations.is_default()
+            && self.close_paren.is_default()
+    }
+}
 impl parameter_list::_T0 {
     pub fn from_parse(
         ((open_paren, parameter_declarations), close_paren): (
@@ -1805,20 +1837,18 @@ impl parameter_list::_T0 {
         }
     }
 }
-impl Default for parameter_list::_T0 {
+
+impl Default for selecting_import_directive::_T2 {
     fn default() -> Self {
         Self {
-            open_paren: Default::default(),
-            parameter_declarations: Default::default(),
-            close_paren: Default::default(),
+            elements: Default::default(),
+            separators: Default::default(),
         }
     }
 }
-impl DefaultTest for parameter_list::_T0 {
+impl DefaultTest for selecting_import_directive::_T2 {
     fn is_default(&self) -> bool {
-        self.open_paren.is_default()
-            && self.parameter_declarations.is_default()
-            && self.close_paren.is_default()
+        self.elements.is_default() && self.separators.is_default()
     }
 }
 
@@ -1843,14 +1873,17 @@ impl pragma_directive::_T0 {
 impl Default for selecting_import_directive::_T1 {
     fn default() -> Self {
         Self {
-            elements: Default::default(),
-            separators: Default::default(),
+            open_brace: Default::default(),
+            selected_imports: Default::default(),
+            close_brace: Default::default(),
         }
     }
 }
-impl DefaultTest for selecting_import_directive::_T2 {
+impl DefaultTest for selecting_import_directive::_T1 {
     fn is_default(&self) -> bool {
-        self.elements.is_default() && self.separators.is_default()
+        self.open_brace.is_default()
+            && self.selected_imports.is_default()
+            && self.close_brace.is_default()
     }
 }
 impl selecting_import_directive::_T1 {
@@ -1868,22 +1901,6 @@ impl selecting_import_directive::_T1 {
             selected_imports,
             close_brace,
         }
-    }
-}
-impl Default for selecting_import_directive::_T1 {
-    fn default() -> Self {
-        Self {
-            open_brace: Default::default(),
-            selected_imports: Default::default(),
-            close_brace: Default::default(),
-        }
-    }
-}
-impl DefaultTest for selecting_import_directive::_T1 {
-    fn is_default(&self) -> bool {
-        self.open_brace.is_default()
-            && self.selected_imports.is_default()
-            && self.close_brace.is_default()
     }
 }
 impl selecting_import_directive::_T0 {
@@ -2448,6 +2465,20 @@ impl DefaultTest for revert_statement::_T0 {
             && self.semicolon_char.is_default()
     }
 }
+impl yul_block::_T0 {
+    pub fn from_parse(
+        ((open_brace, yul_statements), close_brace): (
+            (FixedSizeTerminalWithTrivia<1usize>, Vec<YulStatement>),
+            FixedSizeTerminalWithTrivia<1usize>,
+        ),
+    ) -> Self {
+        Self {
+            open_brace,
+            yul_statements,
+            close_brace,
+        }
+    }
+}
 
 impl type_name::_T3 {
     pub fn from_parse(
@@ -2636,20 +2667,6 @@ impl DefaultTest for using_directive::_T3 {
         self.elements.is_default() && self.separators.is_default()
     }
 }
-impl using_directive::_T2 {
-    pub fn from_parse(
-        ((open_brace, identifier_paths), close_brace): (
-            (FixedSizeTerminalWithTrivia<1usize>, using_directive::_T3),
-            FixedSizeTerminalWithTrivia<1usize>,
-        ),
-    ) -> Self {
-        Self {
-            open_brace,
-            identifier_paths,
-            close_brace,
-        }
-    }
-}
 impl Default for using_directive::_T2 {
     fn default() -> Self {
         Self {
@@ -2664,6 +2681,20 @@ impl DefaultTest for using_directive::_T2 {
         self.open_brace.is_default()
             && self.identifier_paths.is_default()
             && self.close_brace.is_default()
+    }
+}
+impl using_directive::_T2 {
+    pub fn from_parse(
+        ((open_brace, identifier_paths), close_brace): (
+            (FixedSizeTerminalWithTrivia<1usize>, using_directive::_T3),
+            FixedSizeTerminalWithTrivia<1usize>,
+        ),
+    ) -> Self {
+        Self {
+            open_brace,
+            identifier_paths,
+            close_brace,
+        }
     }
 }
 impl using_directive::_T0 {
@@ -2780,6 +2811,22 @@ impl DefaultTest for error_definition::_T2 {
         self.elements.is_default() && self.separators.is_default()
     }
 }
+impl Default for error_definition::_T1 {
+    fn default() -> Self {
+        Self {
+            open_paren: Default::default(),
+            error_parameters: Default::default(),
+            close_paren: Default::default(),
+        }
+    }
+}
+impl DefaultTest for error_definition::_T1 {
+    fn is_default(&self) -> bool {
+        self.open_paren.is_default()
+            && self.error_parameters.is_default()
+            && self.close_paren.is_default()
+    }
+}
 impl error_definition::_T1 {
     pub fn from_parse(
         ((open_paren, error_parameters), close_paren): (
@@ -2795,22 +2842,6 @@ impl error_definition::_T1 {
             error_parameters,
             close_paren,
         }
-    }
-}
-impl Default for error_definition::_T1 {
-    fn default() -> Self {
-        Self {
-            open_paren: Default::default(),
-            error_parameters: Default::default(),
-            close_paren: Default::default(),
-        }
-    }
-}
-impl DefaultTest for error_definition::_T1 {
-    fn is_default(&self) -> bool {
-        self.open_paren.is_default()
-            && self.error_parameters.is_default()
-            && self.close_paren.is_default()
     }
 }
 impl error_definition::_T0 {
@@ -2863,6 +2894,22 @@ impl DefaultTest for event_definition::_T2 {
         self.elements.is_default() && self.separators.is_default()
     }
 }
+impl Default for event_definition::_T1 {
+    fn default() -> Self {
+        Self {
+            open_paren: Default::default(),
+            event_parameters: Default::default(),
+            close_paren: Default::default(),
+        }
+    }
+}
+impl DefaultTest for event_definition::_T1 {
+    fn is_default(&self) -> bool {
+        self.open_paren.is_default()
+            && self.event_parameters.is_default()
+            && self.close_paren.is_default()
+    }
+}
 impl event_definition::_T1 {
     pub fn from_parse(
         ((open_paren, event_parameters), close_paren): (
@@ -2878,22 +2925,6 @@ impl event_definition::_T1 {
             event_parameters,
             close_paren,
         }
-    }
-}
-impl Default for event_definition::_T1 {
-    fn default() -> Self {
-        Self {
-            open_paren: Default::default(),
-            event_parameters: Default::default(),
-            close_paren: Default::default(),
-        }
-    }
-}
-impl DefaultTest for event_definition::_T1 {
-    fn is_default(&self) -> bool {
-        self.open_paren.is_default()
-            && self.event_parameters.is_default()
-            && self.close_paren.is_default()
     }
 }
 impl event_definition::_T0 {
@@ -3025,6 +3056,20 @@ impl DefaultTest for index_access_expression::_T2 {
         self.expression.is_default() && self._t3.is_default()
     }
 }
+impl Default for index_access_expression::_T1 {
+    fn default() -> Self {
+        Self {
+            open_bracket: Default::default(),
+            _t2: Default::default(),
+            close_bracket: Default::default(),
+        }
+    }
+}
+impl DefaultTest for index_access_expression::_T1 {
+    fn is_default(&self) -> bool {
+        self.open_bracket.is_default() && self._t2.is_default() && self.close_bracket.is_default()
+    }
+}
 impl index_access_expression::_T1 {
     pub fn from_parse(
         ((open_bracket, _t2), close_bracket): (
@@ -3040,20 +3085,6 @@ impl index_access_expression::_T1 {
             _t2,
             close_bracket,
         }
-    }
-}
-impl Default for index_access_expression::_T1 {
-    fn default() -> Self {
-        Self {
-            open_bracket: Default::default(),
-            _t2: Default::default(),
-            close_bracket: Default::default(),
-        }
-    }
-}
-impl DefaultTest for index_access_expression::_T1 {
-    fn is_default(&self) -> bool {
-        self.open_bracket.is_default() && self._t2.is_default() && self.close_bracket.is_default()
     }
 }
 
@@ -3081,6 +3112,22 @@ impl DefaultTest for function_call_options_expression::_T2 {
         self.elements.is_default() && self.separators.is_default()
     }
 }
+impl Default for function_call_options_expression::_T1 {
+    fn default() -> Self {
+        Self {
+            open_brace: Default::default(),
+            named_arguments: Default::default(),
+            close_brace: Default::default(),
+        }
+    }
+}
+impl DefaultTest for function_call_options_expression::_T1 {
+    fn is_default(&self) -> bool {
+        self.open_brace.is_default()
+            && self.named_arguments.is_default()
+            && self.close_brace.is_default()
+    }
+}
 impl function_call_options_expression::_T1 {
     pub fn from_parse(
         ((open_brace, named_arguments), close_brace): (
@@ -3096,22 +3143,6 @@ impl function_call_options_expression::_T1 {
             named_arguments,
             close_brace,
         }
-    }
-}
-impl Default for function_call_options_expression::_T1 {
-    fn default() -> Self {
-        Self {
-            open_brace: Default::default(),
-            named_arguments: Default::default(),
-            close_brace: Default::default(),
-        }
-    }
-}
-impl DefaultTest for function_call_options_expression::_T1 {
-    fn is_default(&self) -> bool {
-        self.open_brace.is_default()
-            && self.named_arguments.is_default()
-            && self.close_brace.is_default()
     }
 }
 
@@ -3528,20 +3559,6 @@ impl for_statement::_T0 {
     }
 }
 
-impl block::_T0 {
-    pub fn from_parse(
-        ((open_brace, _t2s), close_brace): (
-            (FixedSizeTerminalWithTrivia<1usize>, Vec<Box<block::_T2>>),
-            FixedSizeTerminalWithTrivia<1usize>,
-        ),
-    ) -> Self {
-        Self {
-            open_brace,
-            _t2s,
-            close_brace,
-        }
-    }
-}
 impl Default for block::_T0 {
     fn default() -> Self {
         Self {
@@ -3554,6 +3571,20 @@ impl Default for block::_T0 {
 impl DefaultTest for block::_T0 {
     fn is_default(&self) -> bool {
         self.open_brace.is_default() && self._t2s.is_default() && self.close_brace.is_default()
+    }
+}
+impl block::_T0 {
+    pub fn from_parse(
+        ((open_brace, _t2s), close_brace): (
+            (FixedSizeTerminalWithTrivia<1usize>, Vec<Box<block::_T2>>),
+            FixedSizeTerminalWithTrivia<1usize>,
+        ),
+    ) -> Self {
+        Self {
+            open_brace,
+            _t2s,
+            close_brace,
+        }
     }
 }
 
@@ -3735,6 +3766,22 @@ impl receive_function_definition::_T0 {
     }
 }
 
+impl Default for contract_definition::_T1 {
+    fn default() -> Self {
+        Self {
+            open_brace: Default::default(),
+            contract_body_elements: Default::default(),
+            close_brace: Default::default(),
+        }
+    }
+}
+impl DefaultTest for contract_definition::_T1 {
+    fn is_default(&self) -> bool {
+        self.open_brace.is_default()
+            && self.contract_body_elements.is_default()
+            && self.close_brace.is_default()
+    }
+}
 impl contract_definition::_T1 {
     pub fn from_parse(
         ((open_brace, contract_body_elements), close_brace): (
@@ -3750,22 +3797,6 @@ impl contract_definition::_T1 {
             contract_body_elements,
             close_brace,
         }
-    }
-}
-impl Default for contract_definition::_T1 {
-    fn default() -> Self {
-        Self {
-            open_brace: Default::default(),
-            contract_body_elements: Default::default(),
-            close_brace: Default::default(),
-        }
-    }
-}
-impl DefaultTest for contract_definition::_T1 {
-    fn is_default(&self) -> bool {
-        self.open_brace.is_default()
-            && self.contract_body_elements.is_default()
-            && self.close_brace.is_default()
     }
 }
 impl contract_definition::_T0 {
@@ -3814,6 +3845,22 @@ impl DefaultTest for contract_definition::_T0 {
     }
 }
 
+impl Default for interface_definition::_T1 {
+    fn default() -> Self {
+        Self {
+            open_brace: Default::default(),
+            contract_body_elements: Default::default(),
+            close_brace: Default::default(),
+        }
+    }
+}
+impl DefaultTest for interface_definition::_T1 {
+    fn is_default(&self) -> bool {
+        self.open_brace.is_default()
+            && self.contract_body_elements.is_default()
+            && self.close_brace.is_default()
+    }
+}
 impl interface_definition::_T1 {
     pub fn from_parse(
         ((open_brace, contract_body_elements), close_brace): (
@@ -3829,22 +3876,6 @@ impl interface_definition::_T1 {
             contract_body_elements,
             close_brace,
         }
-    }
-}
-impl Default for interface_definition::_T1 {
-    fn default() -> Self {
-        Self {
-            open_brace: Default::default(),
-            contract_body_elements: Default::default(),
-            close_brace: Default::default(),
-        }
-    }
-}
-impl DefaultTest for interface_definition::_T1 {
-    fn is_default(&self) -> bool {
-        self.open_brace.is_default()
-            && self.contract_body_elements.is_default()
-            && self.close_brace.is_default()
     }
 }
 impl interface_definition::_T0 {
@@ -3884,6 +3915,22 @@ impl DefaultTest for interface_definition::_T0 {
     }
 }
 
+impl Default for library_definition::_T1 {
+    fn default() -> Self {
+        Self {
+            open_brace: Default::default(),
+            contract_body_elements: Default::default(),
+            close_brace: Default::default(),
+        }
+    }
+}
+impl DefaultTest for library_definition::_T1 {
+    fn is_default(&self) -> bool {
+        self.open_brace.is_default()
+            && self.contract_body_elements.is_default()
+            && self.close_brace.is_default()
+    }
+}
 impl library_definition::_T1 {
     pub fn from_parse(
         ((open_brace, contract_body_elements), close_brace): (
@@ -3899,22 +3946,6 @@ impl library_definition::_T1 {
             contract_body_elements,
             close_brace,
         }
-    }
-}
-impl Default for library_definition::_T1 {
-    fn default() -> Self {
-        Self {
-            open_brace: Default::default(),
-            contract_body_elements: Default::default(),
-            close_brace: Default::default(),
-        }
-    }
-}
-impl DefaultTest for library_definition::_T1 {
-    fn is_default(&self) -> bool {
-        self.open_brace.is_default()
-            && self.contract_body_elements.is_default()
-            && self.close_brace.is_default()
     }
 }
 impl library_definition::_T0 {

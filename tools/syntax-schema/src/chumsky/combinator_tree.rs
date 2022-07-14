@@ -353,7 +353,9 @@ impl CombinatorTreeNodeTrait for CombinatorTreeRef {
                 close,
             } => {
                 let name = name.clone().self_or_numbered(index);
-                ct_delimited_by(name, open.clone(), expr.clone(), close.clone())
+                let e = expr.1.with_unambiguous_named_types(index);
+                let n = e.name().self_or_else(|| Name::from_string("body"));
+                ct_delimited_by(name, open.clone(), (n, e), close.clone())
             }
             CombinatorTree::Lookahead { expr, lookahead } => ct_lookahead(
                 expr.with_unambiguous_named_types(index),
@@ -361,32 +363,42 @@ impl CombinatorTreeNodeTrait for CombinatorTreeRef {
             ),
             CombinatorTree::Choice { name, choices } => {
                 let name = name.clone().self_or_numbered(index);
-                let choices = disambiguate_structure_names(
-                    choices
-                        .into_iter()
-                        .enumerate()
-                        .map(|(i, (n, e))| {
-                            let e = e.with_unambiguous_named_types(index);
-                            let n = n.clone().self_or_else(|| e.name()).self_or_positional(i);
-                            (n, e)
-                        })
-                        .collect(),
-                );
+                let choices = choices
+                    .into_iter()
+                    .enumerate()
+                    .map(|(i, (n, e))| {
+                        let e = e.with_unambiguous_named_types(index);
+                        let n = n.clone().self_or_else(|| e.name()).self_or_positional(i);
+                        (n, e)
+                    })
+                    .collect::<Vec<_>>();
+                let names =
+                    disambiguate_structure_names(choices.iter().map(|(n, _)| n.clone()).collect());
+                let choices = choices
+                    .into_iter()
+                    .zip(names.into_iter())
+                    .map(|((_, e), n)| (n, e))
+                    .collect();
                 ct_choice(name, choices)
             }
             CombinatorTree::Sequence { name, elements } => {
                 let name = name.clone().self_or_numbered(index);
-                let elements = disambiguate_structure_names(
-                    elements
-                        .into_iter()
-                        .enumerate()
-                        .map(|(i, (n, e))| {
-                            let e = e.with_unambiguous_named_types(index);
-                            let n = n.clone().self_or_else(|| e.name()).self_or_positional(i);
-                            (n, e)
-                        })
-                        .collect(),
-                );
+                let elements = elements
+                    .into_iter()
+                    .enumerate()
+                    .map(|(i, (n, e))| {
+                        let e = e.with_unambiguous_named_types(index);
+                        let n = n.clone().self_or_else(|| e.name()).self_or_positional(i);
+                        (n, e)
+                    })
+                    .collect::<Vec<_>>();
+                let names =
+                    disambiguate_structure_names(elements.iter().map(|(n, _)| n.clone()).collect());
+                let elements = elements
+                    .into_iter()
+                    .zip(names.into_iter())
+                    .map(|((_, e), n)| (n, e))
+                    .collect();
                 ct_sequence(name, elements)
             }
             CombinatorTree::Optional { expr } => {
@@ -476,9 +488,7 @@ impl CombinatorTree {
         match self {
             CombinatorTree::Difference { minuend, .. } => minuend.has_default(),
             CombinatorTree::Lookahead { expr, .. } => expr.has_default(),
-            CombinatorTree::DelimitedBy {
-                open, expr, close, ..
-            } => expr.1.has_default(),
+            CombinatorTree::DelimitedBy { expr, .. } => expr.1.has_default(),
             CombinatorTree::Sequence { elements, .. } => {
                 elements.iter().all(|(_, e)| e.has_default())
             }
@@ -537,84 +547,96 @@ impl CombinatorTree {
                 expr,
                 close,
             } => {
-                let mut result: GeneratedCode = Default::default();
-
                 let module_name = tree.slang_name().to_module_name_ident();
                 let type_name = name.to_type_name_ident();
 
-                let mut field_annotations = vec![];
-                let mut field_names = vec![];
-                let mut field_types = vec![];
-                let mut parser_chain = None;
+                pub fn generated_code_for_string(
+                    str: &str,
+                    with_trivia: bool,
+                ) -> (TokenStream, TokenStream, Name) {
+                    let size = str.chars().count();
+                    let parser = quote!(just(#str).map(|_| FixedSizeTerminal::<#size>()) );
 
-                let elements = [open, expr, close];
-
-                for (name, element) in elements {
-                    result.merge(element.to_generated_code(tree));
-
-                    field_annotations.push(if element.has_default() {
-                        quote!( #[serde(default, skip_serializing_if="DefaultTest::is_default")] )
+                    if with_trivia {
+                        (
+                            quote!(
+                                leading_trivia_parser.clone().then(#parser).then(trailing_trivia_parser.clone())
+                                .map(|((leading, content), trailing)| FixedSizeTerminalWithTrivia { leading, content, trailing })
+                            ),
+                            quote!(FixedSizeTerminalWithTrivia<#size>),
+                            Name::from_terminal(str),
+                        )
                     } else {
-                        quote!()
-                    });
-
-                    let name = name.to_field_name_ident();
-                    field_names.push(quote!( #name ));
-
-                    let parser_type = result.parser_type.clone();
-                    field_types.push(quote!( #parser_type ));
-
-                    let next_parser = result.parser.clone();
-                    parser_chain = parser_chain
-                        .and_then(|p| Some(quote!( #p.then(#next_parser) )))
-                        .or_else(|| Some(next_parser))
+                        (
+                            parser,
+                            quote!(FixedSizeTerminal<#size>),
+                            Name::from_terminal(str),
+                        )
+                    }
                 }
 
-                result.tree_interface.push(quote!(
-                    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-                    pub struct #type_name {
-                        #(
-                            #field_annotations
-                            pub #field_names: #field_types
-                        ),*
-                    }
-                ));
+                let (open_parser, open_type, open_name) =
+                    generated_code_for_string(open, !tree.production().is_token());
+                let (close_parser, close_type, close_name) =
+                    generated_code_for_string(close, !tree.production().is_token());
 
-                let folded_field_names = field_names
-                    .clone()
-                    .into_iter()
-                    .reduce(|accum, next| quote!( (#accum, #next) ));
-                let folded_field_types = field_types
-                    .clone()
-                    .into_iter()
-                    .reduce(|accum, next| quote!( (#accum, #next) ));
-                result.tree_implementation.push(quote!(
-                    impl #module_name::#type_name {
-                        pub fn from_parse(#folded_field_names: #folded_field_types) -> Self {
-                            Self { #(#field_names),* }
-                        }
-                    }
-                ));
+                let new_names =
+                    disambiguate_structure_names(vec![open_name, expr.0.clone(), close_name]);
+                let mut new_names = new_names.iter().map(Name::to_field_name_ident);
+                let open_name = new_names.next().unwrap();
+                let expr_name = new_names.next().unwrap();
+                let close_name = new_names.next().unwrap();
 
-                if self.has_default() {
+                let mut result = expr.1.to_generated_code(tree);
+                let expr_annotation = if self.has_default() {
                     result.tree_implementation.push(quote!(
                         impl Default for #module_name::#type_name {
                             fn default() -> Self {
                                 Self {
-                                    #(#field_names: Default::default()),*
+                                    #open_name: Default::default(),
+                                    #expr_name: Default::default(),
+                                    #close_name: Default::default(),
                                 }
                             }
                         }
                         impl DefaultTest for #module_name::#type_name {
                             fn is_default(&self) -> bool {
-                                #(self. #field_names .is_default())&&*
+                                self.#open_name.is_default()
+                                && self.#expr_name.is_default()
+                                && self.#close_name.is_default()
                             }
                         }
                     ));
-                }
 
-                let parser = parser_chain.unwrap();
-                result.parser = quote!( #parser.map(|v| #module_name::#type_name::from_parse(v)) );
+                    quote!( #[serde(default, skip_serializing_if="DefaultTest::is_default")] )
+                } else {
+                    quote!()
+                };
+
+                let expr_type = result.parser_type;
+
+                result.tree_interface.push(quote!(
+                    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+                    pub struct #type_name {
+                        #[serde(default, skip_serializing_if="DefaultTest::is_default")]
+                        pub #open_name: #open_type,
+                        #expr_annotation
+                        pub #expr_name: #expr_type,
+                        #[serde(default, skip_serializing_if="DefaultTest::is_default")]
+                        pub #close_name: #close_type,
+                    }
+                ));
+
+                result.tree_implementation.push(quote!(
+                    impl #module_name::#type_name {
+                        pub fn from_parse(((#open_name, #expr_name), #close_name): ((#open_type, #expr_type), #close_type)) -> Self {
+                            Self { #open_name, #expr_name, #close_name }
+                        }
+                    }
+                ));
+
+                let expr_parser = result.parser;
+                result.parser = quote!( #open_parser.then(#expr_parser).then(#close_parser).map(|v| #module_name::#type_name::from_parse(v)) );
                 result.parser_type = quote!( #module_name::#type_name );
 
                 result
@@ -1480,11 +1502,9 @@ impl Expression {
 
 // TODO: this should remove disambiguation suffixes *before* checking
 // for repeated identifiers.
-fn disambiguate_structure_names(
-    mut members: Vec<(Name, CombinatorTreeRef)>,
-) -> Vec<(Name, CombinatorTreeRef)> {
+fn disambiguate_structure_names(mut members: Vec<Name>) -> Vec<Name> {
     // Find all the duplicated names, with the count of their occurance
-    let mut names = MultiSet::<Name>::from_iter(members.iter().map(|(n, _)| n.clone()));
+    let mut names = MultiSet::<Name>::from_iter(members.iter().cloned());
     names.retain(|_, count| count > 1);
     if names.is_empty() {
         members
@@ -1493,13 +1513,13 @@ fn disambiguate_structure_names(
         members.reverse();
         members = members
             .into_iter()
-            .map(|(n, t)| {
+            .map(|n| {
                 if let Some(count) = names.get(&n) {
                     // Remove the element to decrement the occurance occount
                     names.remove(&n);
-                    (n.with_disambiguating_suffix(count - 1), t)
+                    n.with_disambiguating_suffix(count - 1)
                 } else {
-                    (n, t)
+                    n
                 }
             })
             .collect::<Vec<_>>();
