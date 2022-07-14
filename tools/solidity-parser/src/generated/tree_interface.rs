@@ -2282,7 +2282,7 @@ pub mod index_access_expression {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
-        pub left: Expression,
+        pub left_operand: Expression,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: index_access_expression::Operator,
     }
@@ -2332,7 +2332,7 @@ pub mod member_access_expression {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
-        pub left: Expression,
+        pub left_operand: Expression,
         pub operator: member_access_expression::Operator,
     }
 }
@@ -2360,7 +2360,7 @@ pub mod function_call_options_expression {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
-        pub left: Expression,
+        pub left_operand: Expression,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: function_call_options_expression::Operator,
     }
@@ -2373,7 +2373,7 @@ pub mod function_call_expression {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
-        pub left: Expression,
+        pub left_operand: Expression,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: ArgumentList,
     }
@@ -2388,7 +2388,7 @@ pub mod unary_prefix_expression {
     pub struct E {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: VariableSizeTerminalWithTrivia,
-        pub right: Expression,
+        pub right_operand: Expression,
     }
 }
 
@@ -2399,7 +2399,7 @@ pub mod unary_suffix_expression {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
-        pub left: Expression,
+        pub left_operand: Expression,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: FixedSizeTerminalWithTrivia<2usize>,
     }
@@ -2412,10 +2412,10 @@ pub mod exponentiation_expression {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
-        pub left: Expression,
+        pub left_operand: Expression,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: FixedSizeTerminalWithTrivia<2usize>,
-        pub right: Expression,
+        pub right_operand: Expression,
     }
 }
 
@@ -2426,10 +2426,10 @@ pub mod mul_div_mod_expression {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
-        pub left: Expression,
+        pub left_operand: Expression,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: FixedSizeTerminalWithTrivia<1>,
-        pub right: Expression,
+        pub right_operand: Expression,
     }
 }
 
@@ -2440,10 +2440,10 @@ pub mod add_sub_expression {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
-        pub left: Expression,
+        pub left_operand: Expression,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: FixedSizeTerminalWithTrivia<1>,
-        pub right: Expression,
+        pub right_operand: Expression,
     }
 }
 
@@ -2454,10 +2454,10 @@ pub mod shift_expression {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
-        pub left: Expression,
+        pub left_operand: Expression,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: VariableSizeTerminalWithTrivia,
-        pub right: Expression,
+        pub right_operand: Expression,
     }
 }
 
@@ -2468,10 +2468,10 @@ pub mod bit_and_expression {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
-        pub left: Expression,
+        pub left_operand: Expression,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: FixedSizeTerminalWithTrivia<1>,
-        pub right: Expression,
+        pub right_operand: Expression,
     }
 }
 
@@ -2482,10 +2482,10 @@ pub mod bit_x_or_expression {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
-        pub left: Expression,
+        pub left_operand: Expression,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: FixedSizeTerminalWithTrivia<1>,
-        pub right: Expression,
+        pub right_operand: Expression,
     }
 }
 
@@ -2496,10 +2496,10 @@ pub mod bit_or_expression {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
-        pub left: Expression,
+        pub left_operand: Expression,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: FixedSizeTerminalWithTrivia<1>,
-        pub right: Expression,
+        pub right_operand: Expression,
     }
 }
 
@@ -2510,10 +2510,10 @@ pub mod order_comparison_expression {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
-        pub left: Expression,
+        pub left_operand: Expression,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: VariableSizeTerminalWithTrivia,
-        pub right: Expression,
+        pub right_operand: Expression,
     }
 }
 
@@ -2524,10 +2524,10 @@ pub mod equality_comparison_expression {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
-        pub left: Expression,
+        pub left_operand: Expression,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: FixedSizeTerminalWithTrivia<2usize>,
-        pub right: Expression,
+        pub right_operand: Expression,
     }
 }
 
@@ -2538,10 +2538,10 @@ pub mod and_expression {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
-        pub left: Expression,
+        pub left_operand: Expression,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: FixedSizeTerminalWithTrivia<2usize>,
-        pub right: Expression,
+        pub right_operand: Expression,
     }
 }
 
@@ -2552,10 +2552,10 @@ pub mod or_expression {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
-        pub left: Expression,
+        pub left_operand: Expression,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: FixedSizeTerminalWithTrivia<2usize>,
-        pub right: Expression,
+        pub right_operand: Expression,
     }
 }
 
@@ -2575,7 +2575,7 @@ pub mod conditional_expression {
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
-        pub left: Expression,
+        pub left_operand: Expression,
         pub operator: conditional_expression::_T1,
     }
 }
@@ -2587,10 +2587,10 @@ pub mod assignment_expression {
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
-        pub left: Expression,
+        pub left_operand: Expression,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub operator: VariableSizeTerminalWithTrivia,
-        pub right: Expression,
+        pub right_operand: Expression,
     }
 }
 

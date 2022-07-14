@@ -90,12 +90,6 @@ pub enum OperatorModel {
     UnarySuffix,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum Direction {
-    Left,
-    Right,
-}
-
 pub fn ct_difference(
     minuend: CombinatorTreeRef,
     subtrahend: CombinatorTreeRef,
@@ -819,29 +813,71 @@ impl CombinatorTree {
                         result.tree_interface.push(quote!(
                             #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
                             pub struct E {
-                                pub left: #parent_type_name,
+                                pub left_operand: #parent_type_name,
                                 #annotation
                                 pub operator: #operator_type,
-                                pub right: #parent_type_name,
+                                pub right_operand: #parent_type_name,
                             }
                         ));
 
                         result.parser = quote!(
                            #next_sibling_parser_name.clone()
                             .then(#operator_parser.then(#next_sibling_parser_name.clone()).repeated())
-                            .map(|(next, pairs)|
-                                if pairs.is_empty() {
-                                    next
+                            .map(|(first_operand, operator_operand_pairs)|
+                                if operator_operand_pairs.is_empty() {
+                                    first_operand
                                 } else {
-                                    pairs.into_iter().fold(next, |left, (operator, right)|
-                                        Box::new(#parent_module_name::#parent_type_name::#tag_name(#module_name::E { left, operator, right }))
+                                    // a [ (X b) (Y c) (Z d) ] => { { { a X b } Y c } Z d }
+                                    operator_operand_pairs.into_iter().fold(first_operand, |left_operand, (operator, right_operand)|
+                                        Box::new(#parent_module_name::#parent_type_name::#tag_name(#module_name::E { left_operand, operator, right_operand }))
                                     )
                                 }
                             )
                         );
                     }
 
-                    OperatorModel::BinaryRightAssociative => todo!(),
+                    OperatorModel::BinaryRightAssociative => {
+                        let next_sibling_parser_name = next_sibling_name
+                            .clone()
+                            .expect("Cannot have binary operator as last expression member")
+                            .to_parser_name_ident();
+                        let annotation = if operator.has_default() {
+                            quote!( #[serde(default, skip_serializing_if="DefaultTest::is_default")] )
+                        } else {
+                            quote!()
+                        };
+                        result.tree_interface.push(quote!(
+                            #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+                            pub struct E {
+                                pub left_operand: #parent_type_name,
+                                #annotation
+                                pub operator: #operator_type,
+                                pub right_operand: #parent_type_name,
+                            }
+                        ));
+
+                        result.parser = quote!(
+                           #next_sibling_parser_name.clone()
+                            .then(#operator_parser.then(#next_sibling_parser_name.clone()).repeated())
+                            .map(|(first_operand, operator_operand_pairs)|
+                                if operator_operand_pairs.is_empty() {
+                                    first_operand
+                                } else {
+                                    // a [ (X b) (Y c) (Z d) ] => [ (a X) (b Y) (c Z) ] d
+                                    let mut last_operand = first_operand;
+                                    let mut operand_operator_pairs = vec![];
+                                    for (operator, right_operand) in operator_operand_pairs.into_iter() {
+                                        let left_operand = std::mem::replace(&mut last_operand, right_operand);
+                                        operand_operator_pairs.push((left_operand, operator))
+                                    }
+                                    // [ (a X) (b Y) (c Z) ] d => { a X { b Y { c Z d } } }
+                                    operand_operator_pairs.into_iter().rfold(last_operand, |right_operand, (left_operand, operator)|
+                                        Box::new(#parent_module_name::#parent_type_name::#tag_name(#module_name::E { left_operand, operator, right_operand }))
+                                    )
+                                }
+                            )
+                        );
+                    }
 
                     OperatorModel::UnaryPrefix => {
                         let next_sibling_parser_name = next_sibling_name
@@ -858,7 +894,7 @@ impl CombinatorTree {
                             pub struct E {
                                 #annotation
                                 pub operator: #operator_type,
-                                pub right: #parent_type_name,
+                                pub right_operand: #parent_type_name,
                             }
                         ));
 
@@ -870,8 +906,8 @@ impl CombinatorTree {
                                     operand
                                 } else {
                                     operators.reverse();
-                                    operators.into_iter().fold(operand, |right, operator|
-                                        Box::new(#parent_module_name::#parent_type_name::#tag_name(#module_name::E { operator, right }))
+                                    operators.into_iter().fold(operand, |right_operand, operator|
+                                        Box::new(#parent_module_name::#parent_type_name::#tag_name(#module_name::E { operator, right_operand }))
                                     )
                                 }
                             )
@@ -891,7 +927,7 @@ impl CombinatorTree {
                         result.tree_interface.push(quote!(
                             #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
                             pub struct E {
-                                pub left: #parent_type_name,
+                                pub left_operand: #parent_type_name,
                                 #annotation
                                 pub operator: #operator_type,
                             }
@@ -904,8 +940,8 @@ impl CombinatorTree {
                                 if operators.is_empty() {
                                     operand
                                 } else {
-                                    operators.into_iter().fold(operand, |left, operator|
-                                        Box::new(#parent_module_name::#parent_type_name::#tag_name(#module_name::E { left, operator }))
+                                    operators.into_iter().fold(operand, |left_operand, operator|
+                                        Box::new(#parent_module_name::#parent_type_name::#tag_name(#module_name::E { left_operand, operator }))
                                     )
                                 }
                             )
@@ -1097,8 +1133,13 @@ impl ProductionRefTrait for ProductionRef {
                         (true, false) => (&elements[1..], OperatorModel::UnarySuffix),
                         (true, true) => (
                             &elements[1..elements.len() - 1],
-                            // TODO: pick up pattern for left/right associative
-                            OperatorModel::BinaryLeftAssociative,
+                            if choice.expression_to_generate().config.associativity
+                                == Some(ExpressionAssociativity::Right)
+                            {
+                                OperatorModel::BinaryRightAssociative
+                            } else {
+                                OperatorModel::BinaryLeftAssociative
+                            },
                         ),
                     };
                     let operator = if operator.len() == 1 {

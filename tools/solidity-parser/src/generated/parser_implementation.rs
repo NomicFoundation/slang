@@ -4728,11 +4728,16 @@ impl Parsers {
                 if operators.is_empty() {
                     operand
                 } else {
-                    operators.into_iter().fold(operand, |left, operator| {
-                        Box::new(expression::Expression::IndexAccessExpression(
-                            index_access_expression::E { left, operator },
-                        ))
-                    })
+                    operators
+                        .into_iter()
+                        .fold(operand, |left_operand, operator| {
+                            Box::new(expression::Expression::IndexAccessExpression(
+                                index_access_expression::E {
+                                    left_operand,
+                                    operator,
+                                },
+                            ))
+                        })
                 }
             })
             .boxed();
@@ -4847,11 +4852,16 @@ impl Parsers {
                 if operators.is_empty() {
                     operand
                 } else {
-                    operators.into_iter().fold(operand, |left, operator| {
-                        Box::new(expression::Expression::MemberAccessExpression(
-                            member_access_expression::E { left, operator },
-                        ))
-                    })
+                    operators
+                        .into_iter()
+                        .fold(operand, |left_operand, operator| {
+                            Box::new(expression::Expression::MemberAccessExpression(
+                                member_access_expression::E {
+                                    left_operand,
+                                    operator,
+                                },
+                            ))
+                        })
                 }
             })
             .boxed();
@@ -4917,11 +4927,16 @@ impl Parsers {
                 if operators.is_empty() {
                     operand
                 } else {
-                    operators.into_iter().fold(operand, |left, operator| {
-                        Box::new(expression::Expression::FunctionCallOptionsExpression(
-                            function_call_options_expression::E { left, operator },
-                        ))
-                    })
+                    operators
+                        .into_iter()
+                        .fold(operand, |left_operand, operator| {
+                            Box::new(expression::Expression::FunctionCallOptionsExpression(
+                                function_call_options_expression::E {
+                                    left_operand,
+                                    operator,
+                                },
+                            ))
+                        })
                 }
             })
             .boxed();
@@ -4934,11 +4949,16 @@ impl Parsers {
                 if operators.is_empty() {
                     operand
                 } else {
-                    operators.into_iter().fold(operand, |left, operator| {
-                        Box::new(expression::Expression::FunctionCallExpression(
-                            function_call_expression::E { left, operator },
-                        ))
-                    })
+                    operators
+                        .into_iter()
+                        .fold(operand, |left_operand, operator| {
+                            Box::new(expression::Expression::FunctionCallExpression(
+                                function_call_expression::E {
+                                    left_operand,
+                                    operator,
+                                },
+                            ))
+                        })
                 }
             })
             .boxed();
@@ -4971,11 +4991,16 @@ impl Parsers {
                     operand
                 } else {
                     operators.reverse();
-                    operators.into_iter().fold(operand, |right, operator| {
-                        Box::new(expression::Expression::UnaryPrefixExpression(
-                            unary_prefix_expression::E { operator, right },
-                        ))
-                    })
+                    operators
+                        .into_iter()
+                        .fold(operand, |right_operand, operator| {
+                            Box::new(expression::Expression::UnaryPrefixExpression(
+                                unary_prefix_expression::E {
+                                    operator,
+                                    right_operand,
+                                },
+                            ))
+                        })
                 }
             })
             .boxed();
@@ -5007,11 +5032,16 @@ impl Parsers {
                 if operators.is_empty() {
                     operand
                 } else {
-                    operators.into_iter().fold(operand, |left, operator| {
-                        Box::new(expression::Expression::UnarySuffixExpression(
-                            unary_suffix_expression::E { left, operator },
-                        ))
-                    })
+                    operators
+                        .into_iter()
+                        .fold(operand, |left_operand, operator| {
+                            Box::new(expression::Expression::UnarySuffixExpression(
+                                unary_suffix_expression::E {
+                                    left_operand,
+                                    operator,
+                                },
+                            ))
+                        })
                 }
             })
             .boxed();
@@ -5038,19 +5068,28 @@ impl Parsers {
                     .then(unary_suffix_expression_parser.clone())
                     .repeated(),
             )
-            .map(|(next, pairs)| {
-                if pairs.is_empty() {
-                    next
+            .map(|(first_operand, operator_operand_pairs)| {
+                if operator_operand_pairs.is_empty() {
+                    first_operand
                 } else {
-                    pairs.into_iter().fold(next, |left, (operator, right)| {
-                        Box::new(expression::Expression::ExponentiationExpression(
-                            exponentiation_expression::E {
-                                left,
-                                operator,
-                                right,
-                            },
-                        ))
-                    })
+                    let mut last_operand = first_operand;
+                    let mut operand_operator_pairs = vec![];
+                    for (operator, right_operand) in operator_operand_pairs.into_iter() {
+                        let left_operand = std::mem::replace(&mut last_operand, right_operand);
+                        operand_operator_pairs.push((left_operand, operator))
+                    }
+                    operand_operator_pairs.into_iter().rfold(
+                        last_operand,
+                        |right_operand, (left_operand, operator)| {
+                            Box::new(expression::Expression::ExponentiationExpression(
+                                exponentiation_expression::E {
+                                    left_operand,
+                                    operator,
+                                    right_operand,
+                                },
+                            ))
+                        },
+                    )
                 }
             })
             .boxed();
@@ -5076,19 +5115,22 @@ impl Parsers {
                     .then(exponentiation_expression_parser.clone())
                     .repeated(),
             )
-            .map(|(next, pairs)| {
-                if pairs.is_empty() {
-                    next
+            .map(|(first_operand, operator_operand_pairs)| {
+                if operator_operand_pairs.is_empty() {
+                    first_operand
                 } else {
-                    pairs.into_iter().fold(next, |left, (operator, right)| {
-                        Box::new(expression::Expression::MulDivModExpression(
-                            mul_div_mod_expression::E {
-                                left,
-                                operator,
-                                right,
-                            },
-                        ))
-                    })
+                    operator_operand_pairs.into_iter().fold(
+                        first_operand,
+                        |left_operand, (operator, right_operand)| {
+                            Box::new(expression::Expression::MulDivModExpression(
+                                mul_div_mod_expression::E {
+                                    left_operand,
+                                    operator,
+                                    right_operand,
+                                },
+                            ))
+                        },
+                    )
                 }
             })
             .boxed();
@@ -5113,19 +5155,22 @@ impl Parsers {
                     .then(mul_div_mod_expression_parser.clone())
                     .repeated(),
             )
-            .map(|(next, pairs)| {
-                if pairs.is_empty() {
-                    next
+            .map(|(first_operand, operator_operand_pairs)| {
+                if operator_operand_pairs.is_empty() {
+                    first_operand
                 } else {
-                    pairs.into_iter().fold(next, |left, (operator, right)| {
-                        Box::new(expression::Expression::AddSubExpression(
-                            add_sub_expression::E {
-                                left,
-                                operator,
-                                right,
-                            },
-                        ))
-                    })
+                    operator_operand_pairs.into_iter().fold(
+                        first_operand,
+                        |left_operand, (operator, right_operand)| {
+                            Box::new(expression::Expression::AddSubExpression(
+                                add_sub_expression::E {
+                                    left_operand,
+                                    operator,
+                                    right_operand,
+                                },
+                            ))
+                        },
+                    )
                 }
             })
             .boxed();
@@ -5154,19 +5199,22 @@ impl Parsers {
                     .then(add_sub_expression_parser.clone())
                     .repeated(),
             )
-            .map(|(next, pairs)| {
-                if pairs.is_empty() {
-                    next
+            .map(|(first_operand, operator_operand_pairs)| {
+                if operator_operand_pairs.is_empty() {
+                    first_operand
                 } else {
-                    pairs.into_iter().fold(next, |left, (operator, right)| {
-                        Box::new(expression::Expression::ShiftExpression(
-                            shift_expression::E {
-                                left,
-                                operator,
-                                right,
-                            },
-                        ))
-                    })
+                    operator_operand_pairs.into_iter().fold(
+                        first_operand,
+                        |left_operand, (operator, right_operand)| {
+                            Box::new(expression::Expression::ShiftExpression(
+                                shift_expression::E {
+                                    left_operand,
+                                    operator,
+                                    right_operand,
+                                },
+                            ))
+                        },
+                    )
                 }
             })
             .boxed();
@@ -5189,19 +5237,22 @@ impl Parsers {
                     .then(shift_expression_parser.clone())
                     .repeated(),
             )
-            .map(|(next, pairs)| {
-                if pairs.is_empty() {
-                    next
+            .map(|(first_operand, operator_operand_pairs)| {
+                if operator_operand_pairs.is_empty() {
+                    first_operand
                 } else {
-                    pairs.into_iter().fold(next, |left, (operator, right)| {
-                        Box::new(expression::Expression::BitAndExpression(
-                            bit_and_expression::E {
-                                left,
-                                operator,
-                                right,
-                            },
-                        ))
-                    })
+                    operator_operand_pairs.into_iter().fold(
+                        first_operand,
+                        |left_operand, (operator, right_operand)| {
+                            Box::new(expression::Expression::BitAndExpression(
+                                bit_and_expression::E {
+                                    left_operand,
+                                    operator,
+                                    right_operand,
+                                },
+                            ))
+                        },
+                    )
                 }
             })
             .boxed();
@@ -5224,19 +5275,22 @@ impl Parsers {
                     .then(bit_and_expression_parser.clone())
                     .repeated(),
             )
-            .map(|(next, pairs)| {
-                if pairs.is_empty() {
-                    next
+            .map(|(first_operand, operator_operand_pairs)| {
+                if operator_operand_pairs.is_empty() {
+                    first_operand
                 } else {
-                    pairs.into_iter().fold(next, |left, (operator, right)| {
-                        Box::new(expression::Expression::BitXOrExpression(
-                            bit_x_or_expression::E {
-                                left,
-                                operator,
-                                right,
-                            },
-                        ))
-                    })
+                    operator_operand_pairs.into_iter().fold(
+                        first_operand,
+                        |left_operand, (operator, right_operand)| {
+                            Box::new(expression::Expression::BitXOrExpression(
+                                bit_x_or_expression::E {
+                                    left_operand,
+                                    operator,
+                                    right_operand,
+                                },
+                            ))
+                        },
+                    )
                 }
             })
             .boxed();
@@ -5259,19 +5313,22 @@ impl Parsers {
                     .then(bit_x_or_expression_parser.clone())
                     .repeated(),
             )
-            .map(|(next, pairs)| {
-                if pairs.is_empty() {
-                    next
+            .map(|(first_operand, operator_operand_pairs)| {
+                if operator_operand_pairs.is_empty() {
+                    first_operand
                 } else {
-                    pairs.into_iter().fold(next, |left, (operator, right)| {
-                        Box::new(expression::Expression::BitOrExpression(
-                            bit_or_expression::E {
-                                left,
-                                operator,
-                                right,
-                            },
-                        ))
-                    })
+                    operator_operand_pairs.into_iter().fold(
+                        first_operand,
+                        |left_operand, (operator, right_operand)| {
+                            Box::new(expression::Expression::BitOrExpression(
+                                bit_or_expression::E {
+                                    left_operand,
+                                    operator,
+                                    right_operand,
+                                },
+                            ))
+                        },
+                    )
                 }
             })
             .boxed();
@@ -5303,19 +5360,22 @@ impl Parsers {
                     .then(bit_or_expression_parser.clone())
                     .repeated(),
             )
-            .map(|(next, pairs)| {
-                if pairs.is_empty() {
-                    next
+            .map(|(first_operand, operator_operand_pairs)| {
+                if operator_operand_pairs.is_empty() {
+                    first_operand
                 } else {
-                    pairs.into_iter().fold(next, |left, (operator, right)| {
-                        Box::new(expression::Expression::OrderComparisonExpression(
-                            order_comparison_expression::E {
-                                left,
-                                operator,
-                                right,
-                            },
-                        ))
-                    })
+                    operator_operand_pairs.into_iter().fold(
+                        first_operand,
+                        |left_operand, (operator, right_operand)| {
+                            Box::new(expression::Expression::OrderComparisonExpression(
+                                order_comparison_expression::E {
+                                    left_operand,
+                                    operator,
+                                    right_operand,
+                                },
+                            ))
+                        },
+                    )
                 }
             })
             .boxed();
@@ -5344,19 +5404,22 @@ impl Parsers {
                     .then(order_comparison_expression_parser.clone())
                     .repeated(),
             )
-            .map(|(next, pairs)| {
-                if pairs.is_empty() {
-                    next
+            .map(|(first_operand, operator_operand_pairs)| {
+                if operator_operand_pairs.is_empty() {
+                    first_operand
                 } else {
-                    pairs.into_iter().fold(next, |left, (operator, right)| {
-                        Box::new(expression::Expression::EqualityComparisonExpression(
-                            equality_comparison_expression::E {
-                                left,
-                                operator,
-                                right,
-                            },
-                        ))
-                    })
+                    operator_operand_pairs.into_iter().fold(
+                        first_operand,
+                        |left_operand, (operator, right_operand)| {
+                            Box::new(expression::Expression::EqualityComparisonExpression(
+                                equality_comparison_expression::E {
+                                    left_operand,
+                                    operator,
+                                    right_operand,
+                                },
+                            ))
+                        },
+                    )
                 }
             })
             .boxed();
@@ -5383,17 +5446,20 @@ impl Parsers {
                     .then(equality_comparison_expression_parser.clone())
                     .repeated(),
             )
-            .map(|(next, pairs)| {
-                if pairs.is_empty() {
-                    next
+            .map(|(first_operand, operator_operand_pairs)| {
+                if operator_operand_pairs.is_empty() {
+                    first_operand
                 } else {
-                    pairs.into_iter().fold(next, |left, (operator, right)| {
-                        Box::new(expression::Expression::AndExpression(and_expression::E {
-                            left,
-                            operator,
-                            right,
-                        }))
-                    })
+                    operator_operand_pairs.into_iter().fold(
+                        first_operand,
+                        |left_operand, (operator, right_operand)| {
+                            Box::new(expression::Expression::AndExpression(and_expression::E {
+                                left_operand,
+                                operator,
+                                right_operand,
+                            }))
+                        },
+                    )
                 }
             })
             .boxed();
@@ -5420,17 +5486,20 @@ impl Parsers {
                     .then(and_expression_parser.clone())
                     .repeated(),
             )
-            .map(|(next, pairs)| {
-                if pairs.is_empty() {
-                    next
+            .map(|(first_operand, operator_operand_pairs)| {
+                if operator_operand_pairs.is_empty() {
+                    first_operand
                 } else {
-                    pairs.into_iter().fold(next, |left, (operator, right)| {
-                        Box::new(expression::Expression::OrExpression(or_expression::E {
-                            left,
-                            operator,
-                            right,
-                        }))
-                    })
+                    operator_operand_pairs.into_iter().fold(
+                        first_operand,
+                        |left_operand, (operator, right_operand)| {
+                            Box::new(expression::Expression::OrExpression(or_expression::E {
+                                left_operand,
+                                operator,
+                                right_operand,
+                            }))
+                        },
+                    )
                 }
             })
             .boxed();
@@ -5472,11 +5541,16 @@ impl Parsers {
                 if operators.is_empty() {
                     operand
                 } else {
-                    operators.into_iter().fold(operand, |left, operator| {
-                        Box::new(expression::Expression::ConditionalExpression(
-                            conditional_expression::E { left, operator },
-                        ))
-                    })
+                    operators
+                        .into_iter()
+                        .fold(operand, |left_operand, operator| {
+                            Box::new(expression::Expression::ConditionalExpression(
+                                conditional_expression::E {
+                                    left_operand,
+                                    operator,
+                                },
+                            ))
+                        })
                 }
             })
             .boxed();
@@ -5514,19 +5588,22 @@ impl Parsers {
                     .then(conditional_expression_parser.clone())
                     .repeated(),
             )
-            .map(|(next, pairs)| {
-                if pairs.is_empty() {
-                    next
+            .map(|(first_operand, operator_operand_pairs)| {
+                if operator_operand_pairs.is_empty() {
+                    first_operand
                 } else {
-                    pairs.into_iter().fold(next, |left, (operator, right)| {
-                        Box::new(expression::Expression::AssignmentExpression(
-                            assignment_expression::E {
-                                left,
-                                operator,
-                                right,
-                            },
-                        ))
-                    })
+                    operator_operand_pairs.into_iter().fold(
+                        first_operand,
+                        |left_operand, (operator, right_operand)| {
+                            Box::new(expression::Expression::AssignmentExpression(
+                                assignment_expression::E {
+                                    left_operand,
+                                    operator,
+                                    right_operand,
+                                },
+                            ))
+                        },
+                    )
                 }
             })
             .boxed();
