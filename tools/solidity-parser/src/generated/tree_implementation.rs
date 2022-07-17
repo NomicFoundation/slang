@@ -1122,7 +1122,7 @@ impl DefaultTest for version_pragma_specifier::_T0 {
     }
 }
 
-impl Default for yul_function_call::_T2 {
+impl Default for yul_function_call::_T1 {
     fn default() -> Self {
         Self {
             elements: Default::default(),
@@ -1130,27 +1130,45 @@ impl Default for yul_function_call::_T2 {
         }
     }
 }
-impl DefaultTest for yul_function_call::_T2 {
+impl DefaultTest for yul_function_call::_T1 {
     fn is_default(&self) -> bool {
         self.elements.is_default() && self.separators.is_default()
     }
 }
 impl yul_function_call::_T0 {
     pub fn from_parse(
-        (((_t1, open_paren_char), yul_expressions), close_paren_char): (
+        (((yul_identifier, open_paren_char), yul_expressions), close_paren_char): (
             (
-                (Box<yul_function_call::_T1>, FixedSizeTerminalWithTrivia<1>),
-                Option<yul_function_call::_T2>,
+                (yul_identifier::WithTrivia, FixedSizeTerminalWithTrivia<1>),
+                Option<yul_function_call::_T1>,
             ),
             FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
-            _t1,
+            yul_identifier,
             open_paren_char,
             yul_expressions,
             close_paren_char,
         }
+    }
+}
+impl Default for yul_function_call::_T0 {
+    fn default() -> Self {
+        Self {
+            yul_identifier: Default::default(),
+            open_paren_char: Default::default(),
+            yul_expressions: Default::default(),
+            close_paren_char: Default::default(),
+        }
+    }
+}
+impl DefaultTest for yul_function_call::_T0 {
+    fn is_default(&self) -> bool {
+        self.yul_identifier.is_default()
+            && self.open_paren_char.is_default()
+            && self.yul_expressions.is_default()
+            && self.close_paren_char.is_default()
     }
 }
 
@@ -1273,34 +1291,17 @@ impl DefaultTest for yul_function_definition::_T0 {
     }
 }
 
-impl yul_path::_T2 {
-    pub fn from_parse(
-        (period_char, _t3): (FixedSizeTerminalWithTrivia<1>, Box<yul_path::_T3>),
-    ) -> Self {
-        Self { period_char, _t3 }
-    }
-}
-impl yul_path::_T0 {
-    pub fn from_parse(
-        (yul_identifier, _t2s): (yul_identifier::WithTrivia, Vec<yul_path::_T2>),
-    ) -> Self {
-        Self {
-            yul_identifier,
-            _t2s,
-        }
-    }
-}
-impl Default for yul_path::_T0 {
+impl Default for yul_identifier_path::_T0 {
     fn default() -> Self {
         Self {
-            yul_identifier: Default::default(),
-            _t2s: Default::default(),
+            elements: Default::default(),
+            separators: Default::default(),
         }
     }
 }
-impl DefaultTest for yul_path::_T0 {
+impl DefaultTest for yul_identifier_path::_T0 {
     fn is_default(&self) -> bool {
-        self.yul_identifier.is_default() && self._t2s.is_default()
+        self.elements.is_default() && self.separators.is_default()
     }
 }
 
@@ -1348,17 +1349,17 @@ impl DefaultTest for assembly_flags::_T0 {
     }
 }
 
+impl DefaultTest for identifier::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
+    }
+}
+
 impl numeric_literal::_T0 {
     pub fn from_parse(
         (_t1, _1): (Box<numeric_literal::_T1>, Option<VariableSizeTerminal>),
     ) -> Self {
         Self { _t1, _1 }
-    }
-}
-
-impl DefaultTest for identifier::WithTrivia {
-    fn is_default(&self) -> bool {
-        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
     }
 }
 
@@ -1577,60 +1578,6 @@ impl Default for selected_import::_T0 {
 impl DefaultTest for selected_import::_T0 {
     fn is_default(&self) -> bool {
         self.identifier.is_default() && self._t1.is_default()
-    }
-}
-
-impl simple_import_directive::_T2 {
-    pub fn from_parse(
-        (r#as, identifier): (FixedSizeTerminalWithTrivia<2usize>, identifier::WithTrivia),
-    ) -> Self {
-        Self { r#as, identifier }
-    }
-}
-impl Default for simple_import_directive::_T2 {
-    fn default() -> Self {
-        Self {
-            r#as: Default::default(),
-            identifier: Default::default(),
-        }
-    }
-}
-impl DefaultTest for simple_import_directive::_T2 {
-    fn is_default(&self) -> bool {
-        self.r#as.is_default() && self.identifier.is_default()
-    }
-}
-impl simple_import_directive::_T0 {
-    pub fn from_parse(
-        (import_path, _t2s): (ImportPath, Vec<simple_import_directive::_T2>),
-    ) -> Self {
-        Self { import_path, _t2s }
-    }
-}
-
-impl star_import_directive::_T0 {
-    pub fn from_parse(
-        ((((star_char, r#as), identifier), from), import_path): (
-            (
-                (
-                    (
-                        FixedSizeTerminalWithTrivia<1>,
-                        FixedSizeTerminalWithTrivia<2usize>,
-                    ),
-                    identifier::WithTrivia,
-                ),
-                FixedSizeTerminalWithTrivia<4usize>,
-            ),
-            ImportPath,
-        ),
-    ) -> Self {
-        Self {
-            star_char,
-            r#as,
-            identifier,
-            from,
-            import_path,
-        }
     }
 }
 
@@ -1902,6 +1849,223 @@ impl selecting_import_directive::_T0 {
     }
 }
 
+impl simple_import_directive::_T2 {
+    pub fn from_parse(
+        (r#as, identifier): (FixedSizeTerminalWithTrivia<2usize>, identifier::WithTrivia),
+    ) -> Self {
+        Self { r#as, identifier }
+    }
+}
+impl Default for simple_import_directive::_T2 {
+    fn default() -> Self {
+        Self {
+            r#as: Default::default(),
+            identifier: Default::default(),
+        }
+    }
+}
+impl DefaultTest for simple_import_directive::_T2 {
+    fn is_default(&self) -> bool {
+        self.r#as.is_default() && self.identifier.is_default()
+    }
+}
+impl simple_import_directive::_T0 {
+    pub fn from_parse(
+        (import_path, _t2s): (ImportPath, Vec<simple_import_directive::_T2>),
+    ) -> Self {
+        Self { import_path, _t2s }
+    }
+}
+
+impl star_import_directive::_T0 {
+    pub fn from_parse(
+        ((((star_char, r#as), identifier), from), import_path): (
+            (
+                (
+                    (
+                        FixedSizeTerminalWithTrivia<1>,
+                        FixedSizeTerminalWithTrivia<2usize>,
+                    ),
+                    identifier::WithTrivia,
+                ),
+                FixedSizeTerminalWithTrivia<4usize>,
+            ),
+            ImportPath,
+        ),
+    ) -> Self {
+        Self {
+            star_char,
+            r#as,
+            identifier,
+            from,
+            import_path,
+        }
+    }
+}
+
+impl argument_list::_T0 {
+    pub fn from_parse(
+        ((open_paren_char, _t1), close_paren_char): (
+            (
+                FixedSizeTerminalWithTrivia<1>,
+                Option<Box<argument_list::_T1>>,
+            ),
+            FixedSizeTerminalWithTrivia<1>,
+        ),
+    ) -> Self {
+        Self {
+            open_paren_char,
+            _t1,
+            close_paren_char,
+        }
+    }
+}
+impl Default for argument_list::_T0 {
+    fn default() -> Self {
+        Self {
+            open_paren_char: Default::default(),
+            _t1: Default::default(),
+            close_paren_char: Default::default(),
+        }
+    }
+}
+impl DefaultTest for argument_list::_T0 {
+    fn is_default(&self) -> bool {
+        self.open_paren_char.is_default()
+            && self._t1.is_default()
+            && self.close_paren_char.is_default()
+    }
+}
+
+impl catch_clause::_T1 {
+    pub fn from_parse(
+        (identifier, parameter_list): (Option<identifier::WithTrivia>, ParameterList),
+    ) -> Self {
+        Self {
+            identifier,
+            parameter_list,
+        }
+    }
+}
+impl Default for catch_clause::_T1 {
+    fn default() -> Self {
+        Self {
+            identifier: Default::default(),
+            parameter_list: Default::default(),
+        }
+    }
+}
+impl DefaultTest for catch_clause::_T1 {
+    fn is_default(&self) -> bool {
+        self.identifier.is_default() && self.parameter_list.is_default()
+    }
+}
+impl catch_clause::_T0 {
+    pub fn from_parse(
+        ((catch, _t1), block): (
+            (
+                FixedSizeTerminalWithTrivia<5usize>,
+                Option<catch_clause::_T1>,
+            ),
+            Block,
+        ),
+    ) -> Self {
+        Self { catch, _t1, block }
+    }
+}
+impl Default for catch_clause::_T0 {
+    fn default() -> Self {
+        Self {
+            catch: Default::default(),
+            _t1: Default::default(),
+            block: Default::default(),
+        }
+    }
+}
+impl DefaultTest for catch_clause::_T0 {
+    fn is_default(&self) -> bool {
+        self.catch.is_default() && self._t1.is_default() && self.block.is_default()
+    }
+}
+
+impl function_type::_T2 {
+    pub fn from_parse(
+        (returns, parameter_list): (FixedSizeTerminalWithTrivia<7usize>, ParameterList),
+    ) -> Self {
+        Self {
+            returns,
+            parameter_list,
+        }
+    }
+}
+impl Default for function_type::_T2 {
+    fn default() -> Self {
+        Self {
+            returns: Default::default(),
+            parameter_list: Default::default(),
+        }
+    }
+}
+impl DefaultTest for function_type::_T2 {
+    fn is_default(&self) -> bool {
+        self.returns.is_default() && self.parameter_list.is_default()
+    }
+}
+impl function_type::_T0 {
+    pub fn from_parse(
+        (((function, parameter_list), _2), _t2): (
+            (
+                (FixedSizeTerminalWithTrivia<8usize>, ParameterList),
+                Vec<VariableSizeTerminalWithTrivia>,
+            ),
+            Option<function_type::_T2>,
+        ),
+    ) -> Self {
+        Self {
+            function,
+            parameter_list,
+            _2,
+            _t2,
+        }
+    }
+}
+impl Default for function_type::_T0 {
+    fn default() -> Self {
+        Self {
+            function: Default::default(),
+            parameter_list: Default::default(),
+            _2: Default::default(),
+            _t2: Default::default(),
+        }
+    }
+}
+impl DefaultTest for function_type::_T0 {
+    fn is_default(&self) -> bool {
+        self.function.is_default()
+            && self.parameter_list.is_default()
+            && self._2.is_default()
+            && self._t2.is_default()
+    }
+}
+
+impl import_directive::_T0 {
+    pub fn from_parse(
+        ((import, _t1), semicolon_char): (
+            (
+                FixedSizeTerminalWithTrivia<6usize>,
+                Box<import_directive::_T1>,
+            ),
+            FixedSizeTerminalWithTrivia<1>,
+        ),
+    ) -> Self {
+        Self {
+            import,
+            _t1,
+            semicolon_char,
+        }
+    }
+}
+
 impl yul_assignment::_T2 {
     pub fn from_parse(
         (colon_equal, yul_expression): (FixedSizeTerminalWithTrivia<2usize>, YulExpression),
@@ -1913,10 +2077,12 @@ impl yul_assignment::_T2 {
     }
 }
 impl yul_assignment::_T5 {
-    pub fn from_parse((comma_char, yul_path): (FixedSizeTerminalWithTrivia<1>, YulPath)) -> Self {
+    pub fn from_parse(
+        (comma_char, yul_identifier_path): (FixedSizeTerminalWithTrivia<1>, YulIdentifierPath),
+    ) -> Self {
         Self {
             comma_char,
-            yul_path,
+            yul_identifier_path,
         }
     }
 }
@@ -1924,13 +2090,13 @@ impl Default for yul_assignment::_T5 {
     fn default() -> Self {
         Self {
             comma_char: Default::default(),
-            yul_path: Default::default(),
+            yul_identifier_path: Default::default(),
         }
     }
 }
 impl DefaultTest for yul_assignment::_T5 {
     fn is_default(&self) -> bool {
-        self.comma_char.is_default() && self.yul_path.is_default()
+        self.comma_char.is_default() && self.yul_identifier_path.is_default()
     }
 }
 impl yul_assignment::_T3 {
@@ -1950,9 +2116,30 @@ impl yul_assignment::_T3 {
         }
     }
 }
+impl Default for yul_assignment::_T3 {
+    fn default() -> Self {
+        Self {
+            _t5s: Default::default(),
+            colon_equal: Default::default(),
+            yul_function_call: Default::default(),
+        }
+    }
+}
+impl DefaultTest for yul_assignment::_T3 {
+    fn is_default(&self) -> bool {
+        self._t5s.is_default()
+            && self.colon_equal.is_default()
+            && self.yul_function_call.is_default()
+    }
+}
 impl yul_assignment::_T0 {
-    pub fn from_parse((yul_path, _t1): (YulPath, Box<yul_assignment::_T1>)) -> Self {
-        Self { yul_path, _t1 }
+    pub fn from_parse(
+        (yul_identifier_path, _t1): (YulIdentifierPath, Box<yul_assignment::_T1>),
+    ) -> Self {
+        Self {
+            yul_identifier_path,
+            _t1,
+        }
     }
 }
 
@@ -2129,6 +2316,19 @@ impl yul_variable_declaration::_T5 {
         }
     }
 }
+impl Default for yul_variable_declaration::_T5 {
+    fn default() -> Self {
+        Self {
+            colon_equal: Default::default(),
+            yul_function_call: Default::default(),
+        }
+    }
+}
+impl DefaultTest for yul_variable_declaration::_T5 {
+    fn is_default(&self) -> bool {
+        self.colon_equal.is_default() && self.yul_function_call.is_default()
+    }
+}
 impl yul_variable_declaration::_T3 {
     pub fn from_parse(
         (_t4, _t5): (
@@ -2181,169 +2381,6 @@ impl Default for yul_variable_declaration::_T0 {
 impl DefaultTest for yul_variable_declaration::_T0 {
     fn is_default(&self) -> bool {
         self.r#let.is_default() && self.yul_identifier.is_default() && self._t1.is_default()
-    }
-}
-
-impl argument_list::_T0 {
-    pub fn from_parse(
-        ((open_paren_char, _t1), close_paren_char): (
-            (
-                FixedSizeTerminalWithTrivia<1>,
-                Option<Box<argument_list::_T1>>,
-            ),
-            FixedSizeTerminalWithTrivia<1>,
-        ),
-    ) -> Self {
-        Self {
-            open_paren_char,
-            _t1,
-            close_paren_char,
-        }
-    }
-}
-impl Default for argument_list::_T0 {
-    fn default() -> Self {
-        Self {
-            open_paren_char: Default::default(),
-            _t1: Default::default(),
-            close_paren_char: Default::default(),
-        }
-    }
-}
-impl DefaultTest for argument_list::_T0 {
-    fn is_default(&self) -> bool {
-        self.open_paren_char.is_default()
-            && self._t1.is_default()
-            && self.close_paren_char.is_default()
-    }
-}
-
-impl catch_clause::_T1 {
-    pub fn from_parse(
-        (identifier, parameter_list): (Option<identifier::WithTrivia>, ParameterList),
-    ) -> Self {
-        Self {
-            identifier,
-            parameter_list,
-        }
-    }
-}
-impl Default for catch_clause::_T1 {
-    fn default() -> Self {
-        Self {
-            identifier: Default::default(),
-            parameter_list: Default::default(),
-        }
-    }
-}
-impl DefaultTest for catch_clause::_T1 {
-    fn is_default(&self) -> bool {
-        self.identifier.is_default() && self.parameter_list.is_default()
-    }
-}
-impl catch_clause::_T0 {
-    pub fn from_parse(
-        ((catch, _t1), block): (
-            (
-                FixedSizeTerminalWithTrivia<5usize>,
-                Option<catch_clause::_T1>,
-            ),
-            Block,
-        ),
-    ) -> Self {
-        Self { catch, _t1, block }
-    }
-}
-impl Default for catch_clause::_T0 {
-    fn default() -> Self {
-        Self {
-            catch: Default::default(),
-            _t1: Default::default(),
-            block: Default::default(),
-        }
-    }
-}
-impl DefaultTest for catch_clause::_T0 {
-    fn is_default(&self) -> bool {
-        self.catch.is_default() && self._t1.is_default() && self.block.is_default()
-    }
-}
-
-impl function_type::_T2 {
-    pub fn from_parse(
-        (returns, parameter_list): (FixedSizeTerminalWithTrivia<7usize>, ParameterList),
-    ) -> Self {
-        Self {
-            returns,
-            parameter_list,
-        }
-    }
-}
-impl Default for function_type::_T2 {
-    fn default() -> Self {
-        Self {
-            returns: Default::default(),
-            parameter_list: Default::default(),
-        }
-    }
-}
-impl DefaultTest for function_type::_T2 {
-    fn is_default(&self) -> bool {
-        self.returns.is_default() && self.parameter_list.is_default()
-    }
-}
-impl function_type::_T0 {
-    pub fn from_parse(
-        (((function, parameter_list), _2), _t2): (
-            (
-                (FixedSizeTerminalWithTrivia<8usize>, ParameterList),
-                Vec<VariableSizeTerminalWithTrivia>,
-            ),
-            Option<function_type::_T2>,
-        ),
-    ) -> Self {
-        Self {
-            function,
-            parameter_list,
-            _2,
-            _t2,
-        }
-    }
-}
-impl Default for function_type::_T0 {
-    fn default() -> Self {
-        Self {
-            function: Default::default(),
-            parameter_list: Default::default(),
-            _2: Default::default(),
-            _t2: Default::default(),
-        }
-    }
-}
-impl DefaultTest for function_type::_T0 {
-    fn is_default(&self) -> bool {
-        self.function.is_default()
-            && self.parameter_list.is_default()
-            && self._2.is_default()
-            && self._t2.is_default()
-    }
-}
-
-impl import_directive::_T0 {
-    pub fn from_parse(
-        ((import, _t1), semicolon_char): (
-            (
-                FixedSizeTerminalWithTrivia<6usize>,
-                Box<import_directive::_T1>,
-            ),
-            FixedSizeTerminalWithTrivia<1>,
-        ),
-    ) -> Self {
-        Self {
-            import,
-            _t1,
-            semicolon_char,
-        }
     }
 }
 
@@ -2492,77 +2529,6 @@ impl type_name::_T0 {
             _t3s,
             elementary_type,
         }
-    }
-}
-
-impl yul_block::_T0 {
-    pub fn from_parse(
-        ((open_brace_char, yul_statements), close_brace_char): (
-            (FixedSizeTerminalWithTrivia<1>, Vec<YulStatement>),
-            FixedSizeTerminalWithTrivia<1>,
-        ),
-    ) -> Self {
-        Self {
-            open_brace_char,
-            yul_statements,
-            close_brace_char,
-        }
-    }
-}
-impl Default for yul_block::_T0 {
-    fn default() -> Self {
-        Self {
-            open_brace_char: Default::default(),
-            yul_statements: Default::default(),
-            close_brace_char: Default::default(),
-        }
-    }
-}
-impl DefaultTest for yul_block::_T0 {
-    fn is_default(&self) -> bool {
-        self.open_brace_char.is_default()
-            && self.yul_statements.is_default()
-            && self.close_brace_char.is_default()
-    }
-}
-
-impl assembly_statement::_T0 {
-    pub fn from_parse(
-        (((assembly, double_quote_evmasm_double_quote), assembly_flags), yul_block): (
-            (
-                (
-                    FixedSizeTerminalWithTrivia<8usize>,
-                    Option<FixedSizeTerminalWithTrivia<8usize>>,
-                ),
-                Option<AssemblyFlags>,
-            ),
-            YulBlock,
-        ),
-    ) -> Self {
-        Self {
-            assembly,
-            double_quote_evmasm_double_quote,
-            assembly_flags,
-            yul_block,
-        }
-    }
-}
-impl Default for assembly_statement::_T0 {
-    fn default() -> Self {
-        Self {
-            assembly: Default::default(),
-            double_quote_evmasm_double_quote: Default::default(),
-            assembly_flags: Default::default(),
-            yul_block: Default::default(),
-        }
-    }
-}
-impl DefaultTest for assembly_statement::_T0 {
-    fn is_default(&self) -> bool {
-        self.assembly.is_default()
-            && self.double_quote_evmasm_double_quote.is_default()
-            && self.assembly_flags.is_default()
-            && self.yul_block.is_default()
     }
 }
 
@@ -2737,6 +2703,77 @@ impl using_directive::_T0 {
             global,
             semicolon_char,
         }
+    }
+}
+
+impl yul_block::_T0 {
+    pub fn from_parse(
+        ((open_brace_char, yul_statements), close_brace_char): (
+            (FixedSizeTerminalWithTrivia<1>, Vec<YulStatement>),
+            FixedSizeTerminalWithTrivia<1>,
+        ),
+    ) -> Self {
+        Self {
+            open_brace_char,
+            yul_statements,
+            close_brace_char,
+        }
+    }
+}
+impl Default for yul_block::_T0 {
+    fn default() -> Self {
+        Self {
+            open_brace_char: Default::default(),
+            yul_statements: Default::default(),
+            close_brace_char: Default::default(),
+        }
+    }
+}
+impl DefaultTest for yul_block::_T0 {
+    fn is_default(&self) -> bool {
+        self.open_brace_char.is_default()
+            && self.yul_statements.is_default()
+            && self.close_brace_char.is_default()
+    }
+}
+
+impl assembly_statement::_T0 {
+    pub fn from_parse(
+        (((assembly, double_quote_evmasm_double_quote), assembly_flags), yul_block): (
+            (
+                (
+                    FixedSizeTerminalWithTrivia<8usize>,
+                    Option<FixedSizeTerminalWithTrivia<8usize>>,
+                ),
+                Option<AssemblyFlags>,
+            ),
+            YulBlock,
+        ),
+    ) -> Self {
+        Self {
+            assembly,
+            double_quote_evmasm_double_quote,
+            assembly_flags,
+            yul_block,
+        }
+    }
+}
+impl Default for assembly_statement::_T0 {
+    fn default() -> Self {
+        Self {
+            assembly: Default::default(),
+            double_quote_evmasm_double_quote: Default::default(),
+            assembly_flags: Default::default(),
+            yul_block: Default::default(),
+        }
+    }
+}
+impl DefaultTest for assembly_statement::_T0 {
+    fn is_default(&self) -> bool {
+        self.assembly.is_default()
+            && self.double_quote_evmasm_double_quote.is_default()
+            && self.assembly_flags.is_default()
+            && self.yul_block.is_default()
     }
 }
 
