@@ -116,7 +116,7 @@ ParameterList = '(' { ParameterDeclaration / ',' } ')' ;
 
 ParameterDeclaration = TypeName [ DataLocation ] [ «Identifier» ] ;
 
-OverrideSpecifier = 'override' [ '(' 1…1*{ IdentifierPath / ',' } ')' ] ;
+OverrideSpecifier = 'override' [ '(' 1…*{ IdentifierPath / ',' } ')' ] ;
 
 IdentifierPath = 1…*{ «Identifier» / '.' } ;
 
