@@ -91,66 +91,6 @@ impl DefaultTest for fixed_bytes_type::WithTrivia {
     }
 }
 
-impl fixed_type::_T1 {
-    pub fn from_parse(
-        ((((_0, _1), _2), _3), _4): (
-            (
-                (
-                    (FixedSizeTerminal<1>, VariableSizeTerminal),
-                    FixedSizeTerminal<1>,
-                ),
-                FixedSizeTerminal<1>,
-            ),
-            VariableSizeTerminal,
-        ),
-    ) -> Self {
-        Self { _0, _1, _2, _3, _4 }
-    }
-}
-impl Default for fixed_type::_T1 {
-    fn default() -> Self {
-        Self {
-            _0: Default::default(),
-            _1: Default::default(),
-            _2: Default::default(),
-            _3: Default::default(),
-            _4: Default::default(),
-        }
-    }
-}
-impl DefaultTest for fixed_type::_T1 {
-    fn is_default(&self) -> bool {
-        self._0.is_default()
-            && self._1.is_default()
-            && self._2.is_default()
-            && self._3.is_default()
-            && self._4.is_default()
-    }
-}
-impl fixed_type::_T0 {
-    pub fn from_parse((fixed, _t1): (FixedSizeTerminal<5usize>, Option<fixed_type::_T1>)) -> Self {
-        Self { fixed, _t1 }
-    }
-}
-impl Default for fixed_type::_T0 {
-    fn default() -> Self {
-        Self {
-            fixed: Default::default(),
-            _t1: Default::default(),
-        }
-    }
-}
-impl DefaultTest for fixed_type::_T0 {
-    fn is_default(&self) -> bool {
-        self.fixed.is_default() && self._t1.is_default()
-    }
-}
-impl DefaultTest for fixed_type::WithTrivia {
-    fn is_default(&self) -> bool {
-        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
-    }
-}
-
 impl hex_byte_escape::_T0 {
     pub fn from_parse((_0, _1): (FixedSizeTerminal<1>, VariableSizeTerminal)) -> Self {
         Self { _0, _1 }
@@ -322,6 +262,56 @@ impl DefaultTest for raw_identifier::_T0 {
     }
 }
 impl DefaultTest for raw_identifier::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
+    }
+}
+
+impl signed_fixed_type::_T1 {
+    pub fn from_parse(
+        ((_0, _1), _2): (
+            (VariableSizeTerminal, FixedSizeTerminal<1>),
+            VariableSizeTerminal,
+        ),
+    ) -> Self {
+        Self { _0, _1, _2 }
+    }
+}
+impl Default for signed_fixed_type::_T1 {
+    fn default() -> Self {
+        Self {
+            _0: Default::default(),
+            _1: Default::default(),
+            _2: Default::default(),
+        }
+    }
+}
+impl DefaultTest for signed_fixed_type::_T1 {
+    fn is_default(&self) -> bool {
+        self._0.is_default() && self._1.is_default() && self._2.is_default()
+    }
+}
+impl signed_fixed_type::_T0 {
+    pub fn from_parse(
+        (fixed, _t1): (FixedSizeTerminal<5usize>, Option<signed_fixed_type::_T1>),
+    ) -> Self {
+        Self { fixed, _t1 }
+    }
+}
+impl Default for signed_fixed_type::_T0 {
+    fn default() -> Self {
+        Self {
+            fixed: Default::default(),
+            _t1: Default::default(),
+        }
+    }
+}
+impl DefaultTest for signed_fixed_type::_T0 {
+    fn is_default(&self) -> bool {
+        self.fixed.is_default() && self._t1.is_default()
+    }
+}
+impl DefaultTest for signed_fixed_type::WithTrivia {
     fn is_default(&self) -> bool {
         self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
     }
@@ -651,25 +641,28 @@ impl DefaultTest for trailing_trivia::WithTrivia {
     }
 }
 
-impl ufixed_type::_T0 {
-    pub fn from_parse((_0, fixed_type): (FixedSizeTerminal<1>, FixedType)) -> Self {
-        Self { _0, fixed_type }
-    }
-}
-impl Default for ufixed_type::_T0 {
-    fn default() -> Self {
+impl unsigned_fixed_type::_T0 {
+    pub fn from_parse((_0, signed_fixed_type): (FixedSizeTerminal<1>, SignedFixedType)) -> Self {
         Self {
-            _0: Default::default(),
-            fixed_type: Default::default(),
+            _0,
+            signed_fixed_type,
         }
     }
 }
-impl DefaultTest for ufixed_type::_T0 {
-    fn is_default(&self) -> bool {
-        self._0.is_default() && self.fixed_type.is_default()
+impl Default for unsigned_fixed_type::_T0 {
+    fn default() -> Self {
+        Self {
+            _0: Default::default(),
+            signed_fixed_type: Default::default(),
+        }
     }
 }
-impl DefaultTest for ufixed_type::WithTrivia {
+impl DefaultTest for unsigned_fixed_type::_T0 {
+    fn is_default(&self) -> bool {
+        self._0.is_default() && self.signed_fixed_type.is_default()
+    }
+}
+impl DefaultTest for unsigned_fixed_type::WithTrivia {
     fn is_default(&self) -> bool {
         self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
     }

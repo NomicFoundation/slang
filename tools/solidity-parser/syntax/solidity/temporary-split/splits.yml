@@ -132,8 +132,8 @@
           - SignedIntegerType
           - UnsignedIntegerType
           - FixedBytesType
-          - FixedType
-          - UfixedType
+          - SignedFixedType
+          - UnsignedFixedType
           - BooleanLiteral
           - DecimalNumber
           - DecimalInteger

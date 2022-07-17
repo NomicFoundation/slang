@@ -362,11 +362,11 @@
     - terminal: bool
     - terminal: string
     - reference: AddressType
+    - reference: FixedBytesType
     - reference: SignedIntegerType
     - reference: UnsignedIntegerType
-    - reference: FixedBytesType
-    - reference: FixedType
-    - reference: UfixedType
+    - reference: SignedFixedType
+    - reference: UnsignedFixedType
 
 - name: AddressType
   sequence:
@@ -1137,33 +1137,23 @@
         # Makes the likely errors clearer?
         lookahead: { not: { range: { from: "0", to: "9" } } }
 
-- name: FixedType
+- name: SignedFixedType
   kind: Token
   sequence:
     - terminal: fixed
     - optional:
         sequence:
-          - range:
-              from: "1"
-              to: "9"
-          - zeroOrMore:
-              range:
-                from: "0"
-                to: "9"
+          - oneOrMore:
+              range: { from: "0", to: "9" }
           - terminal: x
-          - range:
-              from: "1"
-              to: "9"
-          - zeroOrMore:
-              range:
-                from: "0"
-                to: "9"
+          - oneOrMore:
+              range: { from: "0", to: "9" }
 
-- name: UfixedType
+- name: UnsignedFixedType
   kind: Token
   sequence:
     - terminal: u
-    - reference: FixedType
+    - reference: SignedFixedType
 
 - name: BooleanLiteral
   kind: Token
