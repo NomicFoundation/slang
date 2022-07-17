@@ -174,11 +174,19 @@ MemberAccessExpression = Expression '.' ( «Identifier» | 'address' ) ;
 
 IndexAccessExpression = Expression '[' [ Expression ] [ ':' [ Expression ] ] ']' ;
 
-PrimaryExpression = 'payable' ArgumentList | 'type' '(' TypeName ')' | 'new' TypeName | '(' 1…*{ [ Expression ] / ',' } ')' | '[' 1…*{ Expression / ',' } ']' | «Identifier» | Literal | ElementaryTypeWithoutPayable ;
+PrimaryExpression = PayableExpression | TypeExpression | NewExpression | ParenthesisExpression | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | «NumericLiteral» | ElementaryTypeWithoutPayable | «BooleanLiteral» | «Identifier» ;
 
-Literal = «AsciiStringLiteral» | «UnicodeStringLiteral» | NumericLiteral | «HexStringLiteral» | «BooleanLiteral» ;
+PayableExpression = 'payable' ArgumentList ;
 
-NumericLiteral = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
+TypeExpression = 'type' '(' TypeName ')' ;
+
+NewExpression = 'new' IdentifierPath ArgumentList ;
+
+ParenthesisExpression = '(' 1…*{ [ Expression ] / ',' } ')' ;
+
+ArrayLiteral = '[' 1…*{ Expression / ',' } ']' ;
+
+«NumericLiteral» = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
 
 Block = '{' { Statement | UncheckedBlock } '}' ;
 

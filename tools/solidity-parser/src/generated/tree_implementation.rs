@@ -723,6 +723,50 @@ impl DefaultTest for yul_identifier::WithTrivia {
     }
 }
 
+impl Default for array_literal::_T1 {
+    fn default() -> Self {
+        Self {
+            elements: Default::default(),
+            separators: Default::default(),
+        }
+    }
+}
+impl DefaultTest for array_literal::_T1 {
+    fn is_default(&self) -> bool {
+        self.elements.is_default() && self.separators.is_default()
+    }
+}
+impl array_literal::_T0 {
+    pub fn from_parse(
+        ((open_bracket_char, expressions), close_bracket_char): (
+            (FixedSizeTerminalWithTrivia<1>, array_literal::_T1),
+            FixedSizeTerminalWithTrivia<1>,
+        ),
+    ) -> Self {
+        Self {
+            open_bracket_char,
+            expressions,
+            close_bracket_char,
+        }
+    }
+}
+impl Default for array_literal::_T0 {
+    fn default() -> Self {
+        Self {
+            open_bracket_char: Default::default(),
+            expressions: Default::default(),
+            close_bracket_char: Default::default(),
+        }
+    }
+}
+impl DefaultTest for array_literal::_T0 {
+    fn is_default(&self) -> bool {
+        self.open_bracket_char.is_default()
+            && self.expressions.is_default()
+            && self.close_bracket_char.is_default()
+    }
+}
+
 impl break_statement::_T0 {
     pub fn from_parse(
         (r#break, semicolon_char): (
@@ -863,6 +907,50 @@ impl DefaultTest for double_quoted_unicode_string_literal::_T0 {
 impl DefaultTest for double_quoted_unicode_string_literal::WithTrivia {
     fn is_default(&self) -> bool {
         self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
+    }
+}
+
+impl Default for parenthesis_expression::_T1 {
+    fn default() -> Self {
+        Self {
+            elements: Default::default(),
+            separators: Default::default(),
+        }
+    }
+}
+impl DefaultTest for parenthesis_expression::_T1 {
+    fn is_default(&self) -> bool {
+        self.elements.is_default() && self.separators.is_default()
+    }
+}
+impl parenthesis_expression::_T0 {
+    pub fn from_parse(
+        ((open_paren_char, expressions), close_paren_char): (
+            (FixedSizeTerminalWithTrivia<1>, parenthesis_expression::_T1),
+            FixedSizeTerminalWithTrivia<1>,
+        ),
+    ) -> Self {
+        Self {
+            open_paren_char,
+            expressions,
+            close_paren_char,
+        }
+    }
+}
+impl Default for parenthesis_expression::_T0 {
+    fn default() -> Self {
+        Self {
+            open_paren_char: Default::default(),
+            expressions: Default::default(),
+            close_paren_char: Default::default(),
+        }
+    }
+}
+impl DefaultTest for parenthesis_expression::_T0 {
+    fn is_default(&self) -> bool {
+        self.open_paren_char.is_default()
+            && self.expressions.is_default()
+            && self.close_paren_char.is_default()
     }
 }
 
@@ -1225,10 +1313,7 @@ impl DefaultTest for elementary_type_with_payable::_T1 {
 
 impl numeric_literal::_T0 {
     pub fn from_parse(
-        (_t1, _1): (
-            Box<numeric_literal::_T1>,
-            Option<VariableSizeTerminalWithTrivia>,
-        ),
+        (_t1, _1): (Box<numeric_literal::_T1>, Option<VariableSizeTerminal>),
     ) -> Self {
         Self { _t1, _1 }
     }
@@ -2178,6 +2263,61 @@ impl DefaultTest for modifier_invocation::_T0 {
     }
 }
 
+impl new_expression::_T0 {
+    pub fn from_parse(
+        ((new, identifier_path), argument_list): (
+            (FixedSizeTerminalWithTrivia<3usize>, IdentifierPath),
+            ArgumentList,
+        ),
+    ) -> Self {
+        Self {
+            new,
+            identifier_path,
+            argument_list,
+        }
+    }
+}
+impl Default for new_expression::_T0 {
+    fn default() -> Self {
+        Self {
+            new: Default::default(),
+            identifier_path: Default::default(),
+            argument_list: Default::default(),
+        }
+    }
+}
+impl DefaultTest for new_expression::_T0 {
+    fn is_default(&self) -> bool {
+        self.new.is_default()
+            && self.identifier_path.is_default()
+            && self.argument_list.is_default()
+    }
+}
+
+impl payable_expression::_T0 {
+    pub fn from_parse(
+        (payable, argument_list): (FixedSizeTerminalWithTrivia<7usize>, ArgumentList),
+    ) -> Self {
+        Self {
+            payable,
+            argument_list,
+        }
+    }
+}
+impl Default for payable_expression::_T0 {
+    fn default() -> Self {
+        Self {
+            payable: Default::default(),
+            argument_list: Default::default(),
+        }
+    }
+}
+impl DefaultTest for payable_expression::_T0 {
+    fn is_default(&self) -> bool {
+        self.payable.is_default() && self.argument_list.is_default()
+    }
+}
+
 impl type_name::_T3 {
     pub fn from_parse(
         ((open_bracket_char, expression), close_bracket_char): (
@@ -2349,30 +2489,22 @@ impl DefaultTest for inheritance_specifier_list::_T0 {
     }
 }
 
-impl primary_expression::_T1 {
+impl struct_member::_T0 {
     pub fn from_parse(
-        (payable, argument_list): (FixedSizeTerminalWithTrivia<7usize>, ArgumentList),
+        ((type_name, identifier), semicolon_char): (
+            (TypeName, identifier::WithTrivia),
+            FixedSizeTerminalWithTrivia<1>,
+        ),
     ) -> Self {
         Self {
-            payable,
-            argument_list,
+            type_name,
+            identifier,
+            semicolon_char,
         }
     }
 }
-impl Default for primary_expression::_T1 {
-    fn default() -> Self {
-        Self {
-            payable: Default::default(),
-            argument_list: Default::default(),
-        }
-    }
-}
-impl DefaultTest for primary_expression::_T1 {
-    fn is_default(&self) -> bool {
-        self.payable.is_default() && self.argument_list.is_default()
-    }
-}
-impl primary_expression::_T2 {
+
+impl type_expression::_T0 {
     pub fn from_parse(
         (((r#type, open_paren_char), type_name), close_paren_char): (
             (
@@ -2390,112 +2522,6 @@ impl primary_expression::_T2 {
             open_paren_char,
             type_name,
             close_paren_char,
-        }
-    }
-}
-impl primary_expression::_T3 {
-    pub fn from_parse((new, type_name): (FixedSizeTerminalWithTrivia<3usize>, TypeName)) -> Self {
-        Self { new, type_name }
-    }
-}
-impl Default for primary_expression::_T5 {
-    fn default() -> Self {
-        Self {
-            elements: Default::default(),
-            separators: Default::default(),
-        }
-    }
-}
-impl DefaultTest for primary_expression::_T5 {
-    fn is_default(&self) -> bool {
-        self.elements.is_default() && self.separators.is_default()
-    }
-}
-impl primary_expression::_T4 {
-    pub fn from_parse(
-        ((open_paren_char, expressions), close_paren_char): (
-            (FixedSizeTerminalWithTrivia<1>, primary_expression::_T5),
-            FixedSizeTerminalWithTrivia<1>,
-        ),
-    ) -> Self {
-        Self {
-            open_paren_char,
-            expressions,
-            close_paren_char,
-        }
-    }
-}
-impl Default for primary_expression::_T4 {
-    fn default() -> Self {
-        Self {
-            open_paren_char: Default::default(),
-            expressions: Default::default(),
-            close_paren_char: Default::default(),
-        }
-    }
-}
-impl DefaultTest for primary_expression::_T4 {
-    fn is_default(&self) -> bool {
-        self.open_paren_char.is_default()
-            && self.expressions.is_default()
-            && self.close_paren_char.is_default()
-    }
-}
-impl Default for primary_expression::_T7 {
-    fn default() -> Self {
-        Self {
-            elements: Default::default(),
-            separators: Default::default(),
-        }
-    }
-}
-impl DefaultTest for primary_expression::_T7 {
-    fn is_default(&self) -> bool {
-        self.elements.is_default() && self.separators.is_default()
-    }
-}
-impl primary_expression::_T6 {
-    pub fn from_parse(
-        ((open_bracket_char, expressions), close_bracket_char): (
-            (FixedSizeTerminalWithTrivia<1>, primary_expression::_T7),
-            FixedSizeTerminalWithTrivia<1>,
-        ),
-    ) -> Self {
-        Self {
-            open_bracket_char,
-            expressions,
-            close_bracket_char,
-        }
-    }
-}
-impl Default for primary_expression::_T6 {
-    fn default() -> Self {
-        Self {
-            open_bracket_char: Default::default(),
-            expressions: Default::default(),
-            close_bracket_char: Default::default(),
-        }
-    }
-}
-impl DefaultTest for primary_expression::_T6 {
-    fn is_default(&self) -> bool {
-        self.open_bracket_char.is_default()
-            && self.expressions.is_default()
-            && self.close_bracket_char.is_default()
-    }
-}
-
-impl struct_member::_T0 {
-    pub fn from_parse(
-        ((type_name, identifier), semicolon_char): (
-            (TypeName, identifier::WithTrivia),
-            FixedSizeTerminalWithTrivia<1>,
-        ),
-    ) -> Self {
-        Self {
-            type_name,
-            identifier,
-            semicolon_char,
         }
     }
 }
@@ -2727,66 +2753,6 @@ impl DefaultTest for event_definition::_T0 {
     }
 }
 
-impl index_access_expression::_T1 {
-    pub fn from_parse(
-        (colon_char, expression): (FixedSizeTerminalWithTrivia<1>, Option<Expression>),
-    ) -> Self {
-        Self {
-            colon_char,
-            expression,
-        }
-    }
-}
-impl Default for index_access_expression::_T1 {
-    fn default() -> Self {
-        Self {
-            colon_char: Default::default(),
-            expression: Default::default(),
-        }
-    }
-}
-impl DefaultTest for index_access_expression::_T1 {
-    fn is_default(&self) -> bool {
-        self.colon_char.is_default() && self.expression.is_default()
-    }
-}
-impl index_access_expression::Operator {
-    pub fn from_parse(
-        (((open_bracket_char, expression_2), _t1), close_bracket_char): (
-            (
-                (FixedSizeTerminalWithTrivia<1>, Option<Expression>),
-                Option<index_access_expression::_T1>,
-            ),
-            FixedSizeTerminalWithTrivia<1>,
-        ),
-    ) -> Self {
-        Self {
-            open_bracket_char,
-            expression_2,
-            _t1,
-            close_bracket_char,
-        }
-    }
-}
-impl Default for index_access_expression::Operator {
-    fn default() -> Self {
-        Self {
-            open_bracket_char: Default::default(),
-            expression_2: Default::default(),
-            _t1: Default::default(),
-            close_bracket_char: Default::default(),
-        }
-    }
-}
-impl DefaultTest for index_access_expression::Operator {
-    fn is_default(&self) -> bool {
-        self.open_bracket_char.is_default()
-            && self.expression_2.is_default()
-            && self._t1.is_default()
-            && self.close_bracket_char.is_default()
-    }
-}
-
 impl struct_definition::_T0 {
     pub fn from_parse(
         ((((r#struct, identifier), open_brace_char), struct_members), close_brace_char): (
@@ -2876,6 +2842,66 @@ impl tuple_variable_declaration::_T0 {
             _t3s,
             close_paren_char,
         }
+    }
+}
+
+impl index_access_expression::_T1 {
+    pub fn from_parse(
+        (colon_char, expression): (FixedSizeTerminalWithTrivia<1>, Option<Expression>),
+    ) -> Self {
+        Self {
+            colon_char,
+            expression,
+        }
+    }
+}
+impl Default for index_access_expression::_T1 {
+    fn default() -> Self {
+        Self {
+            colon_char: Default::default(),
+            expression: Default::default(),
+        }
+    }
+}
+impl DefaultTest for index_access_expression::_T1 {
+    fn is_default(&self) -> bool {
+        self.colon_char.is_default() && self.expression.is_default()
+    }
+}
+impl index_access_expression::Operator {
+    pub fn from_parse(
+        (((open_bracket_char, expression_2), _t1), close_bracket_char): (
+            (
+                (FixedSizeTerminalWithTrivia<1>, Option<Expression>),
+                Option<index_access_expression::_T1>,
+            ),
+            FixedSizeTerminalWithTrivia<1>,
+        ),
+    ) -> Self {
+        Self {
+            open_bracket_char,
+            expression_2,
+            _t1,
+            close_bracket_char,
+        }
+    }
+}
+impl Default for index_access_expression::Operator {
+    fn default() -> Self {
+        Self {
+            open_bracket_char: Default::default(),
+            expression_2: Default::default(),
+            _t1: Default::default(),
+            close_bracket_char: Default::default(),
+        }
+    }
+}
+impl DefaultTest for index_access_expression::Operator {
+    fn is_default(&self) -> bool {
+        self.open_bracket_char.is_default()
+            && self.expression_2.is_default()
+            && self._t1.is_default()
+            && self.close_bracket_char.is_default()
     }
 }
 
