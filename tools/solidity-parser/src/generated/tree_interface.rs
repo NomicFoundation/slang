@@ -1712,7 +1712,7 @@ pub mod catch_clause {
     }
 }
 
-/// FunctionType = 'function' ParameterList { VisibilitySpecifier | StateMutabilitySpecifier } [ 'returns' ParameterList ] ;
+/// FunctionType = 'function' ParameterList { 'internal' | 'external' | 'private' | 'public' | 'pure' | 'view' | 'payable' } [ 'returns' ParameterList ] ;
 pub type FunctionType = function_type::_T0;
 pub mod function_type {
     #[allow(unused_imports)]
@@ -1758,28 +1758,27 @@ pub mod import_directive {
     }
 }
 
-/// MethodAttribute = 'virtual' | OverrideSpecifier ;
-pub type MethodAttribute = Box<method_attribute::_T0>;
-pub mod method_attribute {
+/// ModifierAttribute = OverrideSpecifier | 'virtual' ;
+pub type ModifierAttribute = Box<modifier_attribute::_T0>;
+pub mod modifier_attribute {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub enum _T0 {
-        Virtual(FixedSizeTerminalWithTrivia<7usize>),
         OverrideSpecifier(OverrideSpecifier),
+        Virtual(FixedSizeTerminalWithTrivia<7usize>),
     }
 }
 
-/// StateVariableAttribute = 'public' | 'private' | 'internal' | 'constant' | OverrideSpecifier | 'immutable' ;
+/// StateVariableAttribute = OverrideSpecifier | 'constant' | 'immutable' | 'internal' | 'private' | 'public' ;
 pub type StateVariableAttribute = Box<state_variable_attribute::_T0>;
 pub mod state_variable_attribute {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub enum _T0 {
-        _0(VariableSizeTerminalWithTrivia),
         OverrideSpecifier(OverrideSpecifier),
-        Immutable(FixedSizeTerminalWithTrivia<9usize>),
+        _1(VariableSizeTerminalWithTrivia),
     }
 }
 
@@ -1893,7 +1892,7 @@ pub mod assembly_statement {
     }
 }
 
-/// ConstructorAttribute = ModifierInvocation | 'payable' | 'internal' | 'public' ;
+/// ConstructorAttribute = ModifierInvocation | 'internal' | 'payable' | 'public' ;
 pub type ConstructorAttribute = Box<constructor_attribute::_T0>;
 pub mod constructor_attribute {
     #[allow(unused_imports)]
@@ -1933,31 +1932,29 @@ pub mod event_parameter {
     }
 }
 
-/// FallbackFunctionAttribute = 'external' | StateMutabilitySpecifier | ModifierInvocation | 'virtual' | OverrideSpecifier ;
+/// FallbackFunctionAttribute = ModifierInvocation | OverrideSpecifier | 'external' | 'payable' | 'pure' | 'view' | 'virtual' ;
 pub type FallbackFunctionAttribute = Box<fallback_function_attribute::_T0>;
 pub mod fallback_function_attribute {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub enum _T0 {
-        _0(VariableSizeTerminalWithTrivia),
         ModifierInvocation(ModifierInvocation),
-        Virtual(FixedSizeTerminalWithTrivia<7usize>),
         OverrideSpecifier(OverrideSpecifier),
+        _2(VariableSizeTerminalWithTrivia),
     }
 }
 
-/// FunctionAttribute = VisibilitySpecifier | StateMutabilitySpecifier | ModifierInvocation | 'virtual' | OverrideSpecifier ;
+/// FunctionAttribute = ModifierInvocation | OverrideSpecifier | 'external' | 'internal' | 'payable' | 'private' | 'public' | 'pure' | 'view' | 'virtual' ;
 pub type FunctionAttribute = Box<function_attribute::_T0>;
 pub mod function_attribute {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub enum _T0 {
-        _0(VariableSizeTerminalWithTrivia),
         ModifierInvocation(ModifierInvocation),
-        Virtual(FixedSizeTerminalWithTrivia<7usize>),
         OverrideSpecifier(OverrideSpecifier),
+        _2(VariableSizeTerminalWithTrivia),
     }
 }
 
@@ -2056,17 +2053,16 @@ pub mod primary_expression {
     pub type E = Box<primary_expression::_T0>;
 }
 
-/// ReceiveFunctionAttribute = 'external' | 'payable' | ModifierInvocation | 'virtual' | OverrideSpecifier ;
+/// ReceiveFunctionAttribute = ModifierInvocation | OverrideSpecifier | 'external' | 'payable' | 'virtual' ;
 pub type ReceiveFunctionAttribute = Box<receive_function_attribute::_T0>;
 pub mod receive_function_attribute {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub enum _T0 {
-        _0(VariableSizeTerminalWithTrivia),
         ModifierInvocation(ModifierInvocation),
-        Virtual(FixedSizeTerminalWithTrivia<7usize>),
         OverrideSpecifier(OverrideSpecifier),
+        _2(VariableSizeTerminalWithTrivia),
     }
 }
 
@@ -3016,7 +3012,7 @@ pub mod function_definition {
     }
 }
 
-/// ModifierDefinition = 'modifier' «Identifier» [ ParameterList ] { MethodAttribute } ( ';' | Block ) ;
+/// ModifierDefinition = 'modifier' «Identifier» [ ParameterList ] { ModifierAttribute } ( ';' | Block ) ;
 pub type ModifierDefinition = modifier_definition::_T0;
 pub mod modifier_definition {
     #[allow(unused_imports)]
@@ -3035,7 +3031,7 @@ pub mod modifier_definition {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub parameter_list: Option<ParameterList>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub method_attributes: Vec<MethodAttribute>,
+        pub modifier_attributes: Vec<ModifierAttribute>,
         pub _t2: Box<modifier_definition::_T2>,
     }
 }

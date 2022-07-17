@@ -3493,13 +3493,13 @@ impl function_definition::_T0 {
 
 impl modifier_definition::_T0 {
     pub fn from_parse(
-        ((((modifier, identifier), parameter_list), method_attributes), _t2): (
+        ((((modifier, identifier), parameter_list), modifier_attributes), _t2): (
             (
                 (
                     (FixedSizeTerminalWithTrivia<8usize>, identifier::WithTrivia),
                     Option<ParameterList>,
                 ),
-                Vec<MethodAttribute>,
+                Vec<ModifierAttribute>,
             ),
             Box<modifier_definition::_T2>,
         ),
@@ -3508,7 +3508,7 @@ impl modifier_definition::_T0 {
             modifier,
             identifier,
             parameter_list,
-            method_attributes,
+            modifier_attributes,
             _t2,
         }
     }
