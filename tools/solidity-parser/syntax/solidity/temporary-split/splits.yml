@@ -7,8 +7,8 @@
           - EndOfFileTrivia
           - Whitespace
           - EndOfLine
-          - Comment
-          - LineComment
+          - MultilineComment
+          - SingleLineComment
     - solidity-file:
         productions:
           - SourceUnit
@@ -110,7 +110,7 @@
           - ReturnStatement
           - EmitStatement
           - RevertStatement
-          - VariableDeclarationTuple
+          - TupleVariableDeclaration
           - VariableDeclarationStatement
           - VariableDeclaration
           - ExpressionStatement

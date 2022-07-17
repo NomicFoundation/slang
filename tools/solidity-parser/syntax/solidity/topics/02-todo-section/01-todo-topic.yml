@@ -804,7 +804,7 @@
     - reference: ArgumentList
     - terminal: ;
 
-- name: VariableDeclarationTuple
+- name: TupleVariableDeclaration
   sequence:
     - terminal: (
     - zeroOrMore:
@@ -827,7 +827,7 @@
                   - terminal: "="
                   - reference: Expression
         - sequence:
-            - reference: VariableDeclarationTuple
+            - reference: TupleVariableDeclaration
             - terminal: "="
             - reference: Expression
     - terminal: ;
@@ -1178,8 +1178,7 @@
 - name: HexNumber
   kind: Token
   sequence:
-    - terminal: "0"
-    - terminal: x
+    - terminal: 0x
     - oneOrMore:
         reference: HexCharacter
         separator:
