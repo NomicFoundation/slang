@@ -80,7 +80,7 @@ pub struct Parsers {
     pub import_directive: ParserType<ImportDirective>,
     pub modifier_attribute: ParserType<ModifierAttribute>,
     pub state_variable_attribute: ParserType<StateVariableAttribute>,
-    pub yul_assignment: ParserType<YulAssignment>,
+    pub yul_assignment_statement: ParserType<YulAssignmentStatement>,
     pub yul_for_statement: ParserType<YulForStatement>,
     pub yul_if_statement: ParserType<YulIfStatement>,
     pub yul_switch_statement: ParserType<YulSwitchStatement>,

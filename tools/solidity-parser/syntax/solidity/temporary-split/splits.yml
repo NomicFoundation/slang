@@ -158,7 +158,7 @@
           - YulStatement
           - YulVariableDeclaration
           - YulFunctionDefinition
-          - YulAssignment
+          - YulAssignmentStatement
           - YulFunctionCall
           - YulIfStatement
           - YulLeaveStatement

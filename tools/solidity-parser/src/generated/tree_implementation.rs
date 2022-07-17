@@ -2066,79 +2066,33 @@ impl import_directive::_T0 {
     }
 }
 
-impl yul_assignment::_T2 {
-    pub fn from_parse(
-        (colon_equal, yul_expression): (FixedSizeTerminalWithTrivia<2usize>, YulExpression),
-    ) -> Self {
-        Self {
-            colon_equal,
-            yul_expression,
-        }
-    }
-}
-impl yul_assignment::_T5 {
-    pub fn from_parse(
-        (comma_char, yul_identifier_path): (FixedSizeTerminalWithTrivia<1>, YulIdentifierPath),
-    ) -> Self {
-        Self {
-            comma_char,
-            yul_identifier_path,
-        }
-    }
-}
-impl Default for yul_assignment::_T5 {
+impl Default for yul_assignment_statement::_T1 {
     fn default() -> Self {
         Self {
-            comma_char: Default::default(),
-            yul_identifier_path: Default::default(),
+            elements: Default::default(),
+            separators: Default::default(),
         }
     }
 }
-impl DefaultTest for yul_assignment::_T5 {
+impl DefaultTest for yul_assignment_statement::_T1 {
     fn is_default(&self) -> bool {
-        self.comma_char.is_default() && self.yul_identifier_path.is_default()
+        self.elements.is_default() && self.separators.is_default()
     }
 }
-impl yul_assignment::_T3 {
+impl yul_assignment_statement::_T0 {
     pub fn from_parse(
-        ((_t5s, colon_equal), yul_function_call): (
+        ((yul_identifier_paths, colon_equal), yul_expression): (
             (
-                Vec<yul_assignment::_T5>,
+                yul_assignment_statement::_T1,
                 FixedSizeTerminalWithTrivia<2usize>,
             ),
-            YulFunctionCall,
+            YulExpression,
         ),
     ) -> Self {
         Self {
-            _t5s,
+            yul_identifier_paths,
             colon_equal,
-            yul_function_call,
-        }
-    }
-}
-impl Default for yul_assignment::_T3 {
-    fn default() -> Self {
-        Self {
-            _t5s: Default::default(),
-            colon_equal: Default::default(),
-            yul_function_call: Default::default(),
-        }
-    }
-}
-impl DefaultTest for yul_assignment::_T3 {
-    fn is_default(&self) -> bool {
-        self._t5s.is_default()
-            && self.colon_equal.is_default()
-            && self.yul_function_call.is_default()
-    }
-}
-impl yul_assignment::_T0 {
-    pub fn from_parse(
-        (yul_identifier_path, _t1): (YulIdentifierPath, Box<yul_assignment::_T1>),
-    ) -> Self {
-        Self {
-            yul_identifier_path,
-            _t1,
+            yul_expression,
         }
     }
 }
@@ -2183,96 +2137,44 @@ impl yul_if_statement::_T0 {
 
 impl yul_switch_statement::_T4 {
     pub fn from_parse(
-        ((case, yul_literal), yul_block): (
-            (FixedSizeTerminalWithTrivia<4usize>, YulLiteral),
-            YulBlock,
-        ),
+        (case, yul_literal): (FixedSizeTerminalWithTrivia<4usize>, YulLiteral),
     ) -> Self {
-        Self {
-            case,
-            yul_literal,
-            yul_block,
-        }
-    }
-}
-impl yul_switch_statement::_T5 {
-    pub fn from_parse(
-        (default, yul_block): (FixedSizeTerminalWithTrivia<7usize>, YulBlock),
-    ) -> Self {
-        Self { default, yul_block }
-    }
-}
-impl Default for yul_switch_statement::_T5 {
-    fn default() -> Self {
-        Self {
-            default: Default::default(),
-            yul_block: Default::default(),
-        }
-    }
-}
-impl DefaultTest for yul_switch_statement::_T5 {
-    fn is_default(&self) -> bool {
-        self.default.is_default() && self.yul_block.is_default()
+        Self { case, yul_literal }
     }
 }
 impl yul_switch_statement::_T2 {
-    pub fn from_parse(
-        (_t4s, _t5): (
-            Vec<yul_switch_statement::_T4>,
-            Option<yul_switch_statement::_T5>,
-        ),
-    ) -> Self {
-        Self { _t4s, _t5 }
-    }
-}
-impl Default for yul_switch_statement::_T2 {
-    fn default() -> Self {
-        Self {
-            _t4s: Default::default(),
-            _t5: Default::default(),
-        }
-    }
-}
-impl DefaultTest for yul_switch_statement::_T2 {
-    fn is_default(&self) -> bool {
-        self._t4s.is_default() && self._t5.is_default()
-    }
-}
-impl yul_switch_statement::_T6 {
-    pub fn from_parse(
-        (default, yul_block): (FixedSizeTerminalWithTrivia<7usize>, YulBlock),
-    ) -> Self {
-        Self { default, yul_block }
-    }
-}
-impl Default for yul_switch_statement::_T6 {
-    fn default() -> Self {
-        Self {
-            default: Default::default(),
-            yul_block: Default::default(),
-        }
-    }
-}
-impl DefaultTest for yul_switch_statement::_T6 {
-    fn is_default(&self) -> bool {
-        self.default.is_default() && self.yul_block.is_default()
+    pub fn from_parse((_t3, yul_block): (Box<yul_switch_statement::_T3>, YulBlock)) -> Self {
+        Self { _t3, yul_block }
     }
 }
 impl yul_switch_statement::_T0 {
     pub fn from_parse(
-        ((switch, yul_expression), _t1): (
+        ((switch, yul_expression), _t2s): (
             (FixedSizeTerminalWithTrivia<6usize>, YulExpression),
-            Box<yul_switch_statement::_T1>,
+            Vec<yul_switch_statement::_T2>,
         ),
     ) -> Self {
         Self {
             switch,
             yul_expression,
-            _t1,
+            _t2s,
         }
     }
 }
 
+impl Default for yul_variable_declaration::_T1 {
+    fn default() -> Self {
+        Self {
+            elements: Default::default(),
+            separators: Default::default(),
+        }
+    }
+}
+impl DefaultTest for yul_variable_declaration::_T1 {
+    fn is_default(&self) -> bool {
+        self.elements.is_default() && self.separators.is_default()
+    }
+}
 impl yul_variable_declaration::_T2 {
     pub fn from_parse(
         (colon_equal, yul_expression): (FixedSizeTerminalWithTrivia<2usize>, YulExpression),
@@ -2283,89 +2185,20 @@ impl yul_variable_declaration::_T2 {
         }
     }
 }
-impl yul_variable_declaration::_T4 {
-    pub fn from_parse(
-        (comma_char, yul_identifier): (FixedSizeTerminalWithTrivia<1>, yul_identifier::WithTrivia),
-    ) -> Self {
-        Self {
-            comma_char,
-            yul_identifier,
-        }
-    }
-}
-impl Default for yul_variable_declaration::_T4 {
-    fn default() -> Self {
-        Self {
-            comma_char: Default::default(),
-            yul_identifier: Default::default(),
-        }
-    }
-}
-impl DefaultTest for yul_variable_declaration::_T4 {
-    fn is_default(&self) -> bool {
-        self.comma_char.is_default() && self.yul_identifier.is_default()
-    }
-}
-impl yul_variable_declaration::_T5 {
-    pub fn from_parse(
-        (colon_equal, yul_function_call): (FixedSizeTerminalWithTrivia<2usize>, YulFunctionCall),
-    ) -> Self {
-        Self {
-            colon_equal,
-            yul_function_call,
-        }
-    }
-}
-impl Default for yul_variable_declaration::_T5 {
-    fn default() -> Self {
-        Self {
-            colon_equal: Default::default(),
-            yul_function_call: Default::default(),
-        }
-    }
-}
-impl DefaultTest for yul_variable_declaration::_T5 {
-    fn is_default(&self) -> bool {
-        self.colon_equal.is_default() && self.yul_function_call.is_default()
-    }
-}
-impl yul_variable_declaration::_T3 {
-    pub fn from_parse(
-        (_t4, _t5): (
-            Option<yul_variable_declaration::_T4>,
-            Option<yul_variable_declaration::_T5>,
-        ),
-    ) -> Self {
-        Self { _t4, _t5 }
-    }
-}
-impl Default for yul_variable_declaration::_T3 {
-    fn default() -> Self {
-        Self {
-            _t4: Default::default(),
-            _t5: Default::default(),
-        }
-    }
-}
-impl DefaultTest for yul_variable_declaration::_T3 {
-    fn is_default(&self) -> bool {
-        self._t4.is_default() && self._t5.is_default()
-    }
-}
 impl yul_variable_declaration::_T0 {
     pub fn from_parse(
-        ((r#let, yul_identifier), _t1): (
+        ((r#let, yul_identifier_paths), _t2): (
             (
                 FixedSizeTerminalWithTrivia<3usize>,
-                yul_identifier::WithTrivia,
+                yul_variable_declaration::_T1,
             ),
-            Option<Box<yul_variable_declaration::_T1>>,
+            Option<yul_variable_declaration::_T2>,
         ),
     ) -> Self {
         Self {
             r#let,
-            yul_identifier,
-            _t1,
+            yul_identifier_paths,
+            _t2,
         }
     }
 }
@@ -2373,14 +2206,14 @@ impl Default for yul_variable_declaration::_T0 {
     fn default() -> Self {
         Self {
             r#let: Default::default(),
-            yul_identifier: Default::default(),
-            _t1: Default::default(),
+            yul_identifier_paths: Default::default(),
+            _t2: Default::default(),
         }
     }
 }
 impl DefaultTest for yul_variable_declaration::_T0 {
     fn is_default(&self) -> bool {
-        self.r#let.is_default() && self.yul_identifier.is_default() && self._t1.is_default()
+        self.r#let.is_default() && self.yul_identifier_paths.is_default() && self._t2.is_default()
     }
 }
 

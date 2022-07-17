@@ -304,13 +304,13 @@ ExperimentalPragmaSpecifier = 'experimental' «Identifier» ;
 
 YulBlock = '{' { YulStatement } '}' ;
 
-YulStatement = YulBlock | YulVariableDeclaration | YulFunctionDefinition | YulAssignment | YulFunctionCall | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement ;
+YulStatement = YulBlock | YulVariableDeclaration | YulFunctionDefinition | YulAssignmentStatement | YulFunctionCall | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement ;
 
-YulVariableDeclaration = 'let' «YulIdentifier» [ ':=' YulExpression | [ ',' «YulIdentifier» ] [ ':=' YulFunctionCall ] ] ;
+YulVariableDeclaration = 'let' 1…*{ YulIdentifierPath / ',' } [ ':=' YulExpression ] ;
 
 YulFunctionDefinition = 'function' «YulIdentifier» '(' { «YulIdentifier» / ',' } ')' [ '->' 1…*{ «YulIdentifier» / ',' } ] YulBlock ;
 
-YulAssignment = YulIdentifierPath ( ':=' YulExpression | 1…*{ ',' YulIdentifierPath } ':=' YulFunctionCall ) ;
+YulAssignmentStatement = 1…*{ YulIdentifierPath / ',' } ':=' YulExpression ;
 
 YulFunctionCall = «YulIdentifier» '(' { YulExpression / ',' } ')' ;
 
@@ -324,7 +324,7 @@ YulContinueStatement = 'continue' ;
 
 YulForStatement = 'for' YulBlock YulExpression YulBlock YulBlock ;
 
-YulSwitchStatement = 'switch' YulExpression ( 1…*{ 'case' YulLiteral YulBlock } [ 'default' YulBlock ] | 'default' YulBlock ) ;
+YulSwitchStatement = 'switch' YulExpression 1…*{ ( 'case' YulLiteral | 'default' ) YulBlock } ;
 
 YulExpression = YulIdentifierPath | YulFunctionCall | YulLiteral ;
 
@@ -338,4 +338,4 @@ YulLiteral = «YulDecimalNumberLiteral» | «YulHexLiteral» | «AsciiStringLite
 
 «YulDecimalNumberLiteral» = '0' | '1'…'9' { '0'…'9' } ;
 
-«YulHexLiteral» = '0x' 1…*{ '0'…'9' | 'a'…'f' | 'A'…'F' } ;
+«YulHexLiteral» = '0x' 1…*{ «HexCharacter» } ;

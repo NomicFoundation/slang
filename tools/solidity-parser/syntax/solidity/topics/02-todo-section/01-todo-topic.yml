@@ -1416,7 +1416,7 @@
     - reference: YulBlock
     - reference: YulVariableDeclaration
     - reference: YulFunctionDefinition
-    - reference: YulAssignment
+    - reference: YulAssignmentStatement
     - reference: YulFunctionCall
     - reference: YulIfStatement
     - reference: YulForStatement
@@ -1428,21 +1428,14 @@
 - name: YulVariableDeclaration
   sequence:
     - terminal: let
-    - reference: YulIdentifier
+    - oneOrMore:
+        reference: YulIdentifierPath
+        separator:
+          terminal: ","
     - optional:
-        choice:
-          - sequence:
-              - terminal: ":="
-              - reference: YulExpression
-          - sequence:
-              - optional:
-                  sequence:
-                    - terminal: ","
-                    - reference: YulIdentifier
-              - optional:
-                  sequence:
-                    - terminal: ":="
-                    - reference: YulFunctionCall
+        sequence:
+          - terminal: ":="
+          - reference: YulExpression
 
 - name: YulFunctionDefinition
   sequence:
@@ -1463,20 +1456,14 @@
                 terminal: ","
     - reference: YulBlock
 
-- name: YulAssignment
+- name: YulAssignmentStatement
   sequence:
-    - reference: YulIdentifierPath
-    - choice:
-        - sequence:
-            - terminal: ":="
-            - reference: YulExpression
-        - sequence:
-            - oneOrMore:
-                sequence:
-                  - terminal: ","
-                  - reference: YulIdentifierPath
-            - terminal: ":="
-            - reference: YulFunctionCall
+    - oneOrMore:
+        reference: YulIdentifierPath
+        separator:
+          terminal: ","
+    - terminal: ":="
+    - reference: YulExpression
 
 - name: YulFunctionCall
   sequence:
@@ -1515,20 +1502,14 @@
   sequence:
     - terminal: switch
     - reference: YulExpression
-    - choice:
-        - sequence:
-            - oneOrMore:
-                sequence:
+    - oneOrMore:
+        sequence:
+          - choice:
+              - sequence:
                   - terminal: case
                   - reference: YulLiteral
-                  - reference: YulBlock
-            - optional:
-                sequence:
-                  - terminal: default
-                  - reference: YulBlock
-        - sequence:
-            - terminal: default
-            - reference: YulBlock
+              - terminal: default
+          - reference: YulBlock
 
 - name: YulExpression
   choice:
@@ -1592,13 +1573,4 @@
   sequence:
     - terminal: "0x"
     - oneOrMore:
-        choice:
-          - range:
-              from: "0"
-              to: "9"
-          - range:
-              from: a
-              to: f
-          - range:
-              from: A
-              to: F
+        reference: HexCharacter
