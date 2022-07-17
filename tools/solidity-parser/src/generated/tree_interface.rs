@@ -1800,6 +1800,24 @@ pub mod yul_variable_declaration {
     }
 }
 
+/// EmitStatement = 'emit' IdentifierPath ArgumentList ';' ;
+pub type EmitStatement = emit_statement::_T0;
+pub mod emit_statement {
+    #[allow(unused_imports)]
+    use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub emit: FixedSizeTerminalWithTrivia<4usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub identifier_path: IdentifierPath,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub argument_list: ArgumentList,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub semicolon_char: FixedSizeTerminalWithTrivia<1>,
+    }
+}
+
 /// InheritanceSpecifier = IdentifierPath [ ArgumentList ] ;
 pub type InheritanceSpecifier = inheritance_specifier::_T0;
 pub mod inheritance_specifier {
@@ -1855,6 +1873,24 @@ pub mod payable_expression {
         pub payable: FixedSizeTerminalWithTrivia<7usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub argument_list: ArgumentList,
+    }
+}
+
+/// RevertStatement = 'revert' [ IdentifierPath ] ArgumentList ';' ;
+pub type RevertStatement = revert_statement::_T0;
+pub mod revert_statement {
+    #[allow(unused_imports)]
+    use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub revert: FixedSizeTerminalWithTrivia<6usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub identifier_path: Option<IdentifierPath>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub argument_list: ArgumentList,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub semicolon_char: FixedSizeTerminalWithTrivia<1>,
     }
 }
 
@@ -2617,23 +2653,6 @@ pub mod do_while_statement {
     }
 }
 
-/// EmitStatement = 'emit' Expression ArgumentList ';' ;
-pub type EmitStatement = emit_statement::_T0;
-pub mod emit_statement {
-    #[allow(unused_imports)]
-    use super::*;
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T0 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub emit: FixedSizeTerminalWithTrivia<4usize>,
-        pub expression: Expression,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub argument_list: ArgumentList,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub semicolon_char: FixedSizeTerminalWithTrivia<1>,
-    }
-}
-
 /// ExpressionStatement = Expression ';' ;
 pub type ExpressionStatement = expression_statement::_T0;
 pub mod expression_statement {
@@ -2684,23 +2703,6 @@ pub mod return_statement {
         pub r#return: FixedSizeTerminalWithTrivia<6usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub expression: Option<Expression>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub semicolon_char: FixedSizeTerminalWithTrivia<1>,
-    }
-}
-
-/// RevertStatement = 'revert' Expression ArgumentList ';' ;
-pub type RevertStatement = revert_statement::_T0;
-pub mod revert_statement {
-    #[allow(unused_imports)]
-    use super::*;
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T0 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub revert: FixedSizeTerminalWithTrivia<6usize>,
-        pub expression: Expression,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub argument_list: ArgumentList,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub semicolon_char: FixedSizeTerminalWithTrivia<1>,
     }

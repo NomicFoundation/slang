@@ -2210,6 +2210,43 @@ impl DefaultTest for yul_variable_declaration::_T0 {
     }
 }
 
+impl emit_statement::_T0 {
+    pub fn from_parse(
+        (((emit, identifier_path), argument_list), semicolon_char): (
+            (
+                (FixedSizeTerminalWithTrivia<4usize>, IdentifierPath),
+                ArgumentList,
+            ),
+            FixedSizeTerminalWithTrivia<1>,
+        ),
+    ) -> Self {
+        Self {
+            emit,
+            identifier_path,
+            argument_list,
+            semicolon_char,
+        }
+    }
+}
+impl Default for emit_statement::_T0 {
+    fn default() -> Self {
+        Self {
+            emit: Default::default(),
+            identifier_path: Default::default(),
+            argument_list: Default::default(),
+            semicolon_char: Default::default(),
+        }
+    }
+}
+impl DefaultTest for emit_statement::_T0 {
+    fn is_default(&self) -> bool {
+        self.emit.is_default()
+            && self.identifier_path.is_default()
+            && self.argument_list.is_default()
+            && self.semicolon_char.is_default()
+    }
+}
+
 impl inheritance_specifier::_T0 {
     pub fn from_parse(
         (identifier_path, argument_list): (IdentifierPath, Option<ArgumentList>),
@@ -2310,6 +2347,43 @@ impl Default for payable_expression::_T0 {
 impl DefaultTest for payable_expression::_T0 {
     fn is_default(&self) -> bool {
         self.payable.is_default() && self.argument_list.is_default()
+    }
+}
+
+impl revert_statement::_T0 {
+    pub fn from_parse(
+        (((revert, identifier_path), argument_list), semicolon_char): (
+            (
+                (FixedSizeTerminalWithTrivia<6usize>, Option<IdentifierPath>),
+                ArgumentList,
+            ),
+            FixedSizeTerminalWithTrivia<1>,
+        ),
+    ) -> Self {
+        Self {
+            revert,
+            identifier_path,
+            argument_list,
+            semicolon_char,
+        }
+    }
+}
+impl Default for revert_statement::_T0 {
+    fn default() -> Self {
+        Self {
+            revert: Default::default(),
+            identifier_path: Default::default(),
+            argument_list: Default::default(),
+            semicolon_char: Default::default(),
+        }
+    }
+}
+impl DefaultTest for revert_statement::_T0 {
+    fn is_default(&self) -> bool {
+        self.revert.is_default()
+            && self.identifier_path.is_default()
+            && self.argument_list.is_default()
+            && self.semicolon_char.is_default()
     }
 }
 
@@ -2983,25 +3057,6 @@ impl do_while_statement::_T0 {
     }
 }
 
-impl emit_statement::_T0 {
-    pub fn from_parse(
-        (((emit, expression), argument_list), semicolon_char): (
-            (
-                (FixedSizeTerminalWithTrivia<4usize>, Expression),
-                ArgumentList,
-            ),
-            FixedSizeTerminalWithTrivia<1>,
-        ),
-    ) -> Self {
-        Self {
-            emit,
-            expression,
-            argument_list,
-            semicolon_char,
-        }
-    }
-}
-
 impl expression_statement::_T0 {
     pub fn from_parse(
         (expression, semicolon_char): (Expression, FixedSizeTerminalWithTrivia<1>),
@@ -3078,25 +3133,6 @@ impl DefaultTest for return_statement::_T0 {
         self.r#return.is_default()
             && self.expression.is_default()
             && self.semicolon_char.is_default()
-    }
-}
-
-impl revert_statement::_T0 {
-    pub fn from_parse(
-        (((revert, expression), argument_list), semicolon_char): (
-            (
-                (FixedSizeTerminalWithTrivia<6usize>, Expression),
-                ArgumentList,
-            ),
-            FixedSizeTerminalWithTrivia<1>,
-        ),
-    ) -> Self {
-        Self {
-            revert,
-            expression,
-            argument_list,
-            semicolon_char,
-        }
     }
 }
 

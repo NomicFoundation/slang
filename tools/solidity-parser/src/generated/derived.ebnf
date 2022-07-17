@@ -212,9 +212,9 @@ CatchClause = 'catch' [ [ «Identifier» ] ParameterList ] Block ;
 
 ReturnStatement = 'return' [ Expression ] ';' ;
 
-EmitStatement = 'emit' Expression ArgumentList ';' ;
+EmitStatement = 'emit' IdentifierPath ArgumentList ';' ;
 
-RevertStatement = 'revert' Expression ArgumentList ';' ;
+RevertStatement = 'revert' [ IdentifierPath ] ArgumentList ';' ;
 
 DeleteStatement = 'delete' «Identifier» ';' ;
 

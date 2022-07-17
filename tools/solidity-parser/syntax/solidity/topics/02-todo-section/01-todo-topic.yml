@@ -790,14 +790,15 @@
 - name: EmitStatement
   sequence:
     - terminal: emit
-    - reference: Expression
+    - reference: IdentifierPath
     - reference: ArgumentList
     - terminal: ;
 
 - name: RevertStatement
   sequence:
     - terminal: revert
-    - reference: Expression
+    - optional:
+        reference: IdentifierPath
     - reference: ArgumentList
     - terminal: ;
 
