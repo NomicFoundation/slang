@@ -192,7 +192,7 @@ UncheckedBlock = 'unchecked' Block ;
 
 Statement = Block | SimpleStatement | IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | TryStatement | ReturnStatement | EmitStatement | RevertStatement | AssemblyStatement ;
 
-SimpleStatement = VariableDeclarationStatement | ExpressionStatement ;
+SimpleStatement = TupleDeconstructionStatement | VariableDeclarationStatement | ExpressionStatement ;
 
 IfStatement = 'if' '(' Expression ')' Statement [ 'else' Statement ] ;
 
@@ -216,11 +216,9 @@ EmitStatement = 'emit' Expression ArgumentList ';' ;
 
 RevertStatement = 'revert' Expression ArgumentList ';' ;
 
-TupleVariableDeclaration = '(' { ',' } VariableDeclaration { ',' [ VariableDeclaration ] } ')' ;
+TupleDeconstructionStatement = '(' { [ [ TypeName ] «Identifier» ] / ',' } ')' '=' Expression ';' ;
 
-VariableDeclarationStatement = ( VariableDeclaration [ '=' Expression ] | TupleVariableDeclaration '=' Expression ) ';' ;
-
-VariableDeclaration = TypeName [ DataLocation ] «Identifier» ;
+VariableDeclarationStatement = TypeName [ DataLocation ] «Identifier» [ '=' Expression ] ';' ;
 
 ExpressionStatement = Expression ';' ;
 

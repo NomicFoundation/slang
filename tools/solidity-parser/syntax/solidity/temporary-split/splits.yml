@@ -111,9 +111,8 @@
           - ReturnStatement
           - EmitStatement
           - RevertStatement
-          - TupleVariableDeclaration
+          - TupleDeconstructionStatement
           - VariableDeclarationStatement
-          - VariableDeclaration
           - ExpressionStatement
           - AssemblyStatement
           - AssemblyFlags

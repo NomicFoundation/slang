@@ -2192,21 +2192,6 @@ pub mod using_directive {
     }
 }
 
-/// VariableDeclaration = TypeName [ DataLocation ] «Identifier» ;
-pub type VariableDeclaration = variable_declaration::_T0;
-pub mod variable_declaration {
-    #[allow(unused_imports)]
-    use super::*;
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T0 {
-        pub type_name: TypeName,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _1: Option<VariableSizeTerminalWithTrivia>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub identifier: identifier::WithTrivia,
-    }
-}
-
 /// Directive = PragmaDirective | ImportDirective | UsingDirective ;
 pub type Directive = Box<directive::_T0>;
 pub mod directive {
@@ -2319,32 +2304,6 @@ pub mod struct_definition {
         pub struct_members: Vec<StructMember>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_brace_char: FixedSizeTerminalWithTrivia<1>,
-    }
-}
-
-/// TupleVariableDeclaration = '(' { ',' } VariableDeclaration { ',' [ VariableDeclaration ] } ')' ;
-pub type TupleVariableDeclaration = tuple_variable_declaration::_T0;
-pub mod tuple_variable_declaration {
-    #[allow(unused_imports)]
-    use super::*;
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T3 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub comma_char: FixedSizeTerminalWithTrivia<1>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub variable_declaration: Option<VariableDeclaration>,
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T0 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub open_paren_char: FixedSizeTerminalWithTrivia<1>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub comma_chars: VariableSizeTerminal,
-        pub variable_declaration: VariableDeclaration,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _t3s: Vec<tuple_variable_declaration::_T3>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub close_paren_char: FixedSizeTerminalWithTrivia<1>,
     }
 }
 
@@ -2871,38 +2830,61 @@ pub mod try_statement {
     }
 }
 
-/// VariableDeclarationStatement = ( VariableDeclaration [ '=' Expression ] | TupleVariableDeclaration '=' Expression ) ';' ;
+/// TupleDeconstructionStatement = '(' { [ [ TypeName ] «Identifier» ] / ',' } ')' '=' Expression ';' ;
+pub type TupleDeconstructionStatement = tuple_deconstruction_statement::_T0;
+pub mod tuple_deconstruction_statement {
+    #[allow(unused_imports)]
+    use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T2 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub type_name: Option<TypeName>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub identifier: identifier::WithTrivia,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T1 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub elements: Vec<Option<tuple_deconstruction_statement::_T2>>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub separators: Vec<FixedSizeTerminalWithTrivia<1>>,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub open_paren_char: FixedSizeTerminalWithTrivia<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _t2s: Option<tuple_deconstruction_statement::_T1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub close_paren_char: FixedSizeTerminalWithTrivia<1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub equal_char: FixedSizeTerminalWithTrivia<1>,
+        pub expression: Expression,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub semicolon_char: FixedSizeTerminalWithTrivia<1>,
+    }
+}
+
+/// VariableDeclarationStatement = TypeName [ DataLocation ] «Identifier» [ '=' Expression ] ';' ;
 pub type VariableDeclarationStatement = variable_declaration_statement::_T0;
 pub mod variable_declaration_statement {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T3 {
+    pub struct _T1 {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub equal_char: FixedSizeTerminalWithTrivia<1>,
         pub expression: Expression,
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T2 {
-        pub variable_declaration: VariableDeclaration,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _t3: Option<variable_declaration_statement::_T3>,
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T4 {
-        pub tuple_variable_declaration: TupleVariableDeclaration,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub equal_char: FixedSizeTerminalWithTrivia<1>,
-        pub expression: Expression,
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub enum _T1 {
-        _T2(variable_declaration_statement::_T2),
-        _T4(variable_declaration_statement::_T4),
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
-        pub _t1: Box<variable_declaration_statement::_T1>,
+        pub type_name: TypeName,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _1: Option<VariableSizeTerminalWithTrivia>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub identifier: identifier::WithTrivia,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _t1: Option<variable_declaration_statement::_T1>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub semicolon_char: FixedSizeTerminalWithTrivia<1>,
     }
@@ -2926,13 +2908,14 @@ pub mod while_statement {
     }
 }
 
-/// SimpleStatement = VariableDeclarationStatement | ExpressionStatement ;
+/// SimpleStatement = TupleDeconstructionStatement | VariableDeclarationStatement | ExpressionStatement ;
 pub type SimpleStatement = Box<simple_statement::_T0>;
 pub mod simple_statement {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub enum _T0 {
+        TupleDeconstructionStatement(TupleDeconstructionStatement),
         VariableDeclarationStatement(VariableDeclarationStatement),
         ExpressionStatement(ExpressionStatement),
     }

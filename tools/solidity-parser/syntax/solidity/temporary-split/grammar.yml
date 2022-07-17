@@ -781,6 +781,7 @@
     - reference: AssemblyStatement
 - name: SimpleStatement
   choice:
+    - reference: TupleDeconstructionStatement
     - reference: VariableDeclarationStatement
     - reference: ExpressionStatement
 - name: IfStatement
@@ -870,38 +871,32 @@
     - reference: Expression
     - reference: ArgumentList
     - terminal: ;
-- name: TupleVariableDeclaration
+- name: TupleDeconstructionStatement
   sequence:
     - terminal: (
     - zeroOrMore:
-        terminal: ","
-    - reference: VariableDeclaration
-    - zeroOrMore:
-        sequence:
-          - terminal: ","
-          - optional:
-              reference: VariableDeclaration
-    - terminal: )
-- name: VariableDeclarationStatement
-  sequence:
-    - choice:
-        - sequence:
-            - reference: VariableDeclaration
+        optional:
+          sequence:
             - optional:
-                sequence:
-                  - terminal: "="
-                  - reference: Expression
-        - sequence:
-            - reference: TupleVariableDeclaration
-            - terminal: "="
-            - reference: Expression
+                reference: TypeName
+            - reference: Identifier
+        separator:
+          terminal: ","
+    - terminal: )
+    - terminal: "="
+    - reference: Expression
     - terminal: ;
-- name: VariableDeclaration
+- name: VariableDeclarationStatement
   sequence:
     - reference: TypeName
     - optional:
         reference: DataLocation
     - reference: Identifier
+    - optional:
+        sequence:
+          - terminal: "="
+          - reference: Expression
+    - terminal: ;
 - name: ExpressionStatement
   sequence:
     - reference: Expression

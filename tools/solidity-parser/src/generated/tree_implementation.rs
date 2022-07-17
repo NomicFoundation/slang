@@ -2711,21 +2711,6 @@ impl using_directive::_T0 {
     }
 }
 
-impl variable_declaration::_T0 {
-    pub fn from_parse(
-        ((type_name, _1), identifier): (
-            (TypeName, Option<VariableSizeTerminalWithTrivia>),
-            identifier::WithTrivia,
-        ),
-    ) -> Self {
-        Self {
-            type_name,
-            _1,
-            identifier,
-        }
-    }
-}
-
 impl Default for error_definition::_T1 {
     fn default() -> Self {
         Self {
@@ -2905,55 +2890,6 @@ impl DefaultTest for struct_definition::_T0 {
             && self.open_brace_char.is_default()
             && self.struct_members.is_default()
             && self.close_brace_char.is_default()
-    }
-}
-
-impl tuple_variable_declaration::_T3 {
-    pub fn from_parse(
-        (comma_char, variable_declaration): (
-            FixedSizeTerminalWithTrivia<1>,
-            Option<VariableDeclaration>,
-        ),
-    ) -> Self {
-        Self {
-            comma_char,
-            variable_declaration,
-        }
-    }
-}
-impl Default for tuple_variable_declaration::_T3 {
-    fn default() -> Self {
-        Self {
-            comma_char: Default::default(),
-            variable_declaration: Default::default(),
-        }
-    }
-}
-impl DefaultTest for tuple_variable_declaration::_T3 {
-    fn is_default(&self) -> bool {
-        self.comma_char.is_default() && self.variable_declaration.is_default()
-    }
-}
-impl tuple_variable_declaration::_T0 {
-    pub fn from_parse(
-        ((((open_paren_char, comma_chars), variable_declaration), _t3s), close_paren_char): (
-            (
-                (
-                    (FixedSizeTerminalWithTrivia<1>, VariableSizeTerminal),
-                    VariableDeclaration,
-                ),
-                Vec<tuple_variable_declaration::_T3>,
-            ),
-            FixedSizeTerminalWithTrivia<1>,
-        ),
-    ) -> Self {
-        Self {
-            open_paren_char,
-            comma_chars,
-            variable_declaration,
-            _t3s,
-            close_paren_char,
-        }
     }
 }
 
@@ -3351,7 +3287,71 @@ impl try_statement::_T0 {
     }
 }
 
-impl variable_declaration_statement::_T3 {
+impl tuple_deconstruction_statement::_T2 {
+    pub fn from_parse((type_name, identifier): (Option<TypeName>, identifier::WithTrivia)) -> Self {
+        Self {
+            type_name,
+            identifier,
+        }
+    }
+}
+impl Default for tuple_deconstruction_statement::_T2 {
+    fn default() -> Self {
+        Self {
+            type_name: Default::default(),
+            identifier: Default::default(),
+        }
+    }
+}
+impl DefaultTest for tuple_deconstruction_statement::_T2 {
+    fn is_default(&self) -> bool {
+        self.type_name.is_default() && self.identifier.is_default()
+    }
+}
+impl Default for tuple_deconstruction_statement::_T1 {
+    fn default() -> Self {
+        Self {
+            elements: Default::default(),
+            separators: Default::default(),
+        }
+    }
+}
+impl DefaultTest for tuple_deconstruction_statement::_T1 {
+    fn is_default(&self) -> bool {
+        self.elements.is_default() && self.separators.is_default()
+    }
+}
+impl tuple_deconstruction_statement::_T0 {
+    pub fn from_parse(
+        (((((open_paren_char, _t2s), close_paren_char), equal_char), expression), semicolon_char): (
+            (
+                (
+                    (
+                        (
+                            FixedSizeTerminalWithTrivia<1>,
+                            Option<tuple_deconstruction_statement::_T1>,
+                        ),
+                        FixedSizeTerminalWithTrivia<1>,
+                    ),
+                    FixedSizeTerminalWithTrivia<1>,
+                ),
+                Expression,
+            ),
+            FixedSizeTerminalWithTrivia<1>,
+        ),
+    ) -> Self {
+        Self {
+            open_paren_char,
+            _t2s,
+            close_paren_char,
+            equal_char,
+            expression,
+            semicolon_char,
+        }
+    }
+}
+
+impl variable_declaration_statement::_T1 {
     pub fn from_parse(
         (equal_char, expression): (FixedSizeTerminalWithTrivia<1>, Expression),
     ) -> Self {
@@ -3361,41 +3361,23 @@ impl variable_declaration_statement::_T3 {
         }
     }
 }
-impl variable_declaration_statement::_T2 {
-    pub fn from_parse(
-        (variable_declaration, _t3): (
-            VariableDeclaration,
-            Option<variable_declaration_statement::_T3>,
-        ),
-    ) -> Self {
-        Self {
-            variable_declaration,
-            _t3,
-        }
-    }
-}
-impl variable_declaration_statement::_T4 {
-    pub fn from_parse(
-        ((tuple_variable_declaration, equal_char), expression): (
-            (TupleVariableDeclaration, FixedSizeTerminalWithTrivia<1>),
-            Expression,
-        ),
-    ) -> Self {
-        Self {
-            tuple_variable_declaration,
-            equal_char,
-            expression,
-        }
-    }
-}
 impl variable_declaration_statement::_T0 {
     pub fn from_parse(
-        (_t1, semicolon_char): (
-            Box<variable_declaration_statement::_T1>,
+        ((((type_name, _1), identifier), _t1), semicolon_char): (
+            (
+                (
+                    (TypeName, Option<VariableSizeTerminalWithTrivia>),
+                    identifier::WithTrivia,
+                ),
+                Option<variable_declaration_statement::_T1>,
+            ),
             FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
+            type_name,
+            _1,
+            identifier,
             _t1,
             semicolon_char,
         }
