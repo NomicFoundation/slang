@@ -723,6 +723,30 @@ impl DefaultTest for yul_identifier::WithTrivia {
     }
 }
 
+impl address_type::_T0 {
+    pub fn from_parse(
+        (address, payable): (
+            FixedSizeTerminalWithTrivia<7usize>,
+            Option<FixedSizeTerminalWithTrivia<7usize>>,
+        ),
+    ) -> Self {
+        Self { address, payable }
+    }
+}
+impl Default for address_type::_T0 {
+    fn default() -> Self {
+        Self {
+            address: Default::default(),
+            payable: Default::default(),
+        }
+    }
+}
+impl DefaultTest for address_type::_T0 {
+    fn is_default(&self) -> bool {
+        self.address.is_default() && self.payable.is_default()
+    }
+}
+
 impl Default for array_literal::_T1 {
     fn default() -> Self {
         Self {
@@ -1287,30 +1311,6 @@ impl DefaultTest for assembly_flags::_T0 {
     }
 }
 
-impl elementary_type_with_payable::_T1 {
-    pub fn from_parse(
-        (address, payable): (
-            FixedSizeTerminalWithTrivia<7usize>,
-            Option<FixedSizeTerminalWithTrivia<7usize>>,
-        ),
-    ) -> Self {
-        Self { address, payable }
-    }
-}
-impl Default for elementary_type_with_payable::_T1 {
-    fn default() -> Self {
-        Self {
-            address: Default::default(),
-            payable: Default::default(),
-        }
-    }
-}
-impl DefaultTest for elementary_type_with_payable::_T1 {
-    fn is_default(&self) -> bool {
-        self.address.is_default() && self.payable.is_default()
-    }
-}
-
 impl numeric_literal::_T0 {
     pub fn from_parse(
         (_t1, _1): (Box<numeric_literal::_T1>, Option<VariableSizeTerminal>),
@@ -1522,13 +1522,13 @@ impl star_import_directive::_T0 {
 
 impl user_defined_value_type_definition::_T0 {
     pub fn from_parse(
-        ((((r#type, identifier), is), elementary_type_with_payable), semicolon_char): (
+        ((((r#type, identifier), is), elementary_type), semicolon_char): (
             (
                 (
                     (FixedSizeTerminalWithTrivia<4usize>, identifier::WithTrivia),
                     FixedSizeTerminalWithTrivia<2usize>,
                 ),
-                ElementaryTypeWithPayable,
+                ElementaryType,
             ),
             FixedSizeTerminalWithTrivia<1>,
         ),
@@ -1537,7 +1537,7 @@ impl user_defined_value_type_definition::_T0 {
             r#type,
             identifier,
             is,
-            elementary_type_with_payable,
+            elementary_type,
             semicolon_char,
         }
     }
@@ -2349,8 +2349,17 @@ impl DefaultTest for type_name::_T3 {
     }
 }
 impl type_name::_T0 {
-    pub fn from_parse((_t1, _t3s): (Box<type_name::_T1>, Vec<type_name::_T3>)) -> Self {
-        Self { _t1, _t3s }
+    pub fn from_parse(
+        ((_t1, _t3s), elementary_type): (
+            (Box<type_name::_T1>, Vec<type_name::_T3>),
+            ElementaryType,
+        ),
+    ) -> Self {
+        Self {
+            _t1,
+            _t3s,
+            elementary_type,
+        }
     }
 }
 

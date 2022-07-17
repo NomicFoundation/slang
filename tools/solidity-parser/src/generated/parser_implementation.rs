@@ -755,6 +755,43 @@ impl Parsers {
         )
         .boxed();
 
+        // AddressType = 'address' [ 'payable' ] ;
+        let address_type_parser = leading_trivia_parser
+            .clone()
+            .then(
+                terminal("address")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<7usize>()),
+            )
+            .then(trailing_trivia_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(
+                        terminal("payable")
+                            .ignored()
+                            .map(|_| FixedSizeTerminal::<7usize>()),
+                    )
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    )
+                    .or_not(),
+            )
+            .map(|v| address_type::_T0::from_parse(v))
+            .boxed();
+
         // ArrayLiteral = '[' 1…*{ Expression / ',' } ']' ;
         let array_literal_parser = leading_trivia_parser
             .clone()
@@ -926,85 +963,6 @@ impl Parsers {
             .then(just('"').map(|_| FixedSizeTerminal::<1>()))
             .map(|v| double_quoted_unicode_string_literal::_T0::from_parse(v))
             .boxed();
-
-        // ElementaryType = 'bool' | 'string' | 'bytes' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | «FixedType» | «UfixedType» ;
-        let elementary_type_parser = choice((
-            leading_trivia_parser
-                .clone()
-                .then(choice::<_, ErrorType>((
-                    terminal("b").ignore_then(choice((
-                        terminal("ool").map(|_| 4usize),
-                        terminal("ytes").map(|_| 5usize),
-                    ))),
-                    terminal("string").map(|_| 6usize),
-                )))
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
-                        leading,
-                        content: VariableSizeTerminal(content),
-                        trailing,
-                    },
-                )
-                .map(|v| Box::new(elementary_type::_T0::_0(v))),
-            leading_trivia_parser
-                .clone()
-                .then(signed_integer_type_parser.clone())
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| signed_integer_type::WithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    },
-                )
-                .map(|v| Box::new(elementary_type::_T0::SignedIntegerType(v))),
-            leading_trivia_parser
-                .clone()
-                .then(unsigned_integer_type_parser.clone())
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| unsigned_integer_type::WithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    },
-                )
-                .map(|v| Box::new(elementary_type::_T0::UnsignedIntegerType(v))),
-            leading_trivia_parser
-                .clone()
-                .then(fixed_bytes_type_parser.clone())
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| fixed_bytes_type::WithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    },
-                )
-                .map(|v| Box::new(elementary_type::_T0::FixedBytesType(v))),
-            leading_trivia_parser
-                .clone()
-                .then(fixed_type_parser.clone())
-                .then(trailing_trivia_parser.clone())
-                .map(|((leading, content), trailing)| fixed_type::WithTrivia {
-                    leading,
-                    content,
-                    trailing,
-                })
-                .map(|v| Box::new(elementary_type::_T0::FixedType(v))),
-            leading_trivia_parser
-                .clone()
-                .then(ufixed_type_parser.clone())
-                .then(trailing_trivia_parser.clone())
-                .map(|((leading, content), trailing)| ufixed_type::WithTrivia {
-                    leading,
-                    content,
-                    trailing,
-                })
-                .map(|v| Box::new(elementary_type::_T0::UfixedType(v))),
-        ))
-        .boxed();
 
         // «Keyword» = 'pragma' | 'abstract' | 'anonymous' | 'address' | 'as' | 'assembly' | 'bool' | 'break' | 'bytes' | 'calldata' | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum' | 'event' | 'external' | 'fallback' | 'false' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import' | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override' | 'payable' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct' | 'true' | 'try' | 'type' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | 'fixed' | 'ufixed' ;
         let keyword_parser = choice((
@@ -1951,70 +1909,85 @@ impl Parsers {
             .map(|v| assembly_flags::_T0::from_parse(v))
             .boxed();
 
-        // ElementaryTypeWithPayable = 'address' [ 'payable' ] | ElementaryType ;
-        let elementary_type_with_payable_parser = choice((
+        // ElementaryType = 'bool' | 'string' | 'bytes' | AddressType | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | «FixedType» | «UfixedType» ;
+        let elementary_type_parser = choice((
             leading_trivia_parser
                 .clone()
-                .then(
-                    terminal("address")
-                        .ignored()
-                        .map(|_| FixedSizeTerminal::<7usize>()),
-                )
+                .then(choice::<_, ErrorType>((
+                    terminal("b").ignore_then(choice((
+                        terminal("ool").map(|_| 4usize),
+                        terminal("ytes").map(|_| 5usize),
+                    ))),
+                    terminal("string").map(|_| 6usize),
+                )))
                 .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                    |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
+                        leading,
+                        content: VariableSizeTerminal(content),
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(elementary_type::_T0::_0(v))),
+            address_type_parser
+                .clone()
+                .map(|v| Box::new(elementary_type::_T0::AddressType(v))),
+            leading_trivia_parser
+                .clone()
+                .then(signed_integer_type_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| signed_integer_type::WithTrivia {
                         leading,
                         content,
                         trailing,
                     },
                 )
-                .then(
-                    leading_trivia_parser
-                        .clone()
-                        .then(
-                            terminal("payable")
-                                .ignored()
-                                .map(|_| FixedSizeTerminal::<7usize>()),
-                        )
-                        .then(trailing_trivia_parser.clone())
-                        .map(
-                            |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                                leading,
-                                content,
-                                trailing,
-                            },
-                        )
-                        .or_not(),
-                )
-                .map(|v| elementary_type_with_payable::_T1::from_parse(v))
-                .map(|v| Box::new(elementary_type_with_payable::_T0::_T1(v))),
-            elementary_type_parser
-                .clone()
-                .map(|v| Box::new(elementary_type_with_payable::_T0::ElementaryType(v))),
-        ))
-        .boxed();
-
-        // ElementaryTypeWithoutPayable = 'address' | ElementaryType ;
-        let elementary_type_without_payable_parser = choice((
+                .map(|v| Box::new(elementary_type::_T0::SignedIntegerType(v))),
             leading_trivia_parser
                 .clone()
-                .then(
-                    terminal("address")
-                        .ignored()
-                        .map(|_| FixedSizeTerminal::<7usize>()),
-                )
+                .then(unsigned_integer_type_parser.clone())
                 .then(trailing_trivia_parser.clone())
                 .map(
-                    |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                    |((leading, content), trailing)| unsigned_integer_type::WithTrivia {
                         leading,
                         content,
                         trailing,
                     },
                 )
-                .map(|v| Box::new(elementary_type_without_payable::_T0::Address(v))),
-            elementary_type_parser
+                .map(|v| Box::new(elementary_type::_T0::UnsignedIntegerType(v))),
+            leading_trivia_parser
                 .clone()
-                .map(|v| Box::new(elementary_type_without_payable::_T0::ElementaryType(v))),
+                .then(fixed_bytes_type_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(
+                    |((leading, content), trailing)| fixed_bytes_type::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    },
+                )
+                .map(|v| Box::new(elementary_type::_T0::FixedBytesType(v))),
+            leading_trivia_parser
+                .clone()
+                .then(fixed_type_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(|((leading, content), trailing)| fixed_type::WithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                })
+                .map(|v| Box::new(elementary_type::_T0::FixedType(v))),
+            leading_trivia_parser
+                .clone()
+                .then(ufixed_type_parser.clone())
+                .then(trailing_trivia_parser.clone())
+                .map(|((leading, content), trailing)| ufixed_type::WithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                })
+                .map(|v| Box::new(elementary_type::_T0::UfixedType(v))),
         ))
         .boxed();
 
@@ -2576,7 +2549,7 @@ impl Parsers {
             .map(|v| star_import_directive::_T0::from_parse(v))
             .boxed();
 
-        // UserDefinedValueTypeDefinition = 'type' «Identifier» 'is' ElementaryTypeWithPayable ';' ;
+        // UserDefinedValueTypeDefinition = 'type' «Identifier» 'is' ElementaryType ';' ;
         let user_defined_value_type_definition_parser = leading_trivia_parser
             .clone()
             .then(
@@ -2620,7 +2593,7 @@ impl Parsers {
                         },
                     ),
             )
-            .then(elementary_type_with_payable_parser.clone())
+            .then(elementary_type_parser.clone())
             .then(
                 leading_trivia_parser
                     .clone()
@@ -2653,7 +2626,7 @@ impl Parsers {
             .boxed(),
         );
 
-        // MappingType = 'mapping' '(' ( ElementaryTypeWithoutPayable | IdentifierPath ) '=>' TypeName ')' ;
+        // MappingType = 'mapping' '(' ( ElementaryType | IdentifierPath ) '=>' TypeName ')' ;
         let mapping_type_parser = leading_trivia_parser
             .clone()
             .then(
@@ -2683,9 +2656,9 @@ impl Parsers {
                     ),
             )
             .then(choice((
-                elementary_type_without_payable_parser
+                elementary_type_parser
                     .clone()
-                    .map(|v| Box::new(mapping_type::_T1::ElementaryTypeWithoutPayable(v))),
+                    .map(|v| Box::new(mapping_type::_T1::ElementaryType(v))),
                 identifier_path_parser
                     .clone()
                     .map(|v| Box::new(mapping_type::_T1::IdentifierPath(v))),
@@ -3599,12 +3572,12 @@ impl Parsers {
             .map(|v| payable_expression::_T0::from_parse(v))
             .boxed();
 
-        // TypeName = ( ElementaryTypeWithPayable | FunctionType | MappingType | IdentifierPath ) { '[' [ Expression ] ']' } ;
+        // TypeName = ( ElementaryType | FunctionType | MappingType | IdentifierPath ) { '[' [ Expression ] ']' } ElementaryType ;
         type_name_parser.define(
             choice((
-                elementary_type_with_payable_parser
+                elementary_type_parser
                     .clone()
-                    .map(|v| Box::new(type_name::_T1::ElementaryTypeWithPayable(v))),
+                    .map(|v| Box::new(type_name::_T1::ElementaryType(v))),
                 function_type_parser
                     .clone()
                     .map(|v| Box::new(type_name::_T1::FunctionType(v))),
@@ -3644,6 +3617,7 @@ impl Parsers {
                     .map(|v| type_name::_T3::from_parse(v))
                     .repeated(),
             )
+            .then(elementary_type_parser.clone())
             .map(|v| type_name::_T0::from_parse(v))
             .boxed(),
         );
@@ -4418,7 +4392,7 @@ impl Parsers {
             .map(|v| event_definition::_T0::from_parse(v))
             .boxed();
 
-        // PrimaryExpression = PayableExpression | TypeExpression | NewExpression | ParenthesisExpression | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | «NumericLiteral» | ElementaryTypeWithoutPayable | «BooleanLiteral» | «Identifier» ;
+        // PrimaryExpression = PayableExpression | TypeExpression | NewExpression | ParenthesisExpression | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | «NumericLiteral» | «BooleanLiteral» | «Identifier» ;
         let primary_expression_parser = choice((
             payable_expression_parser
                 .clone()
@@ -4483,9 +4457,6 @@ impl Parsers {
                     },
                 )
                 .map(|v| Box::new(primary_expression::_T0::NumericLiteral(v))),
-            elementary_type_without_payable_parser
-                .clone()
-                .map(|v| Box::new(primary_expression::_T0::ElementaryTypeWithoutPayable(v))),
             leading_trivia_parser
                 .clone()
                 .then(choice::<_, ErrorType>((
@@ -4500,7 +4471,7 @@ impl Parsers {
                         trailing,
                     },
                 )
-                .map(|v| Box::new(primary_expression::_T0::_10(v))),
+                .map(|v| Box::new(primary_expression::_T0::_9(v))),
             leading_trivia_parser
                 .clone()
                 .then(identifier_parser.clone())
@@ -6789,13 +6760,13 @@ impl Parsers {
             ufixed_type: ufixed_type_parser,
             unsigned_integer_type: unsigned_integer_type_parser,
             yul_identifier: yul_identifier_parser,
+            address_type: address_type_parser,
             array_literal: array_literal_parser,
             break_statement: break_statement_parser,
             continue_statement: continue_statement_parser,
             decimal_number: decimal_number_parser,
             double_quoted_ascii_string_literal: double_quoted_ascii_string_literal_parser,
             double_quoted_unicode_string_literal: double_quoted_unicode_string_literal_parser,
-            elementary_type: elementary_type_parser,
             keyword: keyword_parser,
             parenthesis_expression: parenthesis_expression_parser,
             positional_argument_list: positional_argument_list_parser,
@@ -6807,8 +6778,7 @@ impl Parsers {
             yul_path: yul_path_parser,
             ascii_string_literal: ascii_string_literal_parser,
             assembly_flags: assembly_flags_parser,
-            elementary_type_with_payable: elementary_type_with_payable_parser,
-            elementary_type_without_payable: elementary_type_without_payable_parser,
+            elementary_type: elementary_type_parser,
             numeric_literal: numeric_literal_parser,
             reserved_word: reserved_word_parser,
             unicode_string_literal: unicode_string_literal_parser,

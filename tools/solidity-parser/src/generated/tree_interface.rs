@@ -689,6 +689,20 @@ pub mod yul_identifier {
     }
 }
 
+/// AddressType = 'address' [ 'payable' ] ;
+pub type AddressType = address_type::_T0;
+pub mod address_type {
+    #[allow(unused_imports)]
+    use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub address: FixedSizeTerminalWithTrivia<7usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub payable: Option<FixedSizeTerminalWithTrivia<7usize>>,
+    }
+}
+
 /// ArrayLiteral = '[' 1…*{ Expression / ',' } ']' ;
 pub type ArrayLiteral = array_literal::_T0;
 pub mod array_literal {
@@ -823,22 +837,6 @@ pub mod double_quoted_unicode_string_literal {
         pub content: double_quoted_unicode_string_literal::_T0,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub trailing: TrailingTrivia,
-    }
-}
-
-/// ElementaryType = 'bool' | 'string' | 'bytes' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | «FixedType» | «UfixedType» ;
-pub type ElementaryType = Box<elementary_type::_T0>;
-pub mod elementary_type {
-    #[allow(unused_imports)]
-    use super::*;
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub enum _T0 {
-        _0(VariableSizeTerminalWithTrivia),
-        SignedIntegerType(signed_integer_type::WithTrivia),
-        UnsignedIntegerType(unsigned_integer_type::WithTrivia),
-        FixedBytesType(fixed_bytes_type::WithTrivia),
-        FixedType(fixed_type::WithTrivia),
-        UfixedType(ufixed_type::WithTrivia),
     }
 }
 
@@ -1118,34 +1116,20 @@ pub mod assembly_flags {
     }
 }
 
-/// ElementaryTypeWithPayable = 'address' [ 'payable' ] | ElementaryType ;
-pub type ElementaryTypeWithPayable = Box<elementary_type_with_payable::_T0>;
-pub mod elementary_type_with_payable {
-    #[allow(unused_imports)]
-    use super::*;
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T1 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub address: FixedSizeTerminalWithTrivia<7usize>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub payable: Option<FixedSizeTerminalWithTrivia<7usize>>,
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub enum _T0 {
-        _T1(elementary_type_with_payable::_T1),
-        ElementaryType(ElementaryType),
-    }
-}
-
-/// ElementaryTypeWithoutPayable = 'address' | ElementaryType ;
-pub type ElementaryTypeWithoutPayable = Box<elementary_type_without_payable::_T0>;
-pub mod elementary_type_without_payable {
+/// ElementaryType = 'bool' | 'string' | 'bytes' | AddressType | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | «FixedType» | «UfixedType» ;
+pub type ElementaryType = Box<elementary_type::_T0>;
+pub mod elementary_type {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub enum _T0 {
-        Address(FixedSizeTerminalWithTrivia<7usize>),
-        ElementaryType(ElementaryType),
+        _0(VariableSizeTerminalWithTrivia),
+        AddressType(AddressType),
+        SignedIntegerType(signed_integer_type::WithTrivia),
+        UnsignedIntegerType(unsigned_integer_type::WithTrivia),
+        FixedBytesType(fixed_bytes_type::WithTrivia),
+        FixedType(fixed_type::WithTrivia),
+        UfixedType(ufixed_type::WithTrivia),
     }
 }
 
@@ -1380,7 +1364,7 @@ pub mod star_import_directive {
     }
 }
 
-/// UserDefinedValueTypeDefinition = 'type' «Identifier» 'is' ElementaryTypeWithPayable ';' ;
+/// UserDefinedValueTypeDefinition = 'type' «Identifier» 'is' ElementaryType ';' ;
 pub type UserDefinedValueTypeDefinition = user_defined_value_type_definition::_T0;
 pub mod user_defined_value_type_definition {
     #[allow(unused_imports)]
@@ -1393,7 +1377,7 @@ pub mod user_defined_value_type_definition {
         pub identifier: identifier::WithTrivia,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub is: FixedSizeTerminalWithTrivia<2usize>,
-        pub elementary_type_with_payable: ElementaryTypeWithPayable,
+        pub elementary_type: ElementaryType,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub semicolon_char: FixedSizeTerminalWithTrivia<1>,
     }
@@ -1412,14 +1396,14 @@ pub mod yul_expression {
     }
 }
 
-/// MappingType = 'mapping' '(' ( ElementaryTypeWithoutPayable | IdentifierPath ) '=>' TypeName ')' ;
+/// MappingType = 'mapping' '(' ( ElementaryType | IdentifierPath ) '=>' TypeName ')' ;
 pub type MappingType = mapping_type::_T0;
 pub mod mapping_type {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub enum _T1 {
-        ElementaryTypeWithoutPayable(ElementaryTypeWithoutPayable),
+        ElementaryType(ElementaryType),
         IdentifierPath(IdentifierPath),
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -1898,14 +1882,14 @@ pub mod payable_expression {
     }
 }
 
-/// TypeName = ( ElementaryTypeWithPayable | FunctionType | MappingType | IdentifierPath ) { '[' [ Expression ] ']' } ;
+/// TypeName = ( ElementaryType | FunctionType | MappingType | IdentifierPath ) { '[' [ Expression ] ']' } ElementaryType ;
 pub type TypeName = type_name::_T0;
 pub mod type_name {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub enum _T1 {
-        ElementaryTypeWithPayable(ElementaryTypeWithPayable),
+        ElementaryType(ElementaryType),
         FunctionType(FunctionType),
         MappingType(MappingType),
         IdentifierPath(IdentifierPath),
@@ -1924,6 +1908,7 @@ pub mod type_name {
         pub _t1: Box<type_name::_T1>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t3s: Vec<type_name::_T3>,
+        pub elementary_type: ElementaryType,
     }
 }
 
@@ -2227,7 +2212,7 @@ pub mod event_definition {
     }
 }
 
-/// PrimaryExpression = PayableExpression | TypeExpression | NewExpression | ParenthesisExpression | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | «NumericLiteral» | ElementaryTypeWithoutPayable | «BooleanLiteral» | «Identifier» ;
+/// PrimaryExpression = PayableExpression | TypeExpression | NewExpression | ParenthesisExpression | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | «NumericLiteral» | «BooleanLiteral» | «Identifier» ;
 pub type PrimaryExpression = Expression;
 pub mod primary_expression {
     #[allow(unused_imports)]
@@ -2243,8 +2228,7 @@ pub mod primary_expression {
         UnicodeStringLiteral(unicode_string_literal::WithTrivia),
         HexStringLiteral(hex_string_literal::WithTrivia),
         NumericLiteral(numeric_literal::WithTrivia),
-        ElementaryTypeWithoutPayable(ElementaryTypeWithoutPayable),
-        _10(VariableSizeTerminalWithTrivia),
+        _9(VariableSizeTerminalWithTrivia),
         Identifier(identifier::WithTrivia),
     }
     pub type E = Box<primary_expression::_T0>;
