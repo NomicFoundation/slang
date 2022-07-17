@@ -162,7 +162,7 @@ ExponentiationExpression = Expression '**' Expression ;
 
 UnarySuffixExpression = Expression ( '++' | '--' ) ;
 
-UnaryPrefixExpression = ( '++' | '--' | '!' | '~' | 'delete' | '-' ) Expression ;
+UnaryPrefixExpression = ( '++' | '--' | '!' | '~' | '-' ) Expression ;
 
 FunctionCallExpression = Expression ArgumentList ;
 
@@ -190,7 +190,7 @@ Block = '{' { Statement | UncheckedBlock } '}' ;
 
 UncheckedBlock = 'unchecked' Block ;
 
-Statement = Block | SimpleStatement | IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | TryStatement | ReturnStatement | EmitStatement | RevertStatement | AssemblyStatement ;
+Statement = Block | SimpleStatement | IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | TryStatement | ReturnStatement | EmitStatement | RevertStatement | DeleteStatement | AssemblyStatement ;
 
 SimpleStatement = TupleDeconstructionStatement | VariableDeclarationStatement | ExpressionStatement ;
 
@@ -215,6 +215,8 @@ ReturnStatement = 'return' [ Expression ] ';' ;
 EmitStatement = 'emit' Expression ArgumentList ';' ;
 
 RevertStatement = 'revert' Expression ArgumentList ';' ;
+
+DeleteStatement = 'delete' «Identifier» ';' ;
 
 TupleDeconstructionStatement = '(' { [ [ TypeName ] «Identifier» ] / ',' } ')' '=' Expression ';' ;
 

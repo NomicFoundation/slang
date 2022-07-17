@@ -1266,6 +1266,22 @@ pub mod abi_coder_pragma_specifier {
     }
 }
 
+/// DeleteStatement = 'delete' «Identifier» ';' ;
+pub type DeleteStatement = delete_statement::_T0;
+pub mod delete_statement {
+    #[allow(unused_imports)]
+    use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub delete: FixedSizeTerminalWithTrivia<6usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub identifier: identifier::WithTrivia,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub semicolon_char: FixedSizeTerminalWithTrivia<1>,
+    }
+}
+
 /// EnumDefinition = 'enum' «Identifier» '{' 1…*{ «Identifier» / ',' } '}' ;
 pub type EnumDefinition = enum_definition::_T0;
 pub mod enum_definition {
@@ -2403,7 +2419,7 @@ pub mod function_call_expression {
     }
 }
 
-/// UnaryPrefixExpression = ( '++' | '--' | '!' | '~' | 'delete' | '-' ) Expression ;
+/// UnaryPrefixExpression = ( '++' | '--' | '!' | '~' | '-' ) Expression ;
 pub type UnaryPrefixExpression = Expression;
 pub mod unary_prefix_expression {
     #[allow(unused_imports)]
@@ -2952,7 +2968,7 @@ pub mod for_statement {
     }
 }
 
-/// Statement = Block | SimpleStatement | IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | TryStatement | ReturnStatement | EmitStatement | RevertStatement | AssemblyStatement ;
+/// Statement = Block | SimpleStatement | IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | TryStatement | ReturnStatement | EmitStatement | RevertStatement | DeleteStatement | AssemblyStatement ;
 pub type Statement = Box<statement::_T0>;
 pub mod statement {
     #[allow(unused_imports)]
@@ -2971,6 +2987,7 @@ pub mod statement {
         ReturnStatement(ReturnStatement),
         EmitStatement(EmitStatement),
         RevertStatement(RevertStatement),
+        DeleteStatement(DeleteStatement),
         AssemblyStatement(AssemblyStatement),
     }
 }

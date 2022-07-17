@@ -111,6 +111,7 @@
           - ReturnStatement
           - EmitStatement
           - RevertStatement
+          - DeleteStatement
           - TupleDeconstructionStatement
           - VariableDeclarationStatement
           - ExpressionStatement

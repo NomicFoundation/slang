@@ -58,6 +58,7 @@ pub struct Parsers {
     pub import_path: ParserType<ImportPath>,
     pub yul_literal: ParserType<YulLiteral>,
     pub abi_coder_pragma_specifier: ParserType<AbiCoderPragmaSpecifier>,
+    pub delete_statement: ParserType<DeleteStatement>,
     pub enum_definition: ParserType<EnumDefinition>,
     pub experimental_pragma_specifier: ParserType<ExperimentalPragmaSpecifier>,
     pub identifier_path: ParserType<IdentifierPath>,
