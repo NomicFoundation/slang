@@ -67,7 +67,7 @@ pub mod end_of_line {
     }
 }
 
-/// «FixedBytesType» = 'bytes' ( '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15' | '16' | '17' | '18' | '19' | '20' | '21' | '22' | '23' | '24' | '25' | '26' | '27' | '28' | '29' | '30' | '31' | '32' ) ;
+/// «FixedBytesType» = 'bytes' [ '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15' | '16' | '17' | '18' | '19' | '20' | '21' | '22' | '23' | '24' | '25' | '26' | '27' | '28' | '29' | '30' | '31' | '32' ] ;
 pub type FixedBytesType = fixed_bytes_type::_T0;
 pub mod fixed_bytes_type {
     #[allow(unused_imports)]
@@ -77,7 +77,7 @@ pub mod fixed_bytes_type {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub bytes: FixedSizeTerminal<5usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _1: VariableSizeTerminal,
+        pub _1: Option<VariableSizeTerminal>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
     pub struct WithTrivia {
@@ -294,7 +294,7 @@ pub mod raw_identifier {
     }
 }
 
-/// «SignedIntegerType» = 'int' ( '8' | '16' | '24' | '32' | '40' | '48' | '56' | '64' | '72' | '80' | '88' | '96' | '104' | '112' | '120' | '128' | '136' | '144' | '152' | '160' | '168' | '176' | '184' | '192' | '200' | '208' | '216' | '224' | '232' | '240' | '248' | '256' ) ;
+/// «SignedIntegerType» = 'int' [ '8' | '16' | '24' | '32' | '40' | '48' | '56' | '64' | '72' | '80' | '88' | '96' | '104' | '112' | '120' | '128' | '136' | '144' | '152' | '160' | '168' | '176' | '184' | '192' | '200' | '208' | '216' | '224' | '232' | '240' | '248' | '256' ] ;
 pub type SignedIntegerType = signed_integer_type::_T0;
 pub mod signed_integer_type {
     #[allow(unused_imports)]
@@ -304,7 +304,7 @@ pub mod signed_integer_type {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub int: FixedSizeTerminal<3usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _1: VariableSizeTerminal,
+        pub _1: Option<VariableSizeTerminal>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
     pub struct WithTrivia {
@@ -840,7 +840,7 @@ pub mod double_quoted_unicode_string_literal {
     }
 }
 
-/// «Keyword» = 'pragma' | 'abstract' | 'anonymous' | 'address' | 'as' | 'assembly' | 'bool' | 'break' | 'bytes' | 'calldata' | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum' | 'event' | 'external' | 'fallback' | 'false' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import' | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override' | 'payable' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct' | 'true' | 'try' | 'type' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | 'fixed' | 'ufixed' ;
+/// «Keyword» = 'pragma' | 'abstract' | 'anonymous' | 'address' | 'as' | 'assembly' | 'bool' | 'break' | 'calldata' | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum' | 'event' | 'external' | 'fallback' | 'false' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import' | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override' | 'payable' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct' | 'true' | 'try' | 'type' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while' | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | 'fixed' | 'ufixed' ;
 pub type Keyword = Box<keyword::_T0>;
 pub mod keyword {
     #[allow(unused_imports)]
@@ -1116,7 +1116,7 @@ pub mod assembly_flags {
     }
 }
 
-/// ElementaryType = 'bool' | 'string' | 'bytes' | AddressType | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | «FixedType» | «UfixedType» ;
+/// ElementaryType = 'bool' | 'string' | AddressType | «SignedIntegerType» | «UnsignedIntegerType» | «FixedBytesType» | «FixedType» | «UfixedType» ;
 pub type ElementaryType = Box<elementary_type::_T0>;
 pub mod elementary_type {
     #[allow(unused_imports)]

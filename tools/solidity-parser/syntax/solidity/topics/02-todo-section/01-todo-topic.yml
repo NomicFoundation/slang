@@ -363,7 +363,6 @@
   choice:
     - terminal: bool
     - terminal: string
-    - terminal: bytes
     - reference: AddressType
     - reference: SignedIntegerType
     - reference: UnsignedIntegerType
@@ -888,7 +887,6 @@
     - terminal: assembly
     - terminal: bool
     - terminal: break
-    - terminal: bytes
     - terminal: calldata
     - terminal: catch
     - terminal: constant
@@ -1019,39 +1017,40 @@
   kind: Token
   sequence:
     - terminal: int
-    - choice:
-        - terminal: "8"
-        - terminal: "16"
-        - terminal: "24"
-        - terminal: "32"
-        - terminal: "40"
-        - terminal: "48"
-        - terminal: "56"
-        - terminal: "64"
-        - terminal: "72"
-        - terminal: "80"
-        - terminal: "88"
-        - terminal: "96"
-        - terminal: "104"
-        - terminal: "112"
-        - terminal: "120"
-        - terminal: "128"
-        - terminal: "136"
-        - terminal: "144"
-        - terminal: "152"
-        - terminal: "160"
-        - terminal: "168"
-        - terminal: "176"
-        - terminal: "184"
-        - terminal: "192"
-        - terminal: "200"
-        - terminal: "208"
-        - terminal: "216"
-        - terminal: "224"
-        - terminal: "232"
-        - terminal: "240"
-        - terminal: "248"
-        - terminal: "256"
+    - optional:
+        choice:
+          - terminal: "8"
+          - terminal: "16"
+          - terminal: "24"
+          - terminal: "32"
+          - terminal: "40"
+          - terminal: "48"
+          - terminal: "56"
+          - terminal: "64"
+          - terminal: "72"
+          - terminal: "80"
+          - terminal: "88"
+          - terminal: "96"
+          - terminal: "104"
+          - terminal: "112"
+          - terminal: "120"
+          - terminal: "128"
+          - terminal: "136"
+          - terminal: "144"
+          - terminal: "152"
+          - terminal: "160"
+          - terminal: "168"
+          - terminal: "176"
+          - terminal: "184"
+          - terminal: "192"
+          - terminal: "200"
+          - terminal: "208"
+          - terminal: "216"
+          - terminal: "224"
+          - terminal: "232"
+          - terminal: "240"
+          - terminal: "248"
+          - terminal: "256"
       config:
         # Makes the likely errors clearer?
         lookahead: { not: { range: { from: "0", to: "9" } } }
@@ -1066,39 +1065,40 @@
   kind: Token
   sequence:
     - terminal: bytes
-    - choice:
-        - terminal: "1"
-        - terminal: "2"
-        - terminal: "3"
-        - terminal: "4"
-        - terminal: "5"
-        - terminal: "6"
-        - terminal: "7"
-        - terminal: "8"
-        - terminal: "9"
-        - terminal: "10"
-        - terminal: "11"
-        - terminal: "12"
-        - terminal: "13"
-        - terminal: "14"
-        - terminal: "15"
-        - terminal: "16"
-        - terminal: "17"
-        - terminal: "18"
-        - terminal: "19"
-        - terminal: "20"
-        - terminal: "21"
-        - terminal: "22"
-        - terminal: "23"
-        - terminal: "24"
-        - terminal: "25"
-        - terminal: "26"
-        - terminal: "27"
-        - terminal: "28"
-        - terminal: "29"
-        - terminal: "30"
-        - terminal: "31"
-        - terminal: "32"
+    - optional:
+        choice:
+          - terminal: "1"
+          - terminal: "2"
+          - terminal: "3"
+          - terminal: "4"
+          - terminal: "5"
+          - terminal: "6"
+          - terminal: "7"
+          - terminal: "8"
+          - terminal: "9"
+          - terminal: "10"
+          - terminal: "11"
+          - terminal: "12"
+          - terminal: "13"
+          - terminal: "14"
+          - terminal: "15"
+          - terminal: "16"
+          - terminal: "17"
+          - terminal: "18"
+          - terminal: "19"
+          - terminal: "20"
+          - terminal: "21"
+          - terminal: "22"
+          - terminal: "23"
+          - terminal: "24"
+          - terminal: "25"
+          - terminal: "26"
+          - terminal: "27"
+          - terminal: "28"
+          - terminal: "29"
+          - terminal: "30"
+          - terminal: "31"
+          - terminal: "32"
       config:
         # Makes the likely errors clearer?
         lookahead: { not: { range: { from: "0", to: "9" } } }
