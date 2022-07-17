@@ -67,7 +67,6 @@ pub struct Parsers {
     pub yul_expression: ParserType<YulExpression>,
     pub mapping_type: ParserType<MappingType>,
     pub named_argument_list: ParserType<NamedArgumentList>,
-    pub non_empty_parameter_list: ParserType<NonEmptyParameterList>,
     pub override_specifier: ParserType<OverrideSpecifier>,
     pub parameter_list: ParserType<ParameterList>,
     pub selecting_import_directive: ParserType<SelectingImportDirective>,
