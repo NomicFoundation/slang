@@ -4134,22 +4134,9 @@ impl Parsers {
         ))
         .boxed();
 
-        // StructDefinition = 'struct' «Identifier» '{' 1…*{ TypeName «Identifier» ';' } '}' ;
-        let struct_definition_parser = leading_trivia_parser
+        // StructMember = TypeName «Identifier» ';' ;
+        let struct_member_parser = type_name_parser
             .clone()
-            .then(
-                terminal("struct")
-                    .ignored()
-                    .map(|_| FixedSizeTerminal::<6usize>()),
-            )
-            .then(trailing_trivia_parser.clone())
-            .map(
-                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                    leading,
-                    content,
-                    trailing,
-                },
-            )
             .then(
                 leading_trivia_parser
                     .clone()
@@ -4164,7 +4151,7 @@ impl Parsers {
             .then(
                 leading_trivia_parser
                     .clone()
-                    .then(just('{').map(|_| FixedSizeTerminal::<1>()))
+                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
                     .then(trailing_trivia_parser.clone())
                     .map(
                         |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
@@ -4174,51 +4161,7 @@ impl Parsers {
                         },
                     ),
             )
-            .then(
-                type_name_parser
-                    .clone()
-                    .then(
-                        leading_trivia_parser
-                            .clone()
-                            .then(identifier_parser.clone())
-                            .then(trailing_trivia_parser.clone())
-                            .map(|((leading, content), trailing)| identifier::WithTrivia {
-                                leading,
-                                content,
-                                trailing,
-                            }),
-                    )
-                    .then(
-                        leading_trivia_parser
-                            .clone()
-                            .then(just(';').map(|_| FixedSizeTerminal::<1>()))
-                            .then(trailing_trivia_parser.clone())
-                            .map(
-                                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                                    leading,
-                                    content,
-                                    trailing,
-                                },
-                            ),
-                    )
-                    .map(|v| struct_definition::_T2::from_parse(v))
-                    .repeated()
-                    .at_least(1usize),
-            )
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(just('}').map(|_| FixedSizeTerminal::<1>()))
-                    .then(trailing_trivia_parser.clone())
-                    .map(
-                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
-                            leading,
-                            content,
-                            trailing,
-                        },
-                    ),
-            )
-            .map(|v| struct_definition::_T0::from_parse(v))
+            .map(|v| struct_member::_T0::from_parse(v))
             .boxed();
 
         // UsingDirective = 'using' ( IdentifierPath | '{' 1…*{ IdentifierPath / ',' } '}' ) 'for' ( '*' | TypeName ) [ 'global' ] ';' ;
@@ -4688,6 +4631,63 @@ impl Parsers {
                         })
                 }
             })
+            .boxed();
+
+        // StructDefinition = 'struct' «Identifier» '{' 1…*{ StructMember } '}' ;
+        let struct_definition_parser = leading_trivia_parser
+            .clone()
+            .then(
+                terminal("struct")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<6usize>()),
+            )
+            .then(trailing_trivia_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| identifier::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    }),
+            )
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(just('{').map(|_| FixedSizeTerminal::<1>()))
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .then(struct_member_parser.clone().repeated().at_least(1usize))
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(just('}').map(|_| FixedSizeTerminal::<1>()))
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| struct_definition::_T0::from_parse(v))
             .boxed();
 
         // TupleVariableDeclaration = '(' { ',' } VariableDeclaration { ',' [ VariableDeclaration ] } ')' ;
@@ -6905,13 +6905,14 @@ impl Parsers {
             inheritance_specifier_list: inheritance_specifier_list_parser,
             primary_expression: primary_expression_parser,
             receive_function_attribute: receive_function_attribute_parser,
-            struct_definition: struct_definition_parser,
+            struct_member: struct_member_parser,
             using_directive: using_directive_parser,
             variable_declaration: variable_declaration_parser,
             directive: directive_parser,
             error_definition: error_definition_parser,
             event_definition: event_definition_parser,
             index_access_expression: index_access_expression_parser,
+            struct_definition: struct_definition_parser,
             tuple_variable_declaration: tuple_variable_declaration_parser,
             member_access_expression: member_access_expression_parser,
             function_call_options_expression: function_call_options_expression_parser,

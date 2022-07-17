@@ -64,7 +64,9 @@ FunctionAttribute = VisibilitySpecifier | StateMutabilitySpecifier | ModifierInv
 
 ConstantDefinition = TypeName 'constant' «Identifier» '=' Expression ';' ;
 
-StructDefinition = 'struct' «Identifier» '{' 1…*{ TypeName «Identifier» ';' } '}' ;
+StructDefinition = 'struct' «Identifier» '{' 1…*{ StructMember } '}' ;
+
+StructMember = TypeName «Identifier» ';' ;
 
 EnumDefinition = 'enum' «Identifier» '{' 1…*{ «Identifier» / ',' } '}' ;
 
