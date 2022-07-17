@@ -122,6 +122,11 @@
           - Keyword
           - ReservedKeyword
           - PragmaDirective
+          - VersionPragmaSpecifier
+          - VersionPragmaOperator
+          - VersionPragmaValue
+          - ABICoderPragmaSpecifier
+          - ExperimentalPragmaSpecifier
           - RawIdentifier
           - IdentifierStart
           - IdentifierPart

@@ -246,31 +246,6 @@ pub mod possibly_separated_pairs_of_hex_digits {
     }
 }
 
-/// «PragmaDirective» = 'pragma' 1…*{ ¬';' } ';' ;
-pub type PragmaDirective = pragma_directive::_T0;
-pub mod pragma_directive {
-    #[allow(unused_imports)]
-    use super::*;
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T0 {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub pragma: FixedSizeTerminal<6usize>,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub not_semicolon_chars: VariableSizeTerminal,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub semicolon_char: FixedSizeTerminal<1>,
-    }
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
-    pub struct WithTrivia {
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub leading: LeadingTrivia,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub content: pragma_directive::_T0,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub trailing: TrailingTrivia,
-    }
-}
-
 /// «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;
 pub type RawIdentifier = raw_identifier::_T0;
 pub mod raw_identifier {
@@ -358,6 +333,29 @@ pub mod unicode_escape {
         pub leading: LeadingTrivia,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub content: unicode_escape::_T0,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub trailing: TrailingTrivia,
+    }
+}
+
+/// «VersionPragmaValue» = 1…*{ 1…*{ '0'…'9' | 'x' | 'X' | '*' } / '.' } ;
+pub type VersionPragmaValue = version_pragma_value::_T0;
+pub mod version_pragma_value {
+    #[allow(unused_imports)]
+    use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub elements: Vec<VariableSizeTerminal>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub separators: Vec<FixedSizeTerminal<1>>,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
+    pub struct WithTrivia {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub leading: LeadingTrivia,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub content: version_pragma_value::_T0,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub trailing: TrailingTrivia,
     }
@@ -974,6 +972,27 @@ pub mod unchecked_block {
     }
 }
 
+/// VersionPragmaSpecifier = 'solidity' 1…*{ «VersionPragmaOperator» «VersionPragmaValue» } ;
+pub type VersionPragmaSpecifier = version_pragma_specifier::_T0;
+pub mod version_pragma_specifier {
+    #[allow(unused_imports)]
+    use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T2 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _0: VariableSizeTerminalWithTrivia,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub version_pragma_value: version_pragma_value::WithTrivia,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub solidity: FixedSizeTerminalWithTrivia<8usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _t2s: Vec<version_pragma_specifier::_T2>,
+    }
+}
+
 /// YulFunctionCall = ( «YulIdentifier» | «YulEVMBuiltinFunctionName» ) '(' { YulExpression / ',' } ')' ;
 pub type YulFunctionCall = yul_function_call::_T0;
 pub mod yul_function_call {
@@ -1233,6 +1252,20 @@ pub mod yul_literal {
     }
 }
 
+/// ABICoderPragmaSpecifier = 'abicoder' «Identifier» ;
+pub type AbiCoderPragmaSpecifier = abi_coder_pragma_specifier::_T0;
+pub mod abi_coder_pragma_specifier {
+    #[allow(unused_imports)]
+    use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub abicoder: FixedSizeTerminalWithTrivia<8usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub identifier: identifier::WithTrivia,
+    }
+}
+
 /// EnumDefinition = 'enum' «Identifier» '{' 1…*{ «Identifier» / ',' } '}' ;
 pub type EnumDefinition = enum_definition::_T0;
 pub mod enum_definition {
@@ -1257,6 +1290,20 @@ pub mod enum_definition {
         pub identifiers: enum_definition::_T1,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_brace_char: FixedSizeTerminalWithTrivia<1>,
+    }
+}
+
+/// ExperimentalPragmaSpecifier = 'experimental' «Identifier» ;
+pub type ExperimentalPragmaSpecifier = experimental_pragma_specifier::_T0;
+pub mod experimental_pragma_specifier {
+    #[allow(unused_imports)]
+    use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub experimental: FixedSizeTerminalWithTrivia<12usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub identifier: identifier::WithTrivia,
     }
 }
 
@@ -1494,6 +1541,27 @@ pub mod parameter_list {
         pub parameter_declarations: Option<parameter_list::_T1>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub close_paren_char: FixedSizeTerminalWithTrivia<1>,
+    }
+}
+
+/// PragmaDirective = 'pragma' ( VersionPragmaSpecifier | ABICoderPragmaSpecifier | ExperimentalPragmaSpecifier ) ';' ;
+pub type PragmaDirective = pragma_directive::_T0;
+pub mod pragma_directive {
+    #[allow(unused_imports)]
+    use super::*;
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub enum _T1 {
+        VersionPragmaSpecifier(VersionPragmaSpecifier),
+        AbiCoderPragmaSpecifier(AbiCoderPragmaSpecifier),
+        ExperimentalPragmaSpecifier(ExperimentalPragmaSpecifier),
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T0 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub pragma: FixedSizeTerminalWithTrivia<6usize>,
+        pub _t1: Box<pragma_directive::_T1>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub semicolon_char: FixedSizeTerminalWithTrivia<1>,
     }
 }
 
@@ -2139,14 +2207,14 @@ pub mod variable_declaration {
     }
 }
 
-/// Directive = «PragmaDirective» | ImportDirective | UsingDirective ;
+/// Directive = PragmaDirective | ImportDirective | UsingDirective ;
 pub type Directive = Box<directive::_T0>;
 pub mod directive {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub enum _T0 {
-        PragmaDirective(pragma_directive::WithTrivia),
+        PragmaDirective(PragmaDirective),
         ImportDirective(ImportDirective),
         UsingDirective(UsingDirective),
     }

@@ -303,42 +303,6 @@ impl DefaultTest for possibly_separated_pairs_of_hex_digits::WithTrivia {
     }
 }
 
-impl pragma_directive::_T0 {
-    pub fn from_parse(
-        ((pragma, not_semicolon_chars), semicolon_char): (
-            (FixedSizeTerminal<6usize>, VariableSizeTerminal),
-            FixedSizeTerminal<1>,
-        ),
-    ) -> Self {
-        Self {
-            pragma,
-            not_semicolon_chars,
-            semicolon_char,
-        }
-    }
-}
-impl Default for pragma_directive::_T0 {
-    fn default() -> Self {
-        Self {
-            pragma: Default::default(),
-            not_semicolon_chars: Default::default(),
-            semicolon_char: Default::default(),
-        }
-    }
-}
-impl DefaultTest for pragma_directive::_T0 {
-    fn is_default(&self) -> bool {
-        self.pragma.is_default()
-            && self.not_semicolon_chars.is_default()
-            && self.semicolon_char.is_default()
-    }
-}
-impl DefaultTest for pragma_directive::WithTrivia {
-    fn is_default(&self) -> bool {
-        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
-    }
-}
-
 impl raw_identifier::_T0 {
     pub fn from_parse((_0, _1): (FixedSizeTerminal<1>, VariableSizeTerminal)) -> Self {
         Self { _0, _1 }
@@ -434,6 +398,25 @@ impl DefaultTest for unicode_escape::_T0 {
     }
 }
 impl DefaultTest for unicode_escape::WithTrivia {
+    fn is_default(&self) -> bool {
+        self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
+    }
+}
+
+impl Default for version_pragma_value::_T0 {
+    fn default() -> Self {
+        Self {
+            elements: Default::default(),
+            separators: Default::default(),
+        }
+    }
+}
+impl DefaultTest for version_pragma_value::_T0 {
+    fn is_default(&self) -> bool {
+        self.elements.is_default() && self.separators.is_default()
+    }
+}
+impl DefaultTest for version_pragma_value::WithTrivia {
     fn is_default(&self) -> bool {
         self.leading.is_default() && self.content.is_default() && self.trailing.is_default()
     }
@@ -1089,6 +1072,56 @@ impl DefaultTest for unchecked_block::_T0 {
     }
 }
 
+impl version_pragma_specifier::_T2 {
+    pub fn from_parse(
+        (_0, version_pragma_value): (
+            VariableSizeTerminalWithTrivia,
+            version_pragma_value::WithTrivia,
+        ),
+    ) -> Self {
+        Self {
+            _0,
+            version_pragma_value,
+        }
+    }
+}
+impl Default for version_pragma_specifier::_T2 {
+    fn default() -> Self {
+        Self {
+            _0: Default::default(),
+            version_pragma_value: Default::default(),
+        }
+    }
+}
+impl DefaultTest for version_pragma_specifier::_T2 {
+    fn is_default(&self) -> bool {
+        self._0.is_default() && self.version_pragma_value.is_default()
+    }
+}
+impl version_pragma_specifier::_T0 {
+    pub fn from_parse(
+        (solidity, _t2s): (
+            FixedSizeTerminalWithTrivia<8usize>,
+            Vec<version_pragma_specifier::_T2>,
+        ),
+    ) -> Self {
+        Self { solidity, _t2s }
+    }
+}
+impl Default for version_pragma_specifier::_T0 {
+    fn default() -> Self {
+        Self {
+            solidity: Default::default(),
+            _t2s: Default::default(),
+        }
+    }
+}
+impl DefaultTest for version_pragma_specifier::_T0 {
+    fn is_default(&self) -> bool {
+        self.solidity.is_default() && self._t2s.is_default()
+    }
+}
+
 impl Default for yul_function_call::_T2 {
     fn default() -> Self {
         Self {
@@ -1329,6 +1362,30 @@ impl DefaultTest for identifier::WithTrivia {
     }
 }
 
+impl abi_coder_pragma_specifier::_T0 {
+    pub fn from_parse(
+        (abicoder, identifier): (FixedSizeTerminalWithTrivia<8usize>, identifier::WithTrivia),
+    ) -> Self {
+        Self {
+            abicoder,
+            identifier,
+        }
+    }
+}
+impl Default for abi_coder_pragma_specifier::_T0 {
+    fn default() -> Self {
+        Self {
+            abicoder: Default::default(),
+            identifier: Default::default(),
+        }
+    }
+}
+impl DefaultTest for abi_coder_pragma_specifier::_T0 {
+    fn is_default(&self) -> bool {
+        self.abicoder.is_default() && self.identifier.is_default()
+    }
+}
+
 impl Default for enum_definition::_T1 {
     fn default() -> Self {
         Self {
@@ -1382,6 +1439,30 @@ impl DefaultTest for enum_definition::_T0 {
             && self.open_brace_char.is_default()
             && self.identifiers.is_default()
             && self.close_brace_char.is_default()
+    }
+}
+
+impl experimental_pragma_specifier::_T0 {
+    pub fn from_parse(
+        (experimental, identifier): (FixedSizeTerminalWithTrivia<12usize>, identifier::WithTrivia),
+    ) -> Self {
+        Self {
+            experimental,
+            identifier,
+        }
+    }
+}
+impl Default for experimental_pragma_specifier::_T0 {
+    fn default() -> Self {
+        Self {
+            experimental: Default::default(),
+            identifier: Default::default(),
+        }
+    }
+}
+impl DefaultTest for experimental_pragma_specifier::_T0 {
+    fn is_default(&self) -> bool {
+        self.experimental.is_default() && self.identifier.is_default()
     }
 }
 
@@ -1732,6 +1813,24 @@ impl DefaultTest for parameter_list::_T0 {
         self.open_paren_char.is_default()
             && self.parameter_declarations.is_default()
             && self.close_paren_char.is_default()
+    }
+}
+
+impl pragma_directive::_T0 {
+    pub fn from_parse(
+        ((pragma, _t1), semicolon_char): (
+            (
+                FixedSizeTerminalWithTrivia<6usize>,
+                Box<pragma_directive::_T1>,
+            ),
+            FixedSizeTerminalWithTrivia<1>,
+        ),
+    ) -> Self {
+        Self {
+            pragma,
+            _t1,
+            semicolon_char,
+        }
     }
 }
 

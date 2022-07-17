@@ -279,21 +279,6 @@ impl Parsers {
         )
         .boxed();
 
-        // «PragmaDirective» = 'pragma' 1…*{ ¬';' } ';' ;
-        let pragma_directive_parser = terminal("pragma")
-            .ignored()
-            .map(|_| FixedSizeTerminal::<6usize>())
-            .then(
-                filter(|&c: &char| c != ';')
-                    .map(|_| FixedSizeTerminal::<1>())
-                    .repeated()
-                    .at_least(1usize)
-                    .map(|v| VariableSizeTerminal(v.len())),
-            )
-            .then(just(';').map(|_| FixedSizeTerminal::<1>()))
-            .map(|v| pragma_directive::_T0::from_parse(v))
-            .boxed();
-
         // «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;
         let raw_identifier_parser = filter(|&c: &char| {
             c == '_' || c == '$' || ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z')
@@ -402,6 +387,34 @@ impl Parsers {
             )
             .map(|v| unicode_escape::_T0::from_parse(v))
             .boxed();
+
+        // «VersionPragmaValue» = 1…*{ 1…*{ '0'…'9' | 'x' | 'X' | '*' } / '.' } ;
+        let version_pragma_value_parser =
+            filter(|&c: &char| ('0' <= c && c <= '9') || c == 'x' || c == 'X' || c == '*')
+                .map(|_| FixedSizeTerminal::<1>())
+                .repeated()
+                .at_least(1usize)
+                .map(|v| VariableSizeTerminal(v.len()))
+                .then(
+                    just('.')
+                        .map(|_| FixedSizeTerminal::<1>())
+                        .then(
+                            filter(|&c: &char| {
+                                ('0' <= c && c <= '9') || c == 'x' || c == 'X' || c == '*'
+                            })
+                            .map(|_| FixedSizeTerminal::<1>())
+                            .repeated()
+                            .at_least(1usize)
+                            .map(|v| VariableSizeTerminal(v.len())),
+                        )
+                        .repeated(),
+                )
+                .map(repetition_mapper)
+                .map(|(elements, separators)| version_pragma_value::_T0 {
+                    elements,
+                    separators,
+                })
+                .boxed();
 
         // «Whitespace» = 1…*{ '\u{20}' | '\u{9}' } ;
         let whitespace_parser = filter(|&c: &char| c == ' ' || c == '\t')
@@ -1242,6 +1255,66 @@ impl Parsers {
             )
             .then(block_parser.clone())
             .map(|v| unchecked_block::_T0::from_parse(v))
+            .boxed();
+
+        // VersionPragmaSpecifier = 'solidity' 1…*{ «VersionPragmaOperator» «VersionPragmaValue» } ;
+        let version_pragma_specifier_parser = leading_trivia_parser
+            .clone()
+            .then(
+                terminal("solidity")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<8usize>()),
+            )
+            .then(trailing_trivia_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(choice::<_, ErrorType>((
+                        terminal("<").ignore_then(choice((
+                            terminal("=").map(|_| 2usize),
+                            empty().map(|_| 1usize),
+                        ))),
+                        terminal("=").map(|_| 1usize),
+                        terminal(">").ignore_then(choice((
+                            terminal("=").map(|_| 2usize),
+                            empty().map(|_| 1usize),
+                        ))),
+                        terminal("^").map(|_| 1usize),
+                        terminal("~").map(|_| 1usize),
+                    )))
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| VariableSizeTerminalWithTrivia {
+                            leading,
+                            content: VariableSizeTerminal(content),
+                            trailing,
+                        },
+                    )
+                    .then(
+                        leading_trivia_parser
+                            .clone()
+                            .then(version_pragma_value_parser.clone())
+                            .then(trailing_trivia_parser.clone())
+                            .map(|((leading, content), trailing)| {
+                                version_pragma_value::WithTrivia {
+                                    leading,
+                                    content,
+                                    trailing,
+                                }
+                            }),
+                    )
+                    .map(|v| version_pragma_specifier::_T2::from_parse(v))
+                    .repeated()
+                    .at_least(1usize),
+            )
+            .map(|v| version_pragma_specifier::_T0::from_parse(v))
             .boxed();
 
         // YulFunctionCall = ( «YulIdentifier» | «YulEVMBuiltinFunctionName» ) '(' { YulExpression / ',' } ')' ;
@@ -2205,6 +2278,36 @@ impl Parsers {
         ))
         .boxed();
 
+        // ABICoderPragmaSpecifier = 'abicoder' «Identifier» ;
+        let abi_coder_pragma_specifier_parser = leading_trivia_parser
+            .clone()
+            .then(
+                terminal("abicoder")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<8usize>()),
+            )
+            .then(trailing_trivia_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| identifier::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    }),
+            )
+            .map(|v| abi_coder_pragma_specifier::_T0::from_parse(v))
+            .boxed();
+
         // EnumDefinition = 'enum' «Identifier» '{' 1…*{ «Identifier» / ',' } '}' ;
         let enum_definition_parser = leading_trivia_parser
             .clone()
@@ -2300,6 +2403,36 @@ impl Parsers {
                     ),
             )
             .map(|v| enum_definition::_T0::from_parse(v))
+            .boxed();
+
+        // ExperimentalPragmaSpecifier = 'experimental' «Identifier» ;
+        let experimental_pragma_specifier_parser = leading_trivia_parser
+            .clone()
+            .then(
+                terminal("experimental")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<12usize>()),
+            )
+            .then(trailing_trivia_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| identifier::WithTrivia {
+                        leading,
+                        content,
+                        trailing,
+                    }),
+            )
+            .map(|v| experimental_pragma_specifier::_T0::from_parse(v))
             .boxed();
 
         // IdentifierPath = 1…*{ «Identifier» / '.' } ;
@@ -2871,6 +3004,49 @@ impl Parsers {
                     ),
             )
             .map(|v| parameter_list::_T0::from_parse(v))
+            .boxed();
+
+        // PragmaDirective = 'pragma' ( VersionPragmaSpecifier | ABICoderPragmaSpecifier | ExperimentalPragmaSpecifier ) ';' ;
+        let pragma_directive_parser = leading_trivia_parser
+            .clone()
+            .then(
+                terminal("pragma")
+                    .ignored()
+                    .map(|_| FixedSizeTerminal::<6usize>()),
+            )
+            .then(trailing_trivia_parser.clone())
+            .map(
+                |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                    leading,
+                    content,
+                    trailing,
+                },
+            )
+            .then(choice((
+                version_pragma_specifier_parser
+                    .clone()
+                    .map(|v| Box::new(pragma_directive::_T1::VersionPragmaSpecifier(v))),
+                abi_coder_pragma_specifier_parser
+                    .clone()
+                    .map(|v| Box::new(pragma_directive::_T1::AbiCoderPragmaSpecifier(v))),
+                experimental_pragma_specifier_parser
+                    .clone()
+                    .map(|v| Box::new(pragma_directive::_T1::ExperimentalPragmaSpecifier(v))),
+            )))
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(just(';').map(|_| FixedSizeTerminal::<1>()))
+                    .then(trailing_trivia_parser.clone())
+                    .map(
+                        |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
+                            leading,
+                            content,
+                            trailing,
+                        },
+                    ),
+            )
+            .map(|v| pragma_directive::_T0::from_parse(v))
             .boxed();
 
         // SelectingImportDirective = '{' 1…*{ SelectedImport / ',' } '}' 'from' ImportPath ;
@@ -4161,19 +4337,10 @@ impl Parsers {
             .map(|v| variable_declaration::_T0::from_parse(v))
             .boxed();
 
-        // Directive = «PragmaDirective» | ImportDirective | UsingDirective ;
+        // Directive = PragmaDirective | ImportDirective | UsingDirective ;
         let directive_parser = choice((
-            leading_trivia_parser
+            pragma_directive_parser
                 .clone()
-                .then(pragma_directive_parser.clone())
-                .then(trailing_trivia_parser.clone())
-                .map(
-                    |((leading, content), trailing)| pragma_directive::WithTrivia {
-                        leading,
-                        content,
-                        trailing,
-                    },
-                )
                 .map(|v| Box::new(directive::_T0::PragmaDirective(v))),
             import_directive_parser
                 .clone()
@@ -6740,11 +6907,11 @@ impl Parsers {
             hex_number: hex_number_parser,
             multiline_comment: multiline_comment_parser,
             possibly_separated_pairs_of_hex_digits: possibly_separated_pairs_of_hex_digits_parser,
-            pragma_directive: pragma_directive_parser,
             raw_identifier: raw_identifier_parser,
             signed_integer_type: signed_integer_type_parser,
             single_line_comment: single_line_comment_parser,
             unicode_escape: unicode_escape_parser,
+            version_pragma_value: version_pragma_value_parser,
             whitespace: whitespace_parser,
             yul_decimal_number_literal: yul_decimal_number_literal_parser,
             yul_hex_literal: yul_hex_literal_parser,
@@ -6771,6 +6938,7 @@ impl Parsers {
             single_quoted_ascii_string_literal: single_quoted_ascii_string_literal_parser,
             single_quoted_unicode_string_literal: single_quoted_unicode_string_literal_parser,
             unchecked_block: unchecked_block_parser,
+            version_pragma_specifier: version_pragma_specifier_parser,
             yul_function_call: yul_function_call_parser,
             yul_function_definition: yul_function_definition_parser,
             yul_path: yul_path_parser,
@@ -6783,7 +6951,9 @@ impl Parsers {
             identifier: identifier_parser,
             import_path: import_path_parser,
             yul_literal: yul_literal_parser,
+            abi_coder_pragma_specifier: abi_coder_pragma_specifier_parser,
             enum_definition: enum_definition_parser,
+            experimental_pragma_specifier: experimental_pragma_specifier_parser,
             identifier_path: identifier_path_parser,
             named_argument: named_argument_parser,
             parameter_declaration: parameter_declaration_parser,
@@ -6796,6 +6966,7 @@ impl Parsers {
             named_argument_list: named_argument_list_parser,
             override_specifier: override_specifier_parser,
             parameter_list: parameter_list_parser,
+            pragma_directive: pragma_directive_parser,
             selecting_import_directive: selecting_import_directive_parser,
             yul_assignment: yul_assignment_parser,
             yul_for_statement: yul_for_statement_parser,

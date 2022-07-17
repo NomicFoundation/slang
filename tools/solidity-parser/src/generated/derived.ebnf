@@ -26,7 +26,7 @@
 
 SourceUnit = «LeadingTrivia» { Directive | Definition } «EndOfFileTrivia» $ ;
 
-Directive = «PragmaDirective» | ImportDirective | UsingDirective ;
+Directive = PragmaDirective | ImportDirective | UsingDirective ;
 
 Definition = ContractDefinition | InterfaceDefinition | LibraryDefinition | FunctionDefinition | ConstantDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | ErrorDefinition ;
 
@@ -236,7 +236,17 @@ AssemblyFlags = '(' 1…*{ «DoubleQuotedAsciiStringLiteral» / ',' } ')' ;
 
 «ReservedKeyword» = 'after' | 'alias' | 'apply' | 'auto' | 'byte' | 'case' | 'copyof' | 'default' | 'define' | 'final' | 'implements' | 'in' | 'inline' | 'let' | 'macro' | 'match' | 'mutable' | 'null' | 'of' | 'partial' | 'promise' | 'reference' | 'relocatable' | 'sealed' | 'sizeof' | 'static' | 'supports' | 'switch' | 'typedef' | 'typeof' | 'var' ;
 
-«PragmaDirective» = 'pragma' 1…*{ ¬';' } ';' ;
+PragmaDirective = 'pragma' ( VersionPragmaSpecifier | ABICoderPragmaSpecifier | ExperimentalPragmaSpecifier ) ';' ;
+
+VersionPragmaSpecifier = 'solidity' 1…*{ «VersionPragmaOperator» «VersionPragmaValue» } ;
+
+«VersionPragmaOperator» = '^' | '~' | '=' | '<' | '>' | '<=' | '>=' ;
+
+«VersionPragmaValue» = 1…*{ 1…*{ '0'…'9' | 'x' | 'X' | '*' } / '.' } ;
+
+ABICoderPragmaSpecifier = 'abicoder' «Identifier» ;
+
+ExperimentalPragmaSpecifier = 'experimental' «Identifier» ;
 
 «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;
 
