@@ -124,16 +124,21 @@ impl<'de> Deserialize<'de> for Production {
     where
         D: serde::Deserializer<'de>,
     {
+        // Must be isomorphic with the const FIELDS below
         #[derive(Deserialize)]
         #[serde(field_identifier, rename_all = "camelCase")]
         enum Field {
-            Choice,
+            // Metadata
             Config,
+            Kind,
+            Name,
+            Title,
+            Versions,
+            // EBNF
+            Choice,
             DelimitedBy,
             Difference,
             End,
-            Kind,
-            Name,
             Not,
             OneOrMore,
             Optional,
@@ -142,8 +147,6 @@ impl<'de> Deserialize<'de> for Production {
             Repeat,
             Sequence,
             Terminal,
-            Title,
-            Versions,
             ZeroOrMore,
         }
 
@@ -301,14 +304,19 @@ impl<'de> Deserialize<'de> for Production {
             }
         }
 
+        // Must be isomorphic with the enum Field above
         const FIELDS: &'static [&'static str] = &[
-            "choice",
+            // Metadata
             "config",
+            "kind",
+            "name",
+            "title",
+            "versions",
+            // EBNF
+            "choice",
             "delimitedBy",
             "difference",
             "end",
-            "kind",
-            "name",
             "not",
             "oneOrMore",
             "optional",
@@ -317,8 +325,6 @@ impl<'de> Deserialize<'de> for Production {
             "repeat",
             "sequence",
             "terminal",
-            "title",
-            "versions",
             "zeroOrMore",
         ];
         deserializer.deserialize_struct("Production", FIELDS, ProductionVisitor)

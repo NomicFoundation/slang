@@ -40,24 +40,24 @@
       - terminal: "\n"
 - name: MultilineComment
   kind: Token
-  sequence:
-    - terminal: /*
-    - config: { name: content }
-      sequence:
-        - zeroOrMore:
-            choice:
-              - not:
-                  terminal: "*"
-              - sequence:
-                  - oneOrMore:
-                      terminal: "*"
-                  - not:
-                      choice:
-                        - terminal: "*"
-                        - terminal: /
-        - zeroOrMore:
-            terminal: "*"
-    - terminal: "*/"
+  delimitedBy:
+    open: /*
+    config: { name: content }
+    sequence:
+      - zeroOrMore:
+          choice:
+            - not:
+                terminal: "*"
+            - sequence:
+                - oneOrMore:
+                    terminal: "*"
+                - not:
+                    choice:
+                      - terminal: "*"
+                      - terminal: /
+      - zeroOrMore:
+          terminal: "*"
+    close: "*/"
 - name: SingleLineComment
   kind: Token
   sequence:
@@ -239,10 +239,11 @@
   sequence:
     - terminal: struct
     - reference: Identifier
-    - terminal: "{"
-    - oneOrMore:
-        reference: StructMember
-    - terminal: "}"
+    - delimitedBy:
+        open: "{"
+        oneOrMore:
+          reference: StructMember
+        close: "}"
 - name: StructMember
   sequence:
     - reference: TypeName
@@ -435,13 +436,13 @@
     - optional:
         reference: ArgumentList
 - name: ParameterList
-  sequence:
-    - terminal: (
-    - zeroOrMore:
-        reference: ParameterDeclaration
-        separator:
-          terminal: ","
-    - terminal: )
+  delimitedBy:
+    open: (
+    zeroOrMore:
+      reference: ParameterDeclaration
+      separator:
+        terminal: ","
+    close: )
 - name: ParameterDeclaration
   sequence:
     - reference: TypeName
@@ -453,13 +454,13 @@
   sequence:
     - terminal: override
     - optional:
-        sequence:
-          - terminal: (
-          - oneOrMore:
-              reference: IdentifierPath
-              separator:
-                terminal: ","
-          - terminal: )
+        delimitedBy:
+          open: (
+          oneOrMore:
+            reference: IdentifierPath
+            separator:
+              terminal: ","
+          close: )
 - name: IdentifierPath
   oneOrMore:
     reference: Identifier
@@ -473,11 +474,11 @@
         - reference: MappingType
         - reference: IdentifierPath
     - zeroOrMore:
-        sequence:
-          - terminal: "["
-          - optional:
-              reference: Expression
-          - terminal: "]"
+        delimitedBy:
+          open: "["
+          optional:
+            reference: Expression
+          close: "]"
     - reference: ElementaryType
 - name: ElementaryType
   choice:
@@ -514,13 +515,15 @@
 - name: MappingType
   sequence:
     - terminal: mapping
-    - terminal: (
-    - choice:
-        - reference: ElementaryType
-        - reference: IdentifierPath
-    - terminal: "=>"
-    - reference: TypeName
-    - terminal: )
+    - delimitedBy:
+        open: (
+        sequence:
+          - choice:
+              - reference: ElementaryType
+              - reference: IdentifierPath
+          - terminal: "=>"
+          - reference: TypeName
+        close: )
 - name: DataLocation
   choice:
     - terminal: memory
@@ -677,13 +680,12 @@
 - name: FunctionCallOptionsExpression
   sequence:
     - reference: Expression
-    - delimitedBy:
-        open: "{"
-        oneOrMore:
-          reference: NamedArgument
-          separator:
-            terminal: ","
-        close: "}"
+    - terminal: "{"
+    - oneOrMore:
+        reference: NamedArgument
+        separator:
+          terminal: ","
+    - terminal: "}"
 - name: MemberAccessExpression
   sequence:
     - reference: Expression
@@ -726,31 +728,32 @@
 - name: TypeExpression
   sequence:
     - terminal: type
-    - terminal: (
-    - reference: TypeName
-    - terminal: )
+    - delimitedBy:
+        open: (
+        reference: TypeName
+        close: )
 - name: NewExpression
   sequence:
     - terminal: new
     - reference: IdentifierPath
     - reference: ArgumentList
 - name: ParenthesisExpression
-  sequence:
-    - terminal: (
-    - oneOrMore:
-        optional:
-          reference: Expression
-        separator:
-          terminal: ","
-    - terminal: )
-- name: ArrayLiteral
-  sequence:
-    - terminal: "["
-    - oneOrMore:
+  delimitedBy:
+    open: (
+    oneOrMore:
+      optional:
         reference: Expression
-        separator:
-          terminal: ","
-    - terminal: "]"
+      separator:
+        terminal: ","
+    close: )
+- name: ArrayLiteral
+  delimitedBy:
+    open: "["
+    oneOrMore:
+      reference: Expression
+      separator:
+        terminal: ","
+    close: "]"
 - name: NumericLiteral
   kind: Token
   sequence:
@@ -892,16 +895,17 @@
     - terminal: ;
 - name: TupleDeconstructionStatement
   sequence:
-    - terminal: (
-    - zeroOrMore:
-        optional:
-          sequence:
-            - optional:
-                reference: TypeName
-            - reference: Identifier
-        separator:
-          terminal: ","
-    - terminal: )
+    - delimitedBy:
+        open: (
+        zeroOrMore:
+          optional:
+            sequence:
+              - optional:
+                  reference: TypeName
+              - reference: Identifier
+          separator:
+            terminal: ","
+        close: )
     - terminal: "="
     - reference: Expression
     - terminal: ;
@@ -1493,12 +1497,13 @@
 - name: YulFunctionCall
   sequence:
     - reference: YulIdentifier
-    - terminal: (
-    - zeroOrMore:
-        reference: YulExpression
-        separator:
-          terminal: ","
-    - terminal: )
+    - delimitedBy:
+        open: (
+        zeroOrMore:
+          reference: YulExpression
+          separator:
+            terminal: ","
+        close: )
 - name: YulIfStatement
   sequence:
     - terminal: if

@@ -94,10 +94,11 @@
   sequence:
     - terminal: struct
     - reference: Identifier
-    - terminal: "{"
-    - oneOrMore:
-        reference: StructMember
-    - terminal: "}"
+    - delimitedBy:
+        open: "{"
+        oneOrMore:
+          reference: StructMember
+        close: "}"
 
 - name: StructMember
   sequence:
@@ -334,13 +335,13 @@
   sequence:
     - terminal: override
     - optional:
-        sequence:
-          - terminal: (
-          - oneOrMore:
-              reference: IdentifierPath
-              separator:
-                terminal: ","
-          - terminal: )
+        delimitedBy:
+          open: (
+          oneOrMore:
+            reference: IdentifierPath
+            separator:
+              terminal: ","
+          close: )
 
 - name: IdentifierPath
   oneOrMore:
@@ -356,11 +357,11 @@
         - reference: MappingType
         - reference: IdentifierPath
     - zeroOrMore:
-        sequence:
-          - terminal: "["
-          - optional:
-              reference: Expression
-          - terminal: "]"
+        delimitedBy:
+          open: "["
+          optional:
+            reference: Expression
+          close: "]"
     - reference: ElementaryType
 
 - name: ElementaryType
@@ -401,13 +402,15 @@
 - name: MappingType
   sequence:
     - terminal: mapping
-    - terminal: (
-    - choice:
-        - reference: ElementaryType
-        - reference: IdentifierPath
-    - terminal: "=>"
-    - reference: TypeName
-    - terminal: )
+    - delimitedBy:
+        open: (
+        sequence:
+          - choice:
+              - reference: ElementaryType
+              - reference: IdentifierPath
+          - terminal: "=>"
+          - reference: TypeName
+        close: )
 
 - name: DataLocation
   choice:
@@ -583,13 +586,12 @@
 - name: FunctionCallOptionsExpression
   sequence:
     - reference: Expression
-    - delimitedBy:
-        open: "{"
-        oneOrMore:
-          reference: NamedArgument
-          separator:
-            terminal: ","
-        close: "}"
+    - terminal: "{"
+    - oneOrMore:
+        reference: NamedArgument
+        separator:
+          terminal: ","
+    - terminal: "}"
 
 - name: MemberAccessExpression
   sequence:
@@ -637,9 +639,10 @@
 - name: TypeExpression
   sequence:
     - terminal: type
-    - terminal: (
-    - reference: TypeName
-    - terminal: )
+    - delimitedBy:
+        open: (
+        reference: TypeName
+        close: )
 
 - name: NewExpression
   sequence:
@@ -648,23 +651,23 @@
     - reference: ArgumentList
 
 - name: ParenthesisExpression
-  sequence:
-    - terminal: (
-    - oneOrMore:
-        optional:
-          reference: Expression
-        separator:
-          terminal: ","
-    - terminal: )
+  delimitedBy:
+    open: (
+    oneOrMore:
+      optional:
+        reference: Expression
+      separator:
+        terminal: ","
+    close: )
 
 - name: ArrayLiteral
-  sequence:
-    - terminal: "["
-    - oneOrMore:
-        reference: Expression
-        separator:
-          terminal: ","
-    - terminal: "]"
+  delimitedBy:
+    open: "["
+    oneOrMore:
+      reference: Expression
+      separator:
+        terminal: ","
+    close: "]"
 
 - name: NumericLiteral
   kind: Token
@@ -824,16 +827,17 @@
 
 - name: TupleDeconstructionStatement
   sequence:
-    - terminal: (
-    - zeroOrMore:
-        optional:
-          sequence:
-            - optional:
-                reference: TypeName
-            - reference: Identifier
-        separator:
-          terminal: ","
-    - terminal: )
+    - delimitedBy:
+        open: (
+        zeroOrMore:
+          optional:
+            sequence:
+              - optional:
+                  reference: TypeName
+              - reference: Identifier
+          separator:
+            terminal: ","
+        close: )
     - terminal: "="
     - reference: Expression
     - terminal: ;
@@ -1472,12 +1476,13 @@
 - name: YulFunctionCall
   sequence:
     - reference: YulIdentifier
-    - terminal: (
-    - zeroOrMore:
-        reference: YulExpression
-        separator:
-          terminal: ","
-    - terminal: )
+    - delimitedBy:
+        open: (
+        zeroOrMore:
+          reference: YulExpression
+          separator:
+            terminal: ","
+        close: )
 
 - name: YulIfStatement
   sequence:

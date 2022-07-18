@@ -190,20 +190,6 @@ impl DefaultTest for multiline_comment::Content {
         self._t2s.is_default() && self.star_chars.is_default()
     }
 }
-impl multiline_comment::_T0 {
-    pub fn from_parse(
-        ((slash_star, content), star_slash): (
-            (FixedSizeTerminal<2usize>, multiline_comment::Content),
-            FixedSizeTerminal<2usize>,
-        ),
-    ) -> Self {
-        Self {
-            slash_star,
-            content,
-            star_slash,
-        }
-    }
-}
 impl Default for multiline_comment::_T0 {
     fn default() -> Self {
         Self {
@@ -216,6 +202,20 @@ impl Default for multiline_comment::_T0 {
 impl DefaultTest for multiline_comment::_T0 {
     fn is_default(&self) -> bool {
         self.slash_star.is_default() && self.content.is_default() && self.star_slash.is_default()
+    }
+}
+impl multiline_comment::_T0 {
+    pub fn from_parse(
+        ((slash_star, content), star_slash): (
+            (FixedSizeTerminal<2usize>, multiline_comment::Content),
+            FixedSizeTerminal<2usize>,
+        ),
+    ) -> Self {
+        Self {
+            slash_star,
+            content,
+            star_slash,
+        }
     }
 }
 impl DefaultTest for multiline_comment::WithTrivia {
@@ -740,34 +740,34 @@ impl DefaultTest for array_literal::_T1 {
         self.elements.is_default() && self.separators.is_default()
     }
 }
-impl array_literal::_T0 {
-    pub fn from_parse(
-        ((open_bracket_char, expressions), close_bracket_char): (
-            (FixedSizeTerminalWithTrivia<1>, array_literal::_T1),
-            FixedSizeTerminalWithTrivia<1>,
-        ),
-    ) -> Self {
-        Self {
-            open_bracket_char,
-            expressions,
-            close_bracket_char,
-        }
-    }
-}
 impl Default for array_literal::_T0 {
     fn default() -> Self {
         Self {
-            open_bracket_char: Default::default(),
+            open_bracket: Default::default(),
             expressions: Default::default(),
-            close_bracket_char: Default::default(),
+            close_bracket: Default::default(),
         }
     }
 }
 impl DefaultTest for array_literal::_T0 {
     fn is_default(&self) -> bool {
-        self.open_bracket_char.is_default()
+        self.open_bracket.is_default()
             && self.expressions.is_default()
-            && self.close_bracket_char.is_default()
+            && self.close_bracket.is_default()
+    }
+}
+impl array_literal::_T0 {
+    pub fn from_parse(
+        ((open_bracket, expressions), close_bracket): (
+            (FixedSizeTerminalWithTrivia<1usize>, array_literal::_T1),
+            FixedSizeTerminalWithTrivia<1usize>,
+        ),
+    ) -> Self {
+        Self {
+            open_bracket,
+            expressions,
+            close_bracket,
+        }
     }
 }
 
@@ -927,34 +927,37 @@ impl DefaultTest for parenthesis_expression::_T1 {
         self.elements.is_default() && self.separators.is_default()
     }
 }
-impl parenthesis_expression::_T0 {
-    pub fn from_parse(
-        ((open_paren_char, expressions), close_paren_char): (
-            (FixedSizeTerminalWithTrivia<1>, parenthesis_expression::_T1),
-            FixedSizeTerminalWithTrivia<1>,
-        ),
-    ) -> Self {
-        Self {
-            open_paren_char,
-            expressions,
-            close_paren_char,
-        }
-    }
-}
 impl Default for parenthesis_expression::_T0 {
     fn default() -> Self {
         Self {
-            open_paren_char: Default::default(),
+            open_paren: Default::default(),
             expressions: Default::default(),
-            close_paren_char: Default::default(),
+            close_paren: Default::default(),
         }
     }
 }
 impl DefaultTest for parenthesis_expression::_T0 {
     fn is_default(&self) -> bool {
-        self.open_paren_char.is_default()
+        self.open_paren.is_default()
             && self.expressions.is_default()
-            && self.close_paren_char.is_default()
+            && self.close_paren.is_default()
+    }
+}
+impl parenthesis_expression::_T0 {
+    pub fn from_parse(
+        ((open_paren, expressions), close_paren): (
+            (
+                FixedSizeTerminalWithTrivia<1usize>,
+                parenthesis_expression::_T1,
+            ),
+            FixedSizeTerminalWithTrivia<1usize>,
+        ),
+    ) -> Self {
+        Self {
+            open_paren,
+            expressions,
+            close_paren,
+        }
     }
 }
 
@@ -1115,7 +1118,7 @@ impl DefaultTest for version_pragma_specifier::_T0 {
     }
 }
 
-impl Default for yul_function_call::_T1 {
+impl Default for yul_function_call::_T2 {
     fn default() -> Self {
         Self {
             elements: Default::default(),
@@ -1123,12 +1126,12 @@ impl Default for yul_function_call::_T1 {
         }
     }
 }
-impl DefaultTest for yul_function_call::_T1 {
+impl DefaultTest for yul_function_call::_T2 {
     fn is_default(&self) -> bool {
         self.elements.is_default() && self.separators.is_default()
     }
 }
-impl Default for yul_function_call::_T2 {
+impl Default for yul_function_call::_T1 {
     fn default() -> Self {
         Self {
             open_paren: Default::default(),
@@ -1137,28 +1140,37 @@ impl Default for yul_function_call::_T2 {
         }
     }
 }
-impl DefaultTest for yul_function_call::_T2 {
+impl DefaultTest for yul_function_call::_T1 {
     fn is_default(&self) -> bool {
         self.open_paren.is_default()
             && self.yul_expressions.is_default()
             && self.close_paren.is_default()
     }
 }
-impl yul_function_call::_T2 {
+impl yul_function_call::_T1 {
     pub fn from_parse(
-        (((yul_identifier, open_paren_char), yul_expressions), close_paren_char): (
+        ((open_paren, yul_expressions), close_paren): (
             (
-                (yul_identifier::WithTrivia, FixedSizeTerminalWithTrivia<1>),
-                Option<yul_function_call::_T1>,
+                FixedSizeTerminalWithTrivia<1usize>,
+                Option<yul_function_call::_T2>,
             ),
             FixedSizeTerminalWithTrivia<1usize>,
         ),
     ) -> Self {
         Self {
-            yul_identifier,
-            open_paren_char,
+            open_paren,
             yul_expressions,
             close_paren,
+        }
+    }
+}
+impl yul_function_call::_T0 {
+    pub fn from_parse(
+        (yul_identifier, _t1): (yul_identifier::WithTrivia, yul_function_call::_T1),
+    ) -> Self {
+        Self {
+            yul_identifier,
+            _t1,
         }
     }
 }
@@ -1166,18 +1178,13 @@ impl Default for yul_function_call::_T0 {
     fn default() -> Self {
         Self {
             yul_identifier: Default::default(),
-            open_paren_char: Default::default(),
-            yul_expressions: Default::default(),
-            close_paren: Default::default(),
+            _t1: Default::default(),
         }
     }
 }
 impl DefaultTest for yul_function_call::_T0 {
     fn is_default(&self) -> bool {
-        self.yul_identifier.is_default()
-            && self.open_paren_char.is_default()
-            && self.yul_expressions.is_default()
-            && self.close_paren.is_default()
+        self.yul_identifier.is_default() && self._t1.is_default()
     }
 }
 
@@ -1353,6 +1360,20 @@ impl DefaultTest for assembly_flags::_T0 {
         self.open_paren.is_default()
             && self.double_quoted_ascii_string_literals.is_default()
             && self.close_paren.is_default()
+    }
+}
+impl assembly_flags::_T0 {
+    pub fn from_parse(
+        ((open_paren, double_quoted_ascii_string_literals), close_paren): (
+            (FixedSizeTerminalWithTrivia<1usize>, assembly_flags::_T1),
+            FixedSizeTerminalWithTrivia<1usize>,
+        ),
+    ) -> Self {
+        Self {
+            open_paren,
+            double_quoted_ascii_string_literals,
+            close_paren,
+        }
     }
 }
 
@@ -1627,7 +1648,7 @@ impl user_defined_value_type_definition::_T0 {
     }
 }
 
-impl mapping_type::_T0 {
+impl mapping_type::_T2 {
     pub fn from_parse(
         ((_t3, equal_greater), type_name): (
             (Box<mapping_type::_T3>, FixedSizeTerminalWithTrivia<2usize>),
@@ -1707,20 +1728,6 @@ impl named_argument_list::_T0 {
             named_arguments,
             close_brace,
         }
-    }
-}
-
-impl Default for non_empty_parameter_list::_T1 {
-    fn default() -> Self {
-        Self {
-            elements: Default::default(),
-            separators: Default::default(),
-        }
-    }
-}
-impl DefaultTest for non_empty_parameter_list::_T1 {
-    fn is_default(&self) -> bool {
-        self.elements.is_default() && self.separators.is_default()
     }
 }
 
@@ -1838,20 +1845,6 @@ impl parameter_list::_T0 {
     }
 }
 
-impl Default for selecting_import_directive::_T2 {
-    fn default() -> Self {
-        Self {
-            elements: Default::default(),
-            separators: Default::default(),
-        }
-    }
-}
-impl DefaultTest for selecting_import_directive::_T2 {
-    fn is_default(&self) -> bool {
-        self.elements.is_default() && self.separators.is_default()
-    }
-}
-
 impl pragma_directive::_T0 {
     pub fn from_parse(
         ((pragma, _t1), semicolon_char): (
@@ -1870,6 +1863,19 @@ impl pragma_directive::_T0 {
     }
 }
 
+impl Default for selecting_import_directive::_T2 {
+    fn default() -> Self {
+        Self {
+            elements: Default::default(),
+            separators: Default::default(),
+        }
+    }
+}
+impl DefaultTest for selecting_import_directive::_T2 {
+    fn is_default(&self) -> bool {
+        self.elements.is_default() && self.separators.is_default()
+    }
+}
 impl Default for selecting_import_directive::_T1 {
     fn default() -> Self {
         Self {
@@ -1975,37 +1981,35 @@ impl star_import_directive::_T0 {
     }
 }
 
-impl argument_list::_T0 {
-    pub fn from_parse(
-        ((open_paren_char, _t1), close_paren_char): (
-            (
-                FixedSizeTerminalWithTrivia<1>,
-                Option<Box<argument_list::_T1>>,
-            ),
-            FixedSizeTerminalWithTrivia<1>,
-        ),
-    ) -> Self {
-        Self {
-            open_paren_char,
-            _t1,
-            close_paren_char,
-        }
-    }
-}
 impl Default for argument_list::_T0 {
     fn default() -> Self {
         Self {
-            open_paren_char: Default::default(),
+            open_paren: Default::default(),
             _t1: Default::default(),
-            close_paren_char: Default::default(),
+            close_paren: Default::default(),
         }
     }
 }
 impl DefaultTest for argument_list::_T0 {
     fn is_default(&self) -> bool {
-        self.open_paren_char.is_default()
-            && self._t1.is_default()
-            && self.close_paren_char.is_default()
+        self.open_paren.is_default() && self._t1.is_default() && self.close_paren.is_default()
+    }
+}
+impl argument_list::_T0 {
+    pub fn from_parse(
+        ((open_paren, _t1), close_paren): (
+            (
+                FixedSizeTerminalWithTrivia<1usize>,
+                Option<Box<argument_list::_T1>>,
+            ),
+            FixedSizeTerminalWithTrivia<1usize>,
+        ),
+    ) -> Self {
+        Self {
+            open_paren,
+            _t1,
+            close_paren,
+        }
     }
 }
 
@@ -2465,49 +2469,35 @@ impl DefaultTest for revert_statement::_T0 {
             && self.semicolon_char.is_default()
     }
 }
-impl yul_block::_T0 {
-    pub fn from_parse(
-        ((open_brace, yul_statements), close_brace): (
-            (FixedSizeTerminalWithTrivia<1usize>, Vec<YulStatement>),
-            FixedSizeTerminalWithTrivia<1usize>,
-        ),
-    ) -> Self {
-        Self {
-            open_brace,
-            yul_statements,
-            close_brace,
-        }
-    }
-}
 
-impl type_name::_T3 {
-    pub fn from_parse(
-        ((open_bracket_char, expression), close_bracket_char): (
-            (FixedSizeTerminalWithTrivia<1>, Option<Expression>),
-            FixedSizeTerminalWithTrivia<1>,
-        ),
-    ) -> Self {
-        Self {
-            open_bracket_char,
-            expression,
-            close_bracket_char,
-        }
-    }
-}
 impl Default for type_name::_T3 {
     fn default() -> Self {
         Self {
-            open_bracket_char: Default::default(),
+            open_bracket: Default::default(),
             expression: Default::default(),
-            close_bracket_char: Default::default(),
+            close_bracket: Default::default(),
         }
     }
 }
 impl DefaultTest for type_name::_T3 {
     fn is_default(&self) -> bool {
-        self.open_bracket_char.is_default()
+        self.open_bracket.is_default()
             && self.expression.is_default()
-            && self.close_bracket_char.is_default()
+            && self.close_bracket.is_default()
+    }
+}
+impl type_name::_T3 {
+    pub fn from_parse(
+        ((open_bracket, expression), close_bracket): (
+            (FixedSizeTerminalWithTrivia<1usize>, Option<Expression>),
+            FixedSizeTerminalWithTrivia<1usize>,
+        ),
+    ) -> Self {
+        Self {
+            open_bracket,
+            expression,
+            close_bracket,
+        }
     }
 }
 impl type_name::_T0 {
@@ -2604,53 +2594,25 @@ impl struct_member::_T0 {
     }
 }
 
+impl type_expression::_T1 {
+    pub fn from_parse(
+        ((open_paren, type_name), close_paren): (
+            (FixedSizeTerminalWithTrivia<1usize>, TypeName),
+            FixedSizeTerminalWithTrivia<1usize>,
+        ),
+    ) -> Self {
+        Self {
+            open_paren,
+            type_name,
+            close_paren,
+        }
+    }
+}
 impl type_expression::_T0 {
     pub fn from_parse(
-        (((r#type, open_paren_char), type_name), close_paren_char): (
-            (
-                (
-                    FixedSizeTerminalWithTrivia<4usize>,
-                    FixedSizeTerminalWithTrivia<1>,
-                ),
-                TypeName,
-            ),
-            FixedSizeTerminalWithTrivia<1>,
-        ),
+        (r#type, _t1): (FixedSizeTerminalWithTrivia<4usize>, type_expression::_T1),
     ) -> Self {
-        Self {
-            r#type,
-            open_paren_char,
-            type_name,
-            close_paren_char,
-        }
-    }
-}
-impl struct_definition::_T0 {
-    pub fn from_parse(
-        ((r#struct, identifier), _t1): (
-            (FixedSizeTerminalWithTrivia<6usize>, identifier::WithTrivia),
-            struct_definition::_T1,
-        ),
-    ) -> Self {
-        Self {
-            r#struct,
-            identifier,
-            _t1,
-        }
-    }
-}
-impl Default for struct_definition::_T0 {
-    fn default() -> Self {
-        Self {
-            r#struct: Default::default(),
-            identifier: Default::default(),
-            _t1: Default::default(),
-        }
-    }
-}
-impl DefaultTest for struct_definition::_T0 {
-    fn is_default(&self) -> bool {
-        self.r#struct.is_default() && self.identifier.is_default() && self._t1.is_default()
+        Self { r#type, _t1 }
     }
 }
 
@@ -2727,34 +2689,34 @@ impl using_directive::_T0 {
     }
 }
 
-impl yul_block::_T0 {
-    pub fn from_parse(
-        ((open_brace_char, yul_statements), close_brace_char): (
-            (FixedSizeTerminalWithTrivia<1>, Vec<YulStatement>),
-            FixedSizeTerminalWithTrivia<1>,
-        ),
-    ) -> Self {
-        Self {
-            open_brace_char,
-            yul_statements,
-            close_brace_char,
-        }
-    }
-}
 impl Default for yul_block::_T0 {
     fn default() -> Self {
         Self {
-            open_brace_char: Default::default(),
+            open_brace: Default::default(),
             yul_statements: Default::default(),
-            close_brace_char: Default::default(),
+            close_brace: Default::default(),
         }
     }
 }
 impl DefaultTest for yul_block::_T0 {
     fn is_default(&self) -> bool {
-        self.open_brace_char.is_default()
+        self.open_brace.is_default()
             && self.yul_statements.is_default()
-            && self.close_brace_char.is_default()
+            && self.close_brace.is_default()
+    }
+}
+impl yul_block::_T0 {
+    pub fn from_parse(
+        ((open_brace, yul_statements), close_brace): (
+            (FixedSizeTerminalWithTrivia<1usize>, Vec<YulStatement>),
+            FixedSizeTerminalWithTrivia<1usize>,
+        ),
+    ) -> Self {
+        Self {
+            open_brace,
+            yul_statements,
+            close_brace,
+        }
     }
 }
 
@@ -2970,25 +2932,47 @@ impl DefaultTest for event_definition::_T0 {
     }
 }
 
+impl Default for struct_definition::_T1 {
+    fn default() -> Self {
+        Self {
+            open_brace: Default::default(),
+            struct_members: Default::default(),
+            close_brace: Default::default(),
+        }
+    }
+}
+impl DefaultTest for struct_definition::_T1 {
+    fn is_default(&self) -> bool {
+        self.open_brace.is_default()
+            && self.struct_members.is_default()
+            && self.close_brace.is_default()
+    }
+}
+impl struct_definition::_T1 {
+    pub fn from_parse(
+        ((open_brace, struct_members), close_brace): (
+            (FixedSizeTerminalWithTrivia<1usize>, Vec<StructMember>),
+            FixedSizeTerminalWithTrivia<1usize>,
+        ),
+    ) -> Self {
+        Self {
+            open_brace,
+            struct_members,
+            close_brace,
+        }
+    }
+}
 impl struct_definition::_T0 {
     pub fn from_parse(
-        ((((r#struct, identifier), open_brace_char), struct_members), close_brace_char): (
-            (
-                (
-                    (FixedSizeTerminalWithTrivia<6usize>, identifier::WithTrivia),
-                    FixedSizeTerminalWithTrivia<1>,
-                ),
-                Vec<StructMember>,
-            ),
-            FixedSizeTerminalWithTrivia<1>,
+        ((r#struct, identifier), _t1): (
+            (FixedSizeTerminalWithTrivia<6usize>, identifier::WithTrivia),
+            struct_definition::_T1,
         ),
     ) -> Self {
         Self {
             r#struct,
             identifier,
-            open_brace_char,
-            struct_members,
-            close_brace_char,
+            _t1,
         }
     }
 }
@@ -2997,23 +2981,17 @@ impl Default for struct_definition::_T0 {
         Self {
             r#struct: Default::default(),
             identifier: Default::default(),
-            open_brace_char: Default::default(),
-            struct_members: Default::default(),
-            close_brace_char: Default::default(),
+            _t1: Default::default(),
         }
     }
 }
 impl DefaultTest for struct_definition::_T0 {
     fn is_default(&self) -> bool {
-        self.r#struct.is_default()
-            && self.identifier.is_default()
-            && self.open_brace_char.is_default()
-            && self.struct_members.is_default()
-            && self.close_brace_char.is_default()
+        self.r#struct.is_default() && self.identifier.is_default() && self._t1.is_default()
     }
 }
 
-impl index_access_expression::_T1 {
+impl index_access_expression::_T3 {
     pub fn from_parse(
         (colon_char, expression): (FixedSizeTerminalWithTrivia<1>, Option<Expression>),
     ) -> Self {
@@ -3099,7 +3077,7 @@ impl member_access_expression::Operator {
     }
 }
 
-impl Default for function_call_options_expression::_T2 {
+impl Default for function_call_options_expression::_T1 {
     fn default() -> Self {
         Self {
             elements: Default::default(),
@@ -3107,42 +3085,42 @@ impl Default for function_call_options_expression::_T2 {
         }
     }
 }
-impl DefaultTest for function_call_options_expression::_T2 {
+impl DefaultTest for function_call_options_expression::_T1 {
     fn is_default(&self) -> bool {
         self.elements.is_default() && self.separators.is_default()
     }
 }
-impl Default for function_call_options_expression::_T1 {
-    fn default() -> Self {
-        Self {
-            open_brace: Default::default(),
-            named_arguments: Default::default(),
-            close_brace: Default::default(),
-        }
-    }
-}
-impl DefaultTest for function_call_options_expression::_T1 {
-    fn is_default(&self) -> bool {
-        self.open_brace.is_default()
-            && self.named_arguments.is_default()
-            && self.close_brace.is_default()
-    }
-}
-impl function_call_options_expression::_T1 {
+impl function_call_options_expression::Operator {
     pub fn from_parse(
-        ((open_brace, named_arguments), close_brace): (
+        ((open_brace_char, named_arguments), close_brace_char): (
             (
-                FixedSizeTerminalWithTrivia<1usize>,
-                function_call_options_expression::_T2,
+                FixedSizeTerminalWithTrivia<1>,
+                function_call_options_expression::_T1,
             ),
-            FixedSizeTerminalWithTrivia<1usize>,
+            FixedSizeTerminalWithTrivia<1>,
         ),
     ) -> Self {
         Self {
-            open_brace,
+            open_brace_char,
             named_arguments,
-            close_brace,
+            close_brace_char,
         }
+    }
+}
+impl Default for function_call_options_expression::Operator {
+    fn default() -> Self {
+        Self {
+            open_brace_char: Default::default(),
+            named_arguments: Default::default(),
+            close_brace_char: Default::default(),
+        }
+    }
+}
+impl DefaultTest for function_call_options_expression::Operator {
+    fn is_default(&self) -> bool {
+        self.open_brace_char.is_default()
+            && self.named_arguments.is_default()
+            && self.close_brace_char.is_default()
     }
 }
 
@@ -3390,7 +3368,7 @@ impl try_statement::_T0 {
     }
 }
 
-impl tuple_deconstruction_statement::_T2 {
+impl tuple_deconstruction_statement::_T3 {
     pub fn from_parse((type_name, identifier): (Option<TypeName>, identifier::WithTrivia)) -> Self {
         Self {
             type_name,
@@ -3398,7 +3376,7 @@ impl tuple_deconstruction_statement::_T2 {
         }
     }
 }
-impl Default for tuple_deconstruction_statement::_T2 {
+impl Default for tuple_deconstruction_statement::_T3 {
     fn default() -> Self {
         Self {
             type_name: Default::default(),
@@ -3406,12 +3384,12 @@ impl Default for tuple_deconstruction_statement::_T2 {
         }
     }
 }
-impl DefaultTest for tuple_deconstruction_statement::_T2 {
+impl DefaultTest for tuple_deconstruction_statement::_T3 {
     fn is_default(&self) -> bool {
         self.type_name.is_default() && self.identifier.is_default()
     }
 }
-impl Default for tuple_deconstruction_statement::_T1 {
+impl Default for tuple_deconstruction_statement::_T2 {
     fn default() -> Self {
         Self {
             elements: Default::default(),
@@ -3419,23 +3397,48 @@ impl Default for tuple_deconstruction_statement::_T1 {
         }
     }
 }
-impl DefaultTest for tuple_deconstruction_statement::_T1 {
+impl DefaultTest for tuple_deconstruction_statement::_T2 {
     fn is_default(&self) -> bool {
         self.elements.is_default() && self.separators.is_default()
     }
 }
+impl Default for tuple_deconstruction_statement::_T1 {
+    fn default() -> Self {
+        Self {
+            open_paren: Default::default(),
+            _t3s: Default::default(),
+            close_paren: Default::default(),
+        }
+    }
+}
+impl DefaultTest for tuple_deconstruction_statement::_T1 {
+    fn is_default(&self) -> bool {
+        self.open_paren.is_default() && self._t3s.is_default() && self.close_paren.is_default()
+    }
+}
+impl tuple_deconstruction_statement::_T1 {
+    pub fn from_parse(
+        ((open_paren, _t3s), close_paren): (
+            (
+                FixedSizeTerminalWithTrivia<1usize>,
+                Option<tuple_deconstruction_statement::_T2>,
+            ),
+            FixedSizeTerminalWithTrivia<1usize>,
+        ),
+    ) -> Self {
+        Self {
+            open_paren,
+            _t3s,
+            close_paren,
+        }
+    }
+}
 impl tuple_deconstruction_statement::_T0 {
     pub fn from_parse(
-        (((((open_paren_char, _t2s), close_paren_char), equal_char), expression), semicolon_char): (
+        (((_t1, equal_char), expression), semicolon_char): (
             (
                 (
-                    (
-                        (
-                            FixedSizeTerminalWithTrivia<1>,
-                            Option<tuple_deconstruction_statement::_T1>,
-                        ),
-                        FixedSizeTerminalWithTrivia<1>,
-                    ),
+                    tuple_deconstruction_statement::_T1,
                     FixedSizeTerminalWithTrivia<1>,
                 ),
                 Expression,
@@ -3444,9 +3447,7 @@ impl tuple_deconstruction_statement::_T0 {
         ),
     ) -> Self {
         Self {
-            open_paren_char,
-            _t2s,
-            close_paren_char,
+            _t1,
             equal_char,
             expression,
             semicolon_char,
