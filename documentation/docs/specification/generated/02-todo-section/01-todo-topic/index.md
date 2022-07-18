@@ -1,8 +1,8 @@
-# Todo Topic
-
 <!-- markdownlint-disable no-inline-html -->
 <!-- markdownlint-disable no-space-in-emphasis -->
 <!-- cSpell:disable -->
+
+# Todo Topic
 
 <div class="admonition summary">
 <p class="admonition-title">Grammar</p>
@@ -299,4 +299,4 @@
 
 </div>
 
---8<-- "specification/notes/under-construction-snippet.md"
+--8<-- "specification/notes/02-todo-section/01-todo-topic/index.md"

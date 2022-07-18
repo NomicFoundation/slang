@@ -1,6 +1,5 @@
 - first-section:
     - trivia:
-        notes: specification/notes/01-first-section/01-trivia/index.md
         productions:
           - LeadingTrivia
           - TrailingTrivia
@@ -22,7 +21,7 @@
           - ImportPath
           - UsingDirective
     - nat-spec-comments:
-        notes: specification/notes/01-first-section/03-nat-spec-comments/index.md
+        productions:
 
 - todo-section:
     - todo-topic:

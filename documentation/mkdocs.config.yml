@@ -9,6 +9,7 @@ site_dir: !ENV SITE_DIR
 
 nav:
   - Home: index.md
+  - "": snippets/under-construction.md
   - Language Reference:
       - 1. File Structure:
           - 1.1. License Specifier: reference/01-file-structure/01-license-specifier/index.md

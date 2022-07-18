@@ -38,18 +38,8 @@ fn validate_topics(grammar: &Grammar) {
                 .for_each(|(topic_index, topic)| {
                     let slug = generate_topic_slug(grammar, section_index, topic_index);
 
-                    if topic.definition.is_some() {
-                        assert_eq!(
-                            topic.definition.as_ref().unwrap(),
-                            &format!("topics/{}.yml", slug)
-                        );
-                    }
-
-                    if topic.notes.is_some() {
-                        assert_eq!(
-                            topic.notes.as_ref().unwrap(),
-                            &format!("specification/notes/{}/index.md", slug)
-                        );
+                    if let Some(topic_definition) = &topic.definition {
+                        assert_eq!(topic_definition, &format!("topics/{slug}.yml"));
                     }
                 });
         });

@@ -42,13 +42,28 @@ pub fn generate_spec_sections(
                         file_path: Some(topic_file.clone()),
                     });
 
+                    let notes_file = generated_folder
+                        .parent()
+                        .unwrap()
+                        .join("notes")
+                        .join(&topic_slug)
+                        .join("index.md");
+
+                    entries.push(NavigationEntry {
+                        indentation_level: 2,
+                        title: "\"\"".to_string(),
+                        file_path: Some(notes_file.clone()),
+                    });
+
                     std::fs::create_dir_all(topic_file.parent().unwrap()).unwrap();
                     let mut w = File::create(topic_file).expect("Unable to create file");
-                    writeln!(w, "# {}", topic.title).unwrap();
-                    writeln!(w).unwrap();
+
                     writeln!(w, "<!-- markdownlint-disable no-inline-html -->").unwrap();
                     writeln!(w, "<!-- markdownlint-disable no-space-in-emphasis -->").unwrap();
                     writeln!(w, "<!-- cSpell:disable -->").unwrap();
+
+                    writeln!(w).unwrap();
+                    writeln!(w, "# {}", topic.title).unwrap();
 
                     match &topic.definition {
                         None => {}
@@ -72,15 +87,16 @@ pub fn generate_spec_sections(
                         }
                     }
 
+                    assert!(notes_file.exists(), "Notes file does not exist: {notes_file:?}");
+
+                    assert_eq!(
+                        std::fs::read_to_string(&notes_file).unwrap().lines().nth(0),
+                        Some("<!-- markdownlint-configure-file { \"first-line-heading\": { \"level\": 2 } } -->"),
+                        "First line of notes file should be the markdownlint configuration: {:?}", &notes_file
+                    );
+
                     writeln!(w).unwrap();
-                    writeln!(
-                        &w,
-                        "--8<-- \"{}\"",
-                        topic.notes.as_ref().unwrap_or(
-                            &"specification/notes/under-construction-snippet.md".to_string()
-                        )
-                    )
-                    .unwrap();
+                    writeln!(&w, "--8<-- \"specification/notes/{topic_slug}/index.md\"").unwrap();
                 });
         });
 }
