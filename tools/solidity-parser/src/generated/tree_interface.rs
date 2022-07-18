@@ -1922,7 +1922,7 @@ pub mod revert_statement {
     }
 }
 
-/// TypeName = ( ElementaryType | FunctionType | MappingType | IdentifierPath ) { '[' [ Expression ] ']' } ElementaryType ;
+/// TypeName = ( ElementaryType | FunctionType | MappingType | IdentifierPath ) { '[' [ Expression ] ']' } ;
 pub type TypeName = type_name::_T0;
 pub mod type_name {
     #[allow(unused_imports)]
@@ -1948,7 +1948,6 @@ pub mod type_name {
         pub _t1: Box<type_name::_T1>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub _t3s: Vec<type_name::_T3>,
-        pub elementary_type: ElementaryType,
     }
 }
 

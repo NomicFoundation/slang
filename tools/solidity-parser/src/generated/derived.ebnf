@@ -120,7 +120,7 @@ OverrideSpecifier = 'override' [ '(' 1…*{ IdentifierPath / ',' } ')' ] ;
 
 IdentifierPath = 1…*{ «Identifier» / '.' } ;
 
-TypeName = ( ElementaryType | FunctionType | MappingType | IdentifierPath ) { '[' [ Expression ] ']' } ElementaryType ;
+TypeName = ( ElementaryType | FunctionType | MappingType | IdentifierPath ) { '[' [ Expression ] ']' } ;
 
 ElementaryType = 'bool' | 'string' | AddressType | «FixedBytesType» | «SignedIntegerType» | «UnsignedIntegerType» | «SignedFixedType» | «UnsignedFixedType» ;
 

@@ -2501,17 +2501,8 @@ impl type_name::_T3 {
     }
 }
 impl type_name::_T0 {
-    pub fn from_parse(
-        ((_t1, _t3s), elementary_type): (
-            (Box<type_name::_T1>, Vec<type_name::_T3>),
-            ElementaryType,
-        ),
-    ) -> Self {
-        Self {
-            _t1,
-            _t3s,
-            elementary_type,
-        }
+    pub fn from_parse((_t1, _t3s): (Box<type_name::_T1>, Vec<type_name::_T3>)) -> Self {
+        Self { _t1, _t3s }
     }
 }
 
