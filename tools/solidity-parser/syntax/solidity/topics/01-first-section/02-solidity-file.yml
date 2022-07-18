@@ -55,12 +55,13 @@
 
 - name: SelectingImportDirective
   sequence:
-    - terminal: "{"
-    - oneOrMore:
-        reference: SelectedImport
-        separator:
-          terminal: ","
-    - terminal: "}"
+    - delimitedBy:
+        open: "{"
+        oneOrMore:
+          reference: SelectedImport
+          separator:
+            terminal: ","
+        close: "}"
     - terminal: from
     - reference: ImportPath
 
@@ -80,13 +81,13 @@
     - terminal: using
     - choice:
         - reference: IdentifierPath
-        - sequence:
-            - terminal: "{"
-            - oneOrMore:
-                reference: IdentifierPath
-                separator:
-                  terminal: ","
-            - terminal: "}"
+        - delimitedBy:
+            open: "{"
+            oneOrMore:
+              reference: IdentifierPath
+              separator:
+                terminal: ","
+            close: "}"
     - terminal: for
     - choice:
         - terminal: "*"

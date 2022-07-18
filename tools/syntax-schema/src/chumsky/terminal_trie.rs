@@ -10,6 +10,12 @@ use super::{combinator_tree::GeneratedCode, name::Name};
 pub struct TerminalTrie(PatriciaSet);
 
 impl TerminalTrie {
+    pub fn from_string(string: &String) -> Self {
+        let mut set = PatriciaSet::new();
+        set.insert(string);
+        Self(set)
+    }
+
     pub fn slang_name(&self) -> Name {
         if self.0.len() == 1 {
             let node = self.0.as_ref().child().unwrap();
@@ -143,9 +149,12 @@ impl Expression {
                 .expression_to_generate()
                 .collect_terminals(grammar, accum),
             EBNF::Sequence(_) => false, // TODO: special case this i.e. 'multiply' the sequence elements?
-            EBNF::End | EBNF::Repeat(_) | EBNF::Not(_) | EBNF::Difference(_) | EBNF::Range(_) => {
-                false
-            }
+            EBNF::DelimitedBy(_)
+            | EBNF::End
+            | EBNF::Repeat(_)
+            | EBNF::Not(_)
+            | EBNF::Difference(_)
+            | EBNF::Range(_) => false,
         }
     }
 }

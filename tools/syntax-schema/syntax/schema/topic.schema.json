@@ -22,6 +22,7 @@
       "oneOf": [
         { "$ref": "#/$defs/Versions" },
         { "$ref": "#/$defs/Choice" },
+        { "$ref": "#/$defs/DelimitedBy" },
         { "$ref": "#/$defs/Difference" },
         { "$ref": "#/$defs/End" },
         { "$ref": "#/$defs/Not" },
@@ -64,6 +65,7 @@
       },
       "oneOf": [
         { "$ref": "#/$defs/Choice" },
+        { "$ref": "#/$defs/DelimitedBy" },
         { "$ref": "#/$defs/Difference" },
         { "$ref": "#/$defs/End" },
         { "$ref": "#/$defs/Not" },
@@ -162,6 +164,35 @@
         "optional": { "$ref": "#/$defs/Expression" }
       }
     },
+    "DelimitedBy": {
+      "type": "object",
+      "required": ["delimitedBy"],
+      "properties": {
+        "zeroOrMore": {
+          "type": "object",
+          "properties": {
+            "config": { "$ref": "#/$defs/Config" },
+            "open": { "$ref": "#/$defs/Expression" },
+            "close": { "$ref": "#/$defs/Expression" }
+          },
+          "oneOf": [
+            { "$ref": "#/$defs/Choice" },
+            { "$ref": "#/$defs/DelimitedBy" },
+            { "$ref": "#/$defs/Difference" },
+            { "$ref": "#/$defs/End" },
+            { "$ref": "#/$defs/Not" },
+            { "$ref": "#/$defs/OneOrMore" },
+            { "$ref": "#/$defs/Optional" },
+            { "$ref": "#/$defs/Range" },
+            { "$ref": "#/$defs/Reference" },
+            { "$ref": "#/$defs/Sequence" },
+            { "$ref": "#/$defs/Terminal" },
+            { "$ref": "#/$defs/ZeroOrMore" },
+            { "$ref": "#/$defs/Repeat" }
+          ]
+        }
+      }
+    },
     "ZeroOrMore": {
       "type": "object",
       "required": ["zeroOrMore"],
@@ -174,6 +205,7 @@
           },
           "oneOf": [
             { "$ref": "#/$defs/Choice" },
+            { "$ref": "#/$defs/DelimitedBy" },
             { "$ref": "#/$defs/Difference" },
             { "$ref": "#/$defs/End" },
             { "$ref": "#/$defs/Not" },
@@ -201,6 +233,7 @@
           },
           "oneOf": [
             { "$ref": "#/$defs/Choice" },
+            { "$ref": "#/$defs/DelimitedBy" },
             { "$ref": "#/$defs/Difference" },
             { "$ref": "#/$defs/End" },
             { "$ref": "#/$defs/Not" },
@@ -230,6 +263,7 @@
           },
           "oneOf": [
             { "$ref": "#/$defs/Choice" },
+            { "$ref": "#/$defs/DelimitedBy" },
             { "$ref": "#/$defs/Difference" },
             { "$ref": "#/$defs/End" },
             { "$ref": "#/$defs/Not" },
