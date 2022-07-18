@@ -1,0 +1,43 @@
+# yaml-language-server: $schema=../../../../../syntax-schema/syntax/schema/topic.schema.json
+
+- name: Block
+  delimitedBy:
+    open: "{"
+    zeroOrMore:
+      choice:
+        - reference: Statement
+        - reference: UncheckedBlock
+    close: "}"
+
+- name: UncheckedBlock
+  sequence:
+    - terminal: unchecked
+    - reference: Block
+
+- name: Statement
+  choice:
+    - reference: Block
+    - reference: SimpleStatement
+    - reference: IfStatement
+    - reference: ForStatement
+    - reference: WhileStatement
+    - reference: DoWhileStatement
+    - reference: ContinueStatement
+    - reference: BreakStatement
+    - reference: TryStatement
+    - reference: ReturnStatement
+    - reference: EmitStatement
+    - reference: RevertStatement
+    - reference: DeleteStatement
+    - reference: AssemblyStatement
+
+- name: SimpleStatement
+  choice:
+    - reference: TupleDeconstructionStatement
+    - reference: VariableDeclarationStatement
+    - reference: ExpressionStatement
+
+- name: ExpressionStatement
+  sequence:
+    - reference: Expression
+    - terminal: ;

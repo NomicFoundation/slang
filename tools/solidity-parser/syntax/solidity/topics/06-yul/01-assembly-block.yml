@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../../../../syntax-schema/syntax/schema/topic.schema.json
+
+- name: AssemblyStatement
+  sequence:
+    - terminal: assembly
+    - optional:
+        terminal: '"evmasm"'
+    - optional:
+        reference: AssemblyFlags
+    - reference: YulBlock
+
+- name: AssemblyFlags
+  delimitedBy:
+    open: (
+    oneOrMore:
+      reference: DoubleQuotedAsciiStringLiteral
+      separator:
+        terminal: ","
+    close: )

@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=../../../../../syntax-schema/syntax/schema/topic.schema.json
+
+- name: TupleDeconstructionStatement
+  sequence:
+    - delimitedBy:
+        open: (
+        zeroOrMore:
+          optional:
+            sequence:
+              - optional:
+                  reference: TypeName
+              - reference: Identifier
+          separator:
+            terminal: ","
+        close: )
+    - terminal: "="
+    - reference: Expression
+    - terminal: ;
+
+- name: VariableDeclarationStatement
+  sequence:
+    - reference: TypeName
+    - optional:
+        reference: DataLocation
+    - reference: Identifier
+    - optional:
+        sequence:
+          - terminal: "="
+          - reference: Expression
+    - terminal: ;
+
+- name: DataLocation
+  choice:
+    - terminal: memory
+    - terminal: storage
+    - terminal: calldata

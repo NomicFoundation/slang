@@ -1,4 +1,28 @@
-- first-section:
+- file-structure:
+    - license-specifier:
+        productions:
+    - source-unit:
+        productions:
+          - SourceUnit
+          - Directive
+          - Definition
+    - pragmas:
+        productions:
+          - PragmaDirective
+          - VersionPragmaSpecifier
+          - VersionPragmaOperator
+          - VersionPragmaValue
+          - ABICoderPragmaSpecifier
+          - ExperimentalPragmaSpecifier
+    - imports:
+        productions:
+          - ImportDirective
+          - SimpleImportDirective
+          - StarImportDirective
+          - SelectingImportDirective
+          - SelectedImport
+          - ImportPath
+          - UsingDirective
     - trivia:
         productions:
           - LeadingTrivia
@@ -8,69 +32,133 @@
           - EndOfLine
           - MultilineComment
           - SingleLineComment
-    - solidity-file:
-        productions:
-          - SourceUnit
-          - Directive
-          - Definition
-          - ImportDirective
-          - SimpleImportDirective
-          - StarImportDirective
-          - SelectingImportDirective
-          - SelectedImport
-          - ImportPath
-          - UsingDirective
-    - nat-spec-comments:
+    - natspec-format:
         productions:
 
-- todo-section:
-    - todo-topic:
+- definitions:
+    - contracts:
         productions:
           - ContractDefinition
-          - InterfaceDefinition
           - InheritanceSpecifierList
           - InheritanceSpecifier
+          - ContractBodyElement
+    - interfaces:
+        productions:
+          - InterfaceDefinition
+    - libraries:
+        productions:
           - LibraryDefinition
-          - FunctionDefinition
-          - FunctionAttribute
-          - ConstantDefinition
+    - structs:
+        productions:
           - StructDefinition
           - StructMember
+    - enums:
+        productions:
           - EnumDefinition
-          - UserDefinedValueTypeDefinition
-          - EventDefinition
-          - EventParameter
-          - ErrorDefinition
-          - ErrorParameter
-          - ContractBodyElement
+    - constants:
+        productions:
+          - ConstantDefinition
+    - state-variables:
+        productions:
+          - StateVariableDeclaration
+          - StateVariableAttribute
+    - functions:
+        productions:
+          - FunctionDefinition
+          - FunctionAttribute
+          - OverrideSpecifier
+          - ParameterList
+          - ParameterDeclaration
+          - ArgumentList
+          - PositionalArgumentList
+          - NamedArgumentList
+          - NamedArgument
           - ConstructorDefinition
           - ConstructorAttribute
           - FallbackFunctionDefinition
           - FallbackFunctionAttribute
           - ReceiveFunctionDefinition
           - ReceiveFunctionAttribute
+    - modifiers:
+        productions:
           - ModifierDefinition
           - ModifierAttribute
-          - StateVariableDeclaration
-          - StateVariableAttribute
-          - ArgumentList
-          - PositionalArgumentList
-          - NamedArgumentList
-          - NamedArgument
           - ModifierInvocation
-          - ParameterList
-          - ParameterDeclaration
-          - OverrideSpecifier
-          - IdentifierPath
+    - events:
+        productions:
+          - EventDefinition
+          - EventParameter
+    - user-defined-value-types:
+        productions:
+          - UserDefinedValueTypeDefinition
+    - errors:
+        productions:
+          - ErrorDefinition
+          - ErrorParameter
+
+- types:
+    - advanced-types:
+        productions:
           - TypeName
-          - ElementaryType
-          - AddressType
+    - function-types:
+        productions:
           - FunctionType
+    - mapping-types:
+        productions:
           - MappingType
+    - elementary-types:
+        productions:
+          - ElementaryType
+          - FixedBytesType
+          - SignedIntegerType
+          - UnsignedIntegerType
+          - SignedFixedType
+          - UnsignedFixedType
+    - addresses:
+        productions:
+          - AddressType
+
+- statements:
+    - blocks:
+        productions:
+          - Block
+          - UncheckedBlock
+          - Statement
+          - SimpleStatement
+          - ExpressionStatement
+    - declaration-statements:
+        productions:
+          - TupleDeconstructionStatement
+          - VariableDeclarationStatement
           - DataLocation
+    - control-statements:
+        productions:
+          - IfStatement
+          - ForStatement
+          - WhileStatement
+          - DoWhileStatement
+          - ContinueStatement
+          - BreakStatement
+          - ReturnStatement
+          - EmitStatement
+          - DeleteStatement
+    - error-handling:
+        productions:
+          - TryStatement
+          - CatchClause
+          - RevertStatement
+
+- expressions:
+    - base-expressions:
+        productions:
           - Expression
           - AssignmentExpression
           - ConditionalExpression
+          - FunctionCallExpression
+          - MemberAccessExpression
+          - IndexAccessExpression
+    - binary-operators:
+        productions:
           - OrExpression
           - AndExpression
           - EqualityComparisonExpression
@@ -82,63 +170,30 @@
           - AddSubExpression
           - MulDivModExpression
           - ExponentiationExpression
+    - unary-operators:
+        productions:
           - UnarySuffixExpression
           - UnaryPrefixExpression
-          - FunctionCallExpression
-          - MemberAccessExpression
-          - IndexAccessExpression
+    - primary-expressions:
+        productions:
           - PrimaryExpression
           - PayableExpression
           - TypeExpression
           - NewExpression
           - ParenthesisExpression
           - ArrayLiteral
-          - NumericLiteral
-          - Block
-          - UncheckedBlock
-          - Statement
-          - SimpleStatement
-          - IfStatement
-          - ForStatement
-          - WhileStatement
-          - DoWhileStatement
-          - ContinueStatement
-          - BreakStatement
-          - TryStatement
-          - CatchClause
-          - ReturnStatement
-          - EmitStatement
-          - RevertStatement
-          - DeleteStatement
-          - TupleDeconstructionStatement
-          - VariableDeclarationStatement
-          - ExpressionStatement
-          - AssemblyStatement
-          - AssemblyFlags
-          - Identifier
-          - Keyword
-          - ReservedKeyword
-          - PragmaDirective
-          - VersionPragmaSpecifier
-          - VersionPragmaOperator
-          - VersionPragmaValue
-          - ABICoderPragmaSpecifier
-          - ExperimentalPragmaSpecifier
-          - RawIdentifier
-          - IdentifierStart
-          - IdentifierPart
-          - SignedIntegerType
-          - UnsignedIntegerType
-          - FixedBytesType
-          - SignedFixedType
-          - UnsignedFixedType
           - BooleanLiteral
+    - numbers:
+        productions:
+          - NumericLiteral
           - DecimalNumber
           - DecimalInteger
           - DecimalFloat
           - DecimalExponent
           - HexNumber
           - NumberUnit
+    - strings:
+        productions:
           - HexStringLiteral
           - PossiblySeparatedPairsOfHexDigits
           - HexCharacter
@@ -152,6 +207,23 @@
           - AsciiEscape
           - HexByteEscape
           - UnicodeEscape
+    - identifiers:
+        productions:
+          - IdentifierPath
+          - Identifier
+          - Keyword
+          - ReservedKeyword
+          - RawIdentifier
+          - IdentifierStart
+          - IdentifierPart
+
+- yul:
+    - assembly-block:
+        productions:
+          - AssemblyStatement
+          - AssemblyFlags
+    - yul-statements:
+        productions:
           - YulBlock
           - YulStatement
           - YulVariableDeclaration
@@ -164,6 +236,8 @@
           - YulContinueStatement
           - YulForStatement
           - YulSwitchStatement
+    - yul-expressions:
+        productions:
           - YulExpression
           - YulIdentifierPath
           - YulLiteral

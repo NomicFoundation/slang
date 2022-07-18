@@ -1,0 +1,23 @@
+=== "📝 input.sol"
+
+    ```solidity
+    --8<-- "specification/notes/01-file-structure/03-pragmas/tests/experimental/abi-encoder-v2/input.sol"
+    ```
+
+=== "❌ 0.4.13"
+
+    ```log
+    --8<-- "specification/notes/01-file-structure/03-pragmas/tests/experimental/abi-encoder-v2/generated/0.4.13"
+    ```
+
+=== "⚠️ 0.4.16"
+
+    ```log
+    --8<-- "specification/notes/01-file-structure/03-pragmas/tests/experimental/abi-encoder-v2/generated/0.4.16"
+    ```
+
+=== "✅ 0.6.0"
+
+    ```json
+    --8<-- "specification/notes/01-file-structure/03-pragmas/tests/experimental/abi-encoder-v2/generated/0.6.0"
+    ```
