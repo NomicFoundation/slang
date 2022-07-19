@@ -479,7 +479,6 @@
           optional:
             reference: Expression
           close: "]"
-    - reference: ElementaryType
 - name: ElementaryType
   choice:
     - terminal: bool

@@ -3287,7 +3287,7 @@ impl Parsers {
             .map(|v| revert_statement::_T0::from_parse(v))
             .boxed();
 
-        // TypeName = ( ElementaryType | FunctionType | MappingType | IdentifierPath ) { '[' [ Expression ] ']' } ElementaryType ;
+        // TypeName = ( ElementaryType | FunctionType | MappingType | IdentifierPath ) { '[' [ Expression ] ']' } ;
         type_name_parser.define(
             choice((
                 elementary_type_parser
@@ -3332,7 +3332,6 @@ impl Parsers {
                     .map(|v| type_name::_T3::from_parse(v))
                     .repeated(),
             )
-            .then(elementary_type_parser.clone())
             .map(|v| type_name::_T0::from_parse(v))
             .boxed(),
         );
