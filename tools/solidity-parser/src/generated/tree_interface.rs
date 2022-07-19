@@ -2376,45 +2376,39 @@ pub mod member_access_expression {
     }
 }
 
-/// FunctionCallOptionsExpression = Expression '{' 1…*{ NamedArgument / ',' } '}' ;
-pub type FunctionCallOptionsExpression = Expression;
-pub mod function_call_options_expression {
+/// FunctionCallExpression = Expression [ '{' 1…*{ NamedArgument / ',' } '}' ] ArgumentList ;
+pub type FunctionCallExpression = Expression;
+pub mod function_call_expression {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct _T1 {
+    pub struct _T2 {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<NamedArgument>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub separators: Vec<FixedSizeTerminalWithTrivia<1>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T1 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub open_brace: FixedSizeTerminalWithTrivia<1usize>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub named_arguments: function_call_expression::_T2,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub close_brace: FixedSizeTerminalWithTrivia<1usize>,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct Operator {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub open_brace_char: FixedSizeTerminalWithTrivia<1>,
+        pub _t1: Option<function_call_expression::_T1>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub named_arguments: function_call_options_expression::_T1,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub close_brace_char: FixedSizeTerminalWithTrivia<1>,
+        pub argument_list: ArgumentList,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct E {
         pub left_operand: Expression,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub operator: function_call_options_expression::Operator,
-    }
-}
-
-/// FunctionCallExpression = Expression ArgumentList ;
-pub type FunctionCallExpression = Expression;
-pub mod function_call_expression {
-    #[allow(unused_imports)]
-    use super::*;
-    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-    pub struct E {
-        pub left_operand: Expression,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub operator: ArgumentList,
+        pub operator: function_call_expression::Operator,
     }
 }
 
@@ -2633,7 +2627,7 @@ pub mod assignment_expression {
     }
 }
 
-/// Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnarySuffixExpression | UnaryPrefixExpression | FunctionCallExpression | FunctionCallOptionsExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
+/// Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnarySuffixExpression | UnaryPrefixExpression | FunctionCallExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
 pub type Expression = Box<expression::Expression>;
 pub mod expression {
     #[allow(unused_imports)]
@@ -2656,7 +2650,6 @@ pub mod expression {
         UnarySuffixExpression(unary_suffix_expression::E),
         UnaryPrefixExpression(unary_prefix_expression::E),
         FunctionCallExpression(function_call_expression::E),
-        FunctionCallOptionsExpression(function_call_options_expression::E),
         MemberAccessExpression(member_access_expression::E),
         IndexAccessExpression(index_access_expression::E),
         PrimaryExpression(primary_expression::E),

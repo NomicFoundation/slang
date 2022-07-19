@@ -86,7 +86,6 @@
           - UnarySuffixExpression
           - UnaryPrefixExpression
           - FunctionCallExpression
-          - FunctionCallOptionsExpression
           - MemberAccessExpression
           - IndexAccessExpression
           - PrimaryExpression
