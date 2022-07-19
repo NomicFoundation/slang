@@ -12,11 +12,6 @@ REPO_ROOT=$(realpath "$PROJECT_DIR/../..")
 # Solidity from the intended source manifest
 ###################################################
 
-cargo run --manifest-path "$PROJECT_DIR/../syntax-schema/Cargo.toml" --bin "grammar_to_manifest" -- \
-  --grammar-file "$PROJECT_DIR/syntax/solidity/temporary-split/grammar.yml" \
-  --splits-file "$PROJECT_DIR/syntax/solidity/temporary-split/splits.yml" \
-  --output-folder "$PROJECT_DIR/syntax/solidity"
-
 cargo run --manifest-path "$PROJECT_DIR/../syntax-schema/Cargo.toml" --bin "validate_manifest" -- \
   --manifest-input "$PROJECT_DIR/syntax/solidity/manifest.yml"
 
