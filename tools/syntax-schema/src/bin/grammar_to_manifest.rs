@@ -21,7 +21,6 @@ struct ProgramArgs {
 
 #[derive(Deserialize)]
 struct TopicMetadata {
-    pub notes: Option<String>,
     pub productions: Option<Vec<String>>,
 }
 
@@ -133,13 +132,6 @@ fn generate_manifest(sections: &SectionsList, output_folder: &PathBuf, grammar_f
                             let topic_title = generate_title(&topic_id);
 
                             writeln!(&w, "      - title: {}", topic_title).unwrap();
-
-                            match &topic.notes {
-                                None => {}
-                                Some(notes) => {
-                                    writeln!(&w, "        notes: {}", notes).unwrap();
-                                }
-                            }
 
                             match &topic.productions {
                                 None => {}

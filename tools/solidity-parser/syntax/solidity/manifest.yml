@@ -8,12 +8,10 @@ sections:
   - title: First Section
     topics:
       - title: Trivia
-        notes: specification/notes/01-first-section/01-trivia/index.md
         definition: topics/01-first-section/01-trivia.yml
       - title: Solidity File
         definition: topics/01-first-section/02-solidity-file.yml
       - title: Nat Spec Comments
-        notes: specification/notes/01-first-section/03-nat-spec-comments/index.md
   - title: Todo Section
     topics:
       - title: Todo Topic

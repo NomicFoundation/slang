@@ -1,8 +1,8 @@
-# Trivia
-
 <!-- markdownlint-disable no-inline-html -->
 <!-- markdownlint-disable no-space-in-emphasis -->
 <!-- cSpell:disable -->
+
+# Trivia
 
 <div class="admonition summary">
 <p class="admonition-title">Grammar</p>

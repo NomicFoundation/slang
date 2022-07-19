@@ -58,7 +58,6 @@ pub struct Section {
 #[serde(deny_unknown_fields)]
 pub struct Topic {
     pub title: String,
-    pub notes: Option<String>,
     pub definition: Option<String>,
 }
 

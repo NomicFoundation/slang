@@ -1,8 +1,8 @@
-# Solidity File
-
 <!-- markdownlint-disable no-inline-html -->
 <!-- markdownlint-disable no-space-in-emphasis -->
 <!-- cSpell:disable -->
+
+# Solidity File
 
 <div class="admonition summary">
 <p class="admonition-title">Grammar</p>
@@ -29,4 +29,4 @@
 
 </div>
 
---8<-- "specification/notes/under-construction-snippet.md"
+--8<-- "specification/notes/01-first-section/02-solidity-file/index.md"

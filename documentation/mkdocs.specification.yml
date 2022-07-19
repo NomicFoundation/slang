@@ -3,7 +3,11 @@ nav:
       - Solidity Grammar: specification/generated/00-grammar/index.md
       - 1. First Section:
           - 1.1. Trivia: specification/generated/01-first-section/01-trivia/index.md
+          - "": specification/notes/01-first-section/01-trivia/index.md
           - 1.2. Solidity File: specification/generated/01-first-section/02-solidity-file/index.md
+          - "": specification/notes/01-first-section/02-solidity-file/index.md
           - 1.3. Nat Spec Comments: specification/generated/01-first-section/03-nat-spec-comments/index.md
+          - "": specification/notes/01-first-section/03-nat-spec-comments/index.md
       - 2. Todo Section:
           - 2.1. Todo Topic: specification/generated/02-todo-section/01-todo-topic/index.md
+          - "": specification/notes/02-todo-section/01-todo-topic/index.md
