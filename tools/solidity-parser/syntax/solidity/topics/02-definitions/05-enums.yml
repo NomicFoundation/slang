@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../../../../syntax-schema/syntax/schema/topic.schema.json
+
+- name: EnumDefinition
+  sequence:
+    - terminal: enum
+    - reference: Identifier
+    - delimitedBy:
+        open: "{"
+        oneOrMore:
+          reference: Identifier
+          separator:
+            terminal: ","
+        close: "}"

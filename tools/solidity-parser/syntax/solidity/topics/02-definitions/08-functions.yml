@@ -1,0 +1,148 @@
+# yaml-language-server: $schema=../../../../../syntax-schema/syntax/schema/topic.schema.json
+
+- name: FunctionDefinition
+  sequence:
+    - terminal: function
+    - choice:
+        - reference: Identifier
+        - terminal: fallback
+        - terminal: receive
+    - reference: ParameterList
+    - zeroOrMore:
+        reference: FunctionAttribute
+    - optional:
+        sequence:
+          - terminal: returns
+          - reference: ParameterList
+    - choice:
+        - terminal: ;
+        - reference: Block
+
+- name: FunctionAttribute
+  choice:
+    - reference: ModifierInvocation
+    - reference: OverrideSpecifier
+    - terminal: external
+    - terminal: internal
+    - terminal: payable
+    - terminal: private
+    - terminal: public
+    - terminal: pure
+    - terminal: view
+    - terminal: virtual
+
+- name: OverrideSpecifier
+  sequence:
+    - terminal: override
+    - optional:
+        delimitedBy:
+          open: (
+          oneOrMore:
+            reference: IdentifierPath
+            separator:
+              terminal: ","
+          close: )
+
+- name: ParameterList
+  delimitedBy:
+    open: (
+    zeroOrMore:
+      reference: ParameterDeclaration
+      separator:
+        terminal: ","
+    close: )
+
+- name: ParameterDeclaration
+  sequence:
+    - reference: TypeName
+    - optional:
+        reference: DataLocation
+    - optional:
+        reference: Identifier
+
+- name: ArgumentList
+  delimitedBy:
+    open: (
+    optional:
+      choice:
+        - reference: PositionalArgumentList
+        - reference: NamedArgumentList
+    close: )
+
+- name: PositionalArgumentList
+  oneOrMore:
+    reference: Expression
+    separator:
+      terminal: ","
+
+- name: NamedArgumentList
+  delimitedBy:
+    open: "{"
+    zeroOrMore:
+      reference: NamedArgument
+      separator:
+        terminal: ","
+    close: "}"
+
+- name: NamedArgument
+  sequence:
+    - reference: Identifier
+    - terminal: ":"
+    - reference: Expression
+
+- name: ConstructorDefinition
+  sequence:
+    - terminal: constructor
+    - reference: ParameterList
+    - zeroOrMore:
+        reference: ConstructorAttribute
+    - reference: Block
+
+- name: ConstructorAttribute
+  choice:
+    - reference: ModifierInvocation
+    - terminal: internal
+    - terminal: payable
+    - terminal: public
+
+- name: FallbackFunctionDefinition
+  sequence:
+    - terminal: fallback
+    - reference: ParameterList
+    - zeroOrMore:
+        reference: FallbackFunctionAttribute
+    - optional:
+        sequence:
+          - terminal: returns
+          - reference: ParameterList
+    - choice:
+        - terminal: ;
+        - reference: Block
+
+- name: FallbackFunctionAttribute
+  choice:
+    - reference: ModifierInvocation
+    - reference: OverrideSpecifier
+    - terminal: external
+    - terminal: payable
+    - terminal: pure
+    - terminal: view
+    - terminal: virtual
+
+- name: ReceiveFunctionDefinition
+  sequence:
+    - terminal: receive
+    - reference: ParameterList
+    - zeroOrMore:
+        reference: ReceiveFunctionAttribute
+    - choice:
+        - terminal: ;
+        - reference: Block
+
+- name: ReceiveFunctionAttribute
+  choice:
+    - reference: ModifierInvocation
+    - reference: OverrideSpecifier
+    - terminal: external
+    - terminal: payable
+    - terminal: virtual

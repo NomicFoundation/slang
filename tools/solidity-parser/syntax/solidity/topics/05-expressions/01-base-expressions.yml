@@ -1,0 +1,89 @@
+# yaml-language-server: $schema=../../../../../syntax-schema/syntax/schema/topic.schema.json
+
+- name: Expression
+  kind: ExpressionRule
+  choice:
+    - reference: AssignmentExpression
+    - reference: ConditionalExpression
+    - reference: OrExpression
+    - reference: AndExpression
+    - reference: EqualityComparisonExpression
+    - reference: OrderComparisonExpression
+    - reference: BitOrExpression
+    - reference: BitXOrExpression
+    - reference: BitAndExpression
+    - reference: ShiftExpression
+    - reference: AddSubExpression
+    - reference: MulDivModExpression
+    - reference: ExponentiationExpression
+    - reference: UnarySuffixExpression
+    - reference: UnaryPrefixExpression
+    - reference: FunctionCallExpression
+    - reference: MemberAccessExpression
+    - reference: IndexAccessExpression
+    - reference: PrimaryExpression
+
+- name: AssignmentExpression
+  config: { associativity: Left }
+  sequence:
+    - reference: Expression
+    - choice:
+        - terminal: "="
+        - terminal: "|="
+        - terminal: ^=
+        - terminal: "&="
+        - terminal: "<<="
+        - terminal: ">>="
+        - terminal: ">>>="
+        - terminal: +=
+        - terminal: "-="
+        - terminal: "*="
+        - terminal: /=
+        - terminal: "%="
+    - reference: Expression
+
+- name: ConditionalExpression
+  sequence:
+    - reference: Expression
+    - sequence: # This subsequence gives the correct form to the AST
+        - terminal: "?"
+        - reference: Expression
+        - terminal: ":"
+        - reference: Expression
+
+- name: FunctionCallExpression
+  sequence:
+    - reference: Expression
+    - optional:
+        delimitedBy:
+          open: "{"
+          oneOrMore:
+            reference: NamedArgument
+            separator:
+              terminal: ","
+          close: "}"
+    - reference: ArgumentList
+
+- name: MemberAccessExpression
+  sequence:
+    - reference: Expression
+    - terminal: "."
+    - choice:
+        - reference: Identifier
+        - terminal: address
+
+- name: IndexAccessExpression
+  config: { associativity: Left }
+  sequence:
+    - reference: Expression
+    - delimitedBy:
+        open: "["
+        sequence:
+          - optional:
+              reference: Expression
+          - optional:
+              sequence:
+                - terminal: ":"
+                - optional:
+                    reference: Expression
+        close: "]"

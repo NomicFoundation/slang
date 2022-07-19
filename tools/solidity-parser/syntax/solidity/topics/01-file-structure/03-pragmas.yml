@@ -1,0 +1,51 @@
+# yaml-language-server: $schema=../../../../../syntax-schema/syntax/schema/topic.schema.json
+
+- name: PragmaDirective
+  sequence:
+    - terminal: pragma
+    - choice:
+        - reference: VersionPragmaSpecifier
+        - reference: ABICoderPragmaSpecifier
+        - reference: ExperimentalPragmaSpecifier
+    - terminal: ;
+
+- name: VersionPragmaSpecifier
+  sequence:
+    - terminal: solidity
+    - oneOrMore:
+        sequence:
+          - reference: VersionPragmaOperator
+          - reference: VersionPragmaValue
+
+- name: VersionPragmaOperator
+  kind: Token
+  choice:
+    - terminal: "^"
+    - terminal: "~"
+    - terminal: "="
+    - terminal: "<"
+    - terminal: ">"
+    - terminal: "<="
+    - terminal: ">="
+
+- name: VersionPragmaValue
+  kind: Token
+  oneOrMore:
+    oneOrMore:
+      choice:
+        - range: { from: "0", to: "9" }
+        - terminal: "x"
+        - terminal: "X"
+        - terminal: "*"
+    separator:
+      terminal: "."
+
+- name: ABICoderPragmaSpecifier
+  sequence:
+    - terminal: abicoder
+    - reference: Identifier
+
+- name: ExperimentalPragmaSpecifier
+  sequence:
+    - terminal: experimental
+    - reference: Identifier

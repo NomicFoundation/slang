@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../../../../syntax-schema/syntax/schema/topic.schema.json
+
+- name: EventDefinition
+  sequence:
+    - terminal: event
+    - reference: Identifier
+    - delimitedBy:
+        open: (
+        zeroOrMore:
+          reference: EventParameter
+          separator:
+            terminal: ","
+        close: )
+    - optional:
+        terminal: anonymous
+    - terminal: ;
+
+- name: EventParameter
+  sequence:
+    - reference: TypeName
+    - optional:
+        terminal: indexed
+    - optional:
+        reference: Identifier

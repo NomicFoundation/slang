@@ -1,0 +1,69 @@
+# yaml-language-server: $schema=../../../../../syntax-schema/syntax/schema/topic.schema.json
+
+- name: ImportDirective
+  sequence:
+    - terminal: import
+    - choice:
+        - reference: SimpleImportDirective
+        - reference: StarImportDirective
+        - reference: SelectingImportDirective
+    - terminal: ;
+
+- name: SimpleImportDirective
+  sequence:
+    - reference: ImportPath
+    - zeroOrMore:
+        sequence:
+          - terminal: as
+          - reference: Identifier
+
+- name: StarImportDirective
+  sequence:
+    - terminal: "*"
+    - terminal: as
+    - reference: Identifier
+    - terminal: from
+    - reference: ImportPath
+
+- name: SelectingImportDirective
+  sequence:
+    - delimitedBy:
+        open: "{"
+        oneOrMore:
+          reference: SelectedImport
+          separator:
+            terminal: ","
+        close: "}"
+    - terminal: from
+    - reference: ImportPath
+
+- name: SelectedImport
+  sequence:
+    - reference: Identifier
+    - optional:
+        sequence:
+          - terminal: as
+          - reference: Identifier
+
+- name: ImportPath
+  reference: AsciiStringLiteral
+
+- name: UsingDirective
+  sequence:
+    - terminal: using
+    - choice:
+        - reference: IdentifierPath
+        - delimitedBy:
+            open: "{"
+            oneOrMore:
+              reference: IdentifierPath
+              separator:
+                terminal: ","
+            close: "}"
+    - terminal: for
+    - choice:
+        - terminal: "*"
+        - reference: TypeName
+    - optional:
+        terminal: global
+    - terminal: ;

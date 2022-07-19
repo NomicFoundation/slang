@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../../../../syntax-schema/syntax/schema/topic.schema.json
+
+- name: AddressType
+  sequence:
+    - terminal: address
+    - optional:
+        terminal: payable

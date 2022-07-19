@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../../../../syntax-schema/syntax/schema/topic.schema.json
+
+- name: ErrorDefinition
+  sequence:
+    - terminal: error
+    - reference: Identifier
+    - delimitedBy:
+        open: (
+        zeroOrMore:
+          reference: ErrorParameter
+          separator:
+            terminal: ","
+        close: )
+    - terminal: ;
+
+- name: ErrorParameter
+  sequence:
+    - reference: TypeName
+    - optional:
+        reference: Identifier

@@ -1,0 +1,110 @@
+# yaml-language-server: $schema=../../../../../syntax-schema/syntax/schema/topic.schema.json
+
+- name: YulBlock
+  delimitedBy:
+    open: "{"
+    zeroOrMore:
+      reference: YulStatement
+    close: "}"
+
+- name: YulStatement
+  choice:
+    - reference: YulBlock
+    - reference: YulVariableDeclaration
+    - reference: YulFunctionDefinition
+    - reference: YulAssignmentStatement
+    - reference: YulFunctionCall
+    - reference: YulIfStatement
+    - reference: YulForStatement
+    - reference: YulSwitchStatement
+    - reference: YulLeaveStatement
+    - reference: YulBreakStatement
+    - reference: YulContinueStatement
+
+- name: YulVariableDeclaration
+  sequence:
+    - terminal: let
+    - oneOrMore:
+        reference: YulIdentifierPath
+        separator:
+          terminal: ","
+    - optional:
+        sequence:
+          - terminal: ":="
+          - reference: YulExpression
+
+- name: YulFunctionDefinition
+  sequence:
+    - terminal: function
+    - reference: YulIdentifier
+    - delimitedBy:
+        open: (
+        zeroOrMore:
+          reference: YulIdentifier
+          separator:
+            terminal: ","
+        close: )
+    - optional:
+        sequence:
+          - terminal: "->"
+          - oneOrMore:
+              reference: YulIdentifier
+              separator:
+                terminal: ","
+    - reference: YulBlock
+
+- name: YulAssignmentStatement
+  sequence:
+    - oneOrMore:
+        reference: YulIdentifierPath
+        separator:
+          terminal: ","
+    - terminal: ":="
+    - reference: YulExpression
+
+- name: YulFunctionCall
+  sequence:
+    - reference: YulIdentifier
+    - delimitedBy:
+        open: (
+        zeroOrMore:
+          reference: YulExpression
+          separator:
+            terminal: ","
+        close: )
+
+- name: YulIfStatement
+  sequence:
+    - terminal: if
+    - reference: YulExpression
+    - reference: YulBlock
+
+- name: YulLeaveStatement
+  terminal: leave
+
+- name: YulBreakStatement
+  terminal: break
+
+- name: YulContinueStatement
+  terminal: continue
+
+- name: YulForStatement
+  sequence:
+    - terminal: for
+    - reference: YulBlock
+    - reference: YulExpression
+    - reference: YulBlock
+    - reference: YulBlock
+
+- name: YulSwitchStatement
+  sequence:
+    - terminal: switch
+    - reference: YulExpression
+    - oneOrMore:
+        sequence:
+          - choice:
+              - sequence:
+                  - terminal: case
+                  - reference: YulLiteral
+              - terminal: default
+          - reference: YulBlock
