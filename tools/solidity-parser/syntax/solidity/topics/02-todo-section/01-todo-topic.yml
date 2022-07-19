@@ -437,7 +437,6 @@
     - reference: UnarySuffixExpression
     - reference: UnaryPrefixExpression
     - reference: FunctionCallExpression
-    - reference: FunctionCallOptionsExpression
     - reference: MemberAccessExpression
     - reference: IndexAccessExpression
     - reference: PrimaryExpression
@@ -581,17 +580,15 @@
 - name: FunctionCallExpression
   sequence:
     - reference: Expression
+    - optional:
+        delimitedBy:
+          open: "{"
+          oneOrMore:
+            reference: NamedArgument
+            separator:
+              terminal: ","
+          close: "}"
     - reference: ArgumentList
-
-- name: FunctionCallOptionsExpression
-  sequence:
-    - reference: Expression
-    - terminal: "{"
-    - oneOrMore:
-        reference: NamedArgument
-        separator:
-          terminal: ","
-    - terminal: "}"
 
 - name: MemberAccessExpression
   sequence:

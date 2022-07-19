@@ -112,7 +112,6 @@ pub struct Parsers {
     pub struct_definition: ParserType<StructDefinition>,
     pub index_access_expression: ParserType<IndexAccessExpression>,
     pub member_access_expression: ParserType<MemberAccessExpression>,
-    pub function_call_options_expression: ParserType<FunctionCallOptionsExpression>,
     pub function_call_expression: ParserType<FunctionCallExpression>,
     pub unary_prefix_expression: ParserType<UnaryPrefixExpression>,
     pub unary_suffix_expression: ParserType<UnarySuffixExpression>,

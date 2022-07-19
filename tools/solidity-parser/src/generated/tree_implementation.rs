@@ -3077,7 +3077,7 @@ impl member_access_expression::Operator {
     }
 }
 
-impl Default for function_call_options_expression::_T1 {
+impl Default for function_call_expression::_T2 {
     fn default() -> Self {
         Self {
             elements: Default::default(),
@@ -3085,42 +3085,62 @@ impl Default for function_call_options_expression::_T1 {
         }
     }
 }
-impl DefaultTest for function_call_options_expression::_T1 {
+impl DefaultTest for function_call_expression::_T2 {
     fn is_default(&self) -> bool {
         self.elements.is_default() && self.separators.is_default()
     }
 }
-impl function_call_options_expression::Operator {
+impl Default for function_call_expression::_T1 {
+    fn default() -> Self {
+        Self {
+            open_brace: Default::default(),
+            named_arguments: Default::default(),
+            close_brace: Default::default(),
+        }
+    }
+}
+impl DefaultTest for function_call_expression::_T1 {
+    fn is_default(&self) -> bool {
+        self.open_brace.is_default()
+            && self.named_arguments.is_default()
+            && self.close_brace.is_default()
+    }
+}
+impl function_call_expression::_T1 {
     pub fn from_parse(
-        ((open_brace_char, named_arguments), close_brace_char): (
+        ((open_brace, named_arguments), close_brace): (
             (
-                FixedSizeTerminalWithTrivia<1>,
-                function_call_options_expression::_T1,
+                FixedSizeTerminalWithTrivia<1usize>,
+                function_call_expression::_T2,
             ),
-            FixedSizeTerminalWithTrivia<1>,
+            FixedSizeTerminalWithTrivia<1usize>,
         ),
     ) -> Self {
         Self {
-            open_brace_char,
+            open_brace,
             named_arguments,
-            close_brace_char,
+            close_brace,
         }
     }
 }
-impl Default for function_call_options_expression::Operator {
+impl function_call_expression::Operator {
+    pub fn from_parse(
+        (_t1, argument_list): (Option<function_call_expression::_T1>, ArgumentList),
+    ) -> Self {
+        Self { _t1, argument_list }
+    }
+}
+impl Default for function_call_expression::Operator {
     fn default() -> Self {
         Self {
-            open_brace_char: Default::default(),
-            named_arguments: Default::default(),
-            close_brace_char: Default::default(),
+            _t1: Default::default(),
+            argument_list: Default::default(),
         }
     }
 }
-impl DefaultTest for function_call_options_expression::Operator {
+impl DefaultTest for function_call_expression::Operator {
     fn is_default(&self) -> bool {
-        self.open_brace_char.is_default()
-            && self.named_arguments.is_default()
-            && self.close_brace_char.is_default()
+        self._t1.is_default() && self.argument_list.is_default()
     }
 }
 

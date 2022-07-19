@@ -132,7 +132,7 @@ MappingType = 'mapping' '(' ( ElementaryType | IdentifierPath ) '=>' TypeName ')
 
 DataLocation = 'memory' | 'storage' | 'calldata' ;
 
-Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnarySuffixExpression | UnaryPrefixExpression | FunctionCallExpression | FunctionCallOptionsExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
+Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnarySuffixExpression | UnaryPrefixExpression | FunctionCallExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
 
 AssignmentExpression = Expression ( '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ) Expression ;
 
@@ -164,9 +164,7 @@ UnarySuffixExpression = Expression ( '++' | '--' ) ;
 
 UnaryPrefixExpression = ( '++' | '--' | '!' | '~' | '-' ) Expression ;
 
-FunctionCallExpression = Expression ArgumentList ;
-
-FunctionCallOptionsExpression = Expression '{' 1…*{ NamedArgument / ',' } '}' ;
+FunctionCallExpression = Expression [ '{' 1…*{ NamedArgument / ',' } '}' ] ArgumentList ;
 
 MemberAccessExpression = Expression '.' ( «Identifier» | 'address' ) ;
 

@@ -4398,13 +4398,13 @@ impl Parsers {
             })
             .boxed();
 
-        // FunctionCallOptionsExpression = Expression '{' 1…*{ NamedArgument / ',' } '}' ;
-        let function_call_options_expression_parser = member_access_expression_parser
+        // FunctionCallExpression = Expression [ '{' 1…*{ NamedArgument / ',' } '}' ] ArgumentList ;
+        let function_call_expression_parser = member_access_expression_parser
             .clone()
             .then(
                 leading_trivia_parser
                     .clone()
-                    .then(just('{').map(|_| FixedSizeTerminal::<1>()))
+                    .then(just("{").map(|_| FixedSizeTerminal::<1usize>()))
                     .then(trailing_trivia_parser.clone())
                     .map(
                         |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
@@ -4432,17 +4432,15 @@ impl Parsers {
                                     .repeated(),
                             )
                             .map(repetition_mapper)
-                            .map(
-                                |(elements, separators)| function_call_options_expression::_T1 {
-                                    elements,
-                                    separators,
-                                },
-                            ),
+                            .map(|(elements, separators)| function_call_expression::_T2 {
+                                elements,
+                                separators,
+                            }),
                     )
                     .then(
                         leading_trivia_parser
                             .clone()
-                            .then(just('}').map(|_| FixedSizeTerminal::<1>()))
+                            .then(just("}").map(|_| FixedSizeTerminal::<1usize>()))
                             .then(trailing_trivia_parser.clone())
                             .map(
                                 |((leading, content), trailing)| FixedSizeTerminalWithTrivia {
@@ -4452,31 +4450,12 @@ impl Parsers {
                                 },
                             ),
                     )
-                    .map(|v| function_call_options_expression::Operator::from_parse(v))
+                    .map(|v| function_call_expression::_T1::from_parse(v))
+                    .or_not()
+                    .then(argument_list_parser.clone())
+                    .map(|v| function_call_expression::Operator::from_parse(v))
                     .repeated(),
             )
-            .map(|(operand, operators)| {
-                if operators.is_empty() {
-                    operand
-                } else {
-                    operators
-                        .into_iter()
-                        .fold(operand, |left_operand, operator| {
-                            Box::new(expression::Expression::FunctionCallOptionsExpression(
-                                function_call_options_expression::E {
-                                    left_operand,
-                                    operator,
-                                },
-                            ))
-                        })
-                }
-            })
-            .boxed();
-
-        // FunctionCallExpression = Expression ArgumentList ;
-        let function_call_expression_parser = function_call_options_expression_parser
-            .clone()
-            .then(argument_list_parser.clone().repeated())
             .map(|(operand, operators)| {
                 if operators.is_empty() {
                     operand
@@ -5139,7 +5118,7 @@ impl Parsers {
             })
             .boxed();
 
-        // Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnarySuffixExpression | UnaryPrefixExpression | FunctionCallExpression | FunctionCallOptionsExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
+        // Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnarySuffixExpression | UnaryPrefixExpression | FunctionCallExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
         expression_parser.define(assignment_expression_parser.clone().boxed());
 
         // ConstantDefinition = TypeName 'constant' «Identifier» '=' Expression ';' ;
@@ -6576,7 +6555,6 @@ impl Parsers {
             struct_definition: struct_definition_parser,
             index_access_expression: index_access_expression_parser,
             member_access_expression: member_access_expression_parser,
-            function_call_options_expression: function_call_options_expression_parser,
             function_call_expression: function_call_expression_parser,
             unary_prefix_expression: unary_prefix_expression_parser,
             unary_suffix_expression: unary_suffix_expression_parser,
