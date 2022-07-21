@@ -18,14 +18,12 @@
 
 - name: PossiblySeparatedPairsOfHexDigits
   kind: Token
-  oneOrMore:
-    repeat:
-      min: 2
-      max: 2
-      reference: HexCharacter
-    separator:
-      optional:
-        terminal: _
+  sequence:
+    - repeat: { min: 2, max: 2, reference: HexCharacter }
+    - zeroOrMore:
+        sequence:
+          - optional: { terminal: _ }
+          - repeat: { min: 2, max: 2, reference: HexCharacter }
 
 - name: HexCharacter
   kind: Token

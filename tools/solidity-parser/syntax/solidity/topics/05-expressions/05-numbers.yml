@@ -20,13 +20,12 @@
 
 - name: DecimalInteger
   kind: Token
-  oneOrMore:
-    range:
-      from: "0"
-      to: "9"
-    separator:
-      optional:
-        terminal: _
+  sequence:
+    - range: { from: "0", to: "9" }
+    - zeroOrMore:
+        sequence:
+          - optional: { terminal: _ }
+          - range: { from: "0", to: "9" }
 
 - name: DecimalFloat
   kind: Token
@@ -50,11 +49,12 @@
   kind: Token
   sequence:
     - terminal: 0x
-    - oneOrMore:
-        reference: HexCharacter
-        separator:
-          optional:
-            terminal: _
+    - sequence:
+        - reference: HexCharacter
+        - zeroOrMore:
+            sequence:
+              - optional: { terminal: _ }
+              - reference: HexCharacter
 
 - name: NumberUnit
   kind: Token
