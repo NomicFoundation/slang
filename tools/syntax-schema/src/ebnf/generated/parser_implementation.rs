@@ -542,7 +542,7 @@ impl Parsers {
                 .then(
                     leading_trivia_parser
                         .clone()
-                        .then(just('|').map(|_| FixedSizeTerminal::<1>()))
+                        .then(just('|').map(|_| FixedSizeTerminal::<1usize>()))
                         .then(trailing_trivia_parser.clone())
                         .map(
                             |((leading, content), trailing)| FixedSizeTerminalWithTrivia {

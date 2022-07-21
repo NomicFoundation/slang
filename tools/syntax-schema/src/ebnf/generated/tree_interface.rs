@@ -470,7 +470,7 @@ pub mod expression {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<Sequence>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<FixedSizeTerminalWithTrivia<1>>,
+        pub separators: Vec<FixedSizeTerminalWithTrivia<1usize>>,
     }
 }
 
