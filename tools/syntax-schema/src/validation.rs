@@ -170,9 +170,6 @@ fn validate_expression(
         }
         EBNF::Repeat(repeat) => {
             validate_expression(&repeat.expr, defined, used);
-            if repeat.separator.is_some() {
-                validate_expression(repeat.separator.as_ref().unwrap(), defined, used);
-            }
         }
         EBNF::Sequence(sequence) => {
             sequence.iter().for_each(|sub_expression| {

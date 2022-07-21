@@ -201,7 +201,7 @@
           "type": "object",
           "properties": {
             "config": { "$ref": "#/$defs/Config" },
-            "separator": { "$ref": "#/$defs/Expression" }
+            "separator": { "type": "string", "minLength": 1 }
           },
           "oneOf": [
             { "$ref": "#/$defs/Choice" },
@@ -229,7 +229,7 @@
           "type": "object",
           "properties": {
             "config": { "$ref": "#/$defs/Config" },
-            "separator": { "$ref": "#/$defs/Expression" }
+            "separator": { "type": "string", "minLength": 1 }
           },
           "oneOf": [
             { "$ref": "#/$defs/Choice" },
@@ -259,7 +259,7 @@
             "config": { "$ref": "#/$defs/Config" },
             "min": { "type": "number" },
             "max": { "type": "number" },
-            "separator": { "$ref": "#/$defs/Expression" }
+            "separator": { "type": "string", "minLength": 1 }
           },
           "oneOf": [
             { "$ref": "#/$defs/Choice" },

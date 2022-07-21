@@ -19,8 +19,7 @@
     - terminal: is
     - oneOrMore:
         reference: InheritanceSpecifier
-        separator:
-          terminal: ","
+        separator: ","
 
 - name: InheritanceSpecifier
   sequence:

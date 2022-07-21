@@ -8,8 +8,7 @@
         open: (
         zeroOrMore:
           reference: ErrorParameter
-          separator:
-            terminal: ","
+          separator: ","
         close: )
     - terminal: ;
 

@@ -85,14 +85,14 @@ pub fn optional(ebnf: EBNF) -> EBNF {
 }
 
 pub fn repeated(
-    ((range, ebnf), separator): ((Option<(usize, Option<usize>)>, EBNF), Option<EBNF>),
+    ((range, ebnf), separator): ((Option<(usize, Option<usize>)>, EBNF), Option<String>),
 ) -> EBNF {
     let (min, max) = range.unwrap_or((0, None));
     EBNF::Repeat(EBNFRepeat {
         min,
         max,
         expr: ref_from_ebnf(ebnf),
-        separator: separator.map(|ebnf| ref_from_ebnf(ebnf)),
+        separator,
     })
 }
 

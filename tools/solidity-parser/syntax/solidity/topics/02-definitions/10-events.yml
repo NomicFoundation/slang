@@ -8,8 +8,7 @@
         open: (
         zeroOrMore:
           reference: EventParameter
-          separator:
-            terminal: ","
+          separator: ","
         close: )
     - optional:
         terminal: anonymous

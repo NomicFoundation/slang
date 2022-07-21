@@ -249,7 +249,7 @@ impl<'de> Deserialize<'de> for Production {
                                 #[serde(flatten)]
                                 expr: ExpressionRef,
                                 #[serde(default)]
-                                separator: Option<ExpressionRef>,
+                                separator: Option<String>,
                             }
                             let v: V = map.next_value()?;
                             ebnf = Some(EBNF::Repeat(EBNFRepeat {
@@ -380,7 +380,7 @@ impl Expression {
                     #[serde(flatten)]
                     expr: &'a ExpressionRef,
                     #[serde(skip_serializing_if = "Option::is_none")]
-                    separator: &'a Option<ExpressionRef>,
+                    separator: &'a Option<String>,
                 }
                 let v = V { expr, separator };
                 state.serialize_entry(
@@ -499,7 +499,7 @@ impl<'de> Deserialize<'de> for Expression {
                                 #[serde(flatten)]
                                 expr: ExpressionRef,
                                 #[serde(default)]
-                                separator: Option<ExpressionRef>,
+                                separator: Option<String>,
                             }
                             let v: V = map.next_value()?;
                             ebnf = Some(EBNF::Repeat(EBNFRepeat {
@@ -574,7 +574,7 @@ pub struct EBNFRepeat {
     #[serde(flatten)]
     pub expr: ExpressionRef,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub separator: Option<ExpressionRef>,
+    pub separator: Option<String>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, Hash)]

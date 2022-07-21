@@ -33,8 +33,11 @@ impl Expression {
                     write!(w, "{{ ").unwrap();
                     expr.generate_ebnf(grammar, w);
                     if let Some(separator) = separator {
-                        write!(w, "/ ").unwrap();
-                        separator.generate_ebnf(grammar, w);
+                        write!(w, "/ '").unwrap();
+                        for c in separator.chars() {
+                            write_char(w, c);
+                        }
+                        write!(w, "' ").unwrap();
                     }
                     write!(w, "}} ").unwrap();
                 }
@@ -54,8 +57,11 @@ impl Expression {
                     write!(w, "*{{ ").unwrap();
                     expr.generate_ebnf(grammar, w);
                     if let Some(separator) = separator {
-                        write!(w, "/ ").unwrap();
-                        separator.generate_ebnf(grammar, w);
+                        write!(w, "/ '").unwrap();
+                        for c in separator.chars() {
+                            write_char(w, c);
+                        }
+                        write!(w, "' ").unwrap();
                     }
                     write!(w, "}} ").unwrap();
                 }

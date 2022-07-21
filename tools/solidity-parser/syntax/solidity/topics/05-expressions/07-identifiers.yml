@@ -3,8 +3,7 @@
 - name: IdentifierPath
   oneOrMore:
     reference: Identifier
-    separator:
-      terminal: "."
+    separator: "."
 
 - name: Identifier
   kind: Token

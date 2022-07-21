@@ -8,6 +8,5 @@
         open: "{"
         oneOrMore:
           reference: Identifier
-          separator:
-            terminal: ","
+          separator: ","
         close: "}"

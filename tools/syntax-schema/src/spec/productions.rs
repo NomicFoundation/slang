@@ -71,7 +71,7 @@ fn write_expression<T: Write>(w: &mut T, expr: &Expression, context: &SpecProduc
 
                 if let Some(separator) = separator {
                     write_token(w, TokenKind::operator, " / ");
-                    write_expression(w, separator, context);
+                    write_token(w, TokenKind::string, &format_string_literal(separator));
                 }
 
                 write_token(w, TokenKind::operator, "}");
@@ -91,7 +91,7 @@ fn write_expression<T: Write>(w: &mut T, expr: &Expression, context: &SpecProduc
                 write_expression(w, expr, context);
                 if let Some(separator) = separator {
                     write_token(w, TokenKind::operator, " / ");
-                    write_expression(w, separator, context);
+                    write_token(w, TokenKind::string, &format_string_literal(separator));
                 }
                 write_token(w, TokenKind::operator, "}");
             }

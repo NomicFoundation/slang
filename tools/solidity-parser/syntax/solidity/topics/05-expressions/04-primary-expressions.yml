@@ -39,8 +39,7 @@
     oneOrMore:
       optional:
         reference: Expression
-      separator:
-        terminal: ","
+      separator: ","
     close: )
 
 - name: ArrayLiteral
@@ -48,8 +47,7 @@
     open: "["
     oneOrMore:
       reference: Expression
-      separator:
-        terminal: ","
+      separator: ","
     close: "]"
 
 - name: BooleanLiteral

@@ -14,8 +14,7 @@
 - name: expression
   oneOrMore:
     reference: sequence
-    separator:
-      terminal: "|"
+    separator: "|"
 - name: sequence
   oneOrMore:
     reference: difference

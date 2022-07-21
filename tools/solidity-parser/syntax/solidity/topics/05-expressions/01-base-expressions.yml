@@ -59,8 +59,7 @@
           open: "{"
           oneOrMore:
             reference: NamedArgument
-            separator:
-              terminal: ","
+            separator: ","
           close: "}"
     - reference: ArgumentList
 

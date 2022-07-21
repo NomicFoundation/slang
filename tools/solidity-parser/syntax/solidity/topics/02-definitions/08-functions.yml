@@ -39,8 +39,7 @@
           open: (
           oneOrMore:
             reference: IdentifierPath
-            separator:
-              terminal: ","
+            separator: ","
           close: )
 
 - name: ParameterList
@@ -48,8 +47,7 @@
     open: (
     zeroOrMore:
       reference: ParameterDeclaration
-      separator:
-        terminal: ","
+      separator: ","
     close: )
 
 - name: ParameterDeclaration
@@ -72,16 +70,14 @@
 - name: PositionalArgumentList
   oneOrMore:
     reference: Expression
-    separator:
-      terminal: ","
+    separator: ","
 
 - name: NamedArgumentList
   delimitedBy:
     open: "{"
     zeroOrMore:
       reference: NamedArgument
-      separator:
-        terminal: ","
+      separator: ","
     close: "}"
 
 - name: NamedArgument

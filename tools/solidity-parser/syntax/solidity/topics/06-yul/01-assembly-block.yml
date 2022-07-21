@@ -14,6 +14,5 @@
     open: (
     oneOrMore:
       reference: DoubleQuotedAsciiStringLiteral
-      separator:
-        terminal: ","
+      separator: ","
     close: )

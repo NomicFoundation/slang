@@ -10,8 +10,7 @@
               - optional:
                   reference: TypeName
               - reference: Identifier
-          separator:
-            terminal: ","
+          separator: ","
         close: )
     - terminal: "="
     - reference: Expression

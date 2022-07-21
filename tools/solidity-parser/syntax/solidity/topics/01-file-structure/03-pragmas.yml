@@ -37,8 +37,7 @@
         - terminal: "x"
         - terminal: "X"
         - terminal: "*"
-    separator:
-      terminal: "."
+    separator: "."
 
 - name: ABICoderPragmaSpecifier
   sequence:
