@@ -53,7 +53,7 @@ impl Parsers {
 
         let mut block_parser = Recursive::declare();
 
-        // «DecimalInteger» = 1…*{ '0'…'9' / [ '_' ] } ;
+        // «DecimalInteger» = '0'…'9' { [ '_' ] '0'…'9' } ;
         let decimal_integer_parser = filter(|&c: &char| ('0' <= c && c <= '9'))
             .map(|_| FixedSizeTerminal::<1>())
             .then(
@@ -64,13 +64,10 @@ impl Parsers {
                         filter(|&c: &char| ('0' <= c && c <= '9'))
                             .map(|_| FixedSizeTerminal::<1>()),
                     )
+                    .map(|v| decimal_integer::_T2::from_parse(v))
                     .repeated(),
             )
-            .map(repetition_mapper)
-            .map(|(elements, separators)| decimal_integer::_T0 {
-                elements,
-                separators,
-            })
+            .map(|v| decimal_integer::_T0::from_parse(v))
             .boxed();
 
         // «EndOfLine» = 1…*{ '\u{d}' | '\u{a}' } ;
@@ -147,7 +144,7 @@ impl Parsers {
             .map(|v| hex_byte_escape::_T0::from_parse(v))
             .boxed();
 
-        // «HexNumber» = '0x' 1…*{ «HexCharacter» / [ '_' ] } ;
+        // «HexNumber» = '0x' «HexCharacter» { [ '_' ] «HexCharacter» } ;
         let hex_number_parser = terminal("0x")
             .ignored()
             .map(|_| FixedSizeTerminal::<2usize>())
@@ -168,13 +165,10 @@ impl Parsers {
                             })
                             .map(|_| FixedSizeTerminal::<1>()),
                         )
+                        .map(|v| hex_number::_T3::from_parse(v))
                         .repeated(),
                 )
-                .map(repetition_mapper)
-                .map(|(elements, separators)| hex_number::_T1 {
-                    elements,
-                    separators,
-                }),
+                .map(|v| hex_number::_T1::from_parse(v)),
             )
             .map(|v| hex_number::_T0::from_parse(v))
             .boxed();
@@ -212,7 +206,7 @@ impl Parsers {
             .map(|v| multiline_comment::_T0::from_parse(v))
             .boxed();
 
-        // «PossiblySeparatedPairsOfHexDigits» = 1…*{ 2…2*{ «HexCharacter» } / [ '_' ] } ;
+        // «PossiblySeparatedPairsOfHexDigits» = 2…2*{ «HexCharacter» } { [ '_' ] 2…2*{ «HexCharacter» } } ;
         let possibly_separated_pairs_of_hex_digits_parser = filter(|&c: &char| {
             ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
         })
@@ -233,15 +227,10 @@ impl Parsers {
                     .exactly(2usize)
                     .map(|v| VariableSizeTerminal(v.len())),
                 )
+                .map(|v| possibly_separated_pairs_of_hex_digits::_T3::from_parse(v))
                 .repeated(),
         )
-        .map(repetition_mapper)
-        .map(
-            |(elements, separators)| possibly_separated_pairs_of_hex_digits::_T0 {
-                elements,
-                separators,
-            },
-        )
+        .map(|v| possibly_separated_pairs_of_hex_digits::_T0::from_parse(v))
         .boxed();
 
         // «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;

@@ -28,17 +28,24 @@ pub struct VariableSizeTerminalWithTrivia {
     pub trailing: TrailingTrivia,
 }
 
-/// «DecimalInteger» = 1…*{ '0'…'9' / [ '_' ] } ;
+/// «DecimalInteger» = '0'…'9' { [ '_' ] '0'…'9' } ;
 pub type DecimalInteger = decimal_integer::_T0;
 pub mod decimal_integer {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T2 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub underscore_char: Option<FixedSizeTerminal<1>>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _1: FixedSizeTerminal<1>,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub elements: Vec<FixedSizeTerminal<1>>,
+        pub _0: FixedSizeTerminal<1>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<Option<FixedSizeTerminal<1>>>,
+        pub _t2s: Vec<decimal_integer::_T2>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
     pub struct WithTrivia {
@@ -113,24 +120,31 @@ pub mod hex_byte_escape {
     }
 }
 
-/// «HexNumber» = '0x' 1…*{ «HexCharacter» / [ '_' ] } ;
+/// «HexNumber» = '0x' «HexCharacter» { [ '_' ] «HexCharacter» } ;
 pub type HexNumber = hex_number::_T0;
 pub mod hex_number {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T3 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub underscore_char: Option<FixedSizeTerminal<1>>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _1: FixedSizeTerminal<1>,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub elements: Vec<FixedSizeTerminal<1>>,
+        pub _0: FixedSizeTerminal<1>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<Option<FixedSizeTerminal<1>>>,
+        pub _t3s: Vec<hex_number::_T3>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub zero_x: FixedSizeTerminal<2usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _1: hex_number::_T1,
+        pub _t1: hex_number::_T1,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
     pub struct WithTrivia {
@@ -187,17 +201,24 @@ pub mod multiline_comment {
     }
 }
 
-/// «PossiblySeparatedPairsOfHexDigits» = 1…*{ 2…2*{ «HexCharacter» } / [ '_' ] } ;
+/// «PossiblySeparatedPairsOfHexDigits» = 2…2*{ «HexCharacter» } { [ '_' ] 2…2*{ «HexCharacter» } } ;
 pub type PossiblySeparatedPairsOfHexDigits = possibly_separated_pairs_of_hex_digits::_T0;
 pub mod possibly_separated_pairs_of_hex_digits {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T3 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub underscore_char: Option<FixedSizeTerminal<1>>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _1: VariableSizeTerminal,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub elements: Vec<VariableSizeTerminal>,
+        pub _0: VariableSizeTerminal,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<Option<FixedSizeTerminal<1>>>,
+        pub _t3s: Vec<possibly_separated_pairs_of_hex_digits::_T3>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
     pub struct WithTrivia {

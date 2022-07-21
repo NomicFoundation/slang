@@ -354,13 +354,13 @@ ArrayLiteral = '[' 1…*{ Expression / ',' } ']' ;
 
 «DecimalNumber» = ( «DecimalInteger» | «DecimalFloat» ) [ «DecimalExponent» ] ;
 
-«DecimalInteger» = 1…*{ '0'…'9' / [ '_' ] } ;
+«DecimalInteger» = '0'…'9' { [ '_' ] '0'…'9' } ;
 
 «DecimalFloat» = [ «DecimalInteger» ] '.' «DecimalInteger» ;
 
 «DecimalExponent» = ( 'e' | 'E' ) [ '-' ] «DecimalInteger» ;
 
-«HexNumber» = '0x' 1…*{ «HexCharacter» / [ '_' ] } ;
+«HexNumber» = '0x' «HexCharacter» { [ '_' ] «HexCharacter» } ;
 
 «NumberUnit» = 'days' | 'ether' | 'finney' | 'gwei' | 'hours' | 'minutes' | 'seconds' | 'szabo' | 'weeks' | 'wei' | 'years' ;
 
@@ -370,7 +370,7 @@ ArrayLiteral = '[' 1…*{ Expression / ',' } ']' ;
 
 «HexStringLiteral» = 'hex' ( '"' [ «PossiblySeparatedPairsOfHexDigits» ] '"' | '\'' [ «PossiblySeparatedPairsOfHexDigits» ] '\'' ) ;
 
-«PossiblySeparatedPairsOfHexDigits» = 1…*{ 2…2*{ «HexCharacter» } / [ '_' ] } ;
+«PossiblySeparatedPairsOfHexDigits» = 2…2*{ «HexCharacter» } { [ '_' ] 2…2*{ «HexCharacter» } } ;
 
 «HexCharacter» = '0'…'9' | 'a'…'f' | 'A'…'F' ;
 

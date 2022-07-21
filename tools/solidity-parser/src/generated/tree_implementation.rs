@@ -40,17 +40,45 @@ impl<const N: usize> DefaultTest for FixedSizeTerminalWithTrivia<N> {
     }
 }
 
+impl decimal_integer::_T2 {
+    pub fn from_parse(
+        (underscore_char, _1): (Option<FixedSizeTerminal<1>>, FixedSizeTerminal<1>),
+    ) -> Self {
+        Self {
+            underscore_char,
+            _1,
+        }
+    }
+}
+impl Default for decimal_integer::_T2 {
+    fn default() -> Self {
+        Self {
+            underscore_char: Default::default(),
+            _1: Default::default(),
+        }
+    }
+}
+impl DefaultTest for decimal_integer::_T2 {
+    fn is_default(&self) -> bool {
+        self.underscore_char.is_default() && self._1.is_default()
+    }
+}
+impl decimal_integer::_T0 {
+    pub fn from_parse((_0, _t2s): (FixedSizeTerminal<1>, Vec<decimal_integer::_T2>)) -> Self {
+        Self { _0, _t2s }
+    }
+}
 impl Default for decimal_integer::_T0 {
     fn default() -> Self {
         Self {
-            elements: Default::default(),
-            separators: Default::default(),
+            _0: Default::default(),
+            _t2s: Default::default(),
         }
     }
 }
 impl DefaultTest for decimal_integer::_T0 {
     fn is_default(&self) -> bool {
-        self.elements.is_default() && self.separators.is_default()
+        self._0.is_default() && self._t2s.is_default()
     }
 }
 impl DefaultTest for decimal_integer::WithTrivia {
@@ -115,35 +143,63 @@ impl DefaultTest for hex_byte_escape::WithTrivia {
     }
 }
 
+impl hex_number::_T3 {
+    pub fn from_parse(
+        (underscore_char, _1): (Option<FixedSizeTerminal<1>>, FixedSizeTerminal<1>),
+    ) -> Self {
+        Self {
+            underscore_char,
+            _1,
+        }
+    }
+}
+impl Default for hex_number::_T3 {
+    fn default() -> Self {
+        Self {
+            underscore_char: Default::default(),
+            _1: Default::default(),
+        }
+    }
+}
+impl DefaultTest for hex_number::_T3 {
+    fn is_default(&self) -> bool {
+        self.underscore_char.is_default() && self._1.is_default()
+    }
+}
+impl hex_number::_T1 {
+    pub fn from_parse((_0, _t3s): (FixedSizeTerminal<1>, Vec<hex_number::_T3>)) -> Self {
+        Self { _0, _t3s }
+    }
+}
 impl Default for hex_number::_T1 {
     fn default() -> Self {
         Self {
-            elements: Default::default(),
-            separators: Default::default(),
+            _0: Default::default(),
+            _t3s: Default::default(),
         }
     }
 }
 impl DefaultTest for hex_number::_T1 {
     fn is_default(&self) -> bool {
-        self.elements.is_default() && self.separators.is_default()
+        self._0.is_default() && self._t3s.is_default()
     }
 }
 impl hex_number::_T0 {
-    pub fn from_parse((zero_x, _1): (FixedSizeTerminal<2usize>, hex_number::_T1)) -> Self {
-        Self { zero_x, _1 }
+    pub fn from_parse((zero_x, _t1): (FixedSizeTerminal<2usize>, hex_number::_T1)) -> Self {
+        Self { zero_x, _t1 }
     }
 }
 impl Default for hex_number::_T0 {
     fn default() -> Self {
         Self {
             zero_x: Default::default(),
-            _1: Default::default(),
+            _t1: Default::default(),
         }
     }
 }
 impl DefaultTest for hex_number::_T0 {
     fn is_default(&self) -> bool {
-        self.zero_x.is_default() && self._1.is_default()
+        self.zero_x.is_default() && self._t1.is_default()
     }
 }
 impl DefaultTest for hex_number::WithTrivia {
@@ -224,17 +280,50 @@ impl DefaultTest for multiline_comment::WithTrivia {
     }
 }
 
+impl possibly_separated_pairs_of_hex_digits::_T3 {
+    pub fn from_parse(
+        (underscore_char, _1): (Option<FixedSizeTerminal<1>>, VariableSizeTerminal),
+    ) -> Self {
+        Self {
+            underscore_char,
+            _1,
+        }
+    }
+}
+impl Default for possibly_separated_pairs_of_hex_digits::_T3 {
+    fn default() -> Self {
+        Self {
+            underscore_char: Default::default(),
+            _1: Default::default(),
+        }
+    }
+}
+impl DefaultTest for possibly_separated_pairs_of_hex_digits::_T3 {
+    fn is_default(&self) -> bool {
+        self.underscore_char.is_default() && self._1.is_default()
+    }
+}
+impl possibly_separated_pairs_of_hex_digits::_T0 {
+    pub fn from_parse(
+        (_0, _t3s): (
+            VariableSizeTerminal,
+            Vec<possibly_separated_pairs_of_hex_digits::_T3>,
+        ),
+    ) -> Self {
+        Self { _0, _t3s }
+    }
+}
 impl Default for possibly_separated_pairs_of_hex_digits::_T0 {
     fn default() -> Self {
         Self {
-            elements: Default::default(),
-            separators: Default::default(),
+            _0: Default::default(),
+            _t3s: Default::default(),
         }
     }
 }
 impl DefaultTest for possibly_separated_pairs_of_hex_digits::_T0 {
     fn is_default(&self) -> bool {
-        self.elements.is_default() && self.separators.is_default()
+        self._0.is_default() && self._t3s.is_default()
     }
 }
 impl DefaultTest for possibly_separated_pairs_of_hex_digits::WithTrivia {
