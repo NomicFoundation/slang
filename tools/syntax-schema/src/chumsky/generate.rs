@@ -269,6 +269,30 @@ mod boilerplate {
                 #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
                 pub trailing: TrailingTrivia,
             }
+
+            // Generated
+            // pub enum RuleType {}
+            // pub enum TokenType {}
+            // pub enum TokenPartType {}
+
+            // TODO: add return type to control traversal
+
+            pub trait Visitor {
+                fn enter_rule(&self, rule_type: RuleType, offset: usize) {}
+                fn enter_token(
+                    &self,
+                    token_type: TokenType,
+                    offset: usize,
+                    leading_trivia: &LeadingTrivia,
+                    trailing_trivia: &TrailingTrivia,
+                ) {
+                }
+                fn enter_token_part(&self, token_part_type: TokenPartType, offset: usize) {}
+            }
+
+            pub trait Visitable<T: Visitor> {
+                fn visit(&self, visitor: &T);
+            }
         )
     }
 
