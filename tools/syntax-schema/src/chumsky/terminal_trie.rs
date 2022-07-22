@@ -55,7 +55,7 @@ impl TerminalTrie {
                 let mut children = generate_from_trie(node.child(), new_length, ignore_all);
                 if node.child().is_some() && node.value().is_some() {
                     if ignore_all {
-                        children.push(quote!( empty() ));
+                        children.push(quote!(empty()));
                     } else {
                         children.push(quote!( empty().map(|_| #new_length) ));
                     }
@@ -143,7 +143,7 @@ impl Expression {
     fn collect_terminals(&self, grammar: &Grammar, accum: &mut PatriciaSet) -> bool {
         match &self.ebnf {
             EBNF::Choice(exprs) => exprs.iter().all(|e| e.collect_terminals(grammar, accum)),
-            
+
             EBNF::DelimitedBy(_)
             | EBNF::Difference(_)
             | EBNF::End
@@ -157,7 +157,7 @@ impl Expression {
             | EBNF::ZeroOrMore(_) => false,
 
             EBNF::Reference(name) => grammar .get_production(name) .expression_to_generate() .collect_terminals(grammar, accum),
-            
+
             EBNF::Terminal(string) => { accum.insert(string.clone()); true }
 
         }
