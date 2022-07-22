@@ -153,13 +153,18 @@ impl Expression {
             | EBNF::Range(_)
             | EBNF::Repeat(_)
             | EBNF::SeparatedBy(_)
-            | EBNF::Sequence(_) // TODO: special case this i.e. 'multiply' the sequence elements?
+            | EBNF::Sequence(_)
             | EBNF::ZeroOrMore(_) => false,
 
-            EBNF::Reference(name) => grammar .get_production(name) .expression_to_generate() .collect_terminals(grammar, accum),
+            EBNF::Reference(name) => grammar
+                .get_production(name)
+                .expression_to_generate()
+                .collect_terminals(grammar, accum),
 
-            EBNF::Terminal(string) => { accum.insert(string.clone()); true }
-
+            EBNF::Terminal(string) => {
+                accum.insert(string.clone());
+                true
+            }
         }
     }
 }
