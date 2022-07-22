@@ -535,7 +535,7 @@ impl Parsers {
             .at_least(1usize)
             .boxed();
 
-        // expression = 1…*{ sequence / '|' } ;
+        // expression = sequence  { '|' sequence } ;
         expression_parser.define(
             sequence_parser
                 .clone()
