@@ -36,7 +36,7 @@
 - name: ParenthesisExpression
   delimitedBy:
     open: (
-    oneOrMore:
+    separatedBy:
       optional:
         reference: Expression
       separator: ","
@@ -45,7 +45,7 @@
 - name: ArrayLiteral
   delimitedBy:
     open: "["
-    oneOrMore:
+    separatedBy:
       reference: Expression
       separator: ","
     close: "]"

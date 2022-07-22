@@ -23,22 +23,10 @@ impl Expression {
         match &self.ebnf {
             EBNF::End => write!(w, "$ ").unwrap(),
 
-            EBNF::Repeat(EBNFRepeat {
-                min,
-                max,
-                expr,
-                separator,
-            }) => match (min, max) {
+            EBNF::Repeat(EBNFRepeat { min, max, expr }) => match (min, max) {
                 (0, None) => {
                     write!(w, "{{ ").unwrap();
                     expr.generate_ebnf(grammar, w);
-                    if let Some(separator) = separator {
-                        write!(w, "/ '").unwrap();
-                        for c in separator.chars() {
-                            write_char(w, c);
-                        }
-                        write!(w, "' ").unwrap();
-                    }
                     write!(w, "}} ").unwrap();
                 }
                 (0, Some(1)) => {
@@ -56,13 +44,6 @@ impl Expression {
                     }
                     write!(w, "*{{ ").unwrap();
                     expr.generate_ebnf(grammar, w);
-                    if let Some(separator) = separator {
-                        write!(w, "/ '").unwrap();
-                        for c in separator.chars() {
-                            write_char(w, c);
-                        }
-                        write!(w, "' ").unwrap();
-                    }
                     write!(w, "}} ").unwrap();
                 }
             },
@@ -101,6 +82,17 @@ impl Expression {
                     write_char(w, c);
                 }
                 write!(w, "' ").unwrap();
+            }
+
+            EBNF::SeparatedBy(EBNFSeparatedBy { expr, separator }) => {
+                self.generate_ebnf_subexpression(grammar, w, expr);
+                write!(w, " {{ '").unwrap();
+                for c in separator.chars() {
+                    write_char(w, c);
+                }
+                write!(w, "' ").unwrap();
+                self.generate_ebnf_subexpression(grammar, w, expr);
+                write!(w, "}} ").unwrap();
             }
 
             EBNF::DelimitedBy(EBNFDelimitedBy { open, expr, close }) => {
@@ -160,7 +152,7 @@ impl Expression {
             | EBNF::Range { .. } => 0,
             EBNF::Not(..) => 1,
             EBNF::Difference { .. } => 2,
-            EBNF::Sequence(..) | EBNF::DelimitedBy(..) => 3,
+            EBNF::Sequence(..) | EBNF::SeparatedBy(..) | EBNF::DelimitedBy(..) => 3,
             EBNF::Choice(..) => 4,
         }
     }

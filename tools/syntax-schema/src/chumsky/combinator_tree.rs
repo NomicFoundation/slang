@@ -52,8 +52,6 @@ pub enum CombinatorTree {
     SeparatedBy {
         name: Name,
         expr: CombinatorTreeRef,
-        min: usize, // > 0
-        max: Option<usize>,
         separator: String,
     },
     Repeated {
@@ -136,18 +134,10 @@ fn ct_delimited_by(
     })
 }
 
-fn ct_separated_by(
-    name: Name,
-    expr: CombinatorTreeRef,
-    min: usize,
-    max: Option<usize>,
-    separator: String,
-) -> CombinatorTreeRef {
+fn ct_separated_by(name: Name, expr: CombinatorTreeRef, separator: String) -> CombinatorTreeRef {
     Rc::new(CombinatorTree::SeparatedBy {
         name,
         expr,
-        min,
-        max,
         separator,
     })
 }
@@ -407,13 +397,11 @@ impl CombinatorTreeNodeTrait for CombinatorTreeRef {
             CombinatorTree::SeparatedBy {
                 name,
                 expr,
-                min,
-                max,
                 separator,
             } => {
                 let name = name.clone().self_or_numbered(index);
                 let expr = expr.with_unambiguous_named_types(index);
-                ct_separated_by(name, expr, *min, *max, separator.clone())
+                ct_separated_by(name, expr, separator.clone())
             }
             CombinatorTree::Repeated {
                 name,
@@ -772,8 +760,6 @@ impl CombinatorTree {
                 name,
                 expr,
                 separator,
-                min,
-                max,
             } => {
                 let mut result: GeneratedCode = Default::default();
 
@@ -792,24 +778,11 @@ impl CombinatorTree {
                 result.merge(expr);
 
                 let repetition = quote!(#separator_parser.then(#expr_parser).repeated());
-                let at_most = match max {
-                    None => quote!(),
-                    Some(max) => quote!( .at_most(#max - 1) ),
-                };
-                let at_least = match min {
-                    0 | 1 => quote!(),
-                    min => quote!( .at_least(#min - 1) ),
-                };
                 let mapping = quote!(
                     .map(repetition_mapper)
                     .map(|(elements, separators)| #module_name::#type_name { elements, separators })
                 );
-                let or_not = match min {
-                    0 => quote!( .or_not() ),
-                    _ => quote!(),
-                };
-                result.parser =
-                    quote!( #expr_parser.then(#repetition #at_most #at_least) #mapping #or_not );
+                result.parser = quote!( #expr_parser.then(#repetition) #mapping );
 
                 result.tree_interface.push({
                     quote!(
@@ -839,11 +812,7 @@ impl CombinatorTree {
                     }
                 ));
 
-                result.parser_type = if *min == 0 {
-                    quote!( Option<#module_name::#type_name> )
-                } else {
-                    quote!( #module_name::#type_name )
-                };
+                result.parser_type = quote!( #module_name::#type_name );
 
                 result
             }
@@ -1361,25 +1330,15 @@ impl Expression {
                     let et = expr.to_combinator_tree_node(production, grammar);
                     ct_optional(et)
                 }
-                EBNF::Repeat(EBNFRepeat {
-                    expr,
-                    min,
-                    max,
-                    separator: None,
-                }) => {
+                EBNF::Repeat(EBNFRepeat { expr, min, max }) => {
                     let name = self.config.slang_name();
                     let et = expr.to_combinator_tree_node(production, grammar);
                     ct_repeat(name, et, *min, *max)
                 }
-                EBNF::Repeat(EBNFRepeat {
-                    expr,
-                    min,
-                    max,
-                    separator: Some(separator),
-                }) => {
+                EBNF::SeparatedBy(EBNFSeparatedBy { expr, separator }) => {
                     let name = self.config.slang_name();
                     let et = expr.to_combinator_tree_node(production, grammar);
-                    ct_separated_by(name, et, *min, *max, separator.clone())
+                    ct_separated_by(name, et, separator.clone())
                 }
                 EBNF::Choice(exprs) => {
                     let name = self.config.slang_name();

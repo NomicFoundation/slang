@@ -355,7 +355,7 @@ pub mod unicode_escape {
     }
 }
 
-/// «VersionPragmaValue» = 1…*{ 1…*{ '0'…'9' | 'x' | 'X' | '*' } / '.' } ;
+/// «VersionPragmaValue» = 1…*{ '0'…'9' | 'x' | 'X' | '*' }  { '.' 1…*{ '0'…'9' | 'x' | 'X' | '*' } } ;
 pub type VersionPragmaValue = version_pragma_value::_T0;
 pub mod version_pragma_value {
     #[allow(unused_imports)]
@@ -718,7 +718,7 @@ pub mod address_type {
     }
 }
 
-/// ArrayLiteral = '[' 1…*{ Expression / ',' } ']' ;
+/// ArrayLiteral = '[' Expression  { ',' Expression } ']' ;
 pub type ArrayLiteral = array_literal::_T0;
 pub mod array_literal {
     #[allow(unused_imports)]
@@ -879,7 +879,7 @@ pub mod keyword {
     }
 }
 
-/// ParenthesisExpression = '(' 1…*{ [ Expression ] / ',' } ')' ;
+/// ParenthesisExpression = '(' [ Expression ]  { ',' [ Expression ] } ')' ;
 pub type ParenthesisExpression = parenthesis_expression::_T0;
 pub mod parenthesis_expression {
     #[allow(unused_imports)]
@@ -902,7 +902,7 @@ pub mod parenthesis_expression {
     }
 }
 
-/// PositionalArgumentList = 1…*{ Expression / ',' } ;
+/// PositionalArgumentList = Expression  { ',' Expression } ;
 pub type PositionalArgumentList = positional_argument_list::_T0;
 pub mod positional_argument_list {
     #[allow(unused_imports)]
@@ -1011,7 +1011,7 @@ pub mod version_pragma_specifier {
     }
 }
 
-/// YulFunctionCall = «YulIdentifier» '(' { YulExpression / ',' } ')' ;
+/// YulFunctionCall = «YulIdentifier» '(' [ YulExpression  { ',' YulExpression } ] ')' ;
 pub type YulFunctionCall = yul_function_call::_T0;
 pub mod yul_function_call {
     #[allow(unused_imports)]
@@ -1041,7 +1041,7 @@ pub mod yul_function_call {
     }
 }
 
-/// YulFunctionDefinition = 'function' «YulIdentifier» '(' { «YulIdentifier» / ',' } ')' [ '->' 1…*{ «YulIdentifier» / ',' } ] YulBlock ;
+/// YulFunctionDefinition = 'function' «YulIdentifier» '(' [ «YulIdentifier»  { ',' «YulIdentifier» } ] ')' [ '->' «YulIdentifier»  { ',' «YulIdentifier» } ] YulBlock ;
 pub type YulFunctionDefinition = yul_function_definition::_T0;
 pub mod yul_function_definition {
     #[allow(unused_imports)]
@@ -1091,7 +1091,7 @@ pub mod yul_function_definition {
     }
 }
 
-/// YulIdentifierPath = 1…*{ «YulIdentifier» / '.' } ;
+/// YulIdentifierPath = «YulIdentifier»  { '.' «YulIdentifier» } ;
 pub type YulIdentifierPath = yul_identifier_path::_T0;
 pub mod yul_identifier_path {
     #[allow(unused_imports)]
@@ -1125,7 +1125,7 @@ pub mod ascii_string_literal {
     }
 }
 
-/// AssemblyFlags = '(' 1…*{ «DoubleQuotedAsciiStringLiteral» / ',' } ')' ;
+/// AssemblyFlags = '(' «DoubleQuotedAsciiStringLiteral»  { ',' «DoubleQuotedAsciiStringLiteral» } ')' ;
 pub type AssemblyFlags = assembly_flags::_T0;
 pub mod assembly_flags {
     #[allow(unused_imports)]
@@ -1257,7 +1257,7 @@ pub mod delete_statement {
     }
 }
 
-/// EnumDefinition = 'enum' «Identifier» '{' 1…*{ «Identifier» / ',' } '}' ;
+/// EnumDefinition = 'enum' «Identifier» '{' «Identifier»  { ',' «Identifier» } '}' ;
 pub type EnumDefinition = enum_definition::_T0;
 pub mod enum_definition {
     #[allow(unused_imports)]
@@ -1303,7 +1303,7 @@ pub mod experimental_pragma_specifier {
     }
 }
 
-/// IdentifierPath = 1…*{ «Identifier» / '.' } ;
+/// IdentifierPath = «Identifier»  { '.' «Identifier» } ;
 pub type IdentifierPath = identifier_path::_T0;
 pub mod identifier_path {
     #[allow(unused_imports)]
@@ -1438,7 +1438,7 @@ pub mod mapping_type {
     }
 }
 
-/// NamedArgumentList = '{' { NamedArgument / ',' } '}' ;
+/// NamedArgumentList = '{' [ NamedArgument  { ',' NamedArgument } ] '}' ;
 pub type NamedArgumentList = named_argument_list::_T0;
 pub mod named_argument_list {
     #[allow(unused_imports)]
@@ -1461,7 +1461,7 @@ pub mod named_argument_list {
     }
 }
 
-/// OverrideSpecifier = 'override' [ '(' 1…*{ IdentifierPath / ',' } ')' ] ;
+/// OverrideSpecifier = 'override' [ '(' IdentifierPath  { ',' IdentifierPath } ')' ] ;
 pub type OverrideSpecifier = override_specifier::_T0;
 pub mod override_specifier {
     #[allow(unused_imports)]
@@ -1491,7 +1491,7 @@ pub mod override_specifier {
     }
 }
 
-/// ParameterList = '(' { ParameterDeclaration / ',' } ')' ;
+/// ParameterList = '(' [ ParameterDeclaration  { ',' ParameterDeclaration } ] ')' ;
 pub type ParameterList = parameter_list::_T0;
 pub mod parameter_list {
     #[allow(unused_imports)]
@@ -1535,7 +1535,7 @@ pub mod pragma_directive {
     }
 }
 
-/// SelectingImportDirective = '{' 1…*{ SelectedImport / ',' } '}' 'from' ImportPath ;
+/// SelectingImportDirective = '{' SelectedImport  { ',' SelectedImport } '}' 'from' ImportPath ;
 pub type SelectingImportDirective = selecting_import_directive::_T0;
 pub mod selecting_import_directive {
     #[allow(unused_imports)]
@@ -1732,7 +1732,7 @@ pub mod state_variable_attribute {
     }
 }
 
-/// YulAssignmentStatement = 1…*{ YulIdentifierPath / ',' } ':=' YulExpression ;
+/// YulAssignmentStatement = YulIdentifierPath  { ',' YulIdentifierPath } ':=' YulExpression ;
 pub type YulAssignmentStatement = yul_assignment_statement::_T0;
 pub mod yul_assignment_statement {
     #[allow(unused_imports)]
@@ -1820,7 +1820,7 @@ pub mod yul_switch_statement {
     }
 }
 
-/// YulVariableDeclaration = 'let' 1…*{ YulIdentifierPath / ',' } [ ':=' YulExpression ] ;
+/// YulVariableDeclaration = 'let' YulIdentifierPath  { ',' YulIdentifierPath } [ ':=' YulExpression ] ;
 pub type YulVariableDeclaration = yul_variable_declaration::_T0;
 pub mod yul_variable_declaration {
     #[allow(unused_imports)]
@@ -2057,7 +2057,7 @@ pub mod function_attribute {
     }
 }
 
-/// InheritanceSpecifierList = 'is' 1…*{ InheritanceSpecifier / ',' } ;
+/// InheritanceSpecifierList = 'is' InheritanceSpecifier  { ',' InheritanceSpecifier } ;
 pub type InheritanceSpecifierList = inheritance_specifier_list::_T0;
 pub mod inheritance_specifier_list {
     #[allow(unused_imports)]
@@ -2127,7 +2127,7 @@ pub mod type_expression {
     }
 }
 
-/// UsingDirective = 'using' ( IdentifierPath | '{' 1…*{ IdentifierPath / ',' } '}' ) 'for' ( '*' | TypeName ) [ 'global' ] ';' ;
+/// UsingDirective = 'using' ( IdentifierPath | '{' IdentifierPath  { ',' IdentifierPath } '}' ) 'for' ( '*' | TypeName ) [ 'global' ] ';' ;
 pub type UsingDirective = using_directive::_T0;
 pub mod using_directive {
     #[allow(unused_imports)]
@@ -2220,7 +2220,7 @@ pub mod directive {
     }
 }
 
-/// ErrorDefinition = 'error' «Identifier» '(' { ErrorParameter / ',' } ')' ';' ;
+/// ErrorDefinition = 'error' «Identifier» '(' [ ErrorParameter  { ',' ErrorParameter } ] ')' ';' ;
 pub type ErrorDefinition = error_definition::_T0;
 pub mod error_definition {
     #[allow(unused_imports)]
@@ -2254,7 +2254,7 @@ pub mod error_definition {
     }
 }
 
-/// EventDefinition = 'event' «Identifier» '(' { EventParameter / ',' } ')' [ 'anonymous' ] ';' ;
+/// EventDefinition = 'event' «Identifier» '(' [ EventParameter  { ',' EventParameter } ] ')' [ 'anonymous' ] ';' ;
 pub type EventDefinition = event_definition::_T0;
 pub mod event_definition {
     #[allow(unused_imports)]
@@ -2396,7 +2396,7 @@ pub mod member_access_expression {
     }
 }
 
-/// FunctionCallExpression = Expression [ '{' 1…*{ NamedArgument / ',' } '}' ] ArgumentList ;
+/// FunctionCallExpression = Expression [ '{' NamedArgument  { ',' NamedArgument } '}' ] ArgumentList ;
 pub type FunctionCallExpression = Expression;
 pub mod function_call_expression {
     #[allow(unused_imports)]
@@ -2832,7 +2832,7 @@ pub mod try_statement {
     }
 }
 
-/// TupleDeconstructionStatement = '(' { [ [ TypeName ] «Identifier» ] / ',' } ')' '=' Expression ';' ;
+/// TupleDeconstructionStatement = '(' [ [ [ TypeName ] «Identifier» ]  { ',' [ [ TypeName ] «Identifier» ] } ] ')' '=' Expression ';' ;
 pub type TupleDeconstructionStatement = tuple_deconstruction_statement::_T0;
 pub mod tuple_deconstruction_statement {
     #[allow(unused_imports)]

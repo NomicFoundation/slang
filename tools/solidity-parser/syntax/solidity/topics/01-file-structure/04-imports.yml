@@ -29,7 +29,7 @@
   sequence:
     - delimitedBy:
         open: "{"
-        oneOrMore:
+        separatedBy:
           reference: SelectedImport
           separator: ","
         close: "}"
@@ -54,7 +54,7 @@
         - reference: IdentifierPath
         - delimitedBy:
             open: "{"
-            oneOrMore:
+            separatedBy:
               reference: IdentifierPath
               separator: ","
             close: "}"

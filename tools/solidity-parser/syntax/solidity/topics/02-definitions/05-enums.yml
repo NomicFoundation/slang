@@ -6,7 +6,7 @@
     - reference: Identifier
     - delimitedBy:
         open: "{"
-        oneOrMore:
+        separatedBy:
           reference: Identifier
           separator: ","
         close: "}"

@@ -144,6 +144,7 @@ impl<'de> Deserialize<'de> for Production {
             Range,
             Reference,
             Repeat,
+            SeparatedBy,
             Sequence,
             Terminal,
             ZeroOrMore,
@@ -220,6 +221,7 @@ impl<'de> Deserialize<'de> for Production {
                         | Field::Reference
                         | Field::Difference
                         | Field::DelimitedBy
+                        | Field::SeparatedBy
                         | Field::Range => {
                             if ebnf.is_some() {
                                 return Err(de::Error::duplicate_field("ebnf element"));
@@ -243,15 +245,7 @@ impl<'de> Deserialize<'de> for Production {
                             map.next_value()?
                         }
                         Field::ZeroOrMore | Field::OneOrMore | Field::Optional => {
-                            #[derive(Deserialize)]
-                            #[serde(deny_unknown_fields)]
-                            struct V {
-                                #[serde(flatten)]
-                                expr: ExpressionRef,
-                                #[serde(default)]
-                                separator: Option<String>,
-                            }
-                            let v: V = map.next_value()?;
+                            let expr: ExpressionRef = map.next_value()?;
                             ebnf = Some(EBNF::Repeat(EBNFRepeat {
                                 min: if let Field::OneOrMore = key { 1 } else { 0 },
                                 max: if let Field::Optional = key {
@@ -259,8 +253,7 @@ impl<'de> Deserialize<'de> for Production {
                                 } else {
                                     None
                                 },
-                                expr: v.expr,
-                                separator: v.separator,
+                                expr,
                             }))
                         }
                         Field::Repeat => ebnf = Some(EBNF::Repeat(map.next_value()?)),
@@ -270,6 +263,7 @@ impl<'de> Deserialize<'de> for Production {
                         Field::Terminal => ebnf = Some(EBNF::Terminal(map.next_value()?)),
                         Field::Reference => ebnf = Some(EBNF::Reference(map.next_value()?)),
                         Field::DelimitedBy => ebnf = Some(EBNF::DelimitedBy(map.next_value()?)),
+                        Field::SeparatedBy => ebnf = Some(EBNF::SeparatedBy(map.next_value()?)),
                         Field::Difference => ebnf = Some(EBNF::Difference(map.next_value()?)),
                         Field::Range => ebnf = Some(EBNF::Range(map.next_value()?)),
                     }
@@ -322,6 +316,7 @@ impl<'de> Deserialize<'de> for Production {
             "range",
             "reference",
             "repeat",
+            "separatedBy",
             "sequence",
             "terminal",
             "zeroOrMore",
@@ -341,6 +336,7 @@ impl Expression {
         match self.ebnf {
             EBNF::End
             | EBNF::Repeat(..)
+            | EBNF::SeparatedBy(..)
             | EBNF::Terminal(..)
             | EBNF::Reference(..)
             | EBNF::Range { .. } => 0,
@@ -361,39 +357,26 @@ impl Expression {
                 min: min @ 0,
                 max: max @ None,
                 expr,
-                separator,
             })
             | EBNF::Repeat(EBNFRepeat {
                 min: min @ 0,
                 max: max @ Some(1),
                 expr,
-                separator,
             })
             | EBNF::Repeat(EBNFRepeat {
                 min: min @ 1,
                 max: max @ None,
                 expr,
-                separator,
-            }) => {
-                #[derive(Serialize)]
-                struct V<'a> {
-                    #[serde(flatten)]
-                    expr: &'a ExpressionRef,
-                    #[serde(skip_serializing_if = "Option::is_none")]
-                    separator: &'a Option<String>,
-                }
-                let v = V { expr, separator };
-                state.serialize_entry(
-                    if *min == 1 {
-                        "oneOrMore"
-                    } else if let Some(1) = max {
-                        "optional"
-                    } else {
-                        "zeroOrMore"
-                    },
-                    &v,
-                )
-            }
+            }) => state.serialize_entry(
+                if *min == 1 {
+                    "oneOrMore"
+                } else if let Some(1) = max {
+                    "optional"
+                } else {
+                    "zeroOrMore"
+                },
+                &expr,
+            ),
             EBNF::Repeat(repeat) => state.serialize_entry("repeat", &repeat),
             EBNF::Not(expr) => state.serialize_entry("not", &expr),
             EBNF::Choice(exprs) => state.serialize_entry("choice", &exprs),
@@ -401,6 +384,7 @@ impl Expression {
             EBNF::Terminal(string) => state.serialize_entry("terminal", &string),
             EBNF::Reference(name) => state.serialize_entry("reference", &name),
             EBNF::DelimitedBy(delimited_by) => state.serialize_entry("delimitedBy", &delimited_by),
+            EBNF::SeparatedBy(repeat) => state.serialize_entry("separatedBy", &repeat),
             EBNF::Difference(difference) => state.serialize_entry("difference", &difference),
             EBNF::Range(range) => state.serialize_entry("range", &range),
         }?;
@@ -441,6 +425,7 @@ impl<'de> Deserialize<'de> for Expression {
             Range,
             Reference,
             Repeat,
+            SeparatedBy,
             Sequence,
             Terminal,
             ZeroOrMore,
@@ -480,6 +465,7 @@ impl<'de> Deserialize<'de> for Expression {
                         | Field::Reference
                         | Field::Difference
                         | Field::DelimitedBy
+                        | Field::SeparatedBy
                         | Field::Range => {
                             if ebnf.is_some() {
                                 return Err(de::Error::duplicate_field("ebnf element"));
@@ -493,15 +479,7 @@ impl<'de> Deserialize<'de> for Expression {
                             map.next_value()?
                         }
                         Field::ZeroOrMore | Field::OneOrMore | Field::Optional => {
-                            #[derive(Deserialize)]
-                            #[serde(deny_unknown_fields)]
-                            struct V {
-                                #[serde(flatten)]
-                                expr: ExpressionRef,
-                                #[serde(default)]
-                                separator: Option<String>,
-                            }
-                            let v: V = map.next_value()?;
+                            let expr: ExpressionRef = map.next_value()?;
                             ebnf = Some(EBNF::Repeat(EBNFRepeat {
                                 min: if let Field::OneOrMore = key { 1 } else { 0 },
                                 max: if let Field::Optional = key {
@@ -509,10 +487,10 @@ impl<'de> Deserialize<'de> for Expression {
                                 } else {
                                     None
                                 },
-                                expr: v.expr,
-                                separator: v.separator,
+                                expr,
                             }))
                         }
+                        Field::SeparatedBy => ebnf = Some(EBNF::SeparatedBy(map.next_value()?)),
                         Field::Repeat => ebnf = Some(EBNF::Repeat(map.next_value()?)),
                         Field::Not => ebnf = Some(EBNF::Not(map.next_value()?)),
                         Field::Choice => ebnf = Some(EBNF::Choice(map.next_value()?)),
@@ -542,6 +520,7 @@ impl<'de> Deserialize<'de> for Expression {
             "range",
             "reference",
             "repeat",
+            "separatedBy",
             "sequence",
             "terminal",
             "zeroOrMore",
@@ -573,8 +552,14 @@ pub struct EBNFRepeat {
     pub max: Option<usize>,
     #[serde(flatten)]
     pub expr: ExpressionRef,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub separator: Option<String>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, Hash)]
+#[serde(deny_unknown_fields)]
+pub struct EBNFSeparatedBy {
+    #[serde(flatten)]
+    pub expr: ExpressionRef,
+    pub separator: String,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, Hash)]
@@ -590,6 +575,7 @@ pub struct EBNFDelimitedBy {
 pub enum EBNF {
     End,
     Repeat(EBNFRepeat),
+    SeparatedBy(EBNFSeparatedBy),
     Not(ExpressionRef),
     DelimitedBy(EBNFDelimitedBy),
     Choice(Vec<ExpressionRef>),

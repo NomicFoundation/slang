@@ -366,7 +366,7 @@ impl Parsers {
             .map(|v| unicode_escape::_T0::from_parse(v))
             .boxed();
 
-        // «VersionPragmaValue» = 1…*{ 1…*{ '0'…'9' | 'x' | 'X' | '*' } / '.' } ;
+        // «VersionPragmaValue» = 1…*{ '0'…'9' | 'x' | 'X' | '*' }  { '.' 1…*{ '0'…'9' | 'x' | 'X' | '*' } } ;
         let version_pragma_value_parser =
             filter(|&c: &char| ('0' <= c && c <= '9') || c == 'x' || c == 'X' || c == '*')
                 .map(|_| FixedSizeTerminal::<1>())
@@ -642,7 +642,7 @@ impl Parsers {
             .map(|v| address_type::_T0::from_parse(v))
             .boxed();
 
-        // ArrayLiteral = '[' 1…*{ Expression / ',' } ']' ;
+        // ArrayLiteral = '[' Expression  { ',' Expression } ']' ;
         let array_literal_parser = leading_trivia_parser
             .clone()
             .then(just('[').map(|_| FixedSizeTerminal::<1usize>()))
@@ -1028,7 +1028,7 @@ impl Parsers {
         ))
         .boxed();
 
-        // ParenthesisExpression = '(' 1…*{ [ Expression ] / ',' } ')' ;
+        // ParenthesisExpression = '(' [ Expression ]  { ',' [ Expression ] } ')' ;
         let parenthesis_expression_parser = leading_trivia_parser
             .clone()
             .then(just('(').map(|_| FixedSizeTerminal::<1usize>()))
@@ -1081,7 +1081,7 @@ impl Parsers {
             .map(|v| parenthesis_expression::_T0::from_parse(v))
             .boxed();
 
-        // PositionalArgumentList = 1…*{ Expression / ',' } ;
+        // PositionalArgumentList = Expression  { ',' Expression } ;
         let positional_argument_list_parser = expression_parser
             .clone()
             .then(
@@ -1228,7 +1228,7 @@ impl Parsers {
             .map(|v| version_pragma_specifier::_T0::from_parse(v))
             .boxed();
 
-        // YulFunctionCall = «YulIdentifier» '(' { YulExpression / ',' } ')' ;
+        // YulFunctionCall = «YulIdentifier» '(' [ YulExpression  { ',' YulExpression } ] ')' ;
         let yul_function_call_parser = leading_trivia_parser
             .clone()
             .then(yul_identifier_parser.clone())
@@ -1295,7 +1295,7 @@ impl Parsers {
             .map(|v| yul_function_call::_T0::from_parse(v))
             .boxed();
 
-        // YulFunctionDefinition = 'function' «YulIdentifier» '(' { «YulIdentifier» / ',' } ')' [ '->' 1…*{ «YulIdentifier» / ',' } ] YulBlock ;
+        // YulFunctionDefinition = 'function' «YulIdentifier» '(' [ «YulIdentifier»  { ',' «YulIdentifier» } ] ')' [ '->' «YulIdentifier»  { ',' «YulIdentifier» } ] YulBlock ;
         let yul_function_definition_parser = leading_trivia_parser
             .clone()
             .then(
@@ -1465,7 +1465,7 @@ impl Parsers {
             .map(|v| yul_function_definition::_T0::from_parse(v))
             .boxed();
 
-        // YulIdentifierPath = 1…*{ «YulIdentifier» / '.' } ;
+        // YulIdentifierPath = «YulIdentifier»  { '.' «YulIdentifier» } ;
         let yul_identifier_path_parser = leading_trivia_parser
             .clone()
             .then(yul_identifier_parser.clone())
@@ -1522,7 +1522,7 @@ impl Parsers {
         ))
         .boxed();
 
-        // AssemblyFlags = '(' 1…*{ «DoubleQuotedAsciiStringLiteral» / ',' } ')' ;
+        // AssemblyFlags = '(' «DoubleQuotedAsciiStringLiteral»  { ',' «DoubleQuotedAsciiStringLiteral» } ')' ;
         let assembly_flags_parser = leading_trivia_parser
             .clone()
             .then(just('(').map(|_| FixedSizeTerminal::<1usize>()))
@@ -1803,7 +1803,7 @@ impl Parsers {
             .map(|v| delete_statement::_T0::from_parse(v))
             .boxed();
 
-        // EnumDefinition = 'enum' «Identifier» '{' 1…*{ «Identifier» / ',' } '}' ;
+        // EnumDefinition = 'enum' «Identifier» '{' «Identifier»  { ',' «Identifier» } '}' ;
         let enum_definition_parser = leading_trivia_parser
             .clone()
             .then(
@@ -1933,7 +1933,7 @@ impl Parsers {
             .map(|v| experimental_pragma_specifier::_T0::from_parse(v))
             .boxed();
 
-        // IdentifierPath = 1…*{ «Identifier» / '.' } ;
+        // IdentifierPath = «Identifier»  { '.' «Identifier» } ;
         let identifier_path_parser = leading_trivia_parser
             .clone()
             .then(identifier_parser.clone())
@@ -2299,7 +2299,7 @@ impl Parsers {
             .map(|v| mapping_type::_T0::from_parse(v))
             .boxed();
 
-        // NamedArgumentList = '{' { NamedArgument / ',' } '}' ;
+        // NamedArgumentList = '{' [ NamedArgument  { ',' NamedArgument } ] '}' ;
         let named_argument_list_parser = leading_trivia_parser
             .clone()
             .then(just('{').map(|_| FixedSizeTerminal::<1usize>()))
@@ -2352,7 +2352,7 @@ impl Parsers {
             .map(|v| named_argument_list::_T0::from_parse(v))
             .boxed();
 
-        // OverrideSpecifier = 'override' [ '(' 1…*{ IdentifierPath / ',' } ')' ] ;
+        // OverrideSpecifier = 'override' [ '(' IdentifierPath  { ',' IdentifierPath } ')' ] ;
         let override_specifier_parser = leading_trivia_parser
             .clone()
             .then(
@@ -2423,7 +2423,7 @@ impl Parsers {
             .map(|v| override_specifier::_T0::from_parse(v))
             .boxed();
 
-        // ParameterList = '(' { ParameterDeclaration / ',' } ')' ;
+        // ParameterList = '(' [ ParameterDeclaration  { ',' ParameterDeclaration } ] ')' ;
         let parameter_list_parser = leading_trivia_parser
             .clone()
             .then(just('(').map(|_| FixedSizeTerminal::<1usize>()))
@@ -2519,7 +2519,7 @@ impl Parsers {
             .map(|v| pragma_directive::_T0::from_parse(v))
             .boxed();
 
-        // SelectingImportDirective = '{' 1…*{ SelectedImport / ',' } '}' 'from' ImportPath ;
+        // SelectingImportDirective = '{' SelectedImport  { ',' SelectedImport } '}' 'from' ImportPath ;
         let selecting_import_directive_parser = leading_trivia_parser
             .clone()
             .then(just('{').map(|_| FixedSizeTerminal::<1usize>()))
@@ -2940,7 +2940,7 @@ impl Parsers {
         ))
         .boxed();
 
-        // YulAssignmentStatement = 1…*{ YulIdentifierPath / ',' } ':=' YulExpression ;
+        // YulAssignmentStatement = YulIdentifierPath  { ',' YulIdentifierPath } ':=' YulExpression ;
         let yul_assignment_statement_parser = yul_identifier_path_parser
             .clone()
             .then(
@@ -3090,7 +3090,7 @@ impl Parsers {
             .map(|v| yul_switch_statement::_T0::from_parse(v))
             .boxed();
 
-        // YulVariableDeclaration = 'let' 1…*{ YulIdentifierPath / ',' } [ ':=' YulExpression ] ;
+        // YulVariableDeclaration = 'let' YulIdentifierPath  { ',' YulIdentifierPath } [ ':=' YulExpression ] ;
         let yul_variable_declaration_parser = leading_trivia_parser
             .clone()
             .then(
@@ -3521,7 +3521,7 @@ impl Parsers {
         ))
         .boxed();
 
-        // InheritanceSpecifierList = 'is' 1…*{ InheritanceSpecifier / ',' } ;
+        // InheritanceSpecifierList = 'is' InheritanceSpecifier  { ',' InheritanceSpecifier } ;
         let inheritance_specifier_list_parser = leading_trivia_parser
             .clone()
             .then(
@@ -3668,7 +3668,7 @@ impl Parsers {
             .map(|v| type_expression::_T0::from_parse(v))
             .boxed();
 
-        // UsingDirective = 'using' ( IdentifierPath | '{' 1…*{ IdentifierPath / ',' } '}' ) 'for' ( '*' | TypeName ) [ 'global' ] ';' ;
+        // UsingDirective = 'using' ( IdentifierPath | '{' IdentifierPath  { ',' IdentifierPath } '}' ) 'for' ( '*' | TypeName ) [ 'global' ] ';' ;
         let using_directive_parser = leading_trivia_parser
             .clone()
             .then(
@@ -3891,7 +3891,7 @@ impl Parsers {
         ))
         .boxed();
 
-        // ErrorDefinition = 'error' «Identifier» '(' { ErrorParameter / ',' } ')' ';' ;
+        // ErrorDefinition = 'error' «Identifier» '(' [ ErrorParameter  { ',' ErrorParameter } ] ')' ';' ;
         let error_definition_parser = leading_trivia_parser
             .clone()
             .then(
@@ -3986,7 +3986,7 @@ impl Parsers {
             .map(|v| error_definition::_T0::from_parse(v))
             .boxed();
 
-        // EventDefinition = 'event' «Identifier» '(' { EventParameter / ',' } ')' [ 'anonymous' ] ';' ;
+        // EventDefinition = 'event' «Identifier» '(' [ EventParameter  { ',' EventParameter } ] ')' [ 'anonymous' ] ';' ;
         let event_definition_parser = leading_trivia_parser
             .clone()
             .then(
@@ -4386,7 +4386,7 @@ impl Parsers {
             })
             .boxed();
 
-        // FunctionCallExpression = Expression [ '{' 1…*{ NamedArgument / ',' } '}' ] ArgumentList ;
+        // FunctionCallExpression = Expression [ '{' NamedArgument  { ',' NamedArgument } '}' ] ArgumentList ;
         let function_call_expression_parser = member_access_expression_parser
             .clone()
             .then(
@@ -5457,7 +5457,7 @@ impl Parsers {
             .map(|v| try_statement::_T0::from_parse(v))
             .boxed();
 
-        // TupleDeconstructionStatement = '(' { [ [ TypeName ] «Identifier» ] / ',' } ')' '=' Expression ';' ;
+        // TupleDeconstructionStatement = '(' [ [ [ TypeName ] «Identifier» ]  { ',' [ [ TypeName ] «Identifier» ] } ] ')' '=' Expression ';' ;
         let tuple_deconstruction_statement_parser = leading_trivia_parser
             .clone()
             .then(just('(').map(|_| FixedSizeTerminal::<1usize>()))

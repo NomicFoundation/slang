@@ -16,7 +16,7 @@
     - terminal: ;
 
 - name: expression
-  oneOrMore:
+  separatedBy:
     reference: sequence
     separator: "|"
 

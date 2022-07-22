@@ -12,7 +12,7 @@
 - name: AssemblyFlags
   delimitedBy:
     open: (
-    oneOrMore:
+    separatedBy:
       reference: DoubleQuotedAsciiStringLiteral
       separator: ","
     close: )

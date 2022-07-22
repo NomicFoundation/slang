@@ -171,6 +171,9 @@ fn validate_expression(
         EBNF::Repeat(repeat) => {
             validate_expression(&repeat.expr, defined, used);
         }
+        EBNF::SeparatedBy(separated) => {
+            validate_expression(&separated.expr, defined, used);
+        }
         EBNF::Sequence(sequence) => {
             sequence.iter().for_each(|sub_expression| {
                 validate_expression(sub_expression, defined, used);

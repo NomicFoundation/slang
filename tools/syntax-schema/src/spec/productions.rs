@@ -1,6 +1,6 @@
 use crate::schema::{
-    EBNFDelimitedBy, EBNFDifference, EBNFRange, EBNFRepeat, Expression, ExpressionRef, Grammar,
-    Production, EBNF,
+    EBNFDelimitedBy, EBNFDifference, EBNFRange, EBNFRepeat, EBNFSeparatedBy, Expression,
+    ExpressionRef, Grammar, Production, EBNF,
 };
 use itertools::Itertools;
 use semver::Version;
@@ -59,21 +59,10 @@ fn write_expression<T: Write>(w: &mut T, expr: &Expression, context: &SpecProduc
             write_token(w, TokenKind::keyword, "$");
         }
 
-        EBNF::Repeat(EBNFRepeat {
-            min,
-            max,
-            expr,
-            separator,
-        }) => match (min, max) {
+        EBNF::Repeat(EBNFRepeat { min, max, expr }) => match (min, max) {
             (0, None) => {
                 write_token(w, TokenKind::operator, "{");
                 write_expression(w, expr, context);
-
-                if let Some(separator) = separator {
-                    write_token(w, TokenKind::operator, " / ");
-                    write_token(w, TokenKind::string, &format_string_literal(separator));
-                }
-
                 write_token(w, TokenKind::operator, "}");
             }
             (0, Some(1)) => {
@@ -89,10 +78,6 @@ fn write_expression<T: Write>(w: &mut T, expr: &Expression, context: &SpecProduc
                 }
                 write_token(w, TokenKind::operator, "{");
                 write_expression(w, expr, context);
-                if let Some(separator) = separator {
-                    write_token(w, TokenKind::operator, " / ");
-                    write_token(w, TokenKind::string, &format_string_literal(separator));
-                }
                 write_token(w, TokenKind::operator, "}");
             }
         },
@@ -112,6 +97,16 @@ fn write_expression<T: Write>(w: &mut T, expr: &Expression, context: &SpecProduc
                 }
                 write_subexpression(w, expr, sub_expr, context);
             }
+        }
+
+        EBNF::SeparatedBy(EBNFSeparatedBy { expr, separator }) => {
+            write_subexpression(w, expr, expr, context);
+            write_token(w, TokenKind::operator, " { ");
+            write_subexpression(w, expr, expr, context);
+            write_token(w, TokenKind::string, &format_string_literal(separator));
+            write_token(w, TokenKind::operator, " ");
+            write_subexpression(w, expr, expr, context);
+            write_token(w, TokenKind::operator, " }");
         }
 
         EBNF::DelimitedBy(EBNFDelimitedBy { open, expr, close }) => {

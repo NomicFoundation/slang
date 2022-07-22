@@ -57,7 +57,7 @@
     - optional:
         delimitedBy:
           open: "{"
-          oneOrMore:
+          separatedBy:
             reference: NamedArgument
             separator: ","
           close: "}"
