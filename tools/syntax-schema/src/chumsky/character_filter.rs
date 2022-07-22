@@ -160,6 +160,9 @@ impl Expression {
             | EBNF::DelimitedBy(_)
             | EBNF::Sequence(_)
             | EBNF::End
+            | EBNF::Optional(_)
+            | EBNF::ZeroOrMore(_)
+            | EBNF::OneOrMore(_)
             | EBNF::Repeat(_) => None,
         }
     }

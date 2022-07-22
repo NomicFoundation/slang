@@ -78,13 +78,12 @@ pub fn negation((negation, ebnf): (Option<char>, EBNF)) -> EBNF {
 pub fn optional(ebnf: EBNF) -> EBNF {
     EBNF::Repeat(EBNFRepeat {
         min: 0,
-        max: Some(1),
+        max: 1,
         expr: ref_from_ebnf(ebnf),
     })
 }
 
-pub fn repeated((range, ebnf): (Option<(usize, Option<usize>)>, EBNF)) -> EBNF {
-    let (min, max) = range.unwrap_or((0, None));
+pub fn repeated(((min, max), ebnf): ((usize, usize), EBNF)) -> EBNF {
     EBNF::Repeat(EBNFRepeat {
         min,
         max,

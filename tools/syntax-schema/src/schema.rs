@@ -244,18 +244,9 @@ impl<'de> Deserialize<'de> for Production {
                             ebnf = Some(EBNF::End);
                             map.next_value()?
                         }
-                        Field::ZeroOrMore | Field::OneOrMore | Field::Optional => {
-                            let expr: ExpressionRef = map.next_value()?;
-                            ebnf = Some(EBNF::Repeat(EBNFRepeat {
-                                min: if let Field::OneOrMore = key { 1 } else { 0 },
-                                max: if let Field::Optional = key {
-                                    Some(1)
-                                } else {
-                                    None
-                                },
-                                expr,
-                            }))
-                        }
+                        Field::Optional => ebnf = Some(EBNF::Optional(map.next_value()?)),
+                        Field::ZeroOrMore => ebnf = Some(EBNF::ZeroOrMore(map.next_value()?)),
+                        Field::OneOrMore => ebnf = Some(EBNF::OneOrMore(map.next_value()?)),
                         Field::Repeat => ebnf = Some(EBNF::Repeat(map.next_value()?)),
                         Field::Not => ebnf = Some(EBNF::Not(map.next_value()?)),
                         Field::Choice => ebnf = Some(EBNF::Choice(map.next_value()?)),
@@ -335,6 +326,9 @@ impl Expression {
     pub fn precedence(&self) -> u8 {
         match self.ebnf {
             EBNF::End
+            | EBNF::ZeroOrMore(..)
+            | EBNF::OneOrMore(..)
+            | EBNF::Optional(..)
             | EBNF::Repeat(..)
             | EBNF::SeparatedBy(..)
             | EBNF::Terminal(..)
@@ -352,31 +346,9 @@ impl Expression {
             // Ugly - serde has no way of emitting a map entry with
             // no value, which is valid in YAML. So this ends up as `end: ~`
             EBNF::End => state.serialize_entry("end", &Value::Null),
-
-            EBNF::Repeat(EBNFRepeat {
-                min: min @ 0,
-                max: max @ None,
-                expr,
-            })
-            | EBNF::Repeat(EBNFRepeat {
-                min: min @ 0,
-                max: max @ Some(1),
-                expr,
-            })
-            | EBNF::Repeat(EBNFRepeat {
-                min: min @ 1,
-                max: max @ None,
-                expr,
-            }) => state.serialize_entry(
-                if *min == 1 {
-                    "oneOrMore"
-                } else if let Some(1) = max {
-                    "optional"
-                } else {
-                    "zeroOrMore"
-                },
-                &expr,
-            ),
+            EBNF::Optional(expr) => state.serialize_entry("optional", &expr),
+            EBNF::ZeroOrMore(repeat) => state.serialize_entry("zeroOrMore", &repeat),
+            EBNF::OneOrMore(repeat) => state.serialize_entry("oneOrMore", &repeat),
             EBNF::Repeat(repeat) => state.serialize_entry("repeat", &repeat),
             EBNF::Not(expr) => state.serialize_entry("not", &expr),
             EBNF::Choice(exprs) => state.serialize_entry("choice", &exprs),
@@ -453,6 +425,7 @@ impl<'de> Deserialize<'de> for Expression {
                                 return Err(de::Error::duplicate_field("config"));
                             }
                         }
+
                         Field::End
                         | Field::ZeroOrMore
                         | Field::OneOrMore
@@ -474,23 +447,15 @@ impl<'de> Deserialize<'de> for Expression {
                     }
                     match key {
                         Field::Config => config = Some(map.next_value()?),
+
                         Field::End => {
                             ebnf = Some(EBNF::End);
                             map.next_value()?
                         }
-                        Field::ZeroOrMore | Field::OneOrMore | Field::Optional => {
-                            let expr: ExpressionRef = map.next_value()?;
-                            ebnf = Some(EBNF::Repeat(EBNFRepeat {
-                                min: if let Field::OneOrMore = key { 1 } else { 0 },
-                                max: if let Field::Optional = key {
-                                    Some(1)
-                                } else {
-                                    None
-                                },
-                                expr,
-                            }))
-                        }
+                        Field::Optional => ebnf = Some(EBNF::Optional(map.next_value()?)),
                         Field::SeparatedBy => ebnf = Some(EBNF::SeparatedBy(map.next_value()?)),
+                        Field::ZeroOrMore => ebnf = Some(EBNF::ZeroOrMore(map.next_value()?)),
+                        Field::OneOrMore => ebnf = Some(EBNF::OneOrMore(map.next_value()?)),
                         Field::Repeat => ebnf = Some(EBNF::Repeat(map.next_value()?)),
                         Field::Not => ebnf = Some(EBNF::Not(map.next_value()?)),
                         Field::Choice => ebnf = Some(EBNF::Choice(map.next_value()?)),
@@ -546,10 +511,8 @@ pub struct EBNFRange {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, Hash)]
 #[serde(deny_unknown_fields)]
 pub struct EBNFRepeat {
-    #[serde(default)] // TODO: skip_serializing_if is_zero
     pub min: usize,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub max: Option<usize>,
+    pub max: usize,
     #[serde(flatten)]
     pub expr: ExpressionRef,
 }
@@ -573,17 +536,20 @@ pub struct EBNFDelimitedBy {
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum EBNF {
+    Choice(Vec<ExpressionRef>),
+    DelimitedBy(EBNFDelimitedBy),
+    Difference(EBNFDifference),
     End,
+    Not(ExpressionRef),
+    OneOrMore(ExpressionRef),
+    Optional(ExpressionRef),
+    Range(EBNFRange),
+    Reference(String),
     Repeat(EBNFRepeat),
     SeparatedBy(EBNFSeparatedBy),
-    Not(ExpressionRef),
-    DelimitedBy(EBNFDelimitedBy),
-    Choice(Vec<ExpressionRef>),
     Sequence(Vec<ExpressionRef>),
     Terminal(String),
-    Reference(String),
-    Difference(EBNFDifference),
-    Range(EBNFRange),
+    ZeroOrMore(ExpressionRef),
 }
 
 pub type ExpressionRef = Rc<Expression>;
@@ -595,8 +561,6 @@ pub struct ExpressionConfig {
     pub name: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub lookahead: Option<ExpressionRef>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub prelude: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub associativity: Option<ExpressionAssociativity>,
 }
@@ -612,7 +576,6 @@ impl Default for ExpressionConfig {
         Self {
             name: None,
             lookahead: None,
-            prelude: None,
             associativity: None,
         }
     }

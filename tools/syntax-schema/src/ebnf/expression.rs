@@ -23,30 +23,33 @@ impl Expression {
         match &self.ebnf {
             EBNF::End => write!(w, "$ ").unwrap(),
 
-            EBNF::Repeat(EBNFRepeat { min, max, expr }) => match (min, max) {
-                (0, None) => {
-                    write!(w, "{{ ").unwrap();
-                    expr.generate_ebnf(grammar, w);
-                    write!(w, "}} ").unwrap();
-                }
-                (0, Some(1)) => {
-                    write!(w, "[ ").unwrap();
-                    expr.generate_ebnf(grammar, w);
-                    write!(w, "] ").unwrap();
-                }
-                _ => {
-                    if *min != 0 {
-                        write!(w, "{}", min).unwrap();
-                    }
-                    write!(w, "…").unwrap();
-                    if let Some(max) = max {
-                        write!(w, "{}", max).unwrap();
-                    }
-                    write!(w, "*{{ ").unwrap();
-                    expr.generate_ebnf(grammar, w);
-                    write!(w, "}} ").unwrap();
-                }
-            },
+            EBNF::ZeroOrMore(expr) => {
+                write!(w, "{{ ").unwrap();
+                expr.generate_ebnf(grammar, w);
+                write!(w, "}} ").unwrap();
+            }
+
+            EBNF::OneOrMore(expr) => {
+                write!(w, "1…").unwrap();
+                write!(w, "*{{ ").unwrap();
+                expr.generate_ebnf(grammar, w);
+                write!(w, "}} ").unwrap();
+            }
+
+            EBNF::Optional(expr) => {
+                write!(w, "[ ").unwrap();
+                expr.generate_ebnf(grammar, w);
+                write!(w, "] ").unwrap();
+            }
+
+            EBNF::Repeat(EBNFRepeat { expr, min, max, .. }) => {
+                write!(w, "{}", min).unwrap();
+                write!(w, "…").unwrap();
+                write!(w, "{}", max).unwrap();
+                write!(w, "*{{ ").unwrap();
+                expr.generate_ebnf(grammar, w);
+                write!(w, "}} ").unwrap();
+            }
 
             EBNF::Not(expr) => {
                 write!(w, "¬").unwrap();
@@ -146,6 +149,9 @@ impl Expression {
     fn ebnf_precedence(&self) -> u8 {
         match self.ebnf {
             EBNF::End
+            | EBNF::ZeroOrMore(..)
+            | EBNF::OneOrMore(..)
+            | EBNF::Optional(..)
             | EBNF::Repeat(..)
             | EBNF::Terminal(..)
             | EBNF::Reference(..)
