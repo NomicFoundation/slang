@@ -66,7 +66,6 @@ pub struct Topic {
 pub struct Production {
     pub name: String,
     pub kind: Option<ProductionKind>,
-    pub title: Option<String>,
     pub versions: BTreeMap<Version, ExpressionRef>,
     pub combinator_tree: RefCell<CombinatorTreeRoot>,
 }
@@ -90,9 +89,6 @@ impl Production {
         state.serialize_entry("name", &self.name)?;
         if let Some(kind) = self.kind {
             state.serialize_entry("kind", &kind)?;
-        }
-        if let Some(title) = &self.title {
-            state.serialize_entry("title", title)?;
         }
         // TODO: once `if let` can be combined with boolean guards, merge this
         if self.versions.len() == 1 {
@@ -132,7 +128,6 @@ impl<'de> Deserialize<'de> for Production {
             Config,
             Kind,
             Name,
-            Title,
             Versions,
             // EBNF
             Choice,
@@ -165,7 +160,6 @@ impl<'de> Deserialize<'de> for Production {
                 V: MapAccess<'de>,
             {
                 let mut name = None;
-                let mut title = None;
                 let mut versions = None;
                 let mut config = None;
                 let mut ebnf = None;
@@ -181,11 +175,6 @@ impl<'de> Deserialize<'de> for Production {
                         Field::Kind => {
                             if kind.is_some() {
                                 return Err(de::Error::duplicate_field("kind"));
-                            }
-                        }
-                        Field::Title => {
-                            if title.is_some() {
-                                return Err(de::Error::duplicate_field("title"));
                             }
                         }
                         Field::Versions => {
@@ -238,7 +227,6 @@ impl<'de> Deserialize<'de> for Production {
                     match key {
                         Field::Name => name = Some(map.next_value()?),
                         Field::Kind => kind = Some(map.next_value()?),
-                        Field::Title => title = Some(map.next_value()?),
                         Field::Versions => versions = Some(map.next_value()?),
                         Field::Config => config = Some(map.next_value()?),
 
@@ -283,7 +271,6 @@ impl<'de> Deserialize<'de> for Production {
                 Ok(Production {
                     name,
                     kind,
-                    title,
                     versions,
                     combinator_tree: Default::default(),
                 })
@@ -296,7 +283,6 @@ impl<'de> Deserialize<'de> for Production {
             "config",
             "kind",
             "name",
-            "title",
             "versions",
             // EBNF
             "choice",
