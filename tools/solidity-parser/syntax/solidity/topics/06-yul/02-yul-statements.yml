@@ -24,10 +24,9 @@
 - name: YulVariableDeclaration
   sequence:
     - terminal: let
-    - oneOrMore:
+    - separatedBy:
         reference: YulIdentifierPath
-        separator:
-          terminal: ","
+        separator: ","
     - optional:
         sequence:
           - terminal: ":="
@@ -39,26 +38,24 @@
     - reference: YulIdentifier
     - delimitedBy:
         open: (
-        zeroOrMore:
-          reference: YulIdentifier
-          separator:
-            terminal: ","
+        optional:
+          separatedBy:
+            reference: YulIdentifier
+            separator: ","
         close: )
     - optional:
         sequence:
           - terminal: "->"
-          - oneOrMore:
+          - separatedBy:
               reference: YulIdentifier
-              separator:
-                terminal: ","
+              separator: ","
     - reference: YulBlock
 
 - name: YulAssignmentStatement
   sequence:
-    - oneOrMore:
+    - separatedBy:
         reference: YulIdentifierPath
-        separator:
-          terminal: ","
+        separator: ","
     - terminal: ":="
     - reference: YulExpression
 
@@ -67,10 +64,10 @@
     - reference: YulIdentifier
     - delimitedBy:
         open: (
-        zeroOrMore:
-          reference: YulExpression
-          separator:
-            terminal: ","
+        optional:
+          separatedBy:
+            reference: YulExpression
+            separator: ","
         close: )
 
 - name: YulIfStatement

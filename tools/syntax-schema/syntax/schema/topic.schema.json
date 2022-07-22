@@ -30,10 +30,11 @@
         { "$ref": "#/$defs/Optional" },
         { "$ref": "#/$defs/Range" },
         { "$ref": "#/$defs/Reference" },
+        { "$ref": "#/$defs/Repeat" },
+        { "$ref": "#/$defs/SeparatedBy" },
         { "$ref": "#/$defs/Sequence" },
         { "$ref": "#/$defs/Terminal" },
-        { "$ref": "#/$defs/ZeroOrMore" },
-        { "$ref": "#/$defs/Repeat" }
+        { "$ref": "#/$defs/ZeroOrMore" }
       ]
     },
     "Config": {
@@ -73,10 +74,11 @@
         { "$ref": "#/$defs/Optional" },
         { "$ref": "#/$defs/Range" },
         { "$ref": "#/$defs/Reference" },
+        { "$ref": "#/$defs/Repeat" },
+        { "$ref": "#/$defs/SeparatedBy" },
         { "$ref": "#/$defs/Sequence" },
         { "$ref": "#/$defs/Terminal" },
-        { "$ref": "#/$defs/ZeroOrMore" },
-        { "$ref": "#/$defs/Repeat" }
+        { "$ref": "#/$defs/ZeroOrMore" }
       ]
     },
     "Choice": {
@@ -172,8 +174,8 @@
           "type": "object",
           "properties": {
             "config": { "$ref": "#/$defs/Config" },
-            "open": { "$ref": "#/$defs/Expression" },
-            "close": { "$ref": "#/$defs/Expression" }
+            "open": { "type": "string", "minLength": 1 },
+            "close": { "type": "string", "minLength": 1 }
           },
           "oneOf": [
             { "$ref": "#/$defs/Choice" },
@@ -185,10 +187,40 @@
             { "$ref": "#/$defs/Optional" },
             { "$ref": "#/$defs/Range" },
             { "$ref": "#/$defs/Reference" },
+            { "$ref": "#/$defs/Repeat" },
+            { "$ref": "#/$defs/SeparatedBy" },
             { "$ref": "#/$defs/Sequence" },
             { "$ref": "#/$defs/Terminal" },
-            { "$ref": "#/$defs/ZeroOrMore" },
-            { "$ref": "#/$defs/Repeat" }
+            { "$ref": "#/$defs/ZeroOrMore" }
+          ]
+        }
+      }
+    },
+    "SeparatedBy": {
+      "type": "object",
+      "required": ["separatedBy"],
+      "properties": {
+        "zeroOrMore": {
+          "type": "object",
+          "properties": {
+            "config": { "$ref": "#/$defs/Config" },
+            "separator": { "type": "string", "minLength": 1 }
+          },
+          "oneOf": [
+            { "$ref": "#/$defs/Choice" },
+            { "$ref": "#/$defs/DelimitedBy" },
+            { "$ref": "#/$defs/Difference" },
+            { "$ref": "#/$defs/End" },
+            { "$ref": "#/$defs/Not" },
+            { "$ref": "#/$defs/OneOrMore" },
+            { "$ref": "#/$defs/Optional" },
+            { "$ref": "#/$defs/Range" },
+            { "$ref": "#/$defs/Reference" },
+            { "$ref": "#/$defs/Repeat" },
+            { "$ref": "#/$defs/SeparatedBy" },
+            { "$ref": "#/$defs/Sequence" },
+            { "$ref": "#/$defs/Terminal" },
+            { "$ref": "#/$defs/ZeroOrMore" }
           ]
         }
       }
@@ -200,8 +232,7 @@
         "zeroOrMore": {
           "type": "object",
           "properties": {
-            "config": { "$ref": "#/$defs/Config" },
-            "separator": { "$ref": "#/$defs/Expression" }
+            "config": { "$ref": "#/$defs/Config" }
           },
           "oneOf": [
             { "$ref": "#/$defs/Choice" },
@@ -213,10 +244,11 @@
             { "$ref": "#/$defs/Optional" },
             { "$ref": "#/$defs/Range" },
             { "$ref": "#/$defs/Reference" },
+            { "$ref": "#/$defs/Repeat" },
+            { "$ref": "#/$defs/SeparatedBy" },
             { "$ref": "#/$defs/Sequence" },
             { "$ref": "#/$defs/Terminal" },
-            { "$ref": "#/$defs/ZeroOrMore" },
-            { "$ref": "#/$defs/Repeat" }
+            { "$ref": "#/$defs/ZeroOrMore" }
           ]
         }
       }
@@ -228,8 +260,7 @@
         "oneOrMore": {
           "type": "object",
           "properties": {
-            "config": { "$ref": "#/$defs/Config" },
-            "separator": { "$ref": "#/$defs/Expression" }
+            "config": { "$ref": "#/$defs/Config" }
           },
           "oneOf": [
             { "$ref": "#/$defs/Choice" },
@@ -241,10 +272,11 @@
             { "$ref": "#/$defs/Optional" },
             { "$ref": "#/$defs/Range" },
             { "$ref": "#/$defs/Reference" },
+            { "$ref": "#/$defs/Repeat" },
+            { "$ref": "#/$defs/SeparatedBy" },
             { "$ref": "#/$defs/Sequence" },
             { "$ref": "#/$defs/Terminal" },
-            { "$ref": "#/$defs/ZeroOrMore" },
-            { "$ref": "#/$defs/Repeat" }
+            { "$ref": "#/$defs/ZeroOrMore" }
           ]
         }
       }
@@ -258,8 +290,7 @@
           "properties": {
             "config": { "$ref": "#/$defs/Config" },
             "min": { "type": "number" },
-            "max": { "type": "number" },
-            "separator": { "$ref": "#/$defs/Expression" }
+            "max": { "type": "number" }
           },
           "oneOf": [
             { "$ref": "#/$defs/Choice" },
@@ -271,10 +302,11 @@
             { "$ref": "#/$defs/Optional" },
             { "$ref": "#/$defs/Range" },
             { "$ref": "#/$defs/Reference" },
+            { "$ref": "#/$defs/Repeat" },
+            { "$ref": "#/$defs/SeparatedBy" },
             { "$ref": "#/$defs/Sequence" },
             { "$ref": "#/$defs/Terminal" },
-            { "$ref": "#/$defs/ZeroOrMore" },
-            { "$ref": "#/$defs/Repeat" }
+            { "$ref": "#/$defs/ZeroOrMore" }
           ]
         }
       }

@@ -10,7 +10,7 @@ grammar = «LeadingTrivia» { production } «TrailingTrivia» $ ;
 
 production = «Identifier» '=' expression ';' ;
 
-expression = 1…*{ sequence / '|' } ;
+expression = sequence  { '|' sequence } ;
 
 sequence = 1…*{ difference } ;
 

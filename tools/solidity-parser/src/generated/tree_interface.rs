@@ -28,17 +28,24 @@ pub struct VariableSizeTerminalWithTrivia {
     pub trailing: TrailingTrivia,
 }
 
-/// «DecimalInteger» = 1…*{ '0'…'9' / [ '_' ] } ;
+/// «DecimalInteger» = '0'…'9' { [ '_' ] '0'…'9' } ;
 pub type DecimalInteger = decimal_integer::_T0;
 pub mod decimal_integer {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T2 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub underscore_char: Option<FixedSizeTerminal<1>>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _1: FixedSizeTerminal<1>,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub elements: Vec<FixedSizeTerminal<1>>,
+        pub _0: FixedSizeTerminal<1>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<Option<FixedSizeTerminal<1>>>,
+        pub _t2s: Vec<decimal_integer::_T2>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
     pub struct WithTrivia {
@@ -113,24 +120,31 @@ pub mod hex_byte_escape {
     }
 }
 
-/// «HexNumber» = '0x' 1…*{ «HexCharacter» / [ '_' ] } ;
+/// «HexNumber» = '0x' «HexCharacter» { [ '_' ] «HexCharacter» } ;
 pub type HexNumber = hex_number::_T0;
 pub mod hex_number {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T3 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub underscore_char: Option<FixedSizeTerminal<1>>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _1: FixedSizeTerminal<1>,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub elements: Vec<FixedSizeTerminal<1>>,
+        pub _0: FixedSizeTerminal<1>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<Option<FixedSizeTerminal<1>>>,
+        pub _t3s: Vec<hex_number::_T3>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub zero_x: FixedSizeTerminal<2usize>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub _1: hex_number::_T1,
+        pub _t1: hex_number::_T1,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
     pub struct WithTrivia {
@@ -187,17 +201,24 @@ pub mod multiline_comment {
     }
 }
 
-/// «PossiblySeparatedPairsOfHexDigits» = 1…*{ 2…2*{ «HexCharacter» } / [ '_' ] } ;
+/// «PossiblySeparatedPairsOfHexDigits» = 2…2*{ «HexCharacter» } { [ '_' ] 2…2*{ «HexCharacter» } } ;
 pub type PossiblySeparatedPairsOfHexDigits = possibly_separated_pairs_of_hex_digits::_T0;
 pub mod possibly_separated_pairs_of_hex_digits {
     #[allow(unused_imports)]
     use super::*;
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+    pub struct _T3 {
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub underscore_char: Option<FixedSizeTerminal<1>>,
+        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
+        pub _1: VariableSizeTerminal,
+    }
+    #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub elements: Vec<VariableSizeTerminal>,
+        pub _0: VariableSizeTerminal,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<Option<FixedSizeTerminal<1>>>,
+        pub _t3s: Vec<possibly_separated_pairs_of_hex_digits::_T3>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
     pub struct WithTrivia {
@@ -334,7 +355,7 @@ pub mod unicode_escape {
     }
 }
 
-/// «VersionPragmaValue» = 1…*{ 1…*{ '0'…'9' | 'x' | 'X' | '*' } / '.' } ;
+/// «VersionPragmaValue» = 1…*{ '0'…'9' | 'x' | 'X' | '*' }  { '.' 1…*{ '0'…'9' | 'x' | 'X' | '*' } } ;
 pub type VersionPragmaValue = version_pragma_value::_T0;
 pub mod version_pragma_value {
     #[allow(unused_imports)]
@@ -344,7 +365,7 @@ pub mod version_pragma_value {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<VariableSizeTerminal>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<FixedSizeTerminal<1>>,
+        pub separators: Vec<FixedSizeTerminal<1usize>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
     pub struct WithTrivia {
@@ -697,7 +718,7 @@ pub mod address_type {
     }
 }
 
-/// ArrayLiteral = '[' 1…*{ Expression / ',' } ']' ;
+/// ArrayLiteral = '[' Expression  { ',' Expression } ']' ;
 pub type ArrayLiteral = array_literal::_T0;
 pub mod array_literal {
     #[allow(unused_imports)]
@@ -707,7 +728,7 @@ pub mod array_literal {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<Expression>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<FixedSizeTerminalWithTrivia<1>>,
+        pub separators: Vec<FixedSizeTerminalWithTrivia<1usize>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
@@ -858,7 +879,7 @@ pub mod keyword {
     }
 }
 
-/// ParenthesisExpression = '(' 1…*{ [ Expression ] / ',' } ')' ;
+/// ParenthesisExpression = '(' [ Expression ]  { ',' [ Expression ] } ')' ;
 pub type ParenthesisExpression = parenthesis_expression::_T0;
 pub mod parenthesis_expression {
     #[allow(unused_imports)]
@@ -868,7 +889,7 @@ pub mod parenthesis_expression {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<Option<Expression>>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<FixedSizeTerminalWithTrivia<1>>,
+        pub separators: Vec<FixedSizeTerminalWithTrivia<1usize>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
@@ -881,7 +902,7 @@ pub mod parenthesis_expression {
     }
 }
 
-/// PositionalArgumentList = 1…*{ Expression / ',' } ;
+/// PositionalArgumentList = Expression  { ',' Expression } ;
 pub type PositionalArgumentList = positional_argument_list::_T0;
 pub mod positional_argument_list {
     #[allow(unused_imports)]
@@ -891,7 +912,7 @@ pub mod positional_argument_list {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<Expression>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<FixedSizeTerminalWithTrivia<1>>,
+        pub separators: Vec<FixedSizeTerminalWithTrivia<1usize>>,
     }
 }
 
@@ -990,7 +1011,7 @@ pub mod version_pragma_specifier {
     }
 }
 
-/// YulFunctionCall = «YulIdentifier» '(' { YulExpression / ',' } ')' ;
+/// YulFunctionCall = «YulIdentifier» '(' [ YulExpression  { ',' YulExpression } ] ')' ;
 pub type YulFunctionCall = yul_function_call::_T0;
 pub mod yul_function_call {
     #[allow(unused_imports)]
@@ -1000,7 +1021,7 @@ pub mod yul_function_call {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<YulExpression>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<FixedSizeTerminalWithTrivia<1>>,
+        pub separators: Vec<FixedSizeTerminalWithTrivia<1usize>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
@@ -1020,7 +1041,7 @@ pub mod yul_function_call {
     }
 }
 
-/// YulFunctionDefinition = 'function' «YulIdentifier» '(' { «YulIdentifier» / ',' } ')' [ '->' 1…*{ «YulIdentifier» / ',' } ] YulBlock ;
+/// YulFunctionDefinition = 'function' «YulIdentifier» '(' [ «YulIdentifier»  { ',' «YulIdentifier» } ] ')' [ '->' «YulIdentifier»  { ',' «YulIdentifier» } ] YulBlock ;
 pub type YulFunctionDefinition = yul_function_definition::_T0;
 pub mod yul_function_definition {
     #[allow(unused_imports)]
@@ -1030,7 +1051,7 @@ pub mod yul_function_definition {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<yul_identifier::WithTrivia>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<FixedSizeTerminalWithTrivia<1>>,
+        pub separators: Vec<FixedSizeTerminalWithTrivia<1usize>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
@@ -1046,7 +1067,7 @@ pub mod yul_function_definition {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<yul_identifier::WithTrivia>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<FixedSizeTerminalWithTrivia<1>>,
+        pub separators: Vec<FixedSizeTerminalWithTrivia<1usize>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T3 {
@@ -1070,7 +1091,7 @@ pub mod yul_function_definition {
     }
 }
 
-/// YulIdentifierPath = 1…*{ «YulIdentifier» / '.' } ;
+/// YulIdentifierPath = «YulIdentifier»  { '.' «YulIdentifier» } ;
 pub type YulIdentifierPath = yul_identifier_path::_T0;
 pub mod yul_identifier_path {
     #[allow(unused_imports)]
@@ -1080,7 +1101,7 @@ pub mod yul_identifier_path {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<yul_identifier::WithTrivia>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<FixedSizeTerminalWithTrivia<1>>,
+        pub separators: Vec<FixedSizeTerminalWithTrivia<1usize>>,
     }
 }
 
@@ -1104,7 +1125,7 @@ pub mod ascii_string_literal {
     }
 }
 
-/// AssemblyFlags = '(' 1…*{ «DoubleQuotedAsciiStringLiteral» / ',' } ')' ;
+/// AssemblyFlags = '(' «DoubleQuotedAsciiStringLiteral»  { ',' «DoubleQuotedAsciiStringLiteral» } ')' ;
 pub type AssemblyFlags = assembly_flags::_T0;
 pub mod assembly_flags {
     #[allow(unused_imports)]
@@ -1114,7 +1135,7 @@ pub mod assembly_flags {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<double_quoted_ascii_string_literal::WithTrivia>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<FixedSizeTerminalWithTrivia<1>>,
+        pub separators: Vec<FixedSizeTerminalWithTrivia<1usize>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
@@ -1236,7 +1257,7 @@ pub mod delete_statement {
     }
 }
 
-/// EnumDefinition = 'enum' «Identifier» '{' 1…*{ «Identifier» / ',' } '}' ;
+/// EnumDefinition = 'enum' «Identifier» '{' «Identifier»  { ',' «Identifier» } '}' ;
 pub type EnumDefinition = enum_definition::_T0;
 pub mod enum_definition {
     #[allow(unused_imports)]
@@ -1246,7 +1267,7 @@ pub mod enum_definition {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<identifier::WithTrivia>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<FixedSizeTerminalWithTrivia<1>>,
+        pub separators: Vec<FixedSizeTerminalWithTrivia<1usize>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
@@ -1282,7 +1303,7 @@ pub mod experimental_pragma_specifier {
     }
 }
 
-/// IdentifierPath = 1…*{ «Identifier» / '.' } ;
+/// IdentifierPath = «Identifier»  { '.' «Identifier» } ;
 pub type IdentifierPath = identifier_path::_T0;
 pub mod identifier_path {
     #[allow(unused_imports)]
@@ -1292,7 +1313,7 @@ pub mod identifier_path {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<identifier::WithTrivia>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<FixedSizeTerminalWithTrivia<1>>,
+        pub separators: Vec<FixedSizeTerminalWithTrivia<1usize>>,
     }
 }
 
@@ -1417,7 +1438,7 @@ pub mod mapping_type {
     }
 }
 
-/// NamedArgumentList = '{' { NamedArgument / ',' } '}' ;
+/// NamedArgumentList = '{' [ NamedArgument  { ',' NamedArgument } ] '}' ;
 pub type NamedArgumentList = named_argument_list::_T0;
 pub mod named_argument_list {
     #[allow(unused_imports)]
@@ -1427,7 +1448,7 @@ pub mod named_argument_list {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<NamedArgument>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<FixedSizeTerminalWithTrivia<1>>,
+        pub separators: Vec<FixedSizeTerminalWithTrivia<1usize>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
@@ -1440,7 +1461,7 @@ pub mod named_argument_list {
     }
 }
 
-/// OverrideSpecifier = 'override' [ '(' 1…*{ IdentifierPath / ',' } ')' ] ;
+/// OverrideSpecifier = 'override' [ '(' IdentifierPath  { ',' IdentifierPath } ')' ] ;
 pub type OverrideSpecifier = override_specifier::_T0;
 pub mod override_specifier {
     #[allow(unused_imports)]
@@ -1450,7 +1471,7 @@ pub mod override_specifier {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<IdentifierPath>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<FixedSizeTerminalWithTrivia<1>>,
+        pub separators: Vec<FixedSizeTerminalWithTrivia<1usize>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
@@ -1470,7 +1491,7 @@ pub mod override_specifier {
     }
 }
 
-/// ParameterList = '(' { ParameterDeclaration / ',' } ')' ;
+/// ParameterList = '(' [ ParameterDeclaration  { ',' ParameterDeclaration } ] ')' ;
 pub type ParameterList = parameter_list::_T0;
 pub mod parameter_list {
     #[allow(unused_imports)]
@@ -1480,7 +1501,7 @@ pub mod parameter_list {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<ParameterDeclaration>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<FixedSizeTerminalWithTrivia<1>>,
+        pub separators: Vec<FixedSizeTerminalWithTrivia<1usize>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
@@ -1514,7 +1535,7 @@ pub mod pragma_directive {
     }
 }
 
-/// SelectingImportDirective = '{' 1…*{ SelectedImport / ',' } '}' 'from' ImportPath ;
+/// SelectingImportDirective = '{' SelectedImport  { ',' SelectedImport } '}' 'from' ImportPath ;
 pub type SelectingImportDirective = selecting_import_directive::_T0;
 pub mod selecting_import_directive {
     #[allow(unused_imports)]
@@ -1524,7 +1545,7 @@ pub mod selecting_import_directive {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<SelectedImport>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<FixedSizeTerminalWithTrivia<1>>,
+        pub separators: Vec<FixedSizeTerminalWithTrivia<1usize>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
@@ -1711,7 +1732,7 @@ pub mod state_variable_attribute {
     }
 }
 
-/// YulAssignmentStatement = 1…*{ YulIdentifierPath / ',' } ':=' YulExpression ;
+/// YulAssignmentStatement = YulIdentifierPath  { ',' YulIdentifierPath } ':=' YulExpression ;
 pub type YulAssignmentStatement = yul_assignment_statement::_T0;
 pub mod yul_assignment_statement {
     #[allow(unused_imports)]
@@ -1721,7 +1742,7 @@ pub mod yul_assignment_statement {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<YulIdentifierPath>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<FixedSizeTerminalWithTrivia<1>>,
+        pub separators: Vec<FixedSizeTerminalWithTrivia<1usize>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
@@ -1799,7 +1820,7 @@ pub mod yul_switch_statement {
     }
 }
 
-/// YulVariableDeclaration = 'let' 1…*{ YulIdentifierPath / ',' } [ ':=' YulExpression ] ;
+/// YulVariableDeclaration = 'let' YulIdentifierPath  { ',' YulIdentifierPath } [ ':=' YulExpression ] ;
 pub type YulVariableDeclaration = yul_variable_declaration::_T0;
 pub mod yul_variable_declaration {
     #[allow(unused_imports)]
@@ -1809,7 +1830,7 @@ pub mod yul_variable_declaration {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<YulIdentifierPath>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<FixedSizeTerminalWithTrivia<1>>,
+        pub separators: Vec<FixedSizeTerminalWithTrivia<1usize>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
@@ -2036,7 +2057,7 @@ pub mod function_attribute {
     }
 }
 
-/// InheritanceSpecifierList = 'is' 1…*{ InheritanceSpecifier / ',' } ;
+/// InheritanceSpecifierList = 'is' InheritanceSpecifier  { ',' InheritanceSpecifier } ;
 pub type InheritanceSpecifierList = inheritance_specifier_list::_T0;
 pub mod inheritance_specifier_list {
     #[allow(unused_imports)]
@@ -2046,7 +2067,7 @@ pub mod inheritance_specifier_list {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<InheritanceSpecifier>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<FixedSizeTerminalWithTrivia<1>>,
+        pub separators: Vec<FixedSizeTerminalWithTrivia<1usize>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T0 {
@@ -2106,7 +2127,7 @@ pub mod type_expression {
     }
 }
 
-/// UsingDirective = 'using' ( IdentifierPath | '{' 1…*{ IdentifierPath / ',' } '}' ) 'for' ( '*' | TypeName ) [ 'global' ] ';' ;
+/// UsingDirective = 'using' ( IdentifierPath | '{' IdentifierPath  { ',' IdentifierPath } '}' ) 'for' ( '*' | TypeName ) [ 'global' ] ';' ;
 pub type UsingDirective = using_directive::_T0;
 pub mod using_directive {
     #[allow(unused_imports)]
@@ -2116,7 +2137,7 @@ pub mod using_directive {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<IdentifierPath>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<FixedSizeTerminalWithTrivia<1>>,
+        pub separators: Vec<FixedSizeTerminalWithTrivia<1usize>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T2 {
@@ -2199,7 +2220,7 @@ pub mod directive {
     }
 }
 
-/// ErrorDefinition = 'error' «Identifier» '(' { ErrorParameter / ',' } ')' ';' ;
+/// ErrorDefinition = 'error' «Identifier» '(' [ ErrorParameter  { ',' ErrorParameter } ] ')' ';' ;
 pub type ErrorDefinition = error_definition::_T0;
 pub mod error_definition {
     #[allow(unused_imports)]
@@ -2209,7 +2230,7 @@ pub mod error_definition {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<ErrorParameter>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<FixedSizeTerminalWithTrivia<1>>,
+        pub separators: Vec<FixedSizeTerminalWithTrivia<1usize>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
@@ -2233,7 +2254,7 @@ pub mod error_definition {
     }
 }
 
-/// EventDefinition = 'event' «Identifier» '(' { EventParameter / ',' } ')' [ 'anonymous' ] ';' ;
+/// EventDefinition = 'event' «Identifier» '(' [ EventParameter  { ',' EventParameter } ] ')' [ 'anonymous' ] ';' ;
 pub type EventDefinition = event_definition::_T0;
 pub mod event_definition {
     #[allow(unused_imports)]
@@ -2243,7 +2264,7 @@ pub mod event_definition {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<EventParameter>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<FixedSizeTerminalWithTrivia<1>>,
+        pub separators: Vec<FixedSizeTerminalWithTrivia<1usize>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
@@ -2375,7 +2396,7 @@ pub mod member_access_expression {
     }
 }
 
-/// FunctionCallExpression = Expression [ '{' 1…*{ NamedArgument / ',' } '}' ] ArgumentList ;
+/// FunctionCallExpression = Expression [ '{' NamedArgument  { ',' NamedArgument } '}' ] ArgumentList ;
 pub type FunctionCallExpression = Expression;
 pub mod function_call_expression {
     #[allow(unused_imports)]
@@ -2385,7 +2406,7 @@ pub mod function_call_expression {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<NamedArgument>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<FixedSizeTerminalWithTrivia<1>>,
+        pub separators: Vec<FixedSizeTerminalWithTrivia<1usize>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {
@@ -2811,7 +2832,7 @@ pub mod try_statement {
     }
 }
 
-/// TupleDeconstructionStatement = '(' { [ [ TypeName ] «Identifier» ] / ',' } ')' '=' Expression ';' ;
+/// TupleDeconstructionStatement = '(' [ [ [ TypeName ] «Identifier» ]  { ',' [ [ TypeName ] «Identifier» ] } ] ')' '=' Expression ';' ;
 pub type TupleDeconstructionStatement = tuple_deconstruction_statement::_T0;
 pub mod tuple_deconstruction_statement {
     #[allow(unused_imports)]
@@ -2828,7 +2849,7 @@ pub mod tuple_deconstruction_statement {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<Option<tuple_deconstruction_statement::_T3>>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<FixedSizeTerminalWithTrivia<1>>,
+        pub separators: Vec<FixedSizeTerminalWithTrivia<1usize>>,
     }
     #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
     pub struct _T1 {

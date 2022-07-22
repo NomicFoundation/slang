@@ -29,10 +29,9 @@
   sequence:
     - delimitedBy:
         open: "{"
-        oneOrMore:
+        separatedBy:
           reference: SelectedImport
-          separator:
-            terminal: ","
+          separator: ","
         close: "}"
     - terminal: from
     - reference: ImportPath
@@ -55,10 +54,9 @@
         - reference: IdentifierPath
         - delimitedBy:
             open: "{"
-            oneOrMore:
+            separatedBy:
               reference: IdentifierPath
-              separator:
-                terminal: ","
+              separator: ","
             close: "}"
     - terminal: for
     - choice:

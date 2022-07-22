@@ -37,19 +37,18 @@
     - optional:
         delimitedBy:
           open: (
-          oneOrMore:
+          separatedBy:
             reference: IdentifierPath
-            separator:
-              terminal: ","
+            separator: ","
           close: )
 
 - name: ParameterList
   delimitedBy:
     open: (
-    zeroOrMore:
-      reference: ParameterDeclaration
-      separator:
-        terminal: ","
+    optional:
+      separatedBy:
+        reference: ParameterDeclaration
+        separator: ","
     close: )
 
 - name: ParameterDeclaration
@@ -70,18 +69,17 @@
     close: )
 
 - name: PositionalArgumentList
-  oneOrMore:
+  separatedBy:
     reference: Expression
-    separator:
-      terminal: ","
+    separator: ","
 
 - name: NamedArgumentList
   delimitedBy:
     open: "{"
-    zeroOrMore:
-      reference: NamedArgument
-      separator:
-        terminal: ","
+    optional:
+      separatedBy:
+        reference: NamedArgument
+        separator: ","
     close: "}"
 
 - name: NamedArgument

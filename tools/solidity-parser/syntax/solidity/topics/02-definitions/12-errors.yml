@@ -6,10 +6,10 @@
     - reference: Identifier
     - delimitedBy:
         open: (
-        zeroOrMore:
-          reference: ErrorParameter
-          separator:
-            terminal: ","
+        optional:
+          separatedBy:
+            reference: ErrorParameter
+            separator: ","
         close: )
     - terminal: ;
 

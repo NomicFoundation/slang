@@ -36,20 +36,18 @@
 - name: ParenthesisExpression
   delimitedBy:
     open: (
-    oneOrMore:
+    separatedBy:
       optional:
         reference: Expression
-      separator:
-        terminal: ","
+      separator: ","
     close: )
 
 - name: ArrayLiteral
   delimitedBy:
     open: "["
-    oneOrMore:
+    separatedBy:
       reference: Expression
-      separator:
-        terminal: ","
+      separator: ","
     close: "]"
 
 - name: BooleanLiteral

@@ -6,10 +6,10 @@
     - reference: Identifier
     - delimitedBy:
         open: (
-        zeroOrMore:
-          reference: EventParameter
-          separator:
-            terminal: ","
+        optional:
+          separatedBy:
+            reference: EventParameter
+            separator: ","
         close: )
     - optional:
         terminal: anonymous

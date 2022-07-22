@@ -535,14 +535,14 @@ impl Parsers {
             .at_least(1usize)
             .boxed();
 
-        // expression = 1…*{ sequence / '|' } ;
+        // expression = sequence  { '|' sequence } ;
         expression_parser.define(
             sequence_parser
                 .clone()
                 .then(
                     leading_trivia_parser
                         .clone()
-                        .then(just('|').map(|_| FixedSizeTerminal::<1>()))
+                        .then(just('|').map(|_| FixedSizeTerminal::<1usize>()))
                         .then(trailing_trivia_parser.clone())
                         .map(
                             |((leading, content), trailing)| FixedSizeTerminalWithTrivia {

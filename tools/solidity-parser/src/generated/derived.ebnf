@@ -22,7 +22,7 @@ VersionPragmaSpecifier = 'solidity' 1…*{ «VersionPragmaOperator» «VersionPr
 
 «VersionPragmaOperator» = '^' | '~' | '=' | '<' | '>' | '<=' | '>=' ;
 
-«VersionPragmaValue» = 1…*{ 1…*{ '0'…'9' | 'x' | 'X' | '*' } / '.' } ;
+«VersionPragmaValue» = 1…*{ '0'…'9' | 'x' | 'X' | '*' }  { '.' 1…*{ '0'…'9' | 'x' | 'X' | '*' } } ;
 
 ABICoderPragmaSpecifier = 'abicoder' «Identifier» ;
 
@@ -38,13 +38,13 @@ SimpleImportDirective = ImportPath { 'as' «Identifier» } ;
 
 StarImportDirective = '*' 'as' «Identifier» 'from' ImportPath ;
 
-SelectingImportDirective = '{' 1…*{ SelectedImport / ',' } '}' 'from' ImportPath ;
+SelectingImportDirective = '{' SelectedImport  { ',' SelectedImport } '}' 'from' ImportPath ;
 
 SelectedImport = «Identifier» [ 'as' «Identifier» ] ;
 
 ImportPath = «AsciiStringLiteral» ;
 
-UsingDirective = 'using' ( IdentifierPath | '{' 1…*{ IdentifierPath / ',' } '}' ) 'for' ( '*' | TypeName ) [ 'global' ] ';' ;
+UsingDirective = 'using' ( IdentifierPath | '{' IdentifierPath  { ',' IdentifierPath } '}' ) 'for' ( '*' | TypeName ) [ 'global' ] ';' ;
 
 (*
  * File Structure: Trivia
@@ -70,7 +70,7 @@ UsingDirective = 'using' ( IdentifierPath | '{' 1…*{ IdentifierPath / ',' } '}
 
 ContractDefinition = [ 'abstract' ] 'contract' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
 
-InheritanceSpecifierList = 'is' 1…*{ InheritanceSpecifier / ',' } ;
+InheritanceSpecifierList = 'is' InheritanceSpecifier  { ',' InheritanceSpecifier } ;
 
 InheritanceSpecifier = IdentifierPath [ ArgumentList ] ;
 
@@ -100,7 +100,7 @@ StructMember = TypeName «Identifier» ';' ;
  * Definitions: Enums
  *)
 
-EnumDefinition = 'enum' «Identifier» '{' 1…*{ «Identifier» / ',' } '}' ;
+EnumDefinition = 'enum' «Identifier» '{' «Identifier»  { ',' «Identifier» } '}' ;
 
 (*
  * Definitions: Constants
@@ -124,17 +124,17 @@ FunctionDefinition = 'function' ( «Identifier» | 'fallback' | 'receive' ) Para
 
 FunctionAttribute = ModifierInvocation | OverrideSpecifier | 'external' | 'internal' | 'payable' | 'private' | 'public' | 'pure' | 'view' | 'virtual' ;
 
-OverrideSpecifier = 'override' [ '(' 1…*{ IdentifierPath / ',' } ')' ] ;
+OverrideSpecifier = 'override' [ '(' IdentifierPath  { ',' IdentifierPath } ')' ] ;
 
-ParameterList = '(' { ParameterDeclaration / ',' } ')' ;
+ParameterList = '(' [ ParameterDeclaration  { ',' ParameterDeclaration } ] ')' ;
 
 ParameterDeclaration = TypeName [ DataLocation ] [ «Identifier» ] ;
 
 ArgumentList = '(' [ PositionalArgumentList | NamedArgumentList ] ')' ;
 
-PositionalArgumentList = 1…*{ Expression / ',' } ;
+PositionalArgumentList = Expression  { ',' Expression } ;
 
-NamedArgumentList = '{' { NamedArgument / ',' } '}' ;
+NamedArgumentList = '{' [ NamedArgument  { ',' NamedArgument } ] '}' ;
 
 NamedArgument = «Identifier» ':' Expression ;
 
@@ -164,7 +164,7 @@ ModifierInvocation = IdentifierPath [ ArgumentList ] ;
  * Definitions: Events
  *)
 
-EventDefinition = 'event' «Identifier» '(' { EventParameter / ',' } ')' [ 'anonymous' ] ';' ;
+EventDefinition = 'event' «Identifier» '(' [ EventParameter  { ',' EventParameter } ] ')' [ 'anonymous' ] ';' ;
 
 EventParameter = TypeName [ 'indexed' ] [ «Identifier» ] ;
 
@@ -178,7 +178,7 @@ UserDefinedValueTypeDefinition = 'type' «Identifier» 'is' ElementaryType ';' ;
  * Definitions: Errors
  *)
 
-ErrorDefinition = 'error' «Identifier» '(' { ErrorParameter / ',' } ')' ';' ;
+ErrorDefinition = 'error' «Identifier» '(' [ ErrorParameter  { ',' ErrorParameter } ] ')' ';' ;
 
 ErrorParameter = TypeName [ «Identifier» ] ;
 
@@ -240,7 +240,7 @@ ExpressionStatement = Expression ';' ;
  * Statements: Declaration Statements
  *)
 
-TupleDeconstructionStatement = '(' { [ [ TypeName ] «Identifier» ] / ',' } ')' '=' Expression ';' ;
+TupleDeconstructionStatement = '(' [ [ [ TypeName ] «Identifier» ]  { ',' [ [ TypeName ] «Identifier» ] } ] ')' '=' Expression ';' ;
 
 VariableDeclarationStatement = TypeName [ DataLocation ] «Identifier» [ '=' Expression ] ';' ;
 
@@ -288,7 +288,7 @@ AssignmentExpression = Expression ( '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '
 
 ConditionalExpression = Expression '?' Expression ':' Expression ;
 
-FunctionCallExpression = Expression [ '{' 1…*{ NamedArgument / ',' } '}' ] ArgumentList ;
+FunctionCallExpression = Expression [ '{' NamedArgument  { ',' NamedArgument } '}' ] ArgumentList ;
 
 MemberAccessExpression = Expression '.' ( «Identifier» | 'address' ) ;
 
@@ -340,9 +340,9 @@ TypeExpression = 'type' '(' TypeName ')' ;
 
 NewExpression = 'new' IdentifierPath ArgumentList ;
 
-ParenthesisExpression = '(' 1…*{ [ Expression ] / ',' } ')' ;
+ParenthesisExpression = '(' [ Expression ]  { ',' [ Expression ] } ')' ;
 
-ArrayLiteral = '[' 1…*{ Expression / ',' } ']' ;
+ArrayLiteral = '[' Expression  { ',' Expression } ']' ;
 
 «BooleanLiteral» = 'true' | 'false' ;
 
@@ -354,13 +354,13 @@ ArrayLiteral = '[' 1…*{ Expression / ',' } ']' ;
 
 «DecimalNumber» = ( «DecimalInteger» | «DecimalFloat» ) [ «DecimalExponent» ] ;
 
-«DecimalInteger» = 1…*{ '0'…'9' / [ '_' ] } ;
+«DecimalInteger» = '0'…'9' { [ '_' ] '0'…'9' } ;
 
 «DecimalFloat» = [ «DecimalInteger» ] '.' «DecimalInteger» ;
 
 «DecimalExponent» = ( 'e' | 'E' ) [ '-' ] «DecimalInteger» ;
 
-«HexNumber» = '0x' 1…*{ «HexCharacter» / [ '_' ] } ;
+«HexNumber» = '0x' «HexCharacter» { [ '_' ] «HexCharacter» } ;
 
 «NumberUnit» = 'days' | 'ether' | 'finney' | 'gwei' | 'hours' | 'minutes' | 'seconds' | 'szabo' | 'weeks' | 'wei' | 'years' ;
 
@@ -370,7 +370,7 @@ ArrayLiteral = '[' 1…*{ Expression / ',' } ']' ;
 
 «HexStringLiteral» = 'hex' ( '"' [ «PossiblySeparatedPairsOfHexDigits» ] '"' | '\'' [ «PossiblySeparatedPairsOfHexDigits» ] '\'' ) ;
 
-«PossiblySeparatedPairsOfHexDigits» = 1…*{ 2…2*{ «HexCharacter» } / [ '_' ] } ;
+«PossiblySeparatedPairsOfHexDigits» = 2…2*{ «HexCharacter» } { [ '_' ] 2…2*{ «HexCharacter» } } ;
 
 «HexCharacter» = '0'…'9' | 'a'…'f' | 'A'…'F' ;
 
@@ -398,7 +398,7 @@ ArrayLiteral = '[' 1…*{ Expression / ',' } ']' ;
  * Expressions: Identifiers
  *)
 
-IdentifierPath = 1…*{ «Identifier» / '.' } ;
+IdentifierPath = «Identifier»  { '.' «Identifier» } ;
 
 «Identifier» = «RawIdentifier» - «Keyword» ;
 
@@ -418,7 +418,7 @@ IdentifierPath = 1…*{ «Identifier» / '.' } ;
 
 AssemblyStatement = 'assembly' [ '"evmasm"' ] [ AssemblyFlags ] YulBlock ;
 
-AssemblyFlags = '(' 1…*{ «DoubleQuotedAsciiStringLiteral» / ',' } ')' ;
+AssemblyFlags = '(' «DoubleQuotedAsciiStringLiteral»  { ',' «DoubleQuotedAsciiStringLiteral» } ')' ;
 
 (*
  * Yul: Yul Statements
@@ -428,13 +428,13 @@ YulBlock = '{' { YulStatement } '}' ;
 
 YulStatement = YulBlock | YulVariableDeclaration | YulFunctionDefinition | YulAssignmentStatement | YulFunctionCall | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement ;
 
-YulVariableDeclaration = 'let' 1…*{ YulIdentifierPath / ',' } [ ':=' YulExpression ] ;
+YulVariableDeclaration = 'let' YulIdentifierPath  { ',' YulIdentifierPath } [ ':=' YulExpression ] ;
 
-YulFunctionDefinition = 'function' «YulIdentifier» '(' { «YulIdentifier» / ',' } ')' [ '->' 1…*{ «YulIdentifier» / ',' } ] YulBlock ;
+YulFunctionDefinition = 'function' «YulIdentifier» '(' [ «YulIdentifier»  { ',' «YulIdentifier» } ] ')' [ '->' «YulIdentifier»  { ',' «YulIdentifier» } ] YulBlock ;
 
-YulAssignmentStatement = 1…*{ YulIdentifierPath / ',' } ':=' YulExpression ;
+YulAssignmentStatement = YulIdentifierPath  { ',' YulIdentifierPath } ':=' YulExpression ;
 
-YulFunctionCall = «YulIdentifier» '(' { YulExpression / ',' } ')' ;
+YulFunctionCall = «YulIdentifier» '(' [ YulExpression  { ',' YulExpression } ] ')' ;
 
 YulIfStatement = 'if' YulExpression YulBlock ;
 
@@ -454,7 +454,7 @@ YulSwitchStatement = 'switch' YulExpression 1…*{ ( 'case' YulLiteral | 'defaul
 
 YulExpression = YulIdentifierPath | YulFunctionCall | YulLiteral ;
 
-YulIdentifierPath = 1…*{ «YulIdentifier» / '.' } ;
+YulIdentifierPath = «YulIdentifier»  { '.' «YulIdentifier» } ;
 
 YulLiteral = «YulDecimalNumberLiteral» | «YulHexLiteral» | «AsciiStringLiteral» | «BooleanLiteral» | «HexStringLiteral» ;
 

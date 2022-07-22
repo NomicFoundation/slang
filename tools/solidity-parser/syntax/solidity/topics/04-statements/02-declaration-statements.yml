@@ -4,14 +4,14 @@
   sequence:
     - delimitedBy:
         open: (
-        zeroOrMore:
-          optional:
-            sequence:
-              - optional:
-                  reference: TypeName
-              - reference: Identifier
-          separator:
-            terminal: ","
+        optional:
+          separatedBy:
+            optional:
+              sequence:
+                - optional:
+                    reference: TypeName
+                - reference: Identifier
+            separator: ","
         close: )
     - terminal: "="
     - reference: Expression

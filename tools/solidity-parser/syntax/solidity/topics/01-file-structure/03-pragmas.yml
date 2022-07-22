@@ -30,15 +30,14 @@
 
 - name: VersionPragmaValue
   kind: Token
-  oneOrMore:
+  separatedBy:
     oneOrMore:
       choice:
         - range: { from: "0", to: "9" }
         - terminal: "x"
         - terminal: "X"
         - terminal: "*"
-    separator:
-      terminal: "."
+    separator: "."
 
 - name: ABICoderPragmaSpecifier
   sequence:

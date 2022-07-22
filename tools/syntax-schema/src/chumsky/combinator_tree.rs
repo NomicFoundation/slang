@@ -52,9 +52,7 @@ pub enum CombinatorTree {
     SeparatedBy {
         name: Name,
         expr: CombinatorTreeRef,
-        min: usize, // > 0
-        max: Option<usize>,
-        separator: CombinatorTreeRef,
+        separator: String,
     },
     Repeated {
         name: Name,
@@ -136,18 +134,10 @@ fn ct_delimited_by(
     })
 }
 
-fn ct_separated_by(
-    name: Name,
-    expr: CombinatorTreeRef,
-    min: usize,
-    max: Option<usize>,
-    separator: CombinatorTreeRef,
-) -> CombinatorTreeRef {
+fn ct_separated_by(name: Name, expr: CombinatorTreeRef, separator: String) -> CombinatorTreeRef {
     Rc::new(CombinatorTree::SeparatedBy {
         name,
         expr,
-        min,
-        max,
         separator,
     })
 }
@@ -407,14 +397,11 @@ impl CombinatorTreeNodeTrait for CombinatorTreeRef {
             CombinatorTree::SeparatedBy {
                 name,
                 expr,
-                min,
-                max,
                 separator,
             } => {
                 let name = name.clone().self_or_numbered(index);
                 let expr = expr.with_unambiguous_named_types(index);
-                let separator = separator.with_unambiguous_named_types(index);
-                ct_separated_by(name, expr, *min, *max, separator)
+                ct_separated_by(name, expr, separator.clone())
             }
             CombinatorTree::Repeated {
                 name,
@@ -514,6 +501,33 @@ impl CombinatorTree {
         }
     }
 
+    fn generated_code_for_string(str: &str, with_trivia: bool) -> (TokenStream, TokenStream, Name) {
+        let size = str.chars().count();
+        let parser = if size == 1 {
+            let char = str.chars().next().unwrap();
+            quote!( just(#char).map(|_| FixedSizeTerminal::<#size>()) )
+        } else {
+            quote!( just(#str).map(|_| FixedSizeTerminal::<#size>()) )
+        };
+
+        if with_trivia {
+            (
+                quote!(
+                    leading_trivia_parser.clone().then(#parser).then(trailing_trivia_parser.clone())
+                    .map(|((leading, content), trailing)| FixedSizeTerminalWithTrivia { leading, content, trailing })
+                ),
+                quote!(FixedSizeTerminalWithTrivia<#size>),
+                Name::from_terminal(str),
+            )
+        } else {
+            (
+                parser,
+                quote!(FixedSizeTerminal<#size>),
+                Name::from_terminal(str),
+            )
+        }
+    }
+
     fn to_generated_code(&self, tree: &CombinatorTreeRoot) -> GeneratedCode {
         match self {
             CombinatorTree::Difference {
@@ -550,35 +564,10 @@ impl CombinatorTree {
                 let module_name = tree.slang_name().to_module_name_ident();
                 let type_name = name.to_type_name_ident();
 
-                pub fn generated_code_for_string(
-                    str: &str,
-                    with_trivia: bool,
-                ) -> (TokenStream, TokenStream, Name) {
-                    let size = str.chars().count();
-                    let parser = quote!(just(#str).map(|_| FixedSizeTerminal::<#size>()) );
-
-                    if with_trivia {
-                        (
-                            quote!(
-                                leading_trivia_parser.clone().then(#parser).then(trailing_trivia_parser.clone())
-                                .map(|((leading, content), trailing)| FixedSizeTerminalWithTrivia { leading, content, trailing })
-                            ),
-                            quote!(FixedSizeTerminalWithTrivia<#size>),
-                            Name::from_terminal(str),
-                        )
-                    } else {
-                        (
-                            parser,
-                            quote!(FixedSizeTerminal<#size>),
-                            Name::from_terminal(str),
-                        )
-                    }
-                }
-
                 let (open_parser, open_type, open_name) =
-                    generated_code_for_string(open, !tree.production().is_token());
+                    Self::generated_code_for_string(open, !tree.production().is_token());
                 let (close_parser, close_type, close_name) =
-                    generated_code_for_string(close, !tree.production().is_token());
+                    Self::generated_code_for_string(close, !tree.production().is_token());
 
                 let new_names =
                     disambiguate_structure_names(vec![open_name, expr.0.clone(), close_name]);
@@ -771,8 +760,6 @@ impl CombinatorTree {
                 name,
                 expr,
                 separator,
-                min,
-                max,
             } => {
                 let mut result: GeneratedCode = Default::default();
 
@@ -780,35 +767,22 @@ impl CombinatorTree {
                 let type_name = name.to_type_name_ident();
 
                 let expr = expr.to_generated_code(tree);
-                let separator = separator.to_generated_code(tree);
+                let (separator_parser, separator_type, _separator_name) =
+                    Self::generated_code_for_string(separator, !tree.production().is_token());
 
                 let expr_parser_type = expr.parser_type.clone();
-                let separator_parser_type = separator.parser_type.clone();
+                let separator_parser_type = separator_type.clone();
                 let expr_parser = expr.parser.clone();
-                let separator_parser = separator.parser.clone();
+                let separator_parser = separator_parser.clone();
 
                 result.merge(expr);
-                result.merge(separator);
 
                 let repetition = quote!(#separator_parser.then(#expr_parser).repeated());
-                let at_most = match max {
-                    None => quote!(),
-                    Some(max) => quote!( .at_most(#max - 1) ),
-                };
-                let at_least = match min {
-                    0 | 1 => quote!(),
-                    min => quote!( .at_least(#min - 1) ),
-                };
                 let mapping = quote!(
                     .map(repetition_mapper)
                     .map(|(elements, separators)| #module_name::#type_name { elements, separators })
                 );
-                let or_not = match min {
-                    0 => quote!( .or_not() ),
-                    _ => quote!(),
-                };
-                result.parser =
-                    quote!( #expr_parser.then(#repetition #at_most #at_least) #mapping #or_not );
+                result.parser = quote!( #expr_parser.then(#repetition) #mapping );
 
                 result.tree_interface.push({
                     quote!(
@@ -838,11 +812,7 @@ impl CombinatorTree {
                     }
                 ));
 
-                result.parser_type = if *min == 0 {
-                    quote!( Option<#module_name::#type_name> )
-                } else {
-                    quote!( #module_name::#type_name )
-                };
+                result.parser_type = quote!( #module_name::#type_name );
 
                 result
             }
@@ -1168,12 +1138,7 @@ impl CombinatorTree {
                 }
             }
             CombinatorTree::Optional { expr } => expr.collect_identifiers(accum),
-            CombinatorTree::SeparatedBy {
-                expr, separator, ..
-            } => {
-                expr.collect_identifiers(accum);
-                separator.collect_identifiers(accum);
-            }
+            CombinatorTree::SeparatedBy { expr, .. } => expr.collect_identifiers(accum),
             CombinatorTree::Repeated { expr, .. } => expr.collect_identifiers(accum),
             CombinatorTree::Expression { members, .. } => {
                 for pr in members {
@@ -1365,26 +1330,15 @@ impl Expression {
                     let et = expr.to_combinator_tree_node(production, grammar);
                     ct_optional(et)
                 }
-                EBNF::Repeat(EBNFRepeat {
-                    expr,
-                    min,
-                    max,
-                    separator: None,
-                }) => {
+                EBNF::Repeat(EBNFRepeat { expr, min, max }) => {
                     let name = self.config.slang_name();
                     let et = expr.to_combinator_tree_node(production, grammar);
                     ct_repeat(name, et, *min, *max)
                 }
-                EBNF::Repeat(EBNFRepeat {
-                    expr,
-                    min,
-                    max,
-                    separator: Some(separator),
-                }) => {
+                EBNF::SeparatedBy(EBNFSeparatedBy { expr, separator }) => {
                     let name = self.config.slang_name();
                     let et = expr.to_combinator_tree_node(production, grammar);
-                    let st = separator.to_combinator_tree_node(production, grammar);
-                    ct_separated_by(name, et, *min, *max, st)
+                    ct_separated_by(name, et, separator.clone())
                 }
                 EBNF::Choice(exprs) => {
                     let name = self.config.slang_name();

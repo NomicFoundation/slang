@@ -57,10 +57,9 @@
     - optional:
         delimitedBy:
           open: "{"
-          oneOrMore:
+          separatedBy:
             reference: NamedArgument
-            separator:
-              terminal: ","
+            separator: ","
           close: "}"
     - reference: ArgumentList
 

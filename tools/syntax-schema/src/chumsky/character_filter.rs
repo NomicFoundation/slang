@@ -156,7 +156,11 @@ impl Expression {
                     None
                 }
             }
-            EBNF::DelimitedBy(_) | EBNF::Sequence(_) | EBNF::End | EBNF::Repeat(_) => None,
+            EBNF::SeparatedBy(_)
+            | EBNF::DelimitedBy(_)
+            | EBNF::Sequence(_)
+            | EBNF::End
+            | EBNF::Repeat(_) => None,
         }
     }
 }

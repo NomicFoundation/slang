@@ -1,10 +1,9 @@
 # yaml-language-server: $schema=../../../../../syntax-schema/syntax/schema/topic.schema.json
 
 - name: IdentifierPath
-  oneOrMore:
+  separatedBy:
     reference: Identifier
-    separator:
-      terminal: "."
+    separator: "."
 
 - name: Identifier
   kind: Token

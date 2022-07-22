@@ -7,10 +7,9 @@
     - reference: YulLiteral
 
 - name: YulIdentifierPath
-  oneOrMore:
+  separatedBy:
     reference: YulIdentifier
-    separator:
-      terminal: "."
+    separator: "."
 
 - name: YulLiteral
   choice:

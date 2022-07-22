@@ -460,7 +460,7 @@ pub mod difference {
 /// sequence = 1…*{ difference } ;
 pub type Sequence = Vec<Difference>;
 
-/// expression = 1…*{ sequence / '|' } ;
+/// expression = sequence  { '|' sequence } ;
 pub type Expression = expression::_T0;
 pub mod expression {
     #[allow(unused_imports)]
@@ -470,7 +470,7 @@ pub mod expression {
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub elements: Vec<Sequence>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub separators: Vec<FixedSizeTerminalWithTrivia<1>>,
+        pub separators: Vec<FixedSizeTerminalWithTrivia<1usize>>,
     }
 }
 
