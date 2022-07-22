@@ -55,7 +55,7 @@ impl TerminalTrie {
                 let mut children = generate_from_trie(node.child(), new_length, ignore_all);
                 if node.child().is_some() && node.value().is_some() {
                     if ignore_all {
-                        children.push(quote!(empty()));
+                        children.push(quote!( empty() ));
                     } else {
                         children.push(quote!( empty().map(|_| #new_length) ));
                     }
@@ -94,10 +94,12 @@ impl TerminalTrie {
                 quote!( #parser.map(VariableSizeTerminal) ),
                 quote!(VariableSizeTerminal),
             ),
+
             (Some(size), false) => (
                 quote!( #parser.map(|_| FixedSizeTerminal::<#size>()) ),
                 quote!( FixedSizeTerminal<#size> ),
             ),
+
             (None, true) => (
                 quote!(
                     leading_trivia_parser.clone().then(#parser).then(trailing_trivia_parser.clone())
@@ -106,6 +108,7 @@ impl TerminalTrie {
                 ),
                 quote!(VariableSizeTerminalWithTrivia),
             ),
+
             (Some(size), true) => (
                 quote!(
                     leading_trivia_parser.clone().then(#parser.map(|_| FixedSizeTerminal::<#size>())).then(trailing_trivia_parser.clone())
@@ -139,26 +142,24 @@ impl Expression {
 
     fn collect_terminals(&self, grammar: &Grammar, accum: &mut PatriciaSet) -> bool {
         match &self.ebnf {
-            EBNF::Terminal(string) => {
-                accum.insert(string.clone());
-                true
-            }
             EBNF::Choice(exprs) => exprs.iter().all(|e| e.collect_terminals(grammar, accum)),
-            EBNF::Reference(name) => grammar
-                .get_production(name)
-                .expression_to_generate()
-                .collect_terminals(grammar, accum),
-            EBNF::Sequence(_) // TODO: special case this i.e. 'multiply' the sequence elements?
-            | EBNF::SeparatedBy(_)
-            | EBNF::DelimitedBy(_)
+            
+            EBNF::DelimitedBy(_)
+            | EBNF::Difference(_)
             | EBNF::End
-            | EBNF::ZeroOrMore(_)
+            | EBNF::Not(_)
             | EBNF::OneOrMore(_)
             | EBNF::Optional(_)
+            | EBNF::Range(_)
             | EBNF::Repeat(_)
-            | EBNF::Not(_)
-            | EBNF::Difference(_)
-            | EBNF::Range(_) => false,
+            | EBNF::SeparatedBy(_)
+            | EBNF::Sequence(_) // TODO: special case this i.e. 'multiply' the sequence elements?
+            | EBNF::ZeroOrMore(_) => false,
+
+            EBNF::Reference(name) => grammar .get_production(name) .expression_to_generate() .collect_terminals(grammar, accum),
+            
+            EBNF::Terminal(string) => { accum.insert(string.clone()); true }
+
         }
     }
 }

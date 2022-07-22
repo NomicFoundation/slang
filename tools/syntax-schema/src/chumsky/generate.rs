@@ -6,8 +6,9 @@ use std::{
 
 use quote::quote;
 
-use super::{combinator_tree::ProductionGeneratedCode, rustfmt::rustfmt};
 use crate::schema::*;
+
+use super::{combinator_tree::ProductionGeneratedCode, rustfmt::rustfmt};
 
 pub struct GenerationContext {
     pub output_dir: PathBuf,

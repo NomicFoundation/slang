@@ -17,11 +17,7 @@ pub enum CharacterFilterNode {
 pub type CharacterFilter = Box<CharacterFilterNode>;
 
 fn cf_negation(child: CharacterFilter) -> CharacterFilter {
-    if let CharacterFilterNode::Negation { child } = *child {
-        child
-    } else {
-        Box::new(CharacterFilterNode::Negation { child })
-    }
+    Box::new(CharacterFilterNode::Negation { child })
 }
 
 fn cf_range(from: char, to: char) -> CharacterFilter {
@@ -31,6 +27,7 @@ fn cf_range(from: char, to: char) -> CharacterFilter {
 fn cf_char(char: char) -> CharacterFilter {
     Box::new(CharacterFilterNode::Char { char })
 }
+
 fn cf_disjunction(nodes: Vec<CharacterFilter>) -> CharacterFilter {
     Box::new(CharacterFilterNode::Disjunction { nodes })
 }
@@ -82,6 +79,7 @@ impl CharacterFilterNode {
     fn to_parser_predicate(&self, negated: bool) -> TokenStream {
         match self {
             CharacterFilterNode::Negation { child } => child.to_parser_predicate(!negated),
+
             CharacterFilterNode::Range { from, to } => {
                 if negated {
                     quote!( (c < #from || #to < c) )
@@ -89,6 +87,7 @@ impl CharacterFilterNode {
                     quote!( (#from <= c && c <= #to) )
                 }
             }
+
             CharacterFilterNode::Char { char } => {
                 if negated {
                     quote!( c != #char )
@@ -96,20 +95,22 @@ impl CharacterFilterNode {
                     quote!( c == #char )
                 }
             }
-            CharacterFilterNode::Disjunction { nodes } => {
-                let nodes = nodes.iter().map(|n| n.to_parser_predicate(negated));
-                if negated {
-                    quote! ( #(#nodes)&&* )
-                } else {
-                    quote! ( #(#nodes)||* )
-                }
-            }
+
             CharacterFilterNode::Conjunction { nodes } => {
                 let nodes = nodes.iter().map(|n| n.to_parser_predicate(negated));
                 if negated {
                     quote! ( #(#nodes)||* )
                 } else {
                     quote! ( #(#nodes)&&* )
+                }
+            }
+
+            CharacterFilterNode::Disjunction { nodes } => {
+                let nodes = nodes.iter().map(|n| n.to_parser_predicate(negated));
+                if negated {
+                    quote! ( #(#nodes)&&* )
+                } else {
+                    quote! ( #(#nodes)||* )
                 }
             }
         }
@@ -120,6 +121,7 @@ impl Expression {
     pub fn to_character_filter(&self, grammar: &Grammar) -> Option<CharacterFilter> {
         match &self.ebnf {
             EBNF::Not(child) => child.to_character_filter(grammar).map(cf_negation),
+
             EBNF::Choice(children) => {
                 let child_filters = children
                     .iter()
@@ -131,6 +133,7 @@ impl Expression {
                     None
                 }
             }
+
             EBNF::Terminal(string) => {
                 if string.chars().count() == 1 {
                     Some(cf_char(string.chars().next().unwrap()))
@@ -138,11 +141,14 @@ impl Expression {
                     None
                 }
             }
+
             EBNF::Range(EBNFRange { from, to }) => Some(cf_range(*from, *to)),
+
             EBNF::Reference(name) => grammar
                 .get_production(name)
                 .expression_to_generate()
                 .to_character_filter(grammar),
+
             EBNF::Difference(EBNFDifference {
                 minuend,
                 subtrahend,
@@ -156,14 +162,15 @@ impl Expression {
                     None
                 }
             }
-            EBNF::SeparatedBy(_)
-            | EBNF::DelimitedBy(_)
-            | EBNF::Sequence(_)
+
+            EBNF::DelimitedBy(_)
             | EBNF::End
-            | EBNF::Optional(_)
-            | EBNF::ZeroOrMore(_)
             | EBNF::OneOrMore(_)
-            | EBNF::Repeat(_) => None,
+            | EBNF::Optional(_)
+            | EBNF::Repeat(_)
+            | EBNF::SeparatedBy(_)
+            | EBNF::Sequence(_)
+            | EBNF::ZeroOrMore(_) => None,
         }
     }
 }

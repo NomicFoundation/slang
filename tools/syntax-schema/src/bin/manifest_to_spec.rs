@@ -1,5 +1,7 @@
-use clap::Parser;
 use std::path::PathBuf;
+
+use clap::Parser;
+
 use syntax_schema::schema::Grammar;
 
 #[derive(Parser, Debug)]
