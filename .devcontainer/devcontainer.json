@@ -23,10 +23,6 @@
     "DavidAnson.vscode-markdownlint",
     "esbenp.prettier-vscode",
     "streetsidesoftware.code-spell-checker",
-    "timonwong.shellcheck",
-    // Developer Experience
-    "mhutchie.git-graph",
-    "ms-azuretools.vscode-docker",
-    "vscode-icons-team.vscode-icons"
+    "timonwong.shellcheck"
   ]
 }
