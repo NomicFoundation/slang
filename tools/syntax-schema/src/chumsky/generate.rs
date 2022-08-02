@@ -275,19 +275,32 @@ mod boilerplate {
             // pub enum TokenType {}
             // pub enum TokenPartType {}
 
-            // TODO: add return type to control traversal
+            pub enum VisitorResult {
+                Next,
+                NextSibling,
+                Stop,
+            }
 
             pub trait Visitor {
-                fn enter_rule(&self, rule_type: RuleType, offset: usize) {}
+                fn enter_rule(&self, rule_type: RuleType, offset: usize) -> VisitorResult {
+                    VisitorResult::Next
+                }
                 fn enter_token(
                     &self,
                     token_type: TokenType,
                     offset: usize,
                     leading_trivia: &LeadingTrivia,
                     trailing_trivia: &TrailingTrivia,
-                ) {
+                ) -> VisitorResult {
+                    VisitorResult::Next
                 }
-                fn enter_token_part(&self, token_part_type: TokenPartType, offset: usize) {}
+                fn enter_token_part(
+                    &self,
+                    token_part_type: TokenPartType,
+                    offset: usize,
+                ) -> VisitorResult {
+                    VisitorResult::Next
+                }
             }
 
             pub trait Visitable<T: Visitor> {
