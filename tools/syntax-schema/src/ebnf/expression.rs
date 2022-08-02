@@ -1,6 +1,6 @@
-use crate::schema::*;
-
 use std::fmt::Write;
+
+use crate::schema::*;
 
 impl Expression {
     pub(crate) fn generate_ebnf<T: Write>(&self, grammar: &Grammar, w: &mut T) {
@@ -21,41 +21,6 @@ impl Expression {
         }
 
         match &self.ebnf {
-            EBNF::End => write!(w, "$ ").unwrap(),
-
-            EBNF::ZeroOrMore(expr) => {
-                write!(w, "{{ ").unwrap();
-                expr.generate_ebnf(grammar, w);
-                write!(w, "}} ").unwrap();
-            }
-
-            EBNF::OneOrMore(expr) => {
-                write!(w, "1…").unwrap();
-                write!(w, "*{{ ").unwrap();
-                expr.generate_ebnf(grammar, w);
-                write!(w, "}} ").unwrap();
-            }
-
-            EBNF::Optional(expr) => {
-                write!(w, "[ ").unwrap();
-                expr.generate_ebnf(grammar, w);
-                write!(w, "] ").unwrap();
-            }
-
-            EBNF::Repeat(EBNFRepeat { expr, min, max, .. }) => {
-                write!(w, "{}", min).unwrap();
-                write!(w, "…").unwrap();
-                write!(w, "{}", max).unwrap();
-                write!(w, "*{{ ").unwrap();
-                expr.generate_ebnf(grammar, w);
-                write!(w, "}} ").unwrap();
-            }
-
-            EBNF::Not(expr) => {
-                write!(w, "¬").unwrap();
-                self.generate_ebnf_subexpression(grammar, w, expr);
-            }
-
             EBNF::Choice(exprs) => {
                 let mut first = true;
                 for expr in exprs {
@@ -66,36 +31,6 @@ impl Expression {
                     }
                     self.generate_ebnf_subexpression(grammar, w, expr);
                 }
-            }
-
-            EBNF::Sequence(exprs) => {
-                for expr in exprs {
-                    self.generate_ebnf_subexpression(grammar, w, expr);
-                }
-            }
-
-            EBNF::Reference(name) => {
-                let production = grammar.get_production(name);
-                write!(w, "{} ", production.ebnf_display_name()).unwrap();
-            }
-
-            EBNF::Terminal(string) => {
-                write!(w, "'").unwrap();
-                for c in string.chars() {
-                    write_char(w, c);
-                }
-                write!(w, "' ").unwrap();
-            }
-
-            EBNF::SeparatedBy(EBNFSeparatedBy { expr, separator }) => {
-                self.generate_ebnf_subexpression(grammar, w, expr);
-                write!(w, " {{ '").unwrap();
-                for c in separator.chars() {
-                    write_char(w, c);
-                }
-                write!(w, "' ").unwrap();
-                self.generate_ebnf_subexpression(grammar, w, expr);
-                write!(w, "}} ").unwrap();
             }
 
             EBNF::DelimitedBy(EBNFDelimitedBy { open, expr, close }) => {
@@ -121,12 +56,77 @@ impl Expression {
                 self.generate_ebnf_subexpression(grammar, w, subtrahend);
             }
 
+            EBNF::End => write!(w, "$ ").unwrap(),
+
+            EBNF::Not(expr) => {
+                write!(w, "¬").unwrap();
+                self.generate_ebnf_subexpression(grammar, w, expr);
+            }
+
+            EBNF::OneOrMore(expr) => {
+                write!(w, "1…").unwrap();
+                write!(w, "*{{ ").unwrap();
+                expr.generate_ebnf(grammar, w);
+                write!(w, "}} ").unwrap();
+            }
+
+            EBNF::Optional(expr) => {
+                write!(w, "[ ").unwrap();
+                expr.generate_ebnf(grammar, w);
+                write!(w, "] ").unwrap();
+            }
+
             EBNF::Range(EBNFRange { from, to }) => {
                 write!(w, "'").unwrap();
                 write_char(w, *from);
                 write!(w, "'…'").unwrap();
                 write_char(w, *to);
                 write!(w, "' ").unwrap();
+            }
+
+            EBNF::Reference(name) => {
+                let production = grammar.get_production(name);
+                write!(w, "{} ", production.ebnf_display_name()).unwrap();
+            }
+
+            EBNF::Repeat(EBNFRepeat { expr, min, max, .. }) => {
+                write!(w, "{}", min).unwrap();
+                write!(w, "…").unwrap();
+                write!(w, "{}", max).unwrap();
+                write!(w, "*{{ ").unwrap();
+                expr.generate_ebnf(grammar, w);
+                write!(w, "}} ").unwrap();
+            }
+
+            EBNF::SeparatedBy(EBNFSeparatedBy { expr, separator }) => {
+                self.generate_ebnf_subexpression(grammar, w, expr);
+                write!(w, " {{ '").unwrap();
+                for c in separator.chars() {
+                    write_char(w, c);
+                }
+                write!(w, "' ").unwrap();
+                self.generate_ebnf_subexpression(grammar, w, expr);
+                write!(w, "}} ").unwrap();
+            }
+
+            EBNF::Sequence(exprs) => {
+                for expr in exprs {
+                    self.generate_ebnf_subexpression(grammar, w, expr);
+                }
+            }
+
+            EBNF::Terminal(string) => {
+                write!(w, "'").unwrap();
+                for c in string.chars() {
+                    write_char(w, c);
+                }
+                write!(w, "' ").unwrap();
+            }
+
+            EBNF::ZeroOrMore(expr) => {
+                write!(w, "{{ ").unwrap();
+                expr.generate_ebnf(grammar, w);
+                write!(w, "}} ").unwrap();
             }
         }
     }
@@ -148,18 +148,18 @@ impl Expression {
 
     fn ebnf_precedence(&self) -> u8 {
         match self.ebnf {
+            EBNF::Choice(..) => 4,
+            EBNF::DelimitedBy(..) | EBNF::SeparatedBy(..) | EBNF::Sequence(..) => 3,
+            EBNF::Difference { .. } => 2,
             EBNF::End
-            | EBNF::ZeroOrMore(..)
             | EBNF::OneOrMore(..)
             | EBNF::Optional(..)
+            | EBNF::Range { .. }
+            | EBNF::Reference(..)
             | EBNF::Repeat(..)
             | EBNF::Terminal(..)
-            | EBNF::Reference(..)
-            | EBNF::Range { .. } => 0,
+            | EBNF::ZeroOrMore(..) => 0,
             EBNF::Not(..) => 1,
-            EBNF::Difference { .. } => 2,
-            EBNF::Sequence(..) | EBNF::SeparatedBy(..) | EBNF::DelimitedBy(..) => 3,
-            EBNF::Choice(..) => 4,
         }
     }
 }

@@ -1,3 +1,11 @@
+use std::{
+    cell::RefCell,
+    collections::BTreeMap,
+    fmt,
+    path::PathBuf,
+    rc::{Rc, Weak},
+};
+
 use indexmap::IndexMap;
 use semver::Version;
 use serde::{
@@ -6,13 +14,6 @@ use serde::{
     Deserialize, Serialize, Serializer,
 };
 use serde_yaml::Value;
-use std::{
-    cell::RefCell,
-    collections::BTreeMap,
-    fmt,
-    path::PathBuf,
-    rc::{Rc, Weak},
-};
 
 use crate::chumsky::combinator_tree::CombinatorTreeRoot;
 
@@ -209,20 +210,20 @@ impl<'de> Deserialize<'de> for Production {
                             }
                         }
 
-                        Field::End
-                        | Field::ZeroOrMore
-                        | Field::OneOrMore
-                        | Field::Repeat
-                        | Field::Optional
+                        Field::Choice
+                        | Field::DelimitedBy
+                        | Field::Difference
+                        | Field::End
                         | Field::Not
-                        | Field::Choice
+                        | Field::OneOrMore
+                        | Field::Optional
+                        | Field::Range
+                        | Field::Reference
+                        | Field::Repeat
+                        | Field::SeparatedBy
                         | Field::Sequence
                         | Field::Terminal
-                        | Field::Reference
-                        | Field::Difference
-                        | Field::DelimitedBy
-                        | Field::SeparatedBy
-                        | Field::Range => {
+                        | Field::ZeroOrMore => {
                             if ebnf.is_some() {
                                 return Err(de::Error::duplicate_field("ebnf element"));
                             }
@@ -240,23 +241,24 @@ impl<'de> Deserialize<'de> for Production {
                         Field::Title => title = Some(map.next_value()?),
                         Field::Versions => versions = Some(map.next_value()?),
                         Field::Config => config = Some(map.next_value()?),
+
+                        Field::Choice => ebnf = Some(EBNF::Choice(map.next_value()?)),
+                        Field::DelimitedBy => ebnf = Some(EBNF::DelimitedBy(map.next_value()?)),
+                        Field::Difference => ebnf = Some(EBNF::Difference(map.next_value()?)),
                         Field::End => {
                             ebnf = Some(EBNF::End);
                             map.next_value()?
                         }
-                        Field::Optional => ebnf = Some(EBNF::Optional(map.next_value()?)),
-                        Field::ZeroOrMore => ebnf = Some(EBNF::ZeroOrMore(map.next_value()?)),
-                        Field::OneOrMore => ebnf = Some(EBNF::OneOrMore(map.next_value()?)),
-                        Field::Repeat => ebnf = Some(EBNF::Repeat(map.next_value()?)),
                         Field::Not => ebnf = Some(EBNF::Not(map.next_value()?)),
-                        Field::Choice => ebnf = Some(EBNF::Choice(map.next_value()?)),
+                        Field::OneOrMore => ebnf = Some(EBNF::OneOrMore(map.next_value()?)),
+                        Field::Optional => ebnf = Some(EBNF::Optional(map.next_value()?)),
+                        Field::Range => ebnf = Some(EBNF::Range(map.next_value()?)),
+                        Field::Reference => ebnf = Some(EBNF::Reference(map.next_value()?)),
+                        Field::Repeat => ebnf = Some(EBNF::Repeat(map.next_value()?)),
+                        Field::SeparatedBy => ebnf = Some(EBNF::SeparatedBy(map.next_value()?)),
                         Field::Sequence => ebnf = Some(EBNF::Sequence(map.next_value()?)),
                         Field::Terminal => ebnf = Some(EBNF::Terminal(map.next_value()?)),
-                        Field::Reference => ebnf = Some(EBNF::Reference(map.next_value()?)),
-                        Field::DelimitedBy => ebnf = Some(EBNF::DelimitedBy(map.next_value()?)),
-                        Field::SeparatedBy => ebnf = Some(EBNF::SeparatedBy(map.next_value()?)),
-                        Field::Difference => ebnf = Some(EBNF::Difference(map.next_value()?)),
-                        Field::Range => ebnf = Some(EBNF::Range(map.next_value()?)),
+                        Field::ZeroOrMore => ebnf = Some(EBNF::ZeroOrMore(map.next_value()?)),
                     }
                 }
 
@@ -326,14 +328,14 @@ impl Expression {
     pub fn precedence(&self) -> u8 {
         match self.ebnf {
             EBNF::End
-            | EBNF::ZeroOrMore(..)
             | EBNF::OneOrMore(..)
             | EBNF::Optional(..)
+            | EBNF::Range { .. }
+            | EBNF::Reference(..)
             | EBNF::Repeat(..)
             | EBNF::SeparatedBy(..)
             | EBNF::Terminal(..)
-            | EBNF::Reference(..)
-            | EBNF::Range { .. } => 0,
+            | EBNF::ZeroOrMore(..) => 0,
             EBNF::Not(..) => 1,
             EBNF::Difference { .. } => 2,
             EBNF::DelimitedBy(..) | EBNF::Sequence(..) => 3,
@@ -345,20 +347,20 @@ impl Expression {
         match &self.ebnf {
             // Ugly - serde has no way of emitting a map entry with
             // no value, which is valid in YAML. So this ends up as `end: ~`
-            EBNF::End => state.serialize_entry("end", &Value::Null),
-            EBNF::Optional(expr) => state.serialize_entry("optional", &expr),
-            EBNF::ZeroOrMore(repeat) => state.serialize_entry("zeroOrMore", &repeat),
-            EBNF::OneOrMore(repeat) => state.serialize_entry("oneOrMore", &repeat),
-            EBNF::Repeat(repeat) => state.serialize_entry("repeat", &repeat),
-            EBNF::Not(expr) => state.serialize_entry("not", &expr),
             EBNF::Choice(exprs) => state.serialize_entry("choice", &exprs),
+            EBNF::DelimitedBy(delimited_by) => state.serialize_entry("delimitedBy", &delimited_by),
+            EBNF::Difference(difference) => state.serialize_entry("difference", &difference),
+            EBNF::End => state.serialize_entry("end", &Value::Null),
+            EBNF::Not(expr) => state.serialize_entry("not", &expr),
+            EBNF::OneOrMore(repeat) => state.serialize_entry("oneOrMore", &repeat),
+            EBNF::Optional(expr) => state.serialize_entry("optional", &expr),
+            EBNF::Range(range) => state.serialize_entry("range", &range),
+            EBNF::Reference(name) => state.serialize_entry("reference", &name),
+            EBNF::Repeat(repeat) => state.serialize_entry("repeat", &repeat),
+            EBNF::SeparatedBy(repeat) => state.serialize_entry("separatedBy", &repeat),
             EBNF::Sequence(exprs) => state.serialize_entry("sequence", &exprs),
             EBNF::Terminal(string) => state.serialize_entry("terminal", &string),
-            EBNF::Reference(name) => state.serialize_entry("reference", &name),
-            EBNF::DelimitedBy(delimited_by) => state.serialize_entry("delimitedBy", &delimited_by),
-            EBNF::SeparatedBy(repeat) => state.serialize_entry("separatedBy", &repeat),
-            EBNF::Difference(difference) => state.serialize_entry("difference", &difference),
-            EBNF::Range(range) => state.serialize_entry("range", &range),
+            EBNF::ZeroOrMore(repeat) => state.serialize_entry("zeroOrMore", &repeat),
         }?;
         if !self.config.is_default() {
             state.serialize_entry("config", &self.config)?;
@@ -426,20 +428,20 @@ impl<'de> Deserialize<'de> for Expression {
                             }
                         }
 
-                        Field::End
-                        | Field::ZeroOrMore
-                        | Field::OneOrMore
-                        | Field::Repeat
-                        | Field::Optional
+                        Field::Choice
+                        | Field::DelimitedBy
+                        | Field::Difference
+                        | Field::End
                         | Field::Not
-                        | Field::Choice
+                        | Field::OneOrMore
+                        | Field::Optional
+                        | Field::Range
+                        | Field::Reference
+                        | Field::Repeat
+                        | Field::SeparatedBy
                         | Field::Sequence
                         | Field::Terminal
-                        | Field::Reference
-                        | Field::Difference
-                        | Field::DelimitedBy
-                        | Field::SeparatedBy
-                        | Field::Range => {
+                        | Field::ZeroOrMore => {
                             if ebnf.is_some() {
                                 return Err(de::Error::duplicate_field("ebnf element"));
                             }
@@ -448,23 +450,23 @@ impl<'de> Deserialize<'de> for Expression {
                     match key {
                         Field::Config => config = Some(map.next_value()?),
 
+                        Field::Choice => ebnf = Some(EBNF::Choice(map.next_value()?)),
+                        Field::DelimitedBy => ebnf = Some(EBNF::DelimitedBy(map.next_value()?)),
+                        Field::Difference => ebnf = Some(EBNF::Difference(map.next_value()?)),
                         Field::End => {
                             ebnf = Some(EBNF::End);
                             map.next_value()?
                         }
-                        Field::Optional => ebnf = Some(EBNF::Optional(map.next_value()?)),
-                        Field::SeparatedBy => ebnf = Some(EBNF::SeparatedBy(map.next_value()?)),
-                        Field::ZeroOrMore => ebnf = Some(EBNF::ZeroOrMore(map.next_value()?)),
-                        Field::OneOrMore => ebnf = Some(EBNF::OneOrMore(map.next_value()?)),
-                        Field::Repeat => ebnf = Some(EBNF::Repeat(map.next_value()?)),
                         Field::Not => ebnf = Some(EBNF::Not(map.next_value()?)),
-                        Field::Choice => ebnf = Some(EBNF::Choice(map.next_value()?)),
+                        Field::OneOrMore => ebnf = Some(EBNF::OneOrMore(map.next_value()?)),
+                        Field::Optional => ebnf = Some(EBNF::Optional(map.next_value()?)),
+                        Field::Range => ebnf = Some(EBNF::Range(map.next_value()?)),
+                        Field::Reference => ebnf = Some(EBNF::Reference(map.next_value()?)),
+                        Field::Repeat => ebnf = Some(EBNF::Repeat(map.next_value()?)),
+                        Field::SeparatedBy => ebnf = Some(EBNF::SeparatedBy(map.next_value()?)),
                         Field::Sequence => ebnf = Some(EBNF::Sequence(map.next_value()?)),
                         Field::Terminal => ebnf = Some(EBNF::Terminal(map.next_value()?)),
-                        Field::Reference => ebnf = Some(EBNF::Reference(map.next_value()?)),
-                        Field::DelimitedBy => ebnf = Some(EBNF::DelimitedBy(map.next_value()?)),
-                        Field::Difference => ebnf = Some(EBNF::Difference(map.next_value()?)),
-                        Field::Range => ebnf = Some(EBNF::Range(map.next_value()?)),
+                        Field::ZeroOrMore => ebnf = Some(EBNF::ZeroOrMore(map.next_value()?)),
                     }
                 }
                 let config = config.unwrap_or_default();

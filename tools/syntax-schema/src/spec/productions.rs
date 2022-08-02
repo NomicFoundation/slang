@@ -1,10 +1,9 @@
-use crate::schema::{
-    EBNFDelimitedBy, EBNFDifference, EBNFRange, EBNFRepeat, EBNFSeparatedBy, Expression,
-    ExpressionRef, Grammar, Production, EBNF,
-};
+use std::{collections::HashMap, io::Write};
+
 use itertools::Itertools;
 use semver::Version;
-use std::{collections::HashMap, io::Write};
+
+use crate::schema::*;
 
 pub struct SpecProductionContext<'a> {
     pub grammar: &'a Grammar,
@@ -55,14 +54,42 @@ fn write_version<T: Write>(
 
 fn write_expression<T: Write>(w: &mut T, expr: &Expression, context: &SpecProductionContext) {
     match &expr.ebnf {
+        EBNF::Choice(sub_exprs) => {
+            let mut first = true;
+            for sub_expr in sub_exprs {
+                if first {
+                    first = false;
+                } else {
+                    write_token(w, TokenKind::operator, " | ");
+                }
+                write_subexpression(w, expr, sub_expr, context);
+            }
+        }
+
+        EBNF::DelimitedBy(EBNFDelimitedBy { open, expr, close }) => {
+            write_token(w, TokenKind::string, &format_string_literal(open));
+            write_token(w, TokenKind::operator, " ");
+            write_subexpression(w, expr, expr, context);
+            write_token(w, TokenKind::operator, " ");
+            write_token(w, TokenKind::string, &format_string_literal(close));
+        }
+
+        EBNF::Difference(EBNFDifference {
+            minuend,
+            subtrahend,
+        }) => {
+            write_subexpression(w, expr, minuend, context);
+            write_token(w, TokenKind::operator, " - ");
+            write_subexpression(w, expr, subtrahend, context);
+        }
+
         EBNF::End => {
             write_token(w, TokenKind::keyword, "$");
         }
 
-        EBNF::ZeroOrMore(expr) => {
-            write_token(w, TokenKind::operator, "{");
-            write_expression(w, expr, context);
-            write_token(w, TokenKind::operator, "}");
+        EBNF::Not(sub_expr) => {
+            write_token(w, TokenKind::operator, "¬");
+            write_subexpression(w, expr, sub_expr, context);
         }
 
         EBNF::OneOrMore(expr) => {
@@ -78,6 +105,35 @@ fn write_expression<T: Write>(w: &mut T, expr: &Expression, context: &SpecProduc
             write_token(w, TokenKind::operator, "]");
         }
 
+        EBNF::Range(EBNFRange { from, to }) => {
+            write_token(
+                w,
+                TokenKind::string,
+                &format_string_literal(&from.to_string()),
+            );
+            write_token(w, TokenKind::operator, "…");
+            write_token(
+                w,
+                TokenKind::string,
+                &format_string_literal(&to.to_string()),
+            );
+        }
+
+        EBNF::Reference(name) => {
+            let referenced = context.grammar.get_production(name);
+            let location = context.productions_location.get(name).expect(name);
+            write_token(
+                w,
+                TokenKind::keyword,
+                &format!(
+                    "<a href=\"{}#{}\">{}</a>",
+                    location,
+                    get_production_hash_link(name),
+                    get_production_name(referenced.as_ref())
+                ),
+            );
+        }
+
         EBNF::Repeat(EBNFRepeat { min, max, expr }) => {
             write_token(w, TokenKind::constant, &min.to_string());
             write_token(w, TokenKind::operator, "…");
@@ -85,23 +141,6 @@ fn write_expression<T: Write>(w: &mut T, expr: &Expression, context: &SpecProduc
             write_token(w, TokenKind::operator, "{");
             write_expression(w, expr, context);
             write_token(w, TokenKind::operator, "}");
-        }
-
-        EBNF::Not(sub_expr) => {
-            write_token(w, TokenKind::operator, "¬");
-            write_subexpression(w, expr, sub_expr, context);
-        }
-
-        EBNF::Choice(sub_exprs) => {
-            let mut first = true;
-            for sub_expr in sub_exprs {
-                if first {
-                    first = false;
-                } else {
-                    write_token(w, TokenKind::operator, " | ");
-                }
-                write_subexpression(w, expr, sub_expr, context);
-            }
         }
 
         EBNF::SeparatedBy(EBNFSeparatedBy { expr, separator }) => {
@@ -112,14 +151,6 @@ fn write_expression<T: Write>(w: &mut T, expr: &Expression, context: &SpecProduc
             write_token(w, TokenKind::operator, " ");
             write_subexpression(w, expr, expr, context);
             write_token(w, TokenKind::operator, " }");
-        }
-
-        EBNF::DelimitedBy(EBNFDelimitedBy { open, expr, close }) => {
-            write_token(w, TokenKind::string, &format_string_literal(open));
-            write_token(w, TokenKind::operator, " ");
-            write_subexpression(w, expr, expr, context);
-            write_token(w, TokenKind::operator, " ");
-            write_token(w, TokenKind::string, &format_string_literal(close));
         }
 
         EBNF::Sequence(sub_exprs) => {
@@ -134,47 +165,14 @@ fn write_expression<T: Write>(w: &mut T, expr: &Expression, context: &SpecProduc
             }
         }
 
-        EBNF::Reference(name) => {
-            let referenced = context.grammar.get_production(name);
-            let location = context.productions_location.get(name).expect(name);
-
-            write_token(
-                w,
-                TokenKind::keyword,
-                &format!(
-                    "<a href=\"{}#{}\">{}</a>",
-                    location,
-                    get_production_hash_link(name),
-                    get_production_name(referenced.as_ref())
-                ),
-            );
-        }
-
         EBNF::Terminal(string) => {
             write_token(w, TokenKind::string, &format_string_literal(string));
         }
 
-        EBNF::Difference(EBNFDifference {
-            minuend,
-            subtrahend,
-        }) => {
-            write_subexpression(w, expr, minuend, context);
-            write_token(w, TokenKind::operator, " - ");
-            write_subexpression(w, expr, subtrahend, context);
-        }
-
-        EBNF::Range(EBNFRange { from, to }) => {
-            write_token(
-                w,
-                TokenKind::string,
-                &format_string_literal(&from.to_string()),
-            );
-            write_token(w, TokenKind::operator, "…");
-            write_token(
-                w,
-                TokenKind::string,
-                &format_string_literal(&to.to_string()),
-            );
+        EBNF::ZeroOrMore(expr) => {
+            write_token(w, TokenKind::operator, "{");
+            write_expression(w, expr, context);
+            write_token(w, TokenKind::operator, "}");
         }
     }
 }
@@ -198,8 +196,8 @@ fn write_subexpression<T: Write>(
 #[allow(non_camel_case_types)]
 enum TokenKind {
     comment,
-    keyword,
     constant,
+    keyword,
     operator,
     string,
 }

@@ -1,11 +1,13 @@
+use std::{collections::HashSet, path::PathBuf};
+
+use jsonschema::JSONSchema;
+use regex::Regex;
+use semver::Version;
+
 use crate::{
     schema::{EBNFDelimitedBy, EBNFRepeat, EBNFSeparatedBy, Expression, Grammar, EBNF},
     spec::topics::generate_topic_slug,
 };
-use jsonschema::JSONSchema;
-use regex::Regex;
-use semver::Version;
-use std::{collections::HashSet, path::PathBuf};
 
 static REQUIRED_PRODUCTIONS: [&str; 2] = ["LeadingTrivia", "TrailingTrivia"];
 
@@ -142,10 +144,28 @@ fn validate_expression(
     used: &mut HashSet<String>,
 ) {
     match &expression.ebnf {
+        EBNF::Choice(elements) | EBNF::Sequence(elements) => {
+            elements.iter().for_each(|sub_expression| {
+                validate_expression(sub_expression, defined, used);
+            });
+        }
+
+        EBNF::DelimitedBy(EBNFDelimitedBy { expr, .. })
+        | EBNF::Not(expr)
+        | EBNF::OneOrMore(expr)
+        | EBNF::Optional(expr)
+        | EBNF::Repeat(EBNFRepeat { expr, .. })
+        | EBNF::SeparatedBy(EBNFSeparatedBy { expr, .. })
+        | EBNF::ZeroOrMore(expr) => {
+            validate_expression(expr, defined, used);
+        }
+
         EBNF::Difference(difference) => {
             validate_expression(&difference.minuend, defined, used);
             validate_expression(&difference.subtrahend, defined, used);
         }
+
+        EBNF::End | EBNF::Range(..) | EBNF::Terminal(..) => {}
 
         EBNF::Reference(reference) => {
             assert!(
@@ -156,24 +176,6 @@ fn validate_expression(
 
             used.insert(reference.clone());
         }
-
-        EBNF::Not(expr)
-        | EBNF::ZeroOrMore(expr)
-        | EBNF::OneOrMore(expr)
-        | EBNF::Optional(expr)
-        | EBNF::Repeat(EBNFRepeat { expr, .. })
-        | EBNF::DelimitedBy(EBNFDelimitedBy { expr, .. })
-        | EBNF::SeparatedBy(EBNFSeparatedBy { expr, .. }) => {
-            validate_expression(expr, defined, used);
-        }
-
-        EBNF::Choice(elements) | EBNF::Sequence(elements) => {
-            elements.iter().for_each(|sub_expression| {
-                validate_expression(sub_expression, defined, used);
-            });
-        }
-
-        EBNF::End | EBNF::Range(..) | EBNF::Terminal(..) => {}
     };
 }
 

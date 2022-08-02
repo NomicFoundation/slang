@@ -1,8 +1,11 @@
-use super::productions::{write_production, SpecProductionContext};
-use super::NavigationEntry;
+use std::{fs::File, io::Write, path::PathBuf};
+
 use crate::schema::Grammar;
-use std::io::Write;
-use std::{fs::File, path::PathBuf};
+
+use super::{
+    productions::{write_production, SpecProductionContext},
+    NavigationEntry,
+};
 
 pub fn generate_spec_sections(
     grammar: &Grammar,

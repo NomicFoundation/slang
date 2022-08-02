@@ -1,8 +1,8 @@
+use std::fmt::Write;
+
 use semver::Version;
 
 use crate::schema::*;
-
-use std::fmt::Write;
 
 impl Production {
     pub(crate) fn ebnf_display_name(&self) -> String {
