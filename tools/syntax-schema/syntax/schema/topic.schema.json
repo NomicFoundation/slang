@@ -42,7 +42,6 @@
       "properties": {
         "name": { "type": "string", "minLength": 1 },
         "lookahead": { "$ref": "#/$defs/Expression" },
-        "prelude": { "type": "string" },
         "associativity": { "enum": ["Left", "Right"] }
       }
     },

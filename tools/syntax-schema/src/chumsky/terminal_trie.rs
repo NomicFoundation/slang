@@ -148,10 +148,13 @@ impl Expression {
                 .get_production(name)
                 .expression_to_generate()
                 .collect_terminals(grammar, accum),
-            EBNF::Sequence(_) => false, // TODO: special case this i.e. 'multiply' the sequence elements?
-            EBNF::SeparatedBy(_)
+            EBNF::Sequence(_) // TODO: special case this i.e. 'multiply' the sequence elements?
+            | EBNF::SeparatedBy(_)
             | EBNF::DelimitedBy(_)
             | EBNF::End
+            | EBNF::ZeroOrMore(_)
+            | EBNF::OneOrMore(_)
+            | EBNF::Optional(_)
             | EBNF::Repeat(_)
             | EBNF::Not(_)
             | EBNF::Difference(_)

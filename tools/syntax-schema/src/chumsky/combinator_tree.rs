@@ -38,7 +38,7 @@ pub enum CombinatorTree {
     },
     Choice {
         name: Name,
-        choices: Vec<NamedCombinatorTreeRef>,
+        elements: Vec<NamedCombinatorTreeRef>,
     },
     Optional {
         expr: CombinatorTreeRef,
@@ -54,11 +54,19 @@ pub enum CombinatorTree {
         expr: CombinatorTreeRef,
         separator: String,
     },
+    OneOrMore {
+        name: Name,
+        expr: CombinatorTreeRef,
+    },
+    ZeroOrMore {
+        name: Name,
+        expr: CombinatorTreeRef,
+    },
     Repeated {
         name: Name,
         expr: CombinatorTreeRef,
         min: usize,
-        max: Option<usize>,
+        max: usize,
     },
     Expression {
         name: Name,
@@ -108,8 +116,8 @@ fn ct_lookahead(expr: CombinatorTreeRef, lookahead: CombinatorTreeRef) -> Combin
     Rc::new(CombinatorTree::Lookahead { expr, lookahead })
 }
 
-fn ct_choice(name: Name, choices: Vec<(Name, CombinatorTreeRef)>) -> CombinatorTreeRef {
-    Rc::new(CombinatorTree::Choice { name, choices })
+fn ct_choice(name: Name, elements: Vec<(Name, CombinatorTreeRef)>) -> CombinatorTreeRef {
+    Rc::new(CombinatorTree::Choice { name, elements })
 }
 
 fn ct_sequence(name: Name, elements: Vec<(Name, CombinatorTreeRef)>) -> CombinatorTreeRef {
@@ -142,12 +150,15 @@ fn ct_separated_by(name: Name, expr: CombinatorTreeRef, separator: String) -> Co
     })
 }
 
-fn ct_repeat(
-    name: Name,
-    expr: CombinatorTreeRef,
-    min: usize,
-    max: Option<usize>,
-) -> CombinatorTreeRef {
+fn ct_zero_or_more(name: Name, expr: CombinatorTreeRef) -> CombinatorTreeRef {
+    Rc::new(CombinatorTree::ZeroOrMore { name, expr })
+}
+
+fn ct_one_or_more(name: Name, expr: CombinatorTreeRef) -> CombinatorTreeRef {
+    Rc::new(CombinatorTree::OneOrMore { name, expr })
+}
+
+fn ct_repeat(name: Name, expr: CombinatorTreeRef, min: usize, max: usize) -> CombinatorTreeRef {
     Rc::new(CombinatorTree::Repeated {
         name,
         expr,
@@ -336,83 +347,108 @@ impl CombinatorTreeNodeTrait for CombinatorTreeRef {
                 minuend.with_unambiguous_named_types(index),
                 subtrahend.with_unambiguous_named_types(index),
             ),
+
             CombinatorTree::DelimitedBy {
                 name,
                 open,
                 expr,
                 close,
-            } => {
-                let name = name.clone().self_or_numbered(index);
-                let e = expr.1.with_unambiguous_named_types(index);
-                let n = e.name().self_or_else(|| Name::from_string("body"));
-                ct_delimited_by(name, open.clone(), (n, e), close.clone())
-            }
+            } => ct_delimited_by(
+                name.clone().self_or_numbered(index),
+                open.clone(),
+                {
+                    let e = expr.1.with_unambiguous_named_types(index);
+                    let n = e.name().self_or_else(|| Name::from_string("body"));
+                    (n, e)
+                },
+                close.clone(),
+            ),
+
             CombinatorTree::Lookahead { expr, lookahead } => ct_lookahead(
                 expr.with_unambiguous_named_types(index),
                 lookahead.with_unambiguous_named_types(index),
             ),
-            CombinatorTree::Choice { name, choices } => {
-                let name = name.clone().self_or_numbered(index);
-                let choices = choices
-                    .into_iter()
-                    .enumerate()
-                    .map(|(i, (n, e))| {
-                        let e = e.with_unambiguous_named_types(index);
-                        let n = n.clone().self_or_else(|| e.name()).self_or_positional(i);
-                        (n, e)
-                    })
-                    .collect::<Vec<_>>();
-                let names =
-                    disambiguate_structure_names(choices.iter().map(|(n, _)| n.clone()).collect());
-                let choices = choices
-                    .into_iter()
-                    .zip(names.into_iter())
-                    .map(|((_, e), n)| (n, e))
-                    .collect();
-                ct_choice(name, choices)
+
+            CombinatorTree::Choice { name, elements } => {
+                ct_choice(name.clone().self_or_numbered(index), {
+                    let elements = elements
+                        .into_iter()
+                        .enumerate()
+                        .map(|(i, (n, e))| {
+                            let e = e.with_unambiguous_named_types(index);
+                            let n = n.clone().self_or_else(|| e.name()).self_or_positional(i);
+                            (n, e)
+                        })
+                        .collect::<Vec<_>>();
+                    let names = disambiguate_structure_names(
+                        elements.iter().map(|(n, _)| n.clone()).collect(),
+                    );
+                    elements
+                        .into_iter()
+                        .zip(names.into_iter())
+                        .map(|((_, e), n)| (n, e))
+                        .collect()
+                })
             }
+
             CombinatorTree::Sequence { name, elements } => {
-                let name = name.clone().self_or_numbered(index);
-                let elements = elements
-                    .into_iter()
-                    .enumerate()
-                    .map(|(i, (n, e))| {
-                        let e = e.with_unambiguous_named_types(index);
-                        let n = n.clone().self_or_else(|| e.name()).self_or_positional(i);
-                        (n, e)
-                    })
-                    .collect::<Vec<_>>();
-                let names =
-                    disambiguate_structure_names(elements.iter().map(|(n, _)| n.clone()).collect());
-                let elements = elements
-                    .into_iter()
-                    .zip(names.into_iter())
-                    .map(|((_, e), n)| (n, e))
-                    .collect();
-                ct_sequence(name, elements)
+                ct_sequence(name.clone().self_or_numbered(index), {
+                    let elements = elements
+                        .into_iter()
+                        .enumerate()
+                        .map(|(i, (n, e))| {
+                            let e = e.with_unambiguous_named_types(index);
+                            let n = n.clone().self_or_else(|| e.name()).self_or_positional(i);
+                            (n, e)
+                        })
+                        .collect::<Vec<_>>();
+                    let names = disambiguate_structure_names(
+                        elements.iter().map(|(n, _)| n.clone()).collect(),
+                    );
+                    elements
+                        .into_iter()
+                        .zip(names.into_iter())
+                        .map(|((_, e), n)| (n, e))
+                        .collect()
+                })
             }
+
             CombinatorTree::Optional { expr } => {
                 ct_optional(expr.with_unambiguous_named_types(index))
             }
+
             CombinatorTree::SeparatedBy {
                 name,
                 expr,
                 separator,
-            } => {
-                let name = name.clone().self_or_numbered(index);
-                let expr = expr.with_unambiguous_named_types(index);
-                ct_separated_by(name, expr, separator.clone())
-            }
+            } => ct_separated_by(
+                name.clone().self_or_numbered(index),
+                expr.with_unambiguous_named_types(index),
+                separator.clone(),
+            ),
+
+            CombinatorTree::ZeroOrMore { name, expr } => ct_zero_or_more(
+                name.clone().self_or_numbered(index),
+                expr.with_unambiguous_named_types(index),
+            ),
+
+            CombinatorTree::OneOrMore { name, expr } => ct_one_or_more(
+                name.clone().self_or_numbered(index),
+                expr.with_unambiguous_named_types(index),
+            ),
+
             CombinatorTree::Repeated {
                 name,
                 expr,
                 min,
                 max,
-            } => {
-                let name = name.clone().self_or_numbered(index);
-                let expr = expr.with_unambiguous_named_types(index);
-                ct_repeat(name, expr, *min, *max)
-            }
+            } => ct_repeat(
+                name.clone().self_or_numbered(index),
+                expr.with_unambiguous_named_types(index),
+                *min,
+                *max,
+            ),
+
             CombinatorTree::ExpressionMember {
                 name,
                 parent_name,
@@ -426,10 +462,12 @@ impl CombinatorTreeNodeTrait for CombinatorTreeRef {
                 operator.with_unambiguous_named_types(index),
                 *operator_model,
             ),
+
             CombinatorTree::Expression { .. }
             | CombinatorTree::Reference { .. }
             | CombinatorTree::TerminalTrie { .. }
             | CombinatorTree::CharacterFilter { .. } => self.clone(),
+
             CombinatorTree::End => ct_end(),
         }
     }
@@ -462,42 +500,55 @@ impl CombinatorTree {
             | Self::ExpressionMember { name, .. }
             | Self::DelimitedBy { name, .. }
             | Self::Sequence { name, .. } => name.clone(),
+
             Self::Difference { minuend: expr, .. }
             | Self::Lookahead { expr, .. }
             | Self::Optional { expr } => expr.name(),
-            Self::SeparatedBy { expr, .. } | Self::Repeated { expr, .. } => expr.name().pluralize(),
+
+            Self::SeparatedBy { expr, .. }
+            | Self::ZeroOrMore { expr, .. }
+            | Self::OneOrMore { expr, .. }
+            | Self::Repeated { expr, .. } => expr.name().pluralize(),
+
             Self::Reference { production } => production.upgrade().unwrap().slang_name(),
+
             Self::End => Name::from_string("end_marker"),
         }
     }
 
     fn has_default(&self) -> bool {
         match self {
-            CombinatorTree::Difference { minuend, .. } => minuend.has_default(),
-            CombinatorTree::Lookahead { expr, .. } => expr.has_default(),
-            CombinatorTree::DelimitedBy { expr, .. } => expr.1.has_default(),
-            CombinatorTree::Sequence { elements, .. } => {
-                elements.iter().all(|(_, e)| e.has_default())
-            }
-            CombinatorTree::Choice { .. } => false,
-            CombinatorTree::Optional { .. } => true,
-            CombinatorTree::SeparatedBy { .. } => true,
-            CombinatorTree::Repeated { .. } => true,
-            CombinatorTree::Expression { .. } => false,
-            CombinatorTree::ExpressionMember {
+            Self::Difference { minuend: expr, .. }
+            | Self::Lookahead { expr, .. }
+            | Self::DelimitedBy {
+                expr: (_, expr), ..
+            } => expr.has_default(),
+
+            Self::Sequence { elements, .. } => elements.iter().all(|(_, e)| e.has_default()),
+
+            Self::Optional { .. }
+            | Self::SeparatedBy { .. }
+            | Self::ZeroOrMore { .. }
+            | Self::OneOrMore { .. }
+            | Self::Repeated { .. }
+            | Self::TerminalTrie { .. }
+            | Self::CharacterFilter { .. }
+            | Self::End => true,
+
+            Self::Choice { .. } | Self::Expression { .. } => false,
+
+            Self::ExpressionMember {
                 operator,
                 operator_model,
                 ..
             } => *operator_model == OperatorModel::None && operator.has_default(),
-            CombinatorTree::Reference { production } => production
+
+            Self::Reference { production } => production
                 .upgrade()
                 .unwrap()
                 .combinator_tree()
                 .root
                 .has_default(),
-            CombinatorTree::TerminalTrie { .. } => true,
-            CombinatorTree::CharacterFilter { .. } => true,
-            CombinatorTree::End => true,
         }
     }
 
@@ -530,7 +581,7 @@ impl CombinatorTree {
 
     fn to_generated_code(&self, tree: &CombinatorTreeRoot) -> GeneratedCode {
         match self {
-            CombinatorTree::Difference {
+            Self::Difference {
                 minuend,
                 subtrahend,
             } => {
@@ -544,7 +595,7 @@ impl CombinatorTree {
                 minuend
             }
 
-            CombinatorTree::Lookahead { expr, lookahead } => {
+            Self::Lookahead { expr, lookahead } => {
                 let mut expr = expr.to_generated_code(tree);
                 let lookahead = lookahead.to_generated_code(tree);
 
@@ -555,7 +606,7 @@ impl CombinatorTree {
                 expr
             }
 
-            CombinatorTree::DelimitedBy {
+            Self::DelimitedBy {
                 name,
                 open,
                 expr,
@@ -631,7 +682,7 @@ impl CombinatorTree {
                 result
             }
 
-            CombinatorTree::Sequence { name, elements } => {
+            Self::Sequence { name, elements } => {
                 let mut result: GeneratedCode = Default::default();
 
                 let module_name = tree.slang_name().to_module_name_ident();
@@ -712,7 +763,7 @@ impl CombinatorTree {
                 result
             }
 
-            CombinatorTree::Choice { name, choices } => {
+            Self::Choice { name, elements } => {
                 let mut result: GeneratedCode = Default::default();
 
                 let module_name = tree.slang_name().to_module_name_ident();
@@ -720,7 +771,7 @@ impl CombinatorTree {
 
                 let mut fields = vec![];
                 let mut parsers = vec![];
-                for (name, element) in choices {
+                for (name, element) in elements {
                     result.merge(element.to_generated_code(tree));
 
                     let name = name.to_enum_tag_ident();
@@ -744,19 +795,7 @@ impl CombinatorTree {
                 result
             }
 
-            CombinatorTree::Optional { expr } => {
-                let mut result = expr.to_generated_code(tree);
-
-                let parser = result.parser;
-                result.parser = quote!( #parser.or_not() );
-
-                let parser_type = result.parser_type;
-                result.parser_type = quote!( Option<#parser_type> );
-
-                result
-            }
-
-            CombinatorTree::SeparatedBy {
+            Self::SeparatedBy {
                 name,
                 expr,
                 separator,
@@ -817,17 +856,66 @@ impl CombinatorTree {
                 result
             }
 
-            CombinatorTree::Repeated { expr, min, max, .. } => {
+            Self::Optional { expr } => {
+                let mut result = expr.to_generated_code(tree);
+
+                let parser = result.parser;
+                result.parser = quote!( #parser.or_not() );
+
+                let parser_type = result.parser_type;
+                result.parser_type = quote!( Option<#parser_type> );
+
+                result
+            }
+
+            Self::ZeroOrMore { expr, .. } => {
                 let mut result = expr.to_generated_code(tree);
 
                 let mut parser = result.parser;
                 parser = quote!( #parser.repeated() );
-                match (min, max) {
-                    (0, None) => {}
-                    (0, Some(max)) => parser = quote!( #parser.at_most(#max) ),
-                    (min, None) => parser = quote!( #parser.at_least(#min) ),
-                    (min, Some(max)) if min == max => parser = quote!( #parser.exactly(#min) ),
-                    (min, Some(max)) => parser = quote!( #parser.at_least(#min).at_most(#max) ),
+
+                if matches!(**expr, Self::CharacterFilter { .. }) {
+                    // Vec<()> -> VeriableSizeTerminal
+                    parser = quote!( #parser.map(|v| VariableSizeTerminal(v.len())) );
+                    result.parser_type = quote!(VariableSizeTerminal);
+                } else {
+                    let parser_type = result.parser_type;
+                    result.parser_type = quote!( Vec<#parser_type> );
+                };
+
+                result.parser = parser;
+
+                result
+            }
+
+            Self::OneOrMore { expr, .. } => {
+                let mut result = expr.to_generated_code(tree);
+
+                let mut parser = result.parser;
+                parser = quote!( #parser.repeated().at_least(1usize) );
+
+                if matches!(**expr, Self::CharacterFilter { .. }) {
+                    // Vec<()> -> VeriableSizeTerminal
+                    parser = quote!( #parser.map(|v| VariableSizeTerminal(v.len())) );
+                    result.parser_type = quote!(VariableSizeTerminal);
+                } else {
+                    let parser_type = result.parser_type;
+                    result.parser_type = quote!( Vec<#parser_type> );
+                };
+
+                result.parser = parser;
+
+                result
+            }
+
+            Self::Repeated { expr, min, max, .. } => {
+                let mut result = expr.to_generated_code(tree);
+
+                let mut parser = result.parser;
+                parser = if min == max {
+                    quote!( #parser.repeated().exactly(#min) )
+                } else {
+                    quote!( #parser.repeated().at_least(#min).at_most(#max) )
                 };
 
                 if matches!(**expr, Self::CharacterFilter { .. }) {
@@ -844,7 +932,7 @@ impl CombinatorTree {
                 result
             }
 
-            CombinatorTree::Expression { name, members } => {
+            Self::Expression { name, members } => {
                 let mut result: GeneratedCode = Default::default();
 
                 let module_name = tree.slang_name().to_module_name_ident();
@@ -875,7 +963,7 @@ impl CombinatorTree {
                 result
             }
 
-            CombinatorTree::ExpressionMember {
+            Self::ExpressionMember {
                 name,
                 parent_name,
                 next_sibling_name,
@@ -1068,7 +1156,7 @@ impl CombinatorTree {
                 result
             }
 
-            CombinatorTree::Reference { production } => {
+            Self::Reference { production } => {
                 let mut result: GeneratedCode = Default::default();
                 let production = production.upgrade().unwrap();
 
@@ -1094,15 +1182,15 @@ impl CombinatorTree {
                 result
             }
 
-            CombinatorTree::TerminalTrie { trie, .. } => {
+            Self::TerminalTrie { trie, .. } => {
                 trie.to_generated_code(!tree.production().is_token())
             }
 
-            CombinatorTree::CharacterFilter { filter, .. } => {
+            Self::CharacterFilter { filter, .. } => {
                 filter.to_generated_code(!tree.production().is_token())
             }
 
-            CombinatorTree::End => {
+            Self::End => {
                 let mut result: GeneratedCode = Default::default();
                 result.parser = quote!(end());
                 result.parser_type = quote!(());
@@ -1113,40 +1201,42 @@ impl CombinatorTree {
 
     fn collect_identifiers(&self, accum: &mut BTreeSet<String>) {
         match self {
-            CombinatorTree::Difference {
+            Self::Difference {
                 minuend,
                 subtrahend,
             } => {
                 minuend.collect_identifiers(accum);
                 subtrahend.collect_identifiers(accum)
             }
-            CombinatorTree::DelimitedBy { expr, .. } => {
-                expr.1.collect_identifiers(accum);
-            }
-            CombinatorTree::Lookahead { expr, lookahead } => {
+
+            Self::Lookahead { expr, lookahead } => {
                 expr.collect_identifiers(accum);
                 lookahead.collect_identifiers(accum);
             }
-            CombinatorTree::Sequence { elements, .. } => {
+
+            Self::Sequence { elements, .. } | Self::Choice { elements, .. } => {
                 for (_, member) in elements {
                     member.collect_identifiers(accum);
                 }
             }
-            CombinatorTree::Choice { choices, .. } => {
-                for (_, member) in choices {
-                    member.collect_identifiers(accum);
-                }
+
+            Self::DelimitedBy {
+                expr: (_, expr), ..
             }
-            CombinatorTree::Optional { expr } => expr.collect_identifiers(accum),
-            CombinatorTree::SeparatedBy { expr, .. } => expr.collect_identifiers(accum),
-            CombinatorTree::Repeated { expr, .. } => expr.collect_identifiers(accum),
-            CombinatorTree::Expression { members, .. } => {
+            | Self::Optional { expr }
+            | Self::SeparatedBy { expr, .. }
+            | Self::ZeroOrMore { expr, .. }
+            | Self::OneOrMore { expr, .. }
+            | Self::Repeated { expr, .. } => expr.collect_identifiers(accum),
+
+            Self::Expression { members, .. } => {
                 for pr in members {
                     let p = pr.upgrade().unwrap();
                     accum.insert(p.name.clone());
                 }
             }
-            CombinatorTree::ExpressionMember {
+
+            Self::ExpressionMember {
                 parent_name,
                 next_sibling_name,
                 operator,
@@ -1158,12 +1248,12 @@ impl CombinatorTree {
                 }
                 operator.collect_identifiers(accum);
             }
-            CombinatorTree::Reference { production } => {
+
+            Self::Reference { production } => {
                 accum.insert(production.upgrade().unwrap().name.clone());
             }
-            CombinatorTree::TerminalTrie { .. }
-            | CombinatorTree::CharacterFilter { .. }
-            | CombinatorTree::End => {}
+
+            Self::TerminalTrie { .. } | Self::CharacterFilter { .. } | Self::End => {}
         }
     }
 }
@@ -1316,30 +1406,37 @@ impl Expression {
                     minuend.to_combinator_tree_node(production, grammar),
                     subtrahend.to_combinator_tree_node(production, grammar),
                 ),
-                EBNF::DelimitedBy(EBNFDelimitedBy { open, expr, close }) => {
-                    let name = self.config.slang_name();
-                    let expr = expr.to_combinator_tree_node(production, grammar);
-                    ct_delimited_by(name, open.clone(), (expr.name(), expr), close.clone())
+                EBNF::DelimitedBy(EBNFDelimitedBy { open, expr, close }) => ct_delimited_by(
+                    self.config.slang_name(),
+                    open.clone(),
+                    {
+                        let expr = expr.to_combinator_tree_node(production, grammar);
+                        (expr.name(), expr)
+                    },
+                    close.clone(),
+                ),
+                EBNF::ZeroOrMore(expr) => ct_zero_or_more(
+                    self.config.slang_name(),
+                    expr.to_combinator_tree_node(production, grammar),
+                ),
+                EBNF::OneOrMore(expr) => ct_one_or_more(
+                    self.config.slang_name(),
+                    expr.to_combinator_tree_node(production, grammar),
+                ),
+                EBNF::Optional(expr) => {
+                    ct_optional(expr.to_combinator_tree_node(production, grammar))
                 }
-                EBNF::Repeat(EBNFRepeat {
-                    expr,
-                    min: 0,
-                    max: Some(1),
-                    ..
-                }) => {
-                    let et = expr.to_combinator_tree_node(production, grammar);
-                    ct_optional(et)
-                }
-                EBNF::Repeat(EBNFRepeat { expr, min, max }) => {
-                    let name = self.config.slang_name();
-                    let et = expr.to_combinator_tree_node(production, grammar);
-                    ct_repeat(name, et, *min, *max)
-                }
-                EBNF::SeparatedBy(EBNFSeparatedBy { expr, separator }) => {
-                    let name = self.config.slang_name();
-                    let et = expr.to_combinator_tree_node(production, grammar);
-                    ct_separated_by(name, et, separator.clone())
-                }
+                EBNF::Repeat(EBNFRepeat { expr, min, max }) => ct_repeat(
+                    self.config.slang_name(),
+                    expr.to_combinator_tree_node(production, grammar),
+                    *min,
+                    *max,
+                ),
+                EBNF::SeparatedBy(EBNFSeparatedBy { expr, separator }) => ct_separated_by(
+                    self.config.slang_name(),
+                    expr.to_combinator_tree_node(production, grammar),
+                    separator.clone(),
+                ),
                 EBNF::Choice(exprs) => {
                     let name = self.config.slang_name();
 

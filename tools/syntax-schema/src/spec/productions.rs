@@ -59,28 +59,33 @@ fn write_expression<T: Write>(w: &mut T, expr: &Expression, context: &SpecProduc
             write_token(w, TokenKind::keyword, "$");
         }
 
-        EBNF::Repeat(EBNFRepeat { min, max, expr }) => match (min, max) {
-            (0, None) => {
-                write_token(w, TokenKind::operator, "{");
-                write_expression(w, expr, context);
-                write_token(w, TokenKind::operator, "}");
-            }
-            (0, Some(1)) => {
-                write_token(w, TokenKind::operator, "[");
-                write_expression(w, expr, context);
-                write_token(w, TokenKind::operator, "]");
-            }
-            _ => {
-                write_token(w, TokenKind::constant, &min.to_string());
-                write_token(w, TokenKind::operator, "…");
-                if let Some(max) = max {
-                    write_token(w, TokenKind::constant, &max.to_string());
-                }
-                write_token(w, TokenKind::operator, "{");
-                write_expression(w, expr, context);
-                write_token(w, TokenKind::operator, "}");
-            }
-        },
+        EBNF::ZeroOrMore(expr) => {
+            write_token(w, TokenKind::operator, "{");
+            write_expression(w, expr, context);
+            write_token(w, TokenKind::operator, "}");
+        }
+
+        EBNF::OneOrMore(expr) => {
+            write_token(w, TokenKind::constant, "1");
+            write_token(w, TokenKind::operator, "…");
+            write_expression(w, expr, context);
+            write_token(w, TokenKind::operator, "}");
+        }
+
+        EBNF::Optional(expr) => {
+            write_token(w, TokenKind::operator, "[");
+            write_expression(w, expr, context);
+            write_token(w, TokenKind::operator, "]");
+        }
+
+        EBNF::Repeat(EBNFRepeat { min, max, expr }) => {
+            write_token(w, TokenKind::constant, &min.to_string());
+            write_token(w, TokenKind::operator, "…");
+            write_token(w, TokenKind::constant, &max.to_string());
+            write_token(w, TokenKind::operator, "{");
+            write_expression(w, expr, context);
+            write_token(w, TokenKind::operator, "}");
+        }
 
         EBNF::Not(sub_expr) => {
             write_token(w, TokenKind::operator, "¬");
