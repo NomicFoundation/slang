@@ -2,14 +2,12 @@
 set -euo pipefail
 
 THIS_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
-PROJECT_DIR=$(dirname "$THIS_DIR")
-REPO_ROOT=$(realpath "$PROJECT_DIR/../..")
 
 # shellcheck source=/dev/null
-[[ "${HERMIT_ENV:-}" == "$PROJECT_DIR" ]] || source "$PROJECT_DIR/bin/activate-hermit"
+source "$THIS_DIR/../common.sh"
 
 BASH_FILES=$(
-  cd "$REPO_ROOT"
+  cd "$HERMIT_ENV"
   git ls-files --cached --modified --others --exclude-standard | grep ".sh$" | xargs realpath --canonicalize-existing 2> /dev/null
 )
 

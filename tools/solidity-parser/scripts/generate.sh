@@ -2,11 +2,9 @@
 set -euo pipefail
 
 THIS_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
-PROJECT_DIR=$(dirname "$THIS_DIR")
-REPO_ROOT=$(realpath "$PROJECT_DIR/../..")
 
 # shellcheck source=/dev/null
-[[ "${HERMIT_ENV:-}" == "$PROJECT_DIR" ]] || source "$PROJECT_DIR/bin/activate-hermit"
+source "$THIS_DIR/common.sh"
 
 ###################################################
 # Solidity from the intended source manifest
@@ -25,4 +23,4 @@ cargo run --manifest-path "$PROJECT_DIR/../syntax-schema/Cargo.toml" --bin "mani
 
 cargo run --manifest-path "$PROJECT_DIR/../syntax-schema/Cargo.toml" --bin "manifest_to_spec" -- \
   --manifest-input "$PROJECT_DIR/syntax/solidity/manifest.yml" \
-  --documentation-folder "$REPO_ROOT/documentation"
+  --documentation-folder "$HERMIT_ENV/documentation"
