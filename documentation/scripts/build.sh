@@ -2,31 +2,30 @@
 set -euo pipefail
 
 THIS_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
-PROJECT_DIR=$(dirname "$THIS_DIR")
 
 # shellcheck source=/dev/null
-[[ "${HERMIT_ENV:-}" == "$PROJECT_DIR" ]] || source "$PROJECT_DIR/bin/activate-hermit"
+source "$THIS_DIR/common.sh"
 
 (
   # Run setup first
-  "$THIS_DIR/setup.sh"
+  "$DOCUMENTATION_DIR/scripts/setup.sh"
 )
 
 (
   # Merge Config Files
-  mkdir -p "$PROJECT_DIR/target"
+  mkdir -p "$DOCUMENTATION_TARGET_DIR"
 
   # shellcheck disable=SC2016
   yq eval-all '. as $file ireduce ({}; . *+ $file )' \
-    "$PROJECT_DIR/mkdocs.config.yml" \
-    "$PROJECT_DIR/mkdocs.specification.yml" \
-    "$PROJECT_DIR/mkdocs.theme.yml" \
-    > "$PROJECT_DIR/target/mkdocs.yml"
+    "$DOCUMENTATION_DIR/mkdocs.config.yml" \
+    "$DOCUMENTATION_DIR/mkdocs.specification.yml" \
+    "$DOCUMENTATION_DIR/mkdocs.theme.yml" \
+    > "$DOCUMENTATION_TARGET_DIR/mkdocs.yml"
 )
 
 (
   printf "\n\n📚 Building Static Assets 📚\n\n\n"
-  cd "$PROJECT_DIR/target"
+  cd "$DOCUMENTATION_TARGET_DIR"
   python3 -m pipenv run mkdocs build --clean --strict
 )
 

@@ -4,8 +4,8 @@ repo_url: https://github.com/NomicFoundation/slang
 repo_name: NomicFoundation/slang
 edit_uri: blob/main/documentation/docs/
 
-docs_dir: !ENV DOCS_DIR
-site_dir: !ENV SITE_DIR
+docs_dir: !ENV DOCUMENTATION_SOURCE_FILES
+site_dir: !ENV DOCUMENTATION_SITE_DIR
 
 nav:
   - Home: index.md

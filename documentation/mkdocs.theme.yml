@@ -12,7 +12,7 @@ markdown_extensions:
       anchor_linenums: true
   - pymdownx.inlinehilite
   - pymdownx.snippets:
-      base_path: !ENV DOCS_DIR
+      base_path: !ENV DOCUMENTATION_SOURCE_FILES
       check_paths: true
   - pymdownx.superfences
   - pymdownx.tabbed:
