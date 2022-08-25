@@ -9,7 +9,7 @@ jobs:
           [
             "./code-analysis/scripts/check.sh",
             "./documentation/scripts/build.sh",
-            "./tools/linting/scripts/run.sh",
+            "./infrastructure/scripts/lint.sh",
             "./tools/version-breaks/scripts/check.sh",
           ]
     runs-on: ubuntu-latest
