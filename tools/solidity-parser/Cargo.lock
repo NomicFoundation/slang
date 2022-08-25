@@ -237,6 +237,31 @@ dependencies = [
 ]
 
 [[package]]
+name = "codegen"
+version = "0.0.0"
+dependencies = [
+ "Inflector",
+ "ariadne",
+ "binary-search",
+ "chumsky",
+ "clap 3.1.18",
+ "convert_case",
+ "indexmap",
+ "itertools",
+ "jsonschema",
+ "mset",
+ "patricia_tree",
+ "proc-macro2",
+ "quote",
+ "regex 1.5.6",
+ "rustfmt",
+ "semver 1.0.9",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+]
+
+[[package]]
 name = "const-random"
 version = "0.1.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1363,6 +1388,7 @@ dependencies = [
  "binary-search",
  "chumsky",
  "clap 3.1.18",
+ "codegen",
  "convert_case",
  "indexmap",
  "itertools",
