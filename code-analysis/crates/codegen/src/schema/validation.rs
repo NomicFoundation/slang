@@ -8,6 +8,7 @@ use regex::Regex;
 use semver::Version;
 
 use crate::{
+    build_utils::read_source_file,
     schema::{EBNFDelimitedBy, EBNFRepeat, EBNFSeparatedBy, Expression, Grammar, EBNF},
     spec::topics::generate_topic_slug,
 };
@@ -181,7 +182,7 @@ impl LoadedSchemas {
     }
 
     pub fn validate(&mut self, yaml_path: &PathBuf) {
-        let yaml_contents = std::fs::read_to_string(&yaml_path).unwrap();
+        let yaml_contents = read_source_file(&yaml_path);
 
         let schema_path_re = Regex::new(r"# yaml-language-server: \$schema=([\.\-/a-z]+)").unwrap();
         let mut schema_path_matches = schema_path_re.captures_iter(&yaml_contents);
@@ -194,7 +195,7 @@ impl LoadedSchemas {
         let schema_path = yaml_path.parent().unwrap().join(schema_path);
 
         if !self.schemas.contains_key(&schema_path) {
-            let schema_contents = std::fs::read_to_string(&schema_path).unwrap();
+            let schema_contents = read_source_file(&schema_path);
             let schema_json = &serde_json::from_str(&schema_contents).unwrap();
             let schema = JSONSchema::compile(schema_json).unwrap();
 

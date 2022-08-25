@@ -1,6 +1,9 @@
-use std::{fs::File, io::Write, path::PathBuf};
+use std::{io::Write, path::PathBuf};
 
-use crate::schema::Grammar;
+use crate::{
+    build_utils::{read_source_file, write_generated_file},
+    schema::Grammar,
+};
 
 use super::{
     productions::{write_production, SpecProductionContext},
@@ -58,8 +61,7 @@ pub fn generate_spec_sections(
                         file_path: Some(notes_file.clone()),
                     });
 
-                    std::fs::create_dir_all(topic_file.parent().unwrap()).unwrap();
-                    let mut w = File::create(topic_file).expect("Unable to create file");
+                    let mut w : Vec<u8> = Vec::new();
 
                     writeln!(w, "<!-- markdownlint-disable no-inline-html -->").unwrap();
                     writeln!(w, "<!-- markdownlint-disable no-space-in-emphasis -->").unwrap();
@@ -93,13 +95,15 @@ pub fn generate_spec_sections(
                     assert!(notes_file.exists(), "Notes file does not exist: {notes_file:?}");
 
                     assert_eq!(
-                        std::fs::read_to_string(&notes_file).unwrap().lines().nth(0),
+                        read_source_file(&notes_file).lines().nth(0),
                         Some("<!-- markdownlint-configure-file { \"first-line-heading\": { \"level\": 2 } } -->"),
                         "First line of notes file should be the markdownlint configuration: {:?}", &notes_file
                     );
 
                     writeln!(w).unwrap();
-                    writeln!(&w, "--8<-- \"specification/notes/{topic_slug}/index.md\"").unwrap();
+                    writeln!(w, "--8<-- \"specification/notes/{topic_slug}/index.md\"").unwrap();
+
+                    write_generated_file(&topic_file, &String::from_utf8(w).unwrap());
                 });
         });
 }
