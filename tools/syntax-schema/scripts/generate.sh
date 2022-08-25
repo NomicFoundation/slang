@@ -13,13 +13,15 @@ source "$THIS_DIR/common.sh"
 # Do this twice to auto-dogfood the ebnf -> chumsky process
 # Should be a fixed point
 
+EBNF_CRATE="$HERMIT_ENV/code-analysis/crates/parsers/ebnf"
+
 cargo run --manifest-path "$PROJECT_DIR/Cargo.toml" --bin "validate_manifest" -- \
-  --manifest-input "$PROJECT_DIR/syntax/ebnf/manifest.yml"
+  --manifest-input "$EBNF_CRATE/grammar/manifest.yml"
 
 cargo run --manifest-path "$PROJECT_DIR/Cargo.toml" --bin "manifest_to_chumsky" -- \
-  --manifest-input "$PROJECT_DIR/syntax/ebnf/manifest.yml" \
-  --chumsky-output "$PROJECT_DIR/src/ebnf/generated/"
+  --manifest-input "$EBNF_CRATE/grammar/manifest.yml" \
+  --chumsky-output "$EBNF_CRATE/src/generated/"
 
 cargo run --manifest-path "$PROJECT_DIR/Cargo.toml" --bin "manifest_to_ebnf" -- \
-  --manifest-input "$PROJECT_DIR/syntax/ebnf/manifest.yml" \
-  --ebnf-output "$PROJECT_DIR/src/ebnf/generated/derived.ebnf"
+  --manifest-input "$EBNF_CRATE/grammar/manifest.yml" \
+  --ebnf-output "$EBNF_CRATE/src/generated/derived.ebnf"
