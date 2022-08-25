@@ -4,7 +4,7 @@ use ariadne::{Color, Fmt, Label, Report, ReportKind, Source};
 use chumsky::{prelude::*, Parser};
 use clap::Parser as ClapParser;
 
-use syntax_schema::ebnf::generated::parser_interface::Parsers;
+use ebnf_parser::generated::parser_interface::Parsers;
 
 #[derive(ClapParser, Debug)]
 struct ProgramArgs {
