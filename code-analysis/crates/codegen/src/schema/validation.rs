@@ -1,4 +1,7 @@
-use std::{collections::HashSet, path::PathBuf};
+use std::{
+    collections::{HashMap, HashSet},
+    path::PathBuf,
+};
 
 use jsonschema::JSONSchema;
 use regex::Regex;
@@ -15,9 +18,10 @@ impl Grammar {
     pub fn validate(&self, manifest_path: &PathBuf) {
         validate_topics(self);
 
-        validate_json_schema(manifest_path);
+        let mut schemas = LoadedSchemas::new();
+        schemas.validate(manifest_path);
         self.productions.keys().for_each(|topic_path| {
-            validate_json_schema(&manifest_path.parent().unwrap().join(topic_path));
+            schemas.validate(&manifest_path.parent().unwrap().join(topic_path));
         });
 
         let defined = validate_definitions(self);
@@ -45,35 +49,6 @@ fn validate_topics(grammar: &Grammar) {
                     }
                 });
         });
-}
-
-fn validate_json_schema(yaml_path: &PathBuf) {
-    let yaml_contents = std::fs::read_to_string(&yaml_path).unwrap();
-
-    let schema_path_re = Regex::new(r"# yaml-language-server: \$schema=([\.\-/a-z]+)").unwrap();
-    let mut schema_path_matches = schema_path_re.captures_iter(&yaml_contents);
-    let schema_path = schema_path_matches.next().unwrap().get(1).unwrap().as_str();
-    assert!(
-        schema_path_matches.next().is_none(),
-        "Multiple schema paths"
-    );
-
-    let schema_path = yaml_path.parent().unwrap().join(schema_path);
-    let schema_contents = std::fs::read_to_string(&schema_path).unwrap();
-    let schema_json = &serde_json::from_str(&schema_contents).unwrap();
-    let compiled_schema = JSONSchema::compile(schema_json).unwrap();
-
-    let yaml_value = serde_yaml::from_str(&yaml_contents).unwrap();
-    let json_value = serde_json::from_value(yaml_value).unwrap();
-
-    let validation = compiled_schema.validate(&json_value);
-    if let Err(errors) = validation {
-        for error in errors {
-            println!("{:?}", error);
-        }
-
-        panic!("Schema Validation errors in: {:?}", yaml_path);
-    }
 }
 
 fn validate_definitions(grammar: &Grammar) -> HashSet<String> {
@@ -191,5 +166,53 @@ fn validate_version(grammar: &Grammar, version: &Version) {
             "Version {} is not defined in the manifest",
             version
         ),
+    }
+}
+
+struct LoadedSchemas {
+    schemas: HashMap<PathBuf, JSONSchema>,
+}
+
+impl LoadedSchemas {
+    pub fn new() -> Self {
+        return Self {
+            schemas: HashMap::new(),
+        };
+    }
+
+    pub fn validate(&mut self, yaml_path: &PathBuf) {
+        let yaml_contents = std::fs::read_to_string(&yaml_path).unwrap();
+
+        let schema_path_re = Regex::new(r"# yaml-language-server: \$schema=([\.\-/a-z]+)").unwrap();
+        let mut schema_path_matches = schema_path_re.captures_iter(&yaml_contents);
+        let schema_path = schema_path_matches.next().unwrap().get(1).unwrap().as_str();
+        assert!(
+            schema_path_matches.next().is_none(),
+            "Multiple schema paths"
+        );
+
+        let schema_path = yaml_path.parent().unwrap().join(schema_path);
+
+        if !self.schemas.contains_key(&schema_path) {
+            let schema_contents = std::fs::read_to_string(&schema_path).unwrap();
+            let schema_json = &serde_json::from_str(&schema_contents).unwrap();
+            let schema = JSONSchema::compile(schema_json).unwrap();
+
+            self.schemas.insert(schema_path.to_owned(), schema);
+        }
+
+        let schema = self.schemas.get(&schema_path).unwrap();
+
+        let yaml_value = serde_yaml::from_str(&yaml_contents).unwrap();
+        let json_value = serde_json::from_value(yaml_value).unwrap();
+
+        let validation = schema.validate(&json_value);
+        if let Err(errors) = validation {
+            for error in errors {
+                println!("{:?}", error);
+            }
+
+            panic!("Schema Validation errors in: {:?}", yaml_path);
+        }
     }
 }
