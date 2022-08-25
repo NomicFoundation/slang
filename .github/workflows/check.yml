@@ -7,6 +7,7 @@ jobs:
       matrix:
         script:
           [
+            "./code-analysis/scripts/check.sh",
             "./documentation/scripts/build.sh",
             "./tools/linting/scripts/run.sh",
             "./tools/syntax-schema/scripts/check.sh",

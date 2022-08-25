@@ -1,0 +1,6 @@
+[workspace]
+members = ["crates/codegen"]
+
+[profile.dev]
+debug = 0
+incremental = true
