@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../../../../codegen/schema/topic.schema.json
+
+- name: UnarySuffixExpression
+  sequence:
+    - reference: Expression
+    - choice:
+        - terminal: ++
+        - terminal: "--"
+
+- name: UnaryPrefixExpression
+  sequence:
+    - choice:
+        - terminal: ++
+        - terminal: "--"
+        - terminal: "!"
+        - terminal: "~"
+        - terminal: "-"
+    - reference: Expression

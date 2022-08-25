@@ -10,17 +10,19 @@ source "$THIS_DIR/common.sh"
 # Solidity from the intended source manifest
 ###################################################
 
+SOLIDITY_CRATE="$HERMIT_ENV/code-analysis/crates/parsers/solidity"
+
 cargo run --manifest-path "$PROJECT_DIR/../syntax-schema/Cargo.toml" --bin "validate_manifest" -- \
-  --manifest-input "$PROJECT_DIR/syntax/solidity/manifest.yml"
+  --manifest-input "$SOLIDITY_CRATE/grammar/manifest.yml"
 
 cargo run --manifest-path "$PROJECT_DIR/../syntax-schema/Cargo.toml" --bin "manifest_to_ebnf" -- \
-  --manifest-input "$PROJECT_DIR/syntax/solidity/manifest.yml" \
-  --ebnf-output "$PROJECT_DIR/src/generated/derived.ebnf"
+  --manifest-input "$SOLIDITY_CRATE/grammar/manifest.yml" \
+  --ebnf-output "$SOLIDITY_CRATE/src/generated/derived.ebnf"
 
 cargo run --manifest-path "$PROJECT_DIR/../syntax-schema/Cargo.toml" --bin "manifest_to_chumsky" -- \
-  --manifest-input "$PROJECT_DIR/syntax/solidity/manifest.yml" \
-  --chumsky-output "$PROJECT_DIR/src/generated"
+  --manifest-input "$SOLIDITY_CRATE/grammar/manifest.yml" \
+  --chumsky-output "$SOLIDITY_CRATE/src/generated"
 
 cargo run --manifest-path "$PROJECT_DIR/../syntax-schema/Cargo.toml" --bin "manifest_to_spec" -- \
-  --manifest-input "$PROJECT_DIR/syntax/solidity/manifest.yml" \
+  --manifest-input "$SOLIDITY_CRATE/grammar/manifest.yml" \
   --documentation-folder "$HERMIT_ENV/documentation"

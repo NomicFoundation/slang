@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../../../../codegen/schema/topic.schema.json
+
+- name: ModifierDefinition
+  sequence:
+    - terminal: modifier
+    - reference: Identifier
+    - optional:
+        reference: ParameterList
+    - zeroOrMore:
+        reference: ModifierAttribute
+    - choice:
+        - terminal: ;
+        - reference: Block
+
+- name: ModifierAttribute
+  choice:
+    - reference: OverrideSpecifier
+    - terminal: virtual
+
+- name: ModifierInvocation
+  sequence:
+    - reference: IdentifierPath
+    - optional:
+        reference: ArgumentList

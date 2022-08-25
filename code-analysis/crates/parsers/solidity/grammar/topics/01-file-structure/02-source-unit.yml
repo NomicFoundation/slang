@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../../../../codegen/schema/topic.schema.json
+
+- name: SourceUnit
+  sequence:
+    - reference: LeadingTrivia
+    - zeroOrMore:
+        choice:
+          - reference: Directive
+          - reference: Definition
+    - reference: EndOfFileTrivia
+    - end: ~
+
+- name: Directive
+  choice:
+    - reference: PragmaDirective
+    - reference: ImportDirective
+    - reference: UsingDirective
+
+- name: Definition
+  choice:
+    - reference: ContractDefinition
+    - reference: InterfaceDefinition
+    - reference: LibraryDefinition
+    - reference: FunctionDefinition
+    - reference: ConstantDefinition
+    - reference: StructDefinition
+    - reference: EnumDefinition
+    - reference: UserDefinedValueTypeDefinition
+    - reference: ErrorDefinition

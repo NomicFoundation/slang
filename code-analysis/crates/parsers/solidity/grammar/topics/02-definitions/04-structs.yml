@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../../../../codegen/schema/topic.schema.json
+
+- name: StructDefinition
+  sequence:
+    - terminal: struct
+    - reference: Identifier
+    - delimitedBy:
+        open: "{"
+        oneOrMore:
+          reference: StructMember
+        close: "}"
+
+- name: StructMember
+  sequence:
+    - reference: TypeName
+    - reference: Identifier
+    - terminal: ;

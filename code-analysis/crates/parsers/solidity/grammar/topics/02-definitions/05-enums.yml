@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../../../codegen/schema/topic.schema.json
+
+- name: EnumDefinition
+  sequence:
+    - terminal: enum
+    - reference: Identifier
+    - delimitedBy:
+        open: "{"
+        separatedBy:
+          reference: Identifier
+          separator: ","
+        close: "}"
