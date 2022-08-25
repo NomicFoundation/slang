@@ -18,8 +18,8 @@ source "$THIS_DIR/common.sh"
   # shellcheck disable=SC2016
   yq eval-all '. as $file ireduce ({}; . *+ $file )' \
     "$DOCUMENTATION_DIR/mkdocs.config.yml" \
-    "$DOCUMENTATION_DIR/mkdocs.specification.yml" \
     "$DOCUMENTATION_DIR/mkdocs.theme.yml" \
+    "$DOCUMENTATION_DIR/docs/specification/generated/mkdocs.navigation.yml" \
     > "$DOCUMENTATION_TARGET_DIR/mkdocs.yml"
 )
 

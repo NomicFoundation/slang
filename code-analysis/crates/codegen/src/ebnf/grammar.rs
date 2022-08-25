@@ -1,10 +1,11 @@
-use std::{fs::File, io::Write, path::PathBuf};
+use std::{io::Write, path::PathBuf};
 
+use crate::build_utils::write_generated_file;
 use crate::schema::*;
 
 impl Grammar {
     pub fn generate_ebnf(&self, output_path: &PathBuf) {
-        let mut w = File::create(output_path).expect("Unable to create file");
+        let mut w: Vec<u8> = Vec::new();
 
         writeln!(w, "(*").unwrap();
         writeln!(w, " * {}", self.manifest.title).unwrap();
@@ -28,5 +29,7 @@ impl Grammar {
                 }
             }
         }
+
+        write_generated_file(output_path, &String::from_utf8(w).unwrap());
     }
 }

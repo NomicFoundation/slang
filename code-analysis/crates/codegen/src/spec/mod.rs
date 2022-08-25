@@ -1,6 +1,9 @@
 use self::{grammar::generate_spec_grammar, topics::generate_spec_sections};
-use crate::schema::Grammar;
-use std::{collections::HashSet, fs::File, io::Write, path::PathBuf};
+use crate::{
+    build_utils::{delete_generated_file, write_generated_file},
+    schema::Grammar,
+};
+use std::{collections::HashSet, io::Write, path::PathBuf};
 
 pub mod grammar;
 pub mod productions;
@@ -14,33 +17,34 @@ pub struct NavigationEntry {
 
 impl Grammar {
     pub fn generate_spec(&self, documentation_folder: &PathBuf) {
-        let mut entries: Vec<NavigationEntry> = Vec::new();
-
         let generated_folder = documentation_folder
             .join("docs")
             .join("specification")
             .join("generated");
 
+        let mut entries: Vec<NavigationEntry> = Vec::new();
         generate_spec_grammar(&self, &generated_folder, &mut entries);
         generate_spec_sections(&self, &generated_folder, &mut entries);
 
-        generate_spec_navigation(&documentation_folder, &entries);
-
-        let generated_files: HashSet<&PathBuf> = entries
+        let mut generated_files: HashSet<&PathBuf> = entries
             .iter()
             .filter_map(|entry| entry.file_path.as_ref())
             .collect();
+
+        let navigation_file = generate_spec_navigation(&documentation_folder, &entries);
+        generated_files.insert(&navigation_file);
 
         delete_orphaned_files(&generated_folder, &generated_files)
     }
 }
 
-fn generate_spec_navigation(documentation_folder: &PathBuf, entries: &Vec<NavigationEntry>) {
-    let navigation_file = documentation_folder.join("mkdocs.specification.yml");
+fn generate_spec_navigation(
+    documentation_folder: &PathBuf,
+    entries: &Vec<NavigationEntry>,
+) -> PathBuf {
     let docs_folder = documentation_folder.join("docs");
 
-    std::fs::create_dir_all(navigation_file.parent().unwrap()).unwrap();
-    let mut w = File::create(navigation_file).expect("Unable to create file");
+    let mut w: Vec<u8> = Vec::new();
 
     writeln!(w, "nav:").unwrap();
     writeln!(w, "  - Specification:").unwrap();
@@ -65,6 +69,15 @@ fn generate_spec_navigation(documentation_folder: &PathBuf, entries: &Vec<Naviga
         )
         .unwrap();
     });
+
+    let navigation_file = documentation_folder
+        .join("docs")
+        .join("specification")
+        .join("generated")
+        .join("mkdocs.navigation.yml");
+
+    write_generated_file(&navigation_file, &String::from_utf8(w).unwrap());
+    return navigation_file;
 }
 
 fn delete_orphaned_files(root_folder: &PathBuf, generated_files: &HashSet<&PathBuf>) {
@@ -76,7 +89,7 @@ fn delete_orphaned_files(root_folder: &PathBuf, generated_files: &HashSet<&PathB
         } else if generated_files.contains(&child_path) {
             // Keep file
         } else {
-            std::fs::remove_file(&child_path).unwrap();
+            delete_generated_file(&child_path);
         }
     })
 }
