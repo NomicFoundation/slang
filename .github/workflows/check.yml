@@ -10,8 +10,6 @@ jobs:
             "./code-analysis/scripts/check.sh",
             "./documentation/scripts/build.sh",
             "./tools/linting/scripts/run.sh",
-            "./tools/syntax-schema/scripts/check.sh",
-            "./tools/solidity-parser/scripts/check.sh",
             "./tools/version-breaks/scripts/check.sh",
           ]
     runs-on: ubuntu-latest

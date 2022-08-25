@@ -4,6 +4,9 @@ version = "0.0.0"
 edition = "2021"
 rust-version = "1.60.0"
 
+[build-dependencies]
+codegen = { path = "../../codegen" }
+
 [dependencies]
 ariadne = "0.1.5"
 chumsky = "0.8.0"
