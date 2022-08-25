@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../../../../codegen/schema/topic.schema.json
+
+- name: UserDefinedValueTypeDefinition
+  sequence:
+    - terminal: type
+    - reference: Identifier
+    - terminal: is
+    - reference: ElementaryType
+    - terminal: ;

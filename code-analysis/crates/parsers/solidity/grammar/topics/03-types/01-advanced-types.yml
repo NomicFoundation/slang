@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../../../../codegen/schema/topic.schema.json
+
+- name: TypeName
+  sequence:
+    - choice:
+        - reference: ElementaryType
+        - reference: FunctionType
+        - reference: MappingType
+        - reference: IdentifierPath
+    - zeroOrMore:
+        delimitedBy:
+          open: "["
+          optional:
+            reference: Expression
+          close: "]"

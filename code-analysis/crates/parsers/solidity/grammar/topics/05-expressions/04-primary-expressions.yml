@@ -1,0 +1,57 @@
+# yaml-language-server: $schema=../../../../../codegen/schema/topic.schema.json
+
+- name: PrimaryExpression
+  choice:
+    - reference: PayableExpression
+    - reference: TypeExpression
+    - reference: NewExpression
+    - reference: ParenthesisExpression
+    - reference: ArrayLiteral
+    - reference: AsciiStringLiteral
+    - reference: UnicodeStringLiteral
+    - reference: HexStringLiteral
+    - reference: NumericLiteral
+    - reference: BooleanLiteral
+    - reference: Identifier
+
+- name: PayableExpression
+  sequence:
+    - terminal: payable
+    - reference: ArgumentList
+
+- name: TypeExpression
+  sequence:
+    - terminal: type
+    - delimitedBy:
+        open: (
+        reference: TypeName
+        close: )
+
+- name: NewExpression
+  sequence:
+    - terminal: new
+    - reference: IdentifierPath
+    - reference: ArgumentList
+
+- name: ParenthesisExpression
+  delimitedBy:
+    open: (
+    separatedBy:
+      optional:
+        reference: Expression
+      separator: ","
+    close: )
+
+- name: ArrayLiteral
+  delimitedBy:
+    open: "["
+    separatedBy:
+      reference: Expression
+      separator: ","
+    close: "]"
+
+- name: BooleanLiteral
+  kind: Token
+  choice:
+    - terminal: "true"
+    - terminal: "false"
