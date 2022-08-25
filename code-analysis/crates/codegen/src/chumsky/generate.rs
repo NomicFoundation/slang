@@ -10,40 +10,33 @@ use crate::schema::*;
 
 use super::{combinator_tree::ProductionGeneratedCode, rustfmt::rustfmt};
 
-pub struct GenerationContext {
-    pub output_dir: PathBuf,
-}
-
 impl Grammar {
-    pub fn generate_chumsky(&self, context: &GenerationContext) {
+    pub fn generate_chumsky(&self, output_dir: &PathBuf) {
         let root = self
             .productions
             .iter()
             .flat_map(|(_, p)| p)
             .find(|p| p.name == self.manifest.root_production)
             .expect("Didn't find root production");
-        let generated_output = root.generate_chumsky(self, context);
+        let generated_output = root.generate_chumsky(self);
 
         Self::format_and_write_source(
-            &context.output_dir.join("parser_interface.rs"),
+            &output_dir.join("parser_interface.rs"),
             generated_output.parser_interface,
         );
         Self::format_and_write_source(
-            &context.output_dir.join("parser_implementation.rs"),
+            &output_dir.join("parser_implementation.rs"),
             generated_output.parser_implementation,
         );
         Self::format_and_write_source(
-            &context.output_dir.join("tree_interface.rs"),
+            &output_dir.join("tree_interface.rs"),
             generated_output.tree_interface,
         );
         Self::format_and_write_source(
-            &context.output_dir.join("tree_implementation.rs"),
+            &output_dir.join("tree_implementation.rs"),
             generated_output.tree_implementation,
         );
-        Self::format_and_write_source(
-            &context.output_dir.join("mod.rs"),
-            generated_output.mod_file,
-        );
+        Self::format_and_write_source(&output_dir.join("mod.rs"), generated_output.mod_file);
     }
 
     fn format_and_write_source(path: &PathBuf, source: String) {
@@ -116,7 +109,7 @@ impl Production {
         self.versions.iter().last().map(|(_, e)| e.clone()).unwrap()
     }
 
-    fn generate_chumsky(&self, grammar: &Grammar, _context: &GenerationContext) -> GeneratedOutput {
+    fn generate_chumsky(&self, grammar: &Grammar) -> GeneratedOutput {
         let production_ordering = grammar.production_ordering(&self.name);
         let recursive_production_names = grammar.recursive_production_names(&production_ordering);
 

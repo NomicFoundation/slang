@@ -9,6 +9,6 @@ source "$THIS_DIR/common.sh"
 (
   printf "\n\n🧪 Checking Project 🧪\n\n\n"
   cd "$PROJECT_DIR"
-  cargo check --locked
+  SLANG_VERIFY_GENERATED_FILES="true" cargo check --locked
   cargo fmt --check --all
 )
