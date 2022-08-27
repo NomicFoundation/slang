@@ -5,6 +5,7 @@ members = [
     "crates/codegen/utils",
     "crates/parsers/ebnf",
     "crates/parsers/solidity",
+    "crates/solc_proxy",
 ]
 
 [profile.dev]

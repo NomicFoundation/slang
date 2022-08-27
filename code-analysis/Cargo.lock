@@ -1050,6 +1050,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "solc_proxy"
+version = "0.0.0"
+
+[[package]]
 name = "solidity_parser"
 version = "0.0.0"
 dependencies = [
