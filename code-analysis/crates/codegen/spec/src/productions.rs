@@ -3,7 +3,7 @@ use std::{collections::HashMap, io::Write};
 use itertools::Itertools;
 use semver::Version;
 
-use crate::schema::*;
+use codegen_schema::*;
 
 pub struct SpecProductionContext<'a> {
     pub grammar: &'a Grammar,

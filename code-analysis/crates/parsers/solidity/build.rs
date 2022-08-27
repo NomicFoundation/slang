@@ -1,4 +1,6 @@
-use codegen::{build_utils::assert_no_changes_in_ci, schema::Grammar};
+use codegen_schema::Grammar;
+use codegen_spec::generate_spec;
+use codegen_utils::assert_no_changes_in_ci;
 use std::path::PathBuf;
 
 fn main() {
@@ -29,7 +31,7 @@ fn main() {
         .parent()
         .unwrap()
         .join("documentation");
-    grammar.generate_spec(&documentation_dir);
+    generate_spec(&grammar, &documentation_dir);
 
     assert_no_changes_in_ci();
 }

@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../../../crates/codegen/schema/manifest.schema.json
+# yaml-language-server: $schema=../../../../crates/codegen/schema/json-schema/manifest.schema.json
 
 title: Nomic Foundation EBNF Grammar
 rootProduction: grammar

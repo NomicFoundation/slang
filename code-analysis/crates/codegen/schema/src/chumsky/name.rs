@@ -4,7 +4,7 @@ use inflector::Inflector;
 use proc_macro2::Ident;
 use quote::format_ident;
 
-use crate::schema::ExpressionConfig;
+use crate::ExpressionConfig;
 
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
 pub enum Name {

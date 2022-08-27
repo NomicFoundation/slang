@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../../codegen/schema/manifest.schema.json
+# yaml-language-server: $schema=../../../codegen/schema/json-schema/manifest.schema.json
 
 title: Solidity Grammar
 

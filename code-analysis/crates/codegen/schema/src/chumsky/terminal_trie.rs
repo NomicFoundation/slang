@@ -2,7 +2,7 @@ use patricia_tree::{node::Node, PatriciaSet};
 use proc_macro2::TokenStream;
 use quote::quote;
 
-use crate::schema::*;
+use crate::*;
 
 use super::{combinator_tree::GeneratedCode, name::Name};
 

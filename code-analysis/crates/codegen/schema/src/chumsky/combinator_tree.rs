@@ -8,7 +8,7 @@ use mset::MultiSet;
 use proc_macro2::TokenStream;
 use quote::quote;
 
-use crate::schema::*;
+use crate::*;
 
 use super::{character_filter::CharacterFilter, name::Name, terminal_trie::TerminalTrie};
 
