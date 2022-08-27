@@ -1,7 +1,8 @@
 use std::{io::Write, path::PathBuf};
 
-use crate::build_utils::write_generated_file;
-use crate::schema::*;
+use codegen_utils::write_generated_file;
+
+use crate::*;
 
 impl Grammar {
     pub fn generate_ebnf(&self, output_path: &PathBuf) {

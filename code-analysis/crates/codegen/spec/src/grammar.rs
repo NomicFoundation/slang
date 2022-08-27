@@ -1,6 +1,7 @@
 use std::{io::Write, path::PathBuf};
 
-use crate::{build_utils::write_generated_file, schema::Grammar};
+use codegen_schema::Grammar;
+use codegen_utils::write_generated_file;
 
 use super::{
     productions::{write_production, SpecProductionContext},

@@ -1,5 +1,11 @@
 [workspace]
-members = ["crates/codegen", "crates/parsers/ebnf", "crates/parsers/solidity"]
+members = [
+    "crates/codegen/schema",
+    "crates/codegen/spec",
+    "crates/codegen/utils",
+    "crates/parsers/ebnf",
+    "crates/parsers/solidity",
+]
 
 [profile.dev]
 debug = 0

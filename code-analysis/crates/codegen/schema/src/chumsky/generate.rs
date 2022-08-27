@@ -3,10 +3,10 @@ use std::{
     path::PathBuf,
 };
 
+use codegen_utils::write_generated_file;
 use quote::quote;
 
-use crate::build_utils::write_generated_file;
-use crate::schema::*;
+use crate::*;
 
 use super::{combinator_tree::ProductionGeneratedCode, rustfmt::rustfmt};
 
