@@ -1,9 +1,7 @@
 use std::{io::Write, path::PathBuf};
 
-use crate::{
-    build_utils::{read_source_file, write_generated_file},
-    schema::Grammar,
-};
+use codegen_schema::Grammar;
+use codegen_utils::{read_source_file, write_generated_file};
 
 use super::{
     productions::{write_production, SpecProductionContext},
@@ -34,7 +32,7 @@ pub fn generate_spec_sections(
                 .iter()
                 .enumerate()
                 .for_each(|(topic_index, topic)| {
-                    let topic_slug = generate_topic_slug(grammar, section_index, topic_index);
+                    let topic_slug = grammar.generate_topic_slug(section_index, topic_index);
                     let topic_file = generated_folder.join(&topic_slug).join("index.md");
 
                     entries.push(NavigationEntry {
@@ -129,11 +127,7 @@ fn generate_context(grammar: &Grammar) -> SpecProductionContext {
                                         production.name.clone(),
                                         format!(
                                             "../../{}",
-                                            generate_topic_slug(
-                                                grammar,
-                                                section_index,
-                                                topic_index
-                                            )
+                                            grammar.generate_topic_slug(section_index, topic_index)
                                         ),
                                     )
                                 },
@@ -144,17 +138,4 @@ fn generate_context(grammar: &Grammar) -> SpecProductionContext {
             .collect(),
     };
     context
-}
-
-pub fn generate_topic_slug(grammar: &Grammar, section_index: usize, topic_index: usize) -> String {
-    let section = grammar.manifest.sections.get(section_index).unwrap();
-    let topic = section.topics.get(topic_index).unwrap();
-
-    return format!(
-        "{:0>2}-{}/{:0>2}-{}",
-        section_index + 1,
-        section.title.to_ascii_lowercase().replace(" ", "-"),
-        topic_index + 1,
-        topic.title.to_ascii_lowercase().replace(" ", "-"),
-    );
 }

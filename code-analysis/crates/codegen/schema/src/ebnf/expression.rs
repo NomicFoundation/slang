@@ -1,6 +1,6 @@
 use std::fmt::Write;
 
-use crate::schema::*;
+use crate::*;
 
 impl Expression {
     pub(crate) fn generate_ebnf<T: Write>(&self, grammar: &Grammar, w: &mut T) {

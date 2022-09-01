@@ -5,7 +5,8 @@ edition = "2021"
 rust-version = "1.60.0"
 
 [build-dependencies]
-codegen = { path = "../../codegen" }
+codegen_schema = { path = "../../codegen/schema" }
+codegen_utils = { path = "../../codegen/utils" }
 
 [dependencies]
 chumsky = "0.8.0"

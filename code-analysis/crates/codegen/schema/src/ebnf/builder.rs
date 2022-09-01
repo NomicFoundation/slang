@@ -2,7 +2,7 @@ use std::{collections::BTreeMap, rc::Rc};
 
 use semver::Version;
 
-use crate::schema::*;
+use crate::*;
 
 fn ref_from_ebnf(ebnf: EBNF) -> ExpressionRef {
     Rc::new(Expression {

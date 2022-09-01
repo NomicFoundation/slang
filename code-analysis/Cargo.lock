@@ -198,10 +198,11 @@ dependencies = [
 ]
 
 [[package]]
-name = "codegen"
+name = "codegen_schema"
 version = "0.0.0"
 dependencies = [
  "Inflector",
+ "codegen_utils",
  "indexmap",
  "itertools",
  "jsonschema",
@@ -215,6 +216,31 @@ dependencies = [
  "serde_json",
  "serde_yaml",
 ]
+
+[[package]]
+name = "codegen_spec"
+version = "0.0.0"
+dependencies = [
+ "Inflector",
+ "codegen_schema",
+ "codegen_utils",
+ "indexmap",
+ "itertools",
+ "jsonschema",
+ "mset",
+ "patricia_tree",
+ "proc-macro2",
+ "quote",
+ "regex",
+ "semver",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+]
+
+[[package]]
+name = "codegen_utils"
+version = "0.0.0"
 
 [[package]]
 name = "const-random"
@@ -249,7 +275,8 @@ name = "ebnf_parser"
 version = "0.0.0"
 dependencies = [
  "chumsky",
- "codegen",
+ "codegen_schema",
+ "codegen_utils",
  "serde",
 ]
 
@@ -1029,7 +1056,9 @@ dependencies = [
  "ariadne",
  "chumsky",
  "clap 3.2.17",
- "codegen",
+ "codegen_schema",
+ "codegen_spec",
+ "codegen_utils",
  "serde",
  "serde_json",
  "serde_yaml",

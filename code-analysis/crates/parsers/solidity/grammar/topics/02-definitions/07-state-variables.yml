@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../../../../codegen/schema/topic.schema.json
+# yaml-language-server: $schema=../../../../../codegen/schema/json-schema/topic.schema.json
 
 - name: StateVariableDeclaration
   sequence:

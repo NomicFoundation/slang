@@ -1,3 +1,8 @@
+pub mod chumsky;
+pub mod ebnf;
+
+mod validation;
+
 use std::{
     cell::RefCell,
     collections::BTreeMap,
@@ -6,6 +11,7 @@ use std::{
     rc::{Rc, Weak},
 };
 
+use codegen_utils::read_source_file;
 use indexmap::IndexMap;
 use semver::Version;
 use serde::{
@@ -15,9 +21,7 @@ use serde::{
 };
 use serde_yaml::Value;
 
-use crate::{build_utils::read_source_file, chumsky::combinator_tree::CombinatorTreeRoot};
-
-mod validation;
+use crate::chumsky::combinator_tree::CombinatorTreeRoot;
 
 #[derive(Clone, Debug)]
 pub struct Grammar {
@@ -37,6 +41,19 @@ impl Grammar {
             "Cannot find {} production, should have been caught in validation pass",
             name
         )
+    }
+
+    pub fn generate_topic_slug(&self, section_index: usize, topic_index: usize) -> String {
+        let section = self.manifest.sections.get(section_index).unwrap();
+        let topic = section.topics.get(topic_index).unwrap();
+
+        return format!(
+            "{:0>2}-{}/{:0>2}-{}",
+            section_index + 1,
+            section.title.to_ascii_lowercase().replace(" ", "-"),
+            topic_index + 1,
+            topic.title.to_ascii_lowercase().replace(" ", "-"),
+        );
     }
 }
 

@@ -3,15 +3,12 @@ use std::{
     path::PathBuf,
 };
 
+use codegen_utils::read_source_file;
 use jsonschema::JSONSchema;
 use regex::Regex;
 use semver::Version;
 
-use crate::{
-    build_utils::read_source_file,
-    schema::{EBNFDelimitedBy, EBNFRepeat, EBNFSeparatedBy, Expression, Grammar, EBNF},
-    spec::topics::generate_topic_slug,
-};
+use crate::{EBNFDelimitedBy, EBNFRepeat, EBNFSeparatedBy, Expression, Grammar, EBNF};
 
 static REQUIRED_PRODUCTIONS: [&str; 2] = ["LeadingTrivia", "TrailingTrivia"];
 
@@ -43,7 +40,7 @@ fn validate_topics(grammar: &Grammar) {
                 .iter()
                 .enumerate()
                 .for_each(|(topic_index, topic)| {
-                    let slug = generate_topic_slug(grammar, section_index, topic_index);
+                    let slug = grammar.generate_topic_slug(section_index, topic_index);
 
                     if let Some(topic_definition) = &topic.definition {
                         assert_eq!(topic_definition, &format!("topics/{slug}.yml"));
