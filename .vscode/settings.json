@@ -2,7 +2,6 @@
   // Rust
   "rust-analyzer.linkedProjects": [
     "code-analysis/Cargo.toml",
-    "tools/solidity-parser/Cargo.toml",
     "tools/syntax-schema/Cargo.toml",
     "tools/version-breaks/Cargo.toml"
   ],

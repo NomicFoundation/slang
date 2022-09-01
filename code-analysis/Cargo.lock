@@ -1339,6 +1339,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "solidity_parser"
+version = "0.0.0"
+dependencies = [
+ "ariadne",
+ "chumsky",
+ "clap 3.2.17",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+]
+
+[[package]]
 name = "strings"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"

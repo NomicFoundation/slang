@@ -1,0 +1,75 @@
+# yaml-language-server: $schema=../../../../../codegen/schema/topic.schema.json
+
+- name: LeadingTrivia
+  kind: Token
+  zeroOrMore:
+    choice:
+      - reference: Whitespace
+      - reference: EndOfLine
+      - reference: MultilineComment
+      - reference: SingleLineComment
+
+- name: TrailingTrivia
+  kind: Token
+  optional:
+    sequence:
+      - zeroOrMore:
+          choice:
+            - reference: Whitespace
+            - reference: MultilineComment
+      - choice:
+          - reference: EndOfLine
+          - reference: SingleLineComment
+
+- name: EndOfFileTrivia
+  kind: Token
+  zeroOrMore:
+    choice:
+      - reference: Whitespace
+      - reference: MultilineComment
+      - reference: SingleLineComment
+
+- name: Whitespace
+  kind: Token
+  oneOrMore:
+    choice:
+      - terminal: " "
+      - terminal: "\t"
+
+- name: EndOfLine
+  kind: Token
+  oneOrMore:
+    choice:
+      - terminal: "\r"
+      - terminal: "\n"
+
+- name: MultilineComment
+  kind: Token
+  delimitedBy:
+    open: /*
+    config: { name: content }
+    sequence:
+      - zeroOrMore:
+          choice:
+            - not:
+                terminal: "*"
+            - sequence:
+                - oneOrMore:
+                    terminal: "*"
+                - not:
+                    choice:
+                      - terminal: "*"
+                      - terminal: /
+      - zeroOrMore:
+          terminal: "*"
+    close: "*/"
+
+- name: SingleLineComment
+  kind: Token
+  sequence:
+    - terminal: //
+    - zeroOrMore:
+        not:
+          choice:
+            - terminal: "\r"
+            - terminal: "\n"

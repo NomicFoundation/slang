@@ -7,13 +7,6 @@ THIS_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 source "$THIS_DIR/common.sh"
 
 (
-  printf "\n\n🧪 Checking Project 🧪\n\n\n"
-  cd "$PROJECT_DIR"
-  cargo check --locked
-  cargo fmt --check --all
-)
-
-(
   printf "\n\n🧪 Checking Generated Files 🧪\n\n\n"
   cd "$PROJECT_DIR"
 

@@ -1,0 +1,92 @@
+# yaml-language-server: $schema=../../../../../codegen/schema/topic.schema.json
+
+- name: OrExpression
+  config: { associativity: Left }
+  sequence:
+    - reference: Expression
+    - terminal: "||"
+    - reference: Expression
+
+- name: AndExpression
+  config: { associativity: Left }
+  sequence:
+    - reference: Expression
+    - terminal: "&&"
+    - reference: Expression
+
+- name: EqualityComparisonExpression
+  config: { associativity: Left }
+  sequence:
+    - reference: Expression
+    - choice:
+        - terminal: "=="
+        - terminal: "!="
+    - reference: Expression
+
+- name: OrderComparisonExpression
+  config: { associativity: Left }
+  sequence:
+    - reference: Expression
+    - choice:
+        - terminal: "<"
+        - terminal: ">"
+        - terminal: "<="
+        - terminal: ">="
+    - reference: Expression
+
+- name: BitOrExpression
+  config: { associativity: Left }
+  sequence:
+    - reference: Expression
+    - terminal: "|"
+    - reference: Expression
+
+- name: BitXOrExpression
+  config: { associativity: Left }
+  sequence:
+    - reference: Expression
+    - terminal: "^"
+    - reference: Expression
+
+- name: BitAndExpression
+  config: { associativity: Left }
+  sequence:
+    - reference: Expression
+    - terminal: "&"
+    - reference: Expression
+
+- name: ShiftExpression
+  config: { associativity: Left }
+  sequence:
+    - reference: Expression
+    - choice:
+        - terminal: "<<"
+        - terminal: ">>"
+        - terminal: ">>>"
+    - reference: Expression
+
+- name: AddSubExpression
+  config: { associativity: Left }
+  sequence:
+    - reference: Expression
+    - choice:
+        - terminal: +
+        - terminal: "-"
+    - reference: Expression
+
+- name: MulDivModExpression
+  config: { associativity: Left }
+  sequence:
+    - reference: Expression
+    - choice:
+        - terminal: "*"
+        - terminal: /
+        - terminal: "%"
+    - reference: Expression
+
+- name: ExponentiationExpression
+  config: { associativity: Right }
+  sequence:
+    - reference: Expression
+    - terminal: "**"
+    - reference: Expression

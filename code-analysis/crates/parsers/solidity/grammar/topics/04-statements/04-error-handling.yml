@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../../../../codegen/schema/topic.schema.json
+
+- name: TryStatement
+  sequence:
+    - terminal: try
+    - reference: Expression
+    - optional:
+        sequence:
+          - terminal: returns
+          - reference: ParameterList
+    - reference: Block
+    - oneOrMore:
+        reference: CatchClause
+
+- name: CatchClause
+  sequence:
+    - terminal: catch
+    - optional:
+        sequence:
+          - optional:
+              reference: Identifier
+          - reference: ParameterList
+    - reference: Block
+
+- name: RevertStatement
+  sequence:
+    - terminal: revert
+    - optional:
+        reference: IdentifierPath
+    - reference: ArgumentList
+    - terminal: ;

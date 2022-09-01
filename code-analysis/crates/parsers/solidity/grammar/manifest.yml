@@ -1,0 +1,162 @@
+# yaml-language-server: $schema=../../../codegen/schema/manifest.schema.json
+
+title: Solidity Grammar
+
+rootProduction: SourceUnit
+
+sections:
+  - title: File Structure
+    topics:
+      - title: License Specifier
+      - title: Source Unit
+        definition: topics/01-file-structure/02-source-unit.yml
+      - title: Pragmas
+        definition: topics/01-file-structure/03-pragmas.yml
+      - title: Imports
+        definition: topics/01-file-structure/04-imports.yml
+      - title: Trivia
+        definition: topics/01-file-structure/05-trivia.yml
+      - title: Natspec Format
+  - title: Definitions
+    topics:
+      - title: Contracts
+        definition: topics/02-definitions/01-contracts.yml
+      - title: Interfaces
+        definition: topics/02-definitions/02-interfaces.yml
+      - title: Libraries
+        definition: topics/02-definitions/03-libraries.yml
+      - title: Structs
+        definition: topics/02-definitions/04-structs.yml
+      - title: Enums
+        definition: topics/02-definitions/05-enums.yml
+      - title: Constants
+        definition: topics/02-definitions/06-constants.yml
+      - title: State Variables
+        definition: topics/02-definitions/07-state-variables.yml
+      - title: Functions
+        definition: topics/02-definitions/08-functions.yml
+      - title: Modifiers
+        definition: topics/02-definitions/09-modifiers.yml
+      - title: Events
+        definition: topics/02-definitions/10-events.yml
+      - title: User Defined Value Types
+        definition: topics/02-definitions/11-user-defined-value-types.yml
+      - title: Errors
+        definition: topics/02-definitions/12-errors.yml
+  - title: Types
+    topics:
+      - title: Advanced Types
+        definition: topics/03-types/01-advanced-types.yml
+      - title: Function Types
+        definition: topics/03-types/02-function-types.yml
+      - title: Mapping Types
+        definition: topics/03-types/03-mapping-types.yml
+      - title: Elementary Types
+        definition: topics/03-types/04-elementary-types.yml
+      - title: Addresses
+        definition: topics/03-types/05-addresses.yml
+  - title: Statements
+    topics:
+      - title: Blocks
+        definition: topics/04-statements/01-blocks.yml
+      - title: Declaration Statements
+        definition: topics/04-statements/02-declaration-statements.yml
+      - title: Control Statements
+        definition: topics/04-statements/03-control-statements.yml
+      - title: Error Handling
+        definition: topics/04-statements/04-error-handling.yml
+  - title: Expressions
+    topics:
+      - title: Base Expressions
+        definition: topics/05-expressions/01-base-expressions.yml
+      - title: Binary Operators
+        definition: topics/05-expressions/02-binary-operators.yml
+      - title: Unary Operators
+        definition: topics/05-expressions/03-unary-operators.yml
+      - title: Primary Expressions
+        definition: topics/05-expressions/04-primary-expressions.yml
+      - title: Numbers
+        definition: topics/05-expressions/05-numbers.yml
+      - title: Strings
+        definition: topics/05-expressions/06-strings.yml
+      - title: Identifiers
+        definition: topics/05-expressions/07-identifiers.yml
+  - title: Yul
+    topics:
+      - title: Assembly Block
+        definition: topics/06-yul/01-assembly-block.yml
+      - title: Yul Statements
+        definition: topics/06-yul/02-yul-statements.yml
+      - title: Yul Expressions
+        definition: topics/06-yul/03-yul-expressions.yml
+
+versions:
+  - 0.4.10
+  - 0.4.11
+  - 0.4.12
+  - 0.4.13
+  - 0.4.14
+  - 0.4.15
+  - 0.4.16
+  - 0.4.17
+  - 0.4.18
+  - 0.4.19
+  - 0.4.20
+  - 0.4.21
+  - 0.4.22
+  - 0.4.23
+  - 0.4.24
+  - 0.4.25
+  - 0.4.26
+  - 0.5.0
+  - 0.5.1
+  - 0.5.2
+  - 0.5.3
+  - 0.5.4
+  - 0.5.5
+  - 0.5.6
+  - 0.5.7
+  - 0.5.8
+  - 0.5.9
+  - 0.5.10
+  - 0.5.11
+  - 0.5.12
+  - 0.5.13
+  - 0.5.14
+  - 0.5.15
+  - 0.5.16
+  - 0.5.17
+  - 0.6.0
+  - 0.6.1
+  - 0.6.2
+  - 0.6.3
+  - 0.6.4
+  - 0.6.5
+  - 0.6.6
+  - 0.6.7
+  - 0.6.8
+  - 0.6.9
+  - 0.6.10
+  - 0.6.11
+  - 0.6.12
+  - 0.7.0
+  - 0.7.1
+  - 0.7.2
+  - 0.7.3
+  - 0.7.4
+  - 0.7.5
+  - 0.7.6
+  - 0.8.0
+  - 0.8.1
+  - 0.8.2
+  - 0.8.3
+  - 0.8.4
+  - 0.8.5
+  - 0.8.6
+  - 0.8.7
+  - 0.8.8
+  - 0.8.9
+  - 0.8.10
+  - 0.8.11
+  - 0.8.12
+  - 0.8.13
