@@ -20,7 +20,7 @@
 
 # Base Container
 
-FROM ubuntu:21.10
+FROM ubuntu:22.04
 RUN apt-get update
 
 # Shell
@@ -32,11 +32,11 @@ RUN apt-get install --assume-yes \
   "zsh=5.*"
 
 COPY "./scripts" "$HOME"
-RUN curl -fsSL "https://github.com/cashapp/hermit/releases/download/v0.18.3/install.sh" | bash
+RUN curl -fsSL "https://github.com/cashapp/hermit/releases/download/v0.26.1/install.sh" | bash
 
 # Rust
 
 RUN apt-get install --assume-yes \
   "build-essential=12.*" \
   "pkg-config=0.*" \
-  "libssl-dev=1.*"
+  "libssl-dev=3.*"
