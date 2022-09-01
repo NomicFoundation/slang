@@ -1,3 +1,5 @@
+// This file is generated via `cargo build`. Please don't edit by hand.
+
 use super::tree_interface::*;
 impl<T: DefaultTest> DefaultTest for Box<T> {
     fn is_default(&self) -> bool {

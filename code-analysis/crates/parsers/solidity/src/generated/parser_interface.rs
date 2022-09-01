@@ -1,3 +1,5 @@
+// This file is generated via `cargo build`. Please don't edit by hand.
+
 use chumsky::prelude::{BoxedParser, Simple};
 pub type ErrorType = Simple<char>;
 pub type ParserType<T> = BoxedParser<'static, char, T, ErrorType>;

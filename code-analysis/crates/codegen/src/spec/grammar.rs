@@ -1,6 +1,6 @@
-use std::{fs::File, io::Write, path::PathBuf};
+use std::{io::Write, path::PathBuf};
 
-use crate::schema::Grammar;
+use crate::{build_utils::write_generated_file, schema::Grammar};
 
 use super::{
     productions::{write_production, SpecProductionContext},
@@ -15,15 +15,13 @@ pub fn generate_spec_grammar(
     let context = generate_context(grammar);
     let grammar_path = generated_folder.join("00-grammar").join("index.md");
 
-    std::fs::create_dir_all(grammar_path.parent().unwrap()).unwrap();
-
     entries.push(NavigationEntry {
         indentation_level: 1,
         title: grammar.manifest.title.clone(),
         file_path: Some(grammar_path.clone()),
     });
 
-    let mut w = File::create(grammar_path).expect("Unable to create file");
+    let mut w: Vec<u8> = Vec::new();
     writeln!(w, "# {}", grammar.manifest.title).unwrap();
     writeln!(w).unwrap();
     writeln!(w, "<!-- markdownlint-disable no-inline-html -->").unwrap();
@@ -58,6 +56,8 @@ pub fn generate_spec_grammar(
 
     writeln!(w).unwrap();
     writeln!(w, "--8<-- \"specification/notes/00-grammar/index.md\"").unwrap();
+
+    write_generated_file(&grammar_path, &String::from_utf8(w).unwrap());
 }
 
 fn generate_context(grammar: &Grammar) -> SpecProductionContext {

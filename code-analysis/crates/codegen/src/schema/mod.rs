@@ -15,7 +15,7 @@ use serde::{
 };
 use serde_yaml::Value;
 
-use crate::chumsky::combinator_tree::CombinatorTreeRoot;
+use crate::{build_utils::read_source_file, chumsky::combinator_tree::CombinatorTreeRoot};
 
 pub mod validation;
 
@@ -579,9 +579,9 @@ pub enum ExpressionAssociativity {
 
 impl Grammar {
     pub fn from_manifest(manifest_path: &PathBuf) -> Self {
-        let contents = std::fs::read(manifest_path).unwrap();
+        let contents = read_source_file(manifest_path);
         let manifest_path_str = &manifest_path.to_str().unwrap();
-        let manifest: Manifest = serde_yaml::from_slice(&contents).expect(manifest_path_str);
+        let manifest: Manifest = serde_yaml::from_str(&contents).expect(manifest_path_str);
 
         let productions: IndexMap<String, Vec<ProductionRef>> = manifest
             .sections
@@ -593,9 +593,9 @@ impl Grammar {
                     let topic_path = manifest_path.parent().unwrap().join(definition);
                     let topic_path_str = topic_path.to_str().unwrap();
 
-                    let contents = std::fs::read(&topic_path).expect(topic_path_str);
+                    let contents = read_source_file(&topic_path);
                     let rules: Vec<Production> =
-                        serde_yaml::from_slice(&contents).expect(topic_path_str);
+                        serde_yaml::from_str(&contents).expect(topic_path_str);
                     let rules: Vec<ProductionRef> = rules.into_iter().map(|p| Rc::new(p)).collect();
 
                     return Some((definition.clone(), rules));

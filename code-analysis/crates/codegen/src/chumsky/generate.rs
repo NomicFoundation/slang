@@ -1,11 +1,11 @@
 use std::{
     collections::{BTreeMap, BTreeSet},
-    fs,
     path::PathBuf,
 };
 
 use quote::quote;
 
+use crate::build_utils::write_generated_file;
 use crate::schema::*;
 
 use super::{combinator_tree::ProductionGeneratedCode, rustfmt::rustfmt};
@@ -47,14 +47,8 @@ impl Grammar {
     }
 
     fn format_and_write_source(path: &PathBuf, source: String) {
-        // Make it possible to debug the code even when rustfmt dies
-        // by writing the unformatted code to the file.
-        fs::write(path, source.as_str()).expect(format!("Unable to write to {:?}", path).as_str());
         let formatted_src = rustfmt(source);
-        if formatted_src != "" {
-            fs::write(path, formatted_src)
-                .expect(format!("Unable to write to {:?}", path).as_str());
-        };
+        write_generated_file(path, &formatted_src);
     }
 
     // Compute a topological ordering, with backlinks ignored

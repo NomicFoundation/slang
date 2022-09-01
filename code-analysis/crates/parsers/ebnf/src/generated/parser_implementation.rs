@@ -1,3 +1,5 @@
+// This file is generated via `cargo build`. Please don't edit by hand.
+
 use super::parser_interface::*;
 use super::tree_interface::*;
 use chumsky::prelude::*;
