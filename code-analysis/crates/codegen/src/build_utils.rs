@@ -44,6 +44,33 @@ pub fn delete_generated_file(file_path: &PathBuf) {
     }
 }
 
+pub fn assert_no_changes_in_ci() {
+    if !should_verify_generated_files() {
+        return;
+    }
+
+    run_git_command(&["status"]);
+    run_git_command(&["diff-index", "HEAD", "--quiet"]);
+
+    fn run_git_command(args: &[&str]) {
+        let result = Command::new("git")
+            .args(args)
+            .spawn()
+            .expect("Failed to invoke `git`")
+            .wait()
+            .expect("Failed to invoke `git`");
+
+        assert!(
+            result.success(),
+            "Found codegen changes. Please rerun `cargo build` locally and review changes."
+        );
+    }
+}
+
+fn should_verify_generated_files() -> bool {
+    std::env::var("SLANG_VERIFY_GENERATED_FILES").is_ok()
+}
+
 fn generate_header(file_path: &PathBuf) -> String {
     let warning_line = "This file is generated via `cargo build`. Please don't edit by hand.";
 

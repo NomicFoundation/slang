@@ -17,7 +17,7 @@ use serde_yaml::Value;
 
 use crate::{build_utils::read_source_file, chumsky::combinator_tree::CombinatorTreeRoot};
 
-pub mod validation;
+mod validation;
 
 #[derive(Clone, Debug)]
 pub struct Grammar {
@@ -608,12 +608,9 @@ impl Grammar {
             productions,
         };
 
-        grammar.post_initialize();
+        grammar.validate(manifest_path);
+        grammar.create_combinator_trees();
 
         grammar
-    }
-
-    fn post_initialize(&mut self) {
-        self.create_combinator_trees();
     }
 }
