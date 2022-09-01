@@ -17,6 +17,8 @@ use serde_yaml::Value;
 
 use crate::chumsky::combinator_tree::CombinatorTreeRoot;
 
+pub mod validation;
+
 #[derive(Clone, Debug)]
 pub struct Grammar {
     pub manifest: Manifest,

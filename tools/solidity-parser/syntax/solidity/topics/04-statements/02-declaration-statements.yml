@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../../../../syntax-schema/syntax/schema/topic.schema.json
+# yaml-language-server: $schema=../../../../../../code-analysis/crates/codegen/schema/topic.schema.json
 
 - name: TupleDeconstructionStatement
   sequence:
