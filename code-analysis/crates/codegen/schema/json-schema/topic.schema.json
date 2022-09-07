@@ -42,7 +42,8 @@
       "properties": {
         "name": { "type": "string", "minLength": 1 },
         "lookahead": { "$ref": "#/$defs/Expression" },
-        "associativity": { "enum": ["Left", "Right"] }
+        "associativity": { "enum": ["Left", "Right"] },
+        "merge": { "type": "boolean" }
       }
     },
     "Versions": {

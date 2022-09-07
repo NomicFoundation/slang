@@ -1,11 +1,12 @@
 [package]
-name = "codegen_schema"
+name = "codegen_ebnf"
 version = "0.0.0"
 edition = "2021"
 rust-version = "1.60.0"
 
 [dependencies]
 codegen_utils = { path = "../utils" }
+codegen_schema = { path = "../schema" }
 Inflector = "0.11.4"
 unicode_names2 = "0.5.0"
 indexmap = { version = "1.8.1", features = ["serde"] }

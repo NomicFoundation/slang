@@ -1,10 +1,6 @@
-pub mod chumsky;
-pub mod ebnf;
-
 mod validation;
 
 use std::{
-    cell::RefCell,
     collections::BTreeMap,
     fmt,
     path::PathBuf,
@@ -21,13 +17,13 @@ use serde::{
 };
 use serde_yaml::Value;
 
-use crate::chumsky::combinator_tree::CombinatorTreeRoot;
-
 #[derive(Clone, Debug)]
 pub struct Grammar {
     pub manifest: Manifest,
     pub productions: IndexMap<String, Vec<ProductionRef>>,
 }
+
+pub type GrammarRef = Rc<Grammar>;
 
 impl Grammar {
     pub fn get_production(&self, name: &str) -> ProductionRef {
@@ -86,7 +82,6 @@ pub struct Production {
     pub name: String,
     pub kind: Option<ProductionKind>,
     pub versions: BTreeMap<Version, ExpressionRef>,
-    pub combinator_tree: RefCell<CombinatorTreeRoot>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -291,7 +286,6 @@ impl<'de> Deserialize<'de> for Production {
                     name,
                     kind,
                     versions,
-                    combinator_tree: Default::default(),
                 })
             }
         }
@@ -570,6 +564,8 @@ pub struct ExpressionConfig {
     pub lookahead: Option<ExpressionRef>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub associativity: Option<ExpressionAssociativity>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub merge: Option<bool>,
 }
 
 impl ExpressionConfig {
@@ -584,6 +580,7 @@ impl Default for ExpressionConfig {
             name: None,
             lookahead: None,
             associativity: None,
+            merge: None,
         }
     }
 }
@@ -595,7 +592,7 @@ pub enum ExpressionAssociativity {
 }
 
 impl Grammar {
-    pub fn from_manifest(manifest_path: &PathBuf) -> Self {
+    pub fn from_manifest(manifest_path: &PathBuf) -> GrammarRef {
         let contents = read_source_file(manifest_path);
         let manifest_path_str = &manifest_path.to_str().unwrap();
         let manifest: Manifest = serde_yaml::from_str(&contents).expect(manifest_path_str);
@@ -620,14 +617,13 @@ impl Grammar {
             })
             .collect();
 
-        let mut grammar = Grammar {
+        let grammar = Grammar {
             manifest,
             productions,
         };
 
         grammar.validate(manifest_path);
-        grammar.create_combinator_trees();
 
-        grammar
+        Rc::new(grammar)
     }
 }

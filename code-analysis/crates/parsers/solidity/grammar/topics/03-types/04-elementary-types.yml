@@ -15,41 +15,42 @@
   kind: Token
   sequence:
     - terminal: bytes
-    - optional:
-        choice:
-          - terminal: "1"
-          - terminal: "2"
-          - terminal: "3"
-          - terminal: "4"
-          - terminal: "5"
-          - terminal: "6"
-          - terminal: "7"
-          - terminal: "8"
-          - terminal: "9"
-          - terminal: "10"
-          - terminal: "11"
-          - terminal: "12"
-          - terminal: "13"
-          - terminal: "14"
-          - terminal: "15"
-          - terminal: "16"
-          - terminal: "17"
-          - terminal: "18"
-          - terminal: "19"
-          - terminal: "20"
-          - terminal: "21"
-          - terminal: "22"
-          - terminal: "23"
-          - terminal: "24"
-          - terminal: "25"
-          - terminal: "26"
-          - terminal: "27"
-          - terminal: "28"
-          - terminal: "29"
-          - terminal: "30"
-          - terminal: "31"
-          - terminal: "32"
+    - choice:
+        - terminal: "1"
+        - terminal: "2"
+        - terminal: "3"
+        - terminal: "4"
+        - terminal: "5"
+        - terminal: "6"
+        - terminal: "7"
+        - terminal: "8"
+        - terminal: "9"
+        - terminal: "10"
+        - terminal: "11"
+        - terminal: "12"
+        - terminal: "13"
+        - terminal: "14"
+        - terminal: "15"
+        - terminal: "16"
+        - terminal: "17"
+        - terminal: "18"
+        - terminal: "19"
+        - terminal: "20"
+        - terminal: "21"
+        - terminal: "22"
+        - terminal: "23"
+        - terminal: "24"
+        - terminal: "25"
+        - terminal: "26"
+        - terminal: "27"
+        - terminal: "28"
+        - terminal: "29"
+        - terminal: "30"
+        - terminal: "31"
+        - terminal: "32"
       config:
+        merge: true
+        name: Count
         # Makes the likely errors clearer?
         lookahead: { not: { range: { from: "0", to: "9" } } }
 
@@ -91,6 +92,9 @@
           - terminal: "240"
           - terminal: "248"
           - terminal: "256"
+        config:
+          merge: true
+          name: ByteCount
       config:
         # Makes the likely errors clearer?
         lookahead: { not: { range: { from: "0", to: "9" } } }
