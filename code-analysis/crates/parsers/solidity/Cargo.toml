@@ -6,6 +6,8 @@ rust-version = "1.60.0"
 
 [build-dependencies]
 codegen_schema = { path = "../../codegen/schema" }
+codegen_parser = { path = "../../codegen/parser" }
+codegen_ebnf = { path = "../../codegen/ebnf" }
 codegen_spec = { path = "../../codegen/spec" }
 codegen_utils = { path = "../../codegen/utils" }
 
@@ -16,3 +18,4 @@ clap = { version = "3.1.6", features = ["derive"] }
 serde = { version = "1.0.137", features = ["derive"] }
 serde_json = "1.0.81"
 serde_yaml = "0.8.24"
+strum = { version = "0.24.1", features = ["derive"] }

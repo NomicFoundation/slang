@@ -29,6 +29,7 @@
 
 - name: YulKeyword
   kind: Token
+  config: { merge: true }
   choice:
     - reference: BooleanLiteral
     - terminal: break
