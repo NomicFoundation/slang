@@ -1,9 +1,10 @@
 [workspace]
 members = [
     "crates/codegen/schema",
+    "crates/codegen/ebnf",
+    "crates/codegen/parser",
     "crates/codegen/spec",
     "crates/codegen/utils",
-    "crates/parsers/ebnf",
     "crates/parsers/solidity",
 ]
 

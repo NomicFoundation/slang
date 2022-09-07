@@ -39,6 +39,7 @@
     - delimitedBy:
         open: (
         optional:
+          config: { name: Arguments }
           separatedBy:
             reference: YulIdentifier
             separator: ","
@@ -46,7 +47,8 @@
     - optional:
         sequence:
           - terminal: "->"
-          - separatedBy:
+          - config: { name: Results }
+            separatedBy:
               reference: YulIdentifier
               separator: ","
     - reference: YulBlock

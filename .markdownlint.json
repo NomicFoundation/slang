@@ -1,4 +1,5 @@
 {
+  "$schema": "https://raw.githubusercontent.com/DavidAnson/markdownlint/v0.26.2/schema/markdownlint-config-schema.json",
   "default": true,
   "code-block-style": false,
   "line-length": false

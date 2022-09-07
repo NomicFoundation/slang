@@ -3,12 +3,22 @@ use std::fs;
 use ariadne::{Color, Fmt, Label, Report, ReportKind, Source};
 use chumsky::prelude::*;
 use clap::Parser as ClapParser;
+use strum::EnumString;
 
-use solidity_parser::generated::parser_interface::Parsers;
+use solidity_parser::generated::{ast_parser, cst_parser};
+
+#[derive(Copy, Clone, Debug, PartialEq, Eq, EnumString)]
+enum ParserType {
+    CST,
+    AST,
+}
 
 #[derive(ClapParser, Debug)]
 struct ProgramArgs {
     solidity_input: String,
+
+    #[clap(long)]
+    parser: ParserType,
 
     #[clap(long)]
     json_output: Option<String>,
@@ -21,35 +31,69 @@ fn main() -> Result<(), usize> {
     let args = ProgramArgs::parse();
 
     let solidity_src = fs::read_to_string(args.solidity_input).expect("Failed to read file");
-    let (parse_tree, errs) = Parsers::new()
-        .source_unit
-        .parse_recovery(solidity_src.as_str());
-    let number_of_errors = errs.len();
-    print_errors(errs, &solidity_src);
 
-    if let Some(source_unit) = parse_tree {
-        if let Some(json_output) = args.json_output {
-            let json = serde_json::to_string(&source_unit).expect("Failed to produce json");
-            if json_output == "-" {
-                println!("{}", json);
-            } else {
-                fs::write(json_output, json).expect("Failed to write json file");
+    if args.parser == ParserType::AST {
+        let (parse_tree, errs) = ast_parser::Parsers::new()
+            .source_unit
+            .parse_recovery(solidity_src.as_str());
+        let number_of_errors = errs.len();
+        print_errors(errs, &solidity_src);
+
+        if let Some(source_unit) = parse_tree {
+            if let Some(json_output) = args.json_output {
+                let json = serde_json::to_string(&source_unit).expect("Failed to produce json");
+                if json_output == "-" {
+                    println!("{}", json);
+                } else {
+                    fs::write(json_output, json).expect("Failed to write json file");
+                }
+            }
+            if let Some(yaml_output) = args.yaml_output {
+                let yaml = serde_yaml::to_string(&source_unit).expect("Failed to produce yaml");
+                if yaml_output == "-" {
+                    println!("{}", yaml);
+                } else {
+                    fs::write(yaml_output, yaml).expect("Failed to write yaml file");
+                }
             }
         }
-        if let Some(yaml_output) = args.yaml_output {
-            let yaml = serde_yaml::to_string(&source_unit).expect("Failed to produce yaml");
-            if yaml_output == "-" {
-                println!("{}", yaml);
-            } else {
-                fs::write(yaml_output, yaml).expect("Failed to write yaml file");
-            }
-        }
-    }
 
-    if number_of_errors == 0 {
-        Ok(())
+        if number_of_errors == 0 {
+            Ok(())
+        } else {
+            Err(number_of_errors)
+        }
     } else {
-        Err(number_of_errors)
+        let (parse_tree, errs) = cst_parser::Parsers::new()
+            .source_unit
+            .parse_recovery(solidity_src.as_str());
+        let number_of_errors = errs.len();
+        print_errors(errs, &solidity_src);
+
+        if let Some(source_unit) = parse_tree {
+            if let Some(json_output) = args.json_output {
+                let json = serde_json::to_string(&source_unit).expect("Failed to produce json");
+                if json_output == "-" {
+                    println!("{}", json);
+                } else {
+                    fs::write(json_output, json).expect("Failed to write json file");
+                }
+            }
+            if let Some(yaml_output) = args.yaml_output {
+                let yaml = serde_yaml::to_string(&source_unit).expect("Failed to produce yaml");
+                if yaml_output == "-" {
+                    println!("{}", yaml);
+                } else {
+                    fs::write(yaml_output, yaml).expect("Failed to write yaml file");
+                }
+            }
+        }
+
+        if number_of_errors == 0 {
+            Ok(())
+        } else {
+            Err(number_of_errors)
+        }
     }
 }
 
