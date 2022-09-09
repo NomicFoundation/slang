@@ -509,12 +509,12 @@ impl Parsers {
                         .repeated(),
                 )
                 .map(repetition_mapper)
-                .map(
-                    |(filter_0s, periods)| version_pragma_value::VersionPragmaValue {
-                        filter_0s,
-                        periods,
-                    },
-                )
+                .map(|(filter_0_repeated_repeated, period_repeated)| {
+                    version_pragma_value::VersionPragmaValue {
+                        filter_0_repeated_repeated,
+                        period_repeated,
+                    }
+                })
                 .boxed();
 
         // «Whitespace» = 1…*{ '\u{20}' | '\u{9}' } ;
@@ -763,12 +763,12 @@ impl Parsers {
                             .repeated(),
                     )
                     .map(repetition_mapper)
-                    .map(
-                        |(expressions, commas)| array_literal::ExpressionsAndCommas {
-                            expressions,
-                            commas,
-                        },
-                    ),
+                    .map(|(expression_repeated, comma_repeated)| {
+                        array_literal::ExpressionRepeatedAndCommaRepeated {
+                            expression_repeated,
+                            comma_repeated,
+                        }
+                    }),
             )
             .then(
                 leading_trivia_parser
@@ -906,7 +906,9 @@ impl Parsers {
                         .repeated()
                         .at_least(1usize)
                         .map(|v| VariableSizeTerminal(v.len()))
-                        .map(|v| Box::new(double_quoted_ascii_string_literal::Run::Chars(v))),
+                        .map(|v| {
+                            Box::new(double_quoted_ascii_string_literal::Run::CharRepeated(v))
+                        }),
                     escape_sequence_parser.clone().map(|v| {
                         Box::new(double_quoted_ascii_string_literal::Run::EscapeSequence(v))
                     }),
@@ -929,7 +931,9 @@ impl Parsers {
                         .repeated()
                         .at_least(1usize)
                         .map(|v| VariableSizeTerminal(v.len()))
-                        .map(|v| Box::new(double_quoted_unicode_string_literal::Run::Chars(v))),
+                        .map(|v| {
+                            Box::new(double_quoted_unicode_string_literal::Run::CharRepeated(v))
+                        }),
                     escape_sequence_parser.clone().map(|v| {
                         Box::new(double_quoted_unicode_string_literal::Run::EscapeSequence(v))
                     }),
@@ -1117,12 +1121,12 @@ impl Parsers {
                             .repeated(),
                     )
                     .map(repetition_mapper)
-                    .map(
-                        |(expressions, commas)| parenthesis_expression::ExpressionsAndCommas {
-                            expressions,
-                            commas,
-                        },
-                    ),
+                    .map(|(expression_repeated, comma_repeated)| {
+                        parenthesis_expression::ExpressionRepeatedAndCommaRepeated {
+                            expression_repeated,
+                            comma_repeated,
+                        }
+                    }),
             )
             .then(
                 leading_trivia_parser
@@ -1159,12 +1163,12 @@ impl Parsers {
                     .repeated(),
             )
             .map(repetition_mapper)
-            .map(
-                |(expressions, commas)| positional_argument_list::PositionalArgumentList {
-                    expressions,
-                    commas,
-                },
-            )
+            .map(|(expression_repeated, comma_repeated)| {
+                positional_argument_list::PositionalArgumentList {
+                    expression_repeated,
+                    comma_repeated,
+                }
+            })
             .boxed();
 
         // «SingleQuotedAsciiStringLiteral» = '\'' { 1…*{ '\u{20}'…'~' - ( '\'' | '\\' ) } | «EscapeSequence» } '\'' ;
@@ -1177,7 +1181,9 @@ impl Parsers {
                         .repeated()
                         .at_least(1usize)
                         .map(|v| VariableSizeTerminal(v.len()))
-                        .map(|v| Box::new(single_quoted_ascii_string_literal::Run::Chars(v))),
+                        .map(|v| {
+                            Box::new(single_quoted_ascii_string_literal::Run::CharRepeated(v))
+                        }),
                     escape_sequence_parser.clone().map(|v| {
                         Box::new(single_quoted_ascii_string_literal::Run::EscapeSequence(v))
                     }),
@@ -1200,7 +1206,9 @@ impl Parsers {
                         .repeated()
                         .at_least(1usize)
                         .map(|v| VariableSizeTerminal(v.len()))
-                        .map(|v| Box::new(single_quoted_unicode_string_literal::Run::Chars(v))),
+                        .map(|v| {
+                            Box::new(single_quoted_unicode_string_literal::Run::CharRepeated(v))
+                        }),
                     escape_sequence_parser.clone().map(|v| {
                         Box::new(single_quoted_unicode_string_literal::Run::EscapeSequence(v))
                     }),
@@ -1388,12 +1396,14 @@ impl Parsers {
                             .repeated(),
                     )
                     .map(repetition_mapper)
-                    .map(|(double_quoted_ascii_string_literals, commas)| {
-                        assembly_flags::DoubleQuotedAsciiStringLiteralsAndCommas {
-                            double_quoted_ascii_string_literals,
-                            commas,
-                        }
-                    }),
+                    .map(
+                        |(double_quoted_ascii_string_literal_repeated, comma_repeated)| {
+                            assembly_flags::DoubleQuotedAsciiStringLiteralRepeatedAndCommaRepeated {
+                                double_quoted_ascii_string_literal_repeated,
+                                comma_repeated,
+                            }
+                        },
+                    ),
             )
             .then(
                 leading_trivia_parser
@@ -1524,7 +1534,7 @@ impl Parsers {
         let unicode_string_literal_parser = choice ((single_quoted_unicode_string_literal_parser . clone () . map (| v | Box :: new (unicode_string_literal :: UnicodeStringLiteral :: SingleQuotedUnicodeStringLiteral (v))) , double_quoted_unicode_string_literal_parser . clone () . map (| v | Box :: new (unicode_string_literal :: UnicodeStringLiteral :: DoubleQuotedUnicodeStringLiteral (v))))) . boxed () ;
 
         // YulFunctionCall = «YulIdentifier» '(' [ YulExpression  { ',' YulExpression } ] ')' ;
-        let yul_function_call_parser = leading_trivia_parser . clone () . then (yul_identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | yul_identifier :: WithTrivia { leading_trivia , terminal , trailing_trivia }) . then (leading_trivia_parser . clone () . then (just ('(') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (yul_expression_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (yul_expression_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| (yul_expressions , commas) | yul_function_call :: YulExpressionsAndCommas { yul_expressions , commas }) . or_not ()) . then (leading_trivia_parser . clone () . then (just (')') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | yul_function_call :: OpenParenAndYulExpressionsAndCommasAndCloseParen :: from_parse (v))) . map (| v | yul_function_call :: YulFunctionCall :: from_parse (v)) . boxed () ;
+        let yul_function_call_parser = leading_trivia_parser . clone () . then (yul_identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | yul_identifier :: WithTrivia { leading_trivia , terminal , trailing_trivia }) . then (leading_trivia_parser . clone () . then (just ('(') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (yul_expression_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (yul_expression_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| (yul_expression_repeated , comma_repeated) | yul_function_call :: YulExpressionRepeatedAndCommaRepeated { yul_expression_repeated , comma_repeated }) . or_not ()) . then (leading_trivia_parser . clone () . then (just (')') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | yul_function_call :: OpenParenAndYulExpressionRepeatedAndCommaRepeatedAndCloseParen :: from_parse (v))) . map (| v | yul_function_call :: YulFunctionCall :: from_parse (v)) . boxed () ;
 
         // YulFunctionDefinition = 'function' «YulIdentifier» '(' [ «YulIdentifier»  { ',' «YulIdentifier» } ] ')' [ '->' «YulIdentifier»  { ',' «YulIdentifier» } ] YulBlock ;
         let yul_function_definition_parser = leading_trivia_parser
@@ -1605,12 +1615,12 @@ impl Parsers {
                                     .repeated(),
                             )
                             .map(repetition_mapper)
-                            .map(
-                                |(yul_identifiers, commas)| yul_function_definition::Arguments {
-                                    yul_identifiers,
-                                    commas,
-                                },
-                            )
+                            .map(|(yul_identifier_repeated, comma_repeated)| {
+                                yul_function_definition::Arguments {
+                                    yul_identifier_repeated,
+                                    comma_repeated,
+                                }
+                            })
                             .or_not(),
                     )
                     .then(
@@ -1684,12 +1694,12 @@ impl Parsers {
                                     .repeated(),
                             )
                             .map(repetition_mapper)
-                            .map(
-                                |(yul_identifiers, commas)| yul_function_definition::Results {
-                                    yul_identifiers,
-                                    commas,
-                                },
-                            ),
+                            .map(|(yul_identifier_repeated, comma_repeated)| {
+                                yul_function_definition::Results {
+                                    yul_identifier_repeated,
+                                    comma_repeated,
+                                }
+                            }),
                     )
                     .map(|v| yul_function_definition::Sequence0::from_parse(v))
                     .or_not(),
@@ -1738,12 +1748,12 @@ impl Parsers {
                     .repeated(),
             )
             .map(repetition_mapper)
-            .map(
-                |(yul_identifiers, periods)| yul_identifier_path::YulIdentifierPath {
-                    yul_identifiers,
-                    periods,
-                },
-            )
+            .map(|(yul_identifier_repeated, period_repeated)| {
+                yul_identifier_path::YulIdentifierPath {
+                    yul_identifier_repeated,
+                    period_repeated,
+                }
+            })
             .boxed();
 
         // ABICoderPragmaSpecifier = 'abicoder' «Identifier» ;
@@ -1816,112 +1826,7 @@ impl Parsers {
             .boxed();
 
         // EnumDefinition = 'enum' «Identifier» '{' «Identifier»  { ',' «Identifier» } '}' ;
-        let enum_definition_parser = leading_trivia_parser
-            .clone()
-            .then(terminal("enum").to(FixedSizeTerminal::<4usize>()))
-            .then(trailing_trivia_parser.clone())
-            .map(
-                |((leading_trivia, terminal), trailing_trivia)| FixedSizeTerminalWithTrivia {
-                    leading_trivia,
-                    terminal,
-                    trailing_trivia,
-                },
-            )
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(identifier_parser.clone())
-                    .then(trailing_trivia_parser.clone())
-                    .map(
-                        |((leading_trivia, terminal), trailing_trivia)| identifier::WithTrivia {
-                            leading_trivia,
-                            terminal,
-                            trailing_trivia,
-                        },
-                    ),
-            )
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(just('{').to(FixedSizeTerminal::<1usize>()))
-                    .then(trailing_trivia_parser.clone())
-                    .map(|((leading_trivia, terminal), trailing_trivia)| {
-                        FixedSizeTerminalWithTrivia {
-                            leading_trivia,
-                            terminal,
-                            trailing_trivia,
-                        }
-                    })
-                    .then(
-                        leading_trivia_parser
-                            .clone()
-                            .then(identifier_parser.clone())
-                            .then(trailing_trivia_parser.clone())
-                            .map(|((leading_trivia, terminal), trailing_trivia)| {
-                                identifier::WithTrivia {
-                                    leading_trivia,
-                                    terminal,
-                                    trailing_trivia,
-                                }
-                            })
-                            .then(
-                                leading_trivia_parser
-                                    .clone()
-                                    .then(just(',').to(FixedSizeTerminal::<1usize>()))
-                                    .then(trailing_trivia_parser.clone())
-                                    .map(|((leading_trivia, terminal), trailing_trivia)| {
-                                        FixedSizeTerminalWithTrivia {
-                                            leading_trivia,
-                                            terminal,
-                                            trailing_trivia,
-                                        }
-                                    })
-                                    .then(
-                                        leading_trivia_parser
-                                            .clone()
-                                            .then(identifier_parser.clone())
-                                            .then(trailing_trivia_parser.clone())
-                                            .map(
-                                                |((leading_trivia, terminal), trailing_trivia)| {
-                                                    identifier::WithTrivia {
-                                                        leading_trivia,
-                                                        terminal,
-                                                        trailing_trivia,
-                                                    }
-                                                },
-                                            ),
-                                    )
-                                    .repeated(),
-                            )
-                            .map(repetition_mapper)
-                            .map(
-                                |(identifiers, commas)| enum_definition::IdentifiersAndCommas {
-                                    identifiers,
-                                    commas,
-                                },
-                            ),
-                    )
-                    .then(
-                        leading_trivia_parser
-                            .clone()
-                            .then(just('}').to(FixedSizeTerminal::<1usize>()))
-                            .then(trailing_trivia_parser.clone())
-                            .map(|((leading_trivia, terminal), trailing_trivia)| {
-                                FixedSizeTerminalWithTrivia {
-                                    leading_trivia,
-                                    terminal,
-                                    trailing_trivia,
-                                }
-                            }),
-                    )
-                    .map(|v| {
-                        enum_definition::OpenBraceAndIdentifiersAndCommasAndCloseBrace::from_parse(
-                            v,
-                        )
-                    }),
-            )
-            .map(|v| enum_definition::EnumDefinition::from_parse(v))
-            .boxed();
+        let enum_definition_parser = leading_trivia_parser . clone () . then (terminal ("enum") . to (FixedSizeTerminal :: < 4usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | identifier :: WithTrivia { leading_trivia , terminal , trailing_trivia })) . then (leading_trivia_parser . clone () . then (just ('{') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | identifier :: WithTrivia { leading_trivia , terminal , trailing_trivia }) . then (leading_trivia_parser . clone () . then (just (',') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | identifier :: WithTrivia { leading_trivia , terminal , trailing_trivia })) . repeated ()) . map (repetition_mapper) . map (| (identifier_repeated , comma_repeated) | enum_definition :: IdentifierRepeatedAndCommaRepeated { identifier_repeated , comma_repeated })) . then (leading_trivia_parser . clone () . then (just ('}') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | enum_definition :: OpenBraceAndIdentifierRepeatedAndCommaRepeatedAndCloseBrace :: from_parse (v))) . map (| v | enum_definition :: EnumDefinition :: from_parse (v)) . boxed () ;
 
         // ExperimentalPragmaSpecifier = 'experimental' «Identifier» ;
         let experimental_pragma_specifier_parser = leading_trivia_parser
@@ -1991,10 +1896,12 @@ impl Parsers {
                     .repeated(),
             )
             .map(repetition_mapper)
-            .map(|(identifiers, periods)| identifier_path::IdentifierPath {
-                identifiers,
-                periods,
-            })
+            .map(
+                |(identifier_repeated, period_repeated)| identifier_path::IdentifierPath {
+                    identifier_repeated,
+                    period_repeated,
+                },
+            )
             .boxed();
 
         // ImportPath = «AsciiStringLiteral» ;
@@ -2324,12 +2231,12 @@ impl Parsers {
                             .repeated(),
                     )
                     .map(repetition_mapper)
-                    .map(
-                        |(named_arguments, commas)| named_argument_list::NamedArgumentsAndCommas {
-                            named_arguments,
-                            commas,
-                        },
-                    )
+                    .map(|(named_argument_repeated, comma_repeated)| {
+                        named_argument_list::NamedArgumentRepeatedAndCommaRepeated {
+                            named_argument_repeated,
+                            comma_repeated,
+                        }
+                    })
                     .or_not(),
             )
             .then(
@@ -2349,7 +2256,7 @@ impl Parsers {
             .boxed();
 
         // OverrideSpecifier = 'override' [ '(' IdentifierPath  { ',' IdentifierPath } ')' ] ;
-        let override_specifier_parser = leading_trivia_parser . clone () . then (terminal ("override") . to (FixedSizeTerminal :: < 8usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (leading_trivia_parser . clone () . then (just ('(') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (identifier_path_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (identifier_path_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| (identifier_paths , commas) | override_specifier :: IdentifierPathsAndCommas { identifier_paths , commas })) . then (leading_trivia_parser . clone () . then (just (')') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | override_specifier :: OpenParenAndIdentifierPathsAndCommasAndCloseParen :: from_parse (v)) . or_not ()) . map (| v | override_specifier :: OverrideSpecifier :: from_parse (v)) . boxed () ;
+        let override_specifier_parser = leading_trivia_parser . clone () . then (terminal ("override") . to (FixedSizeTerminal :: < 8usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (leading_trivia_parser . clone () . then (just ('(') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (identifier_path_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (identifier_path_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| (identifier_path_repeated , comma_repeated) | override_specifier :: IdentifierPathRepeatedAndCommaRepeated { identifier_path_repeated , comma_repeated })) . then (leading_trivia_parser . clone () . then (just (')') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | override_specifier :: OpenParenAndIdentifierPathRepeatedAndCommaRepeatedAndCloseParen :: from_parse (v)) . or_not ()) . map (| v | override_specifier :: OverrideSpecifier :: from_parse (v)) . boxed () ;
 
         // ParameterList = '(' [ ParameterDeclaration  { ',' ParameterDeclaration } ] ')' ;
         let parameter_list_parser = leading_trivia_parser
@@ -2382,10 +2289,10 @@ impl Parsers {
                             .repeated(),
                     )
                     .map(repetition_mapper)
-                    .map(|(parameter_declarations, commas)| {
-                        parameter_list::ParameterDeclarationsAndCommas {
-                            parameter_declarations,
-                            commas,
+                    .map(|(parameter_declaration_repeated, comma_repeated)| {
+                        parameter_list::ParameterDeclarationRepeatedAndCommaRepeated {
+                            parameter_declaration_repeated,
+                            comma_repeated,
                         }
                     })
                     .or_not(),
@@ -2446,7 +2353,7 @@ impl Parsers {
             .boxed();
 
         // SelectingImportDirective = '{' SelectedImport  { ',' SelectedImport } '}' 'from' ImportPath ;
-        let selecting_import_directive_parser = leading_trivia_parser . clone () . then (just ('{') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (selected_import_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (selected_import_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| (selected_imports , commas) | selecting_import_directive :: SelectedImportsAndCommas { selected_imports , commas })) . then (leading_trivia_parser . clone () . then (just ('}') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | selecting_import_directive :: OpenBraceAndSelectedImportsAndCommasAndCloseBrace :: from_parse (v)) . then (leading_trivia_parser . clone () . then (terminal ("from") . to (FixedSizeTerminal :: < 4usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . then (import_path_parser . clone ()) . map (| v | selecting_import_directive :: SelectingImportDirective :: from_parse (v)) . boxed () ;
+        let selecting_import_directive_parser = leading_trivia_parser . clone () . then (just ('{') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (selected_import_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (selected_import_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| (selected_import_repeated , comma_repeated) | selecting_import_directive :: SelectedImportRepeatedAndCommaRepeated { selected_import_repeated , comma_repeated })) . then (leading_trivia_parser . clone () . then (just ('}') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | selecting_import_directive :: OpenBraceAndSelectedImportRepeatedAndCommaRepeatedAndCloseBrace :: from_parse (v)) . then (leading_trivia_parser . clone () . then (terminal ("from") . to (FixedSizeTerminal :: < 4usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . then (import_path_parser . clone ()) . map (| v | selecting_import_directive :: SelectingImportDirective :: from_parse (v)) . boxed () ;
 
         // SimpleImportDirective = ImportPath { 'as' «Identifier» } ;
         let simple_import_directive_parser = import_path_parser
@@ -2904,10 +2811,10 @@ impl Parsers {
                     .repeated(),
             )
             .map(repetition_mapper)
-            .map(|(yul_identifier_paths, commas)| {
-                yul_assignment_statement::YulIdentifierPathsAndCommas {
-                    yul_identifier_paths,
-                    commas,
+            .map(|(yul_identifier_path_repeated, comma_repeated)| {
+                yul_assignment_statement::YulIdentifierPathRepeatedAndCommaRepeated {
+                    yul_identifier_path_repeated,
+                    comma_repeated,
                 }
             })
             .then(
@@ -3044,10 +2951,10 @@ impl Parsers {
                             .repeated(),
                     )
                     .map(repetition_mapper)
-                    .map(|(yul_identifier_paths, commas)| {
-                        yul_variable_declaration::YulIdentifierPathsAndCommas {
-                            yul_identifier_paths,
-                            commas,
+                    .map(|(yul_identifier_path_repeated, comma_repeated)| {
+                        yul_variable_declaration::YulIdentifierPathRepeatedAndCommaRepeated {
+                            yul_identifier_path_repeated,
+                            comma_repeated,
                         }
                     }),
             )
@@ -3581,10 +3488,10 @@ impl Parsers {
                             .repeated(),
                     )
                     .map(repetition_mapper)
-                    .map(|(inheritance_specifiers, commas)| {
-                        inheritance_specifier_list::InheritanceSpecifiersAndCommas {
-                            inheritance_specifiers,
-                            commas,
+                    .map(|(inheritance_specifier_repeated, comma_repeated)| {
+                        inheritance_specifier_list::InheritanceSpecifierRepeatedAndCommaRepeated {
+                            inheritance_specifier_repeated,
+                            comma_repeated,
                         }
                     }),
             )
@@ -3722,7 +3629,7 @@ impl Parsers {
             .boxed();
 
         // UsingDirective = 'using' ( IdentifierPath | '{' IdentifierPath  { ',' IdentifierPath } '}' ) 'for' ( '*' | TypeName ) [ 'global' ] ';' ;
-        let using_directive_parser = leading_trivia_parser . clone () . then (terminal ("using") . to (FixedSizeTerminal :: < 5usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (choice ((identifier_path_parser . clone () . map (| v | Box :: new (using_directive :: Choices0 :: IdentifierPath (v))) , leading_trivia_parser . clone () . then (just ('{') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (identifier_path_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (identifier_path_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| (identifier_paths , commas) | using_directive :: IdentifierPathsAndCommas { identifier_paths , commas })) . then (leading_trivia_parser . clone () . then (just ('}') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | using_directive :: OpenBraceAndIdentifierPathsAndCommasAndCloseBrace :: from_parse (v)) . map (| v | Box :: new (using_directive :: Choices0 :: OpenBraceAndIdentifierPathsAndCommasAndCloseBrace (v)))))) . then (leading_trivia_parser . clone () . then (terminal ("for") . to (FixedSizeTerminal :: < 3usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . then (choice ((leading_trivia_parser . clone () . then (just ('*') . to (FixedSizeTerminal :: < 1 > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . map (| v | Box :: new (using_directive :: Choices1 :: Star (v))) , type_name_parser . clone () . map (| v | Box :: new (using_directive :: Choices1 :: TypeName (v)))))) . then (leading_trivia_parser . clone () . then (terminal ("global") . to (FixedSizeTerminal :: < 6usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . or_not ()) . then (leading_trivia_parser . clone () . then (just (';') . to (FixedSizeTerminal :: < 1 > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | using_directive :: UsingDirective :: from_parse (v)) . boxed () ;
+        let using_directive_parser = leading_trivia_parser . clone () . then (terminal ("using") . to (FixedSizeTerminal :: < 5usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (choice ((identifier_path_parser . clone () . map (| v | Box :: new (using_directive :: Choices0 :: IdentifierPath (v))) , leading_trivia_parser . clone () . then (just ('{') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (identifier_path_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (identifier_path_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| (identifier_path_repeated , comma_repeated) | using_directive :: IdentifierPathRepeatedAndCommaRepeated { identifier_path_repeated , comma_repeated })) . then (leading_trivia_parser . clone () . then (just ('}') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | using_directive :: OpenBraceAndIdentifierPathRepeatedAndCommaRepeatedAndCloseBrace :: from_parse (v)) . map (| v | Box :: new (using_directive :: Choices0 :: OpenBraceAndIdentifierPathRepeatedAndCommaRepeatedAndCloseBrace (v)))))) . then (leading_trivia_parser . clone () . then (terminal ("for") . to (FixedSizeTerminal :: < 3usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . then (choice ((leading_trivia_parser . clone () . then (just ('*') . to (FixedSizeTerminal :: < 1 > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . map (| v | Box :: new (using_directive :: Choices1 :: Star (v))) , type_name_parser . clone () . map (| v | Box :: new (using_directive :: Choices1 :: TypeName (v)))))) . then (leading_trivia_parser . clone () . then (terminal ("global") . to (FixedSizeTerminal :: < 6usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . or_not ()) . then (leading_trivia_parser . clone () . then (just (';') . to (FixedSizeTerminal :: < 1 > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | using_directive :: UsingDirective :: from_parse (v)) . boxed () ;
 
         // YulBlock = '{' { YulStatement } '}' ;
         yul_block_parser.define(
@@ -3801,10 +3708,10 @@ impl Parsers {
         .boxed();
 
         // ErrorDefinition = 'error' «Identifier» '(' [ ErrorParameter  { ',' ErrorParameter } ] ')' ';' ;
-        let error_definition_parser = leading_trivia_parser . clone () . then (terminal ("error") . to (FixedSizeTerminal :: < 5usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | identifier :: WithTrivia { leading_trivia , terminal , trailing_trivia })) . then (leading_trivia_parser . clone () . then (just ('(') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (error_parameter_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (error_parameter_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| (error_parameters , commas) | error_definition :: ErrorParametersAndCommas { error_parameters , commas }) . or_not ()) . then (leading_trivia_parser . clone () . then (just (')') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | error_definition :: OpenParenAndErrorParametersAndCommasAndCloseParen :: from_parse (v))) . then (leading_trivia_parser . clone () . then (just (';') . to (FixedSizeTerminal :: < 1 > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | error_definition :: ErrorDefinition :: from_parse (v)) . boxed () ;
+        let error_definition_parser = leading_trivia_parser . clone () . then (terminal ("error") . to (FixedSizeTerminal :: < 5usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | identifier :: WithTrivia { leading_trivia , terminal , trailing_trivia })) . then (leading_trivia_parser . clone () . then (just ('(') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (error_parameter_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (error_parameter_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| (error_parameter_repeated , comma_repeated) | error_definition :: ErrorParameterRepeatedAndCommaRepeated { error_parameter_repeated , comma_repeated }) . or_not ()) . then (leading_trivia_parser . clone () . then (just (')') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | error_definition :: OpenParenAndErrorParameterRepeatedAndCommaRepeatedAndCloseParen :: from_parse (v))) . then (leading_trivia_parser . clone () . then (just (';') . to (FixedSizeTerminal :: < 1 > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | error_definition :: ErrorDefinition :: from_parse (v)) . boxed () ;
 
         // EventDefinition = 'event' «Identifier» '(' [ EventParameter  { ',' EventParameter } ] ')' [ 'anonymous' ] ';' ;
-        let event_definition_parser = leading_trivia_parser . clone () . then (terminal ("event") . to (FixedSizeTerminal :: < 5usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | identifier :: WithTrivia { leading_trivia , terminal , trailing_trivia })) . then (leading_trivia_parser . clone () . then (just ('(') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (event_parameter_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (event_parameter_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| (event_parameters , commas) | event_definition :: EventParametersAndCommas { event_parameters , commas }) . or_not ()) . then (leading_trivia_parser . clone () . then (just (')') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | event_definition :: OpenParenAndEventParametersAndCommasAndCloseParen :: from_parse (v))) . then (leading_trivia_parser . clone () . then (terminal ("anonymous") . to (FixedSizeTerminal :: < 9usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . or_not ()) . then (leading_trivia_parser . clone () . then (just (';') . to (FixedSizeTerminal :: < 1 > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | event_definition :: EventDefinition :: from_parse (v)) . boxed () ;
+        let event_definition_parser = leading_trivia_parser . clone () . then (terminal ("event") . to (FixedSizeTerminal :: < 5usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | identifier :: WithTrivia { leading_trivia , terminal , trailing_trivia })) . then (leading_trivia_parser . clone () . then (just ('(') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (event_parameter_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (event_parameter_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| (event_parameter_repeated , comma_repeated) | event_definition :: EventParameterRepeatedAndCommaRepeated { event_parameter_repeated , comma_repeated }) . or_not ()) . then (leading_trivia_parser . clone () . then (just (')') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | event_definition :: OpenParenAndEventParameterRepeatedAndCommaRepeatedAndCloseParen :: from_parse (v))) . then (leading_trivia_parser . clone () . then (terminal ("anonymous") . to (FixedSizeTerminal :: < 9usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . or_not ()) . then (leading_trivia_parser . clone () . then (just (';') . to (FixedSizeTerminal :: < 1 > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | event_definition :: EventDefinition :: from_parse (v)) . boxed () ;
 
         // PrimaryExpression = PayableExpression | TypeExpression | NewExpression | ParenthesisExpression | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | «NumericLiteral» | «BooleanLiteral» | «Identifier» ;
         let primary_expression_parser = choice((
@@ -3904,62 +3811,7 @@ impl Parsers {
         .boxed();
 
         // StructDefinition = 'struct' «Identifier» '{' 1…*{ StructMember } '}' ;
-        let struct_definition_parser = leading_trivia_parser
-            .clone()
-            .then(terminal("struct").to(FixedSizeTerminal::<6usize>()))
-            .then(trailing_trivia_parser.clone())
-            .map(
-                |((leading_trivia, terminal), trailing_trivia)| FixedSizeTerminalWithTrivia {
-                    leading_trivia,
-                    terminal,
-                    trailing_trivia,
-                },
-            )
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(identifier_parser.clone())
-                    .then(trailing_trivia_parser.clone())
-                    .map(
-                        |((leading_trivia, terminal), trailing_trivia)| identifier::WithTrivia {
-                            leading_trivia,
-                            terminal,
-                            trailing_trivia,
-                        },
-                    ),
-            )
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(just('{').to(FixedSizeTerminal::<1usize>()))
-                    .then(trailing_trivia_parser.clone())
-                    .map(|((leading_trivia, terminal), trailing_trivia)| {
-                        FixedSizeTerminalWithTrivia {
-                            leading_trivia,
-                            terminal,
-                            trailing_trivia,
-                        }
-                    })
-                    .then(struct_member_parser.clone().repeated().at_least(1usize))
-                    .then(
-                        leading_trivia_parser
-                            .clone()
-                            .then(just('}').to(FixedSizeTerminal::<1usize>()))
-                            .then(trailing_trivia_parser.clone())
-                            .map(|((leading_trivia, terminal), trailing_trivia)| {
-                                FixedSizeTerminalWithTrivia {
-                                    leading_trivia,
-                                    terminal,
-                                    trailing_trivia,
-                                }
-                            }),
-                    )
-                    .map(|v| {
-                        struct_definition::OpenBraceAndStructMembersAndCloseBrace::from_parse(v)
-                    }),
-            )
-            .map(|v| struct_definition::StructDefinition::from_parse(v))
-            .boxed();
+        let struct_definition_parser = leading_trivia_parser . clone () . then (terminal ("struct") . to (FixedSizeTerminal :: < 6usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | identifier :: WithTrivia { leading_trivia , terminal , trailing_trivia })) . then (leading_trivia_parser . clone () . then (just ('{') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (struct_member_parser . clone () . repeated () . at_least (1usize)) . then (leading_trivia_parser . clone () . then (just ('}') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | struct_definition :: OpenBraceAndStructMemberRepeatedAndCloseBrace :: from_parse (v))) . map (| v | struct_definition :: StructDefinition :: from_parse (v)) . boxed () ;
 
         // IndexAccessExpression = Expression '[' [ Expression ] [ ':' [ Expression ] ] ']' ;
         let index_access_expression_parser = choice ((expression_parser . clone () . then (leading_trivia_parser . clone () . then (just ('[') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (expression_parser . clone () . or_not () . then (leading_trivia_parser . clone () . then (just (':') . to (FixedSizeTerminal :: < 1 > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (expression_parser . clone () . or_not ()) . map (| v | index_access_expression :: Sequence1 :: from_parse (v)) . or_not ()) . map (| v | index_access_expression :: Sequence0 :: from_parse (v))) . then (leading_trivia_parser . clone () . then (just (']') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | index_access_expression :: OpenBracketAndSequence0AndCloseBracket :: from_parse (v))) . map (| v | index_access_expression :: Anonexpfrag3 :: from_parse (v)) . map (| v | Box :: new (expression :: Expression :: IndexAccessExpression (v))) , primary_expression_parser . clone ())) . boxed () ;
@@ -4014,7 +3866,7 @@ impl Parsers {
         .boxed();
 
         // FunctionCallExpression = Expression [ '{' NamedArgument  { ',' NamedArgument } '}' ] ArgumentList ;
-        let function_call_expression_parser = choice ((expression_parser . clone () . then (leading_trivia_parser . clone () . then (just ('{') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (named_argument_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (named_argument_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| (named_arguments , commas) | function_call_expression :: NamedArgumentsAndCommas { named_arguments , commas })) . then (leading_trivia_parser . clone () . then (just ('}') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | function_call_expression :: OpenBraceAndNamedArgumentsAndCommasAndCloseBrace :: from_parse (v)) . or_not ()) . then (argument_list_parser . clone ()) . map (| v | function_call_expression :: Anonexpfrag4 :: from_parse (v)) . map (| v | Box :: new (expression :: Expression :: FunctionCallExpression (v))) , member_access_expression_parser . clone ())) . boxed () ;
+        let function_call_expression_parser = choice ((expression_parser . clone () . then (leading_trivia_parser . clone () . then (just ('{') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (named_argument_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (named_argument_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| (named_argument_repeated , comma_repeated) | function_call_expression :: NamedArgumentRepeatedAndCommaRepeated { named_argument_repeated , comma_repeated })) . then (leading_trivia_parser . clone () . then (just ('}') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | function_call_expression :: OpenBraceAndNamedArgumentRepeatedAndCommaRepeatedAndCloseBrace :: from_parse (v)) . or_not ()) . then (argument_list_parser . clone ()) . map (| v | function_call_expression :: Anonexpfrag4 :: from_parse (v)) . map (| v | Box :: new (expression :: Expression :: FunctionCallExpression (v))) , member_access_expression_parser . clone ())) . boxed () ;
 
         // UnaryPrefixExpression = ( '++' | '--' | '!' | '~' | '-' ) Expression ;
         let unary_prefix_expression_parser = choice((
@@ -4991,7 +4843,7 @@ impl Parsers {
             .boxed();
 
         // TupleDeconstructionStatement = '(' [ [ [ TypeName ] «Identifier» ]  { ',' [ [ TypeName ] «Identifier» ] } ] ')' '=' Expression ';' ;
-        let tuple_deconstruction_statement_parser = leading_trivia_parser . clone () . then (just ('(') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (type_name_parser . clone () . or_not () . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | identifier :: WithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | tuple_deconstruction_statement :: Sequence0 :: from_parse (v)) . or_not () . then (leading_trivia_parser . clone () . then (just (',') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (type_name_parser . clone () . or_not () . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | identifier :: WithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | tuple_deconstruction_statement :: Sequence0 :: from_parse (v)) . or_not ()) . repeated ()) . map (repetition_mapper) . map (| (sequence_0s , commas) | tuple_deconstruction_statement :: Sequence0SAndCommas { sequence_0s , commas }) . or_not ()) . then (leading_trivia_parser . clone () . then (just (')') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | tuple_deconstruction_statement :: OpenParenAndSequence0SAndCommasAndCloseParen :: from_parse (v)) . then (leading_trivia_parser . clone () . then (just ('=') . to (FixedSizeTerminal :: < 1 > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . then (expression_parser . clone ()) . then (leading_trivia_parser . clone () . then (just (';') . to (FixedSizeTerminal :: < 1 > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | tuple_deconstruction_statement :: TupleDeconstructionStatement :: from_parse (v)) . boxed () ;
+        let tuple_deconstruction_statement_parser = leading_trivia_parser . clone () . then (just ('(') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (type_name_parser . clone () . or_not () . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | identifier :: WithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | tuple_deconstruction_statement :: Sequence0 :: from_parse (v)) . or_not () . then (leading_trivia_parser . clone () . then (just (',') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (type_name_parser . clone () . or_not () . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | identifier :: WithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | tuple_deconstruction_statement :: Sequence0 :: from_parse (v)) . or_not ()) . repeated ()) . map (repetition_mapper) . map (| (sequence_0_repeated , comma_repeated) | tuple_deconstruction_statement :: Sequence0RepeatedAndCommaRepeated { sequence_0_repeated , comma_repeated }) . or_not ()) . then (leading_trivia_parser . clone () . then (just (')') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | tuple_deconstruction_statement :: OpenParenAndSequence0RepeatedAndCommaRepeatedAndCloseParen :: from_parse (v)) . then (leading_trivia_parser . clone () . then (just ('=') . to (FixedSizeTerminal :: < 1 > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . then (expression_parser . clone ()) . then (leading_trivia_parser . clone () . then (just (';') . to (FixedSizeTerminal :: < 1 > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | tuple_deconstruction_statement :: TupleDeconstructionStatement :: from_parse (v)) . boxed () ;
 
         // VariableDeclarationStatement = TypeName [ DataLocation ] «Identifier» [ '=' Expression ] ';' ;
         let variable_declaration_statement_parser = type_name_parser
@@ -5560,13 +5412,13 @@ impl Parsers {
         .boxed();
 
         // ContractDefinition = [ 'abstract' ] 'contract' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
-        let contract_definition_parser = leading_trivia_parser . clone () . then (terminal ("abstract") . to (FixedSizeTerminal :: < 8usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . or_not () . then (leading_trivia_parser . clone () . then (terminal ("contract") . to (FixedSizeTerminal :: < 8usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | identifier :: WithTrivia { leading_trivia , terminal , trailing_trivia })) . then (inheritance_specifier_list_parser . clone () . or_not ()) . then (leading_trivia_parser . clone () . then (just ('{') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (contract_body_element_parser . clone () . repeated ()) . then (leading_trivia_parser . clone () . then (just ('}') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | contract_definition :: OpenBraceAndContractBodyElementsAndCloseBrace :: from_parse (v))) . map (| v | contract_definition :: ContractDefinition :: from_parse (v)) . boxed () ;
+        let contract_definition_parser = leading_trivia_parser . clone () . then (terminal ("abstract") . to (FixedSizeTerminal :: < 8usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . or_not () . then (leading_trivia_parser . clone () . then (terminal ("contract") . to (FixedSizeTerminal :: < 8usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | identifier :: WithTrivia { leading_trivia , terminal , trailing_trivia })) . then (inheritance_specifier_list_parser . clone () . or_not ()) . then (leading_trivia_parser . clone () . then (just ('{') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (contract_body_element_parser . clone () . repeated ()) . then (leading_trivia_parser . clone () . then (just ('}') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | contract_definition :: OpenBraceAndContractBodyElementRepeatedAndCloseBrace :: from_parse (v))) . map (| v | contract_definition :: ContractDefinition :: from_parse (v)) . boxed () ;
 
         // InterfaceDefinition = 'interface' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
-        let interface_definition_parser = leading_trivia_parser . clone () . then (terminal ("interface") . to (FixedSizeTerminal :: < 9usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | identifier :: WithTrivia { leading_trivia , terminal , trailing_trivia })) . then (inheritance_specifier_list_parser . clone () . or_not ()) . then (leading_trivia_parser . clone () . then (just ('{') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (contract_body_element_parser . clone () . repeated ()) . then (leading_trivia_parser . clone () . then (just ('}') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | interface_definition :: OpenBraceAndContractBodyElementsAndCloseBrace :: from_parse (v))) . map (| v | interface_definition :: InterfaceDefinition :: from_parse (v)) . boxed () ;
+        let interface_definition_parser = leading_trivia_parser . clone () . then (terminal ("interface") . to (FixedSizeTerminal :: < 9usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | identifier :: WithTrivia { leading_trivia , terminal , trailing_trivia })) . then (inheritance_specifier_list_parser . clone () . or_not ()) . then (leading_trivia_parser . clone () . then (just ('{') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (contract_body_element_parser . clone () . repeated ()) . then (leading_trivia_parser . clone () . then (just ('}') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | interface_definition :: OpenBraceAndContractBodyElementRepeatedAndCloseBrace :: from_parse (v))) . map (| v | interface_definition :: InterfaceDefinition :: from_parse (v)) . boxed () ;
 
         // LibraryDefinition = 'library' «Identifier» '{' { ContractBodyElement } '}' ;
-        let library_definition_parser = leading_trivia_parser . clone () . then (terminal ("library") . to (FixedSizeTerminal :: < 7usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | identifier :: WithTrivia { leading_trivia , terminal , trailing_trivia })) . then (leading_trivia_parser . clone () . then (just ('{') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (contract_body_element_parser . clone () . repeated ()) . then (leading_trivia_parser . clone () . then (just ('}') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | library_definition :: OpenBraceAndContractBodyElementsAndCloseBrace :: from_parse (v))) . map (| v | library_definition :: LibraryDefinition :: from_parse (v)) . boxed () ;
+        let library_definition_parser = leading_trivia_parser . clone () . then (terminal ("library") . to (FixedSizeTerminal :: < 7usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | identifier :: WithTrivia { leading_trivia , terminal , trailing_trivia })) . then (leading_trivia_parser . clone () . then (just ('{') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia }) . then (contract_body_element_parser . clone () . repeated ()) . then (leading_trivia_parser . clone () . then (just ('}') . to (FixedSizeTerminal :: < 1usize > ())) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , terminal) , trailing_trivia) | FixedSizeTerminalWithTrivia { leading_trivia , terminal , trailing_trivia })) . map (| v | library_definition :: OpenBraceAndContractBodyElementRepeatedAndCloseBrace :: from_parse (v))) . map (| v | library_definition :: LibraryDefinition :: from_parse (v)) . boxed () ;
 
         // Definition = ContractDefinition | InterfaceDefinition | LibraryDefinition | FunctionDefinition | ConstantDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | ErrorDefinition ;
         let definition_parser = choice((
