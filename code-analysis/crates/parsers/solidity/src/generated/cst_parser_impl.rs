@@ -64,39 +64,35 @@ impl Parsers {
 
         // «DecimalInteger» = '0'…'9' { [ '_' ] '0'…'9' } ;
         let decimal_integer_parser = filter(|&c: &char| ('0' <= c && c <= '9'))
-            .to(Node::new_token_part(TokenPartKind::Filter0, 1))
+            .to(Node::new_anonymous_token(1))
             .then(
                 just('_')
-                    .to(Node::new_token_part(TokenPartKind::Underscore, 1))
+                    .to(Node::new_token_part(
+                        TokenPartKind::DecimalIntegerUnderscore,
+                        1,
+                    ))
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void()))
+                    .map(|v| v.unwrap_or_else(|| Node::new_none()))
                     .then(
-                        filter(|&c: &char| ('0' <= c && c <= '9'))
-                            .to(Node::new_token_part(TokenPartKind::Filter2, 1)),
+                        filter(|&c: &char| ('0' <= c && c <= '9')).to(Node::new_anonymous_token(1)),
                     )
                     .map(|(underscore, filter_2)| {
-                        Node::new_rule(
-                            RuleKind::DecimalIntegerSequence1,
-                            vec![underscore, filter_2],
-                        )
+                        Node::new_anonymous_rule(vec![underscore, filter_2])
                     })
                     .repeated()
-                    .map(|v| {
-                        if v.is_empty() {
-                            Node::new_void()
-                        } else {
-                            Node::new_rule(RuleKind::DecimalIntegerSequence1S, v)
-                        }
-                    }),
+                    .map(Node::new_anonymous_rule),
             )
-            .map(|(filter_0, sequence_1s)| {
-                Node::new_rule(RuleKind::DecimalInteger, vec![filter_0, sequence_1s])
+            .map(|(filter_0, sequence_1_repeated)| {
+                Node::new_rule(
+                    RuleKind::DecimalInteger,
+                    vec![filter_0, sequence_1_repeated],
+                )
             })
             .boxed();
 
         // «EndOfLine» = 1…*{ '\u{d}' | '\u{a}' } ;
         let end_of_line_parser = filter(|&c: &char| c == '\r' || c == '\n')
-            .to(Node::new_token_part(TokenPartKind::Filter0, 1))
+            .to(Node::new_anonymous_token(1))
             .repeated()
             .at_least(1usize)
             .map(|v| Node::new_token(TokenKind::EndOfLine, v))
@@ -150,20 +146,23 @@ impl Parsers {
 
         // «HexByteEscape» = 'x' 2…2*{ «HexCharacter» } ;
         let hex_byte_escape_parser = just('x')
-            .to(Node::new_token_part(TokenPartKind::LatinSmallLetterX, 1))
+            .to(Node::new_token_part(
+                TokenPartKind::HexByteEscapeLatinSmallLetterX,
+                1,
+            ))
             .then(
                 filter(|&c: &char| {
                     ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
                 })
-                .to(Node::new_token_part(TokenPartKind::Filter0, 1))
+                .to(Node::new_anonymous_token(1))
                 .repeated()
                 .exactly(2usize)
-                .map(|v| Node::new_token(TokenKind::HexByteEscapeFilter0S, v)),
+                .map(|v| Node::new_anonymous_token(v.len())),
             )
-            .map(|(latin_small_letter_x, filter_0s)| {
+            .map(|(latin_small_letter_x, filter_0_repeated)| {
                 Node::new_rule(
                     RuleKind::HexByteEscape,
-                    vec![latin_small_letter_x, filter_0s],
+                    vec![latin_small_letter_x, filter_0_repeated],
                 )
             })
             .boxed();
@@ -175,34 +174,28 @@ impl Parsers {
                 filter(|&c: &char| {
                     ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
                 })
-                .to(Node::new_token_part(TokenPartKind::Filter1, 1))
+                .to(Node::new_anonymous_token(1))
                 .then(
                     just('_')
-                        .to(Node::new_token_part(TokenPartKind::Underscore, 1))
+                        .to(Node::new_token_part(TokenPartKind::HexNumberUnderscore, 1))
                         .or_not()
-                        .map(|v| v.unwrap_or_else(|| Node::new_void()))
+                        .map(|v| v.unwrap_or_else(|| Node::new_none()))
                         .then(
                             filter(|&c: &char| {
                                 ('0' <= c && c <= '9')
                                     || ('a' <= c && c <= 'f')
                                     || ('A' <= c && c <= 'F')
                             })
-                            .to(Node::new_token_part(TokenPartKind::Filter3, 1)),
+                            .to(Node::new_anonymous_token(1)),
                         )
                         .map(|(underscore, filter_3)| {
-                            Node::new_rule(RuleKind::HexNumberSequence2, vec![underscore, filter_3])
+                            Node::new_anonymous_rule(vec![underscore, filter_3])
                         })
                         .repeated()
-                        .map(|v| {
-                            if v.is_empty() {
-                                Node::new_void()
-                            } else {
-                                Node::new_rule(RuleKind::HexNumberSequence2S, v)
-                            }
-                        }),
+                        .map(Node::new_anonymous_rule),
                 )
-                .map(|(filter_1, sequence_2s)| {
-                    Node::new_rule(RuleKind::HexNumberSequence0, vec![filter_1, sequence_2s])
+                .map(|(filter_1, sequence_2_repeated)| {
+                    Node::new_anonymous_rule(vec![filter_1, sequence_2_repeated])
                 }),
             )
             .map(|(zero_x, sequence_0)| {
@@ -215,47 +208,42 @@ impl Parsers {
             .to(Node::new_token_part(TokenPartKind::SlashStar, 2usize))
             .then(
                 choice((
-                    filter(|&c: &char| c != '*')
-                        .to(Node::new_token_part(TokenPartKind::NotStar, 1)),
+                    filter(|&c: &char| c != '*').to(Node::new_token_part(
+                        TokenPartKind::MultilineCommentNotStar,
+                        1,
+                    )),
                     just('*')
-                        .to(Node::new_token_part(TokenPartKind::Star, 1))
+                        .to(Node::new_token_part(TokenPartKind::MultilineCommentStar, 1))
                         .repeated()
                         .at_least(1usize)
-                        .map(|v| Node::new_token(TokenKind::MultilineCommentStars, v))
+                        .map(|v| Node::new_token(TokenKind::MultilineCommentStarRepeated, v))
                         .then(
                             filter(|&c: &char| c != '*' && c != '/')
-                                .to(Node::new_token_part(TokenPartKind::Filter2, 1)),
+                                .to(Node::new_anonymous_token(1)),
                         )
-                        .map(|(stars, filter_2)| {
-                            Node::new_rule(
-                                RuleKind::MultilineCommentSequence1,
-                                vec![stars, filter_2],
-                            )
+                        .map(|(star_repeated, filter_2)| {
+                            Node::new_anonymous_rule(vec![star_repeated, filter_2])
                         }),
                 ))
-                .map(|v| Node::new_rule(RuleKind::MultilineCommentChoices0, vec![v]))
                 .repeated()
-                .map(|v| {
-                    if v.is_empty() {
-                        Node::new_void()
-                    } else {
-                        Node::new_rule(RuleKind::MultilineCommentChoices0S, v)
-                    }
-                })
+                .map(Node::new_anonymous_rule)
                 .then(
                     just('*')
-                        .to(Node::new_token_part(TokenPartKind::Star, 1))
+                        .to(Node::new_token_part(TokenPartKind::MultilineCommentStar, 1))
                         .repeated()
                         .map(|v| {
                             if v.is_empty() {
-                                Node::new_void()
+                                Node::new_none()
                             } else {
-                                Node::new_token(TokenKind::MultilineCommentStars, v)
+                                Node::new_token(TokenKind::MultilineCommentStarRepeated, v)
                             }
                         }),
                 )
-                .map(|(choices_0s, stars)| {
-                    Node::new_rule(RuleKind::MultilineCommentContent, vec![choices_0s, stars])
+                .map(|(choices_0_repeated, star_repeated)| {
+                    Node::new_rule(
+                        RuleKind::MultilineCommentContent,
+                        vec![choices_0_repeated, star_repeated],
+                    )
                 }),
             )
             .then(just("*/").to(Node::new_token_part(TokenPartKind::StarSlash, 2usize)))
@@ -283,45 +271,37 @@ impl Parsers {
         let possibly_separated_pairs_of_hex_digits_parser = filter(|&c: &char| {
             ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
         })
-        .to(Node::new_token_part(TokenPartKind::Filter0, 1))
+        .to(Node::new_anonymous_token(1))
         .repeated()
         .exactly(2usize)
-        .map(|v| Node::new_token(TokenKind::PossiblySeparatedPairsOfHexDigitsFilter0S, v))
+        .map(|v| Node::new_anonymous_token(v.len()))
         .then(
             just('_')
-                .to(Node::new_token_part(TokenPartKind::Underscore, 1))
+                .to(Node::new_token_part(
+                    TokenPartKind::PossiblySeparatedPairsOfHexDigitsUnderscore,
+                    1,
+                ))
                 .or_not()
-                .map(|v| v.unwrap_or_else(|| Node::new_void()))
+                .map(|v| v.unwrap_or_else(|| Node::new_none()))
                 .then(
                     filter(|&c: &char| {
                         ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
                     })
-                    .to(Node::new_token_part(TokenPartKind::Filter2, 1))
+                    .to(Node::new_anonymous_token(1))
                     .repeated()
                     .exactly(2usize)
-                    .map(|v| {
-                        Node::new_token(TokenKind::PossiblySeparatedPairsOfHexDigitsFilter2S, v)
-                    }),
+                    .map(|v| Node::new_anonymous_token(v.len())),
                 )
-                .map(|(underscore, filter_2s)| {
-                    Node::new_rule(
-                        RuleKind::PossiblySeparatedPairsOfHexDigitsSequence1,
-                        vec![underscore, filter_2s],
-                    )
+                .map(|(underscore, filter_2_repeated)| {
+                    Node::new_anonymous_rule(vec![underscore, filter_2_repeated])
                 })
                 .repeated()
-                .map(|v| {
-                    if v.is_empty() {
-                        Node::new_void()
-                    } else {
-                        Node::new_rule(RuleKind::PossiblySeparatedPairsOfHexDigitsSequence1S, v)
-                    }
-                }),
+                .map(Node::new_anonymous_rule),
         )
-        .map(|(filter_0s, sequence_1s)| {
+        .map(|(filter_0_repeated, sequence_1_repeated)| {
             Node::new_rule(
                 RuleKind::PossiblySeparatedPairsOfHexDigits,
-                vec![filter_0s, sequence_1s],
+                vec![filter_0_repeated, sequence_1_repeated],
             )
         })
         .boxed();
@@ -330,7 +310,7 @@ impl Parsers {
         let raw_identifier_parser = filter(|&c: &char| {
             c == '_' || c == '$' || ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z')
         })
-        .to(Node::new_token_part(TokenPartKind::Filter0, 1))
+        .to(Node::new_anonymous_token(1))
         .then(
             filter(|&c: &char| {
                 c == '_'
@@ -339,18 +319,12 @@ impl Parsers {
                     || ('A' <= c && c <= 'Z')
                     || ('0' <= c && c <= '9')
             })
-            .to(Node::new_token_part(TokenPartKind::Filter1, 1))
+            .to(Node::new_anonymous_token(1))
             .repeated()
-            .map(|v| {
-                if v.is_empty() {
-                    Node::new_void()
-                } else {
-                    Node::new_token(TokenKind::RawIdentifierFilter1S, v)
-                }
-            }),
+            .map(|v| Node::new_anonymous_token(v.len())),
         )
-        .map(|(filter_0, filter_1s)| {
-            Node::new_rule(RuleKind::RawIdentifier, vec![filter_0, filter_1s])
+        .map(|(filter_0, filter_1_repeated)| {
+            Node::new_rule(RuleKind::RawIdentifier, vec![filter_0, filter_1_repeated])
         })
         .boxed();
 
@@ -417,26 +391,32 @@ impl Parsers {
             .to(Node::new_token_part(TokenPartKind::Fixed, 5usize))
             .then(
                 filter(|&c: &char| ('0' <= c && c <= '9'))
-                    .to(Node::new_token_part(TokenPartKind::Filter1, 1))
+                    .to(Node::new_anonymous_token(1))
                     .repeated()
                     .at_least(1usize)
-                    .map(|v| Node::new_token(TokenKind::SignedFixedTypeFilter1S, v))
-                    .then(just('x').to(Node::new_token_part(TokenPartKind::LatinSmallLetterX, 1)))
+                    .map(|v| Node::new_anonymous_token(v.len()))
+                    .then(just('x').to(Node::new_token_part(
+                        TokenPartKind::SignedFixedTypeLatinSmallLetterX,
+                        1,
+                    )))
                     .then(
                         filter(|&c: &char| ('0' <= c && c <= '9'))
-                            .to(Node::new_token_part(TokenPartKind::Filter2, 1))
+                            .to(Node::new_anonymous_token(1))
                             .repeated()
                             .at_least(1usize)
-                            .map(|v| Node::new_token(TokenKind::SignedFixedTypeFilter2S, v)),
+                            .map(|v| Node::new_anonymous_token(v.len())),
                     )
-                    .map(|((filter_1s, latin_small_letter_x), filter_2s)| {
-                        Node::new_rule(
-                            RuleKind::SignedFixedTypeSequence0,
-                            vec![filter_1s, latin_small_letter_x, filter_2s],
-                        )
-                    })
+                    .map(
+                        |((filter_1_repeated, latin_small_letter_x), filter_2_repeated)| {
+                            Node::new_anonymous_rule(vec![
+                                filter_1_repeated,
+                                latin_small_letter_x,
+                                filter_2_repeated,
+                            ])
+                        },
+                    )
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
             .map(|(fixed, sequence_0)| {
                 Node::new_rule(RuleKind::SignedFixedType, vec![fixed, sequence_0])
@@ -507,7 +487,7 @@ impl Parsers {
                     terminal("96").to(Node::new_token_part(TokenPartKind::NineSix, 2usize)),
                 ))
                 .or_not()
-                .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
             .map(|(int, byte_count)| {
                 Node::new_rule(RuleKind::SignedIntegerType, vec![int, byte_count])
@@ -519,48 +499,63 @@ impl Parsers {
             .to(Node::new_token_part(TokenPartKind::SlashSlash, 2usize))
             .then(
                 filter(|&c: &char| c != '\r' && c != '\n')
-                    .to(Node::new_token_part(TokenPartKind::Filter0, 1))
+                    .to(Node::new_anonymous_token(1))
                     .repeated()
-                    .map(|v| {
-                        if v.is_empty() {
-                            Node::new_void()
-                        } else {
-                            Node::new_token(TokenKind::SingleLineCommentFilter0S, v)
-                        }
-                    }),
+                    .map(|v| Node::new_anonymous_token(v.len())),
             )
-            .map(|(slash_slash, filter_0s)| {
-                Node::new_rule(RuleKind::SingleLineComment, vec![slash_slash, filter_0s])
+            .map(|(slash_slash, filter_0_repeated)| {
+                Node::new_rule(
+                    RuleKind::SingleLineComment,
+                    vec![slash_slash, filter_0_repeated],
+                )
             })
             .boxed();
 
         // «UnicodeEscape» = 'u' 4…4*{ «HexCharacter» } ;
         let unicode_escape_parser = just('u')
-            .to(Node::new_token_part(TokenPartKind::LatinSmallLetterU, 1))
+            .to(Node::new_token_part(
+                TokenPartKind::UnicodeEscapeLatinSmallLetterU,
+                1,
+            ))
             .then(
                 filter(|&c: &char| {
                     ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
                 })
-                .to(Node::new_token_part(TokenPartKind::Filter0, 1))
+                .to(Node::new_anonymous_token(1))
                 .repeated()
                 .exactly(4usize)
-                .map(|v| Node::new_token(TokenKind::UnicodeEscapeFilter0S, v)),
+                .map(|v| Node::new_anonymous_token(v.len())),
             )
-            .map(|(latin_small_letter_u, filter_0s)| {
+            .map(|(latin_small_letter_u, filter_0_repeated)| {
                 Node::new_rule(
                     RuleKind::UnicodeEscape,
-                    vec![latin_small_letter_u, filter_0s],
+                    vec![latin_small_letter_u, filter_0_repeated],
                 )
             })
             .boxed();
 
         // «VersionPragmaOperator» = '^' | '~' | '=' | '<' | '>' | '<=' | '>=' ;
         let version_pragma_operator_parser = choice((
-            just('^').to(Node::new_token_part(TokenPartKind::Caret, 1)),
-            just('~').to(Node::new_token_part(TokenPartKind::Tilde, 1)),
-            just('=').to(Node::new_token_part(TokenPartKind::Equal, 1)),
-            just('<').to(Node::new_token_part(TokenPartKind::Less, 1)),
-            just('>').to(Node::new_token_part(TokenPartKind::Greater, 1)),
+            just('^').to(Node::new_token_part(
+                TokenPartKind::VersionPragmaOperatorCaret,
+                1,
+            )),
+            just('~').to(Node::new_token_part(
+                TokenPartKind::VersionPragmaOperatorTilde,
+                1,
+            )),
+            just('=').to(Node::new_token_part(
+                TokenPartKind::VersionPragmaOperatorEqual,
+                1,
+            )),
+            just('<').to(Node::new_token_part(
+                TokenPartKind::VersionPragmaOperatorLess,
+                1,
+            )),
+            just('>').to(Node::new_token_part(
+                TokenPartKind::VersionPragmaOperatorGreater,
+                1,
+            )),
             terminal("<=").to(Node::new_token_part(TokenPartKind::LessEqual, 2usize)),
             terminal(">=").to(Node::new_token_part(TokenPartKind::GreaterEqual, 2usize)),
         ))
@@ -570,10 +565,10 @@ impl Parsers {
         // «VersionPragmaValue» = 1…*{ '0'…'9' | 'x' | 'X' | '*' }  { '.' 1…*{ '0'…'9' | 'x' | 'X' | '*' } } ;
         let version_pragma_value_parser =
             filter(|&c: &char| ('0' <= c && c <= '9') || c == 'x' || c == 'X' || c == '*')
-                .to(Node::new_token_part(TokenPartKind::Filter0, 1))
+                .to(Node::new_anonymous_token(1))
                 .repeated()
                 .at_least(1usize)
-                .map(|v| Node::new_token(TokenKind::VersionPragmaValueFilter0S, v))
+                .map(|v| Node::new_anonymous_token(v.len()))
                 .then(
                     just('.')
                         .to(Node::new_token_part(TokenPartKind::Period, 1usize))
@@ -581,10 +576,10 @@ impl Parsers {
                             filter(|&c: &char| {
                                 ('0' <= c && c <= '9') || c == 'x' || c == 'X' || c == '*'
                             })
-                            .to(Node::new_token_part(TokenPartKind::Filter0, 1))
+                            .to(Node::new_anonymous_token(1))
                             .repeated()
                             .at_least(1usize)
-                            .map(|v| Node::new_token(TokenKind::VersionPragmaValueFilter0S, v)),
+                            .map(|v| Node::new_anonymous_token(v.len())),
                         )
                         .repeated(),
                 )
@@ -594,7 +589,7 @@ impl Parsers {
 
         // «Whitespace» = 1…*{ '\u{20}' | '\u{9}' } ;
         let whitespace_parser = filter(|&c: &char| c == ' ' || c == '\t')
-            .to(Node::new_token_part(TokenPartKind::Filter0, 1))
+            .to(Node::new_anonymous_token(1))
             .repeated()
             .at_least(1usize)
             .map(|v| Node::new_token(TokenKind::Whitespace, v))
@@ -602,26 +597,20 @@ impl Parsers {
 
         // «YulDecimalNumberLiteral» = '0' | '1'…'9' { '0'…'9' } ;
         let yul_decimal_number_literal_parser = choice((
-            just('0').to(Node::new_token_part(TokenPartKind::Zero, 1)),
+            just('0').to(Node::new_token_part(
+                TokenPartKind::YulDecimalNumberLiteralZero,
+                1,
+            )),
             filter(|&c: &char| ('1' <= c && c <= '9'))
-                .to(Node::new_token_part(TokenPartKind::Filter1, 1))
+                .to(Node::new_anonymous_token(1))
                 .then(
                     filter(|&c: &char| ('0' <= c && c <= '9'))
-                        .to(Node::new_token_part(TokenPartKind::Filter2, 1))
+                        .to(Node::new_anonymous_token(1))
                         .repeated()
-                        .map(|v| {
-                            if v.is_empty() {
-                                Node::new_void()
-                            } else {
-                                Node::new_token(TokenKind::YulDecimalNumberLiteralFilter2S, v)
-                            }
-                        }),
+                        .map(|v| Node::new_anonymous_token(v.len())),
                 )
-                .map(|(filter_1, filter_2s)| {
-                    Node::new_rule(
-                        RuleKind::YulDecimalNumberLiteralSequence0,
-                        vec![filter_1, filter_2s],
-                    )
+                .map(|(filter_1, filter_2_repeated)| {
+                    Node::new_anonymous_rule(vec![filter_1, filter_2_repeated])
                 }),
         ))
         .map(|v| Node::new_rule(RuleKind::YulDecimalNumberLiteral, vec![v]))
@@ -634,24 +623,24 @@ impl Parsers {
                 filter(|&c: &char| {
                     ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')
                 })
-                .to(Node::new_token_part(TokenPartKind::Filter0, 1))
+                .to(Node::new_anonymous_token(1))
                 .repeated()
                 .at_least(1usize)
-                .map(|v| Node::new_token(TokenKind::YulHexLiteralFilter0S, v)),
+                .map(|v| Node::new_anonymous_token(v.len())),
             )
-            .map(|(zero_x, filter_0s)| {
-                Node::new_rule(RuleKind::YulHexLiteral, vec![zero_x, filter_0s])
+            .map(|(zero_x, filter_0_repeated)| {
+                Node::new_rule(RuleKind::YulHexLiteral, vec![zero_x, filter_0_repeated])
             })
             .boxed();
 
         // «DecimalExponent» = ( 'e' | 'E' ) [ '-' ] «DecimalInteger» ;
         let decimal_exponent_parser = filter(|&c: &char| c == 'e' || c == 'E')
-            .to(Node::new_token_part(TokenPartKind::Filter0, 1))
+            .to(Node::new_anonymous_token(1))
             .then(
                 just('-')
-                    .to(Node::new_token_part(TokenPartKind::Minus, 1))
+                    .to(Node::new_token_part(TokenPartKind::DecimalExponentMinus, 1))
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
             .then(decimal_integer_parser.clone())
             .map(|((filter_0, minus), decimal_integer)| {
@@ -666,8 +655,8 @@ impl Parsers {
         let decimal_float_parser = decimal_integer_parser
             .clone()
             .or_not()
-            .map(|v| v.unwrap_or_else(|| Node::new_void()))
-            .then(just('.').to(Node::new_token_part(TokenPartKind::Period, 1)))
+            .map(|v| v.unwrap_or_else(|| Node::new_none()))
+            .then(just('.').to(Node::new_token_part(TokenPartKind::DecimalFloatPeriod, 1)))
             .then(decimal_integer_parser.clone())
             .map(|((decimal_integer_0_, period), decimal_integer_1_)| {
                 Node::new_rule(
@@ -683,11 +672,10 @@ impl Parsers {
             multiline_comment_parser.clone(),
             single_line_comment_parser.clone(),
         ))
-        .map(|v| Node::new_rule(RuleKind::EndOfFileTriviaChoices0, vec![v]))
         .repeated()
         .map(|v| {
             if v.is_empty() {
-                Node::new_void()
+                Node::new_none()
             } else {
                 Node::new_rule(RuleKind::EndOfFileTrivia, v)
             }
@@ -696,32 +684,32 @@ impl Parsers {
 
         // «EscapeSequence» = '\\' ( «AsciiEscape» | «HexByteEscape» | «UnicodeEscape» ) ;
         let escape_sequence_parser = just('\\')
-            .to(Node::new_token_part(TokenPartKind::Backslash, 1))
-            .then(
-                choice((
-                    filter(|&c: &char| {
-                        c == 'n'
-                            || c == 'r'
-                            || c == 't'
-                            || c == '\''
-                            || c == '"'
-                            || c == '\\'
-                            || c == '\n'
-                            || c == '\r'
-                    })
-                    .to(Node::new_token_part(TokenPartKind::Filter1, 1)),
-                    hex_byte_escape_parser.clone(),
-                    unicode_escape_parser.clone(),
-                ))
-                .map(|v| Node::new_rule(RuleKind::EscapeSequenceChoices0, vec![v])),
-            )
+            .to(Node::new_token_part(
+                TokenPartKind::EscapeSequenceBackslash,
+                1,
+            ))
+            .then(choice((
+                filter(|&c: &char| {
+                    c == 'n'
+                        || c == 'r'
+                        || c == 't'
+                        || c == '\''
+                        || c == '"'
+                        || c == '\\'
+                        || c == '\n'
+                        || c == '\r'
+                })
+                .to(Node::new_anonymous_token(1)),
+                hex_byte_escape_parser.clone(),
+                unicode_escape_parser.clone(),
+            )))
             .map(|(backslash, choices_0)| {
                 Node::new_rule(RuleKind::EscapeSequence, vec![backslash, choices_0])
             })
             .boxed();
 
         // «HexStringLiteral» = 'hex' ( '"' [ «PossiblySeparatedPairsOfHexDigits» ] '"' | '\'' [ «PossiblySeparatedPairsOfHexDigits» ] '\'' ) ;
-        let hex_string_literal_parser = terminal ("hex") . to (Node :: new_token_part (TokenPartKind :: Hex , 3usize)) . then (choice ((just ('"') . to (Node :: new_token_part (TokenPartKind :: DoubleQuote , 1usize)) . then (possibly_separated_pairs_of_hex_digits_parser . clone () . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_void ()))) . then (just ('"') . to (Node :: new_token_part (TokenPartKind :: DoubleQuote , 1usize))) . map (| ((a , b) , c) | Node :: new_rule (RuleKind :: HexStringLiteralDoubleQuoteAndPossiblySeparatedPairsOfHexDigitsAndDoubleQuote , vec ! [a , b , c])) , just ('\'') . to (Node :: new_token_part (TokenPartKind :: Quote , 1usize)) . then (possibly_separated_pairs_of_hex_digits_parser . clone () . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_void ()))) . then (just ('\'') . to (Node :: new_token_part (TokenPartKind :: Quote , 1usize))) . map (| ((a , b) , c) | Node :: new_rule (RuleKind :: HexStringLiteralQuoteAndPossiblySeparatedPairsOfHexDigitsAndQuote , vec ! [a , b , c])))) . map (| v | Node :: new_rule (RuleKind :: HexStringLiteralChoices0 , vec ! [v]))) . map (| (hex , choices_0) | Node :: new_rule (RuleKind :: HexStringLiteral , vec ! [hex , choices_0])) . boxed () ;
+        let hex_string_literal_parser = terminal ("hex") . to (Node :: new_token_part (TokenPartKind :: Hex , 3usize)) . then (choice ((just ('"') . to (Node :: new_token_part (TokenPartKind :: DoubleQuote , 1usize)) . then (possibly_separated_pairs_of_hex_digits_parser . clone () . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_none ()))) . then (just ('"') . to (Node :: new_token_part (TokenPartKind :: DoubleQuote , 1usize))) . map (| ((a , b) , c) | Node :: new_rule (RuleKind :: HexStringLiteralDoubleQuoteAndPossiblySeparatedPairsOfHexDigitsAndDoubleQuote , vec ! [a , b , c])) , just ('\'') . to (Node :: new_token_part (TokenPartKind :: Quote , 1usize)) . then (possibly_separated_pairs_of_hex_digits_parser . clone () . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_none ()))) . then (just ('\'') . to (Node :: new_token_part (TokenPartKind :: Quote , 1usize))) . map (| ((a , b) , c) | Node :: new_rule (RuleKind :: HexStringLiteralQuoteAndPossiblySeparatedPairsOfHexDigitsAndQuote , vec ! [a , b , c]))))) . map (| (hex , choices_0) | Node :: new_rule (RuleKind :: HexStringLiteral , vec ! [hex , choices_0])) . boxed () ;
 
         // «LeadingTrivia» = { «Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment» } ;
         let leading_trivia_parser = choice((
@@ -730,11 +718,10 @@ impl Parsers {
             multiline_comment_parser.clone(),
             single_line_comment_parser.clone(),
         ))
-        .map(|v| Node::new_rule(RuleKind::LeadingTriviaChoices0, vec![v]))
         .repeated()
         .map(|v| {
             if v.is_empty() {
-                Node::new_void()
+                Node::new_none()
             } else {
                 Node::new_rule(RuleKind::LeadingTrivia, v)
             }
@@ -744,32 +731,28 @@ impl Parsers {
         // «TrailingTrivia» = [ { «Whitespace» | «MultilineComment» } ( «EndOfLine» | «SingleLineComment» ) ] ;
         let trailing_trivia_parser =
             choice((whitespace_parser.clone(), multiline_comment_parser.clone()))
-                .map(|v| Node::new_rule(RuleKind::TrailingTriviaChoices0, vec![v]))
                 .repeated()
-                .map(|v| {
-                    if v.is_empty() {
-                        Node::new_void()
-                    } else {
-                        Node::new_rule(RuleKind::TrailingTriviaChoices0S, v)
-                    }
-                })
-                .then(
-                    choice((
-                        end_of_line_parser.clone(),
-                        single_line_comment_parser.clone(),
-                    ))
-                    .map(|v| Node::new_rule(RuleKind::TrailingTriviaChoices1, vec![v])),
-                )
-                .map(|(choices_0s, choices_1)| {
-                    Node::new_rule(RuleKind::TrailingTrivia, vec![choices_0s, choices_1])
+                .map(Node::new_anonymous_rule)
+                .then(choice((
+                    end_of_line_parser.clone(),
+                    single_line_comment_parser.clone(),
+                )))
+                .map(|(choices_0_repeated, choices_1)| {
+                    Node::new_rule(
+                        RuleKind::TrailingTrivia,
+                        vec![choices_0_repeated, choices_1],
+                    )
                 })
                 .or_not()
-                .map(|v| v.unwrap_or_else(|| Node::new_void()))
+                .map(|v| v.unwrap_or_else(|| Node::new_none()))
                 .boxed();
 
         // «UnsignedFixedType» = 'u' «SignedFixedType» ;
         let unsigned_fixed_type_parser = just('u')
-            .to(Node::new_token_part(TokenPartKind::LatinSmallLetterU, 1))
+            .to(Node::new_token_part(
+                TokenPartKind::UnsignedFixedTypeLatinSmallLetterU,
+                1,
+            ))
             .then(signed_fixed_type_parser.clone())
             .map(|(latin_small_letter_u, signed_fixed_type)| {
                 Node::new_rule(
@@ -781,7 +764,10 @@ impl Parsers {
 
         // «UnsignedIntegerType» = 'u' «SignedIntegerType» ;
         let unsigned_integer_type_parser = just('u')
-            .to(Node::new_token_part(TokenPartKind::LatinSmallLetterU, 1))
+            .to(Node::new_token_part(
+                TokenPartKind::UnsignedIntegerTypeLatinSmallLetterU,
+                1,
+            ))
             .then(signed_integer_type_parser.clone())
             .map(|(latin_small_letter_u, signed_integer_type)| {
                 Node::new_rule(
@@ -833,7 +819,7 @@ impl Parsers {
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia)
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
             .map(|(address, payable)| Node::new_rule(RuleKind::AddressType, vec![address, payable]))
             .boxed();
@@ -857,7 +843,9 @@ impl Parsers {
                             .repeated(),
                     )
                     .map(repetition_mapper)
-                    .map(|v| Node::new_rule(RuleKind::ArrayLiteralExpressionsAndCommas, v)),
+                    .map(|v| {
+                        Node::new_rule(RuleKind::ArrayLiteralExpressionRepeatedAndCommaRepeated, v)
+                    }),
             )
             .then(
                 leading_trivia_parser
@@ -878,7 +866,10 @@ impl Parsers {
             .then(
                 leading_trivia_parser
                     .clone()
-                    .then(just(';').to(Node::new_token_part(TokenPartKind::Semicolon, 1)))
+                    .then(just(';').to(Node::new_token_part(
+                        TokenPartKind::BreakStatementSemicolon,
+                        1,
+                    )))
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia),
             )
@@ -896,7 +887,10 @@ impl Parsers {
             .then(
                 leading_trivia_parser
                     .clone()
-                    .then(just(';').to(Node::new_token_part(TokenPartKind::Semicolon, 1)))
+                    .then(just(';').to(Node::new_token_part(
+                        TokenPartKind::ContinueStatementSemicolon,
+                        1,
+                    )))
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia),
             )
@@ -931,12 +925,11 @@ impl Parsers {
         // «DecimalNumber» = ( «DecimalInteger» | «DecimalFloat» ) [ «DecimalExponent» ] ;
         let decimal_number_parser =
             choice((decimal_integer_parser.clone(), decimal_float_parser.clone()))
-                .map(|v| Node::new_rule(RuleKind::DecimalNumberChoices0, vec![v]))
                 .then(
                     decimal_exponent_parser
                         .clone()
                         .or_not()
-                        .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                        .map(|v| v.unwrap_or_else(|| Node::new_none())),
                 )
                 .map(|(choices_0, decimal_exponent)| {
                     Node::new_rule(RuleKind::DecimalNumber, vec![choices_0, decimal_exponent])
@@ -949,11 +942,17 @@ impl Parsers {
             .then(
                 choice((
                     filter(|&c: &char| (' ' <= c && c <= '~') && c != '"' && c != '\\')
-                        .to(Node::new_token_part(TokenPartKind::Char, 1))
+                        .to(Node::new_token_part(
+                            TokenPartKind::DoubleQuotedAsciiStringLiteralChar,
+                            1,
+                        ))
                         .repeated()
                         .at_least(1usize)
                         .map(|v| {
-                            Node::new_token(TokenKind::DoubleQuotedAsciiStringLiteralChars, v)
+                            Node::new_token(
+                                TokenKind::DoubleQuotedAsciiStringLiteralCharRepeated,
+                                v,
+                            )
                         }),
                     escape_sequence_parser.clone(),
                 ))
@@ -961,9 +960,9 @@ impl Parsers {
                 .repeated()
                 .map(|v| {
                     if v.is_empty() {
-                        Node::new_void()
+                        Node::new_none()
                     } else {
-                        Node::new_rule(RuleKind::DoubleQuotedAsciiStringLiteralRuns, v)
+                        Node::new_rule(RuleKind::DoubleQuotedAsciiStringLiteralRunRepeated, v)
                     }
                 }),
             )
@@ -982,11 +981,17 @@ impl Parsers {
             .then(
                 choice((
                     filter(|&c: &char| c != '"' && c != '\\' && c != '\n' && c != '\r')
-                        .to(Node::new_token_part(TokenPartKind::Char, 1))
+                        .to(Node::new_token_part(
+                            TokenPartKind::DoubleQuotedUnicodeStringLiteralChar,
+                            1,
+                        ))
                         .repeated()
                         .at_least(1usize)
                         .map(|v| {
-                            Node::new_token(TokenKind::DoubleQuotedUnicodeStringLiteralChars, v)
+                            Node::new_token(
+                                TokenKind::DoubleQuotedUnicodeStringLiteralCharRepeated,
+                                v,
+                            )
                         }),
                     escape_sequence_parser.clone(),
                 ))
@@ -994,9 +999,9 @@ impl Parsers {
                 .repeated()
                 .map(|v| {
                     if v.is_empty() {
-                        Node::new_void()
+                        Node::new_none()
                     } else {
-                        Node::new_rule(RuleKind::DoubleQuotedUnicodeStringLiteralRuns, v)
+                        Node::new_rule(RuleKind::DoubleQuotedUnicodeStringLiteralRunRepeated, v)
                     }
                 }),
             )
@@ -1154,7 +1159,7 @@ impl Parsers {
                 expression_parser
                     .clone()
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void()))
+                    .map(|v| v.unwrap_or_else(|| Node::new_none()))
                     .then(
                         leading_trivia_parser
                             .clone()
@@ -1165,13 +1170,16 @@ impl Parsers {
                                 expression_parser
                                     .clone()
                                     .or_not()
-                                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
                             )
                             .repeated(),
                     )
                     .map(repetition_mapper)
                     .map(|v| {
-                        Node::new_rule(RuleKind::ParenthesisExpressionExpressionsAndCommas, v)
+                        Node::new_rule(
+                            RuleKind::ParenthesisExpressionExpressionRepeatedAndCommaRepeated,
+                            v,
+                        )
                     }),
             )
             .then(
@@ -1206,11 +1214,17 @@ impl Parsers {
             .then(
                 choice((
                     filter(|&c: &char| (' ' <= c && c <= '~') && c != '\'' && c != '\\')
-                        .to(Node::new_token_part(TokenPartKind::Char, 1))
+                        .to(Node::new_token_part(
+                            TokenPartKind::SingleQuotedAsciiStringLiteralChar,
+                            1,
+                        ))
                         .repeated()
                         .at_least(1usize)
                         .map(|v| {
-                            Node::new_token(TokenKind::SingleQuotedAsciiStringLiteralChars, v)
+                            Node::new_token(
+                                TokenKind::SingleQuotedAsciiStringLiteralCharRepeated,
+                                v,
+                            )
                         }),
                     escape_sequence_parser.clone(),
                 ))
@@ -1218,9 +1232,9 @@ impl Parsers {
                 .repeated()
                 .map(|v| {
                     if v.is_empty() {
-                        Node::new_void()
+                        Node::new_none()
                     } else {
-                        Node::new_rule(RuleKind::SingleQuotedAsciiStringLiteralRuns, v)
+                        Node::new_rule(RuleKind::SingleQuotedAsciiStringLiteralRunRepeated, v)
                     }
                 }),
             )
@@ -1236,11 +1250,17 @@ impl Parsers {
             .then(
                 choice((
                     filter(|&c: &char| c != '\'' && c != '\\' && c != '\n' && c != '\r')
-                        .to(Node::new_token_part(TokenPartKind::Char, 1))
+                        .to(Node::new_token_part(
+                            TokenPartKind::SingleQuotedUnicodeStringLiteralChar,
+                            1,
+                        ))
                         .repeated()
                         .at_least(1usize)
                         .map(|v| {
-                            Node::new_token(TokenKind::SingleQuotedUnicodeStringLiteralChars, v)
+                            Node::new_token(
+                                TokenKind::SingleQuotedUnicodeStringLiteralCharRepeated,
+                                v,
+                            )
                         }),
                     escape_sequence_parser.clone(),
                 ))
@@ -1248,9 +1268,9 @@ impl Parsers {
                 .repeated()
                 .map(|v| {
                     if v.is_empty() {
-                        Node::new_void()
+                        Node::new_none()
                     } else {
-                        Node::new_rule(RuleKind::SingleQuotedUnicodeStringLiteralRuns, v)
+                        Node::new_rule(RuleKind::SingleQuotedUnicodeStringLiteralRunRepeated, v)
                     }
                 }),
             )
@@ -1292,19 +1312,19 @@ impl Parsers {
                             .map(Node::new_with_trivia),
                     )
                     .map(|(version_pragma_operator, version_pragma_value)| {
-                        Node::new_rule(
-                            RuleKind::VersionPragmaSpecifierSequence0,
-                            vec![version_pragma_operator, version_pragma_value],
-                        )
+                        Node::new_anonymous_rule(vec![
+                            version_pragma_operator,
+                            version_pragma_value,
+                        ])
                     })
                     .repeated()
                     .at_least(1usize)
-                    .map(|v| Node::new_rule(RuleKind::VersionPragmaSpecifierSequence0S, v)),
+                    .map(Node::new_anonymous_rule),
             )
-            .map(|(solidity, sequence_0s)| {
+            .map(|(solidity, sequence_0_repeated)| {
                 Node::new_rule(
                     RuleKind::VersionPragmaSpecifier,
-                    vec![solidity, sequence_0s],
+                    vec![solidity, sequence_0_repeated],
                 )
             })
             .boxed();
@@ -1346,49 +1366,7 @@ impl Parsers {
         .boxed();
 
         // AssemblyFlags = '(' «DoubleQuotedAsciiStringLiteral»  { ',' «DoubleQuotedAsciiStringLiteral» } ')' ;
-        let assembly_flags_parser = leading_trivia_parser
-            .clone()
-            .then(just('(').to(Node::new_token_part(TokenPartKind::OpenParen, 1usize)))
-            .then(trailing_trivia_parser.clone())
-            .map(Node::new_with_trivia)
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(double_quoted_ascii_string_literal_parser.clone())
-                    .then(trailing_trivia_parser.clone())
-                    .map(Node::new_with_trivia)
-                    .then(
-                        leading_trivia_parser
-                            .clone()
-                            .then(just(',').to(Node::new_token_part(TokenPartKind::Comma, 1usize)))
-                            .then(trailing_trivia_parser.clone())
-                            .map(Node::new_with_trivia)
-                            .then(
-                                leading_trivia_parser
-                                    .clone()
-                                    .then(double_quoted_ascii_string_literal_parser.clone())
-                                    .then(trailing_trivia_parser.clone())
-                                    .map(Node::new_with_trivia),
-                            )
-                            .repeated(),
-                    )
-                    .map(repetition_mapper)
-                    .map(|v| {
-                        Node::new_rule(
-                            RuleKind::AssemblyFlagsDoubleQuotedAsciiStringLiteralsAndCommas,
-                            v,
-                        )
-                    }),
-            )
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(just(')').to(Node::new_token_part(TokenPartKind::CloseParen, 1usize)))
-                    .then(trailing_trivia_parser.clone())
-                    .map(Node::new_with_trivia),
-            )
-            .map(|((a, b), c)| Node::new_rule(RuleKind::AssemblyFlags, vec![a, b, c]))
-            .boxed();
+        let assembly_flags_parser = leading_trivia_parser . clone () . then (just ('(') . to (Node :: new_token_part (TokenPartKind :: OpenParen , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (leading_trivia_parser . clone () . then (double_quoted_ascii_string_literal_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (leading_trivia_parser . clone () . then (just (',') . to (Node :: new_token_part (TokenPartKind :: Comma , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (leading_trivia_parser . clone () . then (double_quoted_ascii_string_literal_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . repeated ()) . map (repetition_mapper) . map (| v | Node :: new_rule (RuleKind :: AssemblyFlagsDoubleQuotedAsciiStringLiteralRepeatedAndCommaRepeated , v))) . then (leading_trivia_parser . clone () . then (just (')') . to (Node :: new_token_part (TokenPartKind :: CloseParen , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| ((a , b) , c) | Node :: new_rule (RuleKind :: AssemblyFlags , vec ! [a , b , c])) . boxed () ;
 
         // ElementaryType = 'bool' | 'string' | AddressType | «FixedBytesType» | «SignedIntegerType» | «UnsignedIntegerType» | «SignedFixedType» | «UnsignedFixedType» ;
         let elementary_type_parser = choice((
@@ -1439,12 +1417,11 @@ impl Parsers {
         // «NumericLiteral» = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
         let numeric_literal_parser =
             choice((decimal_number_parser.clone(), hex_number_parser.clone()))
-                .map(|v| Node::new_rule(RuleKind::NumericLiteralChoices0, vec![v]))
                 .then(
                     number_unit_parser
                         .clone()
                         .or_not()
-                        .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                        .map(|v| v.unwrap_or_else(|| Node::new_none())),
                 )
                 .map(|(choices_0, number_unit)| {
                     Node::new_rule(RuleKind::NumericLiteral, vec![choices_0, number_unit])
@@ -1460,7 +1437,7 @@ impl Parsers {
         .boxed();
 
         // YulFunctionCall = «YulIdentifier» '(' [ YulExpression  { ',' YulExpression } ] ')' ;
-        let yul_function_call_parser = leading_trivia_parser . clone () . then (yul_identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (leading_trivia_parser . clone () . then (just ('(') . to (Node :: new_token_part (TokenPartKind :: OpenParen , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (yul_expression_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (Node :: new_token_part (TokenPartKind :: Comma , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (yul_expression_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| v | Node :: new_rule (RuleKind :: YulFunctionCallYulExpressionsAndCommas , v)) . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_void ()))) . then (leading_trivia_parser . clone () . then (just (')') . to (Node :: new_token_part (TokenPartKind :: CloseParen , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| ((a , b) , c) | Node :: new_rule (RuleKind :: YulFunctionCallOpenParenAndYulExpressionsAndCommasAndCloseParen , vec ! [a , b , c]))) . map (| (yul_identifier , open_paren_and_yul_expressions_and_commas_and_close_paren) | Node :: new_rule (RuleKind :: YulFunctionCall , vec ! [yul_identifier , open_paren_and_yul_expressions_and_commas_and_close_paren])) . boxed () ;
+        let yul_function_call_parser = leading_trivia_parser . clone () . then (yul_identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (leading_trivia_parser . clone () . then (just ('(') . to (Node :: new_token_part (TokenPartKind :: OpenParen , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (yul_expression_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (Node :: new_token_part (TokenPartKind :: Comma , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (yul_expression_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| v | Node :: new_rule (RuleKind :: YulFunctionCallYulExpressionRepeatedAndCommaRepeated , v)) . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_none ()))) . then (leading_trivia_parser . clone () . then (just (')') . to (Node :: new_token_part (TokenPartKind :: CloseParen , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| ((a , b) , c) | Node :: new_rule (RuleKind :: YulFunctionCallOpenParenAndYulExpressionRepeatedAndCommaRepeatedAndCloseParen , vec ! [a , b , c]))) . map (| (yul_identifier , open_paren_and_yul_expression_repeated_and_comma_repeated_and_close_paren) | Node :: new_rule (RuleKind :: YulFunctionCall , vec ! [yul_identifier , open_paren_and_yul_expression_repeated_and_comma_repeated_and_close_paren])) . boxed () ;
 
         // YulFunctionDefinition = 'function' «YulIdentifier» '(' [ «YulIdentifier»  { ',' «YulIdentifier» } ] ')' [ '->' «YulIdentifier»  { ',' «YulIdentifier» } ] YulBlock ;
         let yul_function_definition_parser = leading_trivia_parser
@@ -1508,7 +1485,7 @@ impl Parsers {
                             .map(repetition_mapper)
                             .map(|v| Node::new_rule(RuleKind::YulFunctionDefinitionArguments, v))
                             .or_not()
-                            .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                            .map(|v| v.unwrap_or_else(|| Node::new_none())),
                     )
                     .then(
                         leading_trivia_parser
@@ -1564,13 +1541,10 @@ impl Parsers {
                             .map(|v| Node::new_rule(RuleKind::YulFunctionDefinitionResults, v)),
                     )
                     .map(|(minus_greater, results)| {
-                        Node::new_rule(
-                            RuleKind::YulFunctionDefinitionSequence0,
-                            vec![minus_greater, results],
-                        )
+                        Node::new_anonymous_rule(vec![minus_greater, results])
                     })
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
             .then(yul_block_parser.clone())
             .map(
@@ -1657,7 +1631,10 @@ impl Parsers {
             .then(
                 leading_trivia_parser
                     .clone()
-                    .then(just(';').to(Node::new_token_part(TokenPartKind::Semicolon, 1)))
+                    .then(just(';').to(Node::new_token_part(
+                        TokenPartKind::DeleteStatementSemicolon,
+                        1,
+                    )))
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia),
             )
@@ -1670,83 +1647,7 @@ impl Parsers {
             .boxed();
 
         // EnumDefinition = 'enum' «Identifier» '{' «Identifier»  { ',' «Identifier» } '}' ;
-        let enum_definition_parser = leading_trivia_parser
-            .clone()
-            .then(terminal("enum").to(Node::new_token_part(TokenPartKind::Enum, 4usize)))
-            .then(trailing_trivia_parser.clone())
-            .map(Node::new_with_trivia)
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(identifier_parser.clone())
-                    .then(trailing_trivia_parser.clone())
-                    .map(Node::new_with_trivia),
-            )
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(just('{').to(Node::new_token_part(TokenPartKind::OpenBrace, 1usize)))
-                    .then(trailing_trivia_parser.clone())
-                    .map(Node::new_with_trivia)
-                    .then(
-                        leading_trivia_parser
-                            .clone()
-                            .then(identifier_parser.clone())
-                            .then(trailing_trivia_parser.clone())
-                            .map(Node::new_with_trivia)
-                            .then(
-                                leading_trivia_parser
-                                    .clone()
-                                    .then(
-                                        just(',')
-                                            .to(Node::new_token_part(TokenPartKind::Comma, 1usize)),
-                                    )
-                                    .then(trailing_trivia_parser.clone())
-                                    .map(Node::new_with_trivia)
-                                    .then(
-                                        leading_trivia_parser
-                                            .clone()
-                                            .then(identifier_parser.clone())
-                                            .then(trailing_trivia_parser.clone())
-                                            .map(Node::new_with_trivia),
-                                    )
-                                    .repeated(),
-                            )
-                            .map(repetition_mapper)
-                            .map(|v| {
-                                Node::new_rule(RuleKind::EnumDefinitionIdentifiersAndCommas, v)
-                            }),
-                    )
-                    .then(
-                        leading_trivia_parser
-                            .clone()
-                            .then(
-                                just('}')
-                                    .to(Node::new_token_part(TokenPartKind::CloseBrace, 1usize)),
-                            )
-                            .then(trailing_trivia_parser.clone())
-                            .map(Node::new_with_trivia),
-                    )
-                    .map(|((a, b), c)| {
-                        Node::new_rule(
-                            RuleKind::EnumDefinitionOpenBraceAndIdentifiersAndCommasAndCloseBrace,
-                            vec![a, b, c],
-                        )
-                    }),
-            )
-            .map(
-                |((r#enum, identifier), open_brace_and_identifiers_and_commas_and_close_brace)| {
-                    Node::new_rule(
-                        RuleKind::EnumDefinition,
-                        vec![
-                            r#enum,
-                            identifier,
-                            open_brace_and_identifiers_and_commas_and_close_brace,
-                        ],
-                    )
-                },
-            )
-            .boxed();
+        let enum_definition_parser = leading_trivia_parser . clone () . then (terminal ("enum") . to (Node :: new_token_part (TokenPartKind :: Enum , 4usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . then (leading_trivia_parser . clone () . then (just ('{') . to (Node :: new_token_part (TokenPartKind :: OpenBrace , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (leading_trivia_parser . clone () . then (just (',') . to (Node :: new_token_part (TokenPartKind :: Comma , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . repeated ()) . map (repetition_mapper) . map (| v | Node :: new_rule (RuleKind :: EnumDefinitionIdentifierRepeatedAndCommaRepeated , v))) . then (leading_trivia_parser . clone () . then (just ('}') . to (Node :: new_token_part (TokenPartKind :: CloseBrace , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| ((a , b) , c) | Node :: new_rule (RuleKind :: EnumDefinitionOpenBraceAndIdentifierRepeatedAndCommaRepeatedAndCloseBrace , vec ! [a , b , c]))) . map (| ((r#enum , identifier) , open_brace_and_identifier_repeated_and_comma_repeated_and_close_brace) | Node :: new_rule (RuleKind :: EnumDefinition , vec ! [r#enum , identifier , open_brace_and_identifier_repeated_and_comma_repeated_and_close_brace])) . boxed () ;
 
         // ExperimentalPragmaSpecifier = 'experimental' «Identifier» ;
         let experimental_pragma_specifier_parser = leading_trivia_parser
@@ -1814,7 +1715,7 @@ impl Parsers {
             .then(
                 leading_trivia_parser
                     .clone()
-                    .then(just(':').to(Node::new_token_part(TokenPartKind::Colon, 1)))
+                    .then(just(':').to(Node::new_token_part(TokenPartKind::NamedArgumentColon, 1)))
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia),
             )
@@ -1831,7 +1732,7 @@ impl Parsers {
                 data_location_parser
                     .clone()
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
             .then(
                 leading_trivia_parser
@@ -1840,7 +1741,7 @@ impl Parsers {
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia)
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
             .map(|((type_name, data_location), identifier)| {
                 Node::new_rule(
@@ -1869,11 +1770,9 @@ impl Parsers {
                             .then(trailing_trivia_parser.clone())
                             .map(Node::new_with_trivia),
                     )
-                    .map(|(r#as, identifier)| {
-                        Node::new_rule(RuleKind::SelectedImportSequence0, vec![r#as, identifier])
-                    })
+                    .map(|(r#as, identifier)| Node::new_anonymous_rule(vec![r#as, identifier]))
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
             .map(|(identifier, sequence_0)| {
                 Node::new_rule(RuleKind::SelectedImport, vec![identifier, sequence_0])
@@ -1904,7 +1803,10 @@ impl Parsers {
             .then(
                 leading_trivia_parser
                     .clone()
-                    .then(just(';').to(Node::new_token_part(TokenPartKind::Semicolon, 1)))
+                    .then(just(';').to(Node::new_token_part(
+                        TokenPartKind::UserDefinedValueTypeDefinitionSemicolon,
+                        1,
+                    )))
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia),
             )
@@ -1966,7 +1868,6 @@ impl Parsers {
                             elementary_type_parser.clone(),
                             identifier_path_parser.clone(),
                         ))
-                        .map(|v| Node::new_rule(RuleKind::MappingTypeChoices1, vec![v]))
                         .then(
                             leading_trivia_parser
                                 .clone()
@@ -1981,10 +1882,7 @@ impl Parsers {
                         )
                         .then(type_name_parser.clone())
                         .map(|((choices_1, equal_greater), type_name)| {
-                            Node::new_rule(
-                                RuleKind::MappingTypeSequence0,
-                                vec![choices_1, equal_greater, type_name],
-                            )
+                            Node::new_anonymous_rule(vec![choices_1, equal_greater, type_name])
                         }),
                     )
                     .then(
@@ -1997,12 +1895,7 @@ impl Parsers {
                             .then(trailing_trivia_parser.clone())
                             .map(Node::new_with_trivia),
                     )
-                    .map(|((a, b), c)| {
-                        Node::new_rule(
-                            RuleKind::MappingTypeOpenParenAndSequence0AndCloseParen,
-                            vec![a, b, c],
-                        )
-                    }),
+                    .map(|((a, b), c)| Node::new_anonymous_rule(vec![a, b, c])),
             )
             .map(|(mapping, open_paren_and_sequence_0_and_close_paren)| {
                 Node::new_rule(
@@ -2031,9 +1924,14 @@ impl Parsers {
                             .repeated(),
                     )
                     .map(repetition_mapper)
-                    .map(|v| Node::new_rule(RuleKind::NamedArgumentListNamedArgumentsAndCommas, v))
+                    .map(|v| {
+                        Node::new_rule(
+                            RuleKind::NamedArgumentListNamedArgumentRepeatedAndCommaRepeated,
+                            v,
+                        )
+                    })
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
             .then(
                 leading_trivia_parser
@@ -2046,7 +1944,7 @@ impl Parsers {
             .boxed();
 
         // OverrideSpecifier = 'override' [ '(' IdentifierPath  { ',' IdentifierPath } ')' ] ;
-        let override_specifier_parser = leading_trivia_parser . clone () . then (terminal ("override") . to (Node :: new_token_part (TokenPartKind :: Override , 8usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (leading_trivia_parser . clone () . then (just ('(') . to (Node :: new_token_part (TokenPartKind :: OpenParen , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (identifier_path_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (Node :: new_token_part (TokenPartKind :: Comma , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (identifier_path_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| v | Node :: new_rule (RuleKind :: OverrideSpecifierIdentifierPathsAndCommas , v))) . then (leading_trivia_parser . clone () . then (just (')') . to (Node :: new_token_part (TokenPartKind :: CloseParen , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| ((a , b) , c) | Node :: new_rule (RuleKind :: OverrideSpecifierOpenParenAndIdentifierPathsAndCommasAndCloseParen , vec ! [a , b , c])) . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_void ()))) . map (| (r#override , open_paren_and_identifier_paths_and_commas_and_close_paren) | Node :: new_rule (RuleKind :: OverrideSpecifier , vec ! [r#override , open_paren_and_identifier_paths_and_commas_and_close_paren])) . boxed () ;
+        let override_specifier_parser = leading_trivia_parser . clone () . then (terminal ("override") . to (Node :: new_token_part (TokenPartKind :: Override , 8usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (leading_trivia_parser . clone () . then (just ('(') . to (Node :: new_token_part (TokenPartKind :: OpenParen , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (identifier_path_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (Node :: new_token_part (TokenPartKind :: Comma , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (identifier_path_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| v | Node :: new_rule (RuleKind :: OverrideSpecifierIdentifierPathRepeatedAndCommaRepeated , v))) . then (leading_trivia_parser . clone () . then (just (')') . to (Node :: new_token_part (TokenPartKind :: CloseParen , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| ((a , b) , c) | Node :: new_rule (RuleKind :: OverrideSpecifierOpenParenAndIdentifierPathRepeatedAndCommaRepeatedAndCloseParen , vec ! [a , b , c])) . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_none ()))) . map (| (r#override , open_paren_and_identifier_path_repeated_and_comma_repeated_and_close_paren) | Node :: new_rule (RuleKind :: OverrideSpecifier , vec ! [r#override , open_paren_and_identifier_path_repeated_and_comma_repeated_and_close_paren])) . boxed () ;
 
         // ParameterList = '(' [ ParameterDeclaration  { ',' ParameterDeclaration } ] ')' ;
         let parameter_list_parser = leading_trivia_parser
@@ -2068,10 +1966,13 @@ impl Parsers {
                     )
                     .map(repetition_mapper)
                     .map(|v| {
-                        Node::new_rule(RuleKind::ParameterListParameterDeclarationsAndCommas, v)
+                        Node::new_rule(
+                            RuleKind::ParameterListParameterDeclarationRepeatedAndCommaRepeated,
+                            v,
+                        )
                     })
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
             .then(
                 leading_trivia_parser
@@ -2089,18 +1990,18 @@ impl Parsers {
             .then(terminal("pragma").to(Node::new_token_part(TokenPartKind::Pragma, 6usize)))
             .then(trailing_trivia_parser.clone())
             .map(Node::new_with_trivia)
-            .then(
-                choice((
-                    version_pragma_specifier_parser.clone(),
-                    abi_coder_pragma_specifier_parser.clone(),
-                    experimental_pragma_specifier_parser.clone(),
-                ))
-                .map(|v| Node::new_rule(RuleKind::PragmaDirectiveChoices0, vec![v])),
-            )
+            .then(choice((
+                version_pragma_specifier_parser.clone(),
+                abi_coder_pragma_specifier_parser.clone(),
+                experimental_pragma_specifier_parser.clone(),
+            )))
             .then(
                 leading_trivia_parser
                     .clone()
-                    .then(just(';').to(Node::new_token_part(TokenPartKind::Semicolon, 1)))
+                    .then(just(';').to(Node::new_token_part(
+                        TokenPartKind::PragmaDirectiveSemicolon,
+                        1,
+                    )))
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia),
             )
@@ -2113,7 +2014,7 @@ impl Parsers {
             .boxed();
 
         // SelectingImportDirective = '{' SelectedImport  { ',' SelectedImport } '}' 'from' ImportPath ;
-        let selecting_import_directive_parser = leading_trivia_parser . clone () . then (just ('{') . to (Node :: new_token_part (TokenPartKind :: OpenBrace , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (selected_import_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (Node :: new_token_part (TokenPartKind :: Comma , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (selected_import_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| v | Node :: new_rule (RuleKind :: SelectingImportDirectiveSelectedImportsAndCommas , v))) . then (leading_trivia_parser . clone () . then (just ('}') . to (Node :: new_token_part (TokenPartKind :: CloseBrace , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| ((a , b) , c) | Node :: new_rule (RuleKind :: SelectingImportDirectiveOpenBraceAndSelectedImportsAndCommasAndCloseBrace , vec ! [a , b , c])) . then (leading_trivia_parser . clone () . then (terminal ("from") . to (Node :: new_token_part (TokenPartKind :: From , 4usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . then (import_path_parser . clone ()) . map (| ((open_brace_and_selected_imports_and_commas_and_close_brace , from) , import_path) | Node :: new_rule (RuleKind :: SelectingImportDirective , vec ! [open_brace_and_selected_imports_and_commas_and_close_brace , from , import_path])) . boxed () ;
+        let selecting_import_directive_parser = leading_trivia_parser . clone () . then (just ('{') . to (Node :: new_token_part (TokenPartKind :: OpenBrace , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (selected_import_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (Node :: new_token_part (TokenPartKind :: Comma , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (selected_import_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| v | Node :: new_rule (RuleKind :: SelectingImportDirectiveSelectedImportRepeatedAndCommaRepeated , v))) . then (leading_trivia_parser . clone () . then (just ('}') . to (Node :: new_token_part (TokenPartKind :: CloseBrace , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| ((a , b) , c) | Node :: new_rule (RuleKind :: SelectingImportDirectiveOpenBraceAndSelectedImportRepeatedAndCommaRepeatedAndCloseBrace , vec ! [a , b , c])) . then (leading_trivia_parser . clone () . then (terminal ("from") . to (Node :: new_token_part (TokenPartKind :: From , 4usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . then (import_path_parser . clone ()) . map (| ((open_brace_and_selected_import_repeated_and_comma_repeated_and_close_brace , from) , import_path) | Node :: new_rule (RuleKind :: SelectingImportDirective , vec ! [open_brace_and_selected_import_repeated_and_comma_repeated_and_close_brace , from , import_path])) . boxed () ;
 
         // SimpleImportDirective = ImportPath { 'as' «Identifier» } ;
         let simple_import_directive_parser = import_path_parser
@@ -2131,25 +2032,14 @@ impl Parsers {
                             .then(trailing_trivia_parser.clone())
                             .map(Node::new_with_trivia),
                     )
-                    .map(|(r#as, identifier)| {
-                        Node::new_rule(
-                            RuleKind::SimpleImportDirectiveSequence0,
-                            vec![r#as, identifier],
-                        )
-                    })
+                    .map(|(r#as, identifier)| Node::new_anonymous_rule(vec![r#as, identifier]))
                     .repeated()
-                    .map(|v| {
-                        if v.is_empty() {
-                            Node::new_void()
-                        } else {
-                            Node::new_rule(RuleKind::SimpleImportDirectiveSequence0S, v)
-                        }
-                    }),
+                    .map(Node::new_anonymous_rule),
             )
-            .map(|(import_path, sequence_0s)| {
+            .map(|(import_path, sequence_0_repeated)| {
                 Node::new_rule(
                     RuleKind::SimpleImportDirective,
-                    vec![import_path, sequence_0s],
+                    vec![import_path, sequence_0_repeated],
                 )
             })
             .boxed();
@@ -2157,7 +2047,10 @@ impl Parsers {
         // StarImportDirective = '*' 'as' «Identifier» 'from' ImportPath ;
         let star_import_directive_parser = leading_trivia_parser
             .clone()
-            .then(just('*').to(Node::new_token_part(TokenPartKind::Star, 1)))
+            .then(just('*').to(Node::new_token_part(
+                TokenPartKind::StarImportDirectiveStar,
+                1,
+            )))
             .then(trailing_trivia_parser.clone())
             .map(Node::new_with_trivia)
             .then(
@@ -2212,9 +2105,8 @@ impl Parsers {
                     positional_argument_list_parser.clone(),
                     named_argument_list_parser.clone(),
                 ))
-                .map(|v| Node::new_rule(RuleKind::ArgumentListChoices0, vec![v]))
                 .or_not()
-                .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
             .then(
                 leading_trivia_parser
@@ -2239,16 +2131,13 @@ impl Parsers {
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia)
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void()))
+                    .map(|v| v.unwrap_or_else(|| Node::new_none()))
                     .then(parameter_list_parser.clone())
                     .map(|(identifier, parameter_list)| {
-                        Node::new_rule(
-                            RuleKind::CatchClauseSequence0,
-                            vec![identifier, parameter_list],
-                        )
+                        Node::new_anonymous_rule(vec![identifier, parameter_list])
                     })
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
             .then(block_parser.clone())
             .map(|((catch, sequence_0), block)| {
@@ -2320,15 +2209,8 @@ impl Parsers {
                         .then(trailing_trivia_parser.clone())
                         .map(Node::new_with_trivia),
                 ))
-                .map(|v| Node::new_rule(RuleKind::FunctionTypeChoices0, vec![v]))
                 .repeated()
-                .map(|v| {
-                    if v.is_empty() {
-                        Node::new_void()
-                    } else {
-                        Node::new_rule(RuleKind::FunctionTypeChoices0S, v)
-                    }
-                }),
+                .map(Node::new_anonymous_rule),
             )
             .then(
                 leading_trivia_parser
@@ -2341,20 +2223,19 @@ impl Parsers {
                     .map(Node::new_with_trivia)
                     .then(parameter_list_parser.clone())
                     .map(|(returns, parameter_list)| {
-                        Node::new_rule(
-                            RuleKind::FunctionTypeSequence1,
-                            vec![returns, parameter_list],
-                        )
+                        Node::new_anonymous_rule(vec![returns, parameter_list])
                     })
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
-            .map(|(((function, parameter_list), choices_0s), sequence_1)| {
-                Node::new_rule(
-                    RuleKind::FunctionType,
-                    vec![function, parameter_list, choices_0s, sequence_1],
-                )
-            })
+            .map(
+                |(((function, parameter_list), choices_0_repeated), sequence_1)| {
+                    Node::new_rule(
+                        RuleKind::FunctionType,
+                        vec![function, parameter_list, choices_0_repeated, sequence_1],
+                    )
+                },
+            )
             .boxed();
 
         // ImportDirective = 'import' ( SimpleImportDirective | StarImportDirective | SelectingImportDirective ) ';' ;
@@ -2363,18 +2244,18 @@ impl Parsers {
             .then(terminal("import").to(Node::new_token_part(TokenPartKind::Import, 6usize)))
             .then(trailing_trivia_parser.clone())
             .map(Node::new_with_trivia)
-            .then(
-                choice((
-                    simple_import_directive_parser.clone(),
-                    star_import_directive_parser.clone(),
-                    selecting_import_directive_parser.clone(),
-                ))
-                .map(|v| Node::new_rule(RuleKind::ImportDirectiveChoices0, vec![v])),
-            )
+            .then(choice((
+                simple_import_directive_parser.clone(),
+                star_import_directive_parser.clone(),
+                selecting_import_directive_parser.clone(),
+            )))
             .then(
                 leading_trivia_parser
                     .clone()
-                    .then(just(';').to(Node::new_token_part(TokenPartKind::Semicolon, 1)))
+                    .then(just(';').to(Node::new_token_part(
+                        TokenPartKind::ImportDirectiveSemicolon,
+                        1,
+                    )))
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia),
             )
@@ -2452,7 +2333,7 @@ impl Parsers {
             .map(repetition_mapper)
             .map(|v| {
                 Node::new_rule(
-                    RuleKind::YulAssignmentStatementYulIdentifierPathsAndCommas,
+                    RuleKind::YulAssignmentStatementYulIdentifierPathRepeatedAndCommaRepeated,
                     v,
                 )
             })
@@ -2467,10 +2348,17 @@ impl Parsers {
             )
             .then(yul_expression_parser.clone())
             .map(
-                |((yul_identifier_paths_and_commas, colon_equal), yul_expression)| {
+                |(
+                    (yul_identifier_path_repeated_and_comma_repeated, colon_equal),
+                    yul_expression,
+                )| {
                     Node::new_rule(
                         RuleKind::YulAssignmentStatement,
-                        vec![yul_identifier_paths_and_commas, colon_equal, yul_expression],
+                        vec![
+                            yul_identifier_path_repeated_and_comma_repeated,
+                            colon_equal,
+                            yul_expression,
+                        ],
                     )
                 },
             )
@@ -2536,10 +2424,7 @@ impl Parsers {
                         .map(Node::new_with_trivia)
                         .then(yul_literal_parser.clone())
                         .map(|(case, yul_literal)| {
-                            Node::new_rule(
-                                RuleKind::YulSwitchStatementSequence2,
-                                vec![case, yul_literal],
-                            )
+                            Node::new_anonymous_rule(vec![case, yul_literal])
                         }),
                     leading_trivia_parser
                         .clone()
@@ -2550,77 +2435,22 @@ impl Parsers {
                         .then(trailing_trivia_parser.clone())
                         .map(Node::new_with_trivia),
                 ))
-                .map(|v| Node::new_rule(RuleKind::YulSwitchStatementChoices1, vec![v]))
                 .then(yul_block_parser.clone())
-                .map(|(choices_1, yul_block)| {
-                    Node::new_rule(
-                        RuleKind::YulSwitchStatementSequence0,
-                        vec![choices_1, yul_block],
-                    )
-                })
+                .map(|(choices_1, yul_block)| Node::new_anonymous_rule(vec![choices_1, yul_block]))
                 .repeated()
                 .at_least(1usize)
-                .map(|v| Node::new_rule(RuleKind::YulSwitchStatementSequence0S, v)),
+                .map(Node::new_anonymous_rule),
             )
-            .map(|((switch, yul_expression), sequence_0s)| {
+            .map(|((switch, yul_expression), sequence_0_repeated)| {
                 Node::new_rule(
                     RuleKind::YulSwitchStatement,
-                    vec![switch, yul_expression, sequence_0s],
+                    vec![switch, yul_expression, sequence_0_repeated],
                 )
             })
             .boxed();
 
         // YulVariableDeclaration = 'let' YulIdentifierPath  { ',' YulIdentifierPath } [ ':=' YulExpression ] ;
-        let yul_variable_declaration_parser = leading_trivia_parser
-            .clone()
-            .then(terminal("let").to(Node::new_token_part(TokenPartKind::Let, 3usize)))
-            .then(trailing_trivia_parser.clone())
-            .map(Node::new_with_trivia)
-            .then(
-                yul_identifier_path_parser
-                    .clone()
-                    .then(
-                        leading_trivia_parser
-                            .clone()
-                            .then(just(',').to(Node::new_token_part(TokenPartKind::Comma, 1usize)))
-                            .then(trailing_trivia_parser.clone())
-                            .map(Node::new_with_trivia)
-                            .then(yul_identifier_path_parser.clone())
-                            .repeated(),
-                    )
-                    .map(repetition_mapper)
-                    .map(|v| {
-                        Node::new_rule(
-                            RuleKind::YulVariableDeclarationYulIdentifierPathsAndCommas,
-                            v,
-                        )
-                    }),
-            )
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(
-                        terminal(":=").to(Node::new_token_part(TokenPartKind::ColonEqual, 2usize)),
-                    )
-                    .then(trailing_trivia_parser.clone())
-                    .map(Node::new_with_trivia)
-                    .then(yul_expression_parser.clone())
-                    .map(|(colon_equal, yul_expression)| {
-                        Node::new_rule(
-                            RuleKind::YulVariableDeclarationSequence0,
-                            vec![colon_equal, yul_expression],
-                        )
-                    })
-                    .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
-            )
-            .map(|((r#let, yul_identifier_paths_and_commas), sequence_0)| {
-                Node::new_rule(
-                    RuleKind::YulVariableDeclaration,
-                    vec![r#let, yul_identifier_paths_and_commas, sequence_0],
-                )
-            })
-            .boxed();
+        let yul_variable_declaration_parser = leading_trivia_parser . clone () . then (terminal ("let") . to (Node :: new_token_part (TokenPartKind :: Let , 3usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (yul_identifier_path_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (Node :: new_token_part (TokenPartKind :: Comma , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (yul_identifier_path_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| v | Node :: new_rule (RuleKind :: YulVariableDeclarationYulIdentifierPathRepeatedAndCommaRepeated , v))) . then (leading_trivia_parser . clone () . then (terminal (":=") . to (Node :: new_token_part (TokenPartKind :: ColonEqual , 2usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (yul_expression_parser . clone ()) . map (| (colon_equal , yul_expression) | Node :: new_anonymous_rule (vec ! [colon_equal , yul_expression])) . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_none ()))) . map (| ((r#let , yul_identifier_path_repeated_and_comma_repeated) , sequence_0) | Node :: new_rule (RuleKind :: YulVariableDeclaration , vec ! [r#let , yul_identifier_path_repeated_and_comma_repeated , sequence_0])) . boxed () ;
 
         // EmitStatement = 'emit' IdentifierPath ArgumentList ';' ;
         let emit_statement_parser = leading_trivia_parser
@@ -2633,7 +2463,10 @@ impl Parsers {
             .then(
                 leading_trivia_parser
                     .clone()
-                    .then(just(';').to(Node::new_token_part(TokenPartKind::Semicolon, 1)))
+                    .then(just(';').to(Node::new_token_part(
+                        TokenPartKind::EmitStatementSemicolon,
+                        1,
+                    )))
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia),
             )
@@ -2652,7 +2485,7 @@ impl Parsers {
                 argument_list_parser
                     .clone()
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
             .map(|(identifier_path, argument_list)| {
                 Node::new_rule(
@@ -2669,7 +2502,7 @@ impl Parsers {
                 argument_list_parser
                     .clone()
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
             .map(|(identifier_path, argument_list)| {
                 Node::new_rule(
@@ -2717,13 +2550,16 @@ impl Parsers {
                 identifier_path_parser
                     .clone()
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
             .then(argument_list_parser.clone())
             .then(
                 leading_trivia_parser
                     .clone()
-                    .then(just(';').to(Node::new_token_part(TokenPartKind::Semicolon, 1)))
+                    .then(just(';').to(Node::new_token_part(
+                        TokenPartKind::RevertStatementSemicolon,
+                        1,
+                    )))
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia),
             )
@@ -2743,7 +2579,6 @@ impl Parsers {
                 mapping_type_parser.clone(),
                 identifier_path_parser.clone(),
             ))
-            .map(|v| Node::new_rule(RuleKind::TypeNameChoices0, vec![v]))
             .then(
                 leading_trivia_parser
                     .clone()
@@ -2754,7 +2589,7 @@ impl Parsers {
                         expression_parser
                             .clone()
                             .or_not()
-                            .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                            .map(|v| v.unwrap_or_else(|| Node::new_none())),
                     )
                     .then(
                         leading_trivia_parser
@@ -2775,20 +2610,23 @@ impl Parsers {
                     .repeated()
                     .map(|v| {
                         if v.is_empty() {
-                            Node::new_void()
+                            Node::new_none()
                         } else {
                             Node::new_rule(
-                                RuleKind::TypeNameOpenBracketAndExpressionAndCloseBrackets,
+                                RuleKind::TypeNameOpenBracketAndExpressionAndCloseBracketRepeated,
                                 v,
                             )
                         }
                     }),
             )
             .map(
-                |(choices_0, open_bracket_and_expression_and_close_brackets)| {
+                |(choices_0, open_bracket_and_expression_and_close_bracket_repeated)| {
                     Node::new_rule(
                         RuleKind::TypeName,
-                        vec![choices_0, open_bracket_and_expression_and_close_brackets],
+                        vec![
+                            choices_0,
+                            open_bracket_and_expression_and_close_bracket_repeated,
+                        ],
                     )
                 },
             )
@@ -2846,7 +2684,7 @@ impl Parsers {
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia)
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
             .map(|(type_name, identifier)| {
                 Node::new_rule(RuleKind::ErrorParameter, vec![type_name, identifier])
@@ -2866,7 +2704,7 @@ impl Parsers {
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia)
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
             .then(
                 leading_trivia_parser
@@ -2875,7 +2713,7 @@ impl Parsers {
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia)
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
             .map(|((type_name, indexed), identifier)| {
                 Node::new_rule(
@@ -2973,38 +2811,7 @@ impl Parsers {
         .boxed();
 
         // InheritanceSpecifierList = 'is' InheritanceSpecifier  { ',' InheritanceSpecifier } ;
-        let inheritance_specifier_list_parser = leading_trivia_parser
-            .clone()
-            .then(terminal("is").to(Node::new_token_part(TokenPartKind::Is, 2usize)))
-            .then(trailing_trivia_parser.clone())
-            .map(Node::new_with_trivia)
-            .then(
-                inheritance_specifier_parser
-                    .clone()
-                    .then(
-                        leading_trivia_parser
-                            .clone()
-                            .then(just(',').to(Node::new_token_part(TokenPartKind::Comma, 1usize)))
-                            .then(trailing_trivia_parser.clone())
-                            .map(Node::new_with_trivia)
-                            .then(inheritance_specifier_parser.clone())
-                            .repeated(),
-                    )
-                    .map(repetition_mapper)
-                    .map(|v| {
-                        Node::new_rule(
-                            RuleKind::InheritanceSpecifierListInheritanceSpecifiersAndCommas,
-                            v,
-                        )
-                    }),
-            )
-            .map(|(is, inheritance_specifiers_and_commas)| {
-                Node::new_rule(
-                    RuleKind::InheritanceSpecifierList,
-                    vec![is, inheritance_specifiers_and_commas],
-                )
-            })
-            .boxed();
+        let inheritance_specifier_list_parser = leading_trivia_parser . clone () . then (terminal ("is") . to (Node :: new_token_part (TokenPartKind :: Is , 2usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (inheritance_specifier_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (Node :: new_token_part (TokenPartKind :: Comma , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (inheritance_specifier_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| v | Node :: new_rule (RuleKind :: InheritanceSpecifierListInheritanceSpecifierRepeatedAndCommaRepeated , v))) . map (| (is , inheritance_specifier_repeated_and_comma_repeated) | Node :: new_rule (RuleKind :: InheritanceSpecifierList , vec ! [is , inheritance_specifier_repeated_and_comma_repeated])) . boxed () ;
 
         // ReceiveFunctionAttribute = ModifierInvocation | OverrideSpecifier | 'external' | 'payable' | 'virtual' ;
         let receive_function_attribute_parser = choice((
@@ -3044,7 +2851,10 @@ impl Parsers {
             .then(
                 leading_trivia_parser
                     .clone()
-                    .then(just(';').to(Node::new_token_part(TokenPartKind::Semicolon, 1)))
+                    .then(just(';').to(Node::new_token_part(
+                        TokenPartKind::StructMemberSemicolon,
+                        1,
+                    )))
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia),
             )
@@ -3095,7 +2905,7 @@ impl Parsers {
             .boxed();
 
         // UsingDirective = 'using' ( IdentifierPath | '{' IdentifierPath  { ',' IdentifierPath } '}' ) 'for' ( '*' | TypeName ) [ 'global' ] ';' ;
-        let using_directive_parser = leading_trivia_parser . clone () . then (terminal ("using") . to (Node :: new_token_part (TokenPartKind :: Using , 5usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (choice ((identifier_path_parser . clone () , leading_trivia_parser . clone () . then (just ('{') . to (Node :: new_token_part (TokenPartKind :: OpenBrace , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (identifier_path_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (Node :: new_token_part (TokenPartKind :: Comma , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (identifier_path_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| v | Node :: new_rule (RuleKind :: UsingDirectiveIdentifierPathsAndCommas , v))) . then (leading_trivia_parser . clone () . then (just ('}') . to (Node :: new_token_part (TokenPartKind :: CloseBrace , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| ((a , b) , c) | Node :: new_rule (RuleKind :: UsingDirectiveOpenBraceAndIdentifierPathsAndCommasAndCloseBrace , vec ! [a , b , c])))) . map (| v | Node :: new_rule (RuleKind :: UsingDirectiveChoices0 , vec ! [v]))) . then (leading_trivia_parser . clone () . then (terminal ("for") . to (Node :: new_token_part (TokenPartKind :: For , 3usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . then (choice ((leading_trivia_parser . clone () . then (just ('*') . to (Node :: new_token_part (TokenPartKind :: Star , 1))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) , type_name_parser . clone ())) . map (| v | Node :: new_rule (RuleKind :: UsingDirectiveChoices1 , vec ! [v]))) . then (leading_trivia_parser . clone () . then (terminal ("global") . to (Node :: new_token_part (TokenPartKind :: Global , 6usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_void ()))) . then (leading_trivia_parser . clone () . then (just (';') . to (Node :: new_token_part (TokenPartKind :: Semicolon , 1))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| (((((using , choices_0) , r#for) , choices_1) , global) , semicolon) | Node :: new_rule (RuleKind :: UsingDirective , vec ! [using , choices_0 , r#for , choices_1 , global , semicolon])) . boxed () ;
+        let using_directive_parser = leading_trivia_parser . clone () . then (terminal ("using") . to (Node :: new_token_part (TokenPartKind :: Using , 5usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (choice ((identifier_path_parser . clone () , leading_trivia_parser . clone () . then (just ('{') . to (Node :: new_token_part (TokenPartKind :: OpenBrace , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (identifier_path_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (Node :: new_token_part (TokenPartKind :: Comma , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (identifier_path_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| v | Node :: new_rule (RuleKind :: UsingDirectiveIdentifierPathRepeatedAndCommaRepeated , v))) . then (leading_trivia_parser . clone () . then (just ('}') . to (Node :: new_token_part (TokenPartKind :: CloseBrace , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| ((a , b) , c) | Node :: new_rule (RuleKind :: UsingDirectiveOpenBraceAndIdentifierPathRepeatedAndCommaRepeatedAndCloseBrace , vec ! [a , b , c]))))) . then (leading_trivia_parser . clone () . then (terminal ("for") . to (Node :: new_token_part (TokenPartKind :: For , 3usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . then (choice ((leading_trivia_parser . clone () . then (just ('*') . to (Node :: new_token_part (TokenPartKind :: UsingDirectiveStar , 1))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) , type_name_parser . clone ()))) . then (leading_trivia_parser . clone () . then (terminal ("global") . to (Node :: new_token_part (TokenPartKind :: Global , 6usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_none ()))) . then (leading_trivia_parser . clone () . then (just (';') . to (Node :: new_token_part (TokenPartKind :: UsingDirectiveSemicolon , 1))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| (((((using , choices_0) , r#for) , choices_1) , global) , semicolon) | Node :: new_rule (RuleKind :: UsingDirective , vec ! [using , choices_0 , r#for , choices_1 , global , semicolon])) . boxed () ;
 
         // YulBlock = '{' { YulStatement } '}' ;
         yul_block_parser.define(
@@ -3106,9 +2916,9 @@ impl Parsers {
                 .map(Node::new_with_trivia)
                 .then(yul_statement_parser.clone().repeated().map(|v| {
                     if v.is_empty() {
-                        Node::new_void()
+                        Node::new_none()
                     } else {
-                        Node::new_rule(RuleKind::YulBlockYulStatements, v)
+                        Node::new_rule(RuleKind::YulBlockYulStatementRepeated, v)
                     }
                 }))
                 .then(
@@ -3138,13 +2948,13 @@ impl Parsers {
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia)
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
             .then(
                 assembly_flags_parser
                     .clone()
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
             .then(yul_block_parser.clone())
             .map(
@@ -3172,10 +2982,10 @@ impl Parsers {
         .boxed();
 
         // ErrorDefinition = 'error' «Identifier» '(' [ ErrorParameter  { ',' ErrorParameter } ] ')' ';' ;
-        let error_definition_parser = leading_trivia_parser . clone () . then (terminal ("error") . to (Node :: new_token_part (TokenPartKind :: Error , 5usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . then (leading_trivia_parser . clone () . then (just ('(') . to (Node :: new_token_part (TokenPartKind :: OpenParen , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (error_parameter_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (Node :: new_token_part (TokenPartKind :: Comma , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (error_parameter_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| v | Node :: new_rule (RuleKind :: ErrorDefinitionErrorParametersAndCommas , v)) . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_void ()))) . then (leading_trivia_parser . clone () . then (just (')') . to (Node :: new_token_part (TokenPartKind :: CloseParen , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| ((a , b) , c) | Node :: new_rule (RuleKind :: ErrorDefinitionOpenParenAndErrorParametersAndCommasAndCloseParen , vec ! [a , b , c]))) . then (leading_trivia_parser . clone () . then (just (';') . to (Node :: new_token_part (TokenPartKind :: Semicolon , 1))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| (((error , identifier) , open_paren_and_error_parameters_and_commas_and_close_paren) , semicolon) | Node :: new_rule (RuleKind :: ErrorDefinition , vec ! [error , identifier , open_paren_and_error_parameters_and_commas_and_close_paren , semicolon])) . boxed () ;
+        let error_definition_parser = leading_trivia_parser . clone () . then (terminal ("error") . to (Node :: new_token_part (TokenPartKind :: Error , 5usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . then (leading_trivia_parser . clone () . then (just ('(') . to (Node :: new_token_part (TokenPartKind :: OpenParen , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (error_parameter_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (Node :: new_token_part (TokenPartKind :: Comma , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (error_parameter_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| v | Node :: new_rule (RuleKind :: ErrorDefinitionErrorParameterRepeatedAndCommaRepeated , v)) . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_none ()))) . then (leading_trivia_parser . clone () . then (just (')') . to (Node :: new_token_part (TokenPartKind :: CloseParen , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| ((a , b) , c) | Node :: new_rule (RuleKind :: ErrorDefinitionOpenParenAndErrorParameterRepeatedAndCommaRepeatedAndCloseParen , vec ! [a , b , c]))) . then (leading_trivia_parser . clone () . then (just (';') . to (Node :: new_token_part (TokenPartKind :: ErrorDefinitionSemicolon , 1))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| (((error , identifier) , open_paren_and_error_parameter_repeated_and_comma_repeated_and_close_paren) , semicolon) | Node :: new_rule (RuleKind :: ErrorDefinition , vec ! [error , identifier , open_paren_and_error_parameter_repeated_and_comma_repeated_and_close_paren , semicolon])) . boxed () ;
 
         // EventDefinition = 'event' «Identifier» '(' [ EventParameter  { ',' EventParameter } ] ')' [ 'anonymous' ] ';' ;
-        let event_definition_parser = leading_trivia_parser . clone () . then (terminal ("event") . to (Node :: new_token_part (TokenPartKind :: Event , 5usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . then (leading_trivia_parser . clone () . then (just ('(') . to (Node :: new_token_part (TokenPartKind :: OpenParen , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (event_parameter_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (Node :: new_token_part (TokenPartKind :: Comma , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (event_parameter_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| v | Node :: new_rule (RuleKind :: EventDefinitionEventParametersAndCommas , v)) . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_void ()))) . then (leading_trivia_parser . clone () . then (just (')') . to (Node :: new_token_part (TokenPartKind :: CloseParen , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| ((a , b) , c) | Node :: new_rule (RuleKind :: EventDefinitionOpenParenAndEventParametersAndCommasAndCloseParen , vec ! [a , b , c]))) . then (leading_trivia_parser . clone () . then (terminal ("anonymous") . to (Node :: new_token_part (TokenPartKind :: Anonymous , 9usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_void ()))) . then (leading_trivia_parser . clone () . then (just (';') . to (Node :: new_token_part (TokenPartKind :: Semicolon , 1))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| ((((event , identifier) , open_paren_and_event_parameters_and_commas_and_close_paren) , anonymous) , semicolon) | Node :: new_rule (RuleKind :: EventDefinition , vec ! [event , identifier , open_paren_and_event_parameters_and_commas_and_close_paren , anonymous , semicolon])) . boxed () ;
+        let event_definition_parser = leading_trivia_parser . clone () . then (terminal ("event") . to (Node :: new_token_part (TokenPartKind :: Event , 5usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . then (leading_trivia_parser . clone () . then (just ('(') . to (Node :: new_token_part (TokenPartKind :: OpenParen , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (event_parameter_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (Node :: new_token_part (TokenPartKind :: Comma , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (event_parameter_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| v | Node :: new_rule (RuleKind :: EventDefinitionEventParameterRepeatedAndCommaRepeated , v)) . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_none ()))) . then (leading_trivia_parser . clone () . then (just (')') . to (Node :: new_token_part (TokenPartKind :: CloseParen , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| ((a , b) , c) | Node :: new_rule (RuleKind :: EventDefinitionOpenParenAndEventParameterRepeatedAndCommaRepeatedAndCloseParen , vec ! [a , b , c]))) . then (leading_trivia_parser . clone () . then (terminal ("anonymous") . to (Node :: new_token_part (TokenPartKind :: Anonymous , 9usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_none ()))) . then (leading_trivia_parser . clone () . then (just (';') . to (Node :: new_token_part (TokenPartKind :: EventDefinitionSemicolon , 1))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| ((((event , identifier) , open_paren_and_event_parameter_repeated_and_comma_repeated_and_close_paren) , anonymous) , semicolon) | Node :: new_rule (RuleKind :: EventDefinition , vec ! [event , identifier , open_paren_and_event_parameter_repeated_and_comma_repeated_and_close_paren , anonymous , semicolon])) . boxed () ;
 
         // PrimaryExpression = PayableExpression | TypeExpression | NewExpression | ParenthesisExpression | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | «NumericLiteral» | «BooleanLiteral» | «Identifier» ;
         let primary_expression_parser = choice((
@@ -3242,7 +3052,9 @@ impl Parsers {
                             .clone()
                             .repeated()
                             .at_least(1usize)
-                            .map(|v| Node::new_rule(RuleKind::StructDefinitionStructMembers, v)),
+                            .map(|v| {
+                                Node::new_rule(RuleKind::StructDefinitionStructMemberRepeated, v)
+                            }),
                     )
                     .then(
                         leading_trivia_parser
@@ -3256,19 +3068,22 @@ impl Parsers {
                     )
                     .map(|((a, b), c)| {
                         Node::new_rule(
-                            RuleKind::StructDefinitionOpenBraceAndStructMembersAndCloseBrace,
+                            RuleKind::StructDefinitionOpenBraceAndStructMemberRepeatedAndCloseBrace,
                             vec![a, b, c],
                         )
                     }),
             )
             .map(
-                |((r#struct, identifier), open_brace_and_struct_members_and_close_brace)| {
+                |(
+                    (r#struct, identifier),
+                    open_brace_and_struct_member_repeated_and_close_brace,
+                )| {
                     Node::new_rule(
                         RuleKind::StructDefinition,
                         vec![
                             r#struct,
                             identifier,
-                            open_brace_and_struct_members_and_close_brace,
+                            open_brace_and_struct_member_repeated_and_close_brace,
                         ],
                     )
                 },
@@ -3288,35 +3103,30 @@ impl Parsers {
                         expression_parser
                             .clone()
                             .or_not()
-                            .map(|v| v.unwrap_or_else(|| Node::new_void()))
+                            .map(|v| v.unwrap_or_else(|| Node::new_none()))
                             .then(
                                 leading_trivia_parser
                                     .clone()
-                                    .then(
-                                        just(':').to(Node::new_token_part(TokenPartKind::Colon, 1)),
-                                    )
+                                    .then(just(':').to(Node::new_token_part(
+                                        TokenPartKind::IndexAccessExpressionColon,
+                                        1,
+                                    )))
                                     .then(trailing_trivia_parser.clone())
                                     .map(Node::new_with_trivia)
                                     .then(
                                         expression_parser
                                             .clone()
                                             .or_not()
-                                            .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                                            .map(|v| v.unwrap_or_else(|| Node::new_none())),
                                     )
                                     .map(|(colon, expression)| {
-                                        Node::new_rule(
-                                            RuleKind::IndexAccessExpressionSequence1,
-                                            vec![colon, expression],
-                                        )
+                                        Node::new_anonymous_rule(vec![colon, expression])
                                     })
                                     .or_not()
-                                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
                             )
                             .map(|(expression, sequence_1)| {
-                                Node::new_rule(
-                                    RuleKind::IndexAccessExpressionSequence0,
-                                    vec![expression, sequence_1],
-                                )
+                                Node::new_anonymous_rule(vec![expression, sequence_1])
                             }),
                     )
                     .then(
@@ -3329,12 +3139,7 @@ impl Parsers {
                             .then(trailing_trivia_parser.clone())
                             .map(Node::new_with_trivia),
                     )
-                    .map(|((a, b), c)| {
-                        Node::new_rule(
-                            RuleKind::IndexAccessExpressionOpenBracketAndSequence0AndCloseBracket,
-                            vec![a, b, c],
-                        )
-                    }),
+                    .map(|((a, b), c)| Node::new_anonymous_rule(vec![a, b, c])),
             )
             .map(
                 |(expression, open_bracket_and_sequence_0_and_close_bracket)| {
@@ -3352,28 +3157,28 @@ impl Parsers {
             .then(
                 leading_trivia_parser
                     .clone()
-                    .then(just('.').to(Node::new_token_part(TokenPartKind::Period, 1)))
+                    .then(just('.').to(Node::new_token_part(
+                        TokenPartKind::MemberAccessExpressionPeriod,
+                        1,
+                    )))
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia),
             )
-            .then(
-                choice((
-                    leading_trivia_parser
-                        .clone()
-                        .then(identifier_parser.clone())
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                    leading_trivia_parser
-                        .clone()
-                        .then(
-                            terminal("address")
-                                .to(Node::new_token_part(TokenPartKind::Address, 7usize)),
-                        )
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                ))
-                .map(|v| Node::new_rule(RuleKind::MemberAccessExpressionChoices0, vec![v])),
-            )
+            .then(choice((
+                leading_trivia_parser
+                    .clone()
+                    .then(identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+                leading_trivia_parser
+                    .clone()
+                    .then(
+                        terminal("address")
+                            .to(Node::new_token_part(TokenPartKind::Address, 7usize)),
+                    )
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+            )))
             .map(|((expression, period), choices_0)| {
                 Node::new_rule(
                     RuleKind::MemberAccessExpressionAnonexpfrag4,
@@ -3383,7 +3188,7 @@ impl Parsers {
             .boxed();
 
         // FunctionCallExpression = Expression [ '{' NamedArgument  { ',' NamedArgument } '}' ] ArgumentList ;
-        let function_call_expression_parser = expression_parser . clone () . then (leading_trivia_parser . clone () . then (just ('{') . to (Node :: new_token_part (TokenPartKind :: OpenBrace , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (named_argument_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (Node :: new_token_part (TokenPartKind :: Comma , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (named_argument_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| v | Node :: new_rule (RuleKind :: FunctionCallExpressionNamedArgumentsAndCommas , v))) . then (leading_trivia_parser . clone () . then (just ('}') . to (Node :: new_token_part (TokenPartKind :: CloseBrace , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| ((a , b) , c) | Node :: new_rule (RuleKind :: FunctionCallExpressionOpenBraceAndNamedArgumentsAndCommasAndCloseBrace , vec ! [a , b , c])) . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_void ()))) . then (argument_list_parser . clone ()) . map (| ((expression , open_brace_and_named_arguments_and_commas_and_close_brace) , argument_list) | Node :: new_rule (RuleKind :: FunctionCallExpressionAnonexpfrag4 , vec ! [expression , open_brace_and_named_arguments_and_commas_and_close_brace , argument_list])) . boxed () ;
+        let function_call_expression_parser = expression_parser . clone () . then (leading_trivia_parser . clone () . then (just ('{') . to (Node :: new_token_part (TokenPartKind :: OpenBrace , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (named_argument_parser . clone () . then (leading_trivia_parser . clone () . then (just (',') . to (Node :: new_token_part (TokenPartKind :: Comma , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (named_argument_parser . clone ()) . repeated ()) . map (repetition_mapper) . map (| v | Node :: new_rule (RuleKind :: FunctionCallExpressionNamedArgumentRepeatedAndCommaRepeated , v))) . then (leading_trivia_parser . clone () . then (just ('}') . to (Node :: new_token_part (TokenPartKind :: CloseBrace , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| ((a , b) , c) | Node :: new_rule (RuleKind :: FunctionCallExpressionOpenBraceAndNamedArgumentRepeatedAndCommaRepeatedAndCloseBrace , vec ! [a , b , c])) . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_none ()))) . then (argument_list_parser . clone ()) . map (| ((expression , open_brace_and_named_argument_repeated_and_comma_repeated_and_close_brace) , argument_list) | Node :: new_rule (RuleKind :: FunctionCallExpressionAnonexpfrag4 , vec ! [expression , open_brace_and_named_argument_repeated_and_comma_repeated_and_close_brace , argument_list])) . boxed () ;
 
         // UnaryPrefixExpression = ( '++' | '--' | '!' | '~' | '-' ) Expression ;
         let unary_prefix_expression_parser = choice((
@@ -3399,21 +3204,29 @@ impl Parsers {
                 .map(Node::new_with_trivia),
             leading_trivia_parser
                 .clone()
-                .then(just('!').to(Node::new_token_part(TokenPartKind::Bang, 1)))
+                .then(just('!').to(Node::new_token_part(
+                    TokenPartKind::UnaryPrefixExpressionBang,
+                    1,
+                )))
                 .then(trailing_trivia_parser.clone())
                 .map(Node::new_with_trivia),
             leading_trivia_parser
                 .clone()
-                .then(just('~').to(Node::new_token_part(TokenPartKind::Tilde, 1)))
+                .then(just('~').to(Node::new_token_part(
+                    TokenPartKind::UnaryPrefixExpressionTilde,
+                    1,
+                )))
                 .then(trailing_trivia_parser.clone())
                 .map(Node::new_with_trivia),
             leading_trivia_parser
                 .clone()
-                .then(just('-').to(Node::new_token_part(TokenPartKind::Minus, 1)))
+                .then(just('-').to(Node::new_token_part(
+                    TokenPartKind::UnaryPrefixExpressionMinus,
+                    1,
+                )))
                 .then(trailing_trivia_parser.clone())
                 .map(Node::new_with_trivia),
         ))
-        .map(|v| Node::new_rule(RuleKind::UnaryPrefixExpressionChoices0, vec![v]))
         .then(expression_parser.clone())
         .map(|(choices_0, expression)| {
             Node::new_rule(
@@ -3426,27 +3239,20 @@ impl Parsers {
         // UnarySuffixExpression = Expression ( '++' | '--' ) ;
         let unary_suffix_expression_parser = expression_parser
             .clone()
-            .then(
-                choice((
-                    leading_trivia_parser
-                        .clone()
-                        .then(
-                            terminal("++")
-                                .to(Node::new_token_part(TokenPartKind::PlusPlus, 2usize)),
-                        )
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                    leading_trivia_parser
-                        .clone()
-                        .then(
-                            terminal("--")
-                                .to(Node::new_token_part(TokenPartKind::MinusMinus, 2usize)),
-                        )
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                ))
-                .map(|v| Node::new_rule(RuleKind::UnarySuffixExpressionChoices0, vec![v])),
-            )
+            .then(choice((
+                leading_trivia_parser
+                    .clone()
+                    .then(terminal("++").to(Node::new_token_part(TokenPartKind::PlusPlus, 2usize)))
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+                leading_trivia_parser
+                    .clone()
+                    .then(
+                        terminal("--").to(Node::new_token_part(TokenPartKind::MinusMinus, 2usize)),
+                    )
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+            )))
             .map(|(expression, choices_0)| {
                 Node::new_rule(
                     RuleKind::UnarySuffixExpressionAnonexpfrag3,
@@ -3482,7 +3288,7 @@ impl Parsers {
                     .clone()
                     .then(
                         filter(|&c: &char| c == '*' || c == '/' || c == '%')
-                            .to(Node::new_token_part(TokenPartKind::Filter0, 1)),
+                            .to(Node::new_anonymous_token(1)),
                     )
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia),
@@ -3502,10 +3308,7 @@ impl Parsers {
             .then(
                 leading_trivia_parser
                     .clone()
-                    .then(
-                        filter(|&c: &char| c == '+' || c == '-')
-                            .to(Node::new_token_part(TokenPartKind::Filter0, 1)),
-                    )
+                    .then(filter(|&c: &char| c == '+' || c == '-').to(Node::new_anonymous_token(1)))
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia),
             )
@@ -3521,35 +3324,29 @@ impl Parsers {
         // ShiftExpression = Expression ( '<<' | '>>' | '>>>' ) Expression ;
         let shift_expression_parser = expression_parser
             .clone()
-            .then(
-                choice((
-                    leading_trivia_parser
-                        .clone()
-                        .then(
-                            terminal("<<")
-                                .to(Node::new_token_part(TokenPartKind::LessLess, 2usize)),
-                        )
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                    leading_trivia_parser
-                        .clone()
-                        .then(
-                            terminal(">>")
-                                .to(Node::new_token_part(TokenPartKind::GreaterGreater, 2usize)),
-                        )
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                    leading_trivia_parser
-                        .clone()
-                        .then(terminal(">>>").to(Node::new_token_part(
-                            TokenPartKind::GreaterGreaterGreater,
-                            3usize,
-                        )))
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                ))
-                .map(|v| Node::new_rule(RuleKind::ShiftExpressionChoices0, vec![v])),
-            )
+            .then(choice((
+                leading_trivia_parser
+                    .clone()
+                    .then(terminal("<<").to(Node::new_token_part(TokenPartKind::LessLess, 2usize)))
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+                leading_trivia_parser
+                    .clone()
+                    .then(
+                        terminal(">>")
+                            .to(Node::new_token_part(TokenPartKind::GreaterGreater, 2usize)),
+                    )
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+                leading_trivia_parser
+                    .clone()
+                    .then(terminal(">>>").to(Node::new_token_part(
+                        TokenPartKind::GreaterGreaterGreater,
+                        3usize,
+                    )))
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+            )))
             .then(expression_parser.clone())
             .map(|((expression_0_, choices_0), expression_1_)| {
                 Node::new_rule(
@@ -3565,7 +3362,10 @@ impl Parsers {
             .then(
                 leading_trivia_parser
                     .clone()
-                    .then(just('&').to(Node::new_token_part(TokenPartKind::Ampersand, 1)))
+                    .then(just('&').to(Node::new_token_part(
+                        TokenPartKind::BitAndExpressionAmpersand,
+                        1,
+                    )))
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia),
             )
@@ -3584,7 +3384,10 @@ impl Parsers {
             .then(
                 leading_trivia_parser
                     .clone()
-                    .then(just('^').to(Node::new_token_part(TokenPartKind::Caret, 1)))
+                    .then(just('^').to(Node::new_token_part(
+                        TokenPartKind::BitXOrExpressionCaret,
+                        1,
+                    )))
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia),
             )
@@ -3603,7 +3406,7 @@ impl Parsers {
             .then(
                 leading_trivia_parser
                     .clone()
-                    .then(just('|').to(Node::new_token_part(TokenPartKind::Pipe, 1)))
+                    .then(just('|').to(Node::new_token_part(TokenPartKind::BitOrExpressionPipe, 1)))
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia),
             )
@@ -3619,37 +3422,37 @@ impl Parsers {
         // OrderComparisonExpression = Expression ( '<' | '>' | '<=' | '>=' ) Expression ;
         let order_comparison_expression_parser = expression_parser
             .clone()
-            .then(
-                choice((
-                    leading_trivia_parser
-                        .clone()
-                        .then(just('<').to(Node::new_token_part(TokenPartKind::Less, 1)))
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                    leading_trivia_parser
-                        .clone()
-                        .then(just('>').to(Node::new_token_part(TokenPartKind::Greater, 1)))
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                    leading_trivia_parser
-                        .clone()
-                        .then(
-                            terminal("<=")
-                                .to(Node::new_token_part(TokenPartKind::LessEqual, 2usize)),
-                        )
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                    leading_trivia_parser
-                        .clone()
-                        .then(
-                            terminal(">=")
-                                .to(Node::new_token_part(TokenPartKind::GreaterEqual, 2usize)),
-                        )
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                ))
-                .map(|v| Node::new_rule(RuleKind::OrderComparisonExpressionChoices0, vec![v])),
-            )
+            .then(choice((
+                leading_trivia_parser
+                    .clone()
+                    .then(just('<').to(Node::new_token_part(
+                        TokenPartKind::OrderComparisonExpressionLess,
+                        1,
+                    )))
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+                leading_trivia_parser
+                    .clone()
+                    .then(just('>').to(Node::new_token_part(
+                        TokenPartKind::OrderComparisonExpressionGreater,
+                        1,
+                    )))
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+                leading_trivia_parser
+                    .clone()
+                    .then(terminal("<=").to(Node::new_token_part(TokenPartKind::LessEqual, 2usize)))
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+                leading_trivia_parser
+                    .clone()
+                    .then(
+                        terminal(">=")
+                            .to(Node::new_token_part(TokenPartKind::GreaterEqual, 2usize)),
+                    )
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+            )))
             .then(expression_parser.clone())
             .map(|((expression_0_, choices_0), expression_1_)| {
                 Node::new_rule(
@@ -3662,27 +3465,20 @@ impl Parsers {
         // EqualityComparisonExpression = Expression ( '==' | '!=' ) Expression ;
         let equality_comparison_expression_parser = expression_parser
             .clone()
-            .then(
-                choice((
-                    leading_trivia_parser
-                        .clone()
-                        .then(
-                            terminal("==")
-                                .to(Node::new_token_part(TokenPartKind::EqualEqual, 2usize)),
-                        )
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                    leading_trivia_parser
-                        .clone()
-                        .then(
-                            terminal("!=")
-                                .to(Node::new_token_part(TokenPartKind::BangEqual, 2usize)),
-                        )
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                ))
-                .map(|v| Node::new_rule(RuleKind::EqualityComparisonExpressionChoices0, vec![v])),
-            )
+            .then(choice((
+                leading_trivia_parser
+                    .clone()
+                    .then(
+                        terminal("==").to(Node::new_token_part(TokenPartKind::EqualEqual, 2usize)),
+                    )
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+                leading_trivia_parser
+                    .clone()
+                    .then(terminal("!=").to(Node::new_token_part(TokenPartKind::BangEqual, 2usize)))
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+            )))
             .then(expression_parser.clone())
             .map(|((expression_0_, choices_0), expression_1_)| {
                 Node::new_rule(
@@ -3739,23 +3535,31 @@ impl Parsers {
             .then(
                 leading_trivia_parser
                     .clone()
-                    .then(just('?').to(Node::new_token_part(TokenPartKind::Question, 1)))
+                    .then(just('?').to(Node::new_token_part(
+                        TokenPartKind::ConditionalExpressionQuestion,
+                        1,
+                    )))
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia)
                     .then(expression_parser.clone())
                     .then(
                         leading_trivia_parser
                             .clone()
-                            .then(just(':').to(Node::new_token_part(TokenPartKind::Colon, 1)))
+                            .then(just(':').to(Node::new_token_part(
+                                TokenPartKind::ConditionalExpressionColon,
+                                1,
+                            )))
                             .then(trailing_trivia_parser.clone())
                             .map(Node::new_with_trivia),
                     )
                     .then(expression_parser.clone())
                     .map(|(((question, expression_0_), colon), expression_1_)| {
-                        Node::new_rule(
-                            RuleKind::ConditionalExpressionSequence0,
-                            vec![question, expression_0_, colon, expression_1_],
-                        )
+                        Node::new_anonymous_rule(vec![
+                            question,
+                            expression_0_,
+                            colon,
+                            expression_1_,
+                        ])
                     }),
             )
             .map(|(expression, sequence_0)| {
@@ -3769,104 +3573,92 @@ impl Parsers {
         // AssignmentExpression = Expression ( '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ) Expression ;
         let assignment_expression_parser = expression_parser
             .clone()
-            .then(
-                choice((
-                    leading_trivia_parser
-                        .clone()
-                        .then(just('=').to(Node::new_token_part(TokenPartKind::Equal, 1)))
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                    leading_trivia_parser
-                        .clone()
-                        .then(
-                            terminal("|=")
-                                .to(Node::new_token_part(TokenPartKind::PipeEqual, 2usize)),
-                        )
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                    leading_trivia_parser
-                        .clone()
-                        .then(
-                            terminal("^=")
-                                .to(Node::new_token_part(TokenPartKind::CaretEqual, 2usize)),
-                        )
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                    leading_trivia_parser
-                        .clone()
-                        .then(
-                            terminal("&=")
-                                .to(Node::new_token_part(TokenPartKind::AmpersandEqual, 2usize)),
-                        )
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                    leading_trivia_parser
-                        .clone()
-                        .then(
-                            terminal("<<=")
-                                .to(Node::new_token_part(TokenPartKind::LessLessEqual, 3usize)),
-                        )
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                    leading_trivia_parser
-                        .clone()
-                        .then(terminal(">>=").to(Node::new_token_part(
-                            TokenPartKind::GreaterGreaterEqual,
-                            3usize,
-                        )))
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                    leading_trivia_parser
-                        .clone()
-                        .then(terminal(">>>=").to(Node::new_token_part(
-                            TokenPartKind::GreaterGreaterGreaterEqual,
-                            4usize,
-                        )))
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                    leading_trivia_parser
-                        .clone()
-                        .then(
-                            terminal("+=")
-                                .to(Node::new_token_part(TokenPartKind::PlusEqual, 2usize)),
-                        )
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                    leading_trivia_parser
-                        .clone()
-                        .then(
-                            terminal("-=")
-                                .to(Node::new_token_part(TokenPartKind::MinusEqual, 2usize)),
-                        )
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                    leading_trivia_parser
-                        .clone()
-                        .then(
-                            terminal("*=")
-                                .to(Node::new_token_part(TokenPartKind::StarEqual, 2usize)),
-                        )
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                    leading_trivia_parser
-                        .clone()
-                        .then(
-                            terminal("/=")
-                                .to(Node::new_token_part(TokenPartKind::SlashEqual, 2usize)),
-                        )
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                    leading_trivia_parser
-                        .clone()
-                        .then(
-                            terminal("%=")
-                                .to(Node::new_token_part(TokenPartKind::PercentEqual, 2usize)),
-                        )
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                ))
-                .map(|v| Node::new_rule(RuleKind::AssignmentExpressionChoices0, vec![v])),
-            )
+            .then(choice((
+                leading_trivia_parser
+                    .clone()
+                    .then(just('=').to(Node::new_token_part(
+                        TokenPartKind::AssignmentExpressionEqual,
+                        1,
+                    )))
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+                leading_trivia_parser
+                    .clone()
+                    .then(terminal("|=").to(Node::new_token_part(TokenPartKind::PipeEqual, 2usize)))
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+                leading_trivia_parser
+                    .clone()
+                    .then(
+                        terminal("^=").to(Node::new_token_part(TokenPartKind::CaretEqual, 2usize)),
+                    )
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+                leading_trivia_parser
+                    .clone()
+                    .then(
+                        terminal("&=")
+                            .to(Node::new_token_part(TokenPartKind::AmpersandEqual, 2usize)),
+                    )
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+                leading_trivia_parser
+                    .clone()
+                    .then(
+                        terminal("<<=")
+                            .to(Node::new_token_part(TokenPartKind::LessLessEqual, 3usize)),
+                    )
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+                leading_trivia_parser
+                    .clone()
+                    .then(terminal(">>=").to(Node::new_token_part(
+                        TokenPartKind::GreaterGreaterEqual,
+                        3usize,
+                    )))
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+                leading_trivia_parser
+                    .clone()
+                    .then(terminal(">>>=").to(Node::new_token_part(
+                        TokenPartKind::GreaterGreaterGreaterEqual,
+                        4usize,
+                    )))
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+                leading_trivia_parser
+                    .clone()
+                    .then(terminal("+=").to(Node::new_token_part(TokenPartKind::PlusEqual, 2usize)))
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+                leading_trivia_parser
+                    .clone()
+                    .then(
+                        terminal("-=").to(Node::new_token_part(TokenPartKind::MinusEqual, 2usize)),
+                    )
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+                leading_trivia_parser
+                    .clone()
+                    .then(terminal("*=").to(Node::new_token_part(TokenPartKind::StarEqual, 2usize)))
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+                leading_trivia_parser
+                    .clone()
+                    .then(
+                        terminal("/=").to(Node::new_token_part(TokenPartKind::SlashEqual, 2usize)),
+                    )
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+                leading_trivia_parser
+                    .clone()
+                    .then(
+                        terminal("%=")
+                            .to(Node::new_token_part(TokenPartKind::PercentEqual, 2usize)),
+                    )
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+            )))
             .then(expression_parser.clone())
             .map(|((expression_0_, choices_0), expression_1_)| {
                 Node::new_rule(
@@ -3907,7 +3699,10 @@ impl Parsers {
             .then(
                 leading_trivia_parser
                     .clone()
-                    .then(just('=').to(Node::new_token_part(TokenPartKind::Equal, 1)))
+                    .then(just('=').to(Node::new_token_part(
+                        TokenPartKind::ConstantDefinitionEqual,
+                        1,
+                    )))
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia),
             )
@@ -3915,7 +3710,10 @@ impl Parsers {
             .then(
                 leading_trivia_parser
                     .clone()
-                    .then(just(';').to(Node::new_token_part(TokenPartKind::Semicolon, 1)))
+                    .then(just(';').to(Node::new_token_part(
+                        TokenPartKind::ConstantDefinitionSemicolon,
+                        1,
+                    )))
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia),
             )
@@ -3972,7 +3770,10 @@ impl Parsers {
             .then(
                 leading_trivia_parser
                     .clone()
-                    .then(just(';').to(Node::new_token_part(TokenPartKind::Semicolon, 1)))
+                    .then(just(';').to(Node::new_token_part(
+                        TokenPartKind::DoWhileStatementSemicolon,
+                        1,
+                    )))
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia),
             )
@@ -4001,7 +3802,10 @@ impl Parsers {
             .then(
                 leading_trivia_parser
                     .clone()
-                    .then(just(';').to(Node::new_token_part(TokenPartKind::Semicolon, 1)))
+                    .then(just(';').to(Node::new_token_part(
+                        TokenPartKind::ExpressionStatementSemicolon,
+                        1,
+                    )))
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia),
             )
@@ -4048,11 +3852,9 @@ impl Parsers {
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia)
                     .then(statement_parser.clone())
-                    .map(|(r#else, statement)| {
-                        Node::new_rule(RuleKind::IfStatementSequence0, vec![r#else, statement])
-                    })
+                    .map(|(r#else, statement)| Node::new_anonymous_rule(vec![r#else, statement]))
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
             .map(
                 |(((r#if, open_paren_and_expression_and_close_paren), statement), sequence_0)| {
@@ -4079,12 +3881,15 @@ impl Parsers {
                 expression_parser
                     .clone()
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
             .then(
                 leading_trivia_parser
                     .clone()
-                    .then(just(';').to(Node::new_token_part(TokenPartKind::Semicolon, 1)))
+                    .then(just(';').to(Node::new_token_part(
+                        TokenPartKind::ReturnStatementSemicolon,
+                        1,
+                    )))
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia),
             )
@@ -4101,9 +3906,12 @@ impl Parsers {
             .clone()
             .then(state_variable_attribute_parser.clone().repeated().map(|v| {
                 if v.is_empty() {
-                    Node::new_void()
+                    Node::new_none()
                 } else {
-                    Node::new_rule(RuleKind::StateVariableDeclarationStateVariableAttributes, v)
+                    Node::new_rule(
+                        RuleKind::StateVariableDeclarationStateVariableAttributeRepeated,
+                        v,
+                    )
                 }
             }))
             .then(
@@ -4116,36 +3924,37 @@ impl Parsers {
             .then(
                 leading_trivia_parser
                     .clone()
-                    .then(just('=').to(Node::new_token_part(TokenPartKind::Equal, 1)))
+                    .then(just('=').to(Node::new_token_part(
+                        TokenPartKind::StateVariableDeclarationEqual,
+                        1,
+                    )))
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia)
                     .then(expression_parser.clone())
-                    .map(|(equal, expression)| {
-                        Node::new_rule(
-                            RuleKind::StateVariableDeclarationSequence0,
-                            vec![equal, expression],
-                        )
-                    })
+                    .map(|(equal, expression)| Node::new_anonymous_rule(vec![equal, expression]))
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
             .then(
                 leading_trivia_parser
                     .clone()
-                    .then(just(';').to(Node::new_token_part(TokenPartKind::Semicolon, 1)))
+                    .then(just(';').to(Node::new_token_part(
+                        TokenPartKind::StateVariableDeclarationSemicolon,
+                        1,
+                    )))
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia),
             )
             .map(
                 |(
-                    (((type_name, state_variable_attributes), identifier), sequence_0),
+                    (((type_name, state_variable_attribute_repeated), identifier), sequence_0),
                     semicolon,
                 )| {
                     Node::new_rule(
                         RuleKind::StateVariableDeclaration,
                         vec![
                             type_name,
-                            state_variable_attributes,
+                            state_variable_attribute_repeated,
                             identifier,
                             sequence_0,
                             semicolon,
@@ -4173,13 +3982,10 @@ impl Parsers {
                     .map(Node::new_with_trivia)
                     .then(parameter_list_parser.clone())
                     .map(|(returns, parameter_list)| {
-                        Node::new_rule(
-                            RuleKind::TryStatementSequence0,
-                            vec![returns, parameter_list],
-                        )
+                        Node::new_anonymous_rule(vec![returns, parameter_list])
                     })
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
             .then(block_parser.clone())
             .then(
@@ -4187,20 +3993,124 @@ impl Parsers {
                     .clone()
                     .repeated()
                     .at_least(1usize)
-                    .map(|v| Node::new_rule(RuleKind::TryStatementCatchClauses, v)),
+                    .map(|v| Node::new_rule(RuleKind::TryStatementCatchClauseRepeated, v)),
             )
             .map(
-                |((((r#try, expression), sequence_0), block), catch_clauses)| {
+                |((((r#try, expression), sequence_0), block), catch_clause_repeated)| {
                     Node::new_rule(
                         RuleKind::TryStatement,
-                        vec![r#try, expression, sequence_0, block, catch_clauses],
+                        vec![r#try, expression, sequence_0, block, catch_clause_repeated],
                     )
                 },
             )
             .boxed();
 
         // TupleDeconstructionStatement = '(' [ [ [ TypeName ] «Identifier» ]  { ',' [ [ TypeName ] «Identifier» ] } ] ')' '=' Expression ';' ;
-        let tuple_deconstruction_statement_parser = leading_trivia_parser . clone () . then (just ('(') . to (Node :: new_token_part (TokenPartKind :: OpenParen , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (type_name_parser . clone () . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_void ())) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| (type_name , identifier) | Node :: new_rule (RuleKind :: TupleDeconstructionStatementSequence0 , vec ! [type_name , identifier])) . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_void ())) . then (leading_trivia_parser . clone () . then (just (',') . to (Node :: new_token_part (TokenPartKind :: Comma , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (type_name_parser . clone () . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_void ())) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| (type_name , identifier) | Node :: new_rule (RuleKind :: TupleDeconstructionStatementSequence0 , vec ! [type_name , identifier])) . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_void ()))) . repeated ()) . map (repetition_mapper) . map (| v | Node :: new_rule (RuleKind :: TupleDeconstructionStatementSequence0SAndCommas , v)) . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_void ()))) . then (leading_trivia_parser . clone () . then (just (')') . to (Node :: new_token_part (TokenPartKind :: CloseParen , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| ((a , b) , c) | Node :: new_rule (RuleKind :: TupleDeconstructionStatementOpenParenAndSequence0SAndCommasAndCloseParen , vec ! [a , b , c])) . then (leading_trivia_parser . clone () . then (just ('=') . to (Node :: new_token_part (TokenPartKind :: Equal , 1))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . then (expression_parser . clone ()) . then (leading_trivia_parser . clone () . then (just (';') . to (Node :: new_token_part (TokenPartKind :: Semicolon , 1))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| (((open_paren_and_sequence_0s_and_commas_and_close_paren , equal) , expression) , semicolon) | Node :: new_rule (RuleKind :: TupleDeconstructionStatement , vec ! [open_paren_and_sequence_0s_and_commas_and_close_paren , equal , expression , semicolon])) . boxed () ;
+        let tuple_deconstruction_statement_parser = leading_trivia_parser
+            .clone()
+            .then(just('(').to(Node::new_token_part(TokenPartKind::OpenParen, 1usize)))
+            .then(trailing_trivia_parser.clone())
+            .map(Node::new_with_trivia)
+            .then(
+                type_name_parser
+                    .clone()
+                    .or_not()
+                    .map(|v| v.unwrap_or_else(|| Node::new_none()))
+                    .then(
+                        leading_trivia_parser
+                            .clone()
+                            .then(identifier_parser.clone())
+                            .then(trailing_trivia_parser.clone())
+                            .map(Node::new_with_trivia),
+                    )
+                    .map(|(type_name, identifier)| {
+                        Node::new_anonymous_rule(vec![type_name, identifier])
+                    })
+                    .or_not()
+                    .map(|v| v.unwrap_or_else(|| Node::new_none()))
+                    .then(
+                        leading_trivia_parser
+                            .clone()
+                            .then(just(',').to(Node::new_token_part(TokenPartKind::Comma, 1usize)))
+                            .then(trailing_trivia_parser.clone())
+                            .map(Node::new_with_trivia)
+                            .then(
+                                type_name_parser
+                                    .clone()
+                                    .or_not()
+                                    .map(|v| v.unwrap_or_else(|| Node::new_none()))
+                                    .then(
+                                        leading_trivia_parser
+                                            .clone()
+                                            .then(identifier_parser.clone())
+                                            .then(trailing_trivia_parser.clone())
+                                            .map(Node::new_with_trivia),
+                                    )
+                                    .map(|(type_name, identifier)| {
+                                        Node::new_anonymous_rule(vec![type_name, identifier])
+                                    })
+                                    .or_not()
+                                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
+                            )
+                            .repeated(),
+                    )
+                    .map(repetition_mapper)
+                    .map(Node::new_anonymous_rule)
+                    .or_not()
+                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
+            )
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(just(')').to(Node::new_token_part(TokenPartKind::CloseParen, 1usize)))
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+            )
+            .map(|((a, b), c)| Node::new_anonymous_rule(vec![a, b, c]))
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(just('=').to(Node::new_token_part(
+                        TokenPartKind::TupleDeconstructionStatementEqual,
+                        1,
+                    )))
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+            )
+            .then(expression_parser.clone())
+            .then(
+                leading_trivia_parser
+                    .clone()
+                    .then(just(';').to(Node::new_token_part(
+                        TokenPartKind::TupleDeconstructionStatementSemicolon,
+                        1,
+                    )))
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+            )
+            .map(
+                |(
+                    (
+                        (
+                            open_paren_and_sequence_0_repeated_and_comma_repeated_and_close_paren,
+                            equal,
+                        ),
+                        expression,
+                    ),
+                    semicolon,
+                )| {
+                    Node::new_rule(
+                        RuleKind::TupleDeconstructionStatement,
+                        vec![
+                            open_paren_and_sequence_0_repeated_and_comma_repeated_and_close_paren,
+                            equal,
+                            expression,
+                            semicolon,
+                        ],
+                    )
+                },
+            )
+            .boxed();
 
         // VariableDeclarationStatement = TypeName [ DataLocation ] «Identifier» [ '=' Expression ] ';' ;
         let variable_declaration_statement_parser = type_name_parser
@@ -4209,7 +4119,7 @@ impl Parsers {
                 data_location_parser
                     .clone()
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
             .then(
                 leading_trivia_parser
@@ -4221,23 +4131,24 @@ impl Parsers {
             .then(
                 leading_trivia_parser
                     .clone()
-                    .then(just('=').to(Node::new_token_part(TokenPartKind::Equal, 1)))
+                    .then(just('=').to(Node::new_token_part(
+                        TokenPartKind::VariableDeclarationStatementEqual,
+                        1,
+                    )))
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia)
                     .then(expression_parser.clone())
-                    .map(|(equal, expression)| {
-                        Node::new_rule(
-                            RuleKind::VariableDeclarationStatementSequence0,
-                            vec![equal, expression],
-                        )
-                    })
+                    .map(|(equal, expression)| Node::new_anonymous_rule(vec![equal, expression]))
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
             .then(
                 leading_trivia_parser
                     .clone()
-                    .then(just(';').to(Node::new_token_part(TokenPartKind::Semicolon, 1)))
+                    .then(just(';').to(Node::new_token_part(
+                        TokenPartKind::VariableDeclarationStatementSemicolon,
+                        1,
+                    )))
                     .then(trailing_trivia_parser.clone())
                     .map(Node::new_with_trivia),
             )
@@ -4322,38 +4233,32 @@ impl Parsers {
                             simple_statement_parser.clone(),
                             leading_trivia_parser
                                 .clone()
-                                .then(
-                                    just(';').to(Node::new_token_part(TokenPartKind::Semicolon, 1)),
-                                )
+                                .then(just(';').to(Node::new_token_part(
+                                    TokenPartKind::ForStatementSemicolon,
+                                    1,
+                                )))
                                 .then(trailing_trivia_parser.clone())
                                 .map(Node::new_with_trivia),
                         ))
-                        .map(|v| Node::new_rule(RuleKind::ForStatementChoices1, vec![v]))
-                        .then(
-                            choice((
-                                expression_statement_parser.clone(),
-                                leading_trivia_parser
-                                    .clone()
-                                    .then(
-                                        just(';')
-                                            .to(Node::new_token_part(TokenPartKind::Semicolon, 1)),
-                                    )
-                                    .then(trailing_trivia_parser.clone())
-                                    .map(Node::new_with_trivia),
-                            ))
-                            .map(|v| Node::new_rule(RuleKind::ForStatementChoices2, vec![v])),
-                        )
+                        .then(choice((
+                            expression_statement_parser.clone(),
+                            leading_trivia_parser
+                                .clone()
+                                .then(just(';').to(Node::new_token_part(
+                                    TokenPartKind::ForStatementSemicolon,
+                                    1,
+                                )))
+                                .then(trailing_trivia_parser.clone())
+                                .map(Node::new_with_trivia),
+                        )))
                         .then(
                             expression_parser
                                 .clone()
                                 .or_not()
-                                .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                                .map(|v| v.unwrap_or_else(|| Node::new_none())),
                         )
                         .map(|((choices_1, choices_2), expression)| {
-                            Node::new_rule(
-                                RuleKind::ForStatementSequence0,
-                                vec![choices_1, choices_2, expression],
-                            )
+                            Node::new_anonymous_rule(vec![choices_1, choices_2, expression])
                         }),
                     )
                     .then(
@@ -4366,12 +4271,7 @@ impl Parsers {
                             .then(trailing_trivia_parser.clone())
                             .map(Node::new_with_trivia),
                     )
-                    .map(|((a, b), c)| {
-                        Node::new_rule(
-                            RuleKind::ForStatementOpenParenAndSequence0AndCloseParen,
-                            vec![a, b, c],
-                        )
-                    }),
+                    .map(|((a, b), c)| Node::new_anonymous_rule(vec![a, b, c])),
             )
             .then(statement_parser.clone())
             .map(
@@ -4415,15 +4315,8 @@ impl Parsers {
                 .map(Node::new_with_trivia)
                 .then(
                     choice((statement_parser.clone(), unchecked_block_parser.clone()))
-                        .map(|v| Node::new_rule(RuleKind::BlockChoices0, vec![v]))
                         .repeated()
-                        .map(|v| {
-                            if v.is_empty() {
-                                Node::new_void()
-                            } else {
-                                Node::new_rule(RuleKind::BlockChoices0S, v)
-                            }
-                        }),
+                        .map(Node::new_anonymous_rule),
                 )
                 .then(
                     leading_trivia_parser
@@ -4448,92 +4341,32 @@ impl Parsers {
             .then(parameter_list_parser.clone())
             .then(constructor_attribute_parser.clone().repeated().map(|v| {
                 if v.is_empty() {
-                    Node::new_void()
+                    Node::new_none()
                 } else {
-                    Node::new_rule(RuleKind::ConstructorDefinitionConstructorAttributes, v)
+                    Node::new_rule(
+                        RuleKind::ConstructorDefinitionConstructorAttributeRepeated,
+                        v,
+                    )
                 }
             }))
             .then(block_parser.clone())
             .map(
-                |(((constructor, parameter_list), constructor_attributes), block)| {
+                |(((constructor, parameter_list), constructor_attribute_repeated), block)| {
                     Node::new_rule(
                         RuleKind::ConstructorDefinition,
-                        vec![constructor, parameter_list, constructor_attributes, block],
+                        vec![
+                            constructor,
+                            parameter_list,
+                            constructor_attribute_repeated,
+                            block,
+                        ],
                     )
                 },
             )
             .boxed();
 
         // FallbackFunctionDefinition = 'fallback' ParameterList { FallbackFunctionAttribute } [ 'returns' ParameterList ] ( ';' | Block ) ;
-        let fallback_function_definition_parser = leading_trivia_parser
-            .clone()
-            .then(terminal("fallback").to(Node::new_token_part(TokenPartKind::Fallback, 8usize)))
-            .then(trailing_trivia_parser.clone())
-            .map(Node::new_with_trivia)
-            .then(parameter_list_parser.clone())
-            .then(
-                fallback_function_attribute_parser
-                    .clone()
-                    .repeated()
-                    .map(|v| {
-                        if v.is_empty() {
-                            Node::new_void()
-                        } else {
-                            Node::new_rule(
-                                RuleKind::FallbackFunctionDefinitionFallbackFunctionAttributes,
-                                v,
-                            )
-                        }
-                    }),
-            )
-            .then(
-                leading_trivia_parser
-                    .clone()
-                    .then(
-                        terminal("returns")
-                            .to(Node::new_token_part(TokenPartKind::Returns, 7usize)),
-                    )
-                    .then(trailing_trivia_parser.clone())
-                    .map(Node::new_with_trivia)
-                    .then(parameter_list_parser.clone())
-                    .map(|(returns, parameter_list)| {
-                        Node::new_rule(
-                            RuleKind::FallbackFunctionDefinitionSequence0,
-                            vec![returns, parameter_list],
-                        )
-                    })
-                    .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
-            )
-            .then(
-                choice((
-                    leading_trivia_parser
-                        .clone()
-                        .then(just(';').to(Node::new_token_part(TokenPartKind::Semicolon, 1)))
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                    block_parser.clone(),
-                ))
-                .map(|v| Node::new_rule(RuleKind::FallbackFunctionDefinitionChoices1, vec![v])),
-            )
-            .map(
-                |(
-                    (((fallback, parameter_list), fallback_function_attributes), sequence_0),
-                    choices_1,
-                )| {
-                    Node::new_rule(
-                        RuleKind::FallbackFunctionDefinition,
-                        vec![
-                            fallback,
-                            parameter_list,
-                            fallback_function_attributes,
-                            sequence_0,
-                            choices_1,
-                        ],
-                    )
-                },
-            )
-            .boxed();
+        let fallback_function_definition_parser = leading_trivia_parser . clone () . then (terminal ("fallback") . to (Node :: new_token_part (TokenPartKind :: Fallback , 8usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (parameter_list_parser . clone ()) . then (fallback_function_attribute_parser . clone () . repeated () . map (| v | if v . is_empty () { Node :: new_none () } else { Node :: new_rule (RuleKind :: FallbackFunctionDefinitionFallbackFunctionAttributeRepeated , v) })) . then (leading_trivia_parser . clone () . then (terminal ("returns") . to (Node :: new_token_part (TokenPartKind :: Returns , 7usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (parameter_list_parser . clone ()) . map (| (returns , parameter_list) | Node :: new_anonymous_rule (vec ! [returns , parameter_list])) . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_none ()))) . then (choice ((leading_trivia_parser . clone () . then (just (';') . to (Node :: new_token_part (TokenPartKind :: FallbackFunctionDefinitionSemicolon , 1))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) , block_parser . clone ()))) . map (| ((((fallback , parameter_list) , fallback_function_attribute_repeated) , sequence_0) , choices_1) | Node :: new_rule (RuleKind :: FallbackFunctionDefinition , vec ! [fallback , parameter_list , fallback_function_attribute_repeated , sequence_0 , choices_1])) . boxed () ;
 
         // FunctionDefinition = 'function' ( «Identifier» | 'fallback' | 'receive' ) ParameterList { FunctionAttribute } [ 'returns' ParameterList ] ( ';' | Block ) ;
         let function_definition_parser = leading_trivia_parser
@@ -4541,38 +4374,35 @@ impl Parsers {
             .then(terminal("function").to(Node::new_token_part(TokenPartKind::Function, 8usize)))
             .then(trailing_trivia_parser.clone())
             .map(Node::new_with_trivia)
-            .then(
-                choice((
-                    leading_trivia_parser
-                        .clone()
-                        .then(identifier_parser.clone())
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                    leading_trivia_parser
-                        .clone()
-                        .then(
-                            terminal("fallback")
-                                .to(Node::new_token_part(TokenPartKind::Fallback, 8usize)),
-                        )
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                    leading_trivia_parser
-                        .clone()
-                        .then(
-                            terminal("receive")
-                                .to(Node::new_token_part(TokenPartKind::Receive, 7usize)),
-                        )
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                ))
-                .map(|v| Node::new_rule(RuleKind::FunctionDefinitionChoices0, vec![v])),
-            )
+            .then(choice((
+                leading_trivia_parser
+                    .clone()
+                    .then(identifier_parser.clone())
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+                leading_trivia_parser
+                    .clone()
+                    .then(
+                        terminal("fallback")
+                            .to(Node::new_token_part(TokenPartKind::Fallback, 8usize)),
+                    )
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+                leading_trivia_parser
+                    .clone()
+                    .then(
+                        terminal("receive")
+                            .to(Node::new_token_part(TokenPartKind::Receive, 7usize)),
+                    )
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+            )))
             .then(parameter_list_parser.clone())
             .then(function_attribute_parser.clone().repeated().map(|v| {
                 if v.is_empty() {
-                    Node::new_void()
+                    Node::new_none()
                 } else {
-                    Node::new_rule(RuleKind::FunctionDefinitionFunctionAttributes, v)
+                    Node::new_rule(RuleKind::FunctionDefinitionFunctionAttributeRepeated, v)
                 }
             }))
             .then(
@@ -4586,28 +4416,28 @@ impl Parsers {
                     .map(Node::new_with_trivia)
                     .then(parameter_list_parser.clone())
                     .map(|(returns, parameter_list)| {
-                        Node::new_rule(
-                            RuleKind::FunctionDefinitionSequence1,
-                            vec![returns, parameter_list],
-                        )
+                        Node::new_anonymous_rule(vec![returns, parameter_list])
                     })
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
-            .then(
-                choice((
-                    leading_trivia_parser
-                        .clone()
-                        .then(just(';').to(Node::new_token_part(TokenPartKind::Semicolon, 1)))
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                    block_parser.clone(),
-                ))
-                .map(|v| Node::new_rule(RuleKind::FunctionDefinitionChoices2, vec![v])),
-            )
+            .then(choice((
+                leading_trivia_parser
+                    .clone()
+                    .then(just(';').to(Node::new_token_part(
+                        TokenPartKind::FunctionDefinitionSemicolon,
+                        1,
+                    )))
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+                block_parser.clone(),
+            )))
             .map(
                 |(
-                    ((((function, choices_0), parameter_list), function_attributes), sequence_1),
+                    (
+                        (((function, choices_0), parameter_list), function_attribute_repeated),
+                        sequence_1,
+                    ),
                     choices_2,
                 )| {
                     Node::new_rule(
@@ -4616,7 +4446,7 @@ impl Parsers {
                             function,
                             choices_0,
                             parameter_list,
-                            function_attributes,
+                            function_attribute_repeated,
                             sequence_1,
                             choices_2,
                         ],
@@ -4642,35 +4472,38 @@ impl Parsers {
                 parameter_list_parser
                     .clone()
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| Node::new_void())),
+                    .map(|v| v.unwrap_or_else(|| Node::new_none())),
             )
             .then(modifier_attribute_parser.clone().repeated().map(|v| {
                 if v.is_empty() {
-                    Node::new_void()
+                    Node::new_none()
                 } else {
-                    Node::new_rule(RuleKind::ModifierDefinitionModifierAttributes, v)
+                    Node::new_rule(RuleKind::ModifierDefinitionModifierAttributeRepeated, v)
                 }
             }))
-            .then(
-                choice((
-                    leading_trivia_parser
-                        .clone()
-                        .then(just(';').to(Node::new_token_part(TokenPartKind::Semicolon, 1)))
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                    block_parser.clone(),
-                ))
-                .map(|v| Node::new_rule(RuleKind::ModifierDefinitionChoices0, vec![v])),
-            )
+            .then(choice((
+                leading_trivia_parser
+                    .clone()
+                    .then(just(';').to(Node::new_token_part(
+                        TokenPartKind::ModifierDefinitionSemicolon,
+                        1,
+                    )))
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+                block_parser.clone(),
+            )))
             .map(
-                |((((modifier, identifier), parameter_list), modifier_attributes), choices_0)| {
+                |(
+                    (((modifier, identifier), parameter_list), modifier_attribute_repeated),
+                    choices_0,
+                )| {
                     Node::new_rule(
                         RuleKind::ModifierDefinition,
                         vec![
                             modifier,
                             identifier,
                             parameter_list,
-                            modifier_attributes,
+                            modifier_attribute_repeated,
                             choices_0,
                         ],
                     )
@@ -4691,34 +4524,34 @@ impl Parsers {
                     .repeated()
                     .map(|v| {
                         if v.is_empty() {
-                            Node::new_void()
+                            Node::new_none()
                         } else {
                             Node::new_rule(
-                                RuleKind::ReceiveFunctionDefinitionReceiveFunctionAttributes,
+                                RuleKind::ReceiveFunctionDefinitionReceiveFunctionAttributeRepeated,
                                 v,
                             )
                         }
                     }),
             )
-            .then(
-                choice((
-                    leading_trivia_parser
-                        .clone()
-                        .then(just(';').to(Node::new_token_part(TokenPartKind::Semicolon, 1)))
-                        .then(trailing_trivia_parser.clone())
-                        .map(Node::new_with_trivia),
-                    block_parser.clone(),
-                ))
-                .map(|v| Node::new_rule(RuleKind::ReceiveFunctionDefinitionChoices0, vec![v])),
-            )
+            .then(choice((
+                leading_trivia_parser
+                    .clone()
+                    .then(just(';').to(Node::new_token_part(
+                        TokenPartKind::ReceiveFunctionDefinitionSemicolon,
+                        1,
+                    )))
+                    .then(trailing_trivia_parser.clone())
+                    .map(Node::new_with_trivia),
+                block_parser.clone(),
+            )))
             .map(
-                |(((receive, parameter_list), receive_function_attributes), choices_0)| {
+                |(((receive, parameter_list), receive_function_attribute_repeated), choices_0)| {
                     Node::new_rule(
                         RuleKind::ReceiveFunctionDefinition,
                         vec![
                             receive,
                             parameter_list,
-                            receive_function_attributes,
+                            receive_function_attribute_repeated,
                             choices_0,
                         ],
                     )
@@ -4745,13 +4578,13 @@ impl Parsers {
         .boxed();
 
         // ContractDefinition = [ 'abstract' ] 'contract' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
-        let contract_definition_parser = leading_trivia_parser . clone () . then (terminal ("abstract") . to (Node :: new_token_part (TokenPartKind :: Abstract , 8usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_void ())) . then (leading_trivia_parser . clone () . then (terminal ("contract") . to (Node :: new_token_part (TokenPartKind :: Contract , 8usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . then (inheritance_specifier_list_parser . clone () . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_void ()))) . then (leading_trivia_parser . clone () . then (just ('{') . to (Node :: new_token_part (TokenPartKind :: OpenBrace , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (contract_body_element_parser . clone () . repeated () . map (| v | if v . is_empty () { Node :: new_void () } else { Node :: new_rule (RuleKind :: ContractDefinitionContractBodyElements , v) })) . then (leading_trivia_parser . clone () . then (just ('}') . to (Node :: new_token_part (TokenPartKind :: CloseBrace , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| ((a , b) , c) | Node :: new_rule (RuleKind :: ContractDefinitionOpenBraceAndContractBodyElementsAndCloseBrace , vec ! [a , b , c]))) . map (| ((((r#abstract , contract) , identifier) , inheritance_specifier_list) , open_brace_and_contract_body_elements_and_close_brace) | Node :: new_rule (RuleKind :: ContractDefinition , vec ! [r#abstract , contract , identifier , inheritance_specifier_list , open_brace_and_contract_body_elements_and_close_brace])) . boxed () ;
+        let contract_definition_parser = leading_trivia_parser . clone () . then (terminal ("abstract") . to (Node :: new_token_part (TokenPartKind :: Abstract , 8usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_none ())) . then (leading_trivia_parser . clone () . then (terminal ("contract") . to (Node :: new_token_part (TokenPartKind :: Contract , 8usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . then (inheritance_specifier_list_parser . clone () . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_none ()))) . then (leading_trivia_parser . clone () . then (just ('{') . to (Node :: new_token_part (TokenPartKind :: OpenBrace , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (contract_body_element_parser . clone () . repeated () . map (| v | if v . is_empty () { Node :: new_none () } else { Node :: new_rule (RuleKind :: ContractDefinitionContractBodyElementRepeated , v) })) . then (leading_trivia_parser . clone () . then (just ('}') . to (Node :: new_token_part (TokenPartKind :: CloseBrace , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| ((a , b) , c) | Node :: new_rule (RuleKind :: ContractDefinitionOpenBraceAndContractBodyElementRepeatedAndCloseBrace , vec ! [a , b , c]))) . map (| ((((r#abstract , contract) , identifier) , inheritance_specifier_list) , open_brace_and_contract_body_element_repeated_and_close_brace) | Node :: new_rule (RuleKind :: ContractDefinition , vec ! [r#abstract , contract , identifier , inheritance_specifier_list , open_brace_and_contract_body_element_repeated_and_close_brace])) . boxed () ;
 
         // InterfaceDefinition = 'interface' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
-        let interface_definition_parser = leading_trivia_parser . clone () . then (terminal ("interface") . to (Node :: new_token_part (TokenPartKind :: Interface , 9usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . then (inheritance_specifier_list_parser . clone () . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_void ()))) . then (leading_trivia_parser . clone () . then (just ('{') . to (Node :: new_token_part (TokenPartKind :: OpenBrace , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (contract_body_element_parser . clone () . repeated () . map (| v | if v . is_empty () { Node :: new_void () } else { Node :: new_rule (RuleKind :: InterfaceDefinitionContractBodyElements , v) })) . then (leading_trivia_parser . clone () . then (just ('}') . to (Node :: new_token_part (TokenPartKind :: CloseBrace , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| ((a , b) , c) | Node :: new_rule (RuleKind :: InterfaceDefinitionOpenBraceAndContractBodyElementsAndCloseBrace , vec ! [a , b , c]))) . map (| (((interface , identifier) , inheritance_specifier_list) , open_brace_and_contract_body_elements_and_close_brace) | Node :: new_rule (RuleKind :: InterfaceDefinition , vec ! [interface , identifier , inheritance_specifier_list , open_brace_and_contract_body_elements_and_close_brace])) . boxed () ;
+        let interface_definition_parser = leading_trivia_parser . clone () . then (terminal ("interface") . to (Node :: new_token_part (TokenPartKind :: Interface , 9usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . then (inheritance_specifier_list_parser . clone () . or_not () . map (| v | v . unwrap_or_else (|| Node :: new_none ()))) . then (leading_trivia_parser . clone () . then (just ('{') . to (Node :: new_token_part (TokenPartKind :: OpenBrace , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (contract_body_element_parser . clone () . repeated () . map (| v | if v . is_empty () { Node :: new_none () } else { Node :: new_rule (RuleKind :: InterfaceDefinitionContractBodyElementRepeated , v) })) . then (leading_trivia_parser . clone () . then (just ('}') . to (Node :: new_token_part (TokenPartKind :: CloseBrace , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| ((a , b) , c) | Node :: new_rule (RuleKind :: InterfaceDefinitionOpenBraceAndContractBodyElementRepeatedAndCloseBrace , vec ! [a , b , c]))) . map (| (((interface , identifier) , inheritance_specifier_list) , open_brace_and_contract_body_element_repeated_and_close_brace) | Node :: new_rule (RuleKind :: InterfaceDefinition , vec ! [interface , identifier , inheritance_specifier_list , open_brace_and_contract_body_element_repeated_and_close_brace])) . boxed () ;
 
         // LibraryDefinition = 'library' «Identifier» '{' { ContractBodyElement } '}' ;
-        let library_definition_parser = leading_trivia_parser . clone () . then (terminal ("library") . to (Node :: new_token_part (TokenPartKind :: Library , 7usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . then (leading_trivia_parser . clone () . then (just ('{') . to (Node :: new_token_part (TokenPartKind :: OpenBrace , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (contract_body_element_parser . clone () . repeated () . map (| v | if v . is_empty () { Node :: new_void () } else { Node :: new_rule (RuleKind :: LibraryDefinitionContractBodyElements , v) })) . then (leading_trivia_parser . clone () . then (just ('}') . to (Node :: new_token_part (TokenPartKind :: CloseBrace , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| ((a , b) , c) | Node :: new_rule (RuleKind :: LibraryDefinitionOpenBraceAndContractBodyElementsAndCloseBrace , vec ! [a , b , c]))) . map (| ((library , identifier) , open_brace_and_contract_body_elements_and_close_brace) | Node :: new_rule (RuleKind :: LibraryDefinition , vec ! [library , identifier , open_brace_and_contract_body_elements_and_close_brace])) . boxed () ;
+        let library_definition_parser = leading_trivia_parser . clone () . then (terminal ("library") . to (Node :: new_token_part (TokenPartKind :: Library , 7usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (leading_trivia_parser . clone () . then (identifier_parser . clone ()) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . then (leading_trivia_parser . clone () . then (just ('{') . to (Node :: new_token_part (TokenPartKind :: OpenBrace , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia) . then (contract_body_element_parser . clone () . repeated () . map (| v | if v . is_empty () { Node :: new_none () } else { Node :: new_rule (RuleKind :: LibraryDefinitionContractBodyElementRepeated , v) })) . then (leading_trivia_parser . clone () . then (just ('}') . to (Node :: new_token_part (TokenPartKind :: CloseBrace , 1usize))) . then (trailing_trivia_parser . clone ()) . map (Node :: new_with_trivia)) . map (| ((a , b) , c) | Node :: new_rule (RuleKind :: LibraryDefinitionOpenBraceAndContractBodyElementRepeatedAndCloseBrace , vec ! [a , b , c]))) . map (| ((library , identifier) , open_brace_and_contract_body_element_repeated_and_close_brace) | Node :: new_rule (RuleKind :: LibraryDefinition , vec ! [library , identifier , open_brace_and_contract_body_element_repeated_and_close_brace])) . boxed () ;
 
         // Definition = ContractDefinition | InterfaceDefinition | LibraryDefinition | FunctionDefinition | ConstantDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | ErrorDefinition ;
         let definition_parser = choice((
@@ -4773,23 +4606,21 @@ impl Parsers {
             .clone()
             .then(
                 choice((directive_parser.clone(), definition_parser.clone()))
-                    .map(|v| Node::new_rule(RuleKind::SourceUnitChoices0, vec![v]))
                     .repeated()
-                    .map(|v| {
-                        if v.is_empty() {
-                            Node::new_void()
-                        } else {
-                            Node::new_rule(RuleKind::SourceUnitChoices0S, v)
-                        }
-                    }),
+                    .map(Node::new_anonymous_rule),
             )
             .then(end_of_file_trivia_parser.clone())
-            .then(end().to(Node::new_void()))
+            .then(end().to(Node::new_none()))
             .map(
-                |(((leading_trivia, choices_0s), end_of_file_trivia), end_of_input)| {
+                |(((leading_trivia, choices_0_repeated), end_of_file_trivia), end_of_input)| {
                     Node::new_rule(
                         RuleKind::SourceUnit,
-                        vec![leading_trivia, choices_0s, end_of_file_trivia, end_of_input],
+                        vec![
+                            leading_trivia,
+                            choices_0_repeated,
+                            end_of_file_trivia,
+                            end_of_input,
+                        ],
                     )
                 },
             )
