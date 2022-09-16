@@ -18,6 +18,7 @@ fi
 
 (
   printf "\n\n🚀 Deploy to GitHub Pages 🚀\n\n\n"
+  cd "$DOCUMENTATION_DIR"
   python3 -m pipenv run ghp-import --no-jekyll --no-history --push "$DOCUMENTATION_SITE_DIR"
 )
 
