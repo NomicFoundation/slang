@@ -29,7 +29,6 @@ impl TerminalTrie {
 
             EBNF::DelimitedBy(_)
             | EBNF::Difference(_)
-            | EBNF::End
             | EBNF::Not(_)
             | EBNF::OneOrMore(_)
             | EBNF::Optional(_)

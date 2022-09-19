@@ -15,7 +15,6 @@ use serde::{
     ser::SerializeMap,
     Deserialize, Serialize, Serializer,
 };
-use serde_yaml::Value;
 
 #[derive(Clone, Debug)]
 pub struct Grammar {
@@ -147,7 +146,6 @@ impl<'de> Deserialize<'de> for Production {
             Choice,
             DelimitedBy,
             Difference,
-            End,
             Not,
             OneOrMore,
             Optional,
@@ -216,7 +214,6 @@ impl<'de> Deserialize<'de> for Production {
                         Field::Choice
                         | Field::DelimitedBy
                         | Field::Difference
-                        | Field::End
                         | Field::Not
                         | Field::OneOrMore
                         | Field::Optional
@@ -247,10 +244,6 @@ impl<'de> Deserialize<'de> for Production {
                         Field::Choice => ebnf = Some(EBNF::Choice(map.next_value()?)),
                         Field::DelimitedBy => ebnf = Some(EBNF::DelimitedBy(map.next_value()?)),
                         Field::Difference => ebnf = Some(EBNF::Difference(map.next_value()?)),
-                        Field::End => {
-                            ebnf = Some(EBNF::End);
-                            map.next_value()?
-                        }
                         Field::Not => ebnf = Some(EBNF::Not(map.next_value()?)),
                         Field::OneOrMore => ebnf = Some(EBNF::OneOrMore(map.next_value()?)),
                         Field::Optional => ebnf = Some(EBNF::Optional(map.next_value()?)),
@@ -301,7 +294,6 @@ impl<'de> Deserialize<'de> for Production {
             "choice",
             "delimitedBy",
             "difference",
-            "end",
             "not",
             "oneOrMore",
             "optional",
@@ -326,8 +318,7 @@ pub struct Expression {
 impl Expression {
     pub fn precedence(&self) -> u8 {
         match self.ebnf {
-            EBNF::End
-            | EBNF::OneOrMore(..)
+            EBNF::OneOrMore(..)
             | EBNF::Optional(..)
             | EBNF::Range { .. }
             | EBNF::Reference(..)
@@ -349,7 +340,6 @@ impl Expression {
             EBNF::Choice(exprs) => state.serialize_entry("choice", &exprs),
             EBNF::DelimitedBy(delimited_by) => state.serialize_entry("delimitedBy", &delimited_by),
             EBNF::Difference(difference) => state.serialize_entry("difference", &difference),
-            EBNF::End => state.serialize_entry("end", &Value::Null),
             EBNF::Not(expr) => state.serialize_entry("not", &expr),
             EBNF::OneOrMore(repeat) => state.serialize_entry("oneOrMore", &repeat),
             EBNF::Optional(expr) => state.serialize_entry("optional", &expr),
@@ -391,7 +381,6 @@ impl<'de> Deserialize<'de> for Expression {
             Config,
             DelimitedBy,
             Difference,
-            End,
             Not,
             OneOrMore,
             Optional,
@@ -430,7 +419,6 @@ impl<'de> Deserialize<'de> for Expression {
                         Field::Choice
                         | Field::DelimitedBy
                         | Field::Difference
-                        | Field::End
                         | Field::Not
                         | Field::OneOrMore
                         | Field::Optional
@@ -452,10 +440,6 @@ impl<'de> Deserialize<'de> for Expression {
                         Field::Choice => ebnf = Some(EBNF::Choice(map.next_value()?)),
                         Field::DelimitedBy => ebnf = Some(EBNF::DelimitedBy(map.next_value()?)),
                         Field::Difference => ebnf = Some(EBNF::Difference(map.next_value()?)),
-                        Field::End => {
-                            ebnf = Some(EBNF::End);
-                            map.next_value()?
-                        }
                         Field::Not => ebnf = Some(EBNF::Not(map.next_value()?)),
                         Field::OneOrMore => ebnf = Some(EBNF::OneOrMore(map.next_value()?)),
                         Field::Optional => ebnf = Some(EBNF::Optional(map.next_value()?)),
@@ -479,7 +463,6 @@ impl<'de> Deserialize<'de> for Expression {
             "config",
             "delimitedBy",
             "difference",
-            "end",
             "not",
             "oneOrMore",
             "optional",
@@ -540,7 +523,6 @@ pub enum EBNF {
     Choice(Vec<ExpressionRef>),
     DelimitedBy(EBNFDelimitedBy),
     Difference(EBNFDifference),
-    End,
     Not(ExpressionRef),
     OneOrMore(ExpressionRef),
     Optional(ExpressionRef),

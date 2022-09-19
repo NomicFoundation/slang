@@ -72,8 +72,6 @@ impl ExpressionEBNFPrivateExtensions for Expression {
                 self.generate_ebnf_subexpression(grammar, w, subtrahend);
             }
 
-            EBNF::End => write!(w, "$ ").unwrap(),
-
             EBNF::Not(expr) => {
                 write!(w, "¬").unwrap();
                 self.generate_ebnf_subexpression(grammar, w, expr);
@@ -167,8 +165,7 @@ impl ExpressionEBNFPrivateExtensions for Expression {
             EBNF::Choice(..) => 4,
             EBNF::DelimitedBy(..) | EBNF::SeparatedBy(..) | EBNF::Sequence(..) => 3,
             EBNF::Difference { .. } => 2,
-            EBNF::End
-            | EBNF::OneOrMore(..)
+            EBNF::OneOrMore(..)
             | EBNF::Optional(..)
             | EBNF::Range { .. }
             | EBNF::Reference(..)

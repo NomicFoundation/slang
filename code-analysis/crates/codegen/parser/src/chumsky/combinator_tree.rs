@@ -206,9 +206,9 @@ impl CombinatorTree {
             cst_parser_field_decl_fragment: quote!( pub #field_name: ParserType<NodeRef> ),
 
             cst_parser_impl_field_init_fragment: if is_recursive {
-                quote!( #field_name: #parser_name.boxed() )
+                quote!( #field_name: #parser_name.then_ignore(end()).boxed() )
             } else {
-                quote!( #field_name: #parser_name )
+                quote!( #field_name: #parser_name.then_ignore(end()).boxed() )
             },
             cst_parser_impl_predecl_fragment: if is_recursive {
                 quote!( let mut #parser_name = Recursive::declare(); )
@@ -243,9 +243,9 @@ impl CombinatorTree {
             ast_parser_field_decl_fragment: quote!( pub #field_name: ParserType<#type_name> ),
 
             ast_parser_impl_field_init_fragment: if is_recursive {
-                quote!( #field_name: #parser_name.boxed() )
+                quote!( #field_name: #parser_name.then_ignore(end()).boxed() )
             } else {
-                quote!( #field_name: #parser_name )
+                quote!( #field_name: #parser_name.then_ignore(end()).boxed() )
             },
             ast_parser_impl_predecl_fragment: if is_recursive {
                 quote!( let mut #parser_name = Recursive::declare(); )

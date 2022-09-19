@@ -4553,19 +4553,15 @@ impl DefaultTest for library_definition::LibraryDefinition {
 
 impl source_unit::SourceUnit {
     pub fn from_parse(
-        (((leading_trivia, choices_0_repeated), end_of_file_trivia), end_of_input): (
-            (
-                (LeadingTrivia, Vec<Box<source_unit::Choices0>>),
-                EndOfFileTrivia,
-            ),
-            (),
+        ((leading_trivia, choices_0_repeated), end_of_file_trivia): (
+            (LeadingTrivia, Vec<Box<source_unit::Choices0>>),
+            EndOfFileTrivia,
         ),
     ) -> Self {
         Self {
             leading_trivia,
             choices_0_repeated,
             end_of_file_trivia,
-            end_of_input,
         }
     }
 }
@@ -4575,7 +4571,6 @@ impl Default for source_unit::SourceUnit {
             leading_trivia: Default::default(),
             choices_0_repeated: Default::default(),
             end_of_file_trivia: Default::default(),
-            end_of_input: Default::default(),
         }
     }
 }
@@ -4584,6 +4579,5 @@ impl DefaultTest for source_unit::SourceUnit {
         self.leading_trivia.is_default()
             && self.choices_0_repeated.is_default()
             && self.end_of_file_trivia.is_default()
-            && self.end_of_input.is_default()
     }
 }

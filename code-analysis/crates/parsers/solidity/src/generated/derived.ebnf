@@ -8,7 +8,7 @@
  * File Structure: Source Unit
  *)
 
-SourceUnit = «LeadingTrivia» { Directive | Definition } «EndOfFileTrivia» $ ;
+SourceUnit = «LeadingTrivia» { Directive | Definition } «EndOfFileTrivia» ;
 
 Directive = PragmaDirective | ImportDirective | UsingDirective ;
 
