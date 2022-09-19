@@ -83,10 +83,6 @@ fn write_expression<T: Write>(w: &mut T, expr: &Expression, context: &SpecProduc
             write_subexpression(w, expr, subtrahend, context);
         }
 
-        EBNF::End => {
-            write_token(w, TokenKind::keyword, "$");
-        }
-
         EBNF::Not(sub_expr) => {
             write_token(w, TokenKind::operator, "¬");
             write_subexpression(w, expr, sub_expr, context);

@@ -24,7 +24,6 @@
         { "$ref": "#/$defs/Choice" },
         { "$ref": "#/$defs/DelimitedBy" },
         { "$ref": "#/$defs/Difference" },
-        { "$ref": "#/$defs/End" },
         { "$ref": "#/$defs/Not" },
         { "$ref": "#/$defs/OneOrMore" },
         { "$ref": "#/$defs/Optional" },
@@ -68,7 +67,6 @@
         { "$ref": "#/$defs/Choice" },
         { "$ref": "#/$defs/DelimitedBy" },
         { "$ref": "#/$defs/Difference" },
-        { "$ref": "#/$defs/End" },
         { "$ref": "#/$defs/Not" },
         { "$ref": "#/$defs/OneOrMore" },
         { "$ref": "#/$defs/Optional" },
@@ -104,13 +102,6 @@
             "subtrahend": { "$ref": "#/$defs/Expression" }
           }
         }
-      }
-    },
-    "End": {
-      "type": "object",
-      "required": ["end"],
-      "properties": {
-        "end": { "type": "null" }
       }
     },
     "Not": {
@@ -181,7 +172,6 @@
             { "$ref": "#/$defs/Choice" },
             { "$ref": "#/$defs/DelimitedBy" },
             { "$ref": "#/$defs/Difference" },
-            { "$ref": "#/$defs/End" },
             { "$ref": "#/$defs/Not" },
             { "$ref": "#/$defs/OneOrMore" },
             { "$ref": "#/$defs/Optional" },
@@ -210,7 +200,6 @@
             { "$ref": "#/$defs/Choice" },
             { "$ref": "#/$defs/DelimitedBy" },
             { "$ref": "#/$defs/Difference" },
-            { "$ref": "#/$defs/End" },
             { "$ref": "#/$defs/Not" },
             { "$ref": "#/$defs/OneOrMore" },
             { "$ref": "#/$defs/Optional" },
@@ -238,7 +227,6 @@
             { "$ref": "#/$defs/Choice" },
             { "$ref": "#/$defs/DelimitedBy" },
             { "$ref": "#/$defs/Difference" },
-            { "$ref": "#/$defs/End" },
             { "$ref": "#/$defs/Not" },
             { "$ref": "#/$defs/OneOrMore" },
             { "$ref": "#/$defs/Optional" },
@@ -266,7 +254,6 @@
             { "$ref": "#/$defs/Choice" },
             { "$ref": "#/$defs/DelimitedBy" },
             { "$ref": "#/$defs/Difference" },
-            { "$ref": "#/$defs/End" },
             { "$ref": "#/$defs/Not" },
             { "$ref": "#/$defs/OneOrMore" },
             { "$ref": "#/$defs/Optional" },
@@ -296,7 +283,6 @@
             { "$ref": "#/$defs/Choice" },
             { "$ref": "#/$defs/DelimitedBy" },
             { "$ref": "#/$defs/Difference" },
-            { "$ref": "#/$defs/End" },
             { "$ref": "#/$defs/Not" },
             { "$ref": "#/$defs/OneOrMore" },
             { "$ref": "#/$defs/Optional" },

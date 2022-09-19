@@ -38,9 +38,6 @@ pub enum CombinatorNode {
         minuend: CombinatorNodeRef,
         subtrahend: CombinatorNodeRef,
     },
-    End {
-        name: String,
-    },
     Expression {
         name: String,
         members: Vec<ProductionRef>,
@@ -328,17 +325,6 @@ impl CombinatorNode {
                     Self::new_difference(name, minuend, subtrahend)
                 }
 
-                EBNF::End => {
-                    let name = expression
-                        .config
-                        .name
-                        .clone()
-                        .map(|s| s.to_snake_case())
-                        .or(inherited_name)
-                        .unwrap_or_else(|| "end_of_input".to_owned());
-                    Self::new_end(name)
-                }
-
                 EBNF::Not(_) => unimplemented!("¬ is only supported on characters or sets thereof"),
 
                 EBNF::OneOrMore(expr) => {
@@ -488,10 +474,6 @@ impl CombinatorNode {
         })
     }
 
-    pub fn new_end(name: String) -> CombinatorNodeRef {
-        Rc::new(Self::End { name })
-    }
-
     pub fn new_expression(name: String, members: Vec<ProductionRef>) -> CombinatorNodeRef {
         Rc::new(Self::Expression { name, members })
     }
@@ -580,7 +562,6 @@ impl CombinatorNode {
             | Self::Choice { name, .. }
             | Self::DelimitedBy { name, .. }
             | Self::Difference { name, .. }
-            | Self::End { name }
             | Self::Expression { name, .. }
             | Self::ExpressionMember { name, .. }
             | Self::Lookahead { name, .. }
@@ -598,7 +579,6 @@ impl CombinatorNode {
     pub fn has_default(&self, forest: &CombinatorForest) -> bool {
         match self {
             Self::CharacterFilter { .. }
-            | Self::End { .. }
             | Self::OneOrMore { .. }
             | Self::Optional { .. }
             | Self::Repeated { .. }
@@ -801,14 +781,6 @@ impl CombinatorNode {
                     quote! ( difference(#minuend_parser, #subtrahend_parser) );
 
                 minuend
-            }
-
-            Self::End { .. } => {
-                let mut result: CodeForNode = Default::default();
-                result.cst_parser_impl_fragment = quote!(end().to(Node::new_none()));
-                result.ast_parser_impl_fragment = quote!(end());
-                result.ast_parser_type = quote!(());
-                result
             }
 
             Self::Expression { name, members } => {
@@ -1545,7 +1517,7 @@ impl CombinatorNode {
 
     pub fn collect_identifiers(&self, accum: &mut BTreeSet<String>) {
         match self {
-            Self::CharacterFilter { .. } | Self::End { .. } | Self::TerminalTrie { .. } => {}
+            Self::CharacterFilter { .. } | Self::TerminalTrie { .. } => {}
 
             Self::Choice { elements, .. } | Self::Sequence { elements, .. } => {
                 for member in elements {
@@ -1603,7 +1575,6 @@ impl CombinatorNode {
 
     fn rename(&self, name: String) -> CombinatorNodeRef {
         match self.clone() {
-            Self::End { .. } => Self::new_end(name),
             Self::Sequence { elements, .. } => Self::new_sequence(name, elements),
             Self::CharacterFilter { filter, .. } => Self::new_character_filter(name, filter),
             Self::Choice { elements, .. } => Self::new_choice(name, elements),
