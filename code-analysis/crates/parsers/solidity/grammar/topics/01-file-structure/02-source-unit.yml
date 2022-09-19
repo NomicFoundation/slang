@@ -8,7 +8,6 @@
           - reference: Directive
           - reference: Definition
     - reference: EndOfFileTrivia
-    - end: ~
 
 - name: Directive
   choice:

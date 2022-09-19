@@ -3499,7 +3499,7 @@ pub mod definition {
     }
 }
 
-/// SourceUnit = «LeadingTrivia» { Directive | Definition } «EndOfFileTrivia» $ ;
+/// SourceUnit = «LeadingTrivia» { Directive | Definition } «EndOfFileTrivia» ;
 pub type SourceUnit = source_unit::SourceUnit;
 pub mod source_unit {
     #[allow(unused_imports)]
@@ -3517,7 +3517,5 @@ pub mod source_unit {
         pub choices_0_repeated: Vec<Box<source_unit::Choices0>>,
         #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
         pub end_of_file_trivia: EndOfFileTrivia,
-        #[serde(default, skip_serializing_if = "DefaultTest::is_default")]
-        pub end_of_input: (),
     }
 }

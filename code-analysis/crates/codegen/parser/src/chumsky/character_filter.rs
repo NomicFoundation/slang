@@ -82,7 +82,6 @@ impl CharacterFilter {
             }
 
             EBNF::DelimitedBy(_)
-            | EBNF::End
             | EBNF::OneOrMore(_)
             | EBNF::Optional(_)
             | EBNF::Repeat(_)

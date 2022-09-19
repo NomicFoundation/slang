@@ -138,7 +138,7 @@ fn validate_expression(
             validate_expression(&difference.subtrahend, defined, used);
         }
 
-        EBNF::End | EBNF::Range(..) | EBNF::Terminal(..) => {}
+        EBNF::Range(..) | EBNF::Terminal(..) => {}
 
         EBNF::Reference(reference) => {
             assert!(
