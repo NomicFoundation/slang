@@ -69,11 +69,11 @@ impl DefaultTest for decimal_integer::Sequence1 {
 }
 impl decimal_integer::DecimalInteger {
     pub fn from_parse(
-        (filter_0, sequence_1_repeated): (FixedSizeTerminal<1>, Vec<decimal_integer::Sequence1>),
+        (filter_0, sequence_1s): (FixedSizeTerminal<1>, Vec<decimal_integer::Sequence1>),
     ) -> Self {
         Self {
             filter_0,
-            sequence_1_repeated,
+            sequence_1s,
         }
     }
 }
@@ -81,13 +81,13 @@ impl Default for decimal_integer::DecimalInteger {
     fn default() -> Self {
         Self {
             filter_0: Default::default(),
-            sequence_1_repeated: Default::default(),
+            sequence_1s: Default::default(),
         }
     }
 }
 impl DefaultTest for decimal_integer::DecimalInteger {
     fn is_default(&self) -> bool {
-        self.filter_0.is_default() && self.sequence_1_repeated.is_default()
+        self.filter_0.is_default() && self.sequence_1s.is_default()
     }
 }
 impl DefaultTest for decimal_integer::WithTrivia {
@@ -134,11 +134,11 @@ impl DefaultTest for fixed_bytes_type::WithTrivia {
 
 impl hex_byte_escape::HexByteEscape {
     pub fn from_parse(
-        (latin_small_letter_x, filter_0_repeated): (FixedSizeTerminal<1>, VariableSizeTerminal),
+        (latin_small_letter_x, filter_0s): (FixedSizeTerminal<1>, VariableSizeTerminal),
     ) -> Self {
         Self {
             latin_small_letter_x,
-            filter_0_repeated,
+            filter_0s,
         }
     }
 }
@@ -146,13 +146,13 @@ impl Default for hex_byte_escape::HexByteEscape {
     fn default() -> Self {
         Self {
             latin_small_letter_x: Default::default(),
-            filter_0_repeated: Default::default(),
+            filter_0s: Default::default(),
         }
     }
 }
 impl DefaultTest for hex_byte_escape::HexByteEscape {
     fn is_default(&self) -> bool {
-        self.latin_small_letter_x.is_default() && self.filter_0_repeated.is_default()
+        self.latin_small_letter_x.is_default() && self.filter_0s.is_default()
     }
 }
 impl DefaultTest for hex_byte_escape::WithTrivia {
@@ -188,11 +188,11 @@ impl DefaultTest for hex_number::Sequence2 {
 }
 impl hex_number::Sequence0 {
     pub fn from_parse(
-        (filter_1, sequence_2_repeated): (FixedSizeTerminal<1>, Vec<hex_number::Sequence2>),
+        (filter_1, sequence_2s): (FixedSizeTerminal<1>, Vec<hex_number::Sequence2>),
     ) -> Self {
         Self {
             filter_1,
-            sequence_2_repeated,
+            sequence_2s,
         }
     }
 }
@@ -200,13 +200,13 @@ impl Default for hex_number::Sequence0 {
     fn default() -> Self {
         Self {
             filter_1: Default::default(),
-            sequence_2_repeated: Default::default(),
+            sequence_2s: Default::default(),
         }
     }
 }
 impl DefaultTest for hex_number::Sequence0 {
     fn is_default(&self) -> bool {
-        self.filter_1.is_default() && self.sequence_2_repeated.is_default()
+        self.filter_1.is_default() && self.sequence_2s.is_default()
     }
 }
 impl hex_number::HexNumber {
@@ -238,52 +238,41 @@ impl DefaultTest for hex_number::WithTrivia {
 }
 
 impl multiline_comment::Sequence1 {
-    pub fn from_parse(
-        (star_repeated, filter_2): (VariableSizeTerminal, FixedSizeTerminal<1>),
-    ) -> Self {
-        Self {
-            star_repeated,
-            filter_2,
-        }
+    pub fn from_parse((stars, filter_2): (VariableSizeTerminal, FixedSizeTerminal<1>)) -> Self {
+        Self { stars, filter_2 }
     }
 }
 impl Default for multiline_comment::Sequence1 {
     fn default() -> Self {
         Self {
-            star_repeated: Default::default(),
+            stars: Default::default(),
             filter_2: Default::default(),
         }
     }
 }
 impl DefaultTest for multiline_comment::Sequence1 {
     fn is_default(&self) -> bool {
-        self.star_repeated.is_default() && self.filter_2.is_default()
+        self.stars.is_default() && self.filter_2.is_default()
     }
 }
 impl multiline_comment::Content {
     pub fn from_parse(
-        (choices_0_repeated, star_repeated): (
-            Vec<Box<multiline_comment::Choices0>>,
-            VariableSizeTerminal,
-        ),
+        (choices_0s, stars): (Vec<Box<multiline_comment::Choices0>>, VariableSizeTerminal),
     ) -> Self {
-        Self {
-            choices_0_repeated,
-            star_repeated,
-        }
+        Self { choices_0s, stars }
     }
 }
 impl Default for multiline_comment::Content {
     fn default() -> Self {
         Self {
-            choices_0_repeated: Default::default(),
-            star_repeated: Default::default(),
+            choices_0s: Default::default(),
+            stars: Default::default(),
         }
     }
 }
 impl DefaultTest for multiline_comment::Content {
     fn is_default(&self) -> bool {
-        self.choices_0_repeated.is_default() && self.star_repeated.is_default()
+        self.choices_0s.is_default() && self.stars.is_default()
     }
 }
 impl Default for multiline_comment::MultilineComment {
@@ -324,11 +313,11 @@ impl DefaultTest for multiline_comment::WithTrivia {
 
 impl possibly_separated_pairs_of_hex_digits::Sequence1 {
     pub fn from_parse(
-        (underscore, filter_2_repeated): (Option<FixedSizeTerminal<1>>, VariableSizeTerminal),
+        (underscore, filter_2s): (Option<FixedSizeTerminal<1>>, VariableSizeTerminal),
     ) -> Self {
         Self {
             underscore,
-            filter_2_repeated,
+            filter_2s,
         }
     }
 }
@@ -336,39 +325,39 @@ impl Default for possibly_separated_pairs_of_hex_digits::Sequence1 {
     fn default() -> Self {
         Self {
             underscore: Default::default(),
-            filter_2_repeated: Default::default(),
+            filter_2s: Default::default(),
         }
     }
 }
 impl DefaultTest for possibly_separated_pairs_of_hex_digits::Sequence1 {
     fn is_default(&self) -> bool {
-        self.underscore.is_default() && self.filter_2_repeated.is_default()
+        self.underscore.is_default() && self.filter_2s.is_default()
     }
 }
 impl possibly_separated_pairs_of_hex_digits::PossiblySeparatedPairsOfHexDigits {
     pub fn from_parse(
-        (filter_0_repeated, sequence_1_repeated): (
+        (filter_0s, sequence_1s): (
             VariableSizeTerminal,
             Vec<possibly_separated_pairs_of_hex_digits::Sequence1>,
         ),
     ) -> Self {
         Self {
-            filter_0_repeated,
-            sequence_1_repeated,
+            filter_0s,
+            sequence_1s,
         }
     }
 }
 impl Default for possibly_separated_pairs_of_hex_digits::PossiblySeparatedPairsOfHexDigits {
     fn default() -> Self {
         Self {
-            filter_0_repeated: Default::default(),
-            sequence_1_repeated: Default::default(),
+            filter_0s: Default::default(),
+            sequence_1s: Default::default(),
         }
     }
 }
 impl DefaultTest for possibly_separated_pairs_of_hex_digits::PossiblySeparatedPairsOfHexDigits {
     fn is_default(&self) -> bool {
-        self.filter_0_repeated.is_default() && self.sequence_1_repeated.is_default()
+        self.filter_0s.is_default() && self.sequence_1s.is_default()
     }
 }
 impl DefaultTest for possibly_separated_pairs_of_hex_digits::WithTrivia {
@@ -380,12 +369,10 @@ impl DefaultTest for possibly_separated_pairs_of_hex_digits::WithTrivia {
 }
 
 impl raw_identifier::RawIdentifier {
-    pub fn from_parse(
-        (filter_0, filter_1_repeated): (FixedSizeTerminal<1>, VariableSizeTerminal),
-    ) -> Self {
+    pub fn from_parse((filter_0, filter_1s): (FixedSizeTerminal<1>, VariableSizeTerminal)) -> Self {
         Self {
             filter_0,
-            filter_1_repeated,
+            filter_1s,
         }
     }
 }
@@ -393,13 +380,13 @@ impl Default for raw_identifier::RawIdentifier {
     fn default() -> Self {
         Self {
             filter_0: Default::default(),
-            filter_1_repeated: Default::default(),
+            filter_1s: Default::default(),
         }
     }
 }
 impl DefaultTest for raw_identifier::RawIdentifier {
     fn is_default(&self) -> bool {
-        self.filter_0.is_default() && self.filter_1_repeated.is_default()
+        self.filter_0.is_default() && self.filter_1s.is_default()
     }
 }
 impl DefaultTest for raw_identifier::WithTrivia {
@@ -420,32 +407,32 @@ impl DefaultTest for reserved_keyword::WithTrivia {
 
 impl signed_fixed_type::Sequence0 {
     pub fn from_parse(
-        ((filter_1_repeated, latin_small_letter_x), filter_2_repeated): (
+        ((filter_1s, latin_small_letter_x), filter_2s): (
             (VariableSizeTerminal, FixedSizeTerminal<1>),
             VariableSizeTerminal,
         ),
     ) -> Self {
         Self {
-            filter_1_repeated,
+            filter_1s,
             latin_small_letter_x,
-            filter_2_repeated,
+            filter_2s,
         }
     }
 }
 impl Default for signed_fixed_type::Sequence0 {
     fn default() -> Self {
         Self {
-            filter_1_repeated: Default::default(),
+            filter_1s: Default::default(),
             latin_small_letter_x: Default::default(),
-            filter_2_repeated: Default::default(),
+            filter_2s: Default::default(),
         }
     }
 }
 impl DefaultTest for signed_fixed_type::Sequence0 {
     fn is_default(&self) -> bool {
-        self.filter_1_repeated.is_default()
+        self.filter_1s.is_default()
             && self.latin_small_letter_x.is_default()
-            && self.filter_2_repeated.is_default()
+            && self.filter_2s.is_default()
     }
 }
 impl signed_fixed_type::SignedFixedType {
@@ -509,11 +496,11 @@ impl DefaultTest for signed_integer_type::WithTrivia {
 
 impl single_line_comment::SingleLineComment {
     pub fn from_parse(
-        (slash_slash, filter_0_repeated): (FixedSizeTerminal<2usize>, VariableSizeTerminal),
+        (slash_slash, filter_0s): (FixedSizeTerminal<2usize>, VariableSizeTerminal),
     ) -> Self {
         Self {
             slash_slash,
-            filter_0_repeated,
+            filter_0s,
         }
     }
 }
@@ -521,13 +508,13 @@ impl Default for single_line_comment::SingleLineComment {
     fn default() -> Self {
         Self {
             slash_slash: Default::default(),
-            filter_0_repeated: Default::default(),
+            filter_0s: Default::default(),
         }
     }
 }
 impl DefaultTest for single_line_comment::SingleLineComment {
     fn is_default(&self) -> bool {
-        self.slash_slash.is_default() && self.filter_0_repeated.is_default()
+        self.slash_slash.is_default() && self.filter_0s.is_default()
     }
 }
 impl DefaultTest for single_line_comment::WithTrivia {
@@ -540,11 +527,11 @@ impl DefaultTest for single_line_comment::WithTrivia {
 
 impl unicode_escape::UnicodeEscape {
     pub fn from_parse(
-        (latin_small_letter_u, filter_0_repeated): (FixedSizeTerminal<1>, VariableSizeTerminal),
+        (latin_small_letter_u, filter_0s): (FixedSizeTerminal<1>, VariableSizeTerminal),
     ) -> Self {
         Self {
             latin_small_letter_u,
-            filter_0_repeated,
+            filter_0s,
         }
     }
 }
@@ -552,13 +539,13 @@ impl Default for unicode_escape::UnicodeEscape {
     fn default() -> Self {
         Self {
             latin_small_letter_u: Default::default(),
-            filter_0_repeated: Default::default(),
+            filter_0s: Default::default(),
         }
     }
 }
 impl DefaultTest for unicode_escape::UnicodeEscape {
     fn is_default(&self) -> bool {
-        self.latin_small_letter_u.is_default() && self.filter_0_repeated.is_default()
+        self.latin_small_letter_u.is_default() && self.filter_0s.is_default()
     }
 }
 impl DefaultTest for unicode_escape::WithTrivia {
@@ -572,14 +559,14 @@ impl DefaultTest for unicode_escape::WithTrivia {
 impl Default for version_pragma_value::VersionPragmaValue {
     fn default() -> Self {
         Self {
-            filter_0_repeated_repeated: Default::default(),
-            period_repeated: Default::default(),
+            filter_0s: Default::default(),
+            periods: Default::default(),
         }
     }
 }
 impl DefaultTest for version_pragma_value::VersionPragmaValue {
     fn is_default(&self) -> bool {
-        self.filter_0_repeated_repeated.is_default() && self.period_repeated.is_default()
+        self.filter_0s.is_default() && self.periods.is_default()
     }
 }
 impl DefaultTest for version_pragma_value::WithTrivia {
@@ -599,12 +586,10 @@ impl DefaultTest for whitespace::WithTrivia {
 }
 
 impl yul_decimal_number_literal::Sequence0 {
-    pub fn from_parse(
-        (filter_1, filter_2_repeated): (FixedSizeTerminal<1>, VariableSizeTerminal),
-    ) -> Self {
+    pub fn from_parse((filter_1, filter_2s): (FixedSizeTerminal<1>, VariableSizeTerminal)) -> Self {
         Self {
             filter_1,
-            filter_2_repeated,
+            filter_2s,
         }
     }
 }
@@ -612,37 +597,34 @@ impl Default for yul_decimal_number_literal::Sequence0 {
     fn default() -> Self {
         Self {
             filter_1: Default::default(),
-            filter_2_repeated: Default::default(),
+            filter_2s: Default::default(),
         }
     }
 }
 impl DefaultTest for yul_decimal_number_literal::Sequence0 {
     fn is_default(&self) -> bool {
-        self.filter_1.is_default() && self.filter_2_repeated.is_default()
+        self.filter_1.is_default() && self.filter_2s.is_default()
     }
 }
 
 impl yul_hex_literal::YulHexLiteral {
     pub fn from_parse(
-        (zero_x, filter_0_repeated): (FixedSizeTerminal<2usize>, VariableSizeTerminal),
+        (zero_x, filter_0s): (FixedSizeTerminal<2usize>, VariableSizeTerminal),
     ) -> Self {
-        Self {
-            zero_x,
-            filter_0_repeated,
-        }
+        Self { zero_x, filter_0s }
     }
 }
 impl Default for yul_hex_literal::YulHexLiteral {
     fn default() -> Self {
         Self {
             zero_x: Default::default(),
-            filter_0_repeated: Default::default(),
+            filter_0s: Default::default(),
         }
     }
 }
 impl DefaultTest for yul_hex_literal::YulHexLiteral {
     fn is_default(&self) -> bool {
-        self.zero_x.is_default() && self.filter_0_repeated.is_default()
+        self.zero_x.is_default() && self.filter_0s.is_default()
     }
 }
 impl DefaultTest for yul_hex_literal::WithTrivia {
@@ -824,13 +806,13 @@ impl hex_string_literal::HexStringLiteral {
 
 impl trailing_trivia::TrailingTrivia {
     pub fn from_parse(
-        (choices_0_repeated, choices_1): (
+        (choices_0s, choices_1): (
             Vec<Box<trailing_trivia::Choices0>>,
             Box<trailing_trivia::Choices1>,
         ),
     ) -> Self {
         Self {
-            choices_0_repeated,
+            choices_0s,
             choices_1,
         }
     }
@@ -922,24 +904,24 @@ impl DefaultTest for address_type::AddressType {
     }
 }
 
-impl Default for array_literal::ExpressionRepeatedAndCommaRepeated {
+impl Default for array_literal::ExpressionsAndCommas {
     fn default() -> Self {
         Self {
-            expression_repeated: Default::default(),
-            comma_repeated: Default::default(),
+            expressions: Default::default(),
+            commas: Default::default(),
         }
     }
 }
-impl DefaultTest for array_literal::ExpressionRepeatedAndCommaRepeated {
+impl DefaultTest for array_literal::ExpressionsAndCommas {
     fn is_default(&self) -> bool {
-        self.expression_repeated.is_default() && self.comma_repeated.is_default()
+        self.expressions.is_default() && self.commas.is_default()
     }
 }
 impl Default for array_literal::ArrayLiteral {
     fn default() -> Self {
         Self {
             open_bracket: Default::default(),
-            expression_repeated_and_comma_repeated: Default::default(),
+            expressions_and_commas: Default::default(),
             close_bracket: Default::default(),
         }
     }
@@ -947,23 +929,23 @@ impl Default for array_literal::ArrayLiteral {
 impl DefaultTest for array_literal::ArrayLiteral {
     fn is_default(&self) -> bool {
         self.open_bracket.is_default()
-            && self.expression_repeated_and_comma_repeated.is_default()
+            && self.expressions_and_commas.is_default()
             && self.close_bracket.is_default()
     }
 }
 impl array_literal::ArrayLiteral {
     pub fn from_parse(
-        ((open_bracket, expression_repeated_and_comma_repeated), close_bracket): (
+        ((open_bracket, expressions_and_commas), close_bracket): (
             (
                 FixedSizeTerminalWithTrivia<1usize>,
-                array_literal::ExpressionRepeatedAndCommaRepeated,
+                array_literal::ExpressionsAndCommas,
             ),
             FixedSizeTerminalWithTrivia<1usize>,
         ),
     ) -> Self {
         Self {
             open_bracket,
-            expression_repeated_and_comma_repeated,
+            expressions_and_commas,
             close_bracket,
         }
     }
@@ -1035,7 +1017,7 @@ impl Default for double_quoted_ascii_string_literal::DoubleQuotedAsciiStringLite
     fn default() -> Self {
         Self {
             opening_double_quote: Default::default(),
-            run_repeated: Default::default(),
+            runs: Default::default(),
             closing_double_quote: Default::default(),
         }
     }
@@ -1043,13 +1025,13 @@ impl Default for double_quoted_ascii_string_literal::DoubleQuotedAsciiStringLite
 impl DefaultTest for double_quoted_ascii_string_literal::DoubleQuotedAsciiStringLiteral {
     fn is_default(&self) -> bool {
         self.opening_double_quote.is_default()
-            && self.run_repeated.is_default()
+            && self.runs.is_default()
             && self.closing_double_quote.is_default()
     }
 }
 impl double_quoted_ascii_string_literal::DoubleQuotedAsciiStringLiteral {
     pub fn from_parse(
-        ((opening_double_quote, run_repeated), closing_double_quote): (
+        ((opening_double_quote, runs), closing_double_quote): (
             (
                 FixedSizeTerminal<1usize>,
                 Vec<Box<double_quoted_ascii_string_literal::Run>>,
@@ -1059,7 +1041,7 @@ impl double_quoted_ascii_string_literal::DoubleQuotedAsciiStringLiteral {
     ) -> Self {
         Self {
             opening_double_quote,
-            run_repeated,
+            runs,
             closing_double_quote,
         }
     }
@@ -1076,7 +1058,7 @@ impl Default for double_quoted_unicode_string_literal::DoubleQuotedUnicodeString
     fn default() -> Self {
         Self {
             unicode_double_quote: Default::default(),
-            run_repeated: Default::default(),
+            runs: Default::default(),
             double_quote: Default::default(),
         }
     }
@@ -1084,13 +1066,13 @@ impl Default for double_quoted_unicode_string_literal::DoubleQuotedUnicodeString
 impl DefaultTest for double_quoted_unicode_string_literal::DoubleQuotedUnicodeStringLiteral {
     fn is_default(&self) -> bool {
         self.unicode_double_quote.is_default()
-            && self.run_repeated.is_default()
+            && self.runs.is_default()
             && self.double_quote.is_default()
     }
 }
 impl double_quoted_unicode_string_literal::DoubleQuotedUnicodeStringLiteral {
     pub fn from_parse(
-        ((unicode_double_quote, run_repeated), double_quote): (
+        ((unicode_double_quote, runs), double_quote): (
             (
                 FixedSizeTerminal<8usize>,
                 Vec<Box<double_quoted_unicode_string_literal::Run>>,
@@ -1100,7 +1082,7 @@ impl double_quoted_unicode_string_literal::DoubleQuotedUnicodeStringLiteral {
     ) -> Self {
         Self {
             unicode_double_quote,
-            run_repeated,
+            runs,
             double_quote,
         }
     }
@@ -1113,24 +1095,24 @@ impl DefaultTest for double_quoted_unicode_string_literal::WithTrivia {
     }
 }
 
-impl Default for parenthesis_expression::ExpressionRepeatedAndCommaRepeated {
+impl Default for parenthesis_expression::ExpressionsAndCommas {
     fn default() -> Self {
         Self {
-            expression_repeated: Default::default(),
-            comma_repeated: Default::default(),
+            expressions: Default::default(),
+            commas: Default::default(),
         }
     }
 }
-impl DefaultTest for parenthesis_expression::ExpressionRepeatedAndCommaRepeated {
+impl DefaultTest for parenthesis_expression::ExpressionsAndCommas {
     fn is_default(&self) -> bool {
-        self.expression_repeated.is_default() && self.comma_repeated.is_default()
+        self.expressions.is_default() && self.commas.is_default()
     }
 }
 impl Default for parenthesis_expression::ParenthesisExpression {
     fn default() -> Self {
         Self {
             open_paren: Default::default(),
-            expression_repeated_and_comma_repeated: Default::default(),
+            expressions_and_commas: Default::default(),
             close_paren: Default::default(),
         }
     }
@@ -1138,23 +1120,23 @@ impl Default for parenthesis_expression::ParenthesisExpression {
 impl DefaultTest for parenthesis_expression::ParenthesisExpression {
     fn is_default(&self) -> bool {
         self.open_paren.is_default()
-            && self.expression_repeated_and_comma_repeated.is_default()
+            && self.expressions_and_commas.is_default()
             && self.close_paren.is_default()
     }
 }
 impl parenthesis_expression::ParenthesisExpression {
     pub fn from_parse(
-        ((open_paren, expression_repeated_and_comma_repeated), close_paren): (
+        ((open_paren, expressions_and_commas), close_paren): (
             (
                 FixedSizeTerminalWithTrivia<1usize>,
-                parenthesis_expression::ExpressionRepeatedAndCommaRepeated,
+                parenthesis_expression::ExpressionsAndCommas,
             ),
             FixedSizeTerminalWithTrivia<1usize>,
         ),
     ) -> Self {
         Self {
             open_paren,
-            expression_repeated_and_comma_repeated,
+            expressions_and_commas,
             close_paren,
         }
     }
@@ -1163,14 +1145,14 @@ impl parenthesis_expression::ParenthesisExpression {
 impl Default for positional_argument_list::PositionalArgumentList {
     fn default() -> Self {
         Self {
-            expression_repeated: Default::default(),
-            comma_repeated: Default::default(),
+            expressions: Default::default(),
+            commas: Default::default(),
         }
     }
 }
 impl DefaultTest for positional_argument_list::PositionalArgumentList {
     fn is_default(&self) -> bool {
-        self.expression_repeated.is_default() && self.comma_repeated.is_default()
+        self.expressions.is_default() && self.commas.is_default()
     }
 }
 
@@ -1178,21 +1160,19 @@ impl Default for single_quoted_ascii_string_literal::SingleQuotedAsciiStringLite
     fn default() -> Self {
         Self {
             opening_quote: Default::default(),
-            run_repeated: Default::default(),
+            runs: Default::default(),
             closing_quote: Default::default(),
         }
     }
 }
 impl DefaultTest for single_quoted_ascii_string_literal::SingleQuotedAsciiStringLiteral {
     fn is_default(&self) -> bool {
-        self.opening_quote.is_default()
-            && self.run_repeated.is_default()
-            && self.closing_quote.is_default()
+        self.opening_quote.is_default() && self.runs.is_default() && self.closing_quote.is_default()
     }
 }
 impl single_quoted_ascii_string_literal::SingleQuotedAsciiStringLiteral {
     pub fn from_parse(
-        ((opening_quote, run_repeated), closing_quote): (
+        ((opening_quote, runs), closing_quote): (
             (
                 FixedSizeTerminal<1usize>,
                 Vec<Box<single_quoted_ascii_string_literal::Run>>,
@@ -1202,7 +1182,7 @@ impl single_quoted_ascii_string_literal::SingleQuotedAsciiStringLiteral {
     ) -> Self {
         Self {
             opening_quote,
-            run_repeated,
+            runs,
             closing_quote,
         }
     }
@@ -1219,19 +1199,19 @@ impl Default for single_quoted_unicode_string_literal::SingleQuotedUnicodeString
     fn default() -> Self {
         Self {
             unicode_quote: Default::default(),
-            run_repeated: Default::default(),
+            runs: Default::default(),
             quote: Default::default(),
         }
     }
 }
 impl DefaultTest for single_quoted_unicode_string_literal::SingleQuotedUnicodeStringLiteral {
     fn is_default(&self) -> bool {
-        self.unicode_quote.is_default() && self.run_repeated.is_default() && self.quote.is_default()
+        self.unicode_quote.is_default() && self.runs.is_default() && self.quote.is_default()
     }
 }
 impl single_quoted_unicode_string_literal::SingleQuotedUnicodeStringLiteral {
     pub fn from_parse(
-        ((unicode_quote, run_repeated), quote): (
+        ((unicode_quote, runs), quote): (
             (
                 FixedSizeTerminal<8usize>,
                 Vec<Box<single_quoted_unicode_string_literal::Run>>,
@@ -1241,7 +1221,7 @@ impl single_quoted_unicode_string_literal::SingleQuotedUnicodeStringLiteral {
     ) -> Self {
         Self {
             unicode_quote,
-            run_repeated,
+            runs,
             quote,
         }
     }
@@ -1288,14 +1268,14 @@ impl version_pragma_specifier::Sequence0 {
 }
 impl version_pragma_specifier::VersionPragmaSpecifier {
     pub fn from_parse(
-        (solidity, sequence_0_repeated): (
+        (solidity, sequence_0s): (
             FixedSizeTerminalWithTrivia<8usize>,
             Vec<version_pragma_specifier::Sequence0>,
         ),
     ) -> Self {
         Self {
             solidity,
-            sequence_0_repeated,
+            sequence_0s,
         }
     }
 }
@@ -1303,13 +1283,13 @@ impl Default for version_pragma_specifier::VersionPragmaSpecifier {
     fn default() -> Self {
         Self {
             solidity: Default::default(),
-            sequence_0_repeated: Default::default(),
+            sequence_0s: Default::default(),
         }
     }
 }
 impl DefaultTest for version_pragma_specifier::VersionPragmaSpecifier {
     fn is_default(&self) -> bool {
-        self.solidity.is_default() && self.sequence_0_repeated.is_default()
+        self.solidity.is_default() && self.sequence_0s.is_default()
     }
 }
 
@@ -1321,26 +1301,24 @@ impl DefaultTest for yul_identifier::WithTrivia {
     }
 }
 
-impl Default for assembly_flags::DoubleQuotedAsciiStringLiteralRepeatedAndCommaRepeated {
+impl Default for assembly_flags::DoubleQuotedAsciiStringLiteralsAndCommas {
     fn default() -> Self {
         Self {
-            double_quoted_ascii_string_literal_repeated: Default::default(),
-            comma_repeated: Default::default(),
+            double_quoted_ascii_string_literals: Default::default(),
+            commas: Default::default(),
         }
     }
 }
-impl DefaultTest for assembly_flags::DoubleQuotedAsciiStringLiteralRepeatedAndCommaRepeated {
+impl DefaultTest for assembly_flags::DoubleQuotedAsciiStringLiteralsAndCommas {
     fn is_default(&self) -> bool {
-        self.double_quoted_ascii_string_literal_repeated
-            .is_default()
-            && self.comma_repeated.is_default()
+        self.double_quoted_ascii_string_literals.is_default() && self.commas.is_default()
     }
 }
 impl Default for assembly_flags::AssemblyFlags {
     fn default() -> Self {
         Self {
             open_paren: Default::default(),
-            double_quoted_ascii_string_literal_repeated_and_comma_repeated: Default::default(),
+            double_quoted_ascii_string_literals_and_commas: Default::default(),
             close_paren: Default::default(),
         }
     }
@@ -1349,18 +1327,24 @@ impl DefaultTest for assembly_flags::AssemblyFlags {
     fn is_default(&self) -> bool {
         self.open_paren.is_default()
             && self
-                .double_quoted_ascii_string_literal_repeated_and_comma_repeated
+                .double_quoted_ascii_string_literals_and_commas
                 .is_default()
             && self.close_paren.is_default()
     }
 }
 impl assembly_flags::AssemblyFlags {
     pub fn from_parse(
-        ((open_paren , double_quoted_ascii_string_literal_repeated_and_comma_repeated) , close_paren) : ((FixedSizeTerminalWithTrivia < 1usize > , assembly_flags :: DoubleQuotedAsciiStringLiteralRepeatedAndCommaRepeated) , FixedSizeTerminalWithTrivia < 1usize >),
+        ((open_paren, double_quoted_ascii_string_literals_and_commas), close_paren): (
+            (
+                FixedSizeTerminalWithTrivia<1usize>,
+                assembly_flags::DoubleQuotedAsciiStringLiteralsAndCommas,
+            ),
+            FixedSizeTerminalWithTrivia<1usize>,
+        ),
     ) -> Self {
         Self {
             open_paren,
-            double_quoted_ascii_string_literal_repeated_and_comma_repeated,
+            double_quoted_ascii_string_literals_and_commas,
             close_paren,
         }
     }
@@ -1385,61 +1369,62 @@ impl numeric_literal::NumericLiteral {
     }
 }
 
-impl Default for yul_function_call::YulExpressionRepeatedAndCommaRepeated {
+impl Default for yul_function_call::YulExpressionsAndCommas {
     fn default() -> Self {
         Self {
-            yul_expression_repeated: Default::default(),
-            comma_repeated: Default::default(),
+            yul_expressions: Default::default(),
+            commas: Default::default(),
         }
     }
 }
-impl DefaultTest for yul_function_call::YulExpressionRepeatedAndCommaRepeated {
+impl DefaultTest for yul_function_call::YulExpressionsAndCommas {
     fn is_default(&self) -> bool {
-        self.yul_expression_repeated.is_default() && self.comma_repeated.is_default()
+        self.yul_expressions.is_default() && self.commas.is_default()
     }
 }
-impl Default for yul_function_call::OpenParenAndYulExpressionRepeatedAndCommaRepeatedAndCloseParen {
+impl Default for yul_function_call::OpenParenAndYulExpressionsAndCommasAndCloseParen {
     fn default() -> Self {
         Self {
             open_paren: Default::default(),
-            yul_expression_repeated_and_comma_repeated: Default::default(),
+            yul_expressions_and_commas: Default::default(),
             close_paren: Default::default(),
         }
     }
 }
-impl DefaultTest
-    for yul_function_call::OpenParenAndYulExpressionRepeatedAndCommaRepeatedAndCloseParen
-{
+impl DefaultTest for yul_function_call::OpenParenAndYulExpressionsAndCommasAndCloseParen {
     fn is_default(&self) -> bool {
         self.open_paren.is_default()
-            && self.yul_expression_repeated_and_comma_repeated.is_default()
+            && self.yul_expressions_and_commas.is_default()
             && self.close_paren.is_default()
     }
 }
-impl yul_function_call::OpenParenAndYulExpressionRepeatedAndCommaRepeatedAndCloseParen {
+impl yul_function_call::OpenParenAndYulExpressionsAndCommasAndCloseParen {
     pub fn from_parse(
-        ((open_paren, yul_expression_repeated_and_comma_repeated), close_paren): (
+        ((open_paren, yul_expressions_and_commas), close_paren): (
             (
                 FixedSizeTerminalWithTrivia<1usize>,
-                Option<yul_function_call::YulExpressionRepeatedAndCommaRepeated>,
+                Option<yul_function_call::YulExpressionsAndCommas>,
             ),
             FixedSizeTerminalWithTrivia<1usize>,
         ),
     ) -> Self {
         Self {
             open_paren,
-            yul_expression_repeated_and_comma_repeated,
+            yul_expressions_and_commas,
             close_paren,
         }
     }
 }
 impl yul_function_call::YulFunctionCall {
     pub fn from_parse(
-        (yul_identifier , open_paren_and_yul_expression_repeated_and_comma_repeated_and_close_paren) : (yul_identifier :: WithTrivia , yul_function_call :: OpenParenAndYulExpressionRepeatedAndCommaRepeatedAndCloseParen),
+        (yul_identifier, open_paren_and_yul_expressions_and_commas_and_close_paren): (
+            yul_identifier::WithTrivia,
+            yul_function_call::OpenParenAndYulExpressionsAndCommasAndCloseParen,
+        ),
     ) -> Self {
         Self {
             yul_identifier,
-            open_paren_and_yul_expression_repeated_and_comma_repeated_and_close_paren,
+            open_paren_and_yul_expressions_and_commas_and_close_paren,
         }
     }
 }
@@ -1447,8 +1432,7 @@ impl Default for yul_function_call::YulFunctionCall {
     fn default() -> Self {
         Self {
             yul_identifier: Default::default(),
-            open_paren_and_yul_expression_repeated_and_comma_repeated_and_close_paren:
-                Default::default(),
+            open_paren_and_yul_expressions_and_commas_and_close_paren: Default::default(),
         }
     }
 }
@@ -1456,7 +1440,7 @@ impl DefaultTest for yul_function_call::YulFunctionCall {
     fn is_default(&self) -> bool {
         self.yul_identifier.is_default()
             && self
-                .open_paren_and_yul_expression_repeated_and_comma_repeated_and_close_paren
+                .open_paren_and_yul_expressions_and_commas_and_close_paren
                 .is_default()
     }
 }
@@ -1464,14 +1448,14 @@ impl DefaultTest for yul_function_call::YulFunctionCall {
 impl Default for yul_function_definition::Arguments {
     fn default() -> Self {
         Self {
-            yul_identifier_repeated: Default::default(),
-            comma_repeated: Default::default(),
+            yul_identifiers: Default::default(),
+            commas: Default::default(),
         }
     }
 }
 impl DefaultTest for yul_function_definition::Arguments {
     fn is_default(&self) -> bool {
-        self.yul_identifier_repeated.is_default() && self.comma_repeated.is_default()
+        self.yul_identifiers.is_default() && self.commas.is_default()
     }
 }
 impl Default for yul_function_definition::OpenParenAndArgumentsAndCloseParen {
@@ -1508,14 +1492,14 @@ impl yul_function_definition::OpenParenAndArgumentsAndCloseParen {
 impl Default for yul_function_definition::Results {
     fn default() -> Self {
         Self {
-            yul_identifier_repeated: Default::default(),
-            comma_repeated: Default::default(),
+            yul_identifiers: Default::default(),
+            commas: Default::default(),
         }
     }
 }
 impl DefaultTest for yul_function_definition::Results {
     fn is_default(&self) -> bool {
-        self.yul_identifier_repeated.is_default() && self.comma_repeated.is_default()
+        self.yul_identifiers.is_default() && self.commas.is_default()
     }
 }
 impl yul_function_definition::Sequence0 {
@@ -1596,14 +1580,14 @@ impl DefaultTest for yul_function_definition::YulFunctionDefinition {
 impl Default for yul_identifier_path::YulIdentifierPath {
     fn default() -> Self {
         Self {
-            yul_identifier_repeated: Default::default(),
-            period_repeated: Default::default(),
+            yul_identifiers: Default::default(),
+            periods: Default::default(),
         }
     }
 }
 impl DefaultTest for yul_identifier_path::YulIdentifierPath {
     fn is_default(&self) -> bool {
-        self.yul_identifier_repeated.is_default() && self.period_repeated.is_default()
+        self.yul_identifiers.is_default() && self.periods.is_default()
     }
 }
 
@@ -1660,66 +1644,63 @@ impl DefaultTest for delete_statement::DeleteStatement {
     }
 }
 
-impl Default for enum_definition::IdentifierRepeatedAndCommaRepeated {
+impl Default for enum_definition::IdentifiersAndCommas {
     fn default() -> Self {
         Self {
-            identifier_repeated: Default::default(),
-            comma_repeated: Default::default(),
+            identifiers: Default::default(),
+            commas: Default::default(),
         }
     }
 }
-impl DefaultTest for enum_definition::IdentifierRepeatedAndCommaRepeated {
+impl DefaultTest for enum_definition::IdentifiersAndCommas {
     fn is_default(&self) -> bool {
-        self.identifier_repeated.is_default() && self.comma_repeated.is_default()
+        self.identifiers.is_default() && self.commas.is_default()
     }
 }
-impl Default for enum_definition::OpenBraceAndIdentifierRepeatedAndCommaRepeatedAndCloseBrace {
+impl Default for enum_definition::OpenBraceAndIdentifiersAndCommasAndCloseBrace {
     fn default() -> Self {
         Self {
             open_brace: Default::default(),
-            identifier_repeated_and_comma_repeated: Default::default(),
+            identifiers_and_commas: Default::default(),
             close_brace: Default::default(),
         }
     }
 }
-impl DefaultTest for enum_definition::OpenBraceAndIdentifierRepeatedAndCommaRepeatedAndCloseBrace {
+impl DefaultTest for enum_definition::OpenBraceAndIdentifiersAndCommasAndCloseBrace {
     fn is_default(&self) -> bool {
         self.open_brace.is_default()
-            && self.identifier_repeated_and_comma_repeated.is_default()
+            && self.identifiers_and_commas.is_default()
             && self.close_brace.is_default()
     }
 }
-impl enum_definition::OpenBraceAndIdentifierRepeatedAndCommaRepeatedAndCloseBrace {
+impl enum_definition::OpenBraceAndIdentifiersAndCommasAndCloseBrace {
     pub fn from_parse(
-        ((open_brace, identifier_repeated_and_comma_repeated), close_brace): (
+        ((open_brace, identifiers_and_commas), close_brace): (
             (
                 FixedSizeTerminalWithTrivia<1usize>,
-                enum_definition::IdentifierRepeatedAndCommaRepeated,
+                enum_definition::IdentifiersAndCommas,
             ),
             FixedSizeTerminalWithTrivia<1usize>,
         ),
     ) -> Self {
         Self {
             open_brace,
-            identifier_repeated_and_comma_repeated,
+            identifiers_and_commas,
             close_brace,
         }
     }
 }
 impl enum_definition::EnumDefinition {
     pub fn from_parse(
-        (
-            (r#enum, identifier),
-            open_brace_and_identifier_repeated_and_comma_repeated_and_close_brace,
-        ): (
+        ((r#enum, identifier), open_brace_and_identifiers_and_commas_and_close_brace): (
             (FixedSizeTerminalWithTrivia<4usize>, identifier::WithTrivia),
-            enum_definition::OpenBraceAndIdentifierRepeatedAndCommaRepeatedAndCloseBrace,
+            enum_definition::OpenBraceAndIdentifiersAndCommasAndCloseBrace,
         ),
     ) -> Self {
         Self {
             r#enum,
             identifier,
-            open_brace_and_identifier_repeated_and_comma_repeated_and_close_brace,
+            open_brace_and_identifiers_and_commas_and_close_brace,
         }
     }
 }
@@ -1728,8 +1709,7 @@ impl Default for enum_definition::EnumDefinition {
         Self {
             r#enum: Default::default(),
             identifier: Default::default(),
-            open_brace_and_identifier_repeated_and_comma_repeated_and_close_brace: Default::default(
-            ),
+            open_brace_and_identifiers_and_commas_and_close_brace: Default::default(),
         }
     }
 }
@@ -1738,7 +1718,7 @@ impl DefaultTest for enum_definition::EnumDefinition {
         self.r#enum.is_default()
             && self.identifier.is_default()
             && self
-                .open_brace_and_identifier_repeated_and_comma_repeated_and_close_brace
+                .open_brace_and_identifiers_and_commas_and_close_brace
                 .is_default()
     }
 }
@@ -1770,14 +1750,14 @@ impl DefaultTest for experimental_pragma_specifier::ExperimentalPragmaSpecifier 
 impl Default for identifier_path::IdentifierPath {
     fn default() -> Self {
         Self {
-            identifier_repeated: Default::default(),
-            period_repeated: Default::default(),
+            identifiers: Default::default(),
+            periods: Default::default(),
         }
     }
 }
 impl DefaultTest for identifier_path::IdentifierPath {
     fn is_default(&self) -> bool {
-        self.identifier_repeated.is_default() && self.period_repeated.is_default()
+        self.identifiers.is_default() && self.periods.is_default()
     }
 }
 
@@ -1923,24 +1903,24 @@ impl mapping_type::MappingType {
     }
 }
 
-impl Default for named_argument_list::NamedArgumentRepeatedAndCommaRepeated {
+impl Default for named_argument_list::NamedArgumentsAndCommas {
     fn default() -> Self {
         Self {
-            named_argument_repeated: Default::default(),
-            comma_repeated: Default::default(),
+            named_arguments: Default::default(),
+            commas: Default::default(),
         }
     }
 }
-impl DefaultTest for named_argument_list::NamedArgumentRepeatedAndCommaRepeated {
+impl DefaultTest for named_argument_list::NamedArgumentsAndCommas {
     fn is_default(&self) -> bool {
-        self.named_argument_repeated.is_default() && self.comma_repeated.is_default()
+        self.named_arguments.is_default() && self.commas.is_default()
     }
 }
 impl Default for named_argument_list::NamedArgumentList {
     fn default() -> Self {
         Self {
             open_brace: Default::default(),
-            named_argument_repeated_and_comma_repeated: Default::default(),
+            named_arguments_and_commas: Default::default(),
             close_brace: Default::default(),
         }
     }
@@ -1948,92 +1928,84 @@ impl Default for named_argument_list::NamedArgumentList {
 impl DefaultTest for named_argument_list::NamedArgumentList {
     fn is_default(&self) -> bool {
         self.open_brace.is_default()
-            && self.named_argument_repeated_and_comma_repeated.is_default()
+            && self.named_arguments_and_commas.is_default()
             && self.close_brace.is_default()
     }
 }
 impl named_argument_list::NamedArgumentList {
     pub fn from_parse(
-        ((open_brace, named_argument_repeated_and_comma_repeated), close_brace): (
+        ((open_brace, named_arguments_and_commas), close_brace): (
             (
                 FixedSizeTerminalWithTrivia<1usize>,
-                Option<named_argument_list::NamedArgumentRepeatedAndCommaRepeated>,
+                Option<named_argument_list::NamedArgumentsAndCommas>,
             ),
             FixedSizeTerminalWithTrivia<1usize>,
         ),
     ) -> Self {
         Self {
             open_brace,
-            named_argument_repeated_and_comma_repeated,
+            named_arguments_and_commas,
             close_brace,
         }
     }
 }
 
-impl Default for override_specifier::IdentifierPathRepeatedAndCommaRepeated {
+impl Default for override_specifier::IdentifierPathsAndCommas {
     fn default() -> Self {
         Self {
-            identifier_path_repeated: Default::default(),
-            comma_repeated: Default::default(),
+            identifier_paths: Default::default(),
+            commas: Default::default(),
         }
     }
 }
-impl DefaultTest for override_specifier::IdentifierPathRepeatedAndCommaRepeated {
+impl DefaultTest for override_specifier::IdentifierPathsAndCommas {
     fn is_default(&self) -> bool {
-        self.identifier_path_repeated.is_default() && self.comma_repeated.is_default()
+        self.identifier_paths.is_default() && self.commas.is_default()
     }
 }
-impl Default
-    for override_specifier::OpenParenAndIdentifierPathRepeatedAndCommaRepeatedAndCloseParen
-{
+impl Default for override_specifier::OpenParenAndIdentifierPathsAndCommasAndCloseParen {
     fn default() -> Self {
         Self {
             open_paren: Default::default(),
-            identifier_path_repeated_and_comma_repeated: Default::default(),
+            identifier_paths_and_commas: Default::default(),
             close_paren: Default::default(),
         }
     }
 }
-impl DefaultTest
-    for override_specifier::OpenParenAndIdentifierPathRepeatedAndCommaRepeatedAndCloseParen
-{
+impl DefaultTest for override_specifier::OpenParenAndIdentifierPathsAndCommasAndCloseParen {
     fn is_default(&self) -> bool {
         self.open_paren.is_default()
-            && self
-                .identifier_path_repeated_and_comma_repeated
-                .is_default()
+            && self.identifier_paths_and_commas.is_default()
             && self.close_paren.is_default()
     }
 }
-impl override_specifier::OpenParenAndIdentifierPathRepeatedAndCommaRepeatedAndCloseParen {
+impl override_specifier::OpenParenAndIdentifierPathsAndCommasAndCloseParen {
     pub fn from_parse(
-        ((open_paren, identifier_path_repeated_and_comma_repeated), close_paren): (
+        ((open_paren, identifier_paths_and_commas), close_paren): (
             (
                 FixedSizeTerminalWithTrivia<1usize>,
-                override_specifier::IdentifierPathRepeatedAndCommaRepeated,
+                override_specifier::IdentifierPathsAndCommas,
             ),
             FixedSizeTerminalWithTrivia<1usize>,
         ),
     ) -> Self {
         Self {
             open_paren,
-            identifier_path_repeated_and_comma_repeated,
+            identifier_paths_and_commas,
             close_paren,
         }
     }
 }
 impl override_specifier::OverrideSpecifier {
     pub fn from_parse(
-        (r#override, open_paren_and_identifier_path_repeated_and_comma_repeated_and_close_paren): (
+        (r#override, open_paren_and_identifier_paths_and_commas_and_close_paren): (
             FixedSizeTerminalWithTrivia<8usize>,
-            Option<
-                override_specifier::OpenParenAndIdentifierPathRepeatedAndCommaRepeatedAndCloseParen,
-            >,
+            Option<override_specifier::OpenParenAndIdentifierPathsAndCommasAndCloseParen>,
         ),
     ) -> Self {
         Self {
             r#override,
-            open_paren_and_identifier_path_repeated_and_comma_repeated_and_close_paren,
+            open_paren_and_identifier_paths_and_commas_and_close_paren,
         }
     }
 }
@@ -2041,8 +2013,7 @@ impl Default for override_specifier::OverrideSpecifier {
     fn default() -> Self {
         Self {
             r#override: Default::default(),
-            open_paren_and_identifier_path_repeated_and_comma_repeated_and_close_paren:
-                Default::default(),
+            open_paren_and_identifier_paths_and_commas_and_close_paren: Default::default(),
         }
     }
 }
@@ -2050,29 +2021,29 @@ impl DefaultTest for override_specifier::OverrideSpecifier {
     fn is_default(&self) -> bool {
         self.r#override.is_default()
             && self
-                .open_paren_and_identifier_path_repeated_and_comma_repeated_and_close_paren
+                .open_paren_and_identifier_paths_and_commas_and_close_paren
                 .is_default()
     }
 }
 
-impl Default for parameter_list::ParameterDeclarationRepeatedAndCommaRepeated {
+impl Default for parameter_list::ParameterDeclarationsAndCommas {
     fn default() -> Self {
         Self {
-            parameter_declaration_repeated: Default::default(),
-            comma_repeated: Default::default(),
+            parameter_declarations: Default::default(),
+            commas: Default::default(),
         }
     }
 }
-impl DefaultTest for parameter_list::ParameterDeclarationRepeatedAndCommaRepeated {
+impl DefaultTest for parameter_list::ParameterDeclarationsAndCommas {
     fn is_default(&self) -> bool {
-        self.parameter_declaration_repeated.is_default() && self.comma_repeated.is_default()
+        self.parameter_declarations.is_default() && self.commas.is_default()
     }
 }
 impl Default for parameter_list::ParameterList {
     fn default() -> Self {
         Self {
             open_paren: Default::default(),
-            parameter_declaration_repeated_and_comma_repeated: Default::default(),
+            parameter_declarations_and_commas: Default::default(),
             close_paren: Default::default(),
         }
     }
@@ -2080,25 +2051,23 @@ impl Default for parameter_list::ParameterList {
 impl DefaultTest for parameter_list::ParameterList {
     fn is_default(&self) -> bool {
         self.open_paren.is_default()
-            && self
-                .parameter_declaration_repeated_and_comma_repeated
-                .is_default()
+            && self.parameter_declarations_and_commas.is_default()
             && self.close_paren.is_default()
     }
 }
 impl parameter_list::ParameterList {
     pub fn from_parse(
-        ((open_paren, parameter_declaration_repeated_and_comma_repeated), close_paren): (
+        ((open_paren, parameter_declarations_and_commas), close_paren): (
             (
                 FixedSizeTerminalWithTrivia<1usize>,
-                Option<parameter_list::ParameterDeclarationRepeatedAndCommaRepeated>,
+                Option<parameter_list::ParameterDeclarationsAndCommas>,
             ),
             FixedSizeTerminalWithTrivia<1usize>,
         ),
     ) -> Self {
         Self {
             open_paren,
-            parameter_declaration_repeated_and_comma_repeated,
+            parameter_declarations_and_commas,
             close_paren,
         }
     }
@@ -2122,64 +2091,64 @@ impl pragma_directive::PragmaDirective {
     }
 }
 
-impl Default for selecting_import_directive::SelectedImportRepeatedAndCommaRepeated {
+impl Default for selecting_import_directive::SelectedImportsAndCommas {
     fn default() -> Self {
         Self {
-            selected_import_repeated: Default::default(),
-            comma_repeated: Default::default(),
+            selected_imports: Default::default(),
+            commas: Default::default(),
         }
     }
 }
-impl DefaultTest for selecting_import_directive::SelectedImportRepeatedAndCommaRepeated {
+impl DefaultTest for selecting_import_directive::SelectedImportsAndCommas {
     fn is_default(&self) -> bool {
-        self.selected_import_repeated.is_default() && self.comma_repeated.is_default()
+        self.selected_imports.is_default() && self.commas.is_default()
     }
 }
-impl Default
-    for selecting_import_directive::OpenBraceAndSelectedImportRepeatedAndCommaRepeatedAndCloseBrace
-{
+impl Default for selecting_import_directive::OpenBraceAndSelectedImportsAndCommasAndCloseBrace {
     fn default() -> Self {
         Self {
             open_brace: Default::default(),
-            selected_import_repeated_and_comma_repeated: Default::default(),
+            selected_imports_and_commas: Default::default(),
             close_brace: Default::default(),
         }
     }
 }
-impl DefaultTest
-    for selecting_import_directive::OpenBraceAndSelectedImportRepeatedAndCommaRepeatedAndCloseBrace
-{
+impl DefaultTest for selecting_import_directive::OpenBraceAndSelectedImportsAndCommasAndCloseBrace {
     fn is_default(&self) -> bool {
         self.open_brace.is_default()
-            && self
-                .selected_import_repeated_and_comma_repeated
-                .is_default()
+            && self.selected_imports_and_commas.is_default()
             && self.close_brace.is_default()
     }
 }
-impl selecting_import_directive::OpenBraceAndSelectedImportRepeatedAndCommaRepeatedAndCloseBrace {
+impl selecting_import_directive::OpenBraceAndSelectedImportsAndCommasAndCloseBrace {
     pub fn from_parse(
-        ((open_brace, selected_import_repeated_and_comma_repeated), close_brace): (
+        ((open_brace, selected_imports_and_commas), close_brace): (
             (
                 FixedSizeTerminalWithTrivia<1usize>,
-                selecting_import_directive::SelectedImportRepeatedAndCommaRepeated,
+                selecting_import_directive::SelectedImportsAndCommas,
             ),
             FixedSizeTerminalWithTrivia<1usize>,
         ),
     ) -> Self {
         Self {
             open_brace,
-            selected_import_repeated_and_comma_repeated,
+            selected_imports_and_commas,
             close_brace,
         }
     }
 }
 impl selecting_import_directive::SelectingImportDirective {
     pub fn from_parse(
-        ((open_brace_and_selected_import_repeated_and_comma_repeated_and_close_brace , from) , import_path) : ((selecting_import_directive :: OpenBraceAndSelectedImportRepeatedAndCommaRepeatedAndCloseBrace , FixedSizeTerminalWithTrivia < 4usize >) , ImportPath),
+        ((open_brace_and_selected_imports_and_commas_and_close_brace, from), import_path): (
+            (
+                selecting_import_directive::OpenBraceAndSelectedImportsAndCommasAndCloseBrace,
+                FixedSizeTerminalWithTrivia<4usize>,
+            ),
+            ImportPath,
+        ),
     ) -> Self {
         Self {
-            open_brace_and_selected_import_repeated_and_comma_repeated_and_close_brace,
+            open_brace_and_selected_imports_and_commas_and_close_brace,
             from,
             import_path,
         }
@@ -2208,11 +2177,11 @@ impl DefaultTest for simple_import_directive::Sequence0 {
 }
 impl simple_import_directive::SimpleImportDirective {
     pub fn from_parse(
-        (import_path, sequence_0_repeated): (ImportPath, Vec<simple_import_directive::Sequence0>),
+        (import_path, sequence_0s): (ImportPath, Vec<simple_import_directive::Sequence0>),
     ) -> Self {
         Self {
             import_path,
-            sequence_0_repeated,
+            sequence_0s,
         }
     }
 }
@@ -2355,7 +2324,7 @@ impl DefaultTest for function_type::Sequence1 {
 }
 impl function_type::FunctionType {
     pub fn from_parse(
-        (((function, parameter_list), choices_0_repeated), sequence_1): (
+        (((function, parameter_list), choices_0s), sequence_1): (
             (
                 (FixedSizeTerminalWithTrivia<8usize>, ParameterList),
                 Vec<Box<function_type::Choices0>>,
@@ -2366,7 +2335,7 @@ impl function_type::FunctionType {
         Self {
             function,
             parameter_list,
-            choices_0_repeated,
+            choices_0s,
             sequence_1,
         }
     }
@@ -2376,7 +2345,7 @@ impl Default for function_type::FunctionType {
         Self {
             function: Default::default(),
             parameter_list: Default::default(),
-            choices_0_repeated: Default::default(),
+            choices_0s: Default::default(),
             sequence_1: Default::default(),
         }
     }
@@ -2385,7 +2354,7 @@ impl DefaultTest for function_type::FunctionType {
     fn is_default(&self) -> bool {
         self.function.is_default()
             && self.parameter_list.is_default()
-            && self.choices_0_repeated.is_default()
+            && self.choices_0s.is_default()
             && self.sequence_1.is_default()
     }
 }
@@ -2408,31 +2377,31 @@ impl import_directive::ImportDirective {
     }
 }
 
-impl Default for yul_assignment_statement::YulIdentifierPathRepeatedAndCommaRepeated {
+impl Default for yul_assignment_statement::YulIdentifierPathsAndCommas {
     fn default() -> Self {
         Self {
-            yul_identifier_path_repeated: Default::default(),
-            comma_repeated: Default::default(),
+            yul_identifier_paths: Default::default(),
+            commas: Default::default(),
         }
     }
 }
-impl DefaultTest for yul_assignment_statement::YulIdentifierPathRepeatedAndCommaRepeated {
+impl DefaultTest for yul_assignment_statement::YulIdentifierPathsAndCommas {
     fn is_default(&self) -> bool {
-        self.yul_identifier_path_repeated.is_default() && self.comma_repeated.is_default()
+        self.yul_identifier_paths.is_default() && self.commas.is_default()
     }
 }
 impl yul_assignment_statement::YulAssignmentStatement {
     pub fn from_parse(
-        ((yul_identifier_path_repeated_and_comma_repeated, colon_equal), yul_expression): (
+        ((yul_identifier_paths_and_commas, colon_equal), yul_expression): (
             (
-                yul_assignment_statement::YulIdentifierPathRepeatedAndCommaRepeated,
+                yul_assignment_statement::YulIdentifierPathsAndCommas,
                 FixedSizeTerminalWithTrivia<2usize>,
             ),
             YulExpression,
         ),
     ) -> Self {
         Self {
-            yul_identifier_path_repeated_and_comma_repeated,
+            yul_identifier_paths_and_commas,
             colon_equal,
             yul_expression,
         }
@@ -2496,7 +2465,7 @@ impl yul_switch_statement::Sequence0 {
 }
 impl yul_switch_statement::YulSwitchStatement {
     pub fn from_parse(
-        ((switch, yul_expression), sequence_0_repeated): (
+        ((switch, yul_expression), sequence_0s): (
             (FixedSizeTerminalWithTrivia<6usize>, YulExpression),
             Vec<yul_switch_statement::Sequence0>,
         ),
@@ -2504,22 +2473,22 @@ impl yul_switch_statement::YulSwitchStatement {
         Self {
             switch,
             yul_expression,
-            sequence_0_repeated,
+            sequence_0s,
         }
     }
 }
 
-impl Default for yul_variable_declaration::YulIdentifierPathRepeatedAndCommaRepeated {
+impl Default for yul_variable_declaration::YulIdentifierPathsAndCommas {
     fn default() -> Self {
         Self {
-            yul_identifier_path_repeated: Default::default(),
-            comma_repeated: Default::default(),
+            yul_identifier_paths: Default::default(),
+            commas: Default::default(),
         }
     }
 }
-impl DefaultTest for yul_variable_declaration::YulIdentifierPathRepeatedAndCommaRepeated {
+impl DefaultTest for yul_variable_declaration::YulIdentifierPathsAndCommas {
     fn is_default(&self) -> bool {
-        self.yul_identifier_path_repeated.is_default() && self.comma_repeated.is_default()
+        self.yul_identifier_paths.is_default() && self.commas.is_default()
     }
 }
 impl yul_variable_declaration::Sequence0 {
@@ -2534,17 +2503,17 @@ impl yul_variable_declaration::Sequence0 {
 }
 impl yul_variable_declaration::YulVariableDeclaration {
     pub fn from_parse(
-        ((r#let, yul_identifier_path_repeated_and_comma_repeated), sequence_0): (
+        ((r#let, yul_identifier_paths_and_commas), sequence_0): (
             (
                 FixedSizeTerminalWithTrivia<3usize>,
-                yul_variable_declaration::YulIdentifierPathRepeatedAndCommaRepeated,
+                yul_variable_declaration::YulIdentifierPathsAndCommas,
             ),
             Option<yul_variable_declaration::Sequence0>,
         ),
     ) -> Self {
         Self {
             r#let,
-            yul_identifier_path_repeated_and_comma_repeated,
+            yul_identifier_paths_and_commas,
             sequence_0,
         }
     }
@@ -2553,7 +2522,7 @@ impl Default for yul_variable_declaration::YulVariableDeclaration {
     fn default() -> Self {
         Self {
             r#let: Default::default(),
-            yul_identifier_path_repeated_and_comma_repeated: Default::default(),
+            yul_identifier_paths_and_commas: Default::default(),
             sequence_0: Default::default(),
         }
     }
@@ -2561,9 +2530,7 @@ impl Default for yul_variable_declaration::YulVariableDeclaration {
 impl DefaultTest for yul_variable_declaration::YulVariableDeclaration {
     fn is_default(&self) -> bool {
         self.r#let.is_default()
-            && self
-                .yul_identifier_path_repeated_and_comma_repeated
-                .is_default()
+            && self.yul_identifier_paths_and_commas.is_default()
             && self.sequence_0.is_default()
     }
 }
@@ -2777,14 +2744,14 @@ impl type_name::OpenBracketAndExpressionAndCloseBracket {
 }
 impl type_name::TypeName {
     pub fn from_parse(
-        (choices_0, open_bracket_and_expression_and_close_bracket_repeated): (
+        (choices_0, open_bracket_and_expression_and_close_brackets): (
             Box<type_name::Choices0>,
             Vec<type_name::OpenBracketAndExpressionAndCloseBracket>,
         ),
     ) -> Self {
         Self {
             choices_0,
-            open_bracket_and_expression_and_close_bracket_repeated,
+            open_bracket_and_expression_and_close_brackets,
         }
     }
 }
@@ -2813,29 +2780,29 @@ impl event_parameter::EventParameter {
     }
 }
 
-impl Default for inheritance_specifier_list::InheritanceSpecifierRepeatedAndCommaRepeated {
+impl Default for inheritance_specifier_list::InheritanceSpecifiersAndCommas {
     fn default() -> Self {
         Self {
-            inheritance_specifier_repeated: Default::default(),
-            comma_repeated: Default::default(),
+            inheritance_specifiers: Default::default(),
+            commas: Default::default(),
         }
     }
 }
-impl DefaultTest for inheritance_specifier_list::InheritanceSpecifierRepeatedAndCommaRepeated {
+impl DefaultTest for inheritance_specifier_list::InheritanceSpecifiersAndCommas {
     fn is_default(&self) -> bool {
-        self.inheritance_specifier_repeated.is_default() && self.comma_repeated.is_default()
+        self.inheritance_specifiers.is_default() && self.commas.is_default()
     }
 }
 impl inheritance_specifier_list::InheritanceSpecifierList {
     pub fn from_parse(
-        (is, inheritance_specifier_repeated_and_comma_repeated): (
+        (is, inheritance_specifiers_and_commas): (
             FixedSizeTerminalWithTrivia<2usize>,
-            inheritance_specifier_list::InheritanceSpecifierRepeatedAndCommaRepeated,
+            inheritance_specifier_list::InheritanceSpecifiersAndCommas,
         ),
     ) -> Self {
         Self {
             is,
-            inheritance_specifier_repeated_and_comma_repeated,
+            inheritance_specifiers_and_commas,
         }
     }
 }
@@ -2843,16 +2810,13 @@ impl Default for inheritance_specifier_list::InheritanceSpecifierList {
     fn default() -> Self {
         Self {
             is: Default::default(),
-            inheritance_specifier_repeated_and_comma_repeated: Default::default(),
+            inheritance_specifiers_and_commas: Default::default(),
         }
     }
 }
 impl DefaultTest for inheritance_specifier_list::InheritanceSpecifierList {
     fn is_default(&self) -> bool {
-        self.is.is_default()
-            && self
-                .inheritance_specifier_repeated_and_comma_repeated
-                .is_default()
+        self.is.is_default() && self.inheritance_specifiers_and_commas.is_default()
     }
 }
 
@@ -2899,52 +2863,48 @@ impl type_expression::TypeExpression {
     }
 }
 
-impl Default for using_directive::IdentifierPathRepeatedAndCommaRepeated {
+impl Default for using_directive::IdentifierPathsAndCommas {
     fn default() -> Self {
         Self {
-            identifier_path_repeated: Default::default(),
-            comma_repeated: Default::default(),
+            identifier_paths: Default::default(),
+            commas: Default::default(),
         }
     }
 }
-impl DefaultTest for using_directive::IdentifierPathRepeatedAndCommaRepeated {
+impl DefaultTest for using_directive::IdentifierPathsAndCommas {
     fn is_default(&self) -> bool {
-        self.identifier_path_repeated.is_default() && self.comma_repeated.is_default()
+        self.identifier_paths.is_default() && self.commas.is_default()
     }
 }
-impl Default for using_directive::OpenBraceAndIdentifierPathRepeatedAndCommaRepeatedAndCloseBrace {
+impl Default for using_directive::OpenBraceAndIdentifierPathsAndCommasAndCloseBrace {
     fn default() -> Self {
         Self {
             open_brace: Default::default(),
-            identifier_path_repeated_and_comma_repeated: Default::default(),
+            identifier_paths_and_commas: Default::default(),
             close_brace: Default::default(),
         }
     }
 }
-impl DefaultTest
-    for using_directive::OpenBraceAndIdentifierPathRepeatedAndCommaRepeatedAndCloseBrace
-{
+impl DefaultTest for using_directive::OpenBraceAndIdentifierPathsAndCommasAndCloseBrace {
     fn is_default(&self) -> bool {
         self.open_brace.is_default()
-            && self
-                .identifier_path_repeated_and_comma_repeated
-                .is_default()
+            && self.identifier_paths_and_commas.is_default()
             && self.close_brace.is_default()
     }
 }
-impl using_directive::OpenBraceAndIdentifierPathRepeatedAndCommaRepeatedAndCloseBrace {
+impl using_directive::OpenBraceAndIdentifierPathsAndCommasAndCloseBrace {
     pub fn from_parse(
-        ((open_brace, identifier_path_repeated_and_comma_repeated), close_brace): (
+        ((open_brace, identifier_paths_and_commas), close_brace): (
             (
                 FixedSizeTerminalWithTrivia<1usize>,
-                using_directive::IdentifierPathRepeatedAndCommaRepeated,
+                using_directive::IdentifierPathsAndCommas,
             ),
             FixedSizeTerminalWithTrivia<1usize>,
         ),
     ) -> Self {
         Self {
             open_brace,
-            identifier_path_repeated_and_comma_repeated,
+            identifier_paths_and_commas,
             close_brace,
         }
     }
@@ -2983,7 +2943,7 @@ impl Default for yul_block::YulBlock {
     fn default() -> Self {
         Self {
             open_brace: Default::default(),
-            yul_statement_repeated: Default::default(),
+            yul_statements: Default::default(),
             close_brace: Default::default(),
         }
     }
@@ -2991,20 +2951,20 @@ impl Default for yul_block::YulBlock {
 impl DefaultTest for yul_block::YulBlock {
     fn is_default(&self) -> bool {
         self.open_brace.is_default()
-            && self.yul_statement_repeated.is_default()
+            && self.yul_statements.is_default()
             && self.close_brace.is_default()
     }
 }
 impl yul_block::YulBlock {
     pub fn from_parse(
-        ((open_brace, yul_statement_repeated), close_brace): (
+        ((open_brace, yul_statements), close_brace): (
             (FixedSizeTerminalWithTrivia<1usize>, Vec<YulStatement>),
             FixedSizeTerminalWithTrivia<1usize>,
         ),
     ) -> Self {
         Self {
             open_brace,
-            yul_statement_repeated,
+            yul_statements,
             close_brace,
         }
     }
@@ -3050,52 +3010,48 @@ impl DefaultTest for assembly_statement::AssemblyStatement {
     }
 }
 
-impl Default for error_definition::ErrorParameterRepeatedAndCommaRepeated {
+impl Default for error_definition::ErrorParametersAndCommas {
     fn default() -> Self {
         Self {
-            error_parameter_repeated: Default::default(),
-            comma_repeated: Default::default(),
+            error_parameters: Default::default(),
+            commas: Default::default(),
         }
     }
 }
-impl DefaultTest for error_definition::ErrorParameterRepeatedAndCommaRepeated {
+impl DefaultTest for error_definition::ErrorParametersAndCommas {
     fn is_default(&self) -> bool {
-        self.error_parameter_repeated.is_default() && self.comma_repeated.is_default()
+        self.error_parameters.is_default() && self.commas.is_default()
     }
 }
-impl Default for error_definition::OpenParenAndErrorParameterRepeatedAndCommaRepeatedAndCloseParen {
+impl Default for error_definition::OpenParenAndErrorParametersAndCommasAndCloseParen {
     fn default() -> Self {
         Self {
             open_paren: Default::default(),
-            error_parameter_repeated_and_comma_repeated: Default::default(),
+            error_parameters_and_commas: Default::default(),
             close_paren: Default::default(),
         }
     }
 }
-impl DefaultTest
-    for error_definition::OpenParenAndErrorParameterRepeatedAndCommaRepeatedAndCloseParen
-{
+impl DefaultTest for error_definition::OpenParenAndErrorParametersAndCommasAndCloseParen {
     fn is_default(&self) -> bool {
         self.open_paren.is_default()
-            && self
-                .error_parameter_repeated_and_comma_repeated
-                .is_default()
+            && self.error_parameters_and_commas.is_default()
             && self.close_paren.is_default()
     }
 }
-impl error_definition::OpenParenAndErrorParameterRepeatedAndCommaRepeatedAndCloseParen {
+impl error_definition::OpenParenAndErrorParametersAndCommasAndCloseParen {
     pub fn from_parse(
-        ((open_paren, error_parameter_repeated_and_comma_repeated), close_paren): (
+        ((open_paren, error_parameters_and_commas), close_paren): (
             (
                 FixedSizeTerminalWithTrivia<1usize>,
-                Option<error_definition::ErrorParameterRepeatedAndCommaRepeated>,
+                Option<error_definition::ErrorParametersAndCommas>,
             ),
             FixedSizeTerminalWithTrivia<1usize>,
         ),
     ) -> Self {
         Self {
             open_paren,
-            error_parameter_repeated_and_comma_repeated,
+            error_parameters_and_commas,
             close_paren,
         }
     }
@@ -3103,15 +3059,12 @@ impl error_definition::OpenParenAndErrorParameterRepeatedAndCommaRepeatedAndClos
 impl error_definition::ErrorDefinition {
     pub fn from_parse(
         (
-            (
-                (error, identifier),
-                open_paren_and_error_parameter_repeated_and_comma_repeated_and_close_paren,
-            ),
+            ((error, identifier), open_paren_and_error_parameters_and_commas_and_close_paren),
             semicolon,
         ): (
             (
                 (FixedSizeTerminalWithTrivia<5usize>, identifier::WithTrivia),
-                error_definition::OpenParenAndErrorParameterRepeatedAndCommaRepeatedAndCloseParen,
+                error_definition::OpenParenAndErrorParametersAndCommasAndCloseParen,
             ),
             FixedSizeTerminalWithTrivia<1>,
         ),
@@ -3119,7 +3072,7 @@ impl error_definition::ErrorDefinition {
         Self {
             error,
             identifier,
-            open_paren_and_error_parameter_repeated_and_comma_repeated_and_close_paren,
+            open_paren_and_error_parameters_and_commas_and_close_paren,
             semicolon,
         }
     }
@@ -3129,8 +3082,7 @@ impl Default for error_definition::ErrorDefinition {
         Self {
             error: Default::default(),
             identifier: Default::default(),
-            open_paren_and_error_parameter_repeated_and_comma_repeated_and_close_paren:
-                Default::default(),
+            open_paren_and_error_parameters_and_commas_and_close_paren: Default::default(),
             semicolon: Default::default(),
         }
     }
@@ -3140,70 +3092,81 @@ impl DefaultTest for error_definition::ErrorDefinition {
         self.error.is_default()
             && self.identifier.is_default()
             && self
-                .open_paren_and_error_parameter_repeated_and_comma_repeated_and_close_paren
+                .open_paren_and_error_parameters_and_commas_and_close_paren
                 .is_default()
             && self.semicolon.is_default()
     }
 }
 
-impl Default for event_definition::EventParameterRepeatedAndCommaRepeated {
+impl Default for event_definition::EventParametersAndCommas {
     fn default() -> Self {
         Self {
-            event_parameter_repeated: Default::default(),
-            comma_repeated: Default::default(),
+            event_parameters: Default::default(),
+            commas: Default::default(),
         }
     }
 }
-impl DefaultTest for event_definition::EventParameterRepeatedAndCommaRepeated {
+impl DefaultTest for event_definition::EventParametersAndCommas {
     fn is_default(&self) -> bool {
-        self.event_parameter_repeated.is_default() && self.comma_repeated.is_default()
+        self.event_parameters.is_default() && self.commas.is_default()
     }
 }
-impl Default for event_definition::OpenParenAndEventParameterRepeatedAndCommaRepeatedAndCloseParen {
+impl Default for event_definition::OpenParenAndEventParametersAndCommasAndCloseParen {
     fn default() -> Self {
         Self {
             open_paren: Default::default(),
-            event_parameter_repeated_and_comma_repeated: Default::default(),
+            event_parameters_and_commas: Default::default(),
             close_paren: Default::default(),
         }
     }
 }
-impl DefaultTest
-    for event_definition::OpenParenAndEventParameterRepeatedAndCommaRepeatedAndCloseParen
-{
+impl DefaultTest for event_definition::OpenParenAndEventParametersAndCommasAndCloseParen {
     fn is_default(&self) -> bool {
         self.open_paren.is_default()
-            && self
-                .event_parameter_repeated_and_comma_repeated
-                .is_default()
+            && self.event_parameters_and_commas.is_default()
             && self.close_paren.is_default()
     }
 }
-impl event_definition::OpenParenAndEventParameterRepeatedAndCommaRepeatedAndCloseParen {
+impl event_definition::OpenParenAndEventParametersAndCommasAndCloseParen {
     pub fn from_parse(
-        ((open_paren, event_parameter_repeated_and_comma_repeated), close_paren): (
+        ((open_paren, event_parameters_and_commas), close_paren): (
             (
                 FixedSizeTerminalWithTrivia<1usize>,
-                Option<event_definition::EventParameterRepeatedAndCommaRepeated>,
+                Option<event_definition::EventParametersAndCommas>,
             ),
             FixedSizeTerminalWithTrivia<1usize>,
         ),
     ) -> Self {
         Self {
             open_paren,
-            event_parameter_repeated_and_comma_repeated,
+            event_parameters_and_commas,
             close_paren,
         }
     }
 }
 impl event_definition::EventDefinition {
     pub fn from_parse(
-        ((((event , identifier) , open_paren_and_event_parameter_repeated_and_comma_repeated_and_close_paren) , anonymous) , semicolon) : ((((FixedSizeTerminalWithTrivia < 5usize > , identifier :: WithTrivia) , event_definition :: OpenParenAndEventParameterRepeatedAndCommaRepeatedAndCloseParen) , Option < FixedSizeTerminalWithTrivia < 9usize > >) , FixedSizeTerminalWithTrivia < 1 >),
+        (
+            (
+                ((event, identifier), open_paren_and_event_parameters_and_commas_and_close_paren),
+                anonymous,
+            ),
+            semicolon,
+        ): (
+            (
+                (
+                    (FixedSizeTerminalWithTrivia<5usize>, identifier::WithTrivia),
+                    event_definition::OpenParenAndEventParametersAndCommasAndCloseParen,
+                ),
+                Option<FixedSizeTerminalWithTrivia<9usize>>,
+            ),
+            FixedSizeTerminalWithTrivia<1>,
+        ),
     ) -> Self {
         Self {
             event,
             identifier,
-            open_paren_and_event_parameter_repeated_and_comma_repeated_and_close_paren,
+            open_paren_and_event_parameters_and_commas_and_close_paren,
             anonymous,
             semicolon,
         }
@@ -3214,8 +3177,7 @@ impl Default for event_definition::EventDefinition {
         Self {
             event: Default::default(),
             identifier: Default::default(),
-            open_paren_and_event_parameter_repeated_and_comma_repeated_and_close_paren:
-                Default::default(),
+            open_paren_and_event_parameters_and_commas_and_close_paren: Default::default(),
             anonymous: Default::default(),
             semicolon: Default::default(),
         }
@@ -3226,54 +3188,54 @@ impl DefaultTest for event_definition::EventDefinition {
         self.event.is_default()
             && self.identifier.is_default()
             && self
-                .open_paren_and_event_parameter_repeated_and_comma_repeated_and_close_paren
+                .open_paren_and_event_parameters_and_commas_and_close_paren
                 .is_default()
             && self.anonymous.is_default()
             && self.semicolon.is_default()
     }
 }
 
-impl Default for struct_definition::OpenBraceAndStructMemberRepeatedAndCloseBrace {
+impl Default for struct_definition::OpenBraceAndStructMembersAndCloseBrace {
     fn default() -> Self {
         Self {
             open_brace: Default::default(),
-            struct_member_repeated: Default::default(),
+            struct_members: Default::default(),
             close_brace: Default::default(),
         }
     }
 }
-impl DefaultTest for struct_definition::OpenBraceAndStructMemberRepeatedAndCloseBrace {
+impl DefaultTest for struct_definition::OpenBraceAndStructMembersAndCloseBrace {
     fn is_default(&self) -> bool {
         self.open_brace.is_default()
-            && self.struct_member_repeated.is_default()
+            && self.struct_members.is_default()
             && self.close_brace.is_default()
     }
 }
-impl struct_definition::OpenBraceAndStructMemberRepeatedAndCloseBrace {
+impl struct_definition::OpenBraceAndStructMembersAndCloseBrace {
     pub fn from_parse(
-        ((open_brace, struct_member_repeated), close_brace): (
+        ((open_brace, struct_members), close_brace): (
             (FixedSizeTerminalWithTrivia<1usize>, Vec<StructMember>),
             FixedSizeTerminalWithTrivia<1usize>,
         ),
     ) -> Self {
         Self {
             open_brace,
-            struct_member_repeated,
+            struct_members,
             close_brace,
         }
     }
 }
 impl struct_definition::StructDefinition {
     pub fn from_parse(
-        ((r#struct, identifier), open_brace_and_struct_member_repeated_and_close_brace): (
+        ((r#struct, identifier), open_brace_and_struct_members_and_close_brace): (
             (FixedSizeTerminalWithTrivia<6usize>, identifier::WithTrivia),
-            struct_definition::OpenBraceAndStructMemberRepeatedAndCloseBrace,
+            struct_definition::OpenBraceAndStructMembersAndCloseBrace,
         ),
     ) -> Self {
         Self {
             r#struct,
             identifier,
-            open_brace_and_struct_member_repeated_and_close_brace,
+            open_brace_and_struct_members_and_close_brace,
         }
     }
 }
@@ -3282,7 +3244,7 @@ impl Default for struct_definition::StructDefinition {
         Self {
             r#struct: Default::default(),
             identifier: Default::default(),
-            open_brace_and_struct_member_repeated_and_close_brace: Default::default(),
+            open_brace_and_struct_members_and_close_brace: Default::default(),
         }
     }
 }
@@ -3291,7 +3253,7 @@ impl DefaultTest for struct_definition::StructDefinition {
         self.r#struct.is_default()
             && self.identifier.is_default()
             && self
-                .open_brace_and_struct_member_repeated_and_close_brace
+                .open_brace_and_struct_members_and_close_brace
                 .is_default()
     }
 }
@@ -3404,63 +3366,65 @@ impl member_access_expression::Anonexpfrag4 {
     }
 }
 
-impl Default for function_call_expression::NamedArgumentRepeatedAndCommaRepeated {
+impl Default for function_call_expression::NamedArgumentsAndCommas {
     fn default() -> Self {
         Self {
-            named_argument_repeated: Default::default(),
-            comma_repeated: Default::default(),
+            named_arguments: Default::default(),
+            commas: Default::default(),
         }
     }
 }
-impl DefaultTest for function_call_expression::NamedArgumentRepeatedAndCommaRepeated {
+impl DefaultTest for function_call_expression::NamedArgumentsAndCommas {
     fn is_default(&self) -> bool {
-        self.named_argument_repeated.is_default() && self.comma_repeated.is_default()
+        self.named_arguments.is_default() && self.commas.is_default()
     }
 }
-impl Default
-    for function_call_expression::OpenBraceAndNamedArgumentRepeatedAndCommaRepeatedAndCloseBrace
-{
+impl Default for function_call_expression::OpenBraceAndNamedArgumentsAndCommasAndCloseBrace {
     fn default() -> Self {
         Self {
             open_brace: Default::default(),
-            named_argument_repeated_and_comma_repeated: Default::default(),
+            named_arguments_and_commas: Default::default(),
             close_brace: Default::default(),
         }
     }
 }
-impl DefaultTest
-    for function_call_expression::OpenBraceAndNamedArgumentRepeatedAndCommaRepeatedAndCloseBrace
-{
+impl DefaultTest for function_call_expression::OpenBraceAndNamedArgumentsAndCommasAndCloseBrace {
     fn is_default(&self) -> bool {
         self.open_brace.is_default()
-            && self.named_argument_repeated_and_comma_repeated.is_default()
+            && self.named_arguments_and_commas.is_default()
             && self.close_brace.is_default()
     }
 }
-impl function_call_expression::OpenBraceAndNamedArgumentRepeatedAndCommaRepeatedAndCloseBrace {
+impl function_call_expression::OpenBraceAndNamedArgumentsAndCommasAndCloseBrace {
     pub fn from_parse(
-        ((open_brace, named_argument_repeated_and_comma_repeated), close_brace): (
+        ((open_brace, named_arguments_and_commas), close_brace): (
             (
                 FixedSizeTerminalWithTrivia<1usize>,
-                function_call_expression::NamedArgumentRepeatedAndCommaRepeated,
+                function_call_expression::NamedArgumentsAndCommas,
             ),
             FixedSizeTerminalWithTrivia<1usize>,
         ),
     ) -> Self {
         Self {
             open_brace,
-            named_argument_repeated_and_comma_repeated,
+            named_arguments_and_commas,
             close_brace,
         }
     }
 }
 impl function_call_expression::Anonexpfrag4 {
     pub fn from_parse(
-        ((expression , open_brace_and_named_argument_repeated_and_comma_repeated_and_close_brace) , argument_list) : ((Expression , Option < function_call_expression :: OpenBraceAndNamedArgumentRepeatedAndCommaRepeatedAndCloseBrace >) , ArgumentList),
+        ((expression, open_brace_and_named_arguments_and_commas_and_close_brace), argument_list): (
+            (
+                Expression,
+                Option<function_call_expression::OpenBraceAndNamedArgumentsAndCommasAndCloseBrace>,
+            ),
+            ArgumentList,
+        ),
     ) -> Self {
         Self {
             expression,
-            open_brace_and_named_argument_repeated_and_comma_repeated_and_close_brace,
+            open_brace_and_named_arguments_and_commas_and_close_brace,
             argument_list,
         }
     }
@@ -3851,7 +3815,7 @@ impl state_variable_declaration::Sequence0 {
 }
 impl state_variable_declaration::StateVariableDeclaration {
     pub fn from_parse(
-        ((((type_name, state_variable_attribute_repeated), identifier), sequence_0), semicolon): (
+        ((((type_name, state_variable_attributes), identifier), sequence_0), semicolon): (
             (
                 (
                     (TypeName, Vec<StateVariableAttribute>),
@@ -3864,7 +3828,7 @@ impl state_variable_declaration::StateVariableDeclaration {
     ) -> Self {
         Self {
             type_name,
-            state_variable_attribute_repeated,
+            state_variable_attributes,
             identifier,
             sequence_0,
             semicolon,
@@ -3897,7 +3861,7 @@ impl DefaultTest for try_statement::Sequence0 {
 }
 impl try_statement::TryStatement {
     pub fn from_parse(
-        ((((r#try, expression), sequence_0), block), catch_clause_repeated): (
+        ((((r#try, expression), sequence_0), block), catch_clauses): (
             (
                 (
                     (FixedSizeTerminalWithTrivia<3usize>, Expression),
@@ -3913,7 +3877,7 @@ impl try_statement::TryStatement {
             expression,
             sequence_0,
             block,
-            catch_clause_repeated,
+            catch_clauses,
         }
     }
 }
@@ -3939,62 +3903,67 @@ impl DefaultTest for tuple_deconstruction_statement::Sequence0 {
         self.type_name.is_default() && self.identifier.is_default()
     }
 }
-impl Default for tuple_deconstruction_statement::Sequence0RepeatedAndCommaRepeated {
+impl Default for tuple_deconstruction_statement::Sequence0SAndCommas {
     fn default() -> Self {
         Self {
-            sequence_0_repeated: Default::default(),
-            comma_repeated: Default::default(),
+            sequence_0s: Default::default(),
+            commas: Default::default(),
         }
     }
 }
-impl DefaultTest for tuple_deconstruction_statement::Sequence0RepeatedAndCommaRepeated {
+impl DefaultTest for tuple_deconstruction_statement::Sequence0SAndCommas {
     fn is_default(&self) -> bool {
-        self.sequence_0_repeated.is_default() && self.comma_repeated.is_default()
+        self.sequence_0s.is_default() && self.commas.is_default()
     }
 }
-impl Default
-    for tuple_deconstruction_statement::OpenParenAndSequence0RepeatedAndCommaRepeatedAndCloseParen
-{
+impl Default for tuple_deconstruction_statement::OpenParenAndSequence0SAndCommasAndCloseParen {
     fn default() -> Self {
         Self {
             open_paren: Default::default(),
-            sequence_0_repeated_and_comma_repeated: Default::default(),
+            sequence_0s_and_commas: Default::default(),
             close_paren: Default::default(),
         }
     }
 }
-impl DefaultTest
-    for tuple_deconstruction_statement::OpenParenAndSequence0RepeatedAndCommaRepeatedAndCloseParen
-{
+impl DefaultTest for tuple_deconstruction_statement::OpenParenAndSequence0SAndCommasAndCloseParen {
     fn is_default(&self) -> bool {
         self.open_paren.is_default()
-            && self.sequence_0_repeated_and_comma_repeated.is_default()
+            && self.sequence_0s_and_commas.is_default()
             && self.close_paren.is_default()
     }
 }
-impl tuple_deconstruction_statement::OpenParenAndSequence0RepeatedAndCommaRepeatedAndCloseParen {
+impl tuple_deconstruction_statement::OpenParenAndSequence0SAndCommasAndCloseParen {
     pub fn from_parse(
-        ((open_paren, sequence_0_repeated_and_comma_repeated), close_paren): (
+        ((open_paren, sequence_0s_and_commas), close_paren): (
             (
                 FixedSizeTerminalWithTrivia<1usize>,
-                Option<tuple_deconstruction_statement::Sequence0RepeatedAndCommaRepeated>,
+                Option<tuple_deconstruction_statement::Sequence0SAndCommas>,
             ),
             FixedSizeTerminalWithTrivia<1usize>,
         ),
     ) -> Self {
         Self {
             open_paren,
-            sequence_0_repeated_and_comma_repeated,
+            sequence_0s_and_commas,
             close_paren,
         }
     }
 }
 impl tuple_deconstruction_statement::TupleDeconstructionStatement {
     pub fn from_parse(
-        (((open_paren_and_sequence_0_repeated_and_comma_repeated_and_close_paren , equal) , expression) , semicolon) : (((tuple_deconstruction_statement :: OpenParenAndSequence0RepeatedAndCommaRepeatedAndCloseParen , FixedSizeTerminalWithTrivia < 1 >) , Expression) , FixedSizeTerminalWithTrivia < 1 >),
+        (((open_paren_and_sequence_0s_and_commas_and_close_paren, equal), expression), semicolon): (
+            (
+                (
+                    tuple_deconstruction_statement::OpenParenAndSequence0SAndCommasAndCloseParen,
+                    FixedSizeTerminalWithTrivia<1>,
+                ),
+                Expression,
+            ),
+            FixedSizeTerminalWithTrivia<1>,
+        ),
     ) -> Self {
         Self {
-            open_paren_and_sequence_0_repeated_and_comma_repeated_and_close_paren,
+            open_paren_and_sequence_0s_and_commas_and_close_paren,
             equal,
             expression,
             semicolon,
@@ -4112,7 +4081,7 @@ impl Default for block::Block {
     fn default() -> Self {
         Self {
             open_brace: Default::default(),
-            choices_0_repeated: Default::default(),
+            choices_0s: Default::default(),
             close_brace: Default::default(),
         }
     }
@@ -4120,13 +4089,13 @@ impl Default for block::Block {
 impl DefaultTest for block::Block {
     fn is_default(&self) -> bool {
         self.open_brace.is_default()
-            && self.choices_0_repeated.is_default()
+            && self.choices_0s.is_default()
             && self.close_brace.is_default()
     }
 }
 impl block::Block {
     pub fn from_parse(
-        ((open_brace, choices_0_repeated), close_brace): (
+        ((open_brace, choices_0s), close_brace): (
             (
                 FixedSizeTerminalWithTrivia<1usize>,
                 Vec<Box<block::Choices0>>,
@@ -4136,7 +4105,7 @@ impl block::Block {
     ) -> Self {
         Self {
             open_brace,
-            choices_0_repeated,
+            choices_0s,
             close_brace,
         }
     }
@@ -4144,7 +4113,7 @@ impl block::Block {
 
 impl constructor_definition::ConstructorDefinition {
     pub fn from_parse(
-        (((constructor, parameter_list), constructor_attribute_repeated), block): (
+        (((constructor, parameter_list), constructor_attributes), block): (
             (
                 (FixedSizeTerminalWithTrivia<11usize>, ParameterList),
                 Vec<ConstructorAttribute>,
@@ -4155,7 +4124,7 @@ impl constructor_definition::ConstructorDefinition {
         Self {
             constructor,
             parameter_list,
-            constructor_attribute_repeated,
+            constructor_attributes,
             block,
         }
     }
@@ -4165,7 +4134,7 @@ impl Default for constructor_definition::ConstructorDefinition {
         Self {
             constructor: Default::default(),
             parameter_list: Default::default(),
-            constructor_attribute_repeated: Default::default(),
+            constructor_attributes: Default::default(),
             block: Default::default(),
         }
     }
@@ -4174,7 +4143,7 @@ impl DefaultTest for constructor_definition::ConstructorDefinition {
     fn is_default(&self) -> bool {
         self.constructor.is_default()
             && self.parameter_list.is_default()
-            && self.constructor_attribute_repeated.is_default()
+            && self.constructor_attributes.is_default()
             && self.block.is_default()
     }
 }
@@ -4204,10 +4173,7 @@ impl DefaultTest for fallback_function_definition::Sequence0 {
 }
 impl fallback_function_definition::FallbackFunctionDefinition {
     pub fn from_parse(
-        (
-            (((fallback, parameter_list), fallback_function_attribute_repeated), sequence_0),
-            choices_1,
-        ): (
+        ((((fallback, parameter_list), fallback_function_attributes), sequence_0), choices_1): (
             (
                 (
                     (FixedSizeTerminalWithTrivia<8usize>, ParameterList),
@@ -4221,7 +4187,7 @@ impl fallback_function_definition::FallbackFunctionDefinition {
         Self {
             fallback,
             parameter_list,
-            fallback_function_attribute_repeated,
+            fallback_function_attributes,
             sequence_0,
             choices_1,
         }
@@ -4253,10 +4219,7 @@ impl DefaultTest for function_definition::Sequence1 {
 }
 impl function_definition::FunctionDefinition {
     pub fn from_parse(
-        (
-            ((((function, choices_0), parameter_list), function_attribute_repeated), sequence_1),
-            choices_2,
-        ): (
+        (((((function, choices_0), parameter_list), function_attributes), sequence_1), choices_2): (
             (
                 (
                     (
@@ -4277,7 +4240,7 @@ impl function_definition::FunctionDefinition {
             function,
             choices_0,
             parameter_list,
-            function_attribute_repeated,
+            function_attributes,
             sequence_1,
             choices_2,
         }
@@ -4286,7 +4249,7 @@ impl function_definition::FunctionDefinition {
 
 impl modifier_definition::ModifierDefinition {
     pub fn from_parse(
-        ((((modifier, identifier), parameter_list), modifier_attribute_repeated), choices_0): (
+        ((((modifier, identifier), parameter_list), modifier_attributes), choices_0): (
             (
                 (
                     (FixedSizeTerminalWithTrivia<8usize>, identifier::WithTrivia),
@@ -4301,7 +4264,7 @@ impl modifier_definition::ModifierDefinition {
             modifier,
             identifier,
             parameter_list,
-            modifier_attribute_repeated,
+            modifier_attributes,
             choices_0,
         }
     }
@@ -4309,7 +4272,7 @@ impl modifier_definition::ModifierDefinition {
 
 impl receive_function_definition::ReceiveFunctionDefinition {
     pub fn from_parse(
-        (((receive, parameter_list), receive_function_attribute_repeated), choices_0): (
+        (((receive, parameter_list), receive_function_attributes), choices_0): (
             (
                 (FixedSizeTerminalWithTrivia<7usize>, ParameterList),
                 Vec<ReceiveFunctionAttribute>,
@@ -4320,31 +4283,31 @@ impl receive_function_definition::ReceiveFunctionDefinition {
         Self {
             receive,
             parameter_list,
-            receive_function_attribute_repeated,
+            receive_function_attributes,
             choices_0,
         }
     }
 }
 
-impl Default for contract_definition::OpenBraceAndContractBodyElementRepeatedAndCloseBrace {
+impl Default for contract_definition::OpenBraceAndContractBodyElementsAndCloseBrace {
     fn default() -> Self {
         Self {
             open_brace: Default::default(),
-            contract_body_element_repeated: Default::default(),
+            contract_body_elements: Default::default(),
             close_brace: Default::default(),
         }
     }
 }
-impl DefaultTest for contract_definition::OpenBraceAndContractBodyElementRepeatedAndCloseBrace {
+impl DefaultTest for contract_definition::OpenBraceAndContractBodyElementsAndCloseBrace {
     fn is_default(&self) -> bool {
         self.open_brace.is_default()
-            && self.contract_body_element_repeated.is_default()
+            && self.contract_body_elements.is_default()
             && self.close_brace.is_default()
     }
 }
-impl contract_definition::OpenBraceAndContractBodyElementRepeatedAndCloseBrace {
+impl contract_definition::OpenBraceAndContractBodyElementsAndCloseBrace {
     pub fn from_parse(
-        ((open_brace, contract_body_element_repeated), close_brace): (
+        ((open_brace, contract_body_elements), close_brace): (
             (
                 FixedSizeTerminalWithTrivia<1usize>,
                 Vec<ContractBodyElement>,
@@ -4354,7 +4317,7 @@ impl contract_definition::OpenBraceAndContractBodyElementRepeatedAndCloseBrace {
     ) -> Self {
         Self {
             open_brace,
-            contract_body_element_repeated,
+            contract_body_elements,
             close_brace,
         }
     }
@@ -4363,7 +4326,7 @@ impl contract_definition::ContractDefinition {
     pub fn from_parse(
         (
             (((r#abstract, contract), identifier), inheritance_specifier_list),
-            open_brace_and_contract_body_element_repeated_and_close_brace,
+            open_brace_and_contract_body_elements_and_close_brace,
         ): (
             (
                 (
@@ -4375,7 +4338,7 @@ impl contract_definition::ContractDefinition {
                 ),
                 Option<InheritanceSpecifierList>,
             ),
-            contract_definition::OpenBraceAndContractBodyElementRepeatedAndCloseBrace,
+            contract_definition::OpenBraceAndContractBodyElementsAndCloseBrace,
         ),
     ) -> Self {
         Self {
@@ -4383,7 +4346,7 @@ impl contract_definition::ContractDefinition {
             contract,
             identifier,
             inheritance_specifier_list,
-            open_brace_and_contract_body_element_repeated_and_close_brace,
+            open_brace_and_contract_body_elements_and_close_brace,
         }
     }
 }
@@ -4394,7 +4357,7 @@ impl Default for contract_definition::ContractDefinition {
             contract: Default::default(),
             identifier: Default::default(),
             inheritance_specifier_list: Default::default(),
-            open_brace_and_contract_body_element_repeated_and_close_brace: Default::default(),
+            open_brace_and_contract_body_elements_and_close_brace: Default::default(),
         }
     }
 }
@@ -4405,30 +4368,30 @@ impl DefaultTest for contract_definition::ContractDefinition {
             && self.identifier.is_default()
             && self.inheritance_specifier_list.is_default()
             && self
-                .open_brace_and_contract_body_element_repeated_and_close_brace
+                .open_brace_and_contract_body_elements_and_close_brace
                 .is_default()
     }
 }
 
-impl Default for interface_definition::OpenBraceAndContractBodyElementRepeatedAndCloseBrace {
+impl Default for interface_definition::OpenBraceAndContractBodyElementsAndCloseBrace {
     fn default() -> Self {
         Self {
             open_brace: Default::default(),
-            contract_body_element_repeated: Default::default(),
+            contract_body_elements: Default::default(),
             close_brace: Default::default(),
         }
     }
 }
-impl DefaultTest for interface_definition::OpenBraceAndContractBodyElementRepeatedAndCloseBrace {
+impl DefaultTest for interface_definition::OpenBraceAndContractBodyElementsAndCloseBrace {
     fn is_default(&self) -> bool {
         self.open_brace.is_default()
-            && self.contract_body_element_repeated.is_default()
+            && self.contract_body_elements.is_default()
             && self.close_brace.is_default()
     }
 }
-impl interface_definition::OpenBraceAndContractBodyElementRepeatedAndCloseBrace {
+impl interface_definition::OpenBraceAndContractBodyElementsAndCloseBrace {
     pub fn from_parse(
-        ((open_brace, contract_body_element_repeated), close_brace): (
+        ((open_brace, contract_body_elements), close_brace): (
             (
                 FixedSizeTerminalWithTrivia<1usize>,
                 Vec<ContractBodyElement>,
@@ -4438,7 +4401,7 @@ impl interface_definition::OpenBraceAndContractBodyElementRepeatedAndCloseBrace 
     ) -> Self {
         Self {
             open_brace,
-            contract_body_element_repeated,
+            contract_body_elements,
             close_brace,
         }
     }
@@ -4447,20 +4410,20 @@ impl interface_definition::InterfaceDefinition {
     pub fn from_parse(
         (
             ((interface, identifier), inheritance_specifier_list),
-            open_brace_and_contract_body_element_repeated_and_close_brace,
+            open_brace_and_contract_body_elements_and_close_brace,
         ): (
             (
                 (FixedSizeTerminalWithTrivia<9usize>, identifier::WithTrivia),
                 Option<InheritanceSpecifierList>,
             ),
-            interface_definition::OpenBraceAndContractBodyElementRepeatedAndCloseBrace,
+            interface_definition::OpenBraceAndContractBodyElementsAndCloseBrace,
         ),
     ) -> Self {
         Self {
             interface,
             identifier,
             inheritance_specifier_list,
-            open_brace_and_contract_body_element_repeated_and_close_brace,
+            open_brace_and_contract_body_elements_and_close_brace,
         }
     }
 }
@@ -4470,7 +4433,7 @@ impl Default for interface_definition::InterfaceDefinition {
             interface: Default::default(),
             identifier: Default::default(),
             inheritance_specifier_list: Default::default(),
-            open_brace_and_contract_body_element_repeated_and_close_brace: Default::default(),
+            open_brace_and_contract_body_elements_and_close_brace: Default::default(),
         }
     }
 }
@@ -4480,30 +4443,30 @@ impl DefaultTest for interface_definition::InterfaceDefinition {
             && self.identifier.is_default()
             && self.inheritance_specifier_list.is_default()
             && self
-                .open_brace_and_contract_body_element_repeated_and_close_brace
+                .open_brace_and_contract_body_elements_and_close_brace
                 .is_default()
     }
 }
 
-impl Default for library_definition::OpenBraceAndContractBodyElementRepeatedAndCloseBrace {
+impl Default for library_definition::OpenBraceAndContractBodyElementsAndCloseBrace {
     fn default() -> Self {
         Self {
             open_brace: Default::default(),
-            contract_body_element_repeated: Default::default(),
+            contract_body_elements: Default::default(),
             close_brace: Default::default(),
         }
     }
 }
-impl DefaultTest for library_definition::OpenBraceAndContractBodyElementRepeatedAndCloseBrace {
+impl DefaultTest for library_definition::OpenBraceAndContractBodyElementsAndCloseBrace {
     fn is_default(&self) -> bool {
         self.open_brace.is_default()
-            && self.contract_body_element_repeated.is_default()
+            && self.contract_body_elements.is_default()
             && self.close_brace.is_default()
     }
 }
-impl library_definition::OpenBraceAndContractBodyElementRepeatedAndCloseBrace {
+impl library_definition::OpenBraceAndContractBodyElementsAndCloseBrace {
     pub fn from_parse(
-        ((open_brace, contract_body_element_repeated), close_brace): (
+        ((open_brace, contract_body_elements), close_brace): (
             (
                 FixedSizeTerminalWithTrivia<1usize>,
                 Vec<ContractBodyElement>,
@@ -4513,22 +4476,22 @@ impl library_definition::OpenBraceAndContractBodyElementRepeatedAndCloseBrace {
     ) -> Self {
         Self {
             open_brace,
-            contract_body_element_repeated,
+            contract_body_elements,
             close_brace,
         }
     }
 }
 impl library_definition::LibraryDefinition {
     pub fn from_parse(
-        ((library, identifier), open_brace_and_contract_body_element_repeated_and_close_brace): (
+        ((library, identifier), open_brace_and_contract_body_elements_and_close_brace): (
             (FixedSizeTerminalWithTrivia<7usize>, identifier::WithTrivia),
-            library_definition::OpenBraceAndContractBodyElementRepeatedAndCloseBrace,
+            library_definition::OpenBraceAndContractBodyElementsAndCloseBrace,
         ),
     ) -> Self {
         Self {
             library,
             identifier,
-            open_brace_and_contract_body_element_repeated_and_close_brace,
+            open_brace_and_contract_body_elements_and_close_brace,
         }
     }
 }
@@ -4537,7 +4500,7 @@ impl Default for library_definition::LibraryDefinition {
         Self {
             library: Default::default(),
             identifier: Default::default(),
-            open_brace_and_contract_body_element_repeated_and_close_brace: Default::default(),
+            open_brace_and_contract_body_elements_and_close_brace: Default::default(),
         }
     }
 }
@@ -4546,14 +4509,14 @@ impl DefaultTest for library_definition::LibraryDefinition {
         self.library.is_default()
             && self.identifier.is_default()
             && self
-                .open_brace_and_contract_body_element_repeated_and_close_brace
+                .open_brace_and_contract_body_elements_and_close_brace
                 .is_default()
     }
 }
 
 impl source_unit::SourceUnit {
     pub fn from_parse(
-        (((leading_trivia, choices_0_repeated), end_of_file_trivia), end_of_input): (
+        (((leading_trivia, choices_0s), end_of_file_trivia), end_of_input): (
             (
                 (LeadingTrivia, Vec<Box<source_unit::Choices0>>),
                 EndOfFileTrivia,
@@ -4563,7 +4526,7 @@ impl source_unit::SourceUnit {
     ) -> Self {
         Self {
             leading_trivia,
-            choices_0_repeated,
+            choices_0s,
             end_of_file_trivia,
             end_of_input,
         }
@@ -4573,7 +4536,7 @@ impl Default for source_unit::SourceUnit {
     fn default() -> Self {
         Self {
             leading_trivia: Default::default(),
-            choices_0_repeated: Default::default(),
+            choices_0s: Default::default(),
             end_of_file_trivia: Default::default(),
             end_of_input: Default::default(),
         }
@@ -4582,7 +4545,7 @@ impl Default for source_unit::SourceUnit {
 impl DefaultTest for source_unit::SourceUnit {
     fn is_default(&self) -> bool {
         self.leading_trivia.is_default()
-            && self.choices_0_repeated.is_default()
+            && self.choices_0s.is_default()
             && self.end_of_file_trivia.is_default()
             && self.end_of_input.is_default()
     }

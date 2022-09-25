@@ -54,37 +54,38 @@ pub fn name_of_terminal_string(string: &str) -> String {
     .to_snake_case()
 }
 
+// pub fn anonymous(cell: &Cell<usize>) -> String {
+//     let count = cell.get();
+//     cell.set(count + 1);
+//     format!("anon_{}", count)
+// }
+
 pub fn anonymous_filter(cell: &Cell<usize>) -> String {
     let count = cell.get();
     cell.set(count + 1);
-    format!("filter@{}", count)
+    format!("filter_{}", count)
 }
 
 pub fn anonymous_terminals(cell: &Cell<usize>) -> String {
     let count = cell.get();
     cell.set(count + 1);
-    format!("terminal@{}", count)
+    format!("terminal_{}", count)
 }
 
 pub fn anonymous_choice(cell: &Cell<usize>) -> String {
     let count = cell.get();
     cell.set(count + 1);
-    format!("choices@{}", count)
+    format!("choices_{}", count)
 }
 
 pub fn anonymous_sequence(cell: &Cell<usize>) -> String {
     let count = cell.get();
     cell.set(count + 1);
-    format!("sequence@{}", count)
-}
-
-pub fn is_anonymous(str: &str) -> bool {
-    str.contains('@')
+    format!("sequence_{}", count)
 }
 
 pub fn pluralize(str: &str) -> String {
-    format!("{}_repeated", str)
-    // str.to_plural()
+    str.to_plural()
 }
 
 pub fn with_disambiguating_suffix(str: &str, suffix: usize) -> String {
@@ -100,18 +101,14 @@ fn without_disambiguating_suffix(str: &str) -> String {
     }
 }
 
-fn without_anonymous_marker(str: &str) -> String {
-    str.replace('@', "_")
-}
-
 fn to_pascal_case_string(str: &str) -> String {
     str.to_pascal_case()
 }
 
 pub fn to_module_name_ident(str: &str) -> Ident {
     let str = without_disambiguating_suffix(str);
-    let str = without_anonymous_marker(&str);
-    if is_reserved_identifier(&str) {
+    let str = str.as_str();
+    if is_reserved_identifier(str) {
         format_ident!("r#{}", str)
     } else {
         format_ident!("{}", str)
@@ -119,8 +116,7 @@ pub fn to_module_name_ident(str: &str) -> Ident {
 }
 
 pub fn to_field_name_ident(str: &str) -> Ident {
-    let str = without_anonymous_marker(str);
-    if is_reserved_identifier(&str) {
+    if is_reserved_identifier(str) {
         format_ident!("r#{}", str)
     } else {
         format_ident!("{}", str)
@@ -128,31 +124,27 @@ pub fn to_field_name_ident(str: &str) -> Ident {
 }
 
 pub fn to_parser_name_ident(str: &str) -> Ident {
-    let str = without_disambiguating_suffix(str);
-    let str = without_anonymous_marker(&str);
-    format_ident!("{}_parser", str)
+    format_ident!("{}_parser", without_disambiguating_suffix(str))
 }
 
 pub fn to_type_name_ident(str: &str) -> Ident {
     let str = without_disambiguating_suffix(str);
-    let str = without_anonymous_marker(&str);
-    format_ident!("{}", to_pascal_case_string(&str))
+    let str = str.as_str();
+    format_ident!("{}", to_pascal_case_string(str))
 }
 
 pub fn to_enum_tag_ident(str: &str) -> Ident {
     let str = without_disambiguating_suffix(str);
-    let str = without_anonymous_marker(&str);
-    format_ident!("{}", to_pascal_case_string(&str))
+    let str = str.as_str();
+    format_ident!("{}", to_pascal_case_string(str))
 }
 
 pub fn to_kind_ident(module_str: &str, type_str: &str) -> Ident {
     let module_str = without_disambiguating_suffix(module_str);
     let type_str = without_disambiguating_suffix(type_str);
-    let type_str = without_anonymous_marker(&type_str);
     if module_str == type_str {
         format_ident!("{}", to_pascal_case_string(&module_str))
     } else {
-        println!("{} != {}", module_str, type_str);
         format_ident!(
             "{}{}",
             to_pascal_case_string(&module_str),

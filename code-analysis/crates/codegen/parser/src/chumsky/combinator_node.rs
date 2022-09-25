@@ -635,14 +635,9 @@ impl CombinatorNode {
         tree: &CombinatorTree,
     ) -> CodeForNode {
         match self {
-            Self::CharacterFilter { filter, name } => filter.to_generated_code(
-                if naming::is_anonymous(name) {
-                    None
-                } else {
-                    Some(naming::to_kind_ident(&tree.name, name))
-                },
-                !tree.production.is_token(),
-            ),
+            Self::CharacterFilter { filter, name } => {
+                filter.to_generated_code(name.clone(), !tree.production.is_token())
+            }
 
             Self::Choice { name, elements } => {
                 let mut result: CodeForNode = Default::default();
@@ -674,13 +669,9 @@ impl CombinatorNode {
                     pub enum #type_name { #(#ast_fields),* }
                 ));
 
-                if naming::is_anonymous(&name) {
-                    result.cst_parser_impl_fragment = quote!( choice(( #(#cst_parsers),* )) );
-                } else {
-                    let kind = naming::to_kind_ident(&tree.name, &name);
-                    result.cst_rule_kinds.insert(kind.clone());
-                    result.cst_parser_impl_fragment = quote!( choice(( #(#cst_parsers),* )).map(|v| Node::new_rule(RuleKind::#kind, vec![v])) );
-                }
+                let kind = naming::to_kind_ident(&tree.name, &name);
+                result.cst_rule_kinds.insert(kind.clone());
+                result.cst_parser_impl_fragment = quote!( choice(( #(#cst_parsers),* )).map(|v| Node::new_rule(RuleKind::#kind, vec![v])) );
 
                 result.ast_parser_impl_fragment = quote!( choice(( #(#ast_parsers),* )) );
                 result.ast_parser_type = quote!( Box<#module_name::#type_name> );
@@ -767,13 +758,9 @@ impl CombinatorNode {
                 result.cst_token_part_kinds.insert(close_kind.clone());
 
                 let expr_parser = result.cst_parser_impl_fragment;
-                if naming::is_anonymous(&name) {
-                    result.cst_parser_impl_fragment = quote!( #open_cst_parser.then(#expr_parser).then(#close_cst_parser).map(|((a, b), c)| Node::new_anonymous_rule(vec![a, b, c])) );
-                } else {
-                    let kind = naming::to_kind_ident(&tree.name, &name);
-                    result.cst_rule_kinds.insert(kind.clone());
-                    result.cst_parser_impl_fragment = quote!( #open_cst_parser.then(#expr_parser).then(#close_cst_parser).map(|((a, b), c)| Node::new_rule(RuleKind::#kind, vec![a, b, c])) );
-                }
+                let kind = naming::to_kind_ident(&tree.name, &name);
+                result.cst_rule_kinds.insert(kind.clone());
+                result.cst_parser_impl_fragment = quote!( #open_cst_parser.then(#expr_parser).then(#close_cst_parser).map(|((a, b), c)| Node::new_rule(RuleKind::#kind, vec![a, b, c])) );
 
                 let expr_parser = result.ast_parser_impl_fragment;
                 result.ast_parser_impl_fragment = quote!( #open_ast_parser.then(#expr_parser).then(#close_ast_parser).map(|v| #module_name::#type_name::from_parse(v)) );
@@ -805,7 +792,7 @@ impl CombinatorNode {
 
             Self::End { .. } => {
                 let mut result: CodeForNode = Default::default();
-                result.cst_parser_impl_fragment = quote!(end().to(Node::new_none()));
+                result.cst_parser_impl_fragment = quote!(end().to(Node::new_void()));
                 result.ast_parser_impl_fragment = quote!(end());
                 result.ast_parser_type = quote!(());
                 result
@@ -1168,28 +1155,18 @@ impl CombinatorNode {
                 let mut ast_parser = result.ast_parser_impl_fragment;
                 ast_parser = quote!( #ast_parser.repeated().at_least(1usize) );
 
+                let kind = naming::to_kind_ident(&tree.name, &name);
+
                 if matches!(**expr, Self::CharacterFilter { .. }) {
+                    result.cst_token_kinds.insert(kind.clone());
                     // Vec<()> -> VeriableSizeTerminal
-                    if naming::is_anonymous(name) {
-                        cst_parser =
-                            quote!( #cst_parser.map(|v| Node::new_anonymous_token(v.len())) );
-                    } else {
-                        let kind = naming::to_kind_ident(&tree.name, &name);
-                        result.cst_token_kinds.insert(kind.clone());
-                        cst_parser =
-                            quote!( #cst_parser.map(|v| Node::new_token(TokenKind::#kind, v)) );
-                    }
+                    cst_parser =
+                        quote!( #cst_parser.map(|v| Node::new_token(TokenKind::#kind, v)) );
                     ast_parser = quote!( #ast_parser.map(|v| VariableSizeTerminal(v.len())) );
                     result.ast_parser_type = quote!(VariableSizeTerminal);
                 } else {
-                    if naming::is_anonymous(&name) {
-                        cst_parser = quote!( #cst_parser.map(Node::new_anonymous_rule) );
-                    } else {
-                        let kind = naming::to_kind_ident(&tree.name, &name);
-                        result.cst_rule_kinds.insert(kind.clone());
-                        cst_parser =
-                            quote!( #cst_parser.map(|v| Node::new_rule(RuleKind::#kind, v)) );
-                    }
+                    result.cst_rule_kinds.insert(kind.clone());
+                    cst_parser = quote!( #cst_parser.map(|v| Node::new_rule(RuleKind::#kind, v)) );
                     let parser_type = result.ast_parser_type;
                     result.ast_parser_type = quote!( Vec<#parser_type> );
                 };
@@ -1205,7 +1182,7 @@ impl CombinatorNode {
 
                 let cst_parser = result.cst_parser_impl_fragment;
                 result.cst_parser_impl_fragment =
-                    quote!( #cst_parser.or_not().map(|v| v.unwrap_or_else(|| Node::new_none())) );
+                    quote!( #cst_parser.or_not().map(|v| v.unwrap_or_else(|| Node::new_void())) );
                 let ast_parser = result.ast_parser_impl_fragment;
                 result.ast_parser_impl_fragment = quote!( #ast_parser.or_not() );
 
@@ -1269,35 +1246,26 @@ impl CombinatorNode {
                     ast_parser = quote!( #ast_parser.repeated().at_least(#min).at_most(#max) );
                 };
 
+                let kind = naming::to_kind_ident(&tree.name, &name);
+
                 if matches!(**expr, Self::CharacterFilter { .. }) {
+                    result.cst_token_kinds.insert(kind.clone());
                     // Vec<()> -> VeriableSizeTerminal
-                    if naming::is_anonymous(name) {
-                        cst_parser =
-                            quote!( #cst_parser.map(|v| Node::new_anonymous_token(v.len())) );
+                    if *min == 0 {
+                        cst_parser = quote!( #cst_parser.map(|v| if v.is_empty() { Node::new_void() } else { Node::new_token(TokenKind::#kind, v) }) );
                     } else {
-                        let kind = naming::to_kind_ident(&tree.name, &name);
-                        result.cst_token_kinds.insert(kind.clone());
-                        if *min == 0 {
-                            cst_parser = quote!( #cst_parser.map(|v| if v.is_empty() { Node::new_none() } else { Node::new_token(TokenKind::#kind, v) }) );
-                        } else {
-                            cst_parser =
-                                quote!( #cst_parser.map(|v| Node::new_token(TokenKind::#kind, v)) );
-                        }
+                        cst_parser =
+                            quote!( #cst_parser.map(|v| Node::new_token(TokenKind::#kind, v)) );
                     }
                     ast_parser = quote!( #ast_parser.map(|v| VariableSizeTerminal(v.len())) );
                     result.ast_parser_type = quote!(VariableSizeTerminal);
                 } else {
-                    if naming::is_anonymous(name) {
-                        cst_parser = quote!( #cst_parser.map(Node::new_anonymous_rule) );
+                    result.cst_rule_kinds.insert(kind.clone());
+                    if *min == 0 {
+                        cst_parser = quote!( #cst_parser.map(|v| if v.is_empty() { Node::new_void() } else { Node::new_rule(RuleKind::#kind, v) }) );
                     } else {
-                        let kind = naming::to_kind_ident(&tree.name, &name);
-                        result.cst_rule_kinds.insert(kind.clone());
-                        if *min == 0 {
-                            cst_parser = quote!( #cst_parser.map(|v| if v.is_empty() { Node::new_none() } else { Node::new_rule(RuleKind::#kind, v) }) );
-                        } else {
-                            cst_parser =
-                                quote!( #cst_parser.map(|v| Node::new_rule(RuleKind::#kind, v)) );
-                        }
+                        cst_parser =
+                            quote!( #cst_parser.map(|v| Node::new_rule(RuleKind::#kind, v)) );
                     }
                     let parser_type = result.ast_parser_type;
                     result.ast_parser_type = quote!( Vec<#parser_type> );
@@ -1344,21 +1312,13 @@ impl CombinatorNode {
 
                 result.cst_token_part_kinds.insert(separator_token_kind);
 
-                if naming::is_anonymous(&name) {
-                    result.cst_parser_impl_fragment = quote!(
-                        #expr_cst_parser.then(#separator_cst_parser.then(#expr_cst_parser).repeated())
-                            .map(repetition_mapper)
-                            .map(Node::new_anonymous_rule)
-                    );
-                } else {
-                    let kind = naming::to_kind_ident(&tree.name, &name);
-                    result.cst_rule_kinds.insert(kind.clone());
-                    result.cst_parser_impl_fragment = quote!(
-                        #expr_cst_parser.then(#separator_cst_parser.then(#expr_cst_parser).repeated())
-                            .map(repetition_mapper)
-                            .map(|v| Node::new_rule(RuleKind::#kind, v))
-                    );
-                }
+                let kind = naming::to_kind_ident(&tree.name, &name);
+                result.cst_rule_kinds.insert(kind.clone());
+                result.cst_parser_impl_fragment = quote!(
+                    #expr_cst_parser.then(#separator_cst_parser.then(#expr_cst_parser).repeated())
+                        .map(repetition_mapper)
+                        .map(|v| Node::new_rule(RuleKind::#kind, v))
+                );
 
                 result.ast_parser_impl_fragment = quote!(
                     #expr_ast_parser.then(#separator_ast_parser.then(#expr_ast_parser).repeated())
@@ -1481,17 +1441,12 @@ impl CombinatorNode {
                 }
 
                 let cst_parser = cst_parser_chain.unwrap();
-                if naming::is_anonymous(&name) {
-                    result.cst_parser_impl_fragment = quote!(
-                        #cst_parser.map(|#folded_field_names| Node::new_anonymous_rule(vec![#(#field_names),*]))
-                    );
-                } else {
-                    let kind = naming::to_kind_ident(&tree.name, &name);
-                    result.cst_rule_kinds.insert(kind.clone());
-                    result.cst_parser_impl_fragment = quote!(
-                        #cst_parser.map(|#folded_field_names| Node::new_rule(RuleKind::#kind, vec![#(#field_names),*]))
-                    );
-                }
+                let kind = naming::to_kind_ident(&tree.name, &name);
+                result.cst_rule_kinds.insert(kind.clone());
+                result.cst_parser_impl_fragment = quote!(
+                    #cst_parser.map(|#folded_field_names| Node::new_rule(RuleKind::#kind, vec![#(#field_names),*]))
+                );
+
                 let ast_parser = ast_parser_chain.unwrap();
                 result.ast_parser_impl_fragment =
                     quote!( #ast_parser.map(|v| #module_name::#type_name::from_parse(v)) );
@@ -1507,30 +1462,20 @@ impl CombinatorNode {
 
                 let mut cst_parser = result.cst_parser_impl_fragment;
                 cst_parser = quote!( #cst_parser.repeated() );
+                let kind = naming::to_kind_ident(&tree.name, name);
 
                 let mut ast_parser = result.ast_parser_impl_fragment;
                 ast_parser = quote!( #ast_parser.repeated() );
 
                 if matches!(**expr, Self::CharacterFilter { .. }) {
                     // Vec<()> -> VeriableSizeTerminal
-                    if naming::is_anonymous(&name) {
-                        cst_parser =
-                            quote!( #cst_parser.map(|v| Node::new_anonymous_token(v.len())) );
-                    } else {
-                        let kind = naming::to_kind_ident(&tree.name, name);
-                        result.cst_token_kinds.insert(kind.clone());
-                        cst_parser = quote!( #cst_parser.map(|v| if v.is_empty() { Node::new_none() } else { Node::new_token(TokenKind::#kind, v) }) );
-                    }
+                    result.cst_token_kinds.insert(kind.clone());
+                    cst_parser = quote!( #cst_parser.map(|v| if v.is_empty() { Node::new_void() } else { Node::new_token(TokenKind::#kind, v) }) );
                     ast_parser = quote!( #ast_parser.map(|v| VariableSizeTerminal(v.len())) );
                     result.ast_parser_type = quote!(VariableSizeTerminal);
                 } else {
-                    if naming::is_anonymous(name) {
-                        cst_parser = quote!( #cst_parser.map(Node::new_anonymous_rule) );
-                    } else {
-                        let kind = naming::to_kind_ident(&tree.name, name);
-                        result.cst_rule_kinds.insert(kind.clone());
-                        cst_parser = quote!( #cst_parser.map(|v| if v.is_empty() { Node::new_none() } else { Node::new_rule(RuleKind::#kind, v) }) );
-                    }
+                    result.cst_rule_kinds.insert(kind.clone());
+                    cst_parser = quote!( #cst_parser.map(|v| if v.is_empty() { Node::new_void() } else { Node::new_rule(RuleKind::#kind, v) }) );
                     let parser_type = result.ast_parser_type;
                     result.ast_parser_type = quote!( Vec<#parser_type> );
                 };

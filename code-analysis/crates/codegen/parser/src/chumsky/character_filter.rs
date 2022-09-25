@@ -1,4 +1,4 @@
-use proc_macro2::{Ident, TokenStream};
+use proc_macro2::TokenStream;
 use quote::quote;
 
 use codegen_schema::*;
@@ -129,38 +129,24 @@ impl CharacterFilter {
 
     pub fn to_generated_code(
         &self,
-        kind: Option<Ident>,
+        name: String,
         with_trivia: bool,
     ) -> combinator_node::CodeForNode {
         let mut result: combinator_node::CodeForNode = Default::default();
 
-        let (cst_parser, ast_parser) = if let Some(kind) = kind {
-            result.cst_token_part_kinds.insert(kind.clone());
-            if let CharacterFilter::Char { char } = self {
-                (
-                    quote!(just(#char).to(Node::new_token_part(TokenPartKind::#kind, 1))),
-                    quote!(just(#char).to(FixedSizeTerminal::<1>()) ),
-                )
-            } else {
-                let predicate = self.to_parser_predicate(false);
-                (
-                    quote!( filter(|&c: &char| #predicate).to(Node::new_token_part(TokenPartKind::#kind, 1))),
-                    quote!( filter(|&c: &char| #predicate).to(FixedSizeTerminal::<1>())),
-                )
-            }
+        let kind = naming::to_kind_ident(&name, &name);
+        result.cst_token_part_kinds.insert(kind.clone());
+        let (cst_parser, ast_parser) = if let CharacterFilter::Char { char } = self {
+            (
+                quote!(just(#char).to(Node::new_token_part(TokenPartKind::#kind, 1))),
+                quote!(just(#char).to(FixedSizeTerminal::<1>()) ),
+            )
         } else {
-            if let CharacterFilter::Char { char } = self {
-                (
-                    quote!(just(#char).to(Node::new_anonymous_token(1))),
-                    quote!(just(#char).to(FixedSizeTerminal::<1>()) ),
-                )
-            } else {
-                let predicate = self.to_parser_predicate(false);
-                (
-                    quote!( filter(|&c: &char| #predicate).to(Node::new_anonymous_token(1))),
-                    quote!( filter(|&c: &char| #predicate).to(FixedSizeTerminal::<1>())),
-                )
-            }
+            let predicate = self.to_parser_predicate(false);
+            (
+                quote!( filter(|&c: &char| #predicate).to(Node::new_token_part(TokenPartKind::#kind, 1))),
+                quote!( filter(|&c: &char| #predicate).to(FixedSizeTerminal::<1>())),
+            )
         };
 
         if with_trivia {

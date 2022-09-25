@@ -22,8 +22,6 @@ pub fn cst() -> TokenStream {
         #[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
         pub enum Node {
             None,
-            AnonymousRule(Vec<NodeRef>),
-            AnonymousToken(usize),
             Rule {
                 kind: RuleKind,
                 children: Vec<NodeRef>,
@@ -36,10 +34,15 @@ pub fn cst() -> TokenStream {
                 kind: TokenPartKind,
                 length: usize,
             },
+            WithTrivia {
+                leading_trivia: NodeRef,
+                token: NodeRef,
+                trailing_trivia: NodeRef,
+            }
         }
 
         impl Node {
-            pub fn new_none() -> NodeRef {
+            pub fn new_void() -> NodeRef {
                 Rc::new(Self::None)
             }
 
@@ -55,30 +58,11 @@ pub fn cst() -> TokenStream {
                 Rc::new(Self::TokenPart { kind, length })
             }
 
-            pub fn new_anonymous_rule(children: Vec<NodeRef>) -> NodeRef {
-                if children.is_empty() {
-                    Self::new_none()
-                } else if children.len() == 1 {
-                    children[0].clone()
-                } else {
-                    Rc::new(Self::AnonymousRule(children))
-                }
-            }
-
-            pub fn new_anonymous_token(length: usize) -> NodeRef {
-                if length == 0 {
-                    Self::new_none()
-                } else {
-                    Rc::new(Self::AnonymousToken(length))
-                }
-            }
-
             pub fn new_with_trivia(((leading_trivia, token), trailing_trivia): ((NodeRef, NodeRef), NodeRef)) -> NodeRef {
-                match (*leading_trivia == Self::None, *trailing_trivia == Self::None) {
-                    (true, true) => token,
-                    (true, false) => Rc::new(Self::AnonymousRule(vec![ token, trailing_trivia ])),
-                    (false, true) => Rc::new(Self::AnonymousRule(vec![ leading_trivia, token ])),
-                    (false, false) => Rc::new(Self::AnonymousRule(vec![ leading_trivia, token, trailing_trivia ])),
+                if *leading_trivia == Self::None && *trailing_trivia == Self::None {
+                    token
+                } else {
+                    Rc::new(Self::WithTrivia { leading_trivia, token, trailing_trivia })
                 }
             }
         }
