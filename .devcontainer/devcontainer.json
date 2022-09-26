@@ -24,5 +24,8 @@
     "esbenp.prettier-vscode",
     "streetsidesoftware.code-spell-checker",
     "timonwong.shellcheck"
-  ]
+  ],
+  "settings": {
+    "rust-analyzer.server.path": "/workspaces/slang/bin/rust-analyzer"
+  }
 }

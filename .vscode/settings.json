@@ -1,6 +1,5 @@
 {
   // Rust
-  "rust-analyzer.server.path": "/workspaces/slang/bin/rust-analyzer",
   "rust-analyzer.linkedProjects": ["code-analysis/Cargo.toml", "tools/version-breaks/Cargo.toml"],
   // YAML
   "yaml.customTags": ["!ENV"],
