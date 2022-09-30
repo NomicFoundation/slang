@@ -49,7 +49,6 @@
         - terminal: "31"
         - terminal: "32"
       config:
-        merge: true
         name: Count
         # Makes the likely errors clearer?
         lookahead: { not: { range: { from: "0", to: "9" } } }
@@ -93,7 +92,6 @@
           - terminal: "248"
           - terminal: "256"
         config:
-          merge: true
           name: ByteCount
       config:
         # Makes the likely errors clearer?

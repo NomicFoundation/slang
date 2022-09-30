@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../../codegen/schema/json-schema/topic.schema.json
 
 - name: LeadingTrivia
-  kind: Token
+  kind: Trivia
   zeroOrMore:
     choice:
       - reference: Whitespace
@@ -10,7 +10,7 @@
       - reference: SingleLineComment
 
 - name: TrailingTrivia
-  kind: Token
+  kind: Trivia
   optional:
     sequence:
       - zeroOrMore:
@@ -22,7 +22,7 @@
           - reference: SingleLineComment
 
 - name: EndOfFileTrivia
-  kind: Token
+  kind: Trivia
   zeroOrMore:
     choice:
       - reference: Whitespace
