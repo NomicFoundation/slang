@@ -1,5 +1,6 @@
 pub mod boilerplate;
 pub mod character_filter;
+pub mod code_fragments;
 pub mod combinator_forest;
 pub mod combinator_node;
 pub mod combinator_tree;

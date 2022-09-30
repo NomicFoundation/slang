@@ -5,7 +5,7 @@ use chumsky::prelude::*;
 use clap::Parser as ClapParser;
 use strum::EnumString;
 
-use solidity_parser::generated::{ast_parser, cst_parser};
+use solidity_parser::generated::parse::Parsers;
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, EnumString)]
 enum ParserType {
@@ -33,7 +33,7 @@ fn main() -> Result<(), usize> {
     let solidity_src = fs::read_to_string(args.solidity_input).expect("Failed to read file");
 
     if args.parser == ParserType::AST {
-        let (parse_tree, errs) = ast_parser::Parsers::new()
+        let (parse_tree, errs) = Parsers::new()
             .source_unit
             .parse_recovery(solidity_src.as_str());
         let number_of_errors = errs.len();
@@ -64,7 +64,7 @@ fn main() -> Result<(), usize> {
             Err(number_of_errors)
         }
     } else {
-        let (parse_tree, errs) = cst_parser::Parsers::new()
+        let (parse_tree, errs) = Parsers::new()
             .source_unit
             .parse_recovery(solidity_src.as_str());
         let number_of_errors = errs.len();

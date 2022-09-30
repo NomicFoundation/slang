@@ -8,7 +8,7 @@
  * File Structure: Source Unit
  *)
 
-SourceUnit = «LeadingTrivia» { Directive | Definition } «EndOfFileTrivia» ;
+SourceUnit = LeadingTrivia { Directive | Definition } EndOfFileTrivia ;
 
 Directive = PragmaDirective | ImportDirective | UsingDirective ;
 
@@ -52,11 +52,11 @@ UsingDirective = 'using' ( IdentifierPath | '{' IdentifierPath  { ',' Identifier
  * File Structure: Trivia
  *)
 
-«LeadingTrivia» = { «Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment» } ;
+LeadingTrivia = { «Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment» } ;
 
-«TrailingTrivia» = [ { «Whitespace» | «MultilineComment» } ( «EndOfLine» | «SingleLineComment» ) ] ;
+TrailingTrivia = [ { «Whitespace» | «MultilineComment» } ( «EndOfLine» | «SingleLineComment» ) ] ;
 
-«EndOfFileTrivia» = { «Whitespace» | «MultilineComment» | «SingleLineComment» } ;
+EndOfFileTrivia = { «Whitespace» | «MultilineComment» | «SingleLineComment» } ;
 
 «Whitespace» = 1…*{ '\u{20}' | '\u{9}' } ;
 

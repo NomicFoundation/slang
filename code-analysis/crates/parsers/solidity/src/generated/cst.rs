@@ -1,601 +1,184 @@
 // This file is generated via `cargo build`. Please don't edit by hand.
 
-use serde::{Deserialize, Serialize};
+use super::kinds;
+use serde::Serialize;
+use std::ops::Range;
 use std::rc::Rc;
-#[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub enum Node {
     None,
-    AnonymousRule(Vec<NodeRef>),
-    AnonymousToken(usize),
     Rule {
-        kind: RuleKind,
+        kind: kinds::Rule,
         children: Vec<NodeRef>,
     },
     Token {
-        kind: TokenKind,
+        kind: kinds::Token,
+        #[doc = r" Range doesn't include the trivia"]
+        range: Range<usize>,
+        #[doc = r" Only Trivia"]
+        #[serde(skip_serializing_if = "Vec::is_empty")]
+        trivia: Vec<NodeRef>,
+    },
+    #[doc = r" For anonymous groups referenced from AST nodes i.e. `delimited_by`"]
+    Group {
+        #[serde(skip_serializing_if = "Vec::is_empty")]
         children: Vec<NodeRef>,
     },
-    TokenPart {
-        kind: TokenPartKind,
-        length: usize,
-    },
-}
-impl Node {
-    pub fn new_none() -> NodeRef {
-        Rc::new(Self::None)
-    }
-    pub fn new_rule(kind: RuleKind, children: Vec<NodeRef>) -> NodeRef {
-        Rc::new(Self::Rule { kind, children })
-    }
-    pub fn new_token(kind: TokenKind, children: Vec<NodeRef>) -> NodeRef {
-        Rc::new(Self::Token { kind, children })
-    }
-    pub fn new_token_part(kind: TokenPartKind, length: usize) -> NodeRef {
-        Rc::new(Self::TokenPart { kind, length })
-    }
-    pub fn new_anonymous_rule(children: Vec<NodeRef>) -> NodeRef {
-        if children.is_empty() {
-            Self::new_none()
-        } else if children.len() == 1 {
-            children[0].clone()
-        } else {
-            Rc::new(Self::AnonymousRule(children))
-        }
-    }
-    pub fn new_anonymous_token(length: usize) -> NodeRef {
-        if length == 0 {
-            Self::new_none()
-        } else {
-            Rc::new(Self::AnonymousToken(length))
-        }
-    }
-    pub fn new_with_trivia(
-        ((leading_trivia, token), trailing_trivia): ((NodeRef, NodeRef), NodeRef),
-    ) -> NodeRef {
-        match (
-            *leading_trivia == Self::None,
-            *trailing_trivia == Self::None,
-        ) {
-            (true, true) => token,
-            (true, false) => Rc::new(Self::AnonymousRule(vec![token, trailing_trivia])),
-            (false, true) => Rc::new(Self::AnonymousRule(vec![leading_trivia, token])),
-            (false, false) => Rc::new(Self::AnonymousRule(vec![
-                leading_trivia,
-                token,
-                trailing_trivia,
-            ])),
-        }
-    }
 }
 pub type NodeRef = Rc<Node>;
-pub enum VisitorResult {
-    Continue,
-    Skip,
-    Quit,
-}
+#[allow(unused_variables)]
 pub trait Visitor {
-    fn enter_rule(&mut self, _kind: RuleKind) -> VisitorResult {
-        VisitorResult::Continue
+    fn enter_rule(
+        &mut self,
+        kind: &kinds::Rule,
+        children: &Vec<NodeRef>,
+        node: &NodeRef,
+    ) -> VisitorEntryResponse {
+        VisitorEntryResponse::StepIn
     }
-    fn leave_rule(&mut self, _kind: RuleKind) -> VisitorResult {
-        VisitorResult::Continue
+    fn exit_rule(
+        &mut self,
+        kind: &kinds::Rule,
+        children: &Vec<NodeRef>,
+        node: &NodeRef,
+    ) -> VisitorExitResponse {
+        VisitorExitResponse::StepIn
     }
-    fn enter_token(&mut self, _kind: TokenKind, _length: usize) -> VisitorResult {
-        VisitorResult::Continue
+    fn enter_token(
+        &mut self,
+        kind: &kinds::Token,
+        range: &Range<usize>,
+        trivia: &Vec<NodeRef>,
+        node: &NodeRef,
+    ) -> VisitorEntryResponse {
+        VisitorEntryResponse::StepIn
     }
-    fn leave_token(&mut self, _kind: TokenKind, _length: usize) -> VisitorResult {
-        VisitorResult::Continue
+    fn exit_token(
+        &mut self,
+        kind: &kinds::Token,
+        range: &Range<usize>,
+        trivia: &Vec<NodeRef>,
+        node: &NodeRef,
+    ) -> VisitorExitResponse {
+        VisitorExitResponse::StepIn
     }
-    fn token_part(&mut self, _kind: TokenPartKind, _length: usize) -> VisitorResult {
-        VisitorResult::Continue
+    fn enter_group(&mut self, children: &Vec<NodeRef>, node: &NodeRef) -> VisitorEntryResponse {
+        VisitorEntryResponse::StepIn
+    }
+    fn exit_group(&mut self, children: &Vec<NodeRef>, node: &NodeRef) -> VisitorExitResponse {
+        VisitorExitResponse::StepIn
+    }
+    fn visit_none(&mut self, node: &NodeRef) -> VisitorExitResponse {
+        VisitorExitResponse::StepIn
     }
 }
-
-#[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum RuleKind {
-    AbiCoderPragmaSpecifier,
-    AddSubExpressionAnonexpfrag4,
-    AddressType,
-    AndExpressionAnonexpfrag4,
-    ArgumentList,
-    ArrayLiteral,
-    ArrayLiteralExpressionRepeatedAndCommaRepeated,
-    AsciiStringLiteral,
-    AssemblyFlags,
-    AssemblyFlagsDoubleQuotedAsciiStringLiteralRepeatedAndCommaRepeated,
-    AssemblyStatement,
-    AssignmentExpressionAnonexpfrag4,
-    BitAndExpressionAnonexpfrag4,
-    BitOrExpressionAnonexpfrag4,
-    BitXOrExpressionAnonexpfrag4,
-    Block,
-    BooleanLiteral,
-    BreakStatement,
-    CatchClause,
-    ConditionalExpressionAnonexpfrag3,
-    ConstantDefinition,
-    ConstructorAttribute,
-    ConstructorDefinition,
-    ConstructorDefinitionConstructorAttributeRepeated,
-    ContinueStatement,
-    ContractBodyElement,
-    ContractDefinition,
-    ContractDefinitionContractBodyElementRepeated,
-    ContractDefinitionOpenBraceAndContractBodyElementRepeatedAndCloseBrace,
-    DataLocation,
-    DecimalExponent,
-    DecimalFloat,
-    DecimalInteger,
-    DecimalNumber,
-    Definition,
-    DeleteStatement,
-    Directive,
-    DoWhileStatement,
-    DoWhileStatementOpenParenAndExpressionAndCloseParen,
-    DoubleQuotedAsciiStringLiteral,
-    DoubleQuotedAsciiStringLiteralRun,
-    DoubleQuotedAsciiStringLiteralRunRepeated,
-    DoubleQuotedUnicodeStringLiteral,
-    DoubleQuotedUnicodeStringLiteralRun,
-    DoubleQuotedUnicodeStringLiteralRunRepeated,
-    ElementaryType,
-    EmitStatement,
-    EndOfFileTrivia,
-    EnumDefinition,
-    EnumDefinitionIdentifierRepeatedAndCommaRepeated,
-    EnumDefinitionOpenBraceAndIdentifierRepeatedAndCommaRepeatedAndCloseBrace,
-    EqualityComparisonExpressionAnonexpfrag4,
-    ErrorDefinition,
-    ErrorDefinitionErrorParameterRepeatedAndCommaRepeated,
-    ErrorDefinitionOpenParenAndErrorParameterRepeatedAndCommaRepeatedAndCloseParen,
-    ErrorParameter,
-    EscapeSequence,
-    EventDefinition,
-    EventDefinitionEventParameterRepeatedAndCommaRepeated,
-    EventDefinitionOpenParenAndEventParameterRepeatedAndCommaRepeatedAndCloseParen,
-    EventParameter,
-    ExperimentalPragmaSpecifier,
-    ExponentiationExpressionAnonexpfrag4,
-    Expression,
-    ExpressionStatement,
-    FallbackFunctionAttribute,
-    FallbackFunctionDefinition,
-    FallbackFunctionDefinitionFallbackFunctionAttributeRepeated,
-    FixedBytesType,
-    ForStatement,
-    FunctionAttribute,
-    FunctionCallExpressionAnonexpfrag4,
-    FunctionCallExpressionNamedArgumentRepeatedAndCommaRepeated,
-    FunctionCallExpressionOpenBraceAndNamedArgumentRepeatedAndCommaRepeatedAndCloseBrace,
-    FunctionDefinition,
-    FunctionDefinitionFunctionAttributeRepeated,
-    FunctionType,
-    HexByteEscape,
-    HexNumber,
-    HexStringLiteral,
-    HexStringLiteralDoubleQuoteAndPossiblySeparatedPairsOfHexDigitsAndDoubleQuote,
-    HexStringLiteralQuoteAndPossiblySeparatedPairsOfHexDigitsAndQuote,
-    IdentifierPath,
-    IfStatement,
-    IfStatementOpenParenAndExpressionAndCloseParen,
-    ImportDirective,
-    IndexAccessExpressionAnonexpfrag3,
-    InheritanceSpecifier,
-    InheritanceSpecifierList,
-    InheritanceSpecifierListInheritanceSpecifierRepeatedAndCommaRepeated,
-    InterfaceDefinition,
-    InterfaceDefinitionContractBodyElementRepeated,
-    InterfaceDefinitionOpenBraceAndContractBodyElementRepeatedAndCloseBrace,
-    Keyword,
-    LeadingTrivia,
-    LibraryDefinition,
-    LibraryDefinitionContractBodyElementRepeated,
-    LibraryDefinitionOpenBraceAndContractBodyElementRepeatedAndCloseBrace,
-    MappingType,
-    MemberAccessExpressionAnonexpfrag4,
-    ModifierAttribute,
-    ModifierDefinition,
-    ModifierDefinitionModifierAttributeRepeated,
-    ModifierInvocation,
-    MulDivModExpressionAnonexpfrag4,
-    MultilineComment,
-    MultilineCommentContent,
-    NamedArgument,
-    NamedArgumentList,
-    NamedArgumentListNamedArgumentRepeatedAndCommaRepeated,
-    NewExpression,
-    NumberUnit,
-    NumericLiteral,
-    OrExpressionAnonexpfrag4,
-    OrderComparisonExpressionAnonexpfrag4,
-    OverrideSpecifier,
-    OverrideSpecifierIdentifierPathRepeatedAndCommaRepeated,
-    OverrideSpecifierOpenParenAndIdentifierPathRepeatedAndCommaRepeatedAndCloseParen,
-    ParameterDeclaration,
-    ParameterList,
-    ParameterListParameterDeclarationRepeatedAndCommaRepeated,
-    ParenthesisExpression,
-    ParenthesisExpressionExpressionRepeatedAndCommaRepeated,
-    PayableExpression,
-    PositionalArgumentList,
-    PossiblySeparatedPairsOfHexDigits,
-    PragmaDirective,
-    PrimaryExpression,
-    RawIdentifier,
-    ReceiveFunctionAttribute,
-    ReceiveFunctionDefinition,
-    ReceiveFunctionDefinitionReceiveFunctionAttributeRepeated,
-    ReturnStatement,
-    RevertStatement,
-    SelectedImport,
-    SelectingImportDirective,
-    SelectingImportDirectiveOpenBraceAndSelectedImportRepeatedAndCommaRepeatedAndCloseBrace,
-    SelectingImportDirectiveSelectedImportRepeatedAndCommaRepeated,
-    ShiftExpressionAnonexpfrag4,
-    SignedFixedType,
-    SignedIntegerType,
-    SimpleImportDirective,
-    SimpleStatement,
-    SingleLineComment,
-    SingleQuotedAsciiStringLiteral,
-    SingleQuotedAsciiStringLiteralRun,
-    SingleQuotedAsciiStringLiteralRunRepeated,
-    SingleQuotedUnicodeStringLiteral,
-    SingleQuotedUnicodeStringLiteralRun,
-    SingleQuotedUnicodeStringLiteralRunRepeated,
-    SourceUnit,
-    StarImportDirective,
-    StateVariableAttribute,
-    StateVariableDeclaration,
-    StateVariableDeclarationStateVariableAttributeRepeated,
-    Statement,
-    StructDefinition,
-    StructDefinitionOpenBraceAndStructMemberRepeatedAndCloseBrace,
-    StructDefinitionStructMemberRepeated,
-    StructMember,
-    TrailingTrivia,
-    TryStatement,
-    TryStatementCatchClauseRepeated,
-    TupleDeconstructionStatement,
-    TypeExpression,
-    TypeExpressionOpenParenAndTypeNameAndCloseParen,
-    TypeName,
-    TypeNameOpenBracketAndExpressionAndCloseBracket,
-    TypeNameOpenBracketAndExpressionAndCloseBracketRepeated,
-    UnaryPrefixExpressionAnonexpfrag3,
-    UnarySuffixExpressionAnonexpfrag3,
-    UncheckedBlock,
-    UnicodeEscape,
-    UnicodeStringLiteral,
-    UnsignedFixedType,
-    UnsignedIntegerType,
-    UserDefinedValueTypeDefinition,
-    UsingDirective,
-    UsingDirectiveIdentifierPathRepeatedAndCommaRepeated,
-    UsingDirectiveOpenBraceAndIdentifierPathRepeatedAndCommaRepeatedAndCloseBrace,
-    VariableDeclarationStatement,
-    VersionPragmaOperator,
-    VersionPragmaSpecifier,
-    VersionPragmaValue,
-    WhileStatement,
-    WhileStatementOpenParenAndExpressionAndCloseParen,
-    YulAssignmentStatement,
-    YulAssignmentStatementYulIdentifierPathRepeatedAndCommaRepeated,
-    YulBlock,
-    YulBlockYulStatementRepeated,
-    YulDecimalNumberLiteral,
-    YulExpression,
-    YulForStatement,
-    YulFunctionCall,
-    YulFunctionCallOpenParenAndYulExpressionRepeatedAndCommaRepeatedAndCloseParen,
-    YulFunctionCallYulExpressionRepeatedAndCommaRepeated,
-    YulFunctionDefinition,
-    YulFunctionDefinitionArguments,
-    YulFunctionDefinitionOpenParenAndArgumentsAndCloseParen,
-    YulFunctionDefinitionResults,
-    YulHexLiteral,
-    YulIdentifierPath,
-    YulIfStatement,
-    YulKeyword,
-    YulLiteral,
-    YulStatement,
-    YulSwitchStatement,
-    YulVariableDeclaration,
-    YulVariableDeclarationYulIdentifierPathRepeatedAndCommaRepeated,
+pub enum VisitorEntryResponse {
+    Quit,
+    StepIn,
+    StepOver,
 }
-
-#[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum TokenKind {
-    DoubleQuotedAsciiStringLiteralCharRepeated,
-    DoubleQuotedUnicodeStringLiteralCharRepeated,
-    EndOfLine,
-    MultilineCommentStarRepeated,
-    SingleQuotedAsciiStringLiteralCharRepeated,
-    SingleQuotedUnicodeStringLiteralCharRepeated,
-    Whitespace,
+pub enum VisitorExitResponse {
+    Quit,
+    StepIn,
 }
-
-#[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
-pub enum TokenPartKind {
-    Abicoder,
-    Abstract,
-    Address,
-    After,
-    Alias,
-    AmpersandAmpersand,
-    AmpersandEqual,
-    Anonymous,
-    Apply,
-    As,
-    Assembly,
-    AssignmentExpressionEqual,
-    Auto,
-    BangEqual,
-    BitAndExpressionAmpersand,
-    BitOrExpressionPipe,
-    BitXOrExpressionCaret,
-    Bool,
-    Break,
-    BreakStatementSemicolon,
-    Byte,
-    Bytes,
-    Calldata,
-    CaretEqual,
-    Case,
-    Catch,
-    CloseBrace,
-    CloseBracket,
-    CloseParen,
-    ColonEqual,
-    Comma,
-    ConditionalExpressionColon,
-    ConditionalExpressionQuestion,
-    Constant,
-    ConstantDefinitionEqual,
-    ConstantDefinitionSemicolon,
-    Constructor,
-    Continue,
-    ContinueStatementSemicolon,
-    Contract,
-    Copyof,
-    Days,
-    DecimalExponentMinus,
-    DecimalFloatPeriod,
-    DecimalIntegerUnderscore,
-    Default,
-    Define,
-    Delete,
-    DeleteStatementSemicolon,
-    Do,
-    DoWhileStatementSemicolon,
-    DoubleQuote,
-    DoubleQuoteEvmasmDoubleQuote,
-    DoubleQuotedAsciiStringLiteralChar,
-    DoubleQuotedUnicodeStringLiteralChar,
-    Eight,
-    EightEight,
-    EightZero,
-    Else,
-    Emit,
-    EmitStatementSemicolon,
-    Enum,
-    EqualEqual,
-    EqualGreater,
-    Error,
-    ErrorDefinitionSemicolon,
-    EscapeSequenceBackslash,
-    Ether,
-    Event,
-    EventDefinitionSemicolon,
-    Experimental,
-    ExpressionStatementSemicolon,
-    External,
-    Fallback,
-    FallbackFunctionDefinitionSemicolon,
-    False,
-    Final,
-    Finney,
-    Five,
-    FiveSix,
-    Fixed,
-    For,
-    ForStatementSemicolon,
-    Four,
-    FourEight,
-    FourZero,
-    From,
-    Function,
-    FunctionDefinitionSemicolon,
-    Global,
-    GreaterEqual,
-    GreaterGreater,
-    GreaterGreaterEqual,
-    GreaterGreaterGreater,
-    GreaterGreaterGreaterEqual,
-    Gwei,
-    Hex,
-    HexByteEscapeLatinSmallLetterX,
-    HexNumberUnderscore,
-    Hours,
-    If,
-    Immutable,
-    Implements,
-    Import,
-    ImportDirectiveSemicolon,
-    In,
-    IndexAccessExpressionColon,
-    Indexed,
-    Inline,
-    Int,
-    Interface,
-    Internal,
-    Is,
-    Leave,
-    LessEqual,
-    LessLess,
-    LessLessEqual,
-    Let,
-    Library,
-    Macro,
-    Mapping,
-    Match,
-    MemberAccessExpressionPeriod,
-    Memory,
-    MinusEqual,
-    MinusGreater,
-    MinusMinus,
-    Minutes,
-    Modifier,
-    ModifierDefinitionSemicolon,
-    MultilineCommentNotStar,
-    MultilineCommentStar,
-    Mutable,
-    NamedArgumentColon,
-    New,
-    Nine,
-    NineSix,
-    Null,
-    Of,
-    One,
-    OneEight,
-    OneEightFour,
-    OneFive,
-    OneFiveTwo,
-    OneFour,
-    OneFourFour,
-    OneNine,
-    OneNineTwo,
-    OneOne,
-    OneOneTwo,
-    OneSeven,
-    OneSevenSix,
-    OneSix,
-    OneSixEight,
-    OneSixZero,
-    OneThree,
-    OneThreeSix,
-    OneTwo,
-    OneTwoEight,
-    OneTwoZero,
-    OneZero,
-    OneZeroFour,
-    OpenBrace,
-    OpenBracket,
-    OpenParen,
-    OrderComparisonExpressionGreater,
-    OrderComparisonExpressionLess,
-    Override,
-    Partial,
-    Payable,
-    PercentEqual,
-    Period,
-    PipeEqual,
-    PipePipe,
-    PlusEqual,
-    PlusPlus,
-    PossiblySeparatedPairsOfHexDigitsUnderscore,
-    Pragma,
-    PragmaDirectiveSemicolon,
-    Private,
-    Promise,
-    Public,
-    Pure,
-    Quote,
-    Receive,
-    ReceiveFunctionDefinitionSemicolon,
-    Reference,
-    Relocatable,
-    Return,
-    ReturnStatementSemicolon,
-    Returns,
-    Revert,
-    RevertStatementSemicolon,
-    Sealed,
-    Seconds,
-    Seven,
-    SevenTwo,
-    SignedFixedTypeLatinSmallLetterX,
-    SingleQuotedAsciiStringLiteralChar,
-    SingleQuotedUnicodeStringLiteralChar,
-    Six,
-    SixFour,
-    Sizeof,
-    SlashEqual,
-    SlashSlash,
-    SlashStar,
-    Solidity,
-    StarEqual,
-    StarImportDirectiveStar,
-    StarSlash,
-    StarStar,
-    StateVariableDeclarationEqual,
-    StateVariableDeclarationSemicolon,
-    Static,
-    Storage,
-    String,
-    Struct,
-    StructMemberSemicolon,
-    Supports,
-    Switch,
-    Szabo,
-    Three,
-    ThreeOne,
-    ThreeTwo,
-    ThreeZero,
-    True,
-    Try,
-    TupleDeconstructionStatementEqual,
-    TupleDeconstructionStatementSemicolon,
-    Two,
-    TwoEight,
-    TwoFive,
-    TwoFiveSix,
-    TwoFour,
-    TwoFourEight,
-    TwoFourZero,
-    TwoNine,
-    TwoOne,
-    TwoOneSix,
-    TwoSeven,
-    TwoSix,
-    TwoThree,
-    TwoThreeTwo,
-    TwoTwo,
-    TwoTwoFour,
-    TwoZero,
-    TwoZeroEight,
-    TwoZeroZero,
-    Type,
-    Typedef,
-    Typeof,
-    Ufixed,
-    UnaryPrefixExpressionBang,
-    UnaryPrefixExpressionMinus,
-    UnaryPrefixExpressionTilde,
-    Unchecked,
-    UnicodeDoubleQuote,
-    UnicodeEscapeLatinSmallLetterU,
-    UnicodeQuote,
-    UnsignedFixedTypeLatinSmallLetterU,
-    UnsignedIntegerTypeLatinSmallLetterU,
-    UserDefinedValueTypeDefinitionSemicolon,
-    Using,
-    UsingDirectiveSemicolon,
-    UsingDirectiveStar,
-    Var,
-    VariableDeclarationStatementEqual,
-    VariableDeclarationStatementSemicolon,
-    VersionPragmaOperatorCaret,
-    VersionPragmaOperatorEqual,
-    VersionPragmaOperatorGreater,
-    VersionPragmaOperatorLess,
-    VersionPragmaOperatorTilde,
-    View,
-    Virtual,
-    Weeks,
-    Wei,
-    While,
-    Years,
-    YulDecimalNumberLiteralZero,
-    ZeroX,
+pub trait Visitable {
+    fn visit<T: Visitor>(&self, visitor: &mut T) -> VisitorExitResponse;
+}
+impl Node {
+    #[inline]
+    pub fn none() -> NodeRef {
+        Rc::new(Self::None)
+    }
+    #[inline]
+    pub fn rule(kind: kinds::Rule, children: Vec<NodeRef>) -> NodeRef {
+        Rc::new(Self::Rule { kind, children })
+    }
+    #[inline]
+    pub fn trivia_token(range: Range<usize>, kind: kinds::Token) -> NodeRef {
+        Rc::new(Self::Token {
+            range,
+            kind,
+            trivia: vec![],
+        })
+    }
+    #[inline]
+    pub fn token(
+        range: Range<usize>,
+        kind: kinds::Token,
+        leading_trivia: NodeRef,
+        trailing_trivia: NodeRef,
+    ) -> NodeRef {
+        let mut trivia = vec![];
+        if *leading_trivia != Node::None {
+            trivia.push(leading_trivia)
+        }
+        if *trailing_trivia != Node::None {
+            trivia.push(trailing_trivia)
+        }
+        Rc::new(Self::Token {
+            range,
+            kind,
+            trivia,
+        })
+    }
+    #[inline]
+    pub fn group(children: Vec<NodeRef>) -> NodeRef {
+        Rc::new(Self::Group { children })
+    }
+}
+impl Visitable for NodeRef {
+    fn visit<T: Visitor>(&self, visitor: &mut T) -> VisitorExitResponse {
+        match self.as_ref() {
+            Node::None => visitor.visit_none(self),
+            Node::Rule { kind, children } => {
+                match visitor.enter_rule(kind, children, self) {
+                    VisitorEntryResponse::Quit => return VisitorExitResponse::Quit,
+                    VisitorEntryResponse::StepOver => {}
+                    VisitorEntryResponse::StepIn => {
+                        for child in children {
+                            match child.visit(visitor) {
+                                VisitorExitResponse::Quit => return VisitorExitResponse::Quit,
+                                VisitorExitResponse::StepIn => {}
+                            }
+                        }
+                    }
+                }
+                visitor.exit_rule(kind, children, self)
+            }
+            Node::Token {
+                kind,
+                range,
+                trivia,
+            } => {
+                match visitor.enter_token(kind, range, trivia, self) {
+                    VisitorEntryResponse::Quit => return VisitorExitResponse::Quit,
+                    VisitorEntryResponse::StepOver => {}
+                    VisitorEntryResponse::StepIn => {
+                        for child in trivia {
+                            match child.visit(visitor) {
+                                VisitorExitResponse::Quit => return VisitorExitResponse::Quit,
+                                VisitorExitResponse::StepIn => {}
+                            }
+                        }
+                    }
+                }
+                visitor.exit_token(kind, range, trivia, self)
+            }
+            Node::Group { children } => {
+                match visitor.enter_group(children, self) {
+                    VisitorEntryResponse::Quit => return VisitorExitResponse::Quit,
+                    VisitorEntryResponse::StepOver => {}
+                    VisitorEntryResponse::StepIn => {
+                        for child in children {
+                            match child.visit(visitor) {
+                                VisitorExitResponse::Quit => return VisitorExitResponse::Quit,
+                                VisitorExitResponse::StepIn => {}
+                            }
+                        }
+                    }
+                }
+                visitor.exit_group(children, self)
+            }
+        }
+    }
 }
