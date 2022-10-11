@@ -8,5 +8,9 @@ docs_dir: !ENV DOCUMENTATION_SOURCE_FILES
 site_dir: !ENV DOCUMENTATION_SITE_DIR
 
 nav:
-  - Home: index.md
-  - "": snippets/under-construction.md
+  - index.md
+  - Internals:
+      - Code Generation:
+          - internals/01-code-generation/01-syntax-schema/index.md
+          - internals/01-code-generation/02-parser/index.md
+          - internals/01-code-generation/03-syntax-tree/index.md
