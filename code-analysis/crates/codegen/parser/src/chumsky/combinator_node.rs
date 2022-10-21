@@ -97,6 +97,11 @@ pub enum OperatorModel {
     UnarySuffix,
 }
 
+pub struct ParserCode {
+    parser: TokenStream,
+    tipe: TokenStream,
+}
+
 impl CombinatorNode {
     pub fn from_expression(
         grammar: &GrammarRef,
@@ -137,6 +142,8 @@ impl CombinatorNode {
         match &expression.ebnf {
             EBNF::Choice(exprs) => {
                 if production.kind != ProductionKind::Token {
+                    // TODO: this should be an error unless all the children have the same type
+                    let name = name.clone().or_else(|| Some("Anon".to_string()));
                     Self::choice(
                         name,
                         exprs
@@ -310,7 +317,12 @@ impl CombinatorNode {
                     .iter()
                     .map(|e| Self::from_expression(grammar, production, e, None))
                     .collect();
-                Self::sequence(name, exprs)
+                if production.kind != ProductionKind::Token {
+                    let name = name.clone().or_else(|| Some("Anon".to_string()));
+                    Self::sequence(name, exprs)
+                } else {
+                    Self::sequence(name, exprs)
+                }
             }
 
             EBNF::Terminal(_) => {
@@ -615,14 +627,14 @@ impl CombinatorNode {
             Self::CharacterFilter { filter, name } => filter.to_trivia_code(name.as_ref(), code),
 
             Self::Choice { elements, name } => {
-                let elements = elements
-                    .iter()
-                    .map(|element| element.to_trivia_code(forest, tree, code))
-                    .collect::<Vec<_>>();
                 if let Some(kind) = create_kind(name, code) {
+                    let elements = elements
+                        .iter()
+                        .map(|element| element.to_trivia_code(forest, tree, code))
+                        .collect::<Vec<_>>();
                     quote!(choice!( #kind, #(#elements),* ))
                 } else {
-                    quote!(choice!( #(#elements),* ))
+                    unreachable!("All choices within trivia must have a kind");
                 }
             }
 
@@ -732,7 +744,7 @@ impl CombinatorNode {
                 if let Some(kind) = create_kind(name, code) {
                     quote!(seq!( #kind, #(#elements),* ))
                 } else {
-                    quote!(seq!( #(#elements),* ))
+                    unreachable!("All sequences within trivia must have a kind");
                 }
             }
 
@@ -755,7 +767,7 @@ impl CombinatorNode {
         forest: &CombinatorForest,
         tree: &CombinatorTree,
         code: &mut CodeFragments,
-    ) -> TokenStream {
+    ) -> ParserCode {
         fn create_kind(name: &Option<String>, code: &mut CodeFragments) -> Option<Ident> {
             name.as_ref().map(|name| code.add_rule_kind(name.clone()))
         }
@@ -764,14 +776,33 @@ impl CombinatorNode {
             Self::CharacterFilter { filter, name } => filter.to_parser_code(name.as_ref(), code),
 
             Self::Choice { elements, name } => {
-                let elements = elements
-                    .iter()
-                    .map(|element| element.to_parser_code(forest, tree, code))
-                    .collect::<Vec<_>>();
-                if let Some(kind) = create_kind(name, code) {
-                    quote!(choice!( #kind, #(#elements),* ))
+                if let Some(kind) = create_kind(&name, code) {
+                    let parser_code = elements
+                        .iter()
+                        .map(|element| element.to_parser_code(forest, tree, code))
+                        .collect::<Vec<_>>();
+                    let names = elements
+                        .iter()
+                        .map(|element| {
+                            naming::to_enum_entry_ident(
+                                &element.name().unwrap_or("WTF".to_string()),
+                            )
+                        })
+                        .collect::<Vec<_>>();
+                    code.add_ast_fragment(quote!(pub enum #kind { #(#names),* }).to_string());
+                    let parsers = parser_code
+                        .iter()
+                        .map(|parser_code| parser_code.parser)
+                        .collect::<Vec<_>>();
+                    ParserCode {
+                        parser: quote!(choice!( #kind, #(#parsers),* )),
+                        tipe: quote!(#kind),
+                    }
                 } else {
-                    quote!(choice!( #(#elements),* ))
+                    // If the choice elements all return the same type, then
+                    // the choice can be elided. This works recursively.
+
+                    unreachable!("All choices within rules must either have a homogeneous type, or have a kind");
                 }
             }
 
@@ -916,14 +947,26 @@ impl CombinatorNode {
             }
 
             Self::Sequence { elements, name } => {
-                let elements = elements
+                let parsers = elements
                     .iter()
                     .map(|element| element.to_parser_code(forest, tree, code))
                     .collect::<Vec<_>>();
                 if let Some(kind) = create_kind(name, code) {
-                    quote!(seq!( #kind, #(#elements),* ))
+                    let names = elements
+                        .iter()
+                        .map(|element| {
+                            naming::to_field_name_ident(
+                                &element.name().unwrap_or("WTF".to_string()),
+                            )
+                        })
+                        .collect::<Vec<_>>();
+                    code.add_ast_fragment(
+                        quote!(pub struct #kind { #(#names: usize),* }).to_string(),
+                    );
+                    quote!(seq!( #kind, #(#parsers),* ))
                 } else {
-                    quote!(seq!( #(#elements),* ))
+                    // No, just a tuple
+                    quote!(seq!( #(#parsers),* ))
                 }
             }
 

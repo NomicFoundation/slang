@@ -19,6 +19,7 @@ enum CodeLocation {
     ParserFieldAssignment,
     ParserPredeclaration,
     ParserDefinition,
+    ASTDefinition,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -65,6 +66,10 @@ impl CodeFragments {
         self.add_fragment(CodeLocation::ParserDefinition, fragment);
     }
 
+    pub fn add_ast_fragment(&mut self, fragment: String) {
+        self.add_fragment(CodeLocation::ASTDefinition, fragment);
+    }
+
     pub fn has_errors(&self) -> bool {
         !self.errors.is_empty()
     }
@@ -91,7 +96,14 @@ impl CodeFragments {
 
         rustfmt::format_and_write_source(
             &output_dir.join("ast.rs"),
-            format!("{}", boilerplate::ast_head()),
+            format!(
+                "{}
+                
+                {}
+                ",
+                boilerplate::ast_head(),
+                self.get_fragments(CodeLocation::ASTDefinition).join("")
+            ),
         );
 
         rustfmt::format_and_write_source(

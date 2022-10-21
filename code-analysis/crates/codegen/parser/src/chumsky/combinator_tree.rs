@@ -77,7 +77,7 @@ impl CombinatorTree {
                 let operator = if operator.len() == 1 {
                     operator[0].clone()
                 } else {
-                    CombinatorNode::sequence(None, operator.into())
+                    CombinatorNode::sequence(Some("Operator".to_string()), operator.into())
                 };
 
                 CombinatorNode::expression_member(

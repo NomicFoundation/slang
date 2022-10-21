@@ -1096,7 +1096,7 @@ impl Parsers {
             left_associative_binary_expression!(
                 AddSubExpression,
                 mul_div_mod_expression_parser,
-                choice!(terminal!(Plus, "+"), terminal!(Minus, "-"))
+                choice!(Anon, terminal!(Plus, "+"), terminal!(Minus, "-"))
             )
             .boxed(),
         );
@@ -1127,6 +1127,7 @@ impl Parsers {
                 ArgumentList,
                 terminal!(OpenParen, "("),
                 optional!(choice!(
+                    Anon,
                     rule!(positional_argument_list_parser),
                     rule!(named_argument_list_parser)
                 )),
@@ -1206,6 +1207,7 @@ impl Parsers {
                 AssignmentExpression,
                 conditional_expression_parser,
                 choice!(
+                    Anon,
                     terminal!(Equal, "="),
                     terminal!(PipeEqual, "|="),
                     terminal!(CaretEqual, "^="),
@@ -1258,10 +1260,10 @@ impl Parsers {
             delimited_by!(
                 Block,
                 terminal!(OpenBrace, "{"),
-                zero_or_more!(choice!(
-                    rule!(statement_parser),
-                    rule!(unchecked_block_parser)
-                )),
+                zero_or_more!(
+                    AnonRepeated,
+                    choice!(Anon, rule!(statement_parser), rule!(unchecked_block_parser))
+                ),
                 terminal!(CloseBrace, "}")
             )
             .boxed(),
@@ -1287,6 +1289,7 @@ impl Parsers {
                 CatchClause,
                 terminal!(Catch, "catch"),
                 optional!(seq!(
+                    Anon,
                     optional!(token!(identifier_parser)),
                     rule!(parameter_list_parser)
                 )),
@@ -1301,6 +1304,7 @@ impl Parsers {
                 ConditionalExpression,
                 or_expression_parser,
                 seq!(
+                    Anon,
                     terminal!(Question, "?"),
                     rule!(expression_parser),
                     terminal!(Colon, ":"),
@@ -1598,6 +1602,7 @@ impl Parsers {
             zero_or_more!(
                 EndOfFileTrivia,
                 choice!(
+                    Anon,
                     trivia_token!(whitespace_parser),
                     trivia_token!(multiline_comment_parser),
                     trivia_token!(single_line_comment_parser)
@@ -1636,7 +1641,11 @@ impl Parsers {
             left_associative_binary_expression!(
                 EqualityComparisonExpression,
                 order_comparison_expression_parser,
-                choice!(terminal!(EqualEqual, "=="), terminal!(BangEqual, "!="))
+                choice!(
+                    Anon,
+                    terminal!(EqualEqual, "=="),
+                    terminal!(BangEqual, "!=")
+                )
             )
             .boxed(),
         );
@@ -1783,10 +1792,11 @@ impl Parsers {
                     rule!(fallback_function_attribute_parser)
                 ),
                 optional!(seq!(
+                    Anon,
                     terminal!(Returns, "returns"),
                     rule!(parameter_list_parser)
                 )),
-                choice!(terminal!(Semicolon, ";"), rule!(block_parser))
+                choice!(Anon, terminal!(Semicolon, ";"), rule!(block_parser))
             )
             .boxed(),
         );
@@ -1855,10 +1865,17 @@ impl Parsers {
                 ForStatement,
                 terminal!(For, "for"),
                 delimited_by!(
+                    OpenParenAndAnonAndCloseParen,
                     terminal!(OpenParen, "("),
                     seq!(
-                        choice!(rule!(simple_statement_parser), terminal!(Semicolon, ";")),
+                        Anon,
                         choice!(
+                            Anon,
+                            rule!(simple_statement_parser),
+                            terminal!(Semicolon, ";")
+                        ),
+                        choice!(
+                            Anon,
                             rule!(expression_statement_parser),
                             terminal!(Semicolon, ";")
                         ),
@@ -1895,6 +1912,7 @@ impl Parsers {
                 FunctionCallExpression,
                 member_access_expression_parser,
                 seq!(
+                    Operator,
                     optional!(delimited_by!(
                         OpenBraceAndNamedArgumentRepeatedAndCommaRepeatedAndCloseBrace,
                         terminal!(OpenBrace, "{"),
@@ -1917,6 +1935,7 @@ impl Parsers {
                 FunctionDefinition,
                 terminal!(Function, "function"),
                 choice!(
+                    Anon,
                     token!(identifier_parser),
                     terminal!(Fallback, "fallback"),
                     terminal!(Receive, "receive")
@@ -1924,10 +1943,11 @@ impl Parsers {
                 rule!(parameter_list_parser),
                 zero_or_more!(FunctionAttributeRepeated, rule!(function_attribute_parser)),
                 optional!(seq!(
+                    Anon,
                     terminal!(Returns, "returns"),
                     rule!(parameter_list_parser)
                 )),
-                choice!(terminal!(Semicolon, ";"), rule!(block_parser))
+                choice!(Anon, terminal!(Semicolon, ";"), rule!(block_parser))
             )
             .boxed(),
         );
@@ -1938,16 +1958,21 @@ impl Parsers {
                 FunctionType,
                 terminal!(Function, "function"),
                 rule!(parameter_list_parser),
-                zero_or_more!(choice!(
-                    terminal!(Internal, "internal"),
-                    terminal!(External, "external"),
-                    terminal!(Private, "private"),
-                    terminal!(Public, "public"),
-                    terminal!(Pure, "pure"),
-                    terminal!(View, "view"),
-                    terminal!(Payable, "payable")
-                )),
+                zero_or_more!(
+                    AnonRepeated,
+                    choice!(
+                        Anon,
+                        terminal!(Internal, "internal"),
+                        terminal!(External, "external"),
+                        terminal!(Private, "private"),
+                        terminal!(Public, "public"),
+                        terminal!(Pure, "pure"),
+                        terminal!(View, "view"),
+                        terminal!(Payable, "payable")
+                    )
+                ),
                 optional!(seq!(
+                    Anon,
                     terminal!(Returns, "returns"),
                     rule!(parameter_list_parser)
                 ))
@@ -2072,7 +2097,7 @@ impl Parsers {
                     terminal!(CloseParen, ")")
                 ),
                 rule!(statement_parser),
-                optional!(seq!(terminal!(Else, "else"), rule!(statement_parser)))
+                optional!(seq!(Anon, terminal!(Else, "else"), rule!(statement_parser)))
             )
             .boxed(),
         );
@@ -2083,6 +2108,7 @@ impl Parsers {
                 ImportDirective,
                 terminal!(Import, "import"),
                 choice!(
+                    Anon,
                     rule!(simple_import_directive_parser),
                     rule!(star_import_directive_parser),
                     rule!(selecting_import_directive_parser)
@@ -2101,10 +2127,13 @@ impl Parsers {
                 IndexAccessExpression,
                 primary_expression_parser,
                 delimited_by!(
+                    OpenBracketAndAnonAndCloseBracket,
                     terminal!(OpenBracket, "["),
                     seq!(
+                        Anon,
                         optional!(rule!(expression_parser)),
                         optional!(seq!(
+                            Anon,
                             terminal!(Colon, ":"),
                             optional!(rule!(expression_parser))
                         ))
@@ -2168,6 +2197,7 @@ impl Parsers {
             zero_or_more!(
                 LeadingTrivia,
                 choice!(
+                    Anon,
                     trivia_token!(whitespace_parser),
                     trivia_token!(end_of_line_parser),
                     trivia_token!(multiline_comment_parser),
@@ -2202,9 +2232,15 @@ impl Parsers {
                 MappingType,
                 terminal!(Mapping, "mapping"),
                 delimited_by!(
+                    OpenParenAndAnonAndCloseParen,
                     terminal!(OpenParen, "("),
                     seq!(
-                        choice!(rule!(elementary_type_parser), rule!(identifier_path_parser)),
+                        Anon,
+                        choice!(
+                            Anon,
+                            rule!(elementary_type_parser),
+                            rule!(identifier_path_parser)
+                        ),
                         terminal!(EqualGreater, "=>"),
                         rule!(type_name_parser)
                     ),
@@ -2220,8 +2256,13 @@ impl Parsers {
                 MemberAccessExpression,
                 index_access_expression_parser,
                 seq!(
+                    Operator,
                     terminal!(Period, "."),
-                    choice!(token!(identifier_parser), terminal!(Address, "address"))
+                    choice!(
+                        Anon,
+                        token!(identifier_parser),
+                        terminal!(Address, "address")
+                    )
                 )
             )
             .boxed(),
@@ -2245,7 +2286,7 @@ impl Parsers {
                 token!(identifier_parser),
                 optional!(rule!(parameter_list_parser)),
                 zero_or_more!(ModifierAttributeRepeated, rule!(modifier_attribute_parser)),
-                choice!(terminal!(Semicolon, ";"), rule!(block_parser))
+                choice!(Anon, terminal!(Semicolon, ";"), rule!(block_parser))
             )
             .boxed(),
         );
@@ -2266,6 +2307,7 @@ impl Parsers {
                 MulDivModExpression,
                 exponentiation_expression_parser,
                 choice!(
+                    Anon,
                     terminal!(Star, "*"),
                     terminal!(Slash, "/"),
                     terminal!(Percent, "%")
@@ -2393,6 +2435,7 @@ impl Parsers {
                 OrderComparisonExpression,
                 bit_or_expression_parser,
                 choice!(
+                    Anon,
                     terminal!(Less, "<"),
                     terminal!(Greater, ">"),
                     terminal!(LessEqual, "<="),
@@ -2513,6 +2556,7 @@ impl Parsers {
                 PragmaDirective,
                 terminal!(Pragma, "pragma"),
                 choice!(
+                    Anon,
                     rule!(version_pragma_specifier_parser),
                     rule!(abi_coder_pragma_specifier_parser),
                     rule!(experimental_pragma_specifier_parser)
@@ -2581,7 +2625,7 @@ impl Parsers {
                     ReceiveFunctionAttributeRepeated,
                     rule!(receive_function_attribute_parser)
                 ),
-                choice!(terminal!(Semicolon, ";"), rule!(block_parser))
+                choice!(Anon, terminal!(Semicolon, ";"), rule!(block_parser))
             )
             .boxed(),
         );
@@ -2677,7 +2721,7 @@ impl Parsers {
             seq!(
                 SelectedImport,
                 token!(identifier_parser),
-                optional!(seq!(terminal!(As, "as"), token!(identifier_parser)))
+                optional!(seq!(Anon, terminal!(As, "as"), token!(identifier_parser)))
             )
             .boxed(),
         );
@@ -2708,6 +2752,7 @@ impl Parsers {
                 ShiftExpression,
                 add_sub_expression_parser,
                 choice!(
+                    Anon,
                     terminal!(LessLess, "<<"),
                     terminal!(GreaterGreater, ">>"),
                     terminal!(GreaterGreaterGreater, ">>>")
@@ -2806,7 +2851,10 @@ impl Parsers {
             seq!(
                 SimpleImportDirective,
                 rule!(import_path_parser),
-                zero_or_more!(seq!(terminal!(As, "as"), token!(identifier_parser)))
+                zero_or_more!(
+                    AnonRepeated,
+                    seq!(Anon, terminal!(As, "as"), token!(identifier_parser))
+                )
             )
             .boxed(),
         );
@@ -2884,7 +2932,10 @@ impl Parsers {
             seq!(
                 SourceUnit,
                 rule!(leading_trivia_parser),
-                zero_or_more!(choice!(rule!(directive_parser), rule!(definition_parser))),
+                zero_or_more!(
+                    AnonRepeated,
+                    choice!(Anon, rule!(directive_parser), rule!(definition_parser))
+                ),
                 rule!(end_of_file_trivia_parser)
             )
             .boxed(),
@@ -2927,7 +2978,7 @@ impl Parsers {
                     rule!(state_variable_attribute_parser)
                 ),
                 token!(identifier_parser),
-                optional!(seq!(terminal!(Equal, "="), rule!(expression_parser))),
+                optional!(seq!(Anon, terminal!(Equal, "="), rule!(expression_parser))),
                 terminal!(Semicolon, ";")
             )
             .boxed(),
@@ -2985,11 +3036,17 @@ impl Parsers {
         // TrailingTrivia = [ { «Whitespace» | «MultilineComment» } ( «EndOfLine» | «SingleLineComment» ) ] ;
         trailing_trivia_parser.define(
             optional!(seq!(
-                zero_or_more!(choice!(
-                    trivia_token!(whitespace_parser),
-                    trivia_token!(multiline_comment_parser)
-                )),
+                Anon,
+                zero_or_more!(
+                    AnonRepeated,
+                    choice!(
+                        Anon,
+                        trivia_token!(whitespace_parser),
+                        trivia_token!(multiline_comment_parser)
+                    )
+                ),
                 choice!(
+                    Anon,
                     trivia_token!(end_of_line_parser),
                     trivia_token!(single_line_comment_parser)
                 )
@@ -3004,6 +3061,7 @@ impl Parsers {
                 terminal!(Try, "try"),
                 rule!(expression_parser),
                 optional!(seq!(
+                    Anon,
                     terminal!(Returns, "returns"),
                     rule!(parameter_list_parser)
                 )),
@@ -3018,9 +3076,12 @@ impl Parsers {
             seq!(
                 TupleDeconstructionStatement,
                 delimited_by!(
+                    OpenParenAndAnonRepeatedAndCommaRepeatedAndCloseParen,
                     terminal!(OpenParen, "("),
                     optional!(separated_by!(
+                        AnonRepeatedAndCommaRepeated,
                         optional!(seq!(
+                            Anon,
                             optional!(rule!(type_name_parser)),
                             token!(identifier_parser)
                         )),
@@ -3055,6 +3116,7 @@ impl Parsers {
             seq!(
                 TypeName,
                 choice!(
+                    Anon,
                     rule!(elementary_type_parser),
                     rule!(function_type_parser),
                     rule!(mapping_type_parser),
@@ -3079,6 +3141,7 @@ impl Parsers {
                 UnaryPrefixExpression,
                 function_call_expression_parser,
                 choice!(
+                    Anon,
                     terminal!(PlusPlus, "++"),
                     terminal!(MinusMinus, "--"),
                     terminal!(Bang, "!"),
@@ -3094,7 +3157,7 @@ impl Parsers {
             unary_suffix_expression!(
                 UnarySuffixExpression,
                 unary_prefix_expression_parser,
-                choice!(terminal!(PlusPlus, "++"), terminal!(MinusMinus, "--"))
+                choice!(Anon, terminal!(PlusPlus, "++"), terminal!(MinusMinus, "--"))
             )
             .boxed(),
         );
@@ -3174,6 +3237,7 @@ impl Parsers {
                 UsingDirective,
                 terminal!(Using, "using"),
                 choice!(
+                    Anon,
                     rule!(identifier_path_parser),
                     delimited_by!(
                         OpenBraceAndIdentifierPathRepeatedAndCommaRepeatedAndCloseBrace,
@@ -3187,7 +3251,7 @@ impl Parsers {
                     )
                 ),
                 terminal!(For, "for"),
-                choice!(terminal!(Star, "*"), rule!(type_name_parser)),
+                choice!(Anon, terminal!(Star, "*"), rule!(type_name_parser)),
                 optional!(terminal!(Global, "global")),
                 terminal!(Semicolon, ";")
             )
@@ -3201,7 +3265,7 @@ impl Parsers {
                 rule!(type_name_parser),
                 optional!(rule!(data_location_parser)),
                 token!(identifier_parser),
-                optional!(seq!(terminal!(Equal, "="), rule!(expression_parser))),
+                optional!(seq!(Anon, terminal!(Equal, "="), rule!(expression_parser))),
                 terminal!(Semicolon, ";")
             )
             .boxed(),
@@ -3224,10 +3288,14 @@ impl Parsers {
             seq!(
                 VersionPragmaSpecifier,
                 terminal!(Solidity, "solidity"),
-                one_or_more!(seq!(
-                    token!(version_pragma_operator_parser),
-                    token!(version_pragma_value_parser)
-                ))
+                one_or_more!(
+                    AnonRepeated,
+                    seq!(
+                        Anon,
+                        token!(version_pragma_operator_parser),
+                        token!(version_pragma_value_parser)
+                    )
+                )
             )
             .boxed(),
         );
@@ -3361,6 +3429,7 @@ impl Parsers {
                     terminal!(CloseParen, ")")
                 ),
                 optional!(seq!(
+                    Anon,
                     terminal!(MinusGreater, "->"),
                     separated_by!(
                         Results,
@@ -3502,13 +3571,18 @@ impl Parsers {
                 YulSwitchStatement,
                 terminal!(Switch, "switch"),
                 rule!(yul_expression_parser),
-                one_or_more!(seq!(
-                    choice!(
-                        seq!(terminal!(Case, "case"), rule!(yul_literal_parser)),
-                        terminal!(Default, "default")
-                    ),
-                    rule!(yul_block_parser)
-                ))
+                one_or_more!(
+                    AnonRepeated,
+                    seq!(
+                        Anon,
+                        choice!(
+                            Anon,
+                            seq!(Anon, terminal!(Case, "case"), rule!(yul_literal_parser)),
+                            terminal!(Default, "default")
+                        ),
+                        rule!(yul_block_parser)
+                    )
+                )
             )
             .boxed(),
         );
@@ -3524,6 +3598,7 @@ impl Parsers {
                     terminal!(Comma, ",")
                 ),
                 optional!(seq!(
+                    Anon,
                     terminal!(ColonEqual, ":="),
                     rule!(yul_expression_parser)
                 ))

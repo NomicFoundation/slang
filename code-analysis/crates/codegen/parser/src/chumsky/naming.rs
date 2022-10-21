@@ -72,6 +72,10 @@ pub fn to_parser_name_ident(str: &str) -> Ident {
     format_ident!("{}_parser", str.to_snake_case())
 }
 
+pub fn to_enum_entry_ident(str: &str) -> Ident {
+    format_ident!("{}", str.to_pascal_case())
+}
+
 fn is_reserved_identifier(s: &str) -> bool {
     RUST_RESERVED_IDENTIFIERS.binary_search(&s).is_ok()
 }
