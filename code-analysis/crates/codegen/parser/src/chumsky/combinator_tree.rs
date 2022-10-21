@@ -122,7 +122,6 @@ impl CombinatorTree {
             }
             ProductionKind::Token => {
                 code.add_token_kind(self.production.name.clone());
-                code.add_rule_kind(self.production.name.clone());
                 (self.root_node.to_lexer_code(code), quote!(lex::NodeRef))
             }
         };
