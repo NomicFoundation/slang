@@ -4,7 +4,9 @@ use quote::{format_ident, quote};
 
 use codegen_schema::*;
 
-use super::{code_fragments::CodeFragments, naming, ProductionChumskyExtensions};
+use super::{
+    code_fragments::CodeFragments, combinator_node::ParserCode, naming, ProductionChumskyExtensions,
+};
 
 #[derive(Clone, Debug)]
 pub struct TerminalTrie(PatriciaMap<String>);
@@ -42,8 +44,11 @@ impl TerminalTrie {
         self.to_code(code, "trivia_")
     }
 
-    pub fn to_parser_code(&self, code: &mut CodeFragments) -> TokenStream {
-        self.to_code(code, "")
+    pub fn to_parser_code(&self, code: &mut CodeFragments) -> ParserCode {
+        ParserCode {
+            parser: self.to_code(code, ""),
+            tipe: quote!(Token),
+        }
     }
 
     fn collect_terminals(&mut self, grammar: &Grammar, expression: &ExpressionRef) -> bool {

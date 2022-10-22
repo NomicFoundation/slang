@@ -2,738 +2,586 @@
 
 #[allow(unused_imports)]
 use super::kinds;
+use std::ops::Range;
+use std::rc::Rc;
+pub type Token = Range<usize>;
+pub type SeparatedBy<T> = Rc<T>;
+pub type DelimitedBy<T> = Rc<T>;
 
-pub struct AbicoderPragmaSpecifier {
-    abicoder: usize,
-    identifier: usize,
-}
-pub enum Anon {
-    Plus,
-    Minus,
-}
-pub struct AddressType {
-    address: usize,
-    payable: usize,
-}
-pub enum Anon {
-    PositionalArgumentList,
-    NamedArgumentList,
-}
-pub struct AssemblyStatement {
-    assembly: usize,
-    double_quote_evmasm_double_quote: usize,
-    assembly_flags: usize,
-    yul_block: usize,
-}
-pub enum Anon {
-    Equal,
-    PipeEqual,
-    CaretEqual,
-    AmpersandEqual,
-    LessLessEqual,
-    GreaterGreaterEqual,
-    GreaterGreaterGreaterEqual,
-    PlusEqual,
-    MinusEqual,
-    StarEqual,
-    SlashEqual,
-    PercentEqual,
-}
-pub enum Anon {
-    Statement,
-    UncheckedBlock,
-}
-pub struct BreakStatement {
-    r#break: usize,
-    semicolon: usize,
-}
-pub struct Anon {
-    identifier: usize,
-    parameter_list: usize,
-}
-pub struct CatchClause {
-    catch: usize,
-    anon: usize,
-    block: usize,
-}
-pub struct Anon {
-    question: usize,
-    expression: usize,
-    colon: usize,
-    expression: usize,
-}
-pub struct ConstantDefinition {
-    type_name: usize,
-    constant: usize,
-    identifier: usize,
-    equal: usize,
-    expression: usize,
-    semicolon: usize,
-}
 pub enum ConstructorAttribute {
-    ModifierInvocation,
-    Internal,
-    Payable,
-    Public,
-}
-pub struct ConstructorDefinition {
-    constructor: usize,
-    parameter_list: usize,
-    constructor_attribute_repeated: usize,
-    block: usize,
-}
-pub struct ContinueStatement {
-    r#continue: usize,
-    semicolon: usize,
+    ModifierInvocation(Rc<ModifierInvocation>),
+    Internal(Token),
+    Payable(Token),
+    Public(Token),
 }
 pub enum ContractBodyElement {
-    UsingDirective,
-    ConstructorDefinition,
-    FunctionDefinition,
-    FallbackFunctionDefinition,
-    ReceiveFunctionDefinition,
-    ModifierDefinition,
-    StructDefinition,
-    EnumDefinition,
-    UserDefinedValueTypeDefinition,
-    EventDefinition,
-    ErrorDefinition,
-    StateVariableDeclaration,
-}
-pub struct ContractDefinition {
-    r#abstract: usize,
-    contract: usize,
-    identifier: usize,
-    inheritance_specifier_list: usize,
-    open_brace_and_contract_body_element_repeated_and_close_brace: usize,
-}
-pub enum DataLocation {
-    Memory,
-    Storage,
-    Calldata,
+    UsingDirective(Rc<UsingDirective>),
+    ConstructorDefinition(Rc<ConstructorDefinition>),
+    FunctionDefinition(Rc<FunctionDefinition>),
+    FallbackFunctionDefinition(Rc<FallbackFunctionDefinition>),
+    ReceiveFunctionDefinition(Rc<ReceiveFunctionDefinition>),
+    ModifierDefinition(Rc<ModifierDefinition>),
+    StructDefinition(Rc<StructDefinition>),
+    EnumDefinition(Rc<EnumDefinition>),
+    UserDefinedValueTypeDefinition(Rc<UserDefinedValueTypeDefinition>),
+    EventDefinition(Rc<EventDefinition>),
+    ErrorDefinition(Rc<ErrorDefinition>),
+    StateVariableDeclaration(Rc<StateVariableDeclaration>),
 }
 pub enum Definition {
-    ContractDefinition,
-    InterfaceDefinition,
-    LibraryDefinition,
-    FunctionDefinition,
-    ConstantDefinition,
-    StructDefinition,
-    EnumDefinition,
-    UserDefinedValueTypeDefinition,
-    ErrorDefinition,
-}
-pub struct DeleteStatement {
-    delete: usize,
-    identifier: usize,
-    semicolon: usize,
+    ContractDefinition(Rc<ContractDefinition>),
+    InterfaceDefinition(Rc<InterfaceDefinition>),
+    LibraryDefinition(Rc<LibraryDefinition>),
+    FunctionDefinition(Rc<FunctionDefinition>),
+    ConstantDefinition(Rc<ConstantDefinition>),
+    StructDefinition(Rc<StructDefinition>),
+    EnumDefinition(Rc<EnumDefinition>),
+    UserDefinedValueTypeDefinition(Rc<UserDefinedValueTypeDefinition>),
+    ErrorDefinition(Rc<ErrorDefinition>),
 }
 pub enum Directive {
-    PragmaDirective,
-    ImportDirective,
-    UsingDirective,
-}
-pub struct DoWhileStatement {
-    r#do: usize,
-    statement: usize,
-    r#while: usize,
-    open_paren_and_expression_and_close_paren: usize,
-    semicolon: usize,
+    PragmaDirective(Rc<PragmaDirective>),
+    ImportDirective(Rc<ImportDirective>),
+    UsingDirective(Rc<UsingDirective>),
 }
 pub enum ElementaryType {
-    Bool,
-    String,
-    AddressType,
-    FixedBytesType,
-    SignedIntegerType,
-    UnsignedIntegerType,
-    SignedFixedType,
-    UnsignedFixedType,
+    Bool(Token),
+    String(Token),
+    AddressType(Rc<AddressType>),
+    FixedBytesType(Token),
+    SignedIntegerType(Token),
+    UnsignedIntegerType(Token),
+    SignedFixedType(Token),
+    UnsignedFixedType(Token),
 }
-pub struct EmitStatement {
-    emit: usize,
-    identifier_path: usize,
-    argument_list: usize,
-    semicolon: usize,
-}
-pub struct EnumDefinition {
-    r#enum: usize,
-    identifier: usize,
-    open_brace_and_identifier_repeated_and_comma_repeated_and_close_brace: usize,
-}
-pub enum Anon {
-    EqualEqual,
-    BangEqual,
-}
-pub struct ErrorDefinition {
-    error: usize,
-    identifier: usize,
-    open_paren_and_error_parameter_repeated_and_comma_repeated_and_close_paren: usize,
-    semicolon: usize,
-}
-pub struct ErrorParameter {
-    type_name: usize,
-    identifier: usize,
-}
-pub struct EventDefinition {
-    event: usize,
-    identifier: usize,
-    open_paren_and_event_parameter_repeated_and_comma_repeated_and_close_paren: usize,
-    anonymous: usize,
-    semicolon: usize,
-}
-pub struct EventParameter {
-    type_name: usize,
-    indexed: usize,
-    identifier: usize,
-}
-pub struct ExperimentalPragmaSpecifier {
-    experimental: usize,
-    identifier: usize,
-}
-pub struct ExpressionStatement {
-    expression: usize,
-    semicolon: usize,
+pub enum Expression {
+    None,
 }
 pub enum FallbackFunctionAttribute {
-    ModifierInvocation,
-    OverrideSpecifier,
-    External,
-    Payable,
-    Pure,
-    View,
-    Virtual,
-}
-pub struct Anon {
-    returns: usize,
-    parameter_list: usize,
-}
-pub enum Anon {
-    Semicolon,
-    Block,
-}
-pub struct FallbackFunctionDefinition {
-    fallback: usize,
-    parameter_list: usize,
-    fallback_function_attribute_repeated: usize,
-    anon: usize,
-    anon: usize,
-}
-pub enum Anon {
-    SimpleStatement,
-    Semicolon,
-}
-pub enum Anon {
-    ExpressionStatement,
-    Semicolon,
-}
-pub struct Anon {
-    anon: usize,
-    anon: usize,
-    expression: usize,
-}
-pub struct ForStatement {
-    r#for: usize,
-    open_paren_and_anon_and_close_paren: usize,
-    statement: usize,
+    ModifierInvocation(Rc<ModifierInvocation>),
+    OverrideSpecifier(Rc<OverrideSpecifier>),
+    External(Token),
+    Payable(Token),
+    Pure(Token),
+    View(Token),
+    Virtual(Token),
 }
 pub enum FunctionAttribute {
-    ModifierInvocation,
-    OverrideSpecifier,
-    External,
-    Internal,
-    Payable,
-    Private,
-    Public,
-    Pure,
-    View,
-    Virtual,
-}
-pub struct Operator {
-    open_brace_and_named_argument_repeated_and_comma_repeated_and_close_brace: usize,
-    argument_list: usize,
-}
-pub enum Anon {
-    Identifier,
-    Fallback,
-    Receive,
-}
-pub struct Anon {
-    returns: usize,
-    parameter_list: usize,
-}
-pub enum Anon {
-    Semicolon,
-    Block,
-}
-pub struct FunctionDefinition {
-    function: usize,
-    anon: usize,
-    parameter_list: usize,
-    function_attribute_repeated: usize,
-    anon: usize,
-    anon: usize,
-}
-pub enum Anon {
-    Internal,
-    External,
-    Private,
-    Public,
-    Pure,
-    View,
-    Payable,
-}
-pub struct Anon {
-    returns: usize,
-    parameter_list: usize,
-}
-pub struct FunctionType {
-    function: usize,
-    parameter_list: usize,
-    anon_repeated: usize,
-    anon: usize,
-}
-pub struct Anon {
-    r#else: usize,
-    statement: usize,
-}
-pub struct IfStatement {
-    r#if: usize,
-    open_paren_and_expression_and_close_paren: usize,
-    statement: usize,
-    anon: usize,
-}
-pub enum Anon {
-    SimpleImportDirective,
-    StarImportDirective,
-    SelectingImportDirective,
-}
-pub struct ImportDirective {
-    import: usize,
-    anon: usize,
-    semicolon: usize,
-}
-pub struct Anon {
-    colon: usize,
-    expression: usize,
-}
-pub struct Anon {
-    expression: usize,
-    anon: usize,
-}
-pub struct InheritanceSpecifier {
-    identifier_path: usize,
-    argument_list: usize,
-}
-pub struct InheritanceSpecifierList {
-    is: usize,
-    inheritance_specifier_repeated_and_comma_repeated: usize,
-}
-pub struct InterfaceDefinition {
-    interface: usize,
-    identifier: usize,
-    inheritance_specifier_list: usize,
-    open_brace_and_contract_body_element_repeated_and_close_brace: usize,
-}
-pub struct LibraryDefinition {
-    library: usize,
-    identifier: usize,
-    open_brace_and_contract_body_element_repeated_and_close_brace: usize,
-}
-pub enum Anon {
-    ElementaryType,
-    IdentifierPath,
-}
-pub struct Anon {
-    anon: usize,
-    equal_greater: usize,
-    type_name: usize,
-}
-pub struct MappingType {
-    mapping: usize,
-    open_paren_and_anon_and_close_paren: usize,
-}
-pub enum Anon {
-    Identifier,
-    Address,
-}
-pub struct Operator {
-    period: usize,
-    anon: usize,
+    ModifierInvocation(Rc<ModifierInvocation>),
+    OverrideSpecifier(Rc<OverrideSpecifier>),
+    External(Token),
+    Internal(Token),
+    Payable(Token),
+    Private(Token),
+    Public(Token),
+    Pure(Token),
+    View(Token),
+    Virtual(Token),
 }
 pub enum ModifierAttribute {
-    OverrideSpecifier,
-    Virtual,
-}
-pub enum Anon {
-    Semicolon,
-    Block,
-}
-pub struct ModifierDefinition {
-    modifier: usize,
-    identifier: usize,
-    parameter_list: usize,
-    modifier_attribute_repeated: usize,
-    anon: usize,
-}
-pub struct ModifierInvocation {
-    identifier_path: usize,
-    argument_list: usize,
-}
-pub enum Anon {
-    Star,
-    Slash,
-    Percent,
-}
-pub struct NamedArgument {
-    identifier: usize,
-    colon: usize,
-    expression: usize,
-}
-pub struct NewExpression {
-    new: usize,
-    identifier_path: usize,
-    argument_list: usize,
-}
-pub enum Anon {
-    Less,
-    Greater,
-    LessEqual,
-    GreaterEqual,
-}
-pub struct OverrideSpecifier {
-    r#override: usize,
-    open_paren_and_identifier_path_repeated_and_comma_repeated_and_close_paren: usize,
-}
-pub struct ParameterDeclaration {
-    type_name: usize,
-    data_location: usize,
-    identifier: usize,
-}
-pub struct PayableExpression {
-    payable: usize,
-    argument_list: usize,
-}
-pub enum Anon {
-    VersionPragmaSpecifier,
-    AbicoderPragmaSpecifier,
-    ExperimentalPragmaSpecifier,
-}
-pub struct PragmaDirective {
-    pragma: usize,
-    anon: usize,
-    semicolon: usize,
+    OverrideSpecifier(Rc<OverrideSpecifier>),
+    Virtual(Token),
 }
 pub enum PrimaryExpression {
-    PayableExpression,
-    TypeExpression,
-    NewExpression,
-    ParenthesisExpression,
-    ArrayLiteral,
-    AsciiStringLiteral,
-    UnicodeStringLiteral,
-    HexStringLiteral,
-    NumericLiteral,
-    BooleanLiteral,
-    Identifier,
+    PayableExpression(Rc<PayableExpression>),
+    TypeExpression(Rc<TypeExpression>),
+    NewExpression(Rc<NewExpression>),
+    ParenthesisExpression(Rc<ParenthesisExpression>),
+    ArrayLiteral(Rc<ArrayLiteral>),
+    AsciiStringLiteral(Token),
+    UnicodeStringLiteral(Token),
+    HexStringLiteral(Token),
+    NumericLiteral(Token),
+    BooleanLiteral(Token),
+    Identifier(Token),
 }
 pub enum ReceiveFunctionAttribute {
-    ModifierInvocation,
-    OverrideSpecifier,
-    External,
-    Payable,
-    Virtual,
-}
-pub enum Anon {
-    Semicolon,
-    Block,
-}
-pub struct ReceiveFunctionDefinition {
-    receive: usize,
-    parameter_list: usize,
-    receive_function_attribute_repeated: usize,
-    anon: usize,
-}
-pub struct ReturnStatement {
-    r#return: usize,
-    expression: usize,
-    semicolon: usize,
-}
-pub struct RevertStatement {
-    revert: usize,
-    identifier_path: usize,
-    argument_list: usize,
-    semicolon: usize,
-}
-pub struct Anon {
-    r#as: usize,
-    identifier: usize,
-}
-pub struct SelectedImport {
-    identifier: usize,
-    anon: usize,
-}
-pub struct SelectingImportDirective {
-    open_brace_and_selected_import_repeated_and_comma_repeated_and_close_brace: usize,
-    from: usize,
-    import_path: usize,
-}
-pub enum Anon {
-    LessLess,
-    GreaterGreater,
-    GreaterGreaterGreater,
-}
-pub struct Anon {
-    r#as: usize,
-    identifier: usize,
-}
-pub struct SimpleImportDirective {
-    import_path: usize,
-    anon_repeated: usize,
+    ModifierInvocation(Rc<ModifierInvocation>),
+    OverrideSpecifier(Rc<OverrideSpecifier>),
+    External(Token),
+    Payable(Token),
+    Virtual(Token),
 }
 pub enum SimpleStatement {
-    TupleDeconstructionStatement,
-    VariableDeclarationStatement,
-    ExpressionStatement,
-}
-pub enum Anon {
-    Directive,
-    Definition,
-}
-pub struct SourceUnit {
-    leading_trivia: usize,
-    anon_repeated: usize,
-    end_of_file_trivia: usize,
-}
-pub struct StarImportDirective {
-    star: usize,
-    r#as: usize,
-    identifier: usize,
-    from: usize,
-    import_path: usize,
+    TupleDeconstructionStatement(Rc<TupleDeconstructionStatement>),
+    VariableDeclarationStatement(Rc<VariableDeclarationStatement>),
+    ExpressionStatement(Rc<ExpressionStatement>),
 }
 pub enum StateVariableAttribute {
-    OverrideSpecifier,
-    Constant,
-    Immutable,
-    Internal,
-    Private,
-    Public,
-}
-pub struct Anon {
-    equal: usize,
-    expression: usize,
-}
-pub struct StateVariableDeclaration {
-    type_name: usize,
-    state_variable_attribute_repeated: usize,
-    identifier: usize,
-    anon: usize,
-    semicolon: usize,
+    OverrideSpecifier(Rc<OverrideSpecifier>),
+    Constant(Token),
+    Immutable(Token),
+    Internal(Token),
+    Private(Token),
+    Public(Token),
 }
 pub enum Statement {
-    Block,
-    SimpleStatement,
-    IfStatement,
-    ForStatement,
-    WhileStatement,
-    DoWhileStatement,
-    ContinueStatement,
-    BreakStatement,
-    TryStatement,
-    ReturnStatement,
-    EmitStatement,
-    RevertStatement,
-    DeleteStatement,
-    AssemblyStatement,
-}
-pub struct StructDefinition {
-    r#struct: usize,
-    identifier: usize,
-    open_brace_and_struct_member_repeated_and_close_brace: usize,
-}
-pub struct StructMember {
-    type_name: usize,
-    identifier: usize,
-    semicolon: usize,
-}
-pub struct Anon {
-    returns: usize,
-    parameter_list: usize,
-}
-pub struct TryStatement {
-    r#try: usize,
-    expression: usize,
-    anon: usize,
-    block: usize,
-    catch_clause_repeated: usize,
-}
-pub struct Anon {
-    type_name: usize,
-    identifier: usize,
-}
-pub struct TupleDeconstructionStatement {
-    open_paren_and_anon_repeated_and_comma_repeated_and_close_paren: usize,
-    equal: usize,
-    expression: usize,
-    semicolon: usize,
-}
-pub struct TypeExpression {
-    r#type: usize,
-    open_paren_and_type_name_and_close_paren: usize,
-}
-pub enum Anon {
-    ElementaryType,
-    FunctionType,
-    MappingType,
-    IdentifierPath,
-}
-pub struct TypeName {
-    anon: usize,
-    open_bracket_and_expression_and_close_bracket_repeated: usize,
-}
-pub enum Anon {
-    PlusPlus,
-    MinusMinus,
-    Bang,
-    Tilde,
-    Minus,
-}
-pub enum Anon {
-    PlusPlus,
-    MinusMinus,
-}
-pub struct UncheckedBlock {
-    unchecked: usize,
-    block: usize,
-}
-pub struct UserDefinedValueTypeDefinition {
-    r#type: usize,
-    identifier: usize,
-    is: usize,
-    elementary_type: usize,
-    semicolon: usize,
-}
-pub enum Anon {
-    IdentifierPath,
-    OpenBraceAndIdentifierPathRepeatedAndCommaRepeatedAndCloseBrace,
-}
-pub enum Anon {
-    Star,
-    TypeName,
-}
-pub struct UsingDirective {
-    using: usize,
-    anon: usize,
-    r#for: usize,
-    anon: usize,
-    global: usize,
-    semicolon: usize,
-}
-pub struct Anon {
-    equal: usize,
-    expression: usize,
-}
-pub struct VariableDeclarationStatement {
-    type_name: usize,
-    data_location: usize,
-    identifier: usize,
-    anon: usize,
-    semicolon: usize,
-}
-pub struct Anon {
-    version_pragma_operator: usize,
-    version_pragma_value: usize,
-}
-pub struct VersionPragmaSpecifier {
-    solidity: usize,
-    anon_repeated: usize,
-}
-pub struct WhileStatement {
-    r#while: usize,
-    open_paren_and_expression_and_close_paren: usize,
-    statement: usize,
-}
-pub struct YulAssignmentStatement {
-    yul_identifier_path_repeated_and_comma_repeated: usize,
-    colon_equal: usize,
-    yul_expression: usize,
+    Block(Rc<Block>),
+    SimpleStatement(Rc<SimpleStatement>),
+    IfStatement(Rc<IfStatement>),
+    ForStatement(Rc<ForStatement>),
+    WhileStatement(Rc<WhileStatement>),
+    DoWhileStatement(Rc<DoWhileStatement>),
+    ContinueStatement(Rc<ContinueStatement>),
+    BreakStatement(Rc<BreakStatement>),
+    TryStatement(Rc<TryStatement>),
+    ReturnStatement(Rc<ReturnStatement>),
+    EmitStatement(Rc<EmitStatement>),
+    RevertStatement(Rc<RevertStatement>),
+    DeleteStatement(Rc<DeleteStatement>),
+    AssemblyStatement(Rc<AssemblyStatement>),
 }
 pub enum YulExpression {
-    YulIdentifierPath,
-    YulFunctionCall,
-    YulLiteral,
-}
-pub struct YulForStatement {
-    r#for: usize,
-    yul_block: usize,
-    yul_expression: usize,
-    yul_block: usize,
-    yul_block: usize,
-}
-pub struct YulFunctionCall {
-    yul_identifier: usize,
-    open_paren_and_yul_expression_repeated_and_comma_repeated_and_close_paren: usize,
-}
-pub struct Anon {
-    minus_greater: usize,
-    results: usize,
-}
-pub struct YulFunctionDefinition {
-    function: usize,
-    yul_identifier: usize,
-    open_paren_and_arguments_and_close_paren: usize,
-    anon: usize,
-    yul_block: usize,
-}
-pub struct YulIfStatement {
-    r#if: usize,
-    yul_expression: usize,
-    yul_block: usize,
-}
-pub enum YulLiteral {
-    YulDecimalNumberLiteral,
-    YulHexLiteral,
-    AsciiStringLiteral,
-    BooleanLiteral,
-    HexStringLiteral,
+    YulIdentifierPath(Rc<YulIdentifierPath>),
+    YulFunctionCall(Rc<YulFunctionCall>),
+    YulLiteral(Rc<YulLiteral>),
 }
 pub enum YulStatement {
-    YulBlock,
-    YulVariableDeclaration,
-    YulFunctionDefinition,
-    YulAssignmentStatement,
-    YulFunctionCall,
-    YulIfStatement,
-    YulForStatement,
-    YulSwitchStatement,
-    YulLeaveStatement,
-    YulBreakStatement,
-    YulContinueStatement,
+    YulBlock(Rc<YulBlock>),
+    YulVariableDeclaration(Rc<YulVariableDeclaration>),
+    YulFunctionDefinition(Rc<YulFunctionDefinition>),
+    YulAssignmentStatement(Rc<YulAssignmentStatement>),
+    YulFunctionCall(Rc<YulFunctionCall>),
+    YulIfStatement(Rc<YulIfStatement>),
+    YulForStatement(Rc<YulForStatement>),
+    YulSwitchStatement(Rc<YulSwitchStatement>),
+    YulLeaveStatement(Rc<YulLeaveStatement>),
+    YulBreakStatement(Rc<YulBreakStatement>),
+    YulContinueStatement(Rc<YulContinueStatement>),
 }
-pub struct Anon {
-    case: usize,
-    yul_literal: usize,
+pub struct AbicoderPragmaSpecifier {
+    abicoder: Token,
+    identifier: Token,
 }
-pub enum Anon {
-    Anon,
-    Default,
+pub struct AddressType {
+    address: Token,
+    optional_payable: Option<Token>,
 }
-pub struct Anon {
-    anon: usize,
-    yul_block: usize,
+pub struct AssemblyStatement {
+    assembly: Token,
+    optional_double_quote_evmasm_double_quote: Option<Token>,
+    optional_assembly_flags: Option<Rc<AssemblyFlags>>,
+    yul_block: Rc<YulBlock>,
 }
-pub struct YulSwitchStatement {
-    switch: usize,
-    yul_expression: usize,
-    anon_repeated: usize,
+pub struct BreakStatement {
+    r#break: Token,
+    semicolon: Token,
 }
-pub struct Anon {
-    colon_equal: usize,
-    yul_expression: usize,
+pub struct ConstantDefinition {
+    type_name: Rc<TypeName>,
+    constant: Token,
+    identifier: Token,
+    equal: Token,
+    expression: Rc<Expression>,
+    semicolon: Token,
 }
-pub struct YulVariableDeclaration {
-    r#let: usize,
-    yul_identifier_path_repeated_and_comma_repeated: usize,
-    anon: usize,
+pub struct ConstructorDefinition {
+    constructor: Token,
+    parameter_list: Rc<ParameterList>,
+    constructor_attributes: ConstructorAttributes,
+    block: Rc<Block>,
 }
+pub struct ContinueStatement {
+    r#continue: Token,
+    semicolon: Token,
+}
+pub struct ContractDefinition {
+    optional_abstract: Option<Token>,
+    contract: Token,
+    identifier: Token,
+    optional_inheritance_specifier_list: Option<Rc<InheritanceSpecifierList>>,
+    open_brace_and_contract_body_elements_and_close_brace:
+        OpenBraceAndContractBodyElementsAndCloseBrace,
+}
+pub struct DeleteStatement {
+    delete: Token,
+    identifier: Token,
+    semicolon: Token,
+}
+pub struct DoWhileStatement {
+    r#do: Token,
+    statement: Rc<Statement>,
+    r#while: Token,
+    open_paren_and_expression_and_close_paren: OpenParenAndExpressionAndCloseParen,
+    semicolon: Token,
+}
+pub struct EmitStatement {
+    emit: Token,
+    identifier_path: Rc<IdentifierPath>,
+    argument_list: Rc<ArgumentList>,
+    semicolon: Token,
+}
+pub struct EnumDefinition {
+    r#enum: Token,
+    identifier: Token,
+    open_brace_and_identifiers_and_commas_and_close_brace:
+        OpenBraceAndIdentifiersAndCommasAndCloseBrace,
+}
+pub struct ErrorDefinition {
+    error: Token,
+    identifier: Token,
+    open_paren_and_optional_error_parameters_and_commas_and_close_paren:
+        OpenParenAndOptionalErrorParametersAndCommasAndCloseParen,
+    semicolon: Token,
+}
+pub struct ErrorParameter {
+    type_name: Rc<TypeName>,
+    optional_identifier: Option<Token>,
+}
+pub struct EventDefinition {
+    event: Token,
+    identifier: Token,
+    open_paren_and_optional_event_parameters_and_commas_and_close_paren:
+        OpenParenAndOptionalEventParametersAndCommasAndCloseParen,
+    optional_anonymous: Option<Token>,
+    semicolon: Token,
+}
+pub struct EventParameter {
+    type_name: Rc<TypeName>,
+    optional_indexed: Option<Token>,
+    optional_identifier: Option<Token>,
+}
+pub struct ExperimentalPragmaSpecifier {
+    experimental: Token,
+    identifier: Token,
+}
+pub struct ExpressionStatement {
+    expression: Rc<Expression>,
+    semicolon: Token,
+}
+pub struct InheritanceSpecifier {
+    identifier_path: Rc<IdentifierPath>,
+    optional_argument_list: Option<Rc<ArgumentList>>,
+}
+pub struct InheritanceSpecifierList {
+    is: Token,
+    inheritance_specifiers_and_commas: InheritanceSpecifiersAndCommas,
+}
+pub struct InterfaceDefinition {
+    interface: Token,
+    identifier: Token,
+    optional_inheritance_specifier_list: Option<Rc<InheritanceSpecifierList>>,
+    open_brace_and_contract_body_elements_and_close_brace:
+        OpenBraceAndContractBodyElementsAndCloseBrace,
+}
+pub struct LibraryDefinition {
+    library: Token,
+    identifier: Token,
+    open_brace_and_contract_body_elements_and_close_brace:
+        OpenBraceAndContractBodyElementsAndCloseBrace,
+}
+pub struct ModifierInvocation {
+    identifier_path: Rc<IdentifierPath>,
+    optional_argument_list: Option<Rc<ArgumentList>>,
+}
+pub struct NamedArgument {
+    identifier: Token,
+    colon: Token,
+    expression: Rc<Expression>,
+}
+pub struct NewExpression {
+    new: Token,
+    identifier_path: Rc<IdentifierPath>,
+    argument_list: Rc<ArgumentList>,
+}
+pub struct OverrideSpecifier {
+    r#override: Token,
+    optional_open_paren_and_identifier_paths_and_commas_and_close_paren:
+        Option<OpenParenAndIdentifierPathsAndCommasAndCloseParen>,
+}
+pub struct ParameterDeclaration {
+    type_name: Rc<TypeName>,
+    optional_data_location: Option<Rc<DataLocation>>,
+    optional_identifier: Option<Token>,
+}
+pub struct PayableExpression {
+    payable: Token,
+    argument_list: Rc<ArgumentList>,
+}
+pub struct ReturnStatement {
+    r#return: Token,
+    optional_expression: Option<Rc<Expression>>,
+    semicolon: Token,
+}
+pub struct RevertStatement {
+    revert: Token,
+    optional_identifier_path: Option<Rc<IdentifierPath>>,
+    argument_list: Rc<ArgumentList>,
+    semicolon: Token,
+}
+pub struct SelectingImportDirective {
+    open_brace_and_selected_imports_and_commas_and_close_brace:
+        OpenBraceAndSelectedImportsAndCommasAndCloseBrace,
+    from: Token,
+    import_path: Rc<ImportPath>,
+}
+pub struct StarImportDirective {
+    star: Token,
+    r#as: Token,
+    identifier: Token,
+    from: Token,
+    import_path: Rc<ImportPath>,
+}
+pub struct StructDefinition {
+    r#struct: Token,
+    identifier: Token,
+    open_brace_and_struct_members_and_close_brace: OpenBraceAndStructMembersAndCloseBrace,
+}
+pub struct StructMember {
+    type_name: Rc<TypeName>,
+    identifier: Token,
+    semicolon: Token,
+}
+pub struct TypeExpression {
+    r#type: Token,
+    open_paren_and_type_name_and_close_paren: OpenParenAndTypeNameAndCloseParen,
+}
+pub struct UncheckedBlock {
+    unchecked: Token,
+    block: Rc<Block>,
+}
+pub struct UserDefinedValueTypeDefinition {
+    r#type: Token,
+    identifier: Token,
+    is: Token,
+    elementary_type: Rc<ElementaryType>,
+    semicolon: Token,
+}
+pub struct WhileStatement {
+    r#while: Token,
+    open_paren_and_expression_and_close_paren: OpenParenAndExpressionAndCloseParen,
+    statement: Rc<Statement>,
+}
+pub struct YulAssignmentStatement {
+    yul_identifier_paths_and_commas: YulIdentifierPathsAndCommas,
+    colon_equal: Token,
+    yul_expression: Rc<YulExpression>,
+}
+pub struct YulForStatement {
+    r#for: Token,
+    yul_block: Rc<YulBlock>,
+    yul_expression: Rc<YulExpression>,
+    yul_block: Rc<YulBlock>,
+    yul_block: Rc<YulBlock>,
+}
+pub struct YulFunctionCall {
+    yul_identifier: Token,
+    open_paren_and_optional_yul_expressions_and_commas_and_close_paren:
+        OpenParenAndOptionalYulExpressionsAndCommasAndCloseParen,
+}
+pub struct YulIfStatement {
+    r#if: Token,
+    yul_expression: Rc<YulExpression>,
+    yul_block: Rc<YulBlock>,
+}
+pub type ArgumentList = DelimitedBy<
+    Option<(
+        Option<Rc<PositionalArgumentList>>,
+        Option<Rc<NamedArgumentList>>,
+    )>,
+>;
+pub type Arguments = SeparatedBy<Token>;
+pub type ArrayLiteral = DelimitedBy<ExpressionsAndCommas>;
+pub type AssemblyFlags = DelimitedBy<DoubleQuotedAsciiStringLiteralsAndCommas>;
+pub type Block = DelimitedBy<Vec<(Option<Rc<Statement>>, Option<Rc<UncheckedBlock>>)>>;
+pub type CatchClause = (Token, Option<(Option<Token>, Rc<ParameterList>)>, Rc<Block>);
+pub type CatchClauses = Vec<Rc<CatchClause>>;
+pub type ConstructorAttributes = Vec<Rc<ConstructorAttribute>>;
+pub type ContractBodyElements = Vec<Rc<ContractBodyElement>>;
+pub type DoubleQuotedAsciiStringLiteralsAndCommas = SeparatedBy<Token>;
+pub type ErrorParametersAndCommas = SeparatedBy<Rc<ErrorParameter>>;
+pub type EventParametersAndCommas = SeparatedBy<Rc<EventParameter>>;
+pub type ExpressionsAndCommas = SeparatedBy<Rc<Expression>>;
+pub type FallbackFunctionAttributes = Vec<Rc<FallbackFunctionAttribute>>;
+pub type FallbackFunctionDefinition = (
+    Token,
+    Rc<ParameterList>,
+    FallbackFunctionAttributes,
+    Option<(Token, Rc<ParameterList>)>,
+    (Option<Token>, Option<Rc<Block>>),
+);
+pub type ForStatement = (
+    Token,
+    DelimitedBy<(
+        (Option<Rc<SimpleStatement>>, Option<Token>),
+        (Option<Rc<ExpressionStatement>>, Option<Token>),
+        Option<Rc<Expression>>,
+    )>,
+    Rc<Statement>,
+);
+pub type FunctionAttributes = Vec<Rc<FunctionAttribute>>;
+pub type FunctionDefinition = (
+    Token,
+    Token,
+    Rc<ParameterList>,
+    FunctionAttributes,
+    Option<(Token, Rc<ParameterList>)>,
+    (Option<Token>, Option<Rc<Block>>),
+);
+pub type FunctionType = (
+    Token,
+    Rc<ParameterList>,
+    Vec<Token>,
+    Option<(Token, Rc<ParameterList>)>,
+);
+pub type IdentifierPath = SeparatedBy<Token>;
+pub type IdentifierPathsAndCommas = SeparatedBy<Rc<IdentifierPath>>;
+pub type IdentifiersAndCommas = SeparatedBy<Token>;
+pub type IfStatement = (
+    Token,
+    OpenParenAndExpressionAndCloseParen,
+    Rc<Statement>,
+    Option<(Token, Rc<Statement>)>,
+);
+pub type ImportDirective = (
+    Token,
+    (
+        Option<Rc<SimpleImportDirective>>,
+        Option<Rc<StarImportDirective>>,
+        Option<Rc<SelectingImportDirective>>,
+    ),
+    Token,
+);
+pub type InheritanceSpecifiersAndCommas = SeparatedBy<Rc<InheritanceSpecifier>>;
+pub type MappingType = (
+    Token,
+    DelimitedBy<(
+        (Option<Rc<ElementaryType>>, Option<Rc<IdentifierPath>>),
+        Token,
+        Rc<TypeName>,
+    )>,
+);
+pub type ModifierAttributes = Vec<Rc<ModifierAttribute>>;
+pub type ModifierDefinition = (
+    Token,
+    Token,
+    Option<Rc<ParameterList>>,
+    ModifierAttributes,
+    (Option<Token>, Option<Rc<Block>>),
+);
+pub type NamedArgumentList = DelimitedBy<Option<NamedArgumentsAndCommas>>;
+pub type NamedArgumentsAndCommas = SeparatedBy<Rc<NamedArgument>>;
+pub type OpenBraceAndContractBodyElementsAndCloseBrace = DelimitedBy<ContractBodyElements>;
+pub type OpenBraceAndIdentifierPathsAndCommasAndCloseBrace = DelimitedBy<IdentifierPathsAndCommas>;
+pub type OpenBraceAndIdentifiersAndCommasAndCloseBrace = DelimitedBy<IdentifiersAndCommas>;
+pub type OpenBraceAndNamedArgumentsAndCommasAndCloseBrace = DelimitedBy<NamedArgumentsAndCommas>;
+pub type OpenBraceAndSelectedImportsAndCommasAndCloseBrace = DelimitedBy<SelectedImportsAndCommas>;
+pub type OpenBraceAndStructMembersAndCloseBrace = DelimitedBy<StructMembers>;
+pub type OpenBracketAndOptionalExpressionAndCloseBracket = DelimitedBy<Option<Rc<Expression>>>;
+pub type OpenBracketAndOptionalExpressionAndCloseBrackets =
+    Vec<OpenBracketAndOptionalExpressionAndCloseBracket>;
+pub type OpenParenAndExpressionAndCloseParen = DelimitedBy<Rc<Expression>>;
+pub type OpenParenAndIdentifierPathsAndCommasAndCloseParen = DelimitedBy<IdentifierPathsAndCommas>;
+pub type OpenParenAndOptionalArgumentsAndCloseParen = DelimitedBy<Option<Arguments>>;
+pub type OpenParenAndOptionalErrorParametersAndCommasAndCloseParen =
+    DelimitedBy<Option<ErrorParametersAndCommas>>;
+pub type OpenParenAndOptionalEventParametersAndCommasAndCloseParen =
+    DelimitedBy<Option<EventParametersAndCommas>>;
+pub type OpenParenAndOptionalYulExpressionsAndCommasAndCloseParen =
+    DelimitedBy<Option<YulExpressionsAndCommas>>;
+pub type OpenParenAndTypeNameAndCloseParen = DelimitedBy<Rc<TypeName>>;
+pub type OptionalExpressionsAndCommas = SeparatedBy<Option<Rc<Expression>>>;
+pub type ParameterDeclarationsAndCommas = SeparatedBy<Rc<ParameterDeclaration>>;
+pub type ParameterList = DelimitedBy<Option<ParameterDeclarationsAndCommas>>;
+pub type ParenthesisExpression = DelimitedBy<OptionalExpressionsAndCommas>;
+pub type PositionalArgumentList = SeparatedBy<Rc<Expression>>;
+pub type PragmaDirective = (
+    Token,
+    (
+        Option<Rc<VersionPragmaSpecifier>>,
+        Option<Rc<AbicoderPragmaSpecifier>>,
+        Option<Rc<ExperimentalPragmaSpecifier>>,
+    ),
+    Token,
+);
+pub type ReceiveFunctionAttributes = Vec<Rc<ReceiveFunctionAttribute>>;
+pub type ReceiveFunctionDefinition = (
+    Token,
+    Rc<ParameterList>,
+    ReceiveFunctionAttributes,
+    (Option<Token>, Option<Rc<Block>>),
+);
+pub type Results = SeparatedBy<Token>;
+pub type SelectedImport = (Token, Option<(Token, Token)>);
+pub type SelectedImportsAndCommas = SeparatedBy<Rc<SelectedImport>>;
+pub type SimpleImportDirective = (Rc<ImportPath>, Vec<(Token, Token)>);
+pub type SourceUnit = (
+    Rc<LeadingTrivia>,
+    Vec<(Option<Rc<Directive>>, Option<Rc<Definition>>)>,
+    Rc<EndOfFileTrivia>,
+);
+pub type StateVariableAttributes = Vec<Rc<StateVariableAttribute>>;
+pub type StateVariableDeclaration = (
+    Rc<TypeName>,
+    StateVariableAttributes,
+    Token,
+    Option<(Token, Rc<Expression>)>,
+    Token,
+);
+pub type StructMembers = Vec<Rc<StructMember>>;
+pub type TryStatement = (
+    Token,
+    Rc<Expression>,
+    Option<(Token, Rc<ParameterList>)>,
+    Rc<Block>,
+    CatchClauses,
+);
+pub type TupleDeconstructionStatement = (
+    DelimitedBy<Option<SeparatedBy<Option<(Option<Rc<TypeName>>, Token)>>>>,
+    Token,
+    Rc<Expression>,
+    Token,
+);
+pub type TypeName = (
+    (
+        Option<Rc<ElementaryType>>,
+        Option<Rc<FunctionType>>,
+        Option<Rc<MappingType>>,
+        Option<Rc<IdentifierPath>>,
+    ),
+    OpenBracketAndOptionalExpressionAndCloseBrackets,
+);
+pub type UsingDirective = (
+    Token,
+    (
+        Option<Rc<IdentifierPath>>,
+        Option<OpenBraceAndIdentifierPathsAndCommasAndCloseBrace>,
+    ),
+    Token,
+    (Option<Token>, Option<Rc<TypeName>>),
+    Option<Token>,
+    Token,
+);
+pub type VariableDeclarationStatement = (
+    Rc<TypeName>,
+    Option<Rc<DataLocation>>,
+    Token,
+    Option<(Token, Rc<Expression>)>,
+    Token,
+);
+pub type VersionPragmaSpecifier = (Token, Vec<(Token, Token)>);
+pub type YulBlock = DelimitedBy<YulStatements>;
+pub type YulExpressionsAndCommas = SeparatedBy<Rc<YulExpression>>;
+pub type YulFunctionDefinition = (
+    Token,
+    Token,
+    OpenParenAndOptionalArgumentsAndCloseParen,
+    Option<(Token, Results)>,
+    Rc<YulBlock>,
+);
+pub type YulIdentifierPath = SeparatedBy<Token>;
+pub type YulIdentifierPathsAndCommas = SeparatedBy<Rc<YulIdentifierPath>>;
+pub type YulStatements = Vec<Rc<YulStatement>>;
+pub type YulSwitchStatement = (
+    Token,
+    Rc<YulExpression>,
+    Vec<(
+        (Option<(Token, Rc<YulLiteral>)>, Option<Token>),
+        Rc<YulBlock>,
+    )>,
+);
+pub type YulVariableDeclaration = (
+    Token,
+    YulIdentifierPathsAndCommas,
+    Option<(Token, Rc<YulExpression>)>,
+);

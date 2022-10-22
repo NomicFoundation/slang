@@ -208,8 +208,15 @@ pub fn cst_head() -> TokenStream {
 
 pub fn ast_head() -> TokenStream {
     quote!(
+        use std::ops::Range;
+        use std::rc::Rc;
+
         #[allow(unused_imports)]
         use super::kinds;
+
+        pub type Token = Range<usize>;
+        pub type SeparatedBy<T> = Rc<T>;
+        pub type DelimitedBy<T> = Rc<T>;
     )
 }
 

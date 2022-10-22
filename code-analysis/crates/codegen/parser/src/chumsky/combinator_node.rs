@@ -1,7 +1,8 @@
 use std::rc::Rc;
 
+use inflector::Inflector;
 use proc_macro2::{Ident, TokenStream};
-use quote::quote;
+use quote::{format_ident, quote};
 
 use codegen_schema::*;
 
@@ -98,8 +99,8 @@ pub enum OperatorModel {
 }
 
 pub struct ParserCode {
-    parser: TokenStream,
-    tipe: TokenStream,
+    pub parser: TokenStream,
+    pub tipe: TokenStream,
 }
 
 impl CombinatorNode {
@@ -143,7 +144,6 @@ impl CombinatorNode {
             EBNF::Choice(exprs) => {
                 if production.kind != ProductionKind::Token {
                     // TODO: this should be an error unless all the children have the same type
-                    let name = name.clone().or_else(|| Some("Anon".to_string()));
                     Self::choice(
                         name,
                         exprs
@@ -275,7 +275,10 @@ impl CombinatorNode {
 
             EBNF::Optional(expr) => {
                 let expr = Self::from_expression(grammar, production, expr, None);
-                Self::optional(name.or_else(|| expr.name()), expr)
+                Self::optional(
+                    name.or_else(|| expr.name().map(|name| format!("optional_{}", name))),
+                    expr,
+                )
             }
 
             EBNF::Range(_) => {
@@ -317,12 +320,7 @@ impl CombinatorNode {
                     .iter()
                     .map(|e| Self::from_expression(grammar, production, e, None))
                     .collect();
-                if production.kind != ProductionKind::Token {
-                    let name = name.clone().or_else(|| Some("Anon".to_string()));
-                    Self::sequence(name, exprs)
-                } else {
-                    Self::sequence(name, exprs)
-                }
+                Self::sequence(name, exprs)
             }
 
             EBNF::Terminal(_) => {
@@ -612,7 +610,6 @@ impl CombinatorNode {
         }
     }
 
-    #[allow(dead_code)]
     pub fn to_trivia_code(
         &self,
         forest: &CombinatorForest,
@@ -627,14 +624,15 @@ impl CombinatorNode {
             Self::CharacterFilter { filter, name } => filter.to_trivia_code(name.as_ref(), code),
 
             Self::Choice { elements, name } => {
+                let elements = elements
+                    .iter()
+                    .map(|element| element.to_trivia_code(forest, tree, code))
+                    .collect::<Vec<_>>();
+
                 if let Some(kind) = create_kind(name, code) {
-                    let elements = elements
-                        .iter()
-                        .map(|element| element.to_trivia_code(forest, tree, code))
-                        .collect::<Vec<_>>();
                     quote!(choice!( #kind, #(#elements),* ))
                 } else {
-                    unreachable!("All choices within trivia must have a kind");
+                    quote!(choice!( #(#elements),* ))
                 }
             }
 
@@ -744,7 +742,7 @@ impl CombinatorNode {
                 if let Some(kind) = create_kind(name, code) {
                     quote!(seq!( #kind, #(#elements),* ))
                 } else {
-                    unreachable!("All sequences within trivia must have a kind");
+                    quote!(seq!( #(#elements),* ))
                 }
             }
 
@@ -761,7 +759,6 @@ impl CombinatorNode {
         }
     }
 
-    #[allow(dead_code)]
     pub fn to_parser_code(
         &self,
         forest: &CombinatorForest,
@@ -773,148 +770,191 @@ impl CombinatorNode {
         }
 
         match self {
-            Self::CharacterFilter { filter, name } => filter.to_parser_code(name.as_ref(), code),
-
-            Self::Choice { elements, name } => {
-                if let Some(kind) = create_kind(&name, code) {
-                    let parser_code = elements
-                        .iter()
-                        .map(|element| element.to_parser_code(forest, tree, code))
-                        .collect::<Vec<_>>();
-                    let names = elements
-                        .iter()
-                        .map(|element| {
-                            naming::to_enum_entry_ident(
-                                &element.name().unwrap_or("WTF".to_string()),
-                            )
-                        })
-                        .collect::<Vec<_>>();
-                    code.add_ast_fragment(quote!(pub enum #kind { #(#names),* }).to_string());
-                    let parsers = parser_code
-                        .iter()
-                        .map(|parser_code| parser_code.parser)
-                        .collect::<Vec<_>>();
-                    ParserCode {
-                        parser: quote!(choice!( #kind, #(#parsers),* )),
-                        tipe: quote!(#kind),
-                    }
-                } else {
-                    // If the choice elements all return the same type, then
-                    // the choice can be elided. This works recursively.
-
-                    unreachable!("All choices within rules must either have a homogeneous type, or have a kind");
-                }
-            }
-
-            Self::DelimitedBy {
-                open,
-                expr,
-                close,
-                name,
-            } => {
-                let open_kind = code.add_terminal_kind(open.clone());
-                let expr = expr.to_parser_code(forest, tree, code);
-                let close_kind = code.add_terminal_kind(close.clone());
-                if let Some(kind) = create_kind(name, code) {
-                    quote!(
-                        delimited_by!(#kind, terminal!(#open_kind, #open), #expr, terminal!(#close_kind, #close))
-                    )
-                } else {
-                    quote!(
-                        delimited_by!(terminal!(#open_kind, #open), #expr, terminal!(#close_kind, #close))
-                    )
-                }
-            }
-
-            Self::Difference {
-                minuend,
-                subtrahend,
-            } => {
-                let minuend = minuend.to_parser_code(forest, tree, code);
-                let subtrahend = subtrahend.to_parser_code(forest, tree, code);
-                quote! ( difference(#minuend, #subtrahend) )
-            }
-
-            Self::Expression { members, .. } => {
-                let first_parser_name = naming::to_parser_name_ident(&members[0].name);
-                quote!(rule!(#first_parser_name))
-            }
-
-            Self::ExpressionMember {
-                next_sibling,
-                operator,
-                operator_model,
-                name,
-                ..
-            } => {
-                let kind = code.add_rule_kind(name.clone());
-                let operator = operator.to_parser_code(forest, tree, code);
-                let next_sibling = next_sibling
-                    .clone()
-                    .map(|next| naming::to_parser_name_ident(&next.name));
-
-                match operator_model {
-                    OperatorModel::None => match next_sibling {
-                        Some(next_sibling) => quote!( choice((#operator, #next_sibling.clone())) ),
-                        None => operator,
-                    },
-
-                    OperatorModel::BinaryLeftAssociative => {
-                        let next_sibling = next_sibling
-                            .expect("Cannot have binary operator as last expression member");
-                        quote!(left_associative_binary_expression!(#kind, #next_sibling, #operator))
-                    }
-
-                    OperatorModel::BinaryRightAssociative => {
-                        let next_sibling = next_sibling
-                            .expect("Cannot have binary operator as last expression member");
-                        quote!(
-                            right_associative_binary_expression!(#kind, #next_sibling, #operator)
-                        )
-                    }
-
-                    OperatorModel::UnaryPrefix => {
-                        let next_sibling = next_sibling
-                            .expect("Cannot have unary operator as last expression member");
-                        quote!(unary_prefix_expression!(#kind, #next_sibling, #operator))
-                    }
-
-                    OperatorModel::UnarySuffix => {
-                        let next_sibling = next_sibling
-                            .expect("Cannot have unary operator as last expression member");
-                        quote!(unary_suffix_expression!(#kind, #next_sibling, #operator))
-                    }
-                }
-            }
-
-            Self::Lookahead { expr, lookahead } => {
-                let expr = expr.to_parser_code(forest, tree, code);
-                let lookahead = lookahead.to_parser_code(forest, tree, code);
-                quote!( #expr.then_ignore(#lookahead.rewind()) )
-            }
-
-            Self::OneOrMore { expr, name } => {
-                let expr = expr.to_parser_code(forest, tree, code);
-                if let Some(kind) = create_kind(name, code) {
-                    quote!(one_or_more!(#kind, #expr))
-                } else {
-                    quote!(one_or_more!(#expr))
-                }
-            }
-
-            Self::Optional { expr, .. } => {
-                let expr = expr.to_parser_code(forest, tree, code);
-                quote!(optional!(#expr))
-            }
-
+            // -----------------------------------------------------------------------------------------------
+            // Simple References
+            //
             Self::Reference { production } => {
                 let production_parser_name = naming::to_parser_name_ident(&production.name);
+                let tipe = format_ident!("{}", production.name.to_pascal_case());
                 match production.kind {
                     ProductionKind::Rule
                     | ProductionKind::ExpressionRule
                     | ProductionKind::ExpressionMemberRule
-                    | ProductionKind::Trivia => quote!(rule!(#production_parser_name)),
-                    ProductionKind::Token => quote!(token!(#production_parser_name)),
+                    | ProductionKind::Trivia => ParserCode {
+                        parser: quote!(rule!(#production_parser_name)),
+                        tipe: quote!(Rc<#tipe>),
+                    },
+                    ProductionKind::Token => ParserCode {
+                        parser: quote!(token!(#production_parser_name)),
+                        tipe: quote!(Token),
+                    },
+                }
+            }
+
+            // -----------------------------------------------------------------------------------------------
+            // Sequence and Choice
+            //
+            Self::Sequence { elements, name } => {
+                let (parsers, tipes): (Vec<TokenStream>, Vec<TokenStream>) = elements
+                    .iter()
+                    .map(|element| {
+                        let pc = element.to_parser_code(forest, tree, code);
+                        (pc.parser, pc.tipe)
+                    })
+                    .unzip();
+
+                if let Some(kind) = create_kind(name, code) {
+                    let names = elements
+                        .iter()
+                        .filter_map(|element| {
+                            element
+                                .name()
+                                .map(|name| naming::to_field_name_ident(&name))
+                        })
+                        .collect::<Vec<_>>();
+
+                    if names.len() == elements.len() {
+                        // ≡ all elements are named
+                        code.add_ast_fragment(
+                            quote!( pub struct #kind  { #( #names: #tipes ),* }  ).to_string(),
+                        );
+                        ParserCode {
+                            parser: quote!(seq!(#kind,  #( #names: #parsers ),* )),
+                            tipe: quote!(#kind),
+                        }
+                    } else {
+                        code.add_ast_fragment(
+                            quote!( pub type #kind =  ( #( #tipes ),* ) ; ).to_string(),
+                        );
+                        ParserCode {
+                            parser: quote!(seq!(#kind, #( #parsers ),* )),
+                            tipe: quote!(#kind),
+                        }
+                    }
+                } else {
+                    ParserCode {
+                        parser: quote!(seq!( #( #parsers ),* )),
+                        tipe: quote!( ( #( #tipes ),* ) ),
+                    }
+                }
+            }
+
+            Self::Choice { elements, name } => {
+                let (parsers, tipes): (Vec<TokenStream>, Vec<TokenStream>) = elements
+                    .iter()
+                    .map(|element| {
+                        let pc = element.to_parser_code(forest, tree, code);
+                        (pc.parser, pc.tipe)
+                    })
+                    .unzip();
+
+                let has_homogeneous_types = tipes
+                    .iter()
+                    .all(|tipe| tipe.to_string() == tipes[0].to_string());
+
+                if has_homogeneous_types {
+                    // If the choice elements all return the same type, then
+                    // the choice can be elided. Common with token choices.
+
+                    if let Some(kind) = create_kind(name, code) {
+                        ParserCode {
+                            parser: quote!(choice!(#kind, #( #parsers ),* )),
+                            tipe: tipes[0].clone(),
+                        }
+                    } else {
+                        ParserCode {
+                            parser: quote!(choice!( #( #parsers ),* )),
+                            tipe: tipes[0].clone(),
+                        }
+                    }
+                } else if let Some(kind) = create_kind(name, code) {
+                    let names = elements
+                        .iter()
+                        .filter_map(|element| {
+                            element
+                                .name()
+                                .map(|name| naming::to_enum_entry_ident(&name))
+                        })
+                        .collect::<Vec<_>>();
+
+                    if names.len() == elements.len() {
+                        // ≡ all elements are named
+                        code.add_ast_fragment(
+                            quote!( pub enum #kind { #( #names(#tipes) ),* }  ).to_string(),
+                        );
+                        ParserCode {
+                            parser: quote!(choice!!(#kind, #( #names: #parsers ),* )),
+                            tipe: quote!(#kind),
+                        }
+                    } else {
+                        code.add_ast_fragment(
+                            quote!( pub type #kind = ( #( Option<#tipes> ),* ) ; ).to_string(),
+                        );
+                        ParserCode {
+                            parser: quote!(choice!(#kind, #( #parsers ),* )),
+                            tipe: quote!(#kind),
+                        }
+                    }
+                } else {
+                    ParserCode {
+                        parser: quote!(choice!( #( #parsers ),* )),
+                        tipe: quote!( ( #( Option<#tipes> ),* ) ),
+                    }
+                }
+            }
+
+            // -----------------------------------------------------------------------------------------------
+            // Numeric Quantifiers
+            //
+            Self::Optional { expr, .. } => {
+                let ParserCode {
+                    parser: expr,
+                    tipe: expr_type,
+                } = expr.to_parser_code(forest, tree, code);
+                let tipe = quote!( Option<#expr_type> );
+                ParserCode {
+                    parser: quote!(optional!(#expr)),
+                    tipe,
+                }
+            }
+
+            Self::OneOrMore { expr, name } => {
+                let ParserCode {
+                    parser: expr,
+                    tipe: expr_type,
+                } = expr.to_parser_code(forest, tree, code);
+                let tipe = quote!( Vec<#expr_type> );
+                if let Some(kind) = create_kind(name, code) {
+                    code.add_ast_fragment(quote!( pub type #kind = #tipe; ).to_string());
+                    ParserCode {
+                        parser: quote!(one_or_more!(#kind, #expr)),
+                        tipe: quote!(#kind),
+                    }
+                } else {
+                    ParserCode {
+                        parser: quote!(one_or_more!(#expr)),
+                        tipe,
+                    }
+                }
+            }
+
+            Self::ZeroOrMore { expr, name } => {
+                let ParserCode {
+                    parser: expr,
+                    tipe: expr_type,
+                } = expr.to_parser_code(forest, tree, code);
+                let tipe = quote!( Vec<#expr_type> );
+                if let Some(kind) = create_kind(name, code) {
+                    code.add_ast_fragment(quote!( pub type #kind = #tipe; ).to_string());
+                    ParserCode {
+                        parser: quote!(zero_or_more!(#kind, #expr)),
+                        tipe: quote!(#kind),
+                    }
+                } else {
+                    ParserCode {
+                        parser: quote!(zero_or_more!(#expr)),
+                        tipe,
+                    }
                 }
             }
 
@@ -924,11 +964,56 @@ impl CombinatorNode {
                 max,
                 name,
             } => {
-                let expr = expr.to_parser_code(forest, tree, code);
+                let ParserCode {
+                    parser: expr,
+                    tipe: expr_type,
+                } = expr.to_parser_code(forest, tree, code);
+                let tipe = quote!( Vec<#expr_type> );
                 if let Some(kind) = create_kind(name, code) {
-                    quote!(repeated!(#kind, #expr, #min, #max))
+                    code.add_ast_fragment(quote!( pub type #kind = #tipe; ).to_string());
+                    ParserCode {
+                        parser: quote!(repeated!(#kind, #expr, #min, #max)),
+                        tipe: quote!(#kind),
+                    }
                 } else {
-                    quote!(repeated!(#expr, #min, #max))
+                    ParserCode {
+                        parser: quote!(repeated!(#expr, #min, #max)),
+                        tipe,
+                    }
+                }
+            }
+
+            // -----------------------------------------------------------------------------------------------
+            // Stereotypes
+            //
+            Self::DelimitedBy {
+                open,
+                expr,
+                close,
+                name,
+            } => {
+                let open_kind = code.add_terminal_kind(open.clone());
+                let ParserCode {
+                    parser: expr,
+                    tipe: expr_type,
+                } = expr.to_parser_code(forest, tree, code);
+                let close_kind = code.add_terminal_kind(close.clone());
+                let tipe = quote!( DelimitedBy<#expr_type> );
+                if let Some(kind) = create_kind(name, code) {
+                    code.add_ast_fragment(quote!( pub type #kind = #tipe; ).to_string());
+                    ParserCode {
+                        parser: quote!(
+                            delimited_by!(#kind, terminal!(#open_kind, #open), #expr, terminal!(#close_kind, #close))
+                        ),
+                        tipe: quote!(#kind),
+                    }
+                } else {
+                    ParserCode {
+                        parser: quote!(
+                            delimited_by!(terminal!(#open_kind, #open), #expr, terminal!(#close_kind, #close))
+                        ),
+                        tipe,
+                    }
                 }
             }
 
@@ -937,47 +1022,153 @@ impl CombinatorNode {
                 separator,
                 name,
             } => {
-                let expr = expr.to_parser_code(forest, tree, code);
+                let ParserCode {
+                    parser: expr,
+                    tipe: expr_type,
+                } = expr.to_parser_code(forest, tree, code);
                 let separator_kind = code.add_terminal_kind(separator.clone());
+                let tipe = quote!( SeparatedBy<#expr_type> );
                 if let Some(kind) = create_kind(name, code) {
-                    quote!(separated_by!(#kind, #expr, terminal!(#separator_kind, #separator)))
+                    code.add_ast_fragment(quote!( pub type #kind = #tipe; ).to_string());
+                    ParserCode {
+                        parser: quote!(
+                            separated_by!(#kind, #expr, terminal!(#separator_kind, #separator))
+                        ),
+                        tipe: quote!(#kind),
+                    }
                 } else {
-                    quote!(separated_by!(#expr, terminal!(#separator_kind, #separator)))
+                    ParserCode {
+                        parser: quote!(
+                            separated_by!(#expr, terminal!(#separator_kind, #separator))
+                        ),
+                        tipe,
+                    }
                 }
             }
 
-            Self::Sequence { elements, name } => {
-                let parsers = elements
-                    .iter()
-                    .map(|element| element.to_parser_code(forest, tree, code))
-                    .collect::<Vec<_>>();
-                if let Some(kind) = create_kind(name, code) {
-                    let names = elements
-                        .iter()
-                        .map(|element| {
-                            naming::to_field_name_ident(
-                                &element.name().unwrap_or("WTF".to_string()),
-                            )
-                        })
-                        .collect::<Vec<_>>();
-                    code.add_ast_fragment(
-                        quote!(pub struct #kind { #(#names: usize),* }).to_string(),
-                    );
-                    quote!(seq!( #kind, #(#parsers),* ))
-                } else {
-                    // No, just a tuple
-                    quote!(seq!( #(#parsers),* ))
+            // -----------------------------------------------------------------------------------------------
+            // Expressions
+            //
+            Self::Expression { members, name } => {
+                let first_parser_name = naming::to_parser_name_ident(&members[0].name);
+                let type_name = format_ident!("{}", name.to_pascal_case());
+                code.add_ast_fragment(quote!(pub enum #type_name { None }).to_string());
+                ParserCode {
+                    parser: quote!(rule!(#first_parser_name)),
+                    tipe: quote!(#type_name),
                 }
             }
+
+            Self::ExpressionMember {
+                next_sibling,
+                operator,
+                operator_model,
+                name,
+                parent,
+            } => {
+                let parent_type_name = format_ident!("{}", parent.name.to_snake_case());
+                let kind = code.add_rule_kind(name.clone());
+                let ParserCode {
+                    parser: operator,
+                    tipe: operator_type,
+                } = operator.to_parser_code(forest, tree, code);
+                let next_sibling = next_sibling
+                    .clone()
+                    .map(|next| naming::to_parser_name_ident(&next.name));
+
+                match operator_model {
+                    OperatorModel::None => match next_sibling {
+                        Some(next_sibling) => ParserCode {
+                            parser: quote!( choice((#operator, #next_sibling.clone())) ),
+                            tipe: quote!(#parent_type_name),
+                        },
+                        None => ParserCode {
+                            parser: operator,
+                            tipe: operator_type,
+                        },
+                    },
+
+                    OperatorModel::BinaryLeftAssociative => {
+                        let next_sibling = next_sibling
+                            .expect("Cannot have binary operator as last expression member");
+                        ParserCode {
+                            parser: quote!(
+                                left_associative_binary_expression!(#kind, #next_sibling, #operator)
+                            ),
+                            tipe: quote!(#parent_type_name),
+                        }
+                    }
+
+                    OperatorModel::BinaryRightAssociative => {
+                        let next_sibling = next_sibling
+                            .expect("Cannot have binary operator as last expression member");
+                        ParserCode {
+                            parser: quote!(
+                                right_associative_binary_expression!(#kind, #next_sibling, #operator)
+                            ),
+                            tipe: quote!(#parent_type_name),
+                        }
+                    }
+
+                    OperatorModel::UnaryPrefix => {
+                        let next_sibling = next_sibling
+                            .expect("Cannot have unary operator as last expression member");
+                        ParserCode {
+                            parser: quote!(
+                                unary_prefix_expression!(#kind, #next_sibling, #operator)
+                            ),
+                            tipe: quote!(#parent_type_name),
+                        }
+                    }
+
+                    OperatorModel::UnarySuffix => {
+                        let next_sibling = next_sibling
+                            .expect("Cannot have unary operator as last expression member");
+                        ParserCode {
+                            parser: quote!(
+                                unary_suffix_expression!(#kind, #next_sibling, #operator)
+                            ),
+                            tipe: quote!(#parent_type_name),
+                        }
+                    }
+                }
+            }
+
+            // -----------------------------------------------------------------------------------------------
+            // Terminals and Utilities
+            //
+            Self::CharacterFilter { filter, name } => filter.to_parser_code(name.as_ref(), code),
 
             Self::TerminalTrie { trie, .. } => trie.to_parser_code(code),
 
-            Self::ZeroOrMore { expr, name } => {
-                let expr = expr.to_parser_code(forest, tree, code);
-                if let Some(kind) = create_kind(name, code) {
-                    quote!(zero_or_more!(#kind, #expr))
-                } else {
-                    quote!(zero_or_more!(#expr))
+            Self::Difference {
+                minuend,
+                subtrahend,
+            } => {
+                let ParserCode {
+                    parser: minuend,
+                    tipe: minuend_type,
+                } = minuend.to_parser_code(forest, tree, code);
+                let ParserCode {
+                    parser: subtrahend, ..
+                } = subtrahend.to_parser_code(forest, tree, code);
+                ParserCode {
+                    parser: quote!(difference!(#minuend, #subtrahend)),
+                    tipe: minuend_type,
+                }
+            }
+
+            Self::Lookahead { expr, lookahead } => {
+                let ParserCode {
+                    parser: expr,
+                    tipe: expr_tipe,
+                } = expr.to_parser_code(forest, tree, code);
+                let ParserCode {
+                    parser: lookahead, ..
+                } = lookahead.to_parser_code(forest, tree, code);
+                ParserCode {
+                    parser: quote!( #expr.then_ignore(#lookahead.rewind()) ),
+                    tipe: expr_tipe,
                 }
             }
         }

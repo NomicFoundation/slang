@@ -1,4 +1,7 @@
-use std::{collections::HashMap, path::PathBuf};
+use std::{
+    collections::{BTreeSet, HashMap},
+    path::PathBuf,
+};
 
 use inflector::Inflector;
 use proc_macro2::Ident;
@@ -102,7 +105,13 @@ impl CodeFragments {
                 {}
                 ",
                 boilerplate::ast_head(),
-                self.get_fragments(CodeLocation::ASTDefinition).join("")
+                self.get_fragments(CodeLocation::ASTDefinition)
+                    .iter()
+                    .cloned()
+                    .collect::<BTreeSet<_>>()
+                    .into_iter()
+                    .collect::<Vec<_>>()
+                    .join("")
             ),
         );
 

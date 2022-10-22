@@ -77,7 +77,7 @@ impl CombinatorTree {
                 let operator = if operator.len() == 1 {
                     operator[0].clone()
                 } else {
-                    CombinatorNode::sequence(Some("Operator".to_string()), operator.into())
+                    CombinatorNode::sequence(None, operator.into())
                 };
 
                 CombinatorNode::expression_member(
@@ -109,7 +109,7 @@ impl CombinatorTree {
             | ProductionKind::ExpressionMemberRule => {
                 code.add_rule_kind(self.production.name.clone());
                 (
-                    self.root_node.to_parser_code(forest, self, code),
+                    self.root_node.to_parser_code(forest, self, code).parser,
                     quote!(cst::NodeRef),
                 )
             }
