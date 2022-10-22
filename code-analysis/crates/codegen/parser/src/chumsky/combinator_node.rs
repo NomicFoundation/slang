@@ -98,6 +98,16 @@ pub enum OperatorModel {
     UnarySuffix,
 }
 
+// pub enum ASTType {
+//     Constant,
+//     Token,
+//     Choice,
+//     Tuple,
+//     Repeat,
+//     Optional,
+//     Named,
+// }
+
 pub struct ParserCode {
     pub parser: TokenStream,
     pub tipe: TokenStream,
@@ -475,7 +485,36 @@ impl CombinatorNode {
         }
 
         match self {
-            Self::CharacterFilter { filter, name } => filter.to_lexer_code(name.as_ref(), code),
+            // -----------------------------------------------------------------------------------------------
+            // Simple References
+            //
+            Self::Reference { production } => {
+                let production_parser_name = naming::to_parser_name_ident(&production.name);
+                match production.kind {
+                    ProductionKind::Rule
+                    | ProductionKind::ExpressionRule
+                    | ProductionKind::ExpressionMemberRule
+                    | ProductionKind::Trivia => {
+                        unreachable!("Token productions can only reference other token productions")
+                    }
+                    ProductionKind::Token => quote!(lex_rule!(#production_parser_name)),
+                }
+            }
+
+            // -----------------------------------------------------------------------------------------------
+            // Sequence and Choice
+            //
+            Self::Sequence { elements, name } => {
+                let expr = elements
+                    .iter()
+                    .map(|e| e.to_lexer_code(code))
+                    .collect::<Vec<_>>();
+                if let Some(kind) = create_kind(name, code) {
+                    quote!(lex_seq![ #kind, #(#expr),* ])
+                } else {
+                    quote!(lex_seq![ #(#expr),* ])
+                }
+            }
 
             Self::Choice { elements, name } => {
                 let choices = elements
@@ -489,6 +528,49 @@ impl CombinatorNode {
                 }
             }
 
+            // -----------------------------------------------------------------------------------------------
+            // Numeric Quantifiers
+            //
+            Self::Optional { expr, .. } => {
+                let expr = expr.to_lexer_code(code);
+                quote!(lex_optional!(#expr))
+            }
+
+            Self::ZeroOrMore { expr, name } => {
+                let expr = expr.to_lexer_code(code);
+                if let Some(kind) = create_kind(name, code) {
+                    quote!(lex_zero_or_more!(#kind, #expr))
+                } else {
+                    quote!(lex_zero_or_more!(#expr))
+                }
+            }
+
+            Self::OneOrMore { expr, name } => {
+                let expr = expr.to_lexer_code(code);
+                if let Some(kind) = create_kind(name, code) {
+                    quote!(lex_one_or_more!(#kind, #expr))
+                } else {
+                    quote!(lex_one_or_more!(#expr))
+                }
+            }
+
+            Self::Repeated {
+                expr,
+                min,
+                max,
+                name,
+            } => {
+                let expr = expr.to_lexer_code(code);
+                if let Some(kind) = create_kind(name, code) {
+                    quote!(lex_repeated!(#kind, #expr, #min, #max))
+                } else {
+                    quote!(lex_repeated!(#expr, #min, #max))
+                }
+            }
+
+            // -----------------------------------------------------------------------------------------------
+            // Stereotypes
+            //
             Self::DelimitedBy {
                 open,
                 expr,
@@ -509,66 +591,6 @@ impl CombinatorNode {
                 }
             }
 
-            Self::Difference {
-                minuend,
-                subtrahend,
-            } => {
-                let minuend = minuend.to_lexer_code(code);
-                let subtrahend = subtrahend.to_lexer_code(code);
-                quote! ( difference(#minuend, #subtrahend) )
-            }
-
-            Self::Expression { .. } => unreachable!(),
-
-            Self::ExpressionMember { .. } => unreachable!(),
-
-            Self::Lookahead { expr, lookahead } => {
-                let expr = expr.to_lexer_code(code);
-                let lookahead = lookahead.to_lexer_code(code);
-                quote!( #expr.then_ignore( #lookahead.rewind() ))
-            }
-
-            Self::OneOrMore { expr, name } => {
-                let expr = expr.to_lexer_code(code);
-                if let Some(kind) = create_kind(name, code) {
-                    quote!(lex_one_or_more!(#kind, #expr))
-                } else {
-                    quote!(lex_one_or_more!(#expr))
-                }
-            }
-
-            Self::Optional { expr, .. } => {
-                let expr = expr.to_lexer_code(code);
-                quote!(lex_optional!(#expr))
-            }
-
-            Self::Reference { production } => {
-                let production_parser_name = naming::to_parser_name_ident(&production.name);
-                match production.kind {
-                    ProductionKind::Rule
-                    | ProductionKind::ExpressionRule
-                    | ProductionKind::ExpressionMemberRule
-                    | ProductionKind::Trivia => {
-                        unreachable!("Token productions can only reference other token productions")
-                    }
-                    ProductionKind::Token => quote!(lex_rule!(#production_parser_name)),
-                }
-            }
-
-            Self::Repeated {
-                expr,
-                min,
-                max,
-                name,
-            } => {
-                let expr = expr.to_lexer_code(code);
-                if let Some(kind) = create_kind(name, code) {
-                    quote!(lex_repeated!(#kind, #expr, #min, #max))
-                } else {
-                    quote!(lex_repeated!(#expr, #min, #max))
-                }
-            }
-
             Self::SeparatedBy {
                 expr,
                 separator,
@@ -585,27 +607,33 @@ impl CombinatorNode {
                 }
             }
 
-            Self::Sequence { elements, name } => {
-                let expr = elements
-                    .iter()
-                    .map(|e| e.to_lexer_code(code))
-                    .collect::<Vec<_>>();
-                if let Some(kind) = create_kind(name, code) {
-                    quote!(lex_seq![ #kind, #(#expr),* ])
-                } else {
-                    quote!(lex_seq![ #(#expr),* ])
-                }
-            }
+            // -----------------------------------------------------------------------------------------------
+            // Expressions
+            //
+            Self::Expression { .. } => unreachable!(),
+
+            Self::ExpressionMember { .. } => unreachable!(),
+
+            // -----------------------------------------------------------------------------------------------
+            // Terminals and Utilities
+            //
+            Self::CharacterFilter { filter, name } => filter.to_lexer_code(name.as_ref(), code),
 
             Self::TerminalTrie { trie, .. } => trie.to_lexer_code(code),
 
-            Self::ZeroOrMore { expr, name } => {
+            Self::Difference {
+                minuend,
+                subtrahend,
+            } => {
+                let minuend = minuend.to_lexer_code(code);
+                let subtrahend = subtrahend.to_lexer_code(code);
+                quote! ( difference(#minuend, #subtrahend) )
+            }
+
+            Self::Lookahead { expr, lookahead } => {
                 let expr = expr.to_lexer_code(code);
-                if let Some(kind) = create_kind(name, code) {
-                    quote!(lex_zero_or_more!(#kind, #expr))
-                } else {
-                    quote!(lex_zero_or_more!(#expr))
-                }
+                let lookahead = lookahead.to_lexer_code(code);
+                quote!( #expr.then_ignore( #lookahead.rewind() ))
             }
         }
     }
@@ -621,7 +649,36 @@ impl CombinatorNode {
         }
 
         match self {
-            Self::CharacterFilter { filter, name } => filter.to_trivia_code(name.as_ref(), code),
+            // -----------------------------------------------------------------------------------------------
+            // Simple References
+            //
+            Self::Reference { production } => {
+                let production_parser_name = naming::to_parser_name_ident(&production.name);
+                match production.kind {
+                    ProductionKind::Rule
+                    | ProductionKind::ExpressionRule
+                    | ProductionKind::ExpressionMemberRule => unreachable!(
+                        "Trivia productions can only reference trivia or token productions"
+                    ),
+                    ProductionKind::Trivia => quote!(rule!(#production_parser_name)),
+                    ProductionKind::Token => quote!(trivia_token!(#production_parser_name)),
+                }
+            }
+
+            // -----------------------------------------------------------------------------------------------
+            // Sequence and Choice
+            //
+            Self::Sequence { elements, name } => {
+                let elements = elements
+                    .iter()
+                    .map(|element| element.to_trivia_code(forest, tree, code))
+                    .collect::<Vec<_>>();
+                if let Some(kind) = create_kind(name, code) {
+                    quote!(seq!( #kind, #(#elements),* ))
+                } else {
+                    quote!(seq!( #(#elements),* ))
+                }
+            }
 
             Self::Choice { elements, name } => {
                 let elements = elements
@@ -636,6 +693,49 @@ impl CombinatorNode {
                 }
             }
 
+            // -----------------------------------------------------------------------------------------------
+            // Numeric Quantifiers
+            //
+            Self::Optional { expr, .. } => {
+                let expr = expr.to_trivia_code(forest, tree, code);
+                quote!(optional!(#expr))
+            }
+
+            Self::ZeroOrMore { expr, name } => {
+                let expr = expr.to_trivia_code(forest, tree, code);
+                if let Some(kind) = create_kind(name, code) {
+                    quote!(zero_or_more!(#kind, #expr))
+                } else {
+                    quote!(zero_or_more!(#expr))
+                }
+            }
+
+            Self::OneOrMore { expr, name } => {
+                let expr = expr.to_trivia_code(forest, tree, code);
+                if let Some(kind) = create_kind(name, code) {
+                    quote!(one_or_more!(#kind, #expr))
+                } else {
+                    quote!(one_or_more!(#expr))
+                }
+            }
+
+            Self::Repeated {
+                expr,
+                min,
+                max,
+                name,
+            } => {
+                let expr = expr.to_trivia_code(forest, tree, code);
+                if let Some(kind) = create_kind(name, code) {
+                    quote!(repeated!(#kind, #expr, #min, #max))
+                } else {
+                    quote!(repeated!(#expr, #min, #max))
+                }
+            }
+
+            // -----------------------------------------------------------------------------------------------
+            // Stereotypes
+            //
             Self::DelimitedBy {
                 open,
                 expr,
@@ -656,68 +756,6 @@ impl CombinatorNode {
                 }
             }
 
-            Self::Difference {
-                minuend,
-                subtrahend,
-            } => {
-                let minuend = minuend.to_trivia_code(forest, tree, code);
-                let subtrahend = subtrahend.to_trivia_code(forest, tree, code);
-                quote! ( difference(#minuend, #subtrahend) )
-            }
-
-            Self::Expression { .. } => unreachable!("Expressions are not allowed in trivia"),
-
-            Self::ExpressionMember { .. } => {
-                unreachable!("ExpressionMembers are not allowed in trivia")
-            }
-
-            Self::Lookahead { expr, lookahead } => {
-                let expr = expr.to_trivia_code(forest, tree, code);
-                let lookahead = lookahead.to_trivia_code(forest, tree, code);
-                quote!( #expr.then_ignore(#lookahead.rewind()) )
-            }
-
-            Self::OneOrMore { expr, name } => {
-                let expr = expr.to_trivia_code(forest, tree, code);
-                if let Some(kind) = create_kind(name, code) {
-                    quote!(one_or_more!(#kind, #expr))
-                } else {
-                    quote!(one_or_more!(#expr))
-                }
-            }
-
-            Self::Optional { expr, .. } => {
-                let expr = expr.to_trivia_code(forest, tree, code);
-                quote!(optional!(#expr))
-            }
-
-            Self::Reference { production } => {
-                let production_parser_name = naming::to_parser_name_ident(&production.name);
-                match production.kind {
-                    ProductionKind::Rule
-                    | ProductionKind::ExpressionRule
-                    | ProductionKind::ExpressionMemberRule => unreachable!(
-                        "Trivia productions can only reference trivia or token productions"
-                    ),
-                    ProductionKind::Trivia => quote!(rule!(#production_parser_name)),
-                    ProductionKind::Token => quote!(trivia_token!(#production_parser_name)),
-                }
-            }
-
-            Self::Repeated {
-                expr,
-                min,
-                max,
-                name,
-            } => {
-                let expr = expr.to_trivia_code(forest, tree, code);
-                if let Some(kind) = create_kind(name, code) {
-                    quote!(repeated!(#kind, #expr, #min, #max))
-                } else {
-                    quote!(repeated!(#expr, #min, #max))
-                }
-            }
-
             Self::SeparatedBy {
                 expr,
                 separator,
@@ -734,27 +772,35 @@ impl CombinatorNode {
                 }
             }
 
-            Self::Sequence { elements, name } => {
-                let elements = elements
-                    .iter()
-                    .map(|element| element.to_trivia_code(forest, tree, code))
-                    .collect::<Vec<_>>();
-                if let Some(kind) = create_kind(name, code) {
-                    quote!(seq!( #kind, #(#elements),* ))
-                } else {
-                    quote!(seq!( #(#elements),* ))
-                }
+            // -----------------------------------------------------------------------------------------------
+            // Expressions
+            //
+            Self::Expression { .. } => unreachable!("Expressions are not allowed in trivia"),
+
+            Self::ExpressionMember { .. } => {
+                unreachable!("ExpressionMembers are not allowed in trivia")
             }
+
+            // -----------------------------------------------------------------------------------------------
+            // Terminals and Utilities
+            //
+            Self::CharacterFilter { filter, name } => filter.to_trivia_code(name.as_ref(), code),
 
             Self::TerminalTrie { trie, .. } => trie.to_trivia_code(code),
 
-            Self::ZeroOrMore { expr, name } => {
+            Self::Difference {
+                minuend,
+                subtrahend,
+            } => {
+                let minuend = minuend.to_trivia_code(forest, tree, code);
+                let subtrahend = subtrahend.to_trivia_code(forest, tree, code);
+                quote! ( difference(#minuend, #subtrahend) )
+            }
+
+            Self::Lookahead { expr, lookahead } => {
                 let expr = expr.to_trivia_code(forest, tree, code);
-                if let Some(kind) = create_kind(name, code) {
-                    quote!(zero_or_more!(#kind, #expr))
-                } else {
-                    quote!(zero_or_more!(#expr))
-                }
+                let lookahead = lookahead.to_trivia_code(forest, tree, code);
+                quote!( #expr.then_ignore(#lookahead.rewind()) )
             }
         }
     }
@@ -918,26 +964,6 @@ impl CombinatorNode {
                 }
             }
 
-            Self::OneOrMore { expr, name } => {
-                let ParserCode {
-                    parser: expr,
-                    tipe: expr_type,
-                } = expr.to_parser_code(forest, tree, code);
-                let tipe = quote!( Vec<#expr_type> );
-                if let Some(kind) = create_kind(name, code) {
-                    code.add_ast_fragment(quote!( pub type #kind = #tipe; ).to_string());
-                    ParserCode {
-                        parser: quote!(one_or_more!(#kind, #expr)),
-                        tipe: quote!(#kind),
-                    }
-                } else {
-                    ParserCode {
-                        parser: quote!(one_or_more!(#expr)),
-                        tipe,
-                    }
-                }
-            }
-
             Self::ZeroOrMore { expr, name } => {
                 let ParserCode {
                     parser: expr,
@@ -953,6 +979,26 @@ impl CombinatorNode {
                 } else {
                     ParserCode {
                         parser: quote!(zero_or_more!(#expr)),
+                        tipe,
+                    }
+                }
+            }
+
+            Self::OneOrMore { expr, name } => {
+                let ParserCode {
+                    parser: expr,
+                    tipe: expr_type,
+                } = expr.to_parser_code(forest, tree, code);
+                let tipe = quote!( Vec<#expr_type> );
+                if let Some(kind) = create_kind(name, code) {
+                    code.add_ast_fragment(quote!( pub type #kind = #tipe; ).to_string());
+                    ParserCode {
+                        parser: quote!(one_or_more!(#kind, #expr)),
+                        tipe: quote!(#kind),
+                    }
+                } else {
+                    ParserCode {
+                        parser: quote!(one_or_more!(#expr)),
                         tipe,
                     }
                 }
