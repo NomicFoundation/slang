@@ -106,17 +106,11 @@ impl CombinatorTree {
         let (parser, result_type) = match self.production.kind {
             ProductionKind::Rule
             | ProductionKind::ExpressionRule
-            | ProductionKind::ExpressionMemberRule => {
+            | ProductionKind::ExpressionMemberRule
+            | ProductionKind::Trivia => {
                 code.add_rule_kind(self.production.name.clone());
                 (
                     self.root_node.to_parser_code(forest, self, code).parser,
-                    quote!(cst::NodeRef),
-                )
-            }
-            ProductionKind::Trivia => {
-                code.add_rule_kind(self.production.name.clone());
-                (
-                    self.root_node.to_trivia_code(forest, self, code),
                     quote!(cst::NodeRef),
                 )
             }

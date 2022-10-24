@@ -4,12 +4,10 @@ use quote::{format_ident, quote};
 
 use codegen_schema::*;
 
-use super::{
-    code_fragments::CodeFragments, combinator_node::ParserCode, naming, ProductionChumskyExtensions,
-};
+use super::{code_fragments::CodeFragments, naming, ProductionChumskyExtensions};
 
 #[derive(Clone, Debug)]
-pub struct TerminalTrie(PatriciaMap<String>);
+pub struct TerminalTrie(pub(super) PatriciaMap<String>);
 
 impl TerminalTrie {
     pub fn from_expression(grammar: &Grammar, expression: &ExpressionRef) -> Option<TerminalTrie> {
@@ -33,21 +31,6 @@ impl TerminalTrie {
             Some(naming::name_of_terminal_string(&name))
         } else {
             None
-        }
-    }
-
-    pub fn to_lexer_code(&self, code: &mut CodeFragments) -> TokenStream {
-        self.to_code(code, "lex_")
-    }
-
-    pub fn to_trivia_code(&self, code: &mut CodeFragments) -> TokenStream {
-        self.to_code(code, "trivia_")
-    }
-
-    pub fn to_parser_code(&self, code: &mut CodeFragments) -> ParserCode {
-        ParserCode {
-            parser: self.to_code(code, ""),
-            tipe: quote!(Token),
         }
     }
 
@@ -78,7 +61,7 @@ impl TerminalTrie {
         }
     }
 
-    fn to_code(&self, code: &mut CodeFragments, macro_prefix: &str) -> TokenStream {
+    pub(super) fn to_code(&self, code: &mut CodeFragments, macro_prefix: &str) -> TokenStream {
         if self.0.len() == 1 {
             let label = self.0.keys().next().unwrap();
             let string = String::from_utf8_lossy(&label);

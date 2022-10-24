@@ -28,6 +28,11 @@ pub enum ContractBodyElement {
     ErrorDefinition(Rc<ErrorDefinition>),
     StateVariableDeclaration(Rc<StateVariableDeclaration>),
 }
+pub enum DataLocation {
+    Memory(Token),
+    Storage(Token),
+    Calldata(Token),
+}
 pub enum Definition {
     ContractDefinition(Rc<ContractDefinition>),
     InterfaceDefinition(Rc<InterfaceDefinition>),
@@ -135,6 +140,13 @@ pub enum YulExpression {
     YulIdentifierPath(Rc<YulIdentifierPath>),
     YulFunctionCall(Rc<YulFunctionCall>),
     YulLiteral(Rc<YulLiteral>),
+}
+pub enum YulLiteral {
+    YulDecimalNumberLiteral(Token),
+    YulHexLiteral(Token),
+    AsciiStringLiteral(Token),
+    BooleanLiteral(Token),
+    HexStringLiteral(Token),
 }
 pub enum YulStatement {
     YulBlock(Rc<YulBlock>),
@@ -389,6 +401,7 @@ pub type CatchClauses = Vec<Rc<CatchClause>>;
 pub type ConstructorAttributes = Vec<Rc<ConstructorAttribute>>;
 pub type ContractBodyElements = Vec<Rc<ContractBodyElement>>;
 pub type DoubleQuotedAsciiStringLiteralsAndCommas = SeparatedBy<Token>;
+pub type EndOfFileTrivia = Vec<Token>;
 pub type ErrorParametersAndCommas = SeparatedBy<Rc<ErrorParameter>>;
 pub type EventParametersAndCommas = SeparatedBy<Rc<EventParameter>>;
 pub type ExpressionsAndCommas = SeparatedBy<Rc<Expression>>;
@@ -443,6 +456,7 @@ pub type ImportDirective = (
     Token,
 );
 pub type InheritanceSpecifiersAndCommas = SeparatedBy<Rc<InheritanceSpecifier>>;
+pub type LeadingTrivia = Vec<Token>;
 pub type MappingType = (
     Token,
     DelimitedBy<(

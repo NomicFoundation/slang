@@ -3,9 +3,7 @@ use quote::{format_ident, quote};
 
 use codegen_schema::*;
 
-use super::{
-    code_fragments::CodeFragments, combinator_node::ParserCode, naming, ProductionChumskyExtensions,
-};
+use super::{code_fragments::CodeFragments, naming, ProductionChumskyExtensions};
 
 #[derive(Clone, Debug)]
 pub enum CharacterFilter {
@@ -125,22 +123,7 @@ impl CharacterFilter {
         }
     }
 
-    pub fn to_lexer_code(&self, name: Option<&String>, code: &mut CodeFragments) -> TokenStream {
-        self.to_code(name, code, "lex_")
-    }
-
-    pub fn to_trivia_code(&self, name: Option<&String>, code: &mut CodeFragments) -> TokenStream {
-        self.to_code(name, code, "trivia_")
-    }
-
-    pub fn to_parser_code(&self, name: Option<&String>, code: &mut CodeFragments) -> ParserCode {
-        ParserCode {
-            parser: self.to_code(name, code, ""),
-            tipe: quote!("Token"),
-        }
-    }
-
-    fn to_code(
+    pub(super) fn to_code(
         &self,
         name: Option<&String>,
         code: &mut CodeFragments,

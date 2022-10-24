@@ -508,7 +508,7 @@ pub yul_variable_declaration : ParserType < cst :: NodeRef > ,
                         
 
 // ABICoderPragmaSpecifier = 'abicoder' «Identifier» ;
-abi_coder_pragma_specifier_parser . define (seq ! (AbicoderPragmaSpecifier , abicoder : terminal ! (Abicoder , "abicoder") , identifier : token ! (identifier_parser)) . boxed ()) ;
+abi_coder_pragma_specifier_parser . define (seq ! (AbicoderPragmaSpecifier , abicoder : terminal ! (Abicoder , "abicoder") , identifier : terminal ! (identifier_parser)) . boxed ()) ;
 
 // AddSubExpression = Expression ( '+' | '-' ) Expression ;
 add_sub_expression_parser . define (left_associative_binary_expression ! (AddSubExpression , mul_div_mod_expression_parser , choice ! (terminal ! (Plus , "+") , terminal ! (Minus , "-"))) . boxed ()) ;
@@ -532,7 +532,7 @@ ascii_escape_parser . define (lex_terminal ! (AsciiEscape , | & c : & char | c =
 ascii_string_literal_parser . define (lex_choice ! (AsciiStringLiteral , lex_rule ! (single_quoted_ascii_string_literal_parser) , lex_rule ! (double_quoted_ascii_string_literal_parser)) . boxed ()) ;
 
 // AssemblyFlags = '(' «DoubleQuotedAsciiStringLiteral»  { ',' «DoubleQuotedAsciiStringLiteral» } ')' ;
-assembly_flags_parser . define (delimited_by ! (AssemblyFlags , terminal ! (OpenParen , "(") , separated_by ! (DoubleQuotedAsciiStringLiteralsAndCommas , token ! (double_quoted_ascii_string_literal_parser) , terminal ! (Comma , ",")) , terminal ! (CloseParen , ")")) . boxed ()) ;
+assembly_flags_parser . define (delimited_by ! (AssemblyFlags , terminal ! (OpenParen , "(") , separated_by ! (DoubleQuotedAsciiStringLiteralsAndCommas , terminal ! (double_quoted_ascii_string_literal_parser) , terminal ! (Comma , ",")) , terminal ! (CloseParen , ")")) . boxed ()) ;
 
 // AssemblyStatement = 'assembly' [ '"evmasm"' ] [ AssemblyFlags ] YulBlock ;
 assembly_statement_parser . define (seq ! (AssemblyStatement , assembly : terminal ! (Assembly , "assembly") , optional_double_quote_evmasm_double_quote : optional ! (terminal ! (DoubleQuoteEvmasmDoubleQuote , "\"evmasm\"")) , optional_assembly_flags : optional ! (rule ! (assembly_flags_parser)) , yul_block : rule ! (yul_block_parser)) . boxed ()) ;
@@ -559,13 +559,13 @@ boolean_literal_parser . define (lex_trie ! (trieleaf ! (False , "false") , trie
 break_statement_parser . define (seq ! (BreakStatement , r#break : terminal ! (Break , "break") , semicolon : terminal ! (Semicolon , ";")) . boxed ()) ;
 
 // CatchClause = 'catch' [ [ «Identifier» ] ParameterList ] Block ;
-catch_clause_parser . define (seq ! (CatchClause , terminal ! (Catch , "catch") , optional ! (seq ! (optional ! (token ! (identifier_parser)) , rule ! (parameter_list_parser))) , rule ! (block_parser)) . boxed ()) ;
+catch_clause_parser . define (seq ! (CatchClause , terminal ! (Catch , "catch") , optional ! (seq ! (optional ! (terminal ! (identifier_parser)) , rule ! (parameter_list_parser))) , rule ! (block_parser)) . boxed ()) ;
 
 // ConditionalExpression = Expression '?' Expression ':' Expression ;
 conditional_expression_parser . define (unary_suffix_expression ! (ConditionalExpression , or_expression_parser , seq ! (terminal ! (Question , "?") , rule ! (expression_parser) , terminal ! (Colon , ":") , rule ! (expression_parser))) . boxed ()) ;
 
 // ConstantDefinition = TypeName 'constant' «Identifier» '=' Expression ';' ;
-constant_definition_parser . define (seq ! (ConstantDefinition , type_name : rule ! (type_name_parser) , constant : terminal ! (Constant , "constant") , identifier : token ! (identifier_parser) , equal : terminal ! (Equal , "=") , expression : rule ! (expression_parser) , semicolon : terminal ! (Semicolon , ";")) . boxed ()) ;
+constant_definition_parser . define (seq ! (ConstantDefinition , type_name : rule ! (type_name_parser) , constant : terminal ! (Constant , "constant") , identifier : terminal ! (identifier_parser) , equal : terminal ! (Equal , "=") , expression : rule ! (expression_parser) , semicolon : terminal ! (Semicolon , ";")) . boxed ()) ;
 
 // ConstructorAttribute = ModifierInvocation | 'internal' | 'payable' | 'public' ;
 constructor_attribute_parser . define (choice ! ! (ConstructorAttribute , ModifierInvocation : rule ! (modifier_invocation_parser) , Internal : terminal ! (Internal , "internal") , Payable : terminal ! (Payable , "payable") , Public : terminal ! (Public , "public")) . boxed ()) ;
@@ -580,10 +580,10 @@ continue_statement_parser . define (seq ! (ContinueStatement , r#continue : term
 contract_body_element_parser . define (choice ! ! (ContractBodyElement , UsingDirective : rule ! (using_directive_parser) , ConstructorDefinition : rule ! (constructor_definition_parser) , FunctionDefinition : rule ! (function_definition_parser) , FallbackFunctionDefinition : rule ! (fallback_function_definition_parser) , ReceiveFunctionDefinition : rule ! (receive_function_definition_parser) , ModifierDefinition : rule ! (modifier_definition_parser) , StructDefinition : rule ! (struct_definition_parser) , EnumDefinition : rule ! (enum_definition_parser) , UserDefinedValueTypeDefinition : rule ! (user_defined_value_type_definition_parser) , EventDefinition : rule ! (event_definition_parser) , ErrorDefinition : rule ! (error_definition_parser) , StateVariableDeclaration : rule ! (state_variable_declaration_parser)) . boxed ()) ;
 
 // ContractDefinition = [ 'abstract' ] 'contract' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
-contract_definition_parser . define (seq ! (ContractDefinition , optional_abstract : optional ! (terminal ! (Abstract , "abstract")) , contract : terminal ! (Contract , "contract") , identifier : token ! (identifier_parser) , optional_inheritance_specifier_list : optional ! (rule ! (inheritance_specifier_list_parser)) , open_brace_and_contract_body_elements_and_close_brace : delimited_by ! (OpenBraceAndContractBodyElementsAndCloseBrace , terminal ! (OpenBrace , "{") , zero_or_more ! (ContractBodyElements , rule ! (contract_body_element_parser)) , terminal ! (CloseBrace , "}"))) . boxed ()) ;
+contract_definition_parser . define (seq ! (ContractDefinition , optional_abstract : optional ! (terminal ! (Abstract , "abstract")) , contract : terminal ! (Contract , "contract") , identifier : terminal ! (identifier_parser) , optional_inheritance_specifier_list : optional ! (rule ! (inheritance_specifier_list_parser)) , open_brace_and_contract_body_elements_and_close_brace : delimited_by ! (OpenBraceAndContractBodyElementsAndCloseBrace , terminal ! (OpenBrace , "{") , zero_or_more ! (ContractBodyElements , rule ! (contract_body_element_parser)) , terminal ! (CloseBrace , "}"))) . boxed ()) ;
 
 // DataLocation = 'memory' | 'storage' | 'calldata' ;
-data_location_parser . define (choice ! (DataLocation , terminal ! (Memory , "memory") , terminal ! (Storage , "storage") , terminal ! (Calldata , "calldata")) . boxed ()) ;
+data_location_parser . define (choice ! ! (DataLocation , Memory : terminal ! (Memory , "memory") , Storage : terminal ! (Storage , "storage") , Calldata : terminal ! (Calldata , "calldata")) . boxed ()) ;
 
 // «DecimalExponent» = ( 'e' | 'E' ) [ '-' ] «DecimalInteger» ;
 decimal_exponent_parser . define (lex_seq ! [DecimalExponent , lex_terminal ! (| & c : & char | c == 'e' || c == 'E') , lex_optional ! (lex_terminal ! (Minus , '-')) , lex_rule ! (decimal_integer_parser)] . boxed ()) ;
@@ -601,7 +601,7 @@ decimal_number_parser . define (lex_seq ! [DecimalNumber , lex_choice ! (lex_rul
 definition_parser . define (choice ! ! (Definition , ContractDefinition : rule ! (contract_definition_parser) , InterfaceDefinition : rule ! (interface_definition_parser) , LibraryDefinition : rule ! (library_definition_parser) , FunctionDefinition : rule ! (function_definition_parser) , ConstantDefinition : rule ! (constant_definition_parser) , StructDefinition : rule ! (struct_definition_parser) , EnumDefinition : rule ! (enum_definition_parser) , UserDefinedValueTypeDefinition : rule ! (user_defined_value_type_definition_parser) , ErrorDefinition : rule ! (error_definition_parser)) . boxed ()) ;
 
 // DeleteStatement = 'delete' «Identifier» ';' ;
-delete_statement_parser . define (seq ! (DeleteStatement , delete : terminal ! (Delete , "delete") , identifier : token ! (identifier_parser) , semicolon : terminal ! (Semicolon , ";")) . boxed ()) ;
+delete_statement_parser . define (seq ! (DeleteStatement , delete : terminal ! (Delete , "delete") , identifier : terminal ! (identifier_parser) , semicolon : terminal ! (Semicolon , ";")) . boxed ()) ;
 
 // Directive = PragmaDirective | ImportDirective | UsingDirective ;
 directive_parser . define (choice ! ! (Directive , PragmaDirective : rule ! (pragma_directive_parser) , ImportDirective : rule ! (import_directive_parser) , UsingDirective : rule ! (using_directive_parser)) . boxed ()) ;
@@ -616,40 +616,40 @@ double_quoted_ascii_string_literal_parser . define (lex_seq ! (DoubleQuotedAscii
 double_quoted_unicode_string_literal_parser . define (lex_seq ! (DoubleQuotedUnicodeStringLiteral , lex_terminal ! (UnicodeDoubleQuote , "unicode\"") , lex_zero_or_more ! (Runs , lex_choice ! (Run , lex_one_or_more ! (Chars , lex_terminal ! (Char , | & c : & char | c != '"' && c != '\\' && c != '\n' && c != '\r')) , lex_rule ! (escape_sequence_parser))) , lex_terminal ! (DoubleQuote , "\"")) . boxed ()) ;
 
 // ElementaryType = 'bool' | 'string' | AddressType | «FixedBytesType» | «SignedIntegerType» | «UnsignedIntegerType» | «SignedFixedType» | «UnsignedFixedType» ;
-elementary_type_parser . define (choice ! ! (ElementaryType , Bool : terminal ! (Bool , "bool") , String : terminal ! (String , "string") , AddressType : rule ! (address_type_parser) , FixedBytesType : token ! (fixed_bytes_type_parser) , SignedIntegerType : token ! (signed_integer_type_parser) , UnsignedIntegerType : token ! (unsigned_integer_type_parser) , SignedFixedType : token ! (signed_fixed_type_parser) , UnsignedFixedType : token ! (unsigned_fixed_type_parser)) . boxed ()) ;
+elementary_type_parser . define (choice ! ! (ElementaryType , Bool : terminal ! (Bool , "bool") , String : terminal ! (String , "string") , AddressType : rule ! (address_type_parser) , FixedBytesType : terminal ! (fixed_bytes_type_parser) , SignedIntegerType : terminal ! (signed_integer_type_parser) , UnsignedIntegerType : terminal ! (unsigned_integer_type_parser) , SignedFixedType : terminal ! (signed_fixed_type_parser) , UnsignedFixedType : terminal ! (unsigned_fixed_type_parser)) . boxed ()) ;
 
 // EmitStatement = 'emit' IdentifierPath ArgumentList ';' ;
 emit_statement_parser . define (seq ! (EmitStatement , emit : terminal ! (Emit , "emit") , identifier_path : rule ! (identifier_path_parser) , argument_list : rule ! (argument_list_parser) , semicolon : terminal ! (Semicolon , ";")) . boxed ()) ;
 
 // EndOfFileTrivia = { «Whitespace» | «MultilineComment» | «SingleLineComment» } ;
-end_of_file_trivia_parser . define (zero_or_more ! (EndOfFileTrivia , choice ! (trivia_token ! (whitespace_parser) , trivia_token ! (multiline_comment_parser) , trivia_token ! (single_line_comment_parser))) . boxed ()) ;
+end_of_file_trivia_parser . define (zero_or_more ! (EndOfFileTrivia , choice ! (trivia_terminal ! (whitespace_parser) , trivia_terminal ! (multiline_comment_parser) , trivia_terminal ! (single_line_comment_parser))) . boxed ()) ;
 
 // «EndOfLine» = 1…*{ '\u{d}' | '\u{a}' } ;
 end_of_line_parser . define (lex_one_or_more ! (EndOfLine , lex_terminal ! (| & c : & char | c == '\r' || c == '\n')) . boxed ()) ;
 
 // EnumDefinition = 'enum' «Identifier» '{' «Identifier»  { ',' «Identifier» } '}' ;
-enum_definition_parser . define (seq ! (EnumDefinition , r#enum : terminal ! (Enum , "enum") , identifier : token ! (identifier_parser) , open_brace_and_identifiers_and_commas_and_close_brace : delimited_by ! (OpenBraceAndIdentifiersAndCommasAndCloseBrace , terminal ! (OpenBrace , "{") , separated_by ! (IdentifiersAndCommas , token ! (identifier_parser) , terminal ! (Comma , ",")) , terminal ! (CloseBrace , "}"))) . boxed ()) ;
+enum_definition_parser . define (seq ! (EnumDefinition , r#enum : terminal ! (Enum , "enum") , identifier : terminal ! (identifier_parser) , open_brace_and_identifiers_and_commas_and_close_brace : delimited_by ! (OpenBraceAndIdentifiersAndCommasAndCloseBrace , terminal ! (OpenBrace , "{") , separated_by ! (IdentifiersAndCommas , terminal ! (identifier_parser) , terminal ! (Comma , ",")) , terminal ! (CloseBrace , "}"))) . boxed ()) ;
 
 // EqualityComparisonExpression = Expression ( '==' | '!=' ) Expression ;
 equality_comparison_expression_parser . define (left_associative_binary_expression ! (EqualityComparisonExpression , order_comparison_expression_parser , choice ! (terminal ! (EqualEqual , "==") , terminal ! (BangEqual , "!="))) . boxed ()) ;
 
 // ErrorDefinition = 'error' «Identifier» '(' [ ErrorParameter  { ',' ErrorParameter } ] ')' ';' ;
-error_definition_parser . define (seq ! (ErrorDefinition , error : terminal ! (Error , "error") , identifier : token ! (identifier_parser) , open_paren_and_optional_error_parameters_and_commas_and_close_paren : delimited_by ! (OpenParenAndOptionalErrorParametersAndCommasAndCloseParen , terminal ! (OpenParen , "(") , optional ! (separated_by ! (ErrorParametersAndCommas , rule ! (error_parameter_parser) , terminal ! (Comma , ","))) , terminal ! (CloseParen , ")")) , semicolon : terminal ! (Semicolon , ";")) . boxed ()) ;
+error_definition_parser . define (seq ! (ErrorDefinition , error : terminal ! (Error , "error") , identifier : terminal ! (identifier_parser) , open_paren_and_optional_error_parameters_and_commas_and_close_paren : delimited_by ! (OpenParenAndOptionalErrorParametersAndCommasAndCloseParen , terminal ! (OpenParen , "(") , optional ! (separated_by ! (ErrorParametersAndCommas , rule ! (error_parameter_parser) , terminal ! (Comma , ","))) , terminal ! (CloseParen , ")")) , semicolon : terminal ! (Semicolon , ";")) . boxed ()) ;
 
 // ErrorParameter = TypeName [ «Identifier» ] ;
-error_parameter_parser . define (seq ! (ErrorParameter , type_name : rule ! (type_name_parser) , optional_identifier : optional ! (token ! (identifier_parser))) . boxed ()) ;
+error_parameter_parser . define (seq ! (ErrorParameter , type_name : rule ! (type_name_parser) , optional_identifier : optional ! (terminal ! (identifier_parser))) . boxed ()) ;
 
 // «EscapeSequence» = '\\' ( «AsciiEscape» | «HexByteEscape» | «UnicodeEscape» ) ;
 escape_sequence_parser . define (lex_seq ! [EscapeSequence , lex_terminal ! (Backslash , '\\') , lex_trie ! (trieleaf ! (Linefeed , "\n") , trieleaf ! (CarriageReturn , "\r") , trieleaf ! (DoubleQuote , "\"") , trieleaf ! (Quote , "'") , trieleaf ! (Backslash , "\\") , trieleaf ! (LatinSmallLetterN , "n") , trieleaf ! (LatinSmallLetterR , "r") , trieleaf ! (LatinSmallLetterT , "t"))] . boxed ()) ;
 
 // EventDefinition = 'event' «Identifier» '(' [ EventParameter  { ',' EventParameter } ] ')' [ 'anonymous' ] ';' ;
-event_definition_parser . define (seq ! (EventDefinition , event : terminal ! (Event , "event") , identifier : token ! (identifier_parser) , open_paren_and_optional_event_parameters_and_commas_and_close_paren : delimited_by ! (OpenParenAndOptionalEventParametersAndCommasAndCloseParen , terminal ! (OpenParen , "(") , optional ! (separated_by ! (EventParametersAndCommas , rule ! (event_parameter_parser) , terminal ! (Comma , ","))) , terminal ! (CloseParen , ")")) , optional_anonymous : optional ! (terminal ! (Anonymous , "anonymous")) , semicolon : terminal ! (Semicolon , ";")) . boxed ()) ;
+event_definition_parser . define (seq ! (EventDefinition , event : terminal ! (Event , "event") , identifier : terminal ! (identifier_parser) , open_paren_and_optional_event_parameters_and_commas_and_close_paren : delimited_by ! (OpenParenAndOptionalEventParametersAndCommasAndCloseParen , terminal ! (OpenParen , "(") , optional ! (separated_by ! (EventParametersAndCommas , rule ! (event_parameter_parser) , terminal ! (Comma , ","))) , terminal ! (CloseParen , ")")) , optional_anonymous : optional ! (terminal ! (Anonymous , "anonymous")) , semicolon : terminal ! (Semicolon , ";")) . boxed ()) ;
 
 // EventParameter = TypeName [ 'indexed' ] [ «Identifier» ] ;
-event_parameter_parser . define (seq ! (EventParameter , type_name : rule ! (type_name_parser) , optional_indexed : optional ! (terminal ! (Indexed , "indexed")) , optional_identifier : optional ! (token ! (identifier_parser))) . boxed ()) ;
+event_parameter_parser . define (seq ! (EventParameter , type_name : rule ! (type_name_parser) , optional_indexed : optional ! (terminal ! (Indexed , "indexed")) , optional_identifier : optional ! (terminal ! (identifier_parser))) . boxed ()) ;
 
 // ExperimentalPragmaSpecifier = 'experimental' «Identifier» ;
-experimental_pragma_specifier_parser . define (seq ! (ExperimentalPragmaSpecifier , experimental : terminal ! (Experimental , "experimental") , identifier : token ! (identifier_parser)) . boxed ()) ;
+experimental_pragma_specifier_parser . define (seq ! (ExperimentalPragmaSpecifier , experimental : terminal ! (Experimental , "experimental") , identifier : terminal ! (identifier_parser)) . boxed ()) ;
 
 // ExponentiationExpression = Expression '**' Expression ;
 exponentiation_expression_parser . define (right_associative_binary_expression ! (ExponentiationExpression , unary_suffix_expression_parser , terminal ! (StarStar , "**")) . boxed ()) ;
@@ -679,7 +679,7 @@ function_attribute_parser . define (choice ! ! (FunctionAttribute , ModifierInvo
 function_call_expression_parser . define (unary_suffix_expression ! (FunctionCallExpression , member_access_expression_parser , seq ! (optional ! (delimited_by ! (OpenBraceAndNamedArgumentsAndCommasAndCloseBrace , terminal ! (OpenBrace , "{") , separated_by ! (NamedArgumentsAndCommas , rule ! (named_argument_parser) , terminal ! (Comma , ",")) , terminal ! (CloseBrace , "}"))) , rule ! (argument_list_parser))) . boxed ()) ;
 
 // FunctionDefinition = 'function' ( «Identifier» | 'fallback' | 'receive' ) ParameterList { FunctionAttribute } [ 'returns' ParameterList ] ( ';' | Block ) ;
-function_definition_parser . define (seq ! (FunctionDefinition , terminal ! (Function , "function") , choice ! (token ! (identifier_parser) , terminal ! (Fallback , "fallback") , terminal ! (Receive , "receive")) , rule ! (parameter_list_parser) , zero_or_more ! (FunctionAttributes , rule ! (function_attribute_parser)) , optional ! (seq ! (terminal ! (Returns , "returns") , rule ! (parameter_list_parser))) , choice ! (terminal ! (Semicolon , ";") , rule ! (block_parser))) . boxed ()) ;
+function_definition_parser . define (seq ! (FunctionDefinition , terminal ! (Function , "function") , choice ! (terminal ! (identifier_parser) , terminal ! (Fallback , "fallback") , terminal ! (Receive , "receive")) , rule ! (parameter_list_parser) , zero_or_more ! (FunctionAttributes , rule ! (function_attribute_parser)) , optional ! (seq ! (terminal ! (Returns , "returns") , rule ! (parameter_list_parser))) , choice ! (terminal ! (Semicolon , ";") , rule ! (block_parser))) . boxed ()) ;
 
 // FunctionType = 'function' ParameterList { 'internal' | 'external' | 'private' | 'public' | 'pure' | 'view' | 'payable' } [ 'returns' ParameterList ] ;
 function_type_parser . define (seq ! (FunctionType , terminal ! (Function , "function") , rule ! (parameter_list_parser) , zero_or_more ! (choice ! (terminal ! (Internal , "internal") , terminal ! (External , "external") , terminal ! (Private , "private") , terminal ! (Public , "public") , terminal ! (Pure , "pure") , terminal ! (View , "view") , terminal ! (Payable , "payable"))) , optional ! (seq ! (terminal ! (Returns , "returns") , rule ! (parameter_list_parser)))) . boxed ()) ;
@@ -703,7 +703,7 @@ identifier_parser . define (difference (lex_rule ! (raw_identifier_parser) , lex
 identifier_part_parser . define (lex_terminal ! (IdentifierPart , | & c : & char | c == '_' || c == '$' || ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9')) . boxed ()) ;
 
 // IdentifierPath = «Identifier»  { '.' «Identifier» } ;
-identifier_path_parser . define (separated_by ! (IdentifierPath , token ! (identifier_parser) , terminal ! (Period , ".")) . boxed ()) ;
+identifier_path_parser . define (separated_by ! (IdentifierPath , terminal ! (identifier_parser) , terminal ! (Period , ".")) . boxed ()) ;
 
 // «IdentifierStart» = '_' | '$' | 'a'…'z' | 'A'…'Z' ;
 identifier_start_parser . define (lex_terminal ! (IdentifierStart , | & c : & char | c == '_' || c == '$' || ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z')) . boxed ()) ;
@@ -715,7 +715,7 @@ if_statement_parser . define (seq ! (IfStatement , terminal ! (If , "if") , deli
 import_directive_parser . define (seq ! (ImportDirective , terminal ! (Import , "import") , choice ! (rule ! (simple_import_directive_parser) , rule ! (star_import_directive_parser) , rule ! (selecting_import_directive_parser)) , terminal ! (Semicolon , ";")) . boxed ()) ;
 
 // ImportPath = «AsciiStringLiteral» ;
-import_path_parser . define (token ! (ascii_string_literal_parser) . boxed ()) ;
+import_path_parser . define (terminal ! (ascii_string_literal_parser) . boxed ()) ;
 
 // IndexAccessExpression = Expression '[' [ Expression ] [ ':' [ Expression ] ] ']' ;
 index_access_expression_parser . define (unary_suffix_expression ! (IndexAccessExpression , primary_expression_parser , delimited_by ! (terminal ! (OpenBracket , "[") , seq ! (optional ! (rule ! (expression_parser)) , optional ! (seq ! (terminal ! (Colon , ":") , optional ! (rule ! (expression_parser))))) , terminal ! (CloseBracket , "]"))) . boxed ()) ;
@@ -727,28 +727,28 @@ inheritance_specifier_parser . define (seq ! (InheritanceSpecifier , identifier_
 inheritance_specifier_list_parser . define (seq ! (InheritanceSpecifierList , is : terminal ! (Is , "is") , inheritance_specifiers_and_commas : separated_by ! (InheritanceSpecifiersAndCommas , rule ! (inheritance_specifier_parser) , terminal ! (Comma , ","))) . boxed ()) ;
 
 // InterfaceDefinition = 'interface' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
-interface_definition_parser . define (seq ! (InterfaceDefinition , interface : terminal ! (Interface , "interface") , identifier : token ! (identifier_parser) , optional_inheritance_specifier_list : optional ! (rule ! (inheritance_specifier_list_parser)) , open_brace_and_contract_body_elements_and_close_brace : delimited_by ! (OpenBraceAndContractBodyElementsAndCloseBrace , terminal ! (OpenBrace , "{") , zero_or_more ! (ContractBodyElements , rule ! (contract_body_element_parser)) , terminal ! (CloseBrace , "}"))) . boxed ()) ;
+interface_definition_parser . define (seq ! (InterfaceDefinition , interface : terminal ! (Interface , "interface") , identifier : terminal ! (identifier_parser) , optional_inheritance_specifier_list : optional ! (rule ! (inheritance_specifier_list_parser)) , open_brace_and_contract_body_elements_and_close_brace : delimited_by ! (OpenBraceAndContractBodyElementsAndCloseBrace , terminal ! (OpenBrace , "{") , zero_or_more ! (ContractBodyElements , rule ! (contract_body_element_parser)) , terminal ! (CloseBrace , "}"))) . boxed ()) ;
 
 // «Keyword» = «BooleanLiteral» | «FixedBytesType» | «NumberUnit» | «ReservedKeyword» | «SignedIntegerType» | «UnsignedIntegerType» | 'abstract' | 'address' | 'anonymous' | 'as' | 'assembly' | 'bool' | 'break' | 'calldata' | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum' | 'event' | 'external' | 'fallback' | 'false' | 'fixed' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import' | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override' | 'payable' | 'pragma' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct' | 'true' | 'try' | 'type' | 'ufixed' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while' ;
 keyword_parser . define (lex_trie ! (trieleaf ! (False , "false") , trieleaf ! (True , "true")) . boxed ()) ;
 
 // LeadingTrivia = { «Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment» } ;
-leading_trivia_parser . define (zero_or_more ! (LeadingTrivia , choice ! (trivia_token ! (whitespace_parser) , trivia_token ! (end_of_line_parser) , trivia_token ! (multiline_comment_parser) , trivia_token ! (single_line_comment_parser))) . boxed ()) ;
+leading_trivia_parser . define (zero_or_more ! (LeadingTrivia , choice ! (trivia_terminal ! (whitespace_parser) , trivia_terminal ! (end_of_line_parser) , trivia_terminal ! (multiline_comment_parser) , trivia_terminal ! (single_line_comment_parser))) . boxed ()) ;
 
 // LibraryDefinition = 'library' «Identifier» '{' { ContractBodyElement } '}' ;
-library_definition_parser . define (seq ! (LibraryDefinition , library : terminal ! (Library , "library") , identifier : token ! (identifier_parser) , open_brace_and_contract_body_elements_and_close_brace : delimited_by ! (OpenBraceAndContractBodyElementsAndCloseBrace , terminal ! (OpenBrace , "{") , zero_or_more ! (ContractBodyElements , rule ! (contract_body_element_parser)) , terminal ! (CloseBrace , "}"))) . boxed ()) ;
+library_definition_parser . define (seq ! (LibraryDefinition , library : terminal ! (Library , "library") , identifier : terminal ! (identifier_parser) , open_brace_and_contract_body_elements_and_close_brace : delimited_by ! (OpenBraceAndContractBodyElementsAndCloseBrace , terminal ! (OpenBrace , "{") , zero_or_more ! (ContractBodyElements , rule ! (contract_body_element_parser)) , terminal ! (CloseBrace , "}"))) . boxed ()) ;
 
 // MappingType = 'mapping' '(' ( ElementaryType | IdentifierPath ) '=>' TypeName ')' ;
 mapping_type_parser . define (seq ! (MappingType , terminal ! (Mapping , "mapping") , delimited_by ! (terminal ! (OpenParen , "(") , seq ! (choice ! (rule ! (elementary_type_parser) , rule ! (identifier_path_parser)) , terminal ! (EqualGreater , "=>") , rule ! (type_name_parser)) , terminal ! (CloseParen , ")"))) . boxed ()) ;
 
 // MemberAccessExpression = Expression '.' ( «Identifier» | 'address' ) ;
-member_access_expression_parser . define (unary_suffix_expression ! (MemberAccessExpression , index_access_expression_parser , seq ! (terminal ! (Period , ".") , choice ! (token ! (identifier_parser) , terminal ! (Address , "address")))) . boxed ()) ;
+member_access_expression_parser . define (unary_suffix_expression ! (MemberAccessExpression , index_access_expression_parser , seq ! (terminal ! (Period , ".") , choice ! (terminal ! (identifier_parser) , terminal ! (Address , "address")))) . boxed ()) ;
 
 // ModifierAttribute = OverrideSpecifier | 'virtual' ;
 modifier_attribute_parser . define (choice ! ! (ModifierAttribute , OverrideSpecifier : rule ! (override_specifier_parser) , Virtual : terminal ! (Virtual , "virtual")) . boxed ()) ;
 
 // ModifierDefinition = 'modifier' «Identifier» [ ParameterList ] { ModifierAttribute } ( ';' | Block ) ;
-modifier_definition_parser . define (seq ! (ModifierDefinition , terminal ! (Modifier , "modifier") , token ! (identifier_parser) , optional ! (rule ! (parameter_list_parser)) , zero_or_more ! (ModifierAttributes , rule ! (modifier_attribute_parser)) , choice ! (terminal ! (Semicolon , ";") , rule ! (block_parser))) . boxed ()) ;
+modifier_definition_parser . define (seq ! (ModifierDefinition , terminal ! (Modifier , "modifier") , terminal ! (identifier_parser) , optional ! (rule ! (parameter_list_parser)) , zero_or_more ! (ModifierAttributes , rule ! (modifier_attribute_parser)) , choice ! (terminal ! (Semicolon , ";") , rule ! (block_parser))) . boxed ()) ;
 
 // ModifierInvocation = IdentifierPath [ ArgumentList ] ;
 modifier_invocation_parser . define (seq ! (ModifierInvocation , identifier_path : rule ! (identifier_path_parser) , optional_argument_list : optional ! (rule ! (argument_list_parser))) . boxed ()) ;
@@ -760,7 +760,7 @@ mul_div_mod_expression_parser . define (left_associative_binary_expression ! (Mu
 multiline_comment_parser . define (lex_seq ! (MultilineComment , lex_terminal ! (SlashStar , "/*") , lex_seq ! [Content , lex_zero_or_more ! (lex_choice ! (lex_terminal ! (NotStar , | & c : & char | c != '*') , lex_seq ! [lex_one_or_more ! (Stars , lex_terminal ! (Star , '*')) , lex_terminal ! (| & c : & char | c != '*' && c != '/')])) , lex_zero_or_more ! (Stars , lex_terminal ! (Star , '*'))] , lex_terminal ! (StarSlash , "*/")) . boxed ()) ;
 
 // NamedArgument = «Identifier» ':' Expression ;
-named_argument_parser . define (seq ! (NamedArgument , identifier : token ! (identifier_parser) , colon : terminal ! (Colon , ":") , expression : rule ! (expression_parser)) . boxed ()) ;
+named_argument_parser . define (seq ! (NamedArgument , identifier : terminal ! (identifier_parser) , colon : terminal ! (Colon , ":") , expression : rule ! (expression_parser)) . boxed ()) ;
 
 // NamedArgumentList = '{' [ NamedArgument  { ',' NamedArgument } ] '}' ;
 named_argument_list_parser . define (delimited_by ! (NamedArgumentList , terminal ! (OpenBrace , "{") , optional ! (separated_by ! (NamedArgumentsAndCommas , rule ! (named_argument_parser) , terminal ! (Comma , ","))) , terminal ! (CloseBrace , "}")) . boxed ()) ;
@@ -784,7 +784,7 @@ order_comparison_expression_parser . define (left_associative_binary_expression 
 override_specifier_parser . define (seq ! (OverrideSpecifier , r#override : terminal ! (Override , "override") , optional_open_paren_and_identifier_paths_and_commas_and_close_paren : optional ! (delimited_by ! (OpenParenAndIdentifierPathsAndCommasAndCloseParen , terminal ! (OpenParen , "(") , separated_by ! (IdentifierPathsAndCommas , rule ! (identifier_path_parser) , terminal ! (Comma , ",")) , terminal ! (CloseParen , ")")))) . boxed ()) ;
 
 // ParameterDeclaration = TypeName [ DataLocation ] [ «Identifier» ] ;
-parameter_declaration_parser . define (seq ! (ParameterDeclaration , type_name : rule ! (type_name_parser) , optional_data_location : optional ! (rule ! (data_location_parser)) , optional_identifier : optional ! (token ! (identifier_parser))) . boxed ()) ;
+parameter_declaration_parser . define (seq ! (ParameterDeclaration , type_name : rule ! (type_name_parser) , optional_data_location : optional ! (rule ! (data_location_parser)) , optional_identifier : optional ! (terminal ! (identifier_parser))) . boxed ()) ;
 
 // ParameterList = '(' [ ParameterDeclaration  { ',' ParameterDeclaration } ] ')' ;
 parameter_list_parser . define (delimited_by ! (ParameterList , terminal ! (OpenParen , "(") , optional ! (separated_by ! (ParameterDeclarationsAndCommas , rule ! (parameter_declaration_parser) , terminal ! (Comma , ","))) , terminal ! (CloseParen , ")")) . boxed ()) ;
@@ -805,7 +805,7 @@ possibly_separated_pairs_of_hex_digits_parser . define (lex_seq ! [PossiblySepar
 pragma_directive_parser . define (seq ! (PragmaDirective , terminal ! (Pragma , "pragma") , choice ! (rule ! (version_pragma_specifier_parser) , rule ! (abi_coder_pragma_specifier_parser) , rule ! (experimental_pragma_specifier_parser)) , terminal ! (Semicolon , ";")) . boxed ()) ;
 
 // PrimaryExpression = PayableExpression | TypeExpression | NewExpression | ParenthesisExpression | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | «NumericLiteral» | «BooleanLiteral» | «Identifier» ;
-primary_expression_parser . define (choice ! ! (PrimaryExpression , PayableExpression : rule ! (payable_expression_parser) , TypeExpression : rule ! (type_expression_parser) , NewExpression : rule ! (new_expression_parser) , ParenthesisExpression : rule ! (parenthesis_expression_parser) , ArrayLiteral : rule ! (array_literal_parser) , AsciiStringLiteral : token ! (ascii_string_literal_parser) , UnicodeStringLiteral : token ! (unicode_string_literal_parser) , HexStringLiteral : token ! (hex_string_literal_parser) , NumericLiteral : token ! (numeric_literal_parser) , BooleanLiteral : token ! (boolean_literal_parser) , Identifier : token ! (identifier_parser)) . boxed ()) ;
+primary_expression_parser . define (choice ! ! (PrimaryExpression , PayableExpression : rule ! (payable_expression_parser) , TypeExpression : rule ! (type_expression_parser) , NewExpression : rule ! (new_expression_parser) , ParenthesisExpression : rule ! (parenthesis_expression_parser) , ArrayLiteral : rule ! (array_literal_parser) , AsciiStringLiteral : terminal ! (ascii_string_literal_parser) , UnicodeStringLiteral : terminal ! (unicode_string_literal_parser) , HexStringLiteral : terminal ! (hex_string_literal_parser) , NumericLiteral : terminal ! (numeric_literal_parser) , BooleanLiteral : terminal ! (boolean_literal_parser) , Identifier : terminal ! (identifier_parser)) . boxed ()) ;
 
 // «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;
 raw_identifier_parser . define (lex_seq ! [RawIdentifier , lex_terminal ! (| & c : & char | c == '_' || c == '$' || ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z')) , lex_zero_or_more ! (lex_terminal ! (| & c : & char | c == '_' || c == '$' || ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9')))] . boxed ()) ;
@@ -826,7 +826,7 @@ return_statement_parser . define (seq ! (ReturnStatement , r#return : terminal !
 revert_statement_parser . define (seq ! (RevertStatement , revert : terminal ! (Revert , "revert") , optional_identifier_path : optional ! (rule ! (identifier_path_parser)) , argument_list : rule ! (argument_list_parser) , semicolon : terminal ! (Semicolon , ";")) . boxed ()) ;
 
 // SelectedImport = «Identifier» [ 'as' «Identifier» ] ;
-selected_import_parser . define (seq ! (SelectedImport , token ! (identifier_parser) , optional ! (seq ! (terminal ! (As , "as") , token ! (identifier_parser)))) . boxed ()) ;
+selected_import_parser . define (seq ! (SelectedImport , terminal ! (identifier_parser) , optional ! (seq ! (terminal ! (As , "as") , terminal ! (identifier_parser)))) . boxed ()) ;
 
 // SelectingImportDirective = '{' SelectedImport  { ',' SelectedImport } '}' 'from' ImportPath ;
 selecting_import_directive_parser . define (seq ! (SelectingImportDirective , open_brace_and_selected_imports_and_commas_and_close_brace : delimited_by ! (OpenBraceAndSelectedImportsAndCommasAndCloseBrace , terminal ! (OpenBrace , "{") , separated_by ! (SelectedImportsAndCommas , rule ! (selected_import_parser) , terminal ! (Comma , ",")) , terminal ! (CloseBrace , "}")) , from : terminal ! (From , "from") , import_path : rule ! (import_path_parser)) . boxed ()) ;
@@ -841,7 +841,7 @@ signed_fixed_type_parser . define (lex_seq ! [SignedFixedType , lex_terminal ! (
 signed_integer_type_parser . define (lex_seq ! [SignedIntegerType , lex_terminal ! (Int , "int") , lex_optional ! (lex_trie ! (trieprefix ! ("1" , [trieleaf ! (OneZeroFour , "04") , trieleaf ! (OneOneTwo , "12") , trieprefix ! ("2" , [trieleaf ! (OneTwoZero , "0") , trieleaf ! (OneTwoEight , "8")]) , trieleaf ! (OneThreeSix , "36") , trieleaf ! (OneFourFour , "44") , trieleaf ! (OneFiveTwo , "52") , trieprefix ! ("6" , [trieleaf ! (OneSixZero , "0") , trieleaf ! (OneSixEight , "8") , trieleaf ! (OneSix)]) , trieleaf ! (OneSevenSix , "76") , trieleaf ! (OneEightFour , "84") , trieleaf ! (OneNineTwo , "92")]) , trieprefix ! ("2" , [trieprefix ! ("0" , [trieleaf ! (TwoZeroZero , "0") , trieleaf ! (TwoZeroEight , "8")]) , trieleaf ! (TwoOneSix , "16") , trieleaf ! (TwoTwoFour , "24") , trieleaf ! (TwoThreeTwo , "32") , trieprefix ! ("4" , [trieleaf ! (TwoFourZero , "0") , trieleaf ! (TwoFourEight , "8") , trieleaf ! (TwoFour)]) , trieleaf ! (TwoFiveSix , "56")]) , trieleaf ! (ThreeTwo , "32") , trieprefix ! ("4" , [trieleaf ! (FourZero , "0") , trieleaf ! (FourEight , "8")]) , trieleaf ! (FiveSix , "56") , trieleaf ! (SixFour , "64") , trieleaf ! (SevenTwo , "72") , trieprefix ! ("8" , [trieleaf ! (EightZero , "0") , trieleaf ! (EightEight , "8") , trieleaf ! (Eight)]) , trieleaf ! (NineSix , "96")))] . boxed ()) ;
 
 // SimpleImportDirective = ImportPath { 'as' «Identifier» } ;
-simple_import_directive_parser . define (seq ! (SimpleImportDirective , rule ! (import_path_parser) , zero_or_more ! (seq ! (terminal ! (As , "as") , token ! (identifier_parser)))) . boxed ()) ;
+simple_import_directive_parser . define (seq ! (SimpleImportDirective , rule ! (import_path_parser) , zero_or_more ! (seq ! (terminal ! (As , "as") , terminal ! (identifier_parser)))) . boxed ()) ;
 
 // SimpleStatement = TupleDeconstructionStatement | VariableDeclarationStatement | ExpressionStatement ;
 simple_statement_parser . define (choice ! ! (SimpleStatement , TupleDeconstructionStatement : rule ! (tuple_deconstruction_statement_parser) , VariableDeclarationStatement : rule ! (variable_declaration_statement_parser) , ExpressionStatement : rule ! (expression_statement_parser)) . boxed ()) ;
@@ -859,31 +859,31 @@ single_quoted_unicode_string_literal_parser . define (lex_seq ! (SingleQuotedUni
 source_unit_parser . define (seq ! (SourceUnit , rule ! (leading_trivia_parser) , zero_or_more ! (choice ! (rule ! (directive_parser) , rule ! (definition_parser))) , rule ! (end_of_file_trivia_parser)) . boxed ()) ;
 
 // StarImportDirective = '*' 'as' «Identifier» 'from' ImportPath ;
-star_import_directive_parser . define (seq ! (StarImportDirective , star : terminal ! (Star , "*") , r#as : terminal ! (As , "as") , identifier : token ! (identifier_parser) , from : terminal ! (From , "from") , import_path : rule ! (import_path_parser)) . boxed ()) ;
+star_import_directive_parser . define (seq ! (StarImportDirective , star : terminal ! (Star , "*") , r#as : terminal ! (As , "as") , identifier : terminal ! (identifier_parser) , from : terminal ! (From , "from") , import_path : rule ! (import_path_parser)) . boxed ()) ;
 
 // StateVariableAttribute = OverrideSpecifier | 'constant' | 'immutable' | 'internal' | 'private' | 'public' ;
 state_variable_attribute_parser . define (choice ! ! (StateVariableAttribute , OverrideSpecifier : rule ! (override_specifier_parser) , Constant : terminal ! (Constant , "constant") , Immutable : terminal ! (Immutable , "immutable") , Internal : terminal ! (Internal , "internal") , Private : terminal ! (Private , "private") , Public : terminal ! (Public , "public")) . boxed ()) ;
 
 // StateVariableDeclaration = TypeName { StateVariableAttribute } «Identifier» [ '=' Expression ] ';' ;
-state_variable_declaration_parser . define (seq ! (StateVariableDeclaration , rule ! (type_name_parser) , zero_or_more ! (StateVariableAttributes , rule ! (state_variable_attribute_parser)) , token ! (identifier_parser) , optional ! (seq ! (terminal ! (Equal , "=") , rule ! (expression_parser))) , terminal ! (Semicolon , ";")) . boxed ()) ;
+state_variable_declaration_parser . define (seq ! (StateVariableDeclaration , rule ! (type_name_parser) , zero_or_more ! (StateVariableAttributes , rule ! (state_variable_attribute_parser)) , terminal ! (identifier_parser) , optional ! (seq ! (terminal ! (Equal , "=") , rule ! (expression_parser))) , terminal ! (Semicolon , ";")) . boxed ()) ;
 
 // Statement = Block | SimpleStatement | IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | TryStatement | ReturnStatement | EmitStatement | RevertStatement | DeleteStatement | AssemblyStatement ;
 statement_parser . define (choice ! ! (Statement , Block : rule ! (block_parser) , SimpleStatement : rule ! (simple_statement_parser) , IfStatement : rule ! (if_statement_parser) , ForStatement : rule ! (for_statement_parser) , WhileStatement : rule ! (while_statement_parser) , DoWhileStatement : rule ! (do_while_statement_parser) , ContinueStatement : rule ! (continue_statement_parser) , BreakStatement : rule ! (break_statement_parser) , TryStatement : rule ! (try_statement_parser) , ReturnStatement : rule ! (return_statement_parser) , EmitStatement : rule ! (emit_statement_parser) , RevertStatement : rule ! (revert_statement_parser) , DeleteStatement : rule ! (delete_statement_parser) , AssemblyStatement : rule ! (assembly_statement_parser)) . boxed ()) ;
 
 // StructDefinition = 'struct' «Identifier» '{' 1…*{ StructMember } '}' ;
-struct_definition_parser . define (seq ! (StructDefinition , r#struct : terminal ! (Struct , "struct") , identifier : token ! (identifier_parser) , open_brace_and_struct_members_and_close_brace : delimited_by ! (OpenBraceAndStructMembersAndCloseBrace , terminal ! (OpenBrace , "{") , one_or_more ! (StructMembers , rule ! (struct_member_parser)) , terminal ! (CloseBrace , "}"))) . boxed ()) ;
+struct_definition_parser . define (seq ! (StructDefinition , r#struct : terminal ! (Struct , "struct") , identifier : terminal ! (identifier_parser) , open_brace_and_struct_members_and_close_brace : delimited_by ! (OpenBraceAndStructMembersAndCloseBrace , terminal ! (OpenBrace , "{") , one_or_more ! (StructMembers , rule ! (struct_member_parser)) , terminal ! (CloseBrace , "}"))) . boxed ()) ;
 
 // StructMember = TypeName «Identifier» ';' ;
-struct_member_parser . define (seq ! (StructMember , type_name : rule ! (type_name_parser) , identifier : token ! (identifier_parser) , semicolon : terminal ! (Semicolon , ";")) . boxed ()) ;
+struct_member_parser . define (seq ! (StructMember , type_name : rule ! (type_name_parser) , identifier : terminal ! (identifier_parser) , semicolon : terminal ! (Semicolon , ";")) . boxed ()) ;
 
 // TrailingTrivia = [ { «Whitespace» | «MultilineComment» } ( «EndOfLine» | «SingleLineComment» ) ] ;
-trailing_trivia_parser . define (optional ! (seq ! (zero_or_more ! (choice ! (trivia_token ! (whitespace_parser) , trivia_token ! (multiline_comment_parser))) , choice ! (trivia_token ! (end_of_line_parser) , trivia_token ! (single_line_comment_parser)))) . boxed ()) ;
+trailing_trivia_parser . define (optional ! (seq ! (zero_or_more ! (choice ! (trivia_terminal ! (whitespace_parser) , trivia_terminal ! (multiline_comment_parser))) , choice ! (trivia_terminal ! (end_of_line_parser) , trivia_terminal ! (single_line_comment_parser)))) . boxed ()) ;
 
 // TryStatement = 'try' Expression [ 'returns' ParameterList ] Block 1…*{ CatchClause } ;
 try_statement_parser . define (seq ! (TryStatement , terminal ! (Try , "try") , rule ! (expression_parser) , optional ! (seq ! (terminal ! (Returns , "returns") , rule ! (parameter_list_parser))) , rule ! (block_parser) , one_or_more ! (CatchClauses , rule ! (catch_clause_parser))) . boxed ()) ;
 
 // TupleDeconstructionStatement = '(' [ [ [ TypeName ] «Identifier» ]  { ',' [ [ TypeName ] «Identifier» ] } ] ')' '=' Expression ';' ;
-tuple_deconstruction_statement_parser . define (seq ! (TupleDeconstructionStatement , delimited_by ! (terminal ! (OpenParen , "(") , optional ! (separated_by ! (optional ! (seq ! (optional ! (rule ! (type_name_parser)) , token ! (identifier_parser))) , terminal ! (Comma , ","))) , terminal ! (CloseParen , ")")) , terminal ! (Equal , "=") , rule ! (expression_parser) , terminal ! (Semicolon , ";")) . boxed ()) ;
+tuple_deconstruction_statement_parser . define (seq ! (TupleDeconstructionStatement , delimited_by ! (terminal ! (OpenParen , "(") , optional ! (separated_by ! (optional ! (seq ! (optional ! (rule ! (type_name_parser)) , terminal ! (identifier_parser))) , terminal ! (Comma , ","))) , terminal ! (CloseParen , ")")) , terminal ! (Equal , "=") , rule ! (expression_parser) , terminal ! (Semicolon , ";")) . boxed ()) ;
 
 // TypeExpression = 'type' '(' TypeName ')' ;
 type_expression_parser . define (seq ! (TypeExpression , r#type : terminal ! (Type , "type") , open_paren_and_type_name_and_close_paren : delimited_by ! (OpenParenAndTypeNameAndCloseParen , terminal ! (OpenParen , "(") , rule ! (type_name_parser) , terminal ! (CloseParen , ")"))) . boxed ()) ;
@@ -913,19 +913,19 @@ unsigned_fixed_type_parser . define (lex_seq ! [UnsignedFixedType , lex_terminal
 unsigned_integer_type_parser . define (lex_seq ! [UnsignedIntegerType , lex_terminal ! (LatinSmallLetterU , 'u') , lex_rule ! (signed_integer_type_parser)] . boxed ()) ;
 
 // UserDefinedValueTypeDefinition = 'type' «Identifier» 'is' ElementaryType ';' ;
-user_defined_value_type_definition_parser . define (seq ! (UserDefinedValueTypeDefinition , r#type : terminal ! (Type , "type") , identifier : token ! (identifier_parser) , is : terminal ! (Is , "is") , elementary_type : rule ! (elementary_type_parser) , semicolon : terminal ! (Semicolon , ";")) . boxed ()) ;
+user_defined_value_type_definition_parser . define (seq ! (UserDefinedValueTypeDefinition , r#type : terminal ! (Type , "type") , identifier : terminal ! (identifier_parser) , is : terminal ! (Is , "is") , elementary_type : rule ! (elementary_type_parser) , semicolon : terminal ! (Semicolon , ";")) . boxed ()) ;
 
 // UsingDirective = 'using' ( IdentifierPath | '{' IdentifierPath  { ',' IdentifierPath } '}' ) 'for' ( '*' | TypeName ) [ 'global' ] ';' ;
 using_directive_parser . define (seq ! (UsingDirective , terminal ! (Using , "using") , choice ! (rule ! (identifier_path_parser) , delimited_by ! (OpenBraceAndIdentifierPathsAndCommasAndCloseBrace , terminal ! (OpenBrace , "{") , separated_by ! (IdentifierPathsAndCommas , rule ! (identifier_path_parser) , terminal ! (Comma , ",")) , terminal ! (CloseBrace , "}"))) , terminal ! (For , "for") , choice ! (terminal ! (Star , "*") , rule ! (type_name_parser)) , optional ! (terminal ! (Global , "global")) , terminal ! (Semicolon , ";")) . boxed ()) ;
 
 // VariableDeclarationStatement = TypeName [ DataLocation ] «Identifier» [ '=' Expression ] ';' ;
-variable_declaration_statement_parser . define (seq ! (VariableDeclarationStatement , rule ! (type_name_parser) , optional ! (rule ! (data_location_parser)) , token ! (identifier_parser) , optional ! (seq ! (terminal ! (Equal , "=") , rule ! (expression_parser))) , terminal ! (Semicolon , ";")) . boxed ()) ;
+variable_declaration_statement_parser . define (seq ! (VariableDeclarationStatement , rule ! (type_name_parser) , optional ! (rule ! (data_location_parser)) , terminal ! (identifier_parser) , optional ! (seq ! (terminal ! (Equal , "=") , rule ! (expression_parser))) , terminal ! (Semicolon , ";")) . boxed ()) ;
 
 // «VersionPragmaOperator» = '^' | '~' | '=' | '<' | '>' | '<=' | '>=' ;
 version_pragma_operator_parser . define (lex_trie ! (trieprefix ! ("<" , [trieleaf ! (LessEqual , "=") , trieleaf ! (Less)]) , trieleaf ! (Equal , "=") , trieprefix ! (">" , [trieleaf ! (GreaterEqual , "=") , trieleaf ! (Greater)]) , trieleaf ! (Caret , "^") , trieleaf ! (Tilde , "~")) . boxed ()) ;
 
 // VersionPragmaSpecifier = 'solidity' 1…*{ «VersionPragmaOperator» «VersionPragmaValue» } ;
-version_pragma_specifier_parser . define (seq ! (VersionPragmaSpecifier , terminal ! (Solidity , "solidity") , one_or_more ! (seq ! (token ! (version_pragma_operator_parser) , token ! (version_pragma_value_parser)))) . boxed ()) ;
+version_pragma_specifier_parser . define (seq ! (VersionPragmaSpecifier , terminal ! (Solidity , "solidity") , one_or_more ! (seq ! (terminal ! (version_pragma_operator_parser) , terminal ! (version_pragma_value_parser)))) . boxed ()) ;
 
 // «VersionPragmaValue» = 1…*{ '0'…'9' | 'x' | 'X' | '*' }  { '.' 1…*{ '0'…'9' | 'x' | 'X' | '*' } } ;
 version_pragma_value_parser . define (lex_separated_by ! (VersionPragmaValue , lex_one_or_more ! (lex_terminal ! (| & c : & char | ('0' <= c && c <= '9') || c == 'x' || c == 'X' || c == '*')) , lex_terminal ! (Period , ".")) . boxed ()) ;
@@ -958,10 +958,10 @@ yul_expression_parser . define (choice ! ! (YulExpression , YulIdentifierPath : 
 yul_for_statement_parser . define (seq ! (YulForStatement , r#for : terminal ! (For , "for") , yul_block : rule ! (yul_block_parser) , yul_expression : rule ! (yul_expression_parser) , yul_block : rule ! (yul_block_parser) , yul_block : rule ! (yul_block_parser)) . boxed ()) ;
 
 // YulFunctionCall = «YulIdentifier» '(' [ YulExpression  { ',' YulExpression } ] ')' ;
-yul_function_call_parser . define (seq ! (YulFunctionCall , yul_identifier : token ! (yul_identifier_parser) , open_paren_and_optional_yul_expressions_and_commas_and_close_paren : delimited_by ! (OpenParenAndOptionalYulExpressionsAndCommasAndCloseParen , terminal ! (OpenParen , "(") , optional ! (separated_by ! (YulExpressionsAndCommas , rule ! (yul_expression_parser) , terminal ! (Comma , ","))) , terminal ! (CloseParen , ")"))) . boxed ()) ;
+yul_function_call_parser . define (seq ! (YulFunctionCall , yul_identifier : terminal ! (yul_identifier_parser) , open_paren_and_optional_yul_expressions_and_commas_and_close_paren : delimited_by ! (OpenParenAndOptionalYulExpressionsAndCommasAndCloseParen , terminal ! (OpenParen , "(") , optional ! (separated_by ! (YulExpressionsAndCommas , rule ! (yul_expression_parser) , terminal ! (Comma , ","))) , terminal ! (CloseParen , ")"))) . boxed ()) ;
 
 // YulFunctionDefinition = 'function' «YulIdentifier» '(' [ «YulIdentifier»  { ',' «YulIdentifier» } ] ')' [ '->' «YulIdentifier»  { ',' «YulIdentifier» } ] YulBlock ;
-yul_function_definition_parser . define (seq ! (YulFunctionDefinition , terminal ! (Function , "function") , token ! (yul_identifier_parser) , delimited_by ! (OpenParenAndOptionalArgumentsAndCloseParen , terminal ! (OpenParen , "(") , optional ! (separated_by ! (Arguments , token ! (yul_identifier_parser) , terminal ! (Comma , ","))) , terminal ! (CloseParen , ")")) , optional ! (seq ! (terminal ! (MinusGreater , "->") , separated_by ! (Results , token ! (yul_identifier_parser) , terminal ! (Comma , ",")))) , rule ! (yul_block_parser)) . boxed ()) ;
+yul_function_definition_parser . define (seq ! (YulFunctionDefinition , terminal ! (Function , "function") , terminal ! (yul_identifier_parser) , delimited_by ! (OpenParenAndOptionalArgumentsAndCloseParen , terminal ! (OpenParen , "(") , optional ! (separated_by ! (Arguments , terminal ! (yul_identifier_parser) , terminal ! (Comma , ","))) , terminal ! (CloseParen , ")")) , optional ! (seq ! (terminal ! (MinusGreater , "->") , separated_by ! (Results , terminal ! (yul_identifier_parser) , terminal ! (Comma , ",")))) , rule ! (yul_block_parser)) . boxed ()) ;
 
 // «YulHexLiteral» = '0x' 1…*{ «HexCharacter» } ;
 yul_hex_literal_parser . define (lex_seq ! [YulHexLiteral , lex_terminal ! (ZeroX , "0x") , lex_one_or_more ! (lex_terminal ! (| & c : & char | ('0' <= c && c <= '9') || ('a' <= c && c <= 'f') || ('A' <= c && c <= 'F')))] . boxed ()) ;
@@ -970,7 +970,7 @@ yul_hex_literal_parser . define (lex_seq ! [YulHexLiteral , lex_terminal ! (Zero
 yul_identifier_parser . define (difference (lex_rule ! (raw_identifier_parser) , lex_trie ! (trieleaf ! (Break , "break") , trieprefix ! ("c" , [trieleaf ! (Case , "ase") , trieleaf ! (Continue , "ontinue")]) , trieleaf ! (Default , "default") , trieprefix ! ("f" , [trieleaf ! (False , "alse") , trieleaf ! (For , "or") , trieleaf ! (Function , "unction")]) , trieleaf ! (Hex , "hex") , trieleaf ! (If , "if") , trieprefix ! ("le" , [trieleaf ! (Leave , "ave") , trieleaf ! (Let , "t")]) , trieleaf ! (Switch , "switch") , trieleaf ! (True , "true"))) . boxed ()) ;
 
 // YulIdentifierPath = «YulIdentifier»  { '.' «YulIdentifier» } ;
-yul_identifier_path_parser . define (separated_by ! (YulIdentifierPath , token ! (yul_identifier_parser) , terminal ! (Period , ".")) . boxed ()) ;
+yul_identifier_path_parser . define (separated_by ! (YulIdentifierPath , terminal ! (yul_identifier_parser) , terminal ! (Period , ".")) . boxed ()) ;
 
 // YulIfStatement = 'if' YulExpression YulBlock ;
 yul_if_statement_parser . define (seq ! (YulIfStatement , r#if : terminal ! (If , "if") , yul_expression : rule ! (yul_expression_parser) , yul_block : rule ! (yul_block_parser)) . boxed ()) ;
@@ -982,7 +982,7 @@ yul_keyword_parser . define (lex_trie ! (trieleaf ! (Break , "break") , triepref
 yul_leave_statement_parser . define (terminal ! (Leave , "leave") . boxed ()) ;
 
 // YulLiteral = «YulDecimalNumberLiteral» | «YulHexLiteral» | «AsciiStringLiteral» | «BooleanLiteral» | «HexStringLiteral» ;
-yul_literal_parser . define (choice ! (YulLiteral , token ! (yul_decimal_number_literal_parser) , token ! (yul_hex_literal_parser) , token ! (ascii_string_literal_parser) , token ! (boolean_literal_parser) , token ! (hex_string_literal_parser)) . boxed ()) ;
+yul_literal_parser . define (choice ! ! (YulLiteral , YulDecimalNumberLiteral : terminal ! (yul_decimal_number_literal_parser) , YulHexLiteral : terminal ! (yul_hex_literal_parser) , AsciiStringLiteral : terminal ! (ascii_string_literal_parser) , BooleanLiteral : terminal ! (boolean_literal_parser) , HexStringLiteral : terminal ! (hex_string_literal_parser)) . boxed ()) ;
 
 // YulStatement = YulBlock | YulVariableDeclaration | YulFunctionDefinition | YulAssignmentStatement | YulFunctionCall | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement ;
 yul_statement_parser . define (choice ! ! (YulStatement , YulBlock : rule ! (yul_block_parser) , YulVariableDeclaration : rule ! (yul_variable_declaration_parser) , YulFunctionDefinition : rule ! (yul_function_definition_parser) , YulAssignmentStatement : rule ! (yul_assignment_statement_parser) , YulFunctionCall : rule ! (yul_function_call_parser) , YulIfStatement : rule ! (yul_if_statement_parser) , YulForStatement : rule ! (yul_for_statement_parser) , YulSwitchStatement : rule ! (yul_switch_statement_parser) , YulLeaveStatement : rule ! (yul_leave_statement_parser) , YulBreakStatement : rule ! (yul_break_statement_parser) , YulContinueStatement : rule ! (yul_continue_statement_parser)) . boxed ()) ;

@@ -4,7 +4,9 @@ pub mod code_fragments;
 pub mod combinator_forest;
 pub mod combinator_node;
 pub mod combinator_tree;
+pub mod lexer_code;
 pub mod naming;
+pub mod parser_code;
 pub mod rustfmt;
 pub mod terminal_trie;
 
