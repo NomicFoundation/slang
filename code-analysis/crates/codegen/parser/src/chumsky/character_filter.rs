@@ -123,19 +123,7 @@ impl CharacterFilter {
         }
     }
 
-    pub fn to_lexer_code(&self, name: Option<&String>, code: &mut CodeFragments) -> TokenStream {
-        self.to_code(name, code, "lex_")
-    }
-
-    pub fn to_trivia_code(&self, name: Option<&String>, code: &mut CodeFragments) -> TokenStream {
-        self.to_code(name, code, "trivia_")
-    }
-
-    pub fn to_parser_code(&self, name: Option<&String>, code: &mut CodeFragments) -> TokenStream {
-        self.to_code(name, code, "")
-    }
-
-    fn to_code(
+    pub(super) fn to_code(
         &self,
         name: Option<&String>,
         code: &mut CodeFragments,

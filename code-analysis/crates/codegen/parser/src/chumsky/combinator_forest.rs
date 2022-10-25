@@ -23,7 +23,7 @@ impl CombinatorForest {
 
         for production in grammar.productions.iter().map(|(_, v)| v).flatten() {
             let tree = CombinatorTree::from_production(&grammar, &production);
-            if let CombinatorNode::Expression { members, .. } = tree.root_node.as_ref() {
+            if let CombinatorNode::PrecedenceRule { members, .. } = tree.root_node.as_ref() {
                 expression_trees.push((tree.clone(), members.clone()));
             }
             trees_by_production_name.insert(production.name.clone(), tree);

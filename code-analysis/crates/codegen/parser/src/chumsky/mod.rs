@@ -7,6 +7,8 @@ pub mod combinator_tree;
 pub mod naming;
 pub mod rustfmt;
 pub mod terminal_trie;
+pub mod to_lexer_code;
+pub mod to_parser_code;
 
 // This is temporary until we deal properly with versions
 pub(crate) trait ProductionChumskyExtensions {
