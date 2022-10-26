@@ -1115,6 +1115,7 @@ dependencies = [
  "codegen_schema",
  "codegen_spec",
  "codegen_utils",
+ "semver",
  "serde",
  "serde_json",
  "serde_yaml 0.9.13",
