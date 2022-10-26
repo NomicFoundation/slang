@@ -79,15 +79,15 @@ pub struct Topic {
 #[derive(Clone, Debug)]
 pub struct Production {
     pub name: String,
-    pub kind: Option<ProductionKind>,
+    pub kind: ProductionKind,
     pub versions: BTreeMap<Version, ExpressionRef>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum ProductionKind {
     Rule,
+    Trivia,
     Token,
-    ExpressionRule,
 }
 
 pub type ProductionRef = Rc<Production>;
@@ -95,14 +95,12 @@ pub type ProductionWeakRef = Weak<Production>;
 
 impl Production {
     pub fn is_token(&self) -> bool {
-        self.kind == Some(ProductionKind::Token)
+        self.kind == ProductionKind::Token
     }
 
     fn serialize_in_map<S: Serializer>(&self, state: &mut S::SerializeMap) -> Result<(), S::Error> {
         state.serialize_entry("name", &self.name)?;
-        if let Some(kind) = self.kind {
-            state.serialize_entry("kind", &kind)?;
-        }
+        state.serialize_entry("kind", &self.kind)?;
         // TODO: once `if let` can be combined with boolean guards, merge this
         if self.versions.len() == 1 {
             if let Some(entry) = self.versions.get(&Version::parse("0.0.0").unwrap()) {
@@ -277,7 +275,7 @@ impl<'de> Deserialize<'de> for Production {
 
                 Ok(Production {
                     name,
-                    kind,
+                    kind: kind.unwrap_or(ProductionKind::Rule),
                     versions,
                 })
             }
@@ -537,17 +535,17 @@ pub enum EBNF {
 
 pub type ExpressionRef = Rc<Expression>;
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, Hash)]
+#[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize, Hash)]
 #[serde(deny_unknown_fields, rename_all = "camelCase")]
 pub struct ExpressionConfig {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
+    #[serde(default, skip_serializing_if = "ParserType::is_default")]
+    pub parser_type: ParserType,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub lookahead: Option<ExpressionRef>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub associativity: Option<ExpressionAssociativity>,
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub merge: Option<bool>,
 }
 
 impl ExpressionConfig {
@@ -556,21 +554,28 @@ impl ExpressionConfig {
     }
 }
 
-impl Default for ExpressionConfig {
-    fn default() -> Self {
-        Self {
-            name: None,
-            lookahead: None,
-            associativity: None,
-            merge: None,
-        }
-    }
-}
-
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, Hash)]
 pub enum ExpressionAssociativity {
     Left,
     Right,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, Hash)]
+pub enum ParserType {
+    Default,
+    Precedence,
+}
+
+impl Default for ParserType {
+    fn default() -> Self {
+        Self::Default
+    }
+}
+
+impl ParserType {
+    fn is_default(&self) -> bool {
+        *self == Self::Default
+    }
 }
 
 impl Grammar {
@@ -590,9 +595,11 @@ impl Grammar {
                     let topic_path_str = topic_path.to_str().unwrap();
 
                     let contents = read_source_file(&topic_path);
-                    let rules: Vec<Production> =
-                        serde_yaml::from_str(&contents).expect(topic_path_str);
-                    let rules: Vec<ProductionRef> = rules.into_iter().map(|p| Rc::new(p)).collect();
+                    let rules = serde_yaml::from_str::<Vec<Production>>(&contents)
+                        .expect(topic_path_str)
+                        .into_iter()
+                        .map(|p| Rc::new(p))
+                        .collect();
 
                     return Some((definition.clone(), rules));
                 }

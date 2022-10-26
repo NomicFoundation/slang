@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../../codegen/schema/json-schema/topic.schema.json
 
 - name: Expression
-  kind: ExpressionRule
+  config: { parserType: Precedence }
   choice:
     - reference: AssignmentExpression
     - reference: ConditionalExpression

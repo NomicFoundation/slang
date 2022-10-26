@@ -1,9 +1,9 @@
-use proc_macro2::{Ident, TokenStream};
-use quote::quote;
+use proc_macro2::TokenStream;
+use quote::{format_ident, quote};
 
 use codegen_schema::*;
 
-use super::{combinator_node, naming, ProductionChumskyExtensions};
+use super::{code_fragments::CodeFragments, naming, ProductionChumskyExtensions};
 
 #[derive(Clone, Debug)]
 pub enum CharacterFilter {
@@ -22,18 +22,15 @@ impl CharacterFilter {
         expression: &ExpressionRef,
     ) -> Option<CharacterFilterRef> {
         match &expression.ebnf {
-            EBNF::Not(child) => Self::from_expression(grammar, child).map(Self::new_negation),
+            EBNF::Not(child) => Self::from_expression(grammar, child).map(Self::negation),
 
             EBNF::Choice(children) => {
-                if expression.config.merge == Some(false) {
-                    return None;
-                }
                 let child_filters = children
                     .iter()
                     .filter_map(|c| Self::from_expression(grammar, c))
                     .collect::<Vec<_>>();
                 if child_filters.len() == children.len() {
-                    Some(CharacterFilter::new_disjunction(child_filters))
+                    Some(CharacterFilter::disjunction(child_filters))
                 } else {
                     None
                 }
@@ -43,7 +40,7 @@ impl CharacterFilter {
                 if string.chars().count() == 1 {
                     Some({
                         let char = string.chars().next().unwrap();
-                        CharacterFilter::new_char(char)
+                        CharacterFilter::char(char)
                     })
                 } else {
                     None
@@ -53,7 +50,7 @@ impl CharacterFilter {
             EBNF::Range(EBNFRange { from, to }) => Some({
                 let from = *from;
                 let to = *to;
-                CharacterFilter::new_range(from, to)
+                CharacterFilter::range(from, to)
             }),
 
             EBNF::Reference(name) => {
@@ -73,8 +70,8 @@ impl CharacterFilter {
                     Self::from_expression(grammar, subtrahend),
                 ) {
                     Some({
-                        let nodes = vec![minuend, Self::new_negation(subtrahend)];
-                        CharacterFilter::new_conjunction(nodes)
+                        let nodes = vec![minuend, Self::negation(subtrahend)];
+                        CharacterFilter::conjunction(nodes)
                     })
                 } else {
                     None
@@ -91,24 +88,29 @@ impl CharacterFilter {
         }
     }
 
-    fn new_negation(child: CharacterFilterRef) -> CharacterFilterRef {
+    fn negation(child: CharacterFilterRef) -> CharacterFilterRef {
         Box::new(Self::Negation { child })
     }
 
-    fn new_range(from: char, to: char) -> CharacterFilterRef {
+    fn range(from: char, to: char) -> CharacterFilterRef {
         Box::new(Self::Range { from, to })
     }
 
-    fn new_char(char: char) -> CharacterFilterRef {
+    fn char(char: char) -> CharacterFilterRef {
         Box::new(Self::Char { char })
     }
 
-    fn new_disjunction(nodes: Vec<CharacterFilterRef>) -> CharacterFilterRef {
+    fn disjunction(nodes: Vec<CharacterFilterRef>) -> CharacterFilterRef {
         Box::new(Self::Disjunction { nodes })
     }
 
-    fn new_conjunction(nodes: Vec<CharacterFilterRef>) -> CharacterFilterRef {
+    fn conjunction(nodes: Vec<CharacterFilterRef>) -> CharacterFilterRef {
         Box::new(Self::Conjunction { nodes })
+    }
+
+    pub fn merged_with(self, other: CharacterFilterRef) -> CharacterFilterRef {
+        let nodes = vec![Box::new(self), other];
+        CharacterFilter::disjunction(nodes)
     }
 
     pub fn default_name(&self) -> Option<String> {
@@ -121,69 +123,41 @@ impl CharacterFilter {
         }
     }
 
-    pub fn merged_with(self, other: CharacterFilterRef) -> CharacterFilterRef {
-        let nodes = vec![Box::new(self), other];
-        CharacterFilter::new_disjunction(nodes)
+    pub fn to_lexer_code(&self, name: Option<&String>, code: &mut CodeFragments) -> TokenStream {
+        self.to_code(name, code, "lex_")
     }
 
-    pub fn to_generated_code(
+    pub fn to_trivia_code(&self, name: Option<&String>, code: &mut CodeFragments) -> TokenStream {
+        self.to_code(name, code, "trivia_")
+    }
+
+    pub fn to_parser_code(&self, name: Option<&String>, code: &mut CodeFragments) -> TokenStream {
+        self.to_code(name, code, "")
+    }
+
+    fn to_code(
         &self,
-        kind: Option<Ident>,
-        with_trivia: bool,
-    ) -> combinator_node::CodeForNode {
-        let mut result: combinator_node::CodeForNode = Default::default();
-
-        let (cst_parser, ast_parser) = if let Some(kind) = kind {
-            result.cst_token_part_kinds.insert(kind.clone());
-            if let CharacterFilter::Char { char } = self {
-                (
-                    quote!(just(#char).to(Node::new_token_part(TokenPartKind::#kind, 1))),
-                    quote!(just(#char).to(FixedSizeTerminal::<1>()) ),
-                )
-            } else {
-                let predicate = self.to_parser_predicate(false);
-                (
-                    quote!( filter(|&c: &char| #predicate).to(Node::new_token_part(TokenPartKind::#kind, 1))),
-                    quote!( filter(|&c: &char| #predicate).to(FixedSizeTerminal::<1>())),
-                )
-            }
+        name: Option<&String>,
+        code: &mut CodeFragments,
+        macro_prefix: &str,
+    ) -> TokenStream {
+        let macro_name = format_ident!("{}terminal", macro_prefix);
+        if let CharacterFilter::Char { char } = self {
+            let kind = code.add_terminal_kind(char.to_string());
+            quote!(#macro_name!(#kind, #char))
         } else {
-            if let CharacterFilter::Char { char } = self {
-                (
-                    quote!(just(#char).to(Node::new_anonymous_token(1))),
-                    quote!(just(#char).to(FixedSizeTerminal::<1>()) ),
-                )
+            let predicate = self.to_predicate(false);
+            if let Some(kind) = name.map(|n| code.add_token_kind(n.clone())) {
+                quote!(#macro_name!(#kind, |&c: &char| #predicate))
             } else {
-                let predicate = self.to_parser_predicate(false);
-                (
-                    quote!( filter(|&c: &char| #predicate).to(Node::new_anonymous_token(1))),
-                    quote!( filter(|&c: &char| #predicate).to(FixedSizeTerminal::<1>())),
-                )
+                quote!(#macro_name!(|&c: &char| #predicate))
             }
-        };
-
-        if with_trivia {
-            result.cst_parser_impl_fragment = quote!(
-                leading_trivia_parser.clone().then(#cst_parser).then(trailing_trivia_parser.clone())
-                .map(Node::new_with_trivia)
-            );
-            result.ast_parser_impl_fragment = quote!(
-                leading_trivia_parser.clone().then(#ast_parser).then(trailing_trivia_parser.clone())
-                .map(|((leading_trivia, terminal), trailing_trivia)| FixedSizeTerminalWithTrivia { leading_trivia, terminal, trailing_trivia })
-            );
-            result.ast_parser_type = quote!(FixedSizeTerminalWithTrivia<1>);
-        } else {
-            result.cst_parser_impl_fragment = cst_parser;
-            result.ast_parser_impl_fragment = ast_parser;
-            result.ast_parser_type = quote!(FixedSizeTerminal<1>);
         }
-
-        result
     }
 
-    fn to_parser_predicate(&self, negated: bool) -> TokenStream {
+    fn to_predicate(&self, negated: bool) -> TokenStream {
         match self {
-            CharacterFilter::Negation { child } => child.to_parser_predicate(!negated),
+            CharacterFilter::Negation { child } => child.to_predicate(!negated),
 
             CharacterFilter::Range { from, to } => {
                 if negated {
@@ -202,7 +176,7 @@ impl CharacterFilter {
             }
 
             CharacterFilter::Conjunction { nodes } => {
-                let nodes = nodes.iter().map(|n| n.to_parser_predicate(negated));
+                let nodes = nodes.iter().map(|n| n.to_predicate(negated));
                 if negated {
                     quote! ( #(#nodes)||* )
                 } else {
@@ -211,7 +185,7 @@ impl CharacterFilter {
             }
 
             CharacterFilter::Disjunction { nodes } => {
-                let nodes = nodes.iter().map(|n| n.to_parser_predicate(negated));
+                let nodes = nodes.iter().map(|n| n.to_predicate(negated));
                 if negated {
                     quote! ( #(#nodes)&&* )
                 } else {

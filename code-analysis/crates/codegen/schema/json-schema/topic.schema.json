@@ -12,7 +12,7 @@
       "properties": {
         "name": { "type": "string", "minLength": 1 },
         "title": { "type": "string", "minLength": 1 },
-        "kind": { "enum": ["Rule", "Token", "ExpressionRule"] },
+        "kind": { "enum": ["Rule", "Trivia", "Token"] },
         "config": {
           "$ref": "#/$defs/Config",
           "$comment": "How to model this constraint structurally?",
@@ -42,7 +42,7 @@
         "name": { "type": "string", "minLength": 1 },
         "lookahead": { "$ref": "#/$defs/Expression" },
         "associativity": { "enum": ["Left", "Right"] },
-        "merge": { "type": "boolean" }
+        "parser_type": { "enum": ["Default", "Precedence"] }
       }
     },
     "Versions": {

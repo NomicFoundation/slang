@@ -15,7 +15,6 @@
 
 - name: Keyword
   kind: Token
-  config: { merge: true }
   choice:
     - reference: BooleanLiteral
     - reference: FixedBytesType
@@ -85,7 +84,6 @@
 
 - name: ReservedKeyword
   kind: Token
-  config: { merge: true }
   choice:
     - terminal: after
     - terminal: alias

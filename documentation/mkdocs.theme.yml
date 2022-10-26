@@ -7,6 +7,7 @@ extra_javascript:
 markdown_extensions:
   - admonition
   - attr_list
+  - def_list
   - pymdownx.details
   - pymdownx.highlight:
       anchor_linenums: true
@@ -19,6 +20,9 @@ markdown_extensions:
       alternate_style: true
   - pymdownx.tasklist:
       custom_checkbox: true
+  - pymdownx.caret
+  - pymdownx.mark
+  - pymdownx.tilde
   - tables
 
 plugins:

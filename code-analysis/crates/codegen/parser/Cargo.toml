@@ -21,4 +21,4 @@ regex = "1.5.6"
 semver = { version = "1.0.9", features = ["serde"] }
 serde = { version = "1.0.137", features = ["derive", "rc"] }
 serde_json = "1.0.81"
-serde_yaml = "0.8.24"
+serde_yaml = "0.9.13"
