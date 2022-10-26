@@ -1415,49 +1415,49 @@ impl Parsers {
 
         // «DecimalExponent» = ( 'e' | 'E' ) [ '-' ] «DecimalInteger» ;
         decimal_exponent_parser.define(
-            lex_seq![
+            lex_seq!(
                 DecimalExponent,
                 lex_terminal!(|&c: &char| c == 'e' || c == 'E'),
                 lex_optional!(lex_terminal!(Minus, '-')),
                 lex_rule!(decimal_integer_parser)
-            ]
+            )
             .boxed(),
         );
 
         // «DecimalFloat» = [ «DecimalInteger» ] '.' «DecimalInteger» ;
         decimal_float_parser.define(
-            lex_seq![
+            lex_seq!(
                 DecimalFloat,
                 lex_optional!(lex_rule!(decimal_integer_parser)),
                 lex_terminal!(Period, '.'),
                 lex_rule!(decimal_integer_parser)
-            ]
+            )
             .boxed(),
         );
 
         // «DecimalInteger» = '0'…'9' { [ '_' ] '0'…'9' } ;
         decimal_integer_parser.define(
-            lex_seq![
+            lex_seq!(
                 DecimalInteger,
                 lex_terminal!(|&c: &char| ('0' <= c && c <= '9')),
-                lex_zero_or_more!(lex_seq![
+                lex_zero_or_more!(lex_seq!(
                     lex_optional!(lex_terminal!(Underscore, '_')),
                     lex_terminal!(|&c: &char| ('0' <= c && c <= '9'))
-                ])
-            ]
+                ))
+            )
             .boxed(),
         );
 
         // «DecimalNumber» = ( «DecimalInteger» | «DecimalFloat» ) [ «DecimalExponent» ] ;
         decimal_number_parser.define(
-            lex_seq![
+            lex_seq!(
                 DecimalNumber,
                 lex_choice!(
                     lex_rule!(decimal_integer_parser),
                     lex_rule!(decimal_float_parser)
                 ),
                 lex_optional!(lex_rule!(decimal_exponent_parser))
-            ]
+            )
             .boxed(),
         );
 
@@ -1674,7 +1674,7 @@ impl Parsers {
 
         // «EscapeSequence» = '\\' ( «AsciiEscape» | «HexByteEscape» | «UnicodeEscape» ) ;
         escape_sequence_parser.define(
-            lex_seq![
+            lex_seq!(
                 EscapeSequence,
                 lex_terminal!(Backslash, '\\'),
                 lex_trie!(
@@ -1687,7 +1687,7 @@ impl Parsers {
                     trieleaf!(LatinSmallLetterR, "r"),
                     trieleaf!(LatinSmallLetterT, "t")
                 )
-            ]
+            )
             .boxed(),
         );
 
@@ -1793,7 +1793,7 @@ impl Parsers {
 
         // «FixedBytesType» = 'bytes' ( '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15' | '16' | '17' | '18' | '19' | '20' | '21' | '22' | '23' | '24' | '25' | '26' | '27' | '28' | '29' | '30' | '31' | '32' ) ;
         fixed_bytes_type_parser.define(
-            lex_seq![
+            lex_seq!(
                 FixedBytesType,
                 lex_terminal!(Bytes, "bytes"),
                 lex_trie!(
@@ -1845,7 +1845,7 @@ impl Parsers {
                     trieleaf!(Eight, "8"),
                     trieleaf!(Nine, "9")
                 )
-            ]
+            )
             .boxed(),
         );
 
@@ -1957,7 +1957,7 @@ impl Parsers {
 
         // «HexByteEscape» = 'x' 2…2*{ «HexCharacter» } ;
         hex_byte_escape_parser.define(
-            lex_seq![
+            lex_seq!(
                 HexByteEscape,
                 lex_terminal!(LatinSmallLetterX, 'x'),
                 lex_repeated!(
@@ -1967,7 +1967,7 @@ impl Parsers {
                     2usize,
                     2usize
                 )
-            ]
+            )
             .boxed(),
         );
 
@@ -1981,27 +1981,27 @@ impl Parsers {
 
         // «HexNumber» = '0x' «HexCharacter» { [ '_' ] «HexCharacter» } ;
         hex_number_parser.define(
-            lex_seq![
+            lex_seq!(
                 HexNumber,
                 lex_terminal!(ZeroX, "0x"),
-                lex_seq![
+                lex_seq!(
                     lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
                         || ('a' <= c && c <= 'f')
                         || ('A' <= c && c <= 'F')),
-                    lex_zero_or_more!(lex_seq![
+                    lex_zero_or_more!(lex_seq!(
                         lex_optional!(lex_terminal!(Underscore, '_')),
                         lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
                             || ('a' <= c && c <= 'f')
                             || ('A' <= c && c <= 'F'))
-                    ])
-                ]
-            ]
+                    ))
+                )
+            )
             .boxed(),
         );
 
         // «HexStringLiteral» = 'hex' ( '"' [ «PossiblySeparatedPairsOfHexDigits» ] '"' | '\'' [ «PossiblySeparatedPairsOfHexDigits» ] '\'' ) ;
         hex_string_literal_parser.define(
-            lex_seq![
+            lex_seq!(
                 HexStringLiteral,
                 lex_terminal!(Hex, "hex"),
                 lex_choice!(
@@ -2018,7 +2018,7 @@ impl Parsers {
                         lex_terminal!(Quote, "'")
                     )
                 )
-            ]
+            )
             .boxed(),
         );
 
@@ -2279,17 +2279,17 @@ impl Parsers {
             lex_seq!(
                 MultilineComment,
                 lex_terminal!(SlashStar, "/*"),
-                lex_seq![
+                lex_seq!(
                     Content,
                     lex_zero_or_more!(lex_choice!(
                         lex_terminal!(NotStar, |&c: &char| c != '*'),
-                        lex_seq![
+                        lex_seq!(
                             lex_one_or_more!(StarRepeated, lex_terminal!(Star, '*')),
                             lex_terminal!(|&c: &char| c != '*' && c != '/')
-                        ]
+                        )
                     )),
                     lex_zero_or_more!(StarRepeated, lex_terminal!(Star, '*'))
-                ],
+                ),
                 lex_terminal!(StarSlash, "*/")
             )
             .boxed(),
@@ -2353,7 +2353,7 @@ impl Parsers {
 
         // «NumericLiteral» = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
         numeric_literal_parser.define(
-            lex_seq![
+            lex_seq!(
                 NumericLiteral,
                 lex_choice!(
                     lex_rule!(decimal_number_parser),
@@ -2373,7 +2373,7 @@ impl Parsers {
                     trieprefix!("we", [trieleaf!(Weeks, "eks"), trieleaf!(Wei, "i")]),
                     trieleaf!(Years, "years")
                 ))
-            ]
+            )
             .boxed(),
         );
 
@@ -2484,7 +2484,7 @@ impl Parsers {
 
         // «PossiblySeparatedPairsOfHexDigits» = 2…2*{ «HexCharacter» } { [ '_' ] 2…2*{ «HexCharacter» } } ;
         possibly_separated_pairs_of_hex_digits_parser.define(
-            lex_seq![
+            lex_seq!(
                 PossiblySeparatedPairsOfHexDigits,
                 lex_repeated!(
                     lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
@@ -2493,7 +2493,7 @@ impl Parsers {
                     2usize,
                     2usize
                 ),
-                lex_zero_or_more!(lex_seq![
+                lex_zero_or_more!(lex_seq!(
                     lex_optional!(lex_terminal!(Underscore, '_')),
                     lex_repeated!(
                         lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
@@ -2502,8 +2502,8 @@ impl Parsers {
                         2usize,
                         2usize
                     )
-                ])
-            ]
+                ))
+            )
             .boxed(),
         );
 
@@ -2543,7 +2543,7 @@ impl Parsers {
 
         // «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;
         raw_identifier_parser.define(
-            lex_seq![
+            lex_seq!(
                 RawIdentifier,
                 lex_terminal!(|&c: &char| c == '_'
                     || c == '$'
@@ -2554,7 +2554,7 @@ impl Parsers {
                     || ('a' <= c && c <= 'z')
                     || ('A' <= c && c <= 'Z')
                     || ('0' <= c && c <= '9')))
-            ]
+            )
             .boxed(),
         );
 
@@ -2718,21 +2718,21 @@ impl Parsers {
 
         // «SignedFixedType» = 'fixed' [ 1…*{ '0'…'9' } 'x' 1…*{ '0'…'9' } ] ;
         signed_fixed_type_parser.define(
-            lex_seq![
+            lex_seq!(
                 SignedFixedType,
                 lex_terminal!(Fixed, "fixed"),
-                lex_optional!(lex_seq![
+                lex_optional!(lex_seq!(
                     lex_one_or_more!(lex_terminal!(|&c: &char| ('0' <= c && c <= '9'))),
                     lex_terminal!(LatinSmallLetterX, 'x'),
                     lex_one_or_more!(lex_terminal!(|&c: &char| ('0' <= c && c <= '9')))
-                ])
-            ]
+                ))
+            )
             .boxed(),
         );
 
         // «SignedIntegerType» = 'int' [ '8' | '16' | '24' | '32' | '40' | '48' | '56' | '64' | '72' | '80' | '88' | '96' | '104' | '112' | '120' | '128' | '136' | '144' | '152' | '160' | '168' | '176' | '184' | '192' | '200' | '208' | '216' | '224' | '232' | '240' | '248' | '256' ] ;
         signed_integer_type_parser.define(
-            lex_seq![
+            lex_seq!(
                 SignedIntegerType,
                 lex_terminal!(Int, "int"),
                 lex_optional!(lex_trie!(
@@ -2797,7 +2797,7 @@ impl Parsers {
                     ),
                     trieleaf!(NineSix, "96")
                 ))
-            ]
+            )
             .boxed(),
         );
 
@@ -2824,11 +2824,11 @@ impl Parsers {
 
         // «SingleLineComment» = '//' { ¬( '\u{d}' | '\u{a}' ) } ;
         single_line_comment_parser.define(
-            lex_seq![
+            lex_seq!(
                 SingleLineComment,
                 lex_terminal!(SlashSlash, "//"),
                 lex_zero_or_more!(lex_terminal!(|&c: &char| c != '\r' && c != '\n'))
-            ]
+            )
             .boxed(),
         );
 
@@ -3111,7 +3111,7 @@ impl Parsers {
 
         // «UnicodeEscape» = 'u' 4…4*{ «HexCharacter» } ;
         unicode_escape_parser.define(
-            lex_seq![
+            lex_seq!(
                 UnicodeEscape,
                 lex_terminal!(LatinSmallLetterU, 'u'),
                 lex_repeated!(
@@ -3121,7 +3121,7 @@ impl Parsers {
                     4usize,
                     4usize
                 )
-            ]
+            )
             .boxed(),
         );
 
@@ -3137,21 +3137,21 @@ impl Parsers {
 
         // «UnsignedFixedType» = 'u' «SignedFixedType» ;
         unsigned_fixed_type_parser.define(
-            lex_seq![
+            lex_seq!(
                 UnsignedFixedType,
                 lex_terminal!(LatinSmallLetterU, 'u'),
                 lex_rule!(signed_fixed_type_parser)
-            ]
+            )
             .boxed(),
         );
 
         // «UnsignedIntegerType» = 'u' «SignedIntegerType» ;
         unsigned_integer_type_parser.define(
-            lex_seq![
+            lex_seq!(
                 UnsignedIntegerType,
                 lex_terminal!(LatinSmallLetterU, 'u'),
                 lex_rule!(signed_integer_type_parser)
-            ]
+            )
             .boxed(),
         );
 
@@ -3375,13 +3375,13 @@ impl Parsers {
 
         // «YulHexLiteral» = '0x' 1…*{ «HexCharacter» } ;
         yul_hex_literal_parser.define(
-            lex_seq![
+            lex_seq!(
                 YulHexLiteral,
                 lex_terminal!(ZeroX, "0x"),
                 lex_one_or_more!(lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
                     || ('a' <= c && c <= 'f')
                     || ('A' <= c && c <= 'F')))
-            ]
+            )
             .boxed(),
         );
 

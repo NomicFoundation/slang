@@ -34,18 +34,6 @@ impl TerminalTrie {
         }
     }
 
-    pub fn to_lexer_code(&self, code: &mut CodeFragments) -> TokenStream {
-        self.to_code(code, "lex_")
-    }
-
-    pub fn to_trivia_code(&self, code: &mut CodeFragments) -> TokenStream {
-        self.to_code(code, "trivia_")
-    }
-
-    pub fn to_parser_code(&self, code: &mut CodeFragments) -> TokenStream {
-        self.to_code(code, "")
-    }
-
     fn collect_terminals(&mut self, grammar: &Grammar, expression: &ExpressionRef) -> bool {
         match &expression.ebnf {
             EBNF::Choice(exprs) => exprs.iter().all(|e| self.collect_terminals(grammar, e)),
@@ -73,7 +61,7 @@ impl TerminalTrie {
         }
     }
 
-    fn to_code(&self, code: &mut CodeFragments, macro_prefix: &str) -> TokenStream {
+    pub(super) fn to_code(&self, code: &mut CodeFragments, macro_prefix: &str) -> TokenStream {
         if self.0.len() == 1 {
             let label = self.0.keys().next().unwrap();
             let string = String::from_utf8_lossy(&label);

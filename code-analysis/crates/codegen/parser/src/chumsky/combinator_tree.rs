@@ -107,14 +107,14 @@ impl CombinatorTree {
             ProductionKind::Rule => {
                 code.add_rule_kind(self.production.name.clone());
                 (
-                    self.root_node.to_parser_code(forest, self, code),
+                    self.root_node.to_parser_code(forest, self, false, code),
                     quote!(cst::NodeRef),
                 )
             }
             ProductionKind::Trivia => {
                 code.add_rule_kind(self.production.name.clone());
                 (
-                    self.root_node.to_trivia_code(forest, self, code),
+                    self.root_node.to_parser_code(forest, self, true, code),
                     quote!(cst::NodeRef),
                 )
             }
