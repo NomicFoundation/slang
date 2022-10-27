@@ -38,7 +38,7 @@ pub fn lex_head() -> TokenStream {
         impl Node {
             #[inline] pub fn none() -> NodeRef { Box::new(Node::None) }
             #[inline] pub fn chars(range: Range<usize>) -> NodeRef { Box::new(Node::Chars(range)) }
-            #[inline] pub fn sequence(elements: Vec<NodeRef>) -> NodeRef { Box::new(Node::Sequence(elements)) }
+            #[inline] pub fn sequence(elements: Vec<NodeRef>) -> NodeRef { Box::new(if elements.is_empty() { Node::None } else { Node::Sequence(elements) }) }
             #[inline] pub fn choice(number: usize, element: NodeRef) -> NodeRef { Box::new(Node::Choice(number, element)) }
             #[inline] pub fn named(kind: kinds::Token, element: NodeRef) -> NodeRef { Box::new(Node::Named(kind, element)) }
 
@@ -145,7 +145,11 @@ pub fn cst_head() -> TokenStream {
                 Rc::new(Self::Token { range, kind, trivia })
             }
             #[inline] pub fn group(children: Vec<NodeRef>) -> NodeRef {
-                Rc::new(Self::Group { children })
+                if children.is_empty() {
+                    Self::none()
+                } else {
+                    Rc::new(Self::Group { children })
+                }
             }
         }
 

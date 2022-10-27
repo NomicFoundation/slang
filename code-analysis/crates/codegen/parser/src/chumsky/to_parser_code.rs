@@ -97,7 +97,7 @@ impl CombinatorNode {
             /**********************************************************************
              * Numeric qualification
              */
-            Self::Optional { expr, .. } => {
+            Self::Optional { expr } => {
                 let expr = expr.to_parser_code(forest, tree, is_trivia, code);
                 quote!(optional!(#expr))
             }

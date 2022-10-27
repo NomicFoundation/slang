@@ -50,7 +50,6 @@ pub enum CombinatorNode {
         expr: CombinatorNodeRef,
     },
     Optional {
-        name: Option<String>,
         expr: CombinatorNodeRef,
     },
     Reference {
@@ -272,8 +271,8 @@ impl CombinatorNode {
             }
 
             EBNF::Optional(expr) => {
-                let expr = Self::from_expression(grammar, production, version, expr, None);
-                Self::optional(name.or_else(|| expr.name()), expr)
+                let expr = Self::from_expression(grammar, production, version, expr, name);
+                Self::optional(expr)
             }
 
             EBNF::Range(_) => {
@@ -396,8 +395,8 @@ impl CombinatorNode {
         Rc::new(Self::OneOrMore { name, expr })
     }
 
-    pub fn optional(name: Option<String>, expr: CombinatorNodeRef) -> CombinatorNodeRef {
-        Rc::new(Self::Optional { name, expr })
+    pub fn optional(expr: CombinatorNodeRef) -> CombinatorNodeRef {
+        Rc::new(Self::Optional { expr })
     }
 
     pub fn reference(production: ProductionRef) -> CombinatorNodeRef {
@@ -457,12 +456,13 @@ impl CombinatorNode {
             | Self::Choice { name, .. }
             | Self::DelimitedBy { name, .. }
             | Self::OneOrMore { name, .. }
-            | Self::Optional { name, .. }
             | Self::Repeated { name, .. }
             | Self::SeparatedBy { name, .. }
             | Self::Sequence { name, .. }
             | Self::TerminalTrie { name, .. }
             | Self::ZeroOrMore { name, .. } => name.clone(),
+
+            Self::Optional { expr } => expr.name(),
         }
     }
 }

@@ -123,7 +123,11 @@ impl Node {
     }
     #[inline]
     pub fn group(children: Vec<NodeRef>) -> NodeRef {
-        Rc::new(Self::Group { children })
+        if children.is_empty() {
+            Self::none()
+        } else {
+            Rc::new(Self::Group { children })
+        }
     }
 }
 impl Visitable for NodeRef {
