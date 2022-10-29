@@ -2,8 +2,9 @@ use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
 use codegen_schema::*;
+use semver::Version;
 
-use super::{code_fragments::CodeFragments, naming, ProductionChumskyExtensions};
+use super::{code_fragments::CodeFragments, naming, production::ProductionChumskyExtensions};
 
 #[derive(Clone, Debug)]
 pub enum CharacterFilter {
@@ -19,15 +20,16 @@ pub type CharacterFilterRef = Box<CharacterFilter>;
 impl CharacterFilter {
     pub fn from_expression(
         grammar: &Grammar,
+        version: &Version,
         expression: &ExpressionRef,
     ) -> Option<CharacterFilterRef> {
         match &expression.ebnf {
-            EBNF::Not(child) => Self::from_expression(grammar, child).map(Self::negation),
+            EBNF::Not(child) => Self::from_expression(grammar, version, child).map(Self::negation),
 
             EBNF::Choice(children) => {
                 let child_filters = children
                     .iter()
-                    .filter_map(|c| Self::from_expression(grammar, c))
+                    .filter_map(|c| Self::from_expression(grammar, version, c))
                     .collect::<Vec<_>>();
                 if child_filters.len() == children.len() {
                     Some(CharacterFilter::disjunction(child_filters))
@@ -53,21 +55,19 @@ impl CharacterFilter {
                 CharacterFilter::range(from, to)
             }),
 
-            EBNF::Reference(name) => {
-                Self::from_expression(
-                    grammar,
-                    &grammar.get_production(name).expression_to_generate(),
-                )
-                // None
-            }
+            EBNF::Reference(name) => Self::from_expression(
+                grammar,
+                version,
+                &grammar.get_production(name).expression_for_version(version),
+            ),
 
             EBNF::Difference(EBNFDifference {
                 minuend,
                 subtrahend,
             }) => {
                 if let (Some(minuend), Some(subtrahend)) = (
-                    Self::from_expression(grammar, minuend),
-                    Self::from_expression(grammar, subtrahend),
+                    Self::from_expression(grammar, version, minuend),
+                    Self::from_expression(grammar, version, subtrahend),
                 ) {
                     Some({
                         let nodes = vec![minuend, Self::negation(subtrahend)];

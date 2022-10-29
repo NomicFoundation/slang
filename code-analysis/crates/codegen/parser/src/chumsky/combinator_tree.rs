@@ -3,12 +3,13 @@ use std::rc::Rc;
 use quote::quote;
 
 use codegen_schema::*;
+use semver::Version;
 
 use super::{
     code_fragments::CodeFragments,
     combinator_forest::CombinatorForest,
     combinator_node::{CombinatorNode, CombinatorNodeRef, OperatorModel},
-    naming, ProductionChumskyExtensions,
+    production::ProductionChumskyExtensions,
 };
 
 #[derive(Clone, Debug)]
@@ -21,21 +22,27 @@ pub struct CombinatorTree {
 pub type CombinatorTreeRef = Rc<CombinatorTree>;
 
 impl CombinatorTree {
-    pub fn from_production(grammar: &GrammarRef, production: &ProductionRef) -> CombinatorTreeRef {
+    pub fn from_production(
+        grammar: &GrammarRef,
+        production: &ProductionRef,
+        version: &Version,
+    ) -> CombinatorTreeRef {
         Rc::new(CombinatorTree {
             root_node: CombinatorNode::from_expression(
                 grammar,
                 production,
-                &production.expression_to_generate(),
+                version,
+                &production.expression_for_version(version),
                 Some(production.name.clone()),
             ),
             production: production.clone(),
         })
     }
 
-    pub fn convert_to_expression_member(
+    pub fn convert_to_precedence_rule_member(
         &mut self,
-        parent: ProductionRef,
+        parent_production: ProductionRef,
+        version: &Version,
         next_sibling: Option<ProductionRef>,
     ) {
         self.root_node = {
@@ -46,7 +53,7 @@ impl CombinatorTree {
 
                 let left =
                     if let CombinatorNode::Reference { production, .. } = elements[0].as_ref() {
-                        production.name == parent.name
+                        production.name == parent_production.name
                     } else {
                         false
                     };
@@ -54,7 +61,7 @@ impl CombinatorTree {
                 let right = if let CombinatorNode::Reference { production, .. } =
                     elements[last_element_index].as_ref()
                 {
-                    production.name == parent.name
+                    production.name == parent_production.name
                 } else {
                     false
                 };
@@ -65,7 +72,10 @@ impl CombinatorTree {
                     (true, false) => (&elements[1..], OperatorModel::UnarySuffix),
                     (true, true) => (
                         &elements[1..last_element_index],
-                        if production.expression_to_generate().config.associativity
+                        if production
+                            .expression_for_version(version)
+                            .config
+                            .associativity
                             == Some(ExpressionAssociativity::Right)
                         {
                             OperatorModel::BinaryRightAssociative
@@ -80,17 +90,17 @@ impl CombinatorTree {
                     CombinatorNode::sequence(None, operator.into())
                 };
 
-                CombinatorNode::expression_member(
+                CombinatorNode::precedence_rule_member(
                     production.name.clone(),
-                    parent,
+                    parent_production,
                     next_sibling,
                     operator,
                     model,
                 )
             } else {
-                CombinatorNode::expression_member(
+                CombinatorNode::precedence_rule_member(
                     production.name.clone(),
-                    parent,
+                    parent_production,
                     next_sibling,
                     this.clone(),
                     OperatorModel::None,
@@ -100,43 +110,39 @@ impl CombinatorTree {
     }
 
     pub fn add_to_code_fragments(&self, forest: &CombinatorForest, code: &mut CodeFragments) {
-        let parser_name = naming::to_parser_name_ident(&self.production.name);
-        let field_name = naming::to_field_name_ident(&self.production.name);
-
-        let (parser, result_type) = match self.production.kind {
+        match self.production.kind {
             ProductionKind::Rule => {
                 code.add_rule_kind(self.production.name.clone());
-                (
-                    self.root_node.to_parser_code(forest, self, false, code),
+                let parser = self.root_node.to_parser_code(forest, self, false, code);
+                code.add_parser(
+                    self.production.name.clone(),
+                    &forest.version,
+                    parser,
                     quote!(cst::NodeRef),
-                )
+                );
             }
+
             ProductionKind::Trivia => {
                 code.add_rule_kind(self.production.name.clone());
-                (
-                    self.root_node.to_parser_code(forest, self, true, code),
+                let parser = self.root_node.to_parser_code(forest, self, true, code);
+                code.add_parser(
+                    self.production.name.clone(),
+                    &forest.version,
+                    parser,
                     quote!(cst::NodeRef),
-                )
+                );
             }
+
             ProductionKind::Token => {
                 code.add_token_kind(self.production.name.clone());
-                (self.root_node.to_lexer_code(code), quote!(lex::NodeRef))
+                let parser = self.root_node.to_lexer_code(code);
+                code.add_parser(
+                    self.production.name.clone(),
+                    &forest.version,
+                    parser,
+                    quote!(lex::NodeRef),
+                );
             }
         };
-
-        code.add_parser_predeclaration_fragment(
-            quote!( let mut #parser_name = Recursive::<char, #result_type, ErrorType>::declare(); )
-                .to_string(),
-        );
-        code.add_parser_definition_fragment(
-            quote!( #parser_name.define(#parser.boxed()); ).to_string(),
-        );
-        code.add_parser_field_definition_fragment(
-            quote!( pub #field_name: ParserType<#result_type>, ).to_string(),
-        );
-
-        code.add_parser_field_assignment_fragment(
-            quote!( #field_name: #parser_name.then_ignore(end()).boxed(), ).to_string(),
-        );
     }
 }

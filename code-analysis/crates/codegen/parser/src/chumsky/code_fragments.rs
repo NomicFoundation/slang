@@ -1,68 +1,69 @@
-use std::{collections::HashMap, path::PathBuf};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    path::PathBuf,
+};
 
 use inflector::Inflector;
-use proc_macro2::Ident;
-use quote::format_ident;
+use proc_macro2::{Ident, TokenStream};
+use quote::{format_ident, quote};
+use semver::Version;
 
 use super::{boilerplate, naming, rustfmt};
 
 #[derive(Clone, Debug, Default)]
 pub struct CodeFragments {
-    kinds: HashMap<Kind, HashMap<String, Option<String>>>,
-    fragments: HashMap<CodeLocation, Vec<String>>,
+    token_kinds: BTreeMap<String, Option<String>>,
+    rule_kinds: BTreeSet<String>,
+    parsers: BTreeMap<String, Parser>,
     errors: Vec<String>,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-enum CodeLocation {
-    ParserFieldDefinition,
-    ParserFieldAssignment,
-    ParserPredeclaration,
-    ParserDefinition,
-}
-
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
-enum Kind {
-    Rule,
-    Token,
+#[derive(Clone, Debug, Default)]
+struct Parser {
+    comment: Vec<String>,
+    result_type: TokenStream,
+    versions: BTreeMap<Version, TokenStream>,
 }
 
 impl CodeFragments {
     pub fn add_rule_kind(&mut self, name: String) -> Ident {
         let kind = name.to_pascal_case();
         let ident = format_ident!("{}", kind);
-        self.add_kind(Kind::Rule, kind, None);
+        self.rule_kinds.insert(kind);
         ident
     }
 
     pub fn add_token_kind(&mut self, name: String) -> Ident {
         let kind = name.to_pascal_case();
         let ident = format_ident!("{}", kind);
-        self.add_kind(Kind::Token, kind, None);
+        self.token_kinds.insert(kind, None);
         ident
     }
 
     pub fn add_terminal_kind(&mut self, terminal: String) -> Ident {
         let kind = naming::name_of_terminal_string(&terminal).to_pascal_case();
         let ident = format_ident!("{}", kind);
-        self.add_kind(Kind::Token, kind, Some(terminal));
+        self.token_kinds.insert(kind, Some(terminal));
         ident
     }
 
-    pub fn add_parser_field_definition_fragment(&mut self, fragment: String) {
-        self.add_fragment(CodeLocation::ParserFieldDefinition, fragment);
+    pub fn add_parser(
+        &mut self,
+        name: String,
+        version: &Version,
+        body: TokenStream,
+        result_type: TokenStream,
+    ) {
+        // TODO: assert consistency of return types across all versions of the same
+        // parser
+
+        let mut entry = self.parsers.entry(name).or_default();
+        entry.versions.insert(version.clone(), body);
+        entry.result_type = result_type;
     }
 
-    pub fn add_parser_field_assignment_fragment(&mut self, fragment: String) {
-        self.add_fragment(CodeLocation::ParserFieldAssignment, fragment);
-    }
-
-    pub fn add_parser_predeclaration_fragment(&mut self, fragment: String) {
-        self.add_fragment(CodeLocation::ParserPredeclaration, fragment);
-    }
-
-    pub fn add_parser_definition_fragment(&mut self, fragment: String) {
-        self.add_fragment(CodeLocation::ParserDefinition, fragment);
+    pub fn add_parser_comment(&mut self, name: String, lines: Vec<String>) {
+        self.parsers.entry(name).or_default().comment = lines.clone();
     }
 
     pub fn has_errors(&self) -> bool {
@@ -94,6 +95,64 @@ impl CodeFragments {
             format!("{}", boilerplate::ast_head()),
         );
 
+        let mut versions = BTreeSet::new();
+        let mut field_definitions = vec![];
+        let mut parser_predeclarations = vec![];
+        let mut parser_definitions = vec![];
+        let mut field_assignments = vec![];
+
+        for (name, parser) in &self.parsers {
+            let parser_name = naming::to_parser_name_ident(&name);
+            let field_name = naming::to_field_name_ident(&name);
+            let result_type = parser.result_type.clone();
+
+            versions.extend(parser.versions.keys());
+
+            parser_predeclarations.push(quote!( let mut #parser_name = Recursive::<char, #result_type, ErrorType>::declare();  ).to_string());
+
+            parser_definitions.push(format!(
+                "{}\n{}",
+                parser
+                    .comment
+                    .iter()
+                    .map(|s| format!("// {}", s))
+                    .collect::<Vec<_>>()
+                    .join("\n"),
+                parser.versions.iter().rev().map(|(version, body)| {
+                    let version_name = format_ident!("version_{}", version.to_string().replace(".", "_"));
+                    if version == &Version::new(0, 0, 0) {
+                        quote!( { #parser_name.define(#body.boxed()); } )
+                    } else {
+                        quote!( if #version_name <= version { #parser_name.define(#body.boxed()); } )
+                    }
+                }).reduce(|a, b| quote!( #a else #b )).unwrap()
+            ));
+
+            field_definitions.push(format!(
+                "{}\n{}",
+                parser
+                    .comment
+                    .iter()
+                    .map(|s| format!("/// {}", s))
+                    .collect::<Vec<_>>()
+                    .join("\n"),
+                quote!( pub #field_name: ParserType<#result_type>, ).to_string()
+            ));
+
+            field_assignments
+                .push(quote!( #field_name: #parser_name.then_ignore(end()).boxed(), ).to_string());
+        }
+
+        let version_declarations = versions
+            .iter()
+            .skip(1) // Don't need the first version
+            .map(|version| {
+                let version = version.to_string();
+                let version_name = format_ident!("version_{}", version.replace(".", "_"));
+                quote!( let #version_name = Version::parse(#version).unwrap(); ).to_string()
+            })
+            .collect::<Vec<String>>();
+
         rustfmt::format_and_write_source(
             &output_dir.join("parse.rs"),
             format!(
@@ -105,20 +164,24 @@ impl CodeFragments {
                 }}
 
                 impl Parsers {{
-                    pub fn new() -> Self {{
-                        // Declare all productions -----------------------------
+                    pub fn new(version: Version) -> Self {{
+                        // Declare all versions -----------------------------
 
                         {}
 
-                        // Macros ----------------------------------------
+                        // Declare all productions --------------------------
 
                         {}
 
-                        // Define all productions ------------------------------
+                        // Macros -------------------------------------------
 
                         {}
 
-                        // Create the Parser object ----------------------------
+                        // Define all productions ---------------------------
+
+                        {}
+
+                        // Create the Parser object -------------------------
 
                         Self {{
                             {}
@@ -127,14 +190,12 @@ impl CodeFragments {
                 }}
                 ",
                 boilerplate::parse_head(),
-                self.get_fragments(CodeLocation::ParserFieldDefinition)
-                    .join(""),
-                self.get_fragments(CodeLocation::ParserPredeclaration)
-                    .join(""),
+                field_definitions.join("\n\n"),
+                version_declarations.join(""),
+                parser_predeclarations.join(""),
                 boilerplate::parse_macros(),
-                self.get_fragments(CodeLocation::ParserDefinition).join(""),
-                self.get_fragments(CodeLocation::ParserFieldAssignment)
-                    .join("")
+                parser_definitions.join("\n\n"),
+                field_assignments.join("")
             ),
         );
 
@@ -143,64 +204,29 @@ impl CodeFragments {
             &output_dir.join("kinds.rs"),
             format!(
                 "{}
+
                 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
                 pub enum Token {{
                     {}
                 }}
+
                 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
                 pub enum Rule {{
                     {}
                 }}
                 ",
                 boilerplate::kinds_head(),
-                self.get_kinds(Kind::Token).join(","),
-                self.get_kinds(Kind::Rule).join(",")
+                self.token_kinds
+                    .keys()
+                    .cloned()
+                    .collect::<Vec<String>>()
+                    .join(","),
+                self.rule_kinds
+                    .iter()
+                    .cloned()
+                    .collect::<Vec<String>>()
+                    .join(","),
             ),
         );
-    }
-
-    fn add_kind(&mut self, kind: Kind, name: String, content: Option<String>) {
-        let m = self.kinds.entry(kind).or_default();
-        if m.contains_key(&name) {
-            if kind == Kind::Token {
-                if content != m[&name] {
-                    if content.is_none() {
-                        self.errors
-                            .push(format!("Token {} is defined multiple times", name));
-                    } else {
-                        self.errors.push(format!(
-                            "Token {} is defined multiple times with different content: {:?} vs {:?}",
-                            name,
-                            content,
-                            m[&name].clone()
-                        ));
-                    }
-                }
-            } else {
-                self.errors
-                    .push(format!("{:?} {} is defined multiple times", kind, name));
-            }
-        } else {
-            m.insert(name, content);
-        }
-    }
-
-    fn add_fragment(&mut self, location: CodeLocation, code: String) {
-        self.fragments.entry(location).or_default().push(code);
-    }
-
-    fn get_kinds(&self, kind: Kind) -> Vec<String> {
-        self.kinds
-            .get(&kind)
-            .map(|m| {
-                let mut k: Vec<String> = m.keys().cloned().collect();
-                k.sort();
-                k
-            })
-            .unwrap_or_default()
-    }
-
-    fn get_fragments(&self, location: CodeLocation) -> Vec<String> {
-        self.fragments.get(&location).cloned().unwrap_or_default()
     }
 }

@@ -7,6 +7,7 @@ use super::kinds;
 use super::lex;
 use chumsky::prelude::*;
 use chumsky::Parser;
+use semver::Version;
 pub type ParserType<T> = BoxedParser<'static, char, T, ErrorType>;
 pub type ErrorType = Simple<char>;
 #[allow(dead_code)]
@@ -176,7 +177,8 @@ pub struct Parsers {
     /// ExperimentalPragmaSpecifier = 'experimental' «Identifier» ;
     pub experimental_pragma_specifier: ParserType<cst::NodeRef>,
 
-    /// ExponentiationExpression = Expression '**' Expression ;
+    /// (* 0.0.0 *) ExponentiationExpression = Expression '**' Expression ;
+    /// (* 0.6.0 *) ExponentiationExpression = Expression '**' Expression ;
     pub exponentiation_expression: ParserType<cst::NodeRef>,
 
     /// Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnarySuffixExpression | UnaryPrefixExpression | FunctionCallExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
@@ -520,8 +522,12 @@ pub struct Parsers {
 }
 
 impl Parsers {
-    pub fn new() -> Self {
-        // Declare all productions -----------------------------
+    pub fn new(version: Version) -> Self {
+        // Declare all versions -----------------------------
+
+        let version_0_6_0 = Version::parse("0.6.0").unwrap();
+
+        // Declare all productions --------------------------
 
         let mut abi_coder_pragma_specifier_parser =
             Recursive::<char, cst::NodeRef, ErrorType>::declare();
@@ -733,7 +739,7 @@ impl Parsers {
         let mut yul_variable_declaration_parser =
             Recursive::<char, cst::NodeRef, ErrorType>::declare();
 
-        // Macros ----------------------------------------
+        // Macros -------------------------------------------
 
         #[allow(unused_macros)]
         macro_rules! lex_terminal {
@@ -1079,1287 +1085,1448 @@ impl Parsers {
         #[allow(unused_macros)]
         macro_rules ! trie { ($ ($ expr : expr) , *) => (leading_trivia_parser . clone () . then (choice :: < _ , ErrorType > (($ ($ expr) , *)) . map_with_span (| kind , span | (kind , span))) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , (kind , span)) , trailing_trivia) | { cst :: Node :: token (span , kind , leading_trivia , trailing_trivia) })) }
 
-        // Define all productions ------------------------------
+        // Define all productions ---------------------------
 
         // ABICoderPragmaSpecifier = 'abicoder' «Identifier» ;
-        abi_coder_pragma_specifier_parser.define(
-            seq!(
-                AbicoderPragmaSpecifier,
-                terminal!(Abicoder, "abicoder"),
-                token!(identifier_parser)
-            )
-            .boxed(),
-        );
+        {
+            abi_coder_pragma_specifier_parser.define(
+                seq!(
+                    AbicoderPragmaSpecifier,
+                    terminal!(Abicoder, "abicoder"),
+                    token!(identifier_parser)
+                )
+                .boxed(),
+            );
+        }
 
         // AddSubExpression = Expression ( '+' | '-' ) Expression ;
-        add_sub_expression_parser.define(
-            left_associative_binary_expression!(
-                AddSubExpression,
-                mul_div_mod_expression_parser,
-                choice!(terminal!(Plus, "+"), terminal!(Minus, "-"))
-            )
-            .boxed(),
-        );
+        {
+            add_sub_expression_parser.define(
+                left_associative_binary_expression!(
+                    AddSubExpression,
+                    mul_div_mod_expression_parser,
+                    choice!(terminal!(Plus, "+"), terminal!(Minus, "-"))
+                )
+                .boxed(),
+            );
+        }
 
         // AddressType = 'address' [ 'payable' ] ;
-        address_type_parser.define(
-            seq!(
-                AddressType,
-                terminal!(Address, "address"),
-                optional!(terminal!(Payable, "payable"))
-            )
-            .boxed(),
-        );
+        {
+            address_type_parser.define(
+                seq!(
+                    AddressType,
+                    terminal!(Address, "address"),
+                    optional!(terminal!(Payable, "payable"))
+                )
+                .boxed(),
+            );
+        }
 
         // AndExpression = Expression '&&' Expression ;
-        and_expression_parser.define(
-            left_associative_binary_expression!(
-                AndExpression,
-                equality_comparison_expression_parser,
-                terminal!(AmpersandAmpersand, "&&")
-            )
-            .boxed(),
-        );
+        {
+            and_expression_parser.define(
+                left_associative_binary_expression!(
+                    AndExpression,
+                    equality_comparison_expression_parser,
+                    terminal!(AmpersandAmpersand, "&&")
+                )
+                .boxed(),
+            );
+        }
 
         // ArgumentList = '(' [ PositionalArgumentList | NamedArgumentList ] ')' ;
-        argument_list_parser.define(
-            delimited_by!(
-                ArgumentList,
-                terminal!(OpenParen, "("),
-                optional!(choice!(
-                    rule!(positional_argument_list_parser),
-                    rule!(named_argument_list_parser)
-                )),
-                terminal!(CloseParen, ")")
-            )
-            .boxed(),
-        );
+        {
+            argument_list_parser.define(
+                delimited_by!(
+                    ArgumentList,
+                    terminal!(OpenParen, "("),
+                    optional!(choice!(
+                        rule!(positional_argument_list_parser),
+                        rule!(named_argument_list_parser)
+                    )),
+                    terminal!(CloseParen, ")")
+                )
+                .boxed(),
+            );
+        }
 
         // ArrayLiteral = '[' Expression  { ',' Expression } ']' ;
-        array_literal_parser.define(
-            delimited_by!(
-                ArrayLiteral,
-                terminal!(OpenBracket, "["),
-                separated_by!(
-                    ExpressionRepeatedAndCommaRepeated,
-                    rule!(expression_parser),
-                    terminal!(Comma, ",")
-                ),
-                terminal!(CloseBracket, "]")
-            )
-            .boxed(),
-        );
+        {
+            array_literal_parser.define(
+                delimited_by!(
+                    ArrayLiteral,
+                    terminal!(OpenBracket, "["),
+                    separated_by!(
+                        ExpressionRepeatedAndCommaRepeated,
+                        rule!(expression_parser),
+                        terminal!(Comma, ",")
+                    ),
+                    terminal!(CloseBracket, "]")
+                )
+                .boxed(),
+            );
+        }
 
         // «AsciiEscape» = 'n' | 'r' | 't' | '\'' | '"' | '\\' | '\u{a}' | '\u{d}' ;
-        ascii_escape_parser.define(
-            lex_terminal!(AsciiEscape, |&c: &char| c == 'n'
-                || c == 'r'
-                || c == 't'
-                || c == '\''
-                || c == '"'
-                || c == '\\'
-                || c == '\n'
-                || c == '\r')
-            .boxed(),
-        );
+        {
+            ascii_escape_parser.define(
+                lex_terminal!(AsciiEscape, |&c: &char| c == 'n'
+                    || c == 'r'
+                    || c == 't'
+                    || c == '\''
+                    || c == '"'
+                    || c == '\\'
+                    || c == '\n'
+                    || c == '\r')
+                .boxed(),
+            );
+        }
 
         // «AsciiStringLiteral» = «SingleQuotedAsciiStringLiteral» | «DoubleQuotedAsciiStringLiteral» ;
-        ascii_string_literal_parser.define(
-            lex_choice!(
-                AsciiStringLiteral,
-                lex_rule!(single_quoted_ascii_string_literal_parser),
-                lex_rule!(double_quoted_ascii_string_literal_parser)
-            )
-            .boxed(),
-        );
+        {
+            ascii_string_literal_parser.define(
+                lex_choice!(
+                    AsciiStringLiteral,
+                    lex_rule!(single_quoted_ascii_string_literal_parser),
+                    lex_rule!(double_quoted_ascii_string_literal_parser)
+                )
+                .boxed(),
+            );
+        }
 
         // AssemblyFlags = '(' «DoubleQuotedAsciiStringLiteral»  { ',' «DoubleQuotedAsciiStringLiteral» } ')' ;
-        assembly_flags_parser.define(
-            delimited_by!(
-                AssemblyFlags,
-                terminal!(OpenParen, "("),
-                separated_by!(
-                    DoubleQuotedAsciiStringLiteralRepeatedAndCommaRepeated,
-                    token!(double_quoted_ascii_string_literal_parser),
-                    terminal!(Comma, ",")
-                ),
-                terminal!(CloseParen, ")")
-            )
-            .boxed(),
-        );
+        {
+            assembly_flags_parser.define(
+                delimited_by!(
+                    AssemblyFlags,
+                    terminal!(OpenParen, "("),
+                    separated_by!(
+                        DoubleQuotedAsciiStringLiteralRepeatedAndCommaRepeated,
+                        token!(double_quoted_ascii_string_literal_parser),
+                        terminal!(Comma, ",")
+                    ),
+                    terminal!(CloseParen, ")")
+                )
+                .boxed(),
+            );
+        }
 
         // AssemblyStatement = 'assembly' [ '"evmasm"' ] [ AssemblyFlags ] YulBlock ;
-        assembly_statement_parser.define(
-            seq!(
-                AssemblyStatement,
-                terminal!(Assembly, "assembly"),
-                optional!(terminal!(DoubleQuoteEvmasmDoubleQuote, "\"evmasm\"")),
-                optional!(rule!(assembly_flags_parser)),
-                rule!(yul_block_parser)
-            )
-            .boxed(),
-        );
+        {
+            assembly_statement_parser.define(
+                seq!(
+                    AssemblyStatement,
+                    terminal!(Assembly, "assembly"),
+                    optional!(terminal!(DoubleQuoteEvmasmDoubleQuote, "\"evmasm\"")),
+                    optional!(rule!(assembly_flags_parser)),
+                    rule!(yul_block_parser)
+                )
+                .boxed(),
+            );
+        }
 
         // AssignmentExpression = Expression ( '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ) Expression ;
-        assignment_expression_parser.define(
-            left_associative_binary_expression!(
-                AssignmentExpression,
-                conditional_expression_parser,
-                choice!(
-                    terminal!(Equal, "="),
-                    terminal!(PipeEqual, "|="),
-                    terminal!(CaretEqual, "^="),
-                    terminal!(AmpersandEqual, "&="),
-                    terminal!(LessLessEqual, "<<="),
-                    terminal!(GreaterGreaterEqual, ">>="),
-                    terminal!(GreaterGreaterGreaterEqual, ">>>="),
-                    terminal!(PlusEqual, "+="),
-                    terminal!(MinusEqual, "-="),
-                    terminal!(StarEqual, "*="),
-                    terminal!(SlashEqual, "/="),
-                    terminal!(PercentEqual, "%=")
+        {
+            assignment_expression_parser.define(
+                left_associative_binary_expression!(
+                    AssignmentExpression,
+                    conditional_expression_parser,
+                    choice!(
+                        terminal!(Equal, "="),
+                        terminal!(PipeEqual, "|="),
+                        terminal!(CaretEqual, "^="),
+                        terminal!(AmpersandEqual, "&="),
+                        terminal!(LessLessEqual, "<<="),
+                        terminal!(GreaterGreaterEqual, ">>="),
+                        terminal!(GreaterGreaterGreaterEqual, ">>>="),
+                        terminal!(PlusEqual, "+="),
+                        terminal!(MinusEqual, "-="),
+                        terminal!(StarEqual, "*="),
+                        terminal!(SlashEqual, "/="),
+                        terminal!(PercentEqual, "%=")
+                    )
                 )
-            )
-            .boxed(),
-        );
+                .boxed(),
+            );
+        }
 
         // BitAndExpression = Expression '&' Expression ;
-        bit_and_expression_parser.define(
-            left_associative_binary_expression!(
-                BitAndExpression,
-                shift_expression_parser,
-                terminal!(Ampersand, "&")
-            )
-            .boxed(),
-        );
+        {
+            bit_and_expression_parser.define(
+                left_associative_binary_expression!(
+                    BitAndExpression,
+                    shift_expression_parser,
+                    terminal!(Ampersand, "&")
+                )
+                .boxed(),
+            );
+        }
 
         // BitOrExpression = Expression '|' Expression ;
-        bit_or_expression_parser.define(
-            left_associative_binary_expression!(
-                BitOrExpression,
-                bit_x_or_expression_parser,
-                terminal!(Pipe, "|")
-            )
-            .boxed(),
-        );
+        {
+            bit_or_expression_parser.define(
+                left_associative_binary_expression!(
+                    BitOrExpression,
+                    bit_x_or_expression_parser,
+                    terminal!(Pipe, "|")
+                )
+                .boxed(),
+            );
+        }
 
         // BitXOrExpression = Expression '^' Expression ;
-        bit_x_or_expression_parser.define(
-            left_associative_binary_expression!(
-                BitXOrExpression,
-                bit_and_expression_parser,
-                terminal!(Caret, "^")
-            )
-            .boxed(),
-        );
+        {
+            bit_x_or_expression_parser.define(
+                left_associative_binary_expression!(
+                    BitXOrExpression,
+                    bit_and_expression_parser,
+                    terminal!(Caret, "^")
+                )
+                .boxed(),
+            );
+        }
 
         // Block = '{' { Statement | UncheckedBlock } '}' ;
-        block_parser.define(
-            delimited_by!(
-                Block,
-                terminal!(OpenBrace, "{"),
-                zero_or_more!(choice!(
-                    rule!(statement_parser),
-                    rule!(unchecked_block_parser)
-                )),
-                terminal!(CloseBrace, "}")
-            )
-            .boxed(),
-        );
+        {
+            block_parser.define(
+                delimited_by!(
+                    Block,
+                    terminal!(OpenBrace, "{"),
+                    zero_or_more!(choice!(
+                        rule!(statement_parser),
+                        rule!(unchecked_block_parser)
+                    )),
+                    terminal!(CloseBrace, "}")
+                )
+                .boxed(),
+            );
+        }
 
         // «BooleanLiteral» = 'true' | 'false' ;
-        boolean_literal_parser
-            .define(lex_trie!(trieleaf!(False, "false"), trieleaf!(True, "true")).boxed());
+        {
+            boolean_literal_parser
+                .define(lex_trie!(trieleaf!(False, "false"), trieleaf!(True, "true")).boxed());
+        }
 
         // BreakStatement = 'break' ';' ;
-        break_statement_parser.define(
-            seq!(
-                BreakStatement,
-                terminal!(Break, "break"),
-                terminal!(Semicolon, ";")
-            )
-            .boxed(),
-        );
+        {
+            break_statement_parser.define(
+                seq!(
+                    BreakStatement,
+                    terminal!(Break, "break"),
+                    terminal!(Semicolon, ";")
+                )
+                .boxed(),
+            );
+        }
 
         // CatchClause = 'catch' [ [ «Identifier» ] ParameterList ] Block ;
-        catch_clause_parser.define(
-            seq!(
-                CatchClause,
-                terminal!(Catch, "catch"),
-                optional!(seq!(
-                    optional!(token!(identifier_parser)),
-                    rule!(parameter_list_parser)
-                )),
-                rule!(block_parser)
-            )
-            .boxed(),
-        );
+        {
+            catch_clause_parser.define(
+                seq!(
+                    CatchClause,
+                    terminal!(Catch, "catch"),
+                    optional!(seq!(
+                        optional!(token!(identifier_parser)),
+                        rule!(parameter_list_parser)
+                    )),
+                    rule!(block_parser)
+                )
+                .boxed(),
+            );
+        }
 
         // ConditionalExpression = Expression '?' Expression ':' Expression ;
-        conditional_expression_parser.define(
-            unary_suffix_expression!(
-                ConditionalExpression,
-                or_expression_parser,
-                seq!(
-                    terminal!(Question, "?"),
-                    rule!(expression_parser),
-                    terminal!(Colon, ":"),
-                    rule!(expression_parser)
+        {
+            conditional_expression_parser.define(
+                unary_suffix_expression!(
+                    ConditionalExpression,
+                    or_expression_parser,
+                    seq!(
+                        terminal!(Question, "?"),
+                        rule!(expression_parser),
+                        terminal!(Colon, ":"),
+                        rule!(expression_parser)
+                    )
                 )
-            )
-            .boxed(),
-        );
+                .boxed(),
+            );
+        }
 
         // ConstantDefinition = TypeName 'constant' «Identifier» '=' Expression ';' ;
-        constant_definition_parser.define(
-            seq!(
-                ConstantDefinition,
-                rule!(type_name_parser),
-                terminal!(Constant, "constant"),
-                token!(identifier_parser),
-                terminal!(Equal, "="),
-                rule!(expression_parser),
-                terminal!(Semicolon, ";")
-            )
-            .boxed(),
-        );
+        {
+            constant_definition_parser.define(
+                seq!(
+                    ConstantDefinition,
+                    rule!(type_name_parser),
+                    terminal!(Constant, "constant"),
+                    token!(identifier_parser),
+                    terminal!(Equal, "="),
+                    rule!(expression_parser),
+                    terminal!(Semicolon, ";")
+                )
+                .boxed(),
+            );
+        }
 
         // ConstructorAttribute = ModifierInvocation | 'internal' | 'payable' | 'public' ;
-        constructor_attribute_parser.define(
-            choice!(
-                ConstructorAttribute,
-                rule!(modifier_invocation_parser),
-                terminal!(Internal, "internal"),
-                terminal!(Payable, "payable"),
-                terminal!(Public, "public")
-            )
-            .boxed(),
-        );
+        {
+            constructor_attribute_parser.define(
+                choice!(
+                    ConstructorAttribute,
+                    rule!(modifier_invocation_parser),
+                    terminal!(Internal, "internal"),
+                    terminal!(Payable, "payable"),
+                    terminal!(Public, "public")
+                )
+                .boxed(),
+            );
+        }
 
         // ConstructorDefinition = 'constructor' ParameterList { ConstructorAttribute } Block ;
-        constructor_definition_parser.define(
-            seq!(
-                ConstructorDefinition,
-                terminal!(Constructor, "constructor"),
-                rule!(parameter_list_parser),
-                zero_or_more!(
-                    ConstructorAttributeRepeated,
-                    rule!(constructor_attribute_parser)
-                ),
-                rule!(block_parser)
-            )
-            .boxed(),
-        );
+        {
+            constructor_definition_parser.define(
+                seq!(
+                    ConstructorDefinition,
+                    terminal!(Constructor, "constructor"),
+                    rule!(parameter_list_parser),
+                    zero_or_more!(
+                        ConstructorAttributeRepeated,
+                        rule!(constructor_attribute_parser)
+                    ),
+                    rule!(block_parser)
+                )
+                .boxed(),
+            );
+        }
 
         // ContinueStatement = 'continue' ';' ;
-        continue_statement_parser.define(
-            seq!(
-                ContinueStatement,
-                terminal!(Continue, "continue"),
-                terminal!(Semicolon, ";")
-            )
-            .boxed(),
-        );
+        {
+            continue_statement_parser.define(
+                seq!(
+                    ContinueStatement,
+                    terminal!(Continue, "continue"),
+                    terminal!(Semicolon, ";")
+                )
+                .boxed(),
+            );
+        }
 
         // ContractBodyElement = UsingDirective | ConstructorDefinition | FunctionDefinition | FallbackFunctionDefinition | ReceiveFunctionDefinition | ModifierDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | EventDefinition | ErrorDefinition | StateVariableDeclaration ;
-        contract_body_element_parser.define(
-            choice!(
-                ContractBodyElement,
-                rule!(using_directive_parser),
-                rule!(constructor_definition_parser),
-                rule!(function_definition_parser),
-                rule!(fallback_function_definition_parser),
-                rule!(receive_function_definition_parser),
-                rule!(modifier_definition_parser),
-                rule!(struct_definition_parser),
-                rule!(enum_definition_parser),
-                rule!(user_defined_value_type_definition_parser),
-                rule!(event_definition_parser),
-                rule!(error_definition_parser),
-                rule!(state_variable_declaration_parser)
-            )
-            .boxed(),
-        );
+        {
+            contract_body_element_parser.define(
+                choice!(
+                    ContractBodyElement,
+                    rule!(using_directive_parser),
+                    rule!(constructor_definition_parser),
+                    rule!(function_definition_parser),
+                    rule!(fallback_function_definition_parser),
+                    rule!(receive_function_definition_parser),
+                    rule!(modifier_definition_parser),
+                    rule!(struct_definition_parser),
+                    rule!(enum_definition_parser),
+                    rule!(user_defined_value_type_definition_parser),
+                    rule!(event_definition_parser),
+                    rule!(error_definition_parser),
+                    rule!(state_variable_declaration_parser)
+                )
+                .boxed(),
+            );
+        }
 
         // ContractDefinition = [ 'abstract' ] 'contract' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
-        contract_definition_parser.define(
-            seq!(
-                ContractDefinition,
-                optional!(terminal!(Abstract, "abstract")),
-                terminal!(Contract, "contract"),
-                token!(identifier_parser),
-                optional!(rule!(inheritance_specifier_list_parser)),
-                delimited_by!(
-                    OpenBraceAndContractBodyElementRepeatedAndCloseBrace,
-                    terminal!(OpenBrace, "{"),
-                    zero_or_more!(
-                        ContractBodyElementRepeated,
-                        rule!(contract_body_element_parser)
-                    ),
-                    terminal!(CloseBrace, "}")
+        {
+            contract_definition_parser.define(
+                seq!(
+                    ContractDefinition,
+                    optional!(terminal!(Abstract, "abstract")),
+                    terminal!(Contract, "contract"),
+                    token!(identifier_parser),
+                    optional!(rule!(inheritance_specifier_list_parser)),
+                    delimited_by!(
+                        OpenBraceAndContractBodyElementRepeatedAndCloseBrace,
+                        terminal!(OpenBrace, "{"),
+                        zero_or_more!(
+                            ContractBodyElementRepeated,
+                            rule!(contract_body_element_parser)
+                        ),
+                        terminal!(CloseBrace, "}")
+                    )
                 )
-            )
-            .boxed(),
-        );
+                .boxed(),
+            );
+        }
 
         // DataLocation = 'memory' | 'storage' | 'calldata' ;
-        data_location_parser.define(
-            choice!(
-                DataLocation,
-                terminal!(Memory, "memory"),
-                terminal!(Storage, "storage"),
-                terminal!(Calldata, "calldata")
-            )
-            .boxed(),
-        );
+        {
+            data_location_parser.define(
+                choice!(
+                    DataLocation,
+                    terminal!(Memory, "memory"),
+                    terminal!(Storage, "storage"),
+                    terminal!(Calldata, "calldata")
+                )
+                .boxed(),
+            );
+        }
 
         // «DecimalExponent» = ( 'e' | 'E' ) [ '-' ] «DecimalInteger» ;
-        decimal_exponent_parser.define(
-            lex_seq!(
-                DecimalExponent,
-                lex_terminal!(|&c: &char| c == 'e' || c == 'E'),
-                lex_optional!(lex_terminal!(Minus, '-')),
-                lex_rule!(decimal_integer_parser)
-            )
-            .boxed(),
-        );
+        {
+            decimal_exponent_parser.define(
+                lex_seq!(
+                    DecimalExponent,
+                    lex_terminal!(|&c: &char| c == 'e' || c == 'E'),
+                    lex_optional!(lex_terminal!(Minus, '-')),
+                    lex_rule!(decimal_integer_parser)
+                )
+                .boxed(),
+            );
+        }
 
         // «DecimalFloat» = [ «DecimalInteger» ] '.' «DecimalInteger» ;
-        decimal_float_parser.define(
-            lex_seq!(
-                DecimalFloat,
-                lex_optional!(lex_rule!(decimal_integer_parser)),
-                lex_terminal!(Period, '.'),
-                lex_rule!(decimal_integer_parser)
-            )
-            .boxed(),
-        );
+        {
+            decimal_float_parser.define(
+                lex_seq!(
+                    DecimalFloat,
+                    lex_optional!(lex_rule!(decimal_integer_parser)),
+                    lex_terminal!(Period, '.'),
+                    lex_rule!(decimal_integer_parser)
+                )
+                .boxed(),
+            );
+        }
 
         // «DecimalInteger» = '0'…'9' { [ '_' ] '0'…'9' } ;
-        decimal_integer_parser.define(
-            lex_seq!(
-                DecimalInteger,
-                lex_terminal!(|&c: &char| ('0' <= c && c <= '9')),
-                lex_zero_or_more!(lex_seq!(
-                    lex_optional!(lex_terminal!(Underscore, '_')),
-                    lex_terminal!(|&c: &char| ('0' <= c && c <= '9'))
-                ))
-            )
-            .boxed(),
-        );
+        {
+            decimal_integer_parser.define(
+                lex_seq!(
+                    DecimalInteger,
+                    lex_terminal!(|&c: &char| ('0' <= c && c <= '9')),
+                    lex_zero_or_more!(lex_seq!(
+                        lex_optional!(lex_terminal!(Underscore, '_')),
+                        lex_terminal!(|&c: &char| ('0' <= c && c <= '9'))
+                    ))
+                )
+                .boxed(),
+            );
+        }
 
         // «DecimalNumber» = ( «DecimalInteger» | «DecimalFloat» ) [ «DecimalExponent» ] ;
-        decimal_number_parser.define(
-            lex_seq!(
-                DecimalNumber,
-                lex_choice!(
-                    lex_rule!(decimal_integer_parser),
-                    lex_rule!(decimal_float_parser)
-                ),
-                lex_optional!(lex_rule!(decimal_exponent_parser))
-            )
-            .boxed(),
-        );
+        {
+            decimal_number_parser.define(
+                lex_seq!(
+                    DecimalNumber,
+                    lex_choice!(
+                        lex_rule!(decimal_integer_parser),
+                        lex_rule!(decimal_float_parser)
+                    ),
+                    lex_optional!(lex_rule!(decimal_exponent_parser))
+                )
+                .boxed(),
+            );
+        }
 
         // Definition = ContractDefinition | InterfaceDefinition | LibraryDefinition | FunctionDefinition | ConstantDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | ErrorDefinition ;
-        definition_parser.define(
-            choice!(
-                Definition,
-                rule!(contract_definition_parser),
-                rule!(interface_definition_parser),
-                rule!(library_definition_parser),
-                rule!(function_definition_parser),
-                rule!(constant_definition_parser),
-                rule!(struct_definition_parser),
-                rule!(enum_definition_parser),
-                rule!(user_defined_value_type_definition_parser),
-                rule!(error_definition_parser)
-            )
-            .boxed(),
-        );
+        {
+            definition_parser.define(
+                choice!(
+                    Definition,
+                    rule!(contract_definition_parser),
+                    rule!(interface_definition_parser),
+                    rule!(library_definition_parser),
+                    rule!(function_definition_parser),
+                    rule!(constant_definition_parser),
+                    rule!(struct_definition_parser),
+                    rule!(enum_definition_parser),
+                    rule!(user_defined_value_type_definition_parser),
+                    rule!(error_definition_parser)
+                )
+                .boxed(),
+            );
+        }
 
         // DeleteStatement = 'delete' «Identifier» ';' ;
-        delete_statement_parser.define(
-            seq!(
-                DeleteStatement,
-                terminal!(Delete, "delete"),
-                token!(identifier_parser),
-                terminal!(Semicolon, ";")
-            )
-            .boxed(),
-        );
+        {
+            delete_statement_parser.define(
+                seq!(
+                    DeleteStatement,
+                    terminal!(Delete, "delete"),
+                    token!(identifier_parser),
+                    terminal!(Semicolon, ";")
+                )
+                .boxed(),
+            );
+        }
 
         // Directive = PragmaDirective | ImportDirective | UsingDirective ;
-        directive_parser.define(
-            choice!(
-                Directive,
-                rule!(pragma_directive_parser),
-                rule!(import_directive_parser),
-                rule!(using_directive_parser)
-            )
-            .boxed(),
-        );
+        {
+            directive_parser.define(
+                choice!(
+                    Directive,
+                    rule!(pragma_directive_parser),
+                    rule!(import_directive_parser),
+                    rule!(using_directive_parser)
+                )
+                .boxed(),
+            );
+        }
 
         // DoWhileStatement = 'do' Statement 'while' '(' Expression ')' ';' ;
-        do_while_statement_parser.define(
-            seq!(
-                DoWhileStatement,
-                terminal!(Do, "do"),
-                rule!(statement_parser),
-                terminal!(While, "while"),
-                delimited_by!(
-                    OpenParenAndExpressionAndCloseParen,
-                    terminal!(OpenParen, "("),
-                    rule!(expression_parser),
-                    terminal!(CloseParen, ")")
-                ),
-                terminal!(Semicolon, ";")
-            )
-            .boxed(),
-        );
+        {
+            do_while_statement_parser.define(
+                seq!(
+                    DoWhileStatement,
+                    terminal!(Do, "do"),
+                    rule!(statement_parser),
+                    terminal!(While, "while"),
+                    delimited_by!(
+                        OpenParenAndExpressionAndCloseParen,
+                        terminal!(OpenParen, "("),
+                        rule!(expression_parser),
+                        terminal!(CloseParen, ")")
+                    ),
+                    terminal!(Semicolon, ";")
+                )
+                .boxed(),
+            );
+        }
 
         // «DoubleQuotedAsciiStringLiteral» = '"' { 1…*{ '\u{20}'…'~' - ( '"' | '\\' ) } | «EscapeSequence» } '"' ;
-        double_quoted_ascii_string_literal_parser.define(
-            lex_seq!(
-                DoubleQuotedAsciiStringLiteral,
-                lex_terminal!(DoubleQuote, "\""),
-                lex_zero_or_more!(
-                    RunRepeated,
-                    lex_choice!(
-                        Run,
-                        lex_one_or_more!(
-                            CharRepeated,
-                            lex_terminal!(Char, |&c: &char| (' ' <= c && c <= '~')
-                                && c != '"'
-                                && c != '\\')
-                        ),
-                        lex_rule!(escape_sequence_parser)
-                    )
-                ),
-                lex_terminal!(DoubleQuote, "\"")
-            )
-            .boxed(),
-        );
+        {
+            double_quoted_ascii_string_literal_parser.define(
+                lex_seq!(
+                    DoubleQuotedAsciiStringLiteral,
+                    lex_terminal!(DoubleQuote, "\""),
+                    lex_zero_or_more!(
+                        RunRepeated,
+                        lex_choice!(
+                            Run,
+                            lex_one_or_more!(
+                                CharRepeated,
+                                lex_terminal!(Char, |&c: &char| (' ' <= c && c <= '~')
+                                    && c != '"'
+                                    && c != '\\')
+                            ),
+                            lex_rule!(escape_sequence_parser)
+                        )
+                    ),
+                    lex_terminal!(DoubleQuote, "\"")
+                )
+                .boxed(),
+            );
+        }
 
         // «DoubleQuotedUnicodeStringLiteral» = 'unicode"' { 1…*{ ¬( '"' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '"' ;
-        double_quoted_unicode_string_literal_parser.define(
-            lex_seq!(
-                DoubleQuotedUnicodeStringLiteral,
-                lex_terminal!(UnicodeDoubleQuote, "unicode\""),
-                lex_zero_or_more!(
-                    RunRepeated,
-                    lex_choice!(
-                        Run,
-                        lex_one_or_more!(
-                            CharRepeated,
-                            lex_terminal!(Char, |&c: &char| c != '"'
-                                && c != '\\'
-                                && c != '\n'
-                                && c != '\r')
-                        ),
-                        lex_rule!(escape_sequence_parser)
-                    )
-                ),
-                lex_terminal!(DoubleQuote, "\"")
-            )
-            .boxed(),
-        );
+        {
+            double_quoted_unicode_string_literal_parser.define(
+                lex_seq!(
+                    DoubleQuotedUnicodeStringLiteral,
+                    lex_terminal!(UnicodeDoubleQuote, "unicode\""),
+                    lex_zero_or_more!(
+                        RunRepeated,
+                        lex_choice!(
+                            Run,
+                            lex_one_or_more!(
+                                CharRepeated,
+                                lex_terminal!(Char, |&c: &char| c != '"'
+                                    && c != '\\'
+                                    && c != '\n'
+                                    && c != '\r')
+                            ),
+                            lex_rule!(escape_sequence_parser)
+                        )
+                    ),
+                    lex_terminal!(DoubleQuote, "\"")
+                )
+                .boxed(),
+            );
+        }
 
         // ElementaryType = 'bool' | 'string' | AddressType | «FixedBytesType» | «SignedIntegerType» | «UnsignedIntegerType» | «SignedFixedType» | «UnsignedFixedType» ;
-        elementary_type_parser.define(
-            choice!(
-                ElementaryType,
-                terminal!(Bool, "bool"),
-                terminal!(String, "string"),
-                rule!(address_type_parser),
-                token!(fixed_bytes_type_parser),
-                token!(signed_integer_type_parser),
-                token!(unsigned_integer_type_parser),
-                token!(signed_fixed_type_parser),
-                token!(unsigned_fixed_type_parser)
-            )
-            .boxed(),
-        );
+        {
+            elementary_type_parser.define(
+                choice!(
+                    ElementaryType,
+                    terminal!(Bool, "bool"),
+                    terminal!(String, "string"),
+                    rule!(address_type_parser),
+                    token!(fixed_bytes_type_parser),
+                    token!(signed_integer_type_parser),
+                    token!(unsigned_integer_type_parser),
+                    token!(signed_fixed_type_parser),
+                    token!(unsigned_fixed_type_parser)
+                )
+                .boxed(),
+            );
+        }
 
         // EmitStatement = 'emit' IdentifierPath ArgumentList ';' ;
-        emit_statement_parser.define(
-            seq!(
-                EmitStatement,
-                terminal!(Emit, "emit"),
-                rule!(identifier_path_parser),
-                rule!(argument_list_parser),
-                terminal!(Semicolon, ";")
-            )
-            .boxed(),
-        );
+        {
+            emit_statement_parser.define(
+                seq!(
+                    EmitStatement,
+                    terminal!(Emit, "emit"),
+                    rule!(identifier_path_parser),
+                    rule!(argument_list_parser),
+                    terminal!(Semicolon, ";")
+                )
+                .boxed(),
+            );
+        }
 
         // EndOfFileTrivia = { «Whitespace» | «MultilineComment» | «SingleLineComment» } ;
-        end_of_file_trivia_parser.define(
-            zero_or_more!(
-                EndOfFileTrivia,
-                choice!(
-                    trivia_token!(whitespace_parser),
-                    trivia_token!(multiline_comment_parser),
-                    trivia_token!(single_line_comment_parser)
+        {
+            end_of_file_trivia_parser.define(
+                zero_or_more!(
+                    EndOfFileTrivia,
+                    choice!(
+                        trivia_token!(whitespace_parser),
+                        trivia_token!(multiline_comment_parser),
+                        trivia_token!(single_line_comment_parser)
+                    )
                 )
-            )
-            .boxed(),
-        );
+                .boxed(),
+            );
+        }
 
         // «EndOfLine» = 1…*{ '\u{d}' | '\u{a}' } ;
-        end_of_line_parser.define(
-            lex_one_or_more!(EndOfLine, lex_terminal!(|&c: &char| c == '\r' || c == '\n')).boxed(),
-        );
+        {
+            end_of_line_parser.define(
+                lex_one_or_more!(EndOfLine, lex_terminal!(|&c: &char| c == '\r' || c == '\n'))
+                    .boxed(),
+            );
+        }
 
         // EnumDefinition = 'enum' «Identifier» '{' «Identifier»  { ',' «Identifier» } '}' ;
-        enum_definition_parser.define(
-            seq!(
-                EnumDefinition,
-                terminal!(Enum, "enum"),
-                token!(identifier_parser),
-                delimited_by!(
-                    OpenBraceAndIdentifierRepeatedAndCommaRepeatedAndCloseBrace,
-                    terminal!(OpenBrace, "{"),
-                    separated_by!(
-                        IdentifierRepeatedAndCommaRepeated,
-                        token!(identifier_parser),
-                        terminal!(Comma, ",")
-                    ),
-                    terminal!(CloseBrace, "}")
-                )
-            )
-            .boxed(),
-        );
-
-        // EqualityComparisonExpression = Expression ( '==' | '!=' ) Expression ;
-        equality_comparison_expression_parser.define(
-            left_associative_binary_expression!(
-                EqualityComparisonExpression,
-                order_comparison_expression_parser,
-                choice!(terminal!(EqualEqual, "=="), terminal!(BangEqual, "!="))
-            )
-            .boxed(),
-        );
-
-        // ErrorDefinition = 'error' «Identifier» '(' [ ErrorParameter  { ',' ErrorParameter } ] ')' ';' ;
-        error_definition_parser.define(
-            seq!(
-                ErrorDefinition,
-                terminal!(Error, "error"),
-                token!(identifier_parser),
-                delimited_by!(
-                    OpenParenAndErrorParameterRepeatedAndCommaRepeatedAndCloseParen,
-                    terminal!(OpenParen, "("),
-                    optional!(separated_by!(
-                        ErrorParameterRepeatedAndCommaRepeated,
-                        rule!(error_parameter_parser),
-                        terminal!(Comma, ",")
-                    )),
-                    terminal!(CloseParen, ")")
-                ),
-                terminal!(Semicolon, ";")
-            )
-            .boxed(),
-        );
-
-        // ErrorParameter = TypeName [ «Identifier» ] ;
-        error_parameter_parser.define(
-            seq!(
-                ErrorParameter,
-                rule!(type_name_parser),
-                optional!(token!(identifier_parser))
-            )
-            .boxed(),
-        );
-
-        // «EscapeSequence» = '\\' ( «AsciiEscape» | «HexByteEscape» | «UnicodeEscape» ) ;
-        escape_sequence_parser.define(
-            lex_seq!(
-                EscapeSequence,
-                lex_terminal!(Backslash, '\\'),
-                lex_trie!(
-                    trieleaf!(Linefeed, "\n"),
-                    trieleaf!(CarriageReturn, "\r"),
-                    trieleaf!(DoubleQuote, "\""),
-                    trieleaf!(Quote, "'"),
-                    trieleaf!(Backslash, "\\"),
-                    trieleaf!(LatinSmallLetterN, "n"),
-                    trieleaf!(LatinSmallLetterR, "r"),
-                    trieleaf!(LatinSmallLetterT, "t")
-                )
-            )
-            .boxed(),
-        );
-
-        // EventDefinition = 'event' «Identifier» '(' [ EventParameter  { ',' EventParameter } ] ')' [ 'anonymous' ] ';' ;
-        event_definition_parser.define(
-            seq!(
-                EventDefinition,
-                terminal!(Event, "event"),
-                token!(identifier_parser),
-                delimited_by!(
-                    OpenParenAndEventParameterRepeatedAndCommaRepeatedAndCloseParen,
-                    terminal!(OpenParen, "("),
-                    optional!(separated_by!(
-                        EventParameterRepeatedAndCommaRepeated,
-                        rule!(event_parameter_parser),
-                        terminal!(Comma, ",")
-                    )),
-                    terminal!(CloseParen, ")")
-                ),
-                optional!(terminal!(Anonymous, "anonymous")),
-                terminal!(Semicolon, ";")
-            )
-            .boxed(),
-        );
-
-        // EventParameter = TypeName [ 'indexed' ] [ «Identifier» ] ;
-        event_parameter_parser.define(
-            seq!(
-                EventParameter,
-                rule!(type_name_parser),
-                optional!(terminal!(Indexed, "indexed")),
-                optional!(token!(identifier_parser))
-            )
-            .boxed(),
-        );
-
-        // ExperimentalPragmaSpecifier = 'experimental' «Identifier» ;
-        experimental_pragma_specifier_parser.define(
-            seq!(
-                ExperimentalPragmaSpecifier,
-                terminal!(Experimental, "experimental"),
-                token!(identifier_parser)
-            )
-            .boxed(),
-        );
-
-        // ExponentiationExpression = Expression '**' Expression ;
-        exponentiation_expression_parser.define(
-            right_associative_binary_expression!(
-                ExponentiationExpression,
-                unary_suffix_expression_parser,
-                terminal!(StarStar, "**")
-            )
-            .boxed(),
-        );
-
-        // Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnarySuffixExpression | UnaryPrefixExpression | FunctionCallExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
-        expression_parser.define(rule!(assignment_expression_parser).boxed());
-
-        // ExpressionStatement = Expression ';' ;
-        expression_statement_parser.define(
-            seq!(
-                ExpressionStatement,
-                rule!(expression_parser),
-                terminal!(Semicolon, ";")
-            )
-            .boxed(),
-        );
-
-        // FallbackFunctionAttribute = ModifierInvocation | OverrideSpecifier | 'external' | 'payable' | 'pure' | 'view' | 'virtual' ;
-        fallback_function_attribute_parser.define(
-            choice!(
-                FallbackFunctionAttribute,
-                rule!(modifier_invocation_parser),
-                rule!(override_specifier_parser),
-                terminal!(External, "external"),
-                terminal!(Payable, "payable"),
-                terminal!(Pure, "pure"),
-                terminal!(View, "view"),
-                terminal!(Virtual, "virtual")
-            )
-            .boxed(),
-        );
-
-        // FallbackFunctionDefinition = 'fallback' ParameterList { FallbackFunctionAttribute } [ 'returns' ParameterList ] ( ';' | Block ) ;
-        fallback_function_definition_parser.define(
-            seq!(
-                FallbackFunctionDefinition,
-                terminal!(Fallback, "fallback"),
-                rule!(parameter_list_parser),
-                zero_or_more!(
-                    FallbackFunctionAttributeRepeated,
-                    rule!(fallback_function_attribute_parser)
-                ),
-                optional!(seq!(
-                    terminal!(Returns, "returns"),
-                    rule!(parameter_list_parser)
-                )),
-                choice!(terminal!(Semicolon, ";"), rule!(block_parser))
-            )
-            .boxed(),
-        );
-
-        // «FixedBytesType» = 'bytes' ( '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15' | '16' | '17' | '18' | '19' | '20' | '21' | '22' | '23' | '24' | '25' | '26' | '27' | '28' | '29' | '30' | '31' | '32' ) ;
-        fixed_bytes_type_parser.define(
-            lex_seq!(
-                FixedBytesType,
-                lex_terminal!(Bytes, "bytes"),
-                lex_trie!(
-                    trieprefix!(
-                        "1",
-                        [
-                            trieleaf!(OneZero, "0"),
-                            trieleaf!(OneOne, "1"),
-                            trieleaf!(OneTwo, "2"),
-                            trieleaf!(OneThree, "3"),
-                            trieleaf!(OneFour, "4"),
-                            trieleaf!(OneFive, "5"),
-                            trieleaf!(OneSix, "6"),
-                            trieleaf!(OneSeven, "7"),
-                            trieleaf!(OneEight, "8"),
-                            trieleaf!(OneNine, "9"),
-                            trieleaf!(One)
-                        ]
-                    ),
-                    trieprefix!(
-                        "2",
-                        [
-                            trieleaf!(TwoZero, "0"),
-                            trieleaf!(TwoOne, "1"),
-                            trieleaf!(TwoTwo, "2"),
-                            trieleaf!(TwoThree, "3"),
-                            trieleaf!(TwoFour, "4"),
-                            trieleaf!(TwoFive, "5"),
-                            trieleaf!(TwoSix, "6"),
-                            trieleaf!(TwoSeven, "7"),
-                            trieleaf!(TwoEight, "8"),
-                            trieleaf!(TwoNine, "9"),
-                            trieleaf!(Two)
-                        ]
-                    ),
-                    trieprefix!(
-                        "3",
-                        [
-                            trieleaf!(ThreeZero, "0"),
-                            trieleaf!(ThreeOne, "1"),
-                            trieleaf!(ThreeTwo, "2"),
-                            trieleaf!(Three)
-                        ]
-                    ),
-                    trieleaf!(Four, "4"),
-                    trieleaf!(Five, "5"),
-                    trieleaf!(Six, "6"),
-                    trieleaf!(Seven, "7"),
-                    trieleaf!(Eight, "8"),
-                    trieleaf!(Nine, "9")
-                )
-            )
-            .boxed(),
-        );
-
-        // ForStatement = 'for' '(' ( SimpleStatement | ';' ) ( ExpressionStatement | ';' ) [ Expression ] ')' Statement ;
-        for_statement_parser.define(
-            seq!(
-                ForStatement,
-                terminal!(For, "for"),
-                delimited_by!(
-                    terminal!(OpenParen, "("),
-                    seq!(
-                        choice!(rule!(simple_statement_parser), terminal!(Semicolon, ";")),
-                        choice!(
-                            rule!(expression_statement_parser),
-                            terminal!(Semicolon, ";")
-                        ),
-                        optional!(rule!(expression_parser))
-                    ),
-                    terminal!(CloseParen, ")")
-                ),
-                rule!(statement_parser)
-            )
-            .boxed(),
-        );
-
-        // FunctionAttribute = ModifierInvocation | OverrideSpecifier | 'external' | 'internal' | 'payable' | 'private' | 'public' | 'pure' | 'view' | 'virtual' ;
-        function_attribute_parser.define(
-            choice!(
-                FunctionAttribute,
-                rule!(modifier_invocation_parser),
-                rule!(override_specifier_parser),
-                terminal!(External, "external"),
-                terminal!(Internal, "internal"),
-                terminal!(Payable, "payable"),
-                terminal!(Private, "private"),
-                terminal!(Public, "public"),
-                terminal!(Pure, "pure"),
-                terminal!(View, "view"),
-                terminal!(Virtual, "virtual")
-            )
-            .boxed(),
-        );
-
-        // FunctionCallExpression = Expression [ '{' NamedArgument  { ',' NamedArgument } '}' ] ArgumentList ;
-        function_call_expression_parser.define(
-            unary_suffix_expression!(
-                FunctionCallExpression,
-                member_access_expression_parser,
+        {
+            enum_definition_parser.define(
                 seq!(
-                    optional!(delimited_by!(
-                        OpenBraceAndNamedArgumentRepeatedAndCommaRepeatedAndCloseBrace,
+                    EnumDefinition,
+                    terminal!(Enum, "enum"),
+                    token!(identifier_parser),
+                    delimited_by!(
+                        OpenBraceAndIdentifierRepeatedAndCommaRepeatedAndCloseBrace,
                         terminal!(OpenBrace, "{"),
                         separated_by!(
-                            NamedArgumentRepeatedAndCommaRepeated,
-                            rule!(named_argument_parser),
+                            IdentifierRepeatedAndCommaRepeated,
+                            token!(identifier_parser),
                             terminal!(Comma, ",")
                         ),
                         terminal!(CloseBrace, "}")
-                    )),
-                    rule!(argument_list_parser)
+                    )
                 )
-            )
-            .boxed(),
-        );
+                .boxed(),
+            );
+        }
 
-        // FunctionDefinition = 'function' ( «Identifier» | 'fallback' | 'receive' ) ParameterList { FunctionAttribute } [ 'returns' ParameterList ] ( ';' | Block ) ;
-        function_definition_parser.define(
-            seq!(
-                FunctionDefinition,
-                terminal!(Function, "function"),
-                choice!(
+        // EqualityComparisonExpression = Expression ( '==' | '!=' ) Expression ;
+        {
+            equality_comparison_expression_parser.define(
+                left_associative_binary_expression!(
+                    EqualityComparisonExpression,
+                    order_comparison_expression_parser,
+                    choice!(terminal!(EqualEqual, "=="), terminal!(BangEqual, "!="))
+                )
+                .boxed(),
+            );
+        }
+
+        // ErrorDefinition = 'error' «Identifier» '(' [ ErrorParameter  { ',' ErrorParameter } ] ')' ';' ;
+        {
+            error_definition_parser.define(
+                seq!(
+                    ErrorDefinition,
+                    terminal!(Error, "error"),
                     token!(identifier_parser),
-                    terminal!(Fallback, "fallback"),
-                    terminal!(Receive, "receive")
-                ),
-                rule!(parameter_list_parser),
-                zero_or_more!(FunctionAttributeRepeated, rule!(function_attribute_parser)),
-                optional!(seq!(
-                    terminal!(Returns, "returns"),
-                    rule!(parameter_list_parser)
-                )),
-                choice!(terminal!(Semicolon, ";"), rule!(block_parser))
-            )
-            .boxed(),
-        );
+                    delimited_by!(
+                        OpenParenAndErrorParameterRepeatedAndCommaRepeatedAndCloseParen,
+                        terminal!(OpenParen, "("),
+                        optional!(separated_by!(
+                            ErrorParameterRepeatedAndCommaRepeated,
+                            rule!(error_parameter_parser),
+                            terminal!(Comma, ",")
+                        )),
+                        terminal!(CloseParen, ")")
+                    ),
+                    terminal!(Semicolon, ";")
+                )
+                .boxed(),
+            );
+        }
 
-        // FunctionType = 'function' ParameterList { 'internal' | 'external' | 'private' | 'public' | 'pure' | 'view' | 'payable' } [ 'returns' ParameterList ] ;
-        function_type_parser.define(
-            seq!(
-                FunctionType,
-                terminal!(Function, "function"),
-                rule!(parameter_list_parser),
-                zero_or_more!(choice!(
-                    terminal!(Internal, "internal"),
+        // ErrorParameter = TypeName [ «Identifier» ] ;
+        {
+            error_parameter_parser.define(
+                seq!(
+                    ErrorParameter,
+                    rule!(type_name_parser),
+                    optional!(token!(identifier_parser))
+                )
+                .boxed(),
+            );
+        }
+
+        // «EscapeSequence» = '\\' ( «AsciiEscape» | «HexByteEscape» | «UnicodeEscape» ) ;
+        {
+            escape_sequence_parser.define(
+                lex_seq!(
+                    EscapeSequence,
+                    lex_terminal!(Backslash, '\\'),
+                    lex_trie!(
+                        trieleaf!(Linefeed, "\n"),
+                        trieleaf!(CarriageReturn, "\r"),
+                        trieleaf!(DoubleQuote, "\""),
+                        trieleaf!(Quote, "'"),
+                        trieleaf!(Backslash, "\\"),
+                        trieleaf!(LatinSmallLetterN, "n"),
+                        trieleaf!(LatinSmallLetterR, "r"),
+                        trieleaf!(LatinSmallLetterT, "t")
+                    )
+                )
+                .boxed(),
+            );
+        }
+
+        // EventDefinition = 'event' «Identifier» '(' [ EventParameter  { ',' EventParameter } ] ')' [ 'anonymous' ] ';' ;
+        {
+            event_definition_parser.define(
+                seq!(
+                    EventDefinition,
+                    terminal!(Event, "event"),
+                    token!(identifier_parser),
+                    delimited_by!(
+                        OpenParenAndEventParameterRepeatedAndCommaRepeatedAndCloseParen,
+                        terminal!(OpenParen, "("),
+                        optional!(separated_by!(
+                            EventParameterRepeatedAndCommaRepeated,
+                            rule!(event_parameter_parser),
+                            terminal!(Comma, ",")
+                        )),
+                        terminal!(CloseParen, ")")
+                    ),
+                    optional!(terminal!(Anonymous, "anonymous")),
+                    terminal!(Semicolon, ";")
+                )
+                .boxed(),
+            );
+        }
+
+        // EventParameter = TypeName [ 'indexed' ] [ «Identifier» ] ;
+        {
+            event_parameter_parser.define(
+                seq!(
+                    EventParameter,
+                    rule!(type_name_parser),
+                    optional!(terminal!(Indexed, "indexed")),
+                    optional!(token!(identifier_parser))
+                )
+                .boxed(),
+            );
+        }
+
+        // ExperimentalPragmaSpecifier = 'experimental' «Identifier» ;
+        {
+            experimental_pragma_specifier_parser.define(
+                seq!(
+                    ExperimentalPragmaSpecifier,
+                    terminal!(Experimental, "experimental"),
+                    token!(identifier_parser)
+                )
+                .boxed(),
+            );
+        }
+
+        // (* 0.0.0 *) ExponentiationExpression = Expression '**' Expression ;
+        // (* 0.6.0 *) ExponentiationExpression = Expression '**' Expression ;
+        if version_0_6_0 <= version {
+            exponentiation_expression_parser.define(
+                right_associative_binary_expression!(
+                    ExponentiationExpression,
+                    unary_suffix_expression_parser,
+                    terminal!(StarStar, "**")
+                )
+                .boxed(),
+            );
+        } else {
+            exponentiation_expression_parser.define(
+                left_associative_binary_expression!(
+                    ExponentiationExpression,
+                    unary_suffix_expression_parser,
+                    terminal!(StarStar, "**")
+                )
+                .boxed(),
+            );
+        }
+
+        // Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnarySuffixExpression | UnaryPrefixExpression | FunctionCallExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
+        {
+            expression_parser.define(rule!(assignment_expression_parser).boxed());
+        }
+
+        // ExpressionStatement = Expression ';' ;
+        {
+            expression_statement_parser.define(
+                seq!(
+                    ExpressionStatement,
+                    rule!(expression_parser),
+                    terminal!(Semicolon, ";")
+                )
+                .boxed(),
+            );
+        }
+
+        // FallbackFunctionAttribute = ModifierInvocation | OverrideSpecifier | 'external' | 'payable' | 'pure' | 'view' | 'virtual' ;
+        {
+            fallback_function_attribute_parser.define(
+                choice!(
+                    FallbackFunctionAttribute,
+                    rule!(modifier_invocation_parser),
+                    rule!(override_specifier_parser),
                     terminal!(External, "external"),
+                    terminal!(Payable, "payable"),
+                    terminal!(Pure, "pure"),
+                    terminal!(View, "view"),
+                    terminal!(Virtual, "virtual")
+                )
+                .boxed(),
+            );
+        }
+
+        // FallbackFunctionDefinition = 'fallback' ParameterList { FallbackFunctionAttribute } [ 'returns' ParameterList ] ( ';' | Block ) ;
+        {
+            fallback_function_definition_parser.define(
+                seq!(
+                    FallbackFunctionDefinition,
+                    terminal!(Fallback, "fallback"),
+                    rule!(parameter_list_parser),
+                    zero_or_more!(
+                        FallbackFunctionAttributeRepeated,
+                        rule!(fallback_function_attribute_parser)
+                    ),
+                    optional!(seq!(
+                        terminal!(Returns, "returns"),
+                        rule!(parameter_list_parser)
+                    )),
+                    choice!(terminal!(Semicolon, ";"), rule!(block_parser))
+                )
+                .boxed(),
+            );
+        }
+
+        // «FixedBytesType» = 'bytes' ( '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15' | '16' | '17' | '18' | '19' | '20' | '21' | '22' | '23' | '24' | '25' | '26' | '27' | '28' | '29' | '30' | '31' | '32' ) ;
+        {
+            fixed_bytes_type_parser.define(
+                lex_seq!(
+                    FixedBytesType,
+                    lex_terminal!(Bytes, "bytes"),
+                    lex_trie!(
+                        trieprefix!(
+                            "1",
+                            [
+                                trieleaf!(OneZero, "0"),
+                                trieleaf!(OneOne, "1"),
+                                trieleaf!(OneTwo, "2"),
+                                trieleaf!(OneThree, "3"),
+                                trieleaf!(OneFour, "4"),
+                                trieleaf!(OneFive, "5"),
+                                trieleaf!(OneSix, "6"),
+                                trieleaf!(OneSeven, "7"),
+                                trieleaf!(OneEight, "8"),
+                                trieleaf!(OneNine, "9"),
+                                trieleaf!(One)
+                            ]
+                        ),
+                        trieprefix!(
+                            "2",
+                            [
+                                trieleaf!(TwoZero, "0"),
+                                trieleaf!(TwoOne, "1"),
+                                trieleaf!(TwoTwo, "2"),
+                                trieleaf!(TwoThree, "3"),
+                                trieleaf!(TwoFour, "4"),
+                                trieleaf!(TwoFive, "5"),
+                                trieleaf!(TwoSix, "6"),
+                                trieleaf!(TwoSeven, "7"),
+                                trieleaf!(TwoEight, "8"),
+                                trieleaf!(TwoNine, "9"),
+                                trieleaf!(Two)
+                            ]
+                        ),
+                        trieprefix!(
+                            "3",
+                            [
+                                trieleaf!(ThreeZero, "0"),
+                                trieleaf!(ThreeOne, "1"),
+                                trieleaf!(ThreeTwo, "2"),
+                                trieleaf!(Three)
+                            ]
+                        ),
+                        trieleaf!(Four, "4"),
+                        trieleaf!(Five, "5"),
+                        trieleaf!(Six, "6"),
+                        trieleaf!(Seven, "7"),
+                        trieleaf!(Eight, "8"),
+                        trieleaf!(Nine, "9")
+                    )
+                )
+                .boxed(),
+            );
+        }
+
+        // ForStatement = 'for' '(' ( SimpleStatement | ';' ) ( ExpressionStatement | ';' ) [ Expression ] ')' Statement ;
+        {
+            for_statement_parser.define(
+                seq!(
+                    ForStatement,
+                    terminal!(For, "for"),
+                    delimited_by!(
+                        terminal!(OpenParen, "("),
+                        seq!(
+                            choice!(rule!(simple_statement_parser), terminal!(Semicolon, ";")),
+                            choice!(
+                                rule!(expression_statement_parser),
+                                terminal!(Semicolon, ";")
+                            ),
+                            optional!(rule!(expression_parser))
+                        ),
+                        terminal!(CloseParen, ")")
+                    ),
+                    rule!(statement_parser)
+                )
+                .boxed(),
+            );
+        }
+
+        // FunctionAttribute = ModifierInvocation | OverrideSpecifier | 'external' | 'internal' | 'payable' | 'private' | 'public' | 'pure' | 'view' | 'virtual' ;
+        {
+            function_attribute_parser.define(
+                choice!(
+                    FunctionAttribute,
+                    rule!(modifier_invocation_parser),
+                    rule!(override_specifier_parser),
+                    terminal!(External, "external"),
+                    terminal!(Internal, "internal"),
+                    terminal!(Payable, "payable"),
                     terminal!(Private, "private"),
                     terminal!(Public, "public"),
                     terminal!(Pure, "pure"),
                     terminal!(View, "view"),
-                    terminal!(Payable, "payable")
-                )),
-                optional!(seq!(
-                    terminal!(Returns, "returns"),
-                    rule!(parameter_list_parser)
-                ))
-            )
-            .boxed(),
-        );
-
-        // «HexByteEscape» = 'x' 2…2*{ «HexCharacter» } ;
-        hex_byte_escape_parser.define(
-            lex_seq!(
-                HexByteEscape,
-                lex_terminal!(LatinSmallLetterX, 'x'),
-                lex_repeated!(
-                    lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
-                        || ('a' <= c && c <= 'f')
-                        || ('A' <= c && c <= 'F')),
-                    2usize,
-                    2usize
+                    terminal!(Virtual, "virtual")
                 )
-            )
-            .boxed(),
-        );
+                .boxed(),
+            );
+        }
 
-        // «HexCharacter» = '0'…'9' | 'a'…'f' | 'A'…'F' ;
-        hex_character_parser.define(
-            lex_terminal!(HexCharacter, |&c: &char| ('0' <= c && c <= '9')
-                || ('a' <= c && c <= 'f')
-                || ('A' <= c && c <= 'F'))
-            .boxed(),
-        );
-
-        // «HexNumber» = '0x' «HexCharacter» { [ '_' ] «HexCharacter» } ;
-        hex_number_parser.define(
-            lex_seq!(
-                HexNumber,
-                lex_terminal!(ZeroX, "0x"),
-                lex_seq!(
-                    lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
-                        || ('a' <= c && c <= 'f')
-                        || ('A' <= c && c <= 'F')),
-                    lex_zero_or_more!(lex_seq!(
-                        lex_optional!(lex_terminal!(Underscore, '_')),
-                        lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
-                            || ('a' <= c && c <= 'f')
-                            || ('A' <= c && c <= 'F'))
-                    ))
-                )
-            )
-            .boxed(),
-        );
-
-        // «HexStringLiteral» = 'hex' ( '"' [ «PossiblySeparatedPairsOfHexDigits» ] '"' | '\'' [ «PossiblySeparatedPairsOfHexDigits» ] '\'' ) ;
-        hex_string_literal_parser.define(
-            lex_seq!(
-                HexStringLiteral,
-                lex_terminal!(Hex, "hex"),
-                lex_choice!(
-                    lex_seq!(
-                        DoubleQuoteAndPossiblySeparatedPairsOfHexDigitsAndDoubleQuote,
-                        lex_terminal!(DoubleQuote, "\""),
-                        lex_optional!(lex_rule!(possibly_separated_pairs_of_hex_digits_parser)),
-                        lex_terminal!(DoubleQuote, "\"")
-                    ),
-                    lex_seq!(
-                        QuoteAndPossiblySeparatedPairsOfHexDigitsAndQuote,
-                        lex_terminal!(Quote, "'"),
-                        lex_optional!(lex_rule!(possibly_separated_pairs_of_hex_digits_parser)),
-                        lex_terminal!(Quote, "'")
+        // FunctionCallExpression = Expression [ '{' NamedArgument  { ',' NamedArgument } '}' ] ArgumentList ;
+        {
+            function_call_expression_parser.define(
+                unary_suffix_expression!(
+                    FunctionCallExpression,
+                    member_access_expression_parser,
+                    seq!(
+                        optional!(delimited_by!(
+                            OpenBraceAndNamedArgumentRepeatedAndCommaRepeatedAndCloseBrace,
+                            terminal!(OpenBrace, "{"),
+                            separated_by!(
+                                NamedArgumentRepeatedAndCommaRepeated,
+                                rule!(named_argument_parser),
+                                terminal!(Comma, ",")
+                            ),
+                            terminal!(CloseBrace, "}")
+                        )),
+                        rule!(argument_list_parser)
                     )
                 )
-            )
-            .boxed(),
-        );
+                .boxed(),
+            );
+        }
+
+        // FunctionDefinition = 'function' ( «Identifier» | 'fallback' | 'receive' ) ParameterList { FunctionAttribute } [ 'returns' ParameterList ] ( ';' | Block ) ;
+        {
+            function_definition_parser.define(
+                seq!(
+                    FunctionDefinition,
+                    terminal!(Function, "function"),
+                    choice!(
+                        token!(identifier_parser),
+                        terminal!(Fallback, "fallback"),
+                        terminal!(Receive, "receive")
+                    ),
+                    rule!(parameter_list_parser),
+                    zero_or_more!(FunctionAttributeRepeated, rule!(function_attribute_parser)),
+                    optional!(seq!(
+                        terminal!(Returns, "returns"),
+                        rule!(parameter_list_parser)
+                    )),
+                    choice!(terminal!(Semicolon, ";"), rule!(block_parser))
+                )
+                .boxed(),
+            );
+        }
+
+        // FunctionType = 'function' ParameterList { 'internal' | 'external' | 'private' | 'public' | 'pure' | 'view' | 'payable' } [ 'returns' ParameterList ] ;
+        {
+            function_type_parser.define(
+                seq!(
+                    FunctionType,
+                    terminal!(Function, "function"),
+                    rule!(parameter_list_parser),
+                    zero_or_more!(choice!(
+                        terminal!(Internal, "internal"),
+                        terminal!(External, "external"),
+                        terminal!(Private, "private"),
+                        terminal!(Public, "public"),
+                        terminal!(Pure, "pure"),
+                        terminal!(View, "view"),
+                        terminal!(Payable, "payable")
+                    )),
+                    optional!(seq!(
+                        terminal!(Returns, "returns"),
+                        rule!(parameter_list_parser)
+                    ))
+                )
+                .boxed(),
+            );
+        }
+
+        // «HexByteEscape» = 'x' 2…2*{ «HexCharacter» } ;
+        {
+            hex_byte_escape_parser.define(
+                lex_seq!(
+                    HexByteEscape,
+                    lex_terminal!(LatinSmallLetterX, 'x'),
+                    lex_repeated!(
+                        lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                            || ('a' <= c && c <= 'f')
+                            || ('A' <= c && c <= 'F')),
+                        2usize,
+                        2usize
+                    )
+                )
+                .boxed(),
+            );
+        }
+
+        // «HexCharacter» = '0'…'9' | 'a'…'f' | 'A'…'F' ;
+        {
+            hex_character_parser.define(
+                lex_terminal!(HexCharacter, |&c: &char| ('0' <= c && c <= '9')
+                    || ('a' <= c && c <= 'f')
+                    || ('A' <= c && c <= 'F'))
+                .boxed(),
+            );
+        }
+
+        // «HexNumber» = '0x' «HexCharacter» { [ '_' ] «HexCharacter» } ;
+        {
+            hex_number_parser.define(
+                lex_seq!(
+                    HexNumber,
+                    lex_terminal!(ZeroX, "0x"),
+                    lex_seq!(
+                        lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                            || ('a' <= c && c <= 'f')
+                            || ('A' <= c && c <= 'F')),
+                        lex_zero_or_more!(lex_seq!(
+                            lex_optional!(lex_terminal!(Underscore, '_')),
+                            lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                                || ('a' <= c && c <= 'f')
+                                || ('A' <= c && c <= 'F'))
+                        ))
+                    )
+                )
+                .boxed(),
+            );
+        }
+
+        // «HexStringLiteral» = 'hex' ( '"' [ «PossiblySeparatedPairsOfHexDigits» ] '"' | '\'' [ «PossiblySeparatedPairsOfHexDigits» ] '\'' ) ;
+        {
+            hex_string_literal_parser.define(
+                lex_seq!(
+                    HexStringLiteral,
+                    lex_terminal!(Hex, "hex"),
+                    lex_choice!(
+                        lex_seq!(
+                            DoubleQuoteAndPossiblySeparatedPairsOfHexDigitsAndDoubleQuote,
+                            lex_terminal!(DoubleQuote, "\""),
+                            lex_optional!(lex_rule!(possibly_separated_pairs_of_hex_digits_parser)),
+                            lex_terminal!(DoubleQuote, "\"")
+                        ),
+                        lex_seq!(
+                            QuoteAndPossiblySeparatedPairsOfHexDigitsAndQuote,
+                            lex_terminal!(Quote, "'"),
+                            lex_optional!(lex_rule!(possibly_separated_pairs_of_hex_digits_parser)),
+                            lex_terminal!(Quote, "'")
+                        )
+                    )
+                )
+                .boxed(),
+            );
+        }
 
         // «Identifier» = «RawIdentifier» - «Keyword» ;
-        identifier_parser.define(
-            difference(
-                lex_rule!(raw_identifier_parser),
-                lex_trie!(trieleaf!(False, "false"), trieleaf!(True, "true")),
-            )
-            .boxed(),
-        );
+        {
+            identifier_parser.define(
+                difference(
+                    lex_rule!(raw_identifier_parser),
+                    lex_trie!(trieleaf!(False, "false"), trieleaf!(True, "true")),
+                )
+                .boxed(),
+            );
+        }
 
         // «IdentifierPart» = «IdentifierStart» | '0'…'9' ;
-        identifier_part_parser.define(
-            lex_terminal!(IdentifierPart, |&c: &char| c == '_'
-                || c == '$'
-                || ('a' <= c && c <= 'z')
-                || ('A' <= c && c <= 'Z')
-                || ('0' <= c && c <= '9'))
-            .boxed(),
-        );
+        {
+            identifier_part_parser.define(
+                lex_terminal!(IdentifierPart, |&c: &char| c == '_'
+                    || c == '$'
+                    || ('a' <= c && c <= 'z')
+                    || ('A' <= c && c <= 'Z')
+                    || ('0' <= c && c <= '9'))
+                .boxed(),
+            );
+        }
 
         // IdentifierPath = «Identifier»  { '.' «Identifier» } ;
-        identifier_path_parser.define(
-            separated_by!(
-                IdentifierPath,
-                token!(identifier_parser),
-                terminal!(Period, ".")
-            )
-            .boxed(),
-        );
+        {
+            identifier_path_parser.define(
+                separated_by!(
+                    IdentifierPath,
+                    token!(identifier_parser),
+                    terminal!(Period, ".")
+                )
+                .boxed(),
+            );
+        }
 
         // «IdentifierStart» = '_' | '$' | 'a'…'z' | 'A'…'Z' ;
-        identifier_start_parser.define(
-            lex_terminal!(IdentifierStart, |&c: &char| c == '_'
-                || c == '$'
-                || ('a' <= c && c <= 'z')
-                || ('A' <= c && c <= 'Z'))
-            .boxed(),
-        );
+        {
+            identifier_start_parser.define(
+                lex_terminal!(IdentifierStart, |&c: &char| c == '_'
+                    || c == '$'
+                    || ('a' <= c && c <= 'z')
+                    || ('A' <= c && c <= 'Z'))
+                .boxed(),
+            );
+        }
 
         // IfStatement = 'if' '(' Expression ')' Statement [ 'else' Statement ] ;
-        if_statement_parser.define(
-            seq!(
-                IfStatement,
-                terminal!(If, "if"),
-                delimited_by!(
-                    OpenParenAndExpressionAndCloseParen,
-                    terminal!(OpenParen, "("),
-                    rule!(expression_parser),
-                    terminal!(CloseParen, ")")
-                ),
-                rule!(statement_parser),
-                optional!(seq!(terminal!(Else, "else"), rule!(statement_parser)))
-            )
-            .boxed(),
-        );
+        {
+            if_statement_parser.define(
+                seq!(
+                    IfStatement,
+                    terminal!(If, "if"),
+                    delimited_by!(
+                        OpenParenAndExpressionAndCloseParen,
+                        terminal!(OpenParen, "("),
+                        rule!(expression_parser),
+                        terminal!(CloseParen, ")")
+                    ),
+                    rule!(statement_parser),
+                    optional!(seq!(terminal!(Else, "else"), rule!(statement_parser)))
+                )
+                .boxed(),
+            );
+        }
 
         // ImportDirective = 'import' ( SimpleImportDirective | StarImportDirective | SelectingImportDirective ) ';' ;
-        import_directive_parser.define(
-            seq!(
-                ImportDirective,
-                terminal!(Import, "import"),
-                choice!(
-                    rule!(simple_import_directive_parser),
-                    rule!(star_import_directive_parser),
-                    rule!(selecting_import_directive_parser)
-                ),
-                terminal!(Semicolon, ";")
-            )
-            .boxed(),
-        );
+        {
+            import_directive_parser.define(
+                seq!(
+                    ImportDirective,
+                    terminal!(Import, "import"),
+                    choice!(
+                        rule!(simple_import_directive_parser),
+                        rule!(star_import_directive_parser),
+                        rule!(selecting_import_directive_parser)
+                    ),
+                    terminal!(Semicolon, ";")
+                )
+                .boxed(),
+            );
+        }
 
         // ImportPath = «AsciiStringLiteral» ;
-        import_path_parser.define(token!(ascii_string_literal_parser).boxed());
+        {
+            import_path_parser.define(token!(ascii_string_literal_parser).boxed());
+        }
 
         // IndexAccessExpression = Expression '[' [ Expression ] [ ':' [ Expression ] ] ']' ;
-        index_access_expression_parser.define(
-            unary_suffix_expression!(
-                IndexAccessExpression,
-                primary_expression_parser,
-                delimited_by!(
-                    terminal!(OpenBracket, "["),
-                    seq!(
-                        optional!(rule!(expression_parser)),
-                        optional!(seq!(
-                            terminal!(Colon, ":"),
-                            optional!(rule!(expression_parser))
-                        ))
-                    ),
-                    terminal!(CloseBracket, "]")
+        {
+            index_access_expression_parser.define(
+                unary_suffix_expression!(
+                    IndexAccessExpression,
+                    primary_expression_parser,
+                    delimited_by!(
+                        terminal!(OpenBracket, "["),
+                        seq!(
+                            optional!(rule!(expression_parser)),
+                            optional!(seq!(
+                                terminal!(Colon, ":"),
+                                optional!(rule!(expression_parser))
+                            ))
+                        ),
+                        terminal!(CloseBracket, "]")
+                    )
                 )
-            )
-            .boxed(),
-        );
+                .boxed(),
+            );
+        }
 
         // InheritanceSpecifier = IdentifierPath [ ArgumentList ] ;
-        inheritance_specifier_parser.define(
-            seq!(
-                InheritanceSpecifier,
-                rule!(identifier_path_parser),
-                optional!(rule!(argument_list_parser))
-            )
-            .boxed(),
-        );
+        {
+            inheritance_specifier_parser.define(
+                seq!(
+                    InheritanceSpecifier,
+                    rule!(identifier_path_parser),
+                    optional!(rule!(argument_list_parser))
+                )
+                .boxed(),
+            );
+        }
 
         // InheritanceSpecifierList = 'is' InheritanceSpecifier  { ',' InheritanceSpecifier } ;
-        inheritance_specifier_list_parser.define(
-            seq!(
-                InheritanceSpecifierList,
-                terminal!(Is, "is"),
-                separated_by!(
-                    InheritanceSpecifierRepeatedAndCommaRepeated,
-                    rule!(inheritance_specifier_parser),
-                    terminal!(Comma, ",")
+        {
+            inheritance_specifier_list_parser.define(
+                seq!(
+                    InheritanceSpecifierList,
+                    terminal!(Is, "is"),
+                    separated_by!(
+                        InheritanceSpecifierRepeatedAndCommaRepeated,
+                        rule!(inheritance_specifier_parser),
+                        terminal!(Comma, ",")
+                    )
                 )
-            )
-            .boxed(),
-        );
+                .boxed(),
+            );
+        }
 
         // InterfaceDefinition = 'interface' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
-        interface_definition_parser.define(
-            seq!(
-                InterfaceDefinition,
-                terminal!(Interface, "interface"),
-                token!(identifier_parser),
-                optional!(rule!(inheritance_specifier_list_parser)),
-                delimited_by!(
-                    OpenBraceAndContractBodyElementRepeatedAndCloseBrace,
-                    terminal!(OpenBrace, "{"),
-                    zero_or_more!(
-                        ContractBodyElementRepeated,
-                        rule!(contract_body_element_parser)
-                    ),
-                    terminal!(CloseBrace, "}")
+        {
+            interface_definition_parser.define(
+                seq!(
+                    InterfaceDefinition,
+                    terminal!(Interface, "interface"),
+                    token!(identifier_parser),
+                    optional!(rule!(inheritance_specifier_list_parser)),
+                    delimited_by!(
+                        OpenBraceAndContractBodyElementRepeatedAndCloseBrace,
+                        terminal!(OpenBrace, "{"),
+                        zero_or_more!(
+                            ContractBodyElementRepeated,
+                            rule!(contract_body_element_parser)
+                        ),
+                        terminal!(CloseBrace, "}")
+                    )
                 )
-            )
-            .boxed(),
-        );
+                .boxed(),
+            );
+        }
 
         // «Keyword» = «BooleanLiteral» | «FixedBytesType» | «NumberUnit» | «ReservedKeyword» | «SignedIntegerType» | «UnsignedIntegerType» | 'abstract' | 'address' | 'anonymous' | 'as' | 'assembly' | 'bool' | 'break' | 'calldata' | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum' | 'event' | 'external' | 'fallback' | 'false' | 'fixed' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import' | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override' | 'payable' | 'pragma' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct' | 'true' | 'try' | 'type' | 'ufixed' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while' ;
-        keyword_parser
-            .define(lex_trie!(trieleaf!(False, "false"), trieleaf!(True, "true")).boxed());
+        {
+            keyword_parser
+                .define(lex_trie!(trieleaf!(False, "false"), trieleaf!(True, "true")).boxed());
+        }
 
         // LeadingTrivia = { «Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment» } ;
-        leading_trivia_parser.define(
-            zero_or_more!(
-                LeadingTrivia,
-                choice!(
-                    trivia_token!(whitespace_parser),
-                    trivia_token!(end_of_line_parser),
-                    trivia_token!(multiline_comment_parser),
-                    trivia_token!(single_line_comment_parser)
+        {
+            leading_trivia_parser.define(
+                zero_or_more!(
+                    LeadingTrivia,
+                    choice!(
+                        trivia_token!(whitespace_parser),
+                        trivia_token!(end_of_line_parser),
+                        trivia_token!(multiline_comment_parser),
+                        trivia_token!(single_line_comment_parser)
+                    )
                 )
-            )
-            .boxed(),
-        );
+                .boxed(),
+            );
+        }
 
         // LibraryDefinition = 'library' «Identifier» '{' { ContractBodyElement } '}' ;
-        library_definition_parser.define(
-            seq!(
-                LibraryDefinition,
-                terminal!(Library, "library"),
-                token!(identifier_parser),
-                delimited_by!(
-                    OpenBraceAndContractBodyElementRepeatedAndCloseBrace,
-                    terminal!(OpenBrace, "{"),
-                    zero_or_more!(
-                        ContractBodyElementRepeated,
-                        rule!(contract_body_element_parser)
-                    ),
-                    terminal!(CloseBrace, "}")
+        {
+            library_definition_parser.define(
+                seq!(
+                    LibraryDefinition,
+                    terminal!(Library, "library"),
+                    token!(identifier_parser),
+                    delimited_by!(
+                        OpenBraceAndContractBodyElementRepeatedAndCloseBrace,
+                        terminal!(OpenBrace, "{"),
+                        zero_or_more!(
+                            ContractBodyElementRepeated,
+                            rule!(contract_body_element_parser)
+                        ),
+                        terminal!(CloseBrace, "}")
+                    )
                 )
-            )
-            .boxed(),
-        );
+                .boxed(),
+            );
+        }
 
         // MappingType = 'mapping' '(' ( ElementaryType | IdentifierPath ) '=>' TypeName ')' ;
-        mapping_type_parser.define(
-            seq!(
-                MappingType,
-                terminal!(Mapping, "mapping"),
-                delimited_by!(
-                    terminal!(OpenParen, "("),
-                    seq!(
-                        choice!(rule!(elementary_type_parser), rule!(identifier_path_parser)),
-                        terminal!(EqualGreater, "=>"),
-                        rule!(type_name_parser)
-                    ),
-                    terminal!(CloseParen, ")")
+        {
+            mapping_type_parser.define(
+                seq!(
+                    MappingType,
+                    terminal!(Mapping, "mapping"),
+                    delimited_by!(
+                        terminal!(OpenParen, "("),
+                        seq!(
+                            choice!(rule!(elementary_type_parser), rule!(identifier_path_parser)),
+                            terminal!(EqualGreater, "=>"),
+                            rule!(type_name_parser)
+                        ),
+                        terminal!(CloseParen, ")")
+                    )
                 )
-            )
-            .boxed(),
-        );
+                .boxed(),
+            );
+        }
 
         // MemberAccessExpression = Expression '.' ( «Identifier» | 'address' ) ;
-        member_access_expression_parser.define(
-            unary_suffix_expression!(
-                MemberAccessExpression,
-                index_access_expression_parser,
-                seq!(
-                    terminal!(Period, "."),
-                    choice!(token!(identifier_parser), terminal!(Address, "address"))
+        {
+            member_access_expression_parser.define(
+                unary_suffix_expression!(
+                    MemberAccessExpression,
+                    index_access_expression_parser,
+                    seq!(
+                        terminal!(Period, "."),
+                        choice!(token!(identifier_parser), terminal!(Address, "address"))
+                    )
                 )
-            )
-            .boxed(),
-        );
+                .boxed(),
+            );
+        }
 
         // ModifierAttribute = OverrideSpecifier | 'virtual' ;
-        modifier_attribute_parser.define(
-            choice!(
-                ModifierAttribute,
-                rule!(override_specifier_parser),
-                terminal!(Virtual, "virtual")
-            )
-            .boxed(),
-        );
+        {
+            modifier_attribute_parser.define(
+                choice!(
+                    ModifierAttribute,
+                    rule!(override_specifier_parser),
+                    terminal!(Virtual, "virtual")
+                )
+                .boxed(),
+            );
+        }
 
         // ModifierDefinition = 'modifier' «Identifier» [ ParameterList ] { ModifierAttribute } ( ';' | Block ) ;
-        modifier_definition_parser.define(
-            seq!(
-                ModifierDefinition,
-                terminal!(Modifier, "modifier"),
-                token!(identifier_parser),
-                optional!(rule!(parameter_list_parser)),
-                zero_or_more!(ModifierAttributeRepeated, rule!(modifier_attribute_parser)),
-                choice!(terminal!(Semicolon, ";"), rule!(block_parser))
-            )
-            .boxed(),
-        );
+        {
+            modifier_definition_parser.define(
+                seq!(
+                    ModifierDefinition,
+                    terminal!(Modifier, "modifier"),
+                    token!(identifier_parser),
+                    optional!(rule!(parameter_list_parser)),
+                    zero_or_more!(ModifierAttributeRepeated, rule!(modifier_attribute_parser)),
+                    choice!(terminal!(Semicolon, ";"), rule!(block_parser))
+                )
+                .boxed(),
+            );
+        }
 
         // ModifierInvocation = IdentifierPath [ ArgumentList ] ;
-        modifier_invocation_parser.define(
-            seq!(
-                ModifierInvocation,
-                rule!(identifier_path_parser),
-                optional!(rule!(argument_list_parser))
-            )
-            .boxed(),
-        );
+        {
+            modifier_invocation_parser.define(
+                seq!(
+                    ModifierInvocation,
+                    rule!(identifier_path_parser),
+                    optional!(rule!(argument_list_parser))
+                )
+                .boxed(),
+            );
+        }
 
         // MulDivModExpression = Expression ( '*' | '/' | '%' ) Expression ;
-        mul_div_mod_expression_parser.define(
-            left_associative_binary_expression!(
-                MulDivModExpression,
-                exponentiation_expression_parser,
-                choice!(
-                    terminal!(Star, "*"),
-                    terminal!(Slash, "/"),
-                    terminal!(Percent, "%")
+        {
+            mul_div_mod_expression_parser.define(
+                left_associative_binary_expression!(
+                    MulDivModExpression,
+                    exponentiation_expression_parser,
+                    choice!(
+                        terminal!(Star, "*"),
+                        terminal!(Slash, "/"),
+                        terminal!(Percent, "%")
+                    )
                 )
-            )
-            .boxed(),
-        );
+                .boxed(),
+            );
+        }
 
         // «MultilineComment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
-        multiline_comment_parser.define(
-            lex_seq!(
-                MultilineComment,
-                lex_terminal!(SlashStar, "/*"),
+        {
+            multiline_comment_parser.define(
                 lex_seq!(
-                    Content,
-                    lex_zero_or_more!(lex_choice!(
-                        lex_terminal!(NotStar, |&c: &char| c != '*'),
-                        lex_seq!(
-                            lex_one_or_more!(StarRepeated, lex_terminal!(Star, '*')),
-                            lex_terminal!(|&c: &char| c != '*' && c != '/')
-                        )
-                    )),
-                    lex_zero_or_more!(StarRepeated, lex_terminal!(Star, '*'))
-                ),
-                lex_terminal!(StarSlash, "*/")
-            )
-            .boxed(),
-        );
+                    MultilineComment,
+                    lex_terminal!(SlashStar, "/*"),
+                    lex_seq!(
+                        Content,
+                        lex_zero_or_more!(lex_choice!(
+                            lex_terminal!(NotStar, |&c: &char| c != '*'),
+                            lex_seq!(
+                                lex_one_or_more!(StarRepeated, lex_terminal!(Star, '*')),
+                                lex_terminal!(|&c: &char| c != '*' && c != '/')
+                            )
+                        )),
+                        lex_zero_or_more!(StarRepeated, lex_terminal!(Star, '*'))
+                    ),
+                    lex_terminal!(StarSlash, "*/")
+                )
+                .boxed(),
+            );
+        }
 
         // NamedArgument = «Identifier» ':' Expression ;
-        named_argument_parser.define(
-            seq!(
-                NamedArgument,
-                token!(identifier_parser),
-                terminal!(Colon, ":"),
-                rule!(expression_parser)
-            )
-            .boxed(),
-        );
+        {
+            named_argument_parser.define(
+                seq!(
+                    NamedArgument,
+                    token!(identifier_parser),
+                    terminal!(Colon, ":"),
+                    rule!(expression_parser)
+                )
+                .boxed(),
+            );
+        }
 
         // NamedArgumentList = '{' [ NamedArgument  { ',' NamedArgument } ] '}' ;
-        named_argument_list_parser.define(
-            delimited_by!(
-                NamedArgumentList,
-                terminal!(OpenBrace, "{"),
-                optional!(separated_by!(
-                    NamedArgumentRepeatedAndCommaRepeated,
-                    rule!(named_argument_parser),
-                    terminal!(Comma, ",")
-                )),
-                terminal!(CloseBrace, "}")
-            )
-            .boxed(),
-        );
+        {
+            named_argument_list_parser.define(
+                delimited_by!(
+                    NamedArgumentList,
+                    terminal!(OpenBrace, "{"),
+                    optional!(separated_by!(
+                        NamedArgumentRepeatedAndCommaRepeated,
+                        rule!(named_argument_parser),
+                        terminal!(Comma, ",")
+                    )),
+                    terminal!(CloseBrace, "}")
+                )
+                .boxed(),
+            );
+        }
 
         // NewExpression = 'new' IdentifierPath ArgumentList ;
-        new_expression_parser.define(
-            seq!(
-                NewExpression,
-                terminal!(New, "new"),
-                rule!(identifier_path_parser),
-                rule!(argument_list_parser)
-            )
-            .boxed(),
-        );
+        {
+            new_expression_parser.define(
+                seq!(
+                    NewExpression,
+                    terminal!(New, "new"),
+                    rule!(identifier_path_parser),
+                    rule!(argument_list_parser)
+                )
+                .boxed(),
+            );
+        }
 
         // «NumberUnit» = 'days' | 'ether' | 'finney' | 'gwei' | 'hours' | 'minutes' | 'seconds' | 'szabo' | 'weeks' | 'wei' | 'years' ;
-        number_unit_parser.define(
-            lex_trie!(
-                trieleaf!(Days, "days"),
-                trieleaf!(Ether, "ether"),
-                trieleaf!(Finney, "finney"),
-                trieleaf!(Gwei, "gwei"),
-                trieleaf!(Hours, "hours"),
-                trieleaf!(Minutes, "minutes"),
-                trieprefix!(
-                    "s",
-                    [trieleaf!(Seconds, "econds"), trieleaf!(Szabo, "zabo")]
-                ),
-                trieprefix!("we", [trieleaf!(Weeks, "eks"), trieleaf!(Wei, "i")]),
-                trieleaf!(Years, "years")
-            )
-            .boxed(),
-        );
-
-        // «NumericLiteral» = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
-        numeric_literal_parser.define(
-            lex_seq!(
-                NumericLiteral,
-                lex_choice!(
-                    lex_rule!(decimal_number_parser),
-                    lex_rule!(hex_number_parser)
-                ),
-                lex_optional!(lex_trie!(
+        {
+            number_unit_parser.define(
+                lex_trie!(
                     trieleaf!(Days, "days"),
                     trieleaf!(Ether, "ether"),
                     trieleaf!(Finney, "finney"),
@@ -2372,1023 +2539,1235 @@ impl Parsers {
                     ),
                     trieprefix!("we", [trieleaf!(Weeks, "eks"), trieleaf!(Wei, "i")]),
                     trieleaf!(Years, "years")
-                ))
-            )
-            .boxed(),
-        );
+                )
+                .boxed(),
+            );
+        }
+
+        // «NumericLiteral» = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
+        {
+            numeric_literal_parser.define(
+                lex_seq!(
+                    NumericLiteral,
+                    lex_choice!(
+                        lex_rule!(decimal_number_parser),
+                        lex_rule!(hex_number_parser)
+                    ),
+                    lex_optional!(lex_trie!(
+                        trieleaf!(Days, "days"),
+                        trieleaf!(Ether, "ether"),
+                        trieleaf!(Finney, "finney"),
+                        trieleaf!(Gwei, "gwei"),
+                        trieleaf!(Hours, "hours"),
+                        trieleaf!(Minutes, "minutes"),
+                        trieprefix!(
+                            "s",
+                            [trieleaf!(Seconds, "econds"), trieleaf!(Szabo, "zabo")]
+                        ),
+                        trieprefix!("we", [trieleaf!(Weeks, "eks"), trieleaf!(Wei, "i")]),
+                        trieleaf!(Years, "years")
+                    ))
+                )
+                .boxed(),
+            );
+        }
 
         // OrExpression = Expression '||' Expression ;
-        or_expression_parser.define(
-            left_associative_binary_expression!(
-                OrExpression,
-                and_expression_parser,
-                terminal!(PipePipe, "||")
-            )
-            .boxed(),
-        );
+        {
+            or_expression_parser.define(
+                left_associative_binary_expression!(
+                    OrExpression,
+                    and_expression_parser,
+                    terminal!(PipePipe, "||")
+                )
+                .boxed(),
+            );
+        }
 
         // OrderComparisonExpression = Expression ( '<' | '>' | '<=' | '>=' ) Expression ;
-        order_comparison_expression_parser.define(
-            left_associative_binary_expression!(
-                OrderComparisonExpression,
-                bit_or_expression_parser,
-                choice!(
-                    terminal!(Less, "<"),
-                    terminal!(Greater, ">"),
-                    terminal!(LessEqual, "<="),
-                    terminal!(GreaterEqual, ">=")
+        {
+            order_comparison_expression_parser.define(
+                left_associative_binary_expression!(
+                    OrderComparisonExpression,
+                    bit_or_expression_parser,
+                    choice!(
+                        terminal!(Less, "<"),
+                        terminal!(Greater, ">"),
+                        terminal!(LessEqual, "<="),
+                        terminal!(GreaterEqual, ">=")
+                    )
                 )
-            )
-            .boxed(),
-        );
+                .boxed(),
+            );
+        }
 
         // OverrideSpecifier = 'override' [ '(' IdentifierPath  { ',' IdentifierPath } ')' ] ;
-        override_specifier_parser.define(
-            seq!(
-                OverrideSpecifier,
-                terminal!(Override, "override"),
-                optional!(delimited_by!(
-                    OpenParenAndIdentifierPathRepeatedAndCommaRepeatedAndCloseParen,
+        {
+            override_specifier_parser.define(
+                seq!(
+                    OverrideSpecifier,
+                    terminal!(Override, "override"),
+                    optional!(delimited_by!(
+                        OpenParenAndIdentifierPathRepeatedAndCommaRepeatedAndCloseParen,
+                        terminal!(OpenParen, "("),
+                        separated_by!(
+                            IdentifierPathRepeatedAndCommaRepeated,
+                            rule!(identifier_path_parser),
+                            terminal!(Comma, ",")
+                        ),
+                        terminal!(CloseParen, ")")
+                    ))
+                )
+                .boxed(),
+            );
+        }
+
+        // ParameterDeclaration = TypeName [ DataLocation ] [ «Identifier» ] ;
+        {
+            parameter_declaration_parser.define(
+                seq!(
+                    ParameterDeclaration,
+                    rule!(type_name_parser),
+                    optional!(rule!(data_location_parser)),
+                    optional!(token!(identifier_parser))
+                )
+                .boxed(),
+            );
+        }
+
+        // ParameterList = '(' [ ParameterDeclaration  { ',' ParameterDeclaration } ] ')' ;
+        {
+            parameter_list_parser.define(
+                delimited_by!(
+                    ParameterList,
+                    terminal!(OpenParen, "("),
+                    optional!(separated_by!(
+                        ParameterDeclarationRepeatedAndCommaRepeated,
+                        rule!(parameter_declaration_parser),
+                        terminal!(Comma, ",")
+                    )),
+                    terminal!(CloseParen, ")")
+                )
+                .boxed(),
+            );
+        }
+
+        // ParenthesisExpression = '(' [ Expression ]  { ',' [ Expression ] } ')' ;
+        {
+            parenthesis_expression_parser.define(
+                delimited_by!(
+                    ParenthesisExpression,
                     terminal!(OpenParen, "("),
                     separated_by!(
-                        IdentifierPathRepeatedAndCommaRepeated,
-                        rule!(identifier_path_parser),
+                        ExpressionRepeatedAndCommaRepeated,
+                        optional!(rule!(expression_parser)),
                         terminal!(Comma, ",")
                     ),
                     terminal!(CloseParen, ")")
-                ))
-            )
-            .boxed(),
-        );
-
-        // ParameterDeclaration = TypeName [ DataLocation ] [ «Identifier» ] ;
-        parameter_declaration_parser.define(
-            seq!(
-                ParameterDeclaration,
-                rule!(type_name_parser),
-                optional!(rule!(data_location_parser)),
-                optional!(token!(identifier_parser))
-            )
-            .boxed(),
-        );
-
-        // ParameterList = '(' [ ParameterDeclaration  { ',' ParameterDeclaration } ] ')' ;
-        parameter_list_parser.define(
-            delimited_by!(
-                ParameterList,
-                terminal!(OpenParen, "("),
-                optional!(separated_by!(
-                    ParameterDeclarationRepeatedAndCommaRepeated,
-                    rule!(parameter_declaration_parser),
-                    terminal!(Comma, ",")
-                )),
-                terminal!(CloseParen, ")")
-            )
-            .boxed(),
-        );
-
-        // ParenthesisExpression = '(' [ Expression ]  { ',' [ Expression ] } ')' ;
-        parenthesis_expression_parser.define(
-            delimited_by!(
-                ParenthesisExpression,
-                terminal!(OpenParen, "("),
-                separated_by!(
-                    ExpressionRepeatedAndCommaRepeated,
-                    optional!(rule!(expression_parser)),
-                    terminal!(Comma, ",")
-                ),
-                terminal!(CloseParen, ")")
-            )
-            .boxed(),
-        );
+                )
+                .boxed(),
+            );
+        }
 
         // PayableExpression = 'payable' ArgumentList ;
-        payable_expression_parser.define(
-            seq!(
-                PayableExpression,
-                terminal!(Payable, "payable"),
-                rule!(argument_list_parser)
-            )
-            .boxed(),
-        );
+        {
+            payable_expression_parser.define(
+                seq!(
+                    PayableExpression,
+                    terminal!(Payable, "payable"),
+                    rule!(argument_list_parser)
+                )
+                .boxed(),
+            );
+        }
 
         // PositionalArgumentList = Expression  { ',' Expression } ;
-        positional_argument_list_parser.define(
-            separated_by!(
-                PositionalArgumentList,
-                rule!(expression_parser),
-                terminal!(Comma, ",")
-            )
-            .boxed(),
-        );
+        {
+            positional_argument_list_parser.define(
+                separated_by!(
+                    PositionalArgumentList,
+                    rule!(expression_parser),
+                    terminal!(Comma, ",")
+                )
+                .boxed(),
+            );
+        }
 
         // «PossiblySeparatedPairsOfHexDigits» = 2…2*{ «HexCharacter» } { [ '_' ] 2…2*{ «HexCharacter» } } ;
-        possibly_separated_pairs_of_hex_digits_parser.define(
-            lex_seq!(
-                PossiblySeparatedPairsOfHexDigits,
-                lex_repeated!(
-                    lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
-                        || ('a' <= c && c <= 'f')
-                        || ('A' <= c && c <= 'F')),
-                    2usize,
-                    2usize
-                ),
-                lex_zero_or_more!(lex_seq!(
-                    lex_optional!(lex_terminal!(Underscore, '_')),
+        {
+            possibly_separated_pairs_of_hex_digits_parser.define(
+                lex_seq!(
+                    PossiblySeparatedPairsOfHexDigits,
                     lex_repeated!(
                         lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
                             || ('a' <= c && c <= 'f')
                             || ('A' <= c && c <= 'F')),
                         2usize,
                         2usize
-                    )
-                ))
-            )
-            .boxed(),
-        );
+                    ),
+                    lex_zero_or_more!(lex_seq!(
+                        lex_optional!(lex_terminal!(Underscore, '_')),
+                        lex_repeated!(
+                            lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                                || ('a' <= c && c <= 'f')
+                                || ('A' <= c && c <= 'F')),
+                            2usize,
+                            2usize
+                        )
+                    ))
+                )
+                .boxed(),
+            );
+        }
 
         // PragmaDirective = 'pragma' ( VersionPragmaSpecifier | ABICoderPragmaSpecifier | ExperimentalPragmaSpecifier ) ';' ;
-        pragma_directive_parser.define(
-            seq!(
-                PragmaDirective,
-                terminal!(Pragma, "pragma"),
-                choice!(
-                    rule!(version_pragma_specifier_parser),
-                    rule!(abi_coder_pragma_specifier_parser),
-                    rule!(experimental_pragma_specifier_parser)
-                ),
-                terminal!(Semicolon, ";")
-            )
-            .boxed(),
-        );
+        {
+            pragma_directive_parser.define(
+                seq!(
+                    PragmaDirective,
+                    terminal!(Pragma, "pragma"),
+                    choice!(
+                        rule!(version_pragma_specifier_parser),
+                        rule!(abi_coder_pragma_specifier_parser),
+                        rule!(experimental_pragma_specifier_parser)
+                    ),
+                    terminal!(Semicolon, ";")
+                )
+                .boxed(),
+            );
+        }
 
         // PrimaryExpression = PayableExpression | TypeExpression | NewExpression | ParenthesisExpression | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | «NumericLiteral» | «BooleanLiteral» | «Identifier» ;
-        primary_expression_parser.define(
-            choice!(
-                PrimaryExpression,
-                rule!(payable_expression_parser),
-                rule!(type_expression_parser),
-                rule!(new_expression_parser),
-                rule!(parenthesis_expression_parser),
-                rule!(array_literal_parser),
-                token!(ascii_string_literal_parser),
-                token!(unicode_string_literal_parser),
-                token!(hex_string_literal_parser),
-                token!(numeric_literal_parser),
-                token!(boolean_literal_parser),
-                token!(identifier_parser)
-            )
-            .boxed(),
-        );
+        {
+            primary_expression_parser.define(
+                choice!(
+                    PrimaryExpression,
+                    rule!(payable_expression_parser),
+                    rule!(type_expression_parser),
+                    rule!(new_expression_parser),
+                    rule!(parenthesis_expression_parser),
+                    rule!(array_literal_parser),
+                    token!(ascii_string_literal_parser),
+                    token!(unicode_string_literal_parser),
+                    token!(hex_string_literal_parser),
+                    token!(numeric_literal_parser),
+                    token!(boolean_literal_parser),
+                    token!(identifier_parser)
+                )
+                .boxed(),
+            );
+        }
 
         // «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;
-        raw_identifier_parser.define(
-            lex_seq!(
-                RawIdentifier,
-                lex_terminal!(|&c: &char| c == '_'
-                    || c == '$'
-                    || ('a' <= c && c <= 'z')
-                    || ('A' <= c && c <= 'Z')),
-                lex_zero_or_more!(lex_terminal!(|&c: &char| c == '_'
-                    || c == '$'
-                    || ('a' <= c && c <= 'z')
-                    || ('A' <= c && c <= 'Z')
-                    || ('0' <= c && c <= '9')))
-            )
-            .boxed(),
-        );
+        {
+            raw_identifier_parser.define(
+                lex_seq!(
+                    RawIdentifier,
+                    lex_terminal!(|&c: &char| c == '_'
+                        || c == '$'
+                        || ('a' <= c && c <= 'z')
+                        || ('A' <= c && c <= 'Z')),
+                    lex_zero_or_more!(lex_terminal!(|&c: &char| c == '_'
+                        || c == '$'
+                        || ('a' <= c && c <= 'z')
+                        || ('A' <= c && c <= 'Z')
+                        || ('0' <= c && c <= '9')))
+                )
+                .boxed(),
+            );
+        }
 
         // ReceiveFunctionAttribute = ModifierInvocation | OverrideSpecifier | 'external' | 'payable' | 'virtual' ;
-        receive_function_attribute_parser.define(
-            choice!(
-                ReceiveFunctionAttribute,
-                rule!(modifier_invocation_parser),
-                rule!(override_specifier_parser),
-                terminal!(External, "external"),
-                terminal!(Payable, "payable"),
-                terminal!(Virtual, "virtual")
-            )
-            .boxed(),
-        );
+        {
+            receive_function_attribute_parser.define(
+                choice!(
+                    ReceiveFunctionAttribute,
+                    rule!(modifier_invocation_parser),
+                    rule!(override_specifier_parser),
+                    terminal!(External, "external"),
+                    terminal!(Payable, "payable"),
+                    terminal!(Virtual, "virtual")
+                )
+                .boxed(),
+            );
+        }
 
         // ReceiveFunctionDefinition = 'receive' ParameterList { ReceiveFunctionAttribute } ( ';' | Block ) ;
-        receive_function_definition_parser.define(
-            seq!(
-                ReceiveFunctionDefinition,
-                terminal!(Receive, "receive"),
-                rule!(parameter_list_parser),
-                zero_or_more!(
-                    ReceiveFunctionAttributeRepeated,
-                    rule!(receive_function_attribute_parser)
-                ),
-                choice!(terminal!(Semicolon, ";"), rule!(block_parser))
-            )
-            .boxed(),
-        );
+        {
+            receive_function_definition_parser.define(
+                seq!(
+                    ReceiveFunctionDefinition,
+                    terminal!(Receive, "receive"),
+                    rule!(parameter_list_parser),
+                    zero_or_more!(
+                        ReceiveFunctionAttributeRepeated,
+                        rule!(receive_function_attribute_parser)
+                    ),
+                    choice!(terminal!(Semicolon, ";"), rule!(block_parser))
+                )
+                .boxed(),
+            );
+        }
 
         // «ReservedKeyword» = 'after' | 'alias' | 'apply' | 'auto' | 'byte' | 'case' | 'copyof' | 'default' | 'define' | 'final' | 'implements' | 'in' | 'inline' | 'let' | 'macro' | 'match' | 'mutable' | 'null' | 'of' | 'partial' | 'promise' | 'reference' | 'relocatable' | 'sealed' | 'sizeof' | 'static' | 'supports' | 'switch' | 'typedef' | 'typeof' | 'var' ;
-        reserved_keyword_parser.define(
-            lex_trie!(
-                trieprefix!(
-                    "a",
-                    [
-                        trieleaf!(After, "fter"),
-                        trieleaf!(Alias, "lias"),
-                        trieleaf!(Apply, "pply"),
-                        trieleaf!(Auto, "uto")
-                    ]
-                ),
-                trieleaf!(Byte, "byte"),
-                trieprefix!("c", [trieleaf!(Case, "ase"), trieleaf!(Copyof, "opyof")]),
-                trieprefix!(
-                    "def",
-                    [trieleaf!(Default, "ault"), trieleaf!(Define, "ine")]
-                ),
-                trieleaf!(Final, "final"),
-                trieprefix!(
-                    "i",
-                    [
-                        trieleaf!(Implements, "mplements"),
-                        trieprefix!("n", [trieleaf!(Inline, "line"), trieleaf!(In)])
-                    ]
-                ),
-                trieleaf!(Let, "let"),
-                trieprefix!(
-                    "m",
-                    [
-                        trieprefix!("a", [trieleaf!(Macro, "cro"), trieleaf!(Match, "tch")]),
-                        trieleaf!(Mutable, "utable")
-                    ]
-                ),
-                trieleaf!(Null, "null"),
-                trieleaf!(Of, "of"),
-                trieprefix!(
-                    "p",
-                    [trieleaf!(Partial, "artial"), trieleaf!(Promise, "romise")]
-                ),
-                trieprefix!(
-                    "re",
-                    [
-                        trieleaf!(Reference, "ference"),
-                        trieleaf!(Relocatable, "locatable")
-                    ]
-                ),
-                trieprefix!(
-                    "s",
-                    [
-                        trieleaf!(Sealed, "ealed"),
-                        trieleaf!(Sizeof, "izeof"),
-                        trieleaf!(Static, "tatic"),
-                        trieleaf!(Supports, "upports"),
-                        trieleaf!(Switch, "witch")
-                    ]
-                ),
-                trieprefix!("type", [trieleaf!(Typedef, "def"), trieleaf!(Typeof, "of")]),
-                trieleaf!(Var, "var")
-            )
-            .boxed(),
-        );
+        {
+            reserved_keyword_parser.define(
+                lex_trie!(
+                    trieprefix!(
+                        "a",
+                        [
+                            trieleaf!(After, "fter"),
+                            trieleaf!(Alias, "lias"),
+                            trieleaf!(Apply, "pply"),
+                            trieleaf!(Auto, "uto")
+                        ]
+                    ),
+                    trieleaf!(Byte, "byte"),
+                    trieprefix!("c", [trieleaf!(Case, "ase"), trieleaf!(Copyof, "opyof")]),
+                    trieprefix!(
+                        "def",
+                        [trieleaf!(Default, "ault"), trieleaf!(Define, "ine")]
+                    ),
+                    trieleaf!(Final, "final"),
+                    trieprefix!(
+                        "i",
+                        [
+                            trieleaf!(Implements, "mplements"),
+                            trieprefix!("n", [trieleaf!(Inline, "line"), trieleaf!(In)])
+                        ]
+                    ),
+                    trieleaf!(Let, "let"),
+                    trieprefix!(
+                        "m",
+                        [
+                            trieprefix!("a", [trieleaf!(Macro, "cro"), trieleaf!(Match, "tch")]),
+                            trieleaf!(Mutable, "utable")
+                        ]
+                    ),
+                    trieleaf!(Null, "null"),
+                    trieleaf!(Of, "of"),
+                    trieprefix!(
+                        "p",
+                        [trieleaf!(Partial, "artial"), trieleaf!(Promise, "romise")]
+                    ),
+                    trieprefix!(
+                        "re",
+                        [
+                            trieleaf!(Reference, "ference"),
+                            trieleaf!(Relocatable, "locatable")
+                        ]
+                    ),
+                    trieprefix!(
+                        "s",
+                        [
+                            trieleaf!(Sealed, "ealed"),
+                            trieleaf!(Sizeof, "izeof"),
+                            trieleaf!(Static, "tatic"),
+                            trieleaf!(Supports, "upports"),
+                            trieleaf!(Switch, "witch")
+                        ]
+                    ),
+                    trieprefix!("type", [trieleaf!(Typedef, "def"), trieleaf!(Typeof, "of")]),
+                    trieleaf!(Var, "var")
+                )
+                .boxed(),
+            );
+        }
 
         // ReturnStatement = 'return' [ Expression ] ';' ;
-        return_statement_parser.define(
-            seq!(
-                ReturnStatement,
-                terminal!(Return, "return"),
-                optional!(rule!(expression_parser)),
-                terminal!(Semicolon, ";")
-            )
-            .boxed(),
-        );
+        {
+            return_statement_parser.define(
+                seq!(
+                    ReturnStatement,
+                    terminal!(Return, "return"),
+                    optional!(rule!(expression_parser)),
+                    terminal!(Semicolon, ";")
+                )
+                .boxed(),
+            );
+        }
 
         // RevertStatement = 'revert' [ IdentifierPath ] ArgumentList ';' ;
-        revert_statement_parser.define(
-            seq!(
-                RevertStatement,
-                terminal!(Revert, "revert"),
-                optional!(rule!(identifier_path_parser)),
-                rule!(argument_list_parser),
-                terminal!(Semicolon, ";")
-            )
-            .boxed(),
-        );
+        {
+            revert_statement_parser.define(
+                seq!(
+                    RevertStatement,
+                    terminal!(Revert, "revert"),
+                    optional!(rule!(identifier_path_parser)),
+                    rule!(argument_list_parser),
+                    terminal!(Semicolon, ";")
+                )
+                .boxed(),
+            );
+        }
 
         // SelectedImport = «Identifier» [ 'as' «Identifier» ] ;
-        selected_import_parser.define(
-            seq!(
-                SelectedImport,
-                token!(identifier_parser),
-                optional!(seq!(terminal!(As, "as"), token!(identifier_parser)))
-            )
-            .boxed(),
-        );
+        {
+            selected_import_parser.define(
+                seq!(
+                    SelectedImport,
+                    token!(identifier_parser),
+                    optional!(seq!(terminal!(As, "as"), token!(identifier_parser)))
+                )
+                .boxed(),
+            );
+        }
 
         // SelectingImportDirective = '{' SelectedImport  { ',' SelectedImport } '}' 'from' ImportPath ;
-        selecting_import_directive_parser.define(
-            seq!(
-                SelectingImportDirective,
-                delimited_by!(
-                    OpenBraceAndSelectedImportRepeatedAndCommaRepeatedAndCloseBrace,
-                    terminal!(OpenBrace, "{"),
-                    separated_by!(
-                        SelectedImportRepeatedAndCommaRepeated,
-                        rule!(selected_import_parser),
-                        terminal!(Comma, ",")
-                    ),
-                    terminal!(CloseBrace, "}")
-                ),
-                terminal!(From, "from"),
-                rule!(import_path_parser)
-            )
-            .boxed(),
-        );
-
-        // ShiftExpression = Expression ( '<<' | '>>' | '>>>' ) Expression ;
-        shift_expression_parser.define(
-            left_associative_binary_expression!(
-                ShiftExpression,
-                add_sub_expression_parser,
-                choice!(
-                    terminal!(LessLess, "<<"),
-                    terminal!(GreaterGreater, ">>"),
-                    terminal!(GreaterGreaterGreater, ">>>")
-                )
-            )
-            .boxed(),
-        );
-
-        // «SignedFixedType» = 'fixed' [ 1…*{ '0'…'9' } 'x' 1…*{ '0'…'9' } ] ;
-        signed_fixed_type_parser.define(
-            lex_seq!(
-                SignedFixedType,
-                lex_terminal!(Fixed, "fixed"),
-                lex_optional!(lex_seq!(
-                    lex_one_or_more!(lex_terminal!(|&c: &char| ('0' <= c && c <= '9'))),
-                    lex_terminal!(LatinSmallLetterX, 'x'),
-                    lex_one_or_more!(lex_terminal!(|&c: &char| ('0' <= c && c <= '9')))
-                ))
-            )
-            .boxed(),
-        );
-
-        // «SignedIntegerType» = 'int' [ '8' | '16' | '24' | '32' | '40' | '48' | '56' | '64' | '72' | '80' | '88' | '96' | '104' | '112' | '120' | '128' | '136' | '144' | '152' | '160' | '168' | '176' | '184' | '192' | '200' | '208' | '216' | '224' | '232' | '240' | '248' | '256' ] ;
-        signed_integer_type_parser.define(
-            lex_seq!(
-                SignedIntegerType,
-                lex_terminal!(Int, "int"),
-                lex_optional!(lex_trie!(
-                    trieprefix!(
-                        "1",
-                        [
-                            trieleaf!(OneZeroFour, "04"),
-                            trieleaf!(OneOneTwo, "12"),
-                            trieprefix!(
-                                "2",
-                                [trieleaf!(OneTwoZero, "0"), trieleaf!(OneTwoEight, "8")]
-                            ),
-                            trieleaf!(OneThreeSix, "36"),
-                            trieleaf!(OneFourFour, "44"),
-                            trieleaf!(OneFiveTwo, "52"),
-                            trieprefix!(
-                                "6",
-                                [
-                                    trieleaf!(OneSixZero, "0"),
-                                    trieleaf!(OneSixEight, "8"),
-                                    trieleaf!(OneSix)
-                                ]
-                            ),
-                            trieleaf!(OneSevenSix, "76"),
-                            trieleaf!(OneEightFour, "84"),
-                            trieleaf!(OneNineTwo, "92")
-                        ]
-                    ),
-                    trieprefix!(
-                        "2",
-                        [
-                            trieprefix!(
-                                "0",
-                                [trieleaf!(TwoZeroZero, "0"), trieleaf!(TwoZeroEight, "8")]
-                            ),
-                            trieleaf!(TwoOneSix, "16"),
-                            trieleaf!(TwoTwoFour, "24"),
-                            trieleaf!(TwoThreeTwo, "32"),
-                            trieprefix!(
-                                "4",
-                                [
-                                    trieleaf!(TwoFourZero, "0"),
-                                    trieleaf!(TwoFourEight, "8"),
-                                    trieleaf!(TwoFour)
-                                ]
-                            ),
-                            trieleaf!(TwoFiveSix, "56")
-                        ]
-                    ),
-                    trieleaf!(ThreeTwo, "32"),
-                    trieprefix!("4", [trieleaf!(FourZero, "0"), trieleaf!(FourEight, "8")]),
-                    trieleaf!(FiveSix, "56"),
-                    trieleaf!(SixFour, "64"),
-                    trieleaf!(SevenTwo, "72"),
-                    trieprefix!(
-                        "8",
-                        [
-                            trieleaf!(EightZero, "0"),
-                            trieleaf!(EightEight, "8"),
-                            trieleaf!(Eight)
-                        ]
-                    ),
-                    trieleaf!(NineSix, "96")
-                ))
-            )
-            .boxed(),
-        );
-
-        // SimpleImportDirective = ImportPath { 'as' «Identifier» } ;
-        simple_import_directive_parser.define(
-            seq!(
-                SimpleImportDirective,
-                rule!(import_path_parser),
-                zero_or_more!(seq!(terminal!(As, "as"), token!(identifier_parser)))
-            )
-            .boxed(),
-        );
-
-        // SimpleStatement = TupleDeconstructionStatement | VariableDeclarationStatement | ExpressionStatement ;
-        simple_statement_parser.define(
-            choice!(
-                SimpleStatement,
-                rule!(tuple_deconstruction_statement_parser),
-                rule!(variable_declaration_statement_parser),
-                rule!(expression_statement_parser)
-            )
-            .boxed(),
-        );
-
-        // «SingleLineComment» = '//' { ¬( '\u{d}' | '\u{a}' ) } ;
-        single_line_comment_parser.define(
-            lex_seq!(
-                SingleLineComment,
-                lex_terminal!(SlashSlash, "//"),
-                lex_zero_or_more!(lex_terminal!(|&c: &char| c != '\r' && c != '\n'))
-            )
-            .boxed(),
-        );
-
-        // «SingleQuotedAsciiStringLiteral» = '\'' { 1…*{ '\u{20}'…'~' - ( '\'' | '\\' ) } | «EscapeSequence» } '\'' ;
-        single_quoted_ascii_string_literal_parser.define(
-            lex_seq!(
-                SingleQuotedAsciiStringLiteral,
-                lex_terminal!(Quote, "'"),
-                lex_zero_or_more!(
-                    RunRepeated,
-                    lex_choice!(
-                        Run,
-                        lex_one_or_more!(
-                            CharRepeated,
-                            lex_terminal!(Char, |&c: &char| (' ' <= c && c <= '~')
-                                && c != '\''
-                                && c != '\\')
-                        ),
-                        lex_rule!(escape_sequence_parser)
-                    )
-                ),
-                lex_terminal!(Quote, "'")
-            )
-            .boxed(),
-        );
-
-        // «SingleQuotedUnicodeStringLiteral» = 'unicode\'' { 1…*{ ¬( '\'' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '\'' ;
-        single_quoted_unicode_string_literal_parser.define(
-            lex_seq!(
-                SingleQuotedUnicodeStringLiteral,
-                lex_terminal!(UnicodeQuote, "unicode'"),
-                lex_zero_or_more!(
-                    RunRepeated,
-                    lex_choice!(
-                        Run,
-                        lex_one_or_more!(
-                            CharRepeated,
-                            lex_terminal!(Char, |&c: &char| c != '\''
-                                && c != '\\'
-                                && c != '\n'
-                                && c != '\r')
-                        ),
-                        lex_rule!(escape_sequence_parser)
-                    )
-                ),
-                lex_terminal!(Quote, "'")
-            )
-            .boxed(),
-        );
-
-        // SourceUnit = LeadingTrivia { Directive | Definition } EndOfFileTrivia ;
-        source_unit_parser.define(
-            seq!(
-                SourceUnit,
-                rule!(leading_trivia_parser),
-                zero_or_more!(choice!(rule!(directive_parser), rule!(definition_parser))),
-                rule!(end_of_file_trivia_parser)
-            )
-            .boxed(),
-        );
-
-        // StarImportDirective = '*' 'as' «Identifier» 'from' ImportPath ;
-        star_import_directive_parser.define(
-            seq!(
-                StarImportDirective,
-                terminal!(Star, "*"),
-                terminal!(As, "as"),
-                token!(identifier_parser),
-                terminal!(From, "from"),
-                rule!(import_path_parser)
-            )
-            .boxed(),
-        );
-
-        // StateVariableAttribute = OverrideSpecifier | 'constant' | 'immutable' | 'internal' | 'private' | 'public' ;
-        state_variable_attribute_parser.define(
-            choice!(
-                StateVariableAttribute,
-                rule!(override_specifier_parser),
-                terminal!(Constant, "constant"),
-                terminal!(Immutable, "immutable"),
-                terminal!(Internal, "internal"),
-                terminal!(Private, "private"),
-                terminal!(Public, "public")
-            )
-            .boxed(),
-        );
-
-        // StateVariableDeclaration = TypeName { StateVariableAttribute } «Identifier» [ '=' Expression ] ';' ;
-        state_variable_declaration_parser.define(
-            seq!(
-                StateVariableDeclaration,
-                rule!(type_name_parser),
-                zero_or_more!(
-                    StateVariableAttributeRepeated,
-                    rule!(state_variable_attribute_parser)
-                ),
-                token!(identifier_parser),
-                optional!(seq!(terminal!(Equal, "="), rule!(expression_parser))),
-                terminal!(Semicolon, ";")
-            )
-            .boxed(),
-        );
-
-        // Statement = Block | SimpleStatement | IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | TryStatement | ReturnStatement | EmitStatement | RevertStatement | DeleteStatement | AssemblyStatement ;
-        statement_parser.define(
-            choice!(
-                Statement,
-                rule!(block_parser),
-                rule!(simple_statement_parser),
-                rule!(if_statement_parser),
-                rule!(for_statement_parser),
-                rule!(while_statement_parser),
-                rule!(do_while_statement_parser),
-                rule!(continue_statement_parser),
-                rule!(break_statement_parser),
-                rule!(try_statement_parser),
-                rule!(return_statement_parser),
-                rule!(emit_statement_parser),
-                rule!(revert_statement_parser),
-                rule!(delete_statement_parser),
-                rule!(assembly_statement_parser)
-            )
-            .boxed(),
-        );
-
-        // StructDefinition = 'struct' «Identifier» '{' 1…*{ StructMember } '}' ;
-        struct_definition_parser.define(
-            seq!(
-                StructDefinition,
-                terminal!(Struct, "struct"),
-                token!(identifier_parser),
-                delimited_by!(
-                    OpenBraceAndStructMemberRepeatedAndCloseBrace,
-                    terminal!(OpenBrace, "{"),
-                    one_or_more!(StructMemberRepeated, rule!(struct_member_parser)),
-                    terminal!(CloseBrace, "}")
-                )
-            )
-            .boxed(),
-        );
-
-        // StructMember = TypeName «Identifier» ';' ;
-        struct_member_parser.define(
-            seq!(
-                StructMember,
-                rule!(type_name_parser),
-                token!(identifier_parser),
-                terminal!(Semicolon, ";")
-            )
-            .boxed(),
-        );
-
-        // TrailingTrivia = [ { «Whitespace» | «MultilineComment» } ( «EndOfLine» | «SingleLineComment» ) ] ;
-        trailing_trivia_parser.define(
-            optional!(seq!(
-                zero_or_more!(choice!(
-                    trivia_token!(whitespace_parser),
-                    trivia_token!(multiline_comment_parser)
-                )),
-                choice!(
-                    trivia_token!(end_of_line_parser),
-                    trivia_token!(single_line_comment_parser)
-                )
-            ))
-            .boxed(),
-        );
-
-        // TryStatement = 'try' Expression [ 'returns' ParameterList ] Block 1…*{ CatchClause } ;
-        try_statement_parser.define(
-            seq!(
-                TryStatement,
-                terminal!(Try, "try"),
-                rule!(expression_parser),
-                optional!(seq!(
-                    terminal!(Returns, "returns"),
-                    rule!(parameter_list_parser)
-                )),
-                rule!(block_parser),
-                one_or_more!(CatchClauseRepeated, rule!(catch_clause_parser))
-            )
-            .boxed(),
-        );
-
-        // TupleDeconstructionStatement = '(' [ [ [ TypeName ] «Identifier» ]  { ',' [ [ TypeName ] «Identifier» ] } ] ')' '=' Expression ';' ;
-        tuple_deconstruction_statement_parser.define(
-            seq!(
-                TupleDeconstructionStatement,
-                delimited_by!(
-                    terminal!(OpenParen, "("),
-                    optional!(separated_by!(
-                        optional!(seq!(
-                            optional!(rule!(type_name_parser)),
-                            token!(identifier_parser)
-                        )),
-                        terminal!(Comma, ",")
-                    )),
-                    terminal!(CloseParen, ")")
-                ),
-                terminal!(Equal, "="),
-                rule!(expression_parser),
-                terminal!(Semicolon, ";")
-            )
-            .boxed(),
-        );
-
-        // TypeExpression = 'type' '(' TypeName ')' ;
-        type_expression_parser.define(
-            seq!(
-                TypeExpression,
-                terminal!(Type, "type"),
-                delimited_by!(
-                    OpenParenAndTypeNameAndCloseParen,
-                    terminal!(OpenParen, "("),
-                    rule!(type_name_parser),
-                    terminal!(CloseParen, ")")
-                )
-            )
-            .boxed(),
-        );
-
-        // TypeName = ( ElementaryType | FunctionType | MappingType | IdentifierPath ) { '[' [ Expression ] ']' } ;
-        type_name_parser.define(
-            seq!(
-                TypeName,
-                choice!(
-                    rule!(elementary_type_parser),
-                    rule!(function_type_parser),
-                    rule!(mapping_type_parser),
-                    rule!(identifier_path_parser)
-                ),
-                zero_or_more!(
-                    OpenBracketAndExpressionAndCloseBracketRepeated,
+        {
+            selecting_import_directive_parser.define(
+                seq!(
+                    SelectingImportDirective,
                     delimited_by!(
-                        OpenBracketAndExpressionAndCloseBracket,
-                        terminal!(OpenBracket, "["),
-                        optional!(rule!(expression_parser)),
-                        terminal!(CloseBracket, "]")
-                    )
-                )
-            )
-            .boxed(),
-        );
-
-        // UnaryPrefixExpression = ( '++' | '--' | '!' | '~' | '-' ) Expression ;
-        unary_prefix_expression_parser.define(
-            unary_prefix_expression!(
-                UnaryPrefixExpression,
-                function_call_expression_parser,
-                choice!(
-                    terminal!(PlusPlus, "++"),
-                    terminal!(MinusMinus, "--"),
-                    terminal!(Bang, "!"),
-                    terminal!(Tilde, "~"),
-                    terminal!(Minus, "-")
-                )
-            )
-            .boxed(),
-        );
-
-        // UnarySuffixExpression = Expression ( '++' | '--' ) ;
-        unary_suffix_expression_parser.define(
-            unary_suffix_expression!(
-                UnarySuffixExpression,
-                unary_prefix_expression_parser,
-                choice!(terminal!(PlusPlus, "++"), terminal!(MinusMinus, "--"))
-            )
-            .boxed(),
-        );
-
-        // UncheckedBlock = 'unchecked' Block ;
-        unchecked_block_parser.define(
-            seq!(
-                UncheckedBlock,
-                terminal!(Unchecked, "unchecked"),
-                rule!(block_parser)
-            )
-            .boxed(),
-        );
-
-        // «UnicodeEscape» = 'u' 4…4*{ «HexCharacter» } ;
-        unicode_escape_parser.define(
-            lex_seq!(
-                UnicodeEscape,
-                lex_terminal!(LatinSmallLetterU, 'u'),
-                lex_repeated!(
-                    lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
-                        || ('a' <= c && c <= 'f')
-                        || ('A' <= c && c <= 'F')),
-                    4usize,
-                    4usize
-                )
-            )
-            .boxed(),
-        );
-
-        // «UnicodeStringLiteral» = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral» ;
-        unicode_string_literal_parser.define(
-            lex_choice!(
-                UnicodeStringLiteral,
-                lex_rule!(single_quoted_unicode_string_literal_parser),
-                lex_rule!(double_quoted_unicode_string_literal_parser)
-            )
-            .boxed(),
-        );
-
-        // «UnsignedFixedType» = 'u' «SignedFixedType» ;
-        unsigned_fixed_type_parser.define(
-            lex_seq!(
-                UnsignedFixedType,
-                lex_terminal!(LatinSmallLetterU, 'u'),
-                lex_rule!(signed_fixed_type_parser)
-            )
-            .boxed(),
-        );
-
-        // «UnsignedIntegerType» = 'u' «SignedIntegerType» ;
-        unsigned_integer_type_parser.define(
-            lex_seq!(
-                UnsignedIntegerType,
-                lex_terminal!(LatinSmallLetterU, 'u'),
-                lex_rule!(signed_integer_type_parser)
-            )
-            .boxed(),
-        );
-
-        // UserDefinedValueTypeDefinition = 'type' «Identifier» 'is' ElementaryType ';' ;
-        user_defined_value_type_definition_parser.define(
-            seq!(
-                UserDefinedValueTypeDefinition,
-                terminal!(Type, "type"),
-                token!(identifier_parser),
-                terminal!(Is, "is"),
-                rule!(elementary_type_parser),
-                terminal!(Semicolon, ";")
-            )
-            .boxed(),
-        );
-
-        // UsingDirective = 'using' ( IdentifierPath | '{' IdentifierPath  { ',' IdentifierPath } '}' ) 'for' ( '*' | TypeName ) [ 'global' ] ';' ;
-        using_directive_parser.define(
-            seq!(
-                UsingDirective,
-                terminal!(Using, "using"),
-                choice!(
-                    rule!(identifier_path_parser),
-                    delimited_by!(
-                        OpenBraceAndIdentifierPathRepeatedAndCommaRepeatedAndCloseBrace,
+                        OpenBraceAndSelectedImportRepeatedAndCommaRepeatedAndCloseBrace,
                         terminal!(OpenBrace, "{"),
                         separated_by!(
-                            IdentifierPathRepeatedAndCommaRepeated,
-                            rule!(identifier_path_parser),
+                            SelectedImportRepeatedAndCommaRepeated,
+                            rule!(selected_import_parser),
                             terminal!(Comma, ",")
                         ),
                         terminal!(CloseBrace, "}")
+                    ),
+                    terminal!(From, "from"),
+                    rule!(import_path_parser)
+                )
+                .boxed(),
+            );
+        }
+
+        // ShiftExpression = Expression ( '<<' | '>>' | '>>>' ) Expression ;
+        {
+            shift_expression_parser.define(
+                left_associative_binary_expression!(
+                    ShiftExpression,
+                    add_sub_expression_parser,
+                    choice!(
+                        terminal!(LessLess, "<<"),
+                        terminal!(GreaterGreater, ">>"),
+                        terminal!(GreaterGreaterGreater, ">>>")
                     )
-                ),
-                terminal!(For, "for"),
-                choice!(terminal!(Star, "*"), rule!(type_name_parser)),
-                optional!(terminal!(Global, "global")),
-                terminal!(Semicolon, ";")
-            )
-            .boxed(),
-        );
+                )
+                .boxed(),
+            );
+        }
+
+        // «SignedFixedType» = 'fixed' [ 1…*{ '0'…'9' } 'x' 1…*{ '0'…'9' } ] ;
+        {
+            signed_fixed_type_parser.define(
+                lex_seq!(
+                    SignedFixedType,
+                    lex_terminal!(Fixed, "fixed"),
+                    lex_optional!(lex_seq!(
+                        lex_one_or_more!(lex_terminal!(|&c: &char| ('0' <= c && c <= '9'))),
+                        lex_terminal!(LatinSmallLetterX, 'x'),
+                        lex_one_or_more!(lex_terminal!(|&c: &char| ('0' <= c && c <= '9')))
+                    ))
+                )
+                .boxed(),
+            );
+        }
+
+        // «SignedIntegerType» = 'int' [ '8' | '16' | '24' | '32' | '40' | '48' | '56' | '64' | '72' | '80' | '88' | '96' | '104' | '112' | '120' | '128' | '136' | '144' | '152' | '160' | '168' | '176' | '184' | '192' | '200' | '208' | '216' | '224' | '232' | '240' | '248' | '256' ] ;
+        {
+            signed_integer_type_parser.define(
+                lex_seq!(
+                    SignedIntegerType,
+                    lex_terminal!(Int, "int"),
+                    lex_optional!(lex_trie!(
+                        trieprefix!(
+                            "1",
+                            [
+                                trieleaf!(OneZeroFour, "04"),
+                                trieleaf!(OneOneTwo, "12"),
+                                trieprefix!(
+                                    "2",
+                                    [trieleaf!(OneTwoZero, "0"), trieleaf!(OneTwoEight, "8")]
+                                ),
+                                trieleaf!(OneThreeSix, "36"),
+                                trieleaf!(OneFourFour, "44"),
+                                trieleaf!(OneFiveTwo, "52"),
+                                trieprefix!(
+                                    "6",
+                                    [
+                                        trieleaf!(OneSixZero, "0"),
+                                        trieleaf!(OneSixEight, "8"),
+                                        trieleaf!(OneSix)
+                                    ]
+                                ),
+                                trieleaf!(OneSevenSix, "76"),
+                                trieleaf!(OneEightFour, "84"),
+                                trieleaf!(OneNineTwo, "92")
+                            ]
+                        ),
+                        trieprefix!(
+                            "2",
+                            [
+                                trieprefix!(
+                                    "0",
+                                    [trieleaf!(TwoZeroZero, "0"), trieleaf!(TwoZeroEight, "8")]
+                                ),
+                                trieleaf!(TwoOneSix, "16"),
+                                trieleaf!(TwoTwoFour, "24"),
+                                trieleaf!(TwoThreeTwo, "32"),
+                                trieprefix!(
+                                    "4",
+                                    [
+                                        trieleaf!(TwoFourZero, "0"),
+                                        trieleaf!(TwoFourEight, "8"),
+                                        trieleaf!(TwoFour)
+                                    ]
+                                ),
+                                trieleaf!(TwoFiveSix, "56")
+                            ]
+                        ),
+                        trieleaf!(ThreeTwo, "32"),
+                        trieprefix!("4", [trieleaf!(FourZero, "0"), trieleaf!(FourEight, "8")]),
+                        trieleaf!(FiveSix, "56"),
+                        trieleaf!(SixFour, "64"),
+                        trieleaf!(SevenTwo, "72"),
+                        trieprefix!(
+                            "8",
+                            [
+                                trieleaf!(EightZero, "0"),
+                                trieleaf!(EightEight, "8"),
+                                trieleaf!(Eight)
+                            ]
+                        ),
+                        trieleaf!(NineSix, "96")
+                    ))
+                )
+                .boxed(),
+            );
+        }
+
+        // SimpleImportDirective = ImportPath { 'as' «Identifier» } ;
+        {
+            simple_import_directive_parser.define(
+                seq!(
+                    SimpleImportDirective,
+                    rule!(import_path_parser),
+                    zero_or_more!(seq!(terminal!(As, "as"), token!(identifier_parser)))
+                )
+                .boxed(),
+            );
+        }
+
+        // SimpleStatement = TupleDeconstructionStatement | VariableDeclarationStatement | ExpressionStatement ;
+        {
+            simple_statement_parser.define(
+                choice!(
+                    SimpleStatement,
+                    rule!(tuple_deconstruction_statement_parser),
+                    rule!(variable_declaration_statement_parser),
+                    rule!(expression_statement_parser)
+                )
+                .boxed(),
+            );
+        }
+
+        // «SingleLineComment» = '//' { ¬( '\u{d}' | '\u{a}' ) } ;
+        {
+            single_line_comment_parser.define(
+                lex_seq!(
+                    SingleLineComment,
+                    lex_terminal!(SlashSlash, "//"),
+                    lex_zero_or_more!(lex_terminal!(|&c: &char| c != '\r' && c != '\n'))
+                )
+                .boxed(),
+            );
+        }
+
+        // «SingleQuotedAsciiStringLiteral» = '\'' { 1…*{ '\u{20}'…'~' - ( '\'' | '\\' ) } | «EscapeSequence» } '\'' ;
+        {
+            single_quoted_ascii_string_literal_parser.define(
+                lex_seq!(
+                    SingleQuotedAsciiStringLiteral,
+                    lex_terminal!(Quote, "'"),
+                    lex_zero_or_more!(
+                        RunRepeated,
+                        lex_choice!(
+                            Run,
+                            lex_one_or_more!(
+                                CharRepeated,
+                                lex_terminal!(Char, |&c: &char| (' ' <= c && c <= '~')
+                                    && c != '\''
+                                    && c != '\\')
+                            ),
+                            lex_rule!(escape_sequence_parser)
+                        )
+                    ),
+                    lex_terminal!(Quote, "'")
+                )
+                .boxed(),
+            );
+        }
+
+        // «SingleQuotedUnicodeStringLiteral» = 'unicode\'' { 1…*{ ¬( '\'' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '\'' ;
+        {
+            single_quoted_unicode_string_literal_parser.define(
+                lex_seq!(
+                    SingleQuotedUnicodeStringLiteral,
+                    lex_terminal!(UnicodeQuote, "unicode'"),
+                    lex_zero_or_more!(
+                        RunRepeated,
+                        lex_choice!(
+                            Run,
+                            lex_one_or_more!(
+                                CharRepeated,
+                                lex_terminal!(Char, |&c: &char| c != '\''
+                                    && c != '\\'
+                                    && c != '\n'
+                                    && c != '\r')
+                            ),
+                            lex_rule!(escape_sequence_parser)
+                        )
+                    ),
+                    lex_terminal!(Quote, "'")
+                )
+                .boxed(),
+            );
+        }
+
+        // SourceUnit = LeadingTrivia { Directive | Definition } EndOfFileTrivia ;
+        {
+            source_unit_parser.define(
+                seq!(
+                    SourceUnit,
+                    rule!(leading_trivia_parser),
+                    zero_or_more!(choice!(rule!(directive_parser), rule!(definition_parser))),
+                    rule!(end_of_file_trivia_parser)
+                )
+                .boxed(),
+            );
+        }
+
+        // StarImportDirective = '*' 'as' «Identifier» 'from' ImportPath ;
+        {
+            star_import_directive_parser.define(
+                seq!(
+                    StarImportDirective,
+                    terminal!(Star, "*"),
+                    terminal!(As, "as"),
+                    token!(identifier_parser),
+                    terminal!(From, "from"),
+                    rule!(import_path_parser)
+                )
+                .boxed(),
+            );
+        }
+
+        // StateVariableAttribute = OverrideSpecifier | 'constant' | 'immutable' | 'internal' | 'private' | 'public' ;
+        {
+            state_variable_attribute_parser.define(
+                choice!(
+                    StateVariableAttribute,
+                    rule!(override_specifier_parser),
+                    terminal!(Constant, "constant"),
+                    terminal!(Immutable, "immutable"),
+                    terminal!(Internal, "internal"),
+                    terminal!(Private, "private"),
+                    terminal!(Public, "public")
+                )
+                .boxed(),
+            );
+        }
+
+        // StateVariableDeclaration = TypeName { StateVariableAttribute } «Identifier» [ '=' Expression ] ';' ;
+        {
+            state_variable_declaration_parser.define(
+                seq!(
+                    StateVariableDeclaration,
+                    rule!(type_name_parser),
+                    zero_or_more!(
+                        StateVariableAttributeRepeated,
+                        rule!(state_variable_attribute_parser)
+                    ),
+                    token!(identifier_parser),
+                    optional!(seq!(terminal!(Equal, "="), rule!(expression_parser))),
+                    terminal!(Semicolon, ";")
+                )
+                .boxed(),
+            );
+        }
+
+        // Statement = Block | SimpleStatement | IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | TryStatement | ReturnStatement | EmitStatement | RevertStatement | DeleteStatement | AssemblyStatement ;
+        {
+            statement_parser.define(
+                choice!(
+                    Statement,
+                    rule!(block_parser),
+                    rule!(simple_statement_parser),
+                    rule!(if_statement_parser),
+                    rule!(for_statement_parser),
+                    rule!(while_statement_parser),
+                    rule!(do_while_statement_parser),
+                    rule!(continue_statement_parser),
+                    rule!(break_statement_parser),
+                    rule!(try_statement_parser),
+                    rule!(return_statement_parser),
+                    rule!(emit_statement_parser),
+                    rule!(revert_statement_parser),
+                    rule!(delete_statement_parser),
+                    rule!(assembly_statement_parser)
+                )
+                .boxed(),
+            );
+        }
+
+        // StructDefinition = 'struct' «Identifier» '{' 1…*{ StructMember } '}' ;
+        {
+            struct_definition_parser.define(
+                seq!(
+                    StructDefinition,
+                    terminal!(Struct, "struct"),
+                    token!(identifier_parser),
+                    delimited_by!(
+                        OpenBraceAndStructMemberRepeatedAndCloseBrace,
+                        terminal!(OpenBrace, "{"),
+                        one_or_more!(StructMemberRepeated, rule!(struct_member_parser)),
+                        terminal!(CloseBrace, "}")
+                    )
+                )
+                .boxed(),
+            );
+        }
+
+        // StructMember = TypeName «Identifier» ';' ;
+        {
+            struct_member_parser.define(
+                seq!(
+                    StructMember,
+                    rule!(type_name_parser),
+                    token!(identifier_parser),
+                    terminal!(Semicolon, ";")
+                )
+                .boxed(),
+            );
+        }
+
+        // TrailingTrivia = [ { «Whitespace» | «MultilineComment» } ( «EndOfLine» | «SingleLineComment» ) ] ;
+        {
+            trailing_trivia_parser.define(
+                optional!(seq!(
+                    zero_or_more!(choice!(
+                        trivia_token!(whitespace_parser),
+                        trivia_token!(multiline_comment_parser)
+                    )),
+                    choice!(
+                        trivia_token!(end_of_line_parser),
+                        trivia_token!(single_line_comment_parser)
+                    )
+                ))
+                .boxed(),
+            );
+        }
+
+        // TryStatement = 'try' Expression [ 'returns' ParameterList ] Block 1…*{ CatchClause } ;
+        {
+            try_statement_parser.define(
+                seq!(
+                    TryStatement,
+                    terminal!(Try, "try"),
+                    rule!(expression_parser),
+                    optional!(seq!(
+                        terminal!(Returns, "returns"),
+                        rule!(parameter_list_parser)
+                    )),
+                    rule!(block_parser),
+                    one_or_more!(CatchClauseRepeated, rule!(catch_clause_parser))
+                )
+                .boxed(),
+            );
+        }
+
+        // TupleDeconstructionStatement = '(' [ [ [ TypeName ] «Identifier» ]  { ',' [ [ TypeName ] «Identifier» ] } ] ')' '=' Expression ';' ;
+        {
+            tuple_deconstruction_statement_parser.define(
+                seq!(
+                    TupleDeconstructionStatement,
+                    delimited_by!(
+                        terminal!(OpenParen, "("),
+                        optional!(separated_by!(
+                            optional!(seq!(
+                                optional!(rule!(type_name_parser)),
+                                token!(identifier_parser)
+                            )),
+                            terminal!(Comma, ",")
+                        )),
+                        terminal!(CloseParen, ")")
+                    ),
+                    terminal!(Equal, "="),
+                    rule!(expression_parser),
+                    terminal!(Semicolon, ";")
+                )
+                .boxed(),
+            );
+        }
+
+        // TypeExpression = 'type' '(' TypeName ')' ;
+        {
+            type_expression_parser.define(
+                seq!(
+                    TypeExpression,
+                    terminal!(Type, "type"),
+                    delimited_by!(
+                        OpenParenAndTypeNameAndCloseParen,
+                        terminal!(OpenParen, "("),
+                        rule!(type_name_parser),
+                        terminal!(CloseParen, ")")
+                    )
+                )
+                .boxed(),
+            );
+        }
+
+        // TypeName = ( ElementaryType | FunctionType | MappingType | IdentifierPath ) { '[' [ Expression ] ']' } ;
+        {
+            type_name_parser.define(
+                seq!(
+                    TypeName,
+                    choice!(
+                        rule!(elementary_type_parser),
+                        rule!(function_type_parser),
+                        rule!(mapping_type_parser),
+                        rule!(identifier_path_parser)
+                    ),
+                    zero_or_more!(
+                        OpenBracketAndExpressionAndCloseBracketRepeated,
+                        delimited_by!(
+                            OpenBracketAndExpressionAndCloseBracket,
+                            terminal!(OpenBracket, "["),
+                            optional!(rule!(expression_parser)),
+                            terminal!(CloseBracket, "]")
+                        )
+                    )
+                )
+                .boxed(),
+            );
+        }
+
+        // UnaryPrefixExpression = ( '++' | '--' | '!' | '~' | '-' ) Expression ;
+        {
+            unary_prefix_expression_parser.define(
+                unary_prefix_expression!(
+                    UnaryPrefixExpression,
+                    function_call_expression_parser,
+                    choice!(
+                        terminal!(PlusPlus, "++"),
+                        terminal!(MinusMinus, "--"),
+                        terminal!(Bang, "!"),
+                        terminal!(Tilde, "~"),
+                        terminal!(Minus, "-")
+                    )
+                )
+                .boxed(),
+            );
+        }
+
+        // UnarySuffixExpression = Expression ( '++' | '--' ) ;
+        {
+            unary_suffix_expression_parser.define(
+                unary_suffix_expression!(
+                    UnarySuffixExpression,
+                    unary_prefix_expression_parser,
+                    choice!(terminal!(PlusPlus, "++"), terminal!(MinusMinus, "--"))
+                )
+                .boxed(),
+            );
+        }
+
+        // UncheckedBlock = 'unchecked' Block ;
+        {
+            unchecked_block_parser.define(
+                seq!(
+                    UncheckedBlock,
+                    terminal!(Unchecked, "unchecked"),
+                    rule!(block_parser)
+                )
+                .boxed(),
+            );
+        }
+
+        // «UnicodeEscape» = 'u' 4…4*{ «HexCharacter» } ;
+        {
+            unicode_escape_parser.define(
+                lex_seq!(
+                    UnicodeEscape,
+                    lex_terminal!(LatinSmallLetterU, 'u'),
+                    lex_repeated!(
+                        lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                            || ('a' <= c && c <= 'f')
+                            || ('A' <= c && c <= 'F')),
+                        4usize,
+                        4usize
+                    )
+                )
+                .boxed(),
+            );
+        }
+
+        // «UnicodeStringLiteral» = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral» ;
+        {
+            unicode_string_literal_parser.define(
+                lex_choice!(
+                    UnicodeStringLiteral,
+                    lex_rule!(single_quoted_unicode_string_literal_parser),
+                    lex_rule!(double_quoted_unicode_string_literal_parser)
+                )
+                .boxed(),
+            );
+        }
+
+        // «UnsignedFixedType» = 'u' «SignedFixedType» ;
+        {
+            unsigned_fixed_type_parser.define(
+                lex_seq!(
+                    UnsignedFixedType,
+                    lex_terminal!(LatinSmallLetterU, 'u'),
+                    lex_rule!(signed_fixed_type_parser)
+                )
+                .boxed(),
+            );
+        }
+
+        // «UnsignedIntegerType» = 'u' «SignedIntegerType» ;
+        {
+            unsigned_integer_type_parser.define(
+                lex_seq!(
+                    UnsignedIntegerType,
+                    lex_terminal!(LatinSmallLetterU, 'u'),
+                    lex_rule!(signed_integer_type_parser)
+                )
+                .boxed(),
+            );
+        }
+
+        // UserDefinedValueTypeDefinition = 'type' «Identifier» 'is' ElementaryType ';' ;
+        {
+            user_defined_value_type_definition_parser.define(
+                seq!(
+                    UserDefinedValueTypeDefinition,
+                    terminal!(Type, "type"),
+                    token!(identifier_parser),
+                    terminal!(Is, "is"),
+                    rule!(elementary_type_parser),
+                    terminal!(Semicolon, ";")
+                )
+                .boxed(),
+            );
+        }
+
+        // UsingDirective = 'using' ( IdentifierPath | '{' IdentifierPath  { ',' IdentifierPath } '}' ) 'for' ( '*' | TypeName ) [ 'global' ] ';' ;
+        {
+            using_directive_parser.define(
+                seq!(
+                    UsingDirective,
+                    terminal!(Using, "using"),
+                    choice!(
+                        rule!(identifier_path_parser),
+                        delimited_by!(
+                            OpenBraceAndIdentifierPathRepeatedAndCommaRepeatedAndCloseBrace,
+                            terminal!(OpenBrace, "{"),
+                            separated_by!(
+                                IdentifierPathRepeatedAndCommaRepeated,
+                                rule!(identifier_path_parser),
+                                terminal!(Comma, ",")
+                            ),
+                            terminal!(CloseBrace, "}")
+                        )
+                    ),
+                    terminal!(For, "for"),
+                    choice!(terminal!(Star, "*"), rule!(type_name_parser)),
+                    optional!(terminal!(Global, "global")),
+                    terminal!(Semicolon, ";")
+                )
+                .boxed(),
+            );
+        }
 
         // VariableDeclarationStatement = TypeName [ DataLocation ] «Identifier» [ '=' Expression ] ';' ;
-        variable_declaration_statement_parser.define(
-            seq!(
-                VariableDeclarationStatement,
-                rule!(type_name_parser),
-                optional!(rule!(data_location_parser)),
-                token!(identifier_parser),
-                optional!(seq!(terminal!(Equal, "="), rule!(expression_parser))),
-                terminal!(Semicolon, ";")
-            )
-            .boxed(),
-        );
+        {
+            variable_declaration_statement_parser.define(
+                seq!(
+                    VariableDeclarationStatement,
+                    rule!(type_name_parser),
+                    optional!(rule!(data_location_parser)),
+                    token!(identifier_parser),
+                    optional!(seq!(terminal!(Equal, "="), rule!(expression_parser))),
+                    terminal!(Semicolon, ";")
+                )
+                .boxed(),
+            );
+        }
 
         // «VersionPragmaOperator» = '^' | '~' | '=' | '<' | '>' | '<=' | '>=' ;
-        version_pragma_operator_parser.define(
-            lex_trie!(
-                trieprefix!("<", [trieleaf!(LessEqual, "="), trieleaf!(Less)]),
-                trieleaf!(Equal, "="),
-                trieprefix!(">", [trieleaf!(GreaterEqual, "="), trieleaf!(Greater)]),
-                trieleaf!(Caret, "^"),
-                trieleaf!(Tilde, "~")
-            )
-            .boxed(),
-        );
+        {
+            version_pragma_operator_parser.define(
+                lex_trie!(
+                    trieprefix!("<", [trieleaf!(LessEqual, "="), trieleaf!(Less)]),
+                    trieleaf!(Equal, "="),
+                    trieprefix!(">", [trieleaf!(GreaterEqual, "="), trieleaf!(Greater)]),
+                    trieleaf!(Caret, "^"),
+                    trieleaf!(Tilde, "~")
+                )
+                .boxed(),
+            );
+        }
 
         // VersionPragmaSpecifier = 'solidity' 1…*{ «VersionPragmaOperator» «VersionPragmaValue» } ;
-        version_pragma_specifier_parser.define(
-            seq!(
-                VersionPragmaSpecifier,
-                terminal!(Solidity, "solidity"),
-                one_or_more!(seq!(
-                    token!(version_pragma_operator_parser),
-                    token!(version_pragma_value_parser)
-                ))
-            )
-            .boxed(),
-        );
+        {
+            version_pragma_specifier_parser.define(
+                seq!(
+                    VersionPragmaSpecifier,
+                    terminal!(Solidity, "solidity"),
+                    one_or_more!(seq!(
+                        token!(version_pragma_operator_parser),
+                        token!(version_pragma_value_parser)
+                    ))
+                )
+                .boxed(),
+            );
+        }
 
         // «VersionPragmaValue» = 1…*{ '0'…'9' | 'x' | 'X' | '*' }  { '.' 1…*{ '0'…'9' | 'x' | 'X' | '*' } } ;
-        version_pragma_value_parser.define(
-            lex_separated_by!(
-                VersionPragmaValue,
-                lex_one_or_more!(lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
-                    || c == 'x'
-                    || c == 'X'
-                    || c == '*')),
-                lex_terminal!(Period, ".")
-            )
-            .boxed(),
-        );
+        {
+            version_pragma_value_parser.define(
+                lex_separated_by!(
+                    VersionPragmaValue,
+                    lex_one_or_more!(lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                        || c == 'x'
+                        || c == 'X'
+                        || c == '*')),
+                    lex_terminal!(Period, ".")
+                )
+                .boxed(),
+            );
+        }
 
         // WhileStatement = 'while' '(' Expression ')' Statement ;
-        while_statement_parser.define(
-            seq!(
-                WhileStatement,
-                terminal!(While, "while"),
-                delimited_by!(
-                    OpenParenAndExpressionAndCloseParen,
-                    terminal!(OpenParen, "("),
-                    rule!(expression_parser),
-                    terminal!(CloseParen, ")")
-                ),
-                rule!(statement_parser)
-            )
-            .boxed(),
-        );
+        {
+            while_statement_parser.define(
+                seq!(
+                    WhileStatement,
+                    terminal!(While, "while"),
+                    delimited_by!(
+                        OpenParenAndExpressionAndCloseParen,
+                        terminal!(OpenParen, "("),
+                        rule!(expression_parser),
+                        terminal!(CloseParen, ")")
+                    ),
+                    rule!(statement_parser)
+                )
+                .boxed(),
+            );
+        }
 
         // «Whitespace» = 1…*{ '\u{20}' | '\u{9}' } ;
-        whitespace_parser.define(
-            lex_one_or_more!(Whitespace, lex_terminal!(|&c: &char| c == ' ' || c == '\t')).boxed(),
-        );
+        {
+            whitespace_parser.define(
+                lex_one_or_more!(Whitespace, lex_terminal!(|&c: &char| c == ' ' || c == '\t'))
+                    .boxed(),
+            );
+        }
 
         // YulAssignmentStatement = YulIdentifierPath  { ',' YulIdentifierPath } ':=' YulExpression ;
-        yul_assignment_statement_parser.define(
-            seq!(
-                YulAssignmentStatement,
-                separated_by!(
-                    YulIdentifierPathRepeatedAndCommaRepeated,
-                    rule!(yul_identifier_path_parser),
-                    terminal!(Comma, ",")
-                ),
-                terminal!(ColonEqual, ":="),
-                rule!(yul_expression_parser)
-            )
-            .boxed(),
-        );
+        {
+            yul_assignment_statement_parser.define(
+                seq!(
+                    YulAssignmentStatement,
+                    separated_by!(
+                        YulIdentifierPathRepeatedAndCommaRepeated,
+                        rule!(yul_identifier_path_parser),
+                        terminal!(Comma, ",")
+                    ),
+                    terminal!(ColonEqual, ":="),
+                    rule!(yul_expression_parser)
+                )
+                .boxed(),
+            );
+        }
 
         // YulBlock = '{' { YulStatement } '}' ;
-        yul_block_parser.define(
-            delimited_by!(
-                YulBlock,
-                terminal!(OpenBrace, "{"),
-                zero_or_more!(YulStatementRepeated, rule!(yul_statement_parser)),
-                terminal!(CloseBrace, "}")
-            )
-            .boxed(),
-        );
+        {
+            yul_block_parser.define(
+                delimited_by!(
+                    YulBlock,
+                    terminal!(OpenBrace, "{"),
+                    zero_or_more!(YulStatementRepeated, rule!(yul_statement_parser)),
+                    terminal!(CloseBrace, "}")
+                )
+                .boxed(),
+            );
+        }
 
         // YulBreakStatement = 'break' ;
-        yul_break_statement_parser.define(terminal!(Break, "break").boxed());
+        {
+            yul_break_statement_parser.define(terminal!(Break, "break").boxed());
+        }
 
         // YulContinueStatement = 'continue' ;
-        yul_continue_statement_parser.define(terminal!(Continue, "continue").boxed());
+        {
+            yul_continue_statement_parser.define(terminal!(Continue, "continue").boxed());
+        }
 
         // «YulDecimalNumberLiteral» = '0' | '1'…'9' { '0'…'9' } ;
-        yul_decimal_number_literal_parser.define(lex_terminal!(Zero, "0").boxed());
+        {
+            yul_decimal_number_literal_parser.define(lex_terminal!(Zero, "0").boxed());
+        }
 
         // YulExpression = YulIdentifierPath | YulFunctionCall | YulLiteral ;
-        yul_expression_parser.define(
-            choice!(
-                YulExpression,
-                rule!(yul_identifier_path_parser),
-                rule!(yul_function_call_parser),
-                rule!(yul_literal_parser)
-            )
-            .boxed(),
-        );
+        {
+            yul_expression_parser.define(
+                choice!(
+                    YulExpression,
+                    rule!(yul_identifier_path_parser),
+                    rule!(yul_function_call_parser),
+                    rule!(yul_literal_parser)
+                )
+                .boxed(),
+            );
+        }
 
         // YulForStatement = 'for' YulBlock YulExpression YulBlock YulBlock ;
-        yul_for_statement_parser.define(
-            seq!(
-                YulForStatement,
-                terminal!(For, "for"),
-                rule!(yul_block_parser),
-                rule!(yul_expression_parser),
-                rule!(yul_block_parser),
-                rule!(yul_block_parser)
-            )
-            .boxed(),
-        );
+        {
+            yul_for_statement_parser.define(
+                seq!(
+                    YulForStatement,
+                    terminal!(For, "for"),
+                    rule!(yul_block_parser),
+                    rule!(yul_expression_parser),
+                    rule!(yul_block_parser),
+                    rule!(yul_block_parser)
+                )
+                .boxed(),
+            );
+        }
 
         // YulFunctionCall = «YulIdentifier» '(' [ YulExpression  { ',' YulExpression } ] ')' ;
-        yul_function_call_parser.define(
-            seq!(
-                YulFunctionCall,
-                token!(yul_identifier_parser),
-                delimited_by!(
-                    OpenParenAndYulExpressionRepeatedAndCommaRepeatedAndCloseParen,
-                    terminal!(OpenParen, "("),
-                    optional!(separated_by!(
-                        YulExpressionRepeatedAndCommaRepeated,
-                        rule!(yul_expression_parser),
-                        terminal!(Comma, ",")
-                    )),
-                    terminal!(CloseParen, ")")
+        {
+            yul_function_call_parser.define(
+                seq!(
+                    YulFunctionCall,
+                    token!(yul_identifier_parser),
+                    delimited_by!(
+                        OpenParenAndYulExpressionRepeatedAndCommaRepeatedAndCloseParen,
+                        terminal!(OpenParen, "("),
+                        optional!(separated_by!(
+                            YulExpressionRepeatedAndCommaRepeated,
+                            rule!(yul_expression_parser),
+                            terminal!(Comma, ",")
+                        )),
+                        terminal!(CloseParen, ")")
+                    )
                 )
-            )
-            .boxed(),
-        );
+                .boxed(),
+            );
+        }
 
         // YulFunctionDefinition = 'function' «YulIdentifier» '(' [ «YulIdentifier»  { ',' «YulIdentifier» } ] ')' [ '->' «YulIdentifier»  { ',' «YulIdentifier» } ] YulBlock ;
-        yul_function_definition_parser.define(
-            seq!(
-                YulFunctionDefinition,
-                terminal!(Function, "function"),
-                token!(yul_identifier_parser),
-                delimited_by!(
-                    OpenParenAndArgumentsAndCloseParen,
-                    terminal!(OpenParen, "("),
-                    optional!(separated_by!(
-                        Arguments,
-                        token!(yul_identifier_parser),
-                        terminal!(Comma, ",")
+        {
+            yul_function_definition_parser.define(
+                seq!(
+                    YulFunctionDefinition,
+                    terminal!(Function, "function"),
+                    token!(yul_identifier_parser),
+                    delimited_by!(
+                        OpenParenAndArgumentsAndCloseParen,
+                        terminal!(OpenParen, "("),
+                        optional!(separated_by!(
+                            Arguments,
+                            token!(yul_identifier_parser),
+                            terminal!(Comma, ",")
+                        )),
+                        terminal!(CloseParen, ")")
+                    ),
+                    optional!(seq!(
+                        terminal!(MinusGreater, "->"),
+                        separated_by!(
+                            Results,
+                            token!(yul_identifier_parser),
+                            terminal!(Comma, ",")
+                        )
                     )),
-                    terminal!(CloseParen, ")")
-                ),
-                optional!(seq!(
-                    terminal!(MinusGreater, "->"),
-                    separated_by!(
-                        Results,
-                        token!(yul_identifier_parser),
-                        terminal!(Comma, ",")
-                    )
-                )),
-                rule!(yul_block_parser)
-            )
-            .boxed(),
-        );
+                    rule!(yul_block_parser)
+                )
+                .boxed(),
+            );
+        }
 
         // «YulHexLiteral» = '0x' 1…*{ «HexCharacter» } ;
-        yul_hex_literal_parser.define(
-            lex_seq!(
-                YulHexLiteral,
-                lex_terminal!(ZeroX, "0x"),
-                lex_one_or_more!(lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
-                    || ('a' <= c && c <= 'f')
-                    || ('A' <= c && c <= 'F')))
-            )
-            .boxed(),
-        );
+        {
+            yul_hex_literal_parser.define(
+                lex_seq!(
+                    YulHexLiteral,
+                    lex_terminal!(ZeroX, "0x"),
+                    lex_one_or_more!(lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                        || ('a' <= c && c <= 'f')
+                        || ('A' <= c && c <= 'F')))
+                )
+                .boxed(),
+            );
+        }
 
         // «YulIdentifier» = «RawIdentifier» - «YulKeyword» ;
-        yul_identifier_parser.define(
-            difference(
-                lex_rule!(raw_identifier_parser),
+        {
+            yul_identifier_parser.define(
+                difference(
+                    lex_rule!(raw_identifier_parser),
+                    lex_trie!(
+                        trieleaf!(Break, "break"),
+                        trieprefix!(
+                            "c",
+                            [trieleaf!(Case, "ase"), trieleaf!(Continue, "ontinue")]
+                        ),
+                        trieleaf!(Default, "default"),
+                        trieprefix!(
+                            "f",
+                            [
+                                trieleaf!(False, "alse"),
+                                trieleaf!(For, "or"),
+                                trieleaf!(Function, "unction")
+                            ]
+                        ),
+                        trieleaf!(Hex, "hex"),
+                        trieleaf!(If, "if"),
+                        trieprefix!("le", [trieleaf!(Leave, "ave"), trieleaf!(Let, "t")]),
+                        trieleaf!(Switch, "switch"),
+                        trieleaf!(True, "true")
+                    ),
+                )
+                .boxed(),
+            );
+        }
+
+        // YulIdentifierPath = «YulIdentifier»  { '.' «YulIdentifier» } ;
+        {
+            yul_identifier_path_parser.define(
+                separated_by!(
+                    YulIdentifierPath,
+                    token!(yul_identifier_parser),
+                    terminal!(Period, ".")
+                )
+                .boxed(),
+            );
+        }
+
+        // YulIfStatement = 'if' YulExpression YulBlock ;
+        {
+            yul_if_statement_parser.define(
+                seq!(
+                    YulIfStatement,
+                    terminal!(If, "if"),
+                    rule!(yul_expression_parser),
+                    rule!(yul_block_parser)
+                )
+                .boxed(),
+            );
+        }
+
+        // «YulKeyword» = «BooleanLiteral» | 'break' | 'case' | 'continue' | 'default' | 'for' | 'function' | 'hex' | 'if' | 'leave' | 'let' | 'switch' ;
+        {
+            yul_keyword_parser.define(
                 lex_trie!(
                     trieleaf!(Break, "break"),
                     trieprefix!(
@@ -3409,129 +3788,92 @@ impl Parsers {
                     trieprefix!("le", [trieleaf!(Leave, "ave"), trieleaf!(Let, "t")]),
                     trieleaf!(Switch, "switch"),
                     trieleaf!(True, "true")
-                ),
-            )
-            .boxed(),
-        );
-
-        // YulIdentifierPath = «YulIdentifier»  { '.' «YulIdentifier» } ;
-        yul_identifier_path_parser.define(
-            separated_by!(
-                YulIdentifierPath,
-                token!(yul_identifier_parser),
-                terminal!(Period, ".")
-            )
-            .boxed(),
-        );
-
-        // YulIfStatement = 'if' YulExpression YulBlock ;
-        yul_if_statement_parser.define(
-            seq!(
-                YulIfStatement,
-                terminal!(If, "if"),
-                rule!(yul_expression_parser),
-                rule!(yul_block_parser)
-            )
-            .boxed(),
-        );
-
-        // «YulKeyword» = «BooleanLiteral» | 'break' | 'case' | 'continue' | 'default' | 'for' | 'function' | 'hex' | 'if' | 'leave' | 'let' | 'switch' ;
-        yul_keyword_parser.define(
-            lex_trie!(
-                trieleaf!(Break, "break"),
-                trieprefix!(
-                    "c",
-                    [trieleaf!(Case, "ase"), trieleaf!(Continue, "ontinue")]
-                ),
-                trieleaf!(Default, "default"),
-                trieprefix!(
-                    "f",
-                    [
-                        trieleaf!(False, "alse"),
-                        trieleaf!(For, "or"),
-                        trieleaf!(Function, "unction")
-                    ]
-                ),
-                trieleaf!(Hex, "hex"),
-                trieleaf!(If, "if"),
-                trieprefix!("le", [trieleaf!(Leave, "ave"), trieleaf!(Let, "t")]),
-                trieleaf!(Switch, "switch"),
-                trieleaf!(True, "true")
-            )
-            .boxed(),
-        );
+                )
+                .boxed(),
+            );
+        }
 
         // YulLeaveStatement = 'leave' ;
-        yul_leave_statement_parser.define(terminal!(Leave, "leave").boxed());
+        {
+            yul_leave_statement_parser.define(terminal!(Leave, "leave").boxed());
+        }
 
         // YulLiteral = «YulDecimalNumberLiteral» | «YulHexLiteral» | «AsciiStringLiteral» | «BooleanLiteral» | «HexStringLiteral» ;
-        yul_literal_parser.define(
-            choice!(
-                YulLiteral,
-                token!(yul_decimal_number_literal_parser),
-                token!(yul_hex_literal_parser),
-                token!(ascii_string_literal_parser),
-                token!(boolean_literal_parser),
-                token!(hex_string_literal_parser)
-            )
-            .boxed(),
-        );
+        {
+            yul_literal_parser.define(
+                choice!(
+                    YulLiteral,
+                    token!(yul_decimal_number_literal_parser),
+                    token!(yul_hex_literal_parser),
+                    token!(ascii_string_literal_parser),
+                    token!(boolean_literal_parser),
+                    token!(hex_string_literal_parser)
+                )
+                .boxed(),
+            );
+        }
 
         // YulStatement = YulBlock | YulVariableDeclaration | YulFunctionDefinition | YulAssignmentStatement | YulFunctionCall | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement ;
-        yul_statement_parser.define(
-            choice!(
-                YulStatement,
-                rule!(yul_block_parser),
-                rule!(yul_variable_declaration_parser),
-                rule!(yul_function_definition_parser),
-                rule!(yul_assignment_statement_parser),
-                rule!(yul_function_call_parser),
-                rule!(yul_if_statement_parser),
-                rule!(yul_for_statement_parser),
-                rule!(yul_switch_statement_parser),
-                rule!(yul_leave_statement_parser),
-                rule!(yul_break_statement_parser),
-                rule!(yul_continue_statement_parser)
-            )
-            .boxed(),
-        );
+        {
+            yul_statement_parser.define(
+                choice!(
+                    YulStatement,
+                    rule!(yul_block_parser),
+                    rule!(yul_variable_declaration_parser),
+                    rule!(yul_function_definition_parser),
+                    rule!(yul_assignment_statement_parser),
+                    rule!(yul_function_call_parser),
+                    rule!(yul_if_statement_parser),
+                    rule!(yul_for_statement_parser),
+                    rule!(yul_switch_statement_parser),
+                    rule!(yul_leave_statement_parser),
+                    rule!(yul_break_statement_parser),
+                    rule!(yul_continue_statement_parser)
+                )
+                .boxed(),
+            );
+        }
 
         // YulSwitchStatement = 'switch' YulExpression 1…*{ ( 'case' YulLiteral | 'default' ) YulBlock } ;
-        yul_switch_statement_parser.define(
-            seq!(
-                YulSwitchStatement,
-                terminal!(Switch, "switch"),
-                rule!(yul_expression_parser),
-                one_or_more!(seq!(
-                    choice!(
-                        seq!(terminal!(Case, "case"), rule!(yul_literal_parser)),
-                        terminal!(Default, "default")
-                    ),
-                    rule!(yul_block_parser)
-                ))
-            )
-            .boxed(),
-        );
+        {
+            yul_switch_statement_parser.define(
+                seq!(
+                    YulSwitchStatement,
+                    terminal!(Switch, "switch"),
+                    rule!(yul_expression_parser),
+                    one_or_more!(seq!(
+                        choice!(
+                            seq!(terminal!(Case, "case"), rule!(yul_literal_parser)),
+                            terminal!(Default, "default")
+                        ),
+                        rule!(yul_block_parser)
+                    ))
+                )
+                .boxed(),
+            );
+        }
 
         // YulVariableDeclaration = 'let' YulIdentifierPath  { ',' YulIdentifierPath } [ ':=' YulExpression ] ;
-        yul_variable_declaration_parser.define(
-            seq!(
-                YulVariableDeclaration,
-                terminal!(Let, "let"),
-                separated_by!(
-                    YulIdentifierPathRepeatedAndCommaRepeated,
-                    rule!(yul_identifier_path_parser),
-                    terminal!(Comma, ",")
-                ),
-                optional!(seq!(
-                    terminal!(ColonEqual, ":="),
-                    rule!(yul_expression_parser)
-                ))
-            )
-            .boxed(),
-        );
+        {
+            yul_variable_declaration_parser.define(
+                seq!(
+                    YulVariableDeclaration,
+                    terminal!(Let, "let"),
+                    separated_by!(
+                        YulIdentifierPathRepeatedAndCommaRepeated,
+                        rule!(yul_identifier_path_parser),
+                        terminal!(Comma, ",")
+                    ),
+                    optional!(seq!(
+                        terminal!(ColonEqual, ":="),
+                        rule!(yul_expression_parser)
+                    ))
+                )
+                .boxed(),
+            );
+        }
 
-        // Create the Parser object ----------------------------
+        // Create the Parser object -------------------------
 
         Self {
             abi_coder_pragma_specifier: abi_coder_pragma_specifier_parser

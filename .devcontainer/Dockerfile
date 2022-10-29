@@ -31,7 +31,7 @@ RUN apt-get install --assume-yes \
   "git=1:2.*" \
   "zsh=5.*"
 
-COPY "./scripts" "$HOME"
+COPY "./scripts/*" "$HOME/"
 RUN curl -fsSL "https://github.com/cashapp/hermit/releases/download/v0.26.1/install.sh" | bash
 
 # Rust

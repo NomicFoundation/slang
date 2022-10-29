@@ -3,16 +3,21 @@ use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
 use codegen_schema::*;
+use semver::Version;
 
-use super::{code_fragments::CodeFragments, naming, ProductionChumskyExtensions};
+use super::{code_fragments::CodeFragments, naming, production::ProductionChumskyExtensions};
 
 #[derive(Clone, Debug)]
 pub struct TerminalTrie(PatriciaMap<String>);
 
 impl TerminalTrie {
-    pub fn from_expression(grammar: &Grammar, expression: &ExpressionRef) -> Option<TerminalTrie> {
+    pub fn from_expression(
+        grammar: &Grammar,
+        version: &Version,
+        expression: &ExpressionRef,
+    ) -> Option<TerminalTrie> {
         let mut trie = Self(PatriciaMap::new());
-        trie.collect_terminals(grammar, expression);
+        trie.collect_terminals(grammar, version, expression);
         if trie.0.len() > 0 {
             Some(trie)
         } else {
@@ -34,9 +39,16 @@ impl TerminalTrie {
         }
     }
 
-    fn collect_terminals(&mut self, grammar: &Grammar, expression: &ExpressionRef) -> bool {
+    fn collect_terminals(
+        &mut self,
+        grammar: &Grammar,
+        version: &Version,
+        expression: &ExpressionRef,
+    ) -> bool {
         match &expression.ebnf {
-            EBNF::Choice(exprs) => exprs.iter().all(|e| self.collect_terminals(grammar, e)),
+            EBNF::Choice(exprs) => exprs
+                .iter()
+                .all(|e| self.collect_terminals(grammar, version, e)),
 
             EBNF::DelimitedBy(_)
             | EBNF::Difference(_)
@@ -51,7 +63,8 @@ impl TerminalTrie {
 
             EBNF::Reference(name) => self.collect_terminals(
                 grammar,
-                &grammar.get_production(name).expression_to_generate(),
+                version,
+                &grammar.get_production(name).expression_for_version(version),
             ),
 
             EBNF::Terminal(string) => {

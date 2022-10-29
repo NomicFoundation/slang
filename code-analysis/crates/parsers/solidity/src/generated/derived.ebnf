@@ -320,7 +320,8 @@ AddSubExpression = Expression ( '+' | '-' ) Expression ;
 
 MulDivModExpression = Expression ( '*' | '/' | '%' ) Expression ;
 
-ExponentiationExpression = Expression '**' Expression ;
+(* 0.0.0 *) ExponentiationExpression = Expression '**' Expression ;
+(* 0.6.0 *) ExponentiationExpression = Expression '**' Expression ;
 
 (*
  * Expressions: Unary Operators

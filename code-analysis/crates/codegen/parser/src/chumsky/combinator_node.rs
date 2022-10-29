@@ -1,6 +1,7 @@
 use std::rc::Rc;
 
 use codegen_schema::*;
+use semver::Version;
 
 use super::{
     character_filter::{CharacterFilter, CharacterFilterRef},
@@ -95,17 +96,19 @@ impl CombinatorNode {
     pub fn from_expression(
         grammar: &GrammarRef,
         production: &ProductionRef,
+        version: &Version,
         expression: &ExpressionRef,
         inherited_name: Option<String>,
     ) -> CombinatorNodeRef {
         let name = expression.config.name.clone().or(inherited_name);
 
         if production.kind == ProductionKind::Token {
-            if let Some(filter) = CharacterFilter::from_expression(grammar, expression) {
+            if let Some(filter) = CharacterFilter::from_expression(grammar, version, expression) {
                 return Self::character_filter(name.or_else(|| filter.default_name()), filter);
             }
 
-            if let Some(terminal_trie) = TerminalTrie::from_expression(grammar, expression) {
+            if let Some(terminal_trie) = TerminalTrie::from_expression(grammar, version, expression)
+            {
                 return Self::terminal_trie(
                     name.or_else(|| terminal_trie.default_name()),
                     terminal_trie,
@@ -124,7 +127,7 @@ impl CombinatorNode {
                         unreachable!("Validation should have checked this: The Expression pattern is only applicable to a choice of references")
                     }
                 }).collect();
-                return Self::expression(production.name.clone(), choices);
+                return Self::precedence_rule(production.name.clone(), choices);
             } else {
                 unreachable!("Validation should have checked this: The Expression pattern is only applicable to a choice of references")
             }
@@ -137,7 +140,7 @@ impl CombinatorNode {
                         name,
                         exprs
                             .iter()
-                            .map(|e| Self::from_expression(grammar, production, e, None))
+                            .map(|e| Self::from_expression(grammar, production, version, e, None))
                             .collect(),
                     )
                 } else {
@@ -149,7 +152,9 @@ impl CombinatorNode {
                         for e in exprs {
                             // Sub-expressions with a user-specified name aren't merged
                             if e.config.name.is_none() {
-                                if let Some(cf) = CharacterFilter::from_expression(grammar, e) {
+                                if let Some(cf) =
+                                    CharacterFilter::from_expression(grammar, version, e)
+                                {
                                     if let Some(ctt) = current_terminal_tree {
                                         choices.push({
                                             let name = ctt.default_name();
@@ -164,7 +169,8 @@ impl CombinatorNode {
                                     }
                                     continue;
                                 }
-                                if let Some(tt) = TerminalTrie::from_expression(grammar, e) {
+                                if let Some(tt) = TerminalTrie::from_expression(grammar, version, e)
+                                {
                                     if let Some(ccf) = current_character_filter {
                                         choices.push({
                                             let name = ccf.default_name();
@@ -197,7 +203,8 @@ impl CombinatorNode {
                                 current_terminal_tree = None
                             };
 
-                            choices.push(Self::from_expression(grammar, production, e, None))
+                            choices
+                                .push(Self::from_expression(grammar, production, version, e, None))
                         }
 
                         if let Some(ccf) = current_character_filter {
@@ -219,7 +226,7 @@ impl CombinatorNode {
             }
 
             EBNF::DelimitedBy(EBNFDelimitedBy { open, expr, close }) => {
-                let expr = Self::from_expression(grammar, production, expr, None);
+                let expr = Self::from_expression(grammar, production, version, expr, None);
                 Self::delimited_by(
                     name.or_else(|| {
                         expr.name().map(|expr_name| {
@@ -241,13 +248,15 @@ impl CombinatorNode {
                 minuend,
                 subtrahend,
             }) => {
-                let minuend = Self::from_expression(grammar, production, minuend, None);
-                let subtrahend = Self::from_expression(grammar, production, subtrahend, None);
+                let minuend = Self::from_expression(grammar, production, version, minuend, None);
+                let subtrahend =
+                    Self::from_expression(grammar, production, version, subtrahend, None);
                 Self::difference(minuend, subtrahend)
             }
 
             EBNF::Not(_) => {
-                if let Some(filter) = CharacterFilter::from_expression(grammar, expression) {
+                if let Some(filter) = CharacterFilter::from_expression(grammar, version, expression)
+                {
                     Self::character_filter(name.or_else(|| filter.default_name()), filter)
                 } else {
                     unimplemented!("¬ is only supported on characters or sets thereof")
@@ -255,7 +264,7 @@ impl CombinatorNode {
             }
 
             EBNF::OneOrMore(expr) => {
-                let expr = Self::from_expression(grammar, production, expr, None);
+                let expr = Self::from_expression(grammar, production, version, expr, None);
                 Self::one_or_more(
                     name.or_else(|| expr.name().map(|expr_name| naming::pluralize(&expr_name))),
                     expr,
@@ -263,19 +272,20 @@ impl CombinatorNode {
             }
 
             EBNF::Optional(expr) => {
-                let expr = Self::from_expression(grammar, production, expr, None);
+                let expr = Self::from_expression(grammar, production, version, expr, None);
                 Self::optional(name.or_else(|| expr.name()), expr)
             }
 
             EBNF::Range(_) => {
-                let filter = CharacterFilter::from_expression(grammar, expression).unwrap();
+                let filter =
+                    CharacterFilter::from_expression(grammar, version, expression).unwrap();
                 Self::character_filter(name.or_else(|| filter.default_name()), filter)
             }
 
             EBNF::Reference(name) => Self::reference(grammar.get_production(&name)),
 
             EBNF::Repeat(EBNFRepeat { expr, min, max }) => {
-                let expr = Self::from_expression(grammar, production, expr, None);
+                let expr = Self::from_expression(grammar, production, version, expr, None);
                 Self::repeat(
                     name.or_else(|| expr.name().map(|expr_name| naming::pluralize(&expr_name))),
                     expr,
@@ -285,7 +295,7 @@ impl CombinatorNode {
             }
 
             EBNF::SeparatedBy(EBNFSeparatedBy { expr, separator }) => {
-                let expr = Self::from_expression(grammar, production, expr, None);
+                let expr = Self::from_expression(grammar, production, version, expr, None);
                 Self::separated_by(
                     name.or_else(|| {
                         expr.name().map(|expr_name| {
@@ -304,18 +314,19 @@ impl CombinatorNode {
             EBNF::Sequence(exprs) => {
                 let exprs = exprs
                     .iter()
-                    .map(|e| Self::from_expression(grammar, production, e, None))
+                    .map(|e| Self::from_expression(grammar, production, version, e, None))
                     .collect();
                 Self::sequence(name, exprs)
             }
 
             EBNF::Terminal(_) => {
-                let terminal_trie = TerminalTrie::from_expression(grammar, expression).unwrap();
+                let terminal_trie =
+                    TerminalTrie::from_expression(grammar, version, expression).unwrap();
                 Self::terminal_trie(name.or_else(|| terminal_trie.default_name()), terminal_trie)
             }
 
             EBNF::ZeroOrMore(expr) => {
-                let expr = Self::from_expression(grammar, production, expr, None);
+                let expr = Self::from_expression(grammar, production, version, expr, None);
                 Self::zero_or_more(
                     name.or_else(|| expr.name().map(|expr_name| naming::pluralize(&expr_name))),
                     expr,
@@ -356,11 +367,11 @@ impl CombinatorNode {
         })
     }
 
-    pub fn expression(name: String, members: Vec<ProductionRef>) -> CombinatorNodeRef {
+    pub fn precedence_rule(name: String, members: Vec<ProductionRef>) -> CombinatorNodeRef {
         Rc::new(Self::PrecedenceRule { name, members })
     }
 
-    pub fn expression_member(
+    pub fn precedence_rule_member(
         name: String,
         parent: ProductionRef,
         next_sibling: Option<ProductionRef>,

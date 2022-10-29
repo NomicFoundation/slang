@@ -85,8 +85,16 @@
     - reference: Expression
 
 - name: ExponentiationExpression
-  config: { associativity: Right }
-  sequence:
-    - reference: Expression
-    - terminal: "**"
-    - reference: Expression
+  versions:
+    0.0.0:
+      config: { associativity: Left }
+      sequence:
+        - reference: Expression
+        - terminal: "**"
+        - reference: Expression
+    0.6.0:
+      config: { associativity: Right }
+      sequence:
+        - reference: Expression
+        - terminal: "**"
+        - reference: Expression

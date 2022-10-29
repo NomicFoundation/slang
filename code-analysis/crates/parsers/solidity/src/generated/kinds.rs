@@ -1,6 +1,7 @@
 // This file is generated via `cargo build`. Please don't edit by hand.
 
 use serde::Serialize;
+
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub enum Token {
     Abicoder,
@@ -294,6 +295,7 @@ pub enum Token {
     Zero,
     ZeroX,
 }
+
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub enum Rule {
     AbicoderPragmaSpecifier,

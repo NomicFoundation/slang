@@ -217,6 +217,7 @@ pub fn parse_head() -> TokenStream {
     quote!(
         use chumsky::Parser;
         use chumsky::prelude::*;
+        use semver::Version;
 
         use super::kinds;
         use super::lex;
