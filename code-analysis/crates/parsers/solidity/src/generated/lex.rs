@@ -23,7 +23,11 @@ impl Node {
     }
     #[inline]
     pub fn sequence(elements: Vec<NodeRef>) -> NodeRef {
-        Box::new(Node::Sequence(elements))
+        Box::new(if elements.is_empty() {
+            Node::None
+        } else {
+            Node::Sequence(elements)
+        })
     }
     #[inline]
     pub fn choice(number: usize, element: NodeRef) -> NodeRef {

@@ -3249,6 +3249,7 @@ impl Parsers {
         {
             trailing_trivia_parser.define(
                 optional!(seq!(
+                    TrailingTrivia,
                     zero_or_more!(choice!(
                         trivia_token!(whitespace_parser),
                         trivia_token!(multiline_comment_parser)
