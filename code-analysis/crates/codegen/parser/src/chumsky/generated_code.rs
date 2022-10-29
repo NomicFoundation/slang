@@ -11,7 +11,7 @@ use semver::Version;
 use super::{boilerplate, naming, rustfmt};
 
 #[derive(Clone, Debug, Default)]
-pub struct CodeFragments {
+pub struct GeneratedCode {
     token_kinds: BTreeMap<String, Option<String>>,
     rule_kinds: BTreeSet<String>,
     parsers: BTreeMap<String, Parser>,
@@ -25,7 +25,7 @@ struct Parser {
     versions: BTreeMap<Version, TokenStream>,
 }
 
-impl CodeFragments {
+impl GeneratedCode {
     pub fn add_rule_kind(&mut self, name: String) -> Ident {
         let kind = name.to_pascal_case();
         let ident = format_ident!("{}", kind);
@@ -51,6 +51,7 @@ impl CodeFragments {
         &mut self,
         name: String,
         version: &Version,
+        comment: Vec<String>,
         body: TokenStream,
         result_type: TokenStream,
     ) {
@@ -60,10 +61,7 @@ impl CodeFragments {
         let mut entry = self.parsers.entry(name).or_default();
         entry.versions.insert(version.clone(), body);
         entry.result_type = result_type;
-    }
-
-    pub fn add_parser_comment(&mut self, name: String, lines: Vec<String>) {
-        self.parsers.entry(name).or_default().comment = lines.clone();
+        entry.comment = comment;
     }
 
     pub fn has_errors(&self) -> bool {

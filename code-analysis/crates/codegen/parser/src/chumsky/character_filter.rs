@@ -2,37 +2,50 @@ use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
 use codegen_schema::*;
-use semver::Version;
 
-use super::{code_fragments::CodeFragments, naming, production::ProductionChumskyExtensions};
+use super::{combinator_tree::CombinatorTree, generated_code::GeneratedCode, naming};
 
-#[derive(Clone, Debug)]
-pub enum CharacterFilter {
-    Negation { child: CharacterFilterRef },
-    Range { from: char, to: char },
-    Char { char: char },
-    Disjunction { nodes: Vec<CharacterFilterRef> },
-    Conjunction { nodes: Vec<CharacterFilterRef> },
+pub enum CharacterFilter<'context> {
+    Negation {
+        child: &'context CharacterFilter<'context>,
+    },
+    Range {
+        from: char,
+        to: char,
+    },
+    Char {
+        char: char,
+    },
+    Disjunction {
+        nodes: Vec<&'context CharacterFilter<'context>>,
+    },
+    Conjunction {
+        nodes: Vec<&'context CharacterFilter<'context>>,
+    },
 }
 
-pub type CharacterFilterRef = Box<CharacterFilter>;
-
-impl CharacterFilter {
-    pub fn from_expression(
-        grammar: &Grammar,
-        version: &Version,
+impl<'context> CharacterFilter<'context> {
+    pub fn new(
+        tree: &CombinatorTree<'context>,
         expression: &ExpressionRef,
-    ) -> Option<CharacterFilterRef> {
+    ) -> Option<&'context CharacterFilter<'context>> {
         match &expression.ebnf {
-            EBNF::Not(child) => Self::from_expression(grammar, version, child).map(Self::negation),
+            EBNF::Not(child) => Self::new(tree, child).map(|child| {
+                tree.context
+                    .alloc_character_filter(Self::Negation { child })
+                    as &CharacterFilter<'context>
+            }),
 
             EBNF::Choice(children) => {
-                let child_filters = children
+                let nodes = children
                     .iter()
-                    .filter_map(|c| Self::from_expression(grammar, version, c))
+                    .filter_map(|c| Self::new(tree, c))
                     .collect::<Vec<_>>();
-                if child_filters.len() == children.len() {
-                    Some(CharacterFilter::disjunction(child_filters))
+                if nodes.len() == children.len() {
+                    Some(
+                        tree.context
+                            .alloc_character_filter(Self::Disjunction { nodes }),
+                    )
                 } else {
                     None
                 }
@@ -42,7 +55,7 @@ impl CharacterFilter {
                 if string.chars().count() == 1 {
                     Some({
                         let char = string.chars().next().unwrap();
-                        CharacterFilter::char(char)
+                        tree.context.alloc_character_filter(Self::Char { char })
                     })
                 } else {
                     None
@@ -52,26 +65,29 @@ impl CharacterFilter {
             EBNF::Range(EBNFRange { from, to }) => Some({
                 let from = *from;
                 let to = *to;
-                CharacterFilter::range(from, to)
+                tree.context
+                    .alloc_character_filter(Self::Range { from, to })
             }),
 
-            EBNF::Reference(name) => Self::from_expression(
-                grammar,
-                version,
-                &grammar.get_production(name).expression_for_version(version),
-            ),
+            EBNF::Reference(name) => {
+                Self::new(tree, &tree.context.get_tree_by_name(name).expression())
+            }
 
             EBNF::Difference(EBNFDifference {
                 minuend,
                 subtrahend,
             }) => {
-                if let (Some(minuend), Some(subtrahend)) = (
-                    Self::from_expression(grammar, version, minuend),
-                    Self::from_expression(grammar, version, subtrahend),
-                ) {
+                if let (Some(minuend), Some(subtrahend)) =
+                    (Self::new(tree, minuend), Self::new(tree, subtrahend))
+                {
                     Some({
-                        let nodes = vec![minuend, Self::negation(subtrahend)];
-                        CharacterFilter::conjunction(nodes)
+                        let nodes = vec![
+                            minuend,
+                            tree.context
+                                .alloc_character_filter(Self::Negation { child: subtrahend }),
+                        ];
+                        tree.context
+                            .alloc_character_filter(Self::Conjunction { nodes })
                     })
                 } else {
                     None
@@ -88,29 +104,14 @@ impl CharacterFilter {
         }
     }
 
-    fn negation(child: CharacterFilterRef) -> CharacterFilterRef {
-        Box::new(Self::Negation { child })
-    }
-
-    fn range(from: char, to: char) -> CharacterFilterRef {
-        Box::new(Self::Range { from, to })
-    }
-
-    fn char(char: char) -> CharacterFilterRef {
-        Box::new(Self::Char { char })
-    }
-
-    fn disjunction(nodes: Vec<CharacterFilterRef>) -> CharacterFilterRef {
-        Box::new(Self::Disjunction { nodes })
-    }
-
-    fn conjunction(nodes: Vec<CharacterFilterRef>) -> CharacterFilterRef {
-        Box::new(Self::Conjunction { nodes })
-    }
-
-    pub fn merged_with(self, other: CharacterFilterRef) -> CharacterFilterRef {
-        let nodes = vec![Box::new(self), other];
-        CharacterFilter::disjunction(nodes)
+    pub fn merged_with(
+        &'context self,
+        other: &'context CharacterFilter<'context>,
+        tree: &CombinatorTree<'context>,
+    ) -> &'context CharacterFilter<'context> {
+        tree.context.alloc_character_filter(Self::Disjunction {
+            nodes: vec![self, other],
+        })
     }
 
     pub fn default_name(&self) -> Option<String> {
@@ -126,7 +127,7 @@ impl CharacterFilter {
     pub(super) fn to_code(
         &self,
         name: Option<&String>,
-        code: &mut CodeFragments,
+        code: &mut GeneratedCode,
         macro_prefix: &str,
     ) -> TokenStream {
         let macro_name = format_ident!("{}terminal", macro_prefix);

@@ -1,81 +1,141 @@
-use std::rc::Rc;
+use std::cell::Cell;
 
+use codegen_ebnf::ProductionEBNFExtensions;
 use quote::quote;
 
 use codegen_schema::*;
-use semver::Version;
 
 use super::{
-    code_fragments::CodeFragments,
-    combinator_forest::CombinatorForest,
-    combinator_node::{CombinatorNode, CombinatorNodeRef, OperatorModel},
-    production::ProductionChumskyExtensions,
+    combinator_context::CombinatorContext,
+    combinator_node::{CombinatorNode, OperatorModel},
+    generated_code::GeneratedCode,
 };
 
-#[derive(Clone, Debug)]
-pub struct CombinatorTree {
-    // pub name: String,
+pub struct CombinatorTree<'context> {
+    pub context: &'context CombinatorContext<'context>,
     pub production: ProductionRef,
-    pub root_node: CombinatorNodeRef,
+    pub root_node: Cell<Option<&'context CombinatorNode<'context>>>,
 }
 
-pub type CombinatorTreeRef = Rc<CombinatorTree>;
-
-impl CombinatorTree {
-    pub fn from_production(
-        grammar: &GrammarRef,
+impl<'context> CombinatorTree<'context> {
+    pub fn new(
+        context: &'context CombinatorContext<'context>,
         production: &ProductionRef,
-        version: &Version,
-    ) -> CombinatorTreeRef {
-        Rc::new(CombinatorTree {
-            root_node: CombinatorNode::from_expression(
-                grammar,
-                production,
-                version,
-                &production.expression_for_version(version),
-                Some(production.name.clone()),
-            ),
+    ) -> &'context CombinatorTree<'context> {
+        context.alloc_tree(CombinatorTree {
+            context: context,
             production: production.clone(),
+            root_node: Cell::new(None),
         })
     }
 
-    pub fn convert_to_precedence_rule_member(
-        &mut self,
-        parent_production: ProductionRef,
-        version: &Version,
-        next_sibling: Option<ProductionRef>,
+    pub fn ensure_tree_is_built(&'context self) {
+        if self.root_node.get().is_none() {
+            let expression = &self.expression();
+            let node = CombinatorNode::new(self, expression, Some(self.production.name.clone()));
+
+            if let CombinatorNode::PrecedenceRule { members, .. } = node {
+                let mut members = members.clone();
+                members.reverse();
+                let mut next_member = None;
+                for member_tree in members {
+                    member_tree.convert_to_precedence_rule_member(self, next_member);
+                    next_member = Some(member_tree);
+                }
+            }
+
+            self.root_node.set(Some(node));
+        }
+    }
+
+    pub fn add_to_generated_code(&self, code: &mut GeneratedCode) {
+        let version = &self.context.version;
+        if self.production.versions.contains_key(version) {
+            let name = self.production.name.clone();
+            let comment = self.production.generate_ebnf(self.context.grammar);
+
+            match self.production.kind {
+                ProductionKind::Rule => {
+                    code.add_rule_kind(self.production.name.clone());
+                    let parser = self.root_node.get().unwrap().to_parser_code(false, code);
+                    code.add_parser(name, version, comment, parser, quote!(cst::NodeRef));
+                }
+
+                ProductionKind::Trivia => {
+                    code.add_rule_kind(self.production.name.clone());
+                    let parser = self.root_node.get().unwrap().to_parser_code(true, code);
+                    code.add_parser(name, version, comment, parser, quote!(cst::NodeRef));
+                }
+
+                ProductionKind::Token => {
+                    code.add_token_kind(self.production.name.clone());
+                    let parser = self.root_node.get().unwrap().to_lexer_code(code);
+                    code.add_parser(name, version, comment, parser, quote!(lex::NodeRef));
+                }
+            }
+        }
+    }
+
+    pub fn expression(&self) -> ExpressionRef {
+        let version = self.context.version.clone();
+        self.production
+            .versions
+            .iter()
+            .filter(|(v, _)| *v <= &version)
+            .last()
+            .map(|(_, e)| e.clone())
+            .expect(&format!(
+                "Production {} has no content for version {}",
+                self.production.name, version
+            ))
+    }
+
+    fn convert_to_precedence_rule_member(
+        &'context self,
+        parent_tree: &'context CombinatorTree<'context>,
+        next_tree: Option<&'context CombinatorTree<'context>>,
     ) {
-        self.root_node = {
-            let ref this = self.root_node;
-            let production = &self.production;
-            if let CombinatorNode::Sequence { elements, .. } = this.as_ref() {
+        self.ensure_tree_is_built();
+
+        self.root_node.set(Some({
+            if let Some(CombinatorNode::Sequence { elements, .. }) = self.root_node.get() {
                 let last_element_index = elements.len() - 1;
 
-                let left =
-                    if let CombinatorNode::Reference { production, .. } = elements[0].as_ref() {
-                        production.name == parent_production.name
-                    } else {
-                        false
-                    };
-
-                let right = if let CombinatorNode::Reference { production, .. } =
-                    elements[last_element_index].as_ref()
-                {
-                    production.name == parent_production.name
+                let left = if let CombinatorNode::Reference { tree } = elements[0] {
+                    tree.production.name == parent_tree.production.name
                 } else {
                     false
                 };
 
+                let right =
+                    if let CombinatorNode::Reference { tree, .. } = elements[last_element_index] {
+                        tree.production.name == parent_tree.production.name
+                    } else {
+                        false
+                    };
+
                 let (operator, model) = match (&left, &right) {
-                    (false, false) => (&elements[..], OperatorModel::None),
-                    (false, true) => (&elements[..last_element_index], OperatorModel::UnaryPrefix),
-                    (true, false) => (&elements[1..], OperatorModel::UnarySuffix),
+                    (false, false) => (
+                        elements[..].iter().map(|v| *v).collect::<Vec<_>>(),
+                        OperatorModel::None,
+                    ),
+                    (false, true) => (
+                        elements[..last_element_index]
+                            .into_iter()
+                            .map(|v| *v)
+                            .collect::<Vec<_>>(),
+                        OperatorModel::UnaryPrefix,
+                    ),
+                    (true, false) => (
+                        elements[1..].into_iter().map(|v| *v).collect::<Vec<_>>(),
+                        OperatorModel::UnarySuffix,
+                    ),
                     (true, true) => (
-                        &elements[1..last_element_index],
-                        if production
-                            .expression_for_version(version)
-                            .config
-                            .associativity
+                        elements[1..last_element_index]
+                            .into_iter()
+                            .map(|v| *v)
+                            .collect::<Vec<_>>(),
+                        if self.expression().config.associativity
                             == Some(ExpressionAssociativity::Right)
                         {
                             OperatorModel::BinaryRightAssociative
@@ -85,64 +145,32 @@ impl CombinatorTree {
                     ),
                 };
                 let operator = if operator.len() == 1 {
-                    operator[0].clone()
+                    operator[0]
                 } else {
-                    CombinatorNode::sequence(None, operator.into())
+                    self.context.alloc_node(CombinatorNode::Sequence {
+                        name: None,
+                        elements: operator,
+                    })
                 };
 
-                CombinatorNode::precedence_rule_member(
-                    production.name.clone(),
-                    parent_production,
-                    next_sibling,
-                    operator,
-                    model,
-                )
+                self.context
+                    .alloc_node(CombinatorNode::PrecedenceRuleMember {
+                        tree: self,
+                        parent: parent_tree,
+                        next_sibling: next_tree,
+                        operator: operator,
+                        operator_model: model,
+                    })
             } else {
-                CombinatorNode::precedence_rule_member(
-                    production.name.clone(),
-                    parent_production,
-                    next_sibling,
-                    this.clone(),
-                    OperatorModel::None,
-                )
+                self.context
+                    .alloc_node(CombinatorNode::PrecedenceRuleMember {
+                        tree: self,
+                        parent: parent_tree,
+                        next_sibling: next_tree,
+                        operator: self.root_node.get().unwrap(),
+                        operator_model: OperatorModel::None,
+                    })
             }
-        };
-    }
-
-    pub fn add_to_code_fragments(&self, forest: &CombinatorForest, code: &mut CodeFragments) {
-        match self.production.kind {
-            ProductionKind::Rule => {
-                code.add_rule_kind(self.production.name.clone());
-                let parser = self.root_node.to_parser_code(forest, self, false, code);
-                code.add_parser(
-                    self.production.name.clone(),
-                    &forest.version,
-                    parser,
-                    quote!(cst::NodeRef),
-                );
-            }
-
-            ProductionKind::Trivia => {
-                code.add_rule_kind(self.production.name.clone());
-                let parser = self.root_node.to_parser_code(forest, self, true, code);
-                code.add_parser(
-                    self.production.name.clone(),
-                    &forest.version,
-                    parser,
-                    quote!(cst::NodeRef),
-                );
-            }
-
-            ProductionKind::Token => {
-                code.add_token_kind(self.production.name.clone());
-                let parser = self.root_node.to_lexer_code(code);
-                code.add_parser(
-                    self.production.name.clone(),
-                    &forest.version,
-                    parser,
-                    quote!(lex::NodeRef),
-                );
-            }
-        };
+        }));
     }
 }

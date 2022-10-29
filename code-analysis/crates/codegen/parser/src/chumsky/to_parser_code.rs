@@ -6,37 +6,30 @@ use codegen_schema::*;
 use crate::chumsky::combinator_node::OperatorModel;
 
 use super::{
-    character_filter::CharacterFilter, code_fragments::CodeFragments,
-    combinator_forest::CombinatorForest, combinator_node::CombinatorNode,
-    combinator_tree::CombinatorTree, naming, terminal_trie::TerminalTrie,
+    character_filter::CharacterFilter, combinator_node::CombinatorNode,
+    generated_code::GeneratedCode, naming, terminal_trie::TerminalTrie,
 };
 
-impl CharacterFilter {
+impl<'context> CharacterFilter<'context> {
     pub fn to_parser_code(
         &self,
         name: Option<&String>,
         is_trivia: bool,
-        code: &mut CodeFragments,
+        code: &mut GeneratedCode,
     ) -> TokenStream {
         self.to_code(name, code, if is_trivia { "trivia_" } else { "" })
     }
 }
 
 impl TerminalTrie {
-    pub fn to_parser_code(&self, is_trivia: bool, code: &mut CodeFragments) -> TokenStream {
+    pub fn to_parser_code(&self, is_trivia: bool, code: &mut GeneratedCode) -> TokenStream {
         self.to_code(code, if is_trivia { "trivia_" } else { "" })
     }
 }
 
-impl CombinatorNode {
-    pub fn to_parser_code(
-        &self,
-        forest: &CombinatorForest,
-        tree: &CombinatorTree,
-        is_trivia: bool,
-        code: &mut CodeFragments,
-    ) -> TokenStream {
-        fn create_kind(name: &Option<String>, code: &mut CodeFragments) -> Option<Ident> {
+impl<'context> CombinatorNode<'context> {
+    pub fn to_parser_code(&self, is_trivia: bool, code: &mut GeneratedCode) -> TokenStream {
+        fn create_kind(name: &Option<String>, code: &mut GeneratedCode) -> Option<Ident> {
             name.as_ref().map(|name| code.add_rule_kind(name.clone()))
         }
 
@@ -55,9 +48,9 @@ impl CombinatorNode {
             /**********************************************************************
              * Simple Reference
              */
-            Self::Reference { production } => {
-                let production_parser_name = naming::to_parser_name_ident(&production.name);
-                match production.kind {
+            Self::Reference { tree } => {
+                let production_parser_name = naming::to_parser_name_ident(&tree.production.name);
+                match tree.production.kind {
                     ProductionKind::Rule if is_trivia => unreachable!(
                         "Trivia productions can only reference trivia or token productions"
                     ),
@@ -73,7 +66,7 @@ impl CombinatorNode {
             Self::Sequence { elements, name } => {
                 let elements = elements
                     .iter()
-                    .map(|element| element.to_parser_code(forest, tree, is_trivia, code))
+                    .map(|element| element.to_parser_code(is_trivia, code))
                     .collect::<Vec<_>>();
                 if let Some(kind) = create_kind(name, code) {
                     quote!(seq!( #kind, #(#elements),* ))
@@ -85,7 +78,7 @@ impl CombinatorNode {
             Self::Choice { elements, name } => {
                 let elements = elements
                     .iter()
-                    .map(|element| element.to_parser_code(forest, tree, is_trivia, code))
+                    .map(|element| element.to_parser_code(is_trivia, code))
                     .collect::<Vec<_>>();
                 if let Some(kind) = create_kind(name, code) {
                     quote!(choice!( #kind, #(#elements),* ))
@@ -98,12 +91,12 @@ impl CombinatorNode {
              * Numeric qualification
              */
             Self::Optional { expr } => {
-                let expr = expr.to_parser_code(forest, tree, is_trivia, code);
+                let expr = expr.to_parser_code(is_trivia, code);
                 quote!(optional!(#expr))
             }
 
             Self::ZeroOrMore { expr, name } => {
-                let expr = expr.to_parser_code(forest, tree, is_trivia, code);
+                let expr = expr.to_parser_code(is_trivia, code);
                 if let Some(kind) = create_kind(name, code) {
                     quote!(zero_or_more!(#kind, #expr))
                 } else {
@@ -111,7 +104,7 @@ impl CombinatorNode {
                 }
             }
             Self::OneOrMore { expr, name } => {
-                let expr = expr.to_parser_code(forest, tree, is_trivia, code);
+                let expr = expr.to_parser_code(is_trivia, code);
                 if let Some(kind) = create_kind(name, code) {
                     quote!(one_or_more!(#kind, #expr))
                 } else {
@@ -125,7 +118,7 @@ impl CombinatorNode {
                 max,
                 name,
             } => {
-                let expr = expr.to_parser_code(forest, tree, is_trivia, code);
+                let expr = expr.to_parser_code(is_trivia, code);
                 if let Some(kind) = create_kind(name, code) {
                     quote!(repeated!(#kind, #expr, #min, #max))
                 } else {
@@ -143,7 +136,7 @@ impl CombinatorNode {
                 name,
             } => {
                 let open_kind = code.add_terminal_kind(open.clone());
-                let expr = expr.to_parser_code(forest, tree, is_trivia, code);
+                let expr = expr.to_parser_code(is_trivia, code);
                 let close_kind = code.add_terminal_kind(close.clone());
                 if let Some(kind) = create_kind(name, code) {
                     quote!(
@@ -161,7 +154,7 @@ impl CombinatorNode {
                 separator,
                 name,
             } => {
-                let expr = expr.to_parser_code(forest, tree, is_trivia, code);
+                let expr = expr.to_parser_code(is_trivia, code);
                 let separator_kind = code.add_terminal_kind(separator.clone());
                 if let Some(kind) = create_kind(name, code) {
                     quote!(
@@ -176,22 +169,22 @@ impl CombinatorNode {
              * Precedence parsing
              */
             Self::PrecedenceRule { members, .. } => {
-                let first_parser_name = naming::to_parser_name_ident(&members[0].name);
+                let first_parser_name = naming::to_parser_name_ident(&members[0].production.name);
                 quote!(rule!(#first_parser_name))
             }
 
             Self::PrecedenceRuleMember {
+                tree,
                 next_sibling,
                 operator,
                 operator_model,
-                name,
                 ..
             } => {
-                let kind = code.add_rule_kind(name.clone());
-                let operator = operator.to_parser_code(forest, tree, is_trivia, code);
+                let kind = code.add_rule_kind(tree.production.name.clone());
+                let operator = operator.to_parser_code(is_trivia, code);
                 let next_sibling = next_sibling
                     .clone()
-                    .map(|next| naming::to_parser_name_ident(&next.name));
+                    .map(|next| naming::to_parser_name_ident(&next.production.name));
 
                 match operator_model {
                     OperatorModel::None => match next_sibling {
@@ -240,14 +233,14 @@ impl CombinatorNode {
                 minuend,
                 subtrahend,
             } => {
-                let minuend = minuend.to_parser_code(forest, tree, is_trivia, code);
-                let subtrahend = subtrahend.to_parser_code(forest, tree, is_trivia, code);
+                let minuend = minuend.to_parser_code(is_trivia, code);
+                let subtrahend = subtrahend.to_parser_code(is_trivia, code);
                 quote! ( difference(#minuend, #subtrahend) )
             }
 
             Self::Lookahead { expr, lookahead } => {
-                let expr = expr.to_parser_code(forest, tree, is_trivia, code);
-                let lookahead = lookahead.to_parser_code(forest, tree, is_trivia, code);
+                let expr = expr.to_parser_code(is_trivia, code);
+                let lookahead = lookahead.to_parser_code(is_trivia, code);
                 quote!( #expr.then_ignore(#lookahead.rewind()) )
             }
         }

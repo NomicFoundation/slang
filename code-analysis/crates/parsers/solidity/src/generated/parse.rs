@@ -1158,7 +1158,7 @@ impl Parsers {
                     ArrayLiteral,
                     terminal!(OpenBracket, "["),
                     separated_by!(
-                        ExpressionRepeatedAndCommaRepeated,
+                        ExpressionsAndCommas,
                         rule!(expression_parser),
                         terminal!(Comma, ",")
                     ),
@@ -1202,7 +1202,7 @@ impl Parsers {
                     AssemblyFlags,
                     terminal!(OpenParen, "("),
                     separated_by!(
-                        DoubleQuotedAsciiStringLiteralRepeatedAndCommaRepeated,
+                        DoubleQuotedAsciiStringLiteralsAndCommas,
                         token!(double_quoted_ascii_string_literal_parser),
                         terminal!(Comma, ",")
                     ),
@@ -1391,10 +1391,7 @@ impl Parsers {
                     ConstructorDefinition,
                     terminal!(Constructor, "constructor"),
                     rule!(parameter_list_parser),
-                    zero_or_more!(
-                        ConstructorAttributeRepeated,
-                        rule!(constructor_attribute_parser)
-                    ),
+                    zero_or_more!(ConstructorAttributes, rule!(constructor_attribute_parser)),
                     rule!(block_parser)
                 )
                 .boxed(),
@@ -1445,12 +1442,9 @@ impl Parsers {
                     token!(identifier_parser),
                     optional!(rule!(inheritance_specifier_list_parser)),
                     delimited_by!(
-                        OpenBraceAndContractBodyElementRepeatedAndCloseBrace,
+                        OpenBraceAndContractBodyElementsAndCloseBrace,
                         terminal!(OpenBrace, "{"),
-                        zero_or_more!(
-                            ContractBodyElementRepeated,
-                            rule!(contract_body_element_parser)
-                        ),
+                        zero_or_more!(ContractBodyElements, rule!(contract_body_element_parser)),
                         terminal!(CloseBrace, "}")
                     )
                 )
@@ -1599,11 +1593,11 @@ impl Parsers {
                     DoubleQuotedAsciiStringLiteral,
                     lex_terminal!(DoubleQuote, "\""),
                     lex_zero_or_more!(
-                        RunRepeated,
+                        Runs,
                         lex_choice!(
                             Run,
                             lex_one_or_more!(
-                                CharRepeated,
+                                Chars,
                                 lex_terminal!(Char, |&c: &char| (' ' <= c && c <= '~')
                                     && c != '"'
                                     && c != '\\')
@@ -1624,11 +1618,11 @@ impl Parsers {
                     DoubleQuotedUnicodeStringLiteral,
                     lex_terminal!(UnicodeDoubleQuote, "unicode\""),
                     lex_zero_or_more!(
-                        RunRepeated,
+                        Runs,
                         lex_choice!(
                             Run,
                             lex_one_or_more!(
-                                CharRepeated,
+                                Chars,
                                 lex_terminal!(Char, |&c: &char| c != '"'
                                     && c != '\\'
                                     && c != '\n'
@@ -1706,10 +1700,10 @@ impl Parsers {
                     terminal!(Enum, "enum"),
                     token!(identifier_parser),
                     delimited_by!(
-                        OpenBraceAndIdentifierRepeatedAndCommaRepeatedAndCloseBrace,
+                        OpenBraceAndIdentifiersAndCommasAndCloseBrace,
                         terminal!(OpenBrace, "{"),
                         separated_by!(
-                            IdentifierRepeatedAndCommaRepeated,
+                            IdentifiersAndCommas,
                             token!(identifier_parser),
                             terminal!(Comma, ",")
                         ),
@@ -1740,10 +1734,10 @@ impl Parsers {
                     terminal!(Error, "error"),
                     token!(identifier_parser),
                     delimited_by!(
-                        OpenParenAndErrorParameterRepeatedAndCommaRepeatedAndCloseParen,
+                        OpenParenAndErrorParametersAndCommasAndCloseParen,
                         terminal!(OpenParen, "("),
                         optional!(separated_by!(
-                            ErrorParameterRepeatedAndCommaRepeated,
+                            ErrorParametersAndCommas,
                             rule!(error_parameter_parser),
                             terminal!(Comma, ",")
                         )),
@@ -1796,10 +1790,10 @@ impl Parsers {
                     terminal!(Event, "event"),
                     token!(identifier_parser),
                     delimited_by!(
-                        OpenParenAndEventParameterRepeatedAndCommaRepeatedAndCloseParen,
+                        OpenParenAndEventParametersAndCommasAndCloseParen,
                         terminal!(OpenParen, "("),
                         optional!(separated_by!(
-                            EventParameterRepeatedAndCommaRepeated,
+                            EventParametersAndCommas,
                             rule!(event_parameter_parser),
                             terminal!(Comma, ",")
                         )),
@@ -1901,7 +1895,7 @@ impl Parsers {
                     terminal!(Fallback, "fallback"),
                     rule!(parameter_list_parser),
                     zero_or_more!(
-                        FallbackFunctionAttributeRepeated,
+                        FallbackFunctionAttributes,
                         rule!(fallback_function_attribute_parser)
                     ),
                     optional!(seq!(
@@ -2026,10 +2020,10 @@ impl Parsers {
                     member_access_expression_parser,
                     seq!(
                         optional!(delimited_by!(
-                            OpenBraceAndNamedArgumentRepeatedAndCommaRepeatedAndCloseBrace,
+                            OpenBraceAndNamedArgumentsAndCommasAndCloseBrace,
                             terminal!(OpenBrace, "{"),
                             separated_by!(
-                                NamedArgumentRepeatedAndCommaRepeated,
+                                NamedArgumentsAndCommas,
                                 rule!(named_argument_parser),
                                 terminal!(Comma, ",")
                             ),
@@ -2054,7 +2048,7 @@ impl Parsers {
                         terminal!(Receive, "receive")
                     ),
                     rule!(parameter_list_parser),
-                    zero_or_more!(FunctionAttributeRepeated, rule!(function_attribute_parser)),
+                    zero_or_more!(FunctionAttributes, rule!(function_attribute_parser)),
                     optional!(seq!(
                         terminal!(Returns, "returns"),
                         rule!(parameter_list_parser)
@@ -2293,7 +2287,7 @@ impl Parsers {
                     InheritanceSpecifierList,
                     terminal!(Is, "is"),
                     separated_by!(
-                        InheritanceSpecifierRepeatedAndCommaRepeated,
+                        InheritanceSpecifiersAndCommas,
                         rule!(inheritance_specifier_parser),
                         terminal!(Comma, ",")
                     )
@@ -2311,12 +2305,9 @@ impl Parsers {
                     token!(identifier_parser),
                     optional!(rule!(inheritance_specifier_list_parser)),
                     delimited_by!(
-                        OpenBraceAndContractBodyElementRepeatedAndCloseBrace,
+                        OpenBraceAndContractBodyElementsAndCloseBrace,
                         terminal!(OpenBrace, "{"),
-                        zero_or_more!(
-                            ContractBodyElementRepeated,
-                            rule!(contract_body_element_parser)
-                        ),
+                        zero_or_more!(ContractBodyElements, rule!(contract_body_element_parser)),
                         terminal!(CloseBrace, "}")
                     )
                 )
@@ -2354,12 +2345,9 @@ impl Parsers {
                     terminal!(Library, "library"),
                     token!(identifier_parser),
                     delimited_by!(
-                        OpenBraceAndContractBodyElementRepeatedAndCloseBrace,
+                        OpenBraceAndContractBodyElementsAndCloseBrace,
                         terminal!(OpenBrace, "{"),
-                        zero_or_more!(
-                            ContractBodyElementRepeated,
-                            rule!(contract_body_element_parser)
-                        ),
+                        zero_or_more!(ContractBodyElements, rule!(contract_body_element_parser)),
                         terminal!(CloseBrace, "}")
                     )
                 )
@@ -2422,7 +2410,7 @@ impl Parsers {
                     terminal!(Modifier, "modifier"),
                     token!(identifier_parser),
                     optional!(rule!(parameter_list_parser)),
-                    zero_or_more!(ModifierAttributeRepeated, rule!(modifier_attribute_parser)),
+                    zero_or_more!(ModifierAttributes, rule!(modifier_attribute_parser)),
                     choice!(terminal!(Semicolon, ";"), rule!(block_parser))
                 )
                 .boxed(),
@@ -2468,11 +2456,11 @@ impl Parsers {
                         lex_zero_or_more!(lex_choice!(
                             lex_terminal!(NotStar, |&c: &char| c != '*'),
                             lex_seq!(
-                                lex_one_or_more!(StarRepeated, lex_terminal!(Star, '*')),
+                                lex_one_or_more!(Stars, lex_terminal!(Star, '*')),
                                 lex_terminal!(|&c: &char| c != '*' && c != '/')
                             )
                         )),
-                        lex_zero_or_more!(StarRepeated, lex_terminal!(Star, '*'))
+                        lex_zero_or_more!(Stars, lex_terminal!(Star, '*'))
                     ),
                     lex_terminal!(StarSlash, "*/")
                 )
@@ -2500,7 +2488,7 @@ impl Parsers {
                     NamedArgumentList,
                     terminal!(OpenBrace, "{"),
                     optional!(separated_by!(
-                        NamedArgumentRepeatedAndCommaRepeated,
+                        NamedArgumentsAndCommas,
                         rule!(named_argument_parser),
                         terminal!(Comma, ",")
                     )),
@@ -2608,10 +2596,10 @@ impl Parsers {
                     OverrideSpecifier,
                     terminal!(Override, "override"),
                     optional!(delimited_by!(
-                        OpenParenAndIdentifierPathRepeatedAndCommaRepeatedAndCloseParen,
+                        OpenParenAndIdentifierPathsAndCommasAndCloseParen,
                         terminal!(OpenParen, "("),
                         separated_by!(
-                            IdentifierPathRepeatedAndCommaRepeated,
+                            IdentifierPathsAndCommas,
                             rule!(identifier_path_parser),
                             terminal!(Comma, ",")
                         ),
@@ -2642,7 +2630,7 @@ impl Parsers {
                     ParameterList,
                     terminal!(OpenParen, "("),
                     optional!(separated_by!(
-                        ParameterDeclarationRepeatedAndCommaRepeated,
+                        ParameterDeclarationsAndCommas,
                         rule!(parameter_declaration_parser),
                         terminal!(Comma, ",")
                     )),
@@ -2659,7 +2647,7 @@ impl Parsers {
                     ParenthesisExpression,
                     terminal!(OpenParen, "("),
                     separated_by!(
-                        ExpressionRepeatedAndCommaRepeated,
+                        ExpressionsAndCommas,
                         optional!(rule!(expression_parser)),
                         terminal!(Comma, ",")
                     ),
@@ -2800,7 +2788,7 @@ impl Parsers {
                     terminal!(Receive, "receive"),
                     rule!(parameter_list_parser),
                     zero_or_more!(
-                        ReceiveFunctionAttributeRepeated,
+                        ReceiveFunctionAttributes,
                         rule!(receive_function_attribute_parser)
                     ),
                     choice!(terminal!(Semicolon, ";"), rule!(block_parser))
@@ -2919,10 +2907,10 @@ impl Parsers {
                 seq!(
                     SelectingImportDirective,
                     delimited_by!(
-                        OpenBraceAndSelectedImportRepeatedAndCommaRepeatedAndCloseBrace,
+                        OpenBraceAndSelectedImportsAndCommasAndCloseBrace,
                         terminal!(OpenBrace, "{"),
                         separated_by!(
-                            SelectedImportRepeatedAndCommaRepeated,
+                            SelectedImportsAndCommas,
                             rule!(selected_import_parser),
                             terminal!(Comma, ",")
                         ),
@@ -3084,11 +3072,11 @@ impl Parsers {
                     SingleQuotedAsciiStringLiteral,
                     lex_terminal!(Quote, "'"),
                     lex_zero_or_more!(
-                        RunRepeated,
+                        Runs,
                         lex_choice!(
                             Run,
                             lex_one_or_more!(
-                                CharRepeated,
+                                Chars,
                                 lex_terminal!(Char, |&c: &char| (' ' <= c && c <= '~')
                                     && c != '\''
                                     && c != '\\')
@@ -3109,11 +3097,11 @@ impl Parsers {
                     SingleQuotedUnicodeStringLiteral,
                     lex_terminal!(UnicodeQuote, "unicode'"),
                     lex_zero_or_more!(
-                        RunRepeated,
+                        Runs,
                         lex_choice!(
                             Run,
                             lex_one_or_more!(
-                                CharRepeated,
+                                Chars,
                                 lex_terminal!(Char, |&c: &char| c != '\''
                                     && c != '\\'
                                     && c != '\n'
@@ -3179,7 +3167,7 @@ impl Parsers {
                     StateVariableDeclaration,
                     rule!(type_name_parser),
                     zero_or_more!(
-                        StateVariableAttributeRepeated,
+                        StateVariableAttributes,
                         rule!(state_variable_attribute_parser)
                     ),
                     token!(identifier_parser),
@@ -3222,9 +3210,9 @@ impl Parsers {
                     terminal!(Struct, "struct"),
                     token!(identifier_parser),
                     delimited_by!(
-                        OpenBraceAndStructMemberRepeatedAndCloseBrace,
+                        OpenBraceAndStructMembersAndCloseBrace,
                         terminal!(OpenBrace, "{"),
-                        one_or_more!(StructMemberRepeated, rule!(struct_member_parser)),
+                        one_or_more!(StructMembers, rule!(struct_member_parser)),
                         terminal!(CloseBrace, "}")
                     )
                 )
@@ -3275,7 +3263,7 @@ impl Parsers {
                         rule!(parameter_list_parser)
                     )),
                     rule!(block_parser),
-                    one_or_more!(CatchClauseRepeated, rule!(catch_clause_parser))
+                    one_or_more!(CatchClauses, rule!(catch_clause_parser))
                 )
                 .boxed(),
             );
@@ -3334,7 +3322,7 @@ impl Parsers {
                         rule!(identifier_path_parser)
                     ),
                     zero_or_more!(
-                        OpenBracketAndExpressionAndCloseBracketRepeated,
+                        OpenBracketAndExpressionAndCloseBrackets,
                         delimited_by!(
                             OpenBracketAndExpressionAndCloseBracket,
                             terminal!(OpenBracket, "["),
@@ -3467,10 +3455,10 @@ impl Parsers {
                     choice!(
                         rule!(identifier_path_parser),
                         delimited_by!(
-                            OpenBraceAndIdentifierPathRepeatedAndCommaRepeatedAndCloseBrace,
+                            OpenBraceAndIdentifierPathsAndCommasAndCloseBrace,
                             terminal!(OpenBrace, "{"),
                             separated_by!(
-                                IdentifierPathRepeatedAndCommaRepeated,
+                                IdentifierPathsAndCommas,
                                 rule!(identifier_path_parser),
                                 terminal!(Comma, ",")
                             ),
@@ -3577,7 +3565,7 @@ impl Parsers {
                 seq!(
                     YulAssignmentStatement,
                     separated_by!(
-                        YulIdentifierPathRepeatedAndCommaRepeated,
+                        YulIdentifierPathsAndCommas,
                         rule!(yul_identifier_path_parser),
                         terminal!(Comma, ",")
                     ),
@@ -3594,7 +3582,7 @@ impl Parsers {
                 delimited_by!(
                     YulBlock,
                     terminal!(OpenBrace, "{"),
-                    zero_or_more!(YulStatementRepeated, rule!(yul_statement_parser)),
+                    zero_or_more!(YulStatements, rule!(yul_statement_parser)),
                     terminal!(CloseBrace, "}")
                 )
                 .boxed(),
@@ -3651,10 +3639,10 @@ impl Parsers {
                     YulFunctionCall,
                     token!(yul_identifier_parser),
                     delimited_by!(
-                        OpenParenAndYulExpressionRepeatedAndCommaRepeatedAndCloseParen,
+                        OpenParenAndYulExpressionsAndCommasAndCloseParen,
                         terminal!(OpenParen, "("),
                         optional!(separated_by!(
-                            YulExpressionRepeatedAndCommaRepeated,
+                            YulExpressionsAndCommas,
                             rule!(yul_expression_parser),
                             terminal!(Comma, ",")
                         )),
@@ -3861,7 +3849,7 @@ impl Parsers {
                     YulVariableDeclaration,
                     terminal!(Let, "let"),
                     separated_by!(
-                        YulIdentifierPathRepeatedAndCommaRepeated,
+                        YulIdentifierPathsAndCommas,
                         rule!(yul_identifier_path_parser),
                         terminal!(Comma, ",")
                     ),

@@ -55,8 +55,7 @@ pub fn name_of_terminal_string(string: &str) -> String {
 }
 
 pub fn pluralize(str: &str) -> String {
-    format!("{}_repeated", str)
-    // str.to_plural()
+    str.to_plural()
 }
 
 pub fn to_field_name_ident(str: &str) -> Ident {
