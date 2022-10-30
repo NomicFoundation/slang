@@ -5,9 +5,13 @@ members = [
     "crates/codegen/parser",
     "crates/codegen/spec",
     "crates/codegen/utils",
-    "crates/solidity/outputs/parser",
+    "crates/solidity/outputs/rust-lib",
+    "crates/solidity/outputs/ts-native-lib",
 ]
 
 [profile.dev]
 debug = 0
 incremental = true
+
+[profile.release]
+lto = true

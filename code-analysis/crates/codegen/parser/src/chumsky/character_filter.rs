@@ -1,26 +1,9 @@
-// use std::cell::Cell;
-
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
 use codegen_schema::*;
 
-use super::{
-    // combinator_node::CombinatorNode,
-    combinator_tree::CombinatorTree,
-    generated_code::GeneratedCode,
-    naming,
-};
-
-// pub enum CharacterFilterParent<'context> {
-//     CharacterFilter(&'context CharacterFilter<'context>),
-//     CombinatorNode(&'context CombinatorNode<'context>),
-// }
-
-// pub struct CharFilter<'context> {
-//     pub parent: CharacterFilterParent<'context>,
-//     pub variant: CharacterFilter<'context>,
-// }
+use super::{combinator_tree::CombinatorTree, generated_code::GeneratedCode, naming};
 
 pub enum CharacterFilter<'context> {
     Negation {

@@ -84,21 +84,14 @@ impl GeneratedCode {
         codegen
             .write_file(
                 &output_dir.join("lex.rs"),
-                &format!("{}", boilerplate::lex_head()),
+                &boilerplate::lex_head().to_string(),
             )
             .unwrap();
 
         codegen
             .write_file(
                 &output_dir.join("cst.rs"),
-                &format!("{}", boilerplate::cst_head()),
-            )
-            .unwrap();
-
-        codegen
-            .write_file(
-                &output_dir.join("ast.rs"),
-                &format!("{}", boilerplate::ast_head()),
+                &boilerplate::cst_head().to_string(),
             )
             .unwrap();
 
@@ -107,6 +100,7 @@ impl GeneratedCode {
         let mut parser_predeclarations = vec![];
         let mut parser_definitions = vec![];
         let mut field_assignments = vec![];
+        let mut parse_methods = vec![];
 
         for (name, parser) in &self.parsers {
             let parser_name = naming::to_parser_name_ident(&name);
@@ -148,6 +142,26 @@ impl GeneratedCode {
 
             field_assignments
                 .push(quote!( #field_name: #parser_name.then_ignore(end()).boxed(), ).to_string());
+
+            parse_methods.push(format!(
+                "{}\n{}",
+                parser
+                    .comment
+                    .iter()
+                    .map(|s| format!("// {}", s))
+                    .collect::<Vec<_>>()
+                    .join("\n"),
+                {
+                    let method_name = format_ident!("parse_{}", field_name);
+                    quote!(
+                    pub fn #method_name(&self, source: &str) -> #result_type {
+                            let (node, _errs) = self.parsers.#field_name.parse_recovery(source);
+                            node.unwrap()
+                        }
+                    )
+                    .to_string()
+                }
+            ));
         }
 
         let version_declarations = versions
@@ -166,37 +180,37 @@ impl GeneratedCode {
                 &format!(
                     "{}
                 
-                #[allow(dead_code)]
-                pub struct Parsers<'a> {{
-                    {}
-                }}
-
-                impl<'a> Parsers<'a> {{
-                    pub fn new(version: &Version) -> Self {{
-                        // Declare all versions -----------------------------
-
+                    #[allow(dead_code)]
+                    pub struct Parsers<'a> {{
                         {}
+                    }}
 
-                        // Declare all productions --------------------------
+                    impl<'a> Parsers<'a> {{
+                        pub fn new(version: &Version) -> Self {{
+                            // Declare all versions -----------------------------
 
-                        {}
-
-                        // Macros -------------------------------------------
-
-                        {}
-
-                        // Define all productions ---------------------------
-
-                        {}
-
-                        // Create the Parser object -------------------------
-
-                        Self {{
                             {}
+
+                            // Declare all productions --------------------------
+
+                            {}
+
+                            // Macros -------------------------------------------
+
+                            {}
+
+                            // Define all productions ---------------------------
+
+                            {}
+
+                            // Create the Parser object -------------------------
+
+                            Self {{
+                                {}
+                            }}
                         }}
                     }}
-                }}
-                ",
+                    ",
                     boilerplate::parse_head(),
                     field_definitions.join("\n\n"),
                     version_declarations.join(""),
@@ -208,6 +222,22 @@ impl GeneratedCode {
             )
             .unwrap();
 
+        codegen
+            .write_file(
+                &output_dir.join("language.rs"),
+                &format!(
+                    "{}
+
+                    impl Language {{
+                        {}
+                    }}
+                    ",
+                    boilerplate::language_head(),
+                    parse_methods.join("\n\n"),
+                ),
+            )
+            .unwrap();
+
         // Do the kinds last, because the code generation steps above may have added new kinds
         codegen
             .write_file(
@@ -215,16 +245,16 @@ impl GeneratedCode {
                 &format!(
                     "{}
 
-                #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
-                pub enum Token {{
-                    {}
-                }}
+                    #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+                    pub enum Token {{
+                        {}
+                    }}
 
-                #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
-                pub enum Rule {{
-                    {}
-                }}
-                ",
+                    #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+                    pub enum Rule {{
+                        {}
+                    }}
+                    ",
                     boilerplate::kinds_head(),
                     self.token_kinds
                         .keys()

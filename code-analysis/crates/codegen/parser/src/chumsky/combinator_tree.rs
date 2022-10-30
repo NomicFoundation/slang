@@ -58,19 +58,19 @@ impl<'context> CombinatorTree<'context> {
                 ProductionKind::Rule => {
                     code.add_rule_kind(self.production.name.clone());
                     let parser = self.root_node.get().unwrap().to_parser_code(false, code);
-                    code.add_parser(name, version, comment, parser, quote!(&'a cst::Node<'a>));
+                    code.add_parser(name, version, comment, parser, quote!(Rc<cst::Node>));
                 }
 
                 ProductionKind::Trivia => {
                     code.add_rule_kind(self.production.name.clone());
                     let parser = self.root_node.get().unwrap().to_parser_code(true, code);
-                    code.add_parser(name, version, comment, parser, quote!(&'a cst::Node<'a>));
+                    code.add_parser(name, version, comment, parser, quote!(Rc<cst::Node>));
                 }
 
                 ProductionKind::Token => {
                     code.add_token_kind(self.production.name.clone());
                     let parser = self.root_node.get().unwrap().to_lexer_code(code);
-                    code.add_parser(name, version, comment, parser, quote!(&'a lex::Node<'a>));
+                    code.add_parser(name, version, comment, parser, quote!(Rc<lex::Node>));
                 }
             }
         }
