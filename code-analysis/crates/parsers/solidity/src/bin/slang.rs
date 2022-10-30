@@ -4,9 +4,12 @@ use ariadne::{Color, Fmt, Label, Report, ReportKind, Source};
 use chumsky::prelude::*;
 use clap::Parser as ClapParser;
 use semver::Version;
+use solidity_parser::generated::parse::ErrorType;
 use strum::EnumString;
 
+use solidity_parser::generated::parse::Context;
 use solidity_parser::generated::parse::Parsers;
+use solidity_parser::generated::parse::SpanType;
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, EnumString)]
 enum ParserType {
@@ -28,14 +31,51 @@ struct ProgramArgs {
     yaml_output: Option<String>,
 }
 
+struct Input<'a, Iter: Iterator<Item = char>> {
+    source: Iter,
+    position: usize,
+    context: &'a Context<'a>,
+}
+
+impl<'a> Input<'a, std::str::Chars<'a>> {
+    fn new(source: &'a str, context: &'a Context<'a>) -> Self {
+        Self {
+            source: source.chars(),
+            position: 0,
+            context,
+        }
+    }
+    fn eos(&self) -> (&'a Context<'a>, std::ops::Range<usize>) {
+        (self.context, 0..0)
+    }
+}
+
+impl<'a, Iter: Iterator<Item = char>> Iterator for Input<'a, Iter> {
+    type Item = (char, (&'a Context<'a>, std::ops::Range<usize>));
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let c = self.source.next();
+        match c {
+            Some(c) => {
+                self.position += 1;
+                Some((c, (self.context, self.position..(self.position + 1))))
+            }
+            None => None,
+        }
+    }
+}
+
 fn main() -> Result<(), usize> {
     let args = ProgramArgs::parse();
 
     let solidity_src = fs::read_to_string(args.solidity_input).expect("Failed to read file");
 
+    let context = Context::new();
+    let input = Input::new(&solidity_src, &context);
+    let stream = chumsky::Stream::from_iter(input.eos(), input);
     let (parse_tree, errs) = Parsers::new(args.version)
         .source_unit
-        .parse_recovery(solidity_src.as_str());
+        .parse_recovery(stream);
     let number_of_errors = errs.len();
     print_errors(errs, &solidity_src);
 
@@ -67,15 +107,16 @@ fn main() -> Result<(), usize> {
 
 // TODO: encapsulate the following in a support library
 
-fn print_errors(errs: Vec<Simple<char>>, src: &str) {
+fn print_errors<'a>(errs: Vec<ErrorType<'a>>, src: &'a str) {
     errs.into_iter().for_each(|e| {
+        let context = e.span().context();
         let report = generate_report(e);
         let source = Source::from(src);
-        report.finish().print(source).unwrap();
+        report.finish().print((context, source)).unwrap();
     });
 }
 
-fn generate_report(e: Simple<char>) -> ariadne::ReportBuilder<std::ops::Range<usize>> {
+fn generate_report<'a>(e: ErrorType<'a>) -> ariadne::ReportBuilder<SpanType<'a>> {
     let msg = if let chumsky::error::SimpleReason::Custom(msg) = e.reason() {
         msg.clone()
     } else {
@@ -104,7 +145,7 @@ fn generate_report(e: Simple<char>) -> ariadne::ReportBuilder<std::ops::Range<us
             },
         )
     };
-    let report = Report::build(ReportKind::Error, (), e.span().start)
+    let report = Report::build(ReportKind::Error, e.span().context(), e.span().start())
         .with_code(3)
         .with_message(msg)
         .with_label(

@@ -106,7 +106,7 @@ impl GeneratedCode {
 
             versions.extend(parser.versions.keys());
 
-            parser_predeclarations.push(quote!( let mut #parser_name = Recursive::<char, #result_type, ErrorType>::declare();  ).to_string());
+            parser_predeclarations.push(quote!( let mut #parser_name = Recursive::<char, #result_type, ErrorType>::declare(); ).to_string());
 
             parser_definitions.push(format!(
                 "{}\n{}",
@@ -134,7 +134,7 @@ impl GeneratedCode {
                     .map(|s| format!("/// {}", s))
                     .collect::<Vec<_>>()
                     .join("\n"),
-                quote!( pub #field_name: ParserType<#result_type>, ).to_string()
+                quote!( pub #field_name: ParserType<'a, #result_type>, ).to_string()
             ));
 
             field_assignments
@@ -157,11 +157,11 @@ impl GeneratedCode {
                 "{}
                 
                 #[allow(dead_code)]
-                pub struct Parsers {{
+                pub struct Parsers<'a> {{
                     {}
                 }}
 
-                impl Parsers {{
+                impl<'a> Parsers<'a> {{
                     pub fn new(version: Version) -> Self {{
                         // Declare all versions -----------------------------
 
@@ -203,12 +203,12 @@ impl GeneratedCode {
             format!(
                 "{}
 
-                #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+                #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
                 pub enum Token {{
                     {}
                 }}
 
-                #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+                #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
                 pub enum Rule {{
                     {}
                 }}

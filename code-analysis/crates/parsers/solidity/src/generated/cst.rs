@@ -1,15 +1,15 @@
 // This file is generated via `cargo build`. Please don't edit by hand.
 
 use super::kinds;
+use super::parse::Context;
 use serde::Serialize;
 use std::ops::Range;
-use std::rc::Rc;
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
-pub enum Node {
+pub enum Node<'a> {
     None,
     Rule {
         kind: kinds::Rule,
-        children: Vec<NodeRef>,
+        children: Vec<&'a Node<'a>>,
     },
     Token {
         kind: kinds::Token,
@@ -17,58 +17,57 @@ pub enum Node {
         range: Range<usize>,
         #[doc = r" Only Trivia"]
         #[serde(skip_serializing_if = "Vec::is_empty")]
-        trivia: Vec<NodeRef>,
+        trivia: Vec<&'a Node<'a>>,
     },
     #[doc = r" For anonymous groups referenced from AST nodes i.e. `delimited_by`"]
     Group {
         #[serde(skip_serializing_if = "Vec::is_empty")]
-        children: Vec<NodeRef>,
+        children: Vec<&'a Node<'a>>,
     },
 }
-pub type NodeRef = Rc<Node>;
 #[allow(unused_variables)]
 pub trait Visitor {
     fn enter_rule(
         &mut self,
-        kind: &kinds::Rule,
-        children: &Vec<NodeRef>,
-        node: &NodeRef,
+        kind: kinds::Rule,
+        children: &Vec<&Node<'_>>,
+        node: &Node<'_>,
     ) -> VisitorEntryResponse {
         VisitorEntryResponse::StepIn
     }
     fn exit_rule(
         &mut self,
-        kind: &kinds::Rule,
-        children: &Vec<NodeRef>,
-        node: &NodeRef,
+        kind: kinds::Rule,
+        children: &Vec<&Node<'_>>,
+        node: &Node<'_>,
     ) -> VisitorExitResponse {
         VisitorExitResponse::StepIn
     }
     fn enter_token(
         &mut self,
-        kind: &kinds::Token,
+        kind: kinds::Token,
         range: &Range<usize>,
-        trivia: &Vec<NodeRef>,
-        node: &NodeRef,
+        trivia: &Vec<&Node<'_>>,
+        node: &Node<'_>,
     ) -> VisitorEntryResponse {
         VisitorEntryResponse::StepIn
     }
     fn exit_token(
         &mut self,
-        kind: &kinds::Token,
+        kind: kinds::Token,
         range: &Range<usize>,
-        trivia: &Vec<NodeRef>,
-        node: &NodeRef,
+        trivia: &Vec<&Node<'_>>,
+        node: &Node<'_>,
     ) -> VisitorExitResponse {
         VisitorExitResponse::StepIn
     }
-    fn enter_group(&mut self, children: &Vec<NodeRef>, node: &NodeRef) -> VisitorEntryResponse {
+    fn enter_group(&mut self, children: &Vec<&Node<'_>>, node: &Node<'_>) -> VisitorEntryResponse {
         VisitorEntryResponse::StepIn
     }
-    fn exit_group(&mut self, children: &Vec<NodeRef>, node: &NodeRef) -> VisitorExitResponse {
+    fn exit_group(&mut self, children: &Vec<&Node<'_>>, node: &Node<'_>) -> VisitorExitResponse {
         VisitorExitResponse::StepIn
     }
-    fn visit_none(&mut self, node: &NodeRef) -> VisitorExitResponse {
+    fn visit_none(&mut self, node: &Node<'_>) -> VisitorExitResponse {
         VisitorExitResponse::StepIn
     }
 }
@@ -84,18 +83,26 @@ pub enum VisitorExitResponse {
 pub trait Visitable {
     fn visit<T: Visitor>(&self, visitor: &mut T) -> VisitorExitResponse;
 }
-impl Node {
+impl<'a> Node<'a> {
     #[inline]
-    pub fn none() -> NodeRef {
-        Rc::new(Self::None)
+    pub fn none(context: &'a Context<'a>) -> &'a Node<'a> {
+        context.alloc_cst_node(Self::None)
     }
     #[inline]
-    pub fn rule(kind: kinds::Rule, children: Vec<NodeRef>) -> NodeRef {
-        Rc::new(Self::Rule { kind, children })
+    pub fn rule(
+        context: &'a Context<'a>,
+        kind: kinds::Rule,
+        children: Vec<&'a Node<'a>>,
+    ) -> &'a Node<'a> {
+        context.alloc_cst_node(Self::Rule { kind, children })
     }
     #[inline]
-    pub fn trivia_token(range: Range<usize>, kind: kinds::Token) -> NodeRef {
-        Rc::new(Self::Token {
+    pub fn trivia_token(
+        context: &'a Context<'a>,
+        range: Range<usize>,
+        kind: kinds::Token,
+    ) -> &'a Node<'a> {
+        context.alloc_cst_node(Self::Token {
             range,
             kind,
             trivia: vec![],
@@ -103,11 +110,12 @@ impl Node {
     }
     #[inline]
     pub fn token(
+        context: &'a Context<'a>,
         range: Range<usize>,
         kind: kinds::Token,
-        leading_trivia: NodeRef,
-        trailing_trivia: NodeRef,
-    ) -> NodeRef {
+        leading_trivia: &'a Node<'a>,
+        trailing_trivia: &'a Node<'a>,
+    ) -> &'a Node<'a> {
         let mut trivia = vec![];
         if *leading_trivia != Node::None {
             trivia.push(leading_trivia)
@@ -115,27 +123,27 @@ impl Node {
         if *trailing_trivia != Node::None {
             trivia.push(trailing_trivia)
         }
-        Rc::new(Self::Token {
+        context.alloc_cst_node(Self::Token {
             range,
             kind,
             trivia,
         })
     }
     #[inline]
-    pub fn group(children: Vec<NodeRef>) -> NodeRef {
+    pub fn group(context: &'a Context<'a>, children: Vec<&'a Node<'a>>) -> &'a Node<'a> {
         if children.is_empty() {
-            Self::none()
+            Self::none(context)
         } else {
-            Rc::new(Self::Group { children })
+            context.alloc_cst_node(Self::Group { children })
         }
     }
 }
-impl Visitable for NodeRef {
+impl<'a> Visitable for &'a Node<'a> {
     fn visit<T: Visitor>(&self, visitor: &mut T) -> VisitorExitResponse {
-        match self.as_ref() {
+        match self {
             Node::None => visitor.visit_none(self),
             Node::Rule { kind, children } => {
-                match visitor.enter_rule(kind, children, self) {
+                match visitor.enter_rule(*kind, children, self) {
                     VisitorEntryResponse::Quit => return VisitorExitResponse::Quit,
                     VisitorEntryResponse::StepOver => {}
                     VisitorEntryResponse::StepIn => {
@@ -147,14 +155,14 @@ impl Visitable for NodeRef {
                         }
                     }
                 }
-                visitor.exit_rule(kind, children, self)
+                visitor.exit_rule(*kind, children, self)
             }
             Node::Token {
                 kind,
                 range,
                 trivia,
             } => {
-                match visitor.enter_token(kind, range, trivia, self) {
+                match visitor.enter_token(*kind, range, trivia, self) {
                     VisitorEntryResponse::Quit => return VisitorExitResponse::Quit,
                     VisitorEntryResponse::StepOver => {}
                     VisitorEntryResponse::StepIn => {
@@ -166,7 +174,7 @@ impl Visitable for NodeRef {
                         }
                     }
                 }
-                visitor.exit_token(kind, range, trivia, self)
+                visitor.exit_token(*kind, range, trivia, self)
             }
             Node::Group { children } => {
                 match visitor.enter_group(children, self) {
