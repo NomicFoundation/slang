@@ -6,8 +6,8 @@ use codegen_schema::*;
 use crate::chumsky::combinator_node::OperatorModel;
 
 use super::{
-    character_filter::CharacterFilter, combinator_node::CombinatorNode,
-    generated_code::GeneratedCode, naming, terminal_trie::TerminalTrie,
+    character_filter::CharacterFilter, code_generator::CodeGenerator,
+    combinator_node::CombinatorNode, naming, terminal_trie::TerminalTrie,
 };
 
 impl<'context> CharacterFilter<'context> {
@@ -15,21 +15,21 @@ impl<'context> CharacterFilter<'context> {
         &self,
         name: Option<&String>,
         is_trivia: bool,
-        code: &mut GeneratedCode,
+        code: &mut CodeGenerator,
     ) -> TokenStream {
         self.to_code(name, code, if is_trivia { "trivia_" } else { "" })
     }
 }
 
 impl TerminalTrie {
-    pub fn to_parser_code(&self, is_trivia: bool, code: &mut GeneratedCode) -> TokenStream {
+    pub fn to_parser_code(&self, is_trivia: bool, code: &mut CodeGenerator) -> TokenStream {
         self.to_code(code, if is_trivia { "trivia_" } else { "" })
     }
 }
 
 impl<'context> CombinatorNode<'context> {
-    pub fn to_parser_code(&self, is_trivia: bool, code: &mut GeneratedCode) -> TokenStream {
-        fn create_kind(name: &Option<String>, code: &mut GeneratedCode) -> Option<Ident> {
+    pub fn to_parser_code(&self, is_trivia: bool, code: &mut CodeGenerator) -> TokenStream {
+        fn create_kind(name: &Option<String>, code: &mut CodeGenerator) -> Option<Ident> {
             name.as_ref().map(|name| code.add_rule_kind(name.clone()))
         }
 

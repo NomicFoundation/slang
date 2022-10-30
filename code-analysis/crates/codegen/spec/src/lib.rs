@@ -14,11 +14,11 @@ pub struct NavigationEntry {
     pub file_path: Option<PathBuf>,
 }
 
-pub trait GrammarSpecExtensions {
+pub trait GrammarSpecGeneratorExtensions {
     fn generate_spec(&self, codegen: &mut CodegenContext, documentation_folder: &PathBuf);
 }
 
-impl GrammarSpecExtensions for Grammar {
+impl GrammarSpecGeneratorExtensions for Grammar {
     fn generate_spec(&self, codegen: &mut CodegenContext, documentation_folder: &PathBuf) {
         let generated_folder = documentation_folder.join("docs/specification/generated");
 

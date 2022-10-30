@@ -218,10 +218,10 @@ impl<'context> CombinatorNode<'context> {
                 let name = name.or_else(|| {
                     expr.name().map(|expr_name| {
                         format!(
-                            "{}_and_{}_and_{}",
-                            naming::name_of_terminal_string(open),
+                            "delimited_{}",
+                            // naming::name_of_terminal_string(open),
                             expr_name,
-                            naming::name_of_terminal_string(close)
+                            // naming::name_of_terminal_string(close)
                         )
                     })
                 });
@@ -302,9 +302,9 @@ impl<'context> CombinatorNode<'context> {
                 let name = name.or_else(|| {
                     expr.name().map(|expr_name| {
                         format!(
-                            "{}_and_{}",
+                            "separated_{}",
                             naming::pluralize(&expr_name),
-                            naming::pluralize(&naming::name_of_terminal_string(&separator))
+                            // naming::pluralize(&naming::name_of_terminal_string(&separator))
                         )
                     })
                 });

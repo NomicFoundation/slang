@@ -1,3 +1,3 @@
 mod chumsky;
 
-pub use chumsky::grammar::GrammarChumskyExtensions;
+pub use chumsky::grammar::GrammarParserGeneratorExtensions;

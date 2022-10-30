@@ -5,3 +5,6 @@ node_modules/
 # Generated Artifacts
 target/
 Pipfile.lock
+
+**/solidity/outputs/typescript_lib/index.js
+**/solidity/outputs/typescript_lib/index.d.ts

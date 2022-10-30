@@ -37,6 +37,7 @@ fn generate_header(file_path: &PathBuf) -> Result<String> {
         "ebnf" => Ok(format!("(* {warning_line} *)")),
         "md" => Ok(format!("<!-- {warning_line} -->")),
         "rs" => Ok(format!("// {warning_line}")),
+        "ts" => Ok(format!("// {warning_line}")),
         "yml" => Ok(format!("# {warning_line}")),
         ext => bail!("Unsupported extension to generate a header for: {ext}"),
     };

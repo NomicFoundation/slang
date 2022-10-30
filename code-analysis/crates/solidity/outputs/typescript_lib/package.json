@@ -1,0 +1,54 @@
+{
+  "name": "solidity_typescript_lib",
+  "version": "0.0.0",
+  "description": "Template project for writing node package with napi-rs",
+  "main": "index.js",
+  "repository": "git@github.com:napi-rs/package-template.git",
+  "types": "index.d.ts",
+  "napi": {
+    "name": "solidity_typescript_lib",
+    "triples": {
+      "defaults": true,
+      "additional": [
+        "aarch64-apple-darwin",
+        "aarch64-linux-android",
+        "aarch64-unknown-linux-gnu",
+        "aarch64-unknown-linux-musl",
+        "aarch64-pc-windows-msvc",
+        "armv7-unknown-linux-gnueabihf",
+        "x86_64-unknown-linux-musl",
+        "x86_64-unknown-freebsd",
+        "i686-pc-windows-msvc",
+        "armv7-linux-androideabi"
+      ]
+    }
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@napi-rs/cli": "^2.12.1",
+    "ava": "^4.3.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.3"
+  },
+  "ava": {
+    "timeout": "3m",
+    "extensions": [
+      "ts"
+    ],
+    "require": [
+      "ts-node/register"
+    ]
+  },
+  "engines": {
+    "node": ">= 10"
+  },
+  "scripts": {
+    "artifacts": "napi artifacts",
+    "build": "napi build --platform --release",
+    "build:debug": "napi build --platform --js index.js",
+    "prepublishOnly": "napi prepublish -t npm",
+    "test": "ava",
+    "version": "napi version"
+  },
+  "packageManager": "yarn@3.2.4"
+}
