@@ -3,21 +3,16 @@ use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
 use codegen_schema::*;
-use semver::Version;
 
-use super::{code_fragments::CodeFragments, naming, production::ProductionChumskyExtensions};
+use super::{combinator_tree::CombinatorTree, generated_code::GeneratedCode, naming};
 
 #[derive(Clone, Debug)]
 pub struct TerminalTrie(PatriciaMap<String>);
 
 impl TerminalTrie {
-    pub fn from_expression(
-        grammar: &Grammar,
-        version: &Version,
-        expression: &ExpressionRef,
-    ) -> Option<TerminalTrie> {
+    pub fn new(tree: &CombinatorTree, expression: &ExpressionRef) -> Option<TerminalTrie> {
         let mut trie = Self(PatriciaMap::new());
-        trie.collect_terminals(grammar, version, expression);
+        trie.collect_terminals(tree, expression);
         if trie.0.len() > 0 {
             Some(trie)
         } else {
@@ -39,16 +34,9 @@ impl TerminalTrie {
         }
     }
 
-    fn collect_terminals(
-        &mut self,
-        grammar: &Grammar,
-        version: &Version,
-        expression: &ExpressionRef,
-    ) -> bool {
+    fn collect_terminals(&mut self, tree: &CombinatorTree, expression: &ExpressionRef) -> bool {
         match &expression.ebnf {
-            EBNF::Choice(exprs) => exprs
-                .iter()
-                .all(|e| self.collect_terminals(grammar, version, e)),
+            EBNF::Choice(exprs) => exprs.iter().all(|e| self.collect_terminals(tree, e)),
 
             EBNF::DelimitedBy(_)
             | EBNF::Difference(_)
@@ -61,11 +49,9 @@ impl TerminalTrie {
             | EBNF::Sequence(_)
             | EBNF::ZeroOrMore(_) => false,
 
-            EBNF::Reference(name) => self.collect_terminals(
-                grammar,
-                version,
-                &grammar.get_production(name).expression_for_version(version),
-            ),
+            EBNF::Reference(name) => {
+                self.collect_terminals(tree, &tree.context.get_tree_by_name(name).expression())
+            }
 
             EBNF::Terminal(string) => {
                 self.0.insert(string.clone(), string.clone());
@@ -74,7 +60,7 @@ impl TerminalTrie {
         }
     }
 
-    pub(super) fn to_code(&self, code: &mut CodeFragments, macro_prefix: &str) -> TokenStream {
+    pub(super) fn to_code(&self, code: &mut GeneratedCode, macro_prefix: &str) -> TokenStream {
         if self.0.len() == 1 {
             let label = self.0.keys().next().unwrap();
             let string = String::from_utf8_lossy(&label);
@@ -84,7 +70,7 @@ impl TerminalTrie {
         } else {
             fn generate_from_trie(
                 node: Option<&Node<String>>,
-                code: &mut CodeFragments,
+                code: &mut GeneratedCode,
             ) -> Vec<TokenStream> {
                 let mut result = vec![];
                 let mut n = node;

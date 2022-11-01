@@ -4,25 +4,25 @@ use quote::quote;
 use codegen_schema::*;
 
 use super::{
-    character_filter::CharacterFilter, code_fragments::CodeFragments,
-    combinator_node::CombinatorNode, naming, terminal_trie::TerminalTrie,
+    character_filter::CharacterFilter, combinator_node::CombinatorNode,
+    generated_code::GeneratedCode, naming, terminal_trie::TerminalTrie,
 };
 
-impl CharacterFilter {
-    pub fn to_lexer_code(&self, name: Option<&String>, code: &mut CodeFragments) -> TokenStream {
+impl<'context> CharacterFilter<'context> {
+    pub fn to_lexer_code(&self, name: Option<&String>, code: &mut GeneratedCode) -> TokenStream {
         self.to_code(name, code, "lex_")
     }
 }
 
 impl TerminalTrie {
-    pub fn to_lexer_code(&self, code: &mut CodeFragments) -> TokenStream {
+    pub fn to_lexer_code(&self, code: &mut GeneratedCode) -> TokenStream {
         self.to_code(code, "lex_")
     }
 }
 
-impl CombinatorNode {
-    pub fn to_lexer_code(&self, code: &mut CodeFragments) -> TokenStream {
-        fn create_kind(name: &Option<String>, code: &mut CodeFragments) -> Option<Ident> {
+impl<'context> CombinatorNode<'context> {
+    pub fn to_lexer_code(&self, code: &mut GeneratedCode) -> TokenStream {
+        fn create_kind(name: &Option<String>, code: &mut GeneratedCode) -> Option<Ident> {
             name.as_ref().map(|name| code.add_token_kind(name.clone()))
         }
 
@@ -30,9 +30,9 @@ impl CombinatorNode {
             /**********************************************************************
              * Simple Reference
              */
-            Self::Reference { production } => {
-                let production_parser_name = naming::to_parser_name_ident(&production.name);
-                match production.kind {
+            Self::Reference { tree } => {
+                let production_parser_name = naming::to_parser_name_ident(&tree.production.name);
+                match tree.production.kind {
                     ProductionKind::Rule | ProductionKind::Trivia => {
                         unreachable!("Token productions can only reference other token productions")
                     }
@@ -70,7 +70,7 @@ impl CombinatorNode {
             /**********************************************************************
              * Numeric qualification
              */
-            Self::Optional { expr, .. } => {
+            Self::Optional { expr } => {
                 let expr = expr.to_lexer_code(code);
                 quote!(lex_optional!(#expr))
             }

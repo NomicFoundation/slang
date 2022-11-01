@@ -1,5 +1,5 @@
 use codegen_ebnf::GrammarEBNFExtensions;
-use codegen_parser::GrammarRefChumskyExtensions;
+use codegen_parser::GrammarChumskyExtensions;
 use codegen_schema::Grammar;
 use codegen_spec::generate_spec;
 use codegen_utils::assert_no_changes_in_ci;
