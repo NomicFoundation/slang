@@ -8,17 +8,63 @@ use super::lex;
 use chumsky::prelude::*;
 use chumsky::Parser;
 use semver::Version;
-pub type ParserType<T> = BoxedParser<'static, char, T, ErrorType>;
-pub type ErrorType = Simple<char>;
+use std::ops::Range;
+pub struct Context<'a> {
+    lex_node_arena: typed_arena::Arena<lex::Node<'a>>,
+    cst_node_arena: typed_arena::Arena<cst::Node<'a>>,
+}
+impl std::hash::Hash for Context<'_> {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        std::ptr::hash(self, state)
+    }
+}
+impl PartialEq for Context<'_> {
+    fn eq(&self, other: &Self) -> bool {
+        std::ptr::eq(self, other)
+    }
+}
+impl Eq for Context<'_> {}
+impl std::fmt::Debug for Context<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Context").finish()
+    }
+}
+impl std::fmt::Display for Context<'_> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Context")
+    }
+}
+impl Context<'_> {
+    pub fn new() -> Self {
+        Self {
+            lex_node_arena: typed_arena::Arena::new(),
+            cst_node_arena: typed_arena::Arena::new(),
+        }
+    }
+}
+impl<'a> Context<'a> {
+    pub fn alloc_lex_node(&'a self, node: lex::Node<'a>) -> &'a lex::Node<'a> {
+        self.lex_node_arena.alloc(node)
+    }
+    pub fn alloc_cst_node(&'a self, node: cst::Node<'a>) -> &'a cst::Node<'a> {
+        self.cst_node_arena.alloc(node)
+    }
+}
+pub type SpanType<'a> = (&'a Context<'a>, Range<usize>);
+pub type ErrorType<'a> = Simple<char, SpanType<'a>>;
+pub type ParserType<'a, T> = BoxedParser<'a, char, T, ErrorType<'a>>;
 #[allow(dead_code)]
-fn difference<M, S, T>(minuend: M, subtrahend: S) -> impl Parser<char, T, Error = ErrorType>
+fn difference<'a, M, S, T>(minuend: M, subtrahend: S) -> impl Parser<char, T, Error = ErrorType<'a>>
 where
-    M: Clone + Parser<char, T, Error = ErrorType>,
-    S: Parser<char, T, Error = ErrorType>,
+    M: Clone + Parser<char, T, Error = ErrorType<'a>>,
+    S: Parser<char, T, Error = ErrorType<'a>>,
 {
-    let minuend_end = minuend.clone().map_with_span(|_, span| span.end).rewind();
+    let minuend_end = minuend
+        .clone()
+        .map_with_span(|_, span: SpanType<'a>| span.end())
+        .rewind();
     let subtrahend_end = subtrahend
-        .map_with_span(|_, span| span.end)
+        .map_with_span(|_, span: SpanType<'a>| span.end())
         .rewind()
         .or_else(|_| Ok(0));
     minuend_end
@@ -32,496 +78,496 @@ where
 }
 
 #[allow(dead_code)]
-pub struct Parsers {
+pub struct Parsers<'a> {
     /// ABICoderPragmaSpecifier = 'abicoder' «Identifier» ;
-    pub abi_coder_pragma_specifier: ParserType<cst::NodeRef>,
+    pub abi_coder_pragma_specifier: ParserType<'a, &'a cst::Node<'a>>,
 
     /// AddSubExpression = Expression ( '+' | '-' ) Expression ;
-    pub add_sub_expression: ParserType<cst::NodeRef>,
+    pub add_sub_expression: ParserType<'a, &'a cst::Node<'a>>,
 
     /// AddressType = 'address' [ 'payable' ] ;
-    pub address_type: ParserType<cst::NodeRef>,
+    pub address_type: ParserType<'a, &'a cst::Node<'a>>,
 
     /// AndExpression = Expression '&&' Expression ;
-    pub and_expression: ParserType<cst::NodeRef>,
+    pub and_expression: ParserType<'a, &'a cst::Node<'a>>,
 
     /// ArgumentList = '(' [ PositionalArgumentList | NamedArgumentList ] ')' ;
-    pub argument_list: ParserType<cst::NodeRef>,
+    pub argument_list: ParserType<'a, &'a cst::Node<'a>>,
 
     /// ArrayLiteral = '[' Expression  { ',' Expression } ']' ;
-    pub array_literal: ParserType<cst::NodeRef>,
+    pub array_literal: ParserType<'a, &'a cst::Node<'a>>,
 
     /// «AsciiEscape» = 'n' | 'r' | 't' | '\'' | '"' | '\\' | '\u{a}' | '\u{d}' ;
-    pub ascii_escape: ParserType<lex::NodeRef>,
+    pub ascii_escape: ParserType<'a, &'a lex::Node<'a>>,
 
     /// «AsciiStringLiteral» = «SingleQuotedAsciiStringLiteral» | «DoubleQuotedAsciiStringLiteral» ;
-    pub ascii_string_literal: ParserType<lex::NodeRef>,
+    pub ascii_string_literal: ParserType<'a, &'a lex::Node<'a>>,
 
     /// AssemblyFlags = '(' «DoubleQuotedAsciiStringLiteral»  { ',' «DoubleQuotedAsciiStringLiteral» } ')' ;
-    pub assembly_flags: ParserType<cst::NodeRef>,
+    pub assembly_flags: ParserType<'a, &'a cst::Node<'a>>,
 
     /// AssemblyStatement = 'assembly' [ '"evmasm"' ] [ AssemblyFlags ] YulBlock ;
-    pub assembly_statement: ParserType<cst::NodeRef>,
+    pub assembly_statement: ParserType<'a, &'a cst::Node<'a>>,
 
     /// AssignmentExpression = Expression ( '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ) Expression ;
-    pub assignment_expression: ParserType<cst::NodeRef>,
+    pub assignment_expression: ParserType<'a, &'a cst::Node<'a>>,
 
     /// BitAndExpression = Expression '&' Expression ;
-    pub bit_and_expression: ParserType<cst::NodeRef>,
+    pub bit_and_expression: ParserType<'a, &'a cst::Node<'a>>,
 
     /// BitOrExpression = Expression '|' Expression ;
-    pub bit_or_expression: ParserType<cst::NodeRef>,
+    pub bit_or_expression: ParserType<'a, &'a cst::Node<'a>>,
 
     /// BitXOrExpression = Expression '^' Expression ;
-    pub bit_x_or_expression: ParserType<cst::NodeRef>,
+    pub bit_x_or_expression: ParserType<'a, &'a cst::Node<'a>>,
 
     /// Block = '{' { Statement | UncheckedBlock } '}' ;
-    pub block: ParserType<cst::NodeRef>,
+    pub block: ParserType<'a, &'a cst::Node<'a>>,
 
     /// «BooleanLiteral» = 'true' | 'false' ;
-    pub boolean_literal: ParserType<lex::NodeRef>,
+    pub boolean_literal: ParserType<'a, &'a lex::Node<'a>>,
 
     /// BreakStatement = 'break' ';' ;
-    pub break_statement: ParserType<cst::NodeRef>,
+    pub break_statement: ParserType<'a, &'a cst::Node<'a>>,
 
     /// CatchClause = 'catch' [ [ «Identifier» ] ParameterList ] Block ;
-    pub catch_clause: ParserType<cst::NodeRef>,
+    pub catch_clause: ParserType<'a, &'a cst::Node<'a>>,
 
     /// ConditionalExpression = Expression '?' Expression ':' Expression ;
-    pub conditional_expression: ParserType<cst::NodeRef>,
+    pub conditional_expression: ParserType<'a, &'a cst::Node<'a>>,
 
     /// ConstantDefinition = TypeName 'constant' «Identifier» '=' Expression ';' ;
-    pub constant_definition: ParserType<cst::NodeRef>,
+    pub constant_definition: ParserType<'a, &'a cst::Node<'a>>,
 
     /// ConstructorAttribute = ModifierInvocation | 'internal' | 'payable' | 'public' ;
-    pub constructor_attribute: ParserType<cst::NodeRef>,
+    pub constructor_attribute: ParserType<'a, &'a cst::Node<'a>>,
 
     /// ConstructorDefinition = 'constructor' ParameterList { ConstructorAttribute } Block ;
-    pub constructor_definition: ParserType<cst::NodeRef>,
+    pub constructor_definition: ParserType<'a, &'a cst::Node<'a>>,
 
     /// ContinueStatement = 'continue' ';' ;
-    pub continue_statement: ParserType<cst::NodeRef>,
+    pub continue_statement: ParserType<'a, &'a cst::Node<'a>>,
 
     /// ContractBodyElement = UsingDirective | ConstructorDefinition | FunctionDefinition | FallbackFunctionDefinition | ReceiveFunctionDefinition | ModifierDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | EventDefinition | ErrorDefinition | StateVariableDeclaration ;
-    pub contract_body_element: ParserType<cst::NodeRef>,
+    pub contract_body_element: ParserType<'a, &'a cst::Node<'a>>,
 
     /// ContractDefinition = [ 'abstract' ] 'contract' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
-    pub contract_definition: ParserType<cst::NodeRef>,
+    pub contract_definition: ParserType<'a, &'a cst::Node<'a>>,
 
     /// DataLocation = 'memory' | 'storage' | 'calldata' ;
-    pub data_location: ParserType<cst::NodeRef>,
+    pub data_location: ParserType<'a, &'a cst::Node<'a>>,
 
     /// «DecimalExponent» = ( 'e' | 'E' ) [ '-' ] «DecimalInteger» ;
-    pub decimal_exponent: ParserType<lex::NodeRef>,
+    pub decimal_exponent: ParserType<'a, &'a lex::Node<'a>>,
 
     /// «DecimalFloat» = [ «DecimalInteger» ] '.' «DecimalInteger» ;
-    pub decimal_float: ParserType<lex::NodeRef>,
+    pub decimal_float: ParserType<'a, &'a lex::Node<'a>>,
 
     /// «DecimalInteger» = '0'…'9' { [ '_' ] '0'…'9' } ;
-    pub decimal_integer: ParserType<lex::NodeRef>,
+    pub decimal_integer: ParserType<'a, &'a lex::Node<'a>>,
 
     /// «DecimalNumber» = ( «DecimalInteger» | «DecimalFloat» ) [ «DecimalExponent» ] ;
-    pub decimal_number: ParserType<lex::NodeRef>,
+    pub decimal_number: ParserType<'a, &'a lex::Node<'a>>,
 
     /// Definition = ContractDefinition | InterfaceDefinition | LibraryDefinition | FunctionDefinition | ConstantDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | ErrorDefinition ;
-    pub definition: ParserType<cst::NodeRef>,
+    pub definition: ParserType<'a, &'a cst::Node<'a>>,
 
     /// DeleteStatement = 'delete' «Identifier» ';' ;
-    pub delete_statement: ParserType<cst::NodeRef>,
+    pub delete_statement: ParserType<'a, &'a cst::Node<'a>>,
 
     /// Directive = PragmaDirective | ImportDirective | UsingDirective ;
-    pub directive: ParserType<cst::NodeRef>,
+    pub directive: ParserType<'a, &'a cst::Node<'a>>,
 
     /// DoWhileStatement = 'do' Statement 'while' '(' Expression ')' ';' ;
-    pub do_while_statement: ParserType<cst::NodeRef>,
+    pub do_while_statement: ParserType<'a, &'a cst::Node<'a>>,
 
     /// «DoubleQuotedAsciiStringLiteral» = '"' { 1…*{ '\u{20}'…'~' - ( '"' | '\\' ) } | «EscapeSequence» } '"' ;
-    pub double_quoted_ascii_string_literal: ParserType<lex::NodeRef>,
+    pub double_quoted_ascii_string_literal: ParserType<'a, &'a lex::Node<'a>>,
 
     /// «DoubleQuotedUnicodeStringLiteral» = 'unicode"' { 1…*{ ¬( '"' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '"' ;
-    pub double_quoted_unicode_string_literal: ParserType<lex::NodeRef>,
+    pub double_quoted_unicode_string_literal: ParserType<'a, &'a lex::Node<'a>>,
 
     /// ElementaryType = 'bool' | 'string' | AddressType | «FixedBytesType» | «SignedIntegerType» | «UnsignedIntegerType» | «SignedFixedType» | «UnsignedFixedType» ;
-    pub elementary_type: ParserType<cst::NodeRef>,
+    pub elementary_type: ParserType<'a, &'a cst::Node<'a>>,
 
     /// EmitStatement = 'emit' IdentifierPath ArgumentList ';' ;
-    pub emit_statement: ParserType<cst::NodeRef>,
+    pub emit_statement: ParserType<'a, &'a cst::Node<'a>>,
 
     /// EndOfFileTrivia = { «Whitespace» | «MultilineComment» | «SingleLineComment» } ;
-    pub end_of_file_trivia: ParserType<cst::NodeRef>,
+    pub end_of_file_trivia: ParserType<'a, &'a cst::Node<'a>>,
 
     /// «EndOfLine» = 1…*{ '\u{d}' | '\u{a}' } ;
-    pub end_of_line: ParserType<lex::NodeRef>,
+    pub end_of_line: ParserType<'a, &'a lex::Node<'a>>,
 
     /// EnumDefinition = 'enum' «Identifier» '{' «Identifier»  { ',' «Identifier» } '}' ;
-    pub enum_definition: ParserType<cst::NodeRef>,
+    pub enum_definition: ParserType<'a, &'a cst::Node<'a>>,
 
     /// EqualityComparisonExpression = Expression ( '==' | '!=' ) Expression ;
-    pub equality_comparison_expression: ParserType<cst::NodeRef>,
+    pub equality_comparison_expression: ParserType<'a, &'a cst::Node<'a>>,
 
     /// ErrorDefinition = 'error' «Identifier» '(' [ ErrorParameter  { ',' ErrorParameter } ] ')' ';' ;
-    pub error_definition: ParserType<cst::NodeRef>,
+    pub error_definition: ParserType<'a, &'a cst::Node<'a>>,
 
     /// ErrorParameter = TypeName [ «Identifier» ] ;
-    pub error_parameter: ParserType<cst::NodeRef>,
+    pub error_parameter: ParserType<'a, &'a cst::Node<'a>>,
 
     /// «EscapeSequence» = '\\' ( «AsciiEscape» | «HexByteEscape» | «UnicodeEscape» ) ;
-    pub escape_sequence: ParserType<lex::NodeRef>,
+    pub escape_sequence: ParserType<'a, &'a lex::Node<'a>>,
 
     /// EventDefinition = 'event' «Identifier» '(' [ EventParameter  { ',' EventParameter } ] ')' [ 'anonymous' ] ';' ;
-    pub event_definition: ParserType<cst::NodeRef>,
+    pub event_definition: ParserType<'a, &'a cst::Node<'a>>,
 
     /// EventParameter = TypeName [ 'indexed' ] [ «Identifier» ] ;
-    pub event_parameter: ParserType<cst::NodeRef>,
+    pub event_parameter: ParserType<'a, &'a cst::Node<'a>>,
 
     /// ExperimentalPragmaSpecifier = 'experimental' «Identifier» ;
-    pub experimental_pragma_specifier: ParserType<cst::NodeRef>,
+    pub experimental_pragma_specifier: ParserType<'a, &'a cst::Node<'a>>,
 
     /// (* 0.0.0 *) ExponentiationExpression = Expression '**' Expression ;
     /// (* 0.6.0 *) ExponentiationExpression = Expression '**' Expression ;
-    pub exponentiation_expression: ParserType<cst::NodeRef>,
+    pub exponentiation_expression: ParserType<'a, &'a cst::Node<'a>>,
 
     /// Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnarySuffixExpression | UnaryPrefixExpression | FunctionCallExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
-    pub expression: ParserType<cst::NodeRef>,
+    pub expression: ParserType<'a, &'a cst::Node<'a>>,
 
     /// ExpressionStatement = Expression ';' ;
-    pub expression_statement: ParserType<cst::NodeRef>,
+    pub expression_statement: ParserType<'a, &'a cst::Node<'a>>,
 
     /// FallbackFunctionAttribute = ModifierInvocation | OverrideSpecifier | 'external' | 'payable' | 'pure' | 'view' | 'virtual' ;
-    pub fallback_function_attribute: ParserType<cst::NodeRef>,
+    pub fallback_function_attribute: ParserType<'a, &'a cst::Node<'a>>,
 
     /// FallbackFunctionDefinition = 'fallback' ParameterList { FallbackFunctionAttribute } [ 'returns' ParameterList ] ( ';' | Block ) ;
-    pub fallback_function_definition: ParserType<cst::NodeRef>,
+    pub fallback_function_definition: ParserType<'a, &'a cst::Node<'a>>,
 
     /// «FixedBytesType» = 'bytes' ( '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15' | '16' | '17' | '18' | '19' | '20' | '21' | '22' | '23' | '24' | '25' | '26' | '27' | '28' | '29' | '30' | '31' | '32' ) ;
-    pub fixed_bytes_type: ParserType<lex::NodeRef>,
+    pub fixed_bytes_type: ParserType<'a, &'a lex::Node<'a>>,
 
     /// ForStatement = 'for' '(' ( SimpleStatement | ';' ) ( ExpressionStatement | ';' ) [ Expression ] ')' Statement ;
-    pub for_statement: ParserType<cst::NodeRef>,
+    pub for_statement: ParserType<'a, &'a cst::Node<'a>>,
 
     /// FunctionAttribute = ModifierInvocation | OverrideSpecifier | 'external' | 'internal' | 'payable' | 'private' | 'public' | 'pure' | 'view' | 'virtual' ;
-    pub function_attribute: ParserType<cst::NodeRef>,
+    pub function_attribute: ParserType<'a, &'a cst::Node<'a>>,
 
     /// FunctionCallExpression = Expression [ '{' NamedArgument  { ',' NamedArgument } '}' ] ArgumentList ;
-    pub function_call_expression: ParserType<cst::NodeRef>,
+    pub function_call_expression: ParserType<'a, &'a cst::Node<'a>>,
 
     /// FunctionDefinition = 'function' ( «Identifier» | 'fallback' | 'receive' ) ParameterList { FunctionAttribute } [ 'returns' ParameterList ] ( ';' | Block ) ;
-    pub function_definition: ParserType<cst::NodeRef>,
+    pub function_definition: ParserType<'a, &'a cst::Node<'a>>,
 
     /// FunctionType = 'function' ParameterList { 'internal' | 'external' | 'private' | 'public' | 'pure' | 'view' | 'payable' } [ 'returns' ParameterList ] ;
-    pub function_type: ParserType<cst::NodeRef>,
+    pub function_type: ParserType<'a, &'a cst::Node<'a>>,
 
     /// «HexByteEscape» = 'x' 2…2*{ «HexCharacter» } ;
-    pub hex_byte_escape: ParserType<lex::NodeRef>,
+    pub hex_byte_escape: ParserType<'a, &'a lex::Node<'a>>,
 
     /// «HexCharacter» = '0'…'9' | 'a'…'f' | 'A'…'F' ;
-    pub hex_character: ParserType<lex::NodeRef>,
+    pub hex_character: ParserType<'a, &'a lex::Node<'a>>,
 
     /// «HexNumber» = '0x' «HexCharacter» { [ '_' ] «HexCharacter» } ;
-    pub hex_number: ParserType<lex::NodeRef>,
+    pub hex_number: ParserType<'a, &'a lex::Node<'a>>,
 
     /// «HexStringLiteral» = 'hex' ( '"' [ «PossiblySeparatedPairsOfHexDigits» ] '"' | '\'' [ «PossiblySeparatedPairsOfHexDigits» ] '\'' ) ;
-    pub hex_string_literal: ParserType<lex::NodeRef>,
+    pub hex_string_literal: ParserType<'a, &'a lex::Node<'a>>,
 
     /// «Identifier» = «RawIdentifier» - «Keyword» ;
-    pub identifier: ParserType<lex::NodeRef>,
+    pub identifier: ParserType<'a, &'a lex::Node<'a>>,
 
     /// «IdentifierPart» = «IdentifierStart» | '0'…'9' ;
-    pub identifier_part: ParserType<lex::NodeRef>,
+    pub identifier_part: ParserType<'a, &'a lex::Node<'a>>,
 
     /// IdentifierPath = «Identifier»  { '.' «Identifier» } ;
-    pub identifier_path: ParserType<cst::NodeRef>,
+    pub identifier_path: ParserType<'a, &'a cst::Node<'a>>,
 
     /// «IdentifierStart» = '_' | '$' | 'a'…'z' | 'A'…'Z' ;
-    pub identifier_start: ParserType<lex::NodeRef>,
+    pub identifier_start: ParserType<'a, &'a lex::Node<'a>>,
 
     /// IfStatement = 'if' '(' Expression ')' Statement [ 'else' Statement ] ;
-    pub if_statement: ParserType<cst::NodeRef>,
+    pub if_statement: ParserType<'a, &'a cst::Node<'a>>,
 
     /// ImportDirective = 'import' ( SimpleImportDirective | StarImportDirective | SelectingImportDirective ) ';' ;
-    pub import_directive: ParserType<cst::NodeRef>,
+    pub import_directive: ParserType<'a, &'a cst::Node<'a>>,
 
     /// ImportPath = «AsciiStringLiteral» ;
-    pub import_path: ParserType<cst::NodeRef>,
+    pub import_path: ParserType<'a, &'a cst::Node<'a>>,
 
     /// IndexAccessExpression = Expression '[' [ Expression ] [ ':' [ Expression ] ] ']' ;
-    pub index_access_expression: ParserType<cst::NodeRef>,
+    pub index_access_expression: ParserType<'a, &'a cst::Node<'a>>,
 
     /// InheritanceSpecifier = IdentifierPath [ ArgumentList ] ;
-    pub inheritance_specifier: ParserType<cst::NodeRef>,
+    pub inheritance_specifier: ParserType<'a, &'a cst::Node<'a>>,
 
     /// InheritanceSpecifierList = 'is' InheritanceSpecifier  { ',' InheritanceSpecifier } ;
-    pub inheritance_specifier_list: ParserType<cst::NodeRef>,
+    pub inheritance_specifier_list: ParserType<'a, &'a cst::Node<'a>>,
 
     /// InterfaceDefinition = 'interface' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
-    pub interface_definition: ParserType<cst::NodeRef>,
+    pub interface_definition: ParserType<'a, &'a cst::Node<'a>>,
 
     /// «Keyword» = «BooleanLiteral» | «FixedBytesType» | «NumberUnit» | «ReservedKeyword» | «SignedIntegerType» | «UnsignedIntegerType» | 'abstract' | 'address' | 'anonymous' | 'as' | 'assembly' | 'bool' | 'break' | 'calldata' | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum' | 'event' | 'external' | 'fallback' | 'false' | 'fixed' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import' | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override' | 'payable' | 'pragma' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct' | 'true' | 'try' | 'type' | 'ufixed' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while' ;
-    pub keyword: ParserType<lex::NodeRef>,
+    pub keyword: ParserType<'a, &'a lex::Node<'a>>,
 
     /// LeadingTrivia = { «Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment» } ;
-    pub leading_trivia: ParserType<cst::NodeRef>,
+    pub leading_trivia: ParserType<'a, &'a cst::Node<'a>>,
 
     /// LibraryDefinition = 'library' «Identifier» '{' { ContractBodyElement } '}' ;
-    pub library_definition: ParserType<cst::NodeRef>,
+    pub library_definition: ParserType<'a, &'a cst::Node<'a>>,
 
     /// MappingType = 'mapping' '(' ( ElementaryType | IdentifierPath ) '=>' TypeName ')' ;
-    pub mapping_type: ParserType<cst::NodeRef>,
+    pub mapping_type: ParserType<'a, &'a cst::Node<'a>>,
 
     /// MemberAccessExpression = Expression '.' ( «Identifier» | 'address' ) ;
-    pub member_access_expression: ParserType<cst::NodeRef>,
+    pub member_access_expression: ParserType<'a, &'a cst::Node<'a>>,
 
     /// ModifierAttribute = OverrideSpecifier | 'virtual' ;
-    pub modifier_attribute: ParserType<cst::NodeRef>,
+    pub modifier_attribute: ParserType<'a, &'a cst::Node<'a>>,
 
     /// ModifierDefinition = 'modifier' «Identifier» [ ParameterList ] { ModifierAttribute } ( ';' | Block ) ;
-    pub modifier_definition: ParserType<cst::NodeRef>,
+    pub modifier_definition: ParserType<'a, &'a cst::Node<'a>>,
 
     /// ModifierInvocation = IdentifierPath [ ArgumentList ] ;
-    pub modifier_invocation: ParserType<cst::NodeRef>,
+    pub modifier_invocation: ParserType<'a, &'a cst::Node<'a>>,
 
     /// MulDivModExpression = Expression ( '*' | '/' | '%' ) Expression ;
-    pub mul_div_mod_expression: ParserType<cst::NodeRef>,
+    pub mul_div_mod_expression: ParserType<'a, &'a cst::Node<'a>>,
 
     /// «MultilineComment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
-    pub multiline_comment: ParserType<lex::NodeRef>,
+    pub multiline_comment: ParserType<'a, &'a lex::Node<'a>>,
 
     /// NamedArgument = «Identifier» ':' Expression ;
-    pub named_argument: ParserType<cst::NodeRef>,
+    pub named_argument: ParserType<'a, &'a cst::Node<'a>>,
 
     /// NamedArgumentList = '{' [ NamedArgument  { ',' NamedArgument } ] '}' ;
-    pub named_argument_list: ParserType<cst::NodeRef>,
+    pub named_argument_list: ParserType<'a, &'a cst::Node<'a>>,
 
     /// NewExpression = 'new' IdentifierPath ArgumentList ;
-    pub new_expression: ParserType<cst::NodeRef>,
+    pub new_expression: ParserType<'a, &'a cst::Node<'a>>,
 
     /// «NumberUnit» = 'days' | 'ether' | 'finney' | 'gwei' | 'hours' | 'minutes' | 'seconds' | 'szabo' | 'weeks' | 'wei' | 'years' ;
-    pub number_unit: ParserType<lex::NodeRef>,
+    pub number_unit: ParserType<'a, &'a lex::Node<'a>>,
 
     /// «NumericLiteral» = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
-    pub numeric_literal: ParserType<lex::NodeRef>,
+    pub numeric_literal: ParserType<'a, &'a lex::Node<'a>>,
 
     /// OrExpression = Expression '||' Expression ;
-    pub or_expression: ParserType<cst::NodeRef>,
+    pub or_expression: ParserType<'a, &'a cst::Node<'a>>,
 
     /// OrderComparisonExpression = Expression ( '<' | '>' | '<=' | '>=' ) Expression ;
-    pub order_comparison_expression: ParserType<cst::NodeRef>,
+    pub order_comparison_expression: ParserType<'a, &'a cst::Node<'a>>,
 
     /// OverrideSpecifier = 'override' [ '(' IdentifierPath  { ',' IdentifierPath } ')' ] ;
-    pub override_specifier: ParserType<cst::NodeRef>,
+    pub override_specifier: ParserType<'a, &'a cst::Node<'a>>,
 
     /// ParameterDeclaration = TypeName [ DataLocation ] [ «Identifier» ] ;
-    pub parameter_declaration: ParserType<cst::NodeRef>,
+    pub parameter_declaration: ParserType<'a, &'a cst::Node<'a>>,
 
     /// ParameterList = '(' [ ParameterDeclaration  { ',' ParameterDeclaration } ] ')' ;
-    pub parameter_list: ParserType<cst::NodeRef>,
+    pub parameter_list: ParserType<'a, &'a cst::Node<'a>>,
 
     /// ParenthesisExpression = '(' [ Expression ]  { ',' [ Expression ] } ')' ;
-    pub parenthesis_expression: ParserType<cst::NodeRef>,
+    pub parenthesis_expression: ParserType<'a, &'a cst::Node<'a>>,
 
     /// PayableExpression = 'payable' ArgumentList ;
-    pub payable_expression: ParserType<cst::NodeRef>,
+    pub payable_expression: ParserType<'a, &'a cst::Node<'a>>,
 
     /// PositionalArgumentList = Expression  { ',' Expression } ;
-    pub positional_argument_list: ParserType<cst::NodeRef>,
+    pub positional_argument_list: ParserType<'a, &'a cst::Node<'a>>,
 
     /// «PossiblySeparatedPairsOfHexDigits» = 2…2*{ «HexCharacter» } { [ '_' ] 2…2*{ «HexCharacter» } } ;
-    pub possibly_separated_pairs_of_hex_digits: ParserType<lex::NodeRef>,
+    pub possibly_separated_pairs_of_hex_digits: ParserType<'a, &'a lex::Node<'a>>,
 
     /// PragmaDirective = 'pragma' ( VersionPragmaSpecifier | ABICoderPragmaSpecifier | ExperimentalPragmaSpecifier ) ';' ;
-    pub pragma_directive: ParserType<cst::NodeRef>,
+    pub pragma_directive: ParserType<'a, &'a cst::Node<'a>>,
 
     /// PrimaryExpression = PayableExpression | TypeExpression | NewExpression | ParenthesisExpression | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | «NumericLiteral» | «BooleanLiteral» | «Identifier» ;
-    pub primary_expression: ParserType<cst::NodeRef>,
+    pub primary_expression: ParserType<'a, &'a cst::Node<'a>>,
 
     /// «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;
-    pub raw_identifier: ParserType<lex::NodeRef>,
+    pub raw_identifier: ParserType<'a, &'a lex::Node<'a>>,
 
     /// ReceiveFunctionAttribute = ModifierInvocation | OverrideSpecifier | 'external' | 'payable' | 'virtual' ;
-    pub receive_function_attribute: ParserType<cst::NodeRef>,
+    pub receive_function_attribute: ParserType<'a, &'a cst::Node<'a>>,
 
     /// ReceiveFunctionDefinition = 'receive' ParameterList { ReceiveFunctionAttribute } ( ';' | Block ) ;
-    pub receive_function_definition: ParserType<cst::NodeRef>,
+    pub receive_function_definition: ParserType<'a, &'a cst::Node<'a>>,
 
     /// «ReservedKeyword» = 'after' | 'alias' | 'apply' | 'auto' | 'byte' | 'case' | 'copyof' | 'default' | 'define' | 'final' | 'implements' | 'in' | 'inline' | 'let' | 'macro' | 'match' | 'mutable' | 'null' | 'of' | 'partial' | 'promise' | 'reference' | 'relocatable' | 'sealed' | 'sizeof' | 'static' | 'supports' | 'switch' | 'typedef' | 'typeof' | 'var' ;
-    pub reserved_keyword: ParserType<lex::NodeRef>,
+    pub reserved_keyword: ParserType<'a, &'a lex::Node<'a>>,
 
     /// ReturnStatement = 'return' [ Expression ] ';' ;
-    pub return_statement: ParserType<cst::NodeRef>,
+    pub return_statement: ParserType<'a, &'a cst::Node<'a>>,
 
     /// RevertStatement = 'revert' [ IdentifierPath ] ArgumentList ';' ;
-    pub revert_statement: ParserType<cst::NodeRef>,
+    pub revert_statement: ParserType<'a, &'a cst::Node<'a>>,
 
     /// SelectedImport = «Identifier» [ 'as' «Identifier» ] ;
-    pub selected_import: ParserType<cst::NodeRef>,
+    pub selected_import: ParserType<'a, &'a cst::Node<'a>>,
 
     /// SelectingImportDirective = '{' SelectedImport  { ',' SelectedImport } '}' 'from' ImportPath ;
-    pub selecting_import_directive: ParserType<cst::NodeRef>,
+    pub selecting_import_directive: ParserType<'a, &'a cst::Node<'a>>,
 
     /// ShiftExpression = Expression ( '<<' | '>>' | '>>>' ) Expression ;
-    pub shift_expression: ParserType<cst::NodeRef>,
+    pub shift_expression: ParserType<'a, &'a cst::Node<'a>>,
 
     /// «SignedFixedType» = 'fixed' [ 1…*{ '0'…'9' } 'x' 1…*{ '0'…'9' } ] ;
-    pub signed_fixed_type: ParserType<lex::NodeRef>,
+    pub signed_fixed_type: ParserType<'a, &'a lex::Node<'a>>,
 
     /// «SignedIntegerType» = 'int' [ '8' | '16' | '24' | '32' | '40' | '48' | '56' | '64' | '72' | '80' | '88' | '96' | '104' | '112' | '120' | '128' | '136' | '144' | '152' | '160' | '168' | '176' | '184' | '192' | '200' | '208' | '216' | '224' | '232' | '240' | '248' | '256' ] ;
-    pub signed_integer_type: ParserType<lex::NodeRef>,
+    pub signed_integer_type: ParserType<'a, &'a lex::Node<'a>>,
 
     /// SimpleImportDirective = ImportPath { 'as' «Identifier» } ;
-    pub simple_import_directive: ParserType<cst::NodeRef>,
+    pub simple_import_directive: ParserType<'a, &'a cst::Node<'a>>,
 
     /// SimpleStatement = TupleDeconstructionStatement | VariableDeclarationStatement | ExpressionStatement ;
-    pub simple_statement: ParserType<cst::NodeRef>,
+    pub simple_statement: ParserType<'a, &'a cst::Node<'a>>,
 
     /// «SingleLineComment» = '//' { ¬( '\u{d}' | '\u{a}' ) } ;
-    pub single_line_comment: ParserType<lex::NodeRef>,
+    pub single_line_comment: ParserType<'a, &'a lex::Node<'a>>,
 
     /// «SingleQuotedAsciiStringLiteral» = '\'' { 1…*{ '\u{20}'…'~' - ( '\'' | '\\' ) } | «EscapeSequence» } '\'' ;
-    pub single_quoted_ascii_string_literal: ParserType<lex::NodeRef>,
+    pub single_quoted_ascii_string_literal: ParserType<'a, &'a lex::Node<'a>>,
 
     /// «SingleQuotedUnicodeStringLiteral» = 'unicode\'' { 1…*{ ¬( '\'' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '\'' ;
-    pub single_quoted_unicode_string_literal: ParserType<lex::NodeRef>,
+    pub single_quoted_unicode_string_literal: ParserType<'a, &'a lex::Node<'a>>,
 
     /// SourceUnit = LeadingTrivia { Directive | Definition } EndOfFileTrivia ;
-    pub source_unit: ParserType<cst::NodeRef>,
+    pub source_unit: ParserType<'a, &'a cst::Node<'a>>,
 
     /// StarImportDirective = '*' 'as' «Identifier» 'from' ImportPath ;
-    pub star_import_directive: ParserType<cst::NodeRef>,
+    pub star_import_directive: ParserType<'a, &'a cst::Node<'a>>,
 
     /// StateVariableAttribute = OverrideSpecifier | 'constant' | 'immutable' | 'internal' | 'private' | 'public' ;
-    pub state_variable_attribute: ParserType<cst::NodeRef>,
+    pub state_variable_attribute: ParserType<'a, &'a cst::Node<'a>>,
 
     /// StateVariableDeclaration = TypeName { StateVariableAttribute } «Identifier» [ '=' Expression ] ';' ;
-    pub state_variable_declaration: ParserType<cst::NodeRef>,
+    pub state_variable_declaration: ParserType<'a, &'a cst::Node<'a>>,
 
     /// Statement = Block | SimpleStatement | IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | TryStatement | ReturnStatement | EmitStatement | RevertStatement | DeleteStatement | AssemblyStatement ;
-    pub statement: ParserType<cst::NodeRef>,
+    pub statement: ParserType<'a, &'a cst::Node<'a>>,
 
     /// StructDefinition = 'struct' «Identifier» '{' 1…*{ StructMember } '}' ;
-    pub struct_definition: ParserType<cst::NodeRef>,
+    pub struct_definition: ParserType<'a, &'a cst::Node<'a>>,
 
     /// StructMember = TypeName «Identifier» ';' ;
-    pub struct_member: ParserType<cst::NodeRef>,
+    pub struct_member: ParserType<'a, &'a cst::Node<'a>>,
 
     /// TrailingTrivia = [ { «Whitespace» | «MultilineComment» } ( «EndOfLine» | «SingleLineComment» ) ] ;
-    pub trailing_trivia: ParserType<cst::NodeRef>,
+    pub trailing_trivia: ParserType<'a, &'a cst::Node<'a>>,
 
     /// TryStatement = 'try' Expression [ 'returns' ParameterList ] Block 1…*{ CatchClause } ;
-    pub try_statement: ParserType<cst::NodeRef>,
+    pub try_statement: ParserType<'a, &'a cst::Node<'a>>,
 
     /// TupleDeconstructionStatement = '(' [ [ [ TypeName ] «Identifier» ]  { ',' [ [ TypeName ] «Identifier» ] } ] ')' '=' Expression ';' ;
-    pub tuple_deconstruction_statement: ParserType<cst::NodeRef>,
+    pub tuple_deconstruction_statement: ParserType<'a, &'a cst::Node<'a>>,
 
     /// TypeExpression = 'type' '(' TypeName ')' ;
-    pub type_expression: ParserType<cst::NodeRef>,
+    pub type_expression: ParserType<'a, &'a cst::Node<'a>>,
 
     /// TypeName = ( ElementaryType | FunctionType | MappingType | IdentifierPath ) { '[' [ Expression ] ']' } ;
-    pub type_name: ParserType<cst::NodeRef>,
+    pub type_name: ParserType<'a, &'a cst::Node<'a>>,
 
     /// UnaryPrefixExpression = ( '++' | '--' | '!' | '~' | '-' ) Expression ;
-    pub unary_prefix_expression: ParserType<cst::NodeRef>,
+    pub unary_prefix_expression: ParserType<'a, &'a cst::Node<'a>>,
 
     /// UnarySuffixExpression = Expression ( '++' | '--' ) ;
-    pub unary_suffix_expression: ParserType<cst::NodeRef>,
+    pub unary_suffix_expression: ParserType<'a, &'a cst::Node<'a>>,
 
     /// UncheckedBlock = 'unchecked' Block ;
-    pub unchecked_block: ParserType<cst::NodeRef>,
+    pub unchecked_block: ParserType<'a, &'a cst::Node<'a>>,
 
     /// «UnicodeEscape» = 'u' 4…4*{ «HexCharacter» } ;
-    pub unicode_escape: ParserType<lex::NodeRef>,
+    pub unicode_escape: ParserType<'a, &'a lex::Node<'a>>,
 
     /// «UnicodeStringLiteral» = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral» ;
-    pub unicode_string_literal: ParserType<lex::NodeRef>,
+    pub unicode_string_literal: ParserType<'a, &'a lex::Node<'a>>,
 
     /// «UnsignedFixedType» = 'u' «SignedFixedType» ;
-    pub unsigned_fixed_type: ParserType<lex::NodeRef>,
+    pub unsigned_fixed_type: ParserType<'a, &'a lex::Node<'a>>,
 
     /// «UnsignedIntegerType» = 'u' «SignedIntegerType» ;
-    pub unsigned_integer_type: ParserType<lex::NodeRef>,
+    pub unsigned_integer_type: ParserType<'a, &'a lex::Node<'a>>,
 
     /// UserDefinedValueTypeDefinition = 'type' «Identifier» 'is' ElementaryType ';' ;
-    pub user_defined_value_type_definition: ParserType<cst::NodeRef>,
+    pub user_defined_value_type_definition: ParserType<'a, &'a cst::Node<'a>>,
 
     /// UsingDirective = 'using' ( IdentifierPath | '{' IdentifierPath  { ',' IdentifierPath } '}' ) 'for' ( '*' | TypeName ) [ 'global' ] ';' ;
-    pub using_directive: ParserType<cst::NodeRef>,
+    pub using_directive: ParserType<'a, &'a cst::Node<'a>>,
 
     /// VariableDeclarationStatement = TypeName [ DataLocation ] «Identifier» [ '=' Expression ] ';' ;
-    pub variable_declaration_statement: ParserType<cst::NodeRef>,
+    pub variable_declaration_statement: ParserType<'a, &'a cst::Node<'a>>,
 
     /// «VersionPragmaOperator» = '^' | '~' | '=' | '<' | '>' | '<=' | '>=' ;
-    pub version_pragma_operator: ParserType<lex::NodeRef>,
+    pub version_pragma_operator: ParserType<'a, &'a lex::Node<'a>>,
 
     /// VersionPragmaSpecifier = 'solidity' 1…*{ «VersionPragmaOperator» «VersionPragmaValue» } ;
-    pub version_pragma_specifier: ParserType<cst::NodeRef>,
+    pub version_pragma_specifier: ParserType<'a, &'a cst::Node<'a>>,
 
     /// «VersionPragmaValue» = 1…*{ '0'…'9' | 'x' | 'X' | '*' }  { '.' 1…*{ '0'…'9' | 'x' | 'X' | '*' } } ;
-    pub version_pragma_value: ParserType<lex::NodeRef>,
+    pub version_pragma_value: ParserType<'a, &'a lex::Node<'a>>,
 
     /// WhileStatement = 'while' '(' Expression ')' Statement ;
-    pub while_statement: ParserType<cst::NodeRef>,
+    pub while_statement: ParserType<'a, &'a cst::Node<'a>>,
 
     /// «Whitespace» = 1…*{ '\u{20}' | '\u{9}' } ;
-    pub whitespace: ParserType<lex::NodeRef>,
+    pub whitespace: ParserType<'a, &'a lex::Node<'a>>,
 
     /// YulAssignmentStatement = YulIdentifierPath  { ',' YulIdentifierPath } ':=' YulExpression ;
-    pub yul_assignment_statement: ParserType<cst::NodeRef>,
+    pub yul_assignment_statement: ParserType<'a, &'a cst::Node<'a>>,
 
     /// YulBlock = '{' { YulStatement } '}' ;
-    pub yul_block: ParserType<cst::NodeRef>,
+    pub yul_block: ParserType<'a, &'a cst::Node<'a>>,
 
     /// YulBreakStatement = 'break' ;
-    pub yul_break_statement: ParserType<cst::NodeRef>,
+    pub yul_break_statement: ParserType<'a, &'a cst::Node<'a>>,
 
     /// YulContinueStatement = 'continue' ;
-    pub yul_continue_statement: ParserType<cst::NodeRef>,
+    pub yul_continue_statement: ParserType<'a, &'a cst::Node<'a>>,
 
     /// «YulDecimalNumberLiteral» = '0' | '1'…'9' { '0'…'9' } ;
-    pub yul_decimal_number_literal: ParserType<lex::NodeRef>,
+    pub yul_decimal_number_literal: ParserType<'a, &'a lex::Node<'a>>,
 
     /// YulExpression = YulIdentifierPath | YulFunctionCall | YulLiteral ;
-    pub yul_expression: ParserType<cst::NodeRef>,
+    pub yul_expression: ParserType<'a, &'a cst::Node<'a>>,
 
     /// YulForStatement = 'for' YulBlock YulExpression YulBlock YulBlock ;
-    pub yul_for_statement: ParserType<cst::NodeRef>,
+    pub yul_for_statement: ParserType<'a, &'a cst::Node<'a>>,
 
     /// YulFunctionCall = «YulIdentifier» '(' [ YulExpression  { ',' YulExpression } ] ')' ;
-    pub yul_function_call: ParserType<cst::NodeRef>,
+    pub yul_function_call: ParserType<'a, &'a cst::Node<'a>>,
 
     /// YulFunctionDefinition = 'function' «YulIdentifier» '(' [ «YulIdentifier»  { ',' «YulIdentifier» } ] ')' [ '->' «YulIdentifier»  { ',' «YulIdentifier» } ] YulBlock ;
-    pub yul_function_definition: ParserType<cst::NodeRef>,
+    pub yul_function_definition: ParserType<'a, &'a cst::Node<'a>>,
 
     /// «YulHexLiteral» = '0x' 1…*{ «HexCharacter» } ;
-    pub yul_hex_literal: ParserType<lex::NodeRef>,
+    pub yul_hex_literal: ParserType<'a, &'a lex::Node<'a>>,
 
     /// «YulIdentifier» = «RawIdentifier» - «YulKeyword» ;
-    pub yul_identifier: ParserType<lex::NodeRef>,
+    pub yul_identifier: ParserType<'a, &'a lex::Node<'a>>,
 
     /// YulIdentifierPath = «YulIdentifier»  { '.' «YulIdentifier» } ;
-    pub yul_identifier_path: ParserType<cst::NodeRef>,
+    pub yul_identifier_path: ParserType<'a, &'a cst::Node<'a>>,
 
     /// YulIfStatement = 'if' YulExpression YulBlock ;
-    pub yul_if_statement: ParserType<cst::NodeRef>,
+    pub yul_if_statement: ParserType<'a, &'a cst::Node<'a>>,
 
     /// «YulKeyword» = «BooleanLiteral» | 'break' | 'case' | 'continue' | 'default' | 'for' | 'function' | 'hex' | 'if' | 'leave' | 'let' | 'switch' ;
-    pub yul_keyword: ParserType<lex::NodeRef>,
+    pub yul_keyword: ParserType<'a, &'a lex::Node<'a>>,
 
     /// YulLeaveStatement = 'leave' ;
-    pub yul_leave_statement: ParserType<cst::NodeRef>,
+    pub yul_leave_statement: ParserType<'a, &'a cst::Node<'a>>,
 
     /// YulLiteral = «YulDecimalNumberLiteral» | «YulHexLiteral» | «AsciiStringLiteral» | «BooleanLiteral» | «HexStringLiteral» ;
-    pub yul_literal: ParserType<cst::NodeRef>,
+    pub yul_literal: ParserType<'a, &'a cst::Node<'a>>,
 
     /// YulStatement = YulBlock | YulVariableDeclaration | YulFunctionDefinition | YulAssignmentStatement | YulFunctionCall | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement ;
-    pub yul_statement: ParserType<cst::NodeRef>,
+    pub yul_statement: ParserType<'a, &'a cst::Node<'a>>,
 
     /// YulSwitchStatement = 'switch' YulExpression 1…*{ ( 'case' YulLiteral | 'default' ) YulBlock } ;
-    pub yul_switch_statement: ParserType<cst::NodeRef>,
+    pub yul_switch_statement: ParserType<'a, &'a cst::Node<'a>>,
 
     /// YulVariableDeclaration = 'let' YulIdentifierPath  { ',' YulIdentifierPath } [ ':=' YulExpression ] ;
-    pub yul_variable_declaration: ParserType<cst::NodeRef>,
+    pub yul_variable_declaration: ParserType<'a, &'a cst::Node<'a>>,
 }
 
-impl Parsers {
+impl<'a> Parsers<'a> {
     pub fn new(version: Version) -> Self {
         // Declare all versions -----------------------------
 
@@ -530,234 +576,297 @@ impl Parsers {
         // Declare all productions --------------------------
 
         let mut abi_coder_pragma_specifier_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut add_sub_expression_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut address_type_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut and_expression_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut argument_list_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut array_literal_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut ascii_escape_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut ascii_string_literal_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut assembly_flags_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut assembly_statement_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut add_sub_expression_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut address_type_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut and_expression_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut argument_list_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut array_literal_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut ascii_escape_parser = Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut ascii_string_literal_parser =
+            Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut assembly_flags_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut assembly_statement_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut assignment_expression_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut bit_and_expression_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut bit_or_expression_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut bit_x_or_expression_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut block_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut boolean_literal_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut break_statement_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut catch_clause_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut bit_and_expression_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut bit_or_expression_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut bit_x_or_expression_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut block_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut boolean_literal_parser = Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut break_statement_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut catch_clause_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut conditional_expression_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut constant_definition_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut constant_definition_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut constructor_attribute_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut constructor_definition_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut continue_statement_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut continue_statement_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut contract_body_element_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut contract_definition_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut data_location_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut decimal_exponent_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut decimal_float_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut decimal_integer_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut decimal_number_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut definition_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut delete_statement_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut directive_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut do_while_statement_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut contract_definition_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut data_location_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut decimal_exponent_parser =
+            Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut decimal_float_parser = Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut decimal_integer_parser = Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut decimal_number_parser = Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut definition_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut delete_statement_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut directive_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut do_while_statement_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut double_quoted_ascii_string_literal_parser =
-            Recursive::<char, lex::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
         let mut double_quoted_unicode_string_literal_parser =
-            Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut elementary_type_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut emit_statement_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut end_of_file_trivia_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut end_of_line_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut enum_definition_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut elementary_type_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut emit_statement_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut end_of_file_trivia_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut end_of_line_parser = Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut enum_definition_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut equality_comparison_expression_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut error_definition_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut error_parameter_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut escape_sequence_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut event_definition_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut event_parameter_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut error_definition_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut error_parameter_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut escape_sequence_parser = Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut event_definition_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut event_parameter_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut experimental_pragma_specifier_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut exponentiation_expression_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut expression_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut expression_statement_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut expression_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut expression_statement_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut fallback_function_attribute_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut fallback_function_definition_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut fixed_bytes_type_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut for_statement_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut function_attribute_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut fixed_bytes_type_parser =
+            Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut for_statement_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut function_attribute_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut function_call_expression_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut function_definition_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut function_type_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut hex_byte_escape_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut hex_character_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut hex_number_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut hex_string_literal_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut identifier_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut identifier_part_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut identifier_path_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut identifier_start_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut if_statement_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut import_directive_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut import_path_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut function_definition_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut function_type_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut hex_byte_escape_parser = Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut hex_character_parser = Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut hex_number_parser = Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut hex_string_literal_parser =
+            Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut identifier_parser = Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut identifier_part_parser = Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut identifier_path_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut identifier_start_parser =
+            Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut if_statement_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut import_directive_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut import_path_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut index_access_expression_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut inheritance_specifier_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut inheritance_specifier_list_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut interface_definition_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut keyword_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut leading_trivia_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut library_definition_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut mapping_type_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut interface_definition_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut keyword_parser = Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut leading_trivia_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut library_definition_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut mapping_type_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut member_access_expression_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut modifier_attribute_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut modifier_definition_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut modifier_invocation_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut modifier_attribute_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut modifier_definition_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut modifier_invocation_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut mul_div_mod_expression_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut multiline_comment_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut named_argument_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut named_argument_list_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut new_expression_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut number_unit_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut numeric_literal_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut or_expression_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut multiline_comment_parser =
+            Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut named_argument_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut named_argument_list_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut new_expression_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut number_unit_parser = Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut numeric_literal_parser = Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut or_expression_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut order_comparison_expression_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut override_specifier_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut override_specifier_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut parameter_declaration_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut parameter_list_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut parameter_list_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut parenthesis_expression_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut payable_expression_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut payable_expression_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut positional_argument_list_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut possibly_separated_pairs_of_hex_digits_parser =
-            Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut pragma_directive_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut primary_expression_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut raw_identifier_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut pragma_directive_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut primary_expression_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut raw_identifier_parser = Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
         let mut receive_function_attribute_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut receive_function_definition_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut reserved_keyword_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut return_statement_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut revert_statement_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut selected_import_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut reserved_keyword_parser =
+            Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut return_statement_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut revert_statement_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut selected_import_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut selecting_import_directive_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut shift_expression_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut signed_fixed_type_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut signed_integer_type_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut shift_expression_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut signed_fixed_type_parser =
+            Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut signed_integer_type_parser =
+            Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
         let mut simple_import_directive_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut simple_statement_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut single_line_comment_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut simple_statement_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut single_line_comment_parser =
+            Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
         let mut single_quoted_ascii_string_literal_parser =
-            Recursive::<char, lex::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
         let mut single_quoted_unicode_string_literal_parser =
-            Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut source_unit_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut source_unit_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut star_import_directive_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut state_variable_attribute_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut state_variable_declaration_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut statement_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut struct_definition_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut struct_member_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut trailing_trivia_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut try_statement_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut statement_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut struct_definition_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut struct_member_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut trailing_trivia_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut try_statement_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut tuple_deconstruction_statement_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut type_expression_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut type_name_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut type_expression_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut type_name_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut unary_prefix_expression_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut unary_suffix_expression_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut unchecked_block_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut unicode_escape_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut unchecked_block_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut unicode_escape_parser = Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
         let mut unicode_string_literal_parser =
-            Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut unsigned_fixed_type_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut unsigned_fixed_type_parser =
+            Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
         let mut unsigned_integer_type_parser =
-            Recursive::<char, lex::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
         let mut user_defined_value_type_definition_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut using_directive_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut using_directive_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut variable_declaration_statement_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut version_pragma_operator_parser =
-            Recursive::<char, lex::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
         let mut version_pragma_specifier_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut version_pragma_value_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut while_statement_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut whitespace_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut version_pragma_value_parser =
+            Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut while_statement_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut whitespace_parser = Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
         let mut yul_assignment_statement_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut yul_block_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut yul_break_statement_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut yul_block_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut yul_break_statement_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut yul_continue_statement_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut yul_decimal_number_literal_parser =
-            Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut yul_expression_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut yul_for_statement_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut yul_function_call_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut yul_expression_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut yul_for_statement_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut yul_function_call_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut yul_function_definition_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut yul_hex_literal_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut yul_identifier_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut yul_identifier_path_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut yul_if_statement_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut yul_keyword_parser = Recursive::<char, lex::NodeRef, ErrorType>::declare();
-        let mut yul_leave_statement_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut yul_literal_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut yul_statement_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
-        let mut yul_switch_statement_parser = Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut yul_hex_literal_parser = Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut yul_identifier_parser = Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut yul_identifier_path_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut yul_if_statement_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut yul_keyword_parser = Recursive::<char, &'a lex::Node<'a>, ErrorType>::declare();
+        let mut yul_leave_statement_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut yul_literal_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut yul_statement_parser = Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
+        let mut yul_switch_statement_parser =
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
         let mut yul_variable_declaration_parser =
-            Recursive::<char, cst::NodeRef, ErrorType>::declare();
+            Recursive::<char, &'a cst::Node<'a>, ErrorType>::declare();
 
         // Macros -------------------------------------------
 
         #[allow(unused_macros)]
         macro_rules! lex_terminal {
             ($ kind : ident , $ literal : literal) => {
-                just($literal).map_with_span(|_, span| {
-                    lex::Node::named(kinds::Token::$kind, lex::Node::chars(span))
+                just($literal).map_with_span(|_, span: SpanType<'a>| {
+                    lex::Node::named(
+                        &span.context(),
+                        kinds::Token::$kind,
+                        lex::Node::chars(&span.context(), span.start()..span.end()),
+                    )
                 })
             };
             ($ kind : ident , $ filter : expr) => {
-                filter($filter).map_with_span(|_, span| {
-                    lex::Node::named(kinds::Token::$kind, lex::Node::chars(span))
+                filter($filter).map_with_span(|_, span: SpanType<'a>| {
+                    lex::Node::named(
+                        &span.context(),
+                        kinds::Token::$kind,
+                        lex::Node::chars(&span.context(), span.start()..span.end()),
+                    )
                 })
             };
             ($ literal : literal) => {
-                just($literal).map_with_span(|_, span| lex::Node::chars(span))
+                just($literal).map_with_span(|_, span: SpanType<'a>| {
+                    lex::Node::chars(&span.context(), span.start()..span.end())
+                })
             };
             ($ filter : expr) => {
-                filter($filter).map_with_span(|_, span| lex::Node::chars(span))
+                filter($filter).map_with_span(|_, span: SpanType<'a>| {
+                    lex::Node::chars(&span.context(), span.start()..span.end())
+                })
             };
         }
         #[allow(unused_macros)]
@@ -767,72 +876,81 @@ impl Parsers {
             };
         }
         #[allow(unused_macros)]
-        macro_rules ! lex_choice { ($ kind : ident , $ ($ expr : expr) , *) => { lex_choice ! ($ ($ expr) , *) . map (| element | lex :: Node :: named (kinds :: Token :: $ kind , element)) } ; ($ ($ expr : expr) , *) => { choice :: < _ , ErrorType > (($ ($ expr . map (| v | lex :: Node :: choice (0 , v))) , *)) } ; }
+        macro_rules ! lex_choice { ($ kind : ident , $ ($ expr : expr) , *) => { lex_choice ! ($ ($ expr) , *) . map_with_span (| element , span : SpanType < 'a > | lex :: Node :: named (& span . context () , kinds :: Token :: $ kind , element)) } ; ($ ($ expr : expr) , *) => { choice :: < _ , ErrorType > (($ ($ expr . map_with_span (| v , span : SpanType < 'a > | lex :: Node :: choice (& span . context () , 0 , v))) , *)) } ; }
         #[allow(unused_macros)]
-        macro_rules ! lex_seq { ($ kind : ident , $ ($ expr : expr) , *) => { lex_seq ! ($ ($ expr) , *) . map (| element | lex :: Node :: named (kinds :: Token :: $ kind , element)) } ; ($ a : expr , $ ($ b : expr) , *) => { $ a $ (. then ($ b)) * . map_with_span (| _ , span | lex :: Node :: chars (span)) } ; }
+        macro_rules ! lex_seq { ($ kind : ident , $ ($ expr : expr) , *) => { lex_seq ! ($ ($ expr) , *) . map_with_span (| element , span : SpanType < 'a > | lex :: Node :: named (& span . context () , kinds :: Token :: $ kind , element)) } ; ($ a : expr , $ ($ b : expr) , *) => { $ a $ (. then ($ b)) * . map_with_span (| _ , span : SpanType < 'a > | lex :: Node :: chars (& span . context () , span . start () .. span . end ())) } ; }
         #[allow(unused_macros)]
         macro_rules! lex_zero_or_more {
             ($ kind : ident , $ expr : expr) => {
-                lex_zero_or_more!($expr)
-                    .map(|element| lex::Node::named(kinds::Token::$kind, element))
+                lex_zero_or_more!($expr).map_with_span(|element, span: SpanType<'a>| {
+                    lex::Node::named(&span.context(), kinds::Token::$kind, element)
+                })
             };
             ($ expr : expr) => {
-                $expr.repeated().map(|v| lex::Node::sequence(v))
+                $expr
+                    .repeated()
+                    .map_with_span(|v, span: SpanType<'a>| lex::Node::sequence(&span.context(), v))
             };
         }
         #[allow(unused_macros)]
         macro_rules! lex_one_or_more {
             ($ kind : ident , $ expr : expr) => {
-                lex_one_or_more!($expr)
-                    .map(|element| lex::Node::named(kinds::Token::$kind, element))
+                lex_one_or_more!($expr).map_with_span(|element, span: SpanType<'a>| {
+                    lex::Node::named(&span.context(), kinds::Token::$kind, element)
+                })
             };
             ($ expr : expr) => {
-                $expr.repeated().at_least(1).map(|v| lex::Node::sequence(v))
+                $expr
+                    .repeated()
+                    .at_least(1)
+                    .map_with_span(|v, span: SpanType<'a>| lex::Node::sequence(&span.context(), v))
             };
         }
         #[allow(unused_macros)]
         macro_rules! lex_repeated {
             ($ kind : ident , $ expr : expr , $ min : literal , $ max : literal) => {
-                lex_repeated!($expr, $min, $max)
-                    .map(|element| lex::Node::named(kinds::Token::$kind, element))
+                lex_repeated!($expr, $min, $max).map_with_span(|element, span: SpanType<'a>| {
+                    lex::Node::named(&span.context(), kinds::Token::$kind, element)
+                })
             };
             ($ expr : expr , $ min : literal , $ max : literal) => {
                 $expr
                     .repeated()
                     .at_least($min)
                     .at_most($max)
-                    .map(|v| lex::Node::sequence(v))
+                    .map_with_span(|v, span: SpanType<'a>| lex::Node::sequence(&span.context(), v))
             };
         }
         #[allow(unused_macros)]
         macro_rules! lex_optional {
             ($ expr : expr) => {
-                $expr
-                    .or_not()
-                    .map(|v| v.unwrap_or_else(|| lex::Node::none()))
+                $expr.or_not().map_with_span(|v, span: SpanType<'a>| {
+                    v.unwrap_or_else(|| lex::Node::none(&span.context()))
+                })
             };
         }
         #[allow(unused_macros)]
         macro_rules! lex_separated_by {
             ($ kind : ident , $ expr : expr , $ separator : expr) => {
-                lex_separated_by!($expr, $separator)
-                    .map(|element| lex::Node::named(kinds::Token::$kind, element))
+                lex_separated_by!($expr, $separator).map_with_span(|element, span: SpanType<'a>| {
+                    lex::Node::named(&span.context(), kinds::Token::$kind, element)
+                })
             };
             ($ expr : expr , $ separator : expr) => {
-                $expr
-                    .then($separator.then($expr).repeated())
-                    .map(|(first, rest)| {
+                $expr.then($separator.then($expr).repeated()).map_with_span(
+                    |(first, rest), span: SpanType<'a>| {
                         let mut v = vec![first];
                         for (separator, expr) in rest {
                             v.push(separator);
                             v.push(expr);
                         }
-                        lex::Node::sequence(v)
-                    })
+                        lex::Node::sequence(&span.context(), v)
+                    },
+                )
             };
         }
         #[allow(unused_macros)]
-        macro_rules ! lex_trie { ($ ($ expr : expr) , *) => (choice :: < _ , ErrorType > (($ ($ expr) , *)) . map_with_span (| kind , span | lex :: Node :: named (kind , lex :: Node :: chars (span)))) }
+        macro_rules ! lex_trie { ($ ($ expr : expr) , *) => (choice :: < _ , ErrorType > (($ ($ expr) , *)) . map_with_span (| kind , span : SpanType < 'a > | lex :: Node :: named (& span . context () , kind , lex :: Node :: chars (& span . context () , span . start () .. span . end ())))) }
         #[allow(unused_macros)]
         macro_rules! trieleaf {
             ($ kind : ident , $ string : literal) => {
@@ -847,46 +965,73 @@ impl Parsers {
         #[allow(unused_macros)]
         macro_rules! trivia_terminal {
             ($ kind : ident , $ literal : literal) => {
-                just($literal)
-                    .map_with_span(|_, range| cst::Node::trivia_token(range, kinds::Token::$kind))
+                just($literal).map_with_span(|_, span: SpanType<'a>| {
+                    cst::Node::trivia_token(
+                        &span.context(),
+                        span.start()..span.end(),
+                        kinds::Token::$kind,
+                    )
+                })
             };
             ($ kind : ident , $ filter : expr) => {
-                filter($filter)
-                    .map_with_span(|_, range| cst::Node::trivia_token(span, kinds::Token::$kind))
+                filter($filter).map_with_span(|_, span: SpanType<'a>| {
+                    cst::Node::trivia_token(
+                        &span.context(),
+                        span.start()..span.end(),
+                        kinds::Token::$kind,
+                    )
+                })
             };
         }
         #[allow(unused_macros)]
-        macro_rules ! trivia_token { ($ token_rule : ident) => { $ token_rule . clone () . map (| token : lex :: NodeRef | { if let lex :: Node :: Named (kind , element) = * token { cst :: Node :: trivia_token (element . range () , kind) } else { unreachable ! ("a token rule should always return a named token, but rule {} returned {:?}" , stringify ! ($ token_rule) , token) } }) } ; }
+        macro_rules ! trivia_token { ($ token_rule : ident) => { $ token_rule . clone () . map_with_span (| token : & 'a lex :: Node < 'a > , span : SpanType < 'a > | { if let lex :: Node :: Named (kind , element) = token { cst :: Node :: trivia_token (& span . context () , element . range () , * kind) } else { unreachable ! ("a token rule should always return a named token, but rule {} returned {:?}" , stringify ! ($ token_rule) , token) } }) } ; }
         #[allow(unused_macros)]
-        macro_rules ! trivia_trie { ($ ($ expr : expr) , *) => (choice :: < _ , ErrorType > (($ ($ expr) , *)) . map_with_span (| kind , span | cst :: Node :: trivia_token (span , kind))) }
+        macro_rules ! trivia_trie { ($ ($ expr : expr) , *) => (choice :: < _ , ErrorType > (($ ($ expr) , *)) . map_with_span (| kind , span : SpanType < 'a > | cst :: Node :: trivia_token (& span . context () , span . start () .. span . end () , kind))) }
         #[allow(unused_macros)]
         macro_rules! terminal {
             ($ kind : ident , $ literal : literal) => {
                 leading_trivia_parser
                     .clone()
-                    .then(just($literal).map_with_span(|_, span| span))
+                    .then(
+                        just($literal)
+                            .map_with_span(|_, span: SpanType<'a>| span.start()..span.end()),
+                    )
                     .then(trailing_trivia_parser.clone())
-                    .map(|((leading_trivia, range), trailing_trivia)| {
-                        cst::Node::token(
-                            range,
-                            kinds::Token::$kind,
-                            leading_trivia,
-                            trailing_trivia,
-                        )
-                    })
+                    .map_with_span(
+                        |((leading_trivia, range), trailing_trivia), span: SpanType<'a>| {
+                            cst::Node::token(
+                                &span.context(),
+                                range,
+                                kinds::Token::$kind,
+                                leading_trivia,
+                                trailing_trivia,
+                            )
+                        },
+                    )
             };
             ($ kind : ident , $ filter : expr) => {
                 leading_trivia_parser
                     .clone()
-                    .then(filter($filter).map_with_span(|_, span| span))
+                    .then(
+                        filter($filter)
+                            .map_with_span(|_, span: SpanType<'a>| span.start()..span.end()),
+                    )
                     .then(trailing_trivia_parser.clone())
-                    .map(|((leading_trivia, span), trailing_trivia)| {
-                        cst::Node::token(span, kinds::Token::$kind, leading_trivia, trailing_trivia)
-                    })
+                    .map_with_span(
+                        |((leading_trivia, range), trailing_trivia), span: SpanType<'a>| {
+                            cst::Node::token(
+                                &span.context(),
+                                range,
+                                kinds::Token::$kind,
+                                leading_trivia,
+                                trailing_trivia,
+                            )
+                        },
+                    )
             };
         }
         #[allow(unused_macros)]
-        macro_rules ! token { ($ token_rule : ident) => { leading_trivia_parser . clone () . then ($ token_rule . clone ()) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , token) , trailing_trivia) : ((_ , lex :: NodeRef) , _) | { if let lex :: Node :: Named (kind , element) = * token { cst :: Node :: token (element . range () , kind , leading_trivia , trailing_trivia) } else { unreachable ! ("a token rule should always return a named token, but rule {} returned {:?}" , stringify ! ($ token_rule) , token) } }) } ; }
+        macro_rules ! token { ($ token_rule : ident) => { leading_trivia_parser . clone () . then ($ token_rule . clone ()) . then (trailing_trivia_parser . clone ()) . map_with_span (| ((leading_trivia , token) , trailing_trivia) : ((_ , & 'a lex :: Node < 'a >) , _) , span : SpanType < 'a > | { if let lex :: Node :: Named (kind , element) = * token { cst :: Node :: token (& span . context () , element . range () , kind , leading_trivia , trailing_trivia) } else { unreachable ! ("a token rule should always return a named token, but rule {} returned {:?}" , stringify ! ($ token_rule) , token) } }) } ; }
         #[allow(unused_macros)]
         macro_rules! rule {
             ($ rule : ident) => {
@@ -896,16 +1041,22 @@ impl Parsers {
         #[allow(unused_macros)]
         macro_rules ! choice { ($ kind : ident , $ ($ expr : expr) , *) => { choice :: < _ , ErrorType > (($ ($ expr) , *)) } ; ($ ($ expr : expr) , *) => { choice :: < _ , ErrorType > (($ ($ expr) , *)) } ; }
         #[allow(unused_macros)]
-        macro_rules ! seq { (@ exp $ head : expr , $ ($ tail : expr) , +) => { $ head . then (seq ! (@ exp $ ($ tail) , +)) } ; (@ exp $ head : expr) => { $ head } ; (@ args [$ ($ accum : expr ,) *] , $ current : expr , $ head : expr , $ ($ tail : expr) , +) => { seq ! (@ args [$ ($ accum ,) * $ current . 0 ,] , $ current . 1 , $ ($ tail) , +) } ; (@ args [$ ($ accum : expr ,) *] , $ current : expr , $ head : expr) => { vec ! [$ ($ accum ,) * $ current] } ; ($ kind : ident , $ ($ expr : expr) , +) => { seq ! (@ exp $ ($ expr) , +) . map (| v | cst :: Node :: rule (kinds :: Rule :: $ kind , seq ! (@ args [] , v , $ ($ expr) , +))) } ; ($ ($ expr : expr) , +) => { seq ! (@ exp $ ($ expr) , +) . map (| v | cst :: Node :: group (seq ! (@ args [] , v , $ ($ expr) , +))) } ; }
+        macro_rules ! seq { (@ exp $ head : expr , $ ($ tail : expr) , +) => { $ head . then (seq ! (@ exp $ ($ tail) , +)) } ; (@ exp $ head : expr) => { $ head } ; (@ args [$ ($ accum : expr ,) *] , $ current : expr , $ head : expr , $ ($ tail : expr) , +) => { seq ! (@ args [$ ($ accum ,) * $ current . 0 ,] , $ current . 1 , $ ($ tail) , +) } ; (@ args [$ ($ accum : expr ,) *] , $ current : expr , $ head : expr) => { vec ! [$ ($ accum ,) * $ current] } ; ($ kind : ident , $ ($ expr : expr) , +) => { seq ! (@ exp $ ($ expr) , +) . map_with_span (| v , span : SpanType < 'a > | cst :: Node :: rule (& span . context () , kinds :: Rule :: $ kind , seq ! (@ args [] , v , $ ($ expr) , +))) } ; ($ ($ expr : expr) , +) => { seq ! (@ exp $ ($ expr) , +) . map_with_span (| v , span : SpanType < 'a > | cst :: Node :: group (& span . context () , seq ! (@ args [] , v , $ ($ expr) , +))) } ; }
         #[allow(unused_macros)]
         macro_rules! zero_or_more {
             ($ kind : ident , $ expr : expr) => {
                 $expr
                     .repeated()
-                    .map(|children| cst::Node::rule(kinds::Rule::$kind, children))
+                    .map_with_span(|children, span: SpanType<'a>| {
+                        cst::Node::rule(&span.context(), kinds::Rule::$kind, children)
+                    })
             };
             ($ expr : expr) => {
-                $expr.repeated().map(|children| cst::Node::group(children))
+                $expr
+                    .repeated()
+                    .map_with_span(|children, span: SpanType<'a>| {
+                        cst::Node::group(&span.context(), children)
+                    })
             };
         }
         #[allow(unused_macros)]
@@ -914,65 +1065,67 @@ impl Parsers {
                 $expr
                     .repeated()
                     .at_least(1)
-                    .map(|children| cst::Node::rule(kinds::Rule::$kind, children))
+                    .map_with_span(|children, span: SpanType<'a>| {
+                        cst::Node::rule(&span.context(), kinds::Rule::$kind, children)
+                    })
             };
             ($ expr : expr) => {
                 $expr
                     .repeated()
                     .at_least(1)
-                    .map(|children| cst::Node::group(children))
+                    .map_with_span(|children, span: SpanType<'a>| {
+                        cst::Node::group(&span.context(), children)
+                    })
             };
         }
         #[allow(unused_macros)]
         macro_rules! repeated {
             ($ kind : ident , $ expr : expr , $ min : literal , $ max : literal) => {
-                $expr
-                    .repeated()
-                    .at_least($min)
-                    .at_most($max)
-                    .map(|children| cst::Node::rule(kinds::Rule::$kind, children))
+                $expr.repeated().at_least($min).at_most($max).map_with_span(
+                    |children, span: SpanType<'a>| {
+                        cst::Node::rule(&span.context(), kinds::Rule::$kind, children)
+                    },
+                )
             };
             ($ expr : expr , $ min : literal , $ max : literal) => {
-                $expr
-                    .repeated()
-                    .at_least($min)
-                    .at_most($max)
-                    .map(|children| cst::Node::group(children))
+                $expr.repeated().at_least($min).at_most($max).map_with_span(
+                    |children, span: SpanType<'a>| cst::Node::group(&span.context(), children),
+                )
             };
         }
         #[allow(unused_macros)]
         macro_rules! optional {
             ($ expr : expr) => {
-                $expr
-                    .or_not()
-                    .map(|v| v.unwrap_or_else(|| cst::Node::none()))
+                $expr.or_not().map_with_span(|v, span: SpanType<'a>| {
+                    v.unwrap_or_else(|| cst::Node::none(&span.context()))
+                })
             };
         }
         #[allow(unused_macros)]
         macro_rules! separated_by {
             ($ kind : ident , $ expr : expr , $ separator : expr) => {
-                $expr
-                    .then($separator.then($expr).repeated())
-                    .map(|(first, rest)| {
+                $expr.then($separator.then($expr).repeated()).map_with_span(
+                    |(first, rest), span: SpanType<'a>| {
                         let mut v = vec![first];
                         for (separator, expr) in rest {
                             v.push(separator);
                             v.push(expr);
                         }
-                        cst::Node::rule(kinds::Rule::$kind, v)
-                    })
+                        cst::Node::rule(&span.context(), kinds::Rule::$kind, v)
+                    },
+                )
             };
             ($ expr : expr , $ separator : expr) => {
-                $expr
-                    .then($separator.then($expr).repeated())
-                    .map(|(first, rest)| {
+                $expr.then($separator.then($expr).repeated()).map_with_span(
+                    |(first, rest), span: SpanType<'a>| {
                         let mut v = vec![first];
                         for (separator, expr) in rest {
                             v.push(separator);
                             v.push(expr);
                         }
-                        cst::Node::group(v)
-                    })
+                        cst::Node::group(&span.context(), v)
+                    },
+                )
             };
         }
         #[allow(unused_macros)]
@@ -981,7 +1134,7 @@ impl Parsers {
                 $next_sibling
                     .clone()
                     .then($operator.then($next_sibling.clone()).repeated())
-                    .map(|(first, rest)| {
+                    .map_with_span(|(first, rest), span: SpanType<'a>| {
                         if rest.is_empty() {
                             first
                         } else {
@@ -989,6 +1142,7 @@ impl Parsers {
                                 first,
                                 |left_operand, (operator, right_operand)| {
                                     cst::Node::rule(
+                                        &span.context(),
                                         kinds::Rule::$kind,
                                         vec![left_operand, operator, right_operand],
                                     )
@@ -1004,7 +1158,7 @@ impl Parsers {
                 $next_sibling
                     .clone()
                     .then($operator.then($next_sibling.clone()).repeated())
-                    .map(|(first, rest)| {
+                    .map_with_span(|(first, rest), span: SpanType<'a>| {
                         if rest.is_empty() {
                             first
                         } else {
@@ -1019,6 +1173,7 @@ impl Parsers {
                                 last_operand,
                                 |right_operand, (left_operand, operator)| {
                                     cst::Node::rule(
+                                        &span.context(),
                                         kinds::Rule::$kind,
                                         vec![left_operand, operator, right_operand],
                                     )
@@ -1034,7 +1189,7 @@ impl Parsers {
                 $operator
                     .repeated()
                     .then($next_sibling.clone())
-                    .map(|(mut operators, operand)| {
+                    .map_with_span(|(mut operators, operand), span: SpanType<'a>| {
                         if operators.is_empty() {
                             operand
                         } else {
@@ -1043,6 +1198,7 @@ impl Parsers {
                                 .into_iter()
                                 .fold(operand, |right_operand, operator| {
                                     cst::Node::rule(
+                                        &span.context(),
                                         kinds::Rule::$kind,
                                         vec![operator, right_operand],
                                     )
@@ -1057,7 +1213,7 @@ impl Parsers {
                 $next_sibling
                     .clone()
                     .then($operator.repeated())
-                    .map(|(operand, operators)| {
+                    .map_with_span(|(operand, operators), span: SpanType<'a>| {
                         if operators.is_empty() {
                             operand
                         } else {
@@ -1065,6 +1221,7 @@ impl Parsers {
                                 .into_iter()
                                 .fold(operand, |left_operand, operator| {
                                     cst::Node::rule(
+                                        &span.context(),
                                         kinds::Rule::$kind,
                                         vec![left_operand, operator],
                                     )
@@ -1083,7 +1240,7 @@ impl Parsers {
             };
         }
         #[allow(unused_macros)]
-        macro_rules ! trie { ($ ($ expr : expr) , *) => (leading_trivia_parser . clone () . then (choice :: < _ , ErrorType > (($ ($ expr) , *)) . map_with_span (| kind , span | (kind , span))) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , (kind , span)) , trailing_trivia) | { cst :: Node :: token (span , kind , leading_trivia , trailing_trivia) })) }
+        macro_rules ! trie { ($ ($ expr : expr) , *) => (leading_trivia_parser . clone () . then (choice :: < _ , ErrorType > (($ ($ expr) , *)) . map_with_span (| kind , span : SpanType < 'a > | (kind , span . start () .. span . end ()))) . then (trailing_trivia_parser . clone ()) . map_with_span (| ((leading_trivia , (kind , range)) , trailing_trivia) , span : SpanType < 'a > | { cst :: Node :: token (& span . context () , range , kind , leading_trivia , trailing_trivia) })) }
 
         // Define all productions ---------------------------
 

@@ -2,7 +2,7 @@
 
 use serde::Serialize;
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
 pub enum Token {
     Abicoder,
     Abstract,
@@ -296,7 +296,7 @@ pub enum Token {
     ZeroX,
 }
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
 pub enum Rule {
     AbicoderPragmaSpecifier,
     AddSubExpression,

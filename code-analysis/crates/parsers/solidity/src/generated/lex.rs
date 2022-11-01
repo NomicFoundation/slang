@@ -1,41 +1,45 @@
 // This file is generated via `cargo build`. Please don't edit by hand.
 
 use super::kinds;
+use super::parse::Context;
 use serde::Serialize;
 use std::ops::Range;
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
-pub enum Node {
+pub enum Node<'a> {
     None,
     Chars(Range<usize>),
-    Choice(usize, NodeRef),
-    Sequence(Vec<NodeRef>),
-    Named(kinds::Token, NodeRef),
+    Choice(usize, &'a Node<'a>),
+    Sequence(Vec<&'a Node<'a>>),
+    Named(kinds::Token, &'a Node<'a>),
 }
-pub type NodeRef = Box<Node>;
-impl Node {
+impl<'a> Node<'a> {
     #[inline]
-    pub fn none() -> NodeRef {
-        Box::new(Node::None)
+    pub fn none(context: &'a Context<'a>) -> &'a Node<'a> {
+        context.alloc_lex_node(Node::None)
     }
     #[inline]
-    pub fn chars(range: Range<usize>) -> NodeRef {
-        Box::new(Node::Chars(range))
+    pub fn chars(context: &'a Context<'a>, range: Range<usize>) -> &'a Node<'a> {
+        context.alloc_lex_node(Node::Chars(range))
     }
     #[inline]
-    pub fn sequence(elements: Vec<NodeRef>) -> NodeRef {
-        Box::new(if elements.is_empty() {
+    pub fn sequence(context: &'a Context<'a>, elements: Vec<&'a Node<'a>>) -> &'a Node<'a> {
+        context.alloc_lex_node(if elements.is_empty() {
             Node::None
         } else {
             Node::Sequence(elements)
         })
     }
     #[inline]
-    pub fn choice(number: usize, element: NodeRef) -> NodeRef {
-        Box::new(Node::Choice(number, element))
+    pub fn choice(context: &'a Context<'a>, number: usize, element: &'a Node<'a>) -> &'a Node<'a> {
+        context.alloc_lex_node(Node::Choice(number, element))
     }
     #[inline]
-    pub fn named(kind: kinds::Token, element: NodeRef) -> NodeRef {
-        Box::new(Node::Named(kind, element))
+    pub fn named(
+        context: &'a Context<'a>,
+        kind: kinds::Token,
+        element: &'a Node<'a>,
+    ) -> &'a Node<'a> {
+        context.alloc_lex_node(Node::Named(kind, element))
     }
     pub fn range(&self) -> Range<usize> {
         match self {

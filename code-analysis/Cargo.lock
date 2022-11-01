@@ -1121,6 +1121,7 @@ dependencies = [
  "serde_json",
  "serde_yaml 0.9.13",
  "strum",
+ "typed-arena",
 ]
 
 [[package]]
