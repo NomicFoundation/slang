@@ -3,12 +3,13 @@ use std::{
     path::PathBuf,
 };
 
+use codegen_utils::context::CodegenContext;
 use inflector::Inflector;
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 use semver::Version;
 
-use super::{boilerplate, naming, rustfmt};
+use super::{boilerplate, naming};
 
 #[derive(Clone, Debug, Default)]
 pub struct GeneratedCode {
@@ -72,26 +73,34 @@ impl GeneratedCode {
         &self.errors
     }
 
-    pub fn write_to_source_files(&self, output_dir: PathBuf) {
-        rustfmt::format_and_write_source(
-            &output_dir.join("mod.rs"),
-            boilerplate::mod_head().to_string(),
-        );
+    pub fn write_to_source_files(&self, codegen: &CodegenContext, output_dir: &PathBuf) {
+        codegen
+            .write_file(
+                &output_dir.join("mod.rs"),
+                &boilerplate::mod_head().to_string(),
+            )
+            .unwrap();
 
-        rustfmt::format_and_write_source(
-            &output_dir.join("lex.rs"),
-            format!("{}", boilerplate::lex_head()),
-        );
+        codegen
+            .write_file(
+                &output_dir.join("lex.rs"),
+                &format!("{}", boilerplate::lex_head()),
+            )
+            .unwrap();
 
-        rustfmt::format_and_write_source(
-            &output_dir.join("cst.rs"),
-            format!("{}", boilerplate::cst_head()),
-        );
+        codegen
+            .write_file(
+                &output_dir.join("cst.rs"),
+                &format!("{}", boilerplate::cst_head()),
+            )
+            .unwrap();
 
-        rustfmt::format_and_write_source(
-            &output_dir.join("ast.rs"),
-            format!("{}", boilerplate::ast_head()),
-        );
+        codegen
+            .write_file(
+                &output_dir.join("ast.rs"),
+                &format!("{}", boilerplate::ast_head()),
+            )
+            .unwrap();
 
         let mut versions = BTreeSet::new();
         let mut field_definitions = vec![];
@@ -151,10 +160,11 @@ impl GeneratedCode {
             })
             .collect::<Vec<String>>();
 
-        rustfmt::format_and_write_source(
-            &output_dir.join("parse.rs"),
-            format!(
-                "{}
+        codegen
+            .write_file(
+                &output_dir.join("parse.rs"),
+                &format!(
+                    "{}
                 
                 #[allow(dead_code)]
                 pub struct Parsers<'a> {{
@@ -187,21 +197,23 @@ impl GeneratedCode {
                     }}
                 }}
                 ",
-                boilerplate::parse_head(),
-                field_definitions.join("\n\n"),
-                version_declarations.join(""),
-                parser_predeclarations.join(""),
-                boilerplate::parse_macros(),
-                parser_definitions.join("\n\n"),
-                field_assignments.join("")
-            ),
-        );
+                    boilerplate::parse_head(),
+                    field_definitions.join("\n\n"),
+                    version_declarations.join(""),
+                    parser_predeclarations.join(""),
+                    boilerplate::parse_macros(),
+                    parser_definitions.join("\n\n"),
+                    field_assignments.join("")
+                ),
+            )
+            .unwrap();
 
         // Do the kinds last, because the code generation steps above may have added new kinds
-        rustfmt::format_and_write_source(
-            &output_dir.join("kinds.rs"),
-            format!(
-                "{}
+        codegen
+            .write_file(
+                &output_dir.join("kinds.rs"),
+                &format!(
+                    "{}
 
                 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
                 pub enum Token {{
@@ -213,18 +225,19 @@ impl GeneratedCode {
                     {}
                 }}
                 ",
-                boilerplate::kinds_head(),
-                self.token_kinds
-                    .keys()
-                    .cloned()
-                    .collect::<Vec<String>>()
-                    .join(","),
-                self.rule_kinds
-                    .iter()
-                    .cloned()
-                    .collect::<Vec<String>>()
-                    .join(","),
-            ),
-        );
+                    boilerplate::kinds_head(),
+                    self.token_kinds
+                        .keys()
+                        .cloned()
+                        .collect::<Vec<String>>()
+                        .join(","),
+                    self.rule_kinds
+                        .iter()
+                        .cloned()
+                        .collect::<Vec<String>>()
+                        .join(","),
+                ),
+            )
+            .unwrap();
     }
 }

@@ -5,7 +5,6 @@ mod combinator_node;
 mod combinator_tree;
 mod generated_code;
 mod naming;
-mod rustfmt;
 mod terminal_trie;
 mod to_lexer_code;
 mod to_parser_code;

@@ -3,7 +3,7 @@ use std::{
     path::PathBuf,
 };
 
-use codegen_utils::read_source_file;
+use codegen_utils::context::CodegenContext;
 use jsonschema::JSONSchema;
 use regex::Regex;
 use semver::Version;
@@ -13,13 +13,21 @@ use crate::{EBNFDelimitedBy, EBNFRepeat, EBNFSeparatedBy, Expression, Grammar, E
 static REQUIRED_PRODUCTIONS: [&str; 2] = ["LeadingTrivia", "TrailingTrivia"];
 
 impl Grammar {
-    pub fn validate(&self, manifest_path: &PathBuf) {
+    pub fn validate(&self, context: &CodegenContext, manifest_path: &PathBuf) {
         validate_topics(self);
 
         let mut schemas = LoadedSchemas::new();
-        schemas.validate(manifest_path);
-        self.productions.keys().for_each(|topic_path| {
-            schemas.validate(&manifest_path.parent().unwrap().join(topic_path));
+        schemas.validate(context, manifest_path);
+        self.productions.keys().for_each(|definition| {
+            schemas.validate(
+                context,
+                &manifest_path
+                    .parent()
+                    .unwrap()
+                    .join(definition)
+                    .canonicalize()
+                    .unwrap(),
+            );
         });
 
         let defined = validate_definitions(self);
@@ -178,8 +186,8 @@ impl LoadedSchemas {
         };
     }
 
-    pub fn validate(&mut self, yaml_path: &PathBuf) {
-        let yaml_contents = read_source_file(&yaml_path);
+    pub fn validate(&mut self, context: &CodegenContext, yaml_path: &PathBuf) {
+        let yaml_contents = context.read_file(&yaml_path).unwrap();
 
         let schema_path_re = Regex::new(r"# yaml-language-server: \$schema=([\.\-/a-z]+)").unwrap();
         let mut schema_path_matches = schema_path_re.captures_iter(&yaml_contents);
@@ -189,10 +197,15 @@ impl LoadedSchemas {
             "Multiple schema paths"
         );
 
-        let schema_path = yaml_path.parent().unwrap().join(schema_path);
+        let schema_path = yaml_path
+            .parent()
+            .unwrap()
+            .join(schema_path)
+            .canonicalize()
+            .unwrap();
 
         if !self.schemas.contains_key(&schema_path) {
-            let schema_contents = read_source_file(&schema_path);
+            let schema_contents = context.read_file(&schema_path).unwrap();
             let schema_json = &serde_json::from_str(&schema_contents).unwrap();
             let schema = JSONSchema::compile(schema_json).unwrap();
 

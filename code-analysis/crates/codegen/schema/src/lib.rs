@@ -7,7 +7,7 @@ use std::{
     rc::{Rc, Weak},
 };
 
-use codegen_utils::read_source_file;
+use codegen_utils::context::CodegenContext;
 use indexmap::IndexMap;
 use semver::Version;
 use serde::{
@@ -579,8 +579,8 @@ impl ParserType {
 }
 
 impl Grammar {
-    pub fn from_manifest(manifest_path: &PathBuf) -> GrammarRef {
-        let contents = read_source_file(manifest_path);
+    pub fn from_manifest(codegen: &CodegenContext, manifest_path: &PathBuf) -> GrammarRef {
+        let contents = codegen.read_file(manifest_path).unwrap();
         let manifest_path_str = &manifest_path.to_str().unwrap();
         let manifest: Manifest = serde_yaml::from_str(&contents).expect(manifest_path_str);
 
@@ -594,7 +594,7 @@ impl Grammar {
                     let topic_path = manifest_path.parent().unwrap().join(definition);
                     let topic_path_str = topic_path.to_str().unwrap();
 
-                    let contents = read_source_file(&topic_path);
+                    let contents = codegen.read_file(&topic_path).unwrap();
                     let rules = serde_yaml::from_str::<Vec<Production>>(&contents)
                         .expect(topic_path_str)
                         .into_iter()
@@ -611,7 +611,7 @@ impl Grammar {
             productions,
         };
 
-        grammar.validate(manifest_path);
+        grammar.validate(codegen, manifest_path);
 
         Rc::new(grammar)
     }

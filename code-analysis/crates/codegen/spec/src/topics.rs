@@ -1,7 +1,7 @@
 use std::{io::Write, path::PathBuf};
 
 use codegen_schema::Grammar;
-use codegen_utils::{read_source_file, write_generated_file};
+use codegen_utils::context::CodegenContext;
 
 use super::{
     productions::{write_production, SpecProductionContext},
@@ -9,6 +9,7 @@ use super::{
 };
 
 pub fn generate_spec_sections(
+    codegen: &CodegenContext,
     grammar: &Grammar,
     generated_folder: &PathBuf,
     entries: &mut Vec<NavigationEntry>,
@@ -93,7 +94,7 @@ pub fn generate_spec_sections(
                     assert!(notes_file.exists(), "Notes file does not exist: {notes_file:?}");
 
                     assert_eq!(
-                        read_source_file(&notes_file).lines().nth(0),
+                        codegen.read_file(&notes_file).unwrap().lines().nth(0),
                         Some("<!-- markdownlint-configure-file { \"first-line-heading\": { \"level\": 2 } } -->"),
                         "First line of notes file should be the markdownlint configuration: {:?}", &notes_file
                     );
@@ -101,7 +102,7 @@ pub fn generate_spec_sections(
                     writeln!(w).unwrap();
                     writeln!(w, "--8<-- \"specification/notes/{topic_slug}/index.md\"").unwrap();
 
-                    write_generated_file(&topic_file, &String::from_utf8(w).unwrap());
+                    codegen.write_file(&topic_file, &String::from_utf8(w).unwrap()).unwrap();
                 });
         });
 }
