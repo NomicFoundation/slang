@@ -1,7 +1,7 @@
 use std::{io::Write, path::PathBuf};
 
 use codegen_schema::Grammar;
-use codegen_utils::write_generated_file;
+use codegen_utils::context::CodegenContext;
 
 use super::{
     productions::{write_production, SpecProductionContext},
@@ -9,6 +9,7 @@ use super::{
 };
 
 pub fn generate_spec_grammar(
+    codegen: &CodegenContext,
     grammar: &Grammar,
     generated_folder: &PathBuf,
     entries: &mut Vec<NavigationEntry>,
@@ -58,7 +59,9 @@ pub fn generate_spec_grammar(
     writeln!(w).unwrap();
     writeln!(w, "--8<-- \"specification/notes/00-grammar/index.md\"").unwrap();
 
-    write_generated_file(&grammar_path, &String::from_utf8(w).unwrap());
+    codegen
+        .write_file(&grammar_path, &String::from_utf8(w).unwrap())
+        .unwrap();
 }
 
 fn generate_context(grammar: &Grammar) -> SpecProductionContext {

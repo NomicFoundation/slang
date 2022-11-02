@@ -1,17 +1,18 @@
 use std::collections::BTreeSet;
 
 use codegen_schema::*;
+use codegen_utils::context::CodegenContext;
 
 use super::combinator_context::CombinatorContext;
 use super::combinator_tree::CombinatorTree;
 use super::generated_code::GeneratedCode;
 
 pub trait GrammarChumskyExtensions {
-    fn generate_chumsky(&self, output_dir: std::path::PathBuf);
+    fn generate_chumsky(&self, codegen: &CodegenContext, output_dir: &std::path::PathBuf);
 }
 
 impl GrammarChumskyExtensions for Grammar {
-    fn generate_chumsky(&self, output_dir: std::path::PathBuf) {
+    fn generate_chumsky(&self, codegen: &CodegenContext, output_dir: &std::path::PathBuf) {
         let mut version_breaks = BTreeSet::new();
         for production in self.productions.values().flatten() {
             for version in production.versions.keys() {
@@ -60,6 +61,6 @@ impl GrammarChumskyExtensions for Grammar {
             }
         }
 
-        generated_code.write_to_source_files(output_dir);
+        generated_code.write_to_source_files(codegen, output_dir);
     }
 }

@@ -1,5 +1,5 @@
 use codegen_schema::Grammar;
-use codegen_utils::{delete_generated_file, write_generated_file};
+use codegen_utils::context::CodegenContext;
 
 use self::{grammar::generate_spec_grammar, topics::generate_spec_sections};
 use std::{collections::HashSet, io::Write, path::PathBuf};
@@ -14,28 +14,32 @@ pub struct NavigationEntry {
     pub file_path: Option<PathBuf>,
 }
 
-pub fn generate_spec(grammar: &Grammar, documentation_folder: &PathBuf) {
-    let generated_folder = documentation_folder
-        .join("docs")
-        .join("specification")
-        .join("generated");
+pub trait GrammarSpecExtensions {
+    fn generate_spec(&self, codegen: &CodegenContext, documentation_folder: &PathBuf);
+}
 
-    let mut entries: Vec<NavigationEntry> = Vec::new();
-    generate_spec_grammar(grammar, &generated_folder, &mut entries);
-    generate_spec_sections(grammar, &generated_folder, &mut entries);
+impl GrammarSpecExtensions for Grammar {
+    fn generate_spec(&self, codegen: &CodegenContext, documentation_folder: &PathBuf) {
+        let generated_folder = documentation_folder.join("docs/specification/generated");
 
-    let mut generated_files: HashSet<&PathBuf> = entries
-        .iter()
-        .filter_map(|entry| entry.file_path.as_ref())
-        .collect();
+        let mut entries: Vec<NavigationEntry> = Vec::new();
+        generate_spec_grammar(codegen, self, &generated_folder, &mut entries);
+        generate_spec_sections(codegen, self, &generated_folder, &mut entries);
 
-    let navigation_file = generate_spec_navigation(&documentation_folder, &entries);
-    generated_files.insert(&navigation_file);
+        let mut generated_files: HashSet<&PathBuf> = entries
+            .iter()
+            .filter_map(|entry| entry.file_path.as_ref())
+            .collect();
 
-    delete_orphaned_files(&generated_folder, &generated_files)
+        let navigation_file = generate_spec_navigation(codegen, &documentation_folder, &entries);
+        generated_files.insert(&navigation_file);
+
+        delete_orphaned_files(codegen, &generated_folder, &generated_files)
+    }
 }
 
 fn generate_spec_navigation(
+    codegen: &CodegenContext,
     documentation_folder: &PathBuf,
     entries: &Vec<NavigationEntry>,
 ) -> PathBuf {
@@ -73,20 +77,27 @@ fn generate_spec_navigation(
         .join("generated")
         .join("mkdocs.navigation.yml");
 
-    write_generated_file(&navigation_file, &String::from_utf8(w).unwrap());
+    codegen
+        .write_file(&navigation_file, &String::from_utf8(w).unwrap())
+        .unwrap();
+
     return navigation_file;
 }
 
-fn delete_orphaned_files(root_folder: &PathBuf, generated_files: &HashSet<&PathBuf>) {
+fn delete_orphaned_files(
+    codegen: &CodegenContext,
+    root_folder: &PathBuf,
+    generated_files: &HashSet<&PathBuf>,
+) {
     root_folder.read_dir().unwrap().for_each(|child| {
         let child_path = child.unwrap().path();
 
         if child_path.is_dir() {
-            delete_orphaned_files(&child_path, generated_files);
+            delete_orphaned_files(codegen, &child_path, generated_files);
         } else if generated_files.contains(&child_path) {
             // Keep file
         } else {
-            delete_generated_file(&child_path);
+            codegen.delete_file(&child_path).unwrap();
         }
     })
 }

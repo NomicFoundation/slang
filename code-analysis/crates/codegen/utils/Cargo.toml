@@ -3,3 +3,6 @@ name = "codegen_utils"
 version = "0.0.0"
 edition = "2021"
 rust-version = "1.60.0"
+
+[dependencies]
+anyhow = { version = "1.0.66", features = ["std", "backtrace"] }
