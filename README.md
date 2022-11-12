@@ -1,6 +1,7 @@
 # slang
 
 <!--
+cSpell:ignore codegen
 cSpell:ignore devcontainer
 cSpell:ignore mkdocs
 -->
@@ -17,12 +18,11 @@ All dependencies should have exact full versions, and we can rely on tooling to 
 
 Currently, the repository has the following projects:
 
-- `./devcontainer`: A Docker image that is self-contained, and has all the dependencies needed to develop, build, test, and ship the project.
+- `./devcontainer`: devcontainer image that is self-contained, and has all the dependencies needed to develop, build, test, and ship the project.
 - `./documentation`: used to host the language specification, and any future documentation for the project.
-- `./tools`:
-  - `./linting`: A NodeJS environment that runs several linters over the repository, for formatting, style checks, anti-patterns, and even spell-checking!
-  - `./syntax-schema`: A rust utility that generates parsers and specifications from a single source of truth.
-  - `./solidity-parser`: A parser for the solidity language, generated from a single source of truth specification.
+- `./code-analysis/crates`:
+  - `codegen/`: code generation scripts.
+  - `solidity/`: Solidity language inputs and outputs.
 
 ## Dev Containers
 
