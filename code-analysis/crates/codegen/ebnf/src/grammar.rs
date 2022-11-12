@@ -6,11 +6,11 @@ use codegen_utils::context::CodegenContext;
 use super::production::ProductionEBNFExtensions;
 
 pub trait GrammarEBNFExtensions {
-    fn generate_ebnf(&self, codegen: &CodegenContext, path: &PathBuf);
+    fn generate_ebnf(&self, codegen: &mut CodegenContext, output_dir: &PathBuf);
 }
 
 impl GrammarEBNFExtensions for Grammar {
-    fn generate_ebnf(&self, codegen: &CodegenContext, output_dir: &PathBuf) {
+    fn generate_ebnf(&self, codegen: &mut CodegenContext, output_dir: &PathBuf) {
         let mut w: Vec<u8> = Vec::new();
 
         writeln!(w, "(*").unwrap();

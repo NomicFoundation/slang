@@ -7,7 +7,7 @@ use anyhow::{bail, Context, Result};
 
 use crate::context::CodegenContext;
 
-pub(crate) fn run_command(
+pub fn run_command(
     codegen: &CodegenContext,
     parts: &Vec<&str>,
     stdin: Option<&str>,

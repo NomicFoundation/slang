@@ -9,7 +9,7 @@ use super::{
 };
 
 pub fn generate_spec_sections(
-    codegen: &CodegenContext,
+    codegen: &mut CodegenContext,
     grammar: &Grammar,
     generated_folder: &PathBuf,
     entries: &mut Vec<NavigationEntry>,

@@ -8,11 +8,11 @@ use super::combinator_tree::CombinatorTree;
 use super::generated_code::GeneratedCode;
 
 pub trait GrammarChumskyExtensions {
-    fn generate_chumsky(&self, codegen: &CodegenContext, output_dir: &std::path::PathBuf);
+    fn generate_chumsky(&self, codegen: &mut CodegenContext, output_dir: &std::path::PathBuf);
 }
 
 impl GrammarChumskyExtensions for Grammar {
-    fn generate_chumsky(&self, codegen: &CodegenContext, output_dir: &std::path::PathBuf) {
+    fn generate_chumsky(&self, codegen: &mut CodegenContext, output_dir: &std::path::PathBuf) {
         let mut version_breaks = BTreeSet::new();
         for production in self.productions.values().flatten() {
             for version in production.versions.keys() {

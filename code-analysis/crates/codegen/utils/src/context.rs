@@ -1,54 +1,81 @@
-use std::path::PathBuf;
+use std::{collections::HashSet, path::PathBuf};
 
-use anyhow::{Context, Result};
+use anyhow::{bail, Context, Result};
 
-use crate::commands::run_command;
+use crate::files::{self, get_generated_dir};
 
 pub struct CodegenContext {
+    generated_dirs: HashSet<PathBuf>,
+    generated_files: HashSet<PathBuf>,
+    validate_generated_files: bool,
+
     pub repo_dir: PathBuf,
-    pub validate: bool,
 }
 
 impl CodegenContext {
     pub fn with_context(
         repo_dir: PathBuf,
-        operation: impl FnOnce(&Self) -> Result<()>,
+        operation: impl FnOnce(&mut Self) -> Result<()>,
     ) -> Result<()> {
-        let context = Self {
+        let mut context = Self {
+            generated_dirs: HashSet::new(),
+            generated_files: HashSet::new(),
+            validate_generated_files: std::env::var("SLANG_VALIDATE_GENERATED_FILES").is_ok(),
+
             repo_dir,
-            validate: std::env::var("SLANG_CODEGEN_VALIDATE").is_ok(),
         };
 
-        pre_validation(&context)?;
-        operation(&context)?;
-        post_validation(&context)?;
+        operation(&mut context)?;
+
+        context.post_validation()?;
 
         return Ok(());
     }
-}
 
-fn pre_validation(codegen: &CodegenContext) -> Result<()> {
-    if codegen.validate {
-        assert_no_local_changes(codegen).context("Found local changes after running codegen")?;
+    pub fn read_file(&self, file_path: &PathBuf) -> Result<String> {
+        self.rerun_if_changed(file_path)?;
+
+        return files::read_file(file_path);
     }
 
-    return Ok(());
-}
+    pub fn write_file(&mut self, file_path: &PathBuf, contents: &str) -> Result<()> {
+        self.rerun_if_changed(file_path)?;
 
-fn post_validation(codegen: &CodegenContext) -> Result<()> {
-    if codegen.validate {
-        assert_no_local_changes(codegen).context("Found local changes after running codegen")?;
+        if !file_path.starts_with(&self.repo_dir) {
+            bail!("Generated file is outside repository: {file_path:?}");
+        }
+
+        if let Ok(generated_dir) = get_generated_dir(file_path) {
+            self.generated_dirs.insert(generated_dir.to_owned());
+        } else {
+            bail!("All generated files should be under a 'generated' parent dir: {file_path:?}");
+        }
+
+        if !self.generated_files.insert(file_path.to_owned()) {
+            bail!("File was generated twice: {file_path:?}")
+        }
+
+        return if self.validate_generated_files {
+            files::verify_file(self, file_path, contents)
+        } else {
+            files::write_file(self, file_path, contents)
+        };
     }
 
-    return Ok(());
-}
+    fn post_validation(&self) -> Result<()> {
+        for generated_dir in &self.generated_dirs {
+            files::check_for_extra_files(generated_dir, &self.generated_files)?;
+        }
 
-fn assert_no_local_changes(codegen: &CodegenContext) -> Result<()> {
-    // Update index status
-    run_command(codegen, &vec!["git", "status"], None)?;
+        return Ok(());
+    }
 
-    // Command will fail if there are any local changes to the index
-    run_command(codegen, &vec!["git", "diff-index", "HEAD", "--quiet"], None)?;
+    pub fn rerun_if_changed(&self, file_path: &PathBuf) -> Result<()> {
+        println!(
+            "cargo:rerun-if-changed={value}",
+            value = file_path.to_str().context("Failed to get file path")?
+        );
 
-    return Ok(());
+        return Ok(());
+    }
 }
