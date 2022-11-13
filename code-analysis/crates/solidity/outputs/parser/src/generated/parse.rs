@@ -568,10 +568,10 @@ pub struct Parsers<'a> {
 }
 
 impl<'a> Parsers<'a> {
-    pub fn new(version: Version) -> Self {
+    pub fn new(version: &Version) -> Self {
         // Declare all versions -----------------------------
 
-        let version_0_6_0 = Version::parse("0.6.0").unwrap();
+        let version_0_6_0 = &Version::parse("0.6.0").unwrap();
 
         // Declare all productions --------------------------
 

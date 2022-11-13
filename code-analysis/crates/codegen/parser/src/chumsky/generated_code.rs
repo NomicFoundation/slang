@@ -156,7 +156,7 @@ impl GeneratedCode {
             .map(|version| {
                 let version = version.to_string();
                 let version_name = format_ident!("version_{}", version.replace(".", "_"));
-                quote!( let #version_name = Version::parse(#version).unwrap(); ).to_string()
+                quote!( let #version_name = &Version::parse(#version).unwrap(); ).to_string()
             })
             .collect::<Vec<String>>();
 
@@ -172,7 +172,7 @@ impl GeneratedCode {
                 }}
 
                 impl<'a> Parsers<'a> {{
-                    pub fn new(version: Version) -> Self {{
+                    pub fn new(version: &Version) -> Self {{
                         // Declare all versions -----------------------------
 
                         {}
