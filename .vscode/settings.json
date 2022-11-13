@@ -1,6 +1,6 @@
 {
   // Rust
-  "rust-analyzer.linkedProjects": ["code-analysis/Cargo.toml", "tools/version-breaks/Cargo.toml"],
+  "rust-analyzer.linkedProjects": ["code-analysis/Cargo.toml"],
   // YAML
   "yaml.customTags": ["!ENV"],
   // Editing

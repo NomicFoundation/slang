@@ -6,12 +6,9 @@ jobs:
     strategy:
       matrix:
         script:
-          [
-            "./code-analysis/scripts/check.sh",
-            "./documentation/scripts/build.sh",
-            "./infrastructure/scripts/lint.sh",
-            "./tools/version-breaks/scripts/check.sh",
-          ]
+          - ./code-analysis/scripts/check.sh
+          - ./documentation/scripts/build.sh
+          - ./infrastructure/scripts/lint.sh
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
