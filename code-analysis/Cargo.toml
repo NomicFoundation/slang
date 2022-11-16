@@ -5,7 +5,7 @@ members = [
     "crates/codegen/parser",
     "crates/codegen/spec",
     "crates/codegen/utils",
-    "crates/parsers/solidity",
+    "crates/solidity/outputs/parser",
 ]
 
 [profile.dev]

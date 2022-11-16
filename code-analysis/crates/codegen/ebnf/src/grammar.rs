@@ -10,7 +10,7 @@ pub trait GrammarEBNFExtensions {
 }
 
 impl GrammarEBNFExtensions for Grammar {
-    fn generate_ebnf(&self, codegen: &CodegenContext, output_path: &PathBuf) {
+    fn generate_ebnf(&self, codegen: &CodegenContext, output_dir: &PathBuf) {
         let mut w: Vec<u8> = Vec::new();
 
         writeln!(w, "(*").unwrap();
@@ -36,8 +36,9 @@ impl GrammarEBNFExtensions for Grammar {
             }
         }
 
+        let output_path = output_dir.join("grammar.ebnf");
         codegen
-            .write_file(output_path, &String::from_utf8(w).unwrap())
+            .write_file(&output_path, &String::from_utf8(w).unwrap())
             .unwrap();
     }
 }
