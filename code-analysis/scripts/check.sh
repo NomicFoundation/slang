@@ -16,7 +16,7 @@ source "$THIS_DIR/common.sh"
   cd "$PROJECT_DIR"
 
   export RUST_BACKTRACE="full"
-  export SLANG_CODEGEN_VALIDATE="true"
+  export SLANG_VALIDATE_GENERATED_FILES="true"
 
   cargo check --locked
   cargo fmt --check --all

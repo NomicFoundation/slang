@@ -73,7 +73,7 @@ impl GeneratedCode {
         &self.errors
     }
 
-    pub fn write_to_source_files(&self, codegen: &CodegenContext, output_dir: &PathBuf) {
+    pub fn write_to_source_files(&self, codegen: &mut CodegenContext, output_dir: &PathBuf) {
         codegen
             .write_file(
                 &output_dir.join("mod.rs"),
