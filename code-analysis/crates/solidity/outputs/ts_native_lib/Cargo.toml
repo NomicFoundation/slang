@@ -1,7 +1,7 @@
 [package]
-edition = "2021"
-name = "solidity-ts-native-lib"
+name = "solidity_ts_native_lib"
 version = "0.0.0"
+edition = "2021"
 
 [lib]
 crate-type = ["cdylib"]
@@ -15,5 +15,4 @@ napi-derive = "2.9.1"
 napi-build = "2.0.1"
 codegen_schema = { path = "../../../codegen/schema" }
 codegen_parser = { path = "../../../codegen/parser" }
-codegen_ebnf = { path = "../../../codegen/ebnf" }
 codegen_utils = { path = "../../../codegen/utils" }

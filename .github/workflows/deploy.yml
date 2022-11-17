@@ -11,4 +11,4 @@ jobs:
       - uses: actions/checkout@v2
       - run: ./.devcontainer/scripts/.entrypoint.sh
         env:
-          SLANG_BUILD_SCRIPT: ./documentation/scripts/deploy.sh
+          SLANG_BUILD_SCRIPT: ./code-analysis/crates/solidity/outputs/documentation/scripts/deploy.sh

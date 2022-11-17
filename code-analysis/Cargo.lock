@@ -160,9 +160,9 @@ dependencies = [
 
 [[package]]
 name = "clap"
-version = "4.0.23"
+version = "4.0.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0eb41c13df48950b20eb4cd0eefa618819469df1bffc49d11e8487c4ba0037e5"
+checksum = "2148adefda54e14492fb9bddcc600b4344c5d1a3123bd666dcb939c6f0e0e57e"
 dependencies = [
  "atty",
  "bitflags",
@@ -1171,29 +1171,45 @@ dependencies = [
 ]
 
 [[package]]
-name = "solidity-rust-lib"
+name = "solidity_cli"
 version = "0.0.0"
 dependencies = [
  "ariadne",
  "chumsky",
- "clap 4.0.23",
- "codegen_ebnf",
- "codegen_parser",
- "codegen_schema",
- "codegen_spec",
- "codegen_utils",
+ "clap 4.0.26",
  "semver",
  "serde",
  "serde_json",
  "serde_yaml",
+ "solidity_rust_lib",
  "strum",
 ]
 
 [[package]]
-name = "solidity-ts-native-lib"
+name = "solidity_documentation"
 version = "0.0.0"
 dependencies = [
- "codegen_ebnf",
+ "codegen_schema",
+ "codegen_spec",
+ "codegen_utils",
+]
+
+[[package]]
+name = "solidity_rust_lib"
+version = "0.0.0"
+dependencies = [
+ "chumsky",
+ "codegen_parser",
+ "codegen_schema",
+ "codegen_utils",
+ "semver",
+ "serde",
+]
+
+[[package]]
+name = "solidity_ts_native_lib"
+version = "0.0.0"
+dependencies = [
  "codegen_parser",
  "codegen_schema",
  "codegen_utils",

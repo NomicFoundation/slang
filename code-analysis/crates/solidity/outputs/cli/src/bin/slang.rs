@@ -27,7 +27,7 @@ fn main() -> std::io::Result<()> {
     let parser = Parsers::new(&args.version).source_unit;
 
     let output =
-        solidity_rust_lib::internal_api::parse(&solidity_src, parser, /* with_color */ true);
+        solidity_cli::internal_api::parse(&solidity_src, parser, /* with_color */ true);
 
     for report in &output.error_reports {
         eprintln!("{report}");

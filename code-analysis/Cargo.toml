@@ -5,8 +5,10 @@ members = [
     "crates/codegen/parser",
     "crates/codegen/spec",
     "crates/codegen/utils",
-    "crates/solidity/outputs/rust-lib",
-    "crates/solidity/outputs/ts-native-lib",
+    "crates/solidity/outputs/documentation",
+    "crates/solidity/outputs/rust_lib",
+    "crates/solidity/outputs/cli",
+    "crates/solidity/outputs/ts_native_lib",
 ]
 
 [profile.dev]

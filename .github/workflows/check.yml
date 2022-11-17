@@ -7,7 +7,7 @@ jobs:
       matrix:
         script:
           - ./code-analysis/scripts/check.sh
-          - ./documentation/scripts/build.sh
+          - ./code-analysis/crates/solidity/outputs/documentation/scripts/build.sh
           - ./infrastructure/scripts/lint.sh
     runs-on: ubuntu-latest
     steps:
