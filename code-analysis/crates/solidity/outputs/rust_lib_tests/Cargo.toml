@@ -1,0 +1,17 @@
+[package]
+name = "solidity_rust_lib_tests"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.60.0"
+
+[build-dependencies]
+codegen_schema = { path = "../../../codegen/schema" }
+codegen_utils = { path = "../../../codegen/utils" }
+
+[dependencies]
+anyhow = { version = "1.0.66", features = ["std", "backtrace"] }
+insta = "1.21.0"
+semver = "1.0.9"
+serde = { version = "1.0.137", features = ["derive"] }
+serde_yaml = "0.9.14"
+solidity_rust_lib = { path = "../rust_lib" }

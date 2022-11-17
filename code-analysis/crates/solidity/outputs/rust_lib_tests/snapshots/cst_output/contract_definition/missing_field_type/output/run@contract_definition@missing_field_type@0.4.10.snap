@@ -1,0 +1,13 @@
+---
+source: crates/solidity/outputs/rust_lib_tests/src/cst_output/mod.rs
+input_file: crates/solidity/outputs/rust_lib_tests/tests/cst_output/contract_definition/missing_field_type/input.sol
+---
+Error: Expected . or / or [ or c or i or o or p
+   ╭─[<unknown>:2:8]
+   │
+ 2 │   field;
+   ·        ┬  
+   ·        ╰── Found ;
+───╯
+---
+

@@ -11,13 +11,23 @@ source "$THIS_DIR/common.sh"
   "$THIS_DIR/setup.sh"
 )
 
+printf "\n\n🧪 Checking Project 🧪\n\n\n"
+cd "$PROJECT_DIR"
+
 (
-  printf "\n\n🧪 Checking Project 🧪\n\n\n"
-  cd "$PROJECT_DIR"
-
-  export RUST_BACKTRACE="full"
+  # Workspace Rust Errors
   export SLANG_VALIDATE_GENERATED_FILES="true"
-
   cargo check --locked
+)
+
+(
+  # Unit and snapshot tests
+  cargo test --locked --no-fail-fast --all-targets
+)
+
+(
+  # Workspace-wide formatting
   cargo fmt --check --all
 )
+
+printf "\n\n✅ Check Success ✅\n\n\n"

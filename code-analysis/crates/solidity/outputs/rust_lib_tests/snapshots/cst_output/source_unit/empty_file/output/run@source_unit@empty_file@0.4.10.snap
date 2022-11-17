@@ -1,0 +1,14 @@
+---
+source: crates/solidity/outputs/rust_lib_tests/src/cst_output/mod.rs
+input_file: crates/solidity/outputs/rust_lib_tests/tests/cst_output/source_unit/empty_file/input.sol
+---
+!Rule
+kind: SourceUnit
+children:
+- !Rule
+  kind: LeadingTrivia
+- None
+- !Rule
+  kind: EndOfFileTrivia
+---
+

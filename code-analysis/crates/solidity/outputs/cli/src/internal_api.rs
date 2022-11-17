@@ -1,5 +1,5 @@
-use ariadne::{Color, Config, Fmt, Label, Report, ReportKind, Source};
-use chumsky::{Parser, Span};
+use ariadne::{Color, Config, Fmt, Label, Report, ReportBuilder, ReportKind, Source};
+use chumsky::{error::SimpleReason, Parser, Span};
 
 use solidity_rust_lib::generated::parse::{ErrorType, ParserType, SpanType};
 
@@ -36,72 +36,59 @@ pub fn parse<'a, TNode>(
 }
 
 fn render_error_report<'a>(error: &ErrorType, with_color: bool) -> Report<SpanType> {
-    let builder = Report::build(
+    let mut builder: ReportBuilder<SpanType> = Report::build(
         ReportKind::Error,
         error.span().context(),
         error.span().start(),
-    );
+    )
+    .with_config(Config::default().with_color(with_color));
 
-    let builder = builder.with_config(Config::default().with_color(with_color));
+    let error_color = if with_color { Color::Red } else { Color::Unset };
 
-    // TODO(OmarTawfik): also disable colors below if with_color is false
-
-    let msg = if let chumsky::error::SimpleReason::Custom(msg) = error.reason() {
-        msg.clone()
-    } else {
-        format!(
-            "{}{}, expected {}",
-            if error.found().is_some() {
-                "Unexpected token"
+    let builder = match error.reason() {
+        SimpleReason::Custom(message) => builder.with_message(message),
+        SimpleReason::Unclosed { span, delimiter } => {
+            builder.add_label(
+                Label::<SpanType>::new(span.to_owned())
+                    .with_color(error_color)
+                    .with_message("Unclosed delimiter"),
+            );
+            builder.with_message(format!(
+                "Expected delimiter {} to be closed",
+                delimiter.fg(error_color)
+            ))
+        }
+        SimpleReason::Unexpected => {
+            let found = if let Some(found) = error.found() {
+                found.fg(error_color).to_string()
             } else {
-                "Unexpected end of input"
-            },
-            if let Some(label) = error.label() {
-                format!(" while parsing {}", label)
-            } else {
-                String::new()
-            },
-            if error.expected().len() == 0 {
+                "end of input".to_string()
+            };
+
+            builder.add_label(
+                Label::<SpanType>::new(error.span())
+                    .with_color(error_color)
+                    .with_message(format!("Found {found}")),
+            );
+
+            let mut expected: Vec<&Option<char>> = error.expected().collect();
+            expected.sort();
+
+            let expected = if expected.len() == 0 {
                 "something else".to_string()
             } else {
-                error
-                    .expected()
+                expected
+                    .iter()
                     .map(|expected| match expected {
                         Some(expected) => expected.to_string(),
                         None => "end of input".to_string(),
                     })
                     .collect::<Vec<_>>()
                     .join(" or ")
-            },
-        )
-    };
+            };
 
-    let builder = builder.with_code(3).with_message(msg).with_label(
-        Label::new(error.span())
-            .with_message(match error.reason() {
-                chumsky::error::SimpleReason::Custom(msg) => msg.clone(),
-                _ => format!(
-                    "Unexpected {}",
-                    error
-                        .found()
-                        .map(|c| format!("token {}", c.fg(Color::Red)))
-                        .unwrap_or_else(|| "end of input".to_string())
-                ),
-            })
-            .with_color(Color::Red),
-    );
-
-    let builder = match error.reason() {
-        chumsky::error::SimpleReason::Unclosed { span, delimiter } => builder.with_label(
-            Label::new(span.clone())
-                .with_message(format!(
-                    "Unclosed delimiter {}",
-                    delimiter.fg(Color::Yellow)
-                ))
-                .with_color(Color::Yellow),
-        ),
-        chumsky::error::SimpleReason::Unexpected => builder,
-        chumsky::error::SimpleReason::Custom(_) => builder,
+            builder.with_message(format!("Expected {expected}"))
+        }
     };
 
     return builder.finish();

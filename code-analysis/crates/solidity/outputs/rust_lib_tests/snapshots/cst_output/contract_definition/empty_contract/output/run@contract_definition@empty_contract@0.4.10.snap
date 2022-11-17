@@ -1,0 +1,69 @@
+---
+source: crates/solidity/outputs/rust_lib_tests/src/cst_output/mod.rs
+input_file: crates/solidity/outputs/rust_lib_tests/tests/cst_output/contract_definition/empty_contract/input.sol
+---
+!Rule
+kind: ContractDefinition
+children:
+- None
+- !Token
+  kind: Contract
+  range:
+    start: 0
+    end: 8
+  trivia:
+  - !Rule
+    kind: LeadingTrivia
+- !Token
+  kind: RawIdentifier
+  range:
+    start: 9
+    end: 15
+  trivia:
+  - !Rule
+    kind: LeadingTrivia
+    children:
+    - !Token
+      kind: Whitespace
+      range:
+        start: 8
+        end: 9
+- None
+- !Rule
+  kind: DelimitedContractBodyElements
+  children:
+  - !Token
+    kind: OpenBrace
+    range:
+      start: 16
+      end: 17
+    trivia:
+    - !Rule
+      kind: LeadingTrivia
+      children:
+      - !Token
+        kind: Whitespace
+        range:
+          start: 15
+          end: 16
+  - !Rule
+    kind: ContractBodyElements
+  - !Token
+    kind: CloseBrace
+    range:
+      start: 17
+      end: 18
+    trivia:
+    - !Rule
+      kind: LeadingTrivia
+    - !Rule
+      kind: TrailingTrivia
+      children:
+      - None
+      - !Token
+        kind: EndOfLine
+        range:
+          start: 18
+          end: 19
+---
+

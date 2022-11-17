@@ -7,6 +7,7 @@ members = [
     "crates/codegen/utils",
     "crates/solidity/outputs/documentation",
     "crates/solidity/outputs/rust_lib",
+    "crates/solidity/outputs/rust_lib_tests",
     "crates/solidity/outputs/cli",
     "crates/solidity/outputs/typescript_lib",
 ]
