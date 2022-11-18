@@ -1,5 +1,5 @@
 [package]
-name = "solidity_ts_native_lib"
+name = "solidity_typescript_lib"
 version = "0.0.0"
 edition = "2021"
 
@@ -10,6 +10,9 @@ crate-type = ["cdylib"]
 # Default enable napi4 feature, see https://nodejs.org/api/n-api.html#node-api-version-matrix
 napi = { version = "2.10.0", default-features = false, features = ["napi4"] }
 napi-derive = "2.9.1"
+chumsky = "0.8.0"
+serde = { version = "1.0.137", features = ["derive"] }
+semver = "1.0.9"
 
 [build-dependencies]
 napi-build = "2.0.1"

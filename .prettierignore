@@ -6,5 +6,5 @@ node_modules/
 target/
 Pipfile.lock
 
-**/ts_native_lib/index.js
-**/ts_native_lib/index.d.ts
+**/solidity/outputs/typescript_lib/index.js
+**/solidity/outputs/typescript_lib/index.d.ts

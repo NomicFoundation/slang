@@ -360,9 +360,10 @@ impl GeneratedCode {
                 {
                     let method_name = format_ident!("parse_{}", field_name);
                     quote!(
-                    pub fn #method_name(&self, source: &str) -> #result_type {
-                            let (node, _errs) = self.parsers.#field_name.parse_recovery(source);
-                            node.unwrap()
+                        #[napi]
+                        pub fn #method_name(&self, env: Env, source: String) -> Option<JsObject> {
+                            let (node, _errs) = self.parsers.#field_name.parse_recovery(source.as_str());
+                            node.unwrap().to_js(&env)
                         }
                     )
                     .to_string()
@@ -434,6 +435,7 @@ impl GeneratedCode {
                 &format!(
                     "{}
 
+                    #[napi]
                     impl Language {{
                         {}
                     }}
@@ -451,13 +453,13 @@ impl GeneratedCode {
                 &format!(
                     "{}
 
-                    #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+                    #[derive(Debug, PartialEq, Eq, Serialize)]
                     #[napi]
                     pub enum Token {{
                         {}
                     }}
 
-                    #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
+                    #[derive(Debug, PartialEq, Eq, Serialize)]
                     #[napi]
                     pub enum Rule {{
                         {}

@@ -1207,15 +1207,18 @@ dependencies = [
 ]
 
 [[package]]
-name = "solidity_ts_native_lib"
+name = "solidity_typescript_lib"
 version = "0.0.0"
 dependencies = [
+ "chumsky",
  "codegen_parser",
  "codegen_schema",
  "codegen_utils",
  "napi",
  "napi-build",
  "napi-derive",
+ "semver",
+ "serde",
 ]
 
 [[package]]

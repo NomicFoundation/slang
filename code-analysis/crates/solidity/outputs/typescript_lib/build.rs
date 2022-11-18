@@ -6,8 +6,6 @@ use codegen_utils::context::CodegenContext;
 use std::path::PathBuf;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    napi_build::setup();
-
     let crate_dir = PathBuf::from(std::env::var("CARGO_MANIFEST_DIR")?);
     let repo_dir = crate_dir.join("../../../../..").canonicalize()?;
 
@@ -23,6 +21,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         return Ok(());
     })?;
+
+    napi_build::setup();
 
     return Ok(());
 }

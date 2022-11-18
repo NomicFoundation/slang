@@ -1,12 +1,12 @@
 {
-  "name": "solidity-ts-native-lib",
+  "name": "solidity-typescript-lib",
   "version": "0.0.0",
   "description": "Template project for writing node package with napi-rs",
   "main": "index.js",
   "repository": "git@github.com:napi-rs/package-template.git",
   "types": "index.d.ts",
   "napi": {
-    "name": "solidity-ts",
+    "name": "solidity-typescript-lib",
     "triples": {
       "defaults": true,
       "additional": [

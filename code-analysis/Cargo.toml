@@ -8,7 +8,7 @@ members = [
     "crates/solidity/outputs/documentation",
     "crates/solidity/outputs/rust_lib",
     "crates/solidity/outputs/cli",
-    "crates/solidity/outputs/ts_native_lib",
+    "crates/solidity/outputs/typescript_lib",
 ]
 
 [profile.dev]

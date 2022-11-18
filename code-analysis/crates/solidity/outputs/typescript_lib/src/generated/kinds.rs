@@ -1,6 +1,10 @@
+// This file is generated via `cargo build`. Please don't edit by hand.
+
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
+use serde::Serialize;
 
+#[derive(Debug, PartialEq, Eq, Serialize)]
 #[napi]
 pub enum Token {
     Abicoder,
@@ -294,6 +298,7 @@ pub enum Token {
     ZeroX,
 }
 
+#[derive(Debug, PartialEq, Eq, Serialize)]
 #[napi]
 pub enum Rule {
     AbicoderPragmaSpecifier,
