@@ -58,6 +58,67 @@ pub fn lex_head() -> TokenStream {
     )
 }
 
+pub fn typescript_lex_head() -> TokenStream {
+    quote!(
+        use std::ops::Range;
+        use serde::Serialize;
+        use std::rc::Rc;
+        use napi::bindgen_prelude::*;
+        use napi::JsObject;
+
+        use super::kinds;
+
+        #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+        pub enum Node {
+            None,
+            Chars(Range<usize>),
+            Choice(usize, Rc<Node>),
+            Sequence(Vec<Rc<Node>>),
+            Named(kinds::Token, Rc<Node>),
+        }
+
+        impl Node {
+            pub fn range(&self) -> Range<usize> {
+                match self {
+                    Node::None => 0..0,
+                    Node::Chars(range) => range.clone(),
+                    Node::Choice(_, element) => element.range(),
+                    Node::Sequence(elements) => {
+                        elements[0].range().start..elements[elements.len() - 1].range().end
+                    }
+                    Node::Named(_, element) => element.range(),
+                }
+            }
+
+            pub fn to_js(&self, env: &Env) -> Option<JsObject> {
+                match self {
+                    Self::None => None,
+                    Self::Chars(_) => {
+                        let mut obj = env.create_object().unwrap();
+                        obj.set_named_property("flavour", env.create_string("Chars").unwrap()).unwrap();
+                        Some(obj)
+                    }
+                    Self::Choice(_, _) => {
+                        let mut obj = env.create_object().unwrap();
+                        obj.set_named_property("flavour", env.create_string("Choice").unwrap()).unwrap();
+                        Some(obj)
+                    }
+                    Self::Sequence(_) => {
+                        let mut obj = env.create_object().unwrap();
+                        obj.set_named_property("flavour", env.create_string("Sequence").unwrap()).unwrap();
+                        Some(obj)
+                    }
+                    Self::Named(_, _) => {
+                        let mut obj = env.create_object().unwrap();
+                        obj.set_named_property("flavour", env.create_string("Named").unwrap()).unwrap();
+                        Some(obj)
+                    }
+                }
+            }
+        }
+    )
+}
+
 pub fn cst_head() -> TokenStream {
     quote!(
         use std::ops::Range;
@@ -234,6 +295,92 @@ pub fn cst_visitor_head() -> TokenStream {
     )
 }
 
+pub fn typescript_cst_head() -> TokenStream {
+    quote!(
+        use std::ops::Range;
+        use serde::Serialize;
+        use std::rc::Rc;
+        use napi::bindgen_prelude::*;
+        use napi::JsObject;
+
+        use super::kinds;
+
+        #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+        pub enum Node {
+            None,
+            Rule {
+                kind: kinds::Rule,
+                #[serde(skip_serializing_if = "Vec::is_empty")]
+                children: Vec<Rc<Node>>,
+            },
+            Token {
+                kind: kinds::Token,
+                /// Range doesn't include the trivia
+                range: Range<usize>,
+                /// Only Trivia
+                #[serde(skip_serializing_if = "Vec::is_empty")]
+                trivia: Vec<Rc<Node>>,
+            },
+            /// For anonymous groups referenced from AST nodes i.e. `delimited_by`
+            Group {
+                #[serde(skip_serializing_if = "Vec::is_empty")]
+                children: Vec<Rc<Node>>,
+            }, // TODO: Error types
+        }
+
+        impl Node {
+            pub fn to_js(&self, env: &Env) -> Option<JsObject> {
+                match self {
+                    Self::None => None,
+                    Self::Rule { kind, children } => {
+                        let mut obj = env.create_object().unwrap();
+                        obj.set_named_property("flavour", env.create_string("Rule").unwrap()).unwrap();
+                        obj.set_named_property("kind", env.create_uint32(*kind as u32).unwrap()).unwrap();
+                        let mut js_children = env.create_array_with_length(children.len()).unwrap();
+                        children.iter().enumerate().for_each(|(i, child)| {
+                            match child.to_js(env) {
+                                Some(js_child) => js_children.set_element(i as u32, js_child).unwrap(),
+                                None => js_children.set_element(i as u32, env.get_null().unwrap()).unwrap(),
+                            }
+                        });
+                        obj.set_named_property("children", js_children).unwrap();
+                        Some(obj)
+                    }
+                    Self::Token { kind, range, trivia } => {
+                        let mut obj = env.create_object().unwrap();
+                        obj.set_named_property("flavour", env.create_string("Token").unwrap()).unwrap();
+                        obj.set_named_property("kind", env.create_uint32(*kind as u32).unwrap()).unwrap();
+                        obj.set_named_property("start", env.create_uint32(range.start.try_into().unwrap()).unwrap()).unwrap();
+                        obj.set_named_property("end", env.create_uint32(range.end.try_into().unwrap()).unwrap()).unwrap();
+                        let mut js_trivia = env.create_array_with_length(trivia.len()).unwrap();
+                        trivia.iter().enumerate().for_each(|(i, trivium)| {
+                            match trivium.to_js(env) {
+                                Some(js_trivium) => js_trivia.set_element(i as u32, js_trivium).unwrap(),
+                                None => js_trivia.set_element(i as u32, env.get_null().unwrap()).unwrap(),
+                            }
+                        });
+                        obj.set_named_property("trivia", js_trivia).unwrap();
+                        Some(obj)
+                    }
+                    Self::Group { children } => {
+                        let mut obj = env.create_object().unwrap();
+                        obj.set_named_property("flavour", env.create_string("Group").unwrap()).unwrap();
+                        let mut js_children = env.create_array_with_length(children.len()).unwrap();
+                        children.iter().enumerate().for_each(|(i, child)| {
+                            match child.to_js(env) {
+                                Some(js_child) => js_children.set_element(i as u32, js_child).unwrap(),
+                                None => js_children.set_element(i as u32, env.get_null().unwrap()).unwrap(),
+                            }
+                        });
+                        obj.set_named_property("children", js_children).unwrap();
+                        Some(obj)
+                    }
+                }
+            }
+        }
+    )
+}
+
 pub fn language_head() -> TokenStream {
     quote!(
         use std::rc::Rc;
@@ -271,8 +418,6 @@ pub fn typescript_language_head() -> TokenStream {
         use napi::JsObject;
 
         use super::parse::Parsers;
-        use super::cst;
-        use super::lex;
 
         #[napi]
         pub struct Language {
@@ -294,57 +439,6 @@ pub fn typescript_language_head() -> TokenStream {
             #[napi]
             pub fn version(&self) -> String {
                 self.version.to_string()
-            }
-        }
-
-        impl lex::Node {
-            fn to_js(&self, env: &Env) -> Option<JsObject> {
-                match self {
-                    Self::None => None,
-                    Self::Chars(_) => {
-                        let mut obj = env.create_object().unwrap();
-                        obj.set_named_property("flavour", env.create_string("Chars").unwrap()).unwrap();
-                        Some(obj)
-                    }
-                    Self::Choice(_, _) => {
-                        let mut obj = env.create_object().unwrap();
-                        obj.set_named_property("flavour", env.create_string("Choice").unwrap()).unwrap();
-                        Some(obj)
-                    }
-                    Self::Sequence(_) => {
-                        let mut obj = env.create_object().unwrap();
-                        obj.set_named_property("flavour", env.create_string("Sequence").unwrap()).unwrap();
-                        Some(obj)
-                    }
-                    Self::Named(_, _) => {
-                        let mut obj = env.create_object().unwrap();
-                        obj.set_named_property("flavour", env.create_string("Named").unwrap()).unwrap();
-                        Some(obj)
-                    }
-                }
-            }
-        }
-
-        impl cst::Node {
-            fn to_js(&self, env: &Env) -> Option<JsObject> {
-                match self {
-                    Self::None => None,
-                    Self::Rule { .. } => {
-                        let mut obj = env.create_object().unwrap();
-                        obj.set_named_property("flavour", env.create_string("Rule").unwrap()).unwrap();
-                        Some(obj)
-                    }
-                    Self::Token { .. } => {
-                        let mut obj = env.create_object().unwrap();
-                        obj.set_named_property("flavour", env.create_string("Token").unwrap()).unwrap();
-                        Some(obj)
-                    }
-                    Self::Group { .. } => {
-                        let mut obj = env.create_object().unwrap();
-                        obj.set_named_property("flavour", env.create_string("Group").unwrap()).unwrap();
-                        Some(obj)
-                    }
-                }
             }
         }
     )

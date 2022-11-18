@@ -1,8 +1,11 @@
 import test from "ava";
 
-import { Language } from "../index.js";
+import { Language, Rule } from "../index.js";
 
 test("parse some code", (t) => {
   const l = new Language("0.18.3");
-  t.is(l.parseSourceUnit("int256 constant z = 1**2**3;"), "anything");
+  const cst = l.parseSourceUnit("int256 constant z = 1**2**3;");
+  t.is(cst.flavour, "Rule");
+  t.is(cst.kind, Rule.SourceUnit);
+  // console.log(cst);
 });

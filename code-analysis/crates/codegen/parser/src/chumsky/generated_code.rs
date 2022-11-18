@@ -290,14 +290,14 @@ impl GeneratedCode {
         codegen
             .write_file(
                 &output_dir.join("lex.rs"),
-                &boilerplate::lex_head().to_string(),
+                &boilerplate::typescript_lex_head().to_string(),
             )
             .unwrap();
 
         codegen
             .write_file(
                 &output_dir.join("cst.rs"),
-                &boilerplate::cst_head().to_string(),
+                &boilerplate::typescript_cst_head().to_string(),
             )
             .unwrap();
 

@@ -1,6 +1,8 @@
 // This file is generated via `cargo build`. Please don't edit by hand.
 
 use super::kinds;
+use napi::bindgen_prelude::*;
+use napi::JsObject;
 use serde::Serialize;
 use std::ops::Range;
 use std::rc::Rc;
@@ -22,6 +24,35 @@ impl Node {
                 elements[0].range().start..elements[elements.len() - 1].range().end
             }
             Node::Named(_, element) => element.range(),
+        }
+    }
+    pub fn to_js(&self, env: &Env) -> Option<JsObject> {
+        match self {
+            Self::None => None,
+            Self::Chars(_) => {
+                let mut obj = env.create_object().unwrap();
+                obj.set_named_property("flavour", env.create_string("Chars").unwrap())
+                    .unwrap();
+                Some(obj)
+            }
+            Self::Choice(_, _) => {
+                let mut obj = env.create_object().unwrap();
+                obj.set_named_property("flavour", env.create_string("Choice").unwrap())
+                    .unwrap();
+                Some(obj)
+            }
+            Self::Sequence(_) => {
+                let mut obj = env.create_object().unwrap();
+                obj.set_named_property("flavour", env.create_string("Sequence").unwrap())
+                    .unwrap();
+                Some(obj)
+            }
+            Self::Named(_, _) => {
+                let mut obj = env.create_object().unwrap();
+                obj.set_named_property("flavour", env.create_string("Named").unwrap())
+                    .unwrap();
+                Some(obj)
+            }
         }
     }
 }

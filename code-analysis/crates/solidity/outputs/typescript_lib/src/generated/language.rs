@@ -1,7 +1,5 @@
 // This file is generated via `cargo build`. Please don't edit by hand.
 
-use super::cst;
-use super::lex;
 use super::parse::Parsers;
 use chumsky::Parser;
 use napi::bindgen_prelude::*;
@@ -25,62 +23,6 @@ impl Language {
     #[napi]
     pub fn version(&self) -> String {
         self.version.to_string()
-    }
-}
-impl lex::Node {
-    fn to_js(&self, env: &Env) -> Option<JsObject> {
-        match self {
-            Self::None => None,
-            Self::Chars(_) => {
-                let mut obj = env.create_object().unwrap();
-                obj.set_named_property("flavour", env.create_string("Chars").unwrap())
-                    .unwrap();
-                Some(obj)
-            }
-            Self::Choice(_, _) => {
-                let mut obj = env.create_object().unwrap();
-                obj.set_named_property("flavour", env.create_string("Choice").unwrap())
-                    .unwrap();
-                Some(obj)
-            }
-            Self::Sequence(_) => {
-                let mut obj = env.create_object().unwrap();
-                obj.set_named_property("flavour", env.create_string("Sequence").unwrap())
-                    .unwrap();
-                Some(obj)
-            }
-            Self::Named(_, _) => {
-                let mut obj = env.create_object().unwrap();
-                obj.set_named_property("flavour", env.create_string("Named").unwrap())
-                    .unwrap();
-                Some(obj)
-            }
-        }
-    }
-}
-impl cst::Node {
-    fn to_js(&self, env: &Env) -> Option<JsObject> {
-        match self {
-            Self::None => None,
-            Self::Rule { .. } => {
-                let mut obj = env.create_object().unwrap();
-                obj.set_named_property("flavour", env.create_string("Rule").unwrap())
-                    .unwrap();
-                Some(obj)
-            }
-            Self::Token { .. } => {
-                let mut obj = env.create_object().unwrap();
-                obj.set_named_property("flavour", env.create_string("Token").unwrap())
-                    .unwrap();
-                Some(obj)
-            }
-            Self::Group { .. } => {
-                let mut obj = env.create_object().unwrap();
-                obj.set_named_property("flavour", env.create_string("Group").unwrap())
-                    .unwrap();
-                Some(obj)
-            }
-        }
     }
 }
 
