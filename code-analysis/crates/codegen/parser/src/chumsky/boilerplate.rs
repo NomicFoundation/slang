@@ -17,6 +17,12 @@ pub fn kinds_head() -> TokenStream {
     )
 }
 
+pub fn typescript_kinds_head() -> TokenStream {
+    quote!(
+        use serde::Serialize;
+    )
+}
+
 pub fn lex_head() -> TokenStream {
     quote!(
         use std::ops::Range;
@@ -80,7 +86,11 @@ pub fn cst_head() -> TokenStream {
                 children: Vec<Rc<Node>>,
             }, // TODO: Error types
         }
+    )
+}
 
+pub fn cst_visitor_head() -> TokenStream {
+    quote!(
         #[allow(unused_variables)]
         pub trait Visitor {
             fn visit_none(&mut self, node: &Rc<Node>) -> VisitorExitResponse {
@@ -223,6 +233,35 @@ pub fn cst_head() -> TokenStream {
 }
 
 pub fn language_head() -> TokenStream {
+    quote!(
+        use std::rc::Rc;
+
+        use chumsky::Parser;
+        use semver::Version;
+
+        use super::{cst, lex, parse::Parsers};
+
+        pub struct Language {
+            parsers: Parsers<'static>,
+            version: Version,
+        }
+
+        impl Language {
+            pub fn new(version: Version) -> Self {
+                Self {
+                    parsers: Parsers::new(&version),
+                    version,
+                }
+            }
+
+            pub fn version(&self) -> &Version {
+                &self.version
+            }
+        }
+    )
+}
+
+pub fn typescript_language_head() -> TokenStream {
     quote!(
         use std::rc::Rc;
 

@@ -15,7 +15,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         );
 
         // Generate Parser
-        grammar.generate_chumsky(codegen, &crate_dir.join("src/generated"));
+        grammar.generate_rust_lib_sources(codegen, &crate_dir.join("src/generated"));
 
         return Ok(());
     })?;

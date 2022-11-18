@@ -1781,9 +1781,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"solidity-ts@workspace:.":
+"solidity-ts-native-lib@workspace:.":
   version: 0.0.0-use.local
-  resolution: "solidity-ts@workspace:."
+  resolution: "solidity-ts-native-lib@workspace:."
   dependencies:
     "@napi-rs/cli": ^2.12.0
     ava: ^4.3.3
