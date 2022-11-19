@@ -301,6 +301,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "codegen_testing"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "codegen_schema",
+ "codegen_utils",
+ "semver",
+]
+
+[[package]]
 name = "codegen_utils"
 version = "0.0.0"
 dependencies = [
@@ -1275,6 +1285,7 @@ version = "0.0.0"
 dependencies = [
  "anyhow",
  "codegen_schema",
+ "codegen_testing",
  "codegen_utils",
  "insta",
  "semver",

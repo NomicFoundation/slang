@@ -1,4 +1,7 @@
-use std::{collections::HashSet, path::PathBuf};
+use std::{
+    collections::HashSet,
+    path::{Path, PathBuf},
+};
 
 use anyhow::{bail, Context, Result};
 
@@ -39,13 +42,12 @@ impl CodegenContext {
     }
 
     pub fn write_file(&mut self, file_path: &PathBuf, contents: &str) -> Result<()> {
-        self.rerun_if_changed(file_path)?;
-
         if !file_path.starts_with(&self.repo_dir) {
             bail!("Generated file is outside repository: {file_path:?}");
         }
 
         if let Ok(generated_dir) = get_generated_dir(file_path) {
+            self.rerun_if_changed(generated_dir)?;
             self.generated_dirs.insert(generated_dir.to_owned());
         } else {
             bail!("All generated files should be under a 'generated' parent dir: {file_path:?}");
@@ -70,7 +72,7 @@ impl CodegenContext {
         return Ok(());
     }
 
-    pub fn rerun_if_changed(&self, file_path: &PathBuf) -> Result<()> {
+    pub fn rerun_if_changed(&self, file_path: &Path) -> Result<()> {
         println!(
             "cargo:rerun-if-changed={value}",
             value = file_path.to_str().context("Failed to get file path")?

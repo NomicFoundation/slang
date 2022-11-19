@@ -1,7 +1,7 @@
 mod validation;
 
 use std::{
-    collections::BTreeMap,
+    collections::{BTreeMap, HashSet},
     fmt,
     path::PathBuf,
     rc::{Rc, Weak},
@@ -59,7 +59,7 @@ pub struct Manifest {
     #[serde(rename = "rootProduction")]
     pub root_production: String,
     pub sections: Vec<Section>,
-    pub versions: Option<Vec<String>>,
+    pub versions: Vec<Version>,
 }
 
 #[derive(Deserialize, Clone, Debug)]
@@ -614,5 +614,25 @@ impl Grammar {
         grammar.validate(codegen, manifest_path);
 
         Rc::new(grammar)
+    }
+
+    pub fn get_breaking_versions<'a>(&'a self) -> Vec<&'a Version> {
+        let mut breaking_versions = HashSet::from([
+            self.manifest.versions.first().unwrap(),
+            self.manifest.versions.last().unwrap(),
+        ]);
+
+        for production in self.productions.values().flatten() {
+            for version in production.versions.keys() {
+                if version != &Version::new(0, 0, 0) {
+                    breaking_versions.insert(version);
+                }
+            }
+        }
+
+        let mut breaking_versions = Vec::from_iter(breaking_versions);
+        breaking_versions.sort();
+
+        return breaking_versions;
     }
 }

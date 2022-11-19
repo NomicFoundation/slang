@@ -4,6 +4,7 @@ members = [
     "crates/codegen/ebnf",
     "crates/codegen/parser",
     "crates/codegen/spec",
+    "crates/codegen/testing",
     "crates/codegen/utils",
     "crates/solidity/outputs/documentation",
     "crates/solidity/outputs/rust_lib",

@@ -1,8 +1,8 @@
 use std::path::PathBuf;
 
-use crate::{commands::run_command, context::CodegenContext};
+use anyhow::{anyhow, bail, Context, Result};
 
-use anyhow::{bail, Context, Result};
+use crate::{commands::run_command, context::CodegenContext};
 
 pub fn format_source_file(
     codegen: &CodegenContext,
@@ -15,18 +15,26 @@ pub fn format_source_file(
     return formatters::run(codegen, file_path, &unformatted)
         .context(format!("Failed to format {file_path:?}"))
         .or_else(|formatter_error| {
-            // Try to write the unformatted version to disk, to be able to debug what went wrong.
-            let debug_file = PathBuf::from(std::env::var("OUT_DIR")?).join(format!(
-                "codegen/formatter/failure.{ext}",
+            // Try to backup the unformatted version to disk, to be able to debug what went wrong.
+            let backup_file = PathBuf::from(std::env::var("OUT_DIR")?).join(format!(
+                "codegen/formatter/backup.{ext}",
                 ext = get_extension(file_path)?
             ));
 
-            return match std::fs::write(&debug_file, &unformatted) {
-                Err(_) => Err(formatter_error), // propagate the original one.
-                Ok(()) => Err(formatter_error).context(format!(
-                    "The unformatted version was written to {debug_file:?}"
-                )),
+            std::fs::create_dir_all(
+                backup_file
+                    .parent()
+                    .context("Failed to get parent: {backup_file:?}")?,
+            )?;
+
+            let context = match std::fs::write(&backup_file, &unformatted) {
+                Ok(()) => anyhow!("The unformatted version was written to: {backup_file:?}"),
+                Err(backup_error) => anyhow!(
+                    "Failed to write unformatted version to: {backup_file:?}\n{backup_error}"
+                ),
             };
+
+            return Err(formatter_error).context(context);
         });
 }
 

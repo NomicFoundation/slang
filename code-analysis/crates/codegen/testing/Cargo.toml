@@ -1,0 +1,11 @@
+[package]
+name = "codegen_testing"
+version = "0.0.0"
+edition = "2021"
+rust-version = "1.60.0"
+
+[dependencies]
+anyhow = { version = "1.0.66", features = ["std", "backtrace"] }
+codegen_schema = { path = "../schema" }
+codegen_utils = { path = "../utils" }
+semver = "1.0.9"

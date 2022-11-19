@@ -1,3 +1,5 @@
+// This file is generated via `cargo build`. Please don't edit by hand.
+
 use crate::cst_output::run;
 use anyhow::Result;
 
