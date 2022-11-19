@@ -236,8 +236,10 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { Token, Rule, Language } = nativeBinding
+const { CSTNodeType, Token, Rule, Language, LexNodeType } = nativeBinding
 
+module.exports.CSTNodeType = CSTNodeType
 module.exports.Token = Token
 module.exports.Rule = Rule
 module.exports.Language = Language
+module.exports.LexNodeType = LexNodeType

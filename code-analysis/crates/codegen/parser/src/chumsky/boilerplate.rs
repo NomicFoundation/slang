@@ -77,6 +77,15 @@ pub fn typescript_lex_head() -> TokenStream {
             Named(kinds::Token, Rc<Node>),
         }
 
+        #[napi]
+        pub enum LexNodeType {
+            None,
+            Chars,
+            Choice,
+            Sequence,
+            Named,
+        }
+
         impl Node {
             pub fn range(&self) -> Range<usize> {
                 match self {
@@ -90,30 +99,26 @@ pub fn typescript_lex_head() -> TokenStream {
                 }
             }
 
-            pub fn to_js(&self, env: &Env) -> Option<JsObject> {
+            pub fn to_js(&self, env: &Env) -> JsObject {
+                let mut obj = env.create_object().unwrap();
                 match self {
-                    Self::None => None,
+                    Self::None => {
+                        obj.set_named_property("flavour", env.create_uint32(LexNodeType::None as u32).unwrap()).unwrap();
+                    }
                     Self::Chars(_) => {
-                        let mut obj = env.create_object().unwrap();
-                        obj.set_named_property("flavour", env.create_string("Chars").unwrap()).unwrap();
-                        Some(obj)
+                        obj.set_named_property("flavour", env.create_uint32(LexNodeType::Chars as u32).unwrap()).unwrap();
                     }
                     Self::Choice(_, _) => {
-                        let mut obj = env.create_object().unwrap();
-                        obj.set_named_property("flavour", env.create_string("Choice").unwrap()).unwrap();
-                        Some(obj)
+                        obj.set_named_property("flavour", env.create_uint32(LexNodeType::Choice as u32).unwrap()).unwrap();
                     }
                     Self::Sequence(_) => {
-                        let mut obj = env.create_object().unwrap();
-                        obj.set_named_property("flavour", env.create_string("Sequence").unwrap()).unwrap();
-                        Some(obj)
+                        obj.set_named_property("flavour", env.create_uint32(LexNodeType::Sequence as u32).unwrap()).unwrap();
                     }
                     Self::Named(_, _) => {
-                        let mut obj = env.create_object().unwrap();
-                        obj.set_named_property("flavour", env.create_string("Named").unwrap()).unwrap();
-                        Some(obj)
+                        obj.set_named_property("flavour", env.create_uint32(LexNodeType::Named as u32).unwrap()).unwrap();
                     }
                 }
+                obj
             }
         }
     )
@@ -328,54 +333,51 @@ pub fn typescript_cst_head() -> TokenStream {
             }, // TODO: Error types
         }
 
+        #[napi]
+        pub enum CSTNodeType {
+            None,
+            Rule,
+            Token,
+            Group,
+        }
+
         impl Node {
-            pub fn to_js(&self, env: &Env) -> Option<JsObject> {
+            pub fn to_js(&self, env: &Env) -> JsObject {
+                let mut obj = env.create_object().unwrap();
                 match self {
-                    Self::None => None,
+                    Self::None => {
+                        obj.set_named_property("flavour", env.create_uint32(CSTNodeType::None as u32).unwrap()).unwrap();
+                    }
                     Self::Rule { kind, children } => {
-                        let mut obj = env.create_object().unwrap();
-                        obj.set_named_property("flavour", env.create_string("Rule").unwrap()).unwrap();
+                        obj.set_named_property("flavour", env.create_uint32(CSTNodeType::Rule as u32).unwrap()).unwrap();
                         obj.set_named_property("kind", env.create_uint32(*kind as u32).unwrap()).unwrap();
                         let mut js_children = env.create_array_with_length(children.len()).unwrap();
                         children.iter().enumerate().for_each(|(i, child)| {
-                            match child.to_js(env) {
-                                Some(js_child) => js_children.set_element(i as u32, js_child).unwrap(),
-                                None => js_children.set_element(i as u32, env.get_null().unwrap()).unwrap(),
-                            }
+                            js_children.set_element(i as u32, child.to_js(env)).unwrap();
                         });
                         obj.set_named_property("children", js_children).unwrap();
-                        Some(obj)
                     }
                     Self::Token { kind, range, trivia } => {
-                        let mut obj = env.create_object().unwrap();
-                        obj.set_named_property("flavour", env.create_string("Token").unwrap()).unwrap();
+                        obj.set_named_property("flavour", env.create_uint32(CSTNodeType::Token as u32).unwrap()).unwrap();
                         obj.set_named_property("kind", env.create_uint32(*kind as u32).unwrap()).unwrap();
                         obj.set_named_property("start", env.create_uint32(range.start.try_into().unwrap()).unwrap()).unwrap();
                         obj.set_named_property("end", env.create_uint32(range.end.try_into().unwrap()).unwrap()).unwrap();
                         let mut js_trivia = env.create_array_with_length(trivia.len()).unwrap();
                         trivia.iter().enumerate().for_each(|(i, trivium)| {
-                            match trivium.to_js(env) {
-                                Some(js_trivium) => js_trivia.set_element(i as u32, js_trivium).unwrap(),
-                                None => js_trivia.set_element(i as u32, env.get_null().unwrap()).unwrap(),
-                            }
+                            js_trivia.set_element(i as u32, trivium.to_js(env)).unwrap();
                         });
                         obj.set_named_property("trivia", js_trivia).unwrap();
-                        Some(obj)
                     }
                     Self::Group { children } => {
-                        let mut obj = env.create_object().unwrap();
-                        obj.set_named_property("flavour", env.create_string("Group").unwrap()).unwrap();
+                        obj.set_named_property("flavour", env.create_uint32(CSTNodeType::Group as u32).unwrap()).unwrap();
                         let mut js_children = env.create_array_with_length(children.len()).unwrap();
                         children.iter().enumerate().for_each(|(i, child)| {
-                            match child.to_js(env) {
-                                Some(js_child) => js_children.set_element(i as u32, js_child).unwrap(),
-                                None => js_children.set_element(i as u32, env.get_null().unwrap()).unwrap(),
-                            }
+                            js_children.set_element(i as u32, child.to_js(env)).unwrap();
                         });
                         obj.set_named_property("children", js_children).unwrap();
-                        Some(obj)
                     }
                 }
+                obj
             }
         }
     )

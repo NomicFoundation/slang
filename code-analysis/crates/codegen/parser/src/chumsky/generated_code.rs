@@ -361,7 +361,7 @@ impl GeneratedCode {
                     let method_name = format_ident!("parse_{}", field_name);
                     quote!(
                         #[napi]
-                        pub fn #method_name(&self, env: Env, source: String) -> Option<JsObject> {
+                        pub fn #method_name(&self, env: Env, source: String) -> JsObject {
                             let (node, _errs) = self.parsers.#field_name.parse_recovery(source.as_str());
                             node.unwrap().to_js(&env)
                         }

@@ -14,6 +14,14 @@ pub enum Node {
     Sequence(Vec<Rc<Node>>),
     Named(kinds::Token, Rc<Node>),
 }
+#[napi]
+pub enum LexNodeType {
+    None,
+    Chars,
+    Choice,
+    Sequence,
+    Named,
+}
 impl Node {
     pub fn range(&self) -> Range<usize> {
         match self {
@@ -26,33 +34,45 @@ impl Node {
             Node::Named(_, element) => element.range(),
         }
     }
-    pub fn to_js(&self, env: &Env) -> Option<JsObject> {
+    pub fn to_js(&self, env: &Env) -> JsObject {
+        let mut obj = env.create_object().unwrap();
         match self {
-            Self::None => None,
+            Self::None => {
+                obj.set_named_property(
+                    "flavour",
+                    env.create_uint32(LexNodeType::None as u32).unwrap(),
+                )
+                .unwrap();
+            }
             Self::Chars(_) => {
-                let mut obj = env.create_object().unwrap();
-                obj.set_named_property("flavour", env.create_string("Chars").unwrap())
-                    .unwrap();
-                Some(obj)
+                obj.set_named_property(
+                    "flavour",
+                    env.create_uint32(LexNodeType::Chars as u32).unwrap(),
+                )
+                .unwrap();
             }
             Self::Choice(_, _) => {
-                let mut obj = env.create_object().unwrap();
-                obj.set_named_property("flavour", env.create_string("Choice").unwrap())
-                    .unwrap();
-                Some(obj)
+                obj.set_named_property(
+                    "flavour",
+                    env.create_uint32(LexNodeType::Choice as u32).unwrap(),
+                )
+                .unwrap();
             }
             Self::Sequence(_) => {
-                let mut obj = env.create_object().unwrap();
-                obj.set_named_property("flavour", env.create_string("Sequence").unwrap())
-                    .unwrap();
-                Some(obj)
+                obj.set_named_property(
+                    "flavour",
+                    env.create_uint32(LexNodeType::Sequence as u32).unwrap(),
+                )
+                .unwrap();
             }
             Self::Named(_, _) => {
-                let mut obj = env.create_object().unwrap();
-                obj.set_named_property("flavour", env.create_string("Named").unwrap())
-                    .unwrap();
-                Some(obj)
+                obj.set_named_property(
+                    "flavour",
+                    env.create_uint32(LexNodeType::Named as u32).unwrap(),
+                )
+                .unwrap();
             }
         }
+        obj
     }
 }
