@@ -1,14 +1,13 @@
 use std::cell::Cell;
 
-use codegen_ebnf::ProductionEBNFExtensions;
-use quote::quote;
+use codegen_ebnf::ProductionEBNFGeneratorExtensions;
 
 use codegen_schema::*;
 
 use super::{
+    code_generator::{CodeGenerator, ParserResultType},
     combinator_context::CombinatorContext,
     combinator_node::{CombinatorNode, OperatorModel},
-    generated_code::GeneratedCode,
 };
 
 pub struct CombinatorTree<'context> {
@@ -48,7 +47,7 @@ impl<'context> CombinatorTree<'context> {
         }
     }
 
-    pub fn add_to_generated_code(&self, code: &mut GeneratedCode) {
+    pub fn add_to_generated_code(&self, code: &mut CodeGenerator) {
         let version = &self.context.version;
         if self.production.versions.contains_key(version) {
             let name = self.production.name.clone();
@@ -58,19 +57,19 @@ impl<'context> CombinatorTree<'context> {
                 ProductionKind::Rule => {
                     code.add_rule_kind(self.production.name.clone());
                     let parser = self.root_node.get().unwrap().to_parser_code(false, code);
-                    code.add_parser(name, version, comment, parser, quote!(&'a cst::Node<'a>));
+                    code.add_parser(name, version, comment, parser, ParserResultType::Rule);
                 }
 
                 ProductionKind::Trivia => {
                     code.add_rule_kind(self.production.name.clone());
                     let parser = self.root_node.get().unwrap().to_parser_code(true, code);
-                    code.add_parser(name, version, comment, parser, quote!(&'a cst::Node<'a>));
+                    code.add_parser(name, version, comment, parser, ParserResultType::Rule);
                 }
 
                 ProductionKind::Token => {
                     code.add_token_kind(self.production.name.clone());
                     let parser = self.root_node.get().unwrap().to_lexer_code(code);
-                    code.add_parser(name, version, comment, parser, quote!(&'a lex::Node<'a>));
+                    code.add_parser(name, version, comment, parser, ParserResultType::Token);
                 }
             }
         }

@@ -5,7 +5,7 @@ use semver::Version;
 
 use super::expression::ExpressionEBNFPrivateExtensions;
 
-pub trait ProductionEBNFExtensions {
+pub trait ProductionEBNFGeneratorExtensions {
     fn generate_ebnf(&self, grammar: &Grammar) -> Vec<String>;
 }
 
@@ -13,7 +13,7 @@ pub(crate) trait ProductionEBNFPrivateExtensions {
     fn ebnf_display_name(&self) -> String;
 }
 
-impl ProductionEBNFExtensions for Production {
+impl ProductionEBNFGeneratorExtensions for Production {
     fn generate_ebnf(&self, grammar: &Grammar) -> Vec<String> {
         let zero_version = Version::parse("0.0.0").unwrap();
 

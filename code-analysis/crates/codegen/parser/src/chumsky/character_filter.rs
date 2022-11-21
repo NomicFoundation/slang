@@ -1,26 +1,9 @@
-// use std::cell::Cell;
-
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
 
 use codegen_schema::*;
 
-use super::{
-    // combinator_node::CombinatorNode,
-    combinator_tree::CombinatorTree,
-    generated_code::GeneratedCode,
-    naming,
-};
-
-// pub enum CharacterFilterParent<'context> {
-//     CharacterFilter(&'context CharacterFilter<'context>),
-//     CombinatorNode(&'context CombinatorNode<'context>),
-// }
-
-// pub struct CharFilter<'context> {
-//     pub parent: CharacterFilterParent<'context>,
-//     pub variant: CharacterFilter<'context>,
-// }
+use super::{code_generator::CodeGenerator, combinator_tree::CombinatorTree, naming};
 
 pub enum CharacterFilter<'context> {
     Negation {
@@ -144,7 +127,7 @@ impl<'context> CharacterFilter<'context> {
     pub(super) fn to_code(
         &self,
         name: Option<&String>,
-        code: &mut GeneratedCode,
+        code: &mut CodeGenerator,
         macro_prefix: &str,
     ) -> TokenStream {
         let macro_name = format_ident!("{}terminal", macro_prefix);

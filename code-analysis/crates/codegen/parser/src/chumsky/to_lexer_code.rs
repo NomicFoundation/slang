@@ -4,25 +4,25 @@ use quote::quote;
 use codegen_schema::*;
 
 use super::{
-    character_filter::CharacterFilter, combinator_node::CombinatorNode,
-    generated_code::GeneratedCode, naming, terminal_trie::TerminalTrie,
+    character_filter::CharacterFilter, code_generator::CodeGenerator,
+    combinator_node::CombinatorNode, naming, terminal_trie::TerminalTrie,
 };
 
 impl<'context> CharacterFilter<'context> {
-    pub fn to_lexer_code(&self, name: Option<&String>, code: &mut GeneratedCode) -> TokenStream {
+    pub fn to_lexer_code(&self, name: Option<&String>, code: &mut CodeGenerator) -> TokenStream {
         self.to_code(name, code, "lex_")
     }
 }
 
 impl TerminalTrie {
-    pub fn to_lexer_code(&self, code: &mut GeneratedCode) -> TokenStream {
+    pub fn to_lexer_code(&self, code: &mut CodeGenerator) -> TokenStream {
         self.to_code(code, "lex_")
     }
 }
 
 impl<'context> CombinatorNode<'context> {
-    pub fn to_lexer_code(&self, code: &mut GeneratedCode) -> TokenStream {
-        fn create_kind(name: &Option<String>, code: &mut GeneratedCode) -> Option<Ident> {
+    pub fn to_lexer_code(&self, code: &mut CodeGenerator) -> TokenStream {
+        fn create_kind(name: &Option<String>, code: &mut CodeGenerator) -> Option<Ident> {
             name.as_ref().map(|name| code.add_token_kind(name.clone()))
         }
 

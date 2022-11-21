@@ -14,12 +14,11 @@ source "$THIS_DIR/common.sh"
     # install cargo crates
     cd "$PROJECT_DIR"
     cargo fetch --locked
-  ) &
+  )
   (
     # install infra packages (need prettier for formatting generated files)
     "$REPO_ROOT/infrastructure/scripts/setup.sh"
-  ) &
-  wait
+  )
 )
 
 printf "\n\n✅ Setup Success ✅\n\n\n"

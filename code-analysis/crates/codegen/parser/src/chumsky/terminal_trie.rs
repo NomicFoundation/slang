@@ -4,7 +4,7 @@ use quote::{format_ident, quote};
 
 use codegen_schema::*;
 
-use super::{combinator_tree::CombinatorTree, generated_code::GeneratedCode, naming};
+use super::{code_generator::CodeGenerator, combinator_tree::CombinatorTree, naming};
 
 #[derive(Clone, Debug)]
 pub struct TerminalTrie(PatriciaMap<String>);
@@ -60,7 +60,7 @@ impl TerminalTrie {
         }
     }
 
-    pub(super) fn to_code(&self, code: &mut GeneratedCode, macro_prefix: &str) -> TokenStream {
+    pub(super) fn to_code(&self, code: &mut CodeGenerator, macro_prefix: &str) -> TokenStream {
         if self.0.len() == 1 {
             let label = self.0.keys().next().unwrap();
             let string = String::from_utf8_lossy(&label);
@@ -70,7 +70,7 @@ impl TerminalTrie {
         } else {
             fn generate_from_trie(
                 node: Option<&Node<String>>,
-                code: &mut GeneratedCode,
+                code: &mut CodeGenerator,
             ) -> Vec<TokenStream> {
                 let mut result = vec![];
                 let mut n = node;

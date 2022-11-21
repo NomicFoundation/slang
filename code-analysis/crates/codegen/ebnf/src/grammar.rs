@@ -3,13 +3,13 @@ use std::{io::Write, path::PathBuf};
 use codegen_schema::Grammar;
 use codegen_utils::context::CodegenContext;
 
-use super::production::ProductionEBNFExtensions;
+use super::production::ProductionEBNFGeneratorExtensions;
 
-pub trait GrammarEBNFExtensions {
+pub trait GrammarEBNFGeneratorExtensions {
     fn generate_ebnf(&self, codegen: &mut CodegenContext, output_dir: &PathBuf);
 }
 
-impl GrammarEBNFExtensions for Grammar {
+impl GrammarEBNFGeneratorExtensions for Grammar {
     fn generate_ebnf(&self, codegen: &mut CodegenContext, output_dir: &PathBuf) {
         let mut w: Vec<u8> = Vec::new();
 

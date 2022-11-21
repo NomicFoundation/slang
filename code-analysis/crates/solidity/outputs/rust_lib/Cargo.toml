@@ -1,0 +1,14 @@
+[package]
+name = "solidity_rust_lib"
+version = "0.0.0"
+edition = "2021"
+
+[build-dependencies]
+codegen_schema = { path = "../../../codegen/schema" }
+codegen_parser = { path = "../../../codegen/parser" }
+codegen_utils = { path = "../../../codegen/utils" }
+
+[dependencies]
+chumsky = "0.8.0"
+serde = { version = "1.0.137", features = ["derive"] }
+semver = "1.0.9"

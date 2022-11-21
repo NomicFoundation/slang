@@ -1,0 +1,18 @@
+{
+  "name": "solidity_typescript_lib-darwin-arm64",
+  "version": "0.0.0",
+  "os": [
+    "darwin"
+  ],
+  "cpu": [
+    "arm64"
+  ],
+  "main": "solidity_typescript_lib.darwin-arm64.node",
+  "files": [
+    "solidity_typescript_lib.darwin-arm64.node"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">= 10"
+  }
+}

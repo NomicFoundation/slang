@@ -1,0 +1,18 @@
+{
+  "name": "solidity_typescript_lib-linux-arm-gnueabihf",
+  "version": "0.0.0",
+  "os": [
+    "linux"
+  ],
+  "cpu": [
+    "arm"
+  ],
+  "main": "solidity_typescript_lib.linux-arm-gnueabihf.node",
+  "files": [
+    "solidity_typescript_lib.linux-arm-gnueabihf.node"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">= 10"
+  }
+}
