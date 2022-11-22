@@ -1,11 +1,15 @@
-use std::collections::{BTreeMap, BTreeSet};
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    path::PathBuf,
+};
 
+use codegen_utils::context::CodegenContext;
 use inflector::Inflector;
 use proc_macro2::{Ident, TokenStream};
-use quote::format_ident;
+use quote::{format_ident, quote};
 use semver::Version;
 
-use super::naming;
+use super::{boilerplate, naming};
 
 #[derive(Clone, Debug, Default)]
 pub struct CodeGenerator {
@@ -74,5 +78,116 @@ impl CodeGenerator {
 
     pub fn get_errors(&self) -> &Vec<String> {
         &self.errors
+    }
+
+    pub fn write_parser_source(&self, codegen: &mut CodegenContext, output_dir: &PathBuf) {
+        let mut versions = BTreeSet::new();
+        let mut field_definitions = vec![];
+        let mut parser_predeclarations = vec![];
+        let mut parser_definitions = vec![];
+        let mut field_assignments = vec![];
+
+        for (name, parser) in &self.parsers {
+            let parser_name = naming::to_parser_name_ident(&name);
+            let field_name = naming::to_field_name_ident(&name);
+            let result_type = match parser.result_type {
+                ParserResultType::Token => quote! { Rc<lex::Node> },
+                ParserResultType::Rule => quote! { Rc<cst::Node> },
+            };
+
+            versions.extend(parser.versions.keys());
+
+            parser_predeclarations.push(quote!( let mut #parser_name = Recursive::<char, #result_type, ErrorType>::declare(); ).to_string());
+
+            parser_definitions.push(format!(
+                "{}\n{}",
+                parser
+                    .comment
+                    .iter()
+                    .map(|s| format!("// {}", s))
+                    .collect::<Vec<_>>()
+                    .join("\n"),
+                parser.versions.iter().rev().map(|(version, body)| {
+                    let version_name = format_ident!("version_{}", version.to_string().replace(".", "_"));
+                    if version == &Version::new(0, 0, 0) {
+                        quote!( { #parser_name.define(#body.boxed()); } )
+                    } else {
+                        quote!( if #version_name <= version { #parser_name.define(#body.boxed()); } )
+                    }
+                }).reduce(|a, b| quote!( #a else #b )).unwrap()
+            ));
+
+            field_definitions.push(format!(
+                "{}\n{}",
+                parser
+                    .comment
+                    .iter()
+                    .map(|s| format!("/// {}", s))
+                    .collect::<Vec<_>>()
+                    .join("\n"),
+                quote!( pub #field_name: ParserType<'a, #result_type>, ).to_string()
+            ));
+
+            field_assignments
+                .push(quote!( #field_name: #parser_name.then_ignore(end()).boxed(), ).to_string());
+        }
+
+        let version_declarations = versions
+            .iter()
+            .skip(1) // Don't need the first version
+            .map(|version| {
+                let version = version.to_string();
+                let version_name = format_ident!("version_{}", version.replace(".", "_"));
+                quote!( let #version_name = &Version::parse(#version).unwrap(); ).to_string()
+            })
+            .collect::<Vec<String>>();
+
+        codegen
+            .write_file(
+                &output_dir.join("parse.rs"),
+                &format!(
+                    "{}
+                
+                    #[allow(dead_code)]
+                    pub struct Parsers<'a> {{
+                        {}
+                    }}
+
+                    impl<'a> Parsers<'a> {{
+                        pub fn new(version: &Version) -> Self {{
+                            // Declare all versions -----------------------------
+
+                            {}
+
+                            // Declare all productions --------------------------
+
+                            {}
+
+                            // Macros -------------------------------------------
+
+                            {}
+
+                            // Define all productions ---------------------------
+
+                            {}
+
+                            // Create the Parser object -------------------------
+
+                            Self {{
+                                {}
+                            }}
+                        }}
+                    }}
+                    ",
+                    boilerplate::parse_head(),
+                    field_definitions.join("\n\n"),
+                    version_declarations.join(""),
+                    parser_predeclarations.join(""),
+                    boilerplate::parse_macros(),
+                    parser_definitions.join("\n\n"),
+                    field_assignments.join("")
+                ),
+            )
+            .unwrap();
     }
 }

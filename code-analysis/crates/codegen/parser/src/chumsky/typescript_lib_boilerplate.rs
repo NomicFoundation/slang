@@ -326,11 +326,3 @@ pub fn language_head() -> TokenStream {
         }
     )
 }
-
-pub fn parse_head() -> TokenStream {
-    rust_lib_boilerplate::parse_head()
-}
-
-pub fn parse_macros() -> TokenStream {
-    rust_lib_boilerplate::parse_macros()
-}

@@ -1,3 +1,4 @@
+mod boilerplate;
 mod character_filter;
 mod code_generator;
 mod combinator_context;

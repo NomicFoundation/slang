@@ -1,172 +1,37 @@
-use std::{collections::BTreeSet, path::PathBuf};
+use std::path::PathBuf;
 
 use codegen_utils::context::CodegenContext;
 use quote::{format_ident, quote};
-use semver::Version;
 
-use super::code_generator::ParserResultType;
-use super::typescript_lib_boilerplate as boilerplate;
-use super::{code_generator::CodeGenerator, naming};
+use super::{
+    code_generator::{CodeGenerator, ParserResultType},
+    naming, typescript_lib_boilerplate,
+};
 
 impl CodeGenerator {
     pub fn write_typescript_lib_sources(&self, codegen: &mut CodegenContext, output_dir: &PathBuf) {
         codegen
             .write_file(
                 &output_dir.join("mod.rs"),
-                &boilerplate::mod_head().to_string(),
+                &typescript_lib_boilerplate::mod_head().to_string(),
             )
             .unwrap();
 
         codegen
             .write_file(
                 &output_dir.join("lex.rs"),
-                &boilerplate::lex_head().to_string(),
+                &typescript_lib_boilerplate::lex_head().to_string(),
             )
             .unwrap();
 
         codegen
             .write_file(
                 &output_dir.join("cst.rs"),
-                &boilerplate::cst_head().to_string(),
+                &typescript_lib_boilerplate::cst_head().to_string(),
             )
             .unwrap();
 
-        let mut versions = BTreeSet::new();
-        let mut field_definitions = vec![];
-        let mut parser_predeclarations = vec![];
-        let mut parser_definitions = vec![];
-        let mut field_assignments = vec![];
-        let mut parse_methods = vec![];
-
-        for (name, parser) in &self.parsers {
-            let parser_name = naming::to_parser_name_ident(&name);
-            let field_name = naming::to_field_name_ident(&name);
-            let result_type = match parser.result_type {
-                ParserResultType::Token => quote! { Rc<lex::Node> },
-                ParserResultType::Rule => quote! { Rc<cst::Node> },
-            };
-
-            versions.extend(parser.versions.keys());
-
-            parser_predeclarations.push(quote!( let mut #parser_name = Recursive::<char, #result_type, ErrorType>::declare(); ).to_string());
-
-            parser_definitions.push(format!(
-                "{}\n{}",
-                parser
-                    .comment
-                    .iter()
-                    .map(|s| format!("// {}", s))
-                    .collect::<Vec<_>>()
-                    .join("\n"),
-                parser.versions.iter().rev().map(|(version, body)| {
-                    let version_name = format_ident!("version_{}", version.to_string().replace(".", "_"));
-                    if version == &Version::new(0, 0, 0) {
-                        quote!( { #parser_name.define(#body.boxed()); } )
-                    } else {
-                        quote!( if #version_name <= version { #parser_name.define(#body.boxed()); } )
-                    }
-                }).reduce(|a, b| quote!( #a else #b )).unwrap()
-            ));
-
-            field_definitions.push(format!(
-                "{}\n{}",
-                parser
-                    .comment
-                    .iter()
-                    .map(|s| format!("/// {}", s))
-                    .collect::<Vec<_>>()
-                    .join("\n"),
-                quote!( pub #field_name: ParserType<'a, #result_type>, ).to_string()
-            ));
-
-            field_assignments
-                .push(quote!( #field_name: #parser_name.then_ignore(end()).boxed(), ).to_string());
-
-            let ts_result_type = match parser.result_type {
-                ParserResultType::Token => quote! { "LexNamedNode" },
-                ParserResultType::Rule => quote! { "CSTRuleNode" },
-            };
-            parse_methods.push(format!(
-                "{}\n{}",
-                parser
-                    .comment
-                    .iter()
-                    .map(|s| format!("// {}", s))
-                    .collect::<Vec<_>>()
-                    .join("\n"),
-                {
-                    let method_name = format_ident!("parse_{}", field_name);
-                    quote!(
-                        #[napi(ts_return_type = #ts_result_type)]
-                        // pub fn #method_name(&self, env: Env, source: String) -> napi::JsUnknown {
-                        pub fn #method_name(&self, env: Env, source: String) -> napi::JsObject {
-                            let (node, _errs) = self.parsers.#field_name.parse_recovery(source.as_str());
-                            // env.to_js_value(&node).unwrap()
-                            node.unwrap().to_js(&env)
-                        }
-                    )
-                    .to_string()
-                }
-            ));
-        }
-
-        let version_declarations = versions
-            .iter()
-            .skip(1) // Don't need the first version
-            .map(|version| {
-                let version = version.to_string();
-                let version_name = format_ident!("version_{}", version.replace(".", "_"));
-                quote!( let #version_name = &Version::parse(#version).unwrap(); ).to_string()
-            })
-            .collect::<Vec<String>>();
-
-        codegen
-            .write_file(
-                &output_dir.join("parse.rs"),
-                &format!(
-                    "{}
-                
-                    #[allow(dead_code)]
-                    pub struct Parsers<'a> {{
-                        {}
-                    }}
-
-                    impl<'a> Parsers<'a> {{
-                        pub fn new(version: &Version) -> Self {{
-                            // Declare all versions -----------------------------
-
-                            {}
-
-                            // Declare all productions --------------------------
-
-                            {}
-
-                            // Macros -------------------------------------------
-
-                            {}
-
-                            // Define all productions ---------------------------
-
-                            {}
-
-                            // Create the Parser object -------------------------
-
-                            Self {{
-                                {}
-                            }}
-                        }}
-                    }}
-                    ",
-                    boilerplate::parse_head(),
-                    field_definitions.join("\n\n"),
-                    version_declarations.join(""),
-                    parser_predeclarations.join(""),
-                    boilerplate::parse_macros(),
-                    parser_definitions.join("\n\n"),
-                    field_assignments.join("")
-                ),
-            )
-            .unwrap();
+        self.write_parser_source(codegen, output_dir);
 
         codegen
             .write_file(
@@ -179,8 +44,37 @@ impl CodeGenerator {
                         {}
                     }}
                     ",
-                    boilerplate::language_head(),
-                    parse_methods.join("\n\n"),
+                    typescript_lib_boilerplate::language_head(),
+                    self
+                        .parsers
+                        .iter()
+                        .map(|(name, parser)| {
+                            let field_name = naming::to_field_name_ident(&name);
+                            let method_name = format_ident!("parse_{}", field_name);
+                            let result_type = match parser.result_type {
+                                ParserResultType::Token => quote! { "LexNamedNode" },
+                                ParserResultType::Rule => quote! { "CSTRuleNode" },
+                            };
+                            format!(
+                                "{}\n{}",
+                                parser
+                                    .comment
+                                    .iter()
+                                    .map(|s| format!("// {}", s))
+                                    .collect::<Vec<_>>()
+                                    .join("\n"),
+                                quote!(
+                                    #[napi(ts_return_type = #result_type)]
+                                    // pub fn #method_name(&self, env: Env, source: String) -> napi::JsUnknown {
+                                    pub fn #method_name(&self, env: Env, source: String) -> napi::JsObject {
+                                        let (node, _errs) = self.parsers.#field_name.parse_recovery(source.as_str());
+                                        // env.to_js_value(&node).unwrap()
+                                        node.unwrap().to_js(&env)
+                                    }
+                                )
+                            )
+                        })
+                        .collect::<Vec<_>>().join("\n\n"),
                 ),
             )
             .unwrap();
@@ -204,16 +98,16 @@ impl CodeGenerator {
                         {}
                     }}
                     ",
-                    boilerplate::kinds_head(),
+                    typescript_lib_boilerplate::kinds_head(),
                     self.token_kinds
                         .keys()
                         .cloned()
-                        .collect::<Vec<String>>()
+                        .collect::<Vec<_>>()
                         .join(","),
                     self.rule_kinds
                         .iter()
                         .cloned()
-                        .collect::<Vec<String>>()
+                        .collect::<Vec<_>>()
                         .join(","),
                 ),
             )
