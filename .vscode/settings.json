@@ -2,7 +2,7 @@
   // Rust
   "rust-analyzer.linkedProjects": ["code-analysis/Cargo.toml"],
   // YAML
-  "yaml.customTags": ["!ENV"],
+  "yaml.validate": false, // Disable editor validation, as it is superseeded by our own serializers
   // Editing
   "editor.formatOnSave": true,
   "editor.rulers": [120],

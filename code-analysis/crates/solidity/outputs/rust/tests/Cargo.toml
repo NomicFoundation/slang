@@ -1,0 +1,19 @@
+[package]
+name = "solidity_rust_tests"
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+
+[build-dependencies]
+codegen_schema = { path = "../../../../codegen/schema" }
+codegen_testing = { path = "../../../../codegen/testing" }
+codegen_utils = { path = "../../../../codegen/utils" }
+
+[dependencies]
+anyhow = { version = "1.0.66", features = ["std", "backtrace"] }
+codegen_utils = { path = "../../../../codegen/utils" }
+semver = "1.0.9"
+serde = { version = "1.0.137", features = ["derive"] }
+serde_yaml = "0.9.14"
+solidity_rust_cli = { path = "../cli" }
+solidity_rust_lib = { path = "../lib" }

@@ -11,3 +11,6 @@ export PROJECT_DIR
 
 REPO_ROOT=$(dirname "$PROJECT_DIR")
 export REPO_ROOT
+
+# Enable stack traces for any errors
+export RUST_BACKTRACE="full"

@@ -15,9 +15,11 @@ source "$THIS_DIR/common.sh"
   printf "\n\n🧪 Checking Project 🧪\n\n\n"
   cd "$PROJECT_DIR"
 
-  export RUST_BACKTRACE="full"
-  export SLANG_VALIDATE_GENERATED_FILES="true"
+  export SLANG_CODEGEN_CHECK_ONLY="true"
 
   cargo check --locked
+  cargo test --locked --no-fail-fast --all-targets
   cargo fmt --check --all
 )
+
+printf "\n\n✅ Check Success ✅\n\n\n"

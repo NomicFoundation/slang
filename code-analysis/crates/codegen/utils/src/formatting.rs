@@ -1,8 +1,8 @@
 use std::path::PathBuf;
 
-use crate::{commands::run_command, context::CodegenContext};
+use anyhow::{anyhow, bail, Context, Result};
 
-use anyhow::{bail, Context, Result};
+use crate::{commands::run_command, context::CodegenContext};
 
 pub fn format_source_file(
     codegen: &CodegenContext,
@@ -15,19 +15,37 @@ pub fn format_source_file(
     return formatters::run(codegen, file_path, &unformatted)
         .context(format!("Failed to format {file_path:?}"))
         .or_else(|formatter_error| {
-            // Try to write the unformatted version to disk, to be able to debug what went wrong.
-            let debug_file = PathBuf::from(std::env::var("OUT_DIR")?).join(format!(
-                "codegen/formatter/failure.{ext}",
-                ext = get_extension(file_path)?
-            ));
-
-            return match std::fs::write(&debug_file, &unformatted) {
-                Err(_) => Err(formatter_error), // propagate the original one.
-                Ok(()) => Err(formatter_error).context(format!(
-                    "The unformatted version was written to {debug_file:?}"
-                )),
+            // Try to backup the unformatted version to disk, to be able to debug what went wrong.
+            let backup_error = match backup_raw_file(file_path, &unformatted) {
+                Ok(backup_file_path) => {
+                    anyhow!("The raw unformatted version was backed up to: {backup_file_path:?}")
+                }
+                Err(backup_error) => backup_error.context("Failed to back up unformatted version"),
             };
+
+            return Err(backup_error).context(formatter_error);
         });
+}
+
+fn backup_raw_file(file_path: &PathBuf, unformatted: &str) -> Result<PathBuf> {
+    let backup_file_name = file_path
+        .file_name()
+        .context(format!("Failed to get file name: {file_path:?}"))?;
+
+    let backup_file_path = PathBuf::from(std::env::var("OUT_DIR")?)
+        .join("codegen/formatter/backup")
+        .join(backup_file_name);
+
+    std::fs::create_dir_all(
+        backup_file_path
+            .parent()
+            .context(format!("Failed to get file parent: {backup_file_path:?}"))?,
+    )?;
+
+    std::fs::write(&backup_file_path, &unformatted)
+        .context(format!("Failed to write back up to: {backup_file_path:?}"))?;
+
+    return Ok(backup_file_path);
 }
 
 fn generate_header(file_path: &PathBuf) -> Result<String> {
