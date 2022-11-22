@@ -87,7 +87,7 @@ pub fn cst_visitor_head() -> TokenStream {
     quote!(
         #[allow(unused_variables)]
         pub trait Visitor {
-            fn visit_none(&mut self, node: &Rc<Node>) -> VisitorExitResponse {
+            fn visit_none(&mut self, node: &Rc<Node>, path: &Vec<Rc<Node>>) -> VisitorExitResponse {
                 VisitorExitResponse::StepIn
             }
 
@@ -96,6 +96,7 @@ pub fn cst_visitor_head() -> TokenStream {
                 kind: kinds::Rule,
                 children: &Vec<Rc<Node>>,
                 node: &Rc<Node>,
+                path: &Vec<Rc<Node>>,
             ) -> VisitorEntryResponse {
                 VisitorEntryResponse::StepIn
             }
@@ -105,6 +106,7 @@ pub fn cst_visitor_head() -> TokenStream {
                 kind: kinds::Rule,
                 children: &Vec<Rc<Node>>,
                 node: &Rc<Node>,
+                path: &Vec<Rc<Node>>,
             ) -> VisitorExitResponse {
                 VisitorExitResponse::StepIn
             }
@@ -115,6 +117,7 @@ pub fn cst_visitor_head() -> TokenStream {
                 range: &Range<usize>,
                 trivia: &Vec<Rc<Node>>,
                 node: &Rc<Node>,
+                path: &Vec<Rc<Node>>,
             ) -> VisitorEntryResponse {
                 VisitorEntryResponse::StepIn
             }
@@ -125,6 +128,7 @@ pub fn cst_visitor_head() -> TokenStream {
                 range: &Range<usize>,
                 trivia: &Vec<Rc<Node>>,
                 node: &Rc<Node>,
+                path: &Vec<Rc<Node>>,
             ) -> VisitorExitResponse {
                 VisitorExitResponse::StepIn
             }
@@ -133,6 +137,7 @@ pub fn cst_visitor_head() -> TokenStream {
                 &mut self,
                 children: &Vec<Rc<Node>>,
                 node: &Rc<Node>,
+                path: &Vec<Rc<Node>>,
             ) -> VisitorEntryResponse {
                 VisitorEntryResponse::StepIn
             }
@@ -141,6 +146,7 @@ pub fn cst_visitor_head() -> TokenStream {
                 &mut self,
                 children: &Vec<Rc<Node>>,
                 node: &Rc<Node>,
+                path: &Vec<Rc<Node>>,
             ) -> VisitorExitResponse {
                 VisitorExitResponse::StepIn
             }
@@ -159,66 +165,80 @@ pub fn cst_visitor_head() -> TokenStream {
 
         pub trait Visitable {
             fn visit<T: Visitor>(&self, visitor: &mut T) -> VisitorExitResponse;
+            fn visit_with_path<T: Visitor>(&self, visitor: &mut T, path: &mut Vec<Rc<Node>>) -> VisitorExitResponse;
         }
 
         impl Visitable for Rc<Node> {
             fn visit<T: Visitor>(&self, visitor: &mut T) -> VisitorExitResponse {
+                self.visit_with_path(visitor, &mut Vec::new())
+            }
+
+            fn visit_with_path<T: Visitor>(&self, visitor: &mut T, path: &mut Vec<Rc<Node>>) -> VisitorExitResponse {
                 match self.as_ref() {
-                    Node::None => visitor.visit_none(self),
+                    Node::None => visitor.visit_none(self, path),
                     Node::Rule { kind, children } => {
-                        match visitor.enter_rule(*kind, children, self) {
+                        match visitor.enter_rule(*kind, children, self, path) {
                             VisitorEntryResponse::Quit => return VisitorExitResponse::Quit,
                             VisitorEntryResponse::StepOver => {}
                             VisitorEntryResponse::StepIn => {
+                                path.push(self.clone());
                                 for child in children {
-                                    match child.visit(visitor) {
+                                    match child.visit_with_path(visitor, path) {
                                         VisitorExitResponse::Quit => {
+                                            path.pop();
                                             return VisitorExitResponse::Quit
                                         }
                                         VisitorExitResponse::StepIn => {}
                                     }
                                 }
+                                path.pop();
                             }
                         }
-                        visitor.exit_rule(*kind, children, self)
+                        visitor.exit_rule(*kind, children, self, path)
                     }
                     Node::Token {
                         kind,
                         range,
                         trivia,
                     } => {
-                        match visitor.enter_token(*kind, range, trivia, self) {
+                        match visitor.enter_token(*kind, range, trivia, self, path) {
                             VisitorEntryResponse::Quit => return VisitorExitResponse::Quit,
                             VisitorEntryResponse::StepOver => {}
                             VisitorEntryResponse::StepIn => {
+                                path.push(self.clone());
                                 for child in trivia {
-                                    match child.visit(visitor) {
+                                    match child.visit_with_path(visitor, path) {
                                         VisitorExitResponse::Quit => {
+                                            path.pop();
                                             return VisitorExitResponse::Quit
                                         }
                                         VisitorExitResponse::StepIn => {}
                                     }
                                 }
+                                path.pop();
                             }
                         }
-                        visitor.exit_token(*kind, range, trivia, self)
+                        visitor.exit_token(*kind, range, trivia, self, path)
                     }
                     Node::Group { children } => {
-                        match visitor.enter_group(children, self) {
+                        match visitor.enter_group(children, self, path) {
                             VisitorEntryResponse::Quit => return VisitorExitResponse::Quit,
                             VisitorEntryResponse::StepOver => {}
                             VisitorEntryResponse::StepIn => {
+                                path.push(self.clone());
                                 for child in children {
-                                    match child.visit(visitor) {
+                                    match child.visit_with_path(visitor, path) {
                                         VisitorExitResponse::Quit => {
+                                            path.pop();
                                             return VisitorExitResponse::Quit
                                         }
                                         VisitorExitResponse::StepIn => {}
                                     }
                                 }
+                                path.pop();
                             }
                         }
-                        visitor.exit_group(children, self)
+                        visitor.exit_group(children, self, path)
                     }
                 }
             }
