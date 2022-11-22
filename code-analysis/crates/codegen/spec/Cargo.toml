@@ -1,8 +1,8 @@
 [package]
 name = "codegen_spec"
-version = "0.0.0"
-edition = "2021"
-rust-version = "1.60.0"
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
 
 [dependencies]
 codegen_schema = { path = "../schema" }
