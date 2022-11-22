@@ -61,18 +61,16 @@ impl LexCharsNode {
     }
     #[napi(getter)]
     pub fn start(&self) -> usize {
-        if let Node::Chars(range) = self.0.as_ref() {
-            range.start
-        } else {
-            unreachable!("Expected a chars node")
+        match self.0.as_ref() {
+            Node::Chars(range) => range.start,
+            _ => unreachable!(),
         }
     }
     #[napi(getter)]
     pub fn end(&self) -> usize {
-        if let Node::Chars(range) = self.0.as_ref() {
-            range.end
-        } else {
-            unreachable!("Expected a chars node")
+        match self.0.as_ref() {
+            Node::Chars(range) => range.end,
+            _ => unreachable!(),
         }
     }
 }
@@ -84,20 +82,18 @@ impl LexChoiceNode {
     }
     #[napi(getter)]
     pub fn index(&self) -> usize {
-        if let Node::Choice(index, _) = self.0.as_ref() {
-            *index
-        } else {
-            unreachable!("Expected a choice node")
+        match self.0.as_ref() {
+            Node::Choice(index, _) => *index,
+            _ => unreachable!(),
         }
     }
     #[napi(
         ts_return_type = "LexNoneNode | LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode"
     )]
     pub fn child(&self, env: Env) -> JsObject {
-        if let Node::Choice(_, child) = self.0.as_ref() {
-            child.to_js(&env)
-        } else {
-            unreachable!("Expected a choice node")
+        match self.0.as_ref() {
+            Node::Choice(_, child) => child.to_js(&env),
+            _ => unreachable!(),
         }
     }
 }
@@ -111,10 +107,9 @@ impl LexSequenceNode {
         ts_return_type = "(LexNoneNode | LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode)[]"
     )]
     pub fn children(&self, env: Env) -> Vec<JsObject> {
-        if let Node::Sequence(children) = self.0.as_ref() {
-            children.iter().map(|child| child.to_js(&env)).collect()
-        } else {
-            unreachable!("Expected a sequence node")
+        match self.0.as_ref() {
+            Node::Sequence(children) => children.iter().map(|child| child.to_js(&env)).collect(),
+            _ => unreachable!(),
         }
     }
 }
@@ -126,20 +121,18 @@ impl LexNamedNode {
     }
     #[napi(getter)]
     pub fn kind(&self) -> kinds::Token {
-        if let Node::Named(kind, _) = self.0.as_ref() {
-            *kind
-        } else {
-            unreachable!("Expected a named node")
+        match self.0.as_ref() {
+            Node::Named(kind, _) => *kind,
+            _ => unreachable!(),
         }
     }
     #[napi(
         ts_return_type = "LexNoneNode | LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode"
     )]
     pub fn child(&self, env: Env) -> JsObject {
-        if let Node::Named(_, child) = self.0.as_ref() {
-            child.to_js(&env)
-        } else {
-            unreachable!("Expected a named node")
+        match self.0.as_ref() {
+            Node::Named(_, child) => child.to_js(&env),
+            _ => unreachable!(),
         }
     }
 }
