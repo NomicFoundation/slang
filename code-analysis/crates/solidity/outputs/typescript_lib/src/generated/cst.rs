@@ -59,18 +59,16 @@ impl CSTRuleNode {
     }
     #[napi(getter)]
     pub fn kind(&self) -> kinds::Rule {
-        if let Node::Rule { kind, .. } = self.0.as_ref() {
-            *kind
-        } else {
-            unreachable!("Expected a rule node")
+        match self.0.as_ref() {
+            Node::Rule { kind, .. } => *kind,
+            _ => unreachable!(),
         }
     }
     #[napi(ts_return_type = "(CSTNoneNode | CSTRuleNode | CSTTokenNode | CSTGroupNode)[]")]
     pub fn children(&self, env: Env) -> Vec<JsObject> {
-        if let Node::Rule { children, .. } = self.0.as_ref() {
-            children.iter().map(|child| child.to_js(&env)).collect()
-        } else {
-            unreachable!("Expected a rule node")
+        match self.0.as_ref() {
+            Node::Rule { children, .. } => children.iter().map(|child| child.to_js(&env)).collect(),
+            _ => unreachable!(),
         }
     }
 }
@@ -82,34 +80,32 @@ impl CSTTokenNode {
     }
     #[napi(getter)]
     pub fn kind(&self) -> kinds::Token {
-        if let Node::Token { kind, .. } = self.0.as_ref() {
-            *kind
-        } else {
-            unreachable!("Expected a token node")
+        match self.0.as_ref() {
+            Node::Token { kind, .. } => *kind,
+            _ => unreachable!(),
         }
     }
     #[napi(getter)]
     pub fn start(&self) -> usize {
-        if let Node::Token { range, .. } = self.0.as_ref() {
-            range.start
-        } else {
-            unreachable!("Expected a token node")
+        match self.0.as_ref() {
+            Node::Token { range, .. } => range.start,
+            _ => unreachable!(),
         }
     }
     #[napi(getter)]
     pub fn end(&self) -> usize {
-        if let Node::Token { range, .. } = self.0.as_ref() {
-            range.end
-        } else {
-            unreachable!("Expected a token node")
+        match self.0.as_ref() {
+            Node::Token { range, .. } => range.end,
+            _ => unreachable!(),
         }
     }
     #[napi(ts_return_type = "(CSTNoneNode | CSTRuleNode | CSTTokenNode | CSTGroupNode)[]")]
     pub fn trivia(&self, env: Env) -> Vec<JsObject> {
-        if let Node::Token { trivia, .. } = self.0.as_ref() {
-            trivia.iter().map(|trivium| trivium.to_js(&env)).collect()
-        } else {
-            unreachable!("Expected a token node")
+        match self.0.as_ref() {
+            Node::Token { trivia, .. } => {
+                trivia.iter().map(|trivium| trivium.to_js(&env)).collect()
+            }
+            _ => unreachable!(),
         }
     }
 }
@@ -121,10 +117,11 @@ impl CSTGroupNode {
     }
     #[napi(ts_return_type = "(CSTNoneNode | CSTRuleNode | CSTTokenNode | CSTGroupNode)[]")]
     pub fn children(&self, env: Env) -> Vec<JsObject> {
-        if let Node::Group { children, .. } = self.0.as_ref() {
-            children.iter().map(|child| child.to_js(&env)).collect()
-        } else {
-            unreachable!("Expected a group node")
+        match self.0.as_ref() {
+            Node::Group { children, .. } => {
+                children.iter().map(|child| child.to_js(&env)).collect()
+            }
+            _ => unreachable!(),
         }
     }
 }

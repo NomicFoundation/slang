@@ -63,19 +63,17 @@ pub fn lex_head() -> TokenStream {
 
             #[napi(getter)]
             pub fn start(&self) -> usize {
-                if let Node::Chars(range) = self.0.as_ref() {
-                    range.start
-                } else {
-                    unreachable!("Expected a chars node")
+                match self.0.as_ref() {
+                    Node::Chars(range) => range.start,
+                    _  => unreachable!()
                 }
             }
 
             #[napi(getter)]
             pub fn end(&self) -> usize {
-                if let Node::Chars(range) = self.0.as_ref() {
-                    range.end
-                } else {
-                    unreachable!("Expected a chars node")
+                match self.0.as_ref() {
+                    Node::Chars(range) => range.end,
+                    _  => unreachable!()
                 }
             }
         }
@@ -87,19 +85,17 @@ pub fn lex_head() -> TokenStream {
 
             #[napi(getter)]
             pub fn index(&self) -> usize {
-                if let Node::Choice(index, _) = self.0.as_ref() {
-                    *index
-                } else {
-                    unreachable!("Expected a choice node")
+                match self.0.as_ref() {
+                    Node::Choice(index, _) => *index,
+                    _  => unreachable!()
                 }
             }
 
             #[napi(ts_return_type = "LexNoneNode | LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode")]
             pub fn child(&self, env: Env) -> JsObject {
-                if let Node::Choice(_, child) = self.0.as_ref() {
-                    child.to_js(&env)
-                } else {
-                    unreachable!("Expected a choice node")
+                match self.0.as_ref() {
+                    Node::Choice(_, child) => child.to_js(&env),
+                    _  => unreachable!()
                 }
             }
         }
@@ -111,10 +107,9 @@ pub fn lex_head() -> TokenStream {
 
             #[napi(ts_return_type = "(LexNoneNode | LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode)[]")]
             pub fn children(&self, env: Env) -> Vec<JsObject> {
-                if let Node::Sequence(children) = self.0.as_ref() {
-                    children.iter().map(|child| child.to_js(&env)).collect()
-                } else {
-                    unreachable!("Expected a sequence node")
+                match self.0.as_ref() {
+                    Node::Sequence(children) => children.iter().map(|child| child.to_js(&env)).collect(),
+                    _  => unreachable!()
                 }
             }
         }
@@ -126,19 +121,17 @@ pub fn lex_head() -> TokenStream {
 
             #[napi(getter)]
             pub fn kind(&self) -> kinds::Token {
-                if let Node::Named(kind, _) = self.0.as_ref() {
-                    *kind
-                } else {
-                    unreachable!("Expected a named node")
+                match self.0.as_ref() {
+                    Node::Named(kind, _) => *kind,
+                    _  => unreachable!()
                 }
             }
 
             #[napi(ts_return_type = "LexNoneNode | LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode")]
             pub fn child(&self, env: Env) -> JsObject {
-                if let Node::Named(_, child) = self.0.as_ref() {
-                    child.to_js(&env)
-                } else {
-                    unreachable!("Expected a named node")
+                match self.0.as_ref() {
+                    Node::Named(_, child) => child.to_js(&env),
+                    _  => unreachable!()
                 }
             }
         }
@@ -200,19 +193,17 @@ pub fn cst_head() -> TokenStream {
 
             #[napi(getter)]
             pub fn kind(&self) -> kinds::Rule {
-                if let Node::Rule { kind, .. } = self.0.as_ref() {
-                    *kind
-                } else {
-                    unreachable!("Expected a rule node")
+                match self.0.as_ref() {
+                    Node::Rule { kind, .. } => *kind,
+                    _ => unreachable!()
                 }
             }
 
             #[napi(ts_return_type = "(CSTNoneNode | CSTRuleNode | CSTTokenNode | CSTGroupNode)[]")]
             pub fn children(&self, env: Env) -> Vec<JsObject> {
-                if let Node::Rule { children, .. } = self.0.as_ref() {
-                    children.iter().map(|child| child.to_js(&env)).collect()
-                } else {
-                    unreachable!("Expected a rule node")
+                match self.0.as_ref() {
+                    Node::Rule { children, .. } => children.iter().map(|child| child.to_js(&env)).collect(),
+                    _ => unreachable!()
                 }
             }
         }
@@ -224,37 +215,33 @@ pub fn cst_head() -> TokenStream {
 
             #[napi(getter)]
             pub fn kind(&self) -> kinds::Token {
-                if let Node::Token { kind, .. } = self.0.as_ref() {
-                    *kind
-                } else {
-                    unreachable!("Expected a token node")
+                match self.0.as_ref() {
+                    Node::Token { kind, .. } => *kind,
+                    _ => unreachable!()
                 }
             }
 
             #[napi(getter)]
             pub fn start(&self) -> usize {
-                if let Node::Token { range, .. } = self.0.as_ref() {
-                    range.start
-                } else {
-                    unreachable!("Expected a token node")
+                match self.0.as_ref() {
+                    Node::Token { range, .. } => range.start,
+                    _ => unreachable!()
                 }
             }
 
             #[napi(getter)]
             pub fn end(&self) -> usize {
-                if let Node::Token { range, .. } = self.0.as_ref() {
-                    range.end
-                } else {
-                    unreachable!("Expected a token node")
+                match self.0.as_ref() {
+                    Node::Token { range, .. } => range.end,
+                    _ => unreachable!()
                 }
             }
 
             #[napi(ts_return_type = "(CSTNoneNode | CSTRuleNode | CSTTokenNode | CSTGroupNode)[]")]
             pub fn trivia(&self, env: Env) -> Vec<JsObject> {
-                if let Node::Token { trivia, .. } = self.0.as_ref() {
-                    trivia.iter().map(|trivium| trivium.to_js(&env)).collect()
-                } else {
-                    unreachable!("Expected a token node")
+                match self.0.as_ref() {
+                    Node::Token { trivia, .. } => trivia.iter().map(|trivium| trivium.to_js(&env)).collect(),
+                    _ => unreachable!()
                 }
             }
         }
@@ -266,10 +253,9 @@ pub fn cst_head() -> TokenStream {
 
             #[napi(ts_return_type = "(CSTNoneNode | CSTRuleNode | CSTTokenNode | CSTGroupNode)[]")]
             pub fn children(&self, env: Env) -> Vec<JsObject> {
-                if let Node::Group { children, .. } = self.0.as_ref() {
-                    children.iter().map(|child| child.to_js(&env)).collect()
-                } else {
-                    unreachable!("Expected a group node")
+                match self.0.as_ref() {
+                    Node::Group { children, .. } => children.iter().map(|child| child.to_js(&env)).collect(),
+                    _ => unreachable!()
                 }
             }
         }
