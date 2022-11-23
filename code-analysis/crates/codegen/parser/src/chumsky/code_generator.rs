@@ -90,6 +90,7 @@ impl CodeGenerator {
         for (name, parser) in &self.parsers {
             let parser_name = naming::to_parser_name_ident(&name);
             let field_name = naming::to_field_name_ident(&name);
+
             let result_type = match parser.result_type {
                 ParserResultType::Token => quote! { Rc<lex::Node> },
                 ParserResultType::Rule => quote! { Rc<cst::Node> },
@@ -125,11 +126,18 @@ impl CodeGenerator {
                     .map(|s| format!("/// {}", s))
                     .collect::<Vec<_>>()
                     .join("\n"),
-                quote!( pub #field_name: ParserType<'a, #result_type>, ).to_string()
+                quote!( pub #field_name: ParserType<'a, Rc<cst::Node>>, ).to_string()
             ));
 
+            let parser = match parser.result_type {
+                ParserResultType::Token => {
+                    // Use cst_trivia_token so we don't need to pass empty trivia nodes
+                    quote!( #parser_name.map(|token| if let lex::Node::Named(kind, node) = token.as_ref() { factory::cst_trivia_token(*kind, node.clone()) } else { unreachable!() }) )
+                }
+                ParserResultType::Rule => quote!( #parser_name ),
+            };
             field_assignments
-                .push(quote!( #field_name: #parser_name.then_ignore(end()).boxed(), ).to_string());
+                .push(quote!( #field_name: #parser.then_ignore(end()).boxed(), ).to_string());
         }
 
         let version_declarations = versions

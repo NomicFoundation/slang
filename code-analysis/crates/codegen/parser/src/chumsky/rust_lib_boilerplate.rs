@@ -11,78 +11,6 @@ pub fn mod_head() -> TokenStream {
     )
 }
 
-pub fn kinds_head() -> TokenStream {
-    quote!(
-        use serde::Serialize;
-    )
-}
-
-pub fn lex_head() -> TokenStream {
-    quote!(
-        use std::ops::Range;
-        use serde::Serialize;
-        use std::rc::Rc;
-
-        use super::kinds;
-
-        #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
-        pub enum Node {
-            None,
-            Chars(Range<usize>),
-            Choice(usize, Rc<Node>),
-            Sequence(Vec<Rc<Node>>),
-            Named(kinds::Token, Rc<Node>),
-        }
-
-        impl Node {
-            pub fn range(&self) -> Range<usize> {
-                match self {
-                    Node::None => 0..0,
-                    Node::Chars(range) => range.clone(),
-                    Node::Choice(_, element) => element.range(),
-                    Node::Sequence(elements) => {
-                        elements[0].range().start..elements[elements.len() - 1].range().end
-                    }
-                    Node::Named(_, element) => element.range(),
-                }
-            }
-        }
-    )
-}
-
-pub fn cst_head() -> TokenStream {
-    quote!(
-        use std::ops::Range;
-        use serde::Serialize;
-        use std::rc::Rc;
-
-        use super::kinds;
-
-        #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
-        pub enum Node {
-            None,
-            Rule {
-                kind: kinds::Rule,
-                #[serde(skip_serializing_if = "Vec::is_empty")]
-                children: Vec<Rc<Node>>,
-            },
-            Token {
-                kind: kinds::Token,
-                /// Range doesn't include the trivia
-                range: Range<usize>,
-                /// Only Trivia
-                #[serde(skip_serializing_if = "Vec::is_empty")]
-                trivia: Vec<Rc<Node>>,
-            },
-            /// For anonymous groups referenced from AST nodes i.e. `delimited_by`
-            Group {
-                #[serde(skip_serializing_if = "Vec::is_empty")]
-                children: Vec<Rc<Node>>,
-            }, // TODO: Error types
-        }
-    )
-}
-
 pub fn cst_visitor_head() -> TokenStream {
     quote!(
         #[allow(unused_variables)]
@@ -114,7 +42,7 @@ pub fn cst_visitor_head() -> TokenStream {
             fn enter_token(
                 &mut self,
                 kind: kinds::Token,
-                range: &Range<usize>,
+                lex_node: &Rc<lex::Node>,
                 trivia: &Vec<Rc<Node>>,
                 node: &Rc<Node>,
                 path: &Vec<Rc<Node>>,
@@ -125,7 +53,7 @@ pub fn cst_visitor_head() -> TokenStream {
             fn exit_token(
                 &mut self,
                 kind: kinds::Token,
-                range: &Range<usize>,
+                lex_node: &Rc<lex::Node>,
                 trivia: &Vec<Rc<Node>>,
                 node: &Rc<Node>,
                 path: &Vec<Rc<Node>>,
@@ -198,10 +126,10 @@ pub fn cst_visitor_head() -> TokenStream {
                     }
                     Node::Token {
                         kind,
-                        range,
+                        lex_node,
                         trivia,
                     } => {
-                        match visitor.enter_token(*kind, range, trivia, self, path) {
+                        match visitor.enter_token(*kind, lex_node, trivia, self, path) {
                             VisitorEntryResponse::Quit => return VisitorExitResponse::Quit,
                             VisitorEntryResponse::StepOver => {}
                             VisitorEntryResponse::StepIn => {
@@ -218,7 +146,7 @@ pub fn cst_visitor_head() -> TokenStream {
                                 path.pop();
                             }
                         }
-                        visitor.exit_token(*kind, range, trivia, self, path)
+                        visitor.exit_token(*kind, lex_node, trivia, self, path)
                     }
                     Node::Group { children } => {
                         match visitor.enter_group(children, self, path) {
@@ -253,7 +181,7 @@ pub fn language_head() -> TokenStream {
         use chumsky::Parser;
         use semver::Version;
 
-        use super::{cst, lex, parse::Parsers};
+        use super::{cst, parse::Parsers};
 
         pub struct Language {
             parsers: Parsers<'static>,

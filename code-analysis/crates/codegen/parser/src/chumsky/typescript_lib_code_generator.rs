@@ -52,7 +52,7 @@ impl CodeGenerator {
                             let field_name = naming::to_field_name_ident(&name);
                             let method_name = format_ident!("parse_{}", field_name);
                             let result_type = match parser.result_type {
-                                ParserResultType::Token => quote! { "LexNamedNode" },
+                                ParserResultType::Token => quote! { "CSTTokenNode" },
                                 ParserResultType::Rule => quote! { "CSTRuleNode" },
                             };
                             format!(

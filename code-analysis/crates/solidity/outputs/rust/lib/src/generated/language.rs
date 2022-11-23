@@ -1,6 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use super::{cst, lex, parse::Parsers};
+use super::{cst, parse::Parsers};
 use chumsky::Parser;
 use semver::Version;
 use std::rc::Rc;
@@ -61,13 +61,13 @@ impl Language {
     }
 
     // «AsciiEscape» = 'n' | 'r' | 't' | '\'' | '"' | '\\' | '\u{a}' | '\u{d}' ;
-    pub fn parse_ascii_escape(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_ascii_escape(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.ascii_escape.parse_recovery(source);
         node.unwrap()
     }
 
     // «AsciiStringLiteral» = «SingleQuotedAsciiStringLiteral» | «DoubleQuotedAsciiStringLiteral» ;
-    pub fn parse_ascii_string_literal(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_ascii_string_literal(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.ascii_string_literal.parse_recovery(source);
         node.unwrap()
     }
@@ -115,7 +115,7 @@ impl Language {
     }
 
     // «BooleanLiteral» = 'true' | 'false' ;
-    pub fn parse_boolean_literal(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_boolean_literal(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.boolean_literal.parse_recovery(source);
         node.unwrap()
     }
@@ -181,25 +181,25 @@ impl Language {
     }
 
     // «DecimalExponent» = ( 'e' | 'E' ) [ '-' ] «DecimalInteger» ;
-    pub fn parse_decimal_exponent(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_decimal_exponent(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.decimal_exponent.parse_recovery(source);
         node.unwrap()
     }
 
     // «DecimalFloat» = [ «DecimalInteger» ] '.' «DecimalInteger» ;
-    pub fn parse_decimal_float(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_decimal_float(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.decimal_float.parse_recovery(source);
         node.unwrap()
     }
 
     // «DecimalInteger» = '0'…'9' { [ '_' ] '0'…'9' } ;
-    pub fn parse_decimal_integer(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_decimal_integer(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.decimal_integer.parse_recovery(source);
         node.unwrap()
     }
 
     // «DecimalNumber» = ( «DecimalInteger» | «DecimalFloat» ) [ «DecimalExponent» ] ;
-    pub fn parse_decimal_number(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_decimal_number(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.decimal_number.parse_recovery(source);
         node.unwrap()
     }
@@ -229,7 +229,7 @@ impl Language {
     }
 
     // «DoubleQuotedAsciiStringLiteral» = '"' { 1…*{ '\u{20}'…'~' - ( '"' | '\\' ) } | «EscapeSequence» } '"' ;
-    pub fn parse_double_quoted_ascii_string_literal(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_double_quoted_ascii_string_literal(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self
             .parsers
             .double_quoted_ascii_string_literal
@@ -238,7 +238,7 @@ impl Language {
     }
 
     // «DoubleQuotedUnicodeStringLiteral» = 'unicode"' { 1…*{ ¬( '"' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '"' ;
-    pub fn parse_double_quoted_unicode_string_literal(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_double_quoted_unicode_string_literal(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self
             .parsers
             .double_quoted_unicode_string_literal
@@ -265,7 +265,7 @@ impl Language {
     }
 
     // «EndOfLine» = 1…*{ '\u{d}' | '\u{a}' } ;
-    pub fn parse_end_of_line(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_end_of_line(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.end_of_line.parse_recovery(source);
         node.unwrap()
     }
@@ -298,7 +298,7 @@ impl Language {
     }
 
     // «EscapeSequence» = '\\' ( «AsciiEscape» | «HexByteEscape» | «UnicodeEscape» ) ;
-    pub fn parse_escape_sequence(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_escape_sequence(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.escape_sequence.parse_recovery(source);
         node.unwrap()
     }
@@ -365,7 +365,7 @@ impl Language {
     }
 
     // «FixedBytesType» = 'bytes' ( '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15' | '16' | '17' | '18' | '19' | '20' | '21' | '22' | '23' | '24' | '25' | '26' | '27' | '28' | '29' | '30' | '31' | '32' ) ;
-    pub fn parse_fixed_bytes_type(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_fixed_bytes_type(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.fixed_bytes_type.parse_recovery(source);
         node.unwrap()
     }
@@ -401,37 +401,37 @@ impl Language {
     }
 
     // «HexByteEscape» = 'x' 2…2*{ «HexCharacter» } ;
-    pub fn parse_hex_byte_escape(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_hex_byte_escape(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.hex_byte_escape.parse_recovery(source);
         node.unwrap()
     }
 
     // «HexCharacter» = '0'…'9' | 'a'…'f' | 'A'…'F' ;
-    pub fn parse_hex_character(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_hex_character(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.hex_character.parse_recovery(source);
         node.unwrap()
     }
 
     // «HexNumber» = '0x' «HexCharacter» { [ '_' ] «HexCharacter» } ;
-    pub fn parse_hex_number(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_hex_number(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.hex_number.parse_recovery(source);
         node.unwrap()
     }
 
     // «HexStringLiteral» = 'hex' ( '"' [ «PossiblySeparatedPairsOfHexDigits» ] '"' | '\'' [ «PossiblySeparatedPairsOfHexDigits» ] '\'' ) ;
-    pub fn parse_hex_string_literal(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_hex_string_literal(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.hex_string_literal.parse_recovery(source);
         node.unwrap()
     }
 
     // «Identifier» = «RawIdentifier» - «Keyword» ;
-    pub fn parse_identifier(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_identifier(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.identifier.parse_recovery(source);
         node.unwrap()
     }
 
     // «IdentifierPart» = «IdentifierStart» | '0'…'9' ;
-    pub fn parse_identifier_part(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_identifier_part(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.identifier_part.parse_recovery(source);
         node.unwrap()
     }
@@ -443,7 +443,7 @@ impl Language {
     }
 
     // «IdentifierStart» = '_' | '$' | 'a'…'z' | 'A'…'Z' ;
-    pub fn parse_identifier_start(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_identifier_start(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.identifier_start.parse_recovery(source);
         node.unwrap()
     }
@@ -494,7 +494,7 @@ impl Language {
     }
 
     // «Keyword» = «BooleanLiteral» | «FixedBytesType» | «NumberUnit» | «ReservedKeyword» | «SignedIntegerType» | «UnsignedIntegerType» | 'abstract' | 'address' | 'anonymous' | 'as' | 'assembly' | 'bool' | 'break' | 'calldata' | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum' | 'event' | 'external' | 'fallback' | 'false' | 'fixed' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import' | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override' | 'payable' | 'pragma' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct' | 'true' | 'try' | 'type' | 'ufixed' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while' ;
-    pub fn parse_keyword(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_keyword(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.keyword.parse_recovery(source);
         node.unwrap()
     }
@@ -548,7 +548,7 @@ impl Language {
     }
 
     // «MultilineComment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
-    pub fn parse_multiline_comment(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_multiline_comment(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.multiline_comment.parse_recovery(source);
         node.unwrap()
     }
@@ -572,13 +572,13 @@ impl Language {
     }
 
     // «NumberUnit» = 'days' | 'ether' | 'finney' | 'gwei' | 'hours' | 'minutes' | 'seconds' | 'szabo' | 'weeks' | 'wei' | 'years' ;
-    pub fn parse_number_unit(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_number_unit(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.number_unit.parse_recovery(source);
         node.unwrap()
     }
 
     // «NumericLiteral» = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
-    pub fn parse_numeric_literal(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_numeric_literal(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.numeric_literal.parse_recovery(source);
         node.unwrap()
     }
@@ -635,7 +635,7 @@ impl Language {
     }
 
     // «PossiblySeparatedPairsOfHexDigits» = 2…2*{ «HexCharacter» } { [ '_' ] 2…2*{ «HexCharacter» } } ;
-    pub fn parse_possibly_separated_pairs_of_hex_digits(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_possibly_separated_pairs_of_hex_digits(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self
             .parsers
             .possibly_separated_pairs_of_hex_digits
@@ -656,7 +656,7 @@ impl Language {
     }
 
     // «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;
-    pub fn parse_raw_identifier(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_raw_identifier(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.raw_identifier.parse_recovery(source);
         node.unwrap()
     }
@@ -680,7 +680,7 @@ impl Language {
     }
 
     // «ReservedKeyword» = 'after' | 'alias' | 'apply' | 'auto' | 'byte' | 'case' | 'copyof' | 'default' | 'define' | 'final' | 'implements' | 'in' | 'inline' | 'let' | 'macro' | 'match' | 'mutable' | 'null' | 'of' | 'partial' | 'promise' | 'reference' | 'relocatable' | 'sealed' | 'sizeof' | 'static' | 'supports' | 'switch' | 'typedef' | 'typeof' | 'var' ;
-    pub fn parse_reserved_keyword(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_reserved_keyword(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.reserved_keyword.parse_recovery(source);
         node.unwrap()
     }
@@ -719,13 +719,13 @@ impl Language {
     }
 
     // «SignedFixedType» = 'fixed' [ 1…*{ '0'…'9' } 'x' 1…*{ '0'…'9' } ] ;
-    pub fn parse_signed_fixed_type(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_signed_fixed_type(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.signed_fixed_type.parse_recovery(source);
         node.unwrap()
     }
 
     // «SignedIntegerType» = 'int' [ '8' | '16' | '24' | '32' | '40' | '48' | '56' | '64' | '72' | '80' | '88' | '96' | '104' | '112' | '120' | '128' | '136' | '144' | '152' | '160' | '168' | '176' | '184' | '192' | '200' | '208' | '216' | '224' | '232' | '240' | '248' | '256' ] ;
-    pub fn parse_signed_integer_type(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_signed_integer_type(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.signed_integer_type.parse_recovery(source);
         node.unwrap()
     }
@@ -743,13 +743,13 @@ impl Language {
     }
 
     // «SingleLineComment» = '//' { ¬( '\u{d}' | '\u{a}' ) } ;
-    pub fn parse_single_line_comment(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_single_line_comment(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.single_line_comment.parse_recovery(source);
         node.unwrap()
     }
 
     // «SingleQuotedAsciiStringLiteral» = '\'' { 1…*{ '\u{20}'…'~' - ( '\'' | '\\' ) } | «EscapeSequence» } '\'' ;
-    pub fn parse_single_quoted_ascii_string_literal(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_single_quoted_ascii_string_literal(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self
             .parsers
             .single_quoted_ascii_string_literal
@@ -758,7 +758,7 @@ impl Language {
     }
 
     // «SingleQuotedUnicodeStringLiteral» = 'unicode\'' { 1…*{ ¬( '\'' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '\'' ;
-    pub fn parse_single_quoted_unicode_string_literal(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_single_quoted_unicode_string_literal(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self
             .parsers
             .single_quoted_unicode_string_literal
@@ -863,25 +863,25 @@ impl Language {
     }
 
     // «UnicodeEscape» = 'u' 4…4*{ «HexCharacter» } ;
-    pub fn parse_unicode_escape(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_unicode_escape(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.unicode_escape.parse_recovery(source);
         node.unwrap()
     }
 
     // «UnicodeStringLiteral» = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral» ;
-    pub fn parse_unicode_string_literal(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_unicode_string_literal(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.unicode_string_literal.parse_recovery(source);
         node.unwrap()
     }
 
     // «UnsignedFixedType» = 'u' «SignedFixedType» ;
-    pub fn parse_unsigned_fixed_type(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_unsigned_fixed_type(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.unsigned_fixed_type.parse_recovery(source);
         node.unwrap()
     }
 
     // «UnsignedIntegerType» = 'u' «SignedIntegerType» ;
-    pub fn parse_unsigned_integer_type(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_unsigned_integer_type(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.unsigned_integer_type.parse_recovery(source);
         node.unwrap()
     }
@@ -911,7 +911,7 @@ impl Language {
     }
 
     // «VersionPragmaOperator» = '^' | '~' | '=' | '<' | '>' | '<=' | '>=' ;
-    pub fn parse_version_pragma_operator(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_version_pragma_operator(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.version_pragma_operator.parse_recovery(source);
         node.unwrap()
     }
@@ -923,7 +923,7 @@ impl Language {
     }
 
     // «VersionPragmaValue» = 1…*{ '0'…'9' | 'x' | 'X' | '*' }  { '.' 1…*{ '0'…'9' | 'x' | 'X' | '*' } } ;
-    pub fn parse_version_pragma_value(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_version_pragma_value(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.version_pragma_value.parse_recovery(source);
         node.unwrap()
     }
@@ -935,7 +935,7 @@ impl Language {
     }
 
     // «Whitespace» = 1…*{ '\u{20}' | '\u{9}' } ;
-    pub fn parse_whitespace(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_whitespace(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.whitespace.parse_recovery(source);
         node.unwrap()
     }
@@ -965,7 +965,7 @@ impl Language {
     }
 
     // «YulDecimalNumberLiteral» = '0' | '1'…'9' { '0'…'9' } ;
-    pub fn parse_yul_decimal_number_literal(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_yul_decimal_number_literal(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self
             .parsers
             .yul_decimal_number_literal
@@ -998,13 +998,13 @@ impl Language {
     }
 
     // «YulHexLiteral» = '0x' 1…*{ «HexCharacter» } ;
-    pub fn parse_yul_hex_literal(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_yul_hex_literal(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.yul_hex_literal.parse_recovery(source);
         node.unwrap()
     }
 
     // «YulIdentifier» = «RawIdentifier» - «YulKeyword» ;
-    pub fn parse_yul_identifier(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_yul_identifier(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.yul_identifier.parse_recovery(source);
         node.unwrap()
     }
@@ -1022,7 +1022,7 @@ impl Language {
     }
 
     // «YulKeyword» = «BooleanLiteral» | 'break' | 'case' | 'continue' | 'default' | 'for' | 'function' | 'hex' | 'if' | 'leave' | 'let' | 'switch' ;
-    pub fn parse_yul_keyword(&self, source: &str) -> Rc<lex::Node> {
+    pub fn parse_yul_keyword(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.yul_keyword.parse_recovery(source);
         node.unwrap()
     }

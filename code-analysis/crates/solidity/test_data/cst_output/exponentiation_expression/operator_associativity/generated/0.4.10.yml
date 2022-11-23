@@ -10,7 +10,7 @@ root: !Rule
       children:
         - !Token
           kind: RawIdentifier
-          range:
+          lex_node: !Chars
             start: 0
             end: 1
           trivia:
@@ -18,7 +18,7 @@ root: !Rule
               kind: LeadingTrivia
         - !Token
           kind: StarStar
-          range:
+          lex_node: !Chars
             start: 2
             end: 4
           trivia:
@@ -27,12 +27,13 @@ root: !Rule
               children:
                 - !Token
                   kind: Whitespace
-                  range:
-                    start: 1
-                    end: 2
+                  lex_node: !Sequence
+                    - !Chars
+                      start: 1
+                      end: 2
         - !Token
           kind: RawIdentifier
-          range:
+          lex_node: !Chars
             start: 5
             end: 6
           trivia:
@@ -41,12 +42,13 @@ root: !Rule
               children:
                 - !Token
                   kind: Whitespace
-                  range:
-                    start: 4
-                    end: 5
+                  lex_node: !Sequence
+                    - !Chars
+                      start: 4
+                      end: 5
     - !Token
       kind: StarStar
-      range:
+      lex_node: !Chars
         start: 7
         end: 9
       trivia:
@@ -55,12 +57,13 @@ root: !Rule
           children:
             - !Token
               kind: Whitespace
-              range:
-                start: 6
-                end: 7
+              lex_node: !Sequence
+                - !Chars
+                  start: 6
+                  end: 7
     - !Token
       kind: RawIdentifier
-      range:
+      lex_node: !Chars
         start: 10
         end: 11
       trivia:
@@ -69,15 +72,17 @@ root: !Rule
           children:
             - !Token
               kind: Whitespace
-              range:
-                start: 9
-                end: 10
+              lex_node: !Sequence
+                - !Chars
+                  start: 9
+                  end: 10
         - !Rule
           kind: TrailingTrivia
           children:
             - None
             - !Token
               kind: EndOfLine
-              range:
-                start: 11
-                end: 12
+              lex_node: !Sequence
+                - !Chars
+                  start: 11
+                  end: 12

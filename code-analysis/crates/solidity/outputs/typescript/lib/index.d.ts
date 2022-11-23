@@ -466,6 +466,10 @@ export const enum LexNodeType {
   Sequence = 3,
   Named = 4
 }
+export interface TokenRange {
+  start: number
+  end: number
+}
 export type CSTNoneNode = CstNoneNode
 export class CstNoneNode {
   get type(): CSTNodeType.None
@@ -480,8 +484,7 @@ export type CSTTokenNode = CstTokenNode
 export class CstTokenNode {
   get type(): CSTNodeType.Token
   get kind(): Token
-  get start(): bigint
-  get end(): bigint
+  lexNode(): LexNoneNode | LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode
   trivia(): (CSTNoneNode | CSTRuleNode | CSTTokenNode | CSTGroupNode)[]
 }
 export type CSTGroupNode = CstGroupNode
@@ -498,8 +501,8 @@ export class Language {
   parseAndExpression(source: string): CSTRuleNode
   parseArgumentList(source: string): CSTRuleNode
   parseArrayLiteral(source: string): CSTRuleNode
-  parseAsciiEscape(source: string): LexNamedNode
-  parseAsciiStringLiteral(source: string): LexNamedNode
+  parseAsciiEscape(source: string): CSTTokenNode
+  parseAsciiStringLiteral(source: string): CSTTokenNode
   parseAssemblyFlags(source: string): CSTRuleNode
   parseAssemblyStatement(source: string): CSTRuleNode
   parseAssignmentExpression(source: string): CSTRuleNode
@@ -507,7 +510,7 @@ export class Language {
   parseBitOrExpression(source: string): CSTRuleNode
   parseBitXOrExpression(source: string): CSTRuleNode
   parseBlock(source: string): CSTRuleNode
-  parseBooleanLiteral(source: string): LexNamedNode
+  parseBooleanLiteral(source: string): CSTTokenNode
   parseBreakStatement(source: string): CSTRuleNode
   parseCatchClause(source: string): CSTRuleNode
   parseConditionalExpression(source: string): CSTRuleNode
@@ -518,25 +521,25 @@ export class Language {
   parseContractBodyElement(source: string): CSTRuleNode
   parseContractDefinition(source: string): CSTRuleNode
   parseDataLocation(source: string): CSTRuleNode
-  parseDecimalExponent(source: string): LexNamedNode
-  parseDecimalFloat(source: string): LexNamedNode
-  parseDecimalInteger(source: string): LexNamedNode
-  parseDecimalNumber(source: string): LexNamedNode
+  parseDecimalExponent(source: string): CSTTokenNode
+  parseDecimalFloat(source: string): CSTTokenNode
+  parseDecimalInteger(source: string): CSTTokenNode
+  parseDecimalNumber(source: string): CSTTokenNode
   parseDefinition(source: string): CSTRuleNode
   parseDeleteStatement(source: string): CSTRuleNode
   parseDirective(source: string): CSTRuleNode
   parseDoWhileStatement(source: string): CSTRuleNode
-  parseDoubleQuotedAsciiStringLiteral(source: string): LexNamedNode
-  parseDoubleQuotedUnicodeStringLiteral(source: string): LexNamedNode
+  parseDoubleQuotedAsciiStringLiteral(source: string): CSTTokenNode
+  parseDoubleQuotedUnicodeStringLiteral(source: string): CSTTokenNode
   parseElementaryType(source: string): CSTRuleNode
   parseEmitStatement(source: string): CSTRuleNode
   parseEndOfFileTrivia(source: string): CSTRuleNode
-  parseEndOfLine(source: string): LexNamedNode
+  parseEndOfLine(source: string): CSTTokenNode
   parseEnumDefinition(source: string): CSTRuleNode
   parseEqualityComparisonExpression(source: string): CSTRuleNode
   parseErrorDefinition(source: string): CSTRuleNode
   parseErrorParameter(source: string): CSTRuleNode
-  parseEscapeSequence(source: string): LexNamedNode
+  parseEscapeSequence(source: string): CSTTokenNode
   parseEventDefinition(source: string): CSTRuleNode
   parseEventParameter(source: string): CSTRuleNode
   parseExperimentalPragmaSpecifier(source: string): CSTRuleNode
@@ -545,20 +548,20 @@ export class Language {
   parseExpressionStatement(source: string): CSTRuleNode
   parseFallbackFunctionAttribute(source: string): CSTRuleNode
   parseFallbackFunctionDefinition(source: string): CSTRuleNode
-  parseFixedBytesType(source: string): LexNamedNode
+  parseFixedBytesType(source: string): CSTTokenNode
   parseForStatement(source: string): CSTRuleNode
   parseFunctionAttribute(source: string): CSTRuleNode
   parseFunctionCallExpression(source: string): CSTRuleNode
   parseFunctionDefinition(source: string): CSTRuleNode
   parseFunctionType(source: string): CSTRuleNode
-  parseHexByteEscape(source: string): LexNamedNode
-  parseHexCharacter(source: string): LexNamedNode
-  parseHexNumber(source: string): LexNamedNode
-  parseHexStringLiteral(source: string): LexNamedNode
-  parseIdentifier(source: string): LexNamedNode
-  parseIdentifierPart(source: string): LexNamedNode
+  parseHexByteEscape(source: string): CSTTokenNode
+  parseHexCharacter(source: string): CSTTokenNode
+  parseHexNumber(source: string): CSTTokenNode
+  parseHexStringLiteral(source: string): CSTTokenNode
+  parseIdentifier(source: string): CSTTokenNode
+  parseIdentifierPart(source: string): CSTTokenNode
   parseIdentifierPath(source: string): CSTRuleNode
-  parseIdentifierStart(source: string): LexNamedNode
+  parseIdentifierStart(source: string): CSTTokenNode
   parseIfStatement(source: string): CSTRuleNode
   parseImportDirective(source: string): CSTRuleNode
   parseImportPath(source: string): CSTRuleNode
@@ -566,7 +569,7 @@ export class Language {
   parseInheritanceSpecifier(source: string): CSTRuleNode
   parseInheritanceSpecifierList(source: string): CSTRuleNode
   parseInterfaceDefinition(source: string): CSTRuleNode
-  parseKeyword(source: string): LexNamedNode
+  parseKeyword(source: string): CSTTokenNode
   parseLeadingTrivia(source: string): CSTRuleNode
   parseLibraryDefinition(source: string): CSTRuleNode
   parseMappingType(source: string): CSTRuleNode
@@ -575,12 +578,12 @@ export class Language {
   parseModifierDefinition(source: string): CSTRuleNode
   parseModifierInvocation(source: string): CSTRuleNode
   parseMulDivModExpression(source: string): CSTRuleNode
-  parseMultilineComment(source: string): LexNamedNode
+  parseMultilineComment(source: string): CSTTokenNode
   parseNamedArgument(source: string): CSTRuleNode
   parseNamedArgumentList(source: string): CSTRuleNode
   parseNewExpression(source: string): CSTRuleNode
-  parseNumberUnit(source: string): LexNamedNode
-  parseNumericLiteral(source: string): LexNamedNode
+  parseNumberUnit(source: string): CSTTokenNode
+  parseNumericLiteral(source: string): CSTTokenNode
   parseOrExpression(source: string): CSTRuleNode
   parseOrderComparisonExpression(source: string): CSTRuleNode
   parseOverrideSpecifier(source: string): CSTRuleNode
@@ -589,25 +592,25 @@ export class Language {
   parseParenthesisExpression(source: string): CSTRuleNode
   parsePayableExpression(source: string): CSTRuleNode
   parsePositionalArgumentList(source: string): CSTRuleNode
-  parsePossiblySeparatedPairsOfHexDigits(source: string): LexNamedNode
+  parsePossiblySeparatedPairsOfHexDigits(source: string): CSTTokenNode
   parsePragmaDirective(source: string): CSTRuleNode
   parsePrimaryExpression(source: string): CSTRuleNode
-  parseRawIdentifier(source: string): LexNamedNode
+  parseRawIdentifier(source: string): CSTTokenNode
   parseReceiveFunctionAttribute(source: string): CSTRuleNode
   parseReceiveFunctionDefinition(source: string): CSTRuleNode
-  parseReservedKeyword(source: string): LexNamedNode
+  parseReservedKeyword(source: string): CSTTokenNode
   parseReturnStatement(source: string): CSTRuleNode
   parseRevertStatement(source: string): CSTRuleNode
   parseSelectedImport(source: string): CSTRuleNode
   parseSelectingImportDirective(source: string): CSTRuleNode
   parseShiftExpression(source: string): CSTRuleNode
-  parseSignedFixedType(source: string): LexNamedNode
-  parseSignedIntegerType(source: string): LexNamedNode
+  parseSignedFixedType(source: string): CSTTokenNode
+  parseSignedIntegerType(source: string): CSTTokenNode
   parseSimpleImportDirective(source: string): CSTRuleNode
   parseSimpleStatement(source: string): CSTRuleNode
-  parseSingleLineComment(source: string): LexNamedNode
-  parseSingleQuotedAsciiStringLiteral(source: string): LexNamedNode
-  parseSingleQuotedUnicodeStringLiteral(source: string): LexNamedNode
+  parseSingleLineComment(source: string): CSTTokenNode
+  parseSingleQuotedAsciiStringLiteral(source: string): CSTTokenNode
+  parseSingleQuotedUnicodeStringLiteral(source: string): CSTTokenNode
   parseSourceUnit(source: string): CSTRuleNode
   parseStarImportDirective(source: string): CSTRuleNode
   parseStateVariableAttribute(source: string): CSTRuleNode
@@ -623,32 +626,32 @@ export class Language {
   parseUnaryPrefixExpression(source: string): CSTRuleNode
   parseUnarySuffixExpression(source: string): CSTRuleNode
   parseUncheckedBlock(source: string): CSTRuleNode
-  parseUnicodeEscape(source: string): LexNamedNode
-  parseUnicodeStringLiteral(source: string): LexNamedNode
-  parseUnsignedFixedType(source: string): LexNamedNode
-  parseUnsignedIntegerType(source: string): LexNamedNode
+  parseUnicodeEscape(source: string): CSTTokenNode
+  parseUnicodeStringLiteral(source: string): CSTTokenNode
+  parseUnsignedFixedType(source: string): CSTTokenNode
+  parseUnsignedIntegerType(source: string): CSTTokenNode
   parseUserDefinedValueTypeDefinition(source: string): CSTRuleNode
   parseUsingDirective(source: string): CSTRuleNode
   parseVariableDeclarationStatement(source: string): CSTRuleNode
-  parseVersionPragmaOperator(source: string): LexNamedNode
+  parseVersionPragmaOperator(source: string): CSTTokenNode
   parseVersionPragmaSpecifier(source: string): CSTRuleNode
-  parseVersionPragmaValue(source: string): LexNamedNode
+  parseVersionPragmaValue(source: string): CSTTokenNode
   parseWhileStatement(source: string): CSTRuleNode
-  parseWhitespace(source: string): LexNamedNode
+  parseWhitespace(source: string): CSTTokenNode
   parseYulAssignmentStatement(source: string): CSTRuleNode
   parseYulBlock(source: string): CSTRuleNode
   parseYulBreakStatement(source: string): CSTRuleNode
   parseYulContinueStatement(source: string): CSTRuleNode
-  parseYulDecimalNumberLiteral(source: string): LexNamedNode
+  parseYulDecimalNumberLiteral(source: string): CSTTokenNode
   parseYulExpression(source: string): CSTRuleNode
   parseYulForStatement(source: string): CSTRuleNode
   parseYulFunctionCall(source: string): CSTRuleNode
   parseYulFunctionDefinition(source: string): CSTRuleNode
-  parseYulHexLiteral(source: string): LexNamedNode
-  parseYulIdentifier(source: string): LexNamedNode
+  parseYulHexLiteral(source: string): CSTTokenNode
+  parseYulIdentifier(source: string): CSTTokenNode
   parseYulIdentifierPath(source: string): CSTRuleNode
   parseYulIfStatement(source: string): CSTRuleNode
-  parseYulKeyword(source: string): LexNamedNode
+  parseYulKeyword(source: string): CSTTokenNode
   parseYulLeaveStatement(source: string): CSTRuleNode
   parseYulLiteral(source: string): CSTRuleNode
   parseYulStatement(source: string): CSTRuleNode
@@ -657,23 +660,26 @@ export class Language {
 }
 export class LexNoneNode {
   get type(): LexNodeType.None
+  get range(): TokenRange
 }
 export class LexCharsNode {
   get type(): LexNodeType.Chars
-  get start(): bigint
-  get end(): bigint
+  get range(): TokenRange
 }
 export class LexChoiceNode {
   get type(): LexNodeType.Choice
+  get range(): TokenRange
   get index(): bigint
   child(): LexNoneNode | LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode
 }
 export class LexSequenceNode {
   get type(): LexNodeType.Sequence
+  get range(): TokenRange
   children(): (LexNoneNode | LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode)[]
 }
 export class LexNamedNode {
   get type(): LexNodeType.Named
+  get range(): TokenRange
   get kind(): Token
   child(): LexNoneNode | LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode
 }

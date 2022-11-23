@@ -1,12 +1,12 @@
 import test from "ava";
 
-import { Language, Rule, Token, CSTNodeType, LexNodeType, LexNamedNode, CSTRuleNode } from "../index";
+import { Language, Rule, Token, CSTNodeType, LexNodeType, CSTRuleNode, CSTTokenNode } from "../index";
 
 test("parse some token", (t) => {
   const l = new Language("0.18.3");
-  const lt: LexNamedNode = l.parseNumericLiteral("5_286_981");
-  t.is(lt.type, LexNodeType.Named);
-  t.is(lt.kind, Token.NumericLiteral);
+  const cst: CSTTokenNode = l.parseNumericLiteral("5_286_981");
+  t.is(cst.type, CSTNodeType.Token);
+  t.is(cst.kind, Token.NumericLiteral);
 });
 
 test("parse some syntax", (t) => {

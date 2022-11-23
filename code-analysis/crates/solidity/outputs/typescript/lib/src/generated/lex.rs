@@ -36,6 +36,11 @@ pub enum LexNodeType {
     Sequence,
     Named,
 }
+#[napi(object)]
+pub struct TokenRange {
+    pub start: u32,
+    pub end: u32,
+}
 #[napi]
 pub struct LexNoneNode;
 #[napi]
@@ -52,6 +57,10 @@ impl LexNoneNode {
     pub fn tipe(&self) -> LexNodeType {
         LexNodeType::None
     }
+    #[napi(getter)]
+    pub fn range(&self) -> TokenRange {
+        TokenRange { start: 0, end: 0 }
+    }
 }
 #[napi]
 impl LexCharsNode {
@@ -60,16 +69,12 @@ impl LexCharsNode {
         LexNodeType::Chars
     }
     #[napi(getter)]
-    pub fn start(&self) -> usize {
+    pub fn range(&self) -> TokenRange {
         match self.0.as_ref() {
-            Node::Chars(range) => range.start,
-            _ => unreachable!(),
-        }
-    }
-    #[napi(getter)]
-    pub fn end(&self) -> usize {
-        match self.0.as_ref() {
-            Node::Chars(range) => range.end,
+            Node::Chars(range) => TokenRange {
+                start: range.start as u32,
+                end: range.end as u32,
+            },
             _ => unreachable!(),
         }
     }
@@ -79,6 +84,14 @@ impl LexChoiceNode {
     #[napi(getter, js_name = "type", ts_return_type = "LexNodeType.Choice")]
     pub fn tipe(&self) -> LexNodeType {
         LexNodeType::Choice
+    }
+    #[napi(getter)]
+    pub fn range(&self) -> TokenRange {
+        let range = self.0.range();
+        TokenRange {
+            start: range.start as u32,
+            end: range.end as u32,
+        }
     }
     #[napi(getter)]
     pub fn index(&self) -> usize {
@@ -103,6 +116,14 @@ impl LexSequenceNode {
     pub fn tipe(&self) -> LexNodeType {
         LexNodeType::Sequence
     }
+    #[napi(getter)]
+    pub fn range(&self) -> TokenRange {
+        let range = self.0.range();
+        TokenRange {
+            start: range.start as u32,
+            end: range.end as u32,
+        }
+    }
     #[napi(
         ts_return_type = "(LexNoneNode | LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode)[]"
     )]
@@ -118,6 +139,14 @@ impl LexNamedNode {
     #[napi(getter, js_name = "type", ts_return_type = "LexNodeType.Named")]
     pub fn tipe(&self) -> LexNodeType {
         LexNodeType::Named
+    }
+    #[napi(getter)]
+    pub fn range(&self) -> TokenRange {
+        let range = self.0.range();
+        TokenRange {
+            start: range.start as u32,
+            end: range.end as u32,
+        }
     }
     #[napi(getter)]
     pub fn kind(&self) -> kinds::Token {

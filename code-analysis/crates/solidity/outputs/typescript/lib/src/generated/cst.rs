@@ -1,8 +1,8 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 use super::kinds;
+use super::lex;
 use serde::Serialize;
-use std::ops::Range;
 use std::rc::Rc;
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub enum Node {
@@ -14,9 +14,7 @@ pub enum Node {
     },
     Token {
         kind: kinds::Token,
-        #[doc = r" Range doesn't include the trivia"]
-        range: Range<usize>,
-        #[doc = r" Only Trivia"]
+        lex_node: Rc<lex::Node>,
         #[serde(skip_serializing_if = "Vec::is_empty")]
         trivia: Vec<Rc<Node>>,
     },
@@ -26,6 +24,7 @@ pub enum Node {
         children: Vec<Rc<Node>>,
     },
 }
+use super::lex::RcNodeExtensions as LexRcNodeExtensions;
 use napi::bindgen_prelude::*;
 use napi::JsObject;
 use napi::NapiValue;
@@ -85,17 +84,12 @@ impl CSTTokenNode {
             _ => unreachable!(),
         }
     }
-    #[napi(getter)]
-    pub fn start(&self) -> usize {
+    #[napi(
+        ts_return_type = "LexNoneNode | LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode"
+    )]
+    pub fn lex_node(&self, env: Env) -> JsObject {
         match self.0.as_ref() {
-            Node::Token { range, .. } => range.start,
-            _ => unreachable!(),
-        }
-    }
-    #[napi(getter)]
-    pub fn end(&self) -> usize {
-        match self.0.as_ref() {
-            Node::Token { range, .. } => range.end,
+            Node::Token { lex_node, .. } => lex_node.to_js(&env),
             _ => unreachable!(),
         }
     }

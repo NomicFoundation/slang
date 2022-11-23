@@ -39,16 +39,16 @@ mod factory {
     pub fn cst_rule(kind: kinds::Rule, children: Vec<Rc<cst::Node>>) -> Rc<cst::Node> {
         Rc::new(cst::Node::Rule { kind, children })
     }
-    pub fn cst_trivia_token(range: Range<usize>, kind: kinds::Token) -> Rc<cst::Node> {
+    pub fn cst_trivia_token(kind: kinds::Token, lex_node: Rc<lex::Node>) -> Rc<cst::Node> {
         Rc::new(cst::Node::Token {
-            range,
             kind,
+            lex_node,
             trivia: vec![],
         })
     }
     pub fn cst_token(
-        range: Range<usize>,
         kind: kinds::Token,
+        lex_node: Rc<lex::Node>,
         leading_trivia: Rc<cst::Node>,
         trailing_trivia: Rc<cst::Node>,
     ) -> Rc<cst::Node> {
@@ -60,8 +60,8 @@ mod factory {
             trivia.push(trailing_trivia)
         }
         Rc::new(cst::Node::Token {
-            range,
             kind,
+            lex_node,
             trivia,
         })
     }
@@ -121,10 +121,10 @@ pub struct Parsers<'a> {
     pub array_literal: ParserType<'a, Rc<cst::Node>>,
 
     /// «AsciiEscape» = 'n' | 'r' | 't' | '\'' | '"' | '\\' | '\u{a}' | '\u{d}' ;
-    pub ascii_escape: ParserType<'a, Rc<lex::Node>>,
+    pub ascii_escape: ParserType<'a, Rc<cst::Node>>,
 
     /// «AsciiStringLiteral» = «SingleQuotedAsciiStringLiteral» | «DoubleQuotedAsciiStringLiteral» ;
-    pub ascii_string_literal: ParserType<'a, Rc<lex::Node>>,
+    pub ascii_string_literal: ParserType<'a, Rc<cst::Node>>,
 
     /// AssemblyFlags = '(' «DoubleQuotedAsciiStringLiteral»  { ',' «DoubleQuotedAsciiStringLiteral» } ')' ;
     pub assembly_flags: ParserType<'a, Rc<cst::Node>>,
@@ -148,7 +148,7 @@ pub struct Parsers<'a> {
     pub block: ParserType<'a, Rc<cst::Node>>,
 
     /// «BooleanLiteral» = 'true' | 'false' ;
-    pub boolean_literal: ParserType<'a, Rc<lex::Node>>,
+    pub boolean_literal: ParserType<'a, Rc<cst::Node>>,
 
     /// BreakStatement = 'break' ';' ;
     pub break_statement: ParserType<'a, Rc<cst::Node>>,
@@ -181,16 +181,16 @@ pub struct Parsers<'a> {
     pub data_location: ParserType<'a, Rc<cst::Node>>,
 
     /// «DecimalExponent» = ( 'e' | 'E' ) [ '-' ] «DecimalInteger» ;
-    pub decimal_exponent: ParserType<'a, Rc<lex::Node>>,
+    pub decimal_exponent: ParserType<'a, Rc<cst::Node>>,
 
     /// «DecimalFloat» = [ «DecimalInteger» ] '.' «DecimalInteger» ;
-    pub decimal_float: ParserType<'a, Rc<lex::Node>>,
+    pub decimal_float: ParserType<'a, Rc<cst::Node>>,
 
     /// «DecimalInteger» = '0'…'9' { [ '_' ] '0'…'9' } ;
-    pub decimal_integer: ParserType<'a, Rc<lex::Node>>,
+    pub decimal_integer: ParserType<'a, Rc<cst::Node>>,
 
     /// «DecimalNumber» = ( «DecimalInteger» | «DecimalFloat» ) [ «DecimalExponent» ] ;
-    pub decimal_number: ParserType<'a, Rc<lex::Node>>,
+    pub decimal_number: ParserType<'a, Rc<cst::Node>>,
 
     /// Definition = ContractDefinition | InterfaceDefinition | LibraryDefinition | FunctionDefinition | ConstantDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | ErrorDefinition ;
     pub definition: ParserType<'a, Rc<cst::Node>>,
@@ -205,10 +205,10 @@ pub struct Parsers<'a> {
     pub do_while_statement: ParserType<'a, Rc<cst::Node>>,
 
     /// «DoubleQuotedAsciiStringLiteral» = '"' { 1…*{ '\u{20}'…'~' - ( '"' | '\\' ) } | «EscapeSequence» } '"' ;
-    pub double_quoted_ascii_string_literal: ParserType<'a, Rc<lex::Node>>,
+    pub double_quoted_ascii_string_literal: ParserType<'a, Rc<cst::Node>>,
 
     /// «DoubleQuotedUnicodeStringLiteral» = 'unicode"' { 1…*{ ¬( '"' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '"' ;
-    pub double_quoted_unicode_string_literal: ParserType<'a, Rc<lex::Node>>,
+    pub double_quoted_unicode_string_literal: ParserType<'a, Rc<cst::Node>>,
 
     /// ElementaryType = 'bool' | 'string' | AddressType | «FixedBytesType» | «SignedIntegerType» | «UnsignedIntegerType» | «SignedFixedType» | «UnsignedFixedType» ;
     pub elementary_type: ParserType<'a, Rc<cst::Node>>,
@@ -220,7 +220,7 @@ pub struct Parsers<'a> {
     pub end_of_file_trivia: ParserType<'a, Rc<cst::Node>>,
 
     /// «EndOfLine» = 1…*{ '\u{d}' | '\u{a}' } ;
-    pub end_of_line: ParserType<'a, Rc<lex::Node>>,
+    pub end_of_line: ParserType<'a, Rc<cst::Node>>,
 
     /// EnumDefinition = 'enum' «Identifier» '{' «Identifier»  { ',' «Identifier» } '}' ;
     pub enum_definition: ParserType<'a, Rc<cst::Node>>,
@@ -235,7 +235,7 @@ pub struct Parsers<'a> {
     pub error_parameter: ParserType<'a, Rc<cst::Node>>,
 
     /// «EscapeSequence» = '\\' ( «AsciiEscape» | «HexByteEscape» | «UnicodeEscape» ) ;
-    pub escape_sequence: ParserType<'a, Rc<lex::Node>>,
+    pub escape_sequence: ParserType<'a, Rc<cst::Node>>,
 
     /// EventDefinition = 'event' «Identifier» '(' [ EventParameter  { ',' EventParameter } ] ')' [ 'anonymous' ] ';' ;
     pub event_definition: ParserType<'a, Rc<cst::Node>>,
@@ -263,7 +263,7 @@ pub struct Parsers<'a> {
     pub fallback_function_definition: ParserType<'a, Rc<cst::Node>>,
 
     /// «FixedBytesType» = 'bytes' ( '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15' | '16' | '17' | '18' | '19' | '20' | '21' | '22' | '23' | '24' | '25' | '26' | '27' | '28' | '29' | '30' | '31' | '32' ) ;
-    pub fixed_bytes_type: ParserType<'a, Rc<lex::Node>>,
+    pub fixed_bytes_type: ParserType<'a, Rc<cst::Node>>,
 
     /// ForStatement = 'for' '(' ( SimpleStatement | ';' ) ( ExpressionStatement | ';' ) [ Expression ] ')' Statement ;
     pub for_statement: ParserType<'a, Rc<cst::Node>>,
@@ -281,28 +281,28 @@ pub struct Parsers<'a> {
     pub function_type: ParserType<'a, Rc<cst::Node>>,
 
     /// «HexByteEscape» = 'x' 2…2*{ «HexCharacter» } ;
-    pub hex_byte_escape: ParserType<'a, Rc<lex::Node>>,
+    pub hex_byte_escape: ParserType<'a, Rc<cst::Node>>,
 
     /// «HexCharacter» = '0'…'9' | 'a'…'f' | 'A'…'F' ;
-    pub hex_character: ParserType<'a, Rc<lex::Node>>,
+    pub hex_character: ParserType<'a, Rc<cst::Node>>,
 
     /// «HexNumber» = '0x' «HexCharacter» { [ '_' ] «HexCharacter» } ;
-    pub hex_number: ParserType<'a, Rc<lex::Node>>,
+    pub hex_number: ParserType<'a, Rc<cst::Node>>,
 
     /// «HexStringLiteral» = 'hex' ( '"' [ «PossiblySeparatedPairsOfHexDigits» ] '"' | '\'' [ «PossiblySeparatedPairsOfHexDigits» ] '\'' ) ;
-    pub hex_string_literal: ParserType<'a, Rc<lex::Node>>,
+    pub hex_string_literal: ParserType<'a, Rc<cst::Node>>,
 
     /// «Identifier» = «RawIdentifier» - «Keyword» ;
-    pub identifier: ParserType<'a, Rc<lex::Node>>,
+    pub identifier: ParserType<'a, Rc<cst::Node>>,
 
     /// «IdentifierPart» = «IdentifierStart» | '0'…'9' ;
-    pub identifier_part: ParserType<'a, Rc<lex::Node>>,
+    pub identifier_part: ParserType<'a, Rc<cst::Node>>,
 
     /// IdentifierPath = «Identifier»  { '.' «Identifier» } ;
     pub identifier_path: ParserType<'a, Rc<cst::Node>>,
 
     /// «IdentifierStart» = '_' | '$' | 'a'…'z' | 'A'…'Z' ;
-    pub identifier_start: ParserType<'a, Rc<lex::Node>>,
+    pub identifier_start: ParserType<'a, Rc<cst::Node>>,
 
     /// IfStatement = 'if' '(' Expression ')' Statement [ 'else' Statement ] ;
     pub if_statement: ParserType<'a, Rc<cst::Node>>,
@@ -326,7 +326,7 @@ pub struct Parsers<'a> {
     pub interface_definition: ParserType<'a, Rc<cst::Node>>,
 
     /// «Keyword» = «BooleanLiteral» | «FixedBytesType» | «NumberUnit» | «ReservedKeyword» | «SignedIntegerType» | «UnsignedIntegerType» | 'abstract' | 'address' | 'anonymous' | 'as' | 'assembly' | 'bool' | 'break' | 'calldata' | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum' | 'event' | 'external' | 'fallback' | 'false' | 'fixed' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import' | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override' | 'payable' | 'pragma' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct' | 'true' | 'try' | 'type' | 'ufixed' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while' ;
-    pub keyword: ParserType<'a, Rc<lex::Node>>,
+    pub keyword: ParserType<'a, Rc<cst::Node>>,
 
     /// LeadingTrivia = { «Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment» } ;
     pub leading_trivia: ParserType<'a, Rc<cst::Node>>,
@@ -353,7 +353,7 @@ pub struct Parsers<'a> {
     pub mul_div_mod_expression: ParserType<'a, Rc<cst::Node>>,
 
     /// «MultilineComment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
-    pub multiline_comment: ParserType<'a, Rc<lex::Node>>,
+    pub multiline_comment: ParserType<'a, Rc<cst::Node>>,
 
     /// NamedArgument = «Identifier» ':' Expression ;
     pub named_argument: ParserType<'a, Rc<cst::Node>>,
@@ -365,10 +365,10 @@ pub struct Parsers<'a> {
     pub new_expression: ParserType<'a, Rc<cst::Node>>,
 
     /// «NumberUnit» = 'days' | 'ether' | 'finney' | 'gwei' | 'hours' | 'minutes' | 'seconds' | 'szabo' | 'weeks' | 'wei' | 'years' ;
-    pub number_unit: ParserType<'a, Rc<lex::Node>>,
+    pub number_unit: ParserType<'a, Rc<cst::Node>>,
 
     /// «NumericLiteral» = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
-    pub numeric_literal: ParserType<'a, Rc<lex::Node>>,
+    pub numeric_literal: ParserType<'a, Rc<cst::Node>>,
 
     /// OrExpression = Expression '||' Expression ;
     pub or_expression: ParserType<'a, Rc<cst::Node>>,
@@ -395,7 +395,7 @@ pub struct Parsers<'a> {
     pub positional_argument_list: ParserType<'a, Rc<cst::Node>>,
 
     /// «PossiblySeparatedPairsOfHexDigits» = 2…2*{ «HexCharacter» } { [ '_' ] 2…2*{ «HexCharacter» } } ;
-    pub possibly_separated_pairs_of_hex_digits: ParserType<'a, Rc<lex::Node>>,
+    pub possibly_separated_pairs_of_hex_digits: ParserType<'a, Rc<cst::Node>>,
 
     /// PragmaDirective = 'pragma' ( VersionPragmaSpecifier | ABICoderPragmaSpecifier | ExperimentalPragmaSpecifier ) ';' ;
     pub pragma_directive: ParserType<'a, Rc<cst::Node>>,
@@ -404,7 +404,7 @@ pub struct Parsers<'a> {
     pub primary_expression: ParserType<'a, Rc<cst::Node>>,
 
     /// «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;
-    pub raw_identifier: ParserType<'a, Rc<lex::Node>>,
+    pub raw_identifier: ParserType<'a, Rc<cst::Node>>,
 
     /// ReceiveFunctionAttribute = ModifierInvocation | OverrideSpecifier | 'external' | 'payable' | 'virtual' ;
     pub receive_function_attribute: ParserType<'a, Rc<cst::Node>>,
@@ -413,7 +413,7 @@ pub struct Parsers<'a> {
     pub receive_function_definition: ParserType<'a, Rc<cst::Node>>,
 
     /// «ReservedKeyword» = 'after' | 'alias' | 'apply' | 'auto' | 'byte' | 'case' | 'copyof' | 'default' | 'define' | 'final' | 'implements' | 'in' | 'inline' | 'let' | 'macro' | 'match' | 'mutable' | 'null' | 'of' | 'partial' | 'promise' | 'reference' | 'relocatable' | 'sealed' | 'sizeof' | 'static' | 'supports' | 'switch' | 'typedef' | 'typeof' | 'var' ;
-    pub reserved_keyword: ParserType<'a, Rc<lex::Node>>,
+    pub reserved_keyword: ParserType<'a, Rc<cst::Node>>,
 
     /// ReturnStatement = 'return' [ Expression ] ';' ;
     pub return_statement: ParserType<'a, Rc<cst::Node>>,
@@ -431,10 +431,10 @@ pub struct Parsers<'a> {
     pub shift_expression: ParserType<'a, Rc<cst::Node>>,
 
     /// «SignedFixedType» = 'fixed' [ 1…*{ '0'…'9' } 'x' 1…*{ '0'…'9' } ] ;
-    pub signed_fixed_type: ParserType<'a, Rc<lex::Node>>,
+    pub signed_fixed_type: ParserType<'a, Rc<cst::Node>>,
 
     /// «SignedIntegerType» = 'int' [ '8' | '16' | '24' | '32' | '40' | '48' | '56' | '64' | '72' | '80' | '88' | '96' | '104' | '112' | '120' | '128' | '136' | '144' | '152' | '160' | '168' | '176' | '184' | '192' | '200' | '208' | '216' | '224' | '232' | '240' | '248' | '256' ] ;
-    pub signed_integer_type: ParserType<'a, Rc<lex::Node>>,
+    pub signed_integer_type: ParserType<'a, Rc<cst::Node>>,
 
     /// SimpleImportDirective = ImportPath { 'as' «Identifier» } ;
     pub simple_import_directive: ParserType<'a, Rc<cst::Node>>,
@@ -443,13 +443,13 @@ pub struct Parsers<'a> {
     pub simple_statement: ParserType<'a, Rc<cst::Node>>,
 
     /// «SingleLineComment» = '//' { ¬( '\u{d}' | '\u{a}' ) } ;
-    pub single_line_comment: ParserType<'a, Rc<lex::Node>>,
+    pub single_line_comment: ParserType<'a, Rc<cst::Node>>,
 
     /// «SingleQuotedAsciiStringLiteral» = '\'' { 1…*{ '\u{20}'…'~' - ( '\'' | '\\' ) } | «EscapeSequence» } '\'' ;
-    pub single_quoted_ascii_string_literal: ParserType<'a, Rc<lex::Node>>,
+    pub single_quoted_ascii_string_literal: ParserType<'a, Rc<cst::Node>>,
 
     /// «SingleQuotedUnicodeStringLiteral» = 'unicode\'' { 1…*{ ¬( '\'' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '\'' ;
-    pub single_quoted_unicode_string_literal: ParserType<'a, Rc<lex::Node>>,
+    pub single_quoted_unicode_string_literal: ParserType<'a, Rc<cst::Node>>,
 
     /// SourceUnit = LeadingTrivia { Directive | Definition } EndOfFileTrivia ;
     pub source_unit: ParserType<'a, Rc<cst::Node>>,
@@ -497,16 +497,16 @@ pub struct Parsers<'a> {
     pub unchecked_block: ParserType<'a, Rc<cst::Node>>,
 
     /// «UnicodeEscape» = 'u' 4…4*{ «HexCharacter» } ;
-    pub unicode_escape: ParserType<'a, Rc<lex::Node>>,
+    pub unicode_escape: ParserType<'a, Rc<cst::Node>>,
 
     /// «UnicodeStringLiteral» = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral» ;
-    pub unicode_string_literal: ParserType<'a, Rc<lex::Node>>,
+    pub unicode_string_literal: ParserType<'a, Rc<cst::Node>>,
 
     /// «UnsignedFixedType» = 'u' «SignedFixedType» ;
-    pub unsigned_fixed_type: ParserType<'a, Rc<lex::Node>>,
+    pub unsigned_fixed_type: ParserType<'a, Rc<cst::Node>>,
 
     /// «UnsignedIntegerType» = 'u' «SignedIntegerType» ;
-    pub unsigned_integer_type: ParserType<'a, Rc<lex::Node>>,
+    pub unsigned_integer_type: ParserType<'a, Rc<cst::Node>>,
 
     /// UserDefinedValueTypeDefinition = 'type' «Identifier» 'is' ElementaryType ';' ;
     pub user_defined_value_type_definition: ParserType<'a, Rc<cst::Node>>,
@@ -518,19 +518,19 @@ pub struct Parsers<'a> {
     pub variable_declaration_statement: ParserType<'a, Rc<cst::Node>>,
 
     /// «VersionPragmaOperator» = '^' | '~' | '=' | '<' | '>' | '<=' | '>=' ;
-    pub version_pragma_operator: ParserType<'a, Rc<lex::Node>>,
+    pub version_pragma_operator: ParserType<'a, Rc<cst::Node>>,
 
     /// VersionPragmaSpecifier = 'solidity' 1…*{ «VersionPragmaOperator» «VersionPragmaValue» } ;
     pub version_pragma_specifier: ParserType<'a, Rc<cst::Node>>,
 
     /// «VersionPragmaValue» = 1…*{ '0'…'9' | 'x' | 'X' | '*' }  { '.' 1…*{ '0'…'9' | 'x' | 'X' | '*' } } ;
-    pub version_pragma_value: ParserType<'a, Rc<lex::Node>>,
+    pub version_pragma_value: ParserType<'a, Rc<cst::Node>>,
 
     /// WhileStatement = 'while' '(' Expression ')' Statement ;
     pub while_statement: ParserType<'a, Rc<cst::Node>>,
 
     /// «Whitespace» = 1…*{ '\u{20}' | '\u{9}' } ;
-    pub whitespace: ParserType<'a, Rc<lex::Node>>,
+    pub whitespace: ParserType<'a, Rc<cst::Node>>,
 
     /// YulAssignmentStatement = YulIdentifierPath  { ',' YulIdentifierPath } ':=' YulExpression ;
     pub yul_assignment_statement: ParserType<'a, Rc<cst::Node>>,
@@ -545,7 +545,7 @@ pub struct Parsers<'a> {
     pub yul_continue_statement: ParserType<'a, Rc<cst::Node>>,
 
     /// «YulDecimalNumberLiteral» = '0' | '1'…'9' { '0'…'9' } ;
-    pub yul_decimal_number_literal: ParserType<'a, Rc<lex::Node>>,
+    pub yul_decimal_number_literal: ParserType<'a, Rc<cst::Node>>,
 
     /// YulExpression = YulIdentifierPath | YulFunctionCall | YulLiteral ;
     pub yul_expression: ParserType<'a, Rc<cst::Node>>,
@@ -560,10 +560,10 @@ pub struct Parsers<'a> {
     pub yul_function_definition: ParserType<'a, Rc<cst::Node>>,
 
     /// «YulHexLiteral» = '0x' 1…*{ «HexCharacter» } ;
-    pub yul_hex_literal: ParserType<'a, Rc<lex::Node>>,
+    pub yul_hex_literal: ParserType<'a, Rc<cst::Node>>,
 
     /// «YulIdentifier» = «RawIdentifier» - «YulKeyword» ;
-    pub yul_identifier: ParserType<'a, Rc<lex::Node>>,
+    pub yul_identifier: ParserType<'a, Rc<cst::Node>>,
 
     /// YulIdentifierPath = «YulIdentifier»  { '.' «YulIdentifier» } ;
     pub yul_identifier_path: ParserType<'a, Rc<cst::Node>>,
@@ -572,7 +572,7 @@ pub struct Parsers<'a> {
     pub yul_if_statement: ParserType<'a, Rc<cst::Node>>,
 
     /// «YulKeyword» = «BooleanLiteral» | 'break' | 'case' | 'continue' | 'default' | 'for' | 'function' | 'hex' | 'if' | 'leave' | 'let' | 'switch' ;
-    pub yul_keyword: ParserType<'a, Rc<lex::Node>>,
+    pub yul_keyword: ParserType<'a, Rc<cst::Node>>,
 
     /// YulLeaveStatement = 'leave' ;
     pub yul_leave_statement: ParserType<'a, Rc<cst::Node>>,
@@ -933,19 +933,25 @@ impl<'a> Parsers<'a> {
         macro_rules! trivia_terminal {
             ($ kind : ident , $ literal : literal) => {
                 just($literal).map_with_span(|_, span: SpanType| {
-                    factory::cst_trivia_token(span.start()..span.end(), kinds::Token::$kind)
+                    factory::cst_trivia_token(
+                        kinds::Token::$kind,
+                        factory::lex_chars(span.start()..span.end()),
+                    )
                 })
             };
             ($ kind : ident , $ filter : expr) => {
                 filter($filter).map_with_span(|_, span: SpanType| {
-                    factory::cst_trivia_token(span.start()..span.end(), kinds::Token::$kind)
+                    factory::cst_trivia_token(
+                        kinds::Token::$kind,
+                        factory::lex_chars(span.start()..span.end()),
+                    )
                 })
             };
         }
         #[allow(unused_macros)]
-        macro_rules ! trivia_token { ($ token_rule : ident) => { $ token_rule . clone () . map (| token : Rc < lex :: Node > | { if let lex :: Node :: Named (kind , element) = token . as_ref () { factory :: cst_trivia_token (element . range () , * kind) } else { unreachable ! ("a token rule should always return a named token, but rule {} returned {:?}" , stringify ! ($ token_rule) , token) } }) } ; }
+        macro_rules ! trivia_token { ($ token_rule : ident) => { $ token_rule . clone () . map (| token : Rc < lex :: Node > | { if let lex :: Node :: Named (kind , element) = token . as_ref () { factory :: cst_trivia_token (* kind , element . clone ()) } else { unreachable ! ("a token rule should always return a named token, but rule {} returned {:?}" , stringify ! ($ token_rule) , token) } }) } ; }
         #[allow(unused_macros)]
-        macro_rules ! trivia_trie { ($ ($ expr : expr) , *) => (choice :: < _ , ErrorType > (($ ($ expr) , *)) . map_with_span (| kind , span : SpanType | factory :: cst_trivia_token (span . start () .. span . end () , kind))) }
+        macro_rules ! trivia_trie { ($ ($ expr : expr) , *) => (choice :: < _ , ErrorType > (($ ($ expr) , *)) . map_with_span (| kind , span : SpanType | factory :: cst_trivia_token (kind , factory :: lex_chars (span . start () .. span . end ())))) }
         #[allow(unused_macros)]
         macro_rules! terminal {
             ($ kind : ident , $ literal : literal) => {
@@ -957,8 +963,8 @@ impl<'a> Parsers<'a> {
                     .then(trailing_trivia_parser.clone())
                     .map(|((leading_trivia, range), trailing_trivia)| {
                         factory::cst_token(
-                            range,
                             kinds::Token::$kind,
+                            factory::lex_chars(range),
                             leading_trivia,
                             trailing_trivia,
                         )
@@ -973,8 +979,8 @@ impl<'a> Parsers<'a> {
                     .then(trailing_trivia_parser.clone())
                     .map(|((leading_trivia, range), trailing_trivia)| {
                         factory::cst_token(
-                            range,
                             kinds::Token::$kind,
+                            factory::lex_chars(range),
                             leading_trivia,
                             trailing_trivia,
                         )
@@ -982,7 +988,7 @@ impl<'a> Parsers<'a> {
             };
         }
         #[allow(unused_macros)]
-        macro_rules ! token { ($ token_rule : ident) => { leading_trivia_parser . clone () . then ($ token_rule . clone ()) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , token) , trailing_trivia) : ((_ , Rc < lex :: Node >) , _) | { if let lex :: Node :: Named (kind , element) = token . as_ref () { factory :: cst_token (element . range () , * kind , leading_trivia , trailing_trivia) } else { unreachable ! ("a token rule should always return a named token, but rule {} returned {:?}" , stringify ! ($ token_rule) , token) } }) } ; }
+        macro_rules ! token { ($ token_rule : ident) => { leading_trivia_parser . clone () . then ($ token_rule . clone ()) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , token) , trailing_trivia) : ((_ , Rc < lex :: Node >) , _) | { if let lex :: Node :: Named (kind , element) = token . as_ref () { factory :: cst_token (* kind , element . clone () , leading_trivia , trailing_trivia) } else { unreachable ! ("a token rule should always return a named token, but rule {} returned {:?}" , stringify ! ($ token_rule) , token) } }) } ; }
         #[allow(unused_macros)]
         macro_rules! rule {
             ($ rule : ident) => {
@@ -1181,7 +1187,7 @@ impl<'a> Parsers<'a> {
             };
         }
         #[allow(unused_macros)]
-        macro_rules ! trie { ($ ($ expr : expr) , *) => (leading_trivia_parser . clone () . then (choice :: < _ , ErrorType > (($ ($ expr) , *)) . map_with_span (| kind , span : SpanType | (kind , span . start () .. span . end ()))) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , (kind , range)) , trailing_trivia) | { factory :: cst_token (range , kind , leading_trivia , trailing_trivia) })) }
+        macro_rules ! trie { ($ ($ expr : expr) , *) => (leading_trivia_parser . clone () . then (choice :: < _ , ErrorType > (($ ($ expr) , *)) . map_with_span (| kind , span : SpanType | (kind , span . start () .. span . end ()))) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , (kind , range)) , trailing_trivia) | { factory :: cst_token (kind , factory :: lex_chars (range) , leading_trivia , trailing_trivia) })) }
 
         // Define all productions ---------------------------
 
@@ -3971,8 +3977,26 @@ impl<'a> Parsers<'a> {
             and_expression: and_expression_parser.then_ignore(end()).boxed(),
             argument_list: argument_list_parser.then_ignore(end()).boxed(),
             array_literal: array_literal_parser.then_ignore(end()).boxed(),
-            ascii_escape: ascii_escape_parser.then_ignore(end()).boxed(),
-            ascii_string_literal: ascii_string_literal_parser.then_ignore(end()).boxed(),
+            ascii_escape: ascii_escape_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
+            ascii_string_literal: ascii_string_literal_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
             assembly_flags: assembly_flags_parser.then_ignore(end()).boxed(),
             assembly_statement: assembly_statement_parser.then_ignore(end()).boxed(),
             assignment_expression: assignment_expression_parser.then_ignore(end()).boxed(),
@@ -3980,7 +4004,16 @@ impl<'a> Parsers<'a> {
             bit_or_expression: bit_or_expression_parser.then_ignore(end()).boxed(),
             bit_x_or_expression: bit_x_or_expression_parser.then_ignore(end()).boxed(),
             block: block_parser.then_ignore(end()).boxed(),
-            boolean_literal: boolean_literal_parser.then_ignore(end()).boxed(),
+            boolean_literal: boolean_literal_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
             break_statement: break_statement_parser.then_ignore(end()).boxed(),
             catch_clause: catch_clause_parser.then_ignore(end()).boxed(),
             conditional_expression: conditional_expression_parser.then_ignore(end()).boxed(),
@@ -3991,31 +4024,99 @@ impl<'a> Parsers<'a> {
             contract_body_element: contract_body_element_parser.then_ignore(end()).boxed(),
             contract_definition: contract_definition_parser.then_ignore(end()).boxed(),
             data_location: data_location_parser.then_ignore(end()).boxed(),
-            decimal_exponent: decimal_exponent_parser.then_ignore(end()).boxed(),
-            decimal_float: decimal_float_parser.then_ignore(end()).boxed(),
-            decimal_integer: decimal_integer_parser.then_ignore(end()).boxed(),
-            decimal_number: decimal_number_parser.then_ignore(end()).boxed(),
+            decimal_exponent: decimal_exponent_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
+            decimal_float: decimal_float_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
+            decimal_integer: decimal_integer_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
+            decimal_number: decimal_number_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
             definition: definition_parser.then_ignore(end()).boxed(),
             delete_statement: delete_statement_parser.then_ignore(end()).boxed(),
             directive: directive_parser.then_ignore(end()).boxed(),
             do_while_statement: do_while_statement_parser.then_ignore(end()).boxed(),
             double_quoted_ascii_string_literal: double_quoted_ascii_string_literal_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
                 .then_ignore(end())
                 .boxed(),
             double_quoted_unicode_string_literal: double_quoted_unicode_string_literal_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
                 .then_ignore(end())
                 .boxed(),
             elementary_type: elementary_type_parser.then_ignore(end()).boxed(),
             emit_statement: emit_statement_parser.then_ignore(end()).boxed(),
             end_of_file_trivia: end_of_file_trivia_parser.then_ignore(end()).boxed(),
-            end_of_line: end_of_line_parser.then_ignore(end()).boxed(),
+            end_of_line: end_of_line_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
             enum_definition: enum_definition_parser.then_ignore(end()).boxed(),
             equality_comparison_expression: equality_comparison_expression_parser
                 .then_ignore(end())
                 .boxed(),
             error_definition: error_definition_parser.then_ignore(end()).boxed(),
             error_parameter: error_parameter_parser.then_ignore(end()).boxed(),
-            escape_sequence: escape_sequence_parser.then_ignore(end()).boxed(),
+            escape_sequence: escape_sequence_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
             event_definition: event_definition_parser.then_ignore(end()).boxed(),
             event_parameter: event_parameter_parser.then_ignore(end()).boxed(),
             experimental_pragma_specifier: experimental_pragma_specifier_parser
@@ -4030,20 +4131,92 @@ impl<'a> Parsers<'a> {
             fallback_function_definition: fallback_function_definition_parser
                 .then_ignore(end())
                 .boxed(),
-            fixed_bytes_type: fixed_bytes_type_parser.then_ignore(end()).boxed(),
+            fixed_bytes_type: fixed_bytes_type_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
             for_statement: for_statement_parser.then_ignore(end()).boxed(),
             function_attribute: function_attribute_parser.then_ignore(end()).boxed(),
             function_call_expression: function_call_expression_parser.then_ignore(end()).boxed(),
             function_definition: function_definition_parser.then_ignore(end()).boxed(),
             function_type: function_type_parser.then_ignore(end()).boxed(),
-            hex_byte_escape: hex_byte_escape_parser.then_ignore(end()).boxed(),
-            hex_character: hex_character_parser.then_ignore(end()).boxed(),
-            hex_number: hex_number_parser.then_ignore(end()).boxed(),
-            hex_string_literal: hex_string_literal_parser.then_ignore(end()).boxed(),
-            identifier: identifier_parser.then_ignore(end()).boxed(),
-            identifier_part: identifier_part_parser.then_ignore(end()).boxed(),
+            hex_byte_escape: hex_byte_escape_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
+            hex_character: hex_character_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
+            hex_number: hex_number_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
+            hex_string_literal: hex_string_literal_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
+            identifier: identifier_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
+            identifier_part: identifier_part_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
             identifier_path: identifier_path_parser.then_ignore(end()).boxed(),
-            identifier_start: identifier_start_parser.then_ignore(end()).boxed(),
+            identifier_start: identifier_start_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
             if_statement: if_statement_parser.then_ignore(end()).boxed(),
             import_directive: import_directive_parser.then_ignore(end()).boxed(),
             import_path: import_path_parser.then_ignore(end()).boxed(),
@@ -4053,7 +4226,16 @@ impl<'a> Parsers<'a> {
                 .then_ignore(end())
                 .boxed(),
             interface_definition: interface_definition_parser.then_ignore(end()).boxed(),
-            keyword: keyword_parser.then_ignore(end()).boxed(),
+            keyword: keyword_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
             leading_trivia: leading_trivia_parser.then_ignore(end()).boxed(),
             library_definition: library_definition_parser.then_ignore(end()).boxed(),
             mapping_type: mapping_type_parser.then_ignore(end()).boxed(),
@@ -4062,12 +4244,39 @@ impl<'a> Parsers<'a> {
             modifier_definition: modifier_definition_parser.then_ignore(end()).boxed(),
             modifier_invocation: modifier_invocation_parser.then_ignore(end()).boxed(),
             mul_div_mod_expression: mul_div_mod_expression_parser.then_ignore(end()).boxed(),
-            multiline_comment: multiline_comment_parser.then_ignore(end()).boxed(),
+            multiline_comment: multiline_comment_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
             named_argument: named_argument_parser.then_ignore(end()).boxed(),
             named_argument_list: named_argument_list_parser.then_ignore(end()).boxed(),
             new_expression: new_expression_parser.then_ignore(end()).boxed(),
-            number_unit: number_unit_parser.then_ignore(end()).boxed(),
-            numeric_literal: numeric_literal_parser.then_ignore(end()).boxed(),
+            number_unit: number_unit_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
+            numeric_literal: numeric_literal_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
             or_expression: or_expression_parser.then_ignore(end()).boxed(),
             order_comparison_expression: order_comparison_expression_parser
                 .then_ignore(end())
@@ -4079,18 +4288,43 @@ impl<'a> Parsers<'a> {
             payable_expression: payable_expression_parser.then_ignore(end()).boxed(),
             positional_argument_list: positional_argument_list_parser.then_ignore(end()).boxed(),
             possibly_separated_pairs_of_hex_digits: possibly_separated_pairs_of_hex_digits_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
                 .then_ignore(end())
                 .boxed(),
             pragma_directive: pragma_directive_parser.then_ignore(end()).boxed(),
             primary_expression: primary_expression_parser.then_ignore(end()).boxed(),
-            raw_identifier: raw_identifier_parser.then_ignore(end()).boxed(),
+            raw_identifier: raw_identifier_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
             receive_function_attribute: receive_function_attribute_parser
                 .then_ignore(end())
                 .boxed(),
             receive_function_definition: receive_function_definition_parser
                 .then_ignore(end())
                 .boxed(),
-            reserved_keyword: reserved_keyword_parser.then_ignore(end()).boxed(),
+            reserved_keyword: reserved_keyword_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
             return_statement: return_statement_parser.then_ignore(end()).boxed(),
             revert_statement: revert_statement_parser.then_ignore(end()).boxed(),
             selected_import: selected_import_parser.then_ignore(end()).boxed(),
@@ -4098,15 +4332,56 @@ impl<'a> Parsers<'a> {
                 .then_ignore(end())
                 .boxed(),
             shift_expression: shift_expression_parser.then_ignore(end()).boxed(),
-            signed_fixed_type: signed_fixed_type_parser.then_ignore(end()).boxed(),
-            signed_integer_type: signed_integer_type_parser.then_ignore(end()).boxed(),
+            signed_fixed_type: signed_fixed_type_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
+            signed_integer_type: signed_integer_type_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
             simple_import_directive: simple_import_directive_parser.then_ignore(end()).boxed(),
             simple_statement: simple_statement_parser.then_ignore(end()).boxed(),
-            single_line_comment: single_line_comment_parser.then_ignore(end()).boxed(),
+            single_line_comment: single_line_comment_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
             single_quoted_ascii_string_literal: single_quoted_ascii_string_literal_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
                 .then_ignore(end())
                 .boxed(),
             single_quoted_unicode_string_literal: single_quoted_unicode_string_literal_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
                 .then_ignore(end())
                 .boxed(),
             source_unit: source_unit_parser.then_ignore(end()).boxed(),
@@ -4128,10 +4403,46 @@ impl<'a> Parsers<'a> {
             unary_prefix_expression: unary_prefix_expression_parser.then_ignore(end()).boxed(),
             unary_suffix_expression: unary_suffix_expression_parser.then_ignore(end()).boxed(),
             unchecked_block: unchecked_block_parser.then_ignore(end()).boxed(),
-            unicode_escape: unicode_escape_parser.then_ignore(end()).boxed(),
-            unicode_string_literal: unicode_string_literal_parser.then_ignore(end()).boxed(),
-            unsigned_fixed_type: unsigned_fixed_type_parser.then_ignore(end()).boxed(),
-            unsigned_integer_type: unsigned_integer_type_parser.then_ignore(end()).boxed(),
+            unicode_escape: unicode_escape_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
+            unicode_string_literal: unicode_string_literal_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
+            unsigned_fixed_type: unsigned_fixed_type_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
+            unsigned_integer_type: unsigned_integer_type_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
             user_defined_value_type_definition: user_defined_value_type_definition_parser
                 .then_ignore(end())
                 .boxed(),
@@ -4139,27 +4450,88 @@ impl<'a> Parsers<'a> {
             variable_declaration_statement: variable_declaration_statement_parser
                 .then_ignore(end())
                 .boxed(),
-            version_pragma_operator: version_pragma_operator_parser.then_ignore(end()).boxed(),
+            version_pragma_operator: version_pragma_operator_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
             version_pragma_specifier: version_pragma_specifier_parser.then_ignore(end()).boxed(),
-            version_pragma_value: version_pragma_value_parser.then_ignore(end()).boxed(),
+            version_pragma_value: version_pragma_value_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
             while_statement: while_statement_parser.then_ignore(end()).boxed(),
-            whitespace: whitespace_parser.then_ignore(end()).boxed(),
+            whitespace: whitespace_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
             yul_assignment_statement: yul_assignment_statement_parser.then_ignore(end()).boxed(),
             yul_block: yul_block_parser.then_ignore(end()).boxed(),
             yul_break_statement: yul_break_statement_parser.then_ignore(end()).boxed(),
             yul_continue_statement: yul_continue_statement_parser.then_ignore(end()).boxed(),
             yul_decimal_number_literal: yul_decimal_number_literal_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
                 .then_ignore(end())
                 .boxed(),
             yul_expression: yul_expression_parser.then_ignore(end()).boxed(),
             yul_for_statement: yul_for_statement_parser.then_ignore(end()).boxed(),
             yul_function_call: yul_function_call_parser.then_ignore(end()).boxed(),
             yul_function_definition: yul_function_definition_parser.then_ignore(end()).boxed(),
-            yul_hex_literal: yul_hex_literal_parser.then_ignore(end()).boxed(),
-            yul_identifier: yul_identifier_parser.then_ignore(end()).boxed(),
+            yul_hex_literal: yul_hex_literal_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
+            yul_identifier: yul_identifier_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
             yul_identifier_path: yul_identifier_path_parser.then_ignore(end()).boxed(),
             yul_if_statement: yul_if_statement_parser.then_ignore(end()).boxed(),
-            yul_keyword: yul_keyword_parser.then_ignore(end()).boxed(),
+            yul_keyword: yul_keyword_parser
+                .map(|token| {
+                    if let lex::Node::Named(kind, node) = token.as_ref() {
+                        factory::cst_trivia_token(*kind, node.clone())
+                    } else {
+                        unreachable!()
+                    }
+                })
+                .then_ignore(end())
+                .boxed(),
             yul_leave_statement: yul_leave_statement_parser.then_ignore(end()).boxed(),
             yul_literal: yul_literal_parser.then_ignore(end()).boxed(),
             yul_statement: yul_statement_parser.then_ignore(end()).boxed(),
