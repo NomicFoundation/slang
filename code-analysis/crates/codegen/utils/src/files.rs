@@ -1,7 +1,4 @@
-use std::{
-    collections::HashSet,
-    path::{Path, PathBuf},
-};
+use std::path::{Path, PathBuf};
 
 use anyhow::{bail, Context, Result};
 
@@ -10,6 +7,11 @@ use crate::{context::CodegenContext, formatting::format_source_file};
 pub fn read_file(file_path: &PathBuf) -> Result<String> {
     return std::fs::read_to_string(file_path)
         .context(format!("Cannot read source file: {file_path:?}"));
+}
+
+pub fn delete_file(file_path: &PathBuf) -> Result<()> {
+    return std::fs::remove_file(&file_path)
+        .context(format!("Failed to delete extra file: {file_path:?}"));
 }
 
 pub fn write_file(codegen: &CodegenContext, file_path: &PathBuf, contents: &str) -> Result<()> {
@@ -53,33 +55,30 @@ pub fn verify_file(codegen: &CodegenContext, file_path: &PathBuf, contents: &str
     return Ok(());
 }
 
-pub fn check_for_extra_files(current_dir: &Path, generated_files: &HashSet<PathBuf>) -> Result<()> {
-    if !current_dir.metadata()?.is_dir() {
-        bail!("Path is not a directory: {current_dir:?}");
+pub fn collect_files_recursively(parent_dir: &Path, result: &mut Vec<PathBuf>) -> Result<()> {
+    if !parent_dir.metadata()?.is_dir() {
+        bail!("Path is not a directory: {parent_dir:?}");
     }
 
-    for child in current_dir.read_dir()? {
+    for child in parent_dir.read_dir()? {
         let child = child?;
         let child_path = child.path();
 
         if child.metadata()?.is_file() {
-            if !generated_files.contains(&child.path()) {
-                bail!("Extra file in generated dir: {child_path:?}");
-            }
+            result.push(child_path);
         } else {
-            check_for_extra_files(&child_path, generated_files)?;
+            collect_files_recursively(&child_path, result)?;
         }
     }
 
     return Ok(());
 }
 
-pub fn get_generated_dir<'a>(path: &'a Path) -> Result<&'a Path> {
-    return if path.is_dir() && path.ends_with("generated") {
-        Ok(path)
-    } else {
-        path.parent()
-            .context(format!("Failed to find generated parent dir of: {path:?}"))
-            .and_then(get_generated_dir)
-    };
+pub fn rerun_if_changed(file_path: &PathBuf) -> Result<()> {
+    println!(
+        "cargo:rerun-if-changed={value}",
+        value = file_path.to_str().context("Failed to get file path")?
+    );
+
+    return Ok(());
 }

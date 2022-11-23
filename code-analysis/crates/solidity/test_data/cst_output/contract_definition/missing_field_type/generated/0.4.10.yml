@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+errors:
+  - |
+    Error: Expected . or / or [ or c or i or o or p
+       ╭─[<unknown>:2:8]
+       │
+     2 │   field;
+       ·        ┬  
+       ·        ╰── Found ;
+    ───╯
+
+root: null

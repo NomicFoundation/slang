@@ -15,6 +15,7 @@ static REQUIRED_PRODUCTIONS: [&str; 2] = ["LeadingTrivia", "TrailingTrivia"];
 impl Grammar {
     pub fn validate(&self, context: &CodegenContext, manifest_path: &PathBuf) {
         validate_topics(self);
+        validate_versions_list(&self.manifest.versions);
 
         let mut schemas = LoadedSchemas::new();
         schemas.validate(context, manifest_path);
@@ -55,6 +56,19 @@ fn validate_topics(grammar: &Grammar) {
                     }
                 });
         });
+}
+
+fn validate_versions_list(versions: &Vec<Version>) {
+    assert_ne!(versions.len(), 0, "Grammar must have at least one version");
+
+    let mut expected = versions.clone();
+    expected.sort();
+    expected.dedup();
+
+    assert_eq!(
+        versions, &expected,
+        "Expected manifest versions to be sorted and unique."
+    );
 }
 
 fn validate_definitions(grammar: &Grammar) -> HashSet<String> {
@@ -165,14 +179,10 @@ fn validate_version(grammar: &Grammar, version: &Version) {
         return;
     }
 
-    match &grammar.manifest.versions {
-        None => panic!("Must define 'Manifest.versions' if using versioned productions"),
-        Some(versions) => assert!(
-            versions.contains(&version.to_string()),
-            "Version {} is not defined in the manifest",
-            version
-        ),
-    }
+    assert!(
+        grammar.manifest.versions.contains(&version),
+        "Version {version} is not defined in the manifest.",
+    );
 }
 
 struct LoadedSchemas {

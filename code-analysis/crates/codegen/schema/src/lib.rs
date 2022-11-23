@@ -59,7 +59,7 @@ pub struct Manifest {
     #[serde(rename = "rootProduction")]
     pub root_production: String,
     pub sections: Vec<Section>,
-    pub versions: Option<Vec<String>>,
+    pub versions: Vec<Version>,
 }
 
 #[derive(Deserialize, Clone, Debug)]

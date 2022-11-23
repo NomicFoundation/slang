@@ -1,0 +1,83 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+errors: []
+
+root: !Rule
+  kind: ExponentiationExpression
+  children:
+    - !Token
+      kind: RawIdentifier
+      range:
+        start: 0
+        end: 1
+      trivia:
+        - !Rule
+          kind: LeadingTrivia
+    - !Token
+      kind: StarStar
+      range:
+        start: 2
+        end: 4
+      trivia:
+        - !Rule
+          kind: LeadingTrivia
+          children:
+            - !Token
+              kind: Whitespace
+              range:
+                start: 1
+                end: 2
+    - !Rule
+      kind: ExponentiationExpression
+      children:
+        - !Token
+          kind: RawIdentifier
+          range:
+            start: 5
+            end: 6
+          trivia:
+            - !Rule
+              kind: LeadingTrivia
+              children:
+                - !Token
+                  kind: Whitespace
+                  range:
+                    start: 4
+                    end: 5
+        - !Token
+          kind: StarStar
+          range:
+            start: 7
+            end: 9
+          trivia:
+            - !Rule
+              kind: LeadingTrivia
+              children:
+                - !Token
+                  kind: Whitespace
+                  range:
+                    start: 6
+                    end: 7
+        - !Token
+          kind: RawIdentifier
+          range:
+            start: 10
+            end: 11
+          trivia:
+            - !Rule
+              kind: LeadingTrivia
+              children:
+                - !Token
+                  kind: Whitespace
+                  range:
+                    start: 9
+                    end: 10
+            - !Rule
+              kind: TrailingTrivia
+              children:
+                - None
+                - !Token
+                  kind: EndOfLine
+                  range:
+                    start: 11
+                    end: 12

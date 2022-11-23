@@ -1,0 +1,12 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+errors: []
+
+root: !Rule
+  kind: SourceUnit
+  children:
+    - !Rule
+      kind: LeadingTrivia
+    - None
+    - !Rule
+      kind: EndOfFileTrivia
