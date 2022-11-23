@@ -4,9 +4,9 @@ version = "0.0.0"
 edition = "2021"
 
 [build-dependencies]
-codegen_schema = { path = "../../../codegen/schema" }
-codegen_parser = { path = "../../../codegen/parser" }
-codegen_utils = { path = "../../../codegen/utils" }
+codegen_schema = { path = "../../../../codegen/schema" }
+codegen_parser = { path = "../../../../codegen/parser" }
+codegen_utils = { path = "../../../../codegen/utils" }
 
 [dependencies]
 chumsky = "0.8.0"

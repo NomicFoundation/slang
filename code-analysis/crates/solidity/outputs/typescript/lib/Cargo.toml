@@ -16,6 +16,6 @@ semver = "1.0.9"
 
 [build-dependencies]
 napi-build = "2.0.1"
-codegen_schema = { path = "../../../codegen/schema" }
-codegen_parser = { path = "../../../codegen/parser" }
-codegen_utils = { path = "../../../codegen/utils" }
+codegen_schema = { path = "../../../../codegen/schema" }
+codegen_parser = { path = "../../../../codegen/parser" }
+codegen_utils = { path = "../../../../codegen/utils" }
