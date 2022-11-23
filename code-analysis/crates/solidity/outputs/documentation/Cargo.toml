@@ -1,8 +1,9 @@
 # how to do the build.rs without an actual crate?
 [package]
 name = "solidity_documentation"
-version = "0.0.0"
-edition = "2021"
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
 
 [build-dependencies]
 codegen_schema = { path = "../../../codegen/schema" }

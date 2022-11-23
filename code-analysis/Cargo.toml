@@ -11,6 +11,11 @@ members = [
     "crates/solidity/outputs/typescript/lib",
 ]
 
+[workspace.package]
+version = "0.0.0"
+rust-version = "1.64.0" # Keep this version in sync with the hermit binary at "REPO_ROOT/bin/.rust-VERSION.pkg"
+edition = "2021"
+
 [profile.dev]
 debug = 0
 incremental = true
