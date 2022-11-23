@@ -31,7 +31,8 @@ pub fn format_source_file(
 }
 
 fn generate_header(file_path: &PathBuf) -> Result<String> {
-    let warning_line = "This file is generated via `cargo build`. Please don't edit by hand.";
+    let warning_line =
+        "This file is generated automatically by infrastructure scripts. Please don't edit by hand.";
 
     return match get_extension(file_path)? {
         "ebnf" => Ok(format!("(* {warning_line} *)")),
