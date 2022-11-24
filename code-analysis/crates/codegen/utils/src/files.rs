@@ -48,9 +48,11 @@ pub fn verify_file(codegen: &CodegenContext, file_path: &PathBuf, contents: &str
     let existing_contents = std::fs::read_to_string(file_path)
         .context(format!("Cannot read existing file: {file_path:?}"))?;
 
-    if formatted != existing_contents {
-        bail!("Generated file is out of date: {file_path:?}");
-    }
+    similar_asserts::assert_eq!(
+        formatted,
+        existing_contents,
+        "Generated file is out of date: {file_path:?}"
+    );
 
     return Ok(());
 }
