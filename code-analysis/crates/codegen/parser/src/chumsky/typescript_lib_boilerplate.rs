@@ -1,7 +1,7 @@
 use proc_macro2::TokenStream;
 use quote::quote;
 
-use super::rust_lib_boilerplate;
+use super::boilerplate;
 
 pub fn mod_head() -> TokenStream {
     quote!(
@@ -14,7 +14,7 @@ pub fn mod_head() -> TokenStream {
 }
 
 pub fn kinds_head() -> TokenStream {
-    let base = rust_lib_boilerplate::kinds_head();
+    let base = boilerplate::kinds_head();
     quote!(
         #base
         use napi::bindgen_prelude::*;
@@ -23,7 +23,7 @@ pub fn kinds_head() -> TokenStream {
 }
 
 pub fn lex_head() -> TokenStream {
-    let base = rust_lib_boilerplate::lex_head();
+    let base = boilerplate::lex_head();
     quote!(
         #base
         use napi::bindgen_prelude::*;
@@ -37,6 +37,12 @@ pub fn lex_head() -> TokenStream {
             Choice,
             Sequence,
             Named,
+        }
+
+        #[napi(object)]
+        pub struct TokenRange {
+            pub start: u32,
+            pub end: u32
         }
 
         #[napi]
@@ -54,6 +60,11 @@ pub fn lex_head() -> TokenStream {
         impl LexNoneNode {
             #[napi(getter, js_name = "type", ts_return_type = "LexNodeType.None")]
             pub fn tipe(&self) -> LexNodeType { LexNodeType::None }
+
+            #[napi(getter)]
+            pub fn range(&self) -> TokenRange {
+                TokenRange { start: 0, end: 0 }
+            }
         }
 
         #[napi]
@@ -62,17 +73,9 @@ pub fn lex_head() -> TokenStream {
             pub fn tipe(&self) -> LexNodeType { LexNodeType::Chars }
 
             #[napi(getter)]
-            pub fn start(&self) -> usize {
+            pub fn range(&self) -> TokenRange {
                 match self.0.as_ref() {
-                    Node::Chars(range) => range.start,
-                    _  => unreachable!()
-                }
-            }
-
-            #[napi(getter)]
-            pub fn end(&self) -> usize {
-                match self.0.as_ref() {
-                    Node::Chars(range) => range.end,
+                    Node::Chars(range) => TokenRange { start: range.start as u32, end: range.end as u32 },
                     _  => unreachable!()
                 }
             }
@@ -82,6 +85,12 @@ pub fn lex_head() -> TokenStream {
         impl LexChoiceNode {
             #[napi(getter, js_name = "type", ts_return_type = "LexNodeType.Choice")]
             pub fn tipe(&self) -> LexNodeType { LexNodeType::Choice }
+
+            #[napi(getter)]
+            pub fn range(&self) -> TokenRange {
+                let range = self.0.range();
+                TokenRange { start: range.start as u32, end: range.end as u32 }
+            }
 
             #[napi(getter)]
             pub fn index(&self) -> usize {
@@ -105,6 +114,12 @@ pub fn lex_head() -> TokenStream {
             #[napi(getter, js_name = "type", ts_return_type = "LexNodeType.Sequence")]
             pub fn tipe(&self) -> LexNodeType { LexNodeType::Sequence }
 
+            #[napi(getter)]
+            pub fn range(&self) -> TokenRange {
+                let range = self.0.range();
+                TokenRange { start: range.start as u32, end: range.end as u32 }
+            }
+
             #[napi(ts_return_type = "(LexNoneNode | LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode)[]")]
             pub fn children(&self, env: Env) -> Vec<JsObject> {
                 match self.0.as_ref() {
@@ -118,6 +133,12 @@ pub fn lex_head() -> TokenStream {
         impl LexNamedNode {
             #[napi(getter, js_name = "type", ts_return_type = "LexNodeType.Named")]
             pub fn tipe(&self) -> LexNodeType { LexNodeType::Named }
+
+            #[napi(getter)]
+            pub fn range(&self) -> TokenRange {
+                let range = self.0.range();
+                TokenRange { start: range.start as u32, end: range.end as u32 }
+            }
 
             #[napi(getter)]
             pub fn kind(&self) -> kinds::Token {
@@ -156,12 +177,14 @@ pub fn lex_head() -> TokenStream {
 }
 
 pub fn cst_head() -> TokenStream {
-    let base = rust_lib_boilerplate::cst_head();
+    let base = boilerplate::cst_head();
     quote!(
         #base
         use napi::bindgen_prelude::*;
         use napi::JsObject;
         use napi::NapiValue;
+
+        use super::lex::RcNodeExtensions as LexRcNodeExtensions;
 
         #[napi]
         pub enum CSTNodeType {
@@ -221,18 +244,10 @@ pub fn cst_head() -> TokenStream {
                 }
             }
 
-            #[napi(getter)]
-            pub fn start(&self) -> usize {
+            #[napi(ts_return_type = "LexNoneNode | LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode")]
+            pub fn lex_node(&self, env: Env) -> JsObject {
                 match self.0.as_ref() {
-                    Node::Token { range, .. } => range.start,
-                    _ => unreachable!()
-                }
-            }
-
-            #[napi(getter)]
-            pub fn end(&self) -> usize {
-                match self.0.as_ref() {
-                    Node::Token { range, .. } => range.end,
+                    Node::Token { lex_node, .. } => lex_node.to_js(&env),
                     _ => unreachable!()
                 }
             }
@@ -286,7 +301,6 @@ pub fn language_head() -> TokenStream {
 
         use super::parse::Parsers;
         use super::cst::RcNodeExtensions as CSTRcNodeExtensions;
-        use super::lex::RcNodeExtensions as LexRcNodeExtensions;
 
         #[napi]
         pub struct Language {

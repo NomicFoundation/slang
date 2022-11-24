@@ -3,10 +3,7 @@ use std::path::PathBuf;
 use codegen_utils::context::CodegenContext;
 use quote::{format_ident, quote};
 
-use super::{
-    code_generator::{CodeGenerator, ParserResultType},
-    naming, rust_lib_boilerplate,
-};
+use super::{boilerplate, code_generator::CodeGenerator, naming, rust_lib_boilerplate};
 
 impl CodeGenerator {
     pub fn write_rust_lib_sources(&self, codegen: &mut CodegenContext, output_dir: &PathBuf) {
@@ -20,7 +17,7 @@ impl CodeGenerator {
         codegen
             .write_file(
                 &output_dir.join("lex.rs"),
-                &rust_lib_boilerplate::lex_head().to_string(),
+                &boilerplate::lex_head().to_string(),
             )
             .unwrap();
 
@@ -29,7 +26,7 @@ impl CodeGenerator {
                 &output_dir.join("cst.rs"),
                 &format!(
                     "{}\n{}",
-                    rust_lib_boilerplate::cst_head(),
+                    boilerplate::cst_head(),
                     rust_lib_boilerplate::cst_visitor_head()
                 ),
             )
@@ -54,10 +51,6 @@ impl CodeGenerator {
                         .map(|(name, parser)| {
                             let field_name = naming::to_field_name_ident(&name);
                             let method_name = format_ident!("parse_{}", field_name);
-                            let result_type = match parser.result_type {
-                                ParserResultType::Token => quote! { Rc<lex::Node> },
-                                ParserResultType::Rule => quote! { Rc<cst::Node> },
-                            };
                             format!(
                                 "{}\n{}",
                                 parser
@@ -67,7 +60,7 @@ impl CodeGenerator {
                                     .collect::<Vec<_>>()
                                     .join("\n"),
                                 quote!(
-                                    pub fn #method_name(&self, source: &str) -> #result_type {
+                                    pub fn #method_name(&self, source: &str) -> Rc<cst::Node> {
                                         let (node, _errs) = self.parsers.#field_name.parse_recovery(source);
                                         node.unwrap()
                                     }
@@ -96,7 +89,7 @@ impl CodeGenerator {
                         {}
                     }}
                     ",
-                    rust_lib_boilerplate::kinds_head(),
+                    boilerplate::kinds_head(),
                     self.token_kinds
                         .keys()
                         .cloned()

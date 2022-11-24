@@ -1,7 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 use super::cst::RcNodeExtensions as CSTRcNodeExtensions;
-use super::lex::RcNodeExtensions as LexRcNodeExtensions;
 use super::parse::Parsers;
 use chumsky::Parser;
 use napi::bindgen_prelude::*;
@@ -78,14 +77,14 @@ impl Language {
     }
 
     // «AsciiEscape» = 'n' | 'r' | 't' | '\'' | '"' | '\\' | '\u{a}' | '\u{d}' ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_ascii_escape(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self.parsers.ascii_escape.parse_recovery(source.as_str());
         node.unwrap().to_js(&env)
     }
 
     // «AsciiStringLiteral» = «SingleQuotedAsciiStringLiteral» | «DoubleQuotedAsciiStringLiteral» ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_ascii_string_literal(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self
             .parsers
@@ -159,7 +158,7 @@ impl Language {
     }
 
     // «BooleanLiteral» = 'true' | 'false' ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_boolean_literal(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self.parsers.boolean_literal.parse_recovery(source.as_str());
         node.unwrap().to_js(&env)
@@ -257,7 +256,7 @@ impl Language {
     }
 
     // «DecimalExponent» = ( 'e' | 'E' ) [ '-' ] «DecimalInteger» ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_decimal_exponent(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self
             .parsers
@@ -267,21 +266,21 @@ impl Language {
     }
 
     // «DecimalFloat» = [ «DecimalInteger» ] '.' «DecimalInteger» ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_decimal_float(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self.parsers.decimal_float.parse_recovery(source.as_str());
         node.unwrap().to_js(&env)
     }
 
     // «DecimalInteger» = '0'…'9' { [ '_' ] '0'…'9' } ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_decimal_integer(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self.parsers.decimal_integer.parse_recovery(source.as_str());
         node.unwrap().to_js(&env)
     }
 
     // «DecimalNumber» = ( «DecimalInteger» | «DecimalFloat» ) [ «DecimalExponent» ] ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_decimal_number(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self.parsers.decimal_number.parse_recovery(source.as_str());
         node.unwrap().to_js(&env)
@@ -322,7 +321,7 @@ impl Language {
     }
 
     // «DoubleQuotedAsciiStringLiteral» = '"' { 1…*{ '\u{20}'…'~' - ( '"' | '\\' ) } | «EscapeSequence» } '"' ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_double_quoted_ascii_string_literal(
         &self,
         env: Env,
@@ -336,7 +335,7 @@ impl Language {
     }
 
     // «DoubleQuotedUnicodeStringLiteral» = 'unicode"' { 1…*{ ¬( '"' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '"' ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_double_quoted_unicode_string_literal(
         &self,
         env: Env,
@@ -374,7 +373,7 @@ impl Language {
     }
 
     // «EndOfLine» = 1…*{ '\u{d}' | '\u{a}' } ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_end_of_line(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self.parsers.end_of_line.parse_recovery(source.as_str());
         node.unwrap().to_js(&env)
@@ -415,7 +414,7 @@ impl Language {
     }
 
     // «EscapeSequence» = '\\' ( «AsciiEscape» | «HexByteEscape» | «UnicodeEscape» ) ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_escape_sequence(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self.parsers.escape_sequence.parse_recovery(source.as_str());
         node.unwrap().to_js(&env)
@@ -497,7 +496,7 @@ impl Language {
     }
 
     // «FixedBytesType» = 'bytes' ( '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15' | '16' | '17' | '18' | '19' | '20' | '21' | '22' | '23' | '24' | '25' | '26' | '27' | '28' | '29' | '30' | '31' | '32' ) ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_fixed_bytes_type(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self
             .parsers
@@ -551,28 +550,28 @@ impl Language {
     }
 
     // «HexByteEscape» = 'x' 2…2*{ «HexCharacter» } ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_hex_byte_escape(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self.parsers.hex_byte_escape.parse_recovery(source.as_str());
         node.unwrap().to_js(&env)
     }
 
     // «HexCharacter» = '0'…'9' | 'a'…'f' | 'A'…'F' ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_hex_character(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self.parsers.hex_character.parse_recovery(source.as_str());
         node.unwrap().to_js(&env)
     }
 
     // «HexNumber» = '0x' «HexCharacter» { [ '_' ] «HexCharacter» } ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_hex_number(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self.parsers.hex_number.parse_recovery(source.as_str());
         node.unwrap().to_js(&env)
     }
 
     // «HexStringLiteral» = 'hex' ( '"' [ «PossiblySeparatedPairsOfHexDigits» ] '"' | '\'' [ «PossiblySeparatedPairsOfHexDigits» ] '\'' ) ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_hex_string_literal(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self
             .parsers
@@ -582,14 +581,14 @@ impl Language {
     }
 
     // «Identifier» = «RawIdentifier» - «Keyword» ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_identifier(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self.parsers.identifier.parse_recovery(source.as_str());
         node.unwrap().to_js(&env)
     }
 
     // «IdentifierPart» = «IdentifierStart» | '0'…'9' ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_identifier_part(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self.parsers.identifier_part.parse_recovery(source.as_str());
         node.unwrap().to_js(&env)
@@ -603,7 +602,7 @@ impl Language {
     }
 
     // «IdentifierStart» = '_' | '$' | 'a'…'z' | 'A'…'Z' ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_identifier_start(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self
             .parsers
@@ -677,7 +676,7 @@ impl Language {
     }
 
     // «Keyword» = «BooleanLiteral» | «FixedBytesType» | «NumberUnit» | «ReservedKeyword» | «SignedIntegerType» | «UnsignedIntegerType» | 'abstract' | 'address' | 'anonymous' | 'as' | 'assembly' | 'bool' | 'break' | 'calldata' | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum' | 'event' | 'external' | 'fallback' | 'false' | 'fixed' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import' | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override' | 'payable' | 'pragma' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct' | 'true' | 'try' | 'type' | 'ufixed' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while' ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_keyword(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self.parsers.keyword.parse_recovery(source.as_str());
         node.unwrap().to_js(&env)
@@ -758,7 +757,7 @@ impl Language {
     }
 
     // «MultilineComment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_multiline_comment(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self
             .parsers
@@ -792,14 +791,14 @@ impl Language {
     }
 
     // «NumberUnit» = 'days' | 'ether' | 'finney' | 'gwei' | 'hours' | 'minutes' | 'seconds' | 'szabo' | 'weeks' | 'wei' | 'years' ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_number_unit(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self.parsers.number_unit.parse_recovery(source.as_str());
         node.unwrap().to_js(&env)
     }
 
     // «NumericLiteral» = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_numeric_literal(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self.parsers.numeric_literal.parse_recovery(source.as_str());
         node.unwrap().to_js(&env)
@@ -880,7 +879,7 @@ impl Language {
     }
 
     // «PossiblySeparatedPairsOfHexDigits» = 2…2*{ «HexCharacter» } { [ '_' ] 2…2*{ «HexCharacter» } } ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_possibly_separated_pairs_of_hex_digits(
         &self,
         env: Env,
@@ -914,7 +913,7 @@ impl Language {
     }
 
     // «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_raw_identifier(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self.parsers.raw_identifier.parse_recovery(source.as_str());
         node.unwrap().to_js(&env)
@@ -941,7 +940,7 @@ impl Language {
     }
 
     // «ReservedKeyword» = 'after' | 'alias' | 'apply' | 'auto' | 'byte' | 'case' | 'copyof' | 'default' | 'define' | 'final' | 'implements' | 'in' | 'inline' | 'let' | 'macro' | 'match' | 'mutable' | 'null' | 'of' | 'partial' | 'promise' | 'reference' | 'relocatable' | 'sealed' | 'sizeof' | 'static' | 'supports' | 'switch' | 'typedef' | 'typeof' | 'var' ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_reserved_keyword(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self
             .parsers
@@ -998,7 +997,7 @@ impl Language {
     }
 
     // «SignedFixedType» = 'fixed' [ 1…*{ '0'…'9' } 'x' 1…*{ '0'…'9' } ] ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_signed_fixed_type(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self
             .parsers
@@ -1008,7 +1007,7 @@ impl Language {
     }
 
     // «SignedIntegerType» = 'int' [ '8' | '16' | '24' | '32' | '40' | '48' | '56' | '64' | '72' | '80' | '88' | '96' | '104' | '112' | '120' | '128' | '136' | '144' | '152' | '160' | '168' | '176' | '184' | '192' | '200' | '208' | '216' | '224' | '232' | '240' | '248' | '256' ] ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_signed_integer_type(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self
             .parsers
@@ -1038,7 +1037,7 @@ impl Language {
     }
 
     // «SingleLineComment» = '//' { ¬( '\u{d}' | '\u{a}' ) } ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_single_line_comment(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self
             .parsers
@@ -1048,7 +1047,7 @@ impl Language {
     }
 
     // «SingleQuotedAsciiStringLiteral» = '\'' { 1…*{ '\u{20}'…'~' - ( '\'' | '\\' ) } | «EscapeSequence» } '\'' ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_single_quoted_ascii_string_literal(
         &self,
         env: Env,
@@ -1062,7 +1061,7 @@ impl Language {
     }
 
     // «SingleQuotedUnicodeStringLiteral» = 'unicode\'' { 1…*{ ¬( '\'' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '\'' ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_single_quoted_unicode_string_literal(
         &self,
         env: Env,
@@ -1202,14 +1201,14 @@ impl Language {
     }
 
     // «UnicodeEscape» = 'u' 4…4*{ «HexCharacter» } ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_unicode_escape(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self.parsers.unicode_escape.parse_recovery(source.as_str());
         node.unwrap().to_js(&env)
     }
 
     // «UnicodeStringLiteral» = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral» ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_unicode_string_literal(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self
             .parsers
@@ -1219,7 +1218,7 @@ impl Language {
     }
 
     // «UnsignedFixedType» = 'u' «SignedFixedType» ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_unsigned_fixed_type(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self
             .parsers
@@ -1229,7 +1228,7 @@ impl Language {
     }
 
     // «UnsignedIntegerType» = 'u' «SignedIntegerType» ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_unsigned_integer_type(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self
             .parsers
@@ -1270,7 +1269,7 @@ impl Language {
     }
 
     // «VersionPragmaOperator» = '^' | '~' | '=' | '<' | '>' | '<=' | '>=' ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_version_pragma_operator(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self
             .parsers
@@ -1290,7 +1289,7 @@ impl Language {
     }
 
     // «VersionPragmaValue» = 1…*{ '0'…'9' | 'x' | 'X' | '*' }  { '.' 1…*{ '0'…'9' | 'x' | 'X' | '*' } } ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_version_pragma_value(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self
             .parsers
@@ -1307,7 +1306,7 @@ impl Language {
     }
 
     // «Whitespace» = 1…*{ '\u{20}' | '\u{9}' } ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_whitespace(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self.parsers.whitespace.parse_recovery(source.as_str());
         node.unwrap().to_js(&env)
@@ -1351,7 +1350,7 @@ impl Language {
     }
 
     // «YulDecimalNumberLiteral» = '0' | '1'…'9' { '0'…'9' } ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_yul_decimal_number_literal(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self
             .parsers
@@ -1398,14 +1397,14 @@ impl Language {
     }
 
     // «YulHexLiteral» = '0x' 1…*{ «HexCharacter» } ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_yul_hex_literal(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self.parsers.yul_hex_literal.parse_recovery(source.as_str());
         node.unwrap().to_js(&env)
     }
 
     // «YulIdentifier» = «RawIdentifier» - «YulKeyword» ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_yul_identifier(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self.parsers.yul_identifier.parse_recovery(source.as_str());
         node.unwrap().to_js(&env)
@@ -1432,7 +1431,7 @@ impl Language {
     }
 
     // «YulKeyword» = «BooleanLiteral» | 'break' | 'case' | 'continue' | 'default' | 'for' | 'function' | 'hex' | 'if' | 'leave' | 'let' | 'switch' ;
-    #[napi(ts_return_type = "LexNamedNode")]
+    #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_yul_keyword(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self.parsers.yul_keyword.parse_recovery(source.as_str());
         node.unwrap().to_js(&env)

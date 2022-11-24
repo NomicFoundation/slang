@@ -1,8 +1,8 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 use super::kinds;
+use super::lex;
 use serde::Serialize;
-use std::ops::Range;
 use std::rc::Rc;
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub enum Node {
@@ -14,9 +14,7 @@ pub enum Node {
     },
     Token {
         kind: kinds::Token,
-        #[doc = r" Range doesn't include the trivia"]
-        range: Range<usize>,
-        #[doc = r" Only Trivia"]
+        lex_node: Rc<lex::Node>,
         #[serde(skip_serializing_if = "Vec::is_empty")]
         trivia: Vec<Rc<Node>>,
     },
@@ -52,7 +50,7 @@ pub trait Visitor {
     fn enter_token(
         &mut self,
         kind: kinds::Token,
-        range: &Range<usize>,
+        lex_node: &Rc<lex::Node>,
         trivia: &Vec<Rc<Node>>,
         node: &Rc<Node>,
         path: &Vec<Rc<Node>>,
@@ -62,7 +60,7 @@ pub trait Visitor {
     fn exit_token(
         &mut self,
         kind: kinds::Token,
-        range: &Range<usize>,
+        lex_node: &Rc<lex::Node>,
         trivia: &Vec<Rc<Node>>,
         node: &Rc<Node>,
         path: &Vec<Rc<Node>>,
@@ -136,10 +134,10 @@ impl Visitable for Rc<Node> {
             }
             Node::Token {
                 kind,
-                range,
+                lex_node,
                 trivia,
             } => {
-                match visitor.enter_token(*kind, range, trivia, self, path) {
+                match visitor.enter_token(*kind, lex_node, trivia, self, path) {
                     VisitorEntryResponse::Quit => return VisitorExitResponse::Quit,
                     VisitorEntryResponse::StepOver => {}
                     VisitorEntryResponse::StepIn => {
@@ -156,7 +154,7 @@ impl Visitable for Rc<Node> {
                         path.pop();
                     }
                 }
-                visitor.exit_token(*kind, range, trivia, self, path)
+                visitor.exit_token(*kind, lex_node, trivia, self, path)
             }
             Node::Group { children } => {
                 match visitor.enter_group(children, self, path) {
