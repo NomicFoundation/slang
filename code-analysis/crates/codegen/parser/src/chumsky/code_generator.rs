@@ -132,7 +132,7 @@ impl CodeGenerator {
             let parser = match parser.result_type {
                 ParserResultType::Token => {
                     // Use cst_trivia_token so we don't need to pass empty trivia nodes
-                    quote!( #parser_name.map(|token| if let lex::Node::Named(kind, node) = token.as_ref() { factory::cst_trivia_token(*kind, node.clone()) } else { unreachable!() }) )
+                    quote!( #parser_name.map(|token| if let lex::Node::Named(kind, node) = token.as_ref() { cst::Node::trivia_token(*kind, node.clone()) } else { unreachable!() }) )
                 }
                 ParserResultType::Rule => quote!( #parser_name ),
             };
