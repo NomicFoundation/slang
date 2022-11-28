@@ -20,10 +20,6 @@ impl TerminalTrie {
         }
     }
 
-    pub fn merge_with(&mut self, other: Self) {
-        self.0.extend(other.0);
-    }
-
     pub fn default_name(&self) -> Option<String> {
         if self.0.len() == 1 {
             let node = self.0.as_ref().child().unwrap();

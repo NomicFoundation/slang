@@ -128,124 +128,35 @@ impl<'context> CombinatorNode<'context> {
         }
 
         tree.context.alloc_node(match &expression.ebnf {
-            EBNF::Choice(exprs) => {
-                if tree.production.kind != ProductionKind::Token {
-                    Self::Choice {
-                        name,
-                        elements: exprs.iter().map(|e| Self::new(tree, e, None)).collect(),
-                    }
-                } else {
-                    // Merge runs of TerminalTrees and CharacterFilters
-                    let mut elements: Vec<&'context CombinatorNode<'context>> = vec![];
-
-                    let mut current_terminal_tree: Option<TerminalTrie> = None;
-                    let mut current_character_filter: Option<&'context CharacterFilter<'context>> =
-                        None;
-                    for e in exprs {
-                        // Sub-expressions with a user-specified name aren't merged
-                        if e.config.name.is_none() {
-                            if let Some(cf) = CharacterFilter::new(tree, e) {
-                                if let Some(trie) = current_terminal_tree {
-                                    elements.push(tree.context.alloc_node(Self::TerminalTrie {
-                                        name: trie.default_name(),
-                                        trie,
-                                    }));
-                                    current_terminal_tree = None
-                                };
-                                if let Some(filter) = current_character_filter {
-                                    current_character_filter = Some(filter.merged_with(cf, tree))
-                                } else {
-                                    current_character_filter = Some(cf)
-                                }
-                                continue;
-                            }
-                            if let Some(tt) = TerminalTrie::new(tree, e) {
-                                if let Some(filter) = current_character_filter {
-                                    elements.push(tree.context.alloc_node(Self::CharacterFilter {
-                                        name: filter.default_name(),
-                                        filter,
-                                    }));
-                                    current_character_filter = None
-                                };
-                                if let Some(trie) = current_terminal_tree.as_mut() {
-                                    trie.merge_with(tt)
-                                } else {
-                                    current_terminal_tree = Some(tt)
-                                }
-                                continue;
-                            }
-                        }
-
-                        if let Some(filter) = current_character_filter {
-                            elements.push(tree.context.alloc_node(Self::CharacterFilter {
-                                name: filter.default_name(),
-                                filter,
-                            }));
-                            current_character_filter = None
-                        };
-
-                        if let Some(trie) = current_terminal_tree {
-                            elements.push(tree.context.alloc_node(Self::TerminalTrie {
-                                name: trie.default_name(),
-                                trie,
-                            }));
-                            current_terminal_tree = None
-                        };
-
-                        elements.push(Self::new(tree, e, None))
-                    }
-
-                    if let Some(filter) = current_character_filter {
-                        elements.push(tree.context.alloc_node(Self::CharacterFilter {
-                            name: filter.default_name(),
-                            filter,
-                        }));
-                    };
-
-                    if let Some(trie) = current_terminal_tree {
-                        elements.push(tree.context.alloc_node(Self::TerminalTrie {
-                            name: trie.default_name(),
-                            trie,
-                        }));
-                    };
-
-                    Self::Choice { name, elements }
-                }
-            }
+            EBNF::Choice(exprs) => Self::Choice {
+                name,
+                elements: exprs
+                    .iter()
+                    .map(|expr| Self::new(tree, expr, None))
+                    .collect(),
+            },
 
             EBNF::DelimitedBy(EBNFDelimitedBy { open, expr, close }) => {
                 let expr = Self::new(tree, expr, None);
                 let name = name.or_else(|| {
-                    expr.name().map(|expr_name| {
-                        format!(
-                            "delimited_{}",
-                            // naming::name_of_terminal_string(open),
-                            expr_name,
-                            // naming::name_of_terminal_string(close)
-                        )
-                    })
+                    expr.name()
+                        .map(|expr_name| format!("delimited_{}", expr_name,))
                 });
-                let open = open.clone();
-                let close = close.clone();
                 Self::DelimitedBy {
                     name,
-                    open,
+                    open: open.clone(),
                     expr,
-                    close,
+                    close: close.clone(),
                 }
             }
 
             EBNF::Difference(EBNFDifference {
                 minuend,
                 subtrahend,
-            }) => {
-                let minuend = Self::new(tree, minuend, None);
-                let subtrahend = Self::new(tree, subtrahend, None);
-                Self::Difference {
-                    minuend,
-                    subtrahend,
-                }
-            }
+            }) => Self::Difference {
+                minuend: Self::new(tree, minuend, None),
+                subtrahend: Self::new(tree, subtrahend, None),
+            },
 
             EBNF::Not(_) => {
                 if let Some(filter) = CharacterFilter::new(tree, expression) {
@@ -263,10 +174,9 @@ impl<'context> CombinatorNode<'context> {
                 Self::OneOrMore { name, expr }
             }
 
-            EBNF::Optional(expr) => {
-                let expr = Self::new(tree, expr, name);
-                Self::Optional { expr }
-            }
+            EBNF::Optional(expr) => Self::Optional {
+                expr: Self::new(tree, expr, name),
+            },
 
             EBNF::Range(_) => {
                 let filter = CharacterFilter::new(tree, expression).unwrap();
@@ -287,26 +197,19 @@ impl<'context> CombinatorNode<'context> {
                 let expr = Self::new(tree, expr, None);
                 let name =
                     name.or_else(|| expr.name().map(|expr_name| naming::pluralize(&expr_name)));
-                let min = *min;
-                let max = *max;
                 Self::Repeated {
                     name,
                     expr,
-                    min,
-                    max,
+                    min: *min,
+                    max: *max,
                 }
             }
 
             EBNF::SeparatedBy(EBNFSeparatedBy { expr, separator }) => {
                 let expr = Self::new(tree, expr, None);
                 let name = name.or_else(|| {
-                    expr.name().map(|expr_name| {
-                        format!(
-                            "separated_{}",
-                            naming::pluralize(&expr_name),
-                            // naming::pluralize(&naming::name_of_terminal_string(&separator))
-                        )
-                    })
+                    expr.name()
+                        .map(|expr_name| format!("separated_{}", naming::pluralize(&expr_name),))
                 });
                 let separator = separator.clone();
                 Self::SeparatedBy {
@@ -316,10 +219,10 @@ impl<'context> CombinatorNode<'context> {
                 }
             }
 
-            EBNF::Sequence(exprs) => {
-                let elements = exprs.iter().map(|e| Self::new(tree, e, None)).collect();
-                Self::Sequence { name, elements }
-            }
+            EBNF::Sequence(exprs) => Self::Sequence {
+                name,
+                elements: exprs.iter().map(|e| Self::new(tree, e, None)).collect(),
+            },
 
             EBNF::Terminal(_) => {
                 let trie = TerminalTrie::new(tree, expression).unwrap();
