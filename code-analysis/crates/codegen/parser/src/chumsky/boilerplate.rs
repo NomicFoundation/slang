@@ -25,6 +25,30 @@ pub fn lex_head() -> TokenStream {
         }
 
         impl Node {
+            pub fn none() -> Rc<Self> {
+                Rc::new(Self::None)
+            }
+
+            pub fn chars(range: Range<usize>) -> Rc<Self> {
+                Rc::new(Self::Chars(range))
+            }
+
+            pub fn sequence(elements: Vec<Rc<Self>>) -> Rc<Self> {
+                Rc::new(if elements.is_empty() {
+                    Self::None
+                } else {
+                    Self::Sequence(elements)
+                })
+            }
+
+            pub fn choice(number: usize, element: Rc<Self>) -> Rc<Self> {
+                Rc::new(Self::Choice(number, element))
+            }
+
+            pub fn named(kind: kinds::Token, element: Rc<Self>) -> Rc<Self> {
+                Rc::new(Self::Named(kind, element))
+            }
+
             pub fn range(&self) -> Range<usize> {
                 match self {
                     Node::None => 0..0,
@@ -68,6 +92,52 @@ pub fn cst_head() -> TokenStream {
                 children: Vec<Rc<Node>>,
             }, // TODO: Error types
         }
+
+        impl Node {
+            pub fn none() -> Rc<Self> {
+                Rc::new(Self::None)
+            }
+
+            pub fn rule(kind: kinds::Rule, children: Vec<Rc<Self>>) -> Rc<Self> {
+                Rc::new(Self::Rule { kind, children })
+            }
+
+            pub fn trivia_token(kind: kinds::Token, lex_node: Rc<lex::Node>) -> Rc<Self> {
+                Rc::new(Self::Token {
+                    kind,
+                    lex_node,
+                    trivia: vec![],
+                })
+            }
+
+            pub fn token(
+                kind: kinds::Token,
+                lex_node: Rc<lex::Node>,
+                leading_trivia: Rc<Self>,
+                trailing_trivia: Rc<Self>,
+            ) -> Rc<Self> {
+                let mut trivia = vec![];
+                if *leading_trivia != Self::None {
+                    trivia.push(leading_trivia)
+                }
+                if *trailing_trivia != Self::None {
+                    trivia.push(trailing_trivia)
+                }
+                Rc::new(Self::Token {
+                    kind,
+                    lex_node,
+                    trivia,
+                })
+            }
+
+            pub fn group(children: Vec<Rc<Self>>) -> Rc<Self> {
+                if children.is_empty() {
+                    Self::none()
+                } else {
+                    Rc::new(Self::Group { children })
+                }
+            }
+        }
     )
 }
 
@@ -82,83 +152,6 @@ pub fn parse_head() -> TokenStream {
         use super::kinds;
         use super::lex;
         use super::cst;
-
-        mod factory {
-            use std::ops::Range;
-            use std::rc::Rc;
-
-            use super::cst;
-            use super::kinds;
-            use super::lex;
-
-            pub fn lex_none() -> Rc<lex::Node> {
-                Rc::new(lex::Node::None)
-            }
-
-            pub fn lex_chars(range: Range<usize>) -> Rc<lex::Node> {
-                Rc::new(lex::Node::Chars(range))
-            }
-
-            pub fn lex_sequence(elements: Vec<Rc<lex::Node>>) -> Rc<lex::Node> {
-                Rc::new(if elements.is_empty() {
-                    lex::Node::None
-                } else {
-                    lex::Node::Sequence(elements)
-                })
-            }
-
-            pub fn lex_choice(number: usize, element: Rc<lex::Node>) -> Rc<lex::Node> {
-                Rc::new(lex::Node::Choice(number, element))
-            }
-
-            pub fn lex_named(kind: kinds::Token, element: Rc<lex::Node>) -> Rc<lex::Node> {
-                Rc::new(lex::Node::Named(kind, element))
-            }
-
-            pub fn cst_none() -> Rc<cst::Node> {
-                Rc::new(cst::Node::None)
-            }
-
-            pub fn cst_rule(kind: kinds::Rule, children: Vec<Rc<cst::Node>>) -> Rc<cst::Node> {
-                Rc::new(cst::Node::Rule { kind, children })
-            }
-
-            pub fn cst_trivia_token(kind: kinds::Token, lex_node: Rc<lex::Node>) -> Rc<cst::Node> {
-                Rc::new(cst::Node::Token {
-                    kind,
-                    lex_node,
-                    trivia: vec![],
-                })
-            }
-
-            pub fn cst_token(
-                kind: kinds::Token,
-                lex_node: Rc<lex::Node>,
-                leading_trivia: Rc<cst::Node>,
-                trailing_trivia: Rc<cst::Node>,
-            ) -> Rc<cst::Node> {
-                let mut trivia = vec![];
-                if *leading_trivia != cst::Node::None {
-                    trivia.push(leading_trivia)
-                }
-                if *trailing_trivia != cst::Node::None {
-                    trivia.push(trailing_trivia)
-                }
-                Rc::new(cst::Node::Token {
-                    kind,
-                    lex_node,
-                    trivia,
-                })
-            }
-
-            pub fn cst_group(children: Vec<Rc<cst::Node>>) -> Rc<cst::Node> {
-                if children.is_empty() {
-                    cst_none()
-                } else {
-                    Rc::new(cst::Node::Group { children })
-                }
-            }
-        }
 
         pub type SpanType = Range<usize>;
         pub type ErrorType = Simple<char, SpanType>;
@@ -198,27 +191,27 @@ pub fn parse_macros() -> TokenStream {
         macro_rules! lex_terminal {
             ($kind:ident, $literal:literal) => {
                 just($literal).map_with_span(|_, span: SpanType| {
-                    factory::lex_named(
+                    lex::Node::named(
                         kinds::Token::$kind,
-                        factory::lex_chars(span.start()..span.end()),
+                        lex::Node::chars(span.start()..span.end()),
                     )
                 })
             };
             ($kind:ident, $filter:expr) => {
                 filter($filter).map_with_span(|_, span: SpanType| {
-                    factory::lex_named(
+                    lex::Node::named(
                         kinds::Token::$kind,
-                        factory::lex_chars(span.start()..span.end()),
+                        lex::Node::chars(span.start()..span.end()),
                     )
                 })
             };
             ($literal:literal) => {
                 just($literal)
-                    .map_with_span(|_, span: SpanType| factory::lex_chars(span.start()..span.end()))
+                    .map_with_span(|_, span: SpanType| lex::Node::chars(span.start()..span.end()))
             };
             ($filter:expr) => {
                 filter($filter)
-                    .map_with_span(|_, span: SpanType| factory::lex_chars(span.start()..span.end()))
+                    .map_with_span(|_, span: SpanType| lex::Node::chars(span.start()..span.end()))
             };
         }
 
@@ -232,11 +225,11 @@ pub fn parse_macros() -> TokenStream {
         #[allow(unused_macros)]
         macro_rules! lex_choice {
             ($kind:ident, $($expr:expr),*) => {
-                lex_choice!($($expr),*).map(|element| factory::lex_named(kinds::Token::$kind, element))
+                lex_choice!($($expr),*).map(|element| lex::Node::named(kinds::Token::$kind, element))
             };
             ($($expr:expr),*) => {
                 choice::<_, ErrorType>((
-                    $($expr.map(|v| factory::lex_choice(0, v))),*
+                    $($expr.map(|v| lex::Node::choice(0, v))),*
                 ))
             };
         }
@@ -244,12 +237,12 @@ pub fn parse_macros() -> TokenStream {
         #[allow(unused_macros)]
         macro_rules! lex_seq {
             ($kind:ident, $($expr:expr),*) => {
-                lex_seq!($($expr),*).map(|element| factory::lex_named(kinds::Token::$kind, element))
+                lex_seq!($($expr),*).map(|element| lex::Node::named(kinds::Token::$kind, element))
             };
             // THIS IS WRONG - it should accumulate the elements like seq! does below
             ($a:expr, $($b:expr),*) => {
                 $a $(.then($b))*
-                    .map_with_span(|_, span: SpanType| factory::lex_chars(span.start()..span.end()))
+                    .map_with_span(|_, span: SpanType| lex::Node::chars(span.start()..span.end()))
             };
         }
 
@@ -257,10 +250,10 @@ pub fn parse_macros() -> TokenStream {
         macro_rules! lex_zero_or_more {
             ($kind:ident, $expr:expr) => {
                 lex_zero_or_more!($expr)
-                    .map(|element| factory::lex_named(kinds::Token::$kind, element))
+                    .map(|element| lex::Node::named(kinds::Token::$kind, element))
             };
             ($expr:expr) => {
-                $expr.repeated().map(|v| factory::lex_sequence(v))
+                $expr.repeated().map(|v| lex::Node::sequence(v))
             };
         }
 
@@ -268,13 +261,10 @@ pub fn parse_macros() -> TokenStream {
         macro_rules! lex_one_or_more {
             ($kind:ident, $expr:expr) => {
                 lex_one_or_more!($expr)
-                    .map(|element| factory::lex_named(kinds::Token::$kind, element))
+                    .map(|element| lex::Node::named(kinds::Token::$kind, element))
             };
             ($expr:expr) => {
-                $expr
-                    .repeated()
-                    .at_least(1)
-                    .map(|v| factory::lex_sequence(v))
+                $expr.repeated().at_least(1).map(|v| lex::Node::sequence(v))
             };
         }
 
@@ -282,14 +272,14 @@ pub fn parse_macros() -> TokenStream {
         macro_rules! lex_repeated {
             ($kind:ident, $expr:expr, $min:literal, $max:literal) => {
                 lex_repeated!($expr, $min, $max)
-                    .map(|element| factory::lex_named(kinds::Token::$kind, element))
+                    .map(|element| lex::Node::named(kinds::Token::$kind, element))
             };
             ($expr:expr, $min:literal, $max:literal) => {
                 $expr
                     .repeated()
                     .at_least($min)
                     .at_most($max)
-                    .map(|v| factory::lex_sequence(v))
+                    .map(|v| lex::Node::sequence(v))
             };
         }
 
@@ -298,7 +288,7 @@ pub fn parse_macros() -> TokenStream {
             ($expr:expr) => {
                 $expr
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| factory::lex_none()))
+                    .map(|v| v.unwrap_or_else(|| lex::Node::none()))
             };
         }
 
@@ -306,7 +296,7 @@ pub fn parse_macros() -> TokenStream {
         macro_rules! lex_separated_by {
             ($kind:ident, $expr:expr, $separator:expr) => {
                 lex_separated_by!($expr, $separator)
-                    .map(|element| factory::lex_named(kinds::Token::$kind, element))
+                    .map(|element| lex::Node::named(kinds::Token::$kind, element))
             };
             ($expr:expr, $separator:expr) => {
                 $expr
@@ -317,7 +307,7 @@ pub fn parse_macros() -> TokenStream {
                             v.push(separator);
                             v.push(expr);
                         }
-                        factory::lex_sequence(v)
+                        lex::Node::sequence(v)
                     })
             };
         }
@@ -326,7 +316,7 @@ pub fn parse_macros() -> TokenStream {
         macro_rules! lex_trie {
             ($($expr:expr),* ) => (
                 choice::<_, ErrorType>(($($expr),*)).map_with_span(|kind, span: SpanType|
-                    factory::lex_named(kind, factory::lex_chars(span.start()..span.end())))
+                    lex::Node::named(kind, lex::Node::chars(span.start()..span.end())))
             )
         }
 
@@ -351,17 +341,17 @@ pub fn parse_macros() -> TokenStream {
         macro_rules! trivia_terminal {
             ($kind:ident, $literal:literal) => {
                 just($literal).map_with_span(|_, span: SpanType| {
-                    factory::cst_trivia_token(
+                    cst::Node::trivia_token(
                         kinds::Token::$kind,
-                        factory::lex_chars(span.start()..span.end()),
+                        lex::Node::chars(span.start()..span.end()),
                     )
                 })
             };
             ($kind:ident, $filter:expr) => {
                 filter($filter).map_with_span(|_, span: SpanType| {
-                    factory::cst_trivia_token(
+                    cst::Node::trivia_token(
                         kinds::Token::$kind,
-                        factory::lex_chars(span.start()..span.end()),
+                        lex::Node::chars(span.start()..span.end()),
                     )
                 })
             };
@@ -372,7 +362,7 @@ pub fn parse_macros() -> TokenStream {
             ($token_rule:ident) => {
                 $token_rule.clone().map(|token: Rc<lex::Node>| {
                     if let lex::Node::Named(kind, element) = token.as_ref() {
-                        factory::cst_trivia_token(*kind, element.clone())
+                        cst::Node::trivia_token(*kind, element.clone())
                     } else {
                         unreachable!("a token rule should always return a named token, but rule {} returned {:?}", stringify!($token_rule), token)
                     }
@@ -383,7 +373,7 @@ pub fn parse_macros() -> TokenStream {
         #[allow(unused_macros)]
         macro_rules! trivia_trie {
             ($($expr:expr),* ) => (
-                choice::<_, ErrorType>(($($expr),*)).map_with_span(|kind, span: SpanType| factory::cst_trivia_token(kind, factory::lex_chars(span.start()..span.end())))
+                choice::<_, ErrorType>(($($expr),*)).map_with_span(|kind, span: SpanType| cst::Node::trivia_token(kind, lex::Node::chars(span.start()..span.end())))
             )
         }
 
@@ -397,9 +387,9 @@ pub fn parse_macros() -> TokenStream {
                     )
                     .then(trailing_trivia_parser.clone())
                     .map(|((leading_trivia, range), trailing_trivia)| {
-                        factory::cst_token(
+                        cst::Node::token(
                             kinds::Token::$kind,
-                            factory::lex_chars(range),
+                            lex::Node::chars(range),
                             leading_trivia,
                             trailing_trivia,
                         )
@@ -413,9 +403,9 @@ pub fn parse_macros() -> TokenStream {
                     )
                     .then(trailing_trivia_parser.clone())
                     .map(|((leading_trivia, range), trailing_trivia)| {
-                        factory::cst_token(
+                        cst::Node::token(
                             kinds::Token::$kind,
-                            factory::lex_chars(range),
+                            lex::Node::chars(range),
                             leading_trivia,
                             trailing_trivia,
                         )
@@ -431,7 +421,7 @@ pub fn parse_macros() -> TokenStream {
                     .then(trailing_trivia_parser.clone())
                     .map(|((leading_trivia, token), trailing_trivia): ((_, Rc<lex::Node>), _)| {
                         if let lex::Node::Named(kind, element) = token.as_ref() {
-                            factory::cst_token(*kind, element.clone(), leading_trivia, trailing_trivia)
+                            cst::Node::token(*kind, element.clone(), leading_trivia, trailing_trivia)
                         } else {
                             unreachable!("a token rule should always return a named token, but rule {} returned {:?}", stringify!($token_rule), token)
                         }
@@ -496,12 +486,12 @@ pub fn parse_macros() -> TokenStream {
 
             ($kind:ident, $($expr:expr),+ ) => {
                 seq!(@exp $($expr),+ )
-                    .map(|v| factory::cst_rule(kinds::Rule::$kind, seq!(@args [] , v , $($expr),+ )))
+                    .map(|v| cst::Node::rule(kinds::Rule::$kind, seq!(@args [] , v , $($expr),+ )))
             };
 
             ($($expr:expr),+ ) => {
                 seq!(@exp $($expr),+ )
-                    .map(|v| factory::cst_group(seq!(@args [] , v , $($expr),+ )))
+                    .map(|v| cst::Node::group(seq!(@args [] , v , $($expr),+ )))
             };
         }
 
@@ -510,12 +500,10 @@ pub fn parse_macros() -> TokenStream {
             ($kind:ident, $expr:expr) => {
                 $expr
                     .repeated()
-                    .map(|children| factory::cst_rule(kinds::Rule::$kind, children))
+                    .map(|children| cst::Node::rule(kinds::Rule::$kind, children))
             };
             ($expr:expr) => {
-                $expr
-                    .repeated()
-                    .map(|children| factory::cst_group(children))
+                $expr.repeated().map(|children| cst::Node::group(children))
             };
         }
 
@@ -525,13 +513,13 @@ pub fn parse_macros() -> TokenStream {
                 $expr
                     .repeated()
                     .at_least(1)
-                    .map(|children| factory::cst_rule(kinds::Rule::$kind, children))
+                    .map(|children| cst::Node::rule(kinds::Rule::$kind, children))
             };
             ($expr:expr) => {
                 $expr
                     .repeated()
                     .at_least(1)
-                    .map(|children| factory::cst_group(children))
+                    .map(|children| cst::Node::group(children))
             };
         }
 
@@ -542,14 +530,14 @@ pub fn parse_macros() -> TokenStream {
                     .repeated()
                     .at_least($min)
                     .at_most($max)
-                    .map(|children| factory::cst_rule(kinds::Rule::$kind, children))
+                    .map(|children| cst::Node::rule(kinds::Rule::$kind, children))
             };
             ($expr:expr, $min:literal, $max:literal) => {
                 $expr
                     .repeated()
                     .at_least($min)
                     .at_most($max)
-                    .map(|children| factory::cst_group(children))
+                    .map(|children| cst::Node::group(children))
             };
         }
 
@@ -558,7 +546,7 @@ pub fn parse_macros() -> TokenStream {
             ($expr:expr) => {
                 $expr
                     .or_not()
-                    .map(|v| v.unwrap_or_else(|| factory::cst_none()))
+                    .map(|v| v.unwrap_or_else(|| cst::Node::none()))
             };
         }
 
@@ -573,7 +561,7 @@ pub fn parse_macros() -> TokenStream {
                             v.push(separator);
                             v.push(expr);
                         }
-                        factory::cst_rule(kinds::Rule::$kind, v)
+                        cst::Node::rule(kinds::Rule::$kind, v)
                     })
             };
             ($expr:expr, $separator:expr) => {
@@ -585,7 +573,7 @@ pub fn parse_macros() -> TokenStream {
                             v.push(separator);
                             v.push(expr);
                         }
-                        factory::cst_group(v)
+                        cst::Node::group(v)
                     })
             };
         }
@@ -604,7 +592,7 @@ pub fn parse_macros() -> TokenStream {
                             rest.into_iter().fold(
                                 first,
                                 |left_operand, (operator, right_operand)| {
-                                    factory::cst_rule(
+                                    cst::Node::rule(
                                         kinds::Rule::$kind,
                                         vec![left_operand, operator, right_operand],
                                     )
@@ -637,7 +625,7 @@ pub fn parse_macros() -> TokenStream {
                             operand_operator_pairs.into_iter().rfold(
                                 last_operand,
                                 |right_operand, (left_operand, operator)| {
-                                    factory::cst_rule(
+                                    cst::Node::rule(
                                         kinds::Rule::$kind,
                                         vec![left_operand, operator, right_operand],
                                     )
@@ -662,7 +650,7 @@ pub fn parse_macros() -> TokenStream {
                             operators
                                 .into_iter()
                                 .fold(operand, |right_operand, operator| {
-                                    factory::cst_rule(
+                                    cst::Node::rule(
                                         kinds::Rule::$kind,
                                         vec![operator, right_operand],
                                     )
@@ -685,7 +673,7 @@ pub fn parse_macros() -> TokenStream {
                             operators
                                 .into_iter()
                                 .fold(operand, |left_operand, operator| {
-                                    factory::cst_rule(
+                                    cst::Node::rule(
                                         kinds::Rule::$kind,
                                         vec![left_operand, operator],
                                     )
@@ -712,7 +700,7 @@ pub fn parse_macros() -> TokenStream {
                     .then(choice::<_, ErrorType>(($($expr),*)).map_with_span(|kind, span: SpanType| (kind, span.start()..span.end())))
                     .then(trailing_trivia_parser.clone())
                     .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
-                        factory::cst_token(kind, factory::lex_chars(range), leading_trivia, trailing_trivia)
+                        cst::Node::token(kind, lex::Node::chars(range), leading_trivia, trailing_trivia)
                     })
             )
         }

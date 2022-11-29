@@ -13,6 +13,25 @@ pub enum Node {
     Named(kinds::Token, Rc<Node>),
 }
 impl Node {
+    pub fn none() -> Rc<Self> {
+        Rc::new(Self::None)
+    }
+    pub fn chars(range: Range<usize>) -> Rc<Self> {
+        Rc::new(Self::Chars(range))
+    }
+    pub fn sequence(elements: Vec<Rc<Self>>) -> Rc<Self> {
+        Rc::new(if elements.is_empty() {
+            Self::None
+        } else {
+            Self::Sequence(elements)
+        })
+    }
+    pub fn choice(number: usize, element: Rc<Self>) -> Rc<Self> {
+        Rc::new(Self::Choice(number, element))
+    }
+    pub fn named(kind: kinds::Token, element: Rc<Self>) -> Rc<Self> {
+        Rc::new(Self::Named(kind, element))
+    }
     pub fn range(&self) -> Range<usize> {
         match self {
             Node::None => 0..0,

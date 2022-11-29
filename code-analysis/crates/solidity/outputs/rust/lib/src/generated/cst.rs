@@ -24,6 +24,47 @@ pub enum Node {
         children: Vec<Rc<Node>>,
     },
 }
+impl Node {
+    pub fn none() -> Rc<Self> {
+        Rc::new(Self::None)
+    }
+    pub fn rule(kind: kinds::Rule, children: Vec<Rc<Self>>) -> Rc<Self> {
+        Rc::new(Self::Rule { kind, children })
+    }
+    pub fn trivia_token(kind: kinds::Token, lex_node: Rc<lex::Node>) -> Rc<Self> {
+        Rc::new(Self::Token {
+            kind,
+            lex_node,
+            trivia: vec![],
+        })
+    }
+    pub fn token(
+        kind: kinds::Token,
+        lex_node: Rc<lex::Node>,
+        leading_trivia: Rc<Self>,
+        trailing_trivia: Rc<Self>,
+    ) -> Rc<Self> {
+        let mut trivia = vec![];
+        if *leading_trivia != Self::None {
+            trivia.push(leading_trivia)
+        }
+        if *trailing_trivia != Self::None {
+            trivia.push(trailing_trivia)
+        }
+        Rc::new(Self::Token {
+            kind,
+            lex_node,
+            trivia,
+        })
+    }
+    pub fn group(children: Vec<Rc<Self>>) -> Rc<Self> {
+        if children.is_empty() {
+            Self::none()
+        } else {
+            Rc::new(Self::Group { children })
+        }
+    }
+}
 #[allow(unused_variables)]
 pub trait Visitor {
     fn visit_none(&mut self, node: &Rc<Node>, path: &Vec<Rc<Node>>) -> VisitorExitResponse {
