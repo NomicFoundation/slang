@@ -104,16 +104,6 @@ impl<'context> CharacterFilter<'context> {
         }
     }
 
-    pub fn merged_with(
-        &'context self,
-        other: &'context CharacterFilter<'context>,
-        tree: &CombinatorTree<'context>,
-    ) -> &'context CharacterFilter<'context> {
-        tree.context.alloc_character_filter(Self::Disjunction {
-            nodes: vec![self, other],
-        })
-    }
-
     pub fn default_name(&self) -> Option<String> {
         if let Self::Negation { child } = self {
             child.default_name().map(|n| format!("not_{}", n))
