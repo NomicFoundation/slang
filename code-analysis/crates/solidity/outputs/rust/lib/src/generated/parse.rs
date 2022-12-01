@@ -534,219 +534,312 @@ impl<'a> Parsers<'a> {
         // Declare all productions --------------------------
 
         let mut abi_coder_pragma_specifier_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut add_sub_expression_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut address_type_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut and_expression_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut argument_list_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut array_literal_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut ascii_escape_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut add_sub_expression_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut address_type_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut and_expression_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut argument_list_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut array_literal_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut ascii_escape_parser =
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
         let mut ascii_string_literal_parser =
-            Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut assembly_flags_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut assembly_statement_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut assembly_flags_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut assembly_statement_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut assignment_expression_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut bit_and_expression_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut bit_or_expression_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut bit_x_or_expression_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut block_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut boolean_literal_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut break_statement_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut catch_clause_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut bit_and_expression_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut bit_or_expression_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut bit_x_or_expression_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut block_parser = Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut boolean_literal_parser =
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut break_statement_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut catch_clause_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut conditional_expression_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut constant_definition_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut constant_definition_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut constructor_attribute_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut constructor_definition_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut continue_statement_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut continue_statement_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut contract_body_element_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut contract_definition_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut data_location_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut decimal_exponent_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut decimal_float_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut decimal_integer_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut decimal_number_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut definition_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut delete_statement_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut directive_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut do_while_statement_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut contract_definition_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut data_location_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut decimal_exponent_parser =
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut decimal_float_parser =
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut decimal_integer_parser =
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut decimal_number_parser =
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut definition_parser = Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut delete_statement_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut directive_parser = Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut do_while_statement_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut double_quoted_ascii_string_literal_parser =
-            Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
         let mut double_quoted_unicode_string_literal_parser =
-            Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut elementary_type_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut emit_statement_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut end_of_file_trivia_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut end_of_line_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut enum_definition_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut elementary_type_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut emit_statement_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut end_of_file_trivia_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut end_of_line_parser = Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut enum_definition_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut equality_comparison_expression_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut error_definition_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut error_parameter_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut escape_sequence_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut event_definition_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut event_parameter_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut error_definition_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut error_parameter_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut escape_sequence_parser =
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut event_definition_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut event_parameter_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut experimental_pragma_specifier_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut exponentiation_expression_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut expression_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut expression_parser = Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut expression_statement_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut fallback_function_attribute_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut fallback_function_definition_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut fixed_bytes_type_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut for_statement_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut function_attribute_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut fixed_bytes_type_parser =
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut for_statement_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut function_attribute_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut function_call_expression_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut function_definition_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut function_type_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut hex_byte_escape_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut hex_character_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut hex_number_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut hex_string_literal_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut identifier_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut identifier_part_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut identifier_path_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut identifier_start_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut if_statement_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut import_directive_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut import_path_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut function_definition_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut function_type_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut hex_byte_escape_parser =
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut hex_character_parser =
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut hex_number_parser = Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut hex_string_literal_parser =
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut identifier_parser = Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut identifier_part_parser =
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut identifier_path_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut identifier_start_parser =
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut if_statement_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut import_directive_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut import_path_parser = Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut index_access_expression_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut inheritance_specifier_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut inheritance_specifier_list_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut interface_definition_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut keyword_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut leading_trivia_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut library_definition_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut mapping_type_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut keyword_parser = Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut leading_trivia_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut library_definition_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut mapping_type_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut member_access_expression_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut modifier_attribute_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut modifier_definition_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut modifier_invocation_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut modifier_attribute_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut modifier_definition_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut modifier_invocation_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut mul_div_mod_expression_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut multiline_comment_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut named_argument_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut named_argument_list_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut new_expression_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut number_unit_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut numeric_literal_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut or_expression_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut multiline_comment_parser =
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut named_argument_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut named_argument_list_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut new_expression_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut number_unit_parser = Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut numeric_literal_parser =
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut or_expression_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut order_comparison_expression_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut override_specifier_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut override_specifier_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut parameter_declaration_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut parameter_list_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut parameter_list_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut parenthesis_expression_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut payable_expression_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut payable_expression_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut positional_argument_list_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut possibly_separated_pairs_of_hex_digits_parser =
-            Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut pragma_directive_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut primary_expression_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut raw_identifier_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut pragma_directive_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut primary_expression_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut raw_identifier_parser =
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
         let mut receive_function_attribute_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut receive_function_definition_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut reserved_keyword_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut return_statement_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut revert_statement_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut selected_import_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut reserved_keyword_parser =
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut return_statement_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut revert_statement_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut selected_import_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut selecting_import_directive_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut shift_expression_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut signed_fixed_type_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut signed_integer_type_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut shift_expression_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut signed_fixed_type_parser =
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut signed_integer_type_parser =
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
         let mut simple_import_directive_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut simple_statement_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut single_line_comment_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut simple_statement_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut single_line_comment_parser =
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
         let mut single_quoted_ascii_string_literal_parser =
-            Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
         let mut single_quoted_unicode_string_literal_parser =
-            Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut source_unit_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut source_unit_parser = Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut star_import_directive_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut state_variable_attribute_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut state_variable_declaration_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut statement_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut struct_definition_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut struct_member_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut trailing_trivia_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut try_statement_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut statement_parser = Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut struct_definition_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut struct_member_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut trailing_trivia_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut try_statement_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut tuple_deconstruction_statement_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut type_expression_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut type_name_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut type_expression_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut type_name_parser = Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut unary_prefix_expression_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut unary_suffix_expression_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut unchecked_block_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut unicode_escape_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut unchecked_block_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut unicode_escape_parser =
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
         let mut unicode_string_literal_parser =
-            Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut unsigned_fixed_type_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut unsigned_fixed_type_parser =
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
         let mut unsigned_integer_type_parser =
-            Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
         let mut user_defined_value_type_definition_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut using_directive_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut using_directive_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut variable_declaration_statement_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut version_pragma_operator_parser =
-            Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
         let mut version_pragma_specifier_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut version_pragma_value_parser =
-            Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut while_statement_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut whitespace_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut while_statement_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut whitespace_parser = Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
         let mut yul_assignment_statement_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut yul_block_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut yul_break_statement_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut yul_block_parser = Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut yul_break_statement_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut yul_continue_statement_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut yul_decimal_number_literal_parser =
-            Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut yul_expression_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut yul_for_statement_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut yul_function_call_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut yul_expression_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut yul_for_statement_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut yul_function_call_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut yul_function_definition_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut yul_hex_literal_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut yul_identifier_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut yul_identifier_path_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut yul_if_statement_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut yul_keyword_parser = Recursive::<char, Rc<lex::Node>, ErrorType>::declare();
-        let mut yul_leave_statement_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut yul_literal_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
-        let mut yul_statement_parser = Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut yul_hex_literal_parser =
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut yul_identifier_parser =
+            Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut yul_identifier_path_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut yul_if_statement_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut yul_keyword_parser = Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
+        let mut yul_leave_statement_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut yul_literal_parser = Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut yul_statement_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut yul_switch_statement_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut yul_variable_declaration_parser =
-            Recursive::<char, Rc<cst::Node>, ErrorType>::declare();
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
 
         // Macros -------------------------------------------
 
@@ -824,9 +917,7 @@ impl<'a> Parsers<'a> {
         #[allow(unused_macros)]
         macro_rules! lex_optional {
             ($ expr : expr) => {
-                $expr
-                    .or_not()
-                    .map(|v| v.unwrap_or_else(|| lex::Node::none()))
+                $expr.or_not().map(|v| v.flatten())
             };
         }
         #[allow(unused_macros)]
@@ -867,7 +958,7 @@ impl<'a> Parsers<'a> {
                 just($literal).map_with_span(|_, span: SpanType| {
                     cst::Node::trivia_token(
                         kinds::Token::$kind,
-                        lex::Node::chars(span.start()..span.end()),
+                        lex::Node::chars_unwrapped(span.start()..span.end()),
                     )
                 })
             };
@@ -875,15 +966,15 @@ impl<'a> Parsers<'a> {
                 filter($filter).map_with_span(|_, span: SpanType| {
                     cst::Node::trivia_token(
                         kinds::Token::$kind,
-                        lex::Node::chars(span.start()..span.end()),
+                        lex::Node::chars_unwrapped(span.start()..span.end()),
                     )
                 })
             };
         }
         #[allow(unused_macros)]
-        macro_rules ! trivia_token { ($ token_rule : ident) => { $ token_rule . clone () . map (| token : Rc < lex :: Node > | { if let lex :: Node :: Named (kind , element) = token . as_ref () { cst :: Node :: trivia_token (* kind , element . clone ()) } else { unreachable ! ("a token rule should always return a named token, but rule {} returned {:?}" , stringify ! ($ token_rule) , token) } }) } ; }
+        macro_rules ! trivia_token { ($ token_rule : ident) => { $ token_rule . clone () . map (| token : Option < Rc < lex :: Node >> | { let token = token . unwrap () ; if let lex :: Node :: Named (kind , element) = token . as_ref () { cst :: Node :: trivia_token (* kind , element . clone ()) } else { unreachable ! ("a token rule should always return a named token, but rule {} returned {:?}" , stringify ! ($ token_rule) , token) } }) } ; }
         #[allow(unused_macros)]
-        macro_rules ! trivia_trie { ($ ($ expr : expr) , *) => (choice :: < _ , ErrorType > (($ ($ expr) , *)) . map_with_span (| kind , span : SpanType | cst :: Node :: trivia_token (kind , lex :: Node :: chars (span . start () .. span . end ())))) }
+        macro_rules ! trivia_trie { ($ ($ expr : expr) , *) => (choice :: < _ , ErrorType > (($ ($ expr) , *)) . map_with_span (| kind , span : SpanType | cst :: Node :: trivia_token (kind , lex :: Node :: chars_unwrapped (span . start () .. span . end ())))) }
         #[allow(unused_macros)]
         macro_rules! terminal {
             ($ kind : ident , $ literal : literal) => {
@@ -896,7 +987,7 @@ impl<'a> Parsers<'a> {
                     .map(|((leading_trivia, range), trailing_trivia)| {
                         cst::Node::token(
                             kinds::Token::$kind,
-                            lex::Node::chars(range),
+                            lex::Node::chars_unwrapped(range),
                             leading_trivia,
                             trailing_trivia,
                         )
@@ -912,7 +1003,7 @@ impl<'a> Parsers<'a> {
                     .map(|((leading_trivia, range), trailing_trivia)| {
                         cst::Node::token(
                             kinds::Token::$kind,
-                            lex::Node::chars(range),
+                            lex::Node::chars_unwrapped(range),
                             leading_trivia,
                             trailing_trivia,
                         )
@@ -920,7 +1011,7 @@ impl<'a> Parsers<'a> {
             };
         }
         #[allow(unused_macros)]
-        macro_rules ! token { ($ token_rule : ident) => { leading_trivia_parser . clone () . then ($ token_rule . clone ()) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , token) , trailing_trivia) : ((_ , Rc < lex :: Node >) , _) | { if let lex :: Node :: Named (kind , element) = token . as_ref () { cst :: Node :: token (* kind , element . clone () , leading_trivia , trailing_trivia) } else { unreachable ! ("a token rule should always return a named token, but rule {} returned {:?}" , stringify ! ($ token_rule) , token) } }) } ; }
+        macro_rules ! token { ($ token_rule : ident) => { leading_trivia_parser . clone () . then ($ token_rule . clone ()) . then (trailing_trivia_parser . clone ()) . map (| ((leading_trivia , token) , trailing_trivia) : ((_ , Option < Rc < lex :: Node >>) , _) | { let token = token . unwrap () ; if let lex :: Node :: Named (kind , element) = token . as_ref () { cst :: Node :: token (* kind , element . clone () , leading_trivia , trailing_trivia) } else { unreachable ! ("a token rule should always return a named token, but rule {} returned {:?}" , stringify ! ($ token_rule) , token) } }) } ; }
         #[allow(unused_macros)]
         macro_rules! rule {
             ($ rule : ident) => {
@@ -977,9 +1068,7 @@ impl<'a> Parsers<'a> {
         #[allow(unused_macros)]
         macro_rules! optional {
             ($ expr : expr) => {
-                $expr
-                    .or_not()
-                    .map(|v| v.unwrap_or_else(|| cst::Node::none()))
+                $expr.or_not().map(|opt| opt.flatten())
             };
         }
         #[allow(unused_macros)]
@@ -3900,573 +3989,665 @@ impl<'a> Parsers<'a> {
 
         Self {
             abi_coder_pragma_specifier: abi_coder_pragma_specifier_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::AbicoderPragmaSpecifier, node))
                 .then_ignore(end())
                 .boxed(),
-            add_sub_expression: add_sub_expression_parser.then_ignore(end()).boxed(),
-            address_type: address_type_parser.then_ignore(end()).boxed(),
-            and_expression: and_expression_parser.then_ignore(end()).boxed(),
-            argument_list: argument_list_parser.then_ignore(end()).boxed(),
-            array_literal: array_literal_parser.then_ignore(end()).boxed(),
+            add_sub_expression: add_sub_expression_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::AddSubExpression, node))
+                .then_ignore(end())
+                .boxed(),
+            address_type: address_type_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::AddressType, node))
+                .then_ignore(end())
+                .boxed(),
+            and_expression: and_expression_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::AndExpression, node))
+                .then_ignore(end())
+                .boxed(),
+            argument_list: argument_list_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::ArgumentList, node))
+                .then_ignore(end())
+                .boxed(),
+            array_literal: array_literal_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::ArrayLiteral, node))
+                .then_ignore(end())
+                .boxed(),
             ascii_escape: ascii_escape_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
             ascii_string_literal: ascii_string_literal_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
-            assembly_flags: assembly_flags_parser.then_ignore(end()).boxed(),
-            assembly_statement: assembly_statement_parser.then_ignore(end()).boxed(),
-            assignment_expression: assignment_expression_parser.then_ignore(end()).boxed(),
-            bit_and_expression: bit_and_expression_parser.then_ignore(end()).boxed(),
-            bit_or_expression: bit_or_expression_parser.then_ignore(end()).boxed(),
-            bit_x_or_expression: bit_x_or_expression_parser.then_ignore(end()).boxed(),
-            block: block_parser.then_ignore(end()).boxed(),
+            assembly_flags: assembly_flags_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::AssemblyFlags, node))
+                .then_ignore(end())
+                .boxed(),
+            assembly_statement: assembly_statement_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::AssemblyStatement, node))
+                .then_ignore(end())
+                .boxed(),
+            assignment_expression: assignment_expression_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::AssignmentExpression, node))
+                .then_ignore(end())
+                .boxed(),
+            bit_and_expression: bit_and_expression_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::BitAndExpression, node))
+                .then_ignore(end())
+                .boxed(),
+            bit_or_expression: bit_or_expression_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::BitOrExpression, node))
+                .then_ignore(end())
+                .boxed(),
+            bit_x_or_expression: bit_x_or_expression_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::BitXOrExpression, node))
+                .then_ignore(end())
+                .boxed(),
+            block: block_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::Block, node))
+                .then_ignore(end())
+                .boxed(),
             boolean_literal: boolean_literal_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
-            break_statement: break_statement_parser.then_ignore(end()).boxed(),
-            catch_clause: catch_clause_parser.then_ignore(end()).boxed(),
-            conditional_expression: conditional_expression_parser.then_ignore(end()).boxed(),
-            constant_definition: constant_definition_parser.then_ignore(end()).boxed(),
-            constructor_attribute: constructor_attribute_parser.then_ignore(end()).boxed(),
-            constructor_definition: constructor_definition_parser.then_ignore(end()).boxed(),
-            continue_statement: continue_statement_parser.then_ignore(end()).boxed(),
-            contract_body_element: contract_body_element_parser.then_ignore(end()).boxed(),
-            contract_definition: contract_definition_parser.then_ignore(end()).boxed(),
-            data_location: data_location_parser.then_ignore(end()).boxed(),
+            break_statement: break_statement_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::BreakStatement, node))
+                .then_ignore(end())
+                .boxed(),
+            catch_clause: catch_clause_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::CatchClause, node))
+                .then_ignore(end())
+                .boxed(),
+            conditional_expression: conditional_expression_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::ConditionalExpression, node))
+                .then_ignore(end())
+                .boxed(),
+            constant_definition: constant_definition_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::ConstantDefinition, node))
+                .then_ignore(end())
+                .boxed(),
+            constructor_attribute: constructor_attribute_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::ConstructorAttribute, node))
+                .then_ignore(end())
+                .boxed(),
+            constructor_definition: constructor_definition_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::ConstructorDefinition, node))
+                .then_ignore(end())
+                .boxed(),
+            continue_statement: continue_statement_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::ContinueStatement, node))
+                .then_ignore(end())
+                .boxed(),
+            contract_body_element: contract_body_element_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::ContractBodyElement, node))
+                .then_ignore(end())
+                .boxed(),
+            contract_definition: contract_definition_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::ContractDefinition, node))
+                .then_ignore(end())
+                .boxed(),
+            data_location: data_location_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::DataLocation, node))
+                .then_ignore(end())
+                .boxed(),
             decimal_exponent: decimal_exponent_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
             decimal_float: decimal_float_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
             decimal_integer: decimal_integer_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
             decimal_number: decimal_number_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
-            definition: definition_parser.then_ignore(end()).boxed(),
-            delete_statement: delete_statement_parser.then_ignore(end()).boxed(),
-            directive: directive_parser.then_ignore(end()).boxed(),
-            do_while_statement: do_while_statement_parser.then_ignore(end()).boxed(),
+            definition: definition_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::Definition, node))
+                .then_ignore(end())
+                .boxed(),
+            delete_statement: delete_statement_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::DeleteStatement, node))
+                .then_ignore(end())
+                .boxed(),
+            directive: directive_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::Directive, node))
+                .then_ignore(end())
+                .boxed(),
+            do_while_statement: do_while_statement_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::DoWhileStatement, node))
+                .then_ignore(end())
+                .boxed(),
             double_quoted_ascii_string_literal: double_quoted_ascii_string_literal_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
             double_quoted_unicode_string_literal: double_quoted_unicode_string_literal_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
-            elementary_type: elementary_type_parser.then_ignore(end()).boxed(),
-            emit_statement: emit_statement_parser.then_ignore(end()).boxed(),
-            end_of_file_trivia: end_of_file_trivia_parser.then_ignore(end()).boxed(),
+            elementary_type: elementary_type_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::ElementaryType, node))
+                .then_ignore(end())
+                .boxed(),
+            emit_statement: emit_statement_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::EmitStatement, node))
+                .then_ignore(end())
+                .boxed(),
+            end_of_file_trivia: end_of_file_trivia_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::EndOfFileTrivia, node))
+                .then_ignore(end())
+                .boxed(),
             end_of_line: end_of_line_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
-            enum_definition: enum_definition_parser.then_ignore(end()).boxed(),
+            enum_definition: enum_definition_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::EnumDefinition, node))
+                .then_ignore(end())
+                .boxed(),
             equality_comparison_expression: equality_comparison_expression_parser
-                .then_ignore(end())
-                .boxed(),
-            error_definition: error_definition_parser.then_ignore(end()).boxed(),
-            error_parameter: error_parameter_parser.then_ignore(end()).boxed(),
-            escape_sequence: escape_sequence_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
+                .map(|node| {
+                    cst::Node::top_level_rule(kinds::Rule::EqualityComparisonExpression, node)
                 })
                 .then_ignore(end())
                 .boxed(),
-            event_definition: event_definition_parser.then_ignore(end()).boxed(),
-            event_parameter: event_parameter_parser.then_ignore(end()).boxed(),
-            experimental_pragma_specifier: experimental_pragma_specifier_parser
+            error_definition: error_definition_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::ErrorDefinition, node))
                 .then_ignore(end())
                 .boxed(),
-            exponentiation_expression: exponentiation_expression_parser.then_ignore(end()).boxed(),
-            expression: expression_parser.then_ignore(end()).boxed(),
-            expression_statement: expression_statement_parser.then_ignore(end()).boxed(),
+            error_parameter: error_parameter_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::ErrorParameter, node))
+                .then_ignore(end())
+                .boxed(),
+            escape_sequence: escape_sequence_parser
+                .map(|node| cst::Node::top_level_token(node))
+                .then_ignore(end())
+                .boxed(),
+            event_definition: event_definition_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::EventDefinition, node))
+                .then_ignore(end())
+                .boxed(),
+            event_parameter: event_parameter_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::EventParameter, node))
+                .then_ignore(end())
+                .boxed(),
+            experimental_pragma_specifier: experimental_pragma_specifier_parser
+                .map(|node| {
+                    cst::Node::top_level_rule(kinds::Rule::ExperimentalPragmaSpecifier, node)
+                })
+                .then_ignore(end())
+                .boxed(),
+            exponentiation_expression: exponentiation_expression_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::ExponentiationExpression, node))
+                .then_ignore(end())
+                .boxed(),
+            expression: expression_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::Expression, node))
+                .then_ignore(end())
+                .boxed(),
+            expression_statement: expression_statement_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::ExpressionStatement, node))
+                .then_ignore(end())
+                .boxed(),
             fallback_function_attribute: fallback_function_attribute_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::FallbackFunctionAttribute, node))
                 .then_ignore(end())
                 .boxed(),
             fallback_function_definition: fallback_function_definition_parser
+                .map(|node| {
+                    cst::Node::top_level_rule(kinds::Rule::FallbackFunctionDefinition, node)
+                })
                 .then_ignore(end())
                 .boxed(),
             fixed_bytes_type: fixed_bytes_type_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
-            for_statement: for_statement_parser.then_ignore(end()).boxed(),
-            function_attribute: function_attribute_parser.then_ignore(end()).boxed(),
-            function_call_expression: function_call_expression_parser.then_ignore(end()).boxed(),
-            function_definition: function_definition_parser.then_ignore(end()).boxed(),
-            function_type: function_type_parser.then_ignore(end()).boxed(),
+            for_statement: for_statement_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::ForStatement, node))
+                .then_ignore(end())
+                .boxed(),
+            function_attribute: function_attribute_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::FunctionAttribute, node))
+                .then_ignore(end())
+                .boxed(),
+            function_call_expression: function_call_expression_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::FunctionCallExpression, node))
+                .then_ignore(end())
+                .boxed(),
+            function_definition: function_definition_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::FunctionDefinition, node))
+                .then_ignore(end())
+                .boxed(),
+            function_type: function_type_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::FunctionType, node))
+                .then_ignore(end())
+                .boxed(),
             hex_byte_escape: hex_byte_escape_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
             hex_character: hex_character_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
             hex_number: hex_number_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
             hex_string_literal: hex_string_literal_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
             identifier: identifier_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
             identifier_part: identifier_part_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
-            identifier_path: identifier_path_parser.then_ignore(end()).boxed(),
+            identifier_path: identifier_path_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::IdentifierPath, node))
+                .then_ignore(end())
+                .boxed(),
             identifier_start: identifier_start_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
-            if_statement: if_statement_parser.then_ignore(end()).boxed(),
-            import_directive: import_directive_parser.then_ignore(end()).boxed(),
-            import_path: import_path_parser.then_ignore(end()).boxed(),
-            index_access_expression: index_access_expression_parser.then_ignore(end()).boxed(),
-            inheritance_specifier: inheritance_specifier_parser.then_ignore(end()).boxed(),
+            if_statement: if_statement_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::IfStatement, node))
+                .then_ignore(end())
+                .boxed(),
+            import_directive: import_directive_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::ImportDirective, node))
+                .then_ignore(end())
+                .boxed(),
+            import_path: import_path_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::ImportPath, node))
+                .then_ignore(end())
+                .boxed(),
+            index_access_expression: index_access_expression_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::IndexAccessExpression, node))
+                .then_ignore(end())
+                .boxed(),
+            inheritance_specifier: inheritance_specifier_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::InheritanceSpecifier, node))
+                .then_ignore(end())
+                .boxed(),
             inheritance_specifier_list: inheritance_specifier_list_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::InheritanceSpecifierList, node))
                 .then_ignore(end())
                 .boxed(),
-            interface_definition: interface_definition_parser.then_ignore(end()).boxed(),
+            interface_definition: interface_definition_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::InterfaceDefinition, node))
+                .then_ignore(end())
+                .boxed(),
             keyword: keyword_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
-            leading_trivia: leading_trivia_parser.then_ignore(end()).boxed(),
-            library_definition: library_definition_parser.then_ignore(end()).boxed(),
-            mapping_type: mapping_type_parser.then_ignore(end()).boxed(),
-            member_access_expression: member_access_expression_parser.then_ignore(end()).boxed(),
-            modifier_attribute: modifier_attribute_parser.then_ignore(end()).boxed(),
-            modifier_definition: modifier_definition_parser.then_ignore(end()).boxed(),
-            modifier_invocation: modifier_invocation_parser.then_ignore(end()).boxed(),
-            mul_div_mod_expression: mul_div_mod_expression_parser.then_ignore(end()).boxed(),
+            leading_trivia: leading_trivia_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::LeadingTrivia, node))
+                .then_ignore(end())
+                .boxed(),
+            library_definition: library_definition_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::LibraryDefinition, node))
+                .then_ignore(end())
+                .boxed(),
+            mapping_type: mapping_type_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::MappingType, node))
+                .then_ignore(end())
+                .boxed(),
+            member_access_expression: member_access_expression_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::MemberAccessExpression, node))
+                .then_ignore(end())
+                .boxed(),
+            modifier_attribute: modifier_attribute_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::ModifierAttribute, node))
+                .then_ignore(end())
+                .boxed(),
+            modifier_definition: modifier_definition_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::ModifierDefinition, node))
+                .then_ignore(end())
+                .boxed(),
+            modifier_invocation: modifier_invocation_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::ModifierInvocation, node))
+                .then_ignore(end())
+                .boxed(),
+            mul_div_mod_expression: mul_div_mod_expression_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::MulDivModExpression, node))
+                .then_ignore(end())
+                .boxed(),
             multiline_comment: multiline_comment_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
-            named_argument: named_argument_parser.then_ignore(end()).boxed(),
-            named_argument_list: named_argument_list_parser.then_ignore(end()).boxed(),
-            new_expression: new_expression_parser.then_ignore(end()).boxed(),
+            named_argument: named_argument_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::NamedArgument, node))
+                .then_ignore(end())
+                .boxed(),
+            named_argument_list: named_argument_list_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::NamedArgumentList, node))
+                .then_ignore(end())
+                .boxed(),
+            new_expression: new_expression_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::NewExpression, node))
+                .then_ignore(end())
+                .boxed(),
             number_unit: number_unit_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
             numeric_literal: numeric_literal_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
-            or_expression: or_expression_parser.then_ignore(end()).boxed(),
+            or_expression: or_expression_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::OrExpression, node))
+                .then_ignore(end())
+                .boxed(),
             order_comparison_expression: order_comparison_expression_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::OrderComparisonExpression, node))
                 .then_ignore(end())
                 .boxed(),
-            override_specifier: override_specifier_parser.then_ignore(end()).boxed(),
-            parameter_declaration: parameter_declaration_parser.then_ignore(end()).boxed(),
-            parameter_list: parameter_list_parser.then_ignore(end()).boxed(),
-            parenthesis_expression: parenthesis_expression_parser.then_ignore(end()).boxed(),
-            payable_expression: payable_expression_parser.then_ignore(end()).boxed(),
-            positional_argument_list: positional_argument_list_parser.then_ignore(end()).boxed(),
+            override_specifier: override_specifier_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::OverrideSpecifier, node))
+                .then_ignore(end())
+                .boxed(),
+            parameter_declaration: parameter_declaration_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::ParameterDeclaration, node))
+                .then_ignore(end())
+                .boxed(),
+            parameter_list: parameter_list_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::ParameterList, node))
+                .then_ignore(end())
+                .boxed(),
+            parenthesis_expression: parenthesis_expression_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::ParenthesisExpression, node))
+                .then_ignore(end())
+                .boxed(),
+            payable_expression: payable_expression_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::PayableExpression, node))
+                .then_ignore(end())
+                .boxed(),
+            positional_argument_list: positional_argument_list_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::PositionalArgumentList, node))
+                .then_ignore(end())
+                .boxed(),
             possibly_separated_pairs_of_hex_digits: possibly_separated_pairs_of_hex_digits_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
-            pragma_directive: pragma_directive_parser.then_ignore(end()).boxed(),
-            primary_expression: primary_expression_parser.then_ignore(end()).boxed(),
+            pragma_directive: pragma_directive_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::PragmaDirective, node))
+                .then_ignore(end())
+                .boxed(),
+            primary_expression: primary_expression_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::PrimaryExpression, node))
+                .then_ignore(end())
+                .boxed(),
             raw_identifier: raw_identifier_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
             receive_function_attribute: receive_function_attribute_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::ReceiveFunctionAttribute, node))
                 .then_ignore(end())
                 .boxed(),
             receive_function_definition: receive_function_definition_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::ReceiveFunctionDefinition, node))
                 .then_ignore(end())
                 .boxed(),
             reserved_keyword: reserved_keyword_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
-            return_statement: return_statement_parser.then_ignore(end()).boxed(),
-            revert_statement: revert_statement_parser.then_ignore(end()).boxed(),
-            selected_import: selected_import_parser.then_ignore(end()).boxed(),
+            return_statement: return_statement_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::ReturnStatement, node))
+                .then_ignore(end())
+                .boxed(),
+            revert_statement: revert_statement_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::RevertStatement, node))
+                .then_ignore(end())
+                .boxed(),
+            selected_import: selected_import_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::SelectedImport, node))
+                .then_ignore(end())
+                .boxed(),
             selecting_import_directive: selecting_import_directive_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::SelectingImportDirective, node))
                 .then_ignore(end())
                 .boxed(),
-            shift_expression: shift_expression_parser.then_ignore(end()).boxed(),
+            shift_expression: shift_expression_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::ShiftExpression, node))
+                .then_ignore(end())
+                .boxed(),
             signed_fixed_type: signed_fixed_type_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
             signed_integer_type: signed_integer_type_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
-            simple_import_directive: simple_import_directive_parser.then_ignore(end()).boxed(),
-            simple_statement: simple_statement_parser.then_ignore(end()).boxed(),
+            simple_import_directive: simple_import_directive_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::SimpleImportDirective, node))
+                .then_ignore(end())
+                .boxed(),
+            simple_statement: simple_statement_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::SimpleStatement, node))
+                .then_ignore(end())
+                .boxed(),
             single_line_comment: single_line_comment_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
             single_quoted_ascii_string_literal: single_quoted_ascii_string_literal_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
             single_quoted_unicode_string_literal: single_quoted_unicode_string_literal_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
-            source_unit: source_unit_parser.then_ignore(end()).boxed(),
-            star_import_directive: star_import_directive_parser.then_ignore(end()).boxed(),
-            state_variable_attribute: state_variable_attribute_parser.then_ignore(end()).boxed(),
+            source_unit: source_unit_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::SourceUnit, node))
+                .then_ignore(end())
+                .boxed(),
+            star_import_directive: star_import_directive_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::StarImportDirective, node))
+                .then_ignore(end())
+                .boxed(),
+            state_variable_attribute: state_variable_attribute_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::StateVariableAttribute, node))
+                .then_ignore(end())
+                .boxed(),
             state_variable_declaration: state_variable_declaration_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::StateVariableDeclaration, node))
                 .then_ignore(end())
                 .boxed(),
-            statement: statement_parser.then_ignore(end()).boxed(),
-            struct_definition: struct_definition_parser.then_ignore(end()).boxed(),
-            struct_member: struct_member_parser.then_ignore(end()).boxed(),
-            trailing_trivia: trailing_trivia_parser.then_ignore(end()).boxed(),
-            try_statement: try_statement_parser.then_ignore(end()).boxed(),
+            statement: statement_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::Statement, node))
+                .then_ignore(end())
+                .boxed(),
+            struct_definition: struct_definition_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::StructDefinition, node))
+                .then_ignore(end())
+                .boxed(),
+            struct_member: struct_member_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::StructMember, node))
+                .then_ignore(end())
+                .boxed(),
+            trailing_trivia: trailing_trivia_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::TrailingTrivia, node))
+                .then_ignore(end())
+                .boxed(),
+            try_statement: try_statement_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::TryStatement, node))
+                .then_ignore(end())
+                .boxed(),
             tuple_deconstruction_statement: tuple_deconstruction_statement_parser
+                .map(|node| {
+                    cst::Node::top_level_rule(kinds::Rule::TupleDeconstructionStatement, node)
+                })
                 .then_ignore(end())
                 .boxed(),
-            type_expression: type_expression_parser.then_ignore(end()).boxed(),
-            type_name: type_name_parser.then_ignore(end()).boxed(),
-            unary_prefix_expression: unary_prefix_expression_parser.then_ignore(end()).boxed(),
-            unary_suffix_expression: unary_suffix_expression_parser.then_ignore(end()).boxed(),
-            unchecked_block: unchecked_block_parser.then_ignore(end()).boxed(),
+            type_expression: type_expression_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::TypeExpression, node))
+                .then_ignore(end())
+                .boxed(),
+            type_name: type_name_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::TypeName, node))
+                .then_ignore(end())
+                .boxed(),
+            unary_prefix_expression: unary_prefix_expression_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::UnaryPrefixExpression, node))
+                .then_ignore(end())
+                .boxed(),
+            unary_suffix_expression: unary_suffix_expression_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::UnarySuffixExpression, node))
+                .then_ignore(end())
+                .boxed(),
+            unchecked_block: unchecked_block_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::UncheckedBlock, node))
+                .then_ignore(end())
+                .boxed(),
             unicode_escape: unicode_escape_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
             unicode_string_literal: unicode_string_literal_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
             unsigned_fixed_type: unsigned_fixed_type_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
             unsigned_integer_type: unsigned_integer_type_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
             user_defined_value_type_definition: user_defined_value_type_definition_parser
+                .map(|node| {
+                    cst::Node::top_level_rule(kinds::Rule::UserDefinedValueTypeDefinition, node)
+                })
                 .then_ignore(end())
                 .boxed(),
-            using_directive: using_directive_parser.then_ignore(end()).boxed(),
+            using_directive: using_directive_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::UsingDirective, node))
+                .then_ignore(end())
+                .boxed(),
             variable_declaration_statement: variable_declaration_statement_parser
+                .map(|node| {
+                    cst::Node::top_level_rule(kinds::Rule::VariableDeclarationStatement, node)
+                })
                 .then_ignore(end())
                 .boxed(),
             version_pragma_operator: version_pragma_operator_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
-            version_pragma_specifier: version_pragma_specifier_parser.then_ignore(end()).boxed(),
+            version_pragma_specifier: version_pragma_specifier_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::VersionPragmaSpecifier, node))
+                .then_ignore(end())
+                .boxed(),
             version_pragma_value: version_pragma_value_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
-            while_statement: while_statement_parser.then_ignore(end()).boxed(),
+            while_statement: while_statement_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::WhileStatement, node))
+                .then_ignore(end())
+                .boxed(),
             whitespace: whitespace_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
-            yul_assignment_statement: yul_assignment_statement_parser.then_ignore(end()).boxed(),
-            yul_block: yul_block_parser.then_ignore(end()).boxed(),
-            yul_break_statement: yul_break_statement_parser.then_ignore(end()).boxed(),
-            yul_continue_statement: yul_continue_statement_parser.then_ignore(end()).boxed(),
+            yul_assignment_statement: yul_assignment_statement_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulAssignmentStatement, node))
+                .then_ignore(end())
+                .boxed(),
+            yul_block: yul_block_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulBlock, node))
+                .then_ignore(end())
+                .boxed(),
+            yul_break_statement: yul_break_statement_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulBreakStatement, node))
+                .then_ignore(end())
+                .boxed(),
+            yul_continue_statement: yul_continue_statement_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulContinueStatement, node))
+                .then_ignore(end())
+                .boxed(),
             yul_decimal_number_literal: yul_decimal_number_literal_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
-            yul_expression: yul_expression_parser.then_ignore(end()).boxed(),
-            yul_for_statement: yul_for_statement_parser.then_ignore(end()).boxed(),
-            yul_function_call: yul_function_call_parser.then_ignore(end()).boxed(),
-            yul_function_definition: yul_function_definition_parser.then_ignore(end()).boxed(),
+            yul_expression: yul_expression_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulExpression, node))
+                .then_ignore(end())
+                .boxed(),
+            yul_for_statement: yul_for_statement_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulForStatement, node))
+                .then_ignore(end())
+                .boxed(),
+            yul_function_call: yul_function_call_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulFunctionCall, node))
+                .then_ignore(end())
+                .boxed(),
+            yul_function_definition: yul_function_definition_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulFunctionDefinition, node))
+                .then_ignore(end())
+                .boxed(),
             yul_hex_literal: yul_hex_literal_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
             yul_identifier: yul_identifier_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
-            yul_identifier_path: yul_identifier_path_parser.then_ignore(end()).boxed(),
-            yul_if_statement: yul_if_statement_parser.then_ignore(end()).boxed(),
+            yul_identifier_path: yul_identifier_path_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulIdentifierPath, node))
+                .then_ignore(end())
+                .boxed(),
+            yul_if_statement: yul_if_statement_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulIfStatement, node))
+                .then_ignore(end())
+                .boxed(),
             yul_keyword: yul_keyword_parser
-                .map(|token| {
-                    if let lex::Node::Named(kind, node) = token.as_ref() {
-                        cst::Node::trivia_token(*kind, node.clone())
-                    } else {
-                        unreachable!()
-                    }
-                })
+                .map(|node| cst::Node::top_level_token(node))
                 .then_ignore(end())
                 .boxed(),
-            yul_leave_statement: yul_leave_statement_parser.then_ignore(end()).boxed(),
-            yul_literal: yul_literal_parser.then_ignore(end()).boxed(),
-            yul_statement: yul_statement_parser.then_ignore(end()).boxed(),
-            yul_switch_statement: yul_switch_statement_parser.then_ignore(end()).boxed(),
-            yul_variable_declaration: yul_variable_declaration_parser.then_ignore(end()).boxed(),
+            yul_leave_statement: yul_leave_statement_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulLeaveStatement, node))
+                .then_ignore(end())
+                .boxed(),
+            yul_literal: yul_literal_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulLiteral, node))
+                .then_ignore(end())
+                .boxed(),
+            yul_statement: yul_statement_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulStatement, node))
+                .then_ignore(end())
+                .boxed(),
+            yul_switch_statement: yul_switch_statement_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulSwitchStatement, node))
+                .then_ignore(end())
+                .boxed(),
+            yul_variable_declaration: yul_variable_declaration_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulVariableDeclaration, node))
+                .then_ignore(end())
+                .boxed(),
         }
     }
 }

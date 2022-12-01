@@ -92,8 +92,8 @@ impl CodeGenerator {
             let field_name = naming::to_field_name_ident(&name);
 
             let result_type = match parser.result_type {
-                ParserResultType::Token => quote! { Rc<lex::Node> },
-                ParserResultType::Rule => quote! { Rc<cst::Node> },
+                ParserResultType::Token => quote! { Option<Rc<lex::Node>> },
+                ParserResultType::Rule => quote! { Option<Rc<cst::Node>> },
             };
 
             versions.extend(parser.versions.keys());
@@ -131,10 +131,12 @@ impl CodeGenerator {
 
             let parser = match parser.result_type {
                 ParserResultType::Token => {
-                    // Use cst_trivia_token so we don't need to pass empty trivia nodes
-                    quote!( #parser_name.map(|token| if let lex::Node::Named(kind, node) = token.as_ref() { cst::Node::trivia_token(*kind, node.clone()) } else { unreachable!() }) )
+                    quote!( #parser_name.map(|node| cst::Node::top_level_token(node)) )
                 }
-                ParserResultType::Rule => quote!( #parser_name ),
+                ParserResultType::Rule => {
+                    let kind = format_ident!("{}", name.to_pascal_case());
+                    quote!( #parser_name.map(|node| cst::Node::top_level_rule(kinds::Rule::#kind, node)) )
+                }
             };
             field_assignments
                 .push(quote!( #field_name: #parser.then_ignore(end()).boxed(), ).to_string());

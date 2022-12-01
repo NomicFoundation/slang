@@ -17,7 +17,6 @@ pub fn lex_head() -> TokenStream {
 
         #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
         pub enum Node {
-            None,
             Chars(Range<usize>),
             Choice(usize, Rc<Node>),
             Sequence(Vec<Rc<Node>>),
@@ -25,33 +24,30 @@ pub fn lex_head() -> TokenStream {
         }
 
         impl Node {
-            pub fn none() -> Rc<Self> {
-                Rc::new(Self::None)
+            pub fn chars(range: Range<usize>) -> Option<Rc<Self>> {
+                Some(Rc::new(Self::Chars(range)))
             }
 
-            pub fn chars(range: Range<usize>) -> Rc<Self> {
+            pub fn chars_unwrapped(range: Range<usize>) -> Rc<Self> {
                 Rc::new(Self::Chars(range))
             }
 
-            pub fn sequence(elements: Vec<Rc<Self>>) -> Rc<Self> {
-                Rc::new(if elements.is_empty() {
-                    Self::None
-                } else {
-                    Self::Sequence(elements)
-                })
+            pub fn sequence(elements: Vec<Option<Rc<Self>>>) -> Option<Rc<Self>> {
+                let elements: Vec<_> = elements.into_iter().filter_map(|e| e).collect();
+                if elements.is_empty() { None } else { Some(Rc::new(Self::Sequence(elements))) }
             }
 
-            pub fn choice(number: usize, element: Rc<Self>) -> Rc<Self> {
-                Rc::new(Self::Choice(number, element))
+            pub fn choice(index: usize, element: Option<Rc<Self>>) -> Option<Rc<Self>> {
+                // TODO: disallow empty choices
+                element.map(|e| Rc::new(Self::Choice(index, e)))
             }
 
-            pub fn named(kind: kinds::Token, element: Rc<Self>) -> Rc<Self> {
-                Rc::new(Self::Named(kind, element))
+            pub fn named(kind: kinds::Token, element: Option<Rc<Self>>) -> Option<Rc<Self>> {
+                element.map(|e| Rc::new(Self::Named(kind, e)))
             }
 
             pub fn range(&self) -> Range<usize> {
                 match self {
-                    Node::None => 0..0,
                     Node::Chars(range) => range.clone(),
                     Node::Choice(_, element) => element.range(),
                     Node::Sequence(elements) => {
@@ -74,10 +70,8 @@ pub fn cst_head() -> TokenStream {
 
         #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
         pub enum Node {
-            None,
             Rule {
                 kind: kinds::Rule,
-                #[serde(skip_serializing_if = "Vec::is_empty")]
                 children: Vec<Rc<Node>>,
             },
             Token {
@@ -88,54 +82,68 @@ pub fn cst_head() -> TokenStream {
             },
             /// For anonymous groups referenced from AST nodes i.e. `delimited_by`
             Group {
-                #[serde(skip_serializing_if = "Vec::is_empty")]
                 children: Vec<Rc<Node>>,
-            }, // TODO: Error types
+            },
+            // TODO: Error types
         }
 
         impl Node {
-            pub fn none() -> Rc<Self> {
-                Rc::new(Self::None)
+            pub fn rule(kind: kinds::Rule, children: Vec<Option<Rc<Self>>>) -> Option<Rc<Self>> {
+                let children: Vec<_> = children.into_iter().filter_map(|e| e).collect();
+                if children.is_empty() { None } else { Some(Rc::new(Self::Rule { kind, children })) }
             }
 
-            pub fn rule(kind: kinds::Rule, children: Vec<Rc<Self>>) -> Rc<Self> {
-                Rc::new(Self::Rule { kind, children })
-            }
-
-            pub fn trivia_token(kind: kinds::Token, lex_node: Rc<lex::Node>) -> Rc<Self> {
-                Rc::new(Self::Token {
+            pub fn trivia_token(kind: kinds::Token, lex_node: Rc<lex::Node>) -> Option<Rc<Self>> {
+                Some(Rc::new(Self::Token {
                     kind,
                     lex_node,
                     trivia: vec![],
-                })
+                }))
             }
 
             pub fn token(
                 kind: kinds::Token,
                 lex_node: Rc<lex::Node>,
-                leading_trivia: Rc<Self>,
-                trailing_trivia: Rc<Self>,
-            ) -> Rc<Self> {
+                leading_trivia: Option<Rc<Self>>,
+                trailing_trivia: Option<Rc<Self>>,
+            ) -> Option<Rc<Self>> {
                 let mut trivia = vec![];
-                if *leading_trivia != Self::None {
+                if let Some(leading_trivia) = leading_trivia {
                     trivia.push(leading_trivia)
                 }
-                if *trailing_trivia != Self::None {
+                if let Some(trailing_trivia) = trailing_trivia {
                     trivia.push(trailing_trivia)
                 }
-                Rc::new(Self::Token {
+                Some(Rc::new(Self::Token {
                     kind,
                     lex_node,
                     trivia,
-                })
+                }))
             }
 
-            pub fn group(children: Vec<Rc<Self>>) -> Rc<Self> {
-                if children.is_empty() {
-                    Self::none()
+            pub fn group(children: Vec<Option<Rc<Self>>>) -> Option<Rc<Self>> {
+                let children: Vec<_> = children.into_iter().filter_map(|e| e).collect();
+                if children.is_empty() { None } else { Some(Rc::new(Self::Group { children })) }
+            }
+
+            pub fn top_level_token(lex_node: Option<Rc<lex::Node>>) -> Rc<Self> {
+                if let Some(lex_node) = lex_node {
+                    if let lex::Node::Named(kind, lex_node) = lex_node.as_ref() {
+                        Rc::new(Self::Token {
+                            kind: *kind,
+                            lex_node: lex_node.clone(),
+                            trivia: vec![],
+                        })
+                    } else {
+                        unreachable!("Top level token unexpected result: {:?}", lex_node)
+                    }
                 } else {
-                    Rc::new(Self::Group { children })
+                    unreachable!("Top level token unexpected None")
                 }
+            }
+
+            pub fn top_level_rule(kind: kinds::Rule, node: Option<Rc<Self>>) -> Rc<Self> {
+                node.unwrap_or_else(|| Rc::new(Self::Rule { kind, children: vec![] }))
             }
         }
     )
@@ -286,9 +294,7 @@ pub fn parse_macros() -> TokenStream {
         #[allow(unused_macros)]
         macro_rules! lex_optional {
             ($expr:expr) => {
-                $expr
-                    .or_not()
-                    .map(|v| v.unwrap_or_else(|| lex::Node::none()))
+                $expr.or_not().map(|v| v.flatten())
             };
         }
 
@@ -343,7 +349,7 @@ pub fn parse_macros() -> TokenStream {
                 just($literal).map_with_span(|_, span: SpanType| {
                     cst::Node::trivia_token(
                         kinds::Token::$kind,
-                        lex::Node::chars(span.start()..span.end()),
+                        lex::Node::chars_unwrapped(span.start()..span.end()),
                     )
                 })
             };
@@ -351,7 +357,7 @@ pub fn parse_macros() -> TokenStream {
                 filter($filter).map_with_span(|_, span: SpanType| {
                     cst::Node::trivia_token(
                         kinds::Token::$kind,
-                        lex::Node::chars(span.start()..span.end()),
+                        lex::Node::chars_unwrapped(span.start()..span.end()),
                     )
                 })
             };
@@ -360,7 +366,8 @@ pub fn parse_macros() -> TokenStream {
         #[allow(unused_macros)]
         macro_rules! trivia_token {
             ($token_rule:ident) => {
-                $token_rule.clone().map(|token: Rc<lex::Node>| {
+                $token_rule.clone().map(|token: Option<Rc<lex::Node>>| {
+                    let token = token.unwrap(); // token rule should always return a token
                     if let lex::Node::Named(kind, element) = token.as_ref() {
                         cst::Node::trivia_token(*kind, element.clone())
                     } else {
@@ -373,7 +380,7 @@ pub fn parse_macros() -> TokenStream {
         #[allow(unused_macros)]
         macro_rules! trivia_trie {
             ($($expr:expr),* ) => (
-                choice::<_, ErrorType>(($($expr),*)).map_with_span(|kind, span: SpanType| cst::Node::trivia_token(kind, lex::Node::chars(span.start()..span.end())))
+                choice::<_, ErrorType>(($($expr),*)).map_with_span(|kind, span: SpanType| cst::Node::trivia_token(kind, lex::Node::chars_unwrapped(span.start()..span.end())))
             )
         }
 
@@ -389,7 +396,7 @@ pub fn parse_macros() -> TokenStream {
                     .map(|((leading_trivia, range), trailing_trivia)| {
                         cst::Node::token(
                             kinds::Token::$kind,
-                            lex::Node::chars(range),
+                            lex::Node::chars_unwrapped(range),
                             leading_trivia,
                             trailing_trivia,
                         )
@@ -405,7 +412,7 @@ pub fn parse_macros() -> TokenStream {
                     .map(|((leading_trivia, range), trailing_trivia)| {
                         cst::Node::token(
                             kinds::Token::$kind,
-                            lex::Node::chars(range),
+                            lex::Node::chars_unwrapped(range),
                             leading_trivia,
                             trailing_trivia,
                         )
@@ -419,7 +426,8 @@ pub fn parse_macros() -> TokenStream {
                 leading_trivia_parser.clone()
                     .then($token_rule.clone())
                     .then(trailing_trivia_parser.clone())
-                    .map(|((leading_trivia, token), trailing_trivia): ((_, Rc<lex::Node>), _)| {
+                    .map(|((leading_trivia, token), trailing_trivia): ((_, Option<Rc<lex::Node>>), _)| {
+                        let token = token.unwrap(); // token rule should always return a token
                         if let lex::Node::Named(kind, element) = token.as_ref() {
                             cst::Node::token(*kind, element.clone(), leading_trivia, trailing_trivia)
                         } else {
@@ -544,9 +552,7 @@ pub fn parse_macros() -> TokenStream {
         #[allow(unused_macros)]
         macro_rules! optional {
             ($expr:expr) => {
-                $expr
-                    .or_not()
-                    .map(|v| v.unwrap_or_else(|| cst::Node::none()))
+                $expr.or_not().map(|opt| opt.flatten())
             };
         }
 

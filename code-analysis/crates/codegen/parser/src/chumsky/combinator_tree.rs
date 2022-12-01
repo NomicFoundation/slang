@@ -28,6 +28,10 @@ impl<'context> CombinatorTree<'context> {
         })
     }
 
+    pub fn can_be_empty(&self) -> bool {
+        self.root_node.get().unwrap().can_be_empty()
+    }
+
     pub fn ensure_tree_is_built(&'context self) {
         if self.root_node.get().is_none() {
             let expression = &self.expression();
@@ -67,6 +71,9 @@ impl<'context> CombinatorTree<'context> {
                 }
 
                 ProductionKind::Token => {
+                    if self.can_be_empty() {
+                        unreachable!("Validation should have discovered that token production {} can generate empty results", name);
+                    }
                     code.add_token_kind(self.production.name.clone());
                     let parser = self.root_node.get().unwrap().to_lexer_code(code);
                     code.add_parser(name, version, comment, parser, ParserResultType::Token);

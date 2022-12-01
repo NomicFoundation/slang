@@ -6,10 +6,8 @@ use serde::Serialize;
 use std::rc::Rc;
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub enum Node {
-    None,
     Rule {
         kind: kinds::Rule,
-        #[serde(skip_serializing_if = "Vec::is_empty")]
         children: Vec<Rc<Node>>,
     },
     Token {
@@ -19,57 +17,77 @@ pub enum Node {
         trivia: Vec<Rc<Node>>,
     },
     #[doc = r" For anonymous groups referenced from AST nodes i.e. `delimited_by`"]
-    Group {
-        #[serde(skip_serializing_if = "Vec::is_empty")]
-        children: Vec<Rc<Node>>,
-    },
+    Group { children: Vec<Rc<Node>> },
 }
 impl Node {
-    pub fn none() -> Rc<Self> {
-        Rc::new(Self::None)
+    pub fn rule(kind: kinds::Rule, children: Vec<Option<Rc<Self>>>) -> Option<Rc<Self>> {
+        let children: Vec<_> = children.into_iter().filter_map(|e| e).collect();
+        if children.is_empty() {
+            None
+        } else {
+            Some(Rc::new(Self::Rule { kind, children }))
+        }
     }
-    pub fn rule(kind: kinds::Rule, children: Vec<Rc<Self>>) -> Rc<Self> {
-        Rc::new(Self::Rule { kind, children })
-    }
-    pub fn trivia_token(kind: kinds::Token, lex_node: Rc<lex::Node>) -> Rc<Self> {
-        Rc::new(Self::Token {
+    pub fn trivia_token(kind: kinds::Token, lex_node: Rc<lex::Node>) -> Option<Rc<Self>> {
+        Some(Rc::new(Self::Token {
             kind,
             lex_node,
             trivia: vec![],
-        })
+        }))
     }
     pub fn token(
         kind: kinds::Token,
         lex_node: Rc<lex::Node>,
-        leading_trivia: Rc<Self>,
-        trailing_trivia: Rc<Self>,
-    ) -> Rc<Self> {
+        leading_trivia: Option<Rc<Self>>,
+        trailing_trivia: Option<Rc<Self>>,
+    ) -> Option<Rc<Self>> {
         let mut trivia = vec![];
-        if *leading_trivia != Self::None {
+        if let Some(leading_trivia) = leading_trivia {
             trivia.push(leading_trivia)
         }
-        if *trailing_trivia != Self::None {
+        if let Some(trailing_trivia) = trailing_trivia {
             trivia.push(trailing_trivia)
         }
-        Rc::new(Self::Token {
+        Some(Rc::new(Self::Token {
             kind,
             lex_node,
             trivia,
-        })
+        }))
     }
-    pub fn group(children: Vec<Rc<Self>>) -> Rc<Self> {
+    pub fn group(children: Vec<Option<Rc<Self>>>) -> Option<Rc<Self>> {
+        let children: Vec<_> = children.into_iter().filter_map(|e| e).collect();
         if children.is_empty() {
-            Self::none()
+            None
         } else {
-            Rc::new(Self::Group { children })
+            Some(Rc::new(Self::Group { children }))
         }
+    }
+    pub fn top_level_token(lex_node: Option<Rc<lex::Node>>) -> Rc<Self> {
+        if let Some(lex_node) = lex_node {
+            if let lex::Node::Named(kind, lex_node) = lex_node.as_ref() {
+                Rc::new(Self::Token {
+                    kind: *kind,
+                    lex_node: lex_node.clone(),
+                    trivia: vec![],
+                })
+            } else {
+                unreachable!("Top level token unexpected result: {:?}", lex_node)
+            }
+        } else {
+            unreachable!("Top level token unexpected None")
+        }
+    }
+    pub fn top_level_rule(kind: kinds::Rule, node: Option<Rc<Self>>) -> Rc<Self> {
+        node.unwrap_or_else(|| {
+            Rc::new(Self::Rule {
+                kind,
+                children: vec![],
+            })
+        })
     }
 }
 #[allow(unused_variables)]
 pub trait Visitor {
-    fn visit_none(&mut self, node: &Rc<Node>, path: &Vec<Rc<Node>>) -> VisitorExitResponse {
-        VisitorExitResponse::StepIn
-    }
     fn enter_rule(
         &mut self,
         kind: kinds::Rule,
@@ -152,7 +170,6 @@ impl Visitable for Rc<Node> {
         path: &mut Vec<Rc<Node>>,
     ) -> VisitorExitResponse {
         match self.as_ref() {
-            Node::None => visitor.visit_none(self, path),
             Node::Rule { kind, children } => {
                 match visitor.enter_rule(*kind, children, self, path) {
                     VisitorEntryResponse::Quit => return VisitorExitResponse::Quit,

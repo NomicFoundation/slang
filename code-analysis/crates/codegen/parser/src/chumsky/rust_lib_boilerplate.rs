@@ -15,10 +15,6 @@ pub fn cst_visitor_head() -> TokenStream {
     quote!(
         #[allow(unused_variables)]
         pub trait Visitor {
-            fn visit_none(&mut self, node: &Rc<Node>, path: &Vec<Rc<Node>>) -> VisitorExitResponse {
-                VisitorExitResponse::StepIn
-            }
-
             fn enter_rule(
                 &mut self,
                 kind: kinds::Rule,
@@ -103,7 +99,6 @@ pub fn cst_visitor_head() -> TokenStream {
 
             fn visit_with_path<T: Visitor>(&self, visitor: &mut T, path: &mut Vec<Rc<Node>>) -> VisitorExitResponse {
                 match self.as_ref() {
-                    Node::None => visitor.visit_none(self, path),
                     Node::Rule { kind, children } => {
                         match visitor.enter_rule(*kind, children, self, path) {
                             VisitorEntryResponse::Quit => return VisitorExitResponse::Quit,

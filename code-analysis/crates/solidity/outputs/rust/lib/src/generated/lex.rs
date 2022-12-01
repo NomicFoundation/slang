@@ -6,35 +6,34 @@ use std::ops::Range;
 use std::rc::Rc;
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub enum Node {
-    None,
     Chars(Range<usize>),
     Choice(usize, Rc<Node>),
     Sequence(Vec<Rc<Node>>),
     Named(kinds::Token, Rc<Node>),
 }
 impl Node {
-    pub fn none() -> Rc<Self> {
-        Rc::new(Self::None)
+    pub fn chars(range: Range<usize>) -> Option<Rc<Self>> {
+        Some(Rc::new(Self::Chars(range)))
     }
-    pub fn chars(range: Range<usize>) -> Rc<Self> {
+    pub fn chars_unwrapped(range: Range<usize>) -> Rc<Self> {
         Rc::new(Self::Chars(range))
     }
-    pub fn sequence(elements: Vec<Rc<Self>>) -> Rc<Self> {
-        Rc::new(if elements.is_empty() {
-            Self::None
+    pub fn sequence(elements: Vec<Option<Rc<Self>>>) -> Option<Rc<Self>> {
+        let elements: Vec<_> = elements.into_iter().filter_map(|e| e).collect();
+        if elements.is_empty() {
+            None
         } else {
-            Self::Sequence(elements)
-        })
+            Some(Rc::new(Self::Sequence(elements)))
+        }
     }
-    pub fn choice(number: usize, element: Rc<Self>) -> Rc<Self> {
-        Rc::new(Self::Choice(number, element))
+    pub fn choice(index: usize, element: Option<Rc<Self>>) -> Option<Rc<Self>> {
+        element.map(|e| Rc::new(Self::Choice(index, e)))
     }
-    pub fn named(kind: kinds::Token, element: Rc<Self>) -> Rc<Self> {
-        Rc::new(Self::Named(kind, element))
+    pub fn named(kind: kinds::Token, element: Option<Rc<Self>>) -> Option<Rc<Self>> {
+        element.map(|e| Rc::new(Self::Named(kind, e)))
     }
     pub fn range(&self) -> Range<usize> {
         match self {
-            Node::None => 0..0,
             Node::Chars(range) => range.clone(),
             Node::Choice(_, element) => element.range(),
             Node::Sequence(elements) => {
