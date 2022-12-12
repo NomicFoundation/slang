@@ -32,7 +32,6 @@ pub fn lex_head() -> TokenStream {
 
         #[napi]
         pub enum LexNodeType {
-            None,
             Chars,
             Choice,
             Sequence,
@@ -46,8 +45,6 @@ pub fn lex_head() -> TokenStream {
         }
 
         #[napi]
-        pub struct LexNoneNode;
-        #[napi]
         pub struct LexCharsNode(Rc<Node>);
         #[napi]
         pub struct LexChoiceNode(Rc<Node>);
@@ -55,17 +52,6 @@ pub fn lex_head() -> TokenStream {
         pub struct LexSequenceNode(Rc<Node>);
         #[napi]
         pub struct LexNamedNode(Rc<Node>);
-
-        #[napi]
-        impl LexNoneNode {
-            #[napi(getter, js_name = "type", ts_return_type = "LexNodeType.None")]
-            pub fn tipe(&self) -> LexNodeType { LexNodeType::None }
-
-            #[napi(getter)]
-            pub fn range(&self) -> TokenRange {
-                TokenRange { start: 0, end: 0 }
-            }
-        }
 
         #[napi]
         impl LexCharsNode {
@@ -100,7 +86,7 @@ pub fn lex_head() -> TokenStream {
                 }
             }
 
-            #[napi(ts_return_type = "LexNoneNode | LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode")]
+            #[napi(ts_return_type = "LexEmptyNode | LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode")]
             pub fn child(&self, env: Env) -> JsObject {
                 match self.0.as_ref() {
                     Node::Choice(_, child) => child.to_js(&env),
@@ -120,7 +106,7 @@ pub fn lex_head() -> TokenStream {
                 TokenRange { start: range.start as u32, end: range.end as u32 }
             }
 
-            #[napi(ts_return_type = "(LexNoneNode | LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode)[]")]
+            #[napi(ts_return_type = "(LexEmptyNode | LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode)[]")]
             pub fn children(&self, env: Env) -> Vec<JsObject> {
                 match self.0.as_ref() {
                     Node::Sequence(children) => children.iter().map(|child| child.to_js(&env)).collect(),
@@ -148,7 +134,7 @@ pub fn lex_head() -> TokenStream {
                 }
             }
 
-            #[napi(ts_return_type = "LexNoneNode | LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode")]
+            #[napi(ts_return_type = "LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode")]
             pub fn child(&self, env: Env) -> JsObject {
                 match self.0.as_ref() {
                     Node::Named(_, child) => child.to_js(&env),
@@ -164,7 +150,6 @@ pub fn lex_head() -> TokenStream {
         impl RcNodeExtensions for Rc<Node> {
             fn to_js(&self, env: &Env) -> JsObject {
                 let obj = match self.as_ref() {
-                    Node::None => unsafe { <LexNoneNode as ToNapiValue>::to_napi_value(env.raw(), LexNoneNode) }
                     Node::Chars(_) => unsafe { <LexCharsNode as ToNapiValue>::to_napi_value(env.raw(), LexCharsNode(self.clone())) }
                     Node::Choice(_, _) => unsafe { <LexChoiceNode as ToNapiValue>::to_napi_value(env.raw(), LexChoiceNode(self.clone())) }
                     Node::Sequence(_) => unsafe { <LexSequenceNode as ToNapiValue>::to_napi_value(env.raw(), LexSequenceNode(self.clone())) }
@@ -188,26 +173,17 @@ pub fn cst_head() -> TokenStream {
 
         #[napi]
         pub enum CSTNodeType {
-            None,
             Rule,
             Token,
             Group,
         }
 
         #[napi]
-        pub struct CSTNoneNode;
-        #[napi]
         pub struct CSTRuleNode(Rc<Node>);
         #[napi]
         pub struct CSTTokenNode(Rc<Node>);
         #[napi]
         pub struct CSTGroupNode(Rc<Node>);
-
-        #[napi]
-        impl CSTNoneNode {
-            #[napi(getter, js_name = "type", ts_return_type = "CSTNodeType.None")]
-            pub fn tipe(&self) -> CSTNodeType { CSTNodeType::None }
-        }
 
         #[napi]
         impl CSTRuleNode {
@@ -222,7 +198,7 @@ pub fn cst_head() -> TokenStream {
                 }
             }
 
-            #[napi(ts_return_type = "(CSTNoneNode | CSTRuleNode | CSTTokenNode | CSTGroupNode)[]")]
+            #[napi(ts_return_type = "(CSTRuleNode | CSTTokenNode | CSTGroupNode)[]")]
             pub fn children(&self, env: Env) -> Vec<JsObject> {
                 match self.0.as_ref() {
                     Node::Rule { children, .. } => children.iter().map(|child| child.to_js(&env)).collect(),
@@ -244,7 +220,7 @@ pub fn cst_head() -> TokenStream {
                 }
             }
 
-            #[napi(ts_return_type = "LexNoneNode | LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode")]
+            #[napi(ts_return_type = "LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode")]
             pub fn lex_node(&self, env: Env) -> JsObject {
                 match self.0.as_ref() {
                     Node::Token { lex_node, .. } => lex_node.to_js(&env),
@@ -252,7 +228,7 @@ pub fn cst_head() -> TokenStream {
                 }
             }
 
-            #[napi(ts_return_type = "(CSTNoneNode | CSTRuleNode | CSTTokenNode | CSTGroupNode)[]")]
+            #[napi(ts_return_type = "(CSTRuleNode | CSTTokenNode | CSTGroupNode)[]")]
             pub fn trivia(&self, env: Env) -> Vec<JsObject> {
                 match self.0.as_ref() {
                     Node::Token { trivia, .. } => trivia.iter().map(|trivium| trivium.to_js(&env)).collect(),
@@ -266,7 +242,7 @@ pub fn cst_head() -> TokenStream {
             #[napi(getter, js_name = "type", ts_return_type = "CSTNodeType.Group")]
             pub fn tipe(&self) -> CSTNodeType { CSTNodeType::Group }
 
-            #[napi(ts_return_type = "(CSTNoneNode | CSTRuleNode | CSTTokenNode | CSTGroupNode)[]")]
+            #[napi(ts_return_type = "(CSTRuleNode | CSTTokenNode | CSTGroupNode)[]")]
             pub fn children(&self, env: Env) -> Vec<JsObject> {
                 match self.0.as_ref() {
                     Node::Group { children, .. } => children.iter().map(|child| child.to_js(&env)).collect(),
@@ -282,7 +258,6 @@ pub fn cst_head() -> TokenStream {
         impl RcNodeExtensions for Rc<Node> {
             fn to_js(&self, env: &Env) -> JsObject {
                 let obj = match self.as_ref() {
-                    Node::None => unsafe { <CSTNoneNode as ToNapiValue>::to_napi_value(env.raw(), CSTNoneNode) }
                     Node::Rule { .. } => unsafe { <CSTRuleNode as ToNapiValue>::to_napi_value(env.raw(), CSTRuleNode(self.clone())) }
                     Node::Token { .. } => unsafe { <CSTTokenNode as ToNapiValue>::to_napi_value(env.raw(), CSTTokenNode(self.clone())) }
                     Node::Group { .. } => unsafe { <CSTGroupNode as ToNapiValue>::to_napi_value(env.raw(), CSTGroupNode(self.clone())) }

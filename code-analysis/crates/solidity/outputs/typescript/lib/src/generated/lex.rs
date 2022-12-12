@@ -6,35 +6,34 @@ use std::ops::Range;
 use std::rc::Rc;
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub enum Node {
-    None,
     Chars(Range<usize>),
     Choice(usize, Rc<Node>),
     Sequence(Vec<Rc<Node>>),
     Named(kinds::Token, Rc<Node>),
 }
 impl Node {
-    pub fn none() -> Rc<Self> {
-        Rc::new(Self::None)
+    pub fn chars(range: Range<usize>) -> Option<Rc<Self>> {
+        Some(Rc::new(Self::Chars(range)))
     }
-    pub fn chars(range: Range<usize>) -> Rc<Self> {
+    pub fn chars_unwrapped(range: Range<usize>) -> Rc<Self> {
         Rc::new(Self::Chars(range))
     }
-    pub fn sequence(elements: Vec<Rc<Self>>) -> Rc<Self> {
-        Rc::new(if elements.is_empty() {
-            Self::None
+    pub fn sequence(elements: Vec<Option<Rc<Self>>>) -> Option<Rc<Self>> {
+        let elements: Vec<_> = elements.into_iter().filter_map(|e| e).collect();
+        if elements.is_empty() {
+            None
         } else {
-            Self::Sequence(elements)
-        })
+            Some(Rc::new(Self::Sequence(elements)))
+        }
     }
-    pub fn choice(number: usize, element: Rc<Self>) -> Rc<Self> {
-        Rc::new(Self::Choice(number, element))
+    pub fn choice(index: usize, element: Option<Rc<Self>>) -> Option<Rc<Self>> {
+        element.map(|e| Rc::new(Self::Choice(index, e)))
     }
-    pub fn named(kind: kinds::Token, element: Rc<Self>) -> Rc<Self> {
-        Rc::new(Self::Named(kind, element))
+    pub fn named(kind: kinds::Token, element: Option<Rc<Self>>) -> Option<Rc<Self>> {
+        element.map(|e| Rc::new(Self::Named(kind, e)))
     }
     pub fn range(&self) -> Range<usize> {
         match self {
-            Node::None => 0..0,
             Node::Chars(range) => range.clone(),
             Node::Choice(_, element) => element.range(),
             Node::Sequence(elements) => {
@@ -49,7 +48,6 @@ use napi::JsObject;
 use napi::NapiValue;
 #[napi]
 pub enum LexNodeType {
-    None,
     Chars,
     Choice,
     Sequence,
@@ -61,8 +59,6 @@ pub struct TokenRange {
     pub end: u32,
 }
 #[napi]
-pub struct LexNoneNode;
-#[napi]
 pub struct LexCharsNode(Rc<Node>);
 #[napi]
 pub struct LexChoiceNode(Rc<Node>);
@@ -70,17 +66,6 @@ pub struct LexChoiceNode(Rc<Node>);
 pub struct LexSequenceNode(Rc<Node>);
 #[napi]
 pub struct LexNamedNode(Rc<Node>);
-#[napi]
-impl LexNoneNode {
-    #[napi(getter, js_name = "type", ts_return_type = "LexNodeType.None")]
-    pub fn tipe(&self) -> LexNodeType {
-        LexNodeType::None
-    }
-    #[napi(getter)]
-    pub fn range(&self) -> TokenRange {
-        TokenRange { start: 0, end: 0 }
-    }
-}
 #[napi]
 impl LexCharsNode {
     #[napi(getter, js_name = "type", ts_return_type = "LexNodeType.Chars")]
@@ -120,7 +105,7 @@ impl LexChoiceNode {
         }
     }
     #[napi(
-        ts_return_type = "LexNoneNode | LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode"
+        ts_return_type = "LexEmptyNode | LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode"
     )]
     pub fn child(&self, env: Env) -> JsObject {
         match self.0.as_ref() {
@@ -144,7 +129,7 @@ impl LexSequenceNode {
         }
     }
     #[napi(
-        ts_return_type = "(LexNoneNode | LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode)[]"
+        ts_return_type = "(LexEmptyNode | LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode)[]"
     )]
     pub fn children(&self, env: Env) -> Vec<JsObject> {
         match self.0.as_ref() {
@@ -174,9 +159,7 @@ impl LexNamedNode {
             _ => unreachable!(),
         }
     }
-    #[napi(
-        ts_return_type = "LexNoneNode | LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode"
-    )]
+    #[napi(ts_return_type = "LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode")]
     pub fn child(&self, env: Env) -> JsObject {
         match self.0.as_ref() {
             Node::Named(_, child) => child.to_js(&env),
@@ -190,9 +173,6 @@ pub trait RcNodeExtensions {
 impl RcNodeExtensions for Rc<Node> {
     fn to_js(&self, env: &Env) -> JsObject {
         let obj = match self.as_ref() {
-            Node::None => unsafe {
-                <LexNoneNode as ToNapiValue>::to_napi_value(env.raw(), LexNoneNode)
-            },
             Node::Chars(_) => unsafe {
                 <LexCharsNode as ToNapiValue>::to_napi_value(env.raw(), LexCharsNode(self.clone()))
             },

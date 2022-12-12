@@ -260,4 +260,35 @@ impl<'context> CombinatorNode<'context> {
             | Self::Optional { expr } => expr.name(),
         }
     }
+
+    pub fn can_be_empty(&self) -> bool {
+        match self {
+            Self::CharacterFilter { .. } | Self::TerminalTrie { .. } | Self::DelimitedBy { .. } => {
+                false
+            }
+
+            Self::Optional { .. } | Self::ZeroOrMore { .. } => true,
+
+            Self::Repeated { expr, min, .. } => *min == 0 || expr.can_be_empty(),
+
+            Self::Reference { tree } => tree.can_be_empty(),
+
+            Self::PrecedenceRule { members, .. } => members[0].can_be_empty(),
+
+            // TODO: Maybe next_sibling shouldn't be optional?
+            Self::PrecedenceRuleMember { next_sibling, .. } => {
+                next_sibling.map(|ns| ns.can_be_empty()).unwrap_or(true)
+            }
+
+            // TODO: choice should limit members to those that cannot be empty
+            Self::Choice { elements, .. } => elements.iter().any(|e| e.can_be_empty()),
+
+            Self::Sequence { elements, .. } => elements.iter().all(|e| e.can_be_empty()),
+
+            Self::OneOrMore { expr, .. }
+            | Self::SeparatedBy { expr, .. }
+            | Self::Lookahead { expr, .. }
+            | Self::Difference { minuend: expr, .. } => expr.can_be_empty(),
+        }
+    }
 }

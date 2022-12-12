@@ -4,9 +4,4 @@ errors: []
 
 root: !Rule
   kind: SourceUnit
-  children:
-    - !Rule
-      kind: LeadingTrivia
-    - None
-    - !Rule
-      kind: EndOfFileTrivia
+  children: []

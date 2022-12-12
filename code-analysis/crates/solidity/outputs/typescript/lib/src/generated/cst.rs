@@ -6,10 +6,8 @@ use serde::Serialize;
 use std::rc::Rc;
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub enum Node {
-    None,
     Rule {
         kind: kinds::Rule,
-        #[serde(skip_serializing_if = "Vec::is_empty")]
         children: Vec<Rc<Node>>,
     },
     Token {
@@ -19,50 +17,73 @@ pub enum Node {
         trivia: Vec<Rc<Node>>,
     },
     #[doc = r" For anonymous groups referenced from AST nodes i.e. `delimited_by`"]
-    Group {
-        #[serde(skip_serializing_if = "Vec::is_empty")]
-        children: Vec<Rc<Node>>,
-    },
+    Group { children: Vec<Rc<Node>> },
 }
 impl Node {
-    pub fn none() -> Rc<Self> {
-        Rc::new(Self::None)
+    pub fn rule(kind: kinds::Rule, children: Vec<Option<Rc<Self>>>) -> Option<Rc<Self>> {
+        let children: Vec<_> = children.into_iter().filter_map(|e| e).collect();
+        if children.is_empty() {
+            None
+        } else {
+            Some(Rc::new(Self::Rule { kind, children }))
+        }
     }
-    pub fn rule(kind: kinds::Rule, children: Vec<Rc<Self>>) -> Rc<Self> {
-        Rc::new(Self::Rule { kind, children })
-    }
-    pub fn trivia_token(kind: kinds::Token, lex_node: Rc<lex::Node>) -> Rc<Self> {
-        Rc::new(Self::Token {
+    pub fn trivia_token(kind: kinds::Token, lex_node: Rc<lex::Node>) -> Option<Rc<Self>> {
+        Some(Rc::new(Self::Token {
             kind,
             lex_node,
             trivia: vec![],
-        })
+        }))
     }
     pub fn token(
         kind: kinds::Token,
         lex_node: Rc<lex::Node>,
-        leading_trivia: Rc<Self>,
-        trailing_trivia: Rc<Self>,
-    ) -> Rc<Self> {
+        leading_trivia: Option<Rc<Self>>,
+        trailing_trivia: Option<Rc<Self>>,
+    ) -> Option<Rc<Self>> {
         let mut trivia = vec![];
-        if *leading_trivia != Self::None {
+        if let Some(leading_trivia) = leading_trivia {
             trivia.push(leading_trivia)
         }
-        if *trailing_trivia != Self::None {
+        if let Some(trailing_trivia) = trailing_trivia {
             trivia.push(trailing_trivia)
         }
-        Rc::new(Self::Token {
+        Some(Rc::new(Self::Token {
             kind,
             lex_node,
             trivia,
-        })
+        }))
     }
-    pub fn group(children: Vec<Rc<Self>>) -> Rc<Self> {
+    pub fn group(children: Vec<Option<Rc<Self>>>) -> Option<Rc<Self>> {
+        let children: Vec<_> = children.into_iter().filter_map(|e| e).collect();
         if children.is_empty() {
-            Self::none()
+            None
         } else {
-            Rc::new(Self::Group { children })
+            Some(Rc::new(Self::Group { children }))
         }
+    }
+    pub fn top_level_token(lex_node: Option<Rc<lex::Node>>) -> Rc<Self> {
+        if let Some(lex_node) = lex_node {
+            if let lex::Node::Named(kind, lex_node) = lex_node.as_ref() {
+                Rc::new(Self::Token {
+                    kind: *kind,
+                    lex_node: lex_node.clone(),
+                    trivia: vec![],
+                })
+            } else {
+                unreachable!("Top level token unexpected result: {:?}", lex_node)
+            }
+        } else {
+            unreachable!("Top level token unexpected None")
+        }
+    }
+    pub fn top_level_rule(kind: kinds::Rule, node: Option<Rc<Self>>) -> Rc<Self> {
+        node.unwrap_or_else(|| {
+            Rc::new(Self::Rule {
+                kind,
+                children: vec![],
+            })
+        })
     }
 }
 use super::lex::RcNodeExtensions as LexRcNodeExtensions;
@@ -71,26 +92,16 @@ use napi::JsObject;
 use napi::NapiValue;
 #[napi]
 pub enum CSTNodeType {
-    None,
     Rule,
     Token,
     Group,
 }
-#[napi]
-pub struct CSTNoneNode;
 #[napi]
 pub struct CSTRuleNode(Rc<Node>);
 #[napi]
 pub struct CSTTokenNode(Rc<Node>);
 #[napi]
 pub struct CSTGroupNode(Rc<Node>);
-#[napi]
-impl CSTNoneNode {
-    #[napi(getter, js_name = "type", ts_return_type = "CSTNodeType.None")]
-    pub fn tipe(&self) -> CSTNodeType {
-        CSTNodeType::None
-    }
-}
 #[napi]
 impl CSTRuleNode {
     #[napi(getter, js_name = "type", ts_return_type = "CSTNodeType.Rule")]
@@ -104,7 +115,7 @@ impl CSTRuleNode {
             _ => unreachable!(),
         }
     }
-    #[napi(ts_return_type = "(CSTNoneNode | CSTRuleNode | CSTTokenNode | CSTGroupNode)[]")]
+    #[napi(ts_return_type = "(CSTRuleNode | CSTTokenNode | CSTGroupNode)[]")]
     pub fn children(&self, env: Env) -> Vec<JsObject> {
         match self.0.as_ref() {
             Node::Rule { children, .. } => children.iter().map(|child| child.to_js(&env)).collect(),
@@ -125,16 +136,14 @@ impl CSTTokenNode {
             _ => unreachable!(),
         }
     }
-    #[napi(
-        ts_return_type = "LexNoneNode | LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode"
-    )]
+    #[napi(ts_return_type = "LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode")]
     pub fn lex_node(&self, env: Env) -> JsObject {
         match self.0.as_ref() {
             Node::Token { lex_node, .. } => lex_node.to_js(&env),
             _ => unreachable!(),
         }
     }
-    #[napi(ts_return_type = "(CSTNoneNode | CSTRuleNode | CSTTokenNode | CSTGroupNode)[]")]
+    #[napi(ts_return_type = "(CSTRuleNode | CSTTokenNode | CSTGroupNode)[]")]
     pub fn trivia(&self, env: Env) -> Vec<JsObject> {
         match self.0.as_ref() {
             Node::Token { trivia, .. } => {
@@ -150,7 +159,7 @@ impl CSTGroupNode {
     pub fn tipe(&self) -> CSTNodeType {
         CSTNodeType::Group
     }
-    #[napi(ts_return_type = "(CSTNoneNode | CSTRuleNode | CSTTokenNode | CSTGroupNode)[]")]
+    #[napi(ts_return_type = "(CSTRuleNode | CSTTokenNode | CSTGroupNode)[]")]
     pub fn children(&self, env: Env) -> Vec<JsObject> {
         match self.0.as_ref() {
             Node::Group { children, .. } => {
@@ -166,9 +175,6 @@ pub trait RcNodeExtensions {
 impl RcNodeExtensions for Rc<Node> {
     fn to_js(&self, env: &Env) -> JsObject {
         let obj = match self.as_ref() {
-            Node::None => unsafe {
-                <CSTNoneNode as ToNapiValue>::to_napi_value(env.raw(), CSTNoneNode)
-            },
             Node::Rule { .. } => unsafe {
                 <CSTRuleNode as ToNapiValue>::to_napi_value(env.raw(), CSTRuleNode(self.clone()))
             },
