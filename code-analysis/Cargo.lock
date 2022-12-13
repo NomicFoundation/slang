@@ -273,6 +273,7 @@ dependencies = [
 name = "codegen_testing"
 version = "0.0.0"
 dependencies = [
+ "Inflector",
  "anyhow",
  "codegen_schema",
  "codegen_utils",
@@ -1267,6 +1268,7 @@ dependencies = [
 name = "solidity_typescript_lib"
 version = "0.0.0"
 dependencies = [
+ "ariadne",
  "chumsky",
  "codegen_parser",
  "codegen_schema",

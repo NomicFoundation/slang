@@ -1,6 +1,8 @@
 use proc_macro2::TokenStream;
 use quote::quote;
 
+use super::boilerplate;
+
 pub fn mod_head() -> TokenStream {
     quote!(
         pub mod kinds;
@@ -178,16 +180,22 @@ pub fn cst_visitor_head() -> TokenStream {
 }
 
 pub fn language_head() -> TokenStream {
+    let error_renderer = boilerplate::error_renderer();
+
     quote!(
         use std::rc::Rc;
 
-        use chumsky::Parser;
+        use chumsky::{error::SimpleReason, Parser, Span};
+        use ariadne::{Color, Config, Fmt, Label, Report, ReportBuilder, ReportKind, Source};
         use semver::Version;
 
-        use super::{cst, parse::Parsers};
+        use super::{
+            cst,
+            parse::{Parsers, BoxedParserType, ErrorType, SpanType},
+        };
 
         pub struct Language {
-            parsers: Parsers<'static>,
+            parsers: Parsers,
             version: Version,
         }
 
@@ -203,5 +211,48 @@ pub fn language_head() -> TokenStream {
                 &self.version
             }
         }
+
+        pub struct ParserOutput {
+            parse_tree: Option<Rc<cst::Node>>,
+            errors: Vec<ErrorType>,
+        }
+
+        impl ParserOutput {
+            fn new(source: &str, parser: &BoxedParserType) -> Self {
+                let (parse_tree, errors) = parser.parse_recovery(source);
+                Self { parse_tree, errors }
+            }
+
+            pub fn parse_tree(&self) -> Option<Rc<cst::Node>> {
+                self.parse_tree.clone()
+            }
+
+            pub fn error_count(&self) -> usize {
+                self.errors.len()
+            }
+
+            pub fn errors_as_strings(&self, source: &str, with_colour: bool) -> Vec<String> {
+                let mut results = vec![];
+                for error in &self.errors {
+                    let report = render_error_report(&error, with_colour);
+
+                    let mut result = vec![];
+                    report
+                        .write(Source::from(source), &mut result)
+                        .expect("Failed to write report");
+
+                    let result = String::from_utf8(result).expect("Failed to convert report to utf8");
+                    results.push(result);
+                }
+
+                results
+            }
+
+            pub fn is_valid(&self) -> bool {
+                self.parse_tree.is_some() && self.errors.is_empty()
+            }
+        }
+
+        #error_renderer
     )
 }

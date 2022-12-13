@@ -4,6 +4,6 @@ use crate::cst_output::run;
 use anyhow::Result;
 
 #[test]
-fn operator_associativity() -> Result<()> {
-    return run("exponentiation_expression", "operator_associativity");
+fn sample_counter() -> Result<()> {
+    return run("InterfaceDefinition", "sample_counter");
 }

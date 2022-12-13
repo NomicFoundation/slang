@@ -163,12 +163,12 @@ pub fn parse_head() -> TokenStream {
 
         pub type SpanType = Range<usize>;
         pub type ErrorType = Simple<char, SpanType>;
-        pub type ParserType<'p, T> = BoxedParser<'p, char, T, ErrorType>;
+        pub type BoxedParserType = BoxedParser<'static, char, Rc<cst::Node>, ErrorType>;
 
         #[allow(dead_code)]
         fn difference<M, S, T>(minuend: M, subtrahend: S) -> impl Parser<char, T, Error = ErrorType>
         where
-            M: Clone + Parser<char, T, Error = ErrorType>,
+            M: Parser<char, T, Error = ErrorType> + Clone,
             S: Parser<char, T, Error = ErrorType>,
         {
             // TODO This could be much more efficient if we were able
@@ -709,6 +709,73 @@ pub fn parse_macros() -> TokenStream {
                         cst::Node::token(kind, lex::Node::chars(range), leading_trivia, trailing_trivia)
                     })
             )
+        }
+    )
+}
+
+pub fn error_renderer() -> TokenStream {
+    quote!(
+        fn render_error_report(error: &ErrorType, with_color: bool) -> Report<SpanType> {
+            let mut builder: ReportBuilder<SpanType> = Report::build(
+                ReportKind::Error,
+                error.span().context(),
+                error.span().start(),
+            )
+            .with_config(Config::default().with_color(with_color));
+
+            let error_color = if with_color { Color::Red } else { Color::Unset };
+
+            builder = match error.reason() {
+                SimpleReason::Custom(message) => {
+                    // use custom message as-is
+                    builder.with_message(message)
+                }
+                SimpleReason::Unclosed { span, delimiter } => {
+                    builder.add_label(
+                        Label::<SpanType>::new(span.to_owned())
+                            .with_color(error_color)
+                            .with_message("Unclosed delimiter"),
+                    );
+
+                    builder.with_message(format!(
+                        "Expected delimiter '{}' to be closed",
+                        delimiter.fg(error_color)
+                    ))
+                }
+                SimpleReason::Unexpected => {
+                    let found = if let Some(found) = error.found() {
+                        format!("'{}'", found.fg(error_color))
+                    } else {
+                        "end of input".to_string()
+                    };
+
+                    builder.add_label(
+                        Label::<SpanType>::new(error.span())
+                            .with_color(error_color)
+                            .with_message(format!("Found {found}.")),
+                    );
+
+                    let mut expected: Vec<&Option<char>> = error.expected().collect();
+                    expected.sort();
+
+                    let expected = if expected.len() == 0 {
+                        "something else".to_string()
+                    } else {
+                        expected
+                            .iter()
+                            .map(|expected| match expected {
+                                Some(expected) => format!("'{}'", expected),
+                                None => "end of input".to_string(),
+                            })
+                            .collect::<Vec<_>>()
+                            .join(" or ")
+                    };
+
+                    builder.with_message(format!("Expected {expected}."))
+                }
+            };
+
+            return builder.finish();
         }
     )
 }

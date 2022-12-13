@@ -8,6 +8,7 @@ edition.workspace = true
 crate-type = ["cdylib"]
 
 [dependencies]
+ariadne = { workspace = true }
 chumsky = { workspace = true }
 # https://nodejs.org/api/n-api.html#node-api-version-matrix
 napi = { workspace = true }

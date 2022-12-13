@@ -5,25 +5,25 @@ use anyhow::Result;
 
 #[test]
 fn equal_operator() -> Result<()> {
-    return run("version_pragma", "equal_operator");
+    return run("VersionPragma", "equal_operator");
 }
 
 #[test]
 fn exact_version() -> Result<()> {
-    return run("version_pragma", "exact_version");
+    return run("VersionPragma", "exact_version");
 }
 
 #[test]
 fn less_than_operator() -> Result<()> {
-    return run("version_pragma", "less_than_operator");
+    return run("VersionPragma", "less_than_operator");
 }
 
 #[test]
 fn multiple_exact_versions() -> Result<()> {
-    return run("version_pragma", "multiple_exact_versions");
+    return run("VersionPragma", "multiple_exact_versions");
 }
 
 #[test]
 fn with_trivia() -> Result<()> {
-    return run("version_pragma", "with_trivia");
+    return run("VersionPragma", "with_trivia");
 }

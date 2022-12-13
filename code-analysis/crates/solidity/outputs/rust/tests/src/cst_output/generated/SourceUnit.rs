@@ -4,6 +4,6 @@ use crate::cst_output::run;
 use anyhow::Result;
 
 #[test]
-fn sample_counter() -> Result<()> {
-    return run("interface_definition", "sample_counter");
+fn empty_file() -> Result<()> {
+    return run("SourceUnit", "empty_file");
 }

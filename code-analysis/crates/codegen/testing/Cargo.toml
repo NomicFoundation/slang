@@ -10,3 +10,4 @@ codegen_schema = { workspace = true }
 codegen_utils = { workspace = true }
 semver = { workspace = true }
 walkdir = { workspace = true }
+Inflector = { workspace = true }

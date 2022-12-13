@@ -48,11 +48,17 @@ impl CodeGenerator {
 
                     impl Language {{
                         {}
+
+                        pub fn parse(&self, parser_name: &str, source: &str) -> Option<ParserOutput> {{
+                            match parser_name {{
+                                {}
+                                _ => None
+                            }}
+                        }}
                     }}
                     ",
                     rust_lib_boilerplate::language_head(),
-                    self
-                        .parsers
+                    self.parsers
                         .iter()
                         .map(|(name, parser)| {
                             let field_name = naming::to_field_name_ident(&name);
@@ -66,14 +72,23 @@ impl CodeGenerator {
                                     .collect::<Vec<_>>()
                                     .join("\n"),
                                 quote!(
-                                    pub fn #method_name(&self, source: &str) -> Rc<cst::Node> {
-                                        let (node, _errs) = self.parsers.#field_name.parse_recovery(source);
-                                        node.unwrap()
+                                    pub fn #method_name(&self, source: &str) -> ParserOutput {
+                                        ParserOutput::new(source, &self.parsers.#field_name)
                                     }
                                 )
                             )
                         })
-                        .collect::<Vec<_>>().join("\n\n"),
+                        .collect::<Vec<_>>()
+                        .join("\n\n"),
+                    self.parsers
+                        .iter()
+                        .map(|(name, _)| {
+                            let field_name = naming::to_field_name_ident(&name);
+                            let method_name = format_ident!("parse_{}", field_name);
+                            quote!( #name => Some(self.#method_name(source)), ).to_string()
+                        })
+                        .collect::<Vec<_>>()
+                        .join("\n"),
                 ),
             )
             .unwrap();
