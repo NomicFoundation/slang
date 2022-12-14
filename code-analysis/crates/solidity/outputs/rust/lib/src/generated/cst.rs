@@ -87,15 +87,15 @@ impl Node {
     }
 }
 #[allow(unused_variables)]
-pub trait Visitor {
+pub trait Visitor<E> {
     fn enter_rule(
         &mut self,
         kind: kinds::Rule,
         children: &Vec<Rc<Node>>,
         node: &Rc<Node>,
         path: &Vec<Rc<Node>>,
-    ) -> VisitorEntryResponse {
-        VisitorEntryResponse::StepIn
+    ) -> Result<VisitorEntryResponse, E> {
+        Ok(VisitorEntryResponse::StepIn)
     }
     fn exit_rule(
         &mut self,
@@ -103,8 +103,8 @@ pub trait Visitor {
         children: &Vec<Rc<Node>>,
         node: &Rc<Node>,
         path: &Vec<Rc<Node>>,
-    ) -> VisitorExitResponse {
-        VisitorExitResponse::StepIn
+    ) -> Result<VisitorExitResponse, E> {
+        Ok(VisitorExitResponse::StepIn)
     }
     fn enter_token(
         &mut self,
@@ -113,8 +113,8 @@ pub trait Visitor {
         trivia: &Vec<Rc<Node>>,
         node: &Rc<Node>,
         path: &Vec<Rc<Node>>,
-    ) -> VisitorEntryResponse {
-        VisitorEntryResponse::StepIn
+    ) -> Result<VisitorEntryResponse, E> {
+        Ok(VisitorEntryResponse::StepIn)
     }
     fn exit_token(
         &mut self,
@@ -123,24 +123,24 @@ pub trait Visitor {
         trivia: &Vec<Rc<Node>>,
         node: &Rc<Node>,
         path: &Vec<Rc<Node>>,
-    ) -> VisitorExitResponse {
-        VisitorExitResponse::StepIn
+    ) -> Result<VisitorExitResponse, E> {
+        Ok(VisitorExitResponse::StepIn)
     }
     fn enter_group(
         &mut self,
         children: &Vec<Rc<Node>>,
         node: &Rc<Node>,
         path: &Vec<Rc<Node>>,
-    ) -> VisitorEntryResponse {
-        VisitorEntryResponse::StepIn
+    ) -> Result<VisitorEntryResponse, E> {
+        Ok(VisitorEntryResponse::StepIn)
     }
     fn exit_group(
         &mut self,
         children: &Vec<Rc<Node>>,
         node: &Rc<Node>,
         path: &Vec<Rc<Node>>,
-    ) -> VisitorExitResponse {
-        VisitorExitResponse::StepIn
+    ) -> Result<VisitorExitResponse, E> {
+        Ok(VisitorExitResponse::StepIn)
     }
 }
 pub enum VisitorEntryResponse {
@@ -152,35 +152,35 @@ pub enum VisitorExitResponse {
     Quit,
     StepIn,
 }
-pub trait Visitable {
-    fn visit<T: Visitor>(&self, visitor: &mut T) -> VisitorExitResponse;
-    fn visit_with_path<T: Visitor>(
+pub trait Visitable<T: Visitor<E>, E> {
+    fn visit(&self, visitor: &mut T) -> Result<VisitorExitResponse, E>;
+    fn visit_with_path(
         &self,
         visitor: &mut T,
         path: &mut Vec<Rc<Node>>,
-    ) -> VisitorExitResponse;
+    ) -> Result<VisitorExitResponse, E>;
 }
-impl Visitable for Rc<Node> {
-    fn visit<T: Visitor>(&self, visitor: &mut T) -> VisitorExitResponse {
+impl<T: Visitor<E>, E> Visitable<T, E> for Rc<Node> {
+    fn visit(&self, visitor: &mut T) -> Result<VisitorExitResponse, E> {
         self.visit_with_path(visitor, &mut Vec::new())
     }
-    fn visit_with_path<T: Visitor>(
+    fn visit_with_path(
         &self,
         visitor: &mut T,
         path: &mut Vec<Rc<Node>>,
-    ) -> VisitorExitResponse {
+    ) -> Result<VisitorExitResponse, E> {
         match self.as_ref() {
             Node::Rule { kind, children } => {
-                match visitor.enter_rule(*kind, children, self, path) {
-                    VisitorEntryResponse::Quit => return VisitorExitResponse::Quit,
+                match visitor.enter_rule(*kind, children, self, path)? {
+                    VisitorEntryResponse::Quit => return Ok(VisitorExitResponse::Quit),
                     VisitorEntryResponse::StepOver => {}
                     VisitorEntryResponse::StepIn => {
                         path.push(self.clone());
                         for child in children {
-                            match child.visit_with_path(visitor, path) {
+                            match child.visit_with_path(visitor, path)? {
                                 VisitorExitResponse::Quit => {
                                     path.pop();
-                                    return VisitorExitResponse::Quit;
+                                    return Ok(VisitorExitResponse::Quit);
                                 }
                                 VisitorExitResponse::StepIn => {}
                             }
@@ -195,16 +195,16 @@ impl Visitable for Rc<Node> {
                 lex_node,
                 trivia,
             } => {
-                match visitor.enter_token(*kind, lex_node, trivia, self, path) {
-                    VisitorEntryResponse::Quit => return VisitorExitResponse::Quit,
+                match visitor.enter_token(*kind, lex_node, trivia, self, path)? {
+                    VisitorEntryResponse::Quit => return Ok(VisitorExitResponse::Quit),
                     VisitorEntryResponse::StepOver => {}
                     VisitorEntryResponse::StepIn => {
                         path.push(self.clone());
                         for child in trivia {
-                            match child.visit_with_path(visitor, path) {
+                            match child.visit_with_path(visitor, path)? {
                                 VisitorExitResponse::Quit => {
                                     path.pop();
-                                    return VisitorExitResponse::Quit;
+                                    return Ok(VisitorExitResponse::Quit);
                                 }
                                 VisitorExitResponse::StepIn => {}
                             }
@@ -215,16 +215,16 @@ impl Visitable for Rc<Node> {
                 visitor.exit_token(*kind, lex_node, trivia, self, path)
             }
             Node::Group { children } => {
-                match visitor.enter_group(children, self, path) {
-                    VisitorEntryResponse::Quit => return VisitorExitResponse::Quit,
+                match visitor.enter_group(children, self, path)? {
+                    VisitorEntryResponse::Quit => return Ok(VisitorExitResponse::Quit),
                     VisitorEntryResponse::StepOver => {}
                     VisitorEntryResponse::StepIn => {
                         path.push(self.clone());
                         for child in children {
-                            match child.visit_with_path(visitor, path) {
+                            match child.visit_with_path(visitor, path)? {
                                 VisitorExitResponse::Quit => {
                                     path.pop();
-                                    return VisitorExitResponse::Quit;
+                                    return Ok(VisitorExitResponse::Quit);
                                 }
                                 VisitorExitResponse::StepIn => {}
                             }
