@@ -11,14 +11,20 @@ source "$THIS_DIR/common.sh"
   "$THIS_DIR/setup.sh"
 )
 
+declare -a rust_flags=(
+  "${RUSTFLAGS:-}"
+  "--deny warnings"
+)
+
 (
   printf "\n\n🧪 Checking Project 🧪\n\n\n"
   cd "$PROJECT_DIR"
 
+  export RUSTFLAGS="${rust_flags[*]}"
   export SLANG_CODEGEN_CHECK_ONLY="true"
 
-  cargo check --locked
-  cargo test --locked --no-fail-fast --all-targets
+  cargo check --offline --all --all-targets
+  cargo test --no-fail-fast --offline --all --all-targets
   cargo fmt --check --all
 )
 
