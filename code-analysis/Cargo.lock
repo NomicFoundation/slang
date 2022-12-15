@@ -1228,6 +1228,7 @@ dependencies = [
 name = "solidity_rust_cli"
 version = "0.0.0"
 dependencies = [
+ "anyhow",
  "clap",
  "semver",
  "serde_json",
