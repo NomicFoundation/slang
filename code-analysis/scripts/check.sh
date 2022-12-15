@@ -13,6 +13,7 @@ source "$THIS_DIR/common.sh"
 
 declare -a rust_flags=(
   "${RUSTFLAGS:-}"
+  "--warn unused_crate_dependencies"
   "--deny warnings"
 )
 

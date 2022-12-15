@@ -6,6 +6,6 @@ rust-version.workspace = true
 edition.workspace = true
 
 [build-dependencies]
-codegen_schema = { path = "../../../codegen/schema" }
-codegen_spec = { path = "../../../codegen/spec" }
-codegen_utils = { path = "../../../codegen/utils" }
+codegen_schema = { workspace = true }
+codegen_spec = { workspace = true }
+codegen_utils = { workspace = true }

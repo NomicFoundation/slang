@@ -5,12 +5,8 @@ rust-version.workspace = true
 edition.workspace = true
 
 [dependencies]
-ariadne = "0.1.5"
-chumsky = "0.8.0"
-clap = { version = "4.0.14", features = ["derive"] }
-serde = { version = "1.0.137", features = ["derive"] }
-serde_json = "1.0.81"
-serde_yaml = "0.9.13"
-strum = { version = "0.24.1", features = ["derive"] }
-semver = "1.0.9"
-solidity_rust_lib = { path = "../lib" }
+clap = { workspace = true }
+semver = { workspace = true }
+serde_json = { workspace = true }
+serde_yaml = { workspace = true }
+solidity_rust_lib = { workspace = true }

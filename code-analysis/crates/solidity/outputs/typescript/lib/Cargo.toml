@@ -8,15 +8,15 @@ edition.workspace = true
 crate-type = ["cdylib"]
 
 [dependencies]
+chumsky = { workspace = true }
 # https://nodejs.org/api/n-api.html#node-api-version-matrix
-napi = { version = "2.10.1", features = ["napi8", "serde-json", "compat-mode"] }
-napi-derive = { version = "2.9.1" }
-chumsky = "0.8.0"
-serde = { version = "1.0.137", features = ["derive"] }
-semver = "1.0.9"
+napi = { workspace = true }
+napi-derive = { workspace = true }
+semver = { workspace = true }
+serde = { workspace = true }
 
 [build-dependencies]
-napi-build = "2.0.1"
-codegen_schema = { path = "../../../../codegen/schema" }
-codegen_parser = { path = "../../../../codegen/parser" }
-codegen_utils = { path = "../../../../codegen/utils" }
+codegen_parser = { workspace = true }
+codegen_schema = { workspace = true }
+codegen_utils = { workspace = true }
+napi-build = { workspace = true }
