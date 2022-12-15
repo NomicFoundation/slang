@@ -1,5 +1,4 @@
-mod commands;
-mod files;
-mod formatting;
+mod internal;
 
+pub mod commands;
 pub mod context;

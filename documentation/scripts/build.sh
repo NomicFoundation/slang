@@ -1,32 +1,31 @@
 #!/bin/bash
 set -euo pipefail
 
-THIS_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
-
 # shellcheck source=/dev/null
-source "$THIS_DIR/common.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 
 (
   # Run setup first
-  "$DOCUMENTATION_DIR/scripts/setup.sh"
+  "$REPO_ROOT/documentation/scripts/setup.sh"
 )
 
 (
   # Merge Config Files
-  mkdir -p "$DOCUMENTATION_TARGET_DIR"
+  mkdir -p "$REPO_ROOT/documentation/target"
 
   # shellcheck disable=SC2016
   yq eval-all '. as $file ireduce ({}; . *+ $file )' \
-    "$DOCUMENTATION_DIR/mkdocs.config.yml" \
-    "$DOCUMENTATION_DIR/mkdocs.theme.yml" \
-    "$DOCUMENTATION_DIR/docs/specification/generated/mkdocs.navigation.yml" \
-    > "$DOCUMENTATION_TARGET_DIR/mkdocs.yml"
+    "$REPO_ROOT/documentation/mkdocs.config.yml" \
+    "$REPO_ROOT/documentation/mkdocs.theme.yml" \
+    "$REPO_ROOT/documentation/docs/specification/generated/mkdocs.navigation.yml" \
+    > "$REPO_ROOT/documentation/target/mkdocs.yml"
 )
 
 (
-  printf "\n\n📚 Building Static Assets 📚\n\n\n"
-  cd "$DOCUMENTATION_TARGET_DIR"
-  python3 -m pipenv run mkdocs build --clean --strict
-)
+  printf "\n\n📚 Building Documentation Site 📚\n\n\n"
 
-printf "\n\n✅ Build Success ✅\n\n\n"
+  cd "$REPO_ROOT/documentation/target"
+  python3 -m pipenv run mkdocs build --clean --strict
+
+  printf "\n\n✅ Build Success ✅\n\n\n"
+)

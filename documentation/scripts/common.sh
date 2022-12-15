@@ -1,12 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
-THIS_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
-
 # shellcheck source=/dev/null
-[[ -z "${HERMIT_ENV:-}" ]] && source "$THIS_DIR/../../bin/activate-hermit"
+source "$(dirname "${BASH_SOURCE[0]}")/../../infrastructure/scripts/common.sh"
 
-export DOCUMENTATION_DIR="$THIS_DIR/.."
-export DOCUMENTATION_SOURCE_FILES="$DOCUMENTATION_DIR/docs"
-export DOCUMENTATION_TARGET_DIR="$DOCUMENTATION_DIR/target"
-export DOCUMENTATION_SITE_DIR="$DOCUMENTATION_DIR/target/site"
+# passed to mkdocs.yml !ENV
+export DOCUMENTATION_SOURCE_FILES="$REPO_ROOT/documentation/docs"
+export DOCUMENTATION_SITE_DIR="$REPO_ROOT/documentation/target/site"

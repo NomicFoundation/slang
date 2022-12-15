@@ -1,22 +1,22 @@
 #!/bin/bash
 set -euo pipefail
 
-THIS_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
-
 # shellcheck source=/dev/null
-source "$THIS_DIR/common.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 
 (
   # Run setup first
-  "$THIS_DIR/setup.sh"
+  "$REPO_ROOT/infrastructure/scripts/setup.sh"
 )
 
 (
-  # Then run specific linters
-  "$THIS_DIR/linters/bash.sh"
-  "$THIS_DIR/linters/cspell.sh"
-  "$THIS_DIR/linters/markdown.sh"
-  "$THIS_DIR/linters/prettier.sh"
-)
+  printf "\n\n🧪 Running All Linters 🧪\n\n\n"
 
-printf "\n\n✅ Lint Success ✅\n\n\n"
+  "$REPO_ROOT/infrastructure/scripts/linters/bash.sh"
+  "$REPO_ROOT/infrastructure/scripts/linters/cargofmt.sh"
+  "$REPO_ROOT/infrastructure/scripts/linters/cspell.sh"
+  "$REPO_ROOT/infrastructure/scripts/linters/markdown.sh"
+  "$REPO_ROOT/infrastructure/scripts/linters/prettier.sh"
+
+  printf "\n\n✅ Linting Success ✅\n\n\n"
+)

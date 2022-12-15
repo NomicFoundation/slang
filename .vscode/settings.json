@@ -12,19 +12,5 @@
     "**/generated/": true,
     "**/node_modules/": true,
     "**/target/": true
-  },
-  // Terminal
-  "terminal.integrated.defaultProfile.linux": "devcontainer-zsh",
-  "terminal.integrated.profiles.linux": {
-    "devcontainer-zsh": {
-      "path": "/bin/zsh",
-      "args": ["-l"]
-    }
-  },
-  "[json]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[jsonc]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
   }
 }

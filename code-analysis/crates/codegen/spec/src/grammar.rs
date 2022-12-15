@@ -73,7 +73,7 @@ fn generate_context(grammar: &Grammar) -> SpecProductionContext {
             .flat_map(|(_, productions)| {
                 productions
                     .iter()
-                    .map(|production| (production.name.clone(), "".to_string()))
+                    .map(|production| (production.name.clone(), ".".to_string()))
             })
             .collect(),
     };

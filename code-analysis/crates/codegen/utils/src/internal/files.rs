@@ -1,8 +1,10 @@
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 use anyhow::{bail, Context, Result};
 
-use crate::{context::CodegenContext, formatting::format_source_file};
+use crate::{
+    commands::run_command, context::CodegenContext, internal::formatting::format_source_file,
+};
 
 pub fn read_file(file_path: &PathBuf) -> Result<String> {
     return std::fs::read_to_string(file_path)
@@ -57,30 +59,18 @@ pub fn verify_file(codegen: &CodegenContext, file_path: &PathBuf, contents: &str
     return Ok(());
 }
 
-pub fn collect_files_recursively(parent_dir: &Path, result: &mut Vec<PathBuf>) -> Result<()> {
-    if !parent_dir.metadata()?.is_dir() {
-        bail!("Path is not a directory: {parent_dir:?}");
-    }
+pub fn calculate_repo_root() -> Result<PathBuf> {
+    // This is the only place where we cannot use the `$REPO_ROOT` env var defined by the hermit environment.
+    // Since CodegenContext can be invoked from VS Code (rust-analyzer), which does not activate hermit first.
+    // All other scripts should use `$REPO_ROOT` directly.
+    let git_dir = run_command(
+        &std::env::current_dir()?,
+        &vec!["git", "rev-parse", "--git-dir"],
+        None,
+    )?;
 
-    for child in parent_dir.read_dir()? {
-        let child = child?;
-        let child_path = child.path();
+    let git_dir = PathBuf::from(git_dir);
+    let repo_root = git_dir.parent().unwrap().to_path_buf();
 
-        if child.metadata()?.is_file() {
-            result.push(child_path);
-        } else {
-            collect_files_recursively(&child_path, result)?;
-        }
-    }
-
-    return Ok(());
-}
-
-pub fn rerun_if_changed(file_path: &PathBuf) -> Result<()> {
-    println!(
-        "cargo:rerun-if-changed={value}",
-        value = file_path.to_str().context("Failed to get file path")?
-    );
-
-    return Ok(());
+    return Ok(repo_root);
 }

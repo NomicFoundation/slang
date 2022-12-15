@@ -7,6 +7,7 @@ use anyhow::{bail, Context, Result};
 use codegen_schema::{Grammar, ProductionVersions};
 use codegen_utils::context::CodegenContext;
 use semver::Version;
+use walkdir::WalkDir;
 
 type ParserTests = BTreeMap<String, BTreeSet<String>>;
 
@@ -72,14 +73,23 @@ fn collect_test_versions<'a>(grammar: &'a Grammar) -> BTreeSet<&'a Version> {
 }
 
 fn collect_parser_tests(codegen: &mut CodegenContext, data_dir: &PathBuf) -> Result<ParserTests> {
-    let input_files = codegen.collect_files_recursively(data_dir)?;
     let mut parser_tests: ParserTests = ParserTests::new();
 
-    for file_path in input_files {
-        if codegen.get_generated_dir(&file_path).is_some() {
-            continue; // skip generated files
+    // Rerun if input files are added/removed
+    codegen.mark_input_dir(data_dir);
+
+    let walker = WalkDir::new(data_dir).into_iter().filter_entry(|entry| {
+        // skip generated files
+        codegen.get_generated_dir(entry.path()).is_none()
+    });
+
+    for entry in walker {
+        let entry = entry?;
+        if entry.file_type().is_dir() {
+            continue;
         }
 
+        let file_path = entry.into_path();
         let parts = file_path
             .strip_prefix(data_dir)?
             .iter()

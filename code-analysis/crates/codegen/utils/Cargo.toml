@@ -7,3 +7,4 @@ edition.workspace = true
 [dependencies]
 anyhow = { workspace = true }
 similar-asserts = { workspace = true }
+walkdir = { workspace = true }

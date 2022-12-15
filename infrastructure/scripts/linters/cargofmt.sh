@@ -5,12 +5,12 @@ set -euo pipefail
 source "$(dirname "${BASH_SOURCE[0]}")/../common.sh"
 
 (
-  printf "\n\n🧪 prettier 🧪\n\n\n"
-  cd "$REPO_ROOT"
+  printf "\n\n🧪 cargofmt 🧪\n\n\n"
+  cd "$REPO_ROOT/code-analysis"
 
   if [[ "${CI:-}" ]]; then
-    prettier --check "$REPO_ROOT"
+    cargo fmt --check --all
   else
-    prettier --write "$REPO_ROOT"
+    cargo fmt --all
   fi
 )

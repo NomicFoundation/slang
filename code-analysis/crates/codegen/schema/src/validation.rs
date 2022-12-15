@@ -15,7 +15,7 @@ use crate::{
 static REQUIRED_PRODUCTIONS: [&str; 2] = ["LeadingTrivia", "TrailingTrivia"];
 
 impl Grammar {
-    pub fn validate(&self, context: &CodegenContext, manifest_path: &PathBuf) {
+    pub fn validate(&self, context: &mut CodegenContext, manifest_path: &PathBuf) {
         validate_topics(self);
         validate_versions_list("Grammar Manifest", &self.manifest.versions.iter().collect());
 
@@ -202,7 +202,7 @@ impl LoadedSchemas {
         };
     }
 
-    pub fn validate(&mut self, context: &CodegenContext, yaml_path: &PathBuf) {
+    pub fn validate(&mut self, context: &mut CodegenContext, yaml_path: &PathBuf) {
         let yaml_contents = context.read_file(&yaml_path).unwrap();
 
         let schema_path_re = Regex::new(r"# yaml-language-server: \$schema=([\.\-/a-z]+)").unwrap();
