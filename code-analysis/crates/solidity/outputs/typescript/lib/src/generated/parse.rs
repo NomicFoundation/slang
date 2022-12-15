@@ -181,7 +181,7 @@ pub struct Parsers<'a> {
     /// ExperimentalPragmaSpecifier = 'experimental' «Identifier» ;
     pub experimental_pragma_specifier: ParserType<'a, Rc<cst::Node>>,
 
-    /// (* 0.4.10 *) ExponentiationExpression = Expression '**' Expression ;
+    /// (* 0.4.11 *) ExponentiationExpression = Expression '**' Expression ;
     /// (* 0.6.0 *) ExponentiationExpression = Expression '**' Expression ;
     pub exponentiation_expression: ParserType<'a, Rc<cst::Node>>,
 
@@ -1954,7 +1954,7 @@ impl<'a> Parsers<'a> {
             );
         }
 
-        // (* 0.4.10 *) ExponentiationExpression = Expression '**' Expression ;
+        // (* 0.4.11 *) ExponentiationExpression = Expression '**' Expression ;
         // (* 0.6.0 *) ExponentiationExpression = Expression '**' Expression ;
         if version_0_6_0 <= version {
             exponentiation_expression_parser.define(

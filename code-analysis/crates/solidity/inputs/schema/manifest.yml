@@ -91,7 +91,6 @@ sections:
         definition: topics/06-yul/03-yul-expressions.yml
 
 versions:
-  - 0.4.10
   - 0.4.11
   - 0.4.12
   - 0.4.13
@@ -160,3 +159,7 @@ versions:
   - 0.8.11
   - 0.8.12
   - 0.8.13
+  - 0.8.14
+  - 0.8.15
+  - 0.8.16
+  - 0.8.17

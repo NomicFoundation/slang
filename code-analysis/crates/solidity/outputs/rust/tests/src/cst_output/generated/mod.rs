@@ -12,7 +12,7 @@ use solidity_rust_lib::generated::{
     parse::{ParserType, Parsers},
 };
 
-pub const TEST_VERSIONS: [&str; 3] = ["0.4.10", "0.6.0", "0.8.13"];
+pub const TEST_VERSIONS: [&str; 3] = ["0.4.11", "0.6.0", "0.8.17"];
 
 pub fn get_parser<'a>(
     parsers: Parsers<'a>,
