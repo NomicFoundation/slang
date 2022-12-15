@@ -3,6 +3,7 @@ use std::{
     path::PathBuf,
 };
 
+use codegen_schema::Grammar;
 use codegen_utils::context::CodegenContext;
 use inflector::Inflector;
 use proc_macro2::{Ident, TokenStream};
@@ -80,12 +81,19 @@ impl CodeGenerator {
         &self.errors
     }
 
-    pub fn write_parser_source(&self, codegen: &mut CodegenContext, output_dir: &PathBuf) {
+    pub fn write_parser_source(
+        &self,
+        grammar: &Grammar,
+        codegen: &mut CodegenContext,
+        output_dir: &PathBuf,
+    ) {
         let mut versions = BTreeSet::new();
         let mut field_definitions = vec![];
         let mut parser_predeclarations = vec![];
         let mut parser_definitions = vec![];
         let mut field_assignments = vec![];
+
+        let first_version = grammar.manifest.versions.first().unwrap();
 
         for (name, parser) in &self.parsers {
             let parser_name = naming::to_parser_name_ident(&name);
@@ -110,7 +118,7 @@ impl CodeGenerator {
                     .join("\n"),
                 parser.versions.iter().rev().map(|(version, body)| {
                     let version_name = format_ident!("version_{}", version.to_string().replace(".", "_"));
-                    if version == &Version::new(0, 0, 0) {
+                    if version == first_version {
                         quote!( { #parser_name.define(#body.boxed()); } )
                     } else {
                         quote!( if #version_name <= version { #parser_name.define(#body.boxed()); } )

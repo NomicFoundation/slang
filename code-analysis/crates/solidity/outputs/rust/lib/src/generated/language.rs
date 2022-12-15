@@ -324,7 +324,7 @@ impl Language {
         node.unwrap()
     }
 
-    // (* 0.0.0 *) ExponentiationExpression = Expression '**' Expression ;
+    // (* 0.4.10 *) ExponentiationExpression = Expression '**' Expression ;
     // (* 0.6.0 *) ExponentiationExpression = Expression '**' Expression ;
     pub fn parse_exponentiation_expression(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self

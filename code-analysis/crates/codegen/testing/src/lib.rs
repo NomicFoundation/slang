@@ -4,7 +4,7 @@ use std::{
 };
 
 use anyhow::{bail, Context, Result};
-use codegen_schema::Grammar;
+use codegen_schema::{Grammar, ProductionVersions};
 use codegen_utils::context::CodegenContext;
 use semver::Version;
 
@@ -56,9 +56,14 @@ fn collect_test_versions<'a>(grammar: &'a Grammar) -> BTreeSet<&'a Version> {
     ]);
 
     for production in grammar.productions.values().flatten() {
-        for version in production.versions.keys() {
-            if version != &Version::new(0, 0, 0) {
-                breaking_versions.insert(version);
+        match &production.versions {
+            ProductionVersions::Unversioned(_) => {
+                // Nothing to add
+            }
+            ProductionVersions::Versioned(versions) => {
+                for version in versions.keys() {
+                    breaking_versions.insert(version);
+                }
             }
         }
     }

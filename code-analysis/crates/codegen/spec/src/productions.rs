@@ -1,7 +1,6 @@
 use std::{collections::HashMap, io::Write};
 
 use itertools::Itertools;
-use semver::Version;
 
 use codegen_schema::*;
 
@@ -23,15 +22,17 @@ pub fn write_production<T: Write>(
     )
     .unwrap();
 
-    let zero_version = Version::parse("0.0.0").unwrap();
-    if production.versions.len() == 1 && production.versions.get(&zero_version).is_some() {
-        write_version(w, &production, &production.versions[&zero_version], context);
-    } else {
-        for version in production.versions.keys().sorted() {
-            write_token(w, TokenKind::comment, &format!("(* v{} *) ", version));
-            write_version(w, &production, &production.versions[version], context);
+    match &production.versions {
+        ProductionVersions::Unversioned(expression) => {
+            write_version(w, production, expression, context);
         }
-    }
+        ProductionVersions::Versioned(versions) => {
+            for (version, expression) in versions {
+                write_token(w, TokenKind::comment, &format!("(* v{} *) ", version));
+                write_version(w, &production, expression, context);
+            }
+        }
+    };
 
     write!(w, "</code>").unwrap();
     write!(w, "</pre>").unwrap();

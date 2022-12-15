@@ -8,14 +8,16 @@ use jsonschema::JSONSchema;
 use regex::Regex;
 use semver::Version;
 
-use crate::{EBNFDelimitedBy, EBNFRepeat, EBNFSeparatedBy, Expression, Grammar, EBNF};
+use crate::{
+    EBNFDelimitedBy, EBNFRepeat, EBNFSeparatedBy, Expression, Grammar, ProductionVersions, EBNF,
+};
 
 static REQUIRED_PRODUCTIONS: [&str; 2] = ["LeadingTrivia", "TrailingTrivia"];
 
 impl Grammar {
     pub fn validate(&self, context: &CodegenContext, manifest_path: &PathBuf) {
         validate_topics(self);
-        validate_versions_list(&self.manifest.versions);
+        validate_versions_list("Grammar Manifest", &self.manifest.versions.iter().collect());
 
         let mut schemas = LoadedSchemas::new();
         schemas.validate(context, manifest_path);
@@ -58,8 +60,12 @@ fn validate_topics(grammar: &Grammar) {
         });
 }
 
-fn validate_versions_list(versions: &Vec<Version>) {
-    assert_ne!(versions.len(), 0, "Grammar must have at least one version");
+fn validate_versions_list(owner: &str, versions: &Vec<&Version>) {
+    assert_ne!(
+        versions.len(),
+        0,
+        "{owner}: must define at least one version"
+    );
 
     let mut expected = versions.clone();
     expected.sort();
@@ -67,7 +73,7 @@ fn validate_versions_list(versions: &Vec<Version>) {
 
     assert_eq!(
         versions, &expected,
-        "Expected manifest versions to be sorted and unique."
+        "{owner}: versions to be sorted and unique."
     );
 }
 
@@ -105,15 +111,26 @@ fn validate_usages(grammar: &Grammar, defined: &HashSet<String>) -> HashSet<Stri
     let mut used = HashSet::<String>::new();
 
     grammar.productions.values().for_each(|productions| {
-        productions.iter().for_each(|production| {
-            production
-                .versions
-                .iter()
-                .for_each(|(version, expression)| {
-                    validate_version(grammar, version);
-                    validate_expression(expression, defined, &mut used);
-                });
-        });
+        productions
+            .iter()
+            .for_each(|production| match &production.versions {
+                ProductionVersions::Unversioned(expression) => {
+                    validate_expression(&expression, defined, &mut used);
+                }
+                ProductionVersions::Versioned(versions) => {
+                    let production_name = &&production.name;
+                    validate_versions_list(production_name, &versions.keys().collect());
+
+                    for (version, expression) in versions {
+                        assert!(
+                            grammar.manifest.versions.contains(&version),
+                            "{production_name}: Version {version} is not defined in the manifest.",
+                        );
+
+                        validate_expression(&expression, defined, &mut used);
+                    }
+                }
+            });
     });
 
     return used;
@@ -172,17 +189,6 @@ fn validate_expression(
             used.insert(reference.clone());
         }
     };
-}
-
-fn validate_version(grammar: &Grammar, version: &Version) {
-    if version == &Version::new(0, 0, 0) {
-        return;
-    }
-
-    assert!(
-        grammar.manifest.versions.contains(&version),
-        "Version {version} is not defined in the manifest.",
-    );
 }
 
 struct LoadedSchemas {

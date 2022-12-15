@@ -1,7 +1,6 @@
 use std::fmt::Write;
 
-use codegen_schema::{Grammar, Production};
-use semver::Version;
+use codegen_schema::{Grammar, Production, ProductionVersions};
 
 use super::expression::ExpressionEBNFPrivateExtensions;
 
@@ -15,16 +14,15 @@ pub(crate) trait ProductionEBNFPrivateExtensions {
 
 impl ProductionEBNFGeneratorExtensions for Production {
     fn generate_ebnf(&self, grammar: &Grammar) -> Vec<String> {
-        let zero_version = Version::parse("0.0.0").unwrap();
-
-        if self.versions.len() == 1 && self.versions.get(&zero_version).is_some() {
-            let mut w = String::new();
-            write!(w, "{} = ", self.ebnf_display_name()).unwrap();
-            self.versions[&zero_version].generate_ebnf(grammar, &mut w);
-            write!(w, ";").unwrap();
-            vec![w]
-        } else {
-            self.versions
+        match &self.versions {
+            ProductionVersions::Unversioned(expression) => {
+                let mut w = String::new();
+                write!(w, "{} = ", self.ebnf_display_name()).unwrap();
+                expression.generate_ebnf(grammar, &mut w);
+                write!(w, ";").unwrap();
+                vec![w]
+            }
+            ProductionVersions::Versioned(versions) => versions
                 .iter()
                 .map(|(version, expr)| {
                     let mut w = String::new();
@@ -33,7 +31,7 @@ impl ProductionEBNFGeneratorExtensions for Production {
                     write!(w, ";").unwrap();
                     w
                 })
-                .collect()
+                .collect(),
         }
     }
 }

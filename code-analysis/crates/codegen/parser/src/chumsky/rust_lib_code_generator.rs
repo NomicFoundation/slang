@@ -1,12 +1,18 @@
 use std::path::PathBuf;
 
+use codegen_schema::Grammar;
 use codegen_utils::context::CodegenContext;
 use quote::{format_ident, quote};
 
 use super::{boilerplate, code_generator::CodeGenerator, naming, rust_lib_boilerplate};
 
 impl CodeGenerator {
-    pub fn write_rust_lib_sources(&self, codegen: &mut CodegenContext, output_dir: &PathBuf) {
+    pub fn write_rust_lib_sources(
+        &self,
+        grammar: &Grammar,
+        codegen: &mut CodegenContext,
+        output_dir: &PathBuf,
+    ) {
         codegen
             .write_file(
                 &output_dir.join("mod.rs"),
@@ -32,7 +38,7 @@ impl CodeGenerator {
             )
             .unwrap();
 
-        self.write_parser_source(codegen, output_dir);
+        self.write_parser_source(grammar, codegen, output_dir);
 
         codegen
             .write_file(

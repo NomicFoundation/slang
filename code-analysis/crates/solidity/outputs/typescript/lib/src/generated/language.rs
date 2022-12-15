@@ -447,7 +447,7 @@ impl Language {
         node.unwrap().to_js(&env)
     }
 
-    // (* 0.0.0 *) ExponentiationExpression = Expression '**' Expression ;
+    // (* 0.4.10 *) ExponentiationExpression = Expression '**' Expression ;
     // (* 0.6.0 *) ExponentiationExpression = Expression '**' Expression ;
     #[napi(ts_return_type = "CSTRuleNode")]
     pub fn parse_exponentiation_expression(&self, env: Env, source: String) -> napi::JsObject {
