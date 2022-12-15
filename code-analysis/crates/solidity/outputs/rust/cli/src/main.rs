@@ -2,7 +2,7 @@ use std::fs;
 
 use clap::Parser as ClapParser;
 use semver::Version;
-use solidity_rust_lib::generated::parse::Parsers;
+use solidity_rust_lib::{generated::parse::Parsers, internal_api::parser::parse};
 
 #[derive(ClapParser, Debug)]
 struct ProgramArgs {
@@ -25,9 +25,7 @@ fn main() -> std::io::Result<()> {
         .expect(&format!("Failed to read file: {:?}", args.solidity_input));
 
     let parser = Parsers::new(&args.version).source_unit;
-
-    let output =
-        solidity_rust_cli::internal_api::parse(&solidity_src, parser, /* with_color */ true);
+    let output = parse(&solidity_src, parser, /* with_color */ true);
 
     for report in &output.error_reports {
         eprintln!("{report}");

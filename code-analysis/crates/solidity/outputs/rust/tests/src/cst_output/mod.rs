@@ -5,8 +5,7 @@ use std::{collections::HashMap, io::Write, path::PathBuf};
 use anyhow::Result;
 use codegen_utils::context::CodegenContext;
 use semver::Version;
-use solidity_rust_cli::internal_api::parse;
-use solidity_rust_lib::generated::parse::Parsers;
+use solidity_rust_lib::{generated::parse::Parsers, internal_api::parser::parse};
 
 use crate::cst_output::generated::{get_parser, TEST_VERSIONS};
 

@@ -1,7 +1,7 @@
 use ariadne::{Color, Config, Fmt, Label, Report, ReportBuilder, ReportKind, Source};
 use chumsky::{error::SimpleReason, Parser, Span};
 
-use solidity_rust_lib::generated::parse::{ErrorType, ParserType, SpanType};
+use crate::generated::parse::{ErrorType, ParserType, SpanType};
 
 pub struct ParserOutput<TNode> {
     pub root_node: Option<TNode>,

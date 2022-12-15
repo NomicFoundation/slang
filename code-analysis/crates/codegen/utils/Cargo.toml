@@ -5,5 +5,5 @@ rust-version.workspace = true
 edition.workspace = true
 
 [dependencies]
-anyhow = { version = "1.0.66", features = ["std"] }
-similar-asserts = "1.4.2"
+anyhow = { workspace = true }
+similar-asserts = { workspace = true }
