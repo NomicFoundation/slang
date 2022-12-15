@@ -2,59 +2,18 @@
 
 errors: []
 
-root: !Rule
-  kind: ContractDefinition
+root:
+  kind: !RuleKind ContractDefinition
+  contents: contract Sample {}
   children:
-    - !Token
-      kind: Contract
-      lex_node: !Chars
-        start: 0
-        end: 8
-    - !Token
-      kind: RawIdentifier
-      lex_node: !Chars
-        start: 9
-        end: 15
-      trivia:
-        - !Rule
-          kind: LeadingTrivia
-          children:
-            - !Token
-              kind: Whitespace
-              lex_node: !Sequence
-                - !Chars
-                  start: 8
-                  end: 9
-    - !Rule
-      kind: DelimitedContractBodyElements
+    - kind: !TokenKind Contract
+      contents: contract
+    - kind: !TokenKind RawIdentifier
+      contents: Sample
+    - kind: !RuleKind DelimitedContractBodyElements
+      contents: "{}"
       children:
-        - !Token
-          kind: OpenBrace
-          lex_node: !Chars
-            start: 16
-            end: 17
-          trivia:
-            - !Rule
-              kind: LeadingTrivia
-              children:
-                - !Token
-                  kind: Whitespace
-                  lex_node: !Sequence
-                    - !Chars
-                      start: 15
-                      end: 16
-        - !Token
-          kind: CloseBrace
-          lex_node: !Chars
-            start: 17
-            end: 18
-          trivia:
-            - !Rule
-              kind: TrailingTrivia
-              children:
-                - !Token
-                  kind: EndOfLine
-                  lex_node: !Sequence
-                    - !Chars
-                      start: 18
-                      end: 19
+        - kind: !TokenKind OpenBrace
+          contents: "{"
+        - kind: !TokenKind CloseBrace
+          contents: "}"

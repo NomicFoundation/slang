@@ -2,6 +2,6 @@
 
 errors: []
 
-root: !Rule
-  kind: SourceUnit
+root:
+  kind: !RuleKind SourceUnit
   children: []

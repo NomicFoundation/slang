@@ -58,13 +58,13 @@ fn render_error_report<'a>(error: &ErrorType, with_color: bool) -> Report<SpanTy
             );
 
             builder.with_message(format!(
-                "Expected delimiter {} to be closed",
+                "Expected delimiter '{}' to be closed",
                 delimiter.fg(error_color)
             ))
         }
         SimpleReason::Unexpected => {
             let found = if let Some(found) = error.found() {
-                found.fg(error_color).to_string()
+                format!("'{}'", found.fg(error_color))
             } else {
                 "end of input".to_string()
             };
@@ -72,7 +72,7 @@ fn render_error_report<'a>(error: &ErrorType, with_color: bool) -> Report<SpanTy
             builder.add_label(
                 Label::<SpanType>::new(error.span())
                     .with_color(error_color)
-                    .with_message(format!("Found {found}")),
+                    .with_message(format!("Found {found}.")),
             );
 
             let mut expected: Vec<&Option<char>> = error.expected().collect();
@@ -84,14 +84,14 @@ fn render_error_report<'a>(error: &ErrorType, with_color: bool) -> Report<SpanTy
                 expected
                     .iter()
                     .map(|expected| match expected {
-                        Some(expected) => expected.to_string(),
+                        Some(expected) => format!("'{}'", expected),
                         None => "end of input".to_string(),
                     })
                     .collect::<Vec<_>>()
                     .join(" or ")
             };
 
-            builder.with_message(format!("Expected {expected}"))
+            builder.with_message(format!("Expected {expected}."))
         }
     };
 
