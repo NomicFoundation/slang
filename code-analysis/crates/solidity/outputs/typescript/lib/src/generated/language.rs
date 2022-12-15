@@ -28,12 +28,12 @@ impl Language {
 
 #[napi]
 impl Language {
-    // ABICoderPragmaSpecifier = 'abicoder' «Identifier» ;
+    // ABICoderPragma = 'abicoder' «Identifier» ;
     #[napi(ts_return_type = "CSTRuleNode")]
-    pub fn parse_abi_coder_pragma_specifier(&self, env: Env, source: String) -> napi::JsObject {
+    pub fn parse_abi_coder_pragma(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self
             .parsers
-            .abi_coder_pragma_specifier
+            .abi_coder_pragma
             .parse_recovery(source.as_str());
         node.unwrap().to_js(&env)
     }
@@ -437,12 +437,12 @@ impl Language {
         node.unwrap().to_js(&env)
     }
 
-    // ExperimentalPragmaSpecifier = 'experimental' «Identifier» ;
+    // ExperimentalPragma = 'experimental' «Identifier» ;
     #[napi(ts_return_type = "CSTRuleNode")]
-    pub fn parse_experimental_pragma_specifier(&self, env: Env, source: String) -> napi::JsObject {
+    pub fn parse_experimental_pragma(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self
             .parsers
-            .experimental_pragma_specifier
+            .experimental_pragma
             .parse_recovery(source.as_str());
         node.unwrap().to_js(&env)
     }
@@ -892,7 +892,7 @@ impl Language {
         node.unwrap().to_js(&env)
     }
 
-    // PragmaDirective = 'pragma' ( VersionPragmaSpecifier | ABICoderPragmaSpecifier | ExperimentalPragmaSpecifier ) ';' ;
+    // PragmaDirective = 'pragma' ( VersionPragma | ABICoderPragma | ExperimentalPragma ) ';' ;
     #[napi(ts_return_type = "CSTRuleNode")]
     pub fn parse_pragma_directive(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self
@@ -1268,6 +1268,13 @@ impl Language {
         node.unwrap().to_js(&env)
     }
 
+    // VersionPragma = 'solidity' 1…*{ VersionPragmaSpecifier } ;
+    #[napi(ts_return_type = "CSTRuleNode")]
+    pub fn parse_version_pragma(&self, env: Env, source: String) -> napi::JsObject {
+        let (node, _errs) = self.parsers.version_pragma.parse_recovery(source.as_str());
+        node.unwrap().to_js(&env)
+    }
+
     // «VersionPragmaOperator» = '^' | '~' | '=' | '<' | '>' | '<=' | '>=' ;
     #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_version_pragma_operator(&self, env: Env, source: String) -> napi::JsObject {
@@ -1278,7 +1285,7 @@ impl Language {
         node.unwrap().to_js(&env)
     }
 
-    // VersionPragmaSpecifier = 'solidity' 1…*{ «VersionPragmaOperator» «VersionPragmaValue» } ;
+    // VersionPragmaSpecifier = [ «VersionPragmaOperator» ] «VersionPragmaValue»  { '.' «VersionPragmaValue» } ;
     #[napi(ts_return_type = "CSTRuleNode")]
     pub fn parse_version_pragma_specifier(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self
@@ -1288,7 +1295,7 @@ impl Language {
         node.unwrap().to_js(&env)
     }
 
-    // «VersionPragmaValue» = 1…*{ '0'…'9' | 'x' | 'X' | '*' }  { '.' 1…*{ '0'…'9' | 'x' | 'X' | '*' } } ;
+    // «VersionPragmaValue» = 1…*{ '0'…'9' | 'x' | 'X' | '*' } ;
     #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_version_pragma_value(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self

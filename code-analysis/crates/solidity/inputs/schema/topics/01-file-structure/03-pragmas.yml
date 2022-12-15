@@ -4,18 +4,24 @@
   sequence:
     - terminal: pragma
     - choice:
-        - reference: VersionPragmaSpecifier
-        - reference: ABICoderPragmaSpecifier
-        - reference: ExperimentalPragmaSpecifier
+        - reference: VersionPragma
+        - reference: ABICoderPragma
+        - reference: ExperimentalPragma
     - terminal: ;
 
-- name: VersionPragmaSpecifier
+- name: VersionPragma
   sequence:
     - terminal: solidity
     - oneOrMore:
-        sequence:
-          - reference: VersionPragmaOperator
-          - reference: VersionPragmaValue
+        reference: VersionPragmaSpecifier
+
+- name: VersionPragmaSpecifier
+  sequence:
+    - optional:
+        reference: VersionPragmaOperator
+    - separatedBy:
+        reference: VersionPragmaValue
+        separator: "."
 
 - name: VersionPragmaOperator
   kind: Token
@@ -30,21 +36,19 @@
 
 - name: VersionPragmaValue
   kind: Token
-  separatedBy:
-    oneOrMore:
-      choice:
-        - range: { from: "0", to: "9" }
-        - terminal: "x"
-        - terminal: "X"
-        - terminal: "*"
-    separator: "."
+  oneOrMore:
+    choice:
+      - range: { from: "0", to: "9" }
+      - terminal: "x"
+      - terminal: "X"
+      - terminal: "*"
 
-- name: ABICoderPragmaSpecifier
+- name: ABICoderPragma
   sequence:
     - terminal: abicoder
     - reference: Identifier
 
-- name: ExperimentalPragmaSpecifier
+- name: ExperimentalPragma
   sequence:
     - terminal: experimental
     - reference: Identifier

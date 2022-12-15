@@ -1,0 +1,58 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+errors: []
+
+root:
+  kind: !RuleKind VersionPragma
+  contents: solidity /* comments */ 0 /* are */ . /* allowed */ 0 . /* here */ 0
+  children:
+    - kind: !TokenKind Solidity
+      contents: solidity
+    - kind: !RuleKind VersionPragmaSpecifiers
+      contents: /* comments */ 0 /* are */ . /* allowed */ 0 . /* here */ 0
+      children:
+        - kind: !RuleKind VersionPragmaSpecifier
+          contents: /* comments */ 0 /* are */ . /* allowed */ 0 . /* here */ 0
+          children:
+            - kind: !RuleKind SeparatedVersionPragmaValues
+              contents: /* comments */ 0 /* are */ . /* allowed */ 0 . /* here */ 0
+              children:
+                - kind: !TokenKind VersionPragmaValue
+                  contents: /* comments */ 0
+                  children:
+                    - kind: !TokenKind MultilineComment
+                      contents: /* comments */
+                    - kind: TokenFragment
+                      contents: "0"
+                      children:
+                        - kind: TokenFragment
+                          contents: "0"
+                - kind: !TokenKind Period
+                  contents: /* are */ .
+                  children:
+                    - kind: !TokenKind MultilineComment
+                      contents: /* are */
+                    - kind: TokenFragment
+                      contents: .
+                - kind: !TokenKind VersionPragmaValue
+                  contents: /* allowed */ 0
+                  children:
+                    - kind: !TokenKind MultilineComment
+                      contents: /* allowed */
+                    - kind: TokenFragment
+                      contents: "0"
+                      children:
+                        - kind: TokenFragment
+                          contents: "0"
+                - kind: !TokenKind Period
+                  contents: .
+                - kind: !TokenKind VersionPragmaValue
+                  contents: /* here */ 0
+                  children:
+                    - kind: !TokenKind MultilineComment
+                      contents: /* here */
+                    - kind: TokenFragment
+                      contents: "0"
+                      children:
+                        - kind: TokenFragment
+                          contents: "0"

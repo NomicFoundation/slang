@@ -1,0 +1,1 @@
+solidity /* comments */ 0 /* are */ . /* allowed */ 0 . /* here */ 0

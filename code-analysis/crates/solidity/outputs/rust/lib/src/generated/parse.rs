@@ -37,8 +37,8 @@ where
 
 #[allow(dead_code)]
 pub struct Parsers<'a> {
-    /// ABICoderPragmaSpecifier = 'abicoder' «Identifier» ;
-    pub abi_coder_pragma_specifier: ParserType<'a, Rc<cst::Node>>,
+    /// ABICoderPragma = 'abicoder' «Identifier» ;
+    pub abi_coder_pragma: ParserType<'a, Rc<cst::Node>>,
 
     /// AddSubExpression = Expression ( '+' | '-' ) Expression ;
     pub add_sub_expression: ParserType<'a, Rc<cst::Node>>,
@@ -178,8 +178,8 @@ pub struct Parsers<'a> {
     /// EventParameter = TypeName [ 'indexed' ] [ «Identifier» ] ;
     pub event_parameter: ParserType<'a, Rc<cst::Node>>,
 
-    /// ExperimentalPragmaSpecifier = 'experimental' «Identifier» ;
-    pub experimental_pragma_specifier: ParserType<'a, Rc<cst::Node>>,
+    /// ExperimentalPragma = 'experimental' «Identifier» ;
+    pub experimental_pragma: ParserType<'a, Rc<cst::Node>>,
 
     /// (* 0.4.11 *) ExponentiationExpression = Expression '**' Expression ;
     /// (* 0.6.0 *) ExponentiationExpression = Expression '**' Expression ;
@@ -332,7 +332,7 @@ pub struct Parsers<'a> {
     /// «PossiblySeparatedPairsOfHexDigits» = 2…2*{ «HexCharacter» } { [ '_' ] 2…2*{ «HexCharacter» } } ;
     pub possibly_separated_pairs_of_hex_digits: ParserType<'a, Rc<cst::Node>>,
 
-    /// PragmaDirective = 'pragma' ( VersionPragmaSpecifier | ABICoderPragmaSpecifier | ExperimentalPragmaSpecifier ) ';' ;
+    /// PragmaDirective = 'pragma' ( VersionPragma | ABICoderPragma | ExperimentalPragma ) ';' ;
     pub pragma_directive: ParserType<'a, Rc<cst::Node>>,
 
     /// PrimaryExpression = PayableExpression | TypeExpression | NewExpression | ParenthesisExpression | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | «NumericLiteral» | «BooleanLiteral» | «Identifier» ;
@@ -452,13 +452,16 @@ pub struct Parsers<'a> {
     /// VariableDeclarationStatement = TypeName [ DataLocation ] «Identifier» [ '=' Expression ] ';' ;
     pub variable_declaration_statement: ParserType<'a, Rc<cst::Node>>,
 
+    /// VersionPragma = 'solidity' 1…*{ VersionPragmaSpecifier } ;
+    pub version_pragma: ParserType<'a, Rc<cst::Node>>,
+
     /// «VersionPragmaOperator» = '^' | '~' | '=' | '<' | '>' | '<=' | '>=' ;
     pub version_pragma_operator: ParserType<'a, Rc<cst::Node>>,
 
-    /// VersionPragmaSpecifier = 'solidity' 1…*{ «VersionPragmaOperator» «VersionPragmaValue» } ;
+    /// VersionPragmaSpecifier = [ «VersionPragmaOperator» ] «VersionPragmaValue»  { '.' «VersionPragmaValue» } ;
     pub version_pragma_specifier: ParserType<'a, Rc<cst::Node>>,
 
-    /// «VersionPragmaValue» = 1…*{ '0'…'9' | 'x' | 'X' | '*' }  { '.' 1…*{ '0'…'9' | 'x' | 'X' | '*' } } ;
+    /// «VersionPragmaValue» = 1…*{ '0'…'9' | 'x' | 'X' | '*' } ;
     pub version_pragma_value: ParserType<'a, Rc<cst::Node>>,
 
     /// WhileStatement = 'while' '(' Expression ')' Statement ;
@@ -533,7 +536,7 @@ impl<'a> Parsers<'a> {
 
         // Declare all productions --------------------------
 
-        let mut abi_coder_pragma_specifier_parser =
+        let mut abi_coder_pragma_parser =
             Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut add_sub_expression_parser =
             Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
@@ -623,7 +626,7 @@ impl<'a> Parsers<'a> {
             Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut event_parameter_parser =
             Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
-        let mut experimental_pragma_specifier_parser =
+        let mut experimental_pragma_parser =
             Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut exponentiation_expression_parser =
             Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
@@ -795,6 +798,8 @@ impl<'a> Parsers<'a> {
         let mut using_directive_parser =
             Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut variable_declaration_statement_parser =
+            Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
+        let mut version_pragma_parser =
             Recursive::<char, Option<Rc<cst::Node>>, ErrorType>::declare();
         let mut version_pragma_operator_parser =
             Recursive::<char, Option<Rc<lex::Node>>, ErrorType>::declare();
@@ -1210,11 +1215,11 @@ impl<'a> Parsers<'a> {
 
         // Define all productions ---------------------------
 
-        // ABICoderPragmaSpecifier = 'abicoder' «Identifier» ;
+        // ABICoderPragma = 'abicoder' «Identifier» ;
         {
-            abi_coder_pragma_specifier_parser.define(
+            abi_coder_pragma_parser.define(
                 seq!(
-                    AbicoderPragmaSpecifier,
+                    AbicoderPragma,
                     terminal!(Abicoder, "abicoder"),
                     token!(identifier_parser)
                 )
@@ -1942,11 +1947,11 @@ impl<'a> Parsers<'a> {
             );
         }
 
-        // ExperimentalPragmaSpecifier = 'experimental' «Identifier» ;
+        // ExperimentalPragma = 'experimental' «Identifier» ;
         {
-            experimental_pragma_specifier_parser.define(
+            experimental_pragma_parser.define(
                 seq!(
-                    ExperimentalPragmaSpecifier,
+                    ExperimentalPragma,
                     terminal!(Experimental, "experimental"),
                     token!(identifier_parser)
                 )
@@ -2830,16 +2835,16 @@ impl<'a> Parsers<'a> {
             );
         }
 
-        // PragmaDirective = 'pragma' ( VersionPragmaSpecifier | ABICoderPragmaSpecifier | ExperimentalPragmaSpecifier ) ';' ;
+        // PragmaDirective = 'pragma' ( VersionPragma | ABICoderPragma | ExperimentalPragma ) ';' ;
         {
             pragma_directive_parser.define(
                 seq!(
                     PragmaDirective,
                     terminal!(Pragma, "pragma"),
                     choice!(
-                        rule!(version_pragma_specifier_parser),
-                        rule!(abi_coder_pragma_specifier_parser),
-                        rule!(experimental_pragma_specifier_parser)
+                        rule!(version_pragma_parser),
+                        rule!(abi_coder_pragma_parser),
+                        rule!(experimental_pragma_parser)
                     ),
                     terminal!(Semicolon, ";")
                 )
@@ -3611,6 +3616,21 @@ impl<'a> Parsers<'a> {
             );
         }
 
+        // VersionPragma = 'solidity' 1…*{ VersionPragmaSpecifier } ;
+        {
+            version_pragma_parser.define(
+                seq!(
+                    VersionPragma,
+                    terminal!(Solidity, "solidity"),
+                    one_or_more!(
+                        VersionPragmaSpecifiers,
+                        rule!(version_pragma_specifier_parser)
+                    )
+                )
+                .boxed(),
+            );
+        }
+
         // «VersionPragmaOperator» = '^' | '~' | '=' | '<' | '>' | '<=' | '>=' ;
         {
             version_pragma_operator_parser.define(
@@ -3625,31 +3645,31 @@ impl<'a> Parsers<'a> {
             );
         }
 
-        // VersionPragmaSpecifier = 'solidity' 1…*{ «VersionPragmaOperator» «VersionPragmaValue» } ;
+        // VersionPragmaSpecifier = [ «VersionPragmaOperator» ] «VersionPragmaValue»  { '.' «VersionPragmaValue» } ;
         {
             version_pragma_specifier_parser.define(
                 seq!(
                     VersionPragmaSpecifier,
-                    terminal!(Solidity, "solidity"),
-                    one_or_more!(seq!(
-                        token!(version_pragma_operator_parser),
-                        token!(version_pragma_value_parser)
-                    ))
+                    optional!(token!(version_pragma_operator_parser)),
+                    separated_by!(
+                        SeparatedVersionPragmaValues,
+                        token!(version_pragma_value_parser),
+                        terminal!(Period, ".")
+                    )
                 )
                 .boxed(),
             );
         }
 
-        // «VersionPragmaValue» = 1…*{ '0'…'9' | 'x' | 'X' | '*' }  { '.' 1…*{ '0'…'9' | 'x' | 'X' | '*' } } ;
+        // «VersionPragmaValue» = 1…*{ '0'…'9' | 'x' | 'X' | '*' } ;
         {
             version_pragma_value_parser.define(
-                lex_separated_by!(
+                lex_one_or_more!(
                     VersionPragmaValue,
-                    lex_one_or_more!(lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                    lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
                         || c == 'x'
                         || c == 'X'
-                        || c == '*')),
-                    lex_terminal!(Period, ".")
+                        || c == '*')
                 )
                 .boxed(),
             );
@@ -3987,8 +4007,8 @@ impl<'a> Parsers<'a> {
         // Create the Parser object -------------------------
 
         Self {
-            abi_coder_pragma_specifier: abi_coder_pragma_specifier_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::AbicoderPragmaSpecifier, node))
+            abi_coder_pragma: abi_coder_pragma_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::AbicoderPragma, node))
                 .then_ignore(end())
                 .boxed(),
             add_sub_expression: add_sub_expression_parser
@@ -4177,10 +4197,8 @@ impl<'a> Parsers<'a> {
                 .map(|node| cst::Node::top_level_rule(kinds::Rule::EventParameter, node))
                 .then_ignore(end())
                 .boxed(),
-            experimental_pragma_specifier: experimental_pragma_specifier_parser
-                .map(|node| {
-                    cst::Node::top_level_rule(kinds::Rule::ExperimentalPragmaSpecifier, node)
-                })
+            experimental_pragma: experimental_pragma_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::ExperimentalPragma, node))
                 .then_ignore(end())
                 .boxed(),
             exponentiation_expression: exponentiation_expression_parser
@@ -4549,6 +4567,10 @@ impl<'a> Parsers<'a> {
                 .map(|node| {
                     cst::Node::top_level_rule(kinds::Rule::VariableDeclarationStatement, node)
                 })
+                .then_ignore(end())
+                .boxed(),
+            version_pragma: version_pragma_parser
+                .map(|node| cst::Node::top_level_rule(kinds::Rule::VersionPragma, node))
                 .then_ignore(end())
                 .boxed(),
             version_pragma_operator: version_pragma_operator_parser

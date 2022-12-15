@@ -301,7 +301,7 @@ pub enum Token {
 #[derive(Debug, PartialEq, Eq, Serialize)]
 #[napi]
 pub enum Rule {
-    AbicoderPragmaSpecifier,
+    AbicoderPragma,
     AddSubExpression,
     AddressType,
     AndExpression,
@@ -354,7 +354,7 @@ pub enum Rule {
     ErrorParameter,
     EventDefinition,
     EventParameter,
-    ExperimentalPragmaSpecifier,
+    ExperimentalPragma,
     ExponentiationExpression,
     Expression,
     ExpressionStatement,
@@ -415,6 +415,7 @@ pub enum Rule {
     SeparatedNamedArguments,
     SeparatedParameterDeclarations,
     SeparatedSelectedImports,
+    SeparatedVersionPragmaValues,
     SeparatedYulExpressions,
     SeparatedYulIdentifierPaths,
     ShiftExpression,
@@ -440,7 +441,9 @@ pub enum Rule {
     UserDefinedValueTypeDefinition,
     UsingDirective,
     VariableDeclarationStatement,
+    VersionPragma,
     VersionPragmaSpecifier,
+    VersionPragmaSpecifiers,
     WhileStatement,
     YulAssignmentStatement,
     YulBlock,
