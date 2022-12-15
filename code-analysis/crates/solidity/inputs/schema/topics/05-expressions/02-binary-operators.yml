@@ -86,7 +86,7 @@
 
 - name: ExponentiationExpression
   versions:
-    0.0.0:
+    0.4.10:
       config: { associativity: Left }
       sequence:
         - reference: Expression

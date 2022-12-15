@@ -80,7 +80,7 @@ pub struct Topic {
 pub struct Production {
     pub name: String,
     pub kind: ProductionKind,
-    pub versions: BTreeMap<Version, ExpressionRef>,
+    pub versions: ProductionVersions,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -88,6 +88,12 @@ pub enum ProductionKind {
     Rule,
     Trivia,
     Token,
+}
+
+#[derive(Clone, Debug)]
+pub enum ProductionVersions {
+    Unversioned(ExpressionRef),
+    Versioned(BTreeMap<Version, ExpressionRef>),
 }
 
 pub type ProductionRef = Rc<Production>;
@@ -101,16 +107,16 @@ impl Production {
     fn serialize_in_map<S: Serializer>(&self, state: &mut S::SerializeMap) -> Result<(), S::Error> {
         state.serialize_entry("name", &self.name)?;
         state.serialize_entry("kind", &self.kind)?;
-        // TODO: once `if let` can be combined with boolean guards, merge this
-        if self.versions.len() == 1 {
-            if let Some(entry) = self.versions.get(&Version::parse("0.0.0").unwrap()) {
-                entry.serialize_in_map::<S>(state)?;
-            } else {
-                state.serialize_entry("versions", &self.versions)?;
+
+        match &self.versions {
+            ProductionVersions::Unversioned(expression) => {
+                expression.serialize_in_map::<S>(state)?;
             }
-        } else {
-            state.serialize_entry("versions", &self.versions)?;
+            ProductionVersions::Versioned(versions) => {
+                state.serialize_entry("versions", &versions)?;
+            }
         }
+
         Ok(())
     }
 }
@@ -236,7 +242,9 @@ impl<'de> Deserialize<'de> for Production {
                     match key {
                         Field::Name => name = Some(map.next_value()?),
                         Field::Kind => kind = Some(map.next_value()?),
-                        Field::Versions => versions = Some(map.next_value()?),
+                        Field::Versions => {
+                            versions = Some(ProductionVersions::Versioned(map.next_value()?))
+                        }
                         Field::Config => config = Some(map.next_value()?),
 
                         Field::Choice => ebnf = Some(EBNF::Choice(map.next_value()?)),
@@ -262,10 +270,10 @@ impl<'de> Deserialize<'de> for Production {
 
                 if let Some(ebnf) = ebnf {
                     let config = config.unwrap_or_default();
-                    versions = Some(BTreeMap::from([(
-                        Version::parse("0.0.0").unwrap(),
-                        Rc::new(Expression { config, ebnf }),
-                    )]))
+                    versions = Some(ProductionVersions::Unversioned(Rc::new(Expression {
+                        config,
+                        ebnf,
+                    })))
                 }
 
                 if versions.is_none() {

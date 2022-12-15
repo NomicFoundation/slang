@@ -31,7 +31,7 @@ impl GrammarParserGeneratorExtensions for Grammar {
         output_dir: &std::path::PathBuf,
     ) {
         self.create_code_generator()
-            .write_rust_lib_sources(context, output_dir);
+            .write_rust_lib_sources(self, context, output_dir);
     }
 
     fn generate_typescript_lib_sources(
@@ -40,16 +40,21 @@ impl GrammarParserGeneratorExtensions for Grammar {
         output_dir: &std::path::PathBuf,
     ) {
         self.create_code_generator()
-            .write_typescript_lib_sources(context, output_dir);
+            .write_typescript_lib_sources(self, context, output_dir);
     }
 }
 
 impl PrivateGrammarParserGeneratorExtensions for Grammar {
     fn create_code_generator(&self) -> CodeGenerator {
         let mut version_breaks = BTreeSet::new();
+        version_breaks.insert(self.manifest.versions.first().unwrap());
+
         for production in self.productions.values().flatten() {
-            for version in production.versions.keys() {
-                version_breaks.insert(version.clone());
+            match &production.versions {
+                ProductionVersions::Unversioned(_) => {}
+                ProductionVersions::Versioned(versions) => {
+                    version_breaks.extend(versions.keys());
+                }
             }
         }
 

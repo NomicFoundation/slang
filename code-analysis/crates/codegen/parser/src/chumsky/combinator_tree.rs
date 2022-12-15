@@ -53,47 +53,63 @@ impl<'context> CombinatorTree<'context> {
 
     pub fn add_to_generated_code(&self, code: &mut CodeGenerator) {
         let version = &self.context.version;
-        if self.production.versions.contains_key(version) {
-            let name = self.production.name.clone();
-            let comment = self.production.generate_ebnf(self.context.grammar);
-
-            match self.production.kind {
-                ProductionKind::Rule => {
-                    code.add_rule_kind(self.production.name.clone());
-                    let parser = self.root_node.get().unwrap().to_parser_code(false, code);
-                    code.add_parser(name, version, comment, parser, ParserResultType::Rule);
+        match &self.production.versions {
+            ProductionVersions::Unversioned(_) => {
+                let first_version = self.context.grammar.manifest.versions.first().unwrap();
+                if version != first_version {
+                    return;
                 }
-
-                ProductionKind::Trivia => {
-                    code.add_rule_kind(self.production.name.clone());
-                    let parser = self.root_node.get().unwrap().to_parser_code(true, code);
-                    code.add_parser(name, version, comment, parser, ParserResultType::Rule);
+            }
+            ProductionVersions::Versioned(versions) => {
+                if !versions.contains_key(version) {
+                    return;
                 }
+            }
+        }
 
-                ProductionKind::Token => {
-                    if self.can_be_empty() {
-                        unreachable!("Validation should have discovered that token production {} can generate empty results", name);
-                    }
-                    code.add_token_kind(self.production.name.clone());
-                    let parser = self.root_node.get().unwrap().to_lexer_code(code);
-                    code.add_parser(name, version, comment, parser, ParserResultType::Token);
+        let name = self.production.name.clone();
+        let comment = self.production.generate_ebnf(self.context.grammar);
+
+        match self.production.kind {
+            ProductionKind::Rule => {
+                code.add_rule_kind(self.production.name.clone());
+                let parser = self.root_node.get().unwrap().to_parser_code(false, code);
+                code.add_parser(name, version, comment, parser, ParserResultType::Rule);
+            }
+
+            ProductionKind::Trivia => {
+                code.add_rule_kind(self.production.name.clone());
+                let parser = self.root_node.get().unwrap().to_parser_code(true, code);
+                code.add_parser(name, version, comment, parser, ParserResultType::Rule);
+            }
+
+            ProductionKind::Token => {
+                if self.can_be_empty() {
+                    unreachable!("Validation should have discovered that token production {} can generate empty results", name);
                 }
+                code.add_token_kind(self.production.name.clone());
+                let parser = self.root_node.get().unwrap().to_lexer_code(code);
+                code.add_parser(name, version, comment, parser, ParserResultType::Token);
             }
         }
     }
 
     pub fn expression(&self) -> ExpressionRef {
-        let version = self.context.version.clone();
-        self.production
-            .versions
-            .iter()
-            .filter(|(v, _)| *v <= &version)
-            .last()
-            .map(|(_, e)| e.clone())
-            .expect(&format!(
-                "Production {} has no content for version {}",
-                self.production.name, version
-            ))
+        return match &self.production.versions {
+            ProductionVersions::Unversioned(expression) => expression.clone(),
+            ProductionVersions::Versioned(versions) => {
+                let version = &self.context.version;
+                versions
+                    .iter()
+                    .filter(|(v, _)| *v <= version)
+                    .last()
+                    .map(|(_, e)| e.clone())
+                    .expect(&format!(
+                        "Production {} has no content for version {}",
+                        self.production.name, version
+                    ))
+            }
+        };
     }
 
     fn convert_to_precedence_rule_member(
