@@ -3,6 +3,7 @@
 mod contract_definition;
 mod exponentiation_expression;
 mod interface_definition;
+mod multiline_comment;
 mod source_unit;
 
 use std::rc::Rc;
@@ -23,6 +24,7 @@ pub fn get_parser<'a>(
         "contract_definition" => parsers.contract_definition,
         "exponentiation_expression" => parsers.exponentiation_expression,
         "interface_definition" => parsers.interface_definition,
+        "multiline_comment" => parsers.multiline_comment,
         "source_unit" => parsers.source_unit,
         _ => bail!("Unrecognized parser_name: {parser_name}"),
     });

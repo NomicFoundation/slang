@@ -1,0 +1,7 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+errors: []
+
+root:
+  kind: !TokenKind MultilineComment
+  contents: /* this is on the same line */

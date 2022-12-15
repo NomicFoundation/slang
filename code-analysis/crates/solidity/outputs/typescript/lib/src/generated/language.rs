@@ -756,7 +756,7 @@ impl Language {
         node.unwrap().to_js(&env)
     }
 
-    // «MultilineComment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
+    // «MultilineComment» = '/*' { ¬'*' | '*' ¬'/' } '*/' ;
     #[napi(ts_return_type = "CSTTokenNode")]
     pub fn parse_multiline_comment(&self, env: Env, source: String) -> napi::JsObject {
         let (node, _errs) = self

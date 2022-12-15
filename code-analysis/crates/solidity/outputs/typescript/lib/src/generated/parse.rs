@@ -287,7 +287,7 @@ pub struct Parsers<'a> {
     /// MulDivModExpression = Expression ( '*' | '/' | '%' ) Expression ;
     pub mul_div_mod_expression: ParserType<'a, Rc<cst::Node>>,
 
-    /// «MultilineComment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
+    /// «MultilineComment» = '/*' { ¬'*' | '*' ¬'/' } '*/' ;
     pub multiline_comment: ParserType<'a, Rc<cst::Node>>,
 
     /// NamedArgument = «Identifier» ':' Expression ;
@@ -2568,22 +2568,21 @@ impl<'a> Parsers<'a> {
             );
         }
 
-        // «MultilineComment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
+        // «MultilineComment» = '/*' { ¬'*' | '*' ¬'/' } '*/' ;
         {
             multiline_comment_parser.define(
                 lex_seq!(
                     MultilineComment,
                     lex_terminal!(SlashStar, "/*"),
-                    lex_seq!(
+                    lex_zero_or_more!(
                         Content,
-                        lex_zero_or_more!(lex_choice!(
+                        lex_choice!(
                             lex_terminal!(NotStar, |&c: &char| c != '*'),
                             lex_seq!(
-                                lex_one_or_more!(Stars, lex_terminal!(Star, '*')),
-                                lex_terminal!(|&c: &char| c != '*' && c != '/')
+                                lex_terminal!(Star, '*'),
+                                lex_terminal!(NotSlash, |&c: &char| c != '/')
                             )
-                        )),
-                        lex_zero_or_more!(Stars, lex_terminal!(Star, '*'))
+                        )
                     ),
                     lex_terminal!(StarSlash, "*/")
                 )

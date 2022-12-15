@@ -547,7 +547,7 @@ impl Language {
         node.unwrap()
     }
 
-    // «MultilineComment» = '/*' { ¬'*' | 1…*{ '*' } ¬( '*' | '/' ) } { '*' } '*/' ;
+    // «MultilineComment» = '/*' { ¬'*' | '*' ¬'/' } '*/' ;
     pub fn parse_multiline_comment(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.multiline_comment.parse_recovery(source);
         node.unwrap()
