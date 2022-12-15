@@ -236,18 +236,17 @@ if (!nativeBinding) {
   throw new Error(`Failed to load native binding`)
 }
 
-const { CSTNodeType, CstNoneNode, CstRuleNode, CstTokenNode, CstGroupNode, Token, Rule, Language, LexNodeType, LexNoneNode, LexCharsNode, LexChoiceNode, LexSequenceNode, LexNamedNode } = nativeBinding
+const { CSTNodeType, CstRuleNode, CstTokenNode, CstGroupNode, Token, Rule, Language, ParserOutput, LexNodeType, LexCharsNode, LexChoiceNode, LexSequenceNode, LexNamedNode } = nativeBinding
 
 module.exports.CSTNodeType = CSTNodeType
-module.exports.CstNoneNode = CstNoneNode
 module.exports.CstRuleNode = CstRuleNode
 module.exports.CstTokenNode = CstTokenNode
 module.exports.CstGroupNode = CstGroupNode
 module.exports.Token = Token
 module.exports.Rule = Rule
 module.exports.Language = Language
+module.exports.ParserOutput = ParserOutput
 module.exports.LexNodeType = LexNodeType
-module.exports.LexNoneNode = LexNoneNode
 module.exports.LexCharsNode = LexCharsNode
 module.exports.LexChoiceNode = LexChoiceNode
 module.exports.LexSequenceNode = LexSequenceNode

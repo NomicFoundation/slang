@@ -46,6 +46,10 @@ impl ParserOutput {
         self.parse_tree.clone().map(|n| n.to_js(&env))
     }
     #[napi]
+    pub fn error_count(&self) -> usize {
+        self.errors.len()
+    }
+    #[napi]
     pub fn errors_as_strings(&self, source: String, with_colour: bool) -> Vec<String> {
         let mut results = vec![];
         for error in &self.errors {
