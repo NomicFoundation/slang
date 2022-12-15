@@ -21,12 +21,9 @@ impl Language {
 }
 
 impl Language {
-    // ABICoderPragmaSpecifier = 'abicoder' «Identifier» ;
-    pub fn parse_abi_coder_pragma_specifier(&self, source: &str) -> Rc<cst::Node> {
-        let (node, _errs) = self
-            .parsers
-            .abi_coder_pragma_specifier
-            .parse_recovery(source);
+    // ABICoderPragma = 'abicoder' «Identifier» ;
+    pub fn parse_abi_coder_pragma(&self, source: &str) -> Rc<cst::Node> {
+        let (node, _errs) = self.parsers.abi_coder_pragma.parse_recovery(source);
         node.unwrap()
     }
 
@@ -315,12 +312,9 @@ impl Language {
         node.unwrap()
     }
 
-    // ExperimentalPragmaSpecifier = 'experimental' «Identifier» ;
-    pub fn parse_experimental_pragma_specifier(&self, source: &str) -> Rc<cst::Node> {
-        let (node, _errs) = self
-            .parsers
-            .experimental_pragma_specifier
-            .parse_recovery(source);
+    // ExperimentalPragma = 'experimental' «Identifier» ;
+    pub fn parse_experimental_pragma(&self, source: &str) -> Rc<cst::Node> {
+        let (node, _errs) = self.parsers.experimental_pragma.parse_recovery(source);
         node.unwrap()
     }
 
@@ -643,7 +637,7 @@ impl Language {
         node.unwrap()
     }
 
-    // PragmaDirective = 'pragma' ( VersionPragmaSpecifier | ABICoderPragmaSpecifier | ExperimentalPragmaSpecifier ) ';' ;
+    // PragmaDirective = 'pragma' ( VersionPragma | ABICoderPragma | ExperimentalPragma ) ';' ;
     pub fn parse_pragma_directive(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.pragma_directive.parse_recovery(source);
         node.unwrap()
@@ -910,19 +904,25 @@ impl Language {
         node.unwrap()
     }
 
+    // VersionPragma = 'solidity' 1…*{ VersionPragmaSpecifier } ;
+    pub fn parse_version_pragma(&self, source: &str) -> Rc<cst::Node> {
+        let (node, _errs) = self.parsers.version_pragma.parse_recovery(source);
+        node.unwrap()
+    }
+
     // «VersionPragmaOperator» = '^' | '~' | '=' | '<' | '>' | '<=' | '>=' ;
     pub fn parse_version_pragma_operator(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.version_pragma_operator.parse_recovery(source);
         node.unwrap()
     }
 
-    // VersionPragmaSpecifier = 'solidity' 1…*{ «VersionPragmaOperator» «VersionPragmaValue» } ;
+    // VersionPragmaSpecifier = [ «VersionPragmaOperator» ] «VersionPragmaValue»  { '.' «VersionPragmaValue» } ;
     pub fn parse_version_pragma_specifier(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.version_pragma_specifier.parse_recovery(source);
         node.unwrap()
     }
 
-    // «VersionPragmaValue» = 1…*{ '0'…'9' | 'x' | 'X' | '*' }  { '.' 1…*{ '0'…'9' | 'x' | 'X' | '*' } } ;
+    // «VersionPragmaValue» = 1…*{ '0'…'9' | 'x' | 'X' | '*' } ;
     pub fn parse_version_pragma_value(&self, source: &str) -> Rc<cst::Node> {
         let (node, _errs) = self.parsers.version_pragma_value.parse_recovery(source);
         node.unwrap()

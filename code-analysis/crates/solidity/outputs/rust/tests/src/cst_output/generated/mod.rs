@@ -5,6 +5,7 @@ mod exponentiation_expression;
 mod interface_definition;
 mod multiline_comment;
 mod source_unit;
+mod version_pragma;
 
 use std::rc::Rc;
 
@@ -26,6 +27,7 @@ pub fn get_parser<'a>(
         "interface_definition" => parsers.interface_definition,
         "multiline_comment" => parsers.multiline_comment,
         "source_unit" => parsers.source_unit,
+        "version_pragma" => parsers.version_pragma,
         _ => bail!("Unrecognized parser_name: {parser_name}"),
     });
 }
