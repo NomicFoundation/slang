@@ -48,20 +48,14 @@
   delimitedBy:
     open: /*
     config: { name: content }
-    sequence:
-      - zeroOrMore:
-          choice:
+    zeroOrMore:
+      choice:
+        - not:
+            terminal: "*"
+        - sequence:
+            - terminal: "*"
             - not:
-                terminal: "*"
-            - sequence:
-                - oneOrMore:
-                    terminal: "*"
-                - not:
-                    choice:
-                      - terminal: "*"
-                      - terminal: /
-      - zeroOrMore:
-          terminal: "*"
+                terminal: /
     close: "*/"
 
 - name: SingleLineComment
