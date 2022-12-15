@@ -8,7 +8,7 @@ pub fn mod_head() -> TokenStream {
         pub mod kinds;
         pub mod lex;
         pub mod cst;
-        pub mod parse;
+        mod parse;
         pub mod language;
     )
 }
@@ -269,17 +269,25 @@ pub fn cst_head() -> TokenStream {
 }
 
 pub fn language_head() -> TokenStream {
-    quote!(
-        use chumsky::Parser;
-        use semver::Version;
-        use napi::bindgen_prelude::*;
+    let error_renderer = boilerplate::error_renderer();
 
-        use super::parse::Parsers;
-        use super::cst::RcNodeExtensions as CSTRcNodeExtensions;
+    quote!(
+        use std::rc::Rc;
+
+        use chumsky::{error::SimpleReason, Parser, Span};
+        use ariadne::{Color, Config, Fmt, Label, Report, ReportBuilder, ReportKind, Source};
+        use semver::Version;
+
+        use super::{
+            cst,
+            cst::RcNodeExtensions as CSTRcNodeExtensions,
+            parse::{Parsers, BoxedParserType, ErrorType, SpanType},
+        };
+        use napi::bindgen_prelude::*;
 
         #[napi]
         pub struct Language {
-            parsers: Parsers<'static>,
+            parsers: Parsers,
             version: Version,
         }
 
@@ -299,5 +307,49 @@ pub fn language_head() -> TokenStream {
                 self.version.to_string()
             }
         }
+
+        #[napi]
+        pub struct ParserOutput {
+            parse_tree: Option<Rc<cst::Node>>,
+            errors: Vec<ErrorType>,
+        }
+
+        #[napi]
+        impl ParserOutput {
+            fn new(source: String, parser: &BoxedParserType) -> Self {
+                let (parse_tree, errors) = parser.parse_recovery(source.as_str());
+                Self { parse_tree, errors }
+            }
+
+            #[napi(ts_return_type = "CSTRuleNode | CSTTokenNode | null")]
+            pub fn parse_tree(&self, env: Env) -> Option<napi::JsObject> {
+                self.parse_tree.clone().map(|n|n.to_js(&env))
+            }
+
+            #[napi]
+            pub fn errors_as_strings(&self, source: String, with_colour: bool) -> Vec<String> {
+                let mut results = vec![];
+                for error in &self.errors {
+                    let report = render_error_report(&error, with_colour);
+
+                    let mut result = vec![];
+                    report
+                        .write(Source::from(source.as_str()), &mut result)
+                        .expect("Failed to write report");
+
+                    let result = String::from_utf8(result).expect("Failed to convert report to utf8");
+                    results.push(result);
+                }
+
+                results
+            }
+
+            #[napi]
+            pub fn is_valid(&self) -> bool {
+                self.parse_tree.is_some() && self.errors.is_empty()
+            }
+        }
+
+        #error_renderer
     )
 }

@@ -5,10 +5,10 @@ use anyhow::Result;
 
 #[test]
 fn multiple_lines() -> Result<()> {
-    return run("multiline_comment", "multiple_lines");
+    return run("MultilineComment", "multiple_lines");
 }
 
 #[test]
 fn same_line() -> Result<()> {
-    return run("multiline_comment", "same_line");
+    return run("MultilineComment", "same_line");
 }

@@ -1,33 +1,16 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-mod contract_definition;
-mod exponentiation_expression;
-mod interface_definition;
-mod multiline_comment;
-mod source_unit;
-mod version_pragma;
-
-use std::rc::Rc;
-
-use anyhow::{bail, Result};
-use solidity_rust_lib::generated::{
-    cst,
-    parse::{ParserType, Parsers},
-};
+#[allow(non_snake_case)]
+mod ContractDefinition;
+#[allow(non_snake_case)]
+mod ExponentiationExpression;
+#[allow(non_snake_case)]
+mod InterfaceDefinition;
+#[allow(non_snake_case)]
+mod MultilineComment;
+#[allow(non_snake_case)]
+mod SourceUnit;
+#[allow(non_snake_case)]
+mod VersionPragma;
 
 pub const TEST_VERSIONS: [&str; 3] = ["0.4.11", "0.6.0", "0.8.17"];
-
-pub fn get_parser<'a>(
-    parsers: Parsers<'a>,
-    parser_name: &str,
-) -> Result<ParserType<'a, Rc<cst::Node>>> {
-    return Ok(match parser_name {
-        "contract_definition" => parsers.contract_definition,
-        "exponentiation_expression" => parsers.exponentiation_expression,
-        "interface_definition" => parsers.interface_definition,
-        "multiline_comment" => parsers.multiline_comment,
-        "source_unit" => parsers.source_unit,
-        "version_pragma" => parsers.version_pragma,
-        _ => bail!("Unrecognized parser_name: {parser_name}"),
-    });
-}

@@ -6,17 +6,14 @@ use anyhow::Result;
 use codegen_utils::context::CodegenContext;
 use semver::Version;
 use serde::Serialize;
-use solidity_rust_lib::{
-    generated::{
-        cst,
-        kinds::{Rule, Token},
-        lex,
-        parse::Parsers,
-    },
-    internal_api::parser::parse,
+use solidity_rust_lib::generated::{
+    cst,
+    kinds::{Rule, Token},
+    language::Language,
+    lex,
 };
 
-use crate::cst_output::generated::{get_parser, TEST_VERSIONS};
+use crate::cst_output::generated::TEST_VERSIONS;
 
 pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
     return CodegenContext::with_context(|codegen| {
@@ -50,18 +47,17 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
 
 fn run_parser(version: &str, parser_name: &str, input: &str) -> Result<String> {
     let version = Version::parse(version)?;
-    let parsers = Parsers::new(&version);
-    let parser = get_parser(parsers, parser_name)?;
-
-    let parser_output = parse(&input, parser, /* with_color */ false);
+    let parser_output = Language::new(version)
+        .parse(parser_name, &input)
+        .expect(format!("No such parser: {}", parser_name).as_str());
     let mut result = Vec::new();
 
     // Manually serializing errors for now, as serde_yaml doesn't support multi-line strings.
-    if parser_output.error_reports.len() == 0 {
+    if parser_output.error_count() == 0 {
         writeln!(&mut result, "errors: []")?;
     } else {
         writeln!(&mut result, "errors:")?;
-        for report in parser_output.error_reports {
+        for report in parser_output.errors_as_strings(input, /* with_colour */ false) {
             writeln!(&mut result, "  - |")?;
             for line in report.lines() {
                 writeln!(&mut result, "    {line}")?;
@@ -75,7 +71,7 @@ fn run_parser(version: &str, parser_name: &str, input: &str) -> Result<String> {
         let mut root_node = HashMap::new();
         root_node.insert(
             "root",
-            parser_output.root_node.and_then(|node| {
+            parser_output.parse_tree().and_then(|node| {
                 let metadata = TestNodeMetadata::from_cst(node.as_ref());
                 Some(TestNode::from_metadata(metadata, input))
             }),

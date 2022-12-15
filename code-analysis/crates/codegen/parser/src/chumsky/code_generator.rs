@@ -100,13 +100,14 @@ impl CodeGenerator {
             let field_name = naming::to_field_name_ident(&name);
 
             let result_type = match parser.result_type {
-                ParserResultType::Token => quote! { Option<Rc<lex::Node>> },
-                ParserResultType::Rule => quote! { Option<Rc<cst::Node>> },
+                ParserResultType::Token => quote! { DeferredLexParserType },
+                ParserResultType::Rule => quote! { DeferredCSTParserType },
             };
 
             versions.extend(parser.versions.keys());
 
-            parser_predeclarations.push(quote!( let mut #parser_name = Recursive::<char, #result_type, ErrorType>::declare(); ).to_string());
+            parser_predeclarations
+                .push(quote!( let mut #parser_name = #result_type::declare(); ).to_string());
 
             parser_definitions.push(format!(
                 "{}\n{}",
@@ -134,7 +135,7 @@ impl CodeGenerator {
                     .map(|s| format!("/// {}", s))
                     .collect::<Vec<_>>()
                     .join("\n"),
-                quote!( pub #field_name: ParserType<'a, Rc<cst::Node>>, ).to_string()
+                quote!( pub #field_name: BoxedParserType, ).to_string()
             ));
 
             let parser = match parser.result_type {
@@ -167,17 +168,20 @@ impl CodeGenerator {
                     "{}
                 
                     #[allow(dead_code)]
-                    pub struct Parsers<'a> {{
+                    pub struct Parsers {{
                         {}
                     }}
 
-                    impl<'a> Parsers<'a> {{
+                    impl Parsers {{
                         pub fn new(version: &Version) -> Self {{
                             // Declare all versions -----------------------------
 
                             {}
 
                             // Declare all productions --------------------------
+
+                            type DeferredLexParserType = Recursive<'static, char, Option<Rc<lex::Node>>, ErrorType>;
+                            type DeferredCSTParserType = Recursive<'static, char, Option<Rc<cst::Node>>, ErrorType>;
 
                             {}
 

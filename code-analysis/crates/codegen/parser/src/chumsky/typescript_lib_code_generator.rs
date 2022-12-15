@@ -48,18 +48,25 @@ impl CodeGenerator {
                     #[napi]
                     impl Language {{
                         {}
+
+                        #[napi]
+                        pub fn parse(&self, parser_name: String, source: String) -> Option<ParserOutput> {{
+                            match parser_name.as_str() {{
+                                {}
+                                _ => None
+                            }}
+                        }}
                     }}
                     ",
                     typescript_lib_boilerplate::language_head(),
-                    self
-                        .parsers
+                    self.parsers
                         .iter()
                         .map(|(name, parser)| {
                             let field_name = naming::to_field_name_ident(&name);
                             let method_name = format_ident!("parse_{}", field_name);
                             let result_type = match parser.result_type {
-                                ParserResultType::Token => quote! { "CSTTokenNode" },
-                                ParserResultType::Rule => quote! { "CSTRuleNode" },
+                                ParserResultType::Token => quote! { ParserOutput },
+                                ParserResultType::Rule => quote! { ParserOutput },
                             };
                             format!(
                                 "{}\n{}",
@@ -70,17 +77,24 @@ impl CodeGenerator {
                                     .collect::<Vec<_>>()
                                     .join("\n"),
                                 quote!(
-                                    #[napi(ts_return_type = #result_type)]
-                                    // pub fn #method_name(&self, env: Env, source: String) -> napi::JsUnknown {
-                                    pub fn #method_name(&self, env: Env, source: String) -> napi::JsObject {
-                                        let (node, _errs) = self.parsers.#field_name.parse_recovery(source.as_str());
-                                        // env.to_js_value(&node).unwrap()
-                                        node.unwrap().to_js(&env)
+                                    #[napi]
+                                    pub fn #method_name(&self, source: String) -> #result_type {
+                                        #result_type::new(source, &self.parsers.#field_name)
                                     }
                                 )
                             )
                         })
-                        .collect::<Vec<_>>().join("\n\n"),
+                        .collect::<Vec<_>>()
+                        .join("\n\n"),
+                    self.parsers
+                        .iter()
+                        .map(|(name, _)| {
+                            let field_name = naming::to_field_name_ident(&name);
+                            let method_name = format_ident!("parse_{}", field_name);
+                            quote!( #name => Some(self.#method_name(source)), ).to_string()
+                        })
+                        .collect::<Vec<_>>()
+                        .join("\n"),
                 ),
             )
             .unwrap();

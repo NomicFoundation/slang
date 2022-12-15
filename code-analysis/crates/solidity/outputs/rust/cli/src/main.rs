@@ -3,7 +3,7 @@ use std::{fs, path::PathBuf};
 use anyhow::{Context, Result};
 use clap::Parser as ClapParser;
 use semver::Version;
-use solidity_rust_lib::{generated::parse::Parsers, internal_api::parser::parse};
+use solidity_rust_lib::generated::language::Language;
 
 #[derive(ClapParser, Debug)]
 struct ProgramArgs {
@@ -27,16 +27,13 @@ fn main() -> Result<()> {
         fs::read_to_string(input_file).context(format!("Failed to read file: {input_file:?}"))?
     };
 
-    let output = {
-        let parser = Parsers::new(&args.version).source_unit;
-        parse(&input, parser, /* with_color */ true)
-    };
+    let output = Language::new(args.version).parse_source_unit(&input);
 
-    for report in &output.error_reports {
+    for report in &output.errors_as_strings(&input, /* with_colour */ true) {
         eprintln!("{report}");
     }
 
-    if let Some(root_node) = output.root_node {
+    if let Some(root_node) = output.parse_tree() {
         if let Some(json_path) = args.json {
             let json = serde_json::to_string_pretty(&root_node).context("Failed to write json")?;
 
@@ -62,8 +59,8 @@ fn main() -> Result<()> {
         }
     }
 
-    let errors_count = i32::try_from(output.error_reports.len())
-        .context("Failed to convert errors count to i32")?;
+    let errors_count =
+        i32::try_from(output.error_count()).context("Failed to convert errors count to i32")?;
 
     std::process::exit(errors_count);
 }

@@ -6,6 +6,7 @@ use std::{
 use anyhow::{bail, Context, Result};
 use codegen_schema::{Grammar, ProductionVersions};
 use codegen_utils::context::CodegenContext;
+use inflector::Inflector;
 use semver::Version;
 use walkdir::WalkDir;
 
@@ -99,7 +100,7 @@ fn collect_parser_tests(codegen: &mut CodegenContext, data_dir: &PathBuf) -> Res
         match &parts[..] {
             [parser_name, test_name, "input.sol"] => {
                 let parser_tests = parser_tests
-                    .entry(parser_name.to_string())
+                    .entry(parser_name.to_string().to_pascal_case())
                     .or_insert_with(|| BTreeSet::new());
 
                 parser_tests.insert(test_name.to_string());
@@ -121,7 +122,7 @@ fn generate_mod_file(
 ) -> Result<()> {
     let module_declarations = parser_tests
         .keys()
-        .map(|parser_name| format!("mod {parser_name};"))
+        .map(|parser_name| format!("#[allow(non_snake_case)] mod {parser_name};"))
         .collect::<String>();
 
     let test_versions_size = test_versions.len();
@@ -131,36 +132,13 @@ fn generate_mod_file(
         .map(|version| format!("\"{version}\","))
         .collect::<String>();
 
-    let parser_name_match_arms = parser_tests
-        .keys()
-        .map(|parser_name| format!("\"{parser_name}\" => parsers.{parser_name},"))
-        .collect::<String>();
-
     let contents = format!(
         "
             {module_declarations}
 
-            use std::rc::Rc;
-
-            use anyhow::{{bail, Result}};
-            use solidity_rust_lib::generated::{{
-                cst,
-                parse::{{ParserType, Parsers}},
-            }};
-
             pub const TEST_VERSIONS: [&str; {test_versions_size}] = [
                 {test_versions}
             ];
-
-            pub fn get_parser<'a>(
-                parsers: Parsers<'a>,
-                parser_name: &str,
-            ) -> Result<ParserType<'a, Rc<cst::Node>>> {{
-                return Ok(match parser_name {{
-                    {parser_name_match_arms}
-                    _ => bail!(\"Unrecognized parser_name: {{parser_name}}\"),
-                }});
-            }}
         "
     );
 

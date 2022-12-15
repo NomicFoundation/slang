@@ -4,4 +4,4 @@ pub mod cst;
 pub mod kinds;
 pub mod language;
 pub mod lex;
-pub mod parse;
+mod parse;
