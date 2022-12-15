@@ -11,12 +11,13 @@
       "onAutoForward": "openPreview"
     }
   },
+  // Keep extensions list in-sync with "$REPO_ROOT/.vscode/extensions.json"
   "extensions": [
-    // Please keep this list in-sync with "${workspaceRoot}/.vscode/extensions.json"
-    //
     // Language Support
+    "igochkov.vscode-ebnf",
     "rust-lang.rust-analyzer",
     "NomicFoundation.hardhat-solidity",
+    "redhat.vscode-yaml",
     "tamasfe.even-better-toml",
     "yzhang.markdown-all-in-one",
     // Formatting/Linting

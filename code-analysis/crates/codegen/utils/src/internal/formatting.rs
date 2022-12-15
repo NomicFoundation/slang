@@ -1,4 +1,8 @@
-use std::path::PathBuf;
+use std::{
+    collections::hash_map::DefaultHasher,
+    hash::{Hash, Hasher},
+    path::PathBuf,
+};
 
 use anyhow::{anyhow, bail, Context, Result};
 
@@ -12,9 +16,9 @@ pub fn format_source_file(
     let header = generate_header(file_path)?;
     let unformatted = format!("{header}\n\n{contents}");
 
-    return formatters::run(codegen, file_path, &unformatted)
-        .context(format!("Failed to format {file_path:?}"))
-        .or_else(|formatter_error| {
+    return match formatters::run(codegen, file_path, &unformatted) {
+        Ok(formatted) => Ok(formatted),
+        Err(formatter_error) => {
             // Try to backup the unformatted version to disk, to be able to debug what went wrong.
             let backup_error = match backup_raw_file(file_path, &unformatted) {
                 Ok(backup_file_path) => {
@@ -23,23 +27,38 @@ pub fn format_source_file(
                 Err(backup_error) => backup_error.context("Failed to back up unformatted version"),
             };
 
-            return Err(backup_error).context(formatter_error);
-        });
+            return Err(formatter_error)
+                .context(backup_error)
+                .context(format!("Failed to format {file_path:?}"));
+        }
+    };
 }
 
 fn backup_raw_file(file_path: &PathBuf, unformatted: &str) -> Result<PathBuf> {
-    let backup_file_name = file_path
-        .file_name()
-        .context(format!("Failed to get file name: {file_path:?}"))?;
+    let backup_file_path = {
+        let backup_file_name = file_path
+            .file_name()
+            .context(format!("Cannot get file name: {file_path:?}"))?;
 
-    let backup_file_path = PathBuf::from(std::env::var("OUT_DIR")?)
-        .join("codegen/formatter/backup")
-        .join(backup_file_name);
+        let backup_file_hash = {
+            let mut hasher = DefaultHasher::new();
+            unformatted.hash(&mut hasher);
+            hasher.finish().to_string()
+        };
+
+        // target/{PROFILE}/build/{CRATE_NAME}-{BUILD_HASH}/out
+        let crate_output_dir = std::env::var("OUT_DIR")?;
+
+        PathBuf::from(crate_output_dir)
+            .join("codegen/formatter-backup")
+            .join(backup_file_hash)
+            .join(backup_file_name)
+    };
 
     std::fs::create_dir_all(
         backup_file_path
             .parent()
-            .context(format!("Failed to get file parent: {backup_file_path:?}"))?,
+            .context(format!("Cannot get file parent: {backup_file_path:?}"))?,
     )?;
 
     std::fs::write(&backup_file_path, &unformatted)
@@ -87,15 +106,12 @@ mod formatters {
         file_path: &PathBuf,
         contents: &str,
     ) -> Result<String> {
-        let rustfmt_path = codegen.repo_dir.join("bin/rustfmt");
+        let rustfmt_path = codegen.repo_root.join("bin/rustfmt");
+        let rustfmt_path = rustfmt_path.to_str().context("Cannot get rustfmt path")?;
 
         return run_command(
-            codegen,
-            &vec![
-                rustfmt_path.to_str().context("Failed to get path")?,
-                "--emit",
-                "stdout",
-            ],
+            &codegen.repo_root,
+            &vec![rustfmt_path, "--emit", "stdout"],
             Some(contents),
         )
         .context(format!("Failed to run rustfmt on file: {file_path:?}"));
@@ -106,24 +122,32 @@ mod formatters {
         file_path: &PathBuf,
         contents: &str,
     ) -> Result<String> {
-        let node_path = codegen.repo_dir.join("bin/node");
+        let node_path = codegen.repo_root.join("bin/node");
+        let node_path = node_path.to_str().context("Cannot get node path")?;
 
-        let prettier_path = codegen
-            .repo_dir
-            .join("infrastructure/node_modules/.bin/prettier");
+        let prettier_path = codegen.repo_root.join("node_modules/.bin/prettier");
 
         if !prettier_path.exists() {
-            let setup_path = codegen.repo_dir.join("infrastructure/scripts/setup.sh");
-            bail!("Failed to find prettier binary at: {prettier_path:?}. Please run {setup_path:?} to install it.");
+            let setup_path = codegen.repo_root.join("infrastructure/scripts/setup.sh");
+            let setup_path = setup_path.to_str().context("Cannot get setup.sh path")?;
+
+            run_command(&codegen.repo_root, &vec![setup_path], None)
+                .context(format!("Failed to run setup script: {setup_path:?}"))?;
         }
 
+        let prettier_path = prettier_path.to_str().context("Cannot get prettier path")?;
+
+        let file_path = file_path
+            .to_str()
+            .context(format!("Cannot get file path: {file_path:?}"))?;
+
         return run_command(
-            codegen,
+            &codegen.repo_root,
             &vec![
-                node_path.to_str().context("Failed to get path")?,
-                prettier_path.to_str().context("Failed to get path")?,
+                node_path,
+                prettier_path,
                 "--stdin-filepath", // used to infer the language, and detect `.prettierrc` options
-                file_path.to_str().context("Failed to read file path")?,
+                file_path,
             ],
             Some(contents),
         )

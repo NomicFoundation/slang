@@ -1,16 +1,20 @@
 #!/bin/bash
 set -euo pipefail
 
-THIS_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
-
 # shellcheck source=/dev/null
-[[ -z "${HERMIT_ENV:-}" ]] && source "$THIS_DIR/../../bin/activate-hermit"
-
-PROJECT_DIR=$(dirname "$THIS_DIR")
-export PROJECT_DIR
-
-REPO_ROOT=$(dirname "$PROJECT_DIR")
-export REPO_ROOT
+source "$(dirname "${BASH_SOURCE[0]}")/../../infrastructure/scripts/common.sh"
 
 # Enable stack traces for any errors
 export RUST_BACKTRACE="full"
+
+if [[ "${CI:-}" ]]; then
+  # Strict checks for rustc
+  declare -a rust_flags=(
+    "${RUSTFLAGS:-}"
+    "--warn unused_crate_dependencies"
+    "--deny warnings"
+  )
+
+  export RUSTFLAGS="${rust_flags[*]}"
+  export SLANG_CODEGEN_CHECK_ONLY="true"
+fi

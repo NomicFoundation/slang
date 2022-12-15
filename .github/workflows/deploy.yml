@@ -5,10 +5,11 @@ on:
       - main
 
 jobs:
-  deploy-docs:
-    runs-on: ubuntu-latest
+  gh-pages:
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
-      - run: ./.devcontainer/scripts/.entrypoint.sh
-        env:
-          SLANG_BUILD_SCRIPT: ./documentation/scripts/deploy.sh
+      - name: Clone repository
+        uses: actions/checkout@v3.1.0
+      - name: Deploy documentation
+        uses: ./.devcontainer
+        with: { entrypoint: documentation/scripts/deploy.sh }

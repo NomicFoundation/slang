@@ -1,6 +1,6 @@
 mod generated;
 
-use std::{collections::HashMap, io::Write, path::PathBuf};
+use std::{collections::HashMap, io::Write};
 
 use anyhow::Result;
 use codegen_utils::context::CodegenContext;
@@ -10,13 +10,9 @@ use solidity_rust_lib::{generated::parse::Parsers, internal_api::parser::parse};
 use crate::cst_output::generated::{get_parser, TEST_VERSIONS};
 
 pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
-    let repo_dir = PathBuf::from(std::env::var("CARGO_MANIFEST_DIR")?)
-        .join("../../../../../..")
-        .canonicalize()?;
-
-    return CodegenContext::with_context(repo_dir, |codegen| {
+    return CodegenContext::with_context(|codegen| {
         let test_dir = codegen
-            .repo_dir
+            .repo_root
             .join("code-analysis/crates/solidity/test_data/cst_output")
             .join(parser_name)
             .join(test_name);

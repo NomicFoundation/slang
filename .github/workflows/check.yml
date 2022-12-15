@@ -1,19 +1,38 @@
 name: check
-on: ["push"]
+on: [push]
 
 jobs:
   check:
-    strategy:
-      matrix:
-        script:
-          - ./code-analysis/scripts/check.sh
-          - ./documentation/scripts/build.sh
-          - ./infrastructure/scripts/lint.sh
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: ./.devcontainer
+      - name: Clone repository
+        uses: actions/checkout@v3.1.0
+      - name: Restore hermit cache
+        uses: actions/cache@v3.0.9
         with:
-          entrypoint: ./.devcontainer/scripts/.entrypoint.sh
-        env:
-          SLANG_BUILD_SCRIPT: ${{ matrix.script }}
+          path: .hermit/
+          key: hermit-cache-${{ hashFiles('code-analysis/Cargo.lock', 'package-lock.json', 'Pipfile.lock') }}
+          restore-keys: hermit-cache-
+      - name: Restore build cache
+        uses: actions/cache@v3.0.9
+        with:
+          path: code-analysis/target/
+          key: build-cache-${{ hashFiles('code-analysis/Cargo.lock', 'package-lock.json', 'Pipfile.lock') }}
+          restore-keys: build-cache-
+      - name: Build devcontainer
+        uses: ./.devcontainer
+        with: { entrypoint: echo } # empty entrypoint for timing
+      - name: Cargo check
+        uses: ./.devcontainer
+        with: { entrypoint: code-analysis/scripts/check.sh }
+      - name: Cargo test
+        uses: ./.devcontainer
+        with: { entrypoint: code-analysis/scripts/test.sh }
+      - name: Run linters
+        uses: ./.devcontainer
+        with: { entrypoint: infrastructure/scripts/lint.sh }
+      - name: Build documentation
+        uses: ./.devcontainer
+        with: { entrypoint: documentation/scripts/build.sh }
+      - name: Repossess cached files # as they are modified by devcontainer (root) user
+        run: sudo chown -R $USER:$USER "$GITHUB_WORKSPACE"

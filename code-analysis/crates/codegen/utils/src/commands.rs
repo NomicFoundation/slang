@@ -1,46 +1,46 @@
 use std::{
     io::Write,
+    path::PathBuf,
     process::{Command, Stdio},
 };
 
-use anyhow::{bail, Context, Result};
+use anyhow::{Context, Result};
 
-use crate::context::CodegenContext;
+pub fn run_command(cwd: &PathBuf, parts: &Vec<&str>, stdin: Option<&str>) -> Result<String> {
+    let result = {
+        let mut command = Command::new(&parts[0]);
+        let command = command
+            .args(&parts[1..])
+            .current_dir(cwd)
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped());
 
-pub fn run_command(
-    codegen: &CodegenContext,
-    parts: &Vec<&str>,
-    stdin: Option<&str>,
-) -> Result<String> {
-    let mut command = Command::new(&parts[0]);
-    let command = command
-        .args(&parts[1..])
-        .current_dir(&codegen.repo_dir)
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped());
+        let mut process = command.spawn()?;
 
-    let mut process = command.spawn()?;
+        if let Some(stdin) = stdin {
+            process
+                .stdin
+                .as_mut()
+                .context("failed to capture stdin")?
+                .write_all(stdin.as_bytes())?;
+        }
 
-    if let Some(stdin) = stdin {
-        process
-            .stdin
-            .as_mut()
-            .context(format!("failed to capture stdin of command: {command:?}"))?
-            .write_all(stdin.as_bytes())?;
-    }
+        let output = process.wait_with_output()?;
 
-    let output = process.wait_with_output()?;
+        let stdout = String::from_utf8(output.stdout).context("Failed to read stdout")?;
 
-    let stdout = String::from_utf8(output.stdout)
-        .context(format!("Failed to read stdout from command: {command:?}"))?;
+        let status = output.status;
+        if status.success() {
+            Ok(stdout)
+        } else {
+            let stderr = String::from_utf8(output.stderr).context("Failed to read stderr")?;
 
-    let status = output.status;
-    if !status.success() {
-        let stderr = String::from_utf8(output.stderr)
-            .context(format!("Failed to read stderr from command: {command:?}"))?;
+            Err(anyhow::anyhow!("Command failed with {status}")
+                .context(format!("{stdout}\n{stderr}")))
+        }
+    };
 
-        bail!("Command failed with {status}: {command:?}\n{stdout}\n{stderr}");
-    }
-
-    return Ok(stdout);
+    return result
+        .context(format!("{parts:#?}",))
+        .context("Failed to run command");
 }

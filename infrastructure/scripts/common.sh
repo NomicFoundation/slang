@@ -1,10 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-THIS_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
+# See https://github.com/actions/checkout/issues/766
+[[ "${GITHUB_WORKSPACE:-}" ]] && git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
 # shellcheck source=/dev/null
-[[ -z "${HERMIT_ENV:-}" ]] && source "$THIS_DIR/../../bin/activate-hermit"
-
-export LINTING_DIR="$THIS_DIR/.."
-export NPM_BIN_DIR="$LINTING_DIR/node_modules/.bin"
+[[ "${HERMIT_ENV:-}" ]] || source "$(dirname "${BASH_SOURCE[0]}")/../../bin/activate-hermit"

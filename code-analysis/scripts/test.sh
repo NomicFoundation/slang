@@ -10,10 +10,10 @@ source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 )
 
 (
-  printf "\n\n🧪 Checking Project 🧪\n\n\n"
+  printf "\n\n🧪 Running Tests 🧪\n\n\n"
 
   cd "$REPO_ROOT/code-analysis"
-  cargo check --offline --all --all-targets
+  cargo test --no-fail-fast --offline --all --all-targets
 
-  printf "\n\n✅ Check Success ✅\n\n\n"
+  printf "\n\n✅ Tests Success ✅\n\n\n"
 )

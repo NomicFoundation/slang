@@ -1,15 +1,21 @@
 #!/bin/bash
 set -euo pipefail
 
-THIS_DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
-
 # shellcheck source=/dev/null
-source "$THIS_DIR/common.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
 
 (
-  printf "\n\n📦 Installing Dependencies 📦\n\n\n"
-  cd "$LINTING_DIR"
-  npm install --ci
-)
+  printf "\n\n📦 Installing NPM Packages 📦\n\n\n"
 
-printf "\n\n✅ Setup Success ✅\n\n\n"
+  export NPM_CONFIG_CACHE="$NPM_CONFIG_PREFIX/cache"
+
+  cd "$REPO_ROOT"
+
+  if [[ "${CI:-}" ]]; then
+    npm install --ci
+  else
+    npm install
+  fi
+
+  printf "\n\n✅ NPM Packages Installed ✅\n\n\n"
+)

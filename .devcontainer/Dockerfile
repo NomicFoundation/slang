@@ -23,21 +23,17 @@
 FROM ubuntu:22.04
 RUN apt-get update
 
-# Shell
+# OS Packages
 
 RUN apt-get install --assume-yes \
   "bash=5.*" \
+  "build-essential=12.*" \
   "curl=7.*" \
   "git=1:2.*" \
+  "libssl-dev=3.*" \
+  "pkg-config=0.*" \
   "zsh=5.*"
 
+# Local Scripts
+
 COPY ./scripts/ /root/
-
-RUN curl -fsSL "https://github.com/cashapp/hermit/releases/download/stable/install.sh" | bash
-
-# Rust
-
-RUN apt-get install --assume-yes \
-  "build-essential=12.*" \
-  "pkg-config=0.*" \
-  "libssl-dev=3.*"

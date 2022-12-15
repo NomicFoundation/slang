@@ -587,7 +587,7 @@ impl ParserType {
 }
 
 impl Grammar {
-    pub fn from_manifest(codegen: &CodegenContext, manifest_path: &PathBuf) -> GrammarRef {
+    pub fn from_manifest(codegen: &mut CodegenContext, manifest_path: &PathBuf) -> GrammarRef {
         let contents = codegen.read_file(manifest_path).unwrap();
         let manifest_path_str = &manifest_path.to_str().unwrap();
         let manifest: Manifest = serde_yaml::from_str(&contents).expect(manifest_path_str);

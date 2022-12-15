@@ -1,7 +1,6 @@
 {
+  // Keep recommendations list in-sync with "$REPO_ROOT/.devcontainer/devcontainer.json"
   "recommendations": [
-    // Please keep this list in-sync with "${workspaceRoot}/.devcontainer/devcontainer.json"
-    //
     // Language Support
     "igochkov.vscode-ebnf",
     "rust-lang.rust-analyzer",
