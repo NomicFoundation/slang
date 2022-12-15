@@ -2,83 +2,20 @@
 
 errors: []
 
-root: !Rule
-  kind: ExponentiationExpression
+root:
+  kind: !RuleKind ExponentiationExpression
+  contents: x ** y ** z
   children:
-    - !Rule
-      kind: ExponentiationExpression
+    - kind: !RuleKind ExponentiationExpression
+      contents: x ** y
       children:
-        - !Token
-          kind: RawIdentifier
-          lex_node: !Chars
-            start: 0
-            end: 1
-        - !Token
-          kind: StarStar
-          lex_node: !Chars
-            start: 2
-            end: 4
-          trivia:
-            - !Rule
-              kind: LeadingTrivia
-              children:
-                - !Token
-                  kind: Whitespace
-                  lex_node: !Sequence
-                    - !Chars
-                      start: 1
-                      end: 2
-        - !Token
-          kind: RawIdentifier
-          lex_node: !Chars
-            start: 5
-            end: 6
-          trivia:
-            - !Rule
-              kind: LeadingTrivia
-              children:
-                - !Token
-                  kind: Whitespace
-                  lex_node: !Sequence
-                    - !Chars
-                      start: 4
-                      end: 5
-    - !Token
-      kind: StarStar
-      lex_node: !Chars
-        start: 7
-        end: 9
-      trivia:
-        - !Rule
-          kind: LeadingTrivia
-          children:
-            - !Token
-              kind: Whitespace
-              lex_node: !Sequence
-                - !Chars
-                  start: 6
-                  end: 7
-    - !Token
-      kind: RawIdentifier
-      lex_node: !Chars
-        start: 10
-        end: 11
-      trivia:
-        - !Rule
-          kind: LeadingTrivia
-          children:
-            - !Token
-              kind: Whitespace
-              lex_node: !Sequence
-                - !Chars
-                  start: 9
-                  end: 10
-        - !Rule
-          kind: TrailingTrivia
-          children:
-            - !Token
-              kind: EndOfLine
-              lex_node: !Sequence
-                - !Chars
-                  start: 11
-                  end: 12
+        - kind: !TokenKind RawIdentifier
+          contents: x
+        - kind: !TokenKind StarStar
+          contents: "**"
+        - kind: !TokenKind RawIdentifier
+          contents: y
+    - kind: !TokenKind StarStar
+      contents: "**"
+    - kind: !TokenKind RawIdentifier
+      contents: z

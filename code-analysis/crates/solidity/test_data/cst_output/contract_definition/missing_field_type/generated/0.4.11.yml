@@ -2,12 +2,12 @@
 
 errors:
   - |
-    Error: Expected . or / or [ or c or i or o or p
+    Error: Expected '.' or '/' or '[' or 'c' or 'i' or 'o' or 'p'.
        ╭─[<unknown>:2:8]
        │
      2 │   field;
        ·        ┬  
-       ·        ╰── Found ;
+       ·        ╰── Found ';'.
     ───╯
 
 root: null
