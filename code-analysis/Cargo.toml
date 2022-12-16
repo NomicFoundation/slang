@@ -51,7 +51,7 @@ unicode_names2 = { version = "0.6.0" }
 walkdir = { version = "2.3.2" }
 
 [profile.dev]
-debug = 0
+debug = 2
 incremental = true
 
 [profile.release]
