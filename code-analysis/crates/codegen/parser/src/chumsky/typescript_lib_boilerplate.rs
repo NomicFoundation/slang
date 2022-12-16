@@ -86,7 +86,7 @@ pub fn lex_head() -> TokenStream {
                 }
             }
 
-            #[napi(ts_return_type = "LexEmptyNode | LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode")]
+            #[napi(ts_return_type = "LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode")]
             pub fn child(&self, env: Env) -> JsObject {
                 match self.0.as_ref() {
                     Node::Choice(_, child) => child.to_js(&env),
@@ -106,7 +106,7 @@ pub fn lex_head() -> TokenStream {
                 TokenRange { start: range.start as u32, end: range.end as u32 }
             }
 
-            #[napi(ts_return_type = "(LexEmptyNode | LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode)[]")]
+            #[napi(ts_return_type = "(LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode)[]")]
             pub fn children(&self, env: Env) -> Vec<JsObject> {
                 match self.0.as_ref() {
                     Node::Sequence(children) => children.iter().map(|child| child.to_js(&env)).collect(),
@@ -324,6 +324,11 @@ pub fn language_head() -> TokenStream {
             #[napi(ts_return_type = "CSTRuleNode | CSTTokenNode | null")]
             pub fn parse_tree(&self, env: Env) -> Option<napi::JsObject> {
                 self.parse_tree.clone().map(|n|n.to_js(&env))
+            }
+
+            #[napi]
+            pub fn error_count(&self) -> usize {
+                self.errors.len()
             }
 
             #[napi]
