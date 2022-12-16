@@ -91,22 +91,22 @@ use napi::bindgen_prelude::*;
 use napi::JsObject;
 use napi::NapiValue;
 #[napi]
-pub enum CSTNodeType {
+pub enum NodeType {
     Rule,
     Token,
     Group,
 }
 #[napi]
-pub struct CSTRuleNode(Rc<Node>);
+pub struct RuleNode(Rc<Node>);
 #[napi]
-pub struct CSTTokenNode(Rc<Node>);
+pub struct TokenNode(Rc<Node>);
 #[napi]
-pub struct CSTGroupNode(Rc<Node>);
+pub struct GroupNode(Rc<Node>);
 #[napi]
-impl CSTRuleNode {
-    #[napi(getter, js_name = "type", ts_return_type = "CSTNodeType.Rule")]
-    pub fn tipe(&self) -> CSTNodeType {
-        CSTNodeType::Rule
+impl RuleNode {
+    #[napi(getter, js_name = "type", ts_return_type = "NodeType.Rule")]
+    pub fn tipe(&self) -> NodeType {
+        NodeType::Rule
     }
     #[napi(getter)]
     pub fn kind(&self) -> kinds::Rule {
@@ -115,7 +115,7 @@ impl CSTRuleNode {
             _ => unreachable!(),
         }
     }
-    #[napi(ts_return_type = "(CSTRuleNode | CSTTokenNode | CSTGroupNode)[]")]
+    #[napi(ts_return_type = "(RuleNode | TokenNode | GroupNode)[]")]
     pub fn children(&self, env: Env) -> Vec<JsObject> {
         match self.0.as_ref() {
             Node::Rule { children, .. } => children.iter().map(|child| child.to_js(&env)).collect(),
@@ -124,10 +124,10 @@ impl CSTRuleNode {
     }
 }
 #[napi]
-impl CSTTokenNode {
-    #[napi(getter, js_name = "type", ts_return_type = "CSTNodeType.Token")]
-    pub fn tipe(&self) -> CSTNodeType {
-        CSTNodeType::Token
+impl TokenNode {
+    #[napi(getter, js_name = "type", ts_return_type = "NodeType.Token")]
+    pub fn tipe(&self) -> NodeType {
+        NodeType::Token
     }
     #[napi(getter)]
     pub fn kind(&self) -> kinds::Token {
@@ -143,7 +143,7 @@ impl CSTTokenNode {
             _ => unreachable!(),
         }
     }
-    #[napi(ts_return_type = "(CSTRuleNode | CSTTokenNode | CSTGroupNode)[]")]
+    #[napi(ts_return_type = "(RuleNode | TokenNode | GroupNode)[]")]
     pub fn trivia(&self, env: Env) -> Vec<JsObject> {
         match self.0.as_ref() {
             Node::Token { trivia, .. } => {
@@ -154,12 +154,12 @@ impl CSTTokenNode {
     }
 }
 #[napi]
-impl CSTGroupNode {
-    #[napi(getter, js_name = "type", ts_return_type = "CSTNodeType.Group")]
-    pub fn tipe(&self) -> CSTNodeType {
-        CSTNodeType::Group
+impl GroupNode {
+    #[napi(getter, js_name = "type", ts_return_type = "NodeType.Group")]
+    pub fn tipe(&self) -> NodeType {
+        NodeType::Group
     }
-    #[napi(ts_return_type = "(CSTRuleNode | CSTTokenNode | CSTGroupNode)[]")]
+    #[napi(ts_return_type = "(RuleNode | TokenNode | GroupNode)[]")]
     pub fn children(&self, env: Env) -> Vec<JsObject> {
         match self.0.as_ref() {
             Node::Group { children, .. } => {
@@ -176,13 +176,13 @@ impl RcNodeExtensions for Rc<Node> {
     fn to_js(&self, env: &Env) -> JsObject {
         let obj = match self.as_ref() {
             Node::Rule { .. } => unsafe {
-                <CSTRuleNode as ToNapiValue>::to_napi_value(env.raw(), CSTRuleNode(self.clone()))
+                <RuleNode as ToNapiValue>::to_napi_value(env.raw(), RuleNode(self.clone()))
             },
             Node::Token { .. } => unsafe {
-                <CSTTokenNode as ToNapiValue>::to_napi_value(env.raw(), CSTTokenNode(self.clone()))
+                <TokenNode as ToNapiValue>::to_napi_value(env.raw(), TokenNode(self.clone()))
             },
             Node::Group { .. } => unsafe {
-                <CSTGroupNode as ToNapiValue>::to_napi_value(env.raw(), CSTGroupNode(self.clone()))
+                <GroupNode as ToNapiValue>::to_napi_value(env.raw(), GroupNode(self.clone()))
             },
         };
         return unsafe { JsObject::from_raw_unchecked(env.raw(), obj.unwrap()) };
