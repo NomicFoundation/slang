@@ -244,13 +244,50 @@ pub fn parse_macros() -> TokenStream {
 
         #[allow(unused_macros)]
         macro_rules! lex_seq {
-            ($kind:ident, $($expr:expr),*) => {
-                lex_seq!($($expr),*).map(|element| lex::Node::named(kinds::Token::$kind, element))
+            // HELPERS -------------------------------------------------------------------------------
+
+            /*
+                (@exp a, b, c, d)
+                => a.then(@exp b, c, d)
+                => a.then(b.then(@exp c, d))
+                => a.then(b.then(c.then(@exp d)))
+                => a.then(b.then(c.then(d)))
+            */
+
+            (@exp $head:expr , $($tail:expr),+ ) => {
+                $head.then(lex_seq!(@exp $($tail),+ ))
             };
-            // THIS IS WRONG - it should accumulate the elements like seq! does below
-            ($a:expr, $($b:expr),*) => {
-                $a $(.then($b))*
-                    .map_with_span(|_, span: SpanType| lex::Node::chars(span.start()..span.end()))
+
+            (@exp $head:expr ) => {
+                $head
+            };
+
+            /*
+                (@args [], v, a, b, c, d)
+                => (@args [v.0,], v.1, b, c, d)
+                => (@args [v.0, v.1.0,], v.1.1, c, d)
+                => (@args [v.0, v.1.0, v.1.1.0,], v.1.1.1, d)
+                => vec![v.0, v.1.0, v.1.1.0, v.1.1.0, v1.1.1, ]
+            */
+
+            (@args [ $($accum:expr,)* ] , $current:expr , $head:expr , $($tail:expr),+ ) => {
+                lex_seq!(@args [ $($accum,)* $current.0, ] , $current.1 , $($tail),+ )
+            };
+
+            (@args [ $($accum:expr,)* ] , $current:expr , $head:expr ) => {
+                vec![ $($accum,)* $current ]
+            };
+
+            //----------------------------------------------------------------------------------------
+
+            ($kind:ident, $($expr:expr),+ ) => {
+                lex_seq!(@exp $($expr),+ )
+                    .map(|v| lex::Node::named(kinds::Token::$kind, lex::Node::sequence(lex_seq!(@args [] , v , $($expr),+ ))))
+            };
+
+            ($($expr:expr),+ ) => {
+                lex_seq!(@exp $($expr),+ )
+                    .map(|v| lex::Node::sequence(lex_seq!(@args [] , v , $($expr),+ )))
             };
         }
 
