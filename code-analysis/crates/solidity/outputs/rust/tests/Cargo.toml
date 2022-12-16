@@ -13,6 +13,5 @@ codegen_utils = { workspace = true }
 anyhow = { workspace = true }
 codegen_utils = { workspace = true }
 semver = { workspace = true }
-serde = { workspace = true }
-serde_yaml = { workspace = true }
 solidity_rust_lib = { workspace = true }
+solidity_testing_utils = { workspace = true }

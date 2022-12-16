@@ -17,7 +17,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             codegen,
             &codegen
                 .repo_root
-                .join("code-analysis/crates/solidity/test_data/cst_output"),
+                .join("code-analysis/crates/solidity/testing/snapshots/cst_output"),
             &codegen
                 .repo_root
                 .join("code-analysis/crates/solidity/outputs/rust/tests/src/cst_output/generated"),

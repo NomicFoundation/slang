@@ -1,0 +1,11 @@
+[package]
+name = "solidity_testing_utils"
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+serde = { workspace = true }
+serde_yaml = { workspace = true }
+solidity_rust_lib = { workspace = true }
