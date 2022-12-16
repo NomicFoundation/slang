@@ -13,4 +13,4 @@ mod SourceUnit;
 #[allow(non_snake_case)]
 mod VersionPragma;
 
-pub const TEST_VERSIONS: [&str; 3] = ["0.4.11", "0.6.0", "0.8.17"];
+pub const BREAKING_VERSIONS: [&str; 3] = ["0.4.11", "0.6.0", "0.8.17"];

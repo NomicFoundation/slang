@@ -273,7 +273,6 @@ dependencies = [
 name = "codegen_testing"
 version = "0.0.0"
 dependencies = [
- "Inflector",
  "anyhow",
  "codegen_schema",
  "codegen_utils",
@@ -1259,6 +1258,15 @@ dependencies = [
  "codegen_testing",
  "codegen_utils",
  "semver",
+ "solidity_rust_lib",
+ "solidity_testing_utils",
+]
+
+[[package]]
+name = "solidity_testing_utils"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
  "serde",
  "serde_yaml",
  "solidity_rust_lib",
