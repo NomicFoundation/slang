@@ -18,11 +18,12 @@ All dependencies should have exact full versions, and we can rely on tooling to 
 
 Currently, the repository has the following projects:
 
-- `./devcontainer`: devcontainer image that is self-contained, and has all the dependencies needed to develop, build, test, and ship the project.
-- `./documentation`: used to host the language specification, and any future documentation for the project.
-- `./code-analysis/crates`:
+- `./.devcontainer`: devcontainer image that is self-contained, and has all the dependencies needed to develop, build, test, and ship the project.
+- `./crates`:
   - `codegen/`: code generation scripts.
   - `solidity/`: Solidity language inputs and outputs.
+- `./documentation`: used to host the language specification, and any future documentation for the project.
+- `./scripts`: self-contained bash scripts to setup, build, test, run, and release all code in this repository.
 
 ## Dev Containers
 
@@ -38,4 +39,4 @@ To install language-specific binaries and packages, we use [Hermit](https://cash
 
 ## Build Scripts
 
-To ensure consistency, and a good experience for first-time developers, all build/test/run/debug commands should be written, versioned, and documented inside script files under each project's `./scripts` folder. For example, `project1/scripts/build.sh`. This means that any dev instructions are well documented, versioned, and verified/executed with every build. Scripts should never assume or use `cwd`, but activate their own hermit environment and run all other commands using project-specific paths. This allows reusing/invoking across projects.
+To ensure consistency, and a good experience for first-time developers, all build/test/run/debug commands should be written, versioned, and documented inside the `scripts/` folder. This means that any dev instructions are well documented, versioned, and verified/executed with every build. Scripts should never assume or use `cwd`, but activate their own hermit environment and run all other commands using repo-relative paths. This allows reusing/invoking across projects.

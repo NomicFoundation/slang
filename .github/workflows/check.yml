@@ -11,28 +11,28 @@ jobs:
         uses: actions/cache@v3.0.9
         with:
           path: .hermit/
-          key: hermit-cache-${{ hashFiles('code-analysis/Cargo.lock', 'package-lock.json', 'Pipfile.lock') }}
+          key: hermit-cache-${{ hashFiles('Cargo.lock', 'package-lock.json', 'Pipfile.lock') }}
           restore-keys: hermit-cache-
       - name: Restore build cache
         uses: actions/cache@v3.0.9
         with:
-          path: code-analysis/target/
-          key: build-cache-${{ hashFiles('code-analysis/Cargo.lock', 'package-lock.json', 'Pipfile.lock') }}
+          path: target/
+          key: build-cache-${{ hashFiles('Cargo.lock', 'package-lock.json', 'Pipfile.lock') }}
           restore-keys: build-cache-
       - name: Build devcontainer
         uses: ./.devcontainer
         with: { entrypoint: echo } # empty entrypoint for timing
       - name: Cargo check
         uses: ./.devcontainer
-        with: { entrypoint: code-analysis/scripts/check.sh }
+        with: { entrypoint: scripts/cargo/check.sh }
       - name: Cargo test
         uses: ./.devcontainer
-        with: { entrypoint: code-analysis/scripts/test.sh }
+        with: { entrypoint: scripts/cargo/test.sh }
       - name: Run linters
         uses: ./.devcontainer
-        with: { entrypoint: infrastructure/scripts/lint.sh }
+        with: { entrypoint: scripts/linting/lint.sh }
       - name: Build documentation
         uses: ./.devcontainer
-        with: { entrypoint: documentation/scripts/build.sh }
+        with: { entrypoint: scripts/documentation/build.sh }
       - name: Repossess cached files # as they are modified by devcontainer (root) user
         run: sudo chown -R $USER:$USER "$GITHUB_WORKSPACE"

@@ -1,6 +1,4 @@
 {
-  // Rust
-  "rust-analyzer.linkedProjects": ["code-analysis/Cargo.toml"],
   // YAML
   "yaml.validate": false, // Disable editor validation, as it is superseeded by our own serializers
   // Editing
