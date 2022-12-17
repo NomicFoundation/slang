@@ -14,8 +14,14 @@ root:
         - kind: !RuleKind VersionPragmaSpecifier
           contents: =0.8.0
           children:
-            - kind: !TokenKind Equal
+            - kind: !TokenKind VersionPragmaOperator
               contents: =
+              children:
+                - kind: !TokenKind Equal
+                  contents: =
+                  children:
+                    - kind: TokenFragment
+                      contents: =
             - kind: !RuleKind SeparatedVersionPragmaValues
               contents: 0.8.0
               children:

@@ -802,7 +802,7 @@ impl Parsers {
             };
         }
         #[allow(unused_macros)]
-        macro_rules ! lex_trie { ($ ($ expr : expr) , *) => (choice :: < _ , ErrorType > (($ ($ expr) , *)) . map_with_span (| kind , span : SpanType | lex :: Node :: named (kind , lex :: Node :: chars (span . start () .. span . end ())))) }
+        macro_rules ! lex_trie { ($ kind : ident , $ ($ expr : expr) , *) => { choice :: < _ , ErrorType > (($ ($ expr) , *)) . map_with_span (| leaf_kind , span : SpanType | lex :: Node :: named (kinds :: Token :: $ kind , lex :: Node :: named (leaf_kind , lex :: Node :: chars (span . start () .. span . end ())))) } ; ($ ($ expr : expr) , *) => { choice :: < _ , ErrorType > (($ ($ expr) , *)) . map_with_span (| kind , span : SpanType | lex :: Node :: named (kind , lex :: Node :: chars (span . start () .. span . end ()))) } ; }
         #[allow(unused_macros)]
         macro_rules! trieleaf {
             ($ kind : ident , $ string : literal) => {
@@ -1290,8 +1290,14 @@ impl Parsers {
 
         // «BooleanLiteral» = 'true' | 'false' ;
         {
-            boolean_literal_parser
-                .define(lex_trie!(trieleaf!(False, "false"), trieleaf!(True, "true")).boxed());
+            boolean_literal_parser.define(
+                lex_trie!(
+                    BooleanLiteral,
+                    trieleaf!(False, "false"),
+                    trieleaf!(True, "true")
+                )
+                .boxed(),
+            );
         }
 
         // BreakStatement = 'break' ';' ;
@@ -1900,6 +1906,7 @@ impl Parsers {
                     FixedBytesType,
                     lex_terminal!(Bytes, "bytes"),
                     lex_trie!(
+                        Count,
                         trieprefix!(
                             "1",
                             [
@@ -2302,8 +2309,9 @@ impl Parsers {
 
         // «Keyword» = «BooleanLiteral» | «FixedBytesType» | «NumberUnit» | «ReservedKeyword» | «SignedIntegerType» | «UnsignedIntegerType» | 'abstract' | 'address' | 'anonymous' | 'as' | 'assembly' | 'bool' | 'break' | 'calldata' | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum' | 'event' | 'external' | 'fallback' | 'false' | 'fixed' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import' | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override' | 'payable' | 'pragma' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct' | 'true' | 'try' | 'type' | 'ufixed' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while' ;
         {
-            keyword_parser
-                .define(lex_trie!(trieleaf!(False, "false"), trieleaf!(True, "true")).boxed());
+            keyword_parser.define(
+                lex_trie!(Keyword, trieleaf!(False, "false"), trieleaf!(True, "true")).boxed(),
+            );
         }
 
         // LeadingTrivia = { «Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment» } ;
@@ -2499,6 +2507,7 @@ impl Parsers {
         {
             number_unit_parser.define(
                 lex_trie!(
+                    NumberUnit,
                     trieleaf!(Days, "days"),
                     trieleaf!(Ether, "ether"),
                     trieleaf!(Finney, "finney"),
@@ -2785,6 +2794,7 @@ impl Parsers {
         {
             reserved_keyword_parser.define(
                 lex_trie!(
+                    ReservedKeyword,
                     trieprefix!(
                         "a",
                         [
@@ -2946,6 +2956,7 @@ impl Parsers {
                     SignedIntegerType,
                     lex_terminal!(Int, "int"),
                     lex_optional!(lex_trie!(
+                        ByteCount,
                         trieprefix!(
                             "1",
                             [
@@ -3492,6 +3503,7 @@ impl Parsers {
         {
             version_pragma_operator_parser.define(
                 lex_trie!(
+                    VersionPragmaOperator,
                     trieprefix!("<", [trieleaf!(LessEqual, "="), trieleaf!(Less)]),
                     trieleaf!(Equal, "="),
                     trieprefix!(">", [trieleaf!(GreaterEqual, "="), trieleaf!(Greater)]),
@@ -3757,6 +3769,7 @@ impl Parsers {
         {
             yul_keyword_parser.define(
                 lex_trie!(
+                    YulKeyword,
                     trieleaf!(Break, "break"),
                     trieprefix!(
                         "c",
