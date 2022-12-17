@@ -1,5 +1,5 @@
 use patricia_tree::{node::Node, PatriciaMap};
-use proc_macro2::TokenStream;
+use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 
 use codegen_schema::*;
@@ -56,7 +56,12 @@ impl TerminalTrie {
         }
     }
 
-    pub(super) fn to_code(&self, code: &mut CodeGenerator, macro_prefix: &str) -> TokenStream {
+    pub(super) fn to_code(
+        &self,
+        kind: Option<Ident>,
+        code: &mut CodeGenerator,
+        macro_prefix: &str,
+    ) -> TokenStream {
         if self.0.len() == 1 {
             let label = self.0.keys().next().unwrap();
             let string = String::from_utf8_lossy(&label);
@@ -101,7 +106,11 @@ impl TerminalTrie {
 
             let lexers = generate_from_trie(self.0.as_ref().child(), code);
             let macro_name = format_ident!("{}trie", macro_prefix);
-            quote!(#macro_name!(#(#lexers),*))
+            if let Some(kind) = kind {
+                quote!(#macro_name!(#kind, #(#lexers),*))
+            } else {
+                quote!(#macro_name!(#(#lexers),*))
+            }
         }
     }
 }

@@ -22,8 +22,13 @@ impl<'context> CharacterFilter<'context> {
 }
 
 impl TerminalTrie {
-    pub fn to_parser_code(&self, is_trivia: bool, code: &mut CodeGenerator) -> TokenStream {
-        self.to_code(code, if is_trivia { "trivia_" } else { "" })
+    pub fn to_parser_code(
+        &self,
+        kind: Option<Ident>,
+        is_trivia: bool,
+        code: &mut CodeGenerator,
+    ) -> TokenStream {
+        self.to_code(kind, code, if is_trivia { "trivia_" } else { "" })
     }
 }
 
@@ -227,7 +232,9 @@ impl<'context> CombinatorNode<'context> {
                 filter.to_parser_code(name.as_ref(), is_trivia, code)
             }
 
-            Self::TerminalTrie { trie, .. } => trie.to_parser_code(is_trivia, code),
+            Self::TerminalTrie { trie, name } => {
+                trie.to_parser_code(name.clone().map(|n| code.add_rule_kind(n)), is_trivia, code)
+            }
 
             Self::Difference {
                 minuend,

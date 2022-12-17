@@ -15,8 +15,8 @@ impl<'context> CharacterFilter<'context> {
 }
 
 impl TerminalTrie {
-    pub fn to_lexer_code(&self, code: &mut CodeGenerator) -> TokenStream {
-        self.to_code(code, "lex_")
+    pub fn to_lexer_code(&self, kind: Option<Ident>, code: &mut CodeGenerator) -> TokenStream {
+        self.to_code(kind, code, "lex_")
     }
 }
 
@@ -157,7 +157,9 @@ impl<'context> CombinatorNode<'context> {
              */
             Self::CharacterFilter { filter, name } => filter.to_lexer_code(name.as_ref(), code),
 
-            Self::TerminalTrie { trie, .. } => trie.to_lexer_code(code),
+            Self::TerminalTrie { trie, name } => {
+                trie.to_lexer_code(name.clone().map(|n| code.add_token_kind(n)), code)
+            }
 
             Self::Difference {
                 minuend,

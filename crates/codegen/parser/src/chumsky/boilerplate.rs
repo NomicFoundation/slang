@@ -357,10 +357,18 @@ pub fn parse_macros() -> TokenStream {
 
         #[allow(unused_macros)]
         macro_rules! lex_trie {
-            ($($expr:expr),* ) => (
+            ($kind:ident, $($expr:expr),* ) => {
+                choice::<_, ErrorType>(($($expr),*)).map_with_span(|leaf_kind, span: SpanType|
+                    lex::Node::named(
+                        kinds::Token::$kind,
+                        lex::Node::named(leaf_kind, lex::Node::chars(span.start()..span.end()))
+                    )
+                )
+            };
+            ($($expr:expr),* ) => {
                 choice::<_, ErrorType>(($($expr),*)).map_with_span(|kind, span: SpanType|
                     lex::Node::named(kind, lex::Node::chars(span.start()..span.end())))
-            )
+            };
         }
 
         #[allow(unused_macros)]
