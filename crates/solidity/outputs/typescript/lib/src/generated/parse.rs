@@ -741,7 +741,7 @@ impl Parsers {
         #[allow(unused_macros)]
         macro_rules ! lex_choice { ($ kind : ident , $ ($ expr : expr) , *) => { lex_choice ! ($ ($ expr) , *) . map (| element | lex :: Node :: named (kinds :: Token :: $ kind , element)) } ; ($ ($ expr : expr) , *) => { choice :: < _ , ErrorType > (($ ($ expr . map (| v | lex :: Node :: choice (0 , v))) , *)) } ; }
         #[allow(unused_macros)]
-        macro_rules ! lex_seq { ($ kind : ident , $ ($ expr : expr) , *) => { lex_seq ! ($ ($ expr) , *) . map (| element | lex :: Node :: named (kinds :: Token :: $ kind , element)) } ; ($ a : expr , $ ($ b : expr) , *) => { $ a $ (. then ($ b)) * . map_with_span (| _ , span : SpanType | lex :: Node :: chars (span . start () .. span . end ())) } ; }
+        macro_rules ! lex_seq { (@ exp $ head : expr , $ ($ tail : expr) , +) => { $ head . then (lex_seq ! (@ exp $ ($ tail) , +)) } ; (@ exp $ head : expr) => { $ head } ; (@ args [$ ($ accum : expr ,) *] , $ current : expr , $ head : expr , $ ($ tail : expr) , +) => { lex_seq ! (@ args [$ ($ accum ,) * $ current . 0 ,] , $ current . 1 , $ ($ tail) , +) } ; (@ args [$ ($ accum : expr ,) *] , $ current : expr , $ head : expr) => { vec ! [$ ($ accum ,) * $ current] } ; ($ kind : ident , $ ($ expr : expr) , +) => { lex_seq ! (@ exp $ ($ expr) , +) . map (| v | lex :: Node :: named (kinds :: Token :: $ kind , lex :: Node :: sequence (lex_seq ! (@ args [] , v , $ ($ expr) , +)))) } ; ($ ($ expr : expr) , +) => { lex_seq ! (@ exp $ ($ expr) , +) . map (| v | lex :: Node :: sequence (lex_seq ! (@ args [] , v , $ ($ expr) , +))) } ; }
         #[allow(unused_macros)]
         macro_rules! lex_zero_or_more {
             ($ kind : ident , $ expr : expr) => {
