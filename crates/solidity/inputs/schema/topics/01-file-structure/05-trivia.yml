@@ -47,7 +47,7 @@
   kind: Token
   delimitedBy:
     open: /*
-    config: { name: content }
+    config: { name: Content }
     zeroOrMore:
       choice:
         - not:

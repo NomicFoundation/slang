@@ -5,7 +5,6 @@ use std::{
 
 use codegen_schema::Grammar;
 use codegen_utils::context::CodegenContext;
-use inflector::Inflector;
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 use semver::Version;
@@ -36,21 +35,21 @@ pub struct GeneratedParser {
 
 impl CodeGenerator {
     pub fn add_rule_kind(&mut self, name: String) -> Ident {
-        let kind = name.to_pascal_case();
-        let ident = format_ident!("{}", kind);
-        self.rule_kinds.insert(kind);
+        let name = name;
+        let ident = format_ident!("{}", name);
+        self.rule_kinds.insert(name);
         ident
     }
 
     pub fn add_token_kind(&mut self, name: String) -> Ident {
-        let kind = name.to_pascal_case();
-        let ident = format_ident!("{}", kind);
-        self.token_kinds.insert(kind, None);
+        let name = name;
+        let ident = format_ident!("{}", name);
+        self.token_kinds.insert(name, None);
         ident
     }
 
     pub fn add_terminal_kind(&mut self, terminal: String) -> Ident {
-        let kind = naming::name_of_terminal_string(&terminal).to_pascal_case();
+        let kind = naming::name_of_terminal_string(&terminal);
         let ident = format_ident!("{}", kind);
         self.token_kinds.insert(kind, Some(terminal));
         ident
@@ -88,27 +87,44 @@ impl CodeGenerator {
         output_dir: &PathBuf,
     ) {
         let mut versions = BTreeSet::new();
-        let mut field_definitions = vec![];
         let mut parser_predeclarations = vec![];
         let mut parser_definitions = vec![];
-        let mut field_assignments = vec![];
 
         let first_version = grammar.manifest.versions.first().unwrap();
 
         for (name, parser) in &self.parsers {
-            let parser_name = naming::to_parser_name_ident(&name);
-            let field_name = naming::to_field_name_ident(&name);
-
-            let result_type = match parser.result_type {
-                ParserResultType::Token => quote! { DeferredLexParserType },
-                ParserResultType::Rule => quote! { DeferredCSTParserType },
-            };
+            let production_kind = format_ident!("{}", name);
 
             versions.extend(parser.versions.keys());
 
-            parser_predeclarations
-                .push(quote!( let mut #parser_name = #result_type::declare(); ).to_string());
+            parser_predeclarations.push(
+                match parser.result_type {
+                    ParserResultType::Token => quote! { declare_token!(#production_kind); },
+                    ParserResultType::Rule => quote! { declare_rule!(#production_kind); },
+                }
+                .to_string(),
+            );
 
+            let parser_body = parser
+                .versions
+                .iter()
+                .rev()
+                .map(|(version, body)| {
+                    let version_name =
+                        format_ident!("version_{}", version.to_string().replace(".", "_"));
+                    if version == first_version {
+                        if parser.versions.len() == 1 {
+                            body.clone()
+                        } else {
+                            quote!( { #body.boxed() } )
+                        }
+                    } else {
+                        quote!( if #version_name <= version { #body.boxed() } )
+                    }
+                })
+                .reduce(|a, b| quote!( #a else #b ))
+                .unwrap();
+            let production_kind = format_ident!("{}", name);
             parser_definitions.push(format!(
                 "{}\n{}",
                 parser
@@ -117,38 +133,13 @@ impl CodeGenerator {
                     .map(|s| format!("// {}", s))
                     .collect::<Vec<_>>()
                     .join("\n"),
-                parser.versions.iter().rev().map(|(version, body)| {
-                    let version_name = format_ident!("version_{}", version.to_string().replace(".", "_"));
-                    if version == first_version {
-                        quote!( { #parser_name.define(#body.boxed()); } )
-                    } else {
-                        quote!( if #version_name <= version { #parser_name.define(#body.boxed()); } )
-                    }
-                }).reduce(|a, b| quote!( #a else #b )).unwrap()
-            ));
-
-            field_definitions.push(format!(
-                "{}\n{}",
-                parser
-                    .comment
-                    .iter()
-                    .map(|s| format!("/// {}", s))
-                    .collect::<Vec<_>>()
-                    .join("\n"),
-                quote!( pub #field_name: BoxedParserType, ).to_string()
-            ));
-
-            let parser = match parser.result_type {
-                ParserResultType::Token => {
-                    quote!( #parser_name.map(|node| cst::Node::top_level_token(node)) )
+                match parser.result_type {
+                    ParserResultType::Token =>
+                        quote! { define_token!(#production_kind, #parser_body); },
+                    ParserResultType::Rule =>
+                        quote! { define_rule!(#production_kind, #parser_body); },
                 }
-                ParserResultType::Rule => {
-                    let kind = format_ident!("{}", name.to_pascal_case());
-                    quote!( #parser_name.map(|node| cst::Node::top_level_rule(RuleKind::#kind, node)) )
-                }
-            };
-            field_assignments
-                .push(quote!( #field_name: #parser.then_ignore(end()).boxed(), ).to_string());
+            ));
         }
 
         let version_declarations = versions
@@ -166,48 +157,36 @@ impl CodeGenerator {
                 &output_dir.join("parse.rs"),
                 &format!(
                     "{}
-                
-                    #[allow(dead_code)]
-                    pub struct Parsers {{
+
+                    pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {{
+                        let mut parsers: BTreeMap<ProductionKind, Parser> = BTreeMap::new();
+                        
+                        // Declare all versions -----------------------------
+
                         {}
-                    }}
 
-                    impl Parsers {{
-                        pub fn new(version: &Version) -> Self {{
-                            // Declare all versions -----------------------------
+                        // Declare all productions --------------------------
 
-                            {}
+                        {}
 
-                            // Declare all productions --------------------------
+                        // Macros -------------------------------------------
 
-                            type DeferredLexParserType = Recursive<'static, char, Option<Rc<lex::Node>>, ErrorType>;
-                            type DeferredCSTParserType = Recursive<'static, char, Option<Rc<cst::Node>>, ErrorType>;
+                        {}
 
-                            {}
+                        // Define all productions ---------------------------
 
-                            // Macros -------------------------------------------
+                        {}
 
-                            {}
+                        // Return the Parsers object ------------------------
 
-                            // Define all productions ---------------------------
-
-                            {}
-
-                            // Create the Parser object -------------------------
-
-                            Self {{
-                                {}
-                            }}
-                        }}
+                        parsers
                     }}
                     ",
                     boilerplate::parse_head(),
-                    field_definitions.join("\n\n"),
                     version_declarations.join(""),
                     parser_predeclarations.join(""),
                     boilerplate::parse_macros(),
                     parser_definitions.join("\n\n"),
-                    field_assignments.join("")
                 ),
             )
             .unwrap();

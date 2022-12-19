@@ -14,9 +14,8 @@ pub fn mod_head() -> TokenStream {
 }
 
 pub fn kinds_head() -> TokenStream {
-    let base = boilerplate::kinds_head();
     quote!(
-        #base
+        use serde::Serialize;
         use napi::bindgen_prelude::*;
         use napi_derive::napi;
     )
@@ -273,21 +272,23 @@ pub fn language_head() -> TokenStream {
 
     quote!(
         use std::rc::Rc;
+        use std::collections::BTreeMap;
 
-        use chumsky::{error::SimpleReason, Parser, Span};
+        use chumsky::{error::SimpleReason, BoxedParser, Span, Parser as ChumskyParser};
         use ariadne::{Color, Config, Fmt, Label, Report, ReportKind, Source};
         use semver::Version;
 
         use super::{
             cst,
             cst::RcNodeExtensions as CSTRcNodeExtensions,
-            parse::{BoxedParserType, ErrorType, Parsers},
+            parse::{create_parsers, ErrorType},
+            kinds::ProductionKind,
         };
         use napi::bindgen_prelude::*;
 
         #[napi]
         pub struct Language {
-            parsers: Parsers,
+            parsers: BTreeMap<ProductionKind, Parser>,
             version: Version,
         }
 
@@ -297,7 +298,7 @@ pub fn language_head() -> TokenStream {
             pub fn new(version: String) -> Self {
                 let version = Version::parse(&version).unwrap();
                 Self {
-                    parsers: Parsers::new(&version),
+                    parsers: create_parsers(&version),
                     version,
                 }
             }
@@ -305,6 +306,28 @@ pub fn language_head() -> TokenStream {
             #[napi]
             pub fn version(&self) -> String {
                 self.version.to_string()
+            }
+
+            #[napi]
+            pub fn get_parser(&self, kind: ProductionKind) -> Parser {
+                self.parsers[&kind].clone()
+            }
+        }
+
+        #[napi]
+        #[derive(Clone)]
+        pub struct Parser(BoxedParser<'static, char, Rc<cst::Node>, ErrorType>);
+
+        #[napi]
+        impl Parser {
+            pub(super) fn new(inner: BoxedParser<'static, char, Rc<cst::Node>, ErrorType>) -> Self {
+                Self(inner)
+            }
+
+            #[napi]
+            pub fn parse(&self, input: String) -> ParserOutput {
+                let (parse_tree, errors) = self.0.parse_recovery(input.as_str());
+                ParserOutput { parse_tree, errors }
             }
         }
 
@@ -316,11 +339,6 @@ pub fn language_head() -> TokenStream {
 
         #[napi]
         impl ParserOutput {
-            fn new(source: String, parser: &BoxedParserType) -> Self {
-                let (parse_tree, errors) = parser.parse_recovery(source.as_str());
-                Self { parse_tree, errors }
-            }
-
             #[napi(ts_return_type = "RuleNode | TokenNode | null")]
             pub fn parse_tree(&self, env: Env) -> Option<napi::JsObject> {
                 self.parse_tree.clone().map(|n|n.to_js(&env))

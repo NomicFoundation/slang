@@ -140,7 +140,7 @@ impl<'context> CombinatorNode<'context> {
                 let expr = Self::new(tree, expr, None);
                 let name = name.or_else(|| {
                     expr.name()
-                        .map(|expr_name| format!("delimited_{}", expr_name,))
+                        .map(|expr_name| format!("Delimited{}", expr_name,))
                 });
                 Self::DelimitedBy {
                     name,
@@ -209,7 +209,7 @@ impl<'context> CombinatorNode<'context> {
                 let expr = Self::new(tree, expr, None);
                 let name = name.or_else(|| {
                     expr.name()
-                        .map(|expr_name| format!("separated_{}", naming::pluralize(&expr_name),))
+                        .map(|expr_name| format!("Separated{}", naming::pluralize(&expr_name),))
                 });
                 let separator = separator.clone();
                 Self::SeparatedBy {

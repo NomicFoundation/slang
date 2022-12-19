@@ -1,7 +1,12 @@
+use std::str::FromStr;
+
 use anyhow::Result;
 use codegen_utils::context::CodegenContext;
 use semver::Version;
-use solidity_rust_lib::generated::language::{Language, ParserOutput};
+use solidity_rust_lib::generated::{
+    kinds::ProductionKind,
+    language::{Language, ParserOutput},
+};
 use solidity_testing_utils::cst_snapshots::ParserOutputTestSnapshotExtensions;
 
 use crate::cst_output::generated::BREAKING_VERSIONS;
@@ -29,8 +34,11 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             let snapshot_path = test_dir.join(format!("generated/{version}.snap"));
 
             let output = Language::new(version)
-                .parse(parser_name, &source)
-                .expect(format!("No such parser: {}", parser_name).as_str());
+                .get_parser(
+                    ProductionKind::from_str(parser_name)
+                        .expect(format!("No such parser: {}", parser_name).as_str()),
+                )
+                .parse(&source);
 
             if let Some(last_output) = &last_output {
                 if &output == last_output {

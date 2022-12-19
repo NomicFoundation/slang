@@ -1,11 +1,11 @@
 use proc_macro2::{Ident, TokenStream};
-use quote::quote;
+use quote::{format_ident, quote};
 
 use codegen_schema::*;
 
 use super::{
     character_filter::CharacterFilter, code_generator::CodeGenerator,
-    combinator_node::CombinatorNode, naming, terminal_trie::TerminalTrie,
+    combinator_node::CombinatorNode, terminal_trie::TerminalTrie,
 };
 
 impl<'context> CharacterFilter<'context> {
@@ -31,12 +31,12 @@ impl<'context> CombinatorNode<'context> {
              * Simple Reference
              */
             Self::Reference { tree } => {
-                let production_parser_name = naming::to_parser_name_ident(&tree.production.name);
+                let production_name = format_ident!("{}", tree.production.name);
                 match tree.production.kind {
                     ProductionKind::Rule | ProductionKind::Trivia => {
                         unreachable!("Token productions can only reference other token productions")
                     }
-                    ProductionKind::Token => quote!(lex_rule!(#production_parser_name)),
+                    ProductionKind::Token => quote!(lex_rule!(#production_name)),
                 }
             }
 
