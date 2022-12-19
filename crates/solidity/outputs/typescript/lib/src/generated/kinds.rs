@@ -6,7 +6,7 @@ use serde::Serialize;
 
 #[derive(Debug, PartialEq, Eq, Serialize)]
 #[napi]
-pub enum Token {
+pub enum TokenKind {
     Abicoder,
     Abstract,
     Address,
@@ -302,7 +302,7 @@ pub enum Token {
 
 #[derive(Debug, PartialEq, Eq, Serialize)]
 #[napi]
-pub enum Rule {
+pub enum RuleKind {
     Abicoder,
     AbicoderPragma,
     Abstract,

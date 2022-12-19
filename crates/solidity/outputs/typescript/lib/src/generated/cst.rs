@@ -1,17 +1,17 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use super::kinds;
+use super::kinds::{RuleKind, TokenKind};
 use super::lex;
 use serde::Serialize;
 use std::rc::Rc;
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub enum Node {
     Rule {
-        kind: kinds::Rule,
+        kind: RuleKind,
         children: Vec<Rc<Node>>,
     },
     Token {
-        kind: kinds::Token,
+        kind: TokenKind,
         lex_node: Rc<lex::Node>,
         #[serde(skip_serializing_if = "Vec::is_empty")]
         trivia: Vec<Rc<Node>>,
@@ -20,7 +20,7 @@ pub enum Node {
     Group { children: Vec<Rc<Node>> },
 }
 impl Node {
-    pub fn rule(kind: kinds::Rule, children: Vec<Option<Rc<Self>>>) -> Option<Rc<Self>> {
+    pub fn rule(kind: RuleKind, children: Vec<Option<Rc<Self>>>) -> Option<Rc<Self>> {
         let children: Vec<_> = children.into_iter().filter_map(|e| e).collect();
         if children.is_empty() {
             None
@@ -28,7 +28,7 @@ impl Node {
             Some(Rc::new(Self::Rule { kind, children }))
         }
     }
-    pub fn trivia_token(kind: kinds::Token, lex_node: Rc<lex::Node>) -> Option<Rc<Self>> {
+    pub fn trivia_token(kind: TokenKind, lex_node: Rc<lex::Node>) -> Option<Rc<Self>> {
         Some(Rc::new(Self::Token {
             kind,
             lex_node,
@@ -36,7 +36,7 @@ impl Node {
         }))
     }
     pub fn token(
-        kind: kinds::Token,
+        kind: TokenKind,
         lex_node: Rc<lex::Node>,
         leading_trivia: Option<Rc<Self>>,
         trailing_trivia: Option<Rc<Self>>,
@@ -77,7 +77,7 @@ impl Node {
             unreachable!("Top level token unexpected None")
         }
     }
-    pub fn top_level_rule(kind: kinds::Rule, node: Option<Rc<Self>>) -> Rc<Self> {
+    pub fn top_level_rule(kind: RuleKind, node: Option<Rc<Self>>) -> Rc<Self> {
         node.unwrap_or_else(|| {
             Rc::new(Self::Rule {
                 kind,
@@ -109,7 +109,7 @@ impl RuleNode {
         NodeType::Rule
     }
     #[napi(getter)]
-    pub fn kind(&self) -> kinds::Rule {
+    pub fn kind(&self) -> RuleKind {
         match self.0.as_ref() {
             Node::Rule { kind, .. } => *kind,
             _ => unreachable!(),
@@ -130,7 +130,7 @@ impl TokenNode {
         NodeType::Token
     }
     #[napi(getter)]
-    pub fn kind(&self) -> kinds::Token {
+    pub fn kind(&self) -> TokenKind {
         match self.0.as_ref() {
             Node::Token { kind, .. } => *kind,
             _ => unreachable!(),

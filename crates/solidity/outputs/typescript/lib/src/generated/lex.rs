@@ -1,6 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use super::kinds;
+use super::kinds::TokenKind;
 use serde::Serialize;
 use std::ops::Range;
 use std::rc::Rc;
@@ -9,7 +9,7 @@ pub enum Node {
     Chars(Range<usize>),
     Choice(usize, Rc<Node>),
     Sequence(Vec<Rc<Node>>),
-    Named(kinds::Token, Rc<Node>),
+    Named(TokenKind, Rc<Node>),
 }
 impl Node {
     pub fn chars(range: Range<usize>) -> Option<Rc<Self>> {
@@ -29,7 +29,7 @@ impl Node {
     pub fn choice(index: usize, element: Option<Rc<Self>>) -> Option<Rc<Self>> {
         element.map(|e| Rc::new(Self::Choice(index, e)))
     }
-    pub fn named(kind: kinds::Token, element: Option<Rc<Self>>) -> Option<Rc<Self>> {
+    pub fn named(kind: TokenKind, element: Option<Rc<Self>>) -> Option<Rc<Self>> {
         element.map(|e| Rc::new(Self::Named(kind, e)))
     }
     pub fn range(&self) -> Range<usize> {
@@ -149,7 +149,7 @@ impl LexNamedNode {
         }
     }
     #[napi(getter)]
-    pub fn kind(&self) -> kinds::Token {
+    pub fn kind(&self) -> TokenKind {
         match self.0.as_ref() {
             Node::Named(kind, _) => *kind,
             _ => unreachable!(),

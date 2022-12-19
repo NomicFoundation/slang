@@ -101,12 +101,12 @@ impl CodeGenerator {
                     "{}
 
                     #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
-                    pub enum Token {{
+                    pub enum TokenKind {{
                         {}
                     }}
 
                     #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
-                    pub enum Rule {{
+                    pub enum RuleKind {{
                         {}
                     }}
                     ",

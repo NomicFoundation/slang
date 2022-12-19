@@ -108,13 +108,13 @@ impl CodeGenerator {
 
                     #[derive(Debug, PartialEq, Eq, Serialize)]
                     #[napi]
-                    pub enum Token {{
+                    pub enum TokenKind {{
                         {}
                     }}
 
                     #[derive(Debug, PartialEq, Eq, Serialize)]
                     #[napi]
-                    pub enum Rule {{
+                    pub enum RuleKind {{
                         {}
                     }}
                     ",

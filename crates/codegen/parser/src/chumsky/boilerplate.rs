@@ -13,14 +13,14 @@ pub fn lex_head() -> TokenStream {
         use serde::Serialize;
         use std::rc::Rc;
 
-        use super::kinds;
+        use super::kinds::TokenKind;
 
         #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
         pub enum Node {
             Chars(Range<usize>),
             Choice(usize, Rc<Node>),
             Sequence(Vec<Rc<Node>>),
-            Named(kinds::Token, Rc<Node>),
+            Named(TokenKind, Rc<Node>),
         }
 
         impl Node {
@@ -42,7 +42,7 @@ pub fn lex_head() -> TokenStream {
                 element.map(|e| Rc::new(Self::Choice(index, e)))
             }
 
-            pub fn named(kind: kinds::Token, element: Option<Rc<Self>>) -> Option<Rc<Self>> {
+            pub fn named(kind: TokenKind, element: Option<Rc<Self>>) -> Option<Rc<Self>> {
                 element.map(|e| Rc::new(Self::Named(kind, e)))
             }
 
@@ -65,17 +65,17 @@ pub fn cst_head() -> TokenStream {
         use serde::Serialize;
         use std::rc::Rc;
 
-        use super::kinds;
+        use super::kinds::{TokenKind, RuleKind};
         use super::lex;
 
         #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
         pub enum Node {
             Rule {
-                kind: kinds::Rule,
+                kind: RuleKind,
                 children: Vec<Rc<Node>>,
             },
             Token {
-                kind: kinds::Token,
+                kind: TokenKind,
                 lex_node: Rc<lex::Node>,
                 #[serde(skip_serializing_if = "Vec::is_empty")]
                 trivia: Vec<Rc<Node>>,
@@ -88,12 +88,12 @@ pub fn cst_head() -> TokenStream {
         }
 
         impl Node {
-            pub fn rule(kind: kinds::Rule, children: Vec<Option<Rc<Self>>>) -> Option<Rc<Self>> {
+            pub fn rule(kind: RuleKind, children: Vec<Option<Rc<Self>>>) -> Option<Rc<Self>> {
                 let children: Vec<_> = children.into_iter().filter_map(|e| e).collect();
                 if children.is_empty() { None } else { Some(Rc::new(Self::Rule { kind, children })) }
             }
 
-            pub fn trivia_token(kind: kinds::Token, lex_node: Rc<lex::Node>) -> Option<Rc<Self>> {
+            pub fn trivia_token(kind: TokenKind, lex_node: Rc<lex::Node>) -> Option<Rc<Self>> {
                 Some(Rc::new(Self::Token {
                     kind,
                     lex_node,
@@ -102,7 +102,7 @@ pub fn cst_head() -> TokenStream {
             }
 
             pub fn token(
-                kind: kinds::Token,
+                kind: TokenKind,
                 lex_node: Rc<lex::Node>,
                 leading_trivia: Option<Rc<Self>>,
                 trailing_trivia: Option<Rc<Self>>,
@@ -142,7 +142,7 @@ pub fn cst_head() -> TokenStream {
                 }
             }
 
-            pub fn top_level_rule(kind: kinds::Rule, node: Option<Rc<Self>>) -> Rc<Self> {
+            pub fn top_level_rule(kind: RuleKind, node: Option<Rc<Self>>) -> Rc<Self> {
                 node.unwrap_or_else(|| Rc::new(Self::Rule { kind, children: vec![] }))
             }
         }
@@ -157,7 +157,7 @@ pub fn parse_head() -> TokenStream {
         use std::ops::Range;
         use std::rc::Rc;
 
-        use super::kinds;
+        use super::kinds::{TokenKind, RuleKind};
         use super::lex;
         use super::cst;
 
@@ -199,18 +199,12 @@ pub fn parse_macros() -> TokenStream {
         macro_rules! lex_terminal {
             ($kind:ident, $literal:literal) => {
                 just($literal).map_with_span(|_, span: SpanType| {
-                    lex::Node::named(
-                        kinds::Token::$kind,
-                        lex::Node::chars(span.start()..span.end()),
-                    )
+                    lex::Node::named(TokenKind::$kind, lex::Node::chars(span.start()..span.end()))
                 })
             };
             ($kind:ident, $filter:expr) => {
                 filter($filter).map_with_span(|_, span: SpanType| {
-                    lex::Node::named(
-                        kinds::Token::$kind,
-                        lex::Node::chars(span.start()..span.end()),
-                    )
+                    lex::Node::named(TokenKind::$kind, lex::Node::chars(span.start()..span.end()))
                 })
             };
             ($literal:literal) => {
@@ -233,7 +227,7 @@ pub fn parse_macros() -> TokenStream {
         #[allow(unused_macros)]
         macro_rules! lex_choice {
             ($kind:ident, $($expr:expr),*) => {
-                lex_choice!($($expr),*).map(|element| lex::Node::named(kinds::Token::$kind, element))
+                lex_choice!($($expr),*).map(|element| lex::Node::named(TokenKind::$kind, element))
             };
             ($($expr:expr),*) => {
                 choice::<_, ErrorType>((
@@ -282,7 +276,7 @@ pub fn parse_macros() -> TokenStream {
 
             ($kind:ident, $($expr:expr),+ ) => {
                 lex_seq!(@exp $($expr),+ )
-                    .map(|v| lex::Node::named(kinds::Token::$kind, lex::Node::sequence(lex_seq!(@args [] , v , $($expr),+ ))))
+                    .map(|v| lex::Node::named(TokenKind::$kind, lex::Node::sequence(lex_seq!(@args [] , v , $($expr),+ ))))
             };
 
             ($($expr:expr),+ ) => {
@@ -294,8 +288,7 @@ pub fn parse_macros() -> TokenStream {
         #[allow(unused_macros)]
         macro_rules! lex_zero_or_more {
             ($kind:ident, $expr:expr) => {
-                lex_zero_or_more!($expr)
-                    .map(|element| lex::Node::named(kinds::Token::$kind, element))
+                lex_zero_or_more!($expr).map(|element| lex::Node::named(TokenKind::$kind, element))
             };
             ($expr:expr) => {
                 $expr.repeated().map(|v| lex::Node::sequence(v))
@@ -305,8 +298,7 @@ pub fn parse_macros() -> TokenStream {
         #[allow(unused_macros)]
         macro_rules! lex_one_or_more {
             ($kind:ident, $expr:expr) => {
-                lex_one_or_more!($expr)
-                    .map(|element| lex::Node::named(kinds::Token::$kind, element))
+                lex_one_or_more!($expr).map(|element| lex::Node::named(TokenKind::$kind, element))
             };
             ($expr:expr) => {
                 $expr.repeated().at_least(1).map(|v| lex::Node::sequence(v))
@@ -317,7 +309,7 @@ pub fn parse_macros() -> TokenStream {
         macro_rules! lex_repeated {
             ($kind:ident, $expr:expr, $min:literal, $max:literal) => {
                 lex_repeated!($expr, $min, $max)
-                    .map(|element| lex::Node::named(kinds::Token::$kind, element))
+                    .map(|element| lex::Node::named(TokenKind::$kind, element))
             };
             ($expr:expr, $min:literal, $max:literal) => {
                 $expr
@@ -339,7 +331,7 @@ pub fn parse_macros() -> TokenStream {
         macro_rules! lex_separated_by {
             ($kind:ident, $expr:expr, $separator:expr) => {
                 lex_separated_by!($expr, $separator)
-                    .map(|element| lex::Node::named(kinds::Token::$kind, element))
+                    .map(|element| lex::Node::named(TokenKind::$kind, element))
             };
             ($expr:expr, $separator:expr) => {
                 $expr
@@ -360,7 +352,7 @@ pub fn parse_macros() -> TokenStream {
             ($kind:ident, $($expr:expr),* ) => {
                 choice::<_, ErrorType>(($($expr),*)).map_with_span(|leaf_kind, span: SpanType|
                     lex::Node::named(
-                        kinds::Token::$kind,
+                        TokenKind::$kind,
                         lex::Node::named(leaf_kind, lex::Node::chars(span.start()..span.end()))
                     )
                 )
@@ -374,10 +366,10 @@ pub fn parse_macros() -> TokenStream {
         #[allow(unused_macros)]
         macro_rules! trieleaf {
             ($kind:ident, $string:literal ) => {
-                just($string).to(kinds::Token::$kind)
+                just($string).to(TokenKind::$kind)
             };
             ($kind:ident ) => {
-                empty().to(kinds::Token::$kind)
+                empty().to(TokenKind::$kind)
             };
         }
 
@@ -393,7 +385,7 @@ pub fn parse_macros() -> TokenStream {
             ($kind:ident, $literal:literal) => {
                 just($literal).map_with_span(|_, span: SpanType| {
                     cst::Node::trivia_token(
-                        kinds::Token::$kind,
+                        TokenKind::$kind,
                         lex::Node::chars_unwrapped(span.start()..span.end()),
                     )
                 })
@@ -401,7 +393,7 @@ pub fn parse_macros() -> TokenStream {
             ($kind:ident, $filter:expr) => {
                 filter($filter).map_with_span(|_, span: SpanType| {
                     cst::Node::trivia_token(
-                        kinds::Token::$kind,
+                        TokenKind::$kind,
                         lex::Node::chars_unwrapped(span.start()..span.end()),
                     )
                 })
@@ -440,7 +432,7 @@ pub fn parse_macros() -> TokenStream {
                     .then(trailing_trivia_parser.clone())
                     .map(|((leading_trivia, range), trailing_trivia)| {
                         cst::Node::token(
-                            kinds::Token::$kind,
+                            TokenKind::$kind,
                             lex::Node::chars_unwrapped(range),
                             leading_trivia,
                             trailing_trivia,
@@ -456,7 +448,7 @@ pub fn parse_macros() -> TokenStream {
                     .then(trailing_trivia_parser.clone())
                     .map(|((leading_trivia, range), trailing_trivia)| {
                         cst::Node::token(
-                            kinds::Token::$kind,
+                            TokenKind::$kind,
                             lex::Node::chars_unwrapped(range),
                             leading_trivia,
                             trailing_trivia,
@@ -539,7 +531,7 @@ pub fn parse_macros() -> TokenStream {
 
             ($kind:ident, $($expr:expr),+ ) => {
                 seq!(@exp $($expr),+ )
-                    .map(|v| cst::Node::rule(kinds::Rule::$kind, seq!(@args [] , v , $($expr),+ )))
+                    .map(|v| cst::Node::rule(RuleKind::$kind, seq!(@args [] , v , $($expr),+ )))
             };
 
             ($($expr:expr),+ ) => {
@@ -553,7 +545,7 @@ pub fn parse_macros() -> TokenStream {
             ($kind:ident, $expr:expr) => {
                 $expr
                     .repeated()
-                    .map(|children| cst::Node::rule(kinds::Rule::$kind, children))
+                    .map(|children| cst::Node::rule(RuleKind::$kind, children))
             };
             ($expr:expr) => {
                 $expr.repeated().map(|children| cst::Node::group(children))
@@ -566,7 +558,7 @@ pub fn parse_macros() -> TokenStream {
                 $expr
                     .repeated()
                     .at_least(1)
-                    .map(|children| cst::Node::rule(kinds::Rule::$kind, children))
+                    .map(|children| cst::Node::rule(RuleKind::$kind, children))
             };
             ($expr:expr) => {
                 $expr
@@ -583,7 +575,7 @@ pub fn parse_macros() -> TokenStream {
                     .repeated()
                     .at_least($min)
                     .at_most($max)
-                    .map(|children| cst::Node::rule(kinds::Rule::$kind, children))
+                    .map(|children| cst::Node::rule(RuleKind::$kind, children))
             };
             ($expr:expr, $min:literal, $max:literal) => {
                 $expr
@@ -612,7 +604,7 @@ pub fn parse_macros() -> TokenStream {
                             v.push(separator);
                             v.push(expr);
                         }
-                        cst::Node::rule(kinds::Rule::$kind, v)
+                        cst::Node::rule(RuleKind::$kind, v)
                     })
             };
             ($expr:expr, $separator:expr) => {
@@ -644,7 +636,7 @@ pub fn parse_macros() -> TokenStream {
                                 first,
                                 |left_operand, (operator, right_operand)| {
                                     cst::Node::rule(
-                                        kinds::Rule::$kind,
+                                        RuleKind::$kind,
                                         vec![left_operand, operator, right_operand],
                                     )
                                 },
@@ -677,7 +669,7 @@ pub fn parse_macros() -> TokenStream {
                                 last_operand,
                                 |right_operand, (left_operand, operator)| {
                                     cst::Node::rule(
-                                        kinds::Rule::$kind,
+                                        RuleKind::$kind,
                                         vec![left_operand, operator, right_operand],
                                     )
                                 },
@@ -701,10 +693,7 @@ pub fn parse_macros() -> TokenStream {
                             operators
                                 .into_iter()
                                 .fold(operand, |right_operand, operator| {
-                                    cst::Node::rule(
-                                        kinds::Rule::$kind,
-                                        vec![operator, right_operand],
-                                    )
+                                    cst::Node::rule(RuleKind::$kind, vec![operator, right_operand])
                                 })
                         }
                     })
@@ -724,10 +713,7 @@ pub fn parse_macros() -> TokenStream {
                             operators
                                 .into_iter()
                                 .fold(operand, |left_operand, operator| {
-                                    cst::Node::rule(
-                                        kinds::Rule::$kind,
-                                        vec![left_operand, operator],
-                                    )
+                                    cst::Node::rule(RuleKind::$kind, vec![left_operand, operator])
                                 })
                         }
                     })
