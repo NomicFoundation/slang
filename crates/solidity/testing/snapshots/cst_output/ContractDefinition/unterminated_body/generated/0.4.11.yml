@@ -3,7 +3,7 @@
 errors:
   - |
     Error: Expected '/' or 'a' or 'b' or 'c' or 'e' or 'f' or 'i' or 'm' or 'r' or 's' or 't' or 'u' or '}'.
-       ╭─[<unknown>:1:18]
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/unterminated_body/input.sol:1:18]
        │
      1 │ contract Sample {
        ·                  │ 
