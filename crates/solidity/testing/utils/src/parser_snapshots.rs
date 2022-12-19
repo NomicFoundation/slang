@@ -4,7 +4,7 @@ use anyhow::Result;
 use serde::Serialize;
 use solidity_rust_lib::generated::{
     cst,
-    kinds::{Rule, Token},
+    kinds::{RuleKind, TokenKind},
     language::ParserOutput,
     lex,
 };
@@ -54,9 +54,9 @@ impl ParserOutputTestSnapshotExtensions for ParserOutput {
 
 #[derive(Serialize, PartialEq)]
 enum TestNodeKind {
-    RuleKind(Rule),
+    RuleKind(RuleKind),
     RuleGroup,
-    TokenKind(Token),
+    TokenKind(TokenKind),
     TokenFragment,
 }
 
@@ -195,10 +195,12 @@ impl TestNodeMetadata {
                                     "Unexpected trivia children: {trivia:?}"
                                 );
                                 match kind {
-                                    Token::Whitespace | Token::EndOfLine | Token::Linefeed => {
+                                    TokenKind::Whitespace
+                                    | TokenKind::EndOfLine
+                                    | TokenKind::Linefeed => {
                                         continue; // skip
                                     }
-                                    Token::SingleLineComment | Token::MultilineComment => {
+                                    TokenKind::SingleLineComment | TokenKind::MultilineComment => {
                                         // include
                                     }
                                     _ => {
@@ -210,8 +212,8 @@ impl TestNodeMetadata {
                         };
 
                         match kind {
-                            Rule::LeadingTrivia => leading.push(Self::from_cst(child)),
-                            Rule::TrailingTrivia => trailing.push(Self::from_cst(child)),
+                            RuleKind::LeadingTrivia => leading.push(Self::from_cst(child)),
+                            RuleKind::TrailingTrivia => trailing.push(Self::from_cst(child)),
                             _ => unreachable!("Unexpected trivia rule rule: {child:?}"),
                         }
                     }

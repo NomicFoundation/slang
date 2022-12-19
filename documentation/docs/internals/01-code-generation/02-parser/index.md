@@ -128,7 +128,7 @@ return type of the builder.
       Chars(Range<usize>),
       Choice(usize, NodeRef),
       Sequence(Vec<NodeRef>),
-      Named(kinds::Token, NodeRef),
+      Named(TokenKind, NodeRef),
   }
 
   pub type NodeRef = Box<Node>;

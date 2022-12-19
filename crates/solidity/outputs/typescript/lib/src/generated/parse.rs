@@ -1,7 +1,7 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 use super::cst;
-use super::kinds;
+use super::kinds::{RuleKind, TokenKind};
 use super::lex;
 use chumsky::prelude::*;
 use chumsky::Parser;
@@ -709,18 +709,12 @@ impl Parsers {
         macro_rules! lex_terminal {
             ($ kind : ident , $ literal : literal) => {
                 just($literal).map_with_span(|_, span: SpanType| {
-                    lex::Node::named(
-                        kinds::Token::$kind,
-                        lex::Node::chars(span.start()..span.end()),
-                    )
+                    lex::Node::named(TokenKind::$kind, lex::Node::chars(span.start()..span.end()))
                 })
             };
             ($ kind : ident , $ filter : expr) => {
                 filter($filter).map_with_span(|_, span: SpanType| {
-                    lex::Node::named(
-                        kinds::Token::$kind,
-                        lex::Node::chars(span.start()..span.end()),
-                    )
+                    lex::Node::named(TokenKind::$kind, lex::Node::chars(span.start()..span.end()))
                 })
             };
             ($ literal : literal) => {
@@ -739,14 +733,13 @@ impl Parsers {
             };
         }
         #[allow(unused_macros)]
-        macro_rules ! lex_choice { ($ kind : ident , $ ($ expr : expr) , *) => { lex_choice ! ($ ($ expr) , *) . map (| element | lex :: Node :: named (kinds :: Token :: $ kind , element)) } ; ($ ($ expr : expr) , *) => { choice :: < _ , ErrorType > (($ ($ expr . map (| v | lex :: Node :: choice (0 , v))) , *)) } ; }
+        macro_rules ! lex_choice { ($ kind : ident , $ ($ expr : expr) , *) => { lex_choice ! ($ ($ expr) , *) . map (| element | lex :: Node :: named (TokenKind :: $ kind , element)) } ; ($ ($ expr : expr) , *) => { choice :: < _ , ErrorType > (($ ($ expr . map (| v | lex :: Node :: choice (0 , v))) , *)) } ; }
         #[allow(unused_macros)]
-        macro_rules ! lex_seq { (@ exp $ head : expr , $ ($ tail : expr) , +) => { $ head . then (lex_seq ! (@ exp $ ($ tail) , +)) } ; (@ exp $ head : expr) => { $ head } ; (@ args [$ ($ accum : expr ,) *] , $ current : expr , $ head : expr , $ ($ tail : expr) , +) => { lex_seq ! (@ args [$ ($ accum ,) * $ current . 0 ,] , $ current . 1 , $ ($ tail) , +) } ; (@ args [$ ($ accum : expr ,) *] , $ current : expr , $ head : expr) => { vec ! [$ ($ accum ,) * $ current] } ; ($ kind : ident , $ ($ expr : expr) , +) => { lex_seq ! (@ exp $ ($ expr) , +) . map (| v | lex :: Node :: named (kinds :: Token :: $ kind , lex :: Node :: sequence (lex_seq ! (@ args [] , v , $ ($ expr) , +)))) } ; ($ ($ expr : expr) , +) => { lex_seq ! (@ exp $ ($ expr) , +) . map (| v | lex :: Node :: sequence (lex_seq ! (@ args [] , v , $ ($ expr) , +))) } ; }
+        macro_rules ! lex_seq { (@ exp $ head : expr , $ ($ tail : expr) , +) => { $ head . then (lex_seq ! (@ exp $ ($ tail) , +)) } ; (@ exp $ head : expr) => { $ head } ; (@ args [$ ($ accum : expr ,) *] , $ current : expr , $ head : expr , $ ($ tail : expr) , +) => { lex_seq ! (@ args [$ ($ accum ,) * $ current . 0 ,] , $ current . 1 , $ ($ tail) , +) } ; (@ args [$ ($ accum : expr ,) *] , $ current : expr , $ head : expr) => { vec ! [$ ($ accum ,) * $ current] } ; ($ kind : ident , $ ($ expr : expr) , +) => { lex_seq ! (@ exp $ ($ expr) , +) . map (| v | lex :: Node :: named (TokenKind :: $ kind , lex :: Node :: sequence (lex_seq ! (@ args [] , v , $ ($ expr) , +)))) } ; ($ ($ expr : expr) , +) => { lex_seq ! (@ exp $ ($ expr) , +) . map (| v | lex :: Node :: sequence (lex_seq ! (@ args [] , v , $ ($ expr) , +))) } ; }
         #[allow(unused_macros)]
         macro_rules! lex_zero_or_more {
             ($ kind : ident , $ expr : expr) => {
-                lex_zero_or_more!($expr)
-                    .map(|element| lex::Node::named(kinds::Token::$kind, element))
+                lex_zero_or_more!($expr).map(|element| lex::Node::named(TokenKind::$kind, element))
             };
             ($ expr : expr) => {
                 $expr.repeated().map(|v| lex::Node::sequence(v))
@@ -755,8 +748,7 @@ impl Parsers {
         #[allow(unused_macros)]
         macro_rules! lex_one_or_more {
             ($ kind : ident , $ expr : expr) => {
-                lex_one_or_more!($expr)
-                    .map(|element| lex::Node::named(kinds::Token::$kind, element))
+                lex_one_or_more!($expr).map(|element| lex::Node::named(TokenKind::$kind, element))
             };
             ($ expr : expr) => {
                 $expr.repeated().at_least(1).map(|v| lex::Node::sequence(v))
@@ -766,7 +758,7 @@ impl Parsers {
         macro_rules! lex_repeated {
             ($ kind : ident , $ expr : expr , $ min : literal , $ max : literal) => {
                 lex_repeated!($expr, $min, $max)
-                    .map(|element| lex::Node::named(kinds::Token::$kind, element))
+                    .map(|element| lex::Node::named(TokenKind::$kind, element))
             };
             ($ expr : expr , $ min : literal , $ max : literal) => {
                 $expr
@@ -786,7 +778,7 @@ impl Parsers {
         macro_rules! lex_separated_by {
             ($ kind : ident , $ expr : expr , $ separator : expr) => {
                 lex_separated_by!($expr, $separator)
-                    .map(|element| lex::Node::named(kinds::Token::$kind, element))
+                    .map(|element| lex::Node::named(TokenKind::$kind, element))
             };
             ($ expr : expr , $ separator : expr) => {
                 $expr
@@ -802,14 +794,14 @@ impl Parsers {
             };
         }
         #[allow(unused_macros)]
-        macro_rules ! lex_trie { ($ kind : ident , $ ($ expr : expr) , *) => { choice :: < _ , ErrorType > (($ ($ expr) , *)) . map_with_span (| leaf_kind , span : SpanType | lex :: Node :: named (kinds :: Token :: $ kind , lex :: Node :: named (leaf_kind , lex :: Node :: chars (span . start () .. span . end ())))) } ; ($ ($ expr : expr) , *) => { choice :: < _ , ErrorType > (($ ($ expr) , *)) . map_with_span (| kind , span : SpanType | lex :: Node :: named (kind , lex :: Node :: chars (span . start () .. span . end ()))) } ; }
+        macro_rules ! lex_trie { ($ kind : ident , $ ($ expr : expr) , *) => { choice :: < _ , ErrorType > (($ ($ expr) , *)) . map_with_span (| leaf_kind , span : SpanType | lex :: Node :: named (TokenKind :: $ kind , lex :: Node :: named (leaf_kind , lex :: Node :: chars (span . start () .. span . end ())))) } ; ($ ($ expr : expr) , *) => { choice :: < _ , ErrorType > (($ ($ expr) , *)) . map_with_span (| kind , span : SpanType | lex :: Node :: named (kind , lex :: Node :: chars (span . start () .. span . end ()))) } ; }
         #[allow(unused_macros)]
         macro_rules! trieleaf {
             ($ kind : ident , $ string : literal) => {
-                just($string).to(kinds::Token::$kind)
+                just($string).to(TokenKind::$kind)
             };
             ($ kind : ident) => {
-                empty().to(kinds::Token::$kind)
+                empty().to(TokenKind::$kind)
             };
         }
         #[allow(unused_macros)]
@@ -819,7 +811,7 @@ impl Parsers {
             ($ kind : ident , $ literal : literal) => {
                 just($literal).map_with_span(|_, span: SpanType| {
                     cst::Node::trivia_token(
-                        kinds::Token::$kind,
+                        TokenKind::$kind,
                         lex::Node::chars_unwrapped(span.start()..span.end()),
                     )
                 })
@@ -827,7 +819,7 @@ impl Parsers {
             ($ kind : ident , $ filter : expr) => {
                 filter($filter).map_with_span(|_, span: SpanType| {
                     cst::Node::trivia_token(
-                        kinds::Token::$kind,
+                        TokenKind::$kind,
                         lex::Node::chars_unwrapped(span.start()..span.end()),
                     )
                 })
@@ -848,7 +840,7 @@ impl Parsers {
                     .then(trailing_trivia_parser.clone())
                     .map(|((leading_trivia, range), trailing_trivia)| {
                         cst::Node::token(
-                            kinds::Token::$kind,
+                            TokenKind::$kind,
                             lex::Node::chars_unwrapped(range),
                             leading_trivia,
                             trailing_trivia,
@@ -864,7 +856,7 @@ impl Parsers {
                     .then(trailing_trivia_parser.clone())
                     .map(|((leading_trivia, range), trailing_trivia)| {
                         cst::Node::token(
-                            kinds::Token::$kind,
+                            TokenKind::$kind,
                             lex::Node::chars_unwrapped(range),
                             leading_trivia,
                             trailing_trivia,
@@ -883,13 +875,13 @@ impl Parsers {
         #[allow(unused_macros)]
         macro_rules ! choice { ($ kind : ident , $ ($ expr : expr) , *) => { choice :: < _ , ErrorType > (($ ($ expr) , *)) } ; ($ ($ expr : expr) , *) => { choice :: < _ , ErrorType > (($ ($ expr) , *)) } ; }
         #[allow(unused_macros)]
-        macro_rules ! seq { (@ exp $ head : expr , $ ($ tail : expr) , +) => { $ head . then (seq ! (@ exp $ ($ tail) , +)) } ; (@ exp $ head : expr) => { $ head } ; (@ args [$ ($ accum : expr ,) *] , $ current : expr , $ head : expr , $ ($ tail : expr) , +) => { seq ! (@ args [$ ($ accum ,) * $ current . 0 ,] , $ current . 1 , $ ($ tail) , +) } ; (@ args [$ ($ accum : expr ,) *] , $ current : expr , $ head : expr) => { vec ! [$ ($ accum ,) * $ current] } ; ($ kind : ident , $ ($ expr : expr) , +) => { seq ! (@ exp $ ($ expr) , +) . map (| v | cst :: Node :: rule (kinds :: Rule :: $ kind , seq ! (@ args [] , v , $ ($ expr) , +))) } ; ($ ($ expr : expr) , +) => { seq ! (@ exp $ ($ expr) , +) . map (| v | cst :: Node :: group (seq ! (@ args [] , v , $ ($ expr) , +))) } ; }
+        macro_rules ! seq { (@ exp $ head : expr , $ ($ tail : expr) , +) => { $ head . then (seq ! (@ exp $ ($ tail) , +)) } ; (@ exp $ head : expr) => { $ head } ; (@ args [$ ($ accum : expr ,) *] , $ current : expr , $ head : expr , $ ($ tail : expr) , +) => { seq ! (@ args [$ ($ accum ,) * $ current . 0 ,] , $ current . 1 , $ ($ tail) , +) } ; (@ args [$ ($ accum : expr ,) *] , $ current : expr , $ head : expr) => { vec ! [$ ($ accum ,) * $ current] } ; ($ kind : ident , $ ($ expr : expr) , +) => { seq ! (@ exp $ ($ expr) , +) . map (| v | cst :: Node :: rule (RuleKind :: $ kind , seq ! (@ args [] , v , $ ($ expr) , +))) } ; ($ ($ expr : expr) , +) => { seq ! (@ exp $ ($ expr) , +) . map (| v | cst :: Node :: group (seq ! (@ args [] , v , $ ($ expr) , +))) } ; }
         #[allow(unused_macros)]
         macro_rules! zero_or_more {
             ($ kind : ident , $ expr : expr) => {
                 $expr
                     .repeated()
-                    .map(|children| cst::Node::rule(kinds::Rule::$kind, children))
+                    .map(|children| cst::Node::rule(RuleKind::$kind, children))
             };
             ($ expr : expr) => {
                 $expr.repeated().map(|children| cst::Node::group(children))
@@ -901,7 +893,7 @@ impl Parsers {
                 $expr
                     .repeated()
                     .at_least(1)
-                    .map(|children| cst::Node::rule(kinds::Rule::$kind, children))
+                    .map(|children| cst::Node::rule(RuleKind::$kind, children))
             };
             ($ expr : expr) => {
                 $expr
@@ -917,7 +909,7 @@ impl Parsers {
                     .repeated()
                     .at_least($min)
                     .at_most($max)
-                    .map(|children| cst::Node::rule(kinds::Rule::$kind, children))
+                    .map(|children| cst::Node::rule(RuleKind::$kind, children))
             };
             ($ expr : expr , $ min : literal , $ max : literal) => {
                 $expr
@@ -944,7 +936,7 @@ impl Parsers {
                             v.push(separator);
                             v.push(expr);
                         }
-                        cst::Node::rule(kinds::Rule::$kind, v)
+                        cst::Node::rule(RuleKind::$kind, v)
                     })
             };
             ($ expr : expr , $ separator : expr) => {
@@ -974,7 +966,7 @@ impl Parsers {
                                 first,
                                 |left_operand, (operator, right_operand)| {
                                     cst::Node::rule(
-                                        kinds::Rule::$kind,
+                                        RuleKind::$kind,
                                         vec![left_operand, operator, right_operand],
                                     )
                                 },
@@ -1004,7 +996,7 @@ impl Parsers {
                                 last_operand,
                                 |right_operand, (left_operand, operator)| {
                                     cst::Node::rule(
-                                        kinds::Rule::$kind,
+                                        RuleKind::$kind,
                                         vec![left_operand, operator, right_operand],
                                     )
                                 },
@@ -1027,10 +1019,7 @@ impl Parsers {
                             operators
                                 .into_iter()
                                 .fold(operand, |right_operand, operator| {
-                                    cst::Node::rule(
-                                        kinds::Rule::$kind,
-                                        vec![operator, right_operand],
-                                    )
+                                    cst::Node::rule(RuleKind::$kind, vec![operator, right_operand])
                                 })
                         }
                     })
@@ -1049,10 +1038,7 @@ impl Parsers {
                             operators
                                 .into_iter()
                                 .fold(operand, |left_operand, operator| {
-                                    cst::Node::rule(
-                                        kinds::Rule::$kind,
-                                        vec![left_operand, operator],
-                                    )
+                                    cst::Node::rule(RuleKind::$kind, vec![left_operand, operator])
                                 })
                         }
                     })
@@ -3878,27 +3864,27 @@ impl Parsers {
 
         Self {
             abi_coder_pragma: abi_coder_pragma_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::AbicoderPragma, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::AbicoderPragma, node))
                 .then_ignore(end())
                 .boxed(),
             add_sub_expression: add_sub_expression_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::AddSubExpression, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::AddSubExpression, node))
                 .then_ignore(end())
                 .boxed(),
             address_type: address_type_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::AddressType, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::AddressType, node))
                 .then_ignore(end())
                 .boxed(),
             and_expression: and_expression_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::AndExpression, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::AndExpression, node))
                 .then_ignore(end())
                 .boxed(),
             argument_list: argument_list_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::ArgumentList, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::ArgumentList, node))
                 .then_ignore(end())
                 .boxed(),
             array_literal: array_literal_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::ArrayLiteral, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::ArrayLiteral, node))
                 .then_ignore(end())
                 .boxed(),
             ascii_escape: ascii_escape_parser
@@ -3910,31 +3896,31 @@ impl Parsers {
                 .then_ignore(end())
                 .boxed(),
             assembly_flags: assembly_flags_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::AssemblyFlags, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::AssemblyFlags, node))
                 .then_ignore(end())
                 .boxed(),
             assembly_statement: assembly_statement_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::AssemblyStatement, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::AssemblyStatement, node))
                 .then_ignore(end())
                 .boxed(),
             assignment_expression: assignment_expression_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::AssignmentExpression, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::AssignmentExpression, node))
                 .then_ignore(end())
                 .boxed(),
             bit_and_expression: bit_and_expression_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::BitAndExpression, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::BitAndExpression, node))
                 .then_ignore(end())
                 .boxed(),
             bit_or_expression: bit_or_expression_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::BitOrExpression, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::BitOrExpression, node))
                 .then_ignore(end())
                 .boxed(),
             bit_x_or_expression: bit_x_or_expression_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::BitXOrExpression, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::BitXOrExpression, node))
                 .then_ignore(end())
                 .boxed(),
             block: block_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::Block, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::Block, node))
                 .then_ignore(end())
                 .boxed(),
             boolean_literal: boolean_literal_parser
@@ -3942,43 +3928,43 @@ impl Parsers {
                 .then_ignore(end())
                 .boxed(),
             break_statement: break_statement_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::BreakStatement, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::BreakStatement, node))
                 .then_ignore(end())
                 .boxed(),
             catch_clause: catch_clause_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::CatchClause, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::CatchClause, node))
                 .then_ignore(end())
                 .boxed(),
             conditional_expression: conditional_expression_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::ConditionalExpression, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::ConditionalExpression, node))
                 .then_ignore(end())
                 .boxed(),
             constant_definition: constant_definition_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::ConstantDefinition, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::ConstantDefinition, node))
                 .then_ignore(end())
                 .boxed(),
             constructor_attribute: constructor_attribute_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::ConstructorAttribute, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::ConstructorAttribute, node))
                 .then_ignore(end())
                 .boxed(),
             constructor_definition: constructor_definition_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::ConstructorDefinition, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::ConstructorDefinition, node))
                 .then_ignore(end())
                 .boxed(),
             continue_statement: continue_statement_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::ContinueStatement, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::ContinueStatement, node))
                 .then_ignore(end())
                 .boxed(),
             contract_body_element: contract_body_element_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::ContractBodyElement, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::ContractBodyElement, node))
                 .then_ignore(end())
                 .boxed(),
             contract_definition: contract_definition_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::ContractDefinition, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::ContractDefinition, node))
                 .then_ignore(end())
                 .boxed(),
             data_location: data_location_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::DataLocation, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::DataLocation, node))
                 .then_ignore(end())
                 .boxed(),
             decimal_exponent: decimal_exponent_parser
@@ -3998,19 +3984,19 @@ impl Parsers {
                 .then_ignore(end())
                 .boxed(),
             definition: definition_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::Definition, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::Definition, node))
                 .then_ignore(end())
                 .boxed(),
             delete_statement: delete_statement_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::DeleteStatement, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::DeleteStatement, node))
                 .then_ignore(end())
                 .boxed(),
             directive: directive_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::Directive, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::Directive, node))
                 .then_ignore(end())
                 .boxed(),
             do_while_statement: do_while_statement_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::DoWhileStatement, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::DoWhileStatement, node))
                 .then_ignore(end())
                 .boxed(),
             double_quoted_ascii_string_literal: double_quoted_ascii_string_literal_parser
@@ -4022,15 +4008,15 @@ impl Parsers {
                 .then_ignore(end())
                 .boxed(),
             elementary_type: elementary_type_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::ElementaryType, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::ElementaryType, node))
                 .then_ignore(end())
                 .boxed(),
             emit_statement: emit_statement_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::EmitStatement, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::EmitStatement, node))
                 .then_ignore(end())
                 .boxed(),
             end_of_file_trivia: end_of_file_trivia_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::EndOfFileTrivia, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::EndOfFileTrivia, node))
                 .then_ignore(end())
                 .boxed(),
             end_of_line: end_of_line_parser
@@ -4038,21 +4024,19 @@ impl Parsers {
                 .then_ignore(end())
                 .boxed(),
             enum_definition: enum_definition_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::EnumDefinition, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::EnumDefinition, node))
                 .then_ignore(end())
                 .boxed(),
             equality_comparison_expression: equality_comparison_expression_parser
-                .map(|node| {
-                    cst::Node::top_level_rule(kinds::Rule::EqualityComparisonExpression, node)
-                })
+                .map(|node| cst::Node::top_level_rule(RuleKind::EqualityComparisonExpression, node))
                 .then_ignore(end())
                 .boxed(),
             error_definition: error_definition_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::ErrorDefinition, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::ErrorDefinition, node))
                 .then_ignore(end())
                 .boxed(),
             error_parameter: error_parameter_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::ErrorParameter, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::ErrorParameter, node))
                 .then_ignore(end())
                 .boxed(),
             escape_sequence: escape_sequence_parser
@@ -4060,37 +4044,35 @@ impl Parsers {
                 .then_ignore(end())
                 .boxed(),
             event_definition: event_definition_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::EventDefinition, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::EventDefinition, node))
                 .then_ignore(end())
                 .boxed(),
             event_parameter: event_parameter_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::EventParameter, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::EventParameter, node))
                 .then_ignore(end())
                 .boxed(),
             experimental_pragma: experimental_pragma_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::ExperimentalPragma, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::ExperimentalPragma, node))
                 .then_ignore(end())
                 .boxed(),
             exponentiation_expression: exponentiation_expression_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::ExponentiationExpression, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::ExponentiationExpression, node))
                 .then_ignore(end())
                 .boxed(),
             expression: expression_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::Expression, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::Expression, node))
                 .then_ignore(end())
                 .boxed(),
             expression_statement: expression_statement_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::ExpressionStatement, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::ExpressionStatement, node))
                 .then_ignore(end())
                 .boxed(),
             fallback_function_attribute: fallback_function_attribute_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::FallbackFunctionAttribute, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::FallbackFunctionAttribute, node))
                 .then_ignore(end())
                 .boxed(),
             fallback_function_definition: fallback_function_definition_parser
-                .map(|node| {
-                    cst::Node::top_level_rule(kinds::Rule::FallbackFunctionDefinition, node)
-                })
+                .map(|node| cst::Node::top_level_rule(RuleKind::FallbackFunctionDefinition, node))
                 .then_ignore(end())
                 .boxed(),
             fixed_bytes_type: fixed_bytes_type_parser
@@ -4098,23 +4080,23 @@ impl Parsers {
                 .then_ignore(end())
                 .boxed(),
             for_statement: for_statement_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::ForStatement, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::ForStatement, node))
                 .then_ignore(end())
                 .boxed(),
             function_attribute: function_attribute_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::FunctionAttribute, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::FunctionAttribute, node))
                 .then_ignore(end())
                 .boxed(),
             function_call_expression: function_call_expression_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::FunctionCallExpression, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::FunctionCallExpression, node))
                 .then_ignore(end())
                 .boxed(),
             function_definition: function_definition_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::FunctionDefinition, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::FunctionDefinition, node))
                 .then_ignore(end())
                 .boxed(),
             function_type: function_type_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::FunctionType, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::FunctionType, node))
                 .then_ignore(end())
                 .boxed(),
             hex_byte_escape: hex_byte_escape_parser
@@ -4142,7 +4124,7 @@ impl Parsers {
                 .then_ignore(end())
                 .boxed(),
             identifier_path: identifier_path_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::IdentifierPath, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::IdentifierPath, node))
                 .then_ignore(end())
                 .boxed(),
             identifier_start: identifier_start_parser
@@ -4150,31 +4132,31 @@ impl Parsers {
                 .then_ignore(end())
                 .boxed(),
             if_statement: if_statement_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::IfStatement, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::IfStatement, node))
                 .then_ignore(end())
                 .boxed(),
             import_directive: import_directive_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::ImportDirective, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::ImportDirective, node))
                 .then_ignore(end())
                 .boxed(),
             import_path: import_path_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::ImportPath, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::ImportPath, node))
                 .then_ignore(end())
                 .boxed(),
             index_access_expression: index_access_expression_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::IndexAccessExpression, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::IndexAccessExpression, node))
                 .then_ignore(end())
                 .boxed(),
             inheritance_specifier: inheritance_specifier_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::InheritanceSpecifier, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::InheritanceSpecifier, node))
                 .then_ignore(end())
                 .boxed(),
             inheritance_specifier_list: inheritance_specifier_list_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::InheritanceSpecifierList, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::InheritanceSpecifierList, node))
                 .then_ignore(end())
                 .boxed(),
             interface_definition: interface_definition_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::InterfaceDefinition, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::InterfaceDefinition, node))
                 .then_ignore(end())
                 .boxed(),
             keyword: keyword_parser
@@ -4182,35 +4164,35 @@ impl Parsers {
                 .then_ignore(end())
                 .boxed(),
             leading_trivia: leading_trivia_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::LeadingTrivia, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::LeadingTrivia, node))
                 .then_ignore(end())
                 .boxed(),
             library_definition: library_definition_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::LibraryDefinition, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::LibraryDefinition, node))
                 .then_ignore(end())
                 .boxed(),
             mapping_type: mapping_type_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::MappingType, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::MappingType, node))
                 .then_ignore(end())
                 .boxed(),
             member_access_expression: member_access_expression_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::MemberAccessExpression, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::MemberAccessExpression, node))
                 .then_ignore(end())
                 .boxed(),
             modifier_attribute: modifier_attribute_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::ModifierAttribute, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::ModifierAttribute, node))
                 .then_ignore(end())
                 .boxed(),
             modifier_definition: modifier_definition_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::ModifierDefinition, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::ModifierDefinition, node))
                 .then_ignore(end())
                 .boxed(),
             modifier_invocation: modifier_invocation_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::ModifierInvocation, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::ModifierInvocation, node))
                 .then_ignore(end())
                 .boxed(),
             mul_div_mod_expression: mul_div_mod_expression_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::MulDivModExpression, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::MulDivModExpression, node))
                 .then_ignore(end())
                 .boxed(),
             multiline_comment: multiline_comment_parser
@@ -4218,15 +4200,15 @@ impl Parsers {
                 .then_ignore(end())
                 .boxed(),
             named_argument: named_argument_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::NamedArgument, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::NamedArgument, node))
                 .then_ignore(end())
                 .boxed(),
             named_argument_list: named_argument_list_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::NamedArgumentList, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::NamedArgumentList, node))
                 .then_ignore(end())
                 .boxed(),
             new_expression: new_expression_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::NewExpression, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::NewExpression, node))
                 .then_ignore(end())
                 .boxed(),
             number_unit: number_unit_parser
@@ -4238,35 +4220,35 @@ impl Parsers {
                 .then_ignore(end())
                 .boxed(),
             or_expression: or_expression_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::OrExpression, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::OrExpression, node))
                 .then_ignore(end())
                 .boxed(),
             order_comparison_expression: order_comparison_expression_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::OrderComparisonExpression, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::OrderComparisonExpression, node))
                 .then_ignore(end())
                 .boxed(),
             override_specifier: override_specifier_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::OverrideSpecifier, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::OverrideSpecifier, node))
                 .then_ignore(end())
                 .boxed(),
             parameter_declaration: parameter_declaration_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::ParameterDeclaration, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::ParameterDeclaration, node))
                 .then_ignore(end())
                 .boxed(),
             parameter_list: parameter_list_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::ParameterList, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::ParameterList, node))
                 .then_ignore(end())
                 .boxed(),
             parenthesis_expression: parenthesis_expression_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::ParenthesisExpression, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::ParenthesisExpression, node))
                 .then_ignore(end())
                 .boxed(),
             payable_expression: payable_expression_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::PayableExpression, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::PayableExpression, node))
                 .then_ignore(end())
                 .boxed(),
             positional_argument_list: positional_argument_list_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::PositionalArgumentList, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::PositionalArgumentList, node))
                 .then_ignore(end())
                 .boxed(),
             possibly_separated_pairs_of_hex_digits: possibly_separated_pairs_of_hex_digits_parser
@@ -4274,11 +4256,11 @@ impl Parsers {
                 .then_ignore(end())
                 .boxed(),
             pragma_directive: pragma_directive_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::PragmaDirective, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::PragmaDirective, node))
                 .then_ignore(end())
                 .boxed(),
             primary_expression: primary_expression_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::PrimaryExpression, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::PrimaryExpression, node))
                 .then_ignore(end())
                 .boxed(),
             raw_identifier: raw_identifier_parser
@@ -4286,11 +4268,11 @@ impl Parsers {
                 .then_ignore(end())
                 .boxed(),
             receive_function_attribute: receive_function_attribute_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::ReceiveFunctionAttribute, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::ReceiveFunctionAttribute, node))
                 .then_ignore(end())
                 .boxed(),
             receive_function_definition: receive_function_definition_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::ReceiveFunctionDefinition, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::ReceiveFunctionDefinition, node))
                 .then_ignore(end())
                 .boxed(),
             reserved_keyword: reserved_keyword_parser
@@ -4298,23 +4280,23 @@ impl Parsers {
                 .then_ignore(end())
                 .boxed(),
             return_statement: return_statement_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::ReturnStatement, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::ReturnStatement, node))
                 .then_ignore(end())
                 .boxed(),
             revert_statement: revert_statement_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::RevertStatement, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::RevertStatement, node))
                 .then_ignore(end())
                 .boxed(),
             selected_import: selected_import_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::SelectedImport, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::SelectedImport, node))
                 .then_ignore(end())
                 .boxed(),
             selecting_import_directive: selecting_import_directive_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::SelectingImportDirective, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::SelectingImportDirective, node))
                 .then_ignore(end())
                 .boxed(),
             shift_expression: shift_expression_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::ShiftExpression, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::ShiftExpression, node))
                 .then_ignore(end())
                 .boxed(),
             signed_fixed_type: signed_fixed_type_parser
@@ -4326,11 +4308,11 @@ impl Parsers {
                 .then_ignore(end())
                 .boxed(),
             simple_import_directive: simple_import_directive_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::SimpleImportDirective, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::SimpleImportDirective, node))
                 .then_ignore(end())
                 .boxed(),
             simple_statement: simple_statement_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::SimpleStatement, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::SimpleStatement, node))
                 .then_ignore(end())
                 .boxed(),
             single_line_comment: single_line_comment_parser
@@ -4346,65 +4328,63 @@ impl Parsers {
                 .then_ignore(end())
                 .boxed(),
             source_unit: source_unit_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::SourceUnit, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::SourceUnit, node))
                 .then_ignore(end())
                 .boxed(),
             star_import_directive: star_import_directive_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::StarImportDirective, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::StarImportDirective, node))
                 .then_ignore(end())
                 .boxed(),
             state_variable_attribute: state_variable_attribute_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::StateVariableAttribute, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::StateVariableAttribute, node))
                 .then_ignore(end())
                 .boxed(),
             state_variable_declaration: state_variable_declaration_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::StateVariableDeclaration, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::StateVariableDeclaration, node))
                 .then_ignore(end())
                 .boxed(),
             statement: statement_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::Statement, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::Statement, node))
                 .then_ignore(end())
                 .boxed(),
             struct_definition: struct_definition_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::StructDefinition, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::StructDefinition, node))
                 .then_ignore(end())
                 .boxed(),
             struct_member: struct_member_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::StructMember, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::StructMember, node))
                 .then_ignore(end())
                 .boxed(),
             trailing_trivia: trailing_trivia_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::TrailingTrivia, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::TrailingTrivia, node))
                 .then_ignore(end())
                 .boxed(),
             try_statement: try_statement_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::TryStatement, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::TryStatement, node))
                 .then_ignore(end())
                 .boxed(),
             tuple_deconstruction_statement: tuple_deconstruction_statement_parser
-                .map(|node| {
-                    cst::Node::top_level_rule(kinds::Rule::TupleDeconstructionStatement, node)
-                })
+                .map(|node| cst::Node::top_level_rule(RuleKind::TupleDeconstructionStatement, node))
                 .then_ignore(end())
                 .boxed(),
             type_expression: type_expression_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::TypeExpression, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::TypeExpression, node))
                 .then_ignore(end())
                 .boxed(),
             type_name: type_name_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::TypeName, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::TypeName, node))
                 .then_ignore(end())
                 .boxed(),
             unary_prefix_expression: unary_prefix_expression_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::UnaryPrefixExpression, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::UnaryPrefixExpression, node))
                 .then_ignore(end())
                 .boxed(),
             unary_suffix_expression: unary_suffix_expression_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::UnarySuffixExpression, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::UnarySuffixExpression, node))
                 .then_ignore(end())
                 .boxed(),
             unchecked_block: unchecked_block_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::UncheckedBlock, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::UncheckedBlock, node))
                 .then_ignore(end())
                 .boxed(),
             unicode_escape: unicode_escape_parser
@@ -4425,22 +4405,20 @@ impl Parsers {
                 .boxed(),
             user_defined_value_type_definition: user_defined_value_type_definition_parser
                 .map(|node| {
-                    cst::Node::top_level_rule(kinds::Rule::UserDefinedValueTypeDefinition, node)
+                    cst::Node::top_level_rule(RuleKind::UserDefinedValueTypeDefinition, node)
                 })
                 .then_ignore(end())
                 .boxed(),
             using_directive: using_directive_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::UsingDirective, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::UsingDirective, node))
                 .then_ignore(end())
                 .boxed(),
             variable_declaration_statement: variable_declaration_statement_parser
-                .map(|node| {
-                    cst::Node::top_level_rule(kinds::Rule::VariableDeclarationStatement, node)
-                })
+                .map(|node| cst::Node::top_level_rule(RuleKind::VariableDeclarationStatement, node))
                 .then_ignore(end())
                 .boxed(),
             version_pragma: version_pragma_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::VersionPragma, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::VersionPragma, node))
                 .then_ignore(end())
                 .boxed(),
             version_pragma_operator: version_pragma_operator_parser
@@ -4448,7 +4426,7 @@ impl Parsers {
                 .then_ignore(end())
                 .boxed(),
             version_pragma_specifier: version_pragma_specifier_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::VersionPragmaSpecifier, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::VersionPragmaSpecifier, node))
                 .then_ignore(end())
                 .boxed(),
             version_pragma_value: version_pragma_value_parser
@@ -4456,7 +4434,7 @@ impl Parsers {
                 .then_ignore(end())
                 .boxed(),
             while_statement: while_statement_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::WhileStatement, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::WhileStatement, node))
                 .then_ignore(end())
                 .boxed(),
             whitespace: whitespace_parser
@@ -4464,19 +4442,19 @@ impl Parsers {
                 .then_ignore(end())
                 .boxed(),
             yul_assignment_statement: yul_assignment_statement_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulAssignmentStatement, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::YulAssignmentStatement, node))
                 .then_ignore(end())
                 .boxed(),
             yul_block: yul_block_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulBlock, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::YulBlock, node))
                 .then_ignore(end())
                 .boxed(),
             yul_break_statement: yul_break_statement_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulBreakStatement, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::YulBreakStatement, node))
                 .then_ignore(end())
                 .boxed(),
             yul_continue_statement: yul_continue_statement_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulContinueStatement, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::YulContinueStatement, node))
                 .then_ignore(end())
                 .boxed(),
             yul_decimal_number_literal: yul_decimal_number_literal_parser
@@ -4484,19 +4462,19 @@ impl Parsers {
                 .then_ignore(end())
                 .boxed(),
             yul_expression: yul_expression_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulExpression, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::YulExpression, node))
                 .then_ignore(end())
                 .boxed(),
             yul_for_statement: yul_for_statement_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulForStatement, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::YulForStatement, node))
                 .then_ignore(end())
                 .boxed(),
             yul_function_call: yul_function_call_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulFunctionCall, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::YulFunctionCall, node))
                 .then_ignore(end())
                 .boxed(),
             yul_function_definition: yul_function_definition_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulFunctionDefinition, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::YulFunctionDefinition, node))
                 .then_ignore(end())
                 .boxed(),
             yul_hex_literal: yul_hex_literal_parser
@@ -4508,11 +4486,11 @@ impl Parsers {
                 .then_ignore(end())
                 .boxed(),
             yul_identifier_path: yul_identifier_path_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulIdentifierPath, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::YulIdentifierPath, node))
                 .then_ignore(end())
                 .boxed(),
             yul_if_statement: yul_if_statement_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulIfStatement, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::YulIfStatement, node))
                 .then_ignore(end())
                 .boxed(),
             yul_keyword: yul_keyword_parser
@@ -4520,23 +4498,23 @@ impl Parsers {
                 .then_ignore(end())
                 .boxed(),
             yul_leave_statement: yul_leave_statement_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulLeaveStatement, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::YulLeaveStatement, node))
                 .then_ignore(end())
                 .boxed(),
             yul_literal: yul_literal_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulLiteral, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::YulLiteral, node))
                 .then_ignore(end())
                 .boxed(),
             yul_statement: yul_statement_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulStatement, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::YulStatement, node))
                 .then_ignore(end())
                 .boxed(),
             yul_switch_statement: yul_switch_statement_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulSwitchStatement, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::YulSwitchStatement, node))
                 .then_ignore(end())
                 .boxed(),
             yul_variable_declaration: yul_variable_declaration_parser
-                .map(|node| cst::Node::top_level_rule(kinds::Rule::YulVariableDeclaration, node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::YulVariableDeclaration, node))
                 .then_ignore(end())
                 .boxed(),
         }

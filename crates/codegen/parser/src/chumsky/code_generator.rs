@@ -144,7 +144,7 @@ impl CodeGenerator {
                 }
                 ParserResultType::Rule => {
                     let kind = format_ident!("{}", name.to_pascal_case());
-                    quote!( #parser_name.map(|node| cst::Node::top_level_rule(kinds::Rule::#kind, node)) )
+                    quote!( #parser_name.map(|node| cst::Node::top_level_rule(RuleKind::#kind, node)) )
                 }
             };
             field_assignments

@@ -3,7 +3,7 @@
 use serde::Serialize;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
-pub enum Token {
+pub enum TokenKind {
     Abicoder,
     Abstract,
     Address,
@@ -298,7 +298,7 @@ pub enum Token {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize)]
-pub enum Rule {
+pub enum RuleKind {
     Abicoder,
     AbicoderPragma,
     Abstract,

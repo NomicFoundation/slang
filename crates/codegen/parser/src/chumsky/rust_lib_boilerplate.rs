@@ -19,7 +19,7 @@ pub fn cst_visitor_head() -> TokenStream {
         pub trait Visitor<E> {
             fn enter_rule(
                 &mut self,
-                kind: kinds::Rule,
+                kind: RuleKind,
                 children: &Vec<Rc<Node>>,
                 node: &Rc<Node>,
                 path: &Vec<Rc<Node>>,
@@ -29,7 +29,7 @@ pub fn cst_visitor_head() -> TokenStream {
 
             fn exit_rule(
                 &mut self,
-                kind: kinds::Rule,
+                kind: RuleKind,
                 children: &Vec<Rc<Node>>,
                 node: &Rc<Node>,
                 path: &Vec<Rc<Node>>,
@@ -39,7 +39,7 @@ pub fn cst_visitor_head() -> TokenStream {
 
             fn enter_token(
                 &mut self,
-                kind: kinds::Token,
+                kind: TokenKind,
                 lex_node: &Rc<lex::Node>,
                 trivia: &Vec<Rc<Node>>,
                 node: &Rc<Node>,
@@ -50,7 +50,7 @@ pub fn cst_visitor_head() -> TokenStream {
 
             fn exit_token(
                 &mut self,
-                kind: kinds::Token,
+                kind: TokenKind,
                 lex_node: &Rc<lex::Node>,
                 trivia: &Vec<Rc<Node>>,
                 node: &Rc<Node>,

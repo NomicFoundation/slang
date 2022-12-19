@@ -127,7 +127,7 @@ pub fn lex_head() -> TokenStream {
             }
 
             #[napi(getter)]
-            pub fn kind(&self) -> kinds::Token {
+            pub fn kind(&self) -> TokenKind {
                 match self.0.as_ref() {
                     Node::Named(kind, _) => *kind,
                     _  => unreachable!()
@@ -191,7 +191,7 @@ pub fn cst_head() -> TokenStream {
             pub fn tipe(&self) -> NodeType { NodeType::Rule }
 
             #[napi(getter)]
-            pub fn kind(&self) -> kinds::Rule {
+            pub fn kind(&self) -> RuleKind {
                 match self.0.as_ref() {
                     Node::Rule { kind, .. } => *kind,
                     _ => unreachable!()
@@ -213,7 +213,7 @@ pub fn cst_head() -> TokenStream {
             pub fn tipe(&self) -> NodeType { NodeType::Token }
 
             #[napi(getter)]
-            pub fn kind(&self) -> kinds::Token {
+            pub fn kind(&self) -> TokenKind {
                 match self.0.as_ref() {
                     Node::Token { kind, .. } => *kind,
                     _ => unreachable!()
