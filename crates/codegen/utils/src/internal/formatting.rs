@@ -111,7 +111,7 @@ mod formatters {
 
         return run_command(
             &codegen.repo_root,
-            &vec![rustfmt_path, "--emit", "stdout"],
+            &[rustfmt_path, "--emit", "stdout"],
             Some(contents),
         )
         .context(format!("Failed to run rustfmt on file: {file_path:?}"));
@@ -131,7 +131,7 @@ mod formatters {
             let setup_path = codegen.repo_root.join("scripts/linting/setup.sh");
             let setup_path = setup_path.to_str().context("Cannot get setup.sh path")?;
 
-            run_command(&codegen.repo_root, &vec![setup_path], None)
+            run_command(&codegen.repo_root, &[setup_path], None)
                 .context(format!("Failed to run setup script: {setup_path:?}"))?;
         }
 
@@ -143,7 +143,7 @@ mod formatters {
 
         return run_command(
             &codegen.repo_root,
-            &vec![
+            &[
                 node_path,
                 prettier_path,
                 "--stdin-filepath", // used to infer the language, and detect `.prettierrc` options

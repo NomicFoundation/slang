@@ -60,17 +60,22 @@ pub fn verify_file(codegen: &CodegenContext, file_path: &PathBuf, contents: &str
 }
 
 pub fn calculate_repo_root() -> Result<PathBuf> {
-    // This is the only place where we cannot use the `$REPO_ROOT` env var defined by the hermit environment.
-    // Since CodegenContext can be invoked from VS Code (rust-analyzer), which does not activate hermit first.
-    // All other scripts should use `$REPO_ROOT` directly.
+    if let Ok(repo_root) = std::env::var("REPO_ROOT") {
+        return Ok(PathBuf::from(repo_root));
+    }
+
+    // If this environment variable is not set, it means we are running outside the Hermit environment.
+    // Most likely, it is the rust-analyzer extension running inside VSCode.
+    // Try to locate the repository root by looking for the ".git" directory.
+
     let git_dir = run_command(
         &std::env::current_dir()?,
-        &vec!["git", "rev-parse", "--git-dir"],
+        &["git", "rev-parse", "--git-dir"],
         None,
     )?;
 
     let git_dir = PathBuf::from(git_dir);
-    let repo_root = git_dir.parent().unwrap().to_path_buf();
+    let repo_root = git_dir.parent().unwrap().canonicalize()?;
 
     return Ok(repo_root);
 }
