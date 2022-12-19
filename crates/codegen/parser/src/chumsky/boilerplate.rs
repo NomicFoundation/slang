@@ -746,46 +746,19 @@ pub fn parse_macros() -> TokenStream {
 
 pub fn error_renderer() -> TokenStream {
     quote!(
-        fn render_error_report(error: &ErrorType, with_color: bool) -> Report<SpanType> {
-            let mut builder: ReportBuilder<SpanType> = Report::build(
-                ReportKind::Error,
-                error.span().context(),
-                error.span().start(),
-            )
-            .with_config(Config::default().with_color(with_color));
+        fn render_error_report(error: &ErrorType, source: &str, with_color: bool) -> String {
+            let kind = ReportKind::Error;
+            let color = if with_color { Color::Red } else { Color::Unset };
 
-            let error_color = if with_color { Color::Red } else { Color::Unset };
-
-            builder = match error.reason() {
+            let message = match error.reason() {
                 SimpleReason::Custom(message) => {
                     // use custom message as-is
-                    builder.with_message(message)
+                    message.to_string()
                 }
-                SimpleReason::Unclosed { span, delimiter } => {
-                    builder.add_label(
-                        Label::<SpanType>::new(span.to_owned())
-                            .with_color(error_color)
-                            .with_message("Unclosed delimiter"),
-                    );
-
-                    builder.with_message(format!(
-                        "Expected delimiter '{}' to be closed",
-                        delimiter.fg(error_color)
-                    ))
+                SimpleReason::Unclosed { delimiter, .. } => {
+                    format!("Expected delimiter '{}' to be closed", delimiter.fg(color))
                 }
                 SimpleReason::Unexpected => {
-                    let found = if let Some(found) = error.found() {
-                        format!("'{}'", found.fg(error_color))
-                    } else {
-                        "end of input".to_string()
-                    };
-
-                    builder.add_label(
-                        Label::<SpanType>::new(error.span())
-                            .with_color(error_color)
-                            .with_message(format!("Found {found}.")),
-                    );
-
                     let mut expected: Vec<&Option<char>> = error.expected().collect();
                     expected.sort();
 
@@ -802,11 +775,50 @@ pub fn error_renderer() -> TokenStream {
                             .join(" or ")
                     };
 
-                    builder.with_message(format!("Expected {expected}."))
+                    format!("Expected {expected}.")
                 }
             };
 
-            return builder.finish();
+            if source.is_empty() {
+                let start = error.span().start();
+                let end = error.span().end();
+                return format!("{kind}: {message}\n   ─[{start}:{end}]");
+            }
+
+            let label = match error.reason() {
+                SimpleReason::Custom(_) => "Error occurred here.".to_string(),
+                SimpleReason::Unclosed { delimiter, .. } => {
+                    format!("Unclosed delimiter '{}'.", delimiter.fg(color))
+                }
+                SimpleReason::Unexpected => {
+                    if let Some(found) = error.found() {
+                        format!("Found '{}'.", found.fg(color))
+                    } else {
+                        "Found end of input.".to_string()
+                    }
+                }
+            };
+
+            let mut builder = Report::build(kind, error.span().context(), error.span().start())
+                .with_config(Config::default().with_color(with_color))
+                .with_message(message);
+
+            builder.add_label(
+                Label::new(error.span())
+                    .with_color(color)
+                    .with_message(label),
+            );
+
+            let mut result = vec![];
+            builder
+                .finish()
+                .write(Source::from(&source), &mut result)
+                .expect("Failed to write report");
+
+            return String::from_utf8(result)
+                .expect("Failed to convert report to utf8")
+                .trim()
+                .to_string();
         }
     )
 }
