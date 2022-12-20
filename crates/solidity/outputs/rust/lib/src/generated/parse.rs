@@ -302,7 +302,7 @@ pub struct Parsers {
     /// «NumberUnit» = 'days' | 'ether' | 'finney' | 'gwei' | 'hours' | 'minutes' | 'seconds' | 'szabo' | 'weeks' | 'wei' | 'years' ;
     pub number_unit: BoxedParserType,
 
-    /// «NumericLiteral» = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
+    /// NumericLiteral = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
     pub numeric_literal: BoxedParserType,
 
     /// OrExpression = Expression '||' Expression ;
@@ -335,7 +335,7 @@ pub struct Parsers {
     /// PragmaDirective = 'pragma' ( VersionPragma | ABICoderPragma | ExperimentalPragma ) ';' ;
     pub pragma_directive: BoxedParserType,
 
-    /// PrimaryExpression = PayableExpression | TypeExpression | NewExpression | ParenthesisExpression | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | «NumericLiteral» | «BooleanLiteral» | «Identifier» ;
+    /// PrimaryExpression = PayableExpression | TypeExpression | NewExpression | ParenthesisExpression | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | NumericLiteral | «BooleanLiteral» | «Identifier» ;
     pub primary_expression: BoxedParserType,
 
     /// «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;
@@ -627,7 +627,7 @@ impl Parsers {
         let mut named_argument_list_parser = DeferredCSTParserType::declare();
         let mut new_expression_parser = DeferredCSTParserType::declare();
         let mut number_unit_parser = DeferredLexParserType::declare();
-        let mut numeric_literal_parser = DeferredLexParserType::declare();
+        let mut numeric_literal_parser = DeferredCSTParserType::declare();
         let mut or_expression_parser = DeferredCSTParserType::declare();
         let mut order_comparison_expression_parser = DeferredCSTParserType::declare();
         let mut override_specifier_parser = DeferredCSTParserType::declare();
@@ -2511,29 +2511,13 @@ impl Parsers {
             );
         }
 
-        // «NumericLiteral» = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
+        // NumericLiteral = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
         {
             numeric_literal_parser.define(
-                lex_seq!(
+                seq!(
                     NumericLiteral,
-                    lex_choice!(
-                        lex_rule!(decimal_number_parser),
-                        lex_rule!(hex_number_parser)
-                    ),
-                    lex_optional!(lex_trie!(
-                        trieleaf!(Days, "days"),
-                        trieleaf!(Ether, "ether"),
-                        trieleaf!(Finney, "finney"),
-                        trieleaf!(Gwei, "gwei"),
-                        trieleaf!(Hours, "hours"),
-                        trieleaf!(Minutes, "minutes"),
-                        trieprefix!(
-                            "s",
-                            [trieleaf!(Seconds, "econds"), trieleaf!(Szabo, "zabo")]
-                        ),
-                        trieprefix!("we", [trieleaf!(Weeks, "eks"), trieleaf!(Wei, "i")]),
-                        trieleaf!(Years, "years")
-                    ))
+                    choice!(token!(decimal_number_parser), token!(hex_number_parser)),
+                    optional!(token!(number_unit_parser))
                 )
                 .boxed(),
             );
@@ -2704,7 +2688,7 @@ impl Parsers {
             );
         }
 
-        // PrimaryExpression = PayableExpression | TypeExpression | NewExpression | ParenthesisExpression | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | «NumericLiteral» | «BooleanLiteral» | «Identifier» ;
+        // PrimaryExpression = PayableExpression | TypeExpression | NewExpression | ParenthesisExpression | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | NumericLiteral | «BooleanLiteral» | «Identifier» ;
         {
             primary_expression_parser.define(
                 choice!(
@@ -2717,7 +2701,7 @@ impl Parsers {
                     token!(ascii_string_literal_parser),
                     token!(unicode_string_literal_parser),
                     token!(hex_string_literal_parser),
-                    token!(numeric_literal_parser),
+                    rule!(numeric_literal_parser),
                     token!(boolean_literal_parser),
                     token!(identifier_parser)
                 )
@@ -4216,7 +4200,7 @@ impl Parsers {
                 .then_ignore(end())
                 .boxed(),
             numeric_literal: numeric_literal_parser
-                .map(|node| cst::Node::top_level_token(node))
+                .map(|node| cst::Node::top_level_rule(RuleKind::NumericLiteral, node))
                 .then_ignore(end())
                 .boxed(),
             or_expression: or_expression_parser

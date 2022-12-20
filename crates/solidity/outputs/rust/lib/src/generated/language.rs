@@ -565,7 +565,7 @@ impl Language {
         ParserOutput::new(source, &self.parsers.number_unit)
     }
 
-    // «NumericLiteral» = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
+    // NumericLiteral = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
     pub fn parse_numeric_literal(&self, source: &str) -> ParserOutput {
         ParserOutput::new(source, &self.parsers.numeric_literal)
     }
@@ -620,7 +620,7 @@ impl Language {
         ParserOutput::new(source, &self.parsers.pragma_directive)
     }
 
-    // PrimaryExpression = PayableExpression | TypeExpression | NewExpression | ParenthesisExpression | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | «NumericLiteral» | «BooleanLiteral» | «Identifier» ;
+    // PrimaryExpression = PayableExpression | TypeExpression | NewExpression | ParenthesisExpression | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | NumericLiteral | «BooleanLiteral» | «Identifier» ;
     pub fn parse_primary_expression(&self, source: &str) -> ParserOutput {
         ParserOutput::new(source, &self.parsers.primary_expression)
     }

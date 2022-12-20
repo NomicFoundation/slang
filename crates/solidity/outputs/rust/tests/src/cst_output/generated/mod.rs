@@ -9,6 +9,8 @@ mod InterfaceDefinition;
 #[allow(non_snake_case)]
 mod MultilineComment;
 #[allow(non_snake_case)]
+mod NumericLiteral;
+#[allow(non_snake_case)]
 mod SourceUnit;
 #[allow(non_snake_case)]
 mod VersionPragma;

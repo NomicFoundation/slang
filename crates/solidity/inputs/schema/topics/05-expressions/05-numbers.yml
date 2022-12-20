@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../../codegen/schema/json-schema/topic.schema.json
 
 - name: NumericLiteral
-  kind: Token
+  kind: Rule
   sequence:
     - choice:
         - reference: DecimalNumber

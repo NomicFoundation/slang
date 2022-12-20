@@ -1,0 +1,7 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Errors: 0
+
+█ Rule(NumericLiteral) - (0..8)        │
+├──► Token(DecimalNumber) - (0..2)     │ 10
+└──► Token(NumberUnit) - (3..8)        │ ether
