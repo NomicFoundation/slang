@@ -111,6 +111,12 @@ impl CodegenContext {
     }
 
     fn print_cargo_markers(&self) {
+        if std::env::var("RUSTC").is_err() {
+            // This environment variable is only set for Cargo build tasks.
+            // When it is missing, it means we are running from tests, and we shouldn't print these markers.
+            return;
+        }
+
         for input_dir in &self.input_dirs {
             println!("cargo:rerun-if-changed={}", input_dir.to_str().unwrap());
         }
