@@ -1,1 +1,1 @@
-pub mod parser_snapshots;
+pub mod cst_snapshots;

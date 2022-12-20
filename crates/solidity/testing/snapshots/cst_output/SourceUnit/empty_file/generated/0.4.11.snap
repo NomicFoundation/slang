@@ -1,7 +1,5 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-errors: []
+Errors: 0
 
-root:
-  kind: !RuleKind SourceUnit
-  children: []
+► Rule(SourceUnit) - (<empty>)     │

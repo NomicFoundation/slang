@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Errors: 0
+
+█ Rule(VersionPragma) - (0..20)                              │
+├──► Token(Solidity) - (0..8)                                │ solidity
+└──█ Rule(VersionPragmaSpecifiers) - (9..20)                 │
+   ├──█ Rule(VersionPragmaSpecifier) - (9..14)               │
+   │  └──█ Rule(SeparatedVersionPragmaValues) - (9..14)      │
+   │     ├──► Token(VersionPragmaValue) - (9..10)            │ 0
+   │     ├──► Token(Period) - (10..11)                       │ .
+   │     ├──► Token(VersionPragmaValue) - (11..12)           │ 7
+   │     ├──► Token(Period) - (12..13)                       │ .
+   │     └──► Token(VersionPragmaValue) - (13..14)           │ 0
+   └──█ Rule(VersionPragmaSpecifier) - (15..20)              │
+      └──█ Rule(SeparatedVersionPragmaValues) - (15..20)     │
+         ├──► Token(VersionPragmaValue) - (15..16)           │ 0
+         ├──► Token(Period) - (16..17)                       │ .
+         ├──► Token(VersionPragmaValue) - (17..18)           │ 8
+         ├──► Token(Period) - (18..19)                       │ .
+         └──► Token(VersionPragmaValue) - (19..20)           │ 0
