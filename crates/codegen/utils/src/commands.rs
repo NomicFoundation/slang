@@ -37,6 +37,18 @@ pub fn run_command(cwd: &PathBuf, parts: &[&str], stdin: Option<&str>) -> Result
     });
 }
 
+pub fn run_command_inline(cwd: &PathBuf, parts: &[&str]) -> Result<()> {
+    return wrap_command_errors(cwd, parts, Stdio::inherit, |command| {
+        let status = command.spawn()?.wait()?;
+
+        if status.success() {
+            return Ok(());
+        } else {
+            bail!("Command failed with status: {status}");
+        }
+    });
+}
+
 fn wrap_command_errors<
     TResult,
     TStdio: Fn() -> Stdio,

@@ -1,0 +1,17 @@
+[package]
+name = "solidity_smoke_testing"
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+
+[dependencies]
+anyhow = { workspace = true }
+codegen_schema = { workspace = true }
+codegen_utils = { workspace = true }
+indicatif = { workspace = true }
+rayon = { workspace = true }
+semver = { workspace = true }
+solidity_rust_lib = { workspace = true }
+solidity_testing_utils = { workspace = true }
+url = { workspace = true }
+walkdir = { workspace = true }
