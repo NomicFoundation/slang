@@ -1267,6 +1267,7 @@ name = "solidity_testing_utils"
 version = "0.0.0"
 dependencies = [
  "anyhow",
+ "semver",
  "solidity_rust_lib",
 ]
 
