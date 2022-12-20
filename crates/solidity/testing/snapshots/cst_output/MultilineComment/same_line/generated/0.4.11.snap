@@ -1,0 +1,5 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Errors: 0
+
+► Token(MultilineComment) - (0..30)     │ /* this is on the same line */

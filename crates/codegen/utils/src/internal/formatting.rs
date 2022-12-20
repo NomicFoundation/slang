@@ -74,9 +74,8 @@ fn generate_header(file_path: &PathBuf) -> Result<String> {
     return match get_extension(file_path)? {
         "ebnf" => Ok(format!("(* {warning_line} *)")),
         "md" => Ok(format!("<!-- {warning_line} -->")),
-        "rs" => Ok(format!("// {warning_line}")),
-        "ts" => Ok(format!("// {warning_line}")),
-        "yml" => Ok(format!("# {warning_line}")),
+        "rs" | "ts" => Ok(format!("// {warning_line}")),
+        "snap" | "yml" => Ok(format!("# {warning_line}")),
         ext => bail!("Unsupported extension to generate a header for: {ext}"),
     };
 }
@@ -96,7 +95,7 @@ mod formatters {
         return match get_extension(file_path)? {
             "rs" => run_rustfmt(codegen, file_path, contents),
             "md" | "yml" => run_prettier(codegen, file_path, contents),
-            "ebnf" => Ok(contents.to_owned()), // we don't format these files (yet)
+            "ebnf" | "snap" => Ok(contents.to_owned()), // we don't format these files (yet)
             ext => bail!("Unsupported extension to format: {ext}"),
         };
     }

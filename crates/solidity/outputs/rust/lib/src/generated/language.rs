@@ -23,6 +23,7 @@ impl Language {
         &self.version
     }
 }
+#[derive(PartialEq)]
 pub struct ParserOutput {
     parse_tree: Option<Rc<cst::Node>>,
     errors: Vec<ErrorType>,

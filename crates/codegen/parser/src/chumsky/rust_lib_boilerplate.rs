@@ -212,6 +212,7 @@ pub fn language_head() -> TokenStream {
             }
         }
 
+        #[derive(PartialEq)]
         pub struct ParserOutput {
             parse_tree: Option<Rc<cst::Node>>,
             errors: Vec<ErrorType>,
