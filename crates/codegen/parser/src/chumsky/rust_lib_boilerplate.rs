@@ -186,12 +186,12 @@ pub fn language_head() -> TokenStream {
         use std::rc::Rc;
 
         use chumsky::{error::SimpleReason, Parser, Span};
-        use ariadne::{Color, Config, Fmt, Label, Report, ReportBuilder, ReportKind, Source};
+        use ariadne::{Color, Config, Fmt, Label, Report, ReportKind, Source};
         use semver::Version;
 
         use super::{
             cst,
-            parse::{Parsers, BoxedParserType, ErrorType, SpanType},
+            parse::{BoxedParserType, ErrorType, Parsers},
         };
 
         pub struct Language {
@@ -232,20 +232,11 @@ pub fn language_head() -> TokenStream {
             }
 
             pub fn errors_as_strings(&self, source: &str, with_colour: bool) -> Vec<String> {
-                let mut results = vec![];
-                for error in &self.errors {
-                    let report = render_error_report(&error, with_colour);
-
-                    let mut result = vec![];
-                    report
-                        .write(Source::from(source), &mut result)
-                        .expect("Failed to write report");
-
-                    let result = String::from_utf8(result).expect("Failed to convert report to utf8");
-                    results.push(result);
-                }
-
-                results
+                return self
+                    .errors
+                    .iter()
+                    .map(|error| render_error_report(error, source, with_colour))
+                    .collect();
             }
 
             pub fn is_valid(&self) -> bool {

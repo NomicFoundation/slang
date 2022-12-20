@@ -17,3 +17,8 @@ fn missing_field_type() -> Result<()> {
 fn unterminated_body() -> Result<()> {
     return run("ContractDefinition", "unterminated_body");
 }
+
+#[test]
+fn zero_length_input() -> Result<()> {
+    return run("ContractDefinition", "zero_length_input");
+}
