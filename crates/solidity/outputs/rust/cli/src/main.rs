@@ -22,14 +22,19 @@ struct ProgramArgs {
 fn main() -> Result<()> {
     let args = ProgramArgs::parse();
 
-    let input = {
-        let input_file = &PathBuf::from(args.input_file).canonicalize()?;
-        fs::read_to_string(input_file).context(format!("Failed to read file: {input_file:?}"))?
-    };
+    let input_file = &PathBuf::from(args.input_file).canonicalize()?;
+    let input =
+        fs::read_to_string(input_file).context(format!("Failed to read file: {input_file:?}"))?;
 
     let output = Language::new(args.version).parse_source_unit(&input);
 
-    for report in &output.errors_as_strings(&input, /* with_colour */ true) {
+    for report in &output.errors_as_strings(
+        input_file
+            .to_str()
+            .context("Failed to parse {input_file:?}")?,
+        &input,
+        /* with_colour */ true,
+    ) {
         eprintln!("{report}");
     }
 

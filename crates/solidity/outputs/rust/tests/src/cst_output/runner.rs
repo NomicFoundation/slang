@@ -14,7 +14,13 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             .join(parser_name)
             .join(test_name);
 
-        let source = &std::fs::read_to_string(&test_dir.join("input.sol"))?;
+        let input_path = test_dir.join("input.sol");
+        let source_id = input_path
+            .strip_prefix(&codegen.repo_root)?
+            .to_str()
+            .unwrap();
+
+        let source = &std::fs::read_to_string(&input_path)?;
 
         let mut last_snapshot: String = String::new();
 
@@ -26,7 +32,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
                 .parse(parser_name, &source)
                 .expect(format!("No such parser: {}", parser_name).as_str());
 
-            let current_snapshot = parser_output.to_test_snapshot(source)?;
+            let current_snapshot = parser_output.to_test_snapshot(source_id, source)?;
 
             if current_snapshot == last_snapshot {
                 // Skip versions that produce the same snapshot.

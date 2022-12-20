@@ -10,11 +10,11 @@ use solidity_rust_lib::generated::{
 };
 
 pub trait ParserOutputTestSnapshotExtensions {
-    fn to_test_snapshot(&self, source: &str) -> Result<String>;
+    fn to_test_snapshot(&self, source_id: &str, source: &str) -> Result<String>;
 }
 
 impl ParserOutputTestSnapshotExtensions for ParserOutput {
-    fn to_test_snapshot(&self, source: &str) -> Result<String> {
+    fn to_test_snapshot(&self, source_id: &str, source: &str) -> Result<String> {
         let mut result = Vec::new();
 
         {
@@ -23,7 +23,9 @@ impl ParserOutputTestSnapshotExtensions for ParserOutput {
                 writeln!(&mut result, "errors: []")?;
             } else {
                 writeln!(&mut result, "errors:")?;
-                for report in self.errors_as_strings(source, /* with_colour */ false) {
+                for report in
+                    self.errors_as_strings(source_id, source, /* with_colour */ false)
+                {
                     writeln!(&mut result, "  - |")?;
                     for line in report.lines() {
                         writeln!(&mut result, "    {line}")?;

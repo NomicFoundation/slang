@@ -332,11 +332,11 @@ pub fn language_head() -> TokenStream {
             }
 
             #[napi]
-            pub fn errors_as_strings(&self, source: String, with_colour: bool) -> Vec<String> {
+            pub fn errors_as_strings(&self, source_id: String, source: String, with_colour: bool) -> Vec<String> {
                 return self
                     .errors
                     .iter()
-                    .map(|error| render_error_report(error, &source, with_colour))
+                    .map(|error| render_error_report(error, &source_id, &source, with_colour))
                     .collect();
             }
 

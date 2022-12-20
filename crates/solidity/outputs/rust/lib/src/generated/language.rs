@@ -38,18 +38,28 @@ impl ParserOutput {
     pub fn error_count(&self) -> usize {
         self.errors.len()
     }
-    pub fn errors_as_strings(&self, source: &str, with_colour: bool) -> Vec<String> {
+    pub fn errors_as_strings(
+        &self,
+        source_id: &str,
+        source: &str,
+        with_colour: bool,
+    ) -> Vec<String> {
         return self
             .errors
             .iter()
-            .map(|error| render_error_report(error, source, with_colour))
+            .map(|error| render_error_report(error, source_id, source, with_colour))
             .collect();
     }
     pub fn is_valid(&self) -> bool {
         self.parse_tree.is_some() && self.errors.is_empty()
     }
 }
-fn render_error_report(error: &ErrorType, source: &str, with_color: bool) -> String {
+fn render_error_report(
+    error: &ErrorType,
+    source_id: &str,
+    source: &str,
+    with_color: bool,
+) -> String {
     let kind = ReportKind::Error;
     let color = if with_color { Color::Red } else { Color::Unset };
     let message = match error.reason() {
@@ -75,10 +85,10 @@ fn render_error_report(error: &ErrorType, source: &str, with_color: bool) -> Str
             format!("Expected {expected}.")
         }
     };
+    let source_start = error.span().start() as usize;
+    let source_end = error.span().end() as usize;
     if source.is_empty() {
-        let start = error.span().start();
-        let end = error.span().end();
-        return format!("{kind}: {message}\n   ─[{start}:{end}]");
+        return format!("{kind}: {message}\n   ─[{source_id}:{source_start}:{source_end}]");
     }
     let label = match error.reason() {
         SimpleReason::Custom(_) => "Error occurred here.".to_string(),
@@ -93,18 +103,18 @@ fn render_error_report(error: &ErrorType, source: &str, with_color: bool) -> Str
             }
         }
     };
-    let mut builder = Report::build(kind, error.span().context(), error.span().start())
+    let mut builder = Report::build(kind, source_id, source_start)
         .with_config(Config::default().with_color(with_color))
         .with_message(message);
     builder.add_label(
-        Label::new(error.span())
+        Label::new((source_id, source_start..source_end))
             .with_color(color)
             .with_message(label),
     );
     let mut result = vec![];
     builder
         .finish()
-        .write(Source::from(&source), &mut result)
+        .write((source_id, Source::from(&source)), &mut result)
         .expect("Failed to write report");
     return String::from_utf8(result)
         .expect("Failed to convert report to utf8")
