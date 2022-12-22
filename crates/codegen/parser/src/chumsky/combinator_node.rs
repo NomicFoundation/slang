@@ -1,4 +1,5 @@
 use codegen_schema::*;
+use itertools::Itertools;
 
 use super::{
     character_filter::CharacterFilter, combinator_tree::CombinatorTree, naming,
@@ -92,20 +93,26 @@ impl<'context> CombinatorNode<'context> {
     ) -> &'context CombinatorNode<'context> {
         let name = expression.config.name.clone().or(inherited_name);
 
+        // Terminals in choices are merged, and represented as a trie
+
         if tree.production.kind == ProductionKind::Token {
-            if let Some(filter) = CharacterFilter::new(tree, expression) {
+            if let Some(filter) = CharacterFilter::new(tree, expression, true) {
                 return tree.context.alloc_node(Self::CharacterFilter {
                     name: name.or_else(|| filter.default_name()),
                     filter,
                 });
             }
+        }
 
-            if let Some(trie) = TerminalTrie::new(tree, expression) {
-                return tree.context.alloc_node(Self::TerminalTrie {
-                    name: name.or_else(|| trie.default_name()),
-                    trie,
-                });
-            }
+        if let Some(trie) = TerminalTrie::new(
+            tree,
+            expression,
+            tree.production.kind == ProductionKind::Token,
+        ) {
+            return tree.context.alloc_node(Self::TerminalTrie {
+                name: name.or_else(|| trie.default_name()),
+                trie,
+            });
         }
 
         if tree.production.kind == ProductionKind::Rule
@@ -128,13 +135,37 @@ impl<'context> CombinatorNode<'context> {
         }
 
         tree.context.alloc_node(match &expression.ebnf {
-            EBNF::Choice(exprs) => Self::Choice {
-                name,
-                elements: exprs
+            EBNF::Choice(exprs) => {
+                enum TN<'c> {
+                    Trie(TerminalTrie),
+                    Node(&'c CombinatorNode<'c>),
+                }
+                let elements = exprs
                     .iter()
-                    .map(|expr| Self::new(tree, expr, None))
-                    .collect(),
-            },
+                    .map(|expr| {
+                        match TerminalTrie::new(
+                            tree,
+                            expr,
+                            tree.production.kind == ProductionKind::Token,
+                        ) {
+                            None => TN::Node(Self::new(tree, expr, None)),
+                            Some(trie) => TN::Trie(trie),
+                        }
+                    })
+                    .coalesce(|prev, curr| match (prev, curr) {
+                        (TN::Trie(prev), TN::Trie(curr)) => Ok(TN::Trie(prev.merged_with(curr))),
+                        pc => Err(pc),
+                    })
+                    .map(|either| match either {
+                        TN::Node(node) => node,
+                        TN::Trie(trie) => tree.context.alloc_node(Self::TerminalTrie {
+                            name: trie.default_name(),
+                            trie,
+                        }),
+                    })
+                    .collect();
+                Self::Choice { name, elements }
+            }
 
             EBNF::DelimitedBy(EBNFDelimitedBy { open, expr, close }) => {
                 let expr = Self::new(tree, expr, None);
@@ -159,7 +190,7 @@ impl<'context> CombinatorNode<'context> {
             },
 
             EBNF::Not(_) => {
-                if let Some(filter) = CharacterFilter::new(tree, expression) {
+                if let Some(filter) = CharacterFilter::new(tree, expression, true) {
                     let name = name.or_else(|| filter.default_name());
                     Self::CharacterFilter { name, filter }
                 } else {
@@ -179,7 +210,7 @@ impl<'context> CombinatorNode<'context> {
             },
 
             EBNF::Range(_) => {
-                let filter = CharacterFilter::new(tree, expression).unwrap();
+                let filter = CharacterFilter::new(tree, expression, true).unwrap();
                 let name = name.or_else(|| filter.default_name());
                 Self::CharacterFilter { name, filter }
             }
@@ -225,7 +256,7 @@ impl<'context> CombinatorNode<'context> {
             },
 
             EBNF::Terminal(_) => {
-                let trie = TerminalTrie::new(tree, expression).unwrap();
+                let trie = TerminalTrie::new(tree, expression, true).unwrap();
                 let name = name.or_else(|| trie.default_name());
                 Self::TerminalTrie { name, trie }
             }

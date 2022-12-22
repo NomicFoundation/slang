@@ -146,6 +146,11 @@ pub fn cst_head() -> TokenStream {
 pub fn parse_head() -> TokenStream {
     quote!(
         use chumsky::Parser as ChumskyParser;
+        #[allow(deprecated)]
+        use chumsky::debug::{Debugger, Verbose, Silent};
+        use chumsky::error::{Located};
+        use chumsky::Stream;
+        use chumsky::Error;
         use chumsky::prelude::*;
         use semver::Version;
         use std::ops::Range;
@@ -160,33 +165,83 @@ pub fn parse_head() -> TokenStream {
         pub type SpanType = Range<usize>;
         pub type ErrorType = Simple<char, SpanType>;
 
-        #[allow(dead_code)]
-        fn difference<M, S, T>(
+        type PResult<O> = (
+            Vec<Located<char, ErrorType>>,
+            Result<(O, Option<Located<char, ErrorType>>), Located<char, ErrorType>>,
+        );
+
+        type StreamOf<'a> = Stream<'a, char, <ErrorType as Error<char>>::Span>;
+
+        #[derive(Copy, Clone)]
+        struct Difference<M, S> {
             minuend: M,
             subtrahend: S,
-        ) -> impl ChumskyParser<char, T, Error = ErrorType>
-        where
-            M: ChumskyParser<char, T, Error = ErrorType> + Clone,
-            S: ChumskyParser<char, T, Error = ErrorType>,
+        }
+
+        impl<
+                O,
+                M: ChumskyParser<char, O, Error = ErrorType> + Clone,
+                S: ChumskyParser<char, O, Error = ErrorType> + Clone,
+            > ChumskyParser<char, O> for Difference<M, S>
         {
-            // TODO This could be much more efficient if we were able
-            // to conditionally rewind
-            let minuend_end = minuend
-                .clone()
-                .map_with_span(|_, span: SpanType| span.end())
-                .rewind();
-            let subtrahend_end = subtrahend
-                .map_with_span(|_, span: SpanType| span.end())
-                .rewind()
-                .or_else(|_| Ok(0));
-            minuend_end
-                .then(subtrahend_end)
-                .validate(|(m, s), span, emit| {
-                    if m == s {
-                        emit(Simple::custom(span, "subtrahend matches minuend"))
+            type Error = ErrorType;
+
+            #[allow(deprecated)]
+            fn parse_inner<D: Debugger>(
+                &self,
+                debugger: &mut D,
+                stream: &mut StreamOf,
+            ) -> PResult<O> {
+                let start_position = stream.save();
+                #[allow(deprecated)]
+                match debugger.invoke(&self.minuend, stream) {
+                    result @ (_, Ok((_, _))) => {
+                        let end_position = stream.save();
+                        stream.revert(start_position);
+                        #[allow(deprecated)]
+                        match debugger.invoke(&self.subtrahend, stream) {
+                            (_, Ok(_)) if end_position == stream.save() => {
+                                stream.revert(start_position);
+                                let (at, span, found) = stream.next();
+                                stream.revert(start_position);
+                                return (
+                                    Vec::new(),
+                                    Err(Located::at(
+                                        at,
+                                        ErrorType::expected_input_found(span, Vec::new(), found),
+                                    )),
+                                );
+                            }
+                            _ => {
+                                stream.revert(end_position);
+                                return result;
+                            }
+                        }
                     }
-                })
-                .ignore_then(minuend)
+                    result => return result,
+                }
+            }
+
+            fn parse_inner_verbose(&self, d: &mut Verbose, s: &mut StreamOf) -> PResult<O> {
+                #[allow(deprecated)]
+                self.parse_inner(d, s)
+            }
+            fn parse_inner_silent(&self, d: &mut Silent, s: &mut StreamOf) -> PResult<O> {
+                #[allow(deprecated)]
+                self.parse_inner(d, s)
+            }
+        }
+
+        #[allow(dead_code)]
+        fn difference<M, S, O>(minuend: M, subtrahend: S) -> Difference<M, S>
+        where
+            M: ChumskyParser<char, O, Error = ErrorType> + Clone,
+            S: ChumskyParser<char, O, Error = ErrorType>,
+        {
+            Difference {
+                minuend,
+                subtrahend,
+            }
         }
 
         #[allow(unused_macros)]
@@ -748,12 +803,15 @@ pub fn parse_macros() -> TokenStream {
 
         #[allow(unused_macros)]
         macro_rules! trie {
+            ($kind:ident, $($expr:expr),* ) => {
+                trie!($($expr),*).map(|child| cst::Node::rule(RuleKind::$kind, vec![child]))
+            };
             ($($expr:expr),* ) => (
                 LeadingTrivia.clone()
                     .then(choice::<_, ErrorType>(($($expr),*)).map_with_span(|kind, span: SpanType| (kind, span.start()..span.end())))
                     .then(TrailingTrivia.clone())
                     .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
-                        cst::Node::token(kind, lex::Node::chars(range), leading_trivia, trailing_trivia)
+                        cst::Node::token(kind, lex::Node::chars_unwrapped(range), leading_trivia, trailing_trivia)
                     })
             )
         }

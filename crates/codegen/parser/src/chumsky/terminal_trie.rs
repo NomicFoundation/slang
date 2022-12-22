@@ -10,10 +10,13 @@ use super::{code_generator::CodeGenerator, combinator_tree::CombinatorTree, nami
 pub struct TerminalTrie(PatriciaMap<String>);
 
 impl TerminalTrie {
-    pub fn new(tree: &CombinatorTree, expression: &ExpressionRef) -> Option<TerminalTrie> {
+    pub fn new(
+        tree: &CombinatorTree,
+        expression: &ExpressionRef,
+        inline_references: bool,
+    ) -> Option<TerminalTrie> {
         let mut trie = Self(PatriciaMap::new());
-        trie.collect_terminals(tree, expression);
-        if trie.0.len() > 0 {
+        if trie.collect_terminals(tree, expression, inline_references) && trie.0.len() > 0 {
             Some(trie)
         } else {
             None
@@ -30,30 +33,39 @@ impl TerminalTrie {
         }
     }
 
-    fn collect_terminals(&mut self, tree: &CombinatorTree, expression: &ExpressionRef) -> bool {
+    fn collect_terminals(
+        &mut self,
+        tree: &CombinatorTree,
+        expression: &ExpressionRef,
+        inline_references: bool,
+    ) -> bool {
         match &expression.ebnf {
-            EBNF::Choice(exprs) => exprs.iter().all(|e| self.collect_terminals(tree, e)),
-
-            EBNF::DelimitedBy(_)
-            | EBNF::Difference(_)
-            | EBNF::Not(_)
-            | EBNF::OneOrMore(_)
-            | EBNF::Optional(_)
-            | EBNF::Range(_)
-            | EBNF::Repeat(_)
-            | EBNF::SeparatedBy(_)
-            | EBNF::Sequence(_)
-            | EBNF::ZeroOrMore(_) => false,
-
-            EBNF::Reference(name) => {
-                self.collect_terminals(tree, &tree.context.get_tree_by_name(name).expression())
-            }
+            EBNF::Choice(exprs) => exprs.iter().fold(true, |accum, e| {
+                self.collect_terminals(tree, e, inline_references) && accum
+            }),
 
             EBNF::Terminal(string) => {
                 self.0.insert(string.clone(), string.clone());
                 true
             }
+
+            EBNF::Reference(name) => {
+                inline_references
+                    && self.collect_terminals(
+                        tree,
+                        &tree.context.get_tree_by_name(name).expression(),
+                        inline_references,
+                    )
+            }
+
+            _ => false,
         }
+    }
+
+    pub(super) fn merged_with(&self, curr: TerminalTrie) -> TerminalTrie {
+        let mut new_set = self.0.clone();
+        new_set.extend(curr.0.into_iter());
+        Self(new_set)
     }
 
     pub(super) fn to_code(

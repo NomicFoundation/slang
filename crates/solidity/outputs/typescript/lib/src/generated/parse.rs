@@ -4,36 +4,86 @@ use super::cst;
 use super::kinds::*;
 use super::language::Parser;
 use super::lex;
+#[allow(deprecated)]
+use chumsky::debug::{Debugger, Silent, Verbose};
+use chumsky::error::Located;
 use chumsky::prelude::*;
+use chumsky::Error;
 use chumsky::Parser as ChumskyParser;
+use chumsky::Stream;
 use semver::Version;
 use std::collections::BTreeMap;
 use std::ops::Range;
 use std::rc::Rc;
 pub type SpanType = Range<usize>;
 pub type ErrorType = Simple<char, SpanType>;
-#[allow(dead_code)]
-fn difference<M, S, T>(minuend: M, subtrahend: S) -> impl ChumskyParser<char, T, Error = ErrorType>
-where
-    M: ChumskyParser<char, T, Error = ErrorType> + Clone,
-    S: ChumskyParser<char, T, Error = ErrorType>,
+type PResult<O> = (
+    Vec<Located<char, ErrorType>>,
+    Result<(O, Option<Located<char, ErrorType>>), Located<char, ErrorType>>,
+);
+type StreamOf<'a> = Stream<'a, char, <ErrorType as Error<char>>::Span>;
+#[derive(Copy, Clone)]
+struct Difference<M, S> {
+    minuend: M,
+    subtrahend: S,
+}
+impl<
+        O,
+        M: ChumskyParser<char, O, Error = ErrorType> + Clone,
+        S: ChumskyParser<char, O, Error = ErrorType> + Clone,
+    > ChumskyParser<char, O> for Difference<M, S>
 {
-    let minuend_end = minuend
-        .clone()
-        .map_with_span(|_, span: SpanType| span.end())
-        .rewind();
-    let subtrahend_end = subtrahend
-        .map_with_span(|_, span: SpanType| span.end())
-        .rewind()
-        .or_else(|_| Ok(0));
-    minuend_end
-        .then(subtrahend_end)
-        .validate(|(m, s), span, emit| {
-            if m == s {
-                emit(Simple::custom(span, "subtrahend matches minuend"))
+    type Error = ErrorType;
+    #[allow(deprecated)]
+    fn parse_inner<D: Debugger>(&self, debugger: &mut D, stream: &mut StreamOf) -> PResult<O> {
+        let start_position = stream.save();
+        #[allow(deprecated)]
+        match debugger.invoke(&self.minuend, stream) {
+            result @ (_, Ok((_, _))) => {
+                let end_position = stream.save();
+                stream.revert(start_position);
+                #[allow(deprecated)]
+                match debugger.invoke(&self.subtrahend, stream) {
+                    (_, Ok(_)) if end_position == stream.save() => {
+                        stream.revert(start_position);
+                        let (at, span, found) = stream.next();
+                        stream.revert(start_position);
+                        return (
+                            Vec::new(),
+                            Err(Located::at(
+                                at,
+                                ErrorType::expected_input_found(span, Vec::new(), found),
+                            )),
+                        );
+                    }
+                    _ => {
+                        stream.revert(end_position);
+                        return result;
+                    }
+                }
             }
-        })
-        .ignore_then(minuend)
+            result => return result,
+        }
+    }
+    fn parse_inner_verbose(&self, d: &mut Verbose, s: &mut StreamOf) -> PResult<O> {
+        #[allow(deprecated)]
+        self.parse_inner(d, s)
+    }
+    fn parse_inner_silent(&self, d: &mut Silent, s: &mut StreamOf) -> PResult<O> {
+        #[allow(deprecated)]
+        self.parse_inner(d, s)
+    }
+}
+#[allow(dead_code)]
+fn difference<M, S, O>(minuend: M, subtrahend: S) -> Difference<M, S>
+where
+    M: ChumskyParser<char, O, Error = ErrorType> + Clone,
+    S: ChumskyParser<char, O, Error = ErrorType>,
+{
+    Difference {
+        minuend,
+        subtrahend,
+    }
 }
 #[allow(unused_macros)]
 macro_rules! declare_rule {
@@ -567,7 +617,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         };
     }
     #[allow(unused_macros)]
-    macro_rules ! trie { ($ ($ expr : expr) , *) => (LeadingTrivia . clone () . then (choice :: < _ , ErrorType > (($ ($ expr) , *)) . map_with_span (| kind , span : SpanType | (kind , span . start () .. span . end ()))) . then (TrailingTrivia . clone ()) . map (| ((leading_trivia , (kind , range)) , trailing_trivia) | { cst :: Node :: token (kind , lex :: Node :: chars (range) , leading_trivia , trailing_trivia) })) }
+    macro_rules ! trie { ($ kind : ident , $ ($ expr : expr) , *) => { trie ! ($ ($ expr) , *) . map (| child | cst :: Node :: rule (RuleKind :: $ kind , vec ! [child])) } ; ($ ($ expr : expr) , *) => (LeadingTrivia . clone () . then (choice :: < _ , ErrorType > (($ ($ expr) , *)) . map_with_span (| kind , span : SpanType | (kind , span . start () .. span . end ()))) . then (TrailingTrivia . clone ()) . map (| ((leading_trivia , (kind , range)) , trailing_trivia) | { cst :: Node :: token (kind , lex :: Node :: chars_unwrapped (range) , leading_trivia , trailing_trivia) })) }
     #[allow(unused_macros)]
     macro_rules! define_rule {
         ($ kind : ident , $ expr : expr) => {{
@@ -619,7 +669,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         left_associative_binary_expression!(
             AddSubExpression,
             MulDivModExpression,
-            choice!(terminal!(Plus, "+"), terminal!(Minus, "-"))
+            trie!(trieleaf!(Plus, "+"), trieleaf!(Minus, "-"))
         )
     );
 
@@ -728,19 +778,24 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         left_associative_binary_expression!(
             AssignmentExpression,
             ConditionalExpression,
-            choice!(
-                terminal!(Equal, "="),
-                terminal!(PipeEqual, "|="),
-                terminal!(CaretEqual, "^="),
-                terminal!(AmpersandEqual, "&="),
-                terminal!(LessLessEqual, "<<="),
-                terminal!(GreaterGreaterEqual, ">>="),
-                terminal!(GreaterGreaterGreaterEqual, ">>>="),
-                terminal!(PlusEqual, "+="),
-                terminal!(MinusEqual, "-="),
-                terminal!(StarEqual, "*="),
-                terminal!(SlashEqual, "/="),
-                terminal!(PercentEqual, "%=")
+            trie!(
+                trieleaf!(PercentEqual, "%="),
+                trieleaf!(AmpersandEqual, "&="),
+                trieleaf!(StarEqual, "*="),
+                trieleaf!(PlusEqual, "+="),
+                trieleaf!(MinusEqual, "-="),
+                trieleaf!(SlashEqual, "/="),
+                trieleaf!(LessLessEqual, "<<="),
+                trieleaf!(Equal, "="),
+                trieprefix!(
+                    ">>",
+                    [
+                        trieleaf!(GreaterGreaterEqual, "="),
+                        trieleaf!(GreaterGreaterGreaterEqual, ">=")
+                    ]
+                ),
+                trieleaf!(CaretEqual, "^="),
+                trieleaf!(PipeEqual, "|=")
             )
         )
     );
@@ -852,9 +907,13 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         choice!(
             ConstructorAttribute,
             rule!(ModifierInvocation),
-            terminal!(Internal, "internal"),
-            terminal!(Payable, "payable"),
-            terminal!(Public, "public")
+            trie!(
+                trieleaf!(Internal, "internal"),
+                trieprefix!(
+                    "p",
+                    [trieleaf!(Payable, "ayable"), trieleaf!(Public, "ublic")]
+                )
+            )
         )
     );
 
@@ -921,11 +980,11 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // DataLocation = 'memory' | 'storage' | 'calldata' ;
     define_rule!(
         DataLocation,
-        choice!(
+        trie!(
             DataLocation,
-            terminal!(Memory, "memory"),
-            terminal!(Storage, "storage"),
-            terminal!(Calldata, "calldata")
+            trieleaf!(Calldata, "calldata"),
+            trieleaf!(Memory, "memory"),
+            trieleaf!(Storage, "storage")
         )
     );
 
@@ -1083,8 +1142,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         ElementaryType,
         choice!(
             ElementaryType,
-            terminal!(Bool, "bool"),
-            terminal!(String, "string"),
+            trie!(trieleaf!(Bool, "bool"), trieleaf!(String, "string")),
             rule!(AddressType),
             token!(FixedBytesType),
             token!(SignedIntegerType),
@@ -1151,7 +1209,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         left_associative_binary_expression!(
             EqualityComparisonExpression,
             OrderComparisonExpression,
-            choice!(terminal!(EqualEqual, "=="), terminal!(BangEqual, "!="))
+            trie!(trieleaf!(BangEqual, "!="), trieleaf!(EqualEqual, "=="))
         )
     );
 
@@ -1192,15 +1250,19 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         lex_seq!(
             EscapeSequence,
             lex_terminal!(Backslash, '\\'),
-            lex_trie!(
-                trieleaf!(Linefeed, "\n"),
-                trieleaf!(CarriageReturn, "\r"),
-                trieleaf!(DoubleQuote, "\""),
-                trieleaf!(Quote, "'"),
-                trieleaf!(Backslash, "\\"),
-                trieleaf!(LatinSmallLetterN, "n"),
-                trieleaf!(LatinSmallLetterR, "r"),
-                trieleaf!(LatinSmallLetterT, "t")
+            lex_choice!(
+                lex_trie!(
+                    trieleaf!(Linefeed, "\n"),
+                    trieleaf!(CarriageReturn, "\r"),
+                    trieleaf!(DoubleQuote, "\""),
+                    trieleaf!(Quote, "'"),
+                    trieleaf!(Backslash, "\\"),
+                    trieleaf!(LatinSmallLetterN, "n"),
+                    trieleaf!(LatinSmallLetterR, "r"),
+                    trieleaf!(LatinSmallLetterT, "t")
+                ),
+                lex_rule!(HexByteEscape),
+                lex_rule!(UnicodeEscape)
             )
         )
     );
@@ -1289,11 +1351,11 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
             FallbackFunctionAttribute,
             rule!(ModifierInvocation),
             rule!(OverrideSpecifier),
-            terminal!(External, "external"),
-            terminal!(Payable, "payable"),
-            terminal!(Pure, "pure"),
-            terminal!(View, "view"),
-            terminal!(Virtual, "virtual")
+            trie!(
+                trieleaf!(External, "external"),
+                trieprefix!("p", [trieleaf!(Payable, "ayable"), trieleaf!(Pure, "ure")]),
+                trieprefix!("vi", [trieleaf!(View, "ew"), trieleaf!(Virtual, "rtual")])
+            )
         )
     );
 
@@ -1395,14 +1457,19 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
             FunctionAttribute,
             rule!(ModifierInvocation),
             rule!(OverrideSpecifier),
-            terminal!(External, "external"),
-            terminal!(Internal, "internal"),
-            terminal!(Payable, "payable"),
-            terminal!(Private, "private"),
-            terminal!(Public, "public"),
-            terminal!(Pure, "pure"),
-            terminal!(View, "view"),
-            terminal!(Virtual, "virtual")
+            trie!(
+                trieleaf!(External, "external"),
+                trieleaf!(Internal, "internal"),
+                trieprefix!(
+                    "p",
+                    [
+                        trieleaf!(Payable, "ayable"),
+                        trieleaf!(Private, "rivate"),
+                        trieprefix!("u", [trieleaf!(Public, "blic"), trieleaf!(Pure, "re")])
+                    ]
+                ),
+                trieprefix!("vi", [trieleaf!(View, "ew"), trieleaf!(Virtual, "rtual")])
+            )
         )
     );
 
@@ -1436,8 +1503,10 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
             terminal!(Function, "function"),
             choice!(
                 token!(Identifier),
-                terminal!(Fallback, "fallback"),
-                terminal!(Receive, "receive")
+                trie!(
+                    trieleaf!(Fallback, "fallback"),
+                    trieleaf!(Receive, "receive")
+                )
             ),
             rule!(ParameterList),
             zero_or_more!(FunctionAttributes, rule!(FunctionAttribute)),
@@ -1453,14 +1522,18 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
             FunctionType,
             terminal!(Function, "function"),
             rule!(ParameterList),
-            zero_or_more!(choice!(
-                terminal!(Internal, "internal"),
-                terminal!(External, "external"),
-                terminal!(Private, "private"),
-                terminal!(Public, "public"),
-                terminal!(Pure, "pure"),
-                terminal!(View, "view"),
-                terminal!(Payable, "payable")
+            zero_or_more!(trie!(
+                trieleaf!(External, "external"),
+                trieleaf!(Internal, "internal"),
+                trieprefix!(
+                    "p",
+                    [
+                        trieleaf!(Payable, "ayable"),
+                        trieleaf!(Private, "rivate"),
+                        trieprefix!("u", [trieleaf!(Public, "blic"), trieleaf!(Pure, "re")])
+                    ]
+                ),
+                trieleaf!(View, "view")
             )),
             optional!(seq!(terminal!(Returns, "returns"), rule!(ParameterList)))
         )
@@ -1536,10 +1609,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // «Identifier» = «RawIdentifier» - «Keyword» ;
     define_token!(
         Identifier,
-        difference(
-            lex_rule!(RawIdentifier),
-            lex_trie!(trieleaf!(False, "false"), trieleaf!(True, "true"))
-        )
+        difference(lex_rule!(RawIdentifier), lex_rule!(Keyword))
     );
 
     // «IdentifierPart» = «IdentifierStart» | '0'…'9' ;
@@ -1663,7 +1733,213 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // «Keyword» = «BooleanLiteral» | «FixedBytesType» | «NumberUnit» | «ReservedKeyword» | «SignedIntegerType» | «UnsignedIntegerType» | 'abstract' | 'address' | 'anonymous' | 'as' | 'assembly' | 'bool' | 'break' | 'calldata' | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum' | 'event' | 'external' | 'fallback' | 'false' | 'fixed' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import' | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override' | 'payable' | 'pragma' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct' | 'true' | 'try' | 'type' | 'ufixed' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while' ;
     define_token!(
         Keyword,
-        lex_trie!(Keyword, trieleaf!(False, "false"), trieleaf!(True, "true"))
+        lex_choice!(
+            Keyword,
+            lex_trie!(trieleaf!(False, "false"), trieleaf!(True, "true")),
+            lex_rule!(FixedBytesType),
+            lex_trie!(
+                trieprefix!(
+                    "a",
+                    [
+                        trieleaf!(After, "fter"),
+                        trieleaf!(Alias, "lias"),
+                        trieleaf!(Apply, "pply"),
+                        trieleaf!(Auto, "uto")
+                    ]
+                ),
+                trieleaf!(Byte, "byte"),
+                trieprefix!("c", [trieleaf!(Case, "ase"), trieleaf!(Copyof, "opyof")]),
+                trieprefix!(
+                    "d",
+                    [
+                        trieleaf!(Days, "ays"),
+                        trieprefix!("ef", [trieleaf!(Default, "ault"), trieleaf!(Define, "ine")])
+                    ]
+                ),
+                trieleaf!(Ether, "ether"),
+                trieprefix!("fin", [trieleaf!(Final, "al"), trieleaf!(Finney, "ney")]),
+                trieleaf!(Gwei, "gwei"),
+                trieleaf!(Hours, "hours"),
+                trieprefix!(
+                    "i",
+                    [
+                        trieleaf!(Implements, "mplements"),
+                        trieprefix!("n", [trieleaf!(Inline, "line"), trieleaf!(In)])
+                    ]
+                ),
+                trieleaf!(Let, "let"),
+                trieprefix!(
+                    "m",
+                    [
+                        trieprefix!("a", [trieleaf!(Macro, "cro"), trieleaf!(Match, "tch")]),
+                        trieleaf!(Minutes, "inutes"),
+                        trieleaf!(Mutable, "utable")
+                    ]
+                ),
+                trieleaf!(Null, "null"),
+                trieleaf!(Of, "of"),
+                trieprefix!(
+                    "p",
+                    [trieleaf!(Partial, "artial"), trieleaf!(Promise, "romise")]
+                ),
+                trieprefix!(
+                    "re",
+                    [
+                        trieleaf!(Reference, "ference"),
+                        trieleaf!(Relocatable, "locatable")
+                    ]
+                ),
+                trieprefix!(
+                    "s",
+                    [
+                        trieprefix!(
+                            "e",
+                            [trieleaf!(Sealed, "aled"), trieleaf!(Seconds, "conds")]
+                        ),
+                        trieleaf!(Sizeof, "izeof"),
+                        trieleaf!(Static, "tatic"),
+                        trieleaf!(Supports, "upports"),
+                        trieleaf!(Switch, "witch"),
+                        trieleaf!(Szabo, "zabo")
+                    ]
+                ),
+                trieprefix!("type", [trieleaf!(Typedef, "def"), trieleaf!(Typeof, "of")]),
+                trieleaf!(Var, "var"),
+                trieprefix!("we", [trieleaf!(Weeks, "eks"), trieleaf!(Wei, "i")]),
+                trieleaf!(Years, "years")
+            ),
+            lex_rule!(SignedIntegerType),
+            lex_rule!(UnsignedIntegerType),
+            lex_trie!(
+                trieprefix!(
+                    "a",
+                    [
+                        trieleaf!(Abstract, "bstract"),
+                        trieleaf!(Address, "ddress"),
+                        trieleaf!(Anonymous, "nonymous"),
+                        trieprefix!("s", [trieleaf!(Assembly, "sembly"), trieleaf!(As)])
+                    ]
+                ),
+                trieprefix!("b", [trieleaf!(Bool, "ool"), trieleaf!(Break, "reak")]),
+                trieprefix!(
+                    "c",
+                    [
+                        trieprefix!(
+                            "a",
+                            [trieleaf!(Calldata, "lldata"), trieleaf!(Catch, "tch")]
+                        ),
+                        trieprefix!(
+                            "on",
+                            [
+                                trieprefix!(
+                                    "st",
+                                    [trieleaf!(Constant, "ant"), trieleaf!(Constructor, "ructor")]
+                                ),
+                                trieprefix!(
+                                    "t",
+                                    [trieleaf!(Continue, "inue"), trieleaf!(Contract, "ract")]
+                                )
+                            ]
+                        )
+                    ]
+                ),
+                trieprefix!("d", [trieleaf!(Delete, "elete"), trieleaf!(Do, "o")]),
+                trieprefix!(
+                    "e",
+                    [
+                        trieleaf!(Else, "lse"),
+                        trieleaf!(Emit, "mit"),
+                        trieleaf!(Enum, "num"),
+                        trieleaf!(Event, "vent"),
+                        trieleaf!(External, "xternal")
+                    ]
+                ),
+                trieprefix!(
+                    "f",
+                    [
+                        trieprefix!("al", [trieleaf!(Fallback, "lback"), trieleaf!(False, "se")]),
+                        trieleaf!(Fixed, "ixed"),
+                        trieleaf!(For, "or"),
+                        trieleaf!(Function, "unction")
+                    ]
+                ),
+                trieleaf!(Hex, "hex"),
+                trieprefix!(
+                    "i",
+                    [
+                        trieleaf!(If, "f"),
+                        trieprefix!(
+                            "m",
+                            [trieleaf!(Immutable, "mutable"), trieleaf!(Import, "port")]
+                        ),
+                        trieprefix!(
+                            "n",
+                            [
+                                trieleaf!(Indexed, "dexed"),
+                                trieprefix!(
+                                    "ter",
+                                    [trieleaf!(Interface, "face"), trieleaf!(Internal, "nal")]
+                                )
+                            ]
+                        ),
+                        trieleaf!(Is, "s")
+                    ]
+                ),
+                trieleaf!(Library, "library"),
+                trieprefix!(
+                    "m",
+                    [
+                        trieleaf!(Mapping, "apping"),
+                        trieleaf!(Memory, "emory"),
+                        trieleaf!(Modifier, "odifier")
+                    ]
+                ),
+                trieleaf!(New, "new"),
+                trieleaf!(Override, "override"),
+                trieprefix!(
+                    "p",
+                    [
+                        trieleaf!(Payable, "ayable"),
+                        trieprefix!(
+                            "r",
+                            [trieleaf!(Pragma, "agma"), trieleaf!(Private, "ivate")]
+                        ),
+                        trieprefix!("u", [trieleaf!(Public, "blic"), trieleaf!(Pure, "re")])
+                    ]
+                ),
+                trieprefix!(
+                    "re",
+                    [
+                        trieleaf!(Receive, "ceive"),
+                        trieprefix!("turn", [trieleaf!(Returns, "s"), trieleaf!(Return)])
+                    ]
+                ),
+                trieprefix!(
+                    "st",
+                    [
+                        trieleaf!(Storage, "orage"),
+                        trieprefix!("r", [trieleaf!(String, "ing"), trieleaf!(Struct, "uct")])
+                    ]
+                ),
+                trieprefix!(
+                    "t",
+                    [
+                        trieprefix!("r", [trieleaf!(True, "ue"), trieleaf!(Try, "y")]),
+                        trieleaf!(Type, "ype")
+                    ]
+                ),
+                trieprefix!(
+                    "u",
+                    [
+                        trieleaf!(Ufixed, "fixed"),
+                        trieleaf!(Unchecked, "nchecked"),
+                        trieleaf!(Using, "sing")
+                    ]
+                ),
+                trieprefix!("vi", [trieleaf!(View, "ew"), trieleaf!(Virtual, "rtual")]),
+                trieleaf!(While, "while")
+            )
+        )
     );
 
     // LeadingTrivia = { «Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment» } ;
@@ -1766,10 +2042,10 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         left_associative_binary_expression!(
             MulDivModExpression,
             ExponentiationExpression,
-            choice!(
-                terminal!(Star, "*"),
-                terminal!(Slash, "/"),
-                terminal!(Percent, "%")
+            trie!(
+                trieleaf!(Percent, "%"),
+                trieleaf!(Star, "*"),
+                trieleaf!(Slash, "/")
             )
         )
     );
@@ -1873,11 +2149,9 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         left_associative_binary_expression!(
             OrderComparisonExpression,
             BitOrExpression,
-            choice!(
-                terminal!(Less, "<"),
-                terminal!(Greater, ">"),
-                terminal!(LessEqual, "<="),
-                terminal!(GreaterEqual, ">=")
+            trie!(
+                trieprefix!("<", [trieleaf!(LessEqual, "="), trieleaf!(Less)]),
+                trieprefix!(">", [trieleaf!(GreaterEqual, "="), trieleaf!(Greater)])
             )
         )
     );
@@ -2045,9 +2319,11 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
             ReceiveFunctionAttribute,
             rule!(ModifierInvocation),
             rule!(OverrideSpecifier),
-            terminal!(External, "external"),
-            terminal!(Payable, "payable"),
-            terminal!(Virtual, "virtual")
+            trie!(
+                trieleaf!(External, "external"),
+                trieleaf!(Payable, "payable"),
+                trieleaf!(Virtual, "virtual")
+            )
         )
     );
 
@@ -2186,10 +2462,15 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         left_associative_binary_expression!(
             ShiftExpression,
             AddSubExpression,
-            choice!(
-                terminal!(LessLess, "<<"),
-                terminal!(GreaterGreater, ">>"),
-                terminal!(GreaterGreaterGreater, ">>>")
+            trie!(
+                trieleaf!(LessLess, "<<"),
+                trieprefix!(
+                    ">>",
+                    [
+                        trieleaf!(GreaterGreaterGreater, ">"),
+                        trieleaf!(GreaterGreater)
+                    ]
+                )
             )
         )
     );
@@ -2388,11 +2669,20 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         choice!(
             StateVariableAttribute,
             rule!(OverrideSpecifier),
-            terminal!(Constant, "constant"),
-            terminal!(Immutable, "immutable"),
-            terminal!(Internal, "internal"),
-            terminal!(Private, "private"),
-            terminal!(Public, "public")
+            trie!(
+                trieleaf!(Constant, "constant"),
+                trieprefix!(
+                    "i",
+                    [
+                        trieleaf!(Immutable, "mmutable"),
+                        trieleaf!(Internal, "nternal")
+                    ]
+                ),
+                trieprefix!(
+                    "p",
+                    [trieleaf!(Private, "rivate"), trieleaf!(Public, "ublic")]
+                )
+            )
         )
     );
 
@@ -2547,12 +2837,11 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         unary_prefix_expression!(
             UnaryPrefixExpression,
             FunctionCallExpression,
-            choice!(
-                terminal!(PlusPlus, "++"),
-                terminal!(MinusMinus, "--"),
-                terminal!(Bang, "!"),
-                terminal!(Tilde, "~"),
-                terminal!(Minus, "-")
+            trie!(
+                trieleaf!(Bang, "!"),
+                trieleaf!(PlusPlus, "++"),
+                trieprefix!("-", [trieleaf!(MinusMinus, "-"), trieleaf!(Minus)]),
+                trieleaf!(Tilde, "~")
             )
         )
     );
@@ -2563,7 +2852,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         unary_suffix_expression!(
             UnarySuffixExpression,
             UnaryPrefixExpression,
-            choice!(terminal!(PlusPlus, "++"), terminal!(MinusMinus, "--"))
+            trie!(trieleaf!(PlusPlus, "++"), trieleaf!(MinusMinus, "--"))
         )
     );
 
@@ -2776,7 +3065,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(YulContinueStatement, terminal!(Continue, "continue"));
 
     // «YulDecimalNumberLiteral» = '0' | '1'…'9' { '0'…'9' } ;
-    define_token!(YulDecimalNumberLiteral, lex_terminal!(Zero, "0"));
+    define_token!(
+        YulDecimalNumberLiteral,
+        lex_choice!(
+            YulDecimalNumberLiteral,
+            lex_terminal!(Zero, "0"),
+            lex_seq!(
+                lex_terminal!(|&c: &char| ('1' <= c && c <= '9')),
+                lex_zero_or_more!(lex_terminal!(|&c: &char| ('0' <= c && c <= '9')))
+            )
+        )
+    );
 
     // YulExpression = YulIdentifierPath | YulFunctionCall | YulLiteral ;
     define_rule!(

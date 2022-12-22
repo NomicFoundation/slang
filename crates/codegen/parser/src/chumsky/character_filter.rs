@@ -28,18 +28,19 @@ impl<'context> CharacterFilter<'context> {
     pub fn new(
         tree: &CombinatorTree<'context>,
         expression: &ExpressionRef,
+        inline_references: bool,
     ) -> Option<&'context CharacterFilter<'context>> {
         match &expression.ebnf {
-            EBNF::Not(child) => Self::new(tree, child).map(|child| {
+            EBNF::Not(child) => Self::new(tree, child, inline_references).map(|child| {
                 tree.context
                     .alloc_character_filter(Self::Negation { child })
-                    as &CharacterFilter<'context>
+                    as &CharacterFilter<'context> // removes the mutability
             }),
 
             EBNF::Choice(children) => {
                 let nodes = children
                     .iter()
-                    .filter_map(|c| Self::new(tree, c))
+                    .filter_map(|c| Self::new(tree, c, inline_references))
                     .collect::<Vec<_>>();
                 if nodes.len() == children.len() {
                     Some(
@@ -69,17 +70,14 @@ impl<'context> CharacterFilter<'context> {
                     .alloc_character_filter(Self::Range { from, to })
             }),
 
-            EBNF::Reference(name) => {
-                Self::new(tree, &tree.context.get_tree_by_name(name).expression())
-            }
-
             EBNF::Difference(EBNFDifference {
                 minuend,
                 subtrahend,
             }) => {
-                if let (Some(minuend), Some(subtrahend)) =
-                    (Self::new(tree, minuend), Self::new(tree, subtrahend))
-                {
+                if let (Some(minuend), Some(subtrahend)) = (
+                    Self::new(tree, minuend, inline_references),
+                    Self::new(tree, subtrahend, inline_references),
+                ) {
                     Some({
                         let nodes = vec![
                             minuend,
@@ -94,13 +92,20 @@ impl<'context> CharacterFilter<'context> {
                 }
             }
 
-            EBNF::DelimitedBy(_)
-            | EBNF::OneOrMore(_)
-            | EBNF::Optional(_)
-            | EBNF::Repeat(_)
-            | EBNF::SeparatedBy(_)
-            | EBNF::Sequence(_)
-            | EBNF::ZeroOrMore(_) => None,
+            // TODO: only do this if the referenced production is marked as inline
+            EBNF::Reference(name) => {
+                if inline_references {
+                    Self::new(
+                        tree,
+                        &tree.context.get_tree_by_name(name).expression(),
+                        inline_references,
+                    )
+                } else {
+                    None
+                }
+            }
+
+            _ => None,
         }
     }
 

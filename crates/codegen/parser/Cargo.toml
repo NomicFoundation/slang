@@ -9,6 +9,7 @@ codegen_ebnf = { workspace = true }
 codegen_schema = { workspace = true }
 codegen_utils = { workspace = true }
 Inflector = { workspace = true }
+itertools = { workspace = true }
 patricia_tree = { workspace = true }
 proc-macro2 = { workspace = true }
 quote = { workspace = true }
