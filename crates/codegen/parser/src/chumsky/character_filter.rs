@@ -106,7 +106,7 @@ impl<'context> CharacterFilter<'context> {
 
     pub fn default_name(&self) -> Option<String> {
         if let Self::Negation { child } = self {
-            child.default_name().map(|n| format!("not_{}", n))
+            child.default_name().map(|n| format!("Not{}", n))
         } else if let Self::Char { char, .. } = self {
             Some(naming::name_of_terminal_char(*char))
         } else {

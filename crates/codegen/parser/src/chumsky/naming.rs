@@ -1,8 +1,6 @@
 use std::fmt::Write;
 
 use inflector::Inflector;
-use proc_macro2::Ident;
-use quote::format_ident;
 
 pub fn name_of_terminal_char(char: char) -> String {
     DEFAULT_TOKEN_NAMES
@@ -16,6 +14,7 @@ pub fn name_of_terminal_char(char: char) -> String {
             let code: u32 = char.into();
             format!("u{}Char", code)
         })
+        .to_pascal_case()
 }
 
 pub fn name_of_terminal_string(string: &str) -> String {
@@ -51,37 +50,12 @@ pub fn name_of_terminal_string(string: &str) -> String {
     } else {
         result
     }
-    .to_snake_case()
+    .to_pascal_case()
 }
 
 pub fn pluralize(str: &str) -> String {
     str.to_plural()
 }
-
-pub fn to_field_name_ident(str: &str) -> Ident {
-    let str = str.to_snake_case();
-    if is_reserved_identifier(&str) {
-        format_ident!("r#{}", str)
-    } else {
-        format_ident!("{}", str)
-    }
-}
-
-pub fn to_parser_name_ident(str: &str) -> Ident {
-    format_ident!("{}_parser", str.to_snake_case())
-}
-
-fn is_reserved_identifier(s: &str) -> bool {
-    RUST_RESERVED_IDENTIFIERS.binary_search(&s).is_ok()
-}
-
-const RUST_RESERVED_IDENTIFIERS: &[&str] = &[
-    "Self", "abstract", "as", "async", "await", "become", "box", "break", "const", "continue",
-    "crate", "do", "dyn", "else", "enum", "extern", "false", "final", "fn", "for", "if", "impl",
-    "in", "let", "loop", "macro", "match", "mod", "move", "mut", "override", "priv", "pub", "ref",
-    "return", "self", "static", "struct", "super", "trait", "true", "try", "type", "typeof",
-    "union", "unsafe", "unsized", "use", "virtual", "where", "while", "yield",
-];
 
 const DEFAULT_TOKEN_NAMES: &[(char, &str)] = &[
     ('\t', "tab"),

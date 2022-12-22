@@ -1,12 +1,6 @@
 use proc_macro2::TokenStream;
 use quote::quote;
 
-pub fn kinds_head() -> TokenStream {
-    quote!(
-        use serde::Serialize;
-    )
-}
-
 pub fn lex_head() -> TokenStream {
     quote!(
         use std::ops::Range;
@@ -151,25 +145,29 @@ pub fn cst_head() -> TokenStream {
 
 pub fn parse_head() -> TokenStream {
     quote!(
-        use chumsky::Parser;
+        use chumsky::Parser as ChumskyParser;
         use chumsky::prelude::*;
         use semver::Version;
         use std::ops::Range;
         use std::rc::Rc;
+        use std::collections::BTreeMap;
 
-        use super::kinds::{TokenKind, RuleKind};
+        use super::kinds::*;
         use super::lex;
         use super::cst;
+        use super::language::Parser;
 
         pub type SpanType = Range<usize>;
         pub type ErrorType = Simple<char, SpanType>;
-        pub type BoxedParserType = BoxedParser<'static, char, Rc<cst::Node>, ErrorType>;
 
         #[allow(dead_code)]
-        fn difference<M, S, T>(minuend: M, subtrahend: S) -> impl Parser<char, T, Error = ErrorType>
+        fn difference<M, S, T>(
+            minuend: M,
+            subtrahend: S,
+        ) -> impl ChumskyParser<char, T, Error = ErrorType>
         where
-            M: Parser<char, T, Error = ErrorType> + Clone,
-            S: Parser<char, T, Error = ErrorType>,
+            M: ChumskyParser<char, T, Error = ErrorType> + Clone,
+            S: ChumskyParser<char, T, Error = ErrorType>,
         {
             // TODO This could be much more efficient if we were able
             // to conditionally rewind
@@ -189,6 +187,24 @@ pub fn parse_head() -> TokenStream {
                     }
                 })
                 .ignore_then(minuend)
+        }
+
+        #[allow(unused_macros)]
+        macro_rules! declare_rule {
+            ($kind:ident) => {
+                #[allow(non_snake_case)]
+                let mut $kind =
+                    Recursive::<'static, char, Option<Rc<cst::Node>>, ErrorType>::declare();
+            };
+        }
+
+        #[allow(unused_macros)]
+        macro_rules! declare_token {
+            ($kind:ident) => {
+                #[allow(non_snake_case)]
+                let mut $kind =
+                    Recursive::<'static, char, Option<Rc<lex::Node>>, ErrorType>::declare();
+            };
         }
     )
 }
@@ -424,12 +440,12 @@ pub fn parse_macros() -> TokenStream {
         #[allow(unused_macros)]
         macro_rules! terminal {
             ($kind:ident, $literal:literal) => {
-                leading_trivia_parser
+                LeadingTrivia
                     .clone()
                     .then(
                         just($literal).map_with_span(|_, span: SpanType| span.start()..span.end()),
                     )
-                    .then(trailing_trivia_parser.clone())
+                    .then(TrailingTrivia.clone())
                     .map(|((leading_trivia, range), trailing_trivia)| {
                         cst::Node::token(
                             TokenKind::$kind,
@@ -440,12 +456,12 @@ pub fn parse_macros() -> TokenStream {
                     })
             };
             ($kind:ident, $filter:expr) => {
-                leading_trivia_parser
+                LeadingTrivia
                     .clone()
                     .then(
                         filter($filter).map_with_span(|_, span: SpanType| span.start()..span.end()),
                     )
-                    .then(trailing_trivia_parser.clone())
+                    .then(TrailingTrivia.clone())
                     .map(|((leading_trivia, range), trailing_trivia)| {
                         cst::Node::token(
                             TokenKind::$kind,
@@ -460,9 +476,9 @@ pub fn parse_macros() -> TokenStream {
         #[allow(unused_macros)]
         macro_rules! token {
             ($token_rule:ident) => {
-                leading_trivia_parser.clone()
+                LeadingTrivia.clone()
                     .then($token_rule.clone())
-                    .then(trailing_trivia_parser.clone())
+                    .then(TrailingTrivia.clone())
                     .map(|((leading_trivia, token), trailing_trivia): ((_, Option<Rc<lex::Node>>), _)| {
                         let token = token.unwrap(); // token rule should always return a token
                         if let lex::Node::Named(kind, element) = token.as_ref() {
@@ -623,7 +639,7 @@ pub fn parse_macros() -> TokenStream {
 
         #[allow(unused_macros)]
         macro_rules! left_associative_binary_expression {
-            ($kind:ident, $next_sibling:expr, $operator:expr) => {
+            ($kind:ident, $next_sibling:ident, $operator:expr) => {
                 $next_sibling
                     .clone()
                     .then($operator.then($next_sibling.clone()).repeated())
@@ -648,7 +664,7 @@ pub fn parse_macros() -> TokenStream {
 
         #[allow(unused_macros)]
         macro_rules! right_associative_binary_expression {
-            ($kind:ident, $next_sibling:expr, $operator:expr) => {
+            ($kind:ident, $next_sibling:ident, $operator:expr) => {
                 $next_sibling
                     .clone()
                     .then($operator.then($next_sibling.clone()).repeated())
@@ -681,7 +697,7 @@ pub fn parse_macros() -> TokenStream {
 
         #[allow(unused_macros)]
         macro_rules! unary_prefix_expression {
-            ($kind:ident, $next_sibling:expr, $operator:expr) => {
+            ($kind:ident, $next_sibling:ident, $operator:expr) => {
                 $operator
                     .repeated()
                     .then($next_sibling.clone())
@@ -702,7 +718,7 @@ pub fn parse_macros() -> TokenStream {
 
         #[allow(unused_macros)]
         macro_rules! unary_suffix_expression {
-            ($kind:ident, $next_sibling:expr, $operator:expr) => {
+            ($kind:ident, $next_sibling:ident, $operator:expr) => {
                 $next_sibling
                     .clone()
                     .then($operator.repeated())
@@ -733,13 +749,47 @@ pub fn parse_macros() -> TokenStream {
         #[allow(unused_macros)]
         macro_rules! trie {
             ($($expr:expr),* ) => (
-                leading_trivia_parser.clone()
+                LeadingTrivia.clone()
                     .then(choice::<_, ErrorType>(($($expr),*)).map_with_span(|kind, span: SpanType| (kind, span.start()..span.end())))
-                    .then(trailing_trivia_parser.clone())
+                    .then(TrailingTrivia.clone())
                     .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
                         cst::Node::token(kind, lex::Node::chars(range), leading_trivia, trailing_trivia)
                     })
             )
+        }
+
+        #[allow(unused_macros)]
+        macro_rules! define_rule {
+            ($kind:ident, $expr:expr) => {{
+                $kind.define($expr);
+            }
+            parsers.insert(
+                ProductionKind::$kind,
+                Parser::new(
+                    $kind
+                        .clone()
+                        .map(|node| cst::Node::top_level_rule(RuleKind::$kind, node))
+                        .then_ignore(end())
+                        .boxed(),
+                ),
+            );};
+        }
+
+        #[allow(unused_macros)]
+        macro_rules! define_token {
+            ($kind:ident, $expr:expr) => {{
+                $kind.define($expr);
+            }
+            parsers.insert(
+                ProductionKind::$kind,
+                Parser::new(
+                    $kind
+                        .clone()
+                        .map(|node| cst::Node::top_level_token(node))
+                        .then_ignore(end())
+                        .boxed(),
+                ),
+            );};
         }
     )
 }

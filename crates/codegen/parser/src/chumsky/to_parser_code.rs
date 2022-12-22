@@ -1,5 +1,5 @@
 use proc_macro2::{Ident, TokenStream};
-use quote::quote;
+use quote::{format_ident, quote};
 
 use codegen_schema::*;
 
@@ -7,7 +7,7 @@ use crate::chumsky::combinator_node::OperatorModel;
 
 use super::{
     character_filter::CharacterFilter, code_generator::CodeGenerator,
-    combinator_node::CombinatorNode, naming, terminal_trie::TerminalTrie,
+    combinator_node::CombinatorNode, terminal_trie::TerminalTrie,
 };
 
 impl<'context> CharacterFilter<'context> {
@@ -54,14 +54,14 @@ impl<'context> CombinatorNode<'context> {
              * Simple Reference
              */
             Self::Reference { tree } => {
-                let production_parser_name = naming::to_parser_name_ident(&tree.production.name);
+                let production_name = format_ident!("{}", tree.production.name);
                 match tree.production.kind {
                     ProductionKind::Rule if is_trivia => unreachable!(
                         "Trivia productions can only reference trivia or token productions"
                     ),
-                    ProductionKind::Rule => quote!(rule!(#production_parser_name)),
-                    ProductionKind::Trivia => quote!(rule!(#production_parser_name)),
-                    ProductionKind::Token => quote!(#token_macro(#production_parser_name)),
+                    ProductionKind::Rule => quote!(rule!(#production_name)),
+                    ProductionKind::Trivia => quote!(rule!(#production_name)),
+                    ProductionKind::Token => quote!(#token_macro(#production_name)),
                 }
             }
 
@@ -174,7 +174,7 @@ impl<'context> CombinatorNode<'context> {
              * Precedence parsing
              */
             Self::PrecedenceRule { members, .. } => {
-                let first_parser_name = naming::to_parser_name_ident(&members[0].production.name);
+                let first_parser_name = format_ident!("{}", members[0].production.name);
                 quote!(rule!(#first_parser_name))
             }
 
@@ -189,7 +189,7 @@ impl<'context> CombinatorNode<'context> {
                 let operator = operator.to_parser_code(is_trivia, code);
                 let next_sibling = next_sibling
                     .clone()
-                    .map(|next| naming::to_parser_name_ident(&next.production.name));
+                    .map(|next| format_ident!("{}", next.production.name));
 
                 match operator_model {
                     OperatorModel::None => match next_sibling {

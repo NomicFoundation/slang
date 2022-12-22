@@ -13,6 +13,13 @@ pub fn mod_head() -> TokenStream {
     )
 }
 
+pub fn kinds_head() -> TokenStream {
+    quote!(
+        use serde::Serialize;
+        use strum_macros::*;
+    )
+}
+
 pub fn cst_visitor_head() -> TokenStream {
     quote!(
         #[allow(unused_variables)]
@@ -184,31 +191,51 @@ pub fn language_head() -> TokenStream {
 
     quote!(
         use std::rc::Rc;
+        use std::collections::BTreeMap;
 
-        use chumsky::{error::SimpleReason, Parser, Span};
+        use chumsky::{error::SimpleReason, BoxedParser, Span, Parser as ChumskyParser};
         use ariadne::{Color, Config, Fmt, Label, Report, ReportKind, Source};
         use semver::Version;
 
         use super::{
             cst,
-            parse::{BoxedParserType, ErrorType, Parsers},
+            parse::ErrorType,
+            parse::create_parsers,
+            kinds::ProductionKind,
         };
 
         pub struct Language {
-            parsers: Parsers,
+            parsers: BTreeMap<ProductionKind, Parser>,
             version: Version,
         }
 
         impl Language {
             pub fn new(version: Version) -> Self {
                 Self {
-                    parsers: Parsers::new(&version),
+                    parsers: create_parsers(&version),
                     version,
                 }
             }
 
             pub fn version(&self) -> &Version {
                 &self.version
+            }
+
+            pub fn get_parser(&self, kind: ProductionKind) -> &Parser {
+                &self.parsers[&kind]
+            }
+        }
+
+        pub struct Parser(BoxedParser<'static, char, Rc<cst::Node>, ErrorType>);
+
+        impl Parser {
+            pub(super) fn new(inner: BoxedParser<'static, char, Rc<cst::Node>, ErrorType>) -> Self {
+                Self(inner)
+            }
+
+            pub fn parse(&self, input: &str) -> ParserOutput {
+                let (parse_tree, errors) = self.0.parse_recovery(input);
+                ParserOutput { parse_tree, errors }
             }
         }
 
@@ -219,11 +246,6 @@ pub fn language_head() -> TokenStream {
         }
 
         impl ParserOutput {
-            fn new(source: &str, parser: &BoxedParserType) -> Self {
-                let (parse_tree, errors) = parser.parse_recovery(source);
-                Self { parse_tree, errors }
-            }
-
             pub fn parse_tree(&self) -> Option<Rc<cst::Node>> {
                 self.parse_tree.clone()
             }

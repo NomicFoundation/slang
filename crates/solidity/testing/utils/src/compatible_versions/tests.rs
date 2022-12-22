@@ -1,6 +1,6 @@
 use anyhow::{bail, Context, Result};
 use semver::Version;
-use solidity_rust_lib::generated::language::Language;
+use solidity_rust_lib::generated::{kinds::ProductionKind, language::Language};
 
 use crate::compatible_versions::filter_compatible_versions;
 
@@ -73,7 +73,9 @@ fn multiple_version_pragmas() -> Result<()> {
 fn test_aux(all_versions: &[Version], source: &str, expected: &Vec<&Version>) -> Result<()> {
     let source_id = "test.sol";
     let latest_version = all_versions.last().context("No versions provided")?;
-    let output = Language::new(latest_version.to_owned()).parse_source_unit(source);
+    let output = Language::new(latest_version.to_owned())
+        .get_parser(ProductionKind::SourceUnit)
+        .parse(source);
 
     let parse_tree = if let Some(root_node) = output.parse_tree() {
         root_node

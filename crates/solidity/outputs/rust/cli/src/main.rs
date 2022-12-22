@@ -3,7 +3,7 @@ use std::{fs, path::PathBuf};
 use anyhow::{Context, Result};
 use clap::Parser as ClapParser;
 use semver::Version;
-use solidity_rust_lib::generated::language::Language;
+use solidity_rust_lib::generated::{kinds::ProductionKind, language::Language};
 
 #[derive(ClapParser, Debug)]
 struct ProgramArgs {
@@ -26,7 +26,9 @@ fn main() -> Result<()> {
     let input =
         fs::read_to_string(input_file).context(format!("Failed to read file: {input_file:?}"))?;
 
-    let output = Language::new(args.version).parse_source_unit(&input);
+    let output = Language::new(args.version)
+        .get_parser(ProductionKind::SourceUnit)
+        .parse(&input);
 
     for report in &output.errors_as_strings(
         input_file
