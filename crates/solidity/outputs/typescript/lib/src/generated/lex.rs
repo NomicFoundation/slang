@@ -7,7 +7,6 @@ use std::rc::Rc;
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub enum Node {
     Chars(Range<usize>),
-    Choice(usize, Rc<Node>),
     Sequence(Vec<Rc<Node>>),
     Named(TokenKind, Rc<Node>),
 }
@@ -26,16 +25,12 @@ impl Node {
             Some(Rc::new(Self::Sequence(elements)))
         }
     }
-    pub fn choice(index: usize, element: Option<Rc<Self>>) -> Option<Rc<Self>> {
-        element.map(|e| Rc::new(Self::Choice(index, e)))
-    }
     pub fn named(kind: TokenKind, element: Option<Rc<Self>>) -> Option<Rc<Self>> {
         element.map(|e| Rc::new(Self::Named(kind, e)))
     }
     pub fn range(&self) -> Range<usize> {
         match self {
             Node::Chars(range) => range.clone(),
-            Node::Choice(_, element) => element.range(),
             Node::Sequence(elements) => {
                 elements[0].range().start..elements[elements.len() - 1].range().end
             }
@@ -49,7 +44,6 @@ use napi::NapiValue;
 #[napi]
 pub enum LexNodeType {
     Chars,
-    Choice,
     Sequence,
     Named,
 }
@@ -60,8 +54,6 @@ pub struct TokenRange {
 }
 #[napi]
 pub struct LexCharsNode(Rc<Node>);
-#[napi]
-pub struct LexChoiceNode(Rc<Node>);
 #[napi]
 pub struct LexSequenceNode(Rc<Node>);
 #[napi]
@@ -79,35 +71,6 @@ impl LexCharsNode {
                 start: range.start as u32,
                 end: range.end as u32,
             },
-            _ => unreachable!(),
-        }
-    }
-}
-#[napi]
-impl LexChoiceNode {
-    #[napi(getter, js_name = "type", ts_return_type = "LexNodeType.Choice")]
-    pub fn tipe(&self) -> LexNodeType {
-        LexNodeType::Choice
-    }
-    #[napi(getter)]
-    pub fn range(&self) -> TokenRange {
-        let range = self.0.range();
-        TokenRange {
-            start: range.start as u32,
-            end: range.end as u32,
-        }
-    }
-    #[napi(getter)]
-    pub fn index(&self) -> usize {
-        match self.0.as_ref() {
-            Node::Choice(index, _) => *index,
-            _ => unreachable!(),
-        }
-    }
-    #[napi(ts_return_type = "LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode")]
-    pub fn child(&self, env: Env) -> JsObject {
-        match self.0.as_ref() {
-            Node::Choice(_, child) => child.to_js(&env),
             _ => unreachable!(),
         }
     }
@@ -171,12 +134,6 @@ impl RcNodeExtensions for Rc<Node> {
         let obj = match self.as_ref() {
             Node::Chars(_) => unsafe {
                 <LexCharsNode as ToNapiValue>::to_napi_value(env.raw(), LexCharsNode(self.clone()))
-            },
-            Node::Choice(_, _) => unsafe {
-                <LexChoiceNode as ToNapiValue>::to_napi_value(
-                    env.raw(),
-                    LexChoiceNode(self.clone()),
-                )
             },
             Node::Sequence(_) => unsafe {
                 <LexSequenceNode as ToNapiValue>::to_napi_value(
