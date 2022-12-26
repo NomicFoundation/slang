@@ -1,3 +1,5 @@
+use std::cell::RefCell;
+
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 
@@ -9,19 +11,42 @@ use super::{
 };
 
 impl<'context> CharacterFilter<'context> {
-    pub fn to_lexer_code(&self, name: Option<&String>, code: &mut CodeGenerator) -> TokenStream {
-        self.to_code(name, code, "lex_")
+    pub fn to_lexer_code(&self, kind: String, code: &mut CodeGenerator) -> TokenStream {
+        let kind = code.add_token_kind(kind);
+        if let CharacterFilter::Char { char } = self {
+            quote!(lex_terminal!(#kind, #char))
+        } else {
+            let predicate = self.to_predicate(false);
+            quote!(lex_terminal!(#kind, |&c: &char| #predicate))
+        }
     }
 }
 
 impl TerminalTrie {
-    pub fn to_lexer_code(&self, kind: Option<Ident>, code: &mut CodeGenerator) -> TokenStream {
-        self.to_code(kind, code, "lex_")
+    pub fn to_lexer_code(&self, code: &mut CodeGenerator) -> TokenStream {
+        let code = RefCell::new(code);
+        let lexers = self.generate(
+            &|label, children| quote!(lex_trieprefix!(#label, [ #(#children),* ])),
+            &|name, label| {
+                let kind = code.borrow_mut().add_token_kind(name.cloned().unwrap());
+                if label.is_empty() {
+                    quote!(lex_trieleaf!(#kind))
+                } else {
+                    quote!(lex_trieleaf!(#kind, #label))
+                }
+            },
+        );
+        quote!(lex_trie!(#(#lexers),*))
     }
 }
 
 impl<'context> CombinatorNode<'context> {
     pub fn to_lexer_code(&self, code: &mut CodeGenerator) -> TokenStream {
+        if !self.has_named_structure() {
+            let scanner = self.to_scanner_code(code);
+            return quote!(scan_make_node!(#scanner));
+        }
+
         fn create_kind(name: &Option<String>, code: &mut CodeGenerator) -> Option<Ident> {
             name.as_ref().map(|name| code.add_token_kind(name.clone()))
         }
@@ -155,11 +180,12 @@ impl<'context> CombinatorNode<'context> {
             /**********************************************************************
              * Terminals and their utilities
              */
-            Self::CharacterFilter { filter, name } => filter.to_lexer_code(name.as_ref(), code),
+            Self::CharacterFilter { filter, name } => filter.to_lexer_code(
+                name.clone().expect("Lexer character filters must be named"),
+                code,
+            ),
 
-            Self::TerminalTrie { trie, name } => {
-                trie.to_lexer_code(name.clone().map(|n| code.add_token_kind(n)), code)
-            }
+            Self::TerminalTrie { trie, .. } => trie.to_lexer_code(code),
 
             Self::Difference {
                 minuend,
@@ -177,4 +203,201 @@ impl<'context> CombinatorNode<'context> {
             }
         }
     }
+}
+
+pub fn parse_macros() -> TokenStream {
+    quote!(
+        #[allow(unused_macros)]
+        macro_rules! lex_terminal {
+            ($kind:ident, $literal:literal) => {
+                just($literal).map_with_span(|_, span: SpanType| {
+                    lex::Node::named(TokenKind::$kind, lex::Node::chars(span))
+                })
+            };
+            ($kind:ident, $filter:expr) => {
+                filter($filter).map_with_span(|_, span: SpanType| {
+                    lex::Node::named(TokenKind::$kind, lex::Node::chars(span))
+                })
+            };
+            ($literal:literal) => {
+                just($literal).map_with_span(|_, span: SpanType| lex::Node::chars(span))
+            };
+            ($filter:expr) => {
+                filter($filter).map_with_span(|_, span: SpanType| lex::Node::chars(span))
+            };
+        }
+
+        #[allow(unused_macros)]
+        macro_rules! lex_rule {
+            ($rule:ident) => {
+                $rule.clone()
+            };
+        }
+
+        #[allow(unused_macros)]
+        macro_rules! lex_choice {
+            ($kind:ident, $($expr:expr),*) => {
+                lex_choice!($($expr),*).map(|element| lex::Node::named(TokenKind::$kind, element))
+            };
+            ($($expr:expr),*) => {
+                choice::<_, ErrorType>(($($expr),*))
+            };
+        }
+
+        #[allow(unused_macros)]
+        macro_rules! lex_seq {
+            // HELPERS -------------------------------------------------------------------------------
+
+            /*
+                (@exp a, b, c, d)
+                => a.then(@exp b, c, d)
+                => a.then(b.then(@exp c, d))
+                => a.then(b.then(c.then(@exp d)))
+                => a.then(b.then(c.then(d)))
+            */
+
+            (@exp $head:expr , $($tail:expr),+ ) => {
+                $head.then(lex_seq!(@exp $($tail),+ ))
+            };
+
+            (@exp $head:expr ) => {
+                $head
+            };
+
+            /*
+                (@args [], v, a, b, c, d)
+                => (@args [v.0,], v.1, b, c, d)
+                => (@args [v.0, v.1.0,], v.1.1, c, d)
+                => (@args [v.0, v.1.0, v.1.1.0,], v.1.1.1, d)
+                => vec![v.0, v.1.0, v.1.1.0, v.1.1.0, v1.1.1, ]
+            */
+
+            (@args [ $($accum:expr,)* ] , $current:expr , $head:expr , $($tail:expr),+ ) => {
+                lex_seq!(@args [ $($accum,)* $current.0, ] , $current.1 , $($tail),+ )
+            };
+
+            (@args [ $($accum:expr,)* ] , $current:expr , $head:expr ) => {
+                vec![ $($accum,)* $current ]
+            };
+
+            //----------------------------------------------------------------------------------------
+
+            ($kind:ident, $($expr:expr),+ ) => {
+                lex_seq!(@exp $($expr),+ )
+                    .map(|v| lex::Node::named(TokenKind::$kind, lex::Node::sequence(lex_seq!(@args [] , v , $($expr),+ ))))
+            };
+
+            ($($expr:expr),+ ) => {
+                lex_seq!(@exp $($expr),+ )
+                    .map(|v| lex::Node::sequence(lex_seq!(@args [] , v , $($expr),+ )))
+            };
+        }
+
+        #[allow(unused_macros)]
+        macro_rules! lex_zero_or_more {
+            ($kind:ident, $expr:expr) => {
+                lex_zero_or_more!($expr).map(|element| lex::Node::named(TokenKind::$kind, element))
+            };
+            ($expr:expr) => {
+                $expr.repeated().map(lex::Node::sequence)
+            };
+        }
+
+        #[allow(unused_macros)]
+        macro_rules! lex_one_or_more {
+            ($kind:ident, $expr:expr) => {
+                lex_one_or_more!($expr).map(|element| lex::Node::named(TokenKind::$kind, element))
+            };
+            ($expr:expr) => {
+                $expr.repeated().at_least(1).map(lex::Node::sequence)
+            };
+        }
+
+        #[allow(unused_macros)]
+        macro_rules! lex_repeated {
+            ($kind:ident, $expr:expr, $min:literal, $max:literal) => {
+                lex_repeated!($expr, $min, $max)
+                    .map(|element| lex::Node::named(TokenKind::$kind, element))
+            };
+            ($expr:expr, $min:literal, $max:literal) => {
+                $expr
+                    .repeated()
+                    .at_least($min)
+                    .at_most($max)
+                    .map(lex::Node::sequence)
+            };
+        }
+
+        #[allow(unused_macros)]
+        macro_rules! lex_optional {
+            ($expr:expr) => {
+                $expr.or_not().map(|v| v.flatten())
+            };
+        }
+
+        #[allow(unused_macros)]
+        macro_rules! lex_separated_by {
+            ($kind:ident, $expr:expr, $separator:expr) => {
+                lex_separated_by!($expr, $separator)
+                    .map(|element| lex::Node::named(TokenKind::$kind, element))
+            };
+            ($expr:expr, $separator:expr) => {
+                $expr
+                    .then($separator.then($expr).repeated())
+                    .map(|(first, rest)| {
+                        let mut v = vec![first];
+                        for (separator, expr) in rest {
+                            v.push(separator);
+                            v.push(expr);
+                        }
+                        lex::Node::sequence(v)
+                    })
+            };
+        }
+
+        #[allow(unused_macros)]
+        macro_rules! lex_trie {
+            ( $expr:expr ) => {
+                $expr.map_with_span(|_, span: SpanType| lex::Node::chars(span))
+            };
+            ( $($expr:expr),+ ) => {
+                choice::<_, ErrorType>(($($expr),+)).map_with_span(|_, span: SpanType|
+                    lex::Node::chars(span))
+            };
+        }
+
+        #[allow(unused_macros)]
+        macro_rules! lex_trieleaf {
+            ( $kind:ident, $string:literal ) => {
+                just($string).to(TokenKind::$kind)
+            };
+            ( $kind:ident ) => {
+                empty().to(TokenKind::$kind)
+            };
+        }
+
+        #[allow(unused_macros)]
+        macro_rules! lex_trieprefix {
+            ($string:literal , [ $($expr:expr),+ ] ) => (
+                just($string).ignore_then(choice::<_, ErrorType>(($($expr),+)))
+            )
+        }
+
+        #[allow(unused_macros)]
+        macro_rules! define_token {
+            ($kind:ident, $expr:expr) => {
+                $kind.define($expr.map(|node| lex::Node::named(TokenKind::$kind, node)));
+                parsers.insert(
+                    ProductionKind::$kind,
+                    Parser::new(
+                        $kind
+                            .clone()
+                            .map(cst::Node::top_level_token)
+                            .then_ignore(end())
+                            .boxed(),
+                    ),
+                );
+            };
+        }
+    )
 }

@@ -2,21 +2,21 @@
 
 Errors: 0
 
-█ Rule(VersionPragma) - (0..68)                             │
-├──► Token(Solidity) - (0..8)                               │ solidity
-└──█ Rule(VersionPragmaSpecifiers) - (9..68)                │
-   └──█ Rule(VersionPragmaSpecifier) - (9..68)              │
-      └──█ Rule(SeparatedVersionPragmaValues) - (9..68)     │
-         ├──█ Token(VersionPragmaValue) - (9..25)           │
-         │  ├──► Trivia(MultilineComment) - (9..23)         │ /* comments */
-         │  └──► Contents - (24..25)                        │ 0
-         ├──█ Token(Period) - (26..37)                      │
-         │  ├──► Trivia(MultilineComment) - (26..35)        │ /* are */
-         │  └──► Contents - (36..37)                        │ .
-         ├──█ Token(VersionPragmaValue) - (38..53)          │
-         │  ├──► Trivia(MultilineComment) - (38..51)        │ /* allowed */
-         │  └──► Contents - (52..53)                        │ 0
-         ├──► Token(Period) - (54..55)                      │ .
-         └──█ Token(VersionPragmaValue) - (56..68)          │
-            ├──► Trivia(MultilineComment) - (56..66)        │ /* here */
-            └──► Contents - (67..68)                        │ 0
+█ Rule(VersionPragma) - (0..68)                          │
+├──► Token(Solidity) - (0..8)                            │ solidity
+└──█ Group - (9..68)                                     │
+   └──█ Rule(VersionPragmaSpecifier) - (9..68)           │
+      └──█ Group - (9..68)                               │
+         ├──█ Token(VersionPragmaValue) - (9..25)        │
+         │  ├──► Trivia(MultilineComment) - (9..23)      │ /* comments */
+         │  └──► Contents - (24..25)                     │ 0
+         ├──█ Token(Period) - (26..37)                   │
+         │  ├──► Trivia(MultilineComment) - (26..35)     │ /* are */
+         │  └──► Contents - (36..37)                     │ .
+         ├──█ Token(VersionPragmaValue) - (38..53)       │
+         │  ├──► Trivia(MultilineComment) - (38..51)     │ /* allowed */
+         │  └──► Contents - (52..53)                     │ 0
+         ├──► Token(Period) - (54..55)                   │ .
+         └──█ Token(VersionPragmaValue) - (56..68)       │
+            ├──► Trivia(MultilineComment) - (56..66)     │ /* here */
+            └──► Contents - (67..68)                     │ 0

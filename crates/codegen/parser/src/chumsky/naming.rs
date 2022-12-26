@@ -53,10 +53,6 @@ pub fn name_of_terminal_string(string: &str) -> String {
     .to_pascal_case()
 }
 
-pub fn pluralize(str: &str) -> String {
-    str.to_plural()
-}
-
 const DEFAULT_TOKEN_NAMES: &[(char, &str)] = &[
     ('\t', "tab"),
     ('\n', "linefeed"),

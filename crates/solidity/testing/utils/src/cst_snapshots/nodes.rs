@@ -128,7 +128,7 @@ impl TestNode {
                 );
 
                 match kind {
-                    TokenKind::Whitespace | TokenKind::EndOfLine | TokenKind::Linefeed => {
+                    TokenKind::Whitespace | TokenKind::EndOfLine => {
                         // hide this from snapshots
                         return None;
                     }
