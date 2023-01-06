@@ -1,20 +1,20 @@
 # yaml-language-server: $schema=../../../../../codegen/schema/json-schema/topic.schema.json
 
-- name: ErrorDefinition
+- name: "ErrorDefinition"
   sequence:
-    - terminal: error
-    - reference: Identifier
+    - terminal: "error"
+    - reference: "Identifier"
     - delimitedBy:
-        open: (
+        open: "("
         optional:
           separatedBy:
-            reference: ErrorParameter
+            reference: "ErrorParameter"
             separator: ","
-        close: )
-    - terminal: ;
+        close: ")"
+    - terminal: ";"
 
-- name: ErrorParameter
+- name: "ErrorParameter"
   sequence:
-    - reference: TypeName
+    - reference: "TypeName"
     - optional:
-        reference: Identifier
+        reference: "Identifier"

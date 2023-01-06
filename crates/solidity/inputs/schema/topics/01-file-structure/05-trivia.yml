@@ -1,53 +1,54 @@
 # yaml-language-server: $schema=../../../../../codegen/schema/json-schema/topic.schema.json
 
-- name: LeadingTrivia
-  kind: Trivia
+- name: "LeadingTrivia"
+  kind: "Trivia"
   zeroOrMore:
     choice:
-      - reference: Whitespace
-      - reference: EndOfLine
-      - reference: MultilineComment
-      - reference: SingleLineComment
+      - reference: "Whitespace"
+      - reference: "EndOfLine"
+      - reference: "MultilineComment"
+      - reference: "SingleLineComment"
 
-- name: TrailingTrivia
-  kind: Trivia
+- name: "TrailingTrivia"
+  kind: "Trivia"
   optional:
     sequence:
       - zeroOrMore:
           choice:
-            - reference: Whitespace
-            - reference: MultilineComment
+            - reference: "Whitespace"
+            - reference: "MultilineComment"
       - choice:
-          - reference: EndOfLine
-          - reference: SingleLineComment
+          - reference: "EndOfLine"
+          - reference: "SingleLineComment"
 
-- name: EndOfFileTrivia
-  kind: Trivia
+- name: "EndOfFileTrivia"
+  kind: "Trivia"
   zeroOrMore:
     choice:
-      - reference: Whitespace
-      - reference: MultilineComment
-      - reference: SingleLineComment
+      - reference: "Whitespace"
+      - reference: "MultilineComment"
+      - reference: "SingleLineComment"
 
-- name: Whitespace
-  kind: Token
+- name: "Whitespace"
+  kind: "Token"
   oneOrMore:
     choice:
       - terminal: " "
       - terminal: "\t"
 
-- name: EndOfLine
-  kind: Token
+- name: "EndOfLine"
+  kind: "Token"
   oneOrMore:
     choice:
       - terminal: "\r"
       - terminal: "\n"
 
-- name: MultilineComment
-  kind: Token
+- name: "MultilineComment"
+  kind: "Token"
   delimitedBy:
-    open: /*
-    config: { name: Content }
+    open: "/*"
+    config:
+      name: "Content"
     zeroOrMore:
       choice:
         - not:
@@ -55,13 +56,13 @@
         - sequence:
             - terminal: "*"
             - not:
-                terminal: /
+                terminal: "/"
     close: "*/"
 
-- name: SingleLineComment
-  kind: Token
+- name: "SingleLineComment"
+  kind: "Token"
   sequence:
-    - terminal: //
+    - terminal: "//"
     - zeroOrMore:
         not:
           choice:

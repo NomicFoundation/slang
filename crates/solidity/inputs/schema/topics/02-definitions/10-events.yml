@@ -1,24 +1,24 @@
 # yaml-language-server: $schema=../../../../../codegen/schema/json-schema/topic.schema.json
 
-- name: EventDefinition
+- name: "EventDefinition"
   sequence:
-    - terminal: event
-    - reference: Identifier
+    - terminal: "event"
+    - reference: "Identifier"
     - delimitedBy:
-        open: (
+        open: "("
         optional:
           separatedBy:
-            reference: EventParameter
+            reference: "EventParameter"
             separator: ","
-        close: )
+        close: ")"
     - optional:
-        terminal: anonymous
-    - terminal: ;
+        terminal: "anonymous"
+    - terminal: ";"
 
-- name: EventParameter
+- name: "EventParameter"
   sequence:
-    - reference: TypeName
+    - reference: "TypeName"
     - optional:
-        terminal: indexed
+        terminal: "indexed"
     - optional:
-        reference: Identifier
+        reference: "Identifier"

@@ -1,146 +1,146 @@
 # yaml-language-server: $schema=../../../../../codegen/schema/json-schema/topic.schema.json
 
-- name: FunctionDefinition
+- name: "FunctionDefinition"
   sequence:
-    - terminal: function
+    - terminal: "function"
     - choice:
-        - reference: Identifier
-        - terminal: fallback
-        - terminal: receive
-    - reference: ParameterList
+        - reference: "Identifier"
+        - terminal: "fallback"
+        - terminal: "receive"
+    - reference: "ParameterList"
     - zeroOrMore:
-        reference: FunctionAttribute
+        reference: "FunctionAttribute"
     - optional:
         sequence:
-          - terminal: returns
-          - reference: ParameterList
+          - terminal: "returns"
+          - reference: "ParameterList"
     - choice:
-        - terminal: ;
-        - reference: Block
+        - terminal: ";"
+        - reference: "Block"
 
-- name: FunctionAttribute
+- name: "FunctionAttribute"
   choice:
-    - reference: ModifierInvocation
-    - reference: OverrideSpecifier
-    - terminal: external
-    - terminal: internal
-    - terminal: payable
-    - terminal: private
-    - terminal: public
-    - terminal: pure
-    - terminal: view
-    - terminal: virtual
+    - reference: "ModifierInvocation"
+    - reference: "OverrideSpecifier"
+    - terminal: "external"
+    - terminal: "internal"
+    - terminal: "payable"
+    - terminal: "private"
+    - terminal: "public"
+    - terminal: "pure"
+    - terminal: "view"
+    - terminal: "virtual"
 
-- name: OverrideSpecifier
+- name: "OverrideSpecifier"
   sequence:
-    - terminal: override
+    - terminal: "override"
     - optional:
         delimitedBy:
-          open: (
+          open: "("
           separatedBy:
-            reference: IdentifierPath
+            reference: "IdentifierPath"
             separator: ","
-          close: )
+          close: ")"
 
-- name: ParameterList
+- name: "ParameterList"
   delimitedBy:
-    open: (
+    open: "("
     optional:
       separatedBy:
-        reference: ParameterDeclaration
+        reference: "ParameterDeclaration"
         separator: ","
-    close: )
+    close: ")"
 
-- name: ParameterDeclaration
+- name: "ParameterDeclaration"
   sequence:
-    - reference: TypeName
+    - reference: "TypeName"
     - optional:
-        reference: DataLocation
+        reference: "DataLocation"
     - optional:
-        reference: Identifier
+        reference: "Identifier"
 
-- name: ArgumentList
+- name: "ArgumentList"
   delimitedBy:
-    open: (
+    open: "("
     optional:
       choice:
-        - reference: PositionalArgumentList
-        - reference: NamedArgumentList
-    close: )
+        - reference: "PositionalArgumentList"
+        - reference: "NamedArgumentList"
+    close: ")"
 
-- name: PositionalArgumentList
+- name: "PositionalArgumentList"
   separatedBy:
-    reference: Expression
+    reference: "Expression"
     separator: ","
 
-- name: NamedArgumentList
+- name: "NamedArgumentList"
   delimitedBy:
     open: "{"
     optional:
       separatedBy:
-        reference: NamedArgument
+        reference: "NamedArgument"
         separator: ","
     close: "}"
 
-- name: NamedArgument
+- name: "NamedArgument"
   sequence:
-    - reference: Identifier
+    - reference: "Identifier"
     - terminal: ":"
-    - reference: Expression
+    - reference: "Expression"
 
-- name: ConstructorDefinition
+- name: "ConstructorDefinition"
   sequence:
-    - terminal: constructor
-    - reference: ParameterList
+    - terminal: "constructor"
+    - reference: "ParameterList"
     - zeroOrMore:
-        reference: ConstructorAttribute
-    - reference: Block
+        reference: "ConstructorAttribute"
+    - reference: "Block"
 
-- name: ConstructorAttribute
+- name: "ConstructorAttribute"
   choice:
-    - reference: ModifierInvocation
-    - terminal: internal
-    - terminal: payable
-    - terminal: public
+    - reference: "ModifierInvocation"
+    - terminal: "internal"
+    - terminal: "payable"
+    - terminal: "public"
 
-- name: FallbackFunctionDefinition
+- name: "FallbackFunctionDefinition"
   sequence:
-    - terminal: fallback
-    - reference: ParameterList
+    - terminal: "fallback"
+    - reference: "ParameterList"
     - zeroOrMore:
-        reference: FallbackFunctionAttribute
+        reference: "FallbackFunctionAttribute"
     - optional:
         sequence:
-          - terminal: returns
-          - reference: ParameterList
+          - terminal: "returns"
+          - reference: "ParameterList"
     - choice:
-        - terminal: ;
-        - reference: Block
+        - terminal: ";"
+        - reference: "Block"
 
-- name: FallbackFunctionAttribute
+- name: "FallbackFunctionAttribute"
   choice:
-    - reference: ModifierInvocation
-    - reference: OverrideSpecifier
-    - terminal: external
-    - terminal: payable
-    - terminal: pure
-    - terminal: view
-    - terminal: virtual
+    - reference: "ModifierInvocation"
+    - reference: "OverrideSpecifier"
+    - terminal: "external"
+    - terminal: "payable"
+    - terminal: "pure"
+    - terminal: "view"
+    - terminal: "virtual"
 
-- name: ReceiveFunctionDefinition
+- name: "ReceiveFunctionDefinition"
   sequence:
-    - terminal: receive
-    - reference: ParameterList
+    - terminal: "receive"
+    - reference: "ParameterList"
     - zeroOrMore:
-        reference: ReceiveFunctionAttribute
+        reference: "ReceiveFunctionAttribute"
     - choice:
-        - terminal: ;
-        - reference: Block
+        - terminal: ";"
+        - reference: "Block"
 
-- name: ReceiveFunctionAttribute
+- name: "ReceiveFunctionAttribute"
   choice:
-    - reference: ModifierInvocation
-    - reference: OverrideSpecifier
-    - terminal: external
-    - terminal: payable
-    - terminal: virtual
+    - reference: "ModifierInvocation"
+    - reference: "OverrideSpecifier"
+    - terminal: "external"
+    - terminal: "payable"
+    - terminal: "virtual"

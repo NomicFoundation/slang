@@ -1,57 +1,57 @@
 # yaml-language-server: $schema=../../../../../codegen/schema/json-schema/topic.schema.json
 
-- name: PrimaryExpression
+- name: "PrimaryExpression"
   choice:
-    - reference: PayableExpression
-    - reference: TypeExpression
-    - reference: NewExpression
-    - reference: ParenthesisExpression
-    - reference: ArrayLiteral
-    - reference: AsciiStringLiteral
-    - reference: UnicodeStringLiteral
-    - reference: HexStringLiteral
-    - reference: NumericLiteral
-    - reference: BooleanLiteral
-    - reference: Identifier
+    - reference: "PayableExpression"
+    - reference: "TypeExpression"
+    - reference: "NewExpression"
+    - reference: "ParenthesisExpression"
+    - reference: "ArrayLiteral"
+    - reference: "AsciiStringLiteral"
+    - reference: "UnicodeStringLiteral"
+    - reference: "HexStringLiteral"
+    - reference: "NumericLiteral"
+    - reference: "BooleanLiteral"
+    - reference: "Identifier"
 
-- name: PayableExpression
+- name: "PayableExpression"
   sequence:
-    - terminal: payable
-    - reference: ArgumentList
+    - terminal: "payable"
+    - reference: "ArgumentList"
 
-- name: TypeExpression
+- name: "TypeExpression"
   sequence:
-    - terminal: type
+    - terminal: "type"
     - delimitedBy:
-        open: (
-        reference: TypeName
-        close: )
+        open: "("
+        reference: "TypeName"
+        close: ")"
 
-- name: NewExpression
+- name: "NewExpression"
   sequence:
-    - terminal: new
-    - reference: IdentifierPath
-    - reference: ArgumentList
+    - terminal: "new"
+    - reference: "IdentifierPath"
+    - reference: "ArgumentList"
 
-- name: ParenthesisExpression
+- name: "ParenthesisExpression"
   delimitedBy:
-    open: (
+    open: "("
     separatedBy:
       optional:
-        reference: Expression
+        reference: "Expression"
       separator: ","
-    close: )
+    close: ")"
 
-- name: ArrayLiteral
+- name: "ArrayLiteral"
   delimitedBy:
     open: "["
     separatedBy:
-      reference: Expression
+      reference: "Expression"
       separator: ","
     close: "]"
 
-- name: BooleanLiteral
-  kind: Token
+- name: "BooleanLiteral"
+  kind: "Token"
   choice:
     - terminal: "true"
     - terminal: "false"

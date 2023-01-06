@@ -1,30 +1,30 @@
 # yaml-language-server: $schema=../../../../../codegen/schema/json-schema/topic.schema.json
 
-- name: PragmaDirective
+- name: "PragmaDirective"
   sequence:
-    - terminal: pragma
+    - terminal: "pragma"
     - choice:
-        - reference: VersionPragma
-        - reference: ABICoderPragma
-        - reference: ExperimentalPragma
-    - terminal: ;
+        - reference: "VersionPragma"
+        - reference: "ABICoderPragma"
+        - reference: "ExperimentalPragma"
+    - terminal: ";"
 
-- name: VersionPragma
+- name: "VersionPragma"
   sequence:
-    - terminal: solidity
+    - terminal: "solidity"
     - oneOrMore:
-        reference: VersionPragmaSpecifier
+        reference: "VersionPragmaSpecifier"
 
-- name: VersionPragmaSpecifier
+- name: "VersionPragmaSpecifier"
   sequence:
     - optional:
-        reference: VersionPragmaOperator
+        reference: "VersionPragmaOperator"
     - separatedBy:
-        reference: VersionPragmaValue
+        reference: "VersionPragmaValue"
         separator: "."
 
-- name: VersionPragmaOperator
-  kind: Token
+- name: "VersionPragmaOperator"
+  kind: "Token"
   choice:
     - terminal: "^"
     - terminal: "~"
@@ -34,21 +34,23 @@
     - terminal: "<="
     - terminal: ">="
 
-- name: VersionPragmaValue
-  kind: Token
+- name: "VersionPragmaValue"
+  kind: "Token"
   oneOrMore:
     choice:
-      - range: { from: "0", to: "9" }
+      - range:
+          from: "0"
+          to: "9"
       - terminal: "x"
       - terminal: "X"
       - terminal: "*"
 
-- name: ABICoderPragma
+- name: "ABICoderPragma"
   sequence:
-    - terminal: abicoder
-    - reference: Identifier
+    - terminal: "abicoder"
+    - reference: "Identifier"
 
-- name: ExperimentalPragma
+- name: "ExperimentalPragma"
   sequence:
-    - terminal: experimental
-    - reference: Identifier
+    - terminal: "experimental"
+    - reference: "Identifier"

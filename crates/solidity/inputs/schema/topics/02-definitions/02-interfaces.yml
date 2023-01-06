@@ -1,13 +1,13 @@
 # yaml-language-server: $schema=../../../../../codegen/schema/json-schema/topic.schema.json
 
-- name: InterfaceDefinition
+- name: "InterfaceDefinition"
   sequence:
-    - terminal: interface
-    - reference: Identifier
+    - terminal: "interface"
+    - reference: "Identifier"
     - optional:
-        reference: InheritanceSpecifierList
+        reference: "InheritanceSpecifierList"
     - delimitedBy:
         open: "{"
         zeroOrMore:
-          reference: ContractBodyElement
+          reference: "ContractBodyElement"
         close: "}"

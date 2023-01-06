@@ -1,18 +1,18 @@
 # yaml-language-server: $schema=../../../../../codegen/schema/json-schema/topic.schema.json
 
-- name: AssemblyStatement
+- name: "AssemblyStatement"
   sequence:
-    - terminal: assembly
+    - terminal: "assembly"
     - optional:
         terminal: '"evmasm"'
     - optional:
-        reference: AssemblyFlags
-    - reference: YulBlock
+        reference: "AssemblyFlags"
+    - reference: "YulBlock"
 
-- name: AssemblyFlags
+- name: "AssemblyFlags"
   delimitedBy:
-    open: (
+    open: "("
     separatedBy:
-      reference: DoubleQuotedAsciiStringLiteral
+      reference: "DoubleQuotedAsciiStringLiteral"
       separator: ","
-    close: )
+    close: ")"

@@ -1,50 +1,50 @@
 # yaml-language-server: $schema=../../../../../codegen/schema/json-schema/topic.schema.json
 
-- name: YulExpression
+- name: "YulExpression"
   choice:
-    - reference: YulIdentifierPath
-    - reference: YulFunctionCall
-    - reference: YulLiteral
+    - reference: "YulIdentifierPath"
+    - reference: "YulFunctionCall"
+    - reference: "YulLiteral"
 
-- name: YulIdentifierPath
+- name: "YulIdentifierPath"
   separatedBy:
-    reference: YulIdentifier
+    reference: "YulIdentifier"
     separator: "."
 
-- name: YulLiteral
+- name: "YulLiteral"
   choice:
-    - reference: YulDecimalNumberLiteral
-    - reference: YulHexLiteral
-    - reference: AsciiStringLiteral
-    - reference: BooleanLiteral
-    - reference: HexStringLiteral
+    - reference: "YulDecimalNumberLiteral"
+    - reference: "YulHexLiteral"
+    - reference: "AsciiStringLiteral"
+    - reference: "BooleanLiteral"
+    - reference: "HexStringLiteral"
 
-- name: YulIdentifier
-  kind: Token
+- name: "YulIdentifier"
+  kind: "Token"
   difference:
     minuend:
-      reference: RawIdentifier
+      reference: "RawIdentifier"
     subtrahend:
-      reference: YulKeyword
+      reference: "YulKeyword"
 
-- name: YulKeyword
-  kind: Token
+- name: "YulKeyword"
+  kind: "Token"
   choice:
-    - reference: BooleanLiteral
-    - terminal: break
-    - terminal: case
-    - terminal: continue
-    - terminal: default
-    - terminal: for
-    - terminal: function
-    - terminal: hex
-    - terminal: if
-    - terminal: leave
-    - terminal: let
-    - terminal: switch
+    - reference: "BooleanLiteral"
+    - terminal: "break"
+    - terminal: "case"
+    - terminal: "continue"
+    - terminal: "default"
+    - terminal: "for"
+    - terminal: "function"
+    - terminal: "hex"
+    - terminal: "if"
+    - terminal: "leave"
+    - terminal: "let"
+    - terminal: "switch"
 
-- name: YulDecimalNumberLiteral
-  kind: Token
+- name: "YulDecimalNumberLiteral"
+  kind: "Token"
   choice:
     - terminal: "0"
     - sequence:
@@ -56,9 +56,9 @@
               from: "0"
               to: "9"
 
-- name: YulHexLiteral
-  kind: Token
+- name: "YulHexLiteral"
+  kind: "Token"
   sequence:
     - terminal: "0x"
     - oneOrMore:
-        reference: HexCharacter
+        reference: "HexCharacter"

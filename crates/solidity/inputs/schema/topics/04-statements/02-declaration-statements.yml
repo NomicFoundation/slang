@@ -1,36 +1,36 @@
 # yaml-language-server: $schema=../../../../../codegen/schema/json-schema/topic.schema.json
 
-- name: TupleDeconstructionStatement
+- name: "TupleDeconstructionStatement"
   sequence:
     - delimitedBy:
-        open: (
+        open: "("
         optional:
           separatedBy:
             optional:
               sequence:
                 - optional:
-                    reference: TypeName
-                - reference: Identifier
+                    reference: "TypeName"
+                - reference: "Identifier"
             separator: ","
-        close: )
+        close: ")"
     - terminal: "="
-    - reference: Expression
-    - terminal: ;
+    - reference: "Expression"
+    - terminal: ";"
 
-- name: VariableDeclarationStatement
+- name: "VariableDeclarationStatement"
   sequence:
-    - reference: TypeName
+    - reference: "TypeName"
     - optional:
-        reference: DataLocation
-    - reference: Identifier
+        reference: "DataLocation"
+    - reference: "Identifier"
     - optional:
         sequence:
           - terminal: "="
-          - reference: Expression
-    - terminal: ;
+          - reference: "Expression"
+    - terminal: ";"
 
-- name: DataLocation
+- name: "DataLocation"
   choice:
-    - terminal: memory
-    - terminal: storage
-    - terminal: calldata
+    - terminal: "memory"
+    - terminal: "storage"
+    - terminal: "calldata"

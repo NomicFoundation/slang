@@ -50,7 +50,7 @@ fn generate_spec_navigation(
             entry.title,
             match &entry.file_path {
                 Some(file_path) => format!(
-                    " {}",
+                    " \"{}\"",
                     file_path
                         .strip_prefix(&docs_folder)
                         .unwrap()

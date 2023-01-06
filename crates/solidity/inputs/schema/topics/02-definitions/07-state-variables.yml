@@ -1,22 +1,22 @@
 # yaml-language-server: $schema=../../../../../codegen/schema/json-schema/topic.schema.json
 
-- name: StateVariableDeclaration
+- name: "StateVariableDeclaration"
   sequence:
-    - reference: TypeName
+    - reference: "TypeName"
     - zeroOrMore:
-        reference: StateVariableAttribute
-    - reference: Identifier
+        reference: "StateVariableAttribute"
+    - reference: "Identifier"
     - optional:
         sequence:
           - terminal: "="
-          - reference: Expression
-    - terminal: ;
+          - reference: "Expression"
+    - terminal: ";"
 
-- name: StateVariableAttribute
+- name: "StateVariableAttribute"
   choice:
-    - reference: OverrideSpecifier
-    - terminal: constant
-    - terminal: immutable
-    - terminal: internal
-    - terminal: private
-    - terminal: public
+    - reference: "OverrideSpecifier"
+    - terminal: "constant"
+    - terminal: "immutable"
+    - terminal: "internal"
+    - terminal: "private"
+    - terminal: "public"

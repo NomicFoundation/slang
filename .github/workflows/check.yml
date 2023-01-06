@@ -1,48 +1,54 @@
-name: check
+name: "check"
 
-on:
-  workflow_dispatch: # manual triggers from GitHub UI
-  push: # all branches
+on: # yamllint disable-line rule:truthy
+  workflow_dispatch: {} # manual triggers from GitHub UI
+  push: {} # all branches
 
 jobs:
   check:
-    runs-on: ubuntu-22.04
+    runs-on: "ubuntu-22.04"
     steps:
-      - name: Clone repository
-        uses: actions/checkout@v3.1.0
-      - name: Restore hermit cache
-        uses: actions/cache@v3.0.9
+      - name: "Clone repository"
+        uses: "actions/checkout@v3.1.0"
+      - name: "Restore hermit cache"
+        uses: "actions/cache@v3.0.9"
         with:
-          path: .hermit/
-          key: hermit-cache-${{ hashFiles('**/Cargo.lock', '**/package-lock.json', '**/Pipfile.lock') }}
-          restore-keys: hermit-cache-
-      - name: Restore build cache
-        uses: actions/cache@v3.0.9
+          path: ".hermit/"
+          key: "hermit-cache-${{ hashFiles('**/Cargo.lock', '**/package-lock.json', '**/Pipfile.lock') }}"
+          restore-keys: "hermit-cache-"
+      - name: "Restore build cache"
+        uses: "actions/cache@v3.0.9"
         with:
-          path: target/
-          key: build-cache-${{ hashFiles('**/Cargo.lock', '**/package-lock.json', '**/Pipfile.lock') }}
-          restore-keys: build-cache-
-      - name: Build devcontainer
-        uses: ./.devcontainer
-        with: { entrypoint: echo } # empty entrypoint for timing
-      - name: Install Dependencies
-        uses: ./.devcontainer
-        with: { entrypoint: scripts/setup/all.sh }
-      - name: Cargo check
-        if: success() || failure() # run and report issues, even if previous steps failed
-        uses: ./.devcontainer
-        with: { entrypoint: scripts/cargo/check.sh }
-      - name: Cargo test
-        if: success() || failure() # run and report issues, even if previous steps failed
-        uses: ./.devcontainer
-        with: { entrypoint: scripts/cargo/test.sh }
-      - name: Run linters
-        if: success() || failure() # run and report issues, even if previous steps failed
-        uses: ./.devcontainer
-        with: { entrypoint: scripts/linting/run.sh }
-      - name: Build documentation
-        if: success() || failure() # run and report issues, even if previous steps failed
-        uses: ./.devcontainer
-        with: { entrypoint: scripts/documentation/build.sh }
-      - name: Repossess cached files # as they are modified by devcontainer (root) user
-        run: sudo chown -R $USER:$USER "$GITHUB_WORKSPACE"
+          path: "target/"
+          key: "build-cache-${{ hashFiles('**/Cargo.lock', '**/package-lock.json', '**/Pipfile.lock') }}"
+          restore-keys: "build-cache-"
+      - name: "Build devcontainer"
+        uses: "./.devcontainer"
+        with:
+          entrypoint: "echo" # empty entrypoint for timing
+      - name: "Install Dependencies"
+        uses: "./.devcontainer"
+        with:
+          entrypoint: "scripts/setup/all.sh"
+      - name: "Cargo check"
+        if: "success() || failure()" # run and report issues, even if previous steps failed
+        uses: "./.devcontainer"
+        with:
+          entrypoint: "scripts/cargo/check.sh"
+      - name: "Cargo test"
+        if: "success() || failure()" # run and report issues, even if previous steps failed
+        uses: "./.devcontainer"
+        with:
+          entrypoint: "scripts/cargo/test.sh"
+      - name: "Run linters"
+        if: "success() || failure()" # run and report issues, even if previous steps failed
+        uses: "./.devcontainer"
+        with:
+          entrypoint: "scripts/linting/run.sh"
+      - name: "Build documentation"
+        if: "success() || failure()" # run and report issues, even if previous steps failed
+        uses: "./.devcontainer"
+        with:
+          entrypoint: "scripts/documentation/build.sh"
+      - name: "Repossess cached files" # as they are modified by devcontainer (root) user
+        run: "sudo chown -R $USER:$USER $GITHUB_WORKSPACE"
