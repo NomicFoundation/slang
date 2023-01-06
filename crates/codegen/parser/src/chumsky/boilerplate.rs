@@ -12,7 +12,6 @@ pub fn lex_head() -> TokenStream {
         #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
         pub enum Node {
             Chars(Range<usize>),
-            Choice(usize, Rc<Node>),
             Sequence(Vec<Rc<Node>>),
             Named(TokenKind, Rc<Node>),
         }
@@ -31,11 +30,6 @@ pub fn lex_head() -> TokenStream {
                 if elements.is_empty() { None } else { Some(Rc::new(Self::Sequence(elements))) }
             }
 
-            pub fn choice(index: usize, element: Option<Rc<Self>>) -> Option<Rc<Self>> {
-                // TODO: disallow empty choices
-                element.map(|e| Rc::new(Self::Choice(index, e)))
-            }
-
             pub fn named(kind: TokenKind, element: Option<Rc<Self>>) -> Option<Rc<Self>> {
                 element.map(|e| Rc::new(Self::Named(kind, e)))
             }
@@ -43,7 +37,6 @@ pub fn lex_head() -> TokenStream {
             pub fn range(&self) -> Range<usize> {
                 match self {
                     Node::Chars(range) => range.clone(),
-                    Node::Choice(_, element) => element.range(),
                     Node::Sequence(elements) => {
                         elements[0].range().start..elements[elements.len() - 1].range().end
                     }
@@ -301,9 +294,7 @@ pub fn parse_macros() -> TokenStream {
                 lex_choice!($($expr),*).map(|element| lex::Node::named(TokenKind::$kind, element))
             };
             ($($expr:expr),*) => {
-                choice::<_, ErrorType>((
-                    $($expr.map(|v| lex::Node::choice(0, v))),*
-                ))
+                choice::<_, ErrorType>(($($expr),*))
             };
         }
 

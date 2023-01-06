@@ -32,7 +32,6 @@ pub fn lex_head() -> TokenStream {
         #[napi]
         pub enum LexNodeType {
             Chars,
-            Choice,
             Sequence,
             Named,
         }
@@ -45,8 +44,6 @@ pub fn lex_head() -> TokenStream {
 
         #[napi]
         pub struct LexCharsNode(Rc<Node>);
-        #[napi]
-        pub struct LexChoiceNode(Rc<Node>);
         #[napi]
         pub struct LexSequenceNode(Rc<Node>);
         #[napi]
@@ -61,34 +58,6 @@ pub fn lex_head() -> TokenStream {
             pub fn range(&self) -> TokenRange {
                 match self.0.as_ref() {
                     Node::Chars(range) => TokenRange { start: range.start as u32, end: range.end as u32 },
-                    _  => unreachable!()
-                }
-            }
-        }
-
-        #[napi]
-        impl LexChoiceNode {
-            #[napi(getter, js_name = "type", ts_return_type = "LexNodeType.Choice")]
-            pub fn tipe(&self) -> LexNodeType { LexNodeType::Choice }
-
-            #[napi(getter)]
-            pub fn range(&self) -> TokenRange {
-                let range = self.0.range();
-                TokenRange { start: range.start as u32, end: range.end as u32 }
-            }
-
-            #[napi(getter)]
-            pub fn index(&self) -> usize {
-                match self.0.as_ref() {
-                    Node::Choice(index, _) => *index,
-                    _  => unreachable!()
-                }
-            }
-
-            #[napi(ts_return_type = "LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode")]
-            pub fn child(&self, env: Env) -> JsObject {
-                match self.0.as_ref() {
-                    Node::Choice(_, child) => child.to_js(&env),
                     _  => unreachable!()
                 }
             }
@@ -150,7 +119,6 @@ pub fn lex_head() -> TokenStream {
             fn to_js(&self, env: &Env) -> JsObject {
                 let obj = match self.as_ref() {
                     Node::Chars(_) => unsafe { <LexCharsNode as ToNapiValue>::to_napi_value(env.raw(), LexCharsNode(self.clone())) }
-                    Node::Choice(_, _) => unsafe { <LexChoiceNode as ToNapiValue>::to_napi_value(env.raw(), LexChoiceNode(self.clone())) }
                     Node::Sequence(_) => unsafe { <LexSequenceNode as ToNapiValue>::to_napi_value(env.raw(), LexSequenceNode(self.clone())) }
                     Node::Named(_, _) => unsafe { <LexNamedNode as ToNapiValue>::to_napi_value(env.raw(), LexNamedNode(self.clone())) }
                 };
