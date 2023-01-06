@@ -5,7 +5,11 @@ mod ContractDefinition;
 #[allow(non_snake_case)]
 mod ExponentiationExpression;
 #[allow(non_snake_case)]
+mod Identifier;
+#[allow(non_snake_case)]
 mod InterfaceDefinition;
+#[allow(non_snake_case)]
+mod Keyword;
 #[allow(non_snake_case)]
 mod MultilineComment;
 #[allow(non_snake_case)]

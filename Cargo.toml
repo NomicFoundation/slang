@@ -23,7 +23,7 @@ edition = "2021"
 [workspace.dependencies]
 anyhow = { version = "1.0.66", features = ["backtrace", "std"] }
 ariadne = { version = "0.1.5" }
-chumsky = { version = "0.8.0" }
+chumsky = { git = "https://github.com/NomicFoundation/chumsky.git", branch = "slang" }
 clap = { version = "4.0.14", features = ["derive"] }
 codegen_ebnf = { path = "crates/codegen/ebnf" }
 codegen_parser = { path = "crates/codegen/parser" }

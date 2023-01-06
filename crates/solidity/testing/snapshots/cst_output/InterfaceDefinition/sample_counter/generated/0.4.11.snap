@@ -2,47 +2,42 @@
 
 Errors: 0
 
-█ Rule(InterfaceDefinition) - (0..172)                              │
-├──► Token(Interface) - (0..9)                                      │ interface
-├──► Token(RawIdentifier) - (10..18)                                │ ICounter
-└──█ Rule(DelimitedContractBodyElements) - (19..172)                │
-   ├──► Token(OpenBrace) - (19..20)                                 │ {
-   ├──█ Rule(ContractBodyElements) - (25..170)                      │
-   │  ├──█ Rule(FunctionDefinition) - (25..104)                     │
-   │  │  ├──█ Token(Function) - (25..66)                            │
-   │  │  │  ├──► Trivia(SingleLineComment) - (25..53)               │ // returns the current count
-   │  │  │  └──► Contents - (58..66)                                │ function
-   │  │  ├──► Token(RawIdentifier) - (67..72)                       │ count
-   │  │  ├──█ Rule(ParameterList) - (72..74)                        │
-   │  │  │  ├──► Token(OpenParen) - (72..73)                        │ (
-   │  │  │  └──► Token(CloseParen) - (73..74)                       │ )
-   │  │  ├──█ Rule(FunctionAttributes) - (75..103)                  │
-   │  │  │  ├──█ Rule(ModifierInvocation) - (75..83)                │
-   │  │  │  │  └──█ Rule(IdentifierPath) - (75..83)                 │
-   │  │  │  │     └──► Token(RawIdentifier) - (75..83)              │ external
-   │  │  │  ├──█ Rule(ModifierInvocation) - (84..88)                │
-   │  │  │  │  └──█ Rule(IdentifierPath) - (84..88)                 │
-   │  │  │  │     └──► Token(RawIdentifier) - (84..88)              │ view
-   │  │  │  └──█ Rule(ModifierInvocation) - (89..103)               │
-   │  │  │     ├──█ Rule(IdentifierPath) - (89..96)                 │
-   │  │  │     │  └──► Token(RawIdentifier) - (89..96)              │ returns
-   │  │  │     └──█ Rule(ArgumentList) - (97..103)                  │
-   │  │  │        ├──► Token(OpenParen) - (97..98)                  │ (
-   │  │  │        ├──█ Rule(PositionalArgumentList) - (98..102)     │
-   │  │  │        │  └──► Token(RawIdentifier) - (98..102)          │ uint
-   │  │  │        └──► Token(CloseParen) - (102..103)               │ )
-   │  │  └──► Token(Semicolon) - (103..104)                         │ ;
-   │  └──█ Rule(FunctionDefinition) - (110..170)                    │
-   │     ├──█ Token(Function) - (110..148)                          │
-   │     │  ├──► Trivia(SingleLineComment) - (110..135)             │ // increments the counter
-   │     │  └──► Contents - (140..148)                              │ function
-   │     ├──► Token(RawIdentifier) - (149..158)                     │ increment
-   │     ├──█ Rule(ParameterList) - (158..160)                      │
-   │     │  ├──► Token(OpenParen) - (158..159)                      │ (
-   │     │  └──► Token(CloseParen) - (159..160)                     │ )
-   │     ├──█ Rule(FunctionAttributes) - (161..169)                 │
-   │     │  └──█ Rule(ModifierInvocation) - (161..169)              │
-   │     │     └──█ Rule(IdentifierPath) - (161..169)               │
-   │     │        └──► Token(RawIdentifier) - (161..169)            │ external
-   │     └──► Token(Semicolon) - (169..170)                         │ ;
-   └──► Token(CloseBrace) - (171..172)                              │ }
+█ Rule(InterfaceDefinition) - (0..172)                                   │
+├──► Token(Interface) - (0..9)                                           │ interface
+├──► Token(RawIdentifier) - (10..18)                                     │ ICounter
+└──█ Rule(DelimitedContractBodyElements) - (19..172)                     │
+   ├──► Token(OpenBrace) - (19..20)                                      │ {
+   ├──█ Rule(ContractBodyElements) - (25..170)                           │
+   │  ├──█ Rule(FunctionDefinition) - (25..104)                          │
+   │  │  ├──█ Token(Function) - (25..66)                                 │
+   │  │  │  ├──► Trivia(SingleLineComment) - (25..53)                    │ // returns the current count
+   │  │  │  └──► Contents - (58..66)                                     │ function
+   │  │  ├──► Token(RawIdentifier) - (67..72)                            │ count
+   │  │  ├──█ Rule(ParameterList) - (72..74)                             │
+   │  │  │  ├──► Token(OpenParen) - (72..73)                             │ (
+   │  │  │  └──► Token(CloseParen) - (73..74)                            │ )
+   │  │  ├──█ Rule(FunctionAttributes) - (75..88)                        │
+   │  │  │  ├──► Token(External) - (75..83)                              │ external
+   │  │  │  └──► Token(View) - (84..88)                                  │ view
+   │  │  ├──█ Group - (89..103)                                          │
+   │  │  │  ├──► Token(Returns) - (89..96)                               │ returns
+   │  │  │  └──█ Rule(ParameterList) - (97..103)                         │
+   │  │  │     ├──► Token(OpenParen) - (97..98)                          │ (
+   │  │  │     ├──█ Rule(SeparatedParameterDeclarations) - (98..102)     │
+   │  │  │     │  └──█ Rule(ParameterDeclaration) - (98..102)            │
+   │  │  │     │     └──█ Rule(TypeName) - (98..102)                     │
+   │  │  │     │        └──► Token(UnsignedIntegerType) - (98..102)      │ uint
+   │  │  │     └──► Token(CloseParen) - (102..103)                       │ )
+   │  │  └──► Token(Semicolon) - (103..104)                              │ ;
+   │  └──█ Rule(FunctionDefinition) - (110..170)                         │
+   │     ├──█ Token(Function) - (110..148)                               │
+   │     │  ├──► Trivia(SingleLineComment) - (110..135)                  │ // increments the counter
+   │     │  └──► Contents - (140..148)                                   │ function
+   │     ├──► Token(RawIdentifier) - (149..158)                          │ increment
+   │     ├──█ Rule(ParameterList) - (158..160)                           │
+   │     │  ├──► Token(OpenParen) - (158..159)                           │ (
+   │     │  └──► Token(CloseParen) - (159..160)                          │ )
+   │     ├──█ Rule(FunctionAttributes) - (161..169)                      │
+   │     │  └──► Token(External) - (161..169)                            │ external
+   │     └──► Token(Semicolon) - (169..170)                              │ ;
+   └──► Token(CloseBrace) - (171..172)                                   │ }
