@@ -7,6 +7,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/_common.sh"
 (
   # Run setup first
   "$REPO_ROOT/scripts/setup/npm.sh"
+  "$REPO_ROOT/scripts/setup/pipenv.sh"
 )
 
 (
@@ -18,6 +19,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/_common.sh"
   "$REPO_ROOT/scripts/linting/linters/markdownlint.sh"
   "$REPO_ROOT/scripts/linting/linters/prettier.sh"
   "$REPO_ROOT/scripts/linting/linters/shellcheck.sh"
+  "$REPO_ROOT/scripts/linting/linters/yamllint.sh"
 
   printf "\n\n✅ Linting Success ✅\n\n\n"
 )

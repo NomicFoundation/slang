@@ -1,0 +1,30 @@
+rules:
+  braces:
+    forbid: "non-empty"
+  brackets:
+    forbid: "non-empty"
+  comments:
+    min-spaces-from-content: 1
+    require-starting-space: true
+  document-end:
+    present: false
+  document-start:
+    present: false
+  empty-values:
+    forbid-in-block-mappings: true
+    forbid-in-flow-mappings: true
+  float-values:
+    forbid-inf: true
+    forbid-nan: true
+    forbid-scientific-notation: true
+    require-numeral-before-decimal: true
+  key-duplicates: "enable"
+  new-lines: "enable"
+  octal-values:
+    forbid-explicit-octal: true
+    forbid-implicit-octal: true
+  quoted-strings:
+    allow-quoted-quotes: true
+    quote-type: "double"
+    required: true
+  truthy: "enable"
