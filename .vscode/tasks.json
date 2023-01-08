@@ -1,0 +1,51 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      /*
+       * You can invoke this task manually by running the "Tasks: Run Task" VSCode command, then choosing it.
+       * It will print codegen validation errors in a special format understood and rendered by the editor.
+       *
+       * For faster REPL, it is recommended that you set your editor to automatically run this task on file save.
+       * To do so, add the following to your VSCode `keybindings.json`:
+       *
+       *   {
+       *     "key": "cmd+s",
+       *     "command": "workbench.action.tasks.runTask",
+       *     "args": "Validate Solidity Grammar",
+       *     "when": "resourceDirname =~ /crates/solidity/inputs/schema/grammar/ && editorLangId == yaml"
+       *   }
+       */
+      "label": "Validate Solidity Grammar",
+      "type": "shell",
+      "command": "scripts/solidity/problem-matcher.sh",
+      "problemMatcher": {
+        "owner": "solidity",
+        "source": "codegen_utils",
+        "applyTo": "allDocuments",
+        "fileLocation": "absolute",
+        "pattern": [
+          {
+            "regexp": "^\\s*([^:]+):([^:]+):([^-]+)-([^:]+):([^:]+): ([^:]+): (.+)$",
+            "file": 1,
+            "line": 2,
+            "column": 3,
+            "endLine": 4,
+            "endColumn": 5,
+            "severity": 6,
+            "message": 7
+          }
+        ]
+      },
+      "runOptions": {
+        "runOn": "folderOpen",
+        "instanceLimit": 1
+      },
+      "presentation": {
+        "group": "slang",
+        "reveal": "never",
+        "clear": true
+      }
+    }
+  ]
+}

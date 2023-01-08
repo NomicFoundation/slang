@@ -4,11 +4,11 @@ mod reporting;
 use std::path::PathBuf;
 
 use anyhow::{Context, Result};
-use codegen_schema::grammar::Grammar;
-use codegen_utils::context::CodegenContext;
+use codegen_schema::types::grammar::Grammar;
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 use semver::Version;
 use solidity_rust_lib::generated::{kinds::ProductionKind, language::Language};
+use solidity_schema::SolidityGrammarExtensions;
 use solidity_testing_utils::compatible_versions::filter_compatible_versions;
 
 use crate::{
@@ -18,22 +18,16 @@ use crate::{
 
 fn main() {
     // Fail the parent process if a child thread panics:
-    std::panic::catch_unwind(|| {
-        CodegenContext::with_context(|codegen| {
-            let grammar_file = &codegen
-                .repo_root
-                .join("crates/solidity/inputs/schema/grammar/manifest.yml");
+    std::panic::catch_unwind(|| -> Result<()> {
+        let grammar = &Grammar::load_solidity()?;
 
-            let grammar = &Grammar::from_manifest(codegen, grammar_file);
+        for dataset in get_all_datasets()? {
+            process_dataset(&dataset, &grammar.versions)?;
+        }
 
-            for dataset in get_all_datasets()? {
-                process_dataset(&dataset, &grammar.manifest.versions)?;
-            }
-
-            return Ok(());
-        })
-        .unwrap();
+        return Ok(());
     })
+    .unwrap()
     .unwrap();
 }
 

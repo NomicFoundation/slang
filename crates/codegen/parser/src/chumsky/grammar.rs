@@ -1,7 +1,7 @@
 use std::collections::BTreeSet;
 
-use codegen_schema::grammar::Grammar;
-use codegen_schema::manifest::ProductionVersioning;
+use codegen_schema::types::grammar::Grammar;
+use codegen_schema::types::productions::ProductionVersioning;
 use codegen_utils::context::CodegenContext;
 
 use super::code_generator::CodeGenerator;
@@ -48,9 +48,9 @@ impl GrammarParserGeneratorExtensions for Grammar {
 impl PrivateGrammarParserGeneratorExtensions for Grammar {
     fn create_code_generator(&self) -> CodeGenerator {
         let mut version_breaks = BTreeSet::new();
-        version_breaks.insert(self.manifest.versions.first().unwrap());
+        version_breaks.insert(self.versions.first().unwrap());
 
-        for production in self.productions.values().flatten() {
+        for production in self.productions.values() {
             match &production.versioning {
                 ProductionVersioning::Unversioned(_) => {}
                 ProductionVersioning::Versioned(versions) => {
@@ -68,7 +68,7 @@ impl PrivateGrammarParserGeneratorExtensions for Grammar {
                 // Scoped to isolate the borrow
                 let mut trees_by_name = context.trees_by_name.borrow_mut();
 
-                for production in self.productions.values().flatten() {
+                for production in self.productions.values() {
                     trees_by_name.insert(
                         production.name.clone(),
                         CombinatorTree::new(&context, &production),

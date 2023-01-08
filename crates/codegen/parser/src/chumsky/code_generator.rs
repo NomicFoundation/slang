@@ -3,7 +3,7 @@ use std::{
     path::PathBuf,
 };
 
-use codegen_schema::grammar::Grammar;
+use codegen_schema::types::grammar::Grammar;
 use codegen_utils::context::CodegenContext;
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
@@ -91,7 +91,7 @@ impl CodeGenerator {
         let mut parser_predeclarations = vec![];
         let mut parser_definitions = vec![];
 
-        let first_version = grammar.manifest.versions.first().unwrap();
+        let first_version = grammar.versions.first().unwrap();
 
         for (name, parser) in &self.parsers {
             let production_kind = format_ident!("{}", name);

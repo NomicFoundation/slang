@@ -1,4 +1,4 @@
-use codegen_schema::manifest::{
+use codegen_schema::types::productions::{
     EBNFDelimitedBy, EBNFDifference, EBNFRepeat, EBNFSeparatedBy, ExpressionRef, ParserType,
     ProductionKind, EBNF,
 };

@@ -1,8 +1,8 @@
 use std::fmt::Write;
 
-use codegen_schema::{
+use codegen_schema::types::{
     grammar::Grammar,
-    manifest::{
+    productions::{
         EBNFDelimitedBy, EBNFDifference, EBNFRange, EBNFRepeat, EBNFSeparatedBy, Expression,
         ExpressionRef, EBNF,
     },
@@ -106,7 +106,7 @@ impl ExpressionEBNFPrivateExtensions for Expression {
             }
 
             EBNF::Reference(name) => {
-                let production = grammar.get_production(name);
+                let production = &grammar.productions[name];
                 write!(w, "{} ", production.ebnf_display_name()).unwrap();
             }
 

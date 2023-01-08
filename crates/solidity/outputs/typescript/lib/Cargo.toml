@@ -17,7 +17,9 @@ semver = { workspace = true }
 serde = { workspace = true }
 
 [build-dependencies]
+anyhow = { workspace = true }
 codegen_parser = { workspace = true }
 codegen_schema = { workspace = true }
 codegen_utils = { workspace = true }
 napi-build = { workspace = true }
+solidity_schema = { workspace = true }

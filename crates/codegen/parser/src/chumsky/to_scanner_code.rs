@@ -1,4 +1,4 @@
-use codegen_schema::manifest::ProductionKind;
+use codegen_schema::types::productions::ProductionKind;
 use proc_macro2::TokenStream;
 use quote::quote;
 

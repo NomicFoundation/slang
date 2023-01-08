@@ -1,7 +1,7 @@
 use std::cell::Cell;
 
 use codegen_ebnf::ProductionEBNFGeneratorExtensions;
-use codegen_schema::manifest::{
+use codegen_schema::types::productions::{
     ExpressionAssociativity, ExpressionRef, ProductionKind, ProductionRef, ProductionVersioning,
 };
 
@@ -56,7 +56,7 @@ impl<'context> CombinatorTree<'context> {
         let version = &self.context.version;
         match &self.production.versioning {
             ProductionVersioning::Unversioned(_) => {
-                let first_version = self.context.grammar.manifest.versions.first().unwrap();
+                let first_version = self.context.grammar.versions.first().unwrap();
                 if version != first_version {
                     return;
                 }

@@ -1,18 +1,13 @@
-use codegen_schema::grammar::Grammar;
+use anyhow::Result;
+use codegen_schema::types::grammar::Grammar;
 use codegen_testing::GrammarTestingGeneratorExtensions;
 use codegen_utils::context::CodegenContext;
+use solidity_schema::SolidityGrammarExtensions;
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    CodegenContext::with_context(|codegen| {
-        // Load Manifest
-        let grammar = Grammar::from_manifest(
-            codegen,
-            &codegen
-                .repo_root
-                .join("crates/solidity/inputs/schema/grammar/manifest.yml"),
-        );
+fn main() -> Result<()> {
+    return CodegenContext::with_context(|codegen| {
+        let grammar = Grammar::load_solidity()?;
 
-        // Generate Tests
         grammar.generate_cst_output_tests(
             codegen,
             &codegen
@@ -24,7 +19,5 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         )?;
 
         return Ok(());
-    })?;
-
-    return Ok(());
+    });
 }

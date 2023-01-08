@@ -1,19 +1,21 @@
-#[path = "src/manifest.rs"]
-mod manifest;
+#[path = "src/types/mod.rs"]
+mod types;
 
 use anyhow::Result;
 use codegen_utils::context::CodegenContext;
 use schemars::{schema_for, JsonSchema};
 use serde_json::Value;
 
+use crate::types::manifest::{ManifestFile, TopicFile};
+
 fn main() -> Result<()> {
     return CodegenContext::with_context(|codegen| {
-        write_schema_file::<manifest::ManifestFile>(
+        write_schema_file::<ManifestFile>(
             codegen,
             "crates/codegen/schema/generated/manifest.schema.json",
         )?;
 
-        write_schema_file::<manifest::TopicFile>(
+        write_schema_file::<TopicFile>(
             codegen,
             "crates/codegen/schema/generated/topic.schema.json",
         )?;
