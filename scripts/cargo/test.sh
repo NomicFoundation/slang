@@ -2,11 +2,11 @@
 set -euo pipefail
 
 # shellcheck source=/dev/null
-source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/_common.sh"
 
 (
   # Run setup first
-  "$REPO_ROOT/scripts/cargo/setup.sh"
+  "$REPO_ROOT/scripts/setup/cargo.sh"
 )
 
 (
