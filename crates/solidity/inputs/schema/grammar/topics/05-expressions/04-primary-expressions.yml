@@ -1,0 +1,75 @@
+# yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
+
+- name: "PrimaryExpression"
+  kind: "Rule"
+  unversioned:
+    choice:
+      - reference: "PayableExpression"
+      - reference: "TypeExpression"
+      - reference: "NewExpression"
+      - reference: "ParenthesisExpression"
+      - reference: "ArrayLiteral"
+      - reference: "AsciiStringLiteral"
+      - reference: "UnicodeStringLiteral"
+      - reference: "HexStringLiteral"
+      - reference: "NumericLiteral"
+      - reference: "BooleanLiteral"
+      - reference: "Identifier"
+
+- name: "PayableExpression"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "payable"
+      - reference: "ArgumentList"
+
+- name: "TypeExpression"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "type"
+      - delimitedBy:
+          open: "("
+          expression:
+            reference: "TypeName"
+          close: ")"
+
+- name: "NewExpression"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "new"
+      - reference: "IdentifierPath"
+      - reference: "ArgumentList"
+
+- name: "ParenthesisExpression"
+  kind: "Rule"
+  unversioned:
+    delimitedBy:
+      open: "("
+      expression:
+        separatedBy:
+          separator: ","
+          expression:
+            optional:
+              reference: "Expression"
+      close: ")"
+
+- name: "ArrayLiteral"
+  kind: "Rule"
+  unversioned:
+    delimitedBy:
+      open: "["
+      expression:
+        separatedBy:
+          separator: ","
+          expression:
+            reference: "Expression"
+      close: "]"
+
+- name: "BooleanLiteral"
+  kind: "Token"
+  unversioned:
+    choice:
+      - terminal: "true"
+      - terminal: "false"

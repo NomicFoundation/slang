@@ -1,7 +1,4 @@
 {
-  // YAML
-  "yaml.validate": false, // Disable editor validation, as it is superseeded by our own serializers
-  // Editing
   "editor.formatOnSave": true,
   "editor.rulers": [120],
   "files.eol": "\n",
@@ -10,5 +7,6 @@
     "**/generated/": true,
     "**/node_modules/": true,
     "**/target/": true
-  }
+  },
+  "yaml.validate": false // Disable LSP validation for YAML files, as it is handled by our own cargo tasks
 }

@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
+
+- name: "TupleDeconstructionStatement"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - delimitedBy:
+          open: "("
+          expression:
+            optional:
+              separatedBy:
+                separator: ","
+                expression:
+                  optional:
+                    sequence:
+                      - optional:
+                          reference: "TypeName"
+                      - reference: "Identifier"
+          close: ")"
+      - terminal: "="
+      - reference: "Expression"
+      - terminal: ";"
+
+- name: "VariableDeclarationStatement"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - reference: "TypeName"
+      - optional:
+          reference: "DataLocation"
+      - reference: "Identifier"
+      - optional:
+          sequence:
+            - terminal: "="
+            - reference: "Expression"
+      - terminal: ";"
+
+- name: "DataLocation"
+  kind: "Rule"
+  unversioned:
+    choice:
+      - terminal: "memory"
+      - terminal: "storage"
+      - terminal: "calldata"

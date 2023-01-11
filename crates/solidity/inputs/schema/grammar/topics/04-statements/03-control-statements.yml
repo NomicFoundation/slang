@@ -1,0 +1,103 @@
+# yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
+
+- name: "IfStatement"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "if"
+      - delimitedBy:
+          open: "("
+          expression:
+            reference: "Expression"
+          close: ")"
+      - reference: "Statement"
+      - optional:
+          sequence:
+            - terminal: "else"
+            - reference: "Statement"
+
+- name: "ForStatement"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "for"
+      - delimitedBy:
+          open: "("
+          expression:
+            sequence:
+              - choice:
+                  - reference: "SimpleStatement"
+                  - terminal: ";"
+              - choice:
+                  - reference: "ExpressionStatement"
+                  - terminal: ";"
+              - optional:
+                  reference: "Expression"
+          close: ")"
+      - reference: "Statement"
+
+- name: "WhileStatement"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "while"
+      - delimitedBy:
+          open: "("
+          expression:
+            reference: "Expression"
+          close: ")"
+      - reference: "Statement"
+
+- name: "DoWhileStatement"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "do"
+      - reference: "Statement"
+      - terminal: "while"
+      - delimitedBy:
+          open: "("
+          expression:
+            reference: "Expression"
+          close: ")"
+      - terminal: ";"
+
+- name: "ContinueStatement"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "continue"
+      - terminal: ";"
+
+- name: "BreakStatement"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "break"
+      - terminal: ";"
+
+- name: "ReturnStatement"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "return"
+      - optional:
+          reference: "Expression"
+      - terminal: ";"
+
+- name: "EmitStatement"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "emit"
+      - reference: "IdentifierPath"
+      - reference: "ArgumentList"
+      - terminal: ";"
+
+- name: "DeleteStatement"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "delete"
+      - reference: "Identifier"
+      - terminal: ";"

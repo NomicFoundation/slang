@@ -1,8 +1,9 @@
 use std::cell::Cell;
 
 use codegen_ebnf::ProductionEBNFGeneratorExtensions;
-
-use codegen_schema::*;
+use codegen_schema::manifest::{
+    ExpressionAssociativity, ExpressionRef, ProductionKind, ProductionRef, ProductionVersioning,
+};
 
 use super::{
     code_generator::{CodeGenerator, ParserResultType},
@@ -53,14 +54,14 @@ impl<'context> CombinatorTree<'context> {
 
     pub fn add_to_generated_code(&self, code: &mut CodeGenerator) {
         let version = &self.context.version;
-        match &self.production.versions {
-            ProductionVersions::Unversioned(_) => {
+        match &self.production.versioning {
+            ProductionVersioning::Unversioned(_) => {
                 let first_version = self.context.grammar.manifest.versions.first().unwrap();
                 if version != first_version {
                     return;
                 }
             }
-            ProductionVersions::Versioned(versions) => {
+            ProductionVersioning::Versioned(versions) => {
                 if !versions.contains_key(version) {
                     return;
                 }
@@ -108,9 +109,9 @@ impl<'context> CombinatorTree<'context> {
     }
 
     pub fn expression(&self) -> ExpressionRef {
-        return match &self.production.versions {
-            ProductionVersions::Unversioned(expression) => expression.clone(),
-            ProductionVersions::Versioned(versions) => {
+        return match &self.production.versioning {
+            ProductionVersioning::Unversioned(expression) => expression.clone(),
+            ProductionVersioning::Versioned(versions) => {
                 let version = &self.context.version;
                 versions
                     .iter()

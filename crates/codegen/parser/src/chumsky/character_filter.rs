@@ -1,7 +1,6 @@
+use codegen_schema::manifest::{EBNFDifference, EBNFRange, ExpressionRef, EBNF};
 use proc_macro2::TokenStream;
 use quote::quote;
-
-use codegen_schema::*;
 
 use super::combinator_tree::CombinatorTree;
 

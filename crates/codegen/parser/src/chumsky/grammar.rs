@@ -1,6 +1,7 @@
 use std::collections::BTreeSet;
 
-use codegen_schema::*;
+use codegen_schema::grammar::Grammar;
+use codegen_schema::manifest::ProductionVersioning;
 use codegen_utils::context::CodegenContext;
 
 use super::code_generator::CodeGenerator;
@@ -50,9 +51,9 @@ impl PrivateGrammarParserGeneratorExtensions for Grammar {
         version_breaks.insert(self.manifest.versions.first().unwrap());
 
         for production in self.productions.values().flatten() {
-            match &production.versions {
-                ProductionVersions::Unversioned(_) => {}
-                ProductionVersions::Versioned(versions) => {
+            match &production.versioning {
+                ProductionVersioning::Unversioned(_) => {}
+                ProductionVersioning::Versioned(versions) => {
                     version_breaks.extend(versions.keys());
                 }
             }

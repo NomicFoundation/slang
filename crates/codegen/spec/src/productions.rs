@@ -1,8 +1,13 @@
 use std::{collections::HashMap, io::Write};
 
+use codegen_schema::{
+    grammar::Grammar,
+    manifest::{
+        EBNFDelimitedBy, EBNFDifference, EBNFRange, EBNFRepeat, EBNFSeparatedBy, ExpressionRef,
+        Production, ProductionKind, ProductionVersioning, EBNF,
+    },
+};
 use itertools::Itertools;
-
-use codegen_schema::*;
 
 pub struct SpecProductionContext<'a> {
     pub grammar: &'a Grammar,
@@ -22,11 +27,11 @@ pub fn write_production<T: Write>(
     )
     .unwrap();
 
-    match &production.versions {
-        ProductionVersions::Unversioned(expression) => {
+    match &production.versioning {
+        ProductionVersioning::Unversioned(expression) => {
             write_version(w, production, expression, context);
         }
-        ProductionVersions::Versioned(versions) => {
+        ProductionVersioning::Versioned(versions) => {
             for (version, expression) in versions {
                 write_token(w, TokenKind::comment, &format!("(* v{} *) ", version));
                 write_version(w, &production, expression, context);
@@ -43,7 +48,7 @@ pub fn write_production<T: Write>(
 fn write_version<T: Write>(
     w: &mut T,
     production: &Production,
-    expr: &Expression,
+    expr: &ExpressionRef,
     context: &SpecProductionContext,
 ) {
     write_token(w, TokenKind::keyword, &get_production_name(production));
@@ -53,7 +58,7 @@ fn write_version<T: Write>(
     write!(w, "<br/>").unwrap();
 }
 
-fn write_expression<T: Write>(w: &mut T, expr: &Expression, context: &SpecProductionContext) {
+fn write_expression<T: Write>(w: &mut T, expr: &ExpressionRef, context: &SpecProductionContext) {
     match &expr.ebnf {
         EBNF::Choice(sub_exprs) => {
             let mut first = true;
@@ -67,10 +72,14 @@ fn write_expression<T: Write>(w: &mut T, expr: &Expression, context: &SpecProduc
             }
         }
 
-        EBNF::DelimitedBy(EBNFDelimitedBy { open, expr, close }) => {
+        EBNF::DelimitedBy(EBNFDelimitedBy {
+            open,
+            expression,
+            close,
+        }) => {
             write_token(w, TokenKind::string, &format_string_literal(open));
             write_token(w, TokenKind::operator, " ");
-            write_subexpression(w, expr, expr, context);
+            write_subexpression(w, expression, expression, context);
             write_token(w, TokenKind::operator, " ");
             write_token(w, TokenKind::string, &format_string_literal(close));
         }
@@ -131,22 +140,29 @@ fn write_expression<T: Write>(w: &mut T, expr: &Expression, context: &SpecProduc
             );
         }
 
-        EBNF::Repeat(EBNFRepeat { min, max, expr }) => {
+        EBNF::Repeat(EBNFRepeat {
+            min,
+            max,
+            expression,
+        }) => {
             write_token(w, TokenKind::constant, &min.to_string());
             write_token(w, TokenKind::operator, "…");
             write_token(w, TokenKind::constant, &max.to_string());
             write_token(w, TokenKind::operator, "{");
-            write_expression(w, expr, context);
+            write_expression(w, expression, context);
             write_token(w, TokenKind::operator, "}");
         }
 
-        EBNF::SeparatedBy(EBNFSeparatedBy { expr, separator }) => {
-            write_subexpression(w, expr, expr, context);
+        EBNF::SeparatedBy(EBNFSeparatedBy {
+            expression,
+            separator,
+        }) => {
+            write_subexpression(w, expression, expression, context);
             write_token(w, TokenKind::operator, " { ");
-            write_subexpression(w, expr, expr, context);
+            write_subexpression(w, expression, expression, context);
             write_token(w, TokenKind::string, &format_string_literal(separator));
             write_token(w, TokenKind::operator, " ");
-            write_subexpression(w, expr, expr, context);
+            write_subexpression(w, expression, expression, context);
             write_token(w, TokenKind::operator, " }");
         }
 
@@ -176,16 +192,33 @@ fn write_expression<T: Write>(w: &mut T, expr: &Expression, context: &SpecProduc
 
 fn write_subexpression<T: Write>(
     w: &mut T,
-    expr: &Expression,
+    expr: &ExpressionRef,
     sub_expr: &ExpressionRef,
     context: &SpecProductionContext,
 ) {
-    if expr.precedence() < sub_expr.precedence() {
+    if expression_precedence(expr) < expression_precedence(sub_expr) {
         write_token(w, TokenKind::operator, "(");
         write_expression(w, sub_expr, context);
         write_token(w, TokenKind::operator, ")");
     } else {
         write_expression(w, sub_expr, context);
+    }
+}
+
+fn expression_precedence(expression: &ExpressionRef) -> u8 {
+    match expression.ebnf {
+        EBNF::OneOrMore(..)
+        | EBNF::Optional(..)
+        | EBNF::Range { .. }
+        | EBNF::Reference(..)
+        | EBNF::Repeat(..)
+        | EBNF::SeparatedBy(..)
+        | EBNF::Terminal(..)
+        | EBNF::ZeroOrMore(..) => 0,
+        EBNF::Not(..) => 1,
+        EBNF::Difference { .. } => 2,
+        EBNF::DelimitedBy(..) | EBNF::Sequence(..) => 3,
+        EBNF::Choice(..) => 4,
     }
 }
 
@@ -240,7 +273,7 @@ fn format_string_literal(value: &str) -> String {
 }
 
 fn get_production_name(production: &Production) -> String {
-    if production.is_token() {
+    if production.kind == ProductionKind::Token {
         format!("«{}»", production.name)
     } else {
         production.name.clone()

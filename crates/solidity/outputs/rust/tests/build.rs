@@ -1,4 +1,4 @@
-use codegen_schema::Grammar;
+use codegen_schema::grammar::Grammar;
 use codegen_testing::GrammarTestingGeneratorExtensions;
 use codegen_utils::context::CodegenContext;
 
@@ -9,7 +9,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             codegen,
             &codegen
                 .repo_root
-                .join("crates/solidity/inputs/schema/manifest.yml"),
+                .join("crates/solidity/inputs/schema/grammar/manifest.yml"),
         );
 
         // Generate Tests

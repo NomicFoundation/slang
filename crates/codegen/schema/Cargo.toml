@@ -4,12 +4,19 @@ version.workspace = true
 rust-version.workspace = true
 edition.workspace = true
 
-[dependencies]
+[build-dependencies]
+anyhow = { workspace = true }
 codegen_utils = { workspace = true }
+schemars = { workspace = true }
 indexmap = { workspace = true }
-jsonschema = { workspace = true }
-regex = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
+
+[dependencies]
+codegen_utils = { workspace = true }
+indexmap = { workspace = true }
+schemars = { workspace = true }
+semver = { workspace = true }
+serde = { workspace = true }
 serde_yaml = { workspace = true }

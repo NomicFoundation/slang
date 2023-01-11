@@ -11,8 +11,8 @@ members = [
     "crates/solidity/outputs/rust/lib",
     "crates/solidity/outputs/rust/tests",
     "crates/solidity/outputs/typescript/lib",
-    "crates/solidity/testing/utils",
     "crates/solidity/testing/smoke",
+    "crates/solidity/testing/utils",
 ]
 
 [workspace.package]
@@ -35,7 +35,6 @@ indexmap = { version = "1.8.1", features = ["serde"] }
 indicatif = { version = "0.17.2" }
 Inflector = { version = "0.11.4" }
 itertools = { version = "0.10.3" }
-jsonschema = { version = "0.16.0" }
 napi = { version = "2.10.1", features = ["compat-mode", "napi8", "serde-json"] }
 napi-build = { version = "2.0.1" }
 napi-derive = { version = "2.9.1" }
@@ -43,16 +42,16 @@ patricia_tree = { version = "0.4.0" }
 proc-macro2 = { version = "1.0.38" }
 quote = { version = "1.0.18" }
 rayon = { version = "1.6.1" }
-regex = { version = "1.5.6" }
+schemars = { version = "0.8.11", features = ["derive", "preserve_order"] }
 semver = { version = "1.0.9", features = ["serde"] }
 serde = { version = "1.0.137", features = ["derive", "rc"] }
-serde_json = { version = "1.0.81" }
+serde_json = { version = "1.0.81", features = ["preserve_order"] }
 serde_yaml = { version = "0.9.14" }
-strum = { version = "0.24" }
-strum_macros = { version = "0.24" }
 similar-asserts = { version = "1.4.2" }
 solidity_rust_lib = { path = "crates/solidity/outputs/rust/lib" }
 solidity_testing_utils = { path = "crates/solidity/testing/utils" }
+strum = { version = "0.24" }
+strum_macros = { version = "0.24" }
 typed-arena = { version = "2.0.1" }
 unicode_names2 = { version = "0.6.0" }
 url = { version = "2.3.1" }

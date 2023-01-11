@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
+
+- name: "Block"
+  kind: "Rule"
+  unversioned:
+    delimitedBy:
+      open: "{"
+      expression:
+        zeroOrMore:
+          choice:
+            - reference: "Statement"
+            - reference: "UncheckedBlock"
+      close: "}"
+
+- name: "UncheckedBlock"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "unchecked"
+      - reference: "Block"
+
+- name: "Statement"
+  kind: "Rule"
+  unversioned:
+    choice:
+      - reference: "Block"
+      - reference: "SimpleStatement"
+      - reference: "IfStatement"
+      - reference: "ForStatement"
+      - reference: "WhileStatement"
+      - reference: "DoWhileStatement"
+      - reference: "ContinueStatement"
+      - reference: "BreakStatement"
+      - reference: "TryStatement"
+      - reference: "ReturnStatement"
+      - reference: "EmitStatement"
+      - reference: "RevertStatement"
+      - reference: "DeleteStatement"
+      - reference: "AssemblyStatement"
+
+- name: "SimpleStatement"
+  kind: "Rule"
+  unversioned:
+    choice:
+      - reference: "TupleDeconstructionStatement"
+      - reference: "VariableDeclarationStatement"
+      - reference: "ExpressionStatement"
+
+- name: "ExpressionStatement"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - reference: "Expression"
+      - terminal: ";"

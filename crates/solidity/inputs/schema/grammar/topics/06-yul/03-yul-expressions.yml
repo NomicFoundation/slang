@@ -1,0 +1,75 @@
+# yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
+
+- name: "YulExpression"
+  kind: "Rule"
+  unversioned:
+    choice:
+      - reference: "YulIdentifierPath"
+      - reference: "YulFunctionCall"
+      - reference: "YulLiteral"
+
+- name: "YulIdentifierPath"
+  kind: "Rule"
+  unversioned:
+    separatedBy:
+      separator: "."
+      expression:
+        reference: "YulIdentifier"
+
+- name: "YulLiteral"
+  kind: "Rule"
+  unversioned:
+    choice:
+      - reference: "YulDecimalNumberLiteral"
+      - reference: "YulHexLiteral"
+      - reference: "AsciiStringLiteral"
+      - reference: "BooleanLiteral"
+      - reference: "HexStringLiteral"
+
+- name: "YulIdentifier"
+  kind: "Token"
+  unversioned:
+    difference:
+      minuend:
+        reference: "RawIdentifier"
+      subtrahend:
+        reference: "YulKeyword"
+
+- name: "YulKeyword"
+  kind: "Token"
+  unversioned:
+    choice:
+      - reference: "BooleanLiteral"
+      - terminal: "break"
+      - terminal: "case"
+      - terminal: "continue"
+      - terminal: "default"
+      - terminal: "for"
+      - terminal: "function"
+      - terminal: "hex"
+      - terminal: "if"
+      - terminal: "leave"
+      - terminal: "let"
+      - terminal: "switch"
+
+- name: "YulDecimalNumberLiteral"
+  kind: "Token"
+  unversioned:
+    choice:
+      - terminal: "0"
+      - sequence:
+          - range:
+              from: "1"
+              to: "9"
+          - zeroOrMore:
+              range:
+                from: "0"
+                to: "9"
+
+- name: "YulHexLiteral"
+  kind: "Token"
+  unversioned:
+    sequence:
+      - terminal: "0x"
+      - oneOrMore:
+          reference: "HexCharacter"

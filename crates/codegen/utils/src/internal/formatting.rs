@@ -73,6 +73,7 @@ fn generate_header(file_path: &PathBuf) -> Result<String> {
 
     return match get_extension(file_path)? {
         "ebnf" => Ok(format!("(* {warning_line} *)")),
+        "json" => Ok(format!("")),
         "md" => Ok(format!("<!-- {warning_line} -->")),
         "rs" | "ts" => Ok(format!("// {warning_line}")),
         "snap" | "yml" => Ok(format!("# {warning_line}")),
@@ -94,7 +95,7 @@ mod formatters {
     pub fn run(codegen: &CodegenContext, file_path: &PathBuf, contents: &str) -> Result<String> {
         return match get_extension(file_path)? {
             "rs" => run_rustfmt(codegen, file_path, contents),
-            "md" | "yml" => run_prettier(codegen, file_path, contents),
+            "json" | "md" | "yml" => run_prettier(codegen, file_path, contents),
             "ebnf" | "snap" => Ok(contents.to_owned()), // we don't format these files (yet)
             ext => bail!("Unsupported extension to format: {ext}"),
         };

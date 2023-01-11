@@ -1,0 +1,85 @@
+# yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
+
+- name: "ImportDirective"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "import"
+      - choice:
+          - reference: "SimpleImportDirective"
+          - reference: "StarImportDirective"
+          - reference: "SelectingImportDirective"
+      - terminal: ";"
+
+- name: "SimpleImportDirective"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - reference: "ImportPath"
+      - zeroOrMore:
+          sequence:
+            - terminal: "as"
+            - reference: "Identifier"
+
+- name: "StarImportDirective"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "*"
+      - terminal: "as"
+      - reference: "Identifier"
+      - terminal: "from"
+      - reference: "ImportPath"
+
+- name: "SelectingImportDirective"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - delimitedBy:
+          open: "{"
+          expression:
+            separatedBy:
+              separator: ","
+              expression:
+                reference: "SelectedImport"
+          close: "}"
+      - terminal: "from"
+      - reference: "ImportPath"
+
+- name: "SelectedImport"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - reference: "Identifier"
+      - optional:
+          sequence:
+            - terminal: "as"
+            - reference: "Identifier"
+
+- name: "ImportPath"
+  kind: "Rule"
+  unversioned:
+    reference: "AsciiStringLiteral"
+
+- name: "UsingDirective"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "using"
+      - choice:
+          - reference: "IdentifierPath"
+          - delimitedBy:
+              open: "{"
+              expression:
+                separatedBy:
+                  separator: ","
+                  expression:
+                    reference: "IdentifierPath"
+              close: "}"
+      - terminal: "for"
+      - choice:
+          - terminal: "*"
+          - reference: "TypeName"
+      - optional:
+          terminal: "global"
+      - terminal: ";"

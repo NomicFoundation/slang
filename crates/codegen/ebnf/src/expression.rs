@@ -1,8 +1,11 @@
 use std::fmt::Write;
 
 use codegen_schema::{
-    EBNFDelimitedBy, EBNFDifference, EBNFRange, EBNFRepeat, EBNFSeparatedBy, Expression,
-    ExpressionRef, Grammar, EBNF,
+    grammar::Grammar,
+    manifest::{
+        EBNFDelimitedBy, EBNFDifference, EBNFRange, EBNFRepeat, EBNFSeparatedBy, Expression,
+        ExpressionRef, EBNF,
+    },
 };
 
 use crate::production::ProductionEBNFPrivateExtensions;
@@ -49,13 +52,17 @@ impl ExpressionEBNFPrivateExtensions for Expression {
                 }
             }
 
-            EBNF::DelimitedBy(EBNFDelimitedBy { open, expr, close }) => {
+            EBNF::DelimitedBy(EBNFDelimitedBy {
+                open,
+                expression,
+                close,
+            }) => {
                 write!(w, "'").unwrap();
                 for c in open.chars() {
                     write_char(w, c);
                 }
                 write!(w, "' ").unwrap();
-                self.generate_ebnf_subexpression(grammar, w, expr);
+                self.generate_ebnf_subexpression(grammar, w, expression);
                 write!(w, "'").unwrap();
                 for c in close.chars() {
                     write_char(w, c);
@@ -103,23 +110,31 @@ impl ExpressionEBNFPrivateExtensions for Expression {
                 write!(w, "{} ", production.ebnf_display_name()).unwrap();
             }
 
-            EBNF::Repeat(EBNFRepeat { expr, min, max, .. }) => {
+            EBNF::Repeat(EBNFRepeat {
+                expression,
+                min,
+                max,
+                ..
+            }) => {
                 write!(w, "{}", min).unwrap();
                 write!(w, "…").unwrap();
                 write!(w, "{}", max).unwrap();
                 write!(w, "*{{ ").unwrap();
-                expr.generate_ebnf(grammar, w);
+                expression.generate_ebnf(grammar, w);
                 write!(w, "}} ").unwrap();
             }
 
-            EBNF::SeparatedBy(EBNFSeparatedBy { expr, separator }) => {
-                self.generate_ebnf_subexpression(grammar, w, expr);
+            EBNF::SeparatedBy(EBNFSeparatedBy {
+                expression,
+                separator,
+            }) => {
+                self.generate_ebnf_subexpression(grammar, w, expression);
                 write!(w, " {{ '").unwrap();
                 for c in separator.chars() {
                     write_char(w, c);
                 }
                 write!(w, "' ").unwrap();
-                self.generate_ebnf_subexpression(grammar, w, expr);
+                self.generate_ebnf_subexpression(grammar, w, expression);
                 write!(w, "}} ").unwrap();
             }
 

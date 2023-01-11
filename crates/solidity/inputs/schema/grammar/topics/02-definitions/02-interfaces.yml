@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
+
+- name: "InterfaceDefinition"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "interface"
+      - reference: "Identifier"
+      - optional:
+          reference: "InheritanceSpecifierList"
+      - delimitedBy:
+          open: "{"
+          expression:
+            zeroOrMore:
+              reference: "ContractBodyElement"
+          close: "}"

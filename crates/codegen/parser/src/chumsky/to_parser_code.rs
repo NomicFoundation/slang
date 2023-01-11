@@ -1,9 +1,8 @@
 use std::cell::RefCell;
 
+use codegen_schema::manifest::ProductionKind;
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
-
-use codegen_schema::*;
 
 use crate::chumsky::combinator_node::OperatorModel;
 

@@ -1,0 +1,184 @@
+# yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
+
+- name: "FunctionDefinition"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "function"
+      - choice:
+          - reference: "Identifier"
+          - terminal: "fallback"
+          - terminal: "receive"
+      - reference: "ParameterList"
+      - zeroOrMore:
+          reference: "FunctionAttribute"
+      - optional:
+          sequence:
+            - terminal: "returns"
+            - reference: "ParameterList"
+      - choice:
+          - terminal: ";"
+          - reference: "Block"
+
+- name: "FunctionAttribute"
+  kind: "Rule"
+  unversioned:
+    choice:
+      - reference: "ModifierInvocation"
+      - reference: "OverrideSpecifier"
+      - terminal: "external"
+      - terminal: "internal"
+      - terminal: "payable"
+      - terminal: "private"
+      - terminal: "public"
+      - terminal: "pure"
+      - terminal: "view"
+      - terminal: "virtual"
+
+- name: "OverrideSpecifier"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "override"
+      - optional:
+          delimitedBy:
+            open: "("
+            expression:
+              separatedBy:
+                separator: ","
+                expression:
+                  reference: "IdentifierPath"
+            close: ")"
+
+- name: "ParameterList"
+  kind: "Rule"
+  unversioned:
+    delimitedBy:
+      open: "("
+      expression:
+        optional:
+          separatedBy:
+            separator: ","
+            expression:
+              reference: "ParameterDeclaration"
+      close: ")"
+
+- name: "ParameterDeclaration"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - reference: "TypeName"
+      - optional:
+          reference: "DataLocation"
+      - optional:
+          reference: "Identifier"
+
+- name: "ArgumentList"
+  kind: "Rule"
+  unversioned:
+    delimitedBy:
+      open: "("
+      expression:
+        optional:
+          choice:
+            - reference: "PositionalArgumentList"
+            - reference: "NamedArgumentList"
+      close: ")"
+
+- name: "PositionalArgumentList"
+  kind: "Rule"
+  unversioned:
+    separatedBy:
+      separator: ","
+      expression:
+        reference: "Expression"
+
+- name: "NamedArgumentList"
+  kind: "Rule"
+  unversioned:
+    delimitedBy:
+      open: "{"
+      expression:
+        optional:
+          separatedBy:
+            separator: ","
+            expression:
+              reference: "NamedArgument"
+      close: "}"
+
+- name: "NamedArgument"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - reference: "Identifier"
+      - terminal: ":"
+      - reference: "Expression"
+
+- name: "ConstructorDefinition"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "constructor"
+      - reference: "ParameterList"
+      - zeroOrMore:
+          reference: "ConstructorAttribute"
+      - reference: "Block"
+
+- name: "ConstructorAttribute"
+  kind: "Rule"
+  unversioned:
+    choice:
+      - reference: "ModifierInvocation"
+      - terminal: "internal"
+      - terminal: "payable"
+      - terminal: "public"
+
+- name: "FallbackFunctionDefinition"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "fallback"
+      - reference: "ParameterList"
+      - zeroOrMore:
+          reference: "FallbackFunctionAttribute"
+      - optional:
+          sequence:
+            - terminal: "returns"
+            - reference: "ParameterList"
+      - choice:
+          - terminal: ";"
+          - reference: "Block"
+
+- name: "FallbackFunctionAttribute"
+  kind: "Rule"
+  unversioned:
+    choice:
+      - reference: "ModifierInvocation"
+      - reference: "OverrideSpecifier"
+      - terminal: "external"
+      - terminal: "payable"
+      - terminal: "pure"
+      - terminal: "view"
+      - terminal: "virtual"
+
+- name: "ReceiveFunctionDefinition"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "receive"
+      - reference: "ParameterList"
+      - zeroOrMore:
+          reference: "ReceiveFunctionAttribute"
+      - choice:
+          - terminal: ";"
+          - reference: "Block"
+
+- name: "ReceiveFunctionAttribute"
+  kind: "Rule"
+  unversioned:
+    choice:
+      - reference: "ModifierInvocation"
+      - reference: "OverrideSpecifier"
+      - terminal: "external"
+      - terminal: "payable"
+      - terminal: "virtual"
