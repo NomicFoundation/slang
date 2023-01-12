@@ -10,15 +10,17 @@ use crate::{
         grammar::{Grammar, GrammarSection, GrammarTopic},
         manifest::{ManifestFile, TopicFile},
     },
-    validation, yaml,
+    validation::Model,
+    yaml,
 };
 
 impl Grammar {
     pub fn compile(codegen: &mut CodegenContext, manifest_path: PathBuf) -> CodegenResult<Grammar> {
         let manifest_file = yaml::files::File::<ManifestFile>::load(codegen, manifest_path)?;
-        validation::check_manifest(&manifest_file)?;
+        let mut model = Model::new(&manifest_file);
 
-        let sections = load_sections(codegen, &manifest_file)?;
+        let sections = load_sections(codegen, &mut model, &manifest_file)?;
+        model.validate()?;
 
         let productions = sections
             .iter()
@@ -26,8 +28,6 @@ impl Grammar {
             .flat_map(|topic| &topic.productions)
             .map(|production| (production.name.to_owned(), production.clone()))
             .collect();
-
-        validation::check_productions(&manifest_file, &productions)?;
 
         return Ok(Grammar {
             title: manifest_file.value.title,
@@ -40,6 +40,7 @@ impl Grammar {
 
 fn load_sections(
     codegen: &mut CodegenContext,
+    model: &mut Model,
     manifest_file: &yaml::files::File<ManifestFile>,
 ) -> CodegenResult<Vec<GrammarSection>> {
     let manifest_dir = manifest_file.path.parent().unwrap().to_owned();
@@ -67,6 +68,8 @@ fn load_sections(
 
             match yaml::files::File::<TopicFile>::load(codegen, topic_path) {
                 Ok(topic_file) => {
+                    model.add_topic(&topic_file);
+
                     topics.push(GrammarTopic {
                         title: topic.title.to_owned(),
                         productions: topic_file.value,

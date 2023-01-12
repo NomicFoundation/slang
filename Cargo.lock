@@ -215,6 +215,7 @@ dependencies = [
 name = "codegen_schema"
 version = "0.0.0"
 dependencies = [
+ "Inflector",
  "anyhow",
  "codegen_utils",
  "indexmap",
