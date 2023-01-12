@@ -89,7 +89,7 @@ impl LexSequenceNode {
             end: range.end as u32,
         }
     }
-    #[napi(ts_return_type = "(LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode)[]")]
+    #[napi(ts_return_type = "(LexCharsNode | LexSequenceNode | LexNamedNode)[]")]
     pub fn children(&self, env: Env) -> Vec<JsObject> {
         match self.0.as_ref() {
             Node::Sequence(children) => children.iter().map(|child| child.to_js(&env)).collect(),
@@ -118,7 +118,7 @@ impl LexNamedNode {
             _ => unreachable!(),
         }
     }
-    #[napi(ts_return_type = "LexCharsNode | LexChoiceNode | LexSequenceNode | LexNamedNode")]
+    #[napi(ts_return_type = "LexCharsNode | LexSequenceNode | LexNamedNode")]
     pub fn child(&self, env: Env) -> JsObject {
         match self.0.as_ref() {
             Node::Named(_, child) => child.to_js(&env),

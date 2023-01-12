@@ -23,10 +23,17 @@ impl Node {
     pub fn rule(kind: RuleKind, children: Vec<Option<Rc<Self>>>) -> Option<Rc<Self>> {
         let children: Vec<_> = children.into_iter().filter_map(|e| e).collect();
         if children.is_empty() {
-            None
-        } else {
-            Some(Rc::new(Self::Rule { kind, children }))
+            return None;
         }
+        if children.len() == 1 {
+            if let Self::Group { children } = children[0].as_ref() {
+                return Some(Rc::new(Self::Rule {
+                    kind,
+                    children: children.clone(),
+                }));
+            }
+        }
+        return Some(Rc::new(Self::Rule { kind, children }));
     }
     pub fn trivia_token(kind: TokenKind, lex_node: Rc<lex::Node>) -> Option<Rc<Self>> {
         Some(Rc::new(Self::Token {

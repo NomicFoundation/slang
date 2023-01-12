@@ -3,9 +3,9 @@
 Errors: 0
 
 █ Rule(ExponentiationExpression) - (0..11)        │
-├──► Token(RawIdentifier) - (0..1)                │ x
+├──► Token(Identifier) - (0..1)                   │ x
 ├──► Token(StarStar) - (2..4)                     │ **
 └──█ Rule(ExponentiationExpression) - (5..11)     │
-   ├──► Token(RawIdentifier) - (5..6)             │ y
+   ├──► Token(Identifier) - (5..6)                │ y
    ├──► Token(StarStar) - (7..9)                  │ **
-   └──► Token(RawIdentifier) - (10..11)           │ z
+   └──► Token(Identifier) - (10..11)              │ z

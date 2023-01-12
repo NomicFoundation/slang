@@ -2,9 +2,9 @@
 
 Errors: 0
 
-█ Rule(ContractDefinition) - (0..18)                    │
-├──► Token(Contract) - (0..8)                           │ contract
-├──► Token(RawIdentifier) - (9..15)                     │ Sample
-└──█ Rule(DelimitedContractBodyElements) - (16..18)     │
-   ├──► Token(OpenBrace) - (16..17)                     │ {
-   └──► Token(CloseBrace) - (17..18)                    │ }
+█ Rule(ContractDefinition) - (0..18)     │
+├──► Token(Contract) - (0..8)            │ contract
+├──► Token(Identifier) - (9..15)         │ Sample
+└──█ Group - (16..18)                    │
+   ├──► Token(OpenBrace) - (16..17)      │ {
+   └──► Token(CloseBrace) - (17..18)     │ }

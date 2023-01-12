@@ -35,7 +35,7 @@ impl<'context> CombinatorTree<'context> {
     pub fn ensure_tree_is_built(&'context self) {
         if self.root_node.get().is_none() {
             let expression = &self.expression();
-            let node = CombinatorNode::new(self, expression, Some(self.production.name.clone()));
+            let node = CombinatorNode::new(self, expression);
 
             if let CombinatorNode::PrecedenceRule { members, .. } = node {
                 let mut members = members.clone();
@@ -74,7 +74,20 @@ impl<'context> CombinatorTree<'context> {
             ProductionKind::Rule => {
                 code.add_rule_kind(self.production.name.clone());
                 let parser = self.root_node.get().unwrap().to_parser_code(false, code);
-                code.add_parser(name, version, comment, parser, ParserResultType::Rule);
+                if matches!(
+                    self.root_node.get().unwrap(),
+                    CombinatorNode::PrecedenceRuleMember { .. }
+                ) {
+                    code.add_parser(
+                        name,
+                        version,
+                        comment,
+                        parser,
+                        ParserResultType::PrecedenceRuleMember,
+                    );
+                } else {
+                    code.add_parser(name, version, comment, parser, ParserResultType::Rule);
+                }
             }
 
             ProductionKind::Trivia => {

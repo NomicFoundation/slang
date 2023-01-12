@@ -17,11 +17,12 @@ use std::ops::Range;
 use std::rc::Rc;
 pub type SpanType = Range<usize>;
 pub type ErrorType = Simple<char, SpanType>;
+pub type LocatedType = Located<char, ErrorType>;
 type PResult<O> = (
-    Vec<Located<char, ErrorType>>,
-    Result<(O, Option<Located<char, ErrorType>>), Located<char, ErrorType>>,
+    Vec<LocatedType>,
+    Result<(O, Option<LocatedType>), LocatedType>,
 );
-type StreamOf<'a> = Stream<'a, char, <ErrorType as Error<char>>::Span>;
+type StreamOf<'a> = Stream<'a, char, SpanType>;
 #[derive(Copy, Clone)]
 struct Difference<M, S> {
     minuend: M,
@@ -276,24 +277,84 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // Macros -------------------------------------------
 
     #[allow(unused_macros)]
+    macro_rules! scan_terminal {
+        ($ literal : literal) => {
+            just($literal).ignored()
+        };
+        ($ filter : expr) => {
+            filter($filter).ignored()
+        };
+    }
+    #[allow(unused_macros)]
+    macro_rules ! scan_choice { ($ ($ expr : expr) , *) => { choice :: < _ , ErrorType > (($ ($ expr) , *)) } ; }
+    #[allow(unused_macros)]
+    macro_rules ! scan_seq { ($ head : expr , $ ($ tail : expr) , +) => { $ head . then_ignore (scan_seq ! ($ ($ tail) , +)) } ; ($ head : expr) => { $ head . ignored () } ; }
+    #[allow(unused_macros)]
+    macro_rules! scan_zero_or_more {
+        ($ expr : expr) => {
+            $expr.repeated().ignored()
+        };
+    }
+    #[allow(unused_macros)]
+    macro_rules! scan_one_or_more {
+        ($ expr : expr) => {
+            $expr.repeated().at_least(1).ignored()
+        };
+    }
+    #[allow(unused_macros)]
+    macro_rules! scan_repeated {
+        ($ expr : expr , $ min : literal , $ max : literal) => {
+            $expr.repeated().at_least($min).at_most($max).ignored()
+        };
+    }
+    #[allow(unused_macros)]
+    macro_rules! scan_optional {
+        ($ expr : expr) => {
+            $expr.or_not().ignored()
+        };
+    }
+    #[allow(unused_macros)]
+    macro_rules! scan_separated_by {
+        ($ expr : expr , $ separator : expr) => {
+            $expr.then_ignore($separator.then_ignore($expr).repeated())
+        };
+    }
+    #[allow(unused_macros)]
+    macro_rules ! scan_trie { ($ expr : expr) => { $ expr } ; ($ ($ expr : expr) , +) => { choice :: < _ , ErrorType > (($ ($ expr) , +)) } ; }
+    #[allow(unused_macros)]
+    macro_rules! scan_trieleaf {
+        ($ string : literal) => {
+            just($string).ignored()
+        };
+        () => {
+            empty()
+        };
+    }
+    #[allow(unused_macros)]
+    macro_rules ! scan_trieprefix { ($ string : literal , [$ ($ expr : expr) , +]) => (just ($ string) . ignore_then (choice :: < _ , ErrorType > (($ ($ expr) , +)))) }
+    #[allow(unused_macros)]
+    macro_rules! scan_make_node {
+        ($ expr : expr) => {
+            $expr.map_with_span(|_, span: SpanType| lex::Node::chars(span))
+        };
+    }
+    #[allow(unused_macros)]
     macro_rules! lex_terminal {
         ($ kind : ident , $ literal : literal) => {
             just($literal).map_with_span(|_, span: SpanType| {
-                lex::Node::named(TokenKind::$kind, lex::Node::chars(span.start()..span.end()))
+                lex::Node::named(TokenKind::$kind, lex::Node::chars(span))
             })
         };
         ($ kind : ident , $ filter : expr) => {
             filter($filter).map_with_span(|_, span: SpanType| {
-                lex::Node::named(TokenKind::$kind, lex::Node::chars(span.start()..span.end()))
+                lex::Node::named(TokenKind::$kind, lex::Node::chars(span))
             })
         };
         ($ literal : literal) => {
-            just($literal)
-                .map_with_span(|_, span: SpanType| lex::Node::chars(span.start()..span.end()))
+            just($literal).map_with_span(|_, span: SpanType| lex::Node::chars(span))
         };
         ($ filter : expr) => {
-            filter($filter)
-                .map_with_span(|_, span: SpanType| lex::Node::chars(span.start()..span.end()))
+            filter($filter).map_with_span(|_, span: SpanType| lex::Node::chars(span))
         };
     }
     #[allow(unused_macros)]
@@ -312,7 +373,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
             lex_zero_or_more!($expr).map(|element| lex::Node::named(TokenKind::$kind, element))
         };
         ($ expr : expr) => {
-            $expr.repeated().map(|v| lex::Node::sequence(v))
+            $expr.repeated().map(lex::Node::sequence)
         };
     }
     #[allow(unused_macros)]
@@ -321,7 +382,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
             lex_one_or_more!($expr).map(|element| lex::Node::named(TokenKind::$kind, element))
         };
         ($ expr : expr) => {
-            $expr.repeated().at_least(1).map(|v| lex::Node::sequence(v))
+            $expr.repeated().at_least(1).map(lex::Node::sequence)
         };
     }
     #[allow(unused_macros)]
@@ -335,7 +396,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                 .repeated()
                 .at_least($min)
                 .at_most($max)
-                .map(|v| lex::Node::sequence(v))
+                .map(lex::Node::sequence)
         };
     }
     #[allow(unused_macros)]
@@ -364,9 +425,9 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         };
     }
     #[allow(unused_macros)]
-    macro_rules ! lex_trie { ($ kind : ident , $ ($ expr : expr) , *) => { choice :: < _ , ErrorType > (($ ($ expr) , *)) . map_with_span (| leaf_kind , span : SpanType | lex :: Node :: named (TokenKind :: $ kind , lex :: Node :: named (leaf_kind , lex :: Node :: chars (span . start () .. span . end ())))) } ; ($ ($ expr : expr) , *) => { choice :: < _ , ErrorType > (($ ($ expr) , *)) . map_with_span (| kind , span : SpanType | lex :: Node :: named (kind , lex :: Node :: chars (span . start () .. span . end ()))) } ; }
+    macro_rules ! lex_trie { ($ expr : expr) => { $ expr . map_with_span (| _ , span : SpanType | lex :: Node :: chars (span)) } ; ($ ($ expr : expr) , +) => { choice :: < _ , ErrorType > (($ ($ expr) , +)) . map_with_span (| _ , span : SpanType | lex :: Node :: chars (span)) } ; }
     #[allow(unused_macros)]
-    macro_rules! trieleaf {
+    macro_rules! lex_trieleaf {
         ($ kind : ident , $ string : literal) => {
             just($string).to(TokenKind::$kind)
         };
@@ -375,7 +436,23 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         };
     }
     #[allow(unused_macros)]
-    macro_rules ! trieprefix { ($ string : literal , [$ ($ expr : expr) , *]) => (just ($ string) . ignore_then (choice :: < _ , ErrorType > (($ ($ expr) , *)))) }
+    macro_rules ! lex_trieprefix { ($ string : literal , [$ ($ expr : expr) , +]) => (just ($ string) . ignore_then (choice :: < _ , ErrorType > (($ ($ expr) , +)))) }
+    #[allow(unused_macros)]
+    macro_rules! define_token {
+        ($ kind : ident , $ expr : expr) => {
+            $kind.define($expr.map(|node| lex::Node::named(TokenKind::$kind, node)));
+            parsers.insert(
+                ProductionKind::$kind,
+                Parser::new(
+                    $kind
+                        .clone()
+                        .map(cst::Node::top_level_token)
+                        .then_ignore(end())
+                        .boxed(),
+                ),
+            );
+        };
+    }
     #[allow(unused_macros)]
     macro_rules! trivia_terminal {
         ($ kind : ident , $ literal : literal) => {
@@ -395,10 +472,6 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
             })
         };
     }
-    #[allow(unused_macros)]
-    macro_rules ! trivia_token { ($ token_rule : ident) => { $ token_rule . clone () . map (| token : Option < Rc < lex :: Node >> | { let token = token . unwrap () ; if let lex :: Node :: Named (kind , element) = token . as_ref () { cst :: Node :: trivia_token (* kind , element . clone ()) } else { unreachable ! ("a token rule should always return a named token, but rule {} returned {:?}" , stringify ! ($ token_rule) , token) } }) } ; }
-    #[allow(unused_macros)]
-    macro_rules ! trivia_trie { ($ ($ expr : expr) , *) => (choice :: < _ , ErrorType > (($ ($ expr) , *)) . map_with_span (| kind , span : SpanType | cst :: Node :: trivia_token (kind , lex :: Node :: chars_unwrapped (span . start () .. span . end ())))) }
     #[allow(unused_macros)]
     macro_rules! terminal {
         ($ kind : ident , $ literal : literal) => {
@@ -430,6 +503,8 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                 })
         };
     }
+    #[allow(unused_macros)]
+    macro_rules ! trivia_token { ($ token_rule : ident) => { $ token_rule . clone () . map (| token : Option < Rc < lex :: Node >> | { let token = token . unwrap () ; if let lex :: Node :: Named (kind , element) = token . as_ref () { cst :: Node :: trivia_token (* kind , element . clone ()) } else { unreachable ! ("a token rule should always return a named token, but rule {} returned {:?}" , stringify ! ($ token_rule) , token) } }) } ; }
     #[allow(unused_macros)]
     macro_rules ! token { ($ token_rule : ident) => { LeadingTrivia . clone () . then ($ token_rule . clone ()) . then (TrailingTrivia . clone ()) . map (| ((leading_trivia , token) , trailing_trivia) : ((_ , Option < Rc < lex :: Node >>) , _) | { let token = token . unwrap () ; if let lex :: Node :: Named (kind , element) = token . as_ref () { cst :: Node :: token (* kind , element . clone () , leading_trivia , trailing_trivia) } else { unreachable ! ("a token rule should always return a named token, but rule {} returned {:?}" , stringify ! ($ token_rule) , token) } }) } ; }
     #[allow(unused_macros)]
@@ -617,38 +692,51 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         };
     }
     #[allow(unused_macros)]
-    macro_rules ! trie { ($ kind : ident , $ ($ expr : expr) , *) => { trie ! ($ ($ expr) , *) . map (| child | cst :: Node :: rule (RuleKind :: $ kind , vec ! [child])) } ; ($ ($ expr : expr) , *) => (LeadingTrivia . clone () . then (choice :: < _ , ErrorType > (($ ($ expr) , *)) . map_with_span (| kind , span : SpanType | (kind , span . start () .. span . end ()))) . then (TrailingTrivia . clone ()) . map (| ((leading_trivia , (kind , range)) , trailing_trivia) | { cst :: Node :: token (kind , lex :: Node :: chars_unwrapped (range) , leading_trivia , trailing_trivia) })) }
+    macro_rules ! trie { ($ kind : ident , $ ($ expr : expr) , *) => { trie ! ($ ($ expr) , *) . map (| child | cst :: Node :: rule (RuleKind :: $ kind , vec ! [child])) } ; ($ expr : expr) => { LeadingTrivia . clone () . then ($ expr . map_with_span (| kind , span : SpanType | (kind , span))) . then (TrailingTrivia . clone ()) . map (| ((leading_trivia , (kind , range)) , trailing_trivia) | { cst :: Node :: token (kind , lex :: Node :: chars_unwrapped (range) , leading_trivia , trailing_trivia) }) } ; ($ ($ expr : expr) , +) => { LeadingTrivia . clone () . then (choice :: < _ , ErrorType > (($ ($ expr) , +)) . map_with_span (| kind , span : SpanType | (kind , span))) . then (TrailingTrivia . clone ()) . map (| ((leading_trivia , (kind , range)) , trailing_trivia) | { cst :: Node :: token (kind , lex :: Node :: chars_unwrapped (range) , leading_trivia , trailing_trivia) }) } ; }
     #[allow(unused_macros)]
-    macro_rules! define_rule {
-        ($ kind : ident , $ expr : expr) => {{
-            $kind.define($expr);
-        }
-        parsers.insert(
-            ProductionKind::$kind,
-            Parser::new(
-                $kind
-                    .clone()
-                    .map(|node| cst::Node::top_level_rule(RuleKind::$kind, node))
-                    .then_ignore(end())
-                    .boxed(),
-            ),
-        );};
+    macro_rules ! trivia_trie { ($ expr : expr) => { $ expr . map_with_span (| kind , span : SpanType | cst :: Node :: trivia_token (kind , lex :: Node :: chars_unwrapped (span))) } ; ($ ($ expr : expr) , +) => { choice :: < _ , ErrorType > (($ ($ expr) , +)) . map_with_span (| kind , span : SpanType | cst :: Node :: trivia_token (kind , lex :: Node :: chars_unwrapped (span))) } ; }
+    #[allow(unused_macros)]
+    macro_rules ! trieprefix { ($ string : literal , [$ ($ expr : expr) , +]) => (just ($ string) . ignore_then (choice :: < _ , ErrorType > (($ ($ expr) , +)))) }
+    #[allow(unused_macros)]
+    macro_rules! trieleaf {
+        ($ kind : ident , $ string : literal) => {
+            just($string).to(TokenKind::$kind)
+        };
+        ($ kind : ident) => {
+            empty().to(TokenKind::$kind)
+        };
     }
     #[allow(unused_macros)]
-    macro_rules! define_token {
-        ($ kind : ident , $ expr : expr) => {{
+    macro_rules! define_rule {
+        ($ kind : ident , $ expr : expr) => {
+            $kind.define($expr.map(|node| cst::Node::rule(RuleKind::$kind, vec![node])));
+            parsers.insert(
+                ProductionKind::$kind,
+                Parser::new(
+                    $kind
+                        .clone()
+                        .map(|node| cst::Node::top_level_rule(RuleKind::$kind, node))
+                        .then_ignore(end())
+                        .boxed(),
+                ),
+            );
+        };
+    }
+    #[allow(unused_macros)]
+    macro_rules! define_precedence_rule_member {
+        ($ kind : ident , $ expr : expr) => {
             $kind.define($expr);
-        }
-        parsers.insert(
-            ProductionKind::$kind,
-            Parser::new(
-                $kind
-                    .clone()
-                    .map(|node| cst::Node::top_level_token(node))
-                    .then_ignore(end())
-                    .boxed(),
-            ),
-        );};
+            parsers.insert(
+                ProductionKind::$kind,
+                Parser::new(
+                    $kind
+                        .clone()
+                        .map(|node| cst::Node::top_level_rule(RuleKind::$kind, node))
+                        .then_ignore(end())
+                        .boxed(),
+                ),
+            );
+        };
     }
 
     // Define all productions ---------------------------
@@ -656,15 +744,11 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // ABICoderPragma = 'abicoder' «Identifier» ;
     define_rule!(
         ABICoderPragma,
-        seq!(
-            ABICoderPragma,
-            terminal!(Abicoder, "abicoder"),
-            token!(Identifier)
-        )
+        seq!(trie!(trieleaf!(Abicoder, "abicoder")), token!(Identifier))
     );
 
     // AddSubExpression = Expression ( '+' | '-' ) Expression ;
-    define_rule!(
+    define_precedence_rule_member!(
         AddSubExpression,
         left_associative_binary_expression!(
             AddSubExpression,
@@ -677,19 +761,18 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         AddressType,
         seq!(
-            AddressType,
-            terminal!(Address, "address"),
-            optional!(terminal!(Payable, "payable"))
+            trie!(trieleaf!(Address, "address")),
+            optional!(trie!(trieleaf!(Payable, "payable")))
         )
     );
 
     // AndExpression = Expression '&&' Expression ;
-    define_rule!(
+    define_precedence_rule_member!(
         AndExpression,
         left_associative_binary_expression!(
             AndExpression,
             EqualityComparisonExpression,
-            terminal!(AmpersandAmpersand, "&&")
+            trie!(trieleaf!(AmpersandAmpersand, "&&"))
         )
     );
 
@@ -697,7 +780,6 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ArgumentList,
         delimited_by!(
-            ArgumentList,
             terminal!(OpenParen, "("),
             optional!(choice!(
                 rule!(PositionalArgumentList),
@@ -711,13 +793,8 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ArrayLiteral,
         delimited_by!(
-            ArrayLiteral,
             terminal!(OpenBracket, "["),
-            separated_by!(
-                SeparatedExpressions,
-                rule!(Expression),
-                terminal!(Comma, ",")
-            ),
+            separated_by!(rule!(Expression), terminal!(Comma, ",")),
             terminal!(CloseBracket, "]")
         )
     );
@@ -725,34 +802,117 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // «AsciiEscape» = 'n' | 'r' | 't' | '\'' | '"' | '\\' | '\u{a}' | '\u{d}' ;
     define_token!(
         AsciiEscape,
-        lex_terminal!(AsciiEscape, |&c: &char| c == 'n'
+        scan_make_node!(scan_terminal!(|&c: &char| c == 'n'
             || c == 'r'
             || c == 't'
             || c == '\''
             || c == '"'
             || c == '\\'
             || c == '\n'
-            || c == '\r')
+            || c == '\r'))
     );
 
     // «AsciiStringLiteral» = «SingleQuotedAsciiStringLiteral» | «DoubleQuotedAsciiStringLiteral» ;
     define_token!(
         AsciiStringLiteral,
-        lex_choice!(
-            AsciiStringLiteral,
-            lex_rule!(SingleQuotedAsciiStringLiteral),
-            lex_rule!(DoubleQuotedAsciiStringLiteral)
-        )
+        scan_make_node!(scan_choice!(
+            scan_seq!(
+                scan_terminal!("'"),
+                scan_zero_or_more!(scan_choice!(
+                    scan_one_or_more!(scan_terminal!(|&c: &char| (' ' <= c && c <= '~')
+                        && c != '\''
+                        && c != '\\')),
+                    scan_seq!(
+                        scan_terminal!('\\'),
+                        scan_choice!(
+                            scan_trie!(
+                                scan_trieleaf!("\n"),
+                                scan_trieleaf!("\r"),
+                                scan_trieleaf!("\""),
+                                scan_trieleaf!("'"),
+                                scan_trieleaf!("\\"),
+                                scan_trieleaf!("n"),
+                                scan_trieleaf!("r"),
+                                scan_trieleaf!("t")
+                            ),
+                            scan_seq!(
+                                scan_terminal!('x'),
+                                scan_repeated!(
+                                    scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                                        || ('a' <= c && c <= 'f')
+                                        || ('A' <= c && c <= 'F')),
+                                    2usize,
+                                    2usize
+                                )
+                            ),
+                            scan_seq!(
+                                scan_terminal!('u'),
+                                scan_repeated!(
+                                    scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                                        || ('a' <= c && c <= 'f')
+                                        || ('A' <= c && c <= 'F')),
+                                    4usize,
+                                    4usize
+                                )
+                            )
+                        )
+                    )
+                )),
+                scan_terminal!("'")
+            ),
+            scan_seq!(
+                scan_terminal!("\""),
+                scan_zero_or_more!(scan_choice!(
+                    scan_one_or_more!(scan_terminal!(|&c: &char| (' ' <= c && c <= '~')
+                        && c != '"'
+                        && c != '\\')),
+                    scan_seq!(
+                        scan_terminal!('\\'),
+                        scan_choice!(
+                            scan_trie!(
+                                scan_trieleaf!("\n"),
+                                scan_trieleaf!("\r"),
+                                scan_trieleaf!("\""),
+                                scan_trieleaf!("'"),
+                                scan_trieleaf!("\\"),
+                                scan_trieleaf!("n"),
+                                scan_trieleaf!("r"),
+                                scan_trieleaf!("t")
+                            ),
+                            scan_seq!(
+                                scan_terminal!('x'),
+                                scan_repeated!(
+                                    scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                                        || ('a' <= c && c <= 'f')
+                                        || ('A' <= c && c <= 'F')),
+                                    2usize,
+                                    2usize
+                                )
+                            ),
+                            scan_seq!(
+                                scan_terminal!('u'),
+                                scan_repeated!(
+                                    scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                                        || ('a' <= c && c <= 'f')
+                                        || ('A' <= c && c <= 'F')),
+                                    4usize,
+                                    4usize
+                                )
+                            )
+                        )
+                    )
+                )),
+                scan_terminal!("\"")
+            )
+        ))
     );
 
     // AssemblyFlags = '(' «DoubleQuotedAsciiStringLiteral»  { ',' «DoubleQuotedAsciiStringLiteral» } ')' ;
     define_rule!(
         AssemblyFlags,
         delimited_by!(
-            AssemblyFlags,
             terminal!(OpenParen, "("),
             separated_by!(
-                SeparatedDoubleQuotedAsciiStringLiterals,
                 token!(DoubleQuotedAsciiStringLiteral),
                 terminal!(Comma, ",")
             ),
@@ -764,16 +924,15 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         AssemblyStatement,
         seq!(
-            AssemblyStatement,
-            terminal!(Assembly, "assembly"),
-            optional!(terminal!(DoubleQuoteEvmasmDoubleQuote, "\"evmasm\"")),
+            trie!(trieleaf!(Assembly, "assembly")),
+            optional!(trie!(trieleaf!(DoubleQuoteEvmasmDoubleQuote, "\"evmasm\""))),
             optional!(rule!(AssemblyFlags)),
             rule!(YulBlock)
         )
     );
 
     // AssignmentExpression = Expression ( '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ) Expression ;
-    define_rule!(
+    define_precedence_rule_member!(
         AssignmentExpression,
         left_associative_binary_expression!(
             AssignmentExpression,
@@ -801,32 +960,32 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     );
 
     // BitAndExpression = Expression '&' Expression ;
-    define_rule!(
+    define_precedence_rule_member!(
         BitAndExpression,
         left_associative_binary_expression!(
             BitAndExpression,
             ShiftExpression,
-            terminal!(Ampersand, "&")
+            trie!(trieleaf!(Ampersand, "&"))
         )
     );
 
     // BitOrExpression = Expression '|' Expression ;
-    define_rule!(
+    define_precedence_rule_member!(
         BitOrExpression,
         left_associative_binary_expression!(
             BitOrExpression,
             BitXOrExpression,
-            terminal!(Pipe, "|")
+            trie!(trieleaf!(Pipe, "|"))
         )
     );
 
     // BitXOrExpression = Expression '^' Expression ;
-    define_rule!(
+    define_precedence_rule_member!(
         BitXOrExpression,
         left_associative_binary_expression!(
             BitXOrExpression,
             BitAndExpression,
-            terminal!(Caret, "^")
+            trie!(trieleaf!(Caret, "^"))
         )
     );
 
@@ -834,7 +993,6 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         Block,
         delimited_by!(
-            Block,
             terminal!(OpenBrace, "{"),
             zero_or_more!(choice!(rule!(Statement), rule!(UncheckedBlock))),
             terminal!(CloseBrace, "}")
@@ -844,20 +1002,15 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // «BooleanLiteral» = 'true' | 'false' ;
     define_token!(
         BooleanLiteral,
-        lex_trie!(
-            BooleanLiteral,
-            trieleaf!(False, "false"),
-            trieleaf!(True, "true")
-        )
+        scan_make_node!(scan_trie!(scan_trieleaf!("false"), scan_trieleaf!("true")))
     );
 
     // BreakStatement = 'break' ';' ;
     define_rule!(
         BreakStatement,
         seq!(
-            BreakStatement,
-            terminal!(Break, "break"),
-            terminal!(Semicolon, ";")
+            trie!(trieleaf!(Break, "break")),
+            trie!(trieleaf!(Semicolon, ";"))
         )
     );
 
@@ -865,23 +1018,22 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         CatchClause,
         seq!(
-            CatchClause,
-            terminal!(Catch, "catch"),
+            trie!(trieleaf!(Catch, "catch")),
             optional!(seq!(optional!(token!(Identifier)), rule!(ParameterList))),
             rule!(Block)
         )
     );
 
     // ConditionalExpression = Expression '?' Expression ':' Expression ;
-    define_rule!(
+    define_precedence_rule_member!(
         ConditionalExpression,
         unary_suffix_expression!(
             ConditionalExpression,
             OrExpression,
             seq!(
-                terminal!(Question, "?"),
+                trie!(trieleaf!(Question, "?")),
                 rule!(Expression),
-                terminal!(Colon, ":"),
+                trie!(trieleaf!(Colon, ":")),
                 rule!(Expression)
             )
         )
@@ -891,13 +1043,12 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ConstantDefinition,
         seq!(
-            ConstantDefinition,
             rule!(TypeName),
-            terminal!(Constant, "constant"),
+            trie!(trieleaf!(Constant, "constant")),
             token!(Identifier),
-            terminal!(Equal, "="),
+            trie!(trieleaf!(Equal, "=")),
             rule!(Expression),
-            terminal!(Semicolon, ";")
+            trie!(trieleaf!(Semicolon, ";"))
         )
     );
 
@@ -905,7 +1056,6 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ConstructorAttribute,
         choice!(
-            ConstructorAttribute,
             rule!(ModifierInvocation),
             trie!(
                 trieleaf!(Internal, "internal"),
@@ -921,10 +1071,9 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ConstructorDefinition,
         seq!(
-            ConstructorDefinition,
-            terminal!(Constructor, "constructor"),
+            trie!(trieleaf!(Constructor, "constructor")),
             rule!(ParameterList),
-            zero_or_more!(ConstructorAttributes, rule!(ConstructorAttribute)),
+            zero_or_more!(rule!(ConstructorAttribute)),
             rule!(Block)
         )
     );
@@ -933,9 +1082,8 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ContinueStatement,
         seq!(
-            ContinueStatement,
-            terminal!(Continue, "continue"),
-            terminal!(Semicolon, ";")
+            trie!(trieleaf!(Continue, "continue")),
+            trie!(trieleaf!(Semicolon, ";"))
         )
     );
 
@@ -943,7 +1091,6 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ContractBodyElement,
         choice!(
-            ContractBodyElement,
             rule!(UsingDirective),
             rule!(ConstructorDefinition),
             rule!(FunctionDefinition),
@@ -963,15 +1110,13 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ContractDefinition,
         seq!(
-            ContractDefinition,
-            optional!(terminal!(Abstract, "abstract")),
-            terminal!(Contract, "contract"),
+            optional!(trie!(trieleaf!(Abstract, "abstract"))),
+            trie!(trieleaf!(Contract, "contract")),
             token!(Identifier),
             optional!(rule!(InheritanceSpecifierList)),
             delimited_by!(
-                DelimitedContractBodyElements,
                 terminal!(OpenBrace, "{"),
-                zero_or_more!(ContractBodyElements, rule!(ContractBodyElement)),
+                zero_or_more!(rule!(ContractBodyElement)),
                 terminal!(CloseBrace, "}")
             )
         )
@@ -981,7 +1126,6 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         DataLocation,
         trie!(
-            DataLocation,
             trieleaf!(Calldata, "calldata"),
             trieleaf!(Memory, "memory"),
             trieleaf!(Storage, "storage")
@@ -991,53 +1135,101 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // «DecimalExponent» = ( 'e' | 'E' ) [ '-' ] «DecimalInteger» ;
     define_token!(
         DecimalExponent,
-        lex_seq!(
-            DecimalExponent,
-            lex_terminal!(|&c: &char| c == 'e' || c == 'E'),
-            lex_optional!(lex_terminal!(Minus, '-')),
-            lex_rule!(DecimalInteger)
-        )
+        scan_make_node!(scan_seq!(
+            scan_terminal!(|&c: &char| c == 'e' || c == 'E'),
+            scan_optional!(scan_terminal!('-')),
+            scan_seq!(
+                scan_terminal!(|&c: &char| ('0' <= c && c <= '9')),
+                scan_zero_or_more!(scan_seq!(
+                    scan_optional!(scan_terminal!('_')),
+                    scan_terminal!(|&c: &char| ('0' <= c && c <= '9'))
+                ))
+            )
+        ))
     );
 
     // «DecimalFloat» = [ «DecimalInteger» ] '.' «DecimalInteger» ;
     define_token!(
         DecimalFloat,
-        lex_seq!(
-            DecimalFloat,
-            lex_optional!(lex_rule!(DecimalInteger)),
-            lex_terminal!(Period, '.'),
-            lex_rule!(DecimalInteger)
-        )
+        scan_make_node!(scan_seq!(
+            scan_optional!(scan_seq!(
+                scan_terminal!(|&c: &char| ('0' <= c && c <= '9')),
+                scan_zero_or_more!(scan_seq!(
+                    scan_optional!(scan_terminal!('_')),
+                    scan_terminal!(|&c: &char| ('0' <= c && c <= '9'))
+                ))
+            )),
+            scan_terminal!('.'),
+            scan_seq!(
+                scan_terminal!(|&c: &char| ('0' <= c && c <= '9')),
+                scan_zero_or_more!(scan_seq!(
+                    scan_optional!(scan_terminal!('_')),
+                    scan_terminal!(|&c: &char| ('0' <= c && c <= '9'))
+                ))
+            )
+        ))
     );
 
     // «DecimalInteger» = '0'…'9' { [ '_' ] '0'…'9' } ;
     define_token!(
         DecimalInteger,
-        lex_seq!(
-            DecimalInteger,
-            lex_terminal!(|&c: &char| ('0' <= c && c <= '9')),
-            lex_zero_or_more!(lex_seq!(
-                lex_optional!(lex_terminal!(Underscore, '_')),
-                lex_terminal!(|&c: &char| ('0' <= c && c <= '9'))
+        scan_make_node!(scan_seq!(
+            scan_terminal!(|&c: &char| ('0' <= c && c <= '9')),
+            scan_zero_or_more!(scan_seq!(
+                scan_optional!(scan_terminal!('_')),
+                scan_terminal!(|&c: &char| ('0' <= c && c <= '9'))
             ))
-        )
+        ))
     );
 
     // «DecimalNumber» = ( «DecimalInteger» | «DecimalFloat» ) [ «DecimalExponent» ] ;
     define_token!(
         DecimalNumber,
-        lex_seq!(
-            DecimalNumber,
-            lex_choice!(lex_rule!(DecimalInteger), lex_rule!(DecimalFloat)),
-            lex_optional!(lex_rule!(DecimalExponent))
-        )
+        scan_make_node!(scan_seq!(
+            scan_choice!(
+                scan_seq!(
+                    scan_terminal!(|&c: &char| ('0' <= c && c <= '9')),
+                    scan_zero_or_more!(scan_seq!(
+                        scan_optional!(scan_terminal!('_')),
+                        scan_terminal!(|&c: &char| ('0' <= c && c <= '9'))
+                    ))
+                ),
+                scan_seq!(
+                    scan_optional!(scan_seq!(
+                        scan_terminal!(|&c: &char| ('0' <= c && c <= '9')),
+                        scan_zero_or_more!(scan_seq!(
+                            scan_optional!(scan_terminal!('_')),
+                            scan_terminal!(|&c: &char| ('0' <= c && c <= '9'))
+                        ))
+                    )),
+                    scan_terminal!('.'),
+                    scan_seq!(
+                        scan_terminal!(|&c: &char| ('0' <= c && c <= '9')),
+                        scan_zero_or_more!(scan_seq!(
+                            scan_optional!(scan_terminal!('_')),
+                            scan_terminal!(|&c: &char| ('0' <= c && c <= '9'))
+                        ))
+                    )
+                )
+            ),
+            scan_optional!(scan_seq!(
+                scan_terminal!(|&c: &char| c == 'e' || c == 'E'),
+                scan_optional!(scan_terminal!('-')),
+                scan_seq!(
+                    scan_terminal!(|&c: &char| ('0' <= c && c <= '9')),
+                    scan_zero_or_more!(scan_seq!(
+                        scan_optional!(scan_terminal!('_')),
+                        scan_terminal!(|&c: &char| ('0' <= c && c <= '9'))
+                    ))
+                )
+            ))
+        ))
     );
 
     // Definition = ContractDefinition | InterfaceDefinition | LibraryDefinition | FunctionDefinition | ConstantDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | ErrorDefinition ;
     define_rule!(
         Definition,
         choice!(
-            Definition,
             rule!(ContractDefinition),
             rule!(InterfaceDefinition),
             rule!(LibraryDefinition),
@@ -1054,10 +1246,9 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         DeleteStatement,
         seq!(
-            DeleteStatement,
-            terminal!(Delete, "delete"),
+            trie!(trieleaf!(Delete, "delete")),
             token!(Identifier),
-            terminal!(Semicolon, ";")
+            trie!(trieleaf!(Semicolon, ";"))
         )
     );
 
@@ -1065,7 +1256,6 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         Directive,
         choice!(
-            Directive,
             rule!(PragmaDirective),
             rule!(ImportDirective),
             rule!(UsingDirective)
@@ -1076,17 +1266,15 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         DoWhileStatement,
         seq!(
-            DoWhileStatement,
-            terminal!(Do, "do"),
+            trie!(trieleaf!(Do, "do")),
             rule!(Statement),
-            terminal!(While, "while"),
+            trie!(trieleaf!(While, "while")),
             delimited_by!(
-                DelimitedExpression,
                 terminal!(OpenParen, "("),
                 rule!(Expression),
                 terminal!(CloseParen, ")")
             ),
-            terminal!(Semicolon, ";")
+            trie!(trieleaf!(Semicolon, ";"))
         )
     );
 
@@ -1094,21 +1282,48 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_token!(
         DoubleQuotedAsciiStringLiteral,
         lex_seq!(
-            DoubleQuotedAsciiStringLiteral,
             lex_terminal!(DoubleQuote, "\""),
-            lex_zero_or_more!(
-                Runs,
-                lex_choice!(
-                    Run,
-                    lex_one_or_more!(
-                        Chars,
-                        lex_terminal!(Char, |&c: &char| (' ' <= c && c <= '~')
-                            && c != '"'
-                            && c != '\\')
-                    ),
-                    lex_rule!(EscapeSequence)
-                )
-            ),
+            lex_zero_or_more!(lex_choice!(
+                Run,
+                lex_one_or_more!(lex_terminal!(Char, |&c: &char| (' ' <= c && c <= '~')
+                    && c != '"'
+                    && c != '\\')),
+                scan_make_node!(scan_seq!(
+                    scan_terminal!('\\'),
+                    scan_choice!(
+                        scan_trie!(
+                            scan_trieleaf!("\n"),
+                            scan_trieleaf!("\r"),
+                            scan_trieleaf!("\""),
+                            scan_trieleaf!("'"),
+                            scan_trieleaf!("\\"),
+                            scan_trieleaf!("n"),
+                            scan_trieleaf!("r"),
+                            scan_trieleaf!("t")
+                        ),
+                        scan_seq!(
+                            scan_terminal!('x'),
+                            scan_repeated!(
+                                scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                                    || ('a' <= c && c <= 'f')
+                                    || ('A' <= c && c <= 'F')),
+                                2usize,
+                                2usize
+                            )
+                        ),
+                        scan_seq!(
+                            scan_terminal!('u'),
+                            scan_repeated!(
+                                scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                                    || ('a' <= c && c <= 'f')
+                                    || ('A' <= c && c <= 'F')),
+                                4usize,
+                                4usize
+                            )
+                        )
+                    )
+                ))
+            )),
             lex_terminal!(DoubleQuote, "\"")
         )
     );
@@ -1117,22 +1332,49 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_token!(
         DoubleQuotedUnicodeStringLiteral,
         lex_seq!(
-            DoubleQuotedUnicodeStringLiteral,
             lex_terminal!(UnicodeDoubleQuote, "unicode\""),
-            lex_zero_or_more!(
-                Runs,
-                lex_choice!(
-                    Run,
-                    lex_one_or_more!(
-                        Chars,
-                        lex_terminal!(Char, |&c: &char| c != '"'
-                            && c != '\\'
-                            && c != '\n'
-                            && c != '\r')
-                    ),
-                    lex_rule!(EscapeSequence)
-                )
-            ),
+            lex_zero_or_more!(lex_choice!(
+                Run,
+                lex_one_or_more!(lex_terminal!(Char, |&c: &char| c != '"'
+                    && c != '\\'
+                    && c != '\n'
+                    && c != '\r')),
+                scan_make_node!(scan_seq!(
+                    scan_terminal!('\\'),
+                    scan_choice!(
+                        scan_trie!(
+                            scan_trieleaf!("\n"),
+                            scan_trieleaf!("\r"),
+                            scan_trieleaf!("\""),
+                            scan_trieleaf!("'"),
+                            scan_trieleaf!("\\"),
+                            scan_trieleaf!("n"),
+                            scan_trieleaf!("r"),
+                            scan_trieleaf!("t")
+                        ),
+                        scan_seq!(
+                            scan_terminal!('x'),
+                            scan_repeated!(
+                                scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                                    || ('a' <= c && c <= 'f')
+                                    || ('A' <= c && c <= 'F')),
+                                2usize,
+                                2usize
+                            )
+                        ),
+                        scan_seq!(
+                            scan_terminal!('u'),
+                            scan_repeated!(
+                                scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                                    || ('a' <= c && c <= 'f')
+                                    || ('A' <= c && c <= 'F')),
+                                4usize,
+                                4usize
+                            )
+                        )
+                    )
+                ))
+            )),
             lex_terminal!(DoubleQuote, "\"")
         )
     );
@@ -1141,7 +1383,6 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ElementaryType,
         choice!(
-            ElementaryType,
             trie!(trieleaf!(Bool, "bool"), trieleaf!(String, "string")),
             rule!(AddressType),
             token!(FixedBytesType),
@@ -1156,55 +1397,47 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         EmitStatement,
         seq!(
-            EmitStatement,
-            terminal!(Emit, "emit"),
+            trie!(trieleaf!(Emit, "emit")),
             rule!(IdentifierPath),
             rule!(ArgumentList),
-            terminal!(Semicolon, ";")
+            trie!(trieleaf!(Semicolon, ";"))
         )
     );
 
     // EndOfFileTrivia = { «Whitespace» | «MultilineComment» | «SingleLineComment» } ;
     define_rule!(
         EndOfFileTrivia,
-        zero_or_more!(
-            EndOfFileTrivia,
-            choice!(
-                trivia_token!(Whitespace),
-                trivia_token!(MultilineComment),
-                trivia_token!(SingleLineComment)
-            )
-        )
+        zero_or_more!(choice!(
+            trivia_token!(Whitespace),
+            trivia_token!(MultilineComment),
+            trivia_token!(SingleLineComment)
+        ))
     );
 
     // «EndOfLine» = 1…*{ '\u{d}' | '\u{a}' } ;
     define_token!(
         EndOfLine,
-        lex_one_or_more!(EndOfLine, lex_terminal!(|&c: &char| c == '\r' || c == '\n'))
+        scan_make_node!(scan_one_or_more!(scan_terminal!(
+            |&c: &char| c == '\r' || c == '\n'
+        )))
     );
 
     // EnumDefinition = 'enum' «Identifier» '{' «Identifier»  { ',' «Identifier» } '}' ;
     define_rule!(
         EnumDefinition,
         seq!(
-            EnumDefinition,
-            terminal!(Enum, "enum"),
+            trie!(trieleaf!(Enum, "enum")),
             token!(Identifier),
             delimited_by!(
-                DelimitedSeparatedIdentifiers,
                 terminal!(OpenBrace, "{"),
-                separated_by!(
-                    SeparatedIdentifiers,
-                    token!(Identifier),
-                    terminal!(Comma, ",")
-                ),
+                separated_by!(token!(Identifier), terminal!(Comma, ",")),
                 terminal!(CloseBrace, "}")
             )
         )
     );
 
     // EqualityComparisonExpression = Expression ( '==' | '!=' ) Expression ;
-    define_rule!(
+    define_precedence_rule_member!(
         EqualityComparisonExpression,
         left_associative_binary_expression!(
             EqualityComparisonExpression,
@@ -1217,75 +1450,76 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ErrorDefinition,
         seq!(
-            ErrorDefinition,
-            terminal!(Error, "error"),
+            trie!(trieleaf!(Error, "error")),
             token!(Identifier),
             delimited_by!(
-                DelimitedSeparatedErrorParameters,
                 terminal!(OpenParen, "("),
-                optional!(separated_by!(
-                    SeparatedErrorParameters,
-                    rule!(ErrorParameter),
-                    terminal!(Comma, ",")
-                )),
+                optional!(separated_by!(rule!(ErrorParameter), terminal!(Comma, ","))),
                 terminal!(CloseParen, ")")
             ),
-            terminal!(Semicolon, ";")
+            trie!(trieleaf!(Semicolon, ";"))
         )
     );
 
     // ErrorParameter = TypeName [ «Identifier» ] ;
     define_rule!(
         ErrorParameter,
-        seq!(
-            ErrorParameter,
-            rule!(TypeName),
-            optional!(token!(Identifier))
-        )
+        seq!(rule!(TypeName), optional!(token!(Identifier)))
     );
 
     // «EscapeSequence» = '\\' ( «AsciiEscape» | «HexByteEscape» | «UnicodeEscape» ) ;
     define_token!(
         EscapeSequence,
-        lex_seq!(
-            EscapeSequence,
-            lex_terminal!(Backslash, '\\'),
-            lex_choice!(
-                lex_trie!(
-                    trieleaf!(Linefeed, "\n"),
-                    trieleaf!(CarriageReturn, "\r"),
-                    trieleaf!(DoubleQuote, "\""),
-                    trieleaf!(Quote, "'"),
-                    trieleaf!(Backslash, "\\"),
-                    trieleaf!(LatinSmallLetterN, "n"),
-                    trieleaf!(LatinSmallLetterR, "r"),
-                    trieleaf!(LatinSmallLetterT, "t")
+        scan_make_node!(scan_seq!(
+            scan_terminal!('\\'),
+            scan_choice!(
+                scan_trie!(
+                    scan_trieleaf!("\n"),
+                    scan_trieleaf!("\r"),
+                    scan_trieleaf!("\""),
+                    scan_trieleaf!("'"),
+                    scan_trieleaf!("\\"),
+                    scan_trieleaf!("n"),
+                    scan_trieleaf!("r"),
+                    scan_trieleaf!("t")
                 ),
-                lex_rule!(HexByteEscape),
-                lex_rule!(UnicodeEscape)
+                scan_seq!(
+                    scan_terminal!('x'),
+                    scan_repeated!(
+                        scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                            || ('a' <= c && c <= 'f')
+                            || ('A' <= c && c <= 'F')),
+                        2usize,
+                        2usize
+                    )
+                ),
+                scan_seq!(
+                    scan_terminal!('u'),
+                    scan_repeated!(
+                        scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                            || ('a' <= c && c <= 'f')
+                            || ('A' <= c && c <= 'F')),
+                        4usize,
+                        4usize
+                    )
+                )
             )
-        )
+        ))
     );
 
     // EventDefinition = 'event' «Identifier» '(' [ EventParameter  { ',' EventParameter } ] ')' [ 'anonymous' ] ';' ;
     define_rule!(
         EventDefinition,
         seq!(
-            EventDefinition,
-            terminal!(Event, "event"),
+            trie!(trieleaf!(Event, "event")),
             token!(Identifier),
             delimited_by!(
-                DelimitedSeparatedEventParameters,
                 terminal!(OpenParen, "("),
-                optional!(separated_by!(
-                    SeparatedEventParameters,
-                    rule!(EventParameter),
-                    terminal!(Comma, ",")
-                )),
+                optional!(separated_by!(rule!(EventParameter), terminal!(Comma, ","))),
                 terminal!(CloseParen, ")")
             ),
-            optional!(terminal!(Anonymous, "anonymous")),
-            terminal!(Semicolon, ";")
+            optional!(trie!(trieleaf!(Anonymous, "anonymous"))),
+            trie!(trieleaf!(Semicolon, ";"))
         )
     );
 
@@ -1293,9 +1527,8 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         EventParameter,
         seq!(
-            EventParameter,
             rule!(TypeName),
-            optional!(terminal!(Indexed, "indexed")),
+            optional!(trie!(trieleaf!(Indexed, "indexed"))),
             optional!(token!(Identifier))
         )
     );
@@ -1304,28 +1537,27 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ExperimentalPragma,
         seq!(
-            ExperimentalPragma,
-            terminal!(Experimental, "experimental"),
+            trie!(trieleaf!(Experimental, "experimental")),
             token!(Identifier)
         )
     );
 
     // (* 0.4.11 *) ExponentiationExpression = Expression '**' Expression ;
     // (* 0.6.0 *) ExponentiationExpression = Expression '**' Expression ;
-    define_rule!(
+    define_precedence_rule_member!(
         ExponentiationExpression,
         if version_0_6_0 <= version {
             right_associative_binary_expression!(
                 ExponentiationExpression,
                 UnarySuffixExpression,
-                terminal!(StarStar, "**")
+                trie!(trieleaf!(StarStar, "**"))
             )
             .boxed()
         } else {
             left_associative_binary_expression!(
                 ExponentiationExpression,
                 UnarySuffixExpression,
-                terminal!(StarStar, "**")
+                trie!(trieleaf!(StarStar, "**"))
             )
             .boxed()
         }
@@ -1337,18 +1569,13 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // ExpressionStatement = Expression ';' ;
     define_rule!(
         ExpressionStatement,
-        seq!(
-            ExpressionStatement,
-            rule!(Expression),
-            terminal!(Semicolon, ";")
-        )
+        seq!(rule!(Expression), trie!(trieleaf!(Semicolon, ";")))
     );
 
     // FallbackFunctionAttribute = ModifierInvocation | OverrideSpecifier | 'external' | 'payable' | 'pure' | 'view' | 'virtual' ;
     define_rule!(
         FallbackFunctionAttribute,
         choice!(
-            FallbackFunctionAttribute,
             rule!(ModifierInvocation),
             rule!(OverrideSpecifier),
             trie!(
@@ -1363,85 +1590,84 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         FallbackFunctionDefinition,
         seq!(
-            FallbackFunctionDefinition,
-            terminal!(Fallback, "fallback"),
+            trie!(trieleaf!(Fallback, "fallback")),
             rule!(ParameterList),
-            zero_or_more!(FallbackFunctionAttributes, rule!(FallbackFunctionAttribute)),
-            optional!(seq!(terminal!(Returns, "returns"), rule!(ParameterList))),
-            choice!(terminal!(Semicolon, ";"), rule!(Block))
+            zero_or_more!(rule!(FallbackFunctionAttribute)),
+            optional!(seq!(
+                trie!(trieleaf!(Returns, "returns")),
+                rule!(ParameterList)
+            )),
+            choice!(trie!(trieleaf!(Semicolon, ";")), rule!(Block))
         )
     );
 
     // «FixedBytesType» = 'bytes' ( '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15' | '16' | '17' | '18' | '19' | '20' | '21' | '22' | '23' | '24' | '25' | '26' | '27' | '28' | '29' | '30' | '31' | '32' ) ;
     define_token!(
         FixedBytesType,
-        lex_seq!(
-            FixedBytesType,
-            lex_terminal!(Bytes, "bytes"),
-            lex_trie!(
-                Count,
-                trieprefix!(
+        scan_make_node!(scan_seq!(
+            scan_trie!(scan_trieleaf!("bytes")),
+            scan_trie!(
+                scan_trieprefix!(
                     "1",
                     [
-                        trieleaf!(OneZero, "0"),
-                        trieleaf!(OneOne, "1"),
-                        trieleaf!(OneTwo, "2"),
-                        trieleaf!(OneThree, "3"),
-                        trieleaf!(OneFour, "4"),
-                        trieleaf!(OneFive, "5"),
-                        trieleaf!(OneSix, "6"),
-                        trieleaf!(OneSeven, "7"),
-                        trieleaf!(OneEight, "8"),
-                        trieleaf!(OneNine, "9"),
-                        trieleaf!(One)
+                        scan_trieleaf!("0"),
+                        scan_trieleaf!("1"),
+                        scan_trieleaf!("2"),
+                        scan_trieleaf!("3"),
+                        scan_trieleaf!("4"),
+                        scan_trieleaf!("5"),
+                        scan_trieleaf!("6"),
+                        scan_trieleaf!("7"),
+                        scan_trieleaf!("8"),
+                        scan_trieleaf!("9"),
+                        scan_trieleaf!()
                     ]
                 ),
-                trieprefix!(
+                scan_trieprefix!(
                     "2",
                     [
-                        trieleaf!(TwoZero, "0"),
-                        trieleaf!(TwoOne, "1"),
-                        trieleaf!(TwoTwo, "2"),
-                        trieleaf!(TwoThree, "3"),
-                        trieleaf!(TwoFour, "4"),
-                        trieleaf!(TwoFive, "5"),
-                        trieleaf!(TwoSix, "6"),
-                        trieleaf!(TwoSeven, "7"),
-                        trieleaf!(TwoEight, "8"),
-                        trieleaf!(TwoNine, "9"),
-                        trieleaf!(Two)
+                        scan_trieleaf!("0"),
+                        scan_trieleaf!("1"),
+                        scan_trieleaf!("2"),
+                        scan_trieleaf!("3"),
+                        scan_trieleaf!("4"),
+                        scan_trieleaf!("5"),
+                        scan_trieleaf!("6"),
+                        scan_trieleaf!("7"),
+                        scan_trieleaf!("8"),
+                        scan_trieleaf!("9"),
+                        scan_trieleaf!()
                     ]
                 ),
-                trieprefix!(
+                scan_trieprefix!(
                     "3",
                     [
-                        trieleaf!(ThreeZero, "0"),
-                        trieleaf!(ThreeOne, "1"),
-                        trieleaf!(ThreeTwo, "2"),
-                        trieleaf!(Three)
+                        scan_trieleaf!("0"),
+                        scan_trieleaf!("1"),
+                        scan_trieleaf!("2"),
+                        scan_trieleaf!()
                     ]
                 ),
-                trieleaf!(Four, "4"),
-                trieleaf!(Five, "5"),
-                trieleaf!(Six, "6"),
-                trieleaf!(Seven, "7"),
-                trieleaf!(Eight, "8"),
-                trieleaf!(Nine, "9")
+                scan_trieleaf!("4"),
+                scan_trieleaf!("5"),
+                scan_trieleaf!("6"),
+                scan_trieleaf!("7"),
+                scan_trieleaf!("8"),
+                scan_trieleaf!("9")
             )
-        )
+        ))
     );
 
     // ForStatement = 'for' '(' ( SimpleStatement | ';' ) ( ExpressionStatement | ';' ) [ Expression ] ')' Statement ;
     define_rule!(
         ForStatement,
         seq!(
-            ForStatement,
-            terminal!(For, "for"),
+            trie!(trieleaf!(For, "for")),
             delimited_by!(
                 terminal!(OpenParen, "("),
                 seq!(
-                    choice!(rule!(SimpleStatement), terminal!(Semicolon, ";")),
-                    choice!(rule!(ExpressionStatement), terminal!(Semicolon, ";")),
+                    choice!(rule!(SimpleStatement), trie!(trieleaf!(Semicolon, ";"))),
+                    choice!(rule!(ExpressionStatement), trie!(trieleaf!(Semicolon, ";"))),
                     optional!(rule!(Expression))
                 ),
                 terminal!(CloseParen, ")")
@@ -1454,7 +1680,6 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         FunctionAttribute,
         choice!(
-            FunctionAttribute,
             rule!(ModifierInvocation),
             rule!(OverrideSpecifier),
             trie!(
@@ -1474,20 +1699,15 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     );
 
     // FunctionCallExpression = Expression [ '{' NamedArgument  { ',' NamedArgument } '}' ] ArgumentList ;
-    define_rule!(
+    define_precedence_rule_member!(
         FunctionCallExpression,
         unary_suffix_expression!(
             FunctionCallExpression,
             MemberAccessExpression,
             seq!(
                 optional!(delimited_by!(
-                    DelimitedSeparatedNamedArguments,
                     terminal!(OpenBrace, "{"),
-                    separated_by!(
-                        SeparatedNamedArguments,
-                        rule!(NamedArgument),
-                        terminal!(Comma, ",")
-                    ),
+                    separated_by!(rule!(NamedArgument), terminal!(Comma, ",")),
                     terminal!(CloseBrace, "}")
                 )),
                 rule!(ArgumentList)
@@ -1499,8 +1719,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         FunctionDefinition,
         seq!(
-            FunctionDefinition,
-            terminal!(Function, "function"),
+            trie!(trieleaf!(Function, "function")),
             choice!(
                 token!(Identifier),
                 trie!(
@@ -1509,9 +1728,12 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                 )
             ),
             rule!(ParameterList),
-            zero_or_more!(FunctionAttributes, rule!(FunctionAttribute)),
-            optional!(seq!(terminal!(Returns, "returns"), rule!(ParameterList))),
-            choice!(terminal!(Semicolon, ";"), rule!(Block))
+            zero_or_more!(rule!(FunctionAttribute)),
+            optional!(seq!(
+                trie!(trieleaf!(Returns, "returns")),
+                rule!(ParameterList)
+            )),
+            choice!(trie!(trieleaf!(Semicolon, ";")), rule!(Block))
         )
     );
 
@@ -1519,8 +1741,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         FunctionType,
         seq!(
-            FunctionType,
-            terminal!(Function, "function"),
+            trie!(trieleaf!(Function, "function")),
             rule!(ParameterList),
             zero_or_more!(trie!(
                 trieleaf!(External, "external"),
@@ -1535,122 +1756,526 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                 ),
                 trieleaf!(View, "view")
             )),
-            optional!(seq!(terminal!(Returns, "returns"), rule!(ParameterList)))
+            optional!(seq!(
+                trie!(trieleaf!(Returns, "returns")),
+                rule!(ParameterList)
+            ))
         )
     );
 
     // «HexByteEscape» = 'x' 2…2*{ «HexCharacter» } ;
     define_token!(
         HexByteEscape,
-        lex_seq!(
-            HexByteEscape,
-            lex_terminal!(LatinSmallLetterX, 'x'),
-            lex_repeated!(
-                lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
+        scan_make_node!(scan_seq!(
+            scan_terminal!('x'),
+            scan_repeated!(
+                scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
                     || ('a' <= c && c <= 'f')
                     || ('A' <= c && c <= 'F')),
                 2usize,
                 2usize
             )
-        )
+        ))
     );
 
     // «HexCharacter» = '0'…'9' | 'a'…'f' | 'A'…'F' ;
     define_token!(
         HexCharacter,
-        lex_terminal!(HexCharacter, |&c: &char| ('0' <= c && c <= '9')
+        scan_make_node!(scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
             || ('a' <= c && c <= 'f')
-            || ('A' <= c && c <= 'F'))
+            || ('A' <= c && c <= 'F')))
     );
 
     // «HexNumber» = '0x' «HexCharacter» { [ '_' ] «HexCharacter» } ;
     define_token!(
         HexNumber,
-        lex_seq!(
-            HexNumber,
-            lex_terminal!(ZeroX, "0x"),
-            lex_seq!(
-                lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
+        scan_make_node!(scan_seq!(
+            scan_trie!(scan_trieleaf!("0x")),
+            scan_seq!(
+                scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
                     || ('a' <= c && c <= 'f')
                     || ('A' <= c && c <= 'F')),
-                lex_zero_or_more!(lex_seq!(
-                    lex_optional!(lex_terminal!(Underscore, '_')),
-                    lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                scan_zero_or_more!(scan_seq!(
+                    scan_optional!(scan_terminal!('_')),
+                    scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
                         || ('a' <= c && c <= 'f')
                         || ('A' <= c && c <= 'F'))
                 ))
             )
-        )
+        ))
     );
 
     // «HexStringLiteral» = 'hex' ( '"' [ «PossiblySeparatedPairsOfHexDigits» ] '"' | '\'' [ «PossiblySeparatedPairsOfHexDigits» ] '\'' ) ;
     define_token!(
         HexStringLiteral,
-        lex_seq!(
-            HexStringLiteral,
-            lex_terminal!(Hex, "hex"),
-            lex_choice!(
-                lex_seq!(
-                    DelimitedPossiblySeparatedPairsOfHexDigits,
-                    lex_terminal!(DoubleQuote, "\""),
-                    lex_optional!(lex_rule!(PossiblySeparatedPairsOfHexDigits)),
-                    lex_terminal!(DoubleQuote, "\"")
+        scan_make_node!(scan_seq!(
+            scan_trie!(scan_trieleaf!("hex")),
+            scan_choice!(
+                scan_seq!(
+                    scan_terminal!("\""),
+                    scan_optional!(scan_seq!(
+                        scan_repeated!(
+                            scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                                || ('a' <= c && c <= 'f')
+                                || ('A' <= c && c <= 'F')),
+                            2usize,
+                            2usize
+                        ),
+                        scan_zero_or_more!(scan_seq!(
+                            scan_optional!(scan_terminal!('_')),
+                            scan_repeated!(
+                                scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                                    || ('a' <= c && c <= 'f')
+                                    || ('A' <= c && c <= 'F')),
+                                2usize,
+                                2usize
+                            )
+                        ))
+                    )),
+                    scan_terminal!("\"")
                 ),
-                lex_seq!(
-                    DelimitedPossiblySeparatedPairsOfHexDigits,
-                    lex_terminal!(Quote, "'"),
-                    lex_optional!(lex_rule!(PossiblySeparatedPairsOfHexDigits)),
-                    lex_terminal!(Quote, "'")
+                scan_seq!(
+                    scan_terminal!("'"),
+                    scan_optional!(scan_seq!(
+                        scan_repeated!(
+                            scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                                || ('a' <= c && c <= 'f')
+                                || ('A' <= c && c <= 'F')),
+                            2usize,
+                            2usize
+                        ),
+                        scan_zero_or_more!(scan_seq!(
+                            scan_optional!(scan_terminal!('_')),
+                            scan_repeated!(
+                                scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                                    || ('a' <= c && c <= 'f')
+                                    || ('A' <= c && c <= 'F')),
+                                2usize,
+                                2usize
+                            )
+                        ))
+                    )),
+                    scan_terminal!("'")
                 )
             )
-        )
+        ))
     );
 
     // «Identifier» = «RawIdentifier» - «Keyword» ;
     define_token!(
         Identifier,
-        difference(lex_rule!(RawIdentifier), lex_rule!(Keyword))
+        scan_make_node!(difference(
+            scan_seq!(
+                scan_terminal!(|&c: &char| c == '_'
+                    || c == '$'
+                    || ('a' <= c && c <= 'z')
+                    || ('A' <= c && c <= 'Z')),
+                scan_zero_or_more!(scan_terminal!(|&c: &char| c == '_'
+                    || c == '$'
+                    || ('a' <= c && c <= 'z')
+                    || ('A' <= c && c <= 'Z')
+                    || ('0' <= c && c <= '9')))
+            ),
+            scan_choice!(
+                scan_trie!(scan_trieleaf!("false"), scan_trieleaf!("true")),
+                scan_seq!(
+                    scan_trie!(scan_trieleaf!("bytes")),
+                    scan_trie!(
+                        scan_trieprefix!(
+                            "1",
+                            [
+                                scan_trieleaf!("0"),
+                                scan_trieleaf!("1"),
+                                scan_trieleaf!("2"),
+                                scan_trieleaf!("3"),
+                                scan_trieleaf!("4"),
+                                scan_trieleaf!("5"),
+                                scan_trieleaf!("6"),
+                                scan_trieleaf!("7"),
+                                scan_trieleaf!("8"),
+                                scan_trieleaf!("9"),
+                                scan_trieleaf!()
+                            ]
+                        ),
+                        scan_trieprefix!(
+                            "2",
+                            [
+                                scan_trieleaf!("0"),
+                                scan_trieleaf!("1"),
+                                scan_trieleaf!("2"),
+                                scan_trieleaf!("3"),
+                                scan_trieleaf!("4"),
+                                scan_trieleaf!("5"),
+                                scan_trieleaf!("6"),
+                                scan_trieleaf!("7"),
+                                scan_trieleaf!("8"),
+                                scan_trieleaf!("9"),
+                                scan_trieleaf!()
+                            ]
+                        ),
+                        scan_trieprefix!(
+                            "3",
+                            [
+                                scan_trieleaf!("0"),
+                                scan_trieleaf!("1"),
+                                scan_trieleaf!("2"),
+                                scan_trieleaf!()
+                            ]
+                        ),
+                        scan_trieleaf!("4"),
+                        scan_trieleaf!("5"),
+                        scan_trieleaf!("6"),
+                        scan_trieleaf!("7"),
+                        scan_trieleaf!("8"),
+                        scan_trieleaf!("9")
+                    )
+                ),
+                scan_trie!(
+                    scan_trieprefix!(
+                        "a",
+                        [
+                            scan_trieleaf!("fter"),
+                            scan_trieleaf!("lias"),
+                            scan_trieleaf!("pply"),
+                            scan_trieleaf!("uto")
+                        ]
+                    ),
+                    scan_trieleaf!("byte"),
+                    scan_trieprefix!("c", [scan_trieleaf!("ase"), scan_trieleaf!("opyof")]),
+                    scan_trieprefix!(
+                        "d",
+                        [
+                            scan_trieleaf!("ays"),
+                            scan_trieprefix!("ef", [scan_trieleaf!("ault"), scan_trieleaf!("ine")])
+                        ]
+                    ),
+                    scan_trieleaf!("ether"),
+                    scan_trieprefix!("fin", [scan_trieleaf!("al"), scan_trieleaf!("ney")]),
+                    scan_trieleaf!("gwei"),
+                    scan_trieleaf!("hours"),
+                    scan_trieprefix!(
+                        "i",
+                        [
+                            scan_trieleaf!("mplements"),
+                            scan_trieprefix!("n", [scan_trieleaf!("line"), scan_trieleaf!()])
+                        ]
+                    ),
+                    scan_trieleaf!("let"),
+                    scan_trieprefix!(
+                        "m",
+                        [
+                            scan_trieprefix!("a", [scan_trieleaf!("cro"), scan_trieleaf!("tch")]),
+                            scan_trieleaf!("inutes"),
+                            scan_trieleaf!("utable")
+                        ]
+                    ),
+                    scan_trieleaf!("null"),
+                    scan_trieleaf!("of"),
+                    scan_trieprefix!("p", [scan_trieleaf!("artial"), scan_trieleaf!("romise")]),
+                    scan_trieprefix!(
+                        "re",
+                        [scan_trieleaf!("ference"), scan_trieleaf!("locatable")]
+                    ),
+                    scan_trieprefix!(
+                        "s",
+                        [
+                            scan_trieprefix!(
+                                "e",
+                                [scan_trieleaf!("aled"), scan_trieleaf!("conds")]
+                            ),
+                            scan_trieleaf!("izeof"),
+                            scan_trieleaf!("tatic"),
+                            scan_trieleaf!("upports"),
+                            scan_trieleaf!("witch"),
+                            scan_trieleaf!("zabo")
+                        ]
+                    ),
+                    scan_trieprefix!("type", [scan_trieleaf!("def"), scan_trieleaf!("of")]),
+                    scan_trieleaf!("var"),
+                    scan_trieprefix!("we", [scan_trieleaf!("eks"), scan_trieleaf!("i")]),
+                    scan_trieleaf!("years")
+                ),
+                scan_seq!(
+                    scan_trie!(scan_trieleaf!("int")),
+                    scan_optional!(scan_trie!(
+                        scan_trieprefix!(
+                            "1",
+                            [
+                                scan_trieleaf!("04"),
+                                scan_trieleaf!("12"),
+                                scan_trieprefix!("2", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
+                                scan_trieleaf!("36"),
+                                scan_trieleaf!("44"),
+                                scan_trieleaf!("52"),
+                                scan_trieprefix!(
+                                    "6",
+                                    [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
+                                ),
+                                scan_trieleaf!("76"),
+                                scan_trieleaf!("84"),
+                                scan_trieleaf!("92")
+                            ]
+                        ),
+                        scan_trieprefix!(
+                            "2",
+                            [
+                                scan_trieprefix!("0", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
+                                scan_trieleaf!("16"),
+                                scan_trieleaf!("24"),
+                                scan_trieleaf!("32"),
+                                scan_trieprefix!(
+                                    "4",
+                                    [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
+                                ),
+                                scan_trieleaf!("56")
+                            ]
+                        ),
+                        scan_trieleaf!("32"),
+                        scan_trieprefix!("4", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
+                        scan_trieleaf!("56"),
+                        scan_trieleaf!("64"),
+                        scan_trieleaf!("72"),
+                        scan_trieprefix!(
+                            "8",
+                            [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
+                        ),
+                        scan_trieleaf!("96")
+                    ))
+                ),
+                scan_seq!(
+                    scan_terminal!('u'),
+                    scan_seq!(
+                        scan_trie!(scan_trieleaf!("int")),
+                        scan_optional!(scan_trie!(
+                            scan_trieprefix!(
+                                "1",
+                                [
+                                    scan_trieleaf!("04"),
+                                    scan_trieleaf!("12"),
+                                    scan_trieprefix!(
+                                        "2",
+                                        [scan_trieleaf!("0"), scan_trieleaf!("8")]
+                                    ),
+                                    scan_trieleaf!("36"),
+                                    scan_trieleaf!("44"),
+                                    scan_trieleaf!("52"),
+                                    scan_trieprefix!(
+                                        "6",
+                                        [
+                                            scan_trieleaf!("0"),
+                                            scan_trieleaf!("8"),
+                                            scan_trieleaf!()
+                                        ]
+                                    ),
+                                    scan_trieleaf!("76"),
+                                    scan_trieleaf!("84"),
+                                    scan_trieleaf!("92")
+                                ]
+                            ),
+                            scan_trieprefix!(
+                                "2",
+                                [
+                                    scan_trieprefix!(
+                                        "0",
+                                        [scan_trieleaf!("0"), scan_trieleaf!("8")]
+                                    ),
+                                    scan_trieleaf!("16"),
+                                    scan_trieleaf!("24"),
+                                    scan_trieleaf!("32"),
+                                    scan_trieprefix!(
+                                        "4",
+                                        [
+                                            scan_trieleaf!("0"),
+                                            scan_trieleaf!("8"),
+                                            scan_trieleaf!()
+                                        ]
+                                    ),
+                                    scan_trieleaf!("56")
+                                ]
+                            ),
+                            scan_trieleaf!("32"),
+                            scan_trieprefix!("4", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
+                            scan_trieleaf!("56"),
+                            scan_trieleaf!("64"),
+                            scan_trieleaf!("72"),
+                            scan_trieprefix!(
+                                "8",
+                                [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
+                            ),
+                            scan_trieleaf!("96")
+                        ))
+                    )
+                ),
+                scan_trie!(
+                    scan_trieprefix!(
+                        "a",
+                        [
+                            scan_trieleaf!("bstract"),
+                            scan_trieleaf!("ddress"),
+                            scan_trieleaf!("nonymous"),
+                            scan_trieprefix!("s", [scan_trieleaf!("sembly"), scan_trieleaf!()])
+                        ]
+                    ),
+                    scan_trieprefix!("b", [scan_trieleaf!("ool"), scan_trieleaf!("reak")]),
+                    scan_trieprefix!(
+                        "c",
+                        [
+                            scan_trieprefix!(
+                                "a",
+                                [scan_trieleaf!("lldata"), scan_trieleaf!("tch")]
+                            ),
+                            scan_trieprefix!(
+                                "on",
+                                [
+                                    scan_trieprefix!(
+                                        "st",
+                                        [scan_trieleaf!("ant"), scan_trieleaf!("ructor")]
+                                    ),
+                                    scan_trieprefix!(
+                                        "t",
+                                        [scan_trieleaf!("inue"), scan_trieleaf!("ract")]
+                                    )
+                                ]
+                            )
+                        ]
+                    ),
+                    scan_trieprefix!("d", [scan_trieleaf!("elete"), scan_trieleaf!("o")]),
+                    scan_trieprefix!(
+                        "e",
+                        [
+                            scan_trieleaf!("lse"),
+                            scan_trieleaf!("mit"),
+                            scan_trieleaf!("num"),
+                            scan_trieleaf!("vent"),
+                            scan_trieleaf!("xternal")
+                        ]
+                    ),
+                    scan_trieprefix!(
+                        "f",
+                        [
+                            scan_trieprefix!("al", [scan_trieleaf!("lback"), scan_trieleaf!("se")]),
+                            scan_trieleaf!("ixed"),
+                            scan_trieleaf!("or"),
+                            scan_trieleaf!("unction")
+                        ]
+                    ),
+                    scan_trieleaf!("hex"),
+                    scan_trieprefix!(
+                        "i",
+                        [
+                            scan_trieleaf!("f"),
+                            scan_trieprefix!(
+                                "m",
+                                [scan_trieleaf!("mutable"), scan_trieleaf!("port")]
+                            ),
+                            scan_trieprefix!(
+                                "n",
+                                [
+                                    scan_trieleaf!("dexed"),
+                                    scan_trieprefix!(
+                                        "ter",
+                                        [scan_trieleaf!("face"), scan_trieleaf!("nal")]
+                                    )
+                                ]
+                            ),
+                            scan_trieleaf!("s")
+                        ]
+                    ),
+                    scan_trieleaf!("library"),
+                    scan_trieprefix!(
+                        "m",
+                        [
+                            scan_trieleaf!("apping"),
+                            scan_trieleaf!("emory"),
+                            scan_trieleaf!("odifier")
+                        ]
+                    ),
+                    scan_trieleaf!("new"),
+                    scan_trieleaf!("override"),
+                    scan_trieprefix!(
+                        "p",
+                        [
+                            scan_trieleaf!("ayable"),
+                            scan_trieprefix!(
+                                "r",
+                                [scan_trieleaf!("agma"), scan_trieleaf!("ivate")]
+                            ),
+                            scan_trieprefix!("u", [scan_trieleaf!("blic"), scan_trieleaf!("re")])
+                        ]
+                    ),
+                    scan_trieprefix!(
+                        "re",
+                        [
+                            scan_trieleaf!("ceive"),
+                            scan_trieprefix!("turn", [scan_trieleaf!("s"), scan_trieleaf!()])
+                        ]
+                    ),
+                    scan_trieprefix!(
+                        "st",
+                        [
+                            scan_trieleaf!("orage"),
+                            scan_trieprefix!("r", [scan_trieleaf!("ing"), scan_trieleaf!("uct")])
+                        ]
+                    ),
+                    scan_trieprefix!(
+                        "t",
+                        [
+                            scan_trieprefix!("r", [scan_trieleaf!("ue"), scan_trieleaf!("y")]),
+                            scan_trieleaf!("ype")
+                        ]
+                    ),
+                    scan_trieprefix!(
+                        "u",
+                        [
+                            scan_trieleaf!("fixed"),
+                            scan_trieleaf!("nchecked"),
+                            scan_trieleaf!("sing")
+                        ]
+                    ),
+                    scan_trieprefix!("vi", [scan_trieleaf!("ew"), scan_trieleaf!("rtual")]),
+                    scan_trieleaf!("while")
+                )
+            )
+        ))
     );
 
     // «IdentifierPart» = «IdentifierStart» | '0'…'9' ;
     define_token!(
         IdentifierPart,
-        lex_terminal!(IdentifierPart, |&c: &char| c == '_'
+        scan_make_node!(scan_terminal!(|&c: &char| c == '_'
             || c == '$'
             || ('a' <= c && c <= 'z')
             || ('A' <= c && c <= 'Z')
-            || ('0' <= c && c <= '9'))
+            || ('0' <= c && c <= '9')))
     );
 
     // IdentifierPath = «Identifier»  { '.' «Identifier» } ;
     define_rule!(
         IdentifierPath,
-        separated_by!(IdentifierPath, token!(Identifier), terminal!(Period, "."))
+        separated_by!(token!(Identifier), terminal!(Period, "."))
     );
 
     // «IdentifierStart» = '_' | '$' | 'a'…'z' | 'A'…'Z' ;
     define_token!(
         IdentifierStart,
-        lex_terminal!(IdentifierStart, |&c: &char| c == '_'
+        scan_make_node!(scan_terminal!(|&c: &char| c == '_'
             || c == '$'
             || ('a' <= c && c <= 'z')
-            || ('A' <= c && c <= 'Z'))
+            || ('A' <= c && c <= 'Z')))
     );
 
     // IfStatement = 'if' '(' Expression ')' Statement [ 'else' Statement ] ;
     define_rule!(
         IfStatement,
         seq!(
-            IfStatement,
-            terminal!(If, "if"),
+            trie!(trieleaf!(If, "if")),
             delimited_by!(
-                DelimitedExpression,
                 terminal!(OpenParen, "("),
                 rule!(Expression),
                 terminal!(CloseParen, ")")
             ),
             rule!(Statement),
-            optional!(seq!(terminal!(Else, "else"), rule!(Statement)))
+            optional!(seq!(trie!(trieleaf!(Else, "else")), rule!(Statement)))
         )
     );
 
@@ -1658,14 +2283,13 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ImportDirective,
         seq!(
-            ImportDirective,
-            terminal!(Import, "import"),
+            trie!(trieleaf!(Import, "import")),
             choice!(
                 rule!(SimpleImportDirective),
                 rule!(StarImportDirective),
                 rule!(SelectingImportDirective)
             ),
-            terminal!(Semicolon, ";")
+            trie!(trieleaf!(Semicolon, ";"))
         )
     );
 
@@ -1673,7 +2297,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(ImportPath, token!(AsciiStringLiteral));
 
     // IndexAccessExpression = Expression '[' [ Expression ] [ ':' [ Expression ] ] ']' ;
-    define_rule!(
+    define_precedence_rule_member!(
         IndexAccessExpression,
         unary_suffix_expression!(
             IndexAccessExpression,
@@ -1682,7 +2306,10 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                 terminal!(OpenBracket, "["),
                 seq!(
                     optional!(rule!(Expression)),
-                    optional!(seq!(terminal!(Colon, ":"), optional!(rule!(Expression))))
+                    optional!(seq!(
+                        trie!(trieleaf!(Colon, ":")),
+                        optional!(rule!(Expression))
+                    ))
                 ),
                 terminal!(CloseBracket, "]")
             )
@@ -1692,24 +2319,15 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // InheritanceSpecifier = IdentifierPath [ ArgumentList ] ;
     define_rule!(
         InheritanceSpecifier,
-        seq!(
-            InheritanceSpecifier,
-            rule!(IdentifierPath),
-            optional!(rule!(ArgumentList))
-        )
+        seq!(rule!(IdentifierPath), optional!(rule!(ArgumentList)))
     );
 
     // InheritanceSpecifierList = 'is' InheritanceSpecifier  { ',' InheritanceSpecifier } ;
     define_rule!(
         InheritanceSpecifierList,
         seq!(
-            InheritanceSpecifierList,
-            terminal!(Is, "is"),
-            separated_by!(
-                SeparatedInheritanceSpecifiers,
-                rule!(InheritanceSpecifier),
-                terminal!(Comma, ",")
-            )
+            trie!(trieleaf!(Is, "is")),
+            separated_by!(rule!(InheritanceSpecifier), terminal!(Comma, ","))
         )
     );
 
@@ -1717,14 +2335,12 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         InterfaceDefinition,
         seq!(
-            InterfaceDefinition,
-            terminal!(Interface, "interface"),
+            trie!(trieleaf!(Interface, "interface")),
             token!(Identifier),
             optional!(rule!(InheritanceSpecifierList)),
             delimited_by!(
-                DelimitedContractBodyElements,
                 terminal!(OpenBrace, "{"),
-                zero_or_more!(ContractBodyElements, rule!(ContractBodyElement)),
+                zero_or_more!(rule!(ContractBodyElement)),
                 terminal!(CloseBrace, "}")
             )
         )
@@ -1733,240 +2349,362 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // «Keyword» = «BooleanLiteral» | «FixedBytesType» | «NumberUnit» | «ReservedKeyword» | «SignedIntegerType» | «UnsignedIntegerType» | 'abstract' | 'address' | 'anonymous' | 'as' | 'assembly' | 'bool' | 'break' | 'calldata' | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum' | 'event' | 'external' | 'fallback' | 'false' | 'fixed' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import' | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override' | 'payable' | 'pragma' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct' | 'true' | 'try' | 'type' | 'ufixed' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while' ;
     define_token!(
         Keyword,
-        lex_choice!(
-            Keyword,
-            lex_trie!(trieleaf!(False, "false"), trieleaf!(True, "true")),
-            lex_rule!(FixedBytesType),
-            lex_trie!(
-                trieprefix!(
+        scan_make_node!(scan_choice!(
+            scan_trie!(scan_trieleaf!("false"), scan_trieleaf!("true")),
+            scan_seq!(
+                scan_trie!(scan_trieleaf!("bytes")),
+                scan_trie!(
+                    scan_trieprefix!(
+                        "1",
+                        [
+                            scan_trieleaf!("0"),
+                            scan_trieleaf!("1"),
+                            scan_trieleaf!("2"),
+                            scan_trieleaf!("3"),
+                            scan_trieleaf!("4"),
+                            scan_trieleaf!("5"),
+                            scan_trieleaf!("6"),
+                            scan_trieleaf!("7"),
+                            scan_trieleaf!("8"),
+                            scan_trieleaf!("9"),
+                            scan_trieleaf!()
+                        ]
+                    ),
+                    scan_trieprefix!(
+                        "2",
+                        [
+                            scan_trieleaf!("0"),
+                            scan_trieleaf!("1"),
+                            scan_trieleaf!("2"),
+                            scan_trieleaf!("3"),
+                            scan_trieleaf!("4"),
+                            scan_trieleaf!("5"),
+                            scan_trieleaf!("6"),
+                            scan_trieleaf!("7"),
+                            scan_trieleaf!("8"),
+                            scan_trieleaf!("9"),
+                            scan_trieleaf!()
+                        ]
+                    ),
+                    scan_trieprefix!(
+                        "3",
+                        [
+                            scan_trieleaf!("0"),
+                            scan_trieleaf!("1"),
+                            scan_trieleaf!("2"),
+                            scan_trieleaf!()
+                        ]
+                    ),
+                    scan_trieleaf!("4"),
+                    scan_trieleaf!("5"),
+                    scan_trieleaf!("6"),
+                    scan_trieleaf!("7"),
+                    scan_trieleaf!("8"),
+                    scan_trieleaf!("9")
+                )
+            ),
+            scan_trie!(
+                scan_trieprefix!(
                     "a",
                     [
-                        trieleaf!(After, "fter"),
-                        trieleaf!(Alias, "lias"),
-                        trieleaf!(Apply, "pply"),
-                        trieleaf!(Auto, "uto")
+                        scan_trieleaf!("fter"),
+                        scan_trieleaf!("lias"),
+                        scan_trieleaf!("pply"),
+                        scan_trieleaf!("uto")
                     ]
                 ),
-                trieleaf!(Byte, "byte"),
-                trieprefix!("c", [trieleaf!(Case, "ase"), trieleaf!(Copyof, "opyof")]),
-                trieprefix!(
+                scan_trieleaf!("byte"),
+                scan_trieprefix!("c", [scan_trieleaf!("ase"), scan_trieleaf!("opyof")]),
+                scan_trieprefix!(
                     "d",
                     [
-                        trieleaf!(Days, "ays"),
-                        trieprefix!("ef", [trieleaf!(Default, "ault"), trieleaf!(Define, "ine")])
+                        scan_trieleaf!("ays"),
+                        scan_trieprefix!("ef", [scan_trieleaf!("ault"), scan_trieleaf!("ine")])
                     ]
                 ),
-                trieleaf!(Ether, "ether"),
-                trieprefix!("fin", [trieleaf!(Final, "al"), trieleaf!(Finney, "ney")]),
-                trieleaf!(Gwei, "gwei"),
-                trieleaf!(Hours, "hours"),
-                trieprefix!(
+                scan_trieleaf!("ether"),
+                scan_trieprefix!("fin", [scan_trieleaf!("al"), scan_trieleaf!("ney")]),
+                scan_trieleaf!("gwei"),
+                scan_trieleaf!("hours"),
+                scan_trieprefix!(
                     "i",
                     [
-                        trieleaf!(Implements, "mplements"),
-                        trieprefix!("n", [trieleaf!(Inline, "line"), trieleaf!(In)])
+                        scan_trieleaf!("mplements"),
+                        scan_trieprefix!("n", [scan_trieleaf!("line"), scan_trieleaf!()])
                     ]
                 ),
-                trieleaf!(Let, "let"),
-                trieprefix!(
+                scan_trieleaf!("let"),
+                scan_trieprefix!(
                     "m",
                     [
-                        trieprefix!("a", [trieleaf!(Macro, "cro"), trieleaf!(Match, "tch")]),
-                        trieleaf!(Minutes, "inutes"),
-                        trieleaf!(Mutable, "utable")
+                        scan_trieprefix!("a", [scan_trieleaf!("cro"), scan_trieleaf!("tch")]),
+                        scan_trieleaf!("inutes"),
+                        scan_trieleaf!("utable")
                     ]
                 ),
-                trieleaf!(Null, "null"),
-                trieleaf!(Of, "of"),
-                trieprefix!(
-                    "p",
-                    [trieleaf!(Partial, "artial"), trieleaf!(Promise, "romise")]
-                ),
-                trieprefix!(
+                scan_trieleaf!("null"),
+                scan_trieleaf!("of"),
+                scan_trieprefix!("p", [scan_trieleaf!("artial"), scan_trieleaf!("romise")]),
+                scan_trieprefix!(
                     "re",
-                    [
-                        trieleaf!(Reference, "ference"),
-                        trieleaf!(Relocatable, "locatable")
-                    ]
+                    [scan_trieleaf!("ference"), scan_trieleaf!("locatable")]
                 ),
-                trieprefix!(
+                scan_trieprefix!(
                     "s",
                     [
-                        trieprefix!(
-                            "e",
-                            [trieleaf!(Sealed, "aled"), trieleaf!(Seconds, "conds")]
-                        ),
-                        trieleaf!(Sizeof, "izeof"),
-                        trieleaf!(Static, "tatic"),
-                        trieleaf!(Supports, "upports"),
-                        trieleaf!(Switch, "witch"),
-                        trieleaf!(Szabo, "zabo")
+                        scan_trieprefix!("e", [scan_trieleaf!("aled"), scan_trieleaf!("conds")]),
+                        scan_trieleaf!("izeof"),
+                        scan_trieleaf!("tatic"),
+                        scan_trieleaf!("upports"),
+                        scan_trieleaf!("witch"),
+                        scan_trieleaf!("zabo")
                     ]
                 ),
-                trieprefix!("type", [trieleaf!(Typedef, "def"), trieleaf!(Typeof, "of")]),
-                trieleaf!(Var, "var"),
-                trieprefix!("we", [trieleaf!(Weeks, "eks"), trieleaf!(Wei, "i")]),
-                trieleaf!(Years, "years")
+                scan_trieprefix!("type", [scan_trieleaf!("def"), scan_trieleaf!("of")]),
+                scan_trieleaf!("var"),
+                scan_trieprefix!("we", [scan_trieleaf!("eks"), scan_trieleaf!("i")]),
+                scan_trieleaf!("years")
             ),
-            lex_rule!(SignedIntegerType),
-            lex_rule!(UnsignedIntegerType),
-            lex_trie!(
-                trieprefix!(
+            scan_seq!(
+                scan_trie!(scan_trieleaf!("int")),
+                scan_optional!(scan_trie!(
+                    scan_trieprefix!(
+                        "1",
+                        [
+                            scan_trieleaf!("04"),
+                            scan_trieleaf!("12"),
+                            scan_trieprefix!("2", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
+                            scan_trieleaf!("36"),
+                            scan_trieleaf!("44"),
+                            scan_trieleaf!("52"),
+                            scan_trieprefix!(
+                                "6",
+                                [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
+                            ),
+                            scan_trieleaf!("76"),
+                            scan_trieleaf!("84"),
+                            scan_trieleaf!("92")
+                        ]
+                    ),
+                    scan_trieprefix!(
+                        "2",
+                        [
+                            scan_trieprefix!("0", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
+                            scan_trieleaf!("16"),
+                            scan_trieleaf!("24"),
+                            scan_trieleaf!("32"),
+                            scan_trieprefix!(
+                                "4",
+                                [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
+                            ),
+                            scan_trieleaf!("56")
+                        ]
+                    ),
+                    scan_trieleaf!("32"),
+                    scan_trieprefix!("4", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
+                    scan_trieleaf!("56"),
+                    scan_trieleaf!("64"),
+                    scan_trieleaf!("72"),
+                    scan_trieprefix!(
+                        "8",
+                        [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
+                    ),
+                    scan_trieleaf!("96")
+                ))
+            ),
+            scan_seq!(
+                scan_terminal!('u'),
+                scan_seq!(
+                    scan_trie!(scan_trieleaf!("int")),
+                    scan_optional!(scan_trie!(
+                        scan_trieprefix!(
+                            "1",
+                            [
+                                scan_trieleaf!("04"),
+                                scan_trieleaf!("12"),
+                                scan_trieprefix!("2", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
+                                scan_trieleaf!("36"),
+                                scan_trieleaf!("44"),
+                                scan_trieleaf!("52"),
+                                scan_trieprefix!(
+                                    "6",
+                                    [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
+                                ),
+                                scan_trieleaf!("76"),
+                                scan_trieleaf!("84"),
+                                scan_trieleaf!("92")
+                            ]
+                        ),
+                        scan_trieprefix!(
+                            "2",
+                            [
+                                scan_trieprefix!("0", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
+                                scan_trieleaf!("16"),
+                                scan_trieleaf!("24"),
+                                scan_trieleaf!("32"),
+                                scan_trieprefix!(
+                                    "4",
+                                    [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
+                                ),
+                                scan_trieleaf!("56")
+                            ]
+                        ),
+                        scan_trieleaf!("32"),
+                        scan_trieprefix!("4", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
+                        scan_trieleaf!("56"),
+                        scan_trieleaf!("64"),
+                        scan_trieleaf!("72"),
+                        scan_trieprefix!(
+                            "8",
+                            [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
+                        ),
+                        scan_trieleaf!("96")
+                    ))
+                )
+            ),
+            scan_trie!(
+                scan_trieprefix!(
                     "a",
                     [
-                        trieleaf!(Abstract, "bstract"),
-                        trieleaf!(Address, "ddress"),
-                        trieleaf!(Anonymous, "nonymous"),
-                        trieprefix!("s", [trieleaf!(Assembly, "sembly"), trieleaf!(As)])
+                        scan_trieleaf!("bstract"),
+                        scan_trieleaf!("ddress"),
+                        scan_trieleaf!("nonymous"),
+                        scan_trieprefix!("s", [scan_trieleaf!("sembly"), scan_trieleaf!()])
                     ]
                 ),
-                trieprefix!("b", [trieleaf!(Bool, "ool"), trieleaf!(Break, "reak")]),
-                trieprefix!(
+                scan_trieprefix!("b", [scan_trieleaf!("ool"), scan_trieleaf!("reak")]),
+                scan_trieprefix!(
                     "c",
                     [
-                        trieprefix!(
-                            "a",
-                            [trieleaf!(Calldata, "lldata"), trieleaf!(Catch, "tch")]
-                        ),
-                        trieprefix!(
+                        scan_trieprefix!("a", [scan_trieleaf!("lldata"), scan_trieleaf!("tch")]),
+                        scan_trieprefix!(
                             "on",
                             [
-                                trieprefix!(
+                                scan_trieprefix!(
                                     "st",
-                                    [trieleaf!(Constant, "ant"), trieleaf!(Constructor, "ructor")]
+                                    [scan_trieleaf!("ant"), scan_trieleaf!("ructor")]
                                 ),
-                                trieprefix!(
+                                scan_trieprefix!(
                                     "t",
-                                    [trieleaf!(Continue, "inue"), trieleaf!(Contract, "ract")]
+                                    [scan_trieleaf!("inue"), scan_trieleaf!("ract")]
                                 )
                             ]
                         )
                     ]
                 ),
-                trieprefix!("d", [trieleaf!(Delete, "elete"), trieleaf!(Do, "o")]),
-                trieprefix!(
+                scan_trieprefix!("d", [scan_trieleaf!("elete"), scan_trieleaf!("o")]),
+                scan_trieprefix!(
                     "e",
                     [
-                        trieleaf!(Else, "lse"),
-                        trieleaf!(Emit, "mit"),
-                        trieleaf!(Enum, "num"),
-                        trieleaf!(Event, "vent"),
-                        trieleaf!(External, "xternal")
+                        scan_trieleaf!("lse"),
+                        scan_trieleaf!("mit"),
+                        scan_trieleaf!("num"),
+                        scan_trieleaf!("vent"),
+                        scan_trieleaf!("xternal")
                     ]
                 ),
-                trieprefix!(
+                scan_trieprefix!(
                     "f",
                     [
-                        trieprefix!("al", [trieleaf!(Fallback, "lback"), trieleaf!(False, "se")]),
-                        trieleaf!(Fixed, "ixed"),
-                        trieleaf!(For, "or"),
-                        trieleaf!(Function, "unction")
+                        scan_trieprefix!("al", [scan_trieleaf!("lback"), scan_trieleaf!("se")]),
+                        scan_trieleaf!("ixed"),
+                        scan_trieleaf!("or"),
+                        scan_trieleaf!("unction")
                     ]
                 ),
-                trieleaf!(Hex, "hex"),
-                trieprefix!(
+                scan_trieleaf!("hex"),
+                scan_trieprefix!(
                     "i",
                     [
-                        trieleaf!(If, "f"),
-                        trieprefix!(
-                            "m",
-                            [trieleaf!(Immutable, "mutable"), trieleaf!(Import, "port")]
-                        ),
-                        trieprefix!(
+                        scan_trieleaf!("f"),
+                        scan_trieprefix!("m", [scan_trieleaf!("mutable"), scan_trieleaf!("port")]),
+                        scan_trieprefix!(
                             "n",
                             [
-                                trieleaf!(Indexed, "dexed"),
-                                trieprefix!(
+                                scan_trieleaf!("dexed"),
+                                scan_trieprefix!(
                                     "ter",
-                                    [trieleaf!(Interface, "face"), trieleaf!(Internal, "nal")]
+                                    [scan_trieleaf!("face"), scan_trieleaf!("nal")]
                                 )
                             ]
                         ),
-                        trieleaf!(Is, "s")
+                        scan_trieleaf!("s")
                     ]
                 ),
-                trieleaf!(Library, "library"),
-                trieprefix!(
+                scan_trieleaf!("library"),
+                scan_trieprefix!(
                     "m",
                     [
-                        trieleaf!(Mapping, "apping"),
-                        trieleaf!(Memory, "emory"),
-                        trieleaf!(Modifier, "odifier")
+                        scan_trieleaf!("apping"),
+                        scan_trieleaf!("emory"),
+                        scan_trieleaf!("odifier")
                     ]
                 ),
-                trieleaf!(New, "new"),
-                trieleaf!(Override, "override"),
-                trieprefix!(
+                scan_trieleaf!("new"),
+                scan_trieleaf!("override"),
+                scan_trieprefix!(
                     "p",
                     [
-                        trieleaf!(Payable, "ayable"),
-                        trieprefix!(
-                            "r",
-                            [trieleaf!(Pragma, "agma"), trieleaf!(Private, "ivate")]
-                        ),
-                        trieprefix!("u", [trieleaf!(Public, "blic"), trieleaf!(Pure, "re")])
+                        scan_trieleaf!("ayable"),
+                        scan_trieprefix!("r", [scan_trieleaf!("agma"), scan_trieleaf!("ivate")]),
+                        scan_trieprefix!("u", [scan_trieleaf!("blic"), scan_trieleaf!("re")])
                     ]
                 ),
-                trieprefix!(
+                scan_trieprefix!(
                     "re",
                     [
-                        trieleaf!(Receive, "ceive"),
-                        trieprefix!("turn", [trieleaf!(Returns, "s"), trieleaf!(Return)])
+                        scan_trieleaf!("ceive"),
+                        scan_trieprefix!("turn", [scan_trieleaf!("s"), scan_trieleaf!()])
                     ]
                 ),
-                trieprefix!(
+                scan_trieprefix!(
                     "st",
                     [
-                        trieleaf!(Storage, "orage"),
-                        trieprefix!("r", [trieleaf!(String, "ing"), trieleaf!(Struct, "uct")])
+                        scan_trieleaf!("orage"),
+                        scan_trieprefix!("r", [scan_trieleaf!("ing"), scan_trieleaf!("uct")])
                     ]
                 ),
-                trieprefix!(
+                scan_trieprefix!(
                     "t",
                     [
-                        trieprefix!("r", [trieleaf!(True, "ue"), trieleaf!(Try, "y")]),
-                        trieleaf!(Type, "ype")
+                        scan_trieprefix!("r", [scan_trieleaf!("ue"), scan_trieleaf!("y")]),
+                        scan_trieleaf!("ype")
                     ]
                 ),
-                trieprefix!(
+                scan_trieprefix!(
                     "u",
                     [
-                        trieleaf!(Ufixed, "fixed"),
-                        trieleaf!(Unchecked, "nchecked"),
-                        trieleaf!(Using, "sing")
+                        scan_trieleaf!("fixed"),
+                        scan_trieleaf!("nchecked"),
+                        scan_trieleaf!("sing")
                     ]
                 ),
-                trieprefix!("vi", [trieleaf!(View, "ew"), trieleaf!(Virtual, "rtual")]),
-                trieleaf!(While, "while")
+                scan_trieprefix!("vi", [scan_trieleaf!("ew"), scan_trieleaf!("rtual")]),
+                scan_trieleaf!("while")
             )
-        )
+        ))
     );
 
     // LeadingTrivia = { «Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment» } ;
     define_rule!(
         LeadingTrivia,
-        zero_or_more!(
-            LeadingTrivia,
-            choice!(
-                trivia_token!(Whitespace),
-                trivia_token!(EndOfLine),
-                trivia_token!(MultilineComment),
-                trivia_token!(SingleLineComment)
-            )
-        )
+        zero_or_more!(choice!(
+            trivia_token!(Whitespace),
+            trivia_token!(EndOfLine),
+            trivia_token!(MultilineComment),
+            trivia_token!(SingleLineComment)
+        ))
     );
 
     // LibraryDefinition = 'library' «Identifier» '{' { ContractBodyElement } '}' ;
     define_rule!(
         LibraryDefinition,
         seq!(
-            LibraryDefinition,
-            terminal!(Library, "library"),
+            trie!(trieleaf!(Library, "library")),
             token!(Identifier),
             delimited_by!(
-                DelimitedContractBodyElements,
                 terminal!(OpenBrace, "{"),
-                zero_or_more!(ContractBodyElements, rule!(ContractBodyElement)),
+                zero_or_more!(rule!(ContractBodyElement)),
                 terminal!(CloseBrace, "}")
             )
         )
@@ -1976,13 +2714,12 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         MappingType,
         seq!(
-            MappingType,
-            terminal!(Mapping, "mapping"),
+            trie!(trieleaf!(Mapping, "mapping")),
             delimited_by!(
                 terminal!(OpenParen, "("),
                 seq!(
                     choice!(rule!(ElementaryType), rule!(IdentifierPath)),
-                    terminal!(EqualGreater, "=>"),
+                    trie!(trieleaf!(EqualGreater, "=>")),
                     rule!(TypeName)
                 ),
                 terminal!(CloseParen, ")")
@@ -1991,14 +2728,14 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     );
 
     // MemberAccessExpression = Expression '.' ( «Identifier» | 'address' ) ;
-    define_rule!(
+    define_precedence_rule_member!(
         MemberAccessExpression,
         unary_suffix_expression!(
             MemberAccessExpression,
             IndexAccessExpression,
             seq!(
-                terminal!(Period, "."),
-                choice!(token!(Identifier), terminal!(Address, "address"))
+                trie!(trieleaf!(Period, ".")),
+                choice!(token!(Identifier), trie!(trieleaf!(Address, "address")))
             )
         )
     );
@@ -2007,9 +2744,8 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ModifierAttribute,
         choice!(
-            ModifierAttribute,
             rule!(OverrideSpecifier),
-            terminal!(Virtual, "virtual")
+            trie!(trieleaf!(Virtual, "virtual"))
         )
     );
 
@@ -2017,27 +2753,22 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ModifierDefinition,
         seq!(
-            ModifierDefinition,
-            terminal!(Modifier, "modifier"),
+            trie!(trieleaf!(Modifier, "modifier")),
             token!(Identifier),
             optional!(rule!(ParameterList)),
-            zero_or_more!(ModifierAttributes, rule!(ModifierAttribute)),
-            choice!(terminal!(Semicolon, ";"), rule!(Block))
+            zero_or_more!(rule!(ModifierAttribute)),
+            choice!(trie!(trieleaf!(Semicolon, ";")), rule!(Block))
         )
     );
 
     // ModifierInvocation = IdentifierPath [ ArgumentList ] ;
     define_rule!(
         ModifierInvocation,
-        seq!(
-            ModifierInvocation,
-            rule!(IdentifierPath),
-            optional!(rule!(ArgumentList))
-        )
+        seq!(rule!(IdentifierPath), optional!(rule!(ArgumentList)))
     );
 
     // MulDivModExpression = Expression ( '*' | '/' | '%' ) Expression ;
-    define_rule!(
+    define_precedence_rule_member!(
         MulDivModExpression,
         left_associative_binary_expression!(
             MulDivModExpression,
@@ -2054,17 +2785,13 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_token!(
         MultilineComment,
         lex_seq!(
-            MultilineComment,
             lex_terminal!(SlashStar, "/*"),
             lex_zero_or_more!(
                 Content,
-                lex_choice!(
-                    lex_terminal!(NotStar, |&c: &char| c != '*'),
-                    lex_seq!(
-                        lex_terminal!(Star, '*'),
-                        lex_terminal!(NotSlash, |&c: &char| c != '/')
-                    )
-                )
+                scan_make_node!(scan_choice!(
+                    scan_terminal!(|&c: &char| c != '*'),
+                    scan_seq!(scan_terminal!('*'), scan_terminal!(|&c: &char| c != '/'))
+                ))
             ),
             lex_terminal!(StarSlash, "*/")
         )
@@ -2074,9 +2801,8 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         NamedArgument,
         seq!(
-            NamedArgument,
             token!(Identifier),
-            terminal!(Colon, ":"),
+            trie!(trieleaf!(Colon, ":")),
             rule!(Expression)
         )
     );
@@ -2085,13 +2811,8 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         NamedArgumentList,
         delimited_by!(
-            NamedArgumentList,
             terminal!(OpenBrace, "{"),
-            optional!(separated_by!(
-                SeparatedNamedArguments,
-                rule!(NamedArgument),
-                terminal!(Comma, ",")
-            )),
+            optional!(separated_by!(rule!(NamedArgument), terminal!(Comma, ","))),
             terminal!(CloseBrace, "}")
         )
     );
@@ -2100,8 +2821,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         NewExpression,
         seq!(
-            NewExpression,
-            terminal!(New, "new"),
+            trie!(trieleaf!(New, "new")),
             rule!(IdentifierPath),
             rule!(ArgumentList)
         )
@@ -2110,41 +2830,40 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // «NumberUnit» = 'days' | 'ether' | 'finney' | 'gwei' | 'hours' | 'minutes' | 'seconds' | 'szabo' | 'weeks' | 'wei' | 'years' ;
     define_token!(
         NumberUnit,
-        lex_trie!(
-            NumberUnit,
-            trieleaf!(Days, "days"),
-            trieleaf!(Ether, "ether"),
-            trieleaf!(Finney, "finney"),
-            trieleaf!(Gwei, "gwei"),
-            trieleaf!(Hours, "hours"),
-            trieleaf!(Minutes, "minutes"),
-            trieprefix!(
-                "s",
-                [trieleaf!(Seconds, "econds"), trieleaf!(Szabo, "zabo")]
-            ),
-            trieprefix!("we", [trieleaf!(Weeks, "eks"), trieleaf!(Wei, "i")]),
-            trieleaf!(Years, "years")
-        )
+        scan_make_node!(scan_trie!(
+            scan_trieleaf!("days"),
+            scan_trieleaf!("ether"),
+            scan_trieleaf!("finney"),
+            scan_trieleaf!("gwei"),
+            scan_trieleaf!("hours"),
+            scan_trieleaf!("minutes"),
+            scan_trieprefix!("s", [scan_trieleaf!("econds"), scan_trieleaf!("zabo")]),
+            scan_trieprefix!("we", [scan_trieleaf!("eks"), scan_trieleaf!("i")]),
+            scan_trieleaf!("years")
+        ))
     );
 
     // NumericLiteral = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
     define_rule!(
         NumericLiteral,
         seq!(
-            NumericLiteral,
             choice!(token!(DecimalNumber), token!(HexNumber)),
             optional!(token!(NumberUnit))
         )
     );
 
     // OrExpression = Expression '||' Expression ;
-    define_rule!(
+    define_precedence_rule_member!(
         OrExpression,
-        left_associative_binary_expression!(OrExpression, AndExpression, terminal!(PipePipe, "||"))
+        left_associative_binary_expression!(
+            OrExpression,
+            AndExpression,
+            trie!(trieleaf!(PipePipe, "||"))
+        )
     );
 
     // OrderComparisonExpression = Expression ( '<' | '>' | '<=' | '>=' ) Expression ;
-    define_rule!(
+    define_precedence_rule_member!(
         OrderComparisonExpression,
         left_associative_binary_expression!(
             OrderComparisonExpression,
@@ -2160,16 +2879,10 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         OverrideSpecifier,
         seq!(
-            OverrideSpecifier,
-            terminal!(Override, "override"),
+            trie!(trieleaf!(Override, "override")),
             optional!(delimited_by!(
-                DelimitedSeparatedIdentifierPaths,
                 terminal!(OpenParen, "("),
-                separated_by!(
-                    SeparatedIdentifierPaths,
-                    rule!(IdentifierPath),
-                    terminal!(Comma, ",")
-                ),
+                separated_by!(rule!(IdentifierPath), terminal!(Comma, ",")),
                 terminal!(CloseParen, ")")
             ))
         )
@@ -2179,7 +2892,6 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ParameterDeclaration,
         seq!(
-            ParameterDeclaration,
             rule!(TypeName),
             optional!(rule!(DataLocation)),
             optional!(token!(Identifier))
@@ -2190,10 +2902,8 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ParameterList,
         delimited_by!(
-            ParameterList,
             terminal!(OpenParen, "("),
             optional!(separated_by!(
-                SeparatedParameterDeclarations,
                 rule!(ParameterDeclaration),
                 terminal!(Comma, ",")
             )),
@@ -2205,13 +2915,8 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ParenthesisExpression,
         delimited_by!(
-            ParenthesisExpression,
             terminal!(OpenParen, "("),
-            separated_by!(
-                SeparatedExpressions,
-                optional!(rule!(Expression)),
-                terminal!(Comma, ",")
-            ),
+            separated_by!(optional!(rule!(Expression)), terminal!(Comma, ",")),
             terminal!(CloseParen, ")")
         )
     );
@@ -2219,68 +2924,57 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // PayableExpression = 'payable' ArgumentList ;
     define_rule!(
         PayableExpression,
-        seq!(
-            PayableExpression,
-            terminal!(Payable, "payable"),
-            rule!(ArgumentList)
-        )
+        seq!(trie!(trieleaf!(Payable, "payable")), rule!(ArgumentList))
     );
 
     // PositionalArgumentList = Expression  { ',' Expression } ;
     define_rule!(
         PositionalArgumentList,
-        separated_by!(
-            PositionalArgumentList,
-            rule!(Expression),
-            terminal!(Comma, ",")
-        )
+        separated_by!(rule!(Expression), terminal!(Comma, ","))
     );
 
     // «PossiblySeparatedPairsOfHexDigits» = 2…2*{ «HexCharacter» } { [ '_' ] 2…2*{ «HexCharacter» } } ;
     define_token!(
         PossiblySeparatedPairsOfHexDigits,
-        lex_seq!(
-            PossiblySeparatedPairsOfHexDigits,
-            lex_repeated!(
-                lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
+        scan_make_node!(scan_seq!(
+            scan_repeated!(
+                scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
                     || ('a' <= c && c <= 'f')
                     || ('A' <= c && c <= 'F')),
                 2usize,
                 2usize
             ),
-            lex_zero_or_more!(lex_seq!(
-                lex_optional!(lex_terminal!(Underscore, '_')),
-                lex_repeated!(
-                    lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
+            scan_zero_or_more!(scan_seq!(
+                scan_optional!(scan_terminal!('_')),
+                scan_repeated!(
+                    scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
                         || ('a' <= c && c <= 'f')
                         || ('A' <= c && c <= 'F')),
                     2usize,
                     2usize
                 )
             ))
-        )
+        ))
     );
 
     // PragmaDirective = 'pragma' ( VersionPragma | ABICoderPragma | ExperimentalPragma ) ';' ;
     define_rule!(
         PragmaDirective,
         seq!(
-            PragmaDirective,
-            terminal!(Pragma, "pragma"),
+            trie!(trieleaf!(Pragma, "pragma")),
             choice!(
                 rule!(VersionPragma),
                 rule!(ABICoderPragma),
                 rule!(ExperimentalPragma)
             ),
-            terminal!(Semicolon, ";")
+            trie!(trieleaf!(Semicolon, ";"))
         )
     );
 
     // PrimaryExpression = PayableExpression | TypeExpression | NewExpression | ParenthesisExpression | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | NumericLiteral | «BooleanLiteral» | «Identifier» ;
-    define_rule!(
+    define_precedence_rule_member!(
         PrimaryExpression,
         choice!(
-            PrimaryExpression,
             rule!(PayableExpression),
             rule!(TypeExpression),
             rule!(NewExpression),
@@ -2298,25 +2992,23 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;
     define_token!(
         RawIdentifier,
-        lex_seq!(
-            RawIdentifier,
-            lex_terminal!(|&c: &char| c == '_'
+        scan_make_node!(scan_seq!(
+            scan_terminal!(|&c: &char| c == '_'
                 || c == '$'
                 || ('a' <= c && c <= 'z')
                 || ('A' <= c && c <= 'Z')),
-            lex_zero_or_more!(lex_terminal!(|&c: &char| c == '_'
+            scan_zero_or_more!(scan_terminal!(|&c: &char| c == '_'
                 || c == '$'
                 || ('a' <= c && c <= 'z')
                 || ('A' <= c && c <= 'Z')
                 || ('0' <= c && c <= '9')))
-        )
+        ))
     );
 
     // ReceiveFunctionAttribute = ModifierInvocation | OverrideSpecifier | 'external' | 'payable' | 'virtual' ;
     define_rule!(
         ReceiveFunctionAttribute,
         choice!(
-            ReceiveFunctionAttribute,
             rule!(ModifierInvocation),
             rule!(OverrideSpecifier),
             trie!(
@@ -2331,86 +3023,74 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ReceiveFunctionDefinition,
         seq!(
-            ReceiveFunctionDefinition,
-            terminal!(Receive, "receive"),
+            trie!(trieleaf!(Receive, "receive")),
             rule!(ParameterList),
-            zero_or_more!(ReceiveFunctionAttributes, rule!(ReceiveFunctionAttribute)),
-            choice!(terminal!(Semicolon, ";"), rule!(Block))
+            zero_or_more!(rule!(ReceiveFunctionAttribute)),
+            choice!(trie!(trieleaf!(Semicolon, ";")), rule!(Block))
         )
     );
 
     // «ReservedKeyword» = 'after' | 'alias' | 'apply' | 'auto' | 'byte' | 'case' | 'copyof' | 'default' | 'define' | 'final' | 'implements' | 'in' | 'inline' | 'let' | 'macro' | 'match' | 'mutable' | 'null' | 'of' | 'partial' | 'promise' | 'reference' | 'relocatable' | 'sealed' | 'sizeof' | 'static' | 'supports' | 'switch' | 'typedef' | 'typeof' | 'var' ;
     define_token!(
         ReservedKeyword,
-        lex_trie!(
-            ReservedKeyword,
-            trieprefix!(
+        scan_make_node!(scan_trie!(
+            scan_trieprefix!(
                 "a",
                 [
-                    trieleaf!(After, "fter"),
-                    trieleaf!(Alias, "lias"),
-                    trieleaf!(Apply, "pply"),
-                    trieleaf!(Auto, "uto")
+                    scan_trieleaf!("fter"),
+                    scan_trieleaf!("lias"),
+                    scan_trieleaf!("pply"),
+                    scan_trieleaf!("uto")
                 ]
             ),
-            trieleaf!(Byte, "byte"),
-            trieprefix!("c", [trieleaf!(Case, "ase"), trieleaf!(Copyof, "opyof")]),
-            trieprefix!(
-                "def",
-                [trieleaf!(Default, "ault"), trieleaf!(Define, "ine")]
-            ),
-            trieleaf!(Final, "final"),
-            trieprefix!(
+            scan_trieleaf!("byte"),
+            scan_trieprefix!("c", [scan_trieleaf!("ase"), scan_trieleaf!("opyof")]),
+            scan_trieprefix!("def", [scan_trieleaf!("ault"), scan_trieleaf!("ine")]),
+            scan_trieleaf!("final"),
+            scan_trieprefix!(
                 "i",
                 [
-                    trieleaf!(Implements, "mplements"),
-                    trieprefix!("n", [trieleaf!(Inline, "line"), trieleaf!(In)])
+                    scan_trieleaf!("mplements"),
+                    scan_trieprefix!("n", [scan_trieleaf!("line"), scan_trieleaf!()])
                 ]
             ),
-            trieleaf!(Let, "let"),
-            trieprefix!(
+            scan_trieleaf!("let"),
+            scan_trieprefix!(
                 "m",
                 [
-                    trieprefix!("a", [trieleaf!(Macro, "cro"), trieleaf!(Match, "tch")]),
-                    trieleaf!(Mutable, "utable")
+                    scan_trieprefix!("a", [scan_trieleaf!("cro"), scan_trieleaf!("tch")]),
+                    scan_trieleaf!("utable")
                 ]
             ),
-            trieleaf!(Null, "null"),
-            trieleaf!(Of, "of"),
-            trieprefix!(
-                "p",
-                [trieleaf!(Partial, "artial"), trieleaf!(Promise, "romise")]
-            ),
-            trieprefix!(
+            scan_trieleaf!("null"),
+            scan_trieleaf!("of"),
+            scan_trieprefix!("p", [scan_trieleaf!("artial"), scan_trieleaf!("romise")]),
+            scan_trieprefix!(
                 "re",
-                [
-                    trieleaf!(Reference, "ference"),
-                    trieleaf!(Relocatable, "locatable")
-                ]
+                [scan_trieleaf!("ference"), scan_trieleaf!("locatable")]
             ),
-            trieprefix!(
+            scan_trieprefix!(
                 "s",
                 [
-                    trieleaf!(Sealed, "ealed"),
-                    trieleaf!(Sizeof, "izeof"),
-                    trieleaf!(Static, "tatic"),
-                    trieleaf!(Supports, "upports"),
-                    trieleaf!(Switch, "witch")
+                    scan_trieleaf!("ealed"),
+                    scan_trieleaf!("izeof"),
+                    scan_trieleaf!("tatic"),
+                    scan_trieleaf!("upports"),
+                    scan_trieleaf!("witch")
                 ]
             ),
-            trieprefix!("type", [trieleaf!(Typedef, "def"), trieleaf!(Typeof, "of")]),
-            trieleaf!(Var, "var")
-        )
+            scan_trieprefix!("type", [scan_trieleaf!("def"), scan_trieleaf!("of")]),
+            scan_trieleaf!("var")
+        ))
     );
 
     // ReturnStatement = 'return' [ Expression ] ';' ;
     define_rule!(
         ReturnStatement,
         seq!(
-            ReturnStatement,
-            terminal!(Return, "return"),
+            trie!(trieleaf!(Return, "return")),
             optional!(rule!(Expression)),
-            terminal!(Semicolon, ";")
+            trie!(trieleaf!(Semicolon, ";"))
         )
     );
 
@@ -2418,11 +3098,10 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         RevertStatement,
         seq!(
-            RevertStatement,
-            terminal!(Revert, "revert"),
+            trie!(trieleaf!(Revert, "revert")),
             optional!(rule!(IdentifierPath)),
             rule!(ArgumentList),
-            terminal!(Semicolon, ";")
+            trie!(trieleaf!(Semicolon, ";"))
         )
     );
 
@@ -2430,9 +3109,8 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         SelectedImport,
         seq!(
-            SelectedImport,
             token!(Identifier),
-            optional!(seq!(terminal!(As, "as"), token!(Identifier)))
+            optional!(seq!(trie!(trieleaf!(As, "as")), token!(Identifier)))
         )
     );
 
@@ -2440,24 +3118,18 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         SelectingImportDirective,
         seq!(
-            SelectingImportDirective,
             delimited_by!(
-                DelimitedSeparatedSelectedImports,
                 terminal!(OpenBrace, "{"),
-                separated_by!(
-                    SeparatedSelectedImports,
-                    rule!(SelectedImport),
-                    terminal!(Comma, ",")
-                ),
+                separated_by!(rule!(SelectedImport), terminal!(Comma, ",")),
                 terminal!(CloseBrace, "}")
             ),
-            terminal!(From, "from"),
+            trie!(trieleaf!(From, "from")),
             rule!(ImportPath)
         )
     );
 
     // ShiftExpression = Expression ( '<<' | '>>' | '>>>' ) Expression ;
-    define_rule!(
+    define_precedence_rule_member!(
         ShiftExpression,
         left_associative_binary_expression!(
             ShiftExpression,
@@ -2478,96 +3150,74 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // «SignedFixedType» = 'fixed' [ 1…*{ '0'…'9' } 'x' 1…*{ '0'…'9' } ] ;
     define_token!(
         SignedFixedType,
-        lex_seq!(
-            SignedFixedType,
-            lex_terminal!(Fixed, "fixed"),
-            lex_optional!(lex_seq!(
-                lex_one_or_more!(lex_terminal!(|&c: &char| ('0' <= c && c <= '9'))),
-                lex_terminal!(LatinSmallLetterX, 'x'),
-                lex_one_or_more!(lex_terminal!(|&c: &char| ('0' <= c && c <= '9')))
+        scan_make_node!(scan_seq!(
+            scan_trie!(scan_trieleaf!("fixed")),
+            scan_optional!(scan_seq!(
+                scan_one_or_more!(scan_terminal!(|&c: &char| ('0' <= c && c <= '9'))),
+                scan_terminal!('x'),
+                scan_one_or_more!(scan_terminal!(|&c: &char| ('0' <= c && c <= '9')))
             ))
-        )
+        ))
     );
 
     // «SignedIntegerType» = 'int' [ '8' | '16' | '24' | '32' | '40' | '48' | '56' | '64' | '72' | '80' | '88' | '96' | '104' | '112' | '120' | '128' | '136' | '144' | '152' | '160' | '168' | '176' | '184' | '192' | '200' | '208' | '216' | '224' | '232' | '240' | '248' | '256' ] ;
     define_token!(
         SignedIntegerType,
-        lex_seq!(
-            SignedIntegerType,
-            lex_terminal!(Int, "int"),
-            lex_optional!(lex_trie!(
-                ByteCount,
-                trieprefix!(
+        scan_make_node!(scan_seq!(
+            scan_trie!(scan_trieleaf!("int")),
+            scan_optional!(scan_trie!(
+                scan_trieprefix!(
                     "1",
                     [
-                        trieleaf!(OneZeroFour, "04"),
-                        trieleaf!(OneOneTwo, "12"),
-                        trieprefix!(
-                            "2",
-                            [trieleaf!(OneTwoZero, "0"), trieleaf!(OneTwoEight, "8")]
-                        ),
-                        trieleaf!(OneThreeSix, "36"),
-                        trieleaf!(OneFourFour, "44"),
-                        trieleaf!(OneFiveTwo, "52"),
-                        trieprefix!(
+                        scan_trieleaf!("04"),
+                        scan_trieleaf!("12"),
+                        scan_trieprefix!("2", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
+                        scan_trieleaf!("36"),
+                        scan_trieleaf!("44"),
+                        scan_trieleaf!("52"),
+                        scan_trieprefix!(
                             "6",
-                            [
-                                trieleaf!(OneSixZero, "0"),
-                                trieleaf!(OneSixEight, "8"),
-                                trieleaf!(OneSix)
-                            ]
+                            [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
                         ),
-                        trieleaf!(OneSevenSix, "76"),
-                        trieleaf!(OneEightFour, "84"),
-                        trieleaf!(OneNineTwo, "92")
+                        scan_trieleaf!("76"),
+                        scan_trieleaf!("84"),
+                        scan_trieleaf!("92")
                     ]
                 ),
-                trieprefix!(
+                scan_trieprefix!(
                     "2",
                     [
-                        trieprefix!(
-                            "0",
-                            [trieleaf!(TwoZeroZero, "0"), trieleaf!(TwoZeroEight, "8")]
-                        ),
-                        trieleaf!(TwoOneSix, "16"),
-                        trieleaf!(TwoTwoFour, "24"),
-                        trieleaf!(TwoThreeTwo, "32"),
-                        trieprefix!(
+                        scan_trieprefix!("0", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
+                        scan_trieleaf!("16"),
+                        scan_trieleaf!("24"),
+                        scan_trieleaf!("32"),
+                        scan_trieprefix!(
                             "4",
-                            [
-                                trieleaf!(TwoFourZero, "0"),
-                                trieleaf!(TwoFourEight, "8"),
-                                trieleaf!(TwoFour)
-                            ]
+                            [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
                         ),
-                        trieleaf!(TwoFiveSix, "56")
+                        scan_trieleaf!("56")
                     ]
                 ),
-                trieleaf!(ThreeTwo, "32"),
-                trieprefix!("4", [trieleaf!(FourZero, "0"), trieleaf!(FourEight, "8")]),
-                trieleaf!(FiveSix, "56"),
-                trieleaf!(SixFour, "64"),
-                trieleaf!(SevenTwo, "72"),
-                trieprefix!(
+                scan_trieleaf!("32"),
+                scan_trieprefix!("4", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
+                scan_trieleaf!("56"),
+                scan_trieleaf!("64"),
+                scan_trieleaf!("72"),
+                scan_trieprefix!(
                     "8",
-                    [
-                        trieleaf!(EightZero, "0"),
-                        trieleaf!(EightEight, "8"),
-                        trieleaf!(Eight)
-                    ]
+                    [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
                 ),
-                trieleaf!(NineSix, "96")
+                scan_trieleaf!("96")
             ))
-        )
+        ))
     );
 
     // SimpleImportDirective = ImportPath { 'as' «Identifier» } ;
     define_rule!(
         SimpleImportDirective,
         seq!(
-            SimpleImportDirective,
             rule!(ImportPath),
-            zero_or_more!(seq!(terminal!(As, "as"), token!(Identifier)))
+            zero_or_more!(seq!(trie!(trieleaf!(As, "as")), token!(Identifier)))
         )
     );
 
@@ -2575,7 +3225,6 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         SimpleStatement,
         choice!(
-            SimpleStatement,
             rule!(TupleDeconstructionStatement),
             rule!(VariableDeclarationStatement),
             rule!(ExpressionStatement)
@@ -2585,32 +3234,58 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // «SingleLineComment» = '//' { ¬( '\u{d}' | '\u{a}' ) } ;
     define_token!(
         SingleLineComment,
-        lex_seq!(
-            SingleLineComment,
-            lex_terminal!(SlashSlash, "//"),
-            lex_zero_or_more!(lex_terminal!(|&c: &char| c != '\r' && c != '\n'))
-        )
+        scan_make_node!(scan_seq!(
+            scan_trie!(scan_trieleaf!("//")),
+            scan_zero_or_more!(scan_terminal!(|&c: &char| c != '\r' && c != '\n'))
+        ))
     );
 
     // «SingleQuotedAsciiStringLiteral» = '\'' { 1…*{ '\u{20}'…'~' - ( '\'' | '\\' ) } | «EscapeSequence» } '\'' ;
     define_token!(
         SingleQuotedAsciiStringLiteral,
         lex_seq!(
-            SingleQuotedAsciiStringLiteral,
             lex_terminal!(Quote, "'"),
-            lex_zero_or_more!(
-                Runs,
-                lex_choice!(
-                    Run,
-                    lex_one_or_more!(
-                        Chars,
-                        lex_terminal!(Char, |&c: &char| (' ' <= c && c <= '~')
-                            && c != '\''
-                            && c != '\\')
-                    ),
-                    lex_rule!(EscapeSequence)
-                )
-            ),
+            lex_zero_or_more!(lex_choice!(
+                Run,
+                lex_one_or_more!(lex_terminal!(Char, |&c: &char| (' ' <= c && c <= '~')
+                    && c != '\''
+                    && c != '\\')),
+                scan_make_node!(scan_seq!(
+                    scan_terminal!('\\'),
+                    scan_choice!(
+                        scan_trie!(
+                            scan_trieleaf!("\n"),
+                            scan_trieleaf!("\r"),
+                            scan_trieleaf!("\""),
+                            scan_trieleaf!("'"),
+                            scan_trieleaf!("\\"),
+                            scan_trieleaf!("n"),
+                            scan_trieleaf!("r"),
+                            scan_trieleaf!("t")
+                        ),
+                        scan_seq!(
+                            scan_terminal!('x'),
+                            scan_repeated!(
+                                scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                                    || ('a' <= c && c <= 'f')
+                                    || ('A' <= c && c <= 'F')),
+                                2usize,
+                                2usize
+                            )
+                        ),
+                        scan_seq!(
+                            scan_terminal!('u'),
+                            scan_repeated!(
+                                scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                                    || ('a' <= c && c <= 'f')
+                                    || ('A' <= c && c <= 'F')),
+                                4usize,
+                                4usize
+                            )
+                        )
+                    )
+                ))
+            )),
             lex_terminal!(Quote, "'")
         )
     );
@@ -2619,22 +3294,49 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_token!(
         SingleQuotedUnicodeStringLiteral,
         lex_seq!(
-            SingleQuotedUnicodeStringLiteral,
             lex_terminal!(UnicodeQuote, "unicode'"),
-            lex_zero_or_more!(
-                Runs,
-                lex_choice!(
-                    Run,
-                    lex_one_or_more!(
-                        Chars,
-                        lex_terminal!(Char, |&c: &char| c != '\''
-                            && c != '\\'
-                            && c != '\n'
-                            && c != '\r')
-                    ),
-                    lex_rule!(EscapeSequence)
-                )
-            ),
+            lex_zero_or_more!(lex_choice!(
+                Run,
+                lex_one_or_more!(lex_terminal!(Char, |&c: &char| c != '\''
+                    && c != '\\'
+                    && c != '\n'
+                    && c != '\r')),
+                scan_make_node!(scan_seq!(
+                    scan_terminal!('\\'),
+                    scan_choice!(
+                        scan_trie!(
+                            scan_trieleaf!("\n"),
+                            scan_trieleaf!("\r"),
+                            scan_trieleaf!("\""),
+                            scan_trieleaf!("'"),
+                            scan_trieleaf!("\\"),
+                            scan_trieleaf!("n"),
+                            scan_trieleaf!("r"),
+                            scan_trieleaf!("t")
+                        ),
+                        scan_seq!(
+                            scan_terminal!('x'),
+                            scan_repeated!(
+                                scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                                    || ('a' <= c && c <= 'f')
+                                    || ('A' <= c && c <= 'F')),
+                                2usize,
+                                2usize
+                            )
+                        ),
+                        scan_seq!(
+                            scan_terminal!('u'),
+                            scan_repeated!(
+                                scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                                    || ('a' <= c && c <= 'f')
+                                    || ('A' <= c && c <= 'F')),
+                                4usize,
+                                4usize
+                            )
+                        )
+                    )
+                ))
+            )),
             lex_terminal!(Quote, "'")
         )
     );
@@ -2643,7 +3345,6 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         SourceUnit,
         seq!(
-            SourceUnit,
             rule!(LeadingTrivia),
             zero_or_more!(choice!(rule!(Directive), rule!(Definition))),
             rule!(EndOfFileTrivia)
@@ -2654,11 +3355,10 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         StarImportDirective,
         seq!(
-            StarImportDirective,
-            terminal!(Star, "*"),
-            terminal!(As, "as"),
+            trie!(trieleaf!(Star, "*")),
+            trie!(trieleaf!(As, "as")),
             token!(Identifier),
-            terminal!(From, "from"),
+            trie!(trieleaf!(From, "from")),
             rule!(ImportPath)
         )
     );
@@ -2667,7 +3367,6 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         StateVariableAttribute,
         choice!(
-            StateVariableAttribute,
             rule!(OverrideSpecifier),
             trie!(
                 trieleaf!(Constant, "constant"),
@@ -2690,12 +3389,11 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         StateVariableDeclaration,
         seq!(
-            StateVariableDeclaration,
             rule!(TypeName),
-            zero_or_more!(StateVariableAttributes, rule!(StateVariableAttribute)),
+            zero_or_more!(rule!(StateVariableAttribute)),
             token!(Identifier),
-            optional!(seq!(terminal!(Equal, "="), rule!(Expression))),
-            terminal!(Semicolon, ";")
+            optional!(seq!(trie!(trieleaf!(Equal, "=")), rule!(Expression))),
+            trie!(trieleaf!(Semicolon, ";"))
         )
     );
 
@@ -2703,7 +3401,6 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         Statement,
         choice!(
-            Statement,
             rule!(Block),
             rule!(SimpleStatement),
             rule!(IfStatement),
@@ -2725,13 +3422,11 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         StructDefinition,
         seq!(
-            StructDefinition,
-            terminal!(Struct, "struct"),
+            trie!(trieleaf!(Struct, "struct")),
             token!(Identifier),
             delimited_by!(
-                DelimitedStructMembers,
                 terminal!(OpenBrace, "{"),
-                one_or_more!(StructMembers, rule!(StructMember)),
+                one_or_more!(rule!(StructMember)),
                 terminal!(CloseBrace, "}")
             )
         )
@@ -2741,10 +3436,9 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         StructMember,
         seq!(
-            StructMember,
             rule!(TypeName),
             token!(Identifier),
-            terminal!(Semicolon, ";")
+            trie!(trieleaf!(Semicolon, ";"))
         )
     );
 
@@ -2752,7 +3446,6 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         TrailingTrivia,
         optional!(seq!(
-            TrailingTrivia,
             zero_or_more!(choice!(
                 trivia_token!(Whitespace),
                 trivia_token!(MultilineComment)
@@ -2765,12 +3458,14 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         TryStatement,
         seq!(
-            TryStatement,
-            terminal!(Try, "try"),
+            trie!(trieleaf!(Try, "try")),
             rule!(Expression),
-            optional!(seq!(terminal!(Returns, "returns"), rule!(ParameterList))),
+            optional!(seq!(
+                trie!(trieleaf!(Returns, "returns")),
+                rule!(ParameterList)
+            )),
             rule!(Block),
-            one_or_more!(CatchClauses, rule!(CatchClause))
+            one_or_more!(rule!(CatchClause))
         )
     );
 
@@ -2778,7 +3473,6 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         TupleDeconstructionStatement,
         seq!(
-            TupleDeconstructionStatement,
             delimited_by!(
                 terminal!(OpenParen, "("),
                 optional!(separated_by!(
@@ -2787,9 +3481,9 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                 )),
                 terminal!(CloseParen, ")")
             ),
-            terminal!(Equal, "="),
+            trie!(trieleaf!(Equal, "=")),
             rule!(Expression),
-            terminal!(Semicolon, ";")
+            trie!(trieleaf!(Semicolon, ";"))
         )
     );
 
@@ -2797,10 +3491,8 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         TypeExpression,
         seq!(
-            TypeExpression,
-            terminal!(Type, "type"),
+            trie!(trieleaf!(Type, "type")),
             delimited_by!(
-                DelimitedTypeName,
                 terminal!(OpenParen, "("),
                 rule!(TypeName),
                 terminal!(CloseParen, ")")
@@ -2812,27 +3504,22 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         TypeName,
         seq!(
-            TypeName,
             choice!(
                 rule!(ElementaryType),
                 rule!(FunctionType),
                 rule!(MappingType),
                 rule!(IdentifierPath)
             ),
-            zero_or_more!(
-                DelimitedExpressions,
-                delimited_by!(
-                    DelimitedExpression,
-                    terminal!(OpenBracket, "["),
-                    optional!(rule!(Expression)),
-                    terminal!(CloseBracket, "]")
-                )
-            )
+            zero_or_more!(delimited_by!(
+                terminal!(OpenBracket, "["),
+                optional!(rule!(Expression)),
+                terminal!(CloseBracket, "]")
+            ))
         )
     );
 
     // UnaryPrefixExpression = ( '++' | '--' | '!' | '~' | '-' ) Expression ;
-    define_rule!(
+    define_precedence_rule_member!(
         UnaryPrefixExpression,
         unary_prefix_expression!(
             UnaryPrefixExpression,
@@ -2847,7 +3534,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     );
 
     // UnarySuffixExpression = Expression ( '++' | '--' ) ;
-    define_rule!(
+    define_precedence_rule_member!(
         UnarySuffixExpression,
         unary_suffix_expression!(
             UnarySuffixExpression,
@@ -2859,69 +3546,201 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // UncheckedBlock = 'unchecked' Block ;
     define_rule!(
         UncheckedBlock,
-        seq!(
-            UncheckedBlock,
-            terminal!(Unchecked, "unchecked"),
-            rule!(Block)
-        )
+        seq!(trie!(trieleaf!(Unchecked, "unchecked")), rule!(Block))
     );
 
     // «UnicodeEscape» = 'u' 4…4*{ «HexCharacter» } ;
     define_token!(
         UnicodeEscape,
-        lex_seq!(
-            UnicodeEscape,
-            lex_terminal!(LatinSmallLetterU, 'u'),
-            lex_repeated!(
-                lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
+        scan_make_node!(scan_seq!(
+            scan_terminal!('u'),
+            scan_repeated!(
+                scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
                     || ('a' <= c && c <= 'f')
                     || ('A' <= c && c <= 'F')),
                 4usize,
                 4usize
             )
-        )
+        ))
     );
 
     // «UnicodeStringLiteral» = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral» ;
     define_token!(
         UnicodeStringLiteral,
-        lex_choice!(
-            UnicodeStringLiteral,
-            lex_rule!(SingleQuotedUnicodeStringLiteral),
-            lex_rule!(DoubleQuotedUnicodeStringLiteral)
-        )
+        scan_make_node!(scan_choice!(
+            scan_seq!(
+                scan_terminal!("unicode'"),
+                scan_zero_or_more!(scan_choice!(
+                    scan_one_or_more!(scan_terminal!(|&c: &char| c != '\''
+                        && c != '\\'
+                        && c != '\n'
+                        && c != '\r')),
+                    scan_seq!(
+                        scan_terminal!('\\'),
+                        scan_choice!(
+                            scan_trie!(
+                                scan_trieleaf!("\n"),
+                                scan_trieleaf!("\r"),
+                                scan_trieleaf!("\""),
+                                scan_trieleaf!("'"),
+                                scan_trieleaf!("\\"),
+                                scan_trieleaf!("n"),
+                                scan_trieleaf!("r"),
+                                scan_trieleaf!("t")
+                            ),
+                            scan_seq!(
+                                scan_terminal!('x'),
+                                scan_repeated!(
+                                    scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                                        || ('a' <= c && c <= 'f')
+                                        || ('A' <= c && c <= 'F')),
+                                    2usize,
+                                    2usize
+                                )
+                            ),
+                            scan_seq!(
+                                scan_terminal!('u'),
+                                scan_repeated!(
+                                    scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                                        || ('a' <= c && c <= 'f')
+                                        || ('A' <= c && c <= 'F')),
+                                    4usize,
+                                    4usize
+                                )
+                            )
+                        )
+                    )
+                )),
+                scan_terminal!("'")
+            ),
+            scan_seq!(
+                scan_terminal!("unicode\""),
+                scan_zero_or_more!(scan_choice!(
+                    scan_one_or_more!(scan_terminal!(|&c: &char| c != '"'
+                        && c != '\\'
+                        && c != '\n'
+                        && c != '\r')),
+                    scan_seq!(
+                        scan_terminal!('\\'),
+                        scan_choice!(
+                            scan_trie!(
+                                scan_trieleaf!("\n"),
+                                scan_trieleaf!("\r"),
+                                scan_trieleaf!("\""),
+                                scan_trieleaf!("'"),
+                                scan_trieleaf!("\\"),
+                                scan_trieleaf!("n"),
+                                scan_trieleaf!("r"),
+                                scan_trieleaf!("t")
+                            ),
+                            scan_seq!(
+                                scan_terminal!('x'),
+                                scan_repeated!(
+                                    scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                                        || ('a' <= c && c <= 'f')
+                                        || ('A' <= c && c <= 'F')),
+                                    2usize,
+                                    2usize
+                                )
+                            ),
+                            scan_seq!(
+                                scan_terminal!('u'),
+                                scan_repeated!(
+                                    scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
+                                        || ('a' <= c && c <= 'f')
+                                        || ('A' <= c && c <= 'F')),
+                                    4usize,
+                                    4usize
+                                )
+                            )
+                        )
+                    )
+                )),
+                scan_terminal!("\"")
+            )
+        ))
     );
 
     // «UnsignedFixedType» = 'u' «SignedFixedType» ;
     define_token!(
         UnsignedFixedType,
-        lex_seq!(
-            UnsignedFixedType,
-            lex_terminal!(LatinSmallLetterU, 'u'),
-            lex_rule!(SignedFixedType)
-        )
+        scan_make_node!(scan_seq!(
+            scan_terminal!('u'),
+            scan_seq!(
+                scan_trie!(scan_trieleaf!("fixed")),
+                scan_optional!(scan_seq!(
+                    scan_one_or_more!(scan_terminal!(|&c: &char| ('0' <= c && c <= '9'))),
+                    scan_terminal!('x'),
+                    scan_one_or_more!(scan_terminal!(|&c: &char| ('0' <= c && c <= '9')))
+                ))
+            )
+        ))
     );
 
     // «UnsignedIntegerType» = 'u' «SignedIntegerType» ;
     define_token!(
         UnsignedIntegerType,
-        lex_seq!(
-            UnsignedIntegerType,
-            lex_terminal!(LatinSmallLetterU, 'u'),
-            lex_rule!(SignedIntegerType)
-        )
+        scan_make_node!(scan_seq!(
+            scan_terminal!('u'),
+            scan_seq!(
+                scan_trie!(scan_trieleaf!("int")),
+                scan_optional!(scan_trie!(
+                    scan_trieprefix!(
+                        "1",
+                        [
+                            scan_trieleaf!("04"),
+                            scan_trieleaf!("12"),
+                            scan_trieprefix!("2", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
+                            scan_trieleaf!("36"),
+                            scan_trieleaf!("44"),
+                            scan_trieleaf!("52"),
+                            scan_trieprefix!(
+                                "6",
+                                [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
+                            ),
+                            scan_trieleaf!("76"),
+                            scan_trieleaf!("84"),
+                            scan_trieleaf!("92")
+                        ]
+                    ),
+                    scan_trieprefix!(
+                        "2",
+                        [
+                            scan_trieprefix!("0", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
+                            scan_trieleaf!("16"),
+                            scan_trieleaf!("24"),
+                            scan_trieleaf!("32"),
+                            scan_trieprefix!(
+                                "4",
+                                [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
+                            ),
+                            scan_trieleaf!("56")
+                        ]
+                    ),
+                    scan_trieleaf!("32"),
+                    scan_trieprefix!("4", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
+                    scan_trieleaf!("56"),
+                    scan_trieleaf!("64"),
+                    scan_trieleaf!("72"),
+                    scan_trieprefix!(
+                        "8",
+                        [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
+                    ),
+                    scan_trieleaf!("96")
+                ))
+            )
+        ))
     );
 
     // UserDefinedValueTypeDefinition = 'type' «Identifier» 'is' ElementaryType ';' ;
     define_rule!(
         UserDefinedValueTypeDefinition,
         seq!(
-            UserDefinedValueTypeDefinition,
-            terminal!(Type, "type"),
+            trie!(trieleaf!(Type, "type")),
             token!(Identifier),
-            terminal!(Is, "is"),
+            trie!(trieleaf!(Is, "is")),
             rule!(ElementaryType),
-            terminal!(Semicolon, ";")
+            trie!(trieleaf!(Semicolon, ";"))
         )
     );
 
@@ -2929,25 +3748,19 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         UsingDirective,
         seq!(
-            UsingDirective,
-            terminal!(Using, "using"),
+            trie!(trieleaf!(Using, "using")),
             choice!(
                 rule!(IdentifierPath),
                 delimited_by!(
-                    DelimitedSeparatedIdentifierPaths,
                     terminal!(OpenBrace, "{"),
-                    separated_by!(
-                        SeparatedIdentifierPaths,
-                        rule!(IdentifierPath),
-                        terminal!(Comma, ",")
-                    ),
+                    separated_by!(rule!(IdentifierPath), terminal!(Comma, ",")),
                     terminal!(CloseBrace, "}")
                 )
             ),
-            terminal!(For, "for"),
-            choice!(terminal!(Star, "*"), rule!(TypeName)),
-            optional!(terminal!(Global, "global")),
-            terminal!(Semicolon, ";")
+            trie!(trieleaf!(For, "for")),
+            choice!(trie!(trieleaf!(Star, "*")), rule!(TypeName)),
+            optional!(trie!(trieleaf!(Global, "global"))),
+            trie!(trieleaf!(Semicolon, ";"))
         )
     );
 
@@ -2955,12 +3768,11 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         VariableDeclarationStatement,
         seq!(
-            VariableDeclarationStatement,
             rule!(TypeName),
             optional!(rule!(DataLocation)),
             token!(Identifier),
-            optional!(seq!(terminal!(Equal, "="), rule!(Expression))),
-            terminal!(Semicolon, ";")
+            optional!(seq!(trie!(trieleaf!(Equal, "=")), rule!(Expression))),
+            trie!(trieleaf!(Semicolon, ";"))
         )
     );
 
@@ -2968,56 +3780,48 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         VersionPragma,
         seq!(
-            VersionPragma,
-            terminal!(Solidity, "solidity"),
-            one_or_more!(VersionPragmaSpecifiers, rule!(VersionPragmaSpecifier))
+            trie!(trieleaf!(Solidity, "solidity")),
+            one_or_more!(rule!(VersionPragmaSpecifier))
         )
     );
 
     // «VersionPragmaOperator» = '^' | '~' | '=' | '<' | '>' | '<=' | '>=' ;
     define_token!(
         VersionPragmaOperator,
-        lex_trie!(
-            VersionPragmaOperator,
-            trieprefix!("<", [trieleaf!(LessEqual, "="), trieleaf!(Less)]),
-            trieleaf!(Equal, "="),
-            trieprefix!(">", [trieleaf!(GreaterEqual, "="), trieleaf!(Greater)]),
-            trieleaf!(Caret, "^"),
-            trieleaf!(Tilde, "~")
-        )
+        scan_make_node!(scan_trie!(
+            scan_trieprefix!("<", [scan_trieleaf!("="), scan_trieleaf!()]),
+            scan_trieleaf!("="),
+            scan_trieprefix!(">", [scan_trieleaf!("="), scan_trieleaf!()]),
+            scan_trieleaf!("^"),
+            scan_trieleaf!("~")
+        ))
     );
 
     // VersionPragmaSpecifier = [ «VersionPragmaOperator» ] «VersionPragmaValue»  { '.' «VersionPragmaValue» } ;
     define_rule!(
         VersionPragmaSpecifier,
         seq!(
-            VersionPragmaSpecifier,
             optional!(token!(VersionPragmaOperator)),
-            separated_by!(
-                SeparatedVersionPragmaValues,
-                token!(VersionPragmaValue),
-                terminal!(Period, ".")
-            )
+            separated_by!(token!(VersionPragmaValue), terminal!(Period, "."))
         )
     );
 
     // «VersionPragmaValue» = 1…*{ '0'…'9' | 'x' | 'X' | '*' } ;
     define_token!(
         VersionPragmaValue,
-        lex_one_or_more!(
-            VersionPragmaValue,
-            lex_terminal!(|&c: &char| ('0' <= c && c <= '9') || c == 'x' || c == 'X' || c == '*')
-        )
+        scan_make_node!(scan_one_or_more!(scan_terminal!(|&c: &char| ('0' <= c
+            && c <= '9')
+            || c == 'x'
+            || c == 'X'
+            || c == '*')))
     );
 
     // WhileStatement = 'while' '(' Expression ')' Statement ;
     define_rule!(
         WhileStatement,
         seq!(
-            WhileStatement,
-            terminal!(While, "while"),
+            trie!(trieleaf!(While, "while")),
             delimited_by!(
-                DelimitedExpression,
                 terminal!(OpenParen, "("),
                 rule!(Expression),
                 terminal!(CloseParen, ")")
@@ -3029,20 +3833,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // «Whitespace» = 1…*{ '\u{20}' | '\u{9}' } ;
     define_token!(
         Whitespace,
-        lex_one_or_more!(Whitespace, lex_terminal!(|&c: &char| c == ' ' || c == '\t'))
+        scan_make_node!(scan_one_or_more!(scan_terminal!(
+            |&c: &char| c == ' ' || c == '\t'
+        )))
     );
 
     // YulAssignmentStatement = YulIdentifierPath  { ',' YulIdentifierPath } ':=' YulExpression ;
     define_rule!(
         YulAssignmentStatement,
         seq!(
-            YulAssignmentStatement,
-            separated_by!(
-                SeparatedYulIdentifierPaths,
-                rule!(YulIdentifierPath),
-                terminal!(Comma, ",")
-            ),
-            terminal!(ColonEqual, ":="),
+            separated_by!(rule!(YulIdentifierPath), terminal!(Comma, ",")),
+            trie!(trieleaf!(ColonEqual, ":=")),
             rule!(YulExpression)
         )
     );
@@ -3051,37 +3852,34 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         YulBlock,
         delimited_by!(
-            YulBlock,
             terminal!(OpenBrace, "{"),
-            zero_or_more!(YulStatements, rule!(YulStatement)),
+            zero_or_more!(rule!(YulStatement)),
             terminal!(CloseBrace, "}")
         )
     );
 
     // YulBreakStatement = 'break' ;
-    define_rule!(YulBreakStatement, terminal!(Break, "break"));
+    define_rule!(YulBreakStatement, trie!(trieleaf!(Break, "break")));
 
     // YulContinueStatement = 'continue' ;
-    define_rule!(YulContinueStatement, terminal!(Continue, "continue"));
+    define_rule!(YulContinueStatement, trie!(trieleaf!(Continue, "continue")));
 
     // «YulDecimalNumberLiteral» = '0' | '1'…'9' { '0'…'9' } ;
     define_token!(
         YulDecimalNumberLiteral,
-        lex_choice!(
-            YulDecimalNumberLiteral,
-            lex_terminal!(Zero, "0"),
-            lex_seq!(
-                lex_terminal!(|&c: &char| ('1' <= c && c <= '9')),
-                lex_zero_or_more!(lex_terminal!(|&c: &char| ('0' <= c && c <= '9')))
+        scan_make_node!(scan_choice!(
+            scan_trie!(scan_trieleaf!("0")),
+            scan_seq!(
+                scan_terminal!(|&c: &char| ('1' <= c && c <= '9')),
+                scan_zero_or_more!(scan_terminal!(|&c: &char| ('0' <= c && c <= '9')))
             )
-        )
+        ))
     );
 
     // YulExpression = YulIdentifierPath | YulFunctionCall | YulLiteral ;
     define_rule!(
         YulExpression,
         choice!(
-            YulExpression,
             rule!(YulIdentifierPath),
             rule!(YulFunctionCall),
             rule!(YulLiteral)
@@ -3092,8 +3890,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         YulForStatement,
         seq!(
-            YulForStatement,
-            terminal!(For, "for"),
+            trie!(trieleaf!(For, "for")),
             rule!(YulBlock),
             rule!(YulExpression),
             rule!(YulBlock),
@@ -3105,16 +3902,10 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         YulFunctionCall,
         seq!(
-            YulFunctionCall,
             token!(YulIdentifier),
             delimited_by!(
-                DelimitedSeparatedYulExpressions,
                 terminal!(OpenParen, "("),
-                optional!(separated_by!(
-                    SeparatedYulExpressions,
-                    rule!(YulExpression),
-                    terminal!(Comma, ",")
-                )),
+                optional!(separated_by!(rule!(YulExpression), terminal!(Comma, ","))),
                 terminal!(CloseParen, ")")
             )
         )
@@ -3124,11 +3915,9 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         YulFunctionDefinition,
         seq!(
-            YulFunctionDefinition,
-            terminal!(Function, "function"),
+            trie!(trieleaf!(Function, "function")),
             token!(YulIdentifier),
             delimited_by!(
-                DelimitedArguments,
                 terminal!(OpenParen, "("),
                 optional!(separated_by!(
                     Arguments,
@@ -3138,7 +3927,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                 terminal!(CloseParen, ")")
             ),
             optional!(seq!(
-                terminal!(MinusGreater, "->"),
+                trie!(trieleaf!(MinusGreater, "->")),
                 separated_by!(Results, token!(YulIdentifier), terminal!(Comma, ","))
             )),
             rule!(YulBlock)
@@ -3148,60 +3937,61 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // «YulHexLiteral» = '0x' 1…*{ «HexCharacter» } ;
     define_token!(
         YulHexLiteral,
-        lex_seq!(
-            YulHexLiteral,
-            lex_terminal!(ZeroX, "0x"),
-            lex_one_or_more!(lex_terminal!(|&c: &char| ('0' <= c && c <= '9')
+        scan_make_node!(scan_seq!(
+            scan_trie!(scan_trieleaf!("0x")),
+            scan_one_or_more!(scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
                 || ('a' <= c && c <= 'f')
                 || ('A' <= c && c <= 'F')))
-        )
+        ))
     );
 
     // «YulIdentifier» = «RawIdentifier» - «YulKeyword» ;
     define_token!(
         YulIdentifier,
-        difference(
-            lex_rule!(RawIdentifier),
-            lex_trie!(
-                trieleaf!(Break, "break"),
-                trieprefix!(
-                    "c",
-                    [trieleaf!(Case, "ase"), trieleaf!(Continue, "ontinue")]
-                ),
-                trieleaf!(Default, "default"),
-                trieprefix!(
+        scan_make_node!(difference(
+            scan_seq!(
+                scan_terminal!(|&c: &char| c == '_'
+                    || c == '$'
+                    || ('a' <= c && c <= 'z')
+                    || ('A' <= c && c <= 'Z')),
+                scan_zero_or_more!(scan_terminal!(|&c: &char| c == '_'
+                    || c == '$'
+                    || ('a' <= c && c <= 'z')
+                    || ('A' <= c && c <= 'Z')
+                    || ('0' <= c && c <= '9')))
+            ),
+            scan_trie!(
+                scan_trieleaf!("break"),
+                scan_trieprefix!("c", [scan_trieleaf!("ase"), scan_trieleaf!("ontinue")]),
+                scan_trieleaf!("default"),
+                scan_trieprefix!(
                     "f",
                     [
-                        trieleaf!(False, "alse"),
-                        trieleaf!(For, "or"),
-                        trieleaf!(Function, "unction")
+                        scan_trieleaf!("alse"),
+                        scan_trieleaf!("or"),
+                        scan_trieleaf!("unction")
                     ]
                 ),
-                trieleaf!(Hex, "hex"),
-                trieleaf!(If, "if"),
-                trieprefix!("le", [trieleaf!(Leave, "ave"), trieleaf!(Let, "t")]),
-                trieleaf!(Switch, "switch"),
-                trieleaf!(True, "true")
+                scan_trieleaf!("hex"),
+                scan_trieleaf!("if"),
+                scan_trieprefix!("le", [scan_trieleaf!("ave"), scan_trieleaf!("t")]),
+                scan_trieleaf!("switch"),
+                scan_trieleaf!("true")
             )
-        )
+        ))
     );
 
     // YulIdentifierPath = «YulIdentifier»  { '.' «YulIdentifier» } ;
     define_rule!(
         YulIdentifierPath,
-        separated_by!(
-            YulIdentifierPath,
-            token!(YulIdentifier),
-            terminal!(Period, ".")
-        )
+        separated_by!(token!(YulIdentifier), terminal!(Period, "."))
     );
 
     // YulIfStatement = 'if' YulExpression YulBlock ;
     define_rule!(
         YulIfStatement,
         seq!(
-            YulIfStatement,
-            terminal!(If, "if"),
+            trie!(trieleaf!(If, "if")),
             rule!(YulExpression),
             rule!(YulBlock)
         )
@@ -3210,38 +4000,33 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // «YulKeyword» = «BooleanLiteral» | 'break' | 'case' | 'continue' | 'default' | 'for' | 'function' | 'hex' | 'if' | 'leave' | 'let' | 'switch' ;
     define_token!(
         YulKeyword,
-        lex_trie!(
-            YulKeyword,
-            trieleaf!(Break, "break"),
-            trieprefix!(
-                "c",
-                [trieleaf!(Case, "ase"), trieleaf!(Continue, "ontinue")]
-            ),
-            trieleaf!(Default, "default"),
-            trieprefix!(
+        scan_make_node!(scan_trie!(
+            scan_trieleaf!("break"),
+            scan_trieprefix!("c", [scan_trieleaf!("ase"), scan_trieleaf!("ontinue")]),
+            scan_trieleaf!("default"),
+            scan_trieprefix!(
                 "f",
                 [
-                    trieleaf!(False, "alse"),
-                    trieleaf!(For, "or"),
-                    trieleaf!(Function, "unction")
+                    scan_trieleaf!("alse"),
+                    scan_trieleaf!("or"),
+                    scan_trieleaf!("unction")
                 ]
             ),
-            trieleaf!(Hex, "hex"),
-            trieleaf!(If, "if"),
-            trieprefix!("le", [trieleaf!(Leave, "ave"), trieleaf!(Let, "t")]),
-            trieleaf!(Switch, "switch"),
-            trieleaf!(True, "true")
-        )
+            scan_trieleaf!("hex"),
+            scan_trieleaf!("if"),
+            scan_trieprefix!("le", [scan_trieleaf!("ave"), scan_trieleaf!("t")]),
+            scan_trieleaf!("switch"),
+            scan_trieleaf!("true")
+        ))
     );
 
     // YulLeaveStatement = 'leave' ;
-    define_rule!(YulLeaveStatement, terminal!(Leave, "leave"));
+    define_rule!(YulLeaveStatement, trie!(trieleaf!(Leave, "leave")));
 
     // YulLiteral = «YulDecimalNumberLiteral» | «YulHexLiteral» | «AsciiStringLiteral» | «BooleanLiteral» | «HexStringLiteral» ;
     define_rule!(
         YulLiteral,
         choice!(
-            YulLiteral,
             token!(YulDecimalNumberLiteral),
             token!(YulHexLiteral),
             token!(AsciiStringLiteral),
@@ -3254,7 +4039,6 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         YulStatement,
         choice!(
-            YulStatement,
             rule!(YulBlock),
             rule!(YulVariableDeclaration),
             rule!(YulFunctionDefinition),
@@ -3273,13 +4057,12 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         YulSwitchStatement,
         seq!(
-            YulSwitchStatement,
-            terminal!(Switch, "switch"),
+            trie!(trieleaf!(Switch, "switch")),
             rule!(YulExpression),
             one_or_more!(seq!(
                 choice!(
-                    seq!(terminal!(Case, "case"), rule!(YulLiteral)),
-                    terminal!(Default, "default")
+                    seq!(trie!(trieleaf!(Case, "case")), rule!(YulLiteral)),
+                    trie!(trieleaf!(Default, "default"))
                 ),
                 rule!(YulBlock)
             ))
@@ -3290,14 +4073,12 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         YulVariableDeclaration,
         seq!(
-            YulVariableDeclaration,
-            terminal!(Let, "let"),
-            separated_by!(
-                SeparatedYulIdentifierPaths,
-                rule!(YulIdentifierPath),
-                terminal!(Comma, ",")
-            ),
-            optional!(seq!(terminal!(ColonEqual, ":="), rule!(YulExpression)))
+            trie!(trieleaf!(Let, "let")),
+            separated_by!(rule!(YulIdentifierPath), terminal!(Comma, ",")),
+            optional!(seq!(
+                trie!(trieleaf!(ColonEqual, ":=")),
+                rule!(YulExpression)
+            ))
         )
     );
 

@@ -2,8 +2,7 @@ use codegen_schema::*;
 use itertools::Itertools;
 
 use super::{
-    character_filter::CharacterFilter, combinator_tree::CombinatorTree, naming,
-    terminal_trie::TerminalTrie,
+    character_filter::CharacterFilter, combinator_tree::CombinatorTree, terminal_trie::TerminalTrie,
 };
 
 pub enum CombinatorNode<'context> {
@@ -67,7 +66,6 @@ pub enum CombinatorNode<'context> {
         elements: Vec<&'context CombinatorNode<'context>>,
     },
     TerminalTrie {
-        name: Option<String>,
         trie: TerminalTrie,
     },
     ZeroOrMore {
@@ -89,30 +87,21 @@ impl<'context> CombinatorNode<'context> {
     pub fn new(
         tree: &'context CombinatorTree<'context>,
         expression: &ExpressionRef,
-        inherited_name: Option<String>,
     ) -> &'context CombinatorNode<'context> {
-        let name = expression.config.name.clone().or(inherited_name);
+        let name = expression.config.name.clone();
 
         // Terminals in choices are merged, and represented as a trie
 
         if tree.production.kind == ProductionKind::Token {
             if let Some(filter) = CharacterFilter::new(tree, expression, true) {
-                return tree.context.alloc_node(Self::CharacterFilter {
-                    name: name.or_else(|| filter.default_name()),
-                    filter,
-                });
+                return tree
+                    .context
+                    .alloc_node(Self::CharacterFilter { name, filter });
             }
         }
 
-        if let Some(trie) = TerminalTrie::new(
-            tree,
-            expression,
-            tree.production.kind == ProductionKind::Token,
-        ) {
-            return tree.context.alloc_node(Self::TerminalTrie {
-                name: name.or_else(|| trie.default_name()),
-                trie,
-            });
+        if let Some(trie) = TerminalTrie::new(tree, expression) {
+            return tree.context.alloc_node(Self::TerminalTrie { trie });
         }
 
         if tree.production.kind == ProductionKind::Rule
@@ -142,78 +131,58 @@ impl<'context> CombinatorNode<'context> {
                 }
                 let elements = exprs
                     .iter()
-                    .map(|expr| {
-                        match TerminalTrie::new(
-                            tree,
-                            expr,
-                            tree.production.kind == ProductionKind::Token,
-                        ) {
-                            None => TN::Node(Self::new(tree, expr, None)),
-                            Some(trie) => TN::Trie(trie),
-                        }
+                    .map(|expr| match TerminalTrie::new(tree, expr) {
+                        None => TN::Node(Self::new(tree, expr)),
+                        Some(trie) => TN::Trie(trie),
                     })
                     .coalesce(|prev, curr| match (prev, curr) {
                         (TN::Trie(prev), TN::Trie(curr)) => Ok(TN::Trie(prev.merged_with(curr))),
-                        pc => Err(pc),
+                        pair => Err(pair),
                     })
                     .map(|either| match either {
                         TN::Node(node) => node,
-                        TN::Trie(trie) => tree.context.alloc_node(Self::TerminalTrie {
-                            name: trie.default_name(),
-                            trie,
-                        }),
+                        TN::Trie(trie) => tree.context.alloc_node(Self::TerminalTrie { trie }),
                     })
                     .collect();
                 Self::Choice { name, elements }
             }
 
-            EBNF::DelimitedBy(EBNFDelimitedBy { open, expr, close }) => {
-                let expr = Self::new(tree, expr, None);
-                let name = name.or_else(|| {
-                    expr.name()
-                        .map(|expr_name| format!("Delimited{}", expr_name,))
-                });
-                Self::DelimitedBy {
-                    name,
-                    open: open.clone(),
-                    expr,
-                    close: close.clone(),
-                }
-            }
+            EBNF::DelimitedBy(EBNFDelimitedBy { open, expr, close }) => Self::DelimitedBy {
+                name,
+                open: open.clone(),
+                expr: Self::new(tree, expr),
+                close: close.clone(),
+            },
 
             EBNF::Difference(EBNFDifference {
                 minuend,
                 subtrahend,
             }) => Self::Difference {
-                minuend: Self::new(tree, minuend, None),
-                subtrahend: Self::new(tree, subtrahend, None),
+                minuend: Self::new(tree, minuend),
+                subtrahend: Self::new(tree, subtrahend),
             },
 
             EBNF::Not(_) => {
                 if let Some(filter) = CharacterFilter::new(tree, expression, true) {
-                    let name = name.or_else(|| filter.default_name());
                     Self::CharacterFilter { name, filter }
                 } else {
                     unimplemented!("¬ is only supported on characters or sets thereof")
                 }
             }
 
-            EBNF::OneOrMore(expr) => {
-                let expr = Self::new(tree, expr, None);
-                let name =
-                    name.or_else(|| expr.name().map(|expr_name| naming::pluralize(&expr_name)));
-                Self::OneOrMore { name, expr }
-            }
-
-            EBNF::Optional(expr) => Self::Optional {
-                expr: Self::new(tree, expr, name),
+            EBNF::OneOrMore(expr) => Self::OneOrMore {
+                name,
+                expr: Self::new(tree, expr),
             },
 
-            EBNF::Range(_) => {
-                let filter = CharacterFilter::new(tree, expression, true).unwrap();
-                let name = name.or_else(|| filter.default_name());
-                Self::CharacterFilter { name, filter }
-            }
+            EBNF::Optional(expr) => Self::Optional {
+                expr: Self::new(tree, expr),
+            },
+
+            EBNF::Range(_) => Self::CharacterFilter {
+                name,
+                filter: CharacterFilter::new(tree, expression, true).unwrap(),
+            },
 
             EBNF::Reference(name) => Self::Reference {
                 tree: tree
@@ -224,71 +193,58 @@ impl<'context> CombinatorNode<'context> {
                     .expect("Production not found"),
             },
 
-            EBNF::Repeat(EBNFRepeat { expr, min, max }) => {
-                let expr = Self::new(tree, expr, None);
-                let name =
-                    name.or_else(|| expr.name().map(|expr_name| naming::pluralize(&expr_name)));
-                Self::Repeated {
-                    name,
-                    expr,
-                    min: *min,
-                    max: *max,
-                }
-            }
+            EBNF::Repeat(EBNFRepeat { expr, min, max }) => Self::Repeated {
+                name,
+                expr: Self::new(tree, expr),
+                min: *min,
+                max: *max,
+            },
 
-            EBNF::SeparatedBy(EBNFSeparatedBy { expr, separator }) => {
-                let expr = Self::new(tree, expr, None);
-                let name = name.or_else(|| {
-                    expr.name()
-                        .map(|expr_name| format!("Separated{}", naming::pluralize(&expr_name),))
-                });
-                let separator = separator.clone();
-                Self::SeparatedBy {
-                    name,
-                    expr,
-                    separator,
-                }
-            }
+            EBNF::SeparatedBy(EBNFSeparatedBy { expr, separator }) => Self::SeparatedBy {
+                name,
+                expr: Self::new(tree, expr),
+                separator: separator.clone(),
+            },
 
             EBNF::Sequence(exprs) => Self::Sequence {
                 name,
-                elements: exprs.iter().map(|e| Self::new(tree, e, None)).collect(),
+                elements: exprs.iter().map(|e| Self::new(tree, e)).collect(),
             },
 
-            EBNF::Terminal(_) => {
-                let trie = TerminalTrie::new(tree, expression, true).unwrap();
-                let name = name.or_else(|| trie.default_name());
-                Self::TerminalTrie { name, trie }
-            }
+            EBNF::Terminal(_) => Self::TerminalTrie {
+                trie: TerminalTrie::new(tree, expression).unwrap(),
+            },
 
-            EBNF::ZeroOrMore(expr) => {
-                let expr = Self::new(tree, expr, None);
-                let name =
-                    name.or_else(|| expr.name().map(|expr_name| naming::pluralize(&expr_name)));
-                Self::ZeroOrMore { name, expr }
-            }
+            EBNF::ZeroOrMore(expr) => Self::ZeroOrMore {
+                name,
+                expr: Self::new(tree, expr),
+            },
         })
     }
 
-    pub fn name(&self) -> Option<String> {
+    pub fn has_named_structure(&self) -> bool {
         match self {
-            Self::Reference { tree }
-            | Self::PrecedenceRule { tree, .. }
-            | Self::PrecedenceRuleMember { tree, .. } => Some(tree.production.name.clone()),
+            Self::Reference { .. }
+            | Self::PrecedenceRule { .. }
+            | Self::PrecedenceRuleMember { .. } => false,
 
-            Self::CharacterFilter { name, .. }
-            | Self::Choice { name, .. }
-            | Self::DelimitedBy { name, .. }
-            | Self::OneOrMore { name, .. }
-            | Self::Repeated { name, .. }
-            | Self::SeparatedBy { name, .. }
-            | Self::Sequence { name, .. }
-            | Self::TerminalTrie { name, .. }
-            | Self::ZeroOrMore { name, .. } => name.clone(),
+            Self::CharacterFilter { name, .. } => name.is_some(),
+
+            Self::TerminalTrie { trie } => trie.has_named_structure(),
+
+            Self::Choice { name, elements } | Self::Sequence { name, elements } => {
+                name.is_some() || elements.iter().any(|e| e.has_named_structure())
+            }
+
+            Self::DelimitedBy { name, expr, .. }
+            | Self::OneOrMore { name, expr }
+            | Self::Repeated { name, expr, .. }
+            | Self::SeparatedBy { name, expr, .. }
+            | Self::ZeroOrMore { name, expr } => name.is_some() || expr.has_named_structure(),
 
             Self::Difference { minuend: expr, .. }
             | Self::Lookahead { expr, .. }
-            | Self::Optional { expr } => expr.name(),
+            | Self::Optional { expr } => expr.has_named_structure(),
         }
     }
 

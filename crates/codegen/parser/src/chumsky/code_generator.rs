@@ -9,7 +9,7 @@ use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 use semver::Version;
 
-use super::{boilerplate, naming};
+use super::{boilerplate, naming, to_lexer_code, to_parser_code, to_scanner_code};
 
 #[derive(Clone, Debug, Default)]
 pub struct CodeGenerator {
@@ -23,6 +23,7 @@ pub struct CodeGenerator {
 pub enum ParserResultType {
     #[default]
     Token,
+    PrecedenceRuleMember,
     Rule,
 }
 
@@ -101,6 +102,9 @@ impl CodeGenerator {
                 match parser.result_type {
                     ParserResultType::Token => quote! { declare_token!(#production_kind); },
                     ParserResultType::Rule => quote! { declare_rule!(#production_kind); },
+                    ParserResultType::PrecedenceRuleMember => {
+                        quote! { declare_rule!(#production_kind); }
+                    }
                 }
                 .to_string(),
             );
@@ -136,6 +140,8 @@ impl CodeGenerator {
                 match parser.result_type {
                     ParserResultType::Token =>
                         quote! { define_token!(#production_kind, #parser_body); },
+                    ParserResultType::PrecedenceRuleMember =>
+                        quote! { define_precedence_rule_member!(#production_kind, #parser_body); },
                     ParserResultType::Rule =>
                         quote! { define_rule!(#production_kind, #parser_body); },
                 }
@@ -172,6 +178,8 @@ impl CodeGenerator {
                         // Macros -------------------------------------------
 
                         {}
+                        {}
+                        {}
 
                         // Define all productions ---------------------------
 
@@ -185,7 +193,9 @@ impl CodeGenerator {
                     boilerplate::parse_head(),
                     version_declarations.join(""),
                     parser_predeclarations.join(""),
-                    boilerplate::parse_macros(),
+                    to_scanner_code::parse_macros(),
+                    to_lexer_code::parse_macros(),
+                    to_parser_code::parse_macros(),
                     parser_definitions.join("\n\n"),
                 ),
             )
