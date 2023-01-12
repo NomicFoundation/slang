@@ -54,7 +54,6 @@
     delimitedBy:
       open: "/*"
       expression:
-        name: "Content"
         zeroOrMore:
           choice:
             - not:

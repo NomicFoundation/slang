@@ -66,10 +66,8 @@
       open: "'"
       expression:
         zeroOrMore:
-          name: "Run"
           choice:
             - oneOrMore:
-                name: "Char"
                 difference:
                   minuend:
                     range:
@@ -89,10 +87,8 @@
       open: '"'
       expression:
         zeroOrMore:
-          name: "Run"
           choice:
             - oneOrMore:
-                name: "Char"
                 difference:
                   minuend:
                     range:
@@ -119,10 +115,8 @@
       open: "unicode'"
       expression:
         zeroOrMore:
-          name: "Run"
           choice:
             - oneOrMore:
-                name: "Char"
                 not:
                   choice:
                     - terminal: "'"
@@ -139,10 +133,8 @@
       open: 'unicode"'
       expression:
         zeroOrMore:
-          name: "Run"
           choice:
             - oneOrMore:
-                name: "Char"
                 not:
                   choice:
                     - terminal: '"'

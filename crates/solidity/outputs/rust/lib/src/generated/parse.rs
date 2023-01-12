@@ -1281,14 +1281,13 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // «DoubleQuotedAsciiStringLiteral» = '"' { 1…*{ '\u{20}'…'~' - ( '"' | '\\' ) } | «EscapeSequence» } '"' ;
     define_token!(
         DoubleQuotedAsciiStringLiteral,
-        lex_seq!(
-            lex_terminal!(DoubleQuote, "\""),
-            lex_zero_or_more!(lex_choice!(
-                Run,
-                lex_one_or_more!(lex_terminal!(Char, |&c: &char| (' ' <= c && c <= '~')
+        scan_make_node!(scan_seq!(
+            scan_terminal!("\""),
+            scan_zero_or_more!(scan_choice!(
+                scan_one_or_more!(scan_terminal!(|&c: &char| (' ' <= c && c <= '~')
                     && c != '"'
                     && c != '\\')),
-                scan_make_node!(scan_seq!(
+                scan_seq!(
                     scan_terminal!('\\'),
                     scan_choice!(
                         scan_trie!(
@@ -1322,24 +1321,23 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                             )
                         )
                     )
-                ))
+                )
             )),
-            lex_terminal!(DoubleQuote, "\"")
-        )
+            scan_terminal!("\"")
+        ))
     );
 
     // «DoubleQuotedUnicodeStringLiteral» = 'unicode"' { 1…*{ ¬( '"' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '"' ;
     define_token!(
         DoubleQuotedUnicodeStringLiteral,
-        lex_seq!(
-            lex_terminal!(UnicodeDoubleQuote, "unicode\""),
-            lex_zero_or_more!(lex_choice!(
-                Run,
-                lex_one_or_more!(lex_terminal!(Char, |&c: &char| c != '"'
+        scan_make_node!(scan_seq!(
+            scan_terminal!("unicode\""),
+            scan_zero_or_more!(scan_choice!(
+                scan_one_or_more!(scan_terminal!(|&c: &char| c != '"'
                     && c != '\\'
                     && c != '\n'
                     && c != '\r')),
-                scan_make_node!(scan_seq!(
+                scan_seq!(
                     scan_terminal!('\\'),
                     scan_choice!(
                         scan_trie!(
@@ -1373,10 +1371,10 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                             )
                         )
                     )
-                ))
+                )
             )),
-            lex_terminal!(DoubleQuote, "\"")
-        )
+            scan_terminal!("\"")
+        ))
     );
 
     // ElementaryType = 'bool' | 'string' | AddressType | «FixedBytesType» | «SignedIntegerType» | «UnsignedIntegerType» | «SignedFixedType» | «UnsignedFixedType» ;
@@ -2784,17 +2782,14 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // «MultilineComment» = '/*' { ¬'*' | '*' ¬'/' } '*/' ;
     define_token!(
         MultilineComment,
-        lex_seq!(
-            lex_terminal!(SlashStar, "/*"),
-            lex_zero_or_more!(
-                Content,
-                scan_make_node!(scan_choice!(
-                    scan_terminal!(|&c: &char| c != '*'),
-                    scan_seq!(scan_terminal!('*'), scan_terminal!(|&c: &char| c != '/'))
-                ))
-            ),
-            lex_terminal!(StarSlash, "*/")
-        )
+        scan_make_node!(scan_seq!(
+            scan_terminal!("/*"),
+            scan_zero_or_more!(scan_choice!(
+                scan_terminal!(|&c: &char| c != '*'),
+                scan_seq!(scan_terminal!('*'), scan_terminal!(|&c: &char| c != '/'))
+            )),
+            scan_terminal!("*/")
+        ))
     );
 
     // NamedArgument = «Identifier» ':' Expression ;
@@ -3243,14 +3238,13 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // «SingleQuotedAsciiStringLiteral» = '\'' { 1…*{ '\u{20}'…'~' - ( '\'' | '\\' ) } | «EscapeSequence» } '\'' ;
     define_token!(
         SingleQuotedAsciiStringLiteral,
-        lex_seq!(
-            lex_terminal!(Quote, "'"),
-            lex_zero_or_more!(lex_choice!(
-                Run,
-                lex_one_or_more!(lex_terminal!(Char, |&c: &char| (' ' <= c && c <= '~')
+        scan_make_node!(scan_seq!(
+            scan_terminal!("'"),
+            scan_zero_or_more!(scan_choice!(
+                scan_one_or_more!(scan_terminal!(|&c: &char| (' ' <= c && c <= '~')
                     && c != '\''
                     && c != '\\')),
-                scan_make_node!(scan_seq!(
+                scan_seq!(
                     scan_terminal!('\\'),
                     scan_choice!(
                         scan_trie!(
@@ -3284,24 +3278,23 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                             )
                         )
                     )
-                ))
+                )
             )),
-            lex_terminal!(Quote, "'")
-        )
+            scan_terminal!("'")
+        ))
     );
 
     // «SingleQuotedUnicodeStringLiteral» = 'unicode\'' { 1…*{ ¬( '\'' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '\'' ;
     define_token!(
         SingleQuotedUnicodeStringLiteral,
-        lex_seq!(
-            lex_terminal!(UnicodeQuote, "unicode'"),
-            lex_zero_or_more!(lex_choice!(
-                Run,
-                lex_one_or_more!(lex_terminal!(Char, |&c: &char| c != '\''
+        scan_make_node!(scan_seq!(
+            scan_terminal!("unicode'"),
+            scan_zero_or_more!(scan_choice!(
+                scan_one_or_more!(scan_terminal!(|&c: &char| c != '\''
                     && c != '\\'
                     && c != '\n'
                     && c != '\r')),
-                scan_make_node!(scan_seq!(
+                scan_seq!(
                     scan_terminal!('\\'),
                     scan_choice!(
                         scan_trie!(
@@ -3335,10 +3328,10 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                             )
                         )
                     )
-                ))
+                )
             )),
-            lex_terminal!(Quote, "'")
-        )
+            scan_terminal!("'")
+        ))
     );
 
     // SourceUnit = LeadingTrivia { Directive | Definition } EndOfFileTrivia ;

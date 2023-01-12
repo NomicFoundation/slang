@@ -18,8 +18,7 @@
   unversioned:
     sequence:
       - terminal: "bytes"
-      - name: "Count"
-        lookahead: # Makes the likely errors clearer?
+      - lookahead: # Makes the likely errors clearer?
           not:
             range:
               from: "0"
@@ -64,7 +63,6 @@
     sequence:
       - terminal: "int"
       - optional:
-          name: "ByteCount"
           lookahead: # Makes the likely errors clearer?
             not:
               range:
