@@ -3,7 +3,7 @@
 #[allow(non_snake_case)]
 mod ContractDefinition;
 #[allow(non_snake_case)]
-mod ExponentiationExpression;
+mod Expression;
 #[allow(non_snake_case)]
 mod Identifier;
 #[allow(non_snake_case)]

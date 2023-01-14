@@ -110,8 +110,6 @@ impl<'context> CombinatorNode<'context> {
              */
             Self::PrecedenceRule { .. } => unreachable!(),
 
-            Self::PrecedenceRuleMember { .. } => unreachable!(),
-
             /**********************************************************************
              * Terminals and their utilities
              */

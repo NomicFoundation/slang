@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Errors: 0
+
+█ Rule(Expression) - (0..5)                       │
+└──█ Rule(FunctionCallExpression) - (0..5)        │
+   ├──█ Rule(FunctionCallExpression) - (0..3)     │
+   │  ├──█ Rule(PrimaryExpression) - (0..1)       │
+   │  │  └──► Token(Identifier) - (0..1)          │ x
+   │  └──█ Group - (1..3)                         │
+   │     └──█ Rule(ArgumentList) - (1..3)         │
+   │        ├──► Token(OpenParen) - (1..2)        │ (
+   │        └──► Token(CloseParen) - (2..3)       │ )
+   └──█ Group - (3..5)                            │
+      └──█ Rule(ArgumentList) - (3..5)            │
+         ├──► Token(OpenParen) - (3..4)           │ (
+         └──► Token(CloseParen) - (4..5)          │ )

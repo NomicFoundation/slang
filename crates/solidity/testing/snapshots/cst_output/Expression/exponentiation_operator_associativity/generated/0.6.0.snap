@@ -1,0 +1,15 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Errors: 0
+
+█ Rule(Expression) - (0..11)                         │
+└──█ Rule(ExponentiationExpression) - (0..11)        │
+   ├──█ Rule(PrimaryExpression) - (0..1)             │
+   │  └──► Token(Identifier) - (0..1)                │ x
+   ├──► Token(StarStar) - (2..4)                     │ **
+   └──█ Rule(ExponentiationExpression) - (5..11)     │
+      ├──█ Rule(PrimaryExpression) - (5..6)          │
+      │  └──► Token(Identifier) - (5..6)             │ y
+      ├──► Token(StarStar) - (7..9)                  │ **
+      └──█ Rule(PrimaryExpression) - (10..11)        │
+         └──► Token(Identifier) - (10..11)           │ z

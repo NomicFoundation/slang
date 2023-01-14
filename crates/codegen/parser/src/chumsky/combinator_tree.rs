@@ -8,7 +8,7 @@ use codegen_schema::types::productions::{
 use super::{
     code_generator::{CodeGenerator, ParserResultType},
     combinator_context::CombinatorContext,
-    combinator_node::{CombinatorNode, OperatorModel},
+    combinator_node::{CombinatorNode, OperatorModel, PrecedenceRuleOperator},
 };
 
 pub struct CombinatorTree<'context> {
@@ -37,17 +37,6 @@ impl<'context> CombinatorTree<'context> {
         if self.root_node.get().is_none() {
             let expression = &self.expression();
             let node = CombinatorNode::new(self, expression);
-
-            if let CombinatorNode::PrecedenceRule { members, .. } = node {
-                let mut members = members.clone();
-                members.reverse();
-                let mut next_member = None;
-                for member_tree in members {
-                    member_tree.convert_to_precedence_rule_member(self, next_member);
-                    next_member = Some(member_tree);
-                }
-            }
-
             self.root_node.set(Some(node));
         }
     }
@@ -75,20 +64,7 @@ impl<'context> CombinatorTree<'context> {
             ProductionKind::Rule => {
                 code.add_rule_kind(self.production.name.clone());
                 let parser = self.root_node.get().unwrap().to_parser_code(false, code);
-                if matches!(
-                    self.root_node.get().unwrap(),
-                    CombinatorNode::PrecedenceRuleMember { .. }
-                ) {
-                    code.add_parser(
-                        name,
-                        version,
-                        comment,
-                        parser,
-                        ParserResultType::PrecedenceRuleMember,
-                    );
-                } else {
-                    code.add_parser(name, version, comment, parser, ParserResultType::Rule);
-                }
+                code.add_parser(name, version, comment, parser, ParserResultType::Rule);
             }
 
             ProductionKind::Trivia => {
@@ -126,87 +102,72 @@ impl<'context> CombinatorTree<'context> {
         };
     }
 
-    fn convert_to_precedence_rule_member(
+    pub(crate) fn to_precedence_rule_operator(
         &'context self,
         parent_tree: &'context CombinatorTree<'context>,
-        next_tree: Option<&'context CombinatorTree<'context>>,
-    ) {
+    ) -> Option<PrecedenceRuleOperator> {
         self.ensure_tree_is_built();
 
-        self.root_node.set(Some({
-            if let Some(CombinatorNode::Sequence { elements, .. }) = self.root_node.get() {
-                let last_element_index = elements.len() - 1;
+        if let Some(CombinatorNode::Sequence { elements, .. }) = self.root_node.get() {
+            let last_element_index = elements.len() - 1;
 
-                let left = if let CombinatorNode::Reference { tree } = elements[0] {
-                    tree.production.name == parent_tree.production.name
-                } else {
-                    false
-                };
-
-                let right =
-                    if let CombinatorNode::Reference { tree, .. } = elements[last_element_index] {
-                        tree.production.name == parent_tree.production.name
-                    } else {
-                        false
-                    };
-
-                let (operator, model) = match (&left, &right) {
-                    (false, false) => (
-                        elements[..].iter().map(|v| *v).collect::<Vec<_>>(),
-                        OperatorModel::None,
-                    ),
-                    (false, true) => (
-                        elements[..last_element_index]
-                            .into_iter()
-                            .map(|v| *v)
-                            .collect::<Vec<_>>(),
-                        OperatorModel::UnaryPrefix,
-                    ),
-                    (true, false) => (
-                        elements[1..].into_iter().map(|v| *v).collect::<Vec<_>>(),
-                        OperatorModel::UnarySuffix,
-                    ),
-                    (true, true) => (
-                        elements[1..last_element_index]
-                            .into_iter()
-                            .map(|v| *v)
-                            .collect::<Vec<_>>(),
-                        if self.expression().config.associativity
-                            == Some(ExpressionAssociativity::Right)
-                        {
-                            OperatorModel::BinaryRightAssociative
-                        } else {
-                            OperatorModel::BinaryLeftAssociative
-                        },
-                    ),
-                };
-                let operator = if operator.len() == 1 {
-                    operator[0]
-                } else {
-                    self.context.alloc_node(CombinatorNode::Sequence {
-                        name: None,
-                        elements: operator,
-                    })
-                };
-
-                self.context
-                    .alloc_node(CombinatorNode::PrecedenceRuleMember {
-                        tree: self,
-                        parent: parent_tree,
-                        next_sibling: next_tree,
-                        operator: operator,
-                        operator_model: model,
-                    })
+            let left = if let CombinatorNode::Reference { tree } = elements[0] {
+                tree.production.name == parent_tree.production.name
             } else {
-                self.context
-                    .alloc_node(CombinatorNode::PrecedenceRuleMember {
-                        tree: self,
-                        parent: parent_tree,
-                        next_sibling: next_tree,
-                        operator: self.root_node.get().unwrap(),
-                        operator_model: OperatorModel::None,
-                    })
-            }
-        }));
+                false
+            };
+
+            let right = if let CombinatorNode::Reference { tree, .. } = elements[last_element_index]
+            {
+                tree.production.name == parent_tree.production.name
+            } else {
+                false
+            };
+
+            let (operator, model) = match (&left, &right) {
+                (false, false) => return None,
+                (false, true) => (
+                    elements[..last_element_index]
+                        .into_iter()
+                        .map(|v| *v)
+                        .collect::<Vec<_>>(),
+                    OperatorModel::UnaryPrefix,
+                ),
+                (true, false) => (
+                    elements[1..].into_iter().map(|v| *v).collect::<Vec<_>>(),
+                    OperatorModel::UnarySuffix,
+                ),
+                (true, true) => (
+                    elements[1..last_element_index]
+                        .into_iter()
+                        .map(|v| *v)
+                        .collect::<Vec<_>>(),
+                    if self.expression().config.associativity
+                        == Some(ExpressionAssociativity::Right)
+                    {
+                        OperatorModel::BinaryRightAssociative
+                    } else {
+                        OperatorModel::BinaryLeftAssociative
+                    },
+                ),
+            };
+
+            let operator = if operator.len() == 1 {
+                operator[0]
+            } else {
+                self.context.alloc_node(CombinatorNode::Sequence {
+                    name: None,
+                    elements: operator,
+                })
+            };
+
+            Some(PrecedenceRuleOperator {
+                name: self.production.name.clone(),
+                model,
+                operator: operator,
+            })
+        } else {
+            return None;
+        }
     }
 }

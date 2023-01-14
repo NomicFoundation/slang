@@ -453,6 +453,15 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
             );
         };
     }
+    enum Pratt {
+        Operator {
+            kind: RuleKind,
+            node: Option<Rc<cst::Node>>,
+            left_binding_power: u8,
+            right_binding_power: u8,
+        },
+        Node(Option<Rc<cst::Node>>),
+    }
     #[allow(unused_macros)]
     macro_rules! trivia_terminal {
         ($ kind : ident , $ literal : literal) => {
@@ -722,22 +731,6 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
             );
         };
     }
-    #[allow(unused_macros)]
-    macro_rules! define_precedence_rule_member {
-        ($ kind : ident , $ expr : expr) => {
-            $kind.define($expr);
-            parsers.insert(
-                ProductionKind::$kind,
-                Parser::new(
-                    $kind
-                        .clone()
-                        .map(|node| cst::Node::top_level_rule(RuleKind::$kind, node))
-                        .then_ignore(end())
-                        .boxed(),
-                ),
-            );
-        };
-    }
 
     // Define all productions ---------------------------
 
@@ -748,12 +741,12 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     );
 
     // AddSubExpression = Expression ( '+' | '-' ) Expression ;
-    define_precedence_rule_member!(
+    define_rule!(
         AddSubExpression,
-        left_associative_binary_expression!(
-            AddSubExpression,
-            MulDivModExpression,
-            trie!(trieleaf!(Plus, "+"), trieleaf!(Minus, "-"))
+        seq!(
+            rule!(Expression),
+            trie!(trieleaf!(Plus, "+"), trieleaf!(Minus, "-")),
+            rule!(Expression)
         )
     );
 
@@ -767,12 +760,12 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     );
 
     // AndExpression = Expression '&&' Expression ;
-    define_precedence_rule_member!(
+    define_rule!(
         AndExpression,
-        left_associative_binary_expression!(
-            AndExpression,
-            EqualityComparisonExpression,
-            trie!(trieleaf!(AmpersandAmpersand, "&&"))
+        seq!(
+            rule!(Expression),
+            trie!(trieleaf!(AmpersandAmpersand, "&&")),
+            rule!(Expression)
         )
     );
 
@@ -932,11 +925,10 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     );
 
     // AssignmentExpression = Expression ( '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ) Expression ;
-    define_precedence_rule_member!(
+    define_rule!(
         AssignmentExpression,
-        left_associative_binary_expression!(
-            AssignmentExpression,
-            ConditionalExpression,
+        seq!(
+            rule!(Expression),
             trie!(
                 trieleaf!(PercentEqual, "%="),
                 trieleaf!(AmpersandEqual, "&="),
@@ -955,37 +947,38 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                 ),
                 trieleaf!(CaretEqual, "^="),
                 trieleaf!(PipeEqual, "|=")
-            )
+            ),
+            rule!(Expression)
         )
     );
 
     // BitAndExpression = Expression '&' Expression ;
-    define_precedence_rule_member!(
+    define_rule!(
         BitAndExpression,
-        left_associative_binary_expression!(
-            BitAndExpression,
-            ShiftExpression,
-            trie!(trieleaf!(Ampersand, "&"))
+        seq!(
+            rule!(Expression),
+            trie!(trieleaf!(Ampersand, "&")),
+            rule!(Expression)
         )
     );
 
     // BitOrExpression = Expression '|' Expression ;
-    define_precedence_rule_member!(
+    define_rule!(
         BitOrExpression,
-        left_associative_binary_expression!(
-            BitOrExpression,
-            BitXOrExpression,
-            trie!(trieleaf!(Pipe, "|"))
+        seq!(
+            rule!(Expression),
+            trie!(trieleaf!(Pipe, "|")),
+            rule!(Expression)
         )
     );
 
     // BitXOrExpression = Expression '^' Expression ;
-    define_precedence_rule_member!(
+    define_rule!(
         BitXOrExpression,
-        left_associative_binary_expression!(
-            BitXOrExpression,
-            BitAndExpression,
-            trie!(trieleaf!(Caret, "^"))
+        seq!(
+            rule!(Expression),
+            trie!(trieleaf!(Caret, "^")),
+            rule!(Expression)
         )
     );
 
@@ -1025,11 +1018,10 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     );
 
     // ConditionalExpression = Expression '?' Expression ':' Expression ;
-    define_precedence_rule_member!(
+    define_rule!(
         ConditionalExpression,
-        unary_suffix_expression!(
-            ConditionalExpression,
-            OrExpression,
+        seq!(
+            rule!(Expression),
             seq!(
                 trie!(trieleaf!(Question, "?")),
                 rule!(Expression),
@@ -1435,12 +1427,12 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     );
 
     // EqualityComparisonExpression = Expression ( '==' | '!=' ) Expression ;
-    define_precedence_rule_member!(
+    define_rule!(
         EqualityComparisonExpression,
-        left_associative_binary_expression!(
-            EqualityComparisonExpression,
-            OrderComparisonExpression,
-            trie!(trieleaf!(BangEqual, "!="), trieleaf!(EqualEqual, "=="))
+        seq!(
+            rule!(Expression),
+            trie!(trieleaf!(BangEqual, "!="), trieleaf!(EqualEqual, "==")),
+            rule!(Expression)
         )
     );
 
@@ -1542,27 +1534,633 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
 
     // (* 0.4.11 *) ExponentiationExpression = Expression '**' Expression ;
     // (* 0.6.0 *) ExponentiationExpression = Expression '**' Expression ;
-    define_precedence_rule_member!(
+    define_rule!(
         ExponentiationExpression,
         if version_0_6_0 <= version {
-            right_associative_binary_expression!(
-                ExponentiationExpression,
-                UnarySuffixExpression,
-                trie!(trieleaf!(StarStar, "**"))
+            seq!(
+                rule!(Expression),
+                trie!(trieleaf!(StarStar, "**")),
+                rule!(Expression)
             )
             .boxed()
         } else {
-            left_associative_binary_expression!(
-                ExponentiationExpression,
-                UnarySuffixExpression,
-                trie!(trieleaf!(StarStar, "**"))
+            seq!(
+                rule!(Expression),
+                trie!(trieleaf!(StarStar, "**")),
+                rule!(Expression)
             )
             .boxed()
         }
     );
 
-    // Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnarySuffixExpression | UnaryPrefixExpression | FunctionCallExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
-    define_rule!(Expression, rule!(AssignmentExpression));
+    // (* 0.4.11 *) Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnarySuffixExpression | UnaryPrefixExpression | FunctionCallExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
+    // (* 0.6.0 *) Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnarySuffixExpression | UnaryPrefixExpression | FunctionCallExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
+    define_rule!(
+        Expression,
+        if version_0_6_0 <= version {
+            {
+                let prefix_operators = trie!(
+                    trieleaf!(Bang, "!"),
+                    trieleaf!(PlusPlus, "++"),
+                    trieprefix!("-", [trieleaf!(MinusMinus, "-"), trieleaf!(Minus)]),
+                    trieleaf!(Tilde, "~")
+                )
+                .map(|node| Pratt::Operator {
+                    node,
+                    kind: RuleKind::UnaryPrefixExpression,
+                    left_binding_power: 255,
+                    right_binding_power: 29u8,
+                });
+                let suffix_operators = choice!(
+                    delimited_by!(
+                        terminal!(OpenBracket, "["),
+                        seq!(
+                            optional!(rule!(Expression)),
+                            optional!(seq!(
+                                trie!(trieleaf!(Colon, ":")),
+                                optional!(rule!(Expression))
+                            ))
+                        ),
+                        terminal!(CloseBracket, "]")
+                    )
+                    .map(|node| Pratt::Operator {
+                        node,
+                        kind: RuleKind::IndexAccessExpression,
+                        left_binding_power: 35u8,
+                        right_binding_power: 255
+                    }),
+                    seq!(
+                        trie!(trieleaf!(Period, ".")),
+                        choice!(token!(Identifier), trie!(trieleaf!(Address, "address")))
+                    )
+                    .map(|node| Pratt::Operator {
+                        node,
+                        kind: RuleKind::MemberAccessExpression,
+                        left_binding_power: 33u8,
+                        right_binding_power: 255
+                    }),
+                    seq!(
+                        optional!(delimited_by!(
+                            terminal!(OpenBrace, "{"),
+                            separated_by!(rule!(NamedArgument), terminal!(Comma, ",")),
+                            terminal!(CloseBrace, "}")
+                        )),
+                        rule!(ArgumentList)
+                    )
+                    .map(|node| Pratt::Operator {
+                        node,
+                        kind: RuleKind::FunctionCallExpression,
+                        left_binding_power: 31u8,
+                        right_binding_power: 255
+                    }),
+                    trie!(trieleaf!(PlusPlus, "++"), trieleaf!(MinusMinus, "--")).map(|node| {
+                        Pratt::Operator {
+                            node,
+                            kind: RuleKind::UnarySuffixExpression,
+                            left_binding_power: 27u8,
+                            right_binding_power: 255,
+                        }
+                    }),
+                    seq!(
+                        trie!(trieleaf!(Question, "?")),
+                        rule!(Expression),
+                        trie!(trieleaf!(Colon, ":")),
+                        rule!(Expression)
+                    )
+                    .map(|node| Pratt::Operator {
+                        node,
+                        kind: RuleKind::ConditionalExpression,
+                        left_binding_power: 3u8,
+                        right_binding_power: 255
+                    })
+                );
+                let primary = rule!(PrimaryExpression);
+                let prefixes_primary_suffixes = prefix_operators
+                    .repeated()
+                    .then(primary)
+                    .then(suffix_operators.repeated());
+                type PPS = ((Vec<Pratt>, Option<Rc<cst::Node>>), Vec<Pratt>);
+                let binary_operator = choice!(
+                    trie!(trieleaf!(StarStar, "**")).map(|node| Pratt::Operator {
+                        node,
+                        kind: RuleKind::ExponentiationExpression,
+                        left_binding_power: 25u8 + 1,
+                        right_binding_power: 25u8
+                    }),
+                    trie!(
+                        trieleaf!(Percent, "%"),
+                        trieleaf!(Star, "*"),
+                        trieleaf!(Slash, "/")
+                    )
+                    .map(|node| Pratt::Operator {
+                        node,
+                        kind: RuleKind::MulDivModExpression,
+                        left_binding_power: 23u8,
+                        right_binding_power: 23u8 + 1
+                    }),
+                    trie!(trieleaf!(Plus, "+"), trieleaf!(Minus, "-")).map(|node| {
+                        Pratt::Operator {
+                            node,
+                            kind: RuleKind::AddSubExpression,
+                            left_binding_power: 21u8,
+                            right_binding_power: 21u8 + 1,
+                        }
+                    }),
+                    trie!(
+                        trieleaf!(LessLess, "<<"),
+                        trieprefix!(
+                            ">>",
+                            [
+                                trieleaf!(GreaterGreaterGreater, ">"),
+                                trieleaf!(GreaterGreater)
+                            ]
+                        )
+                    )
+                    .map(|node| Pratt::Operator {
+                        node,
+                        kind: RuleKind::ShiftExpression,
+                        left_binding_power: 19u8,
+                        right_binding_power: 19u8 + 1
+                    }),
+                    trie!(trieleaf!(Ampersand, "&")).map(|node| Pratt::Operator {
+                        node,
+                        kind: RuleKind::BitAndExpression,
+                        left_binding_power: 17u8,
+                        right_binding_power: 17u8 + 1
+                    }),
+                    trie!(trieleaf!(Caret, "^")).map(|node| Pratt::Operator {
+                        node,
+                        kind: RuleKind::BitXOrExpression,
+                        left_binding_power: 15u8,
+                        right_binding_power: 15u8 + 1
+                    }),
+                    trie!(trieleaf!(Pipe, "|")).map(|node| Pratt::Operator {
+                        node,
+                        kind: RuleKind::BitOrExpression,
+                        left_binding_power: 13u8,
+                        right_binding_power: 13u8 + 1
+                    }),
+                    trie!(
+                        trieprefix!("<", [trieleaf!(LessEqual, "="), trieleaf!(Less)]),
+                        trieprefix!(">", [trieleaf!(GreaterEqual, "="), trieleaf!(Greater)])
+                    )
+                    .map(|node| Pratt::Operator {
+                        node,
+                        kind: RuleKind::OrderComparisonExpression,
+                        left_binding_power: 11u8,
+                        right_binding_power: 11u8 + 1
+                    }),
+                    trie!(trieleaf!(BangEqual, "!="), trieleaf!(EqualEqual, "==")).map(|node| {
+                        Pratt::Operator {
+                            node,
+                            kind: RuleKind::EqualityComparisonExpression,
+                            left_binding_power: 9u8,
+                            right_binding_power: 9u8 + 1,
+                        }
+                    }),
+                    trie!(trieleaf!(AmpersandAmpersand, "&&")).map(|node| Pratt::Operator {
+                        node,
+                        kind: RuleKind::AndExpression,
+                        left_binding_power: 7u8,
+                        right_binding_power: 7u8 + 1
+                    }),
+                    trie!(trieleaf!(PipePipe, "||")).map(|node| Pratt::Operator {
+                        node,
+                        kind: RuleKind::OrExpression,
+                        left_binding_power: 5u8,
+                        right_binding_power: 5u8 + 1
+                    }),
+                    trie!(
+                        trieleaf!(PercentEqual, "%="),
+                        trieleaf!(AmpersandEqual, "&="),
+                        trieleaf!(StarEqual, "*="),
+                        trieleaf!(PlusEqual, "+="),
+                        trieleaf!(MinusEqual, "-="),
+                        trieleaf!(SlashEqual, "/="),
+                        trieleaf!(LessLessEqual, "<<="),
+                        trieleaf!(Equal, "="),
+                        trieprefix!(
+                            ">>",
+                            [
+                                trieleaf!(GreaterGreaterEqual, "="),
+                                trieleaf!(GreaterGreaterGreaterEqual, ">=")
+                            ]
+                        ),
+                        trieleaf!(CaretEqual, "^="),
+                        trieleaf!(PipeEqual, "|=")
+                    )
+                    .map(|node| Pratt::Operator {
+                        node,
+                        kind: RuleKind::AssignmentExpression,
+                        left_binding_power: 1u8,
+                        right_binding_power: 1u8 + 1
+                    })
+                );
+                prefixes_primary_suffixes
+                    .clone()
+                    .then(binary_operator.then(prefixes_primary_suffixes).repeated())
+                    .map(|(pps, tail): (PPS, Vec<(Pratt, PPS)>)| {
+                        let mut elements = Vec::new();
+                        let ((prefixes, expr), suffixes) = pps;
+                        elements.extend(prefixes.into_iter());
+                        elements.push(Pratt::Node(expr));
+                        elements.extend(suffixes.into_iter());
+                        for (op, pps) in tail.into_iter() {
+                            elements.push(op);
+                            let ((prefixes, expr), suffixes) = pps;
+                            elements.extend(prefixes.into_iter());
+                            elements.push(Pratt::Node(expr));
+                            elements.extend(suffixes.into_iter());
+                        }
+                        let mut i = 0;
+                        while elements.len() > 1 {
+                            if let Pratt::Operator {
+                                right_binding_power,
+                                left_binding_power,
+                                ..
+                            } = &elements[i]
+                            {
+                                let next_left_binding_power = if elements.len() == i + 1 {
+                                    0
+                                } else if let Pratt::Operator {
+                                    left_binding_power, ..
+                                } = &elements[i + 1]
+                                {
+                                    *left_binding_power
+                                } else if elements.len() == i + 2 {
+                                    0
+                                } else if let Pratt::Operator {
+                                    left_binding_power, ..
+                                } = &elements[i + 2]
+                                {
+                                    *left_binding_power
+                                } else {
+                                    0
+                                };
+                                if *right_binding_power <= next_left_binding_power {
+                                    i += 1;
+                                    continue;
+                                }
+                                if *right_binding_power == 255 {
+                                    let left = elements.remove(i - 1);
+                                    let op = elements.remove(i - 1);
+                                    if let (
+                                        Pratt::Node(left),
+                                        Pratt::Operator { node: op, kind, .. },
+                                    ) = (left, op)
+                                    {
+                                        let node = cst::Node::rule(kind, vec![left, op]);
+                                        elements.insert(i - 1, Pratt::Node(node));
+                                        i = 0;
+                                    } else {
+                                        unreachable!()
+                                    }
+                                } else if *left_binding_power == 255 {
+                                    let op = elements.remove(i);
+                                    let right = elements.remove(i);
+                                    if let (
+                                        Pratt::Operator { node: op, kind, .. },
+                                        Pratt::Node(right),
+                                    ) = (op, right)
+                                    {
+                                        let node = cst::Node::rule(kind, vec![op, right]);
+                                        elements.insert(i, Pratt::Node(node));
+                                        i = 0;
+                                    } else {
+                                        unreachable!()
+                                    }
+                                } else {
+                                    let left = elements.remove(i - 1);
+                                    let op = elements.remove(i - 1);
+                                    let right = elements.remove(i - 1);
+                                    if let (
+                                        Pratt::Node(left),
+                                        Pratt::Operator { node: op, kind, .. },
+                                        Pratt::Node(right),
+                                    ) = (left, op, right)
+                                    {
+                                        let node = cst::Node::rule(kind, vec![left, op, right]);
+                                        elements.insert(i - 1, Pratt::Node(node));
+                                        i = 0;
+                                    } else {
+                                        unreachable!()
+                                    }
+                                }
+                            } else {
+                                i += 1;
+                            }
+                        }
+                        if let Pratt::Node(node) = elements.pop().unwrap() {
+                            node
+                        } else {
+                            unreachable!()
+                        }
+                    })
+            }
+            .boxed()
+        } else {
+            {
+                let prefix_operators = trie!(
+                    trieleaf!(Bang, "!"),
+                    trieleaf!(PlusPlus, "++"),
+                    trieprefix!("-", [trieleaf!(MinusMinus, "-"), trieleaf!(Minus)]),
+                    trieleaf!(Tilde, "~")
+                )
+                .map(|node| Pratt::Operator {
+                    node,
+                    kind: RuleKind::UnaryPrefixExpression,
+                    left_binding_power: 255,
+                    right_binding_power: 29u8,
+                });
+                let suffix_operators = choice!(
+                    delimited_by!(
+                        terminal!(OpenBracket, "["),
+                        seq!(
+                            optional!(rule!(Expression)),
+                            optional!(seq!(
+                                trie!(trieleaf!(Colon, ":")),
+                                optional!(rule!(Expression))
+                            ))
+                        ),
+                        terminal!(CloseBracket, "]")
+                    )
+                    .map(|node| Pratt::Operator {
+                        node,
+                        kind: RuleKind::IndexAccessExpression,
+                        left_binding_power: 35u8,
+                        right_binding_power: 255
+                    }),
+                    seq!(
+                        trie!(trieleaf!(Period, ".")),
+                        choice!(token!(Identifier), trie!(trieleaf!(Address, "address")))
+                    )
+                    .map(|node| Pratt::Operator {
+                        node,
+                        kind: RuleKind::MemberAccessExpression,
+                        left_binding_power: 33u8,
+                        right_binding_power: 255
+                    }),
+                    seq!(
+                        optional!(delimited_by!(
+                            terminal!(OpenBrace, "{"),
+                            separated_by!(rule!(NamedArgument), terminal!(Comma, ",")),
+                            terminal!(CloseBrace, "}")
+                        )),
+                        rule!(ArgumentList)
+                    )
+                    .map(|node| Pratt::Operator {
+                        node,
+                        kind: RuleKind::FunctionCallExpression,
+                        left_binding_power: 31u8,
+                        right_binding_power: 255
+                    }),
+                    trie!(trieleaf!(PlusPlus, "++"), trieleaf!(MinusMinus, "--")).map(|node| {
+                        Pratt::Operator {
+                            node,
+                            kind: RuleKind::UnarySuffixExpression,
+                            left_binding_power: 27u8,
+                            right_binding_power: 255,
+                        }
+                    }),
+                    seq!(
+                        trie!(trieleaf!(Question, "?")),
+                        rule!(Expression),
+                        trie!(trieleaf!(Colon, ":")),
+                        rule!(Expression)
+                    )
+                    .map(|node| Pratt::Operator {
+                        node,
+                        kind: RuleKind::ConditionalExpression,
+                        left_binding_power: 3u8,
+                        right_binding_power: 255
+                    })
+                );
+                let primary = rule!(PrimaryExpression);
+                let prefixes_primary_suffixes = prefix_operators
+                    .repeated()
+                    .then(primary)
+                    .then(suffix_operators.repeated());
+                type PPS = ((Vec<Pratt>, Option<Rc<cst::Node>>), Vec<Pratt>);
+                let binary_operator = choice!(
+                    trie!(trieleaf!(StarStar, "**")).map(|node| Pratt::Operator {
+                        node,
+                        kind: RuleKind::ExponentiationExpression,
+                        left_binding_power: 25u8,
+                        right_binding_power: 25u8 + 1
+                    }),
+                    trie!(
+                        trieleaf!(Percent, "%"),
+                        trieleaf!(Star, "*"),
+                        trieleaf!(Slash, "/")
+                    )
+                    .map(|node| Pratt::Operator {
+                        node,
+                        kind: RuleKind::MulDivModExpression,
+                        left_binding_power: 23u8,
+                        right_binding_power: 23u8 + 1
+                    }),
+                    trie!(trieleaf!(Plus, "+"), trieleaf!(Minus, "-")).map(|node| {
+                        Pratt::Operator {
+                            node,
+                            kind: RuleKind::AddSubExpression,
+                            left_binding_power: 21u8,
+                            right_binding_power: 21u8 + 1,
+                        }
+                    }),
+                    trie!(
+                        trieleaf!(LessLess, "<<"),
+                        trieprefix!(
+                            ">>",
+                            [
+                                trieleaf!(GreaterGreaterGreater, ">"),
+                                trieleaf!(GreaterGreater)
+                            ]
+                        )
+                    )
+                    .map(|node| Pratt::Operator {
+                        node,
+                        kind: RuleKind::ShiftExpression,
+                        left_binding_power: 19u8,
+                        right_binding_power: 19u8 + 1
+                    }),
+                    trie!(trieleaf!(Ampersand, "&")).map(|node| Pratt::Operator {
+                        node,
+                        kind: RuleKind::BitAndExpression,
+                        left_binding_power: 17u8,
+                        right_binding_power: 17u8 + 1
+                    }),
+                    trie!(trieleaf!(Caret, "^")).map(|node| Pratt::Operator {
+                        node,
+                        kind: RuleKind::BitXOrExpression,
+                        left_binding_power: 15u8,
+                        right_binding_power: 15u8 + 1
+                    }),
+                    trie!(trieleaf!(Pipe, "|")).map(|node| Pratt::Operator {
+                        node,
+                        kind: RuleKind::BitOrExpression,
+                        left_binding_power: 13u8,
+                        right_binding_power: 13u8 + 1
+                    }),
+                    trie!(
+                        trieprefix!("<", [trieleaf!(LessEqual, "="), trieleaf!(Less)]),
+                        trieprefix!(">", [trieleaf!(GreaterEqual, "="), trieleaf!(Greater)])
+                    )
+                    .map(|node| Pratt::Operator {
+                        node,
+                        kind: RuleKind::OrderComparisonExpression,
+                        left_binding_power: 11u8,
+                        right_binding_power: 11u8 + 1
+                    }),
+                    trie!(trieleaf!(BangEqual, "!="), trieleaf!(EqualEqual, "==")).map(|node| {
+                        Pratt::Operator {
+                            node,
+                            kind: RuleKind::EqualityComparisonExpression,
+                            left_binding_power: 9u8,
+                            right_binding_power: 9u8 + 1,
+                        }
+                    }),
+                    trie!(trieleaf!(AmpersandAmpersand, "&&")).map(|node| Pratt::Operator {
+                        node,
+                        kind: RuleKind::AndExpression,
+                        left_binding_power: 7u8,
+                        right_binding_power: 7u8 + 1
+                    }),
+                    trie!(trieleaf!(PipePipe, "||")).map(|node| Pratt::Operator {
+                        node,
+                        kind: RuleKind::OrExpression,
+                        left_binding_power: 5u8,
+                        right_binding_power: 5u8 + 1
+                    }),
+                    trie!(
+                        trieleaf!(PercentEqual, "%="),
+                        trieleaf!(AmpersandEqual, "&="),
+                        trieleaf!(StarEqual, "*="),
+                        trieleaf!(PlusEqual, "+="),
+                        trieleaf!(MinusEqual, "-="),
+                        trieleaf!(SlashEqual, "/="),
+                        trieleaf!(LessLessEqual, "<<="),
+                        trieleaf!(Equal, "="),
+                        trieprefix!(
+                            ">>",
+                            [
+                                trieleaf!(GreaterGreaterEqual, "="),
+                                trieleaf!(GreaterGreaterGreaterEqual, ">=")
+                            ]
+                        ),
+                        trieleaf!(CaretEqual, "^="),
+                        trieleaf!(PipeEqual, "|=")
+                    )
+                    .map(|node| Pratt::Operator {
+                        node,
+                        kind: RuleKind::AssignmentExpression,
+                        left_binding_power: 1u8,
+                        right_binding_power: 1u8 + 1
+                    })
+                );
+                prefixes_primary_suffixes
+                    .clone()
+                    .then(binary_operator.then(prefixes_primary_suffixes).repeated())
+                    .map(|(pps, tail): (PPS, Vec<(Pratt, PPS)>)| {
+                        let mut elements = Vec::new();
+                        let ((prefixes, expr), suffixes) = pps;
+                        elements.extend(prefixes.into_iter());
+                        elements.push(Pratt::Node(expr));
+                        elements.extend(suffixes.into_iter());
+                        for (op, pps) in tail.into_iter() {
+                            elements.push(op);
+                            let ((prefixes, expr), suffixes) = pps;
+                            elements.extend(prefixes.into_iter());
+                            elements.push(Pratt::Node(expr));
+                            elements.extend(suffixes.into_iter());
+                        }
+                        let mut i = 0;
+                        while elements.len() > 1 {
+                            if let Pratt::Operator {
+                                right_binding_power,
+                                left_binding_power,
+                                ..
+                            } = &elements[i]
+                            {
+                                let next_left_binding_power = if elements.len() == i + 1 {
+                                    0
+                                } else if let Pratt::Operator {
+                                    left_binding_power, ..
+                                } = &elements[i + 1]
+                                {
+                                    *left_binding_power
+                                } else if elements.len() == i + 2 {
+                                    0
+                                } else if let Pratt::Operator {
+                                    left_binding_power, ..
+                                } = &elements[i + 2]
+                                {
+                                    *left_binding_power
+                                } else {
+                                    0
+                                };
+                                if *right_binding_power <= next_left_binding_power {
+                                    i += 1;
+                                    continue;
+                                }
+                                if *right_binding_power == 255 {
+                                    let left = elements.remove(i - 1);
+                                    let op = elements.remove(i - 1);
+                                    if let (
+                                        Pratt::Node(left),
+                                        Pratt::Operator { node: op, kind, .. },
+                                    ) = (left, op)
+                                    {
+                                        let node = cst::Node::rule(kind, vec![left, op]);
+                                        elements.insert(i - 1, Pratt::Node(node));
+                                        i = 0;
+                                    } else {
+                                        unreachable!()
+                                    }
+                                } else if *left_binding_power == 255 {
+                                    let op = elements.remove(i);
+                                    let right = elements.remove(i);
+                                    if let (
+                                        Pratt::Operator { node: op, kind, .. },
+                                        Pratt::Node(right),
+                                    ) = (op, right)
+                                    {
+                                        let node = cst::Node::rule(kind, vec![op, right]);
+                                        elements.insert(i, Pratt::Node(node));
+                                        i = 0;
+                                    } else {
+                                        unreachable!()
+                                    }
+                                } else {
+                                    let left = elements.remove(i - 1);
+                                    let op = elements.remove(i - 1);
+                                    let right = elements.remove(i - 1);
+                                    if let (
+                                        Pratt::Node(left),
+                                        Pratt::Operator { node: op, kind, .. },
+                                        Pratt::Node(right),
+                                    ) = (left, op, right)
+                                    {
+                                        let node = cst::Node::rule(kind, vec![left, op, right]);
+                                        elements.insert(i - 1, Pratt::Node(node));
+                                        i = 0;
+                                    } else {
+                                        unreachable!()
+                                    }
+                                }
+                            } else {
+                                i += 1;
+                            }
+                        }
+                        if let Pratt::Node(node) = elements.pop().unwrap() {
+                            node
+                        } else {
+                            unreachable!()
+                        }
+                    })
+            }
+            .boxed()
+        }
+    );
 
     // ExpressionStatement = Expression ';' ;
     define_rule!(
@@ -1697,19 +2295,16 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     );
 
     // FunctionCallExpression = Expression [ '{' NamedArgument  { ',' NamedArgument } '}' ] ArgumentList ;
-    define_precedence_rule_member!(
+    define_rule!(
         FunctionCallExpression,
-        unary_suffix_expression!(
-            FunctionCallExpression,
-            MemberAccessExpression,
-            seq!(
-                optional!(delimited_by!(
-                    terminal!(OpenBrace, "{"),
-                    separated_by!(rule!(NamedArgument), terminal!(Comma, ",")),
-                    terminal!(CloseBrace, "}")
-                )),
-                rule!(ArgumentList)
-            )
+        seq!(
+            rule!(Expression),
+            optional!(delimited_by!(
+                terminal!(OpenBrace, "{"),
+                separated_by!(rule!(NamedArgument), terminal!(Comma, ",")),
+                terminal!(CloseBrace, "}")
+            )),
+            rule!(ArgumentList)
         )
     );
 
@@ -2295,11 +2890,10 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(ImportPath, token!(AsciiStringLiteral));
 
     // IndexAccessExpression = Expression '[' [ Expression ] [ ':' [ Expression ] ] ']' ;
-    define_precedence_rule_member!(
+    define_rule!(
         IndexAccessExpression,
-        unary_suffix_expression!(
-            IndexAccessExpression,
-            PrimaryExpression,
+        seq!(
+            rule!(Expression),
             delimited_by!(
                 terminal!(OpenBracket, "["),
                 seq!(
@@ -2726,15 +3320,12 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     );
 
     // MemberAccessExpression = Expression '.' ( «Identifier» | 'address' ) ;
-    define_precedence_rule_member!(
+    define_rule!(
         MemberAccessExpression,
-        unary_suffix_expression!(
-            MemberAccessExpression,
-            IndexAccessExpression,
-            seq!(
-                trie!(trieleaf!(Period, ".")),
-                choice!(token!(Identifier), trie!(trieleaf!(Address, "address")))
-            )
+        seq!(
+            rule!(Expression),
+            trie!(trieleaf!(Period, ".")),
+            choice!(token!(Identifier), trie!(trieleaf!(Address, "address")))
         )
     );
 
@@ -2766,16 +3357,16 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     );
 
     // MulDivModExpression = Expression ( '*' | '/' | '%' ) Expression ;
-    define_precedence_rule_member!(
+    define_rule!(
         MulDivModExpression,
-        left_associative_binary_expression!(
-            MulDivModExpression,
-            ExponentiationExpression,
+        seq!(
+            rule!(Expression),
             trie!(
                 trieleaf!(Percent, "%"),
                 trieleaf!(Star, "*"),
                 trieleaf!(Slash, "/")
-            )
+            ),
+            rule!(Expression)
         )
     );
 
@@ -2848,25 +3439,25 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     );
 
     // OrExpression = Expression '||' Expression ;
-    define_precedence_rule_member!(
+    define_rule!(
         OrExpression,
-        left_associative_binary_expression!(
-            OrExpression,
-            AndExpression,
-            trie!(trieleaf!(PipePipe, "||"))
+        seq!(
+            rule!(Expression),
+            trie!(trieleaf!(PipePipe, "||")),
+            rule!(Expression)
         )
     );
 
     // OrderComparisonExpression = Expression ( '<' | '>' | '<=' | '>=' ) Expression ;
-    define_precedence_rule_member!(
+    define_rule!(
         OrderComparisonExpression,
-        left_associative_binary_expression!(
-            OrderComparisonExpression,
-            BitOrExpression,
+        seq!(
+            rule!(Expression),
             trie!(
                 trieprefix!("<", [trieleaf!(LessEqual, "="), trieleaf!(Less)]),
                 trieprefix!(">", [trieleaf!(GreaterEqual, "="), trieleaf!(Greater)])
-            )
+            ),
+            rule!(Expression)
         )
     );
 
@@ -2967,7 +3558,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     );
 
     // PrimaryExpression = PayableExpression | TypeExpression | NewExpression | ParenthesisExpression | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | NumericLiteral | «BooleanLiteral» | «Identifier» ;
-    define_precedence_rule_member!(
+    define_rule!(
         PrimaryExpression,
         choice!(
             rule!(PayableExpression),
@@ -3124,11 +3715,10 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     );
 
     // ShiftExpression = Expression ( '<<' | '>>' | '>>>' ) Expression ;
-    define_precedence_rule_member!(
+    define_rule!(
         ShiftExpression,
-        left_associative_binary_expression!(
-            ShiftExpression,
-            AddSubExpression,
+        seq!(
+            rule!(Expression),
             trie!(
                 trieleaf!(LessLess, "<<"),
                 trieprefix!(
@@ -3138,7 +3728,8 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                         trieleaf!(GreaterGreater)
                     ]
                 )
-            )
+            ),
+            rule!(Expression)
         )
     );
 
@@ -3512,26 +4103,24 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     );
 
     // UnaryPrefixExpression = ( '++' | '--' | '!' | '~' | '-' ) Expression ;
-    define_precedence_rule_member!(
+    define_rule!(
         UnaryPrefixExpression,
-        unary_prefix_expression!(
-            UnaryPrefixExpression,
-            FunctionCallExpression,
+        seq!(
             trie!(
                 trieleaf!(Bang, "!"),
                 trieleaf!(PlusPlus, "++"),
                 trieprefix!("-", [trieleaf!(MinusMinus, "-"), trieleaf!(Minus)]),
                 trieleaf!(Tilde, "~")
-            )
+            ),
+            rule!(Expression)
         )
     );
 
     // UnarySuffixExpression = Expression ( '++' | '--' ) ;
-    define_precedence_rule_member!(
+    define_rule!(
         UnarySuffixExpression,
-        unary_suffix_expression!(
-            UnarySuffixExpression,
-            UnaryPrefixExpression,
+        seq!(
+            rule!(Expression),
             trie!(trieleaf!(PlusPlus, "++"), trieleaf!(MinusMinus, "--"))
         )
     );

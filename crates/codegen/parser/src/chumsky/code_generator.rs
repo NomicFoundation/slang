@@ -23,7 +23,6 @@ pub struct CodeGenerator {
 pub enum ParserResultType {
     #[default]
     Token,
-    PrecedenceRuleMember,
     Rule,
 }
 
@@ -102,9 +101,6 @@ impl CodeGenerator {
                 match parser.result_type {
                     ParserResultType::Token => quote! { declare_token!(#production_kind); },
                     ParserResultType::Rule => quote! { declare_rule!(#production_kind); },
-                    ParserResultType::PrecedenceRuleMember => {
-                        quote! { declare_rule!(#production_kind); }
-                    }
                 }
                 .to_string(),
             );
@@ -140,8 +136,6 @@ impl CodeGenerator {
                 match parser.result_type {
                     ParserResultType::Token =>
                         quote! { define_token!(#production_kind, #parser_body); },
-                    ParserResultType::PrecedenceRuleMember =>
-                        quote! { define_precedence_rule_member!(#production_kind, #parser_body); },
                     ParserResultType::Rule =>
                         quote! { define_rule!(#production_kind, #parser_body); },
                 }
