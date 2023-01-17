@@ -127,11 +127,9 @@ mod formatters {
         let prettier_path = codegen.repo_root.join("node_modules/.bin/prettier");
 
         if !prettier_path.exists() {
-            let setup_path = codegen.repo_root.join("scripts/linting/setup.sh");
-            let setup_path = setup_path.to_str().context("Cannot get setup.sh path")?;
+            let setup_path = codegen.repo_root.join("scripts/setup/npm.sh");
 
-            run_command(&codegen.repo_root, &[setup_path], None)
-                .context(format!("Failed to run setup script: {setup_path:?}"))?;
+            bail!("Prettier not found. Please consider running: {setup_path:?}");
         }
 
         let prettier_path = prettier_path.to_str().context("Cannot get prettier path")?;

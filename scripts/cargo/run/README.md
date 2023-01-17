@@ -13,5 +13,5 @@ Whenever we add new binaries (internal or external), we should add a new script 
 
 ```bash
 cd "$REPO_ROOT/scripts/cargo/run"
-ln -s _slang_cargo_bin_runner.sh THE_NEW_BINARY_NAME
+ln -s "_runner.sh" THE_NEW_BINARY_NAME
 ```
