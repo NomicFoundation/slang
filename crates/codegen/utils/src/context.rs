@@ -6,7 +6,10 @@ use std::{
 use anyhow::{bail, Result};
 use walkdir::WalkDir;
 
-use crate::internal::files::{self, calculate_repo_root};
+use crate::{
+    errors::CodegenErrors,
+    internal::files::{self, calculate_repo_root},
+};
 
 pub struct CodegenContext {
     input_dirs: HashSet<PathBuf>,
@@ -28,7 +31,13 @@ impl CodegenContext {
             repo_root: calculate_repo_root()?,
         };
 
-        operation(&mut context)?;
+        if let Err(error) = operation(&mut context) {
+            if let Some(errors) = error.downcast_ref::<CodegenErrors>() {
+                Self::process_errors(errors);
+            } else {
+                bail!(error);
+            }
+        }
 
         context.validate_orphaned_files()?;
         context.print_cargo_markers();
@@ -108,6 +117,20 @@ impl CodegenContext {
         }
 
         return Ok(());
+    }
+
+    fn process_errors(errors: &CodegenErrors) -> ! {
+        let count = errors.len() as i32;
+        assert_ne!(count, 0);
+
+        eprintln!();
+        eprintln!("{errors}");
+
+        eprintln!();
+        eprintln!("Found {count} validation errors. Aborting.");
+
+        // `process::exit()` instead of `panic!()`. No need to pollute the output with useless stack traces:
+        std::process::exit(count);
     }
 
     fn print_cargo_markers(&self) {

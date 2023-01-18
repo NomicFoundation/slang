@@ -7,8 +7,8 @@ edition.workspace = true
 [build-dependencies]
 anyhow = { workspace = true }
 codegen_utils = { workspace = true }
-schemars = { workspace = true }
 indexmap = { workspace = true }
+schemars = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
@@ -20,3 +20,5 @@ schemars = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }
 serde_yaml = { workspace = true }
+thiserror = { workspace = true }
+yaml-rust = { workspace = true }

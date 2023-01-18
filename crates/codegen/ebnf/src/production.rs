@@ -1,8 +1,8 @@
 use std::fmt::Write;
 
-use codegen_schema::{
+use codegen_schema::types::{
     grammar::Grammar,
-    manifest::{Production, ProductionKind, ProductionVersioning},
+    productions::{Production, ProductionKind, ProductionVersioning},
 };
 
 use super::expression::ExpressionEBNFPrivateExtensions;

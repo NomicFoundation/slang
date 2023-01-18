@@ -1,4 +1,4 @@
-use codegen_schema::manifest::{EBNFDifference, EBNFRange, ExpressionRef, EBNF};
+use codegen_schema::types::productions::{EBNFDifference, EBNFRange, ExpressionRef, EBNF};
 use proc_macro2::TokenStream;
 use quote::quote;
 

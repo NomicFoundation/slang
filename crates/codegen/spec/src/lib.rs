@@ -1,4 +1,4 @@
-use codegen_schema::grammar::Grammar;
+use codegen_schema::types::grammar::Grammar;
 use codegen_utils::context::CodegenContext;
 
 use self::{grammar::generate_spec_grammar, topics::generate_spec_sections};

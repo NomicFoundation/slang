@@ -1,6 +1,6 @@
 use std::{collections::HashMap, io::Write, path::PathBuf};
 
-use codegen_schema::grammar::Grammar;
+use codegen_schema::types::grammar::Grammar;
 use codegen_utils::context::CodegenContext;
 
 use crate::{
@@ -17,7 +17,6 @@ pub fn generate_spec_sections(
     let context = generate_context(grammar);
 
     grammar
-        .manifest
         .sections
         .iter()
         .enumerate()
@@ -69,26 +68,20 @@ pub fn generate_spec_sections(
                     writeln!(w).unwrap();
                     writeln!(w, "# {}", topic.title).unwrap();
 
-                    match &topic.definition {
-                        None => {}
-                        Some(definition) => {
-                            writeln!(w).unwrap();
-                            writeln!(w, "<div class=\"admonition summary\">").unwrap();
-                            writeln!(w, "<p class=\"admonition-title\">Grammar</p>").unwrap();
+                    if !topic.productions.is_empty() {
+                        writeln!(w).unwrap();
+                        writeln!(w, "<div class=\"admonition summary\">").unwrap();
+                        writeln!(w, "<p class=\"admonition-title\">Grammar</p>").unwrap();
 
-                            grammar
-                                .productions
-                                .get(definition)
-                                .unwrap()
-                                .iter()
-                                .for_each(|production| {
-                                    writeln!(w).unwrap();
-                                    write_production(&mut w, production, &context);
-                                });
+                        topic.productions
+                            .iter()
+                            .for_each(|production| {
+                                writeln!(w).unwrap();
+                                write_production(&mut w, production, &context);
+                            });
 
-                            writeln!(w).unwrap();
-                            writeln!(w, "</div>").unwrap();
-                        }
+                        writeln!(w).unwrap();
+                        writeln!(w, "</div>").unwrap();
                     }
 
                     assert!(notes_file.exists(), "Notes file does not exist: {notes_file:?}");
@@ -110,19 +103,11 @@ pub fn generate_spec_sections(
 fn generate_context(grammar: &Grammar) -> SpecProductionContext {
     let mut productions_location = HashMap::<String, String>::new();
 
-    for (section_index, section) in grammar.manifest.sections.iter().enumerate() {
+    for (section_index, section) in grammar.sections.iter().enumerate() {
         for (topic_index, topic) in section.topics.iter().enumerate() {
             let topic_slug = generate_topic_slug(grammar, section_index, topic_index);
 
-            let definition = if let Some(definition) = &topic.definition {
-                assert_eq!(definition, &format!("topics/{topic_slug}.yml"));
-                definition
-            } else {
-                continue;
-            };
-
-            for production in grammar.productions.get(definition).unwrap() {
-                let production = production.as_ref();
+            for production in &topic.productions {
                 productions_location.insert(production.name.clone(), format!("../../{topic_slug}"));
             }
         }
@@ -135,7 +120,7 @@ fn generate_context(grammar: &Grammar) -> SpecProductionContext {
 }
 
 fn generate_topic_slug(grammar: &Grammar, section_index: usize, topic_index: usize) -> String {
-    let section = grammar.manifest.sections.get(section_index).unwrap();
+    let section = grammar.sections.get(section_index).unwrap();
     let topic = section.topics.get(topic_index).unwrap();
 
     return format!(

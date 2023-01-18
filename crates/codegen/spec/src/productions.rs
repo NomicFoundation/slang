@@ -1,8 +1,8 @@
 use std::{collections::HashMap, io::Write};
 
-use codegen_schema::{
+use codegen_schema::types::{
     grammar::Grammar,
-    manifest::{
+    productions::{
         EBNFDelimitedBy, EBNFDifference, EBNFRange, EBNFRepeat, EBNFSeparatedBy, ExpressionRef,
         Production, ProductionKind, ProductionVersioning, EBNF,
     },
@@ -126,7 +126,7 @@ fn write_expression<T: Write>(w: &mut T, expr: &ExpressionRef, context: &SpecPro
         }
 
         EBNF::Reference(name) => {
-            let referenced = context.grammar.get_production(name);
+            let referenced = &context.grammar.productions[name];
             let location = context.productions_location.get(name).expect(name);
             write_token(
                 w,

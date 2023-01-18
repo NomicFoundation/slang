@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 use std::collections::BTreeMap;
 
-use codegen_schema::grammar::Grammar;
+use codegen_schema::types::grammar::Grammar;
 use semver::Version;
 use typed_arena::Arena;
 

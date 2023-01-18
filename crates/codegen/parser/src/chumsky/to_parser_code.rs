@@ -1,6 +1,6 @@
 use std::cell::RefCell;
 
-use codegen_schema::manifest::ProductionKind;
+use codegen_schema::types::productions::ProductionKind;
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 

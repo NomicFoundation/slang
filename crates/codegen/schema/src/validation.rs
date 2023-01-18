@@ -1,25 +1,43 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
+use codegen_utils::errors::CodegenResult;
 use semver::Version;
 
 use crate::{
-    grammar::Grammar,
-    manifest::{
-        EBNFDelimitedBy, EBNFRepeat, EBNFSeparatedBy, Expression, ProductionVersioning, EBNF,
+    types::{
+        manifest::ManifestFile,
+        productions::{
+            EBNFDelimitedBy, EBNFRepeat, EBNFSeparatedBy, Expression, ProductionRef,
+            ProductionVersioning, EBNF,
+        },
     },
+    yaml::files::File,
 };
 
-static REQUIRED_PRODUCTIONS: [&str; 2] = ["LeadingTrivia", "TrailingTrivia"];
-
-pub fn validate_grammar(grammar: &Grammar) {
+pub fn check_manifest(manifest_file: &File<ManifestFile>) -> CodegenResult<()> {
     validate_versions_list(
         "Grammar Manifest",
-        &grammar.manifest.versions.iter().collect(),
+        &manifest_file.value.versions.iter().collect(),
     );
 
-    let defined = validate_definitions(grammar);
-    let used = validate_usages(grammar, &defined);
-    validate_orphaned_nodes(&grammar, defined, used);
+    return Ok(());
+}
+
+pub fn check_productions(
+    manifest_file: &File<ManifestFile>,
+    productions: &HashMap<String, ProductionRef>,
+) -> CodegenResult<()> {
+    let required = &HashSet::from([
+        manifest_file.value.root_production.to_owned(),
+        "LeadingTrivia".to_string(),
+        "TrailingTrivia".to_string(),
+    ]);
+
+    let defined = collect_definitions(&required, &productions);
+    let used = collect_usages(&productions, &defined, &manifest_file.value.versions);
+    validate_orphaned_nodes(&required, &defined, &used);
+
+    return Ok(());
 }
 
 fn validate_versions_list(owner: &str, versions: &Vec<&Version>) {
@@ -39,26 +57,20 @@ fn validate_versions_list(owner: &str, versions: &Vec<&Version>) {
     );
 }
 
-fn validate_definitions(grammar: &Grammar) -> HashSet<String> {
+fn collect_definitions(
+    required: &HashSet<String>,
+    productions: &HashMap<String, ProductionRef>,
+) -> HashSet<String> {
     let mut defined = HashSet::<String>::new();
 
-    grammar.productions.values().for_each(|productions| {
-        productions.iter().for_each(|production| {
-            assert!(
-                defined.insert(production.name.clone()),
-                "Production '{}' defined more than once",
-                production.name
-            );
-        });
+    productions.keys().for_each(|production| {
+        assert!(
+            defined.insert(production.clone()),
+            "Production '{production}' defined more than once",
+        );
     });
 
-    assert!(
-        defined.contains(&grammar.manifest.root_production),
-        "Root production '{}' is not defined in grammar",
-        grammar.manifest.root_production
-    );
-
-    for production_name in REQUIRED_PRODUCTIONS {
+    for production_name in required {
         assert!(
             defined.contains(production_name),
             "Grammar must contain a '{}' production",
@@ -69,47 +81,51 @@ fn validate_definitions(grammar: &Grammar) -> HashSet<String> {
     return defined;
 }
 
-fn validate_usages(grammar: &Grammar, defined: &HashSet<String>) -> HashSet<String> {
+fn collect_usages(
+    productions: &HashMap<String, ProductionRef>,
+    defined: &HashSet<String>,
+    manifest_versions: &Vec<Version>,
+) -> HashSet<String> {
     let mut used = HashSet::<String>::new();
 
-    grammar.productions.values().for_each(|productions| {
-        productions
-            .iter()
-            .for_each(|production| match &production.versioning {
-                ProductionVersioning::Unversioned(expression) => {
+    productions
+        .values()
+        .for_each(|production| match &production.versioning {
+            ProductionVersioning::Unversioned(expression) => {
+                validate_expression(&expression, defined, &mut used);
+            }
+            ProductionVersioning::Versioned(versions) => {
+                let production_name = &&production.name;
+                validate_versions_list(production_name, &versions.keys().collect());
+
+                for (version, expression) in versions {
+                    assert!(
+                        manifest_versions.contains(&version),
+                        "{production_name}: Version {version} is not defined in the manifest.",
+                    );
+
                     validate_expression(&expression, defined, &mut used);
                 }
-                ProductionVersioning::Versioned(versions) => {
-                    let production_name = &&production.name;
-                    validate_versions_list(production_name, &versions.keys().collect());
-
-                    for (version, expression) in versions {
-                        assert!(
-                            grammar.manifest.versions.contains(&version),
-                            "{production_name}: Version {version} is not defined in the manifest.",
-                        );
-
-                        validate_expression(&expression, defined, &mut used);
-                    }
-                }
-            });
-    });
+            }
+        });
 
     return used;
 }
 
-fn validate_orphaned_nodes(grammar: &Grammar, defined: HashSet<String>, used: HashSet<String>) {
-    defined.iter().for_each(|name| {
-        if name != &grammar.manifest.root_production
-            && !REQUIRED_PRODUCTIONS.contains(&name.as_str())
-        {
+fn validate_orphaned_nodes(
+    required: &HashSet<String>,
+    defined: &HashSet<String>,
+    used: &HashSet<String>,
+) {
+    for name in defined {
+        if !required.contains(name) {
             assert!(
                 used.contains(name),
                 "Production '{}' is defined but not referenced anywhere",
                 name
             );
         }
-    });
+    }
 }
 
 fn validate_expression(

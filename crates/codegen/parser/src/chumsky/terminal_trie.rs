@@ -1,4 +1,4 @@
-use codegen_schema::manifest::{ExpressionRef, ProductionKind, EBNF};
+use codegen_schema::types::productions::{ExpressionRef, ProductionKind, EBNF};
 use patricia_tree::{node::Node, PatriciaMap};
 use proc_macro2::TokenStream;
 

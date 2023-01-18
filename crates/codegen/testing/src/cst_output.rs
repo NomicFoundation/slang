@@ -4,7 +4,7 @@ use std::{
 };
 
 use anyhow::{bail, Context, Result};
-use codegen_schema::grammar::Grammar;
+use codegen_schema::types::grammar::Grammar;
 use codegen_utils::context::CodegenContext;
 use semver::Version;
 use walkdir::WalkDir;

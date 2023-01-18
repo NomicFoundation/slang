@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use codegen_schema::grammar::Grammar;
+use codegen_schema::types::grammar::Grammar;
 use codegen_utils::context::CodegenContext;
 
 use super::{code_generator::CodeGenerator, typescript_lib_boilerplate};
