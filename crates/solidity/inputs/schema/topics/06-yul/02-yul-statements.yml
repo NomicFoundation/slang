@@ -1,109 +1,111 @@
 # yaml-language-server: $schema=../../../../../codegen/schema/json-schema/topic.schema.json
 
-- name: YulBlock
+- name: "YulBlock"
   delimitedBy:
     open: "{"
     zeroOrMore:
-      reference: YulStatement
+      reference: "YulStatement"
     close: "}"
 
-- name: YulStatement
+- name: "YulStatement"
   choice:
-    - reference: YulBlock
-    - reference: YulVariableDeclaration
-    - reference: YulFunctionDefinition
-    - reference: YulAssignmentStatement
-    - reference: YulFunctionCall
-    - reference: YulIfStatement
-    - reference: YulForStatement
-    - reference: YulSwitchStatement
-    - reference: YulLeaveStatement
-    - reference: YulBreakStatement
-    - reference: YulContinueStatement
+    - reference: "YulBlock"
+    - reference: "YulVariableDeclaration"
+    - reference: "YulFunctionDefinition"
+    - reference: "YulAssignmentStatement"
+    - reference: "YulFunctionCall"
+    - reference: "YulIfStatement"
+    - reference: "YulForStatement"
+    - reference: "YulSwitchStatement"
+    - reference: "YulLeaveStatement"
+    - reference: "YulBreakStatement"
+    - reference: "YulContinueStatement"
 
-- name: YulVariableDeclaration
+- name: "YulVariableDeclaration"
   sequence:
-    - terminal: let
+    - terminal: "let"
     - separatedBy:
-        reference: YulIdentifierPath
+        reference: "YulIdentifierPath"
         separator: ","
     - optional:
         sequence:
           - terminal: ":="
-          - reference: YulExpression
+          - reference: "YulExpression"
 
-- name: YulFunctionDefinition
+- name: "YulFunctionDefinition"
   sequence:
-    - terminal: function
-    - reference: YulIdentifier
+    - terminal: "function"
+    - reference: "YulIdentifier"
     - delimitedBy:
-        open: (
+        open: "("
         optional:
-          config: { name: Arguments }
+          config:
+            name: "Arguments"
           separatedBy:
-            reference: YulIdentifier
+            reference: "YulIdentifier"
             separator: ","
-        close: )
+        close: ")"
     - optional:
         sequence:
           - terminal: "->"
-          - config: { name: Results }
+          - config:
+              name: "Results"
             separatedBy:
-              reference: YulIdentifier
+              reference: "YulIdentifier"
               separator: ","
-    - reference: YulBlock
+    - reference: "YulBlock"
 
-- name: YulAssignmentStatement
+- name: "YulAssignmentStatement"
   sequence:
     - separatedBy:
-        reference: YulIdentifierPath
+        reference: "YulIdentifierPath"
         separator: ","
     - terminal: ":="
-    - reference: YulExpression
+    - reference: "YulExpression"
 
-- name: YulFunctionCall
+- name: "YulFunctionCall"
   sequence:
-    - reference: YulIdentifier
+    - reference: "YulIdentifier"
     - delimitedBy:
-        open: (
+        open: "("
         optional:
           separatedBy:
-            reference: YulExpression
+            reference: "YulExpression"
             separator: ","
-        close: )
+        close: ")"
 
-- name: YulIfStatement
+- name: "YulIfStatement"
   sequence:
-    - terminal: if
-    - reference: YulExpression
-    - reference: YulBlock
+    - terminal: "if"
+    - reference: "YulExpression"
+    - reference: "YulBlock"
 
-- name: YulLeaveStatement
-  terminal: leave
+- name: "YulLeaveStatement"
+  terminal: "leave"
 
-- name: YulBreakStatement
-  terminal: break
+- name: "YulBreakStatement"
+  terminal: "break"
 
-- name: YulContinueStatement
-  terminal: continue
+- name: "YulContinueStatement"
+  terminal: "continue"
 
-- name: YulForStatement
+- name: "YulForStatement"
   sequence:
-    - terminal: for
-    - reference: YulBlock
-    - reference: YulExpression
-    - reference: YulBlock
-    - reference: YulBlock
+    - terminal: "for"
+    - reference: "YulBlock"
+    - reference: "YulExpression"
+    - reference: "YulBlock"
+    - reference: "YulBlock"
 
-- name: YulSwitchStatement
+- name: "YulSwitchStatement"
   sequence:
-    - terminal: switch
-    - reference: YulExpression
+    - terminal: "switch"
+    - reference: "YulExpression"
     - oneOrMore:
         sequence:
           - choice:
               - sequence:
-                  - terminal: case
-                  - reference: YulLiteral
-              - terminal: default
-          - reference: YulBlock
+                  - terminal: "case"
+                  - reference: "YulLiteral"
+              - terminal: "default"
+          - reference: "YulBlock"

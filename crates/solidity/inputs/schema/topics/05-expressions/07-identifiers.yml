@@ -1,145 +1,145 @@
 # yaml-language-server: $schema=../../../../../codegen/schema/json-schema/topic.schema.json
 
-- name: IdentifierPath
+- name: "IdentifierPath"
   separatedBy:
-    reference: Identifier
+    reference: "Identifier"
     separator: "."
 
-- name: Identifier
-  kind: Token
+- name: "Identifier"
+  kind: "Token"
   difference:
     minuend:
-      reference: RawIdentifier
+      reference: "RawIdentifier"
     subtrahend:
-      reference: Keyword
+      reference: "Keyword"
 
-- name: Keyword
-  kind: Token
+- name: "Keyword"
+  kind: "Token"
   choice:
-    - reference: BooleanLiteral
-    - reference: FixedBytesType
-    - reference: NumberUnit
-    - reference: ReservedKeyword
-    - reference: SignedIntegerType
-    - reference: UnsignedIntegerType
-    - terminal: abstract
-    - terminal: address
-    - terminal: anonymous
-    - terminal: as
-    - terminal: assembly
-    - terminal: bool
-    - terminal: break
-    - terminal: calldata
-    - terminal: catch
-    - terminal: constant
-    - terminal: constructor
-    - terminal: continue
-    - terminal: contract
-    - terminal: delete
-    - terminal: do
-    - terminal: else
-    - terminal: emit
-    - terminal: enum
-    - terminal: event
-    - terminal: external
-    - terminal: fallback
+    - reference: "BooleanLiteral"
+    - reference: "FixedBytesType"
+    - reference: "NumberUnit"
+    - reference: "ReservedKeyword"
+    - reference: "SignedIntegerType"
+    - reference: "UnsignedIntegerType"
+    - terminal: "abstract"
+    - terminal: "address"
+    - terminal: "anonymous"
+    - terminal: "as"
+    - terminal: "assembly"
+    - terminal: "bool"
+    - terminal: "break"
+    - terminal: "calldata"
+    - terminal: "catch"
+    - terminal: "constant"
+    - terminal: "constructor"
+    - terminal: "continue"
+    - terminal: "contract"
+    - terminal: "delete"
+    - terminal: "do"
+    - terminal: "else"
+    - terminal: "emit"
+    - terminal: "enum"
+    - terminal: "event"
+    - terminal: "external"
+    - terminal: "fallback"
     - terminal: "false"
-    - terminal: fixed
-    - terminal: for
-    - terminal: function
-    - terminal: hex
-    - terminal: if
-    - terminal: immutable
-    - terminal: import
-    - terminal: indexed
-    - terminal: interface
-    - terminal: internal
-    - terminal: is
-    - terminal: library
-    - terminal: mapping
-    - terminal: memory
-    - terminal: modifier
-    - terminal: new
-    - terminal: override
-    - terminal: payable
-    - terminal: pragma
-    - terminal: private
-    - terminal: public
-    - terminal: pure
-    - terminal: receive
-    - terminal: return
-    - terminal: returns
-    - terminal: storage
-    - terminal: string
-    - terminal: struct
+    - terminal: "fixed"
+    - terminal: "for"
+    - terminal: "function"
+    - terminal: "hex"
+    - terminal: "if"
+    - terminal: "immutable"
+    - terminal: "import"
+    - terminal: "indexed"
+    - terminal: "interface"
+    - terminal: "internal"
+    - terminal: "is"
+    - terminal: "library"
+    - terminal: "mapping"
+    - terminal: "memory"
+    - terminal: "modifier"
+    - terminal: "new"
+    - terminal: "override"
+    - terminal: "payable"
+    - terminal: "pragma"
+    - terminal: "private"
+    - terminal: "public"
+    - terminal: "pure"
+    - terminal: "receive"
+    - terminal: "return"
+    - terminal: "returns"
+    - terminal: "storage"
+    - terminal: "string"
+    - terminal: "struct"
     - terminal: "true"
-    - terminal: try
-    - terminal: type
-    - terminal: ufixed
-    - terminal: unchecked
-    - terminal: using
-    - terminal: view
-    - terminal: virtual
-    - terminal: while
+    - terminal: "try"
+    - terminal: "type"
+    - terminal: "ufixed"
+    - terminal: "unchecked"
+    - terminal: "using"
+    - terminal: "view"
+    - terminal: "virtual"
+    - terminal: "while"
 
-- name: ReservedKeyword
-  kind: Token
+- name: "ReservedKeyword"
+  kind: "Token"
   choice:
-    - terminal: after
-    - terminal: alias
-    - terminal: apply
-    - terminal: auto
-    - terminal: byte
-    - terminal: case
-    - terminal: copyof
-    - terminal: default
-    - terminal: define
-    - terminal: final
-    - terminal: implements
-    - terminal: in
-    - terminal: inline
-    - terminal: let
-    - terminal: macro
-    - terminal: match
-    - terminal: mutable
+    - terminal: "after"
+    - terminal: "alias"
+    - terminal: "apply"
+    - terminal: "auto"
+    - terminal: "byte"
+    - terminal: "case"
+    - terminal: "copyof"
+    - terminal: "default"
+    - terminal: "define"
+    - terminal: "final"
+    - terminal: "implements"
+    - terminal: "in"
+    - terminal: "inline"
+    - terminal: "let"
+    - terminal: "macro"
+    - terminal: "match"
+    - terminal: "mutable"
     - terminal: "null"
-    - terminal: of
-    - terminal: partial
-    - terminal: promise
-    - terminal: reference
-    - terminal: relocatable
-    - terminal: sealed
-    - terminal: sizeof
-    - terminal: static
-    - terminal: supports
-    - terminal: switch
-    - terminal: typedef
-    - terminal: typeof
-    - terminal: var
+    - terminal: "of"
+    - terminal: "partial"
+    - terminal: "promise"
+    - terminal: "reference"
+    - terminal: "relocatable"
+    - terminal: "sealed"
+    - terminal: "sizeof"
+    - terminal: "static"
+    - terminal: "supports"
+    - terminal: "switch"
+    - terminal: "typedef"
+    - terminal: "typeof"
+    - terminal: "var"
 
-- name: RawIdentifier
-  kind: Token
+- name: "RawIdentifier"
+  kind: "Token"
   sequence:
-    - reference: IdentifierStart
+    - reference: "IdentifierStart"
     - zeroOrMore:
-        reference: IdentifierPart
+        reference: "IdentifierPart"
 
-- name: IdentifierStart
-  kind: Token
+- name: "IdentifierStart"
+  kind: "Token"
   choice:
-    - terminal: _
-    - terminal: $
+    - terminal: "_"
+    - terminal: "$"
     - range:
-        from: a
-        to: z
+        from: "a"
+        to: "z"
     - range:
-        from: A
-        to: Z
+        from: "A"
+        to: "Z"
 
-- name: IdentifierPart
-  kind: Token
+- name: "IdentifierPart"
+  kind: "Token"
   choice:
-    - reference: IdentifierStart
+    - reference: "IdentifierStart"
     - range:
         from: "0"
         to: "9"

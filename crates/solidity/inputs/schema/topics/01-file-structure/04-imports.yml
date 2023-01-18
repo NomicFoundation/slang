@@ -1,67 +1,67 @@
 # yaml-language-server: $schema=../../../../../codegen/schema/json-schema/topic.schema.json
 
-- name: ImportDirective
+- name: "ImportDirective"
   sequence:
-    - terminal: import
+    - terminal: "import"
     - choice:
-        - reference: SimpleImportDirective
-        - reference: StarImportDirective
-        - reference: SelectingImportDirective
-    - terminal: ;
+        - reference: "SimpleImportDirective"
+        - reference: "StarImportDirective"
+        - reference: "SelectingImportDirective"
+    - terminal: ";"
 
-- name: SimpleImportDirective
+- name: "SimpleImportDirective"
   sequence:
-    - reference: ImportPath
+    - reference: "ImportPath"
     - zeroOrMore:
         sequence:
-          - terminal: as
-          - reference: Identifier
+          - terminal: "as"
+          - reference: "Identifier"
 
-- name: StarImportDirective
+- name: "StarImportDirective"
   sequence:
     - terminal: "*"
-    - terminal: as
-    - reference: Identifier
-    - terminal: from
-    - reference: ImportPath
+    - terminal: "as"
+    - reference: "Identifier"
+    - terminal: "from"
+    - reference: "ImportPath"
 
-- name: SelectingImportDirective
+- name: "SelectingImportDirective"
   sequence:
     - delimitedBy:
         open: "{"
         separatedBy:
-          reference: SelectedImport
+          reference: "SelectedImport"
           separator: ","
         close: "}"
-    - terminal: from
-    - reference: ImportPath
+    - terminal: "from"
+    - reference: "ImportPath"
 
-- name: SelectedImport
+- name: "SelectedImport"
   sequence:
-    - reference: Identifier
+    - reference: "Identifier"
     - optional:
         sequence:
-          - terminal: as
-          - reference: Identifier
+          - terminal: "as"
+          - reference: "Identifier"
 
-- name: ImportPath
-  reference: AsciiStringLiteral
+- name: "ImportPath"
+  reference: "AsciiStringLiteral"
 
-- name: UsingDirective
+- name: "UsingDirective"
   sequence:
-    - terminal: using
+    - terminal: "using"
     - choice:
-        - reference: IdentifierPath
+        - reference: "IdentifierPath"
         - delimitedBy:
             open: "{"
             separatedBy:
-              reference: IdentifierPath
+              reference: "IdentifierPath"
               separator: ","
             close: "}"
-    - terminal: for
+    - terminal: "for"
     - choice:
         - terminal: "*"
-        - reference: TypeName
+        - reference: "TypeName"
     - optional:
-        terminal: global
-    - terminal: ;
+        terminal: "global"
+    - terminal: ";"

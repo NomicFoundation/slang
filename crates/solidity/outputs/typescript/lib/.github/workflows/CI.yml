@@ -1,3 +1,6 @@
+# yamllint disable-file
+# TODO: clean up: this is a temporary file as we are prototyping the NPM package.
+
 name: CI
 env:
   DEBUG: napi:*

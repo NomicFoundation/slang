@@ -1,72 +1,78 @@
 # yaml-language-server: $schema=../../../../../codegen/schema/json-schema/topic.schema.json
 
-- name: NumericLiteral
-  kind: Rule
+- name: "NumericLiteral"
+  kind: "Rule"
   sequence:
     - choice:
-        - reference: DecimalNumber
-        - reference: HexNumber
+        - reference: "DecimalNumber"
+        - reference: "HexNumber"
     - optional:
-        reference: NumberUnit
+        reference: "NumberUnit"
 
-- name: DecimalNumber
-  kind: Token
+- name: "DecimalNumber"
+  kind: "Token"
   sequence:
     - choice:
-        - reference: DecimalInteger
-        - reference: DecimalFloat
+        - reference: "DecimalInteger"
+        - reference: "DecimalFloat"
     - optional:
-        reference: DecimalExponent
+        reference: "DecimalExponent"
 
-- name: DecimalInteger
-  kind: Token
+- name: "DecimalInteger"
+  kind: "Token"
   sequence:
-    - range: { from: "0", to: "9" }
+    - range:
+        from: "0"
+        to: "9"
     - zeroOrMore:
         sequence:
-          - optional: { terminal: _ }
-          - range: { from: "0", to: "9" }
+          - optional:
+              terminal: "_"
+          - range:
+              from: "0"
+              to: "9"
 
-- name: DecimalFloat
-  kind: Token
+- name: "DecimalFloat"
+  kind: "Token"
   sequence:
     - optional:
-        reference: DecimalInteger
+        reference: "DecimalInteger"
     - terminal: "."
-    - reference: DecimalInteger
+    - reference: "DecimalInteger"
 
-- name: DecimalExponent
-  kind: Token
+- name: "DecimalExponent"
+  kind: "Token"
   sequence:
     - choice:
-        - terminal: e
-        - terminal: E
+        - terminal: "e"
+        - terminal: "E"
     - optional:
         terminal: "-"
-    - reference: DecimalInteger
+    - reference: "DecimalInteger"
 
-- name: HexNumber
-  kind: Token
+- name: "HexNumber"
+  kind: "Token"
   sequence:
-    - terminal: 0x
+    - terminal: "0x"
     - sequence:
-        - reference: HexCharacter
+        - reference: "HexCharacter"
         - zeroOrMore:
             sequence:
-              - optional: { terminal: _ }
-              - reference: HexCharacter
+              - optional:
+                  terminal: "_"
+              - reference: "HexCharacter"
 
-- name: NumberUnit
-  kind: Token
+- name: "NumberUnit"
+  kind: "Token"
   choice:
-    - terminal: days
-    - terminal: ether
-    - terminal: finney
-    - terminal: gwei
-    - terminal: hours
-    - terminal: minutes
-    - terminal: seconds
-    - terminal: szabo
-    - terminal: weeks
-    - terminal: wei
-    - terminal: years
+    - terminal: "days"
+    - terminal: "ether"
+    - terminal: "finney"
+    - terminal: "gwei"
+    - terminal: "hours"
+    - terminal: "minutes"
+    - terminal: "seconds"
+    - terminal: "szabo"
+    - terminal: "weeks"
+    - terminal: "wei"
+    - terminal: "years"

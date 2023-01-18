@@ -1,20 +1,20 @@
 # yaml-language-server: $schema=../../../../../codegen/schema/json-schema/topic.schema.json
 
-- name: ElementaryType
+- name: "ElementaryType"
   choice:
-    - terminal: bool
-    - terminal: string
-    - reference: AddressType
-    - reference: FixedBytesType
-    - reference: SignedIntegerType
-    - reference: UnsignedIntegerType
-    - reference: SignedFixedType
-    - reference: UnsignedFixedType
+    - terminal: "bool"
+    - terminal: "string"
+    - reference: "AddressType"
+    - reference: "FixedBytesType"
+    - reference: "SignedIntegerType"
+    - reference: "UnsignedIntegerType"
+    - reference: "SignedFixedType"
+    - reference: "UnsignedFixedType"
 
-- name: FixedBytesType
-  kind: Token
+- name: "FixedBytesType"
+  kind: "Token"
   sequence:
-    - terminal: bytes
+    - terminal: "bytes"
     - choice:
         - terminal: "1"
         - terminal: "2"
@@ -49,14 +49,18 @@
         - terminal: "31"
         - terminal: "32"
       config:
-        name: Count
+        name: "Count"
         # Makes the likely errors clearer?
-        lookahead: { not: { range: { from: "0", to: "9" } } }
+        lookahead:
+          not:
+            range:
+              from: "0"
+              to: "9"
 
-- name: SignedIntegerType
-  kind: Token
+- name: "SignedIntegerType"
+  kind: "Token"
   sequence:
-    - terminal: int
+    - terminal: "int"
     - optional:
         choice:
           - terminal: "8"
@@ -92,31 +96,39 @@
           - terminal: "248"
           - terminal: "256"
         config:
-          name: ByteCount
+          name: "ByteCount"
       config:
         # Makes the likely errors clearer?
-        lookahead: { not: { range: { from: "0", to: "9" } } }
+        lookahead:
+          not:
+            range:
+              from: "0"
+              to: "9"
 
-- name: UnsignedIntegerType
-  kind: Token
+- name: "UnsignedIntegerType"
+  kind: "Token"
   sequence:
-    - terminal: u
-    - reference: SignedIntegerType
+    - terminal: "u"
+    - reference: "SignedIntegerType"
 
-- name: SignedFixedType
-  kind: Token
+- name: "SignedFixedType"
+  kind: "Token"
   sequence:
-    - terminal: fixed
+    - terminal: "fixed"
     - optional:
         sequence:
           - oneOrMore:
-              range: { from: "0", to: "9" }
-          - terminal: x
+              range:
+                from: "0"
+                to: "9"
+          - terminal: "x"
           - oneOrMore:
-              range: { from: "0", to: "9" }
+              range:
+                from: "0"
+                to: "9"
 
-- name: UnsignedFixedType
-  kind: Token
+- name: "UnsignedFixedType"
+  kind: "Token"
   sequence:
-    - terminal: u
-    - reference: SignedFixedType
+    - terminal: "u"
+    - reference: "SignedFixedType"

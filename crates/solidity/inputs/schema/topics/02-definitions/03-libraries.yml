@@ -1,11 +1,11 @@
 # yaml-language-server: $schema=../../../../../codegen/schema/json-schema/topic.schema.json
 
-- name: LibraryDefinition
+- name: "LibraryDefinition"
   sequence:
-    - terminal: library
-    - reference: Identifier
+    - terminal: "library"
+    - reference: "Identifier"
     - delimitedBy:
         open: "{"
         zeroOrMore:
-          reference: ContractBodyElement
+          reference: "ContractBodyElement"
         close: "}"

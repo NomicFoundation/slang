@@ -1,58 +1,67 @@
 # yaml-language-server: $schema=../../../../../codegen/schema/json-schema/topic.schema.json
 
-- name: HexStringLiteral
-  kind: Token
+- name: "HexStringLiteral"
+  kind: "Token"
   sequence:
-    - terminal: hex
+    - terminal: "hex"
     - choice:
         - delimitedBy:
             open: '"'
             optional:
-              reference: PossiblySeparatedPairsOfHexDigits
+              reference: "PossiblySeparatedPairsOfHexDigits"
             close: '"'
         - delimitedBy:
             open: "'"
             optional:
-              reference: PossiblySeparatedPairsOfHexDigits
+              reference: "PossiblySeparatedPairsOfHexDigits"
             close: "'"
 
-- name: PossiblySeparatedPairsOfHexDigits
-  kind: Token
+- name: "PossiblySeparatedPairsOfHexDigits"
+  kind: "Token"
   sequence:
-    - repeat: { min: 2, max: 2, reference: HexCharacter }
+    - repeat:
+        min: 2
+        max: 2
+        reference: "HexCharacter"
     - zeroOrMore:
         sequence:
-          - optional: { terminal: _ }
-          - repeat: { min: 2, max: 2, reference: HexCharacter }
+          - optional:
+              terminal: "_"
+          - repeat:
+              min: 2
+              max: 2
+              reference: "HexCharacter"
 
-- name: HexCharacter
-  kind: Token
+- name: "HexCharacter"
+  kind: "Token"
   choice:
     - range:
         from: "0"
         to: "9"
     - range:
-        from: a
-        to: f
+        from: "a"
+        to: "f"
     - range:
-        from: A
-        to: F
+        from: "A"
+        to: "F"
 
-- name: AsciiStringLiteral
-  kind: Token
+- name: "AsciiStringLiteral"
+  kind: "Token"
   choice:
-    - reference: SingleQuotedAsciiStringLiteral
-    - reference: DoubleQuotedAsciiStringLiteral
+    - reference: "SingleQuotedAsciiStringLiteral"
+    - reference: "DoubleQuotedAsciiStringLiteral"
 
-- name: SingleQuotedAsciiStringLiteral
-  kind: Token
+- name: "SingleQuotedAsciiStringLiteral"
+  kind: "Token"
   delimitedBy:
     open: "'"
     zeroOrMore:
-      config: { name: Run }
+      config:
+        name: "Run"
       choice:
         - oneOrMore:
-            config: { name: Char }
+            config:
+              name: "Char"
             difference:
               minuend:
                 range:
@@ -62,18 +71,20 @@
                 choice:
                   - terminal: "'"
                   - terminal: "\\"
-        - reference: EscapeSequence
+        - reference: "EscapeSequence"
     close: "'"
 
-- name: DoubleQuotedAsciiStringLiteral
-  kind: Token
+- name: "DoubleQuotedAsciiStringLiteral"
+  kind: "Token"
   delimitedBy:
     open: '"'
     zeroOrMore:
-      config: { name: Run }
+      config:
+        name: "Run"
       choice:
         - oneOrMore:
-            config: { name: Char }
+            config:
+              name: "Char"
             difference:
               minuend:
                 range:
@@ -83,86 +94,90 @@
                 choice:
                   - terminal: '"'
                   - terminal: "\\"
-        - reference: EscapeSequence
+        - reference: "EscapeSequence"
     close: '"'
 
-- name: UnicodeStringLiteral
-  kind: Token
+- name: "UnicodeStringLiteral"
+  kind: "Token"
   choice:
-    - reference: SingleQuotedUnicodeStringLiteral
-    - reference: DoubleQuotedUnicodeStringLiteral
+    - reference: "SingleQuotedUnicodeStringLiteral"
+    - reference: "DoubleQuotedUnicodeStringLiteral"
 
-- name: SingleQuotedUnicodeStringLiteral
-  kind: Token
+- name: "SingleQuotedUnicodeStringLiteral"
+  kind: "Token"
   delimitedBy:
     open: "unicode'"
     zeroOrMore:
-      config: { name: Run }
+      config:
+        name: "Run"
       choice:
         - oneOrMore:
-            config: { name: Char }
+            config:
+              name: "Char"
             not:
               choice:
                 - terminal: "'"
                 - terminal: "\\"
                 - terminal: "\n"
                 - terminal: "\r"
-        - reference: EscapeSequence
+        - reference: "EscapeSequence"
     close: "'"
 
-- name: DoubleQuotedUnicodeStringLiteral
-  kind: Token
+- name: "DoubleQuotedUnicodeStringLiteral"
+  kind: "Token"
   delimitedBy:
     open: 'unicode"'
     zeroOrMore:
-      config: { name: Run }
+      config:
+        name: "Run"
       choice:
         - oneOrMore:
-            config: { name: Char }
+            config:
+              name: "Char"
             not:
               choice:
                 - terminal: '"'
                 - terminal: "\\"
                 - terminal: "\n"
                 - terminal: "\r"
-        - reference: EscapeSequence
+        - reference: "EscapeSequence"
     close: '"'
 
-- name: EscapeSequence
-  kind: Token
+- name: "EscapeSequence"
+  kind: "Token"
   sequence:
     - terminal: "\\"
     - choice:
-        - reference: AsciiEscape
-        - reference: HexByteEscape
-        - reference: UnicodeEscape
+        - reference: "AsciiEscape"
+        - reference: "HexByteEscape"
+        - reference: "UnicodeEscape"
 
-- name: AsciiEscape
-  kind: Token
+- name: "AsciiEscape"
+  kind: "Token"
   choice:
-    - terminal: n
-    - terminal: r
-    - terminal: t
+    - terminal: "n"
+    - terminal: "r"
+    - terminal: "t"
     - terminal: "'"
     - terminal: '"'
     - terminal: "\\"
     - terminal: "\n"
     - terminal: "\r"
 
-- name: HexByteEscape
-  kind: Token
+- name: "HexByteEscape"
+  kind: "Token"
   sequence:
-    - terminal: x
+    - terminal: "x"
     - repeat:
         min: 2
         max: 2
-        reference: HexCharacter
+        reference: "HexCharacter"
 
-- name: UnicodeEscape
-  kind: Token
+- name: "UnicodeEscape"
+  kind: "Token"
   sequence:
-    - terminal: u
+    - terminal: "u"
     - repeat:
         min: 4
         max: 4
-        reference: HexCharacter
+        reference: "HexCharacter"

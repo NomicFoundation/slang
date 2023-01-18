@@ -1,43 +1,43 @@
 # yaml-language-server: $schema=../../../../../codegen/schema/json-schema/topic.schema.json
 
-- name: ContractDefinition
+- name: "ContractDefinition"
   sequence:
     - optional:
-        terminal: abstract
-    - terminal: contract
-    - reference: Identifier
+        terminal: "abstract"
+    - terminal: "contract"
+    - reference: "Identifier"
     - optional:
-        reference: InheritanceSpecifierList
+        reference: "InheritanceSpecifierList"
     - delimitedBy:
         open: "{"
         zeroOrMore:
-          reference: ContractBodyElement
+          reference: "ContractBodyElement"
         close: "}"
 
-- name: InheritanceSpecifierList
+- name: "InheritanceSpecifierList"
   sequence:
-    - terminal: is
+    - terminal: "is"
     - separatedBy:
-        reference: InheritanceSpecifier
+        reference: "InheritanceSpecifier"
         separator: ","
 
-- name: InheritanceSpecifier
+- name: "InheritanceSpecifier"
   sequence:
-    - reference: IdentifierPath
+    - reference: "IdentifierPath"
     - optional:
-        reference: ArgumentList
+        reference: "ArgumentList"
 
-- name: ContractBodyElement
+- name: "ContractBodyElement"
   choice:
-    - reference: UsingDirective
-    - reference: ConstructorDefinition
-    - reference: FunctionDefinition
-    - reference: FallbackFunctionDefinition
-    - reference: ReceiveFunctionDefinition
-    - reference: ModifierDefinition
-    - reference: StructDefinition
-    - reference: EnumDefinition
-    - reference: UserDefinedValueTypeDefinition
-    - reference: EventDefinition
-    - reference: ErrorDefinition
-    - reference: StateVariableDeclaration
+    - reference: "UsingDirective"
+    - reference: "ConstructorDefinition"
+    - reference: "FunctionDefinition"
+    - reference: "FallbackFunctionDefinition"
+    - reference: "ReceiveFunctionDefinition"
+    - reference: "ModifierDefinition"
+    - reference: "StructDefinition"
+    - reference: "EnumDefinition"
+    - reference: "UserDefinedValueTypeDefinition"
+    - reference: "EventDefinition"
+    - reference: "ErrorDefinition"
+    - reference: "StateVariableDeclaration"
