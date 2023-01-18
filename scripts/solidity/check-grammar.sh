@@ -4,10 +4,8 @@ set -euo pipefail
 # shellcheck source=/dev/null
 source "$(dirname "${BASH_SOURCE[0]}")/../cargo/_common.sh"
 
-export VSCODE_PROBLEM_MATCHER="true"
-
 (
-  printf "\n\n🧪 Checking Project 🧪\n\n\n"
+  printf "\n\n🧪 Checking Solidity Grammar 🧪\n\n\n"
   cd "$REPO_ROOT"
 
   cargo check --offline --lib \

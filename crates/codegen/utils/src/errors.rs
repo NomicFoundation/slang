@@ -75,13 +75,14 @@ struct ErrorDescriptor {
 
 impl std::fmt::Display for ErrorDescriptor {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        let display = if std::env::var("VSCODE_PROBLEM_MATCHER").is_ok() {
-            self.to_problem_matcher()
-        } else {
-            self.to_ariadne_report()
-        };
+        if std::env::var("VSCODE_PROBLEM_MATCHER").is_ok() {
+            writeln!(f, "{}", self.to_problem_matcher())?;
+            writeln!(f, "")?;
+        }
 
-        return writeln!(f, "{display}");
+        writeln!(f, "{}", self.to_ariadne_report())?;
+
+        return Ok(());
     }
 }
 
@@ -118,7 +119,7 @@ impl ErrorDescriptor {
 
     fn to_problem_matcher(&self) -> String {
         return format!(
-            "{file}:{line}:{column}-{end_line}:{end_column}: {severity}: {message}",
+            "slang-problem-matcher:{file}:{line}:{column}-{end_line}:{end_column}: {severity}: {message}",
             file = self.file_path.to_str().unwrap(),
             line = self.range.start.line,
             column = self.range.start.column,
