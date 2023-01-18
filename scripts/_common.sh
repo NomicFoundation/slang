@@ -17,5 +17,5 @@ function _list_source_files() {
   pattern="$1"
 
   cd "$REPO_ROOT"
-  rg --files --hidden --glob '!.git/**' --glob "$pattern" | xargs realpath --canonicalize-existing
+  rg --files --hidden --sort "path" --glob '!.git/**' --glob "$pattern" | xargs realpath --canonicalize-existing
 }
