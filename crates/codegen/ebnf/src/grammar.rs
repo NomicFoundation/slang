@@ -1,6 +1,6 @@
 use std::{io::Write, path::PathBuf};
 
-use codegen_schema::Grammar;
+use codegen_schema::grammar::Grammar;
 use codegen_utils::context::CodegenContext;
 
 use super::production::ProductionEBNFGeneratorExtensions;

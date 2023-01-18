@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
+
+- name: "MappingType"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "mapping"
+      - delimitedBy:
+          open: "("
+          expression:
+            sequence:
+              - choice:
+                  - reference: "ElementaryType"
+                  - reference: "IdentifierPath"
+              - terminal: "=>"
+              - reference: "TypeName"
+          close: ")"

@@ -4,7 +4,7 @@ mod versions;
 use std::{collections::BTreeSet, path::PathBuf};
 
 use anyhow::Result;
-use codegen_schema::Grammar;
+use codegen_schema::grammar::Grammar;
 use codegen_utils::context::CodegenContext;
 use semver::Version;
 

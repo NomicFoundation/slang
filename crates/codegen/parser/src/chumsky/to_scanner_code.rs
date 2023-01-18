@@ -1,7 +1,6 @@
+use codegen_schema::manifest::ProductionKind;
 use proc_macro2::TokenStream;
 use quote::quote;
-
-use codegen_schema::*;
 
 use super::{
     character_filter::CharacterFilter, code_generator::CodeGenerator,

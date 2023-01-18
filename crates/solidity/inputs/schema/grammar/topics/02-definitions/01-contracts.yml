@@ -1,0 +1,53 @@
+# yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
+
+- name: "ContractDefinition"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - optional:
+          terminal: "abstract"
+      - terminal: "contract"
+      - reference: "Identifier"
+      - optional:
+          reference: "InheritanceSpecifierList"
+      - delimitedBy:
+          open: "{"
+          expression:
+            zeroOrMore:
+              reference: "ContractBodyElement"
+          close: "}"
+
+- name: "InheritanceSpecifierList"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "is"
+      - separatedBy:
+          separator: ","
+          expression:
+            reference: "InheritanceSpecifier"
+
+- name: "InheritanceSpecifier"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - reference: "IdentifierPath"
+      - optional:
+          reference: "ArgumentList"
+
+- name: "ContractBodyElement"
+  kind: "Rule"
+  unversioned:
+    choice:
+      - reference: "UsingDirective"
+      - reference: "ConstructorDefinition"
+      - reference: "FunctionDefinition"
+      - reference: "FallbackFunctionDefinition"
+      - reference: "ReceiveFunctionDefinition"
+      - reference: "ModifierDefinition"
+      - reference: "StructDefinition"
+      - reference: "EnumDefinition"
+      - reference: "UserDefinedValueTypeDefinition"
+      - reference: "EventDefinition"
+      - reference: "ErrorDefinition"
+      - reference: "StateVariableDeclaration"

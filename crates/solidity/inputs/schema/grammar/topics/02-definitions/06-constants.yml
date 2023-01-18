@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
+
+- name: "ConstantDefinition"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - reference: "TypeName"
+      - terminal: "constant"
+      - reference: "Identifier"
+      - terminal: "="
+      - reference: "Expression"
+      - terminal: ";"

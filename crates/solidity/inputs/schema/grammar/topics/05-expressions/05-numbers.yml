@@ -1,0 +1,85 @@
+# yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
+
+- name: "NumericLiteral"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - choice:
+          - reference: "DecimalNumber"
+          - reference: "HexNumber"
+      - optional:
+          reference: "NumberUnit"
+
+- name: "DecimalNumber"
+  kind: "Token"
+  unversioned:
+    sequence:
+      - choice:
+          - reference: "DecimalInteger"
+          - reference: "DecimalFloat"
+      - optional:
+          reference: "DecimalExponent"
+
+- name: "DecimalInteger"
+  kind: "Token"
+  unversioned:
+    sequence:
+      - range:
+          from: "0"
+          to: "9"
+      - zeroOrMore:
+          sequence:
+            - optional:
+                terminal: "_"
+            - range:
+                from: "0"
+                to: "9"
+
+- name: "DecimalFloat"
+  kind: "Token"
+  unversioned:
+    sequence:
+      - optional:
+          reference: "DecimalInteger"
+      - terminal: "."
+      - reference: "DecimalInteger"
+
+- name: "DecimalExponent"
+  kind: "Token"
+  unversioned:
+    sequence:
+      - choice:
+          - terminal: "e"
+          - terminal: "E"
+      - optional:
+          terminal: "-"
+      - reference: "DecimalInteger"
+
+- name: "HexNumber"
+  kind: "Token"
+  unversioned:
+    sequence:
+      - terminal: "0x"
+      - sequence:
+          - reference: "HexCharacter"
+          - zeroOrMore:
+              sequence:
+                - optional:
+                    terminal: "_"
+                - reference: "HexCharacter"
+
+- name: "NumberUnit"
+  kind: "Token"
+  unversioned:
+    choice:
+      - terminal: "days"
+      - terminal: "ether"
+      - terminal: "finney"
+      - terminal: "gwei"
+      - terminal: "hours"
+      - terminal: "minutes"
+      - terminal: "seconds"
+      - terminal: "szabo"
+      - terminal: "weeks"
+      - terminal: "wei"
+      - terminal: "years"

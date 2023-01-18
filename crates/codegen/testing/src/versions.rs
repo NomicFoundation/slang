@@ -1,6 +1,6 @@
 use std::collections::BTreeSet;
 
-use codegen_schema::{Grammar, ProductionVersions};
+use codegen_schema::{grammar::Grammar, manifest::ProductionVersioning};
 use semver::Version;
 
 pub fn collect_breaking_versions<'a>(grammar: &'a Grammar) -> BTreeSet<&'a Version> {
@@ -10,11 +10,11 @@ pub fn collect_breaking_versions<'a>(grammar: &'a Grammar) -> BTreeSet<&'a Versi
     ]);
 
     for production in grammar.productions.values().flatten() {
-        match &production.versions {
-            ProductionVersions::Unversioned(_) => {
+        match &production.versioning {
+            ProductionVersioning::Unversioned(_) => {
                 // Nothing to add
             }
-            ProductionVersions::Versioned(versions) => {
+            ProductionVersioning::Versioned(versions) => {
                 for version in versions.keys() {
                     breaking_versions.insert(version);
                 }

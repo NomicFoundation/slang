@@ -1,9 +1,9 @@
-use std::{io::Write, path::PathBuf};
+use std::{collections::HashMap, io::Write, path::PathBuf};
 
-use codegen_schema::Grammar;
+use codegen_schema::grammar::Grammar;
 use codegen_utils::context::CodegenContext;
 
-use super::{
+use crate::{
     productions::{write_production, SpecProductionContext},
     NavigationEntry,
 };
@@ -33,7 +33,7 @@ pub fn generate_spec_sections(
                 .iter()
                 .enumerate()
                 .for_each(|(topic_index, topic)| {
-                    let topic_slug = grammar.generate_topic_slug(section_index, topic_index);
+                    let topic_slug = generate_topic_slug(grammar, section_index, topic_index);
                     let topic_file = generated_folder.join(&topic_slug).join("index.md");
 
                     entries.push(NavigationEntry {
@@ -108,35 +108,41 @@ pub fn generate_spec_sections(
 }
 
 fn generate_context(grammar: &Grammar) -> SpecProductionContext {
-    let context = SpecProductionContext {
-        grammar: grammar,
-        productions_location: grammar
-            .manifest
-            .sections
-            .iter()
-            .enumerate()
-            .flat_map(|(section_index, section)| {
-                section
-                    .topics
-                    .iter()
-                    .enumerate()
-                    .flat_map(move |(topic_index, topic)| {
-                        topic.definition.iter().flat_map(move |definition| {
-                            grammar.productions.get(definition).unwrap().iter().map(
-                                move |production| {
-                                    (
-                                        production.name.clone(),
-                                        format!(
-                                            "../../{}",
-                                            grammar.generate_topic_slug(section_index, topic_index)
-                                        ),
-                                    )
-                                },
-                            )
-                        })
-                    })
-            })
-            .collect(),
+    let mut productions_location = HashMap::<String, String>::new();
+
+    for (section_index, section) in grammar.manifest.sections.iter().enumerate() {
+        for (topic_index, topic) in section.topics.iter().enumerate() {
+            let topic_slug = generate_topic_slug(grammar, section_index, topic_index);
+
+            let definition = if let Some(definition) = &topic.definition {
+                assert_eq!(definition, &format!("topics/{topic_slug}.yml"));
+                definition
+            } else {
+                continue;
+            };
+
+            for production in grammar.productions.get(definition).unwrap() {
+                let production = production.as_ref();
+                productions_location.insert(production.name.clone(), format!("../../{topic_slug}"));
+            }
+        }
+    }
+
+    return SpecProductionContext {
+        grammar,
+        productions_location,
     };
-    context
+}
+
+fn generate_topic_slug(grammar: &Grammar, section_index: usize, topic_index: usize) -> String {
+    let section = grammar.manifest.sections.get(section_index).unwrap();
+    let topic = section.topics.get(topic_index).unwrap();
+
+    return format!(
+        "{:0>2}-{}/{:0>2}-{}",
+        section_index + 1,
+        section.title.to_ascii_lowercase().replace(" ", "-"),
+        topic_index + 1,
+        topic.title.to_ascii_lowercase().replace(" ", "-"),
+    );
 }

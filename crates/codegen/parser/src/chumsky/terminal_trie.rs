@@ -1,7 +1,6 @@
+use codegen_schema::manifest::{ExpressionRef, ProductionKind, EBNF};
 use patricia_tree::{node::Node, PatriciaMap};
 use proc_macro2::TokenStream;
-
-use codegen_schema::*;
 
 use super::{combinator_tree::CombinatorTree, naming};
 
@@ -50,7 +49,9 @@ impl TerminalTrie {
                     string.clone(),
                     TreeEntry {
                         name: expression.config.name.clone().or_else(|| {
-                            if tree.production.is_token() && !force_all_entries_to_be_named {
+                            if tree.production.kind == ProductionKind::Token
+                                && !force_all_entries_to_be_named
+                            {
                                 None
                             } else {
                                 Some(naming::name_of_terminal_string(&string))

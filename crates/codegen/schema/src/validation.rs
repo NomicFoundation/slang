@@ -1,63 +1,25 @@
-use std::{
-    collections::{HashMap, HashSet},
-    path::PathBuf,
-};
+use std::collections::HashSet;
 
-use codegen_utils::context::CodegenContext;
-use jsonschema::JSONSchema;
-use regex::Regex;
 use semver::Version;
 
 use crate::{
-    EBNFDelimitedBy, EBNFRepeat, EBNFSeparatedBy, Expression, Grammar, ProductionVersions, EBNF,
+    grammar::Grammar,
+    manifest::{
+        EBNFDelimitedBy, EBNFRepeat, EBNFSeparatedBy, Expression, ProductionVersioning, EBNF,
+    },
 };
 
 static REQUIRED_PRODUCTIONS: [&str; 2] = ["LeadingTrivia", "TrailingTrivia"];
 
-impl Grammar {
-    pub fn validate(&self, context: &mut CodegenContext, manifest_path: &PathBuf) {
-        validate_topics(self);
-        validate_versions_list("Grammar Manifest", &self.manifest.versions.iter().collect());
+pub fn validate_grammar(grammar: &Grammar) {
+    validate_versions_list(
+        "Grammar Manifest",
+        &grammar.manifest.versions.iter().collect(),
+    );
 
-        let mut schemas = LoadedSchemas::new();
-        schemas.validate(context, manifest_path);
-        self.productions.keys().for_each(|definition| {
-            schemas.validate(
-                context,
-                &manifest_path
-                    .parent()
-                    .unwrap()
-                    .join(definition)
-                    .canonicalize()
-                    .unwrap(),
-            );
-        });
-
-        let defined = validate_definitions(self);
-        let used = validate_usages(self, &defined);
-        validate_orphaned_nodes(&self, defined, used);
-    }
-}
-
-fn validate_topics(grammar: &Grammar) {
-    grammar
-        .manifest
-        .sections
-        .iter()
-        .enumerate()
-        .for_each(|(section_index, section)| {
-            section
-                .topics
-                .iter()
-                .enumerate()
-                .for_each(|(topic_index, topic)| {
-                    let slug = grammar.generate_topic_slug(section_index, topic_index);
-
-                    if let Some(topic_definition) = &topic.definition {
-                        assert_eq!(topic_definition, &format!("topics/{slug}.yml"));
-                    }
-                });
-        });
+    let defined = validate_definitions(grammar);
+    let used = validate_usages(grammar, &defined);
+    validate_orphaned_nodes(&grammar, defined, used);
 }
 
 fn validate_versions_list(owner: &str, versions: &Vec<&Version>) {
@@ -113,11 +75,11 @@ fn validate_usages(grammar: &Grammar, defined: &HashSet<String>) -> HashSet<Stri
     grammar.productions.values().for_each(|productions| {
         productions
             .iter()
-            .for_each(|production| match &production.versions {
-                ProductionVersions::Unversioned(expression) => {
+            .for_each(|production| match &production.versioning {
+                ProductionVersioning::Unversioned(expression) => {
                     validate_expression(&expression, defined, &mut used);
                 }
-                ProductionVersions::Versioned(versions) => {
+                ProductionVersioning::Versioned(versions) => {
                     let production_name = &&production.name;
                     validate_versions_list(production_name, &versions.keys().collect());
 
@@ -162,14 +124,14 @@ fn validate_expression(
             });
         }
 
-        EBNF::DelimitedBy(EBNFDelimitedBy { expr, .. })
-        | EBNF::Not(expr)
-        | EBNF::OneOrMore(expr)
-        | EBNF::Optional(expr)
-        | EBNF::Repeat(EBNFRepeat { expr, .. })
-        | EBNF::SeparatedBy(EBNFSeparatedBy { expr, .. })
-        | EBNF::ZeroOrMore(expr) => {
-            validate_expression(expr, defined, used);
+        EBNF::DelimitedBy(EBNFDelimitedBy { expression, .. })
+        | EBNF::Not(expression)
+        | EBNF::OneOrMore(expression)
+        | EBNF::Optional(expression)
+        | EBNF::Repeat(EBNFRepeat { expression, .. })
+        | EBNF::SeparatedBy(EBNFSeparatedBy { expression, .. })
+        | EBNF::ZeroOrMore(expression) => {
+            validate_expression(expression, defined, used);
         }
 
         EBNF::Difference(difference) => {
@@ -189,57 +151,4 @@ fn validate_expression(
             used.insert(reference.clone());
         }
     };
-}
-
-struct LoadedSchemas {
-    schemas: HashMap<PathBuf, JSONSchema>,
-}
-
-impl LoadedSchemas {
-    pub fn new() -> Self {
-        return Self {
-            schemas: HashMap::new(),
-        };
-    }
-
-    pub fn validate(&mut self, context: &mut CodegenContext, yaml_path: &PathBuf) {
-        let yaml_contents = context.read_file(&yaml_path).unwrap();
-
-        let schema_path_re = Regex::new(r"# yaml-language-server: \$schema=([\.\-/a-z]+)").unwrap();
-        let mut schema_path_matches = schema_path_re.captures_iter(&yaml_contents);
-        let schema_path = schema_path_matches.next().unwrap().get(1).unwrap().as_str();
-        assert!(
-            schema_path_matches.next().is_none(),
-            "Multiple schema paths"
-        );
-
-        let schema_path = yaml_path
-            .parent()
-            .unwrap()
-            .join(schema_path)
-            .canonicalize()
-            .unwrap();
-
-        if !self.schemas.contains_key(&schema_path) {
-            let schema_contents = context.read_file(&schema_path).unwrap();
-            let schema_json = &serde_json::from_str(&schema_contents).unwrap();
-            let schema = JSONSchema::compile(schema_json).unwrap();
-
-            self.schemas.insert(schema_path.to_owned(), schema);
-        }
-
-        let schema = self.schemas.get(&schema_path).unwrap();
-
-        let yaml_value = serde_yaml::from_str(&yaml_contents).unwrap();
-        let json_value = serde_json::from_value(yaml_value).unwrap();
-
-        let validation = schema.validate(&json_value);
-        if let Err(errors) = validation {
-            for error in errors {
-                println!("{:?}", error);
-            }
-
-            panic!("Schema Validation errors in: {:?}", yaml_path);
-        }
-    }
 }

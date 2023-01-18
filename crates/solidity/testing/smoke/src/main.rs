@@ -4,7 +4,7 @@ mod reporting;
 use std::path::PathBuf;
 
 use anyhow::{Context, Result};
-use codegen_schema::Grammar;
+use codegen_schema::grammar::Grammar;
 use codegen_utils::context::CodegenContext;
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 use semver::Version;
@@ -22,7 +22,7 @@ fn main() {
         CodegenContext::with_context(|codegen| {
             let grammar_file = &codegen
                 .repo_root
-                .join("crates/solidity/inputs/schema/manifest.yml");
+                .join("crates/solidity/inputs/schema/grammar/manifest.yml");
 
             let grammar = &Grammar::from_manifest(codegen, grammar_file);
 

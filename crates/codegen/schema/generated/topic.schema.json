@@ -1,0 +1,311 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Array_of_Production",
+  "type": "array",
+  "items": {
+    "$ref": "#/definitions/Production"
+  },
+  "definitions": {
+    "Production": {
+      "type": "object",
+      "anyOf": [
+        {
+          "type": "object",
+          "required": ["unversioned"],
+          "properties": {
+            "unversioned": {
+              "$ref": "#/definitions/Expression"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": ["versioned"],
+          "properties": {
+            "versioned": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/definitions/Expression"
+              }
+            }
+          }
+        }
+      ],
+      "required": ["kind", "name"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/definitions/ProductionKind"
+        }
+      }
+    },
+    "ProductionKind": {
+      "type": "string",
+      "enum": ["Rule", "Trivia", "Token"]
+    },
+    "Expression": {
+      "type": "object",
+      "anyOf": [
+        {
+          "title": "Choice Expression",
+          "type": "object",
+          "required": ["choice"],
+          "properties": {
+            "choice": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Expression"
+              }
+            }
+          }
+        },
+        {
+          "title": "DelimitedBy Expression",
+          "type": "object",
+          "required": ["delimitedBy"],
+          "properties": {
+            "delimitedBy": {
+              "$ref": "#/definitions/EBNFDelimitedBy"
+            }
+          }
+        },
+        {
+          "title": "Difference Expression",
+          "type": "object",
+          "required": ["difference"],
+          "properties": {
+            "difference": {
+              "$ref": "#/definitions/EBNFDifference"
+            }
+          }
+        },
+        {
+          "title": "Not Expression",
+          "type": "object",
+          "required": ["not"],
+          "properties": {
+            "not": {
+              "$ref": "#/definitions/Expression"
+            }
+          }
+        },
+        {
+          "title": "OneOrMore Expression",
+          "type": "object",
+          "required": ["oneOrMore"],
+          "properties": {
+            "oneOrMore": {
+              "$ref": "#/definitions/Expression"
+            }
+          }
+        },
+        {
+          "title": "Optional Expression",
+          "type": "object",
+          "required": ["optional"],
+          "properties": {
+            "optional": {
+              "$ref": "#/definitions/Expression"
+            }
+          }
+        },
+        {
+          "title": "Range Expression",
+          "type": "object",
+          "required": ["range"],
+          "properties": {
+            "range": {
+              "$ref": "#/definitions/EBNFRange"
+            }
+          }
+        },
+        {
+          "title": "Reference Expression",
+          "type": "object",
+          "required": ["reference"],
+          "properties": {
+            "reference": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "Repeat Expression",
+          "type": "object",
+          "required": ["repeat"],
+          "properties": {
+            "repeat": {
+              "$ref": "#/definitions/EBNFRepeat"
+            }
+          }
+        },
+        {
+          "title": "SeparatedBy Expression",
+          "type": "object",
+          "required": ["separatedBy"],
+          "properties": {
+            "separatedBy": {
+              "$ref": "#/definitions/EBNFSeparatedBy"
+            }
+          }
+        },
+        {
+          "title": "Sequence Expression",
+          "type": "object",
+          "required": ["sequence"],
+          "properties": {
+            "sequence": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Expression"
+              }
+            }
+          }
+        },
+        {
+          "title": "Terminal Expression",
+          "type": "object",
+          "required": ["terminal"],
+          "properties": {
+            "terminal": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "ZeroOrMore Expression",
+          "type": "object",
+          "required": ["zeroOrMore"],
+          "properties": {
+            "zeroOrMore": {
+              "$ref": "#/definitions/Expression"
+            }
+          }
+        }
+      ],
+      "properties": {
+        "name": {
+          "default": null,
+          "type": ["string", "null"]
+        },
+        "parserType": {
+          "default": null,
+          "anyOf": [
+            {
+              "$ref": "#/definitions/ParserType"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "lookahead": {
+          "default": null,
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Expression"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "associativity": {
+          "default": null,
+          "anyOf": [
+            {
+              "$ref": "#/definitions/ExpressionAssociativity"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "ParserType": {
+      "type": "string",
+      "enum": ["Precedence"]
+    },
+    "ExpressionAssociativity": {
+      "type": "string",
+      "enum": ["Left", "Right"]
+    },
+    "EBNFDelimitedBy": {
+      "type": "object",
+      "required": ["close", "expression", "open"],
+      "properties": {
+        "open": {
+          "type": "string"
+        },
+        "expression": {
+          "$ref": "#/definitions/Expression"
+        },
+        "close": {
+          "type": "string"
+        }
+      }
+    },
+    "EBNFDifference": {
+      "type": "object",
+      "required": ["minuend", "subtrahend"],
+      "properties": {
+        "minuend": {
+          "$ref": "#/definitions/Expression"
+        },
+        "subtrahend": {
+          "$ref": "#/definitions/Expression"
+        }
+      }
+    },
+    "EBNFRange": {
+      "type": "object",
+      "required": ["from", "to"],
+      "properties": {
+        "from": {
+          "type": "string",
+          "maxLength": 1,
+          "minLength": 1
+        },
+        "to": {
+          "type": "string",
+          "maxLength": 1,
+          "minLength": 1
+        }
+      }
+    },
+    "EBNFRepeat": {
+      "type": "object",
+      "required": ["expression", "max", "min"],
+      "properties": {
+        "min": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0.0
+        },
+        "max": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0.0
+        },
+        "expression": {
+          "$ref": "#/definitions/Expression"
+        }
+      }
+    },
+    "EBNFSeparatedBy": {
+      "type": "object",
+      "required": ["expression", "separator"],
+      "properties": {
+        "separator": {
+          "type": "string"
+        },
+        "expression": {
+          "$ref": "#/definitions/Expression"
+        }
+      }
+    }
+  }
+}

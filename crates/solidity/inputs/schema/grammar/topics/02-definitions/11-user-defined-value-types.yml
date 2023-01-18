@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
+
+- name: "UserDefinedValueTypeDefinition"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "type"
+      - reference: "Identifier"
+      - terminal: "is"
+      - reference: "ElementaryType"
+      - terminal: ";"

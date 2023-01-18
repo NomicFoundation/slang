@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
+
+- name: "StateVariableDeclaration"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - reference: "TypeName"
+      - zeroOrMore:
+          reference: "StateVariableAttribute"
+      - reference: "Identifier"
+      - optional:
+          sequence:
+            - terminal: "="
+            - reference: "Expression"
+      - terminal: ";"
+
+- name: "StateVariableAttribute"
+  kind: "Rule"
+  unversioned:
+    choice:
+      - reference: "OverrideSpecifier"
+      - terminal: "constant"
+      - terminal: "immutable"
+      - terminal: "internal"
+      - terminal: "private"
+      - terminal: "public"

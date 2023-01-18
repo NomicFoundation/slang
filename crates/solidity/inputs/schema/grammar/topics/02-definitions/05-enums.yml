@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
+
+- name: "EnumDefinition"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "enum"
+      - reference: "Identifier"
+      - delimitedBy:
+          open: "{"
+          expression:
+            separatedBy:
+              separator: ","
+              expression:
+                reference: "Identifier"
+          close: "}"

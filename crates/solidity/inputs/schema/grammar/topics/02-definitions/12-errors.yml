@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
+
+- name: "ErrorDefinition"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "error"
+      - reference: "Identifier"
+      - delimitedBy:
+          open: "("
+          expression:
+            optional:
+              separatedBy:
+                separator: ","
+                expression:
+                  reference: "ErrorParameter"
+          close: ")"
+      - terminal: ";"
+
+- name: "ErrorParameter"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - reference: "TypeName"
+      - optional:
+          reference: "Identifier"

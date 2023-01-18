@@ -1,0 +1,121 @@
+# yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
+
+- name: "OrExpression"
+  kind: "Rule"
+  unversioned:
+    associativity: "Left"
+    sequence:
+      - reference: "Expression"
+      - terminal: "||"
+      - reference: "Expression"
+
+- name: "AndExpression"
+  kind: "Rule"
+  unversioned:
+    associativity: "Left"
+    sequence:
+      - reference: "Expression"
+      - terminal: "&&"
+      - reference: "Expression"
+
+- name: "EqualityComparisonExpression"
+  kind: "Rule"
+  unversioned:
+    associativity: "Left"
+    sequence:
+      - reference: "Expression"
+      - choice:
+          - terminal: "=="
+          - terminal: "!="
+      - reference: "Expression"
+
+- name: "OrderComparisonExpression"
+  kind: "Rule"
+  unversioned:
+    associativity: "Left"
+    sequence:
+      - reference: "Expression"
+      - choice:
+          - terminal: "<"
+          - terminal: ">"
+          - terminal: "<="
+          - terminal: ">="
+      - reference: "Expression"
+
+- name: "BitOrExpression"
+  kind: "Rule"
+  unversioned:
+    associativity: "Left"
+    sequence:
+      - reference: "Expression"
+      - terminal: "|"
+      - reference: "Expression"
+
+- name: "BitXOrExpression"
+  kind: "Rule"
+  unversioned:
+    associativity: "Left"
+    sequence:
+      - reference: "Expression"
+      - terminal: "^"
+      - reference: "Expression"
+
+- name: "BitAndExpression"
+  kind: "Rule"
+  unversioned:
+    associativity: "Left"
+    sequence:
+      - reference: "Expression"
+      - terminal: "&"
+      - reference: "Expression"
+
+- name: "ShiftExpression"
+  kind: "Rule"
+  unversioned:
+    associativity: "Left"
+    sequence:
+      - reference: "Expression"
+      - choice:
+          - terminal: "<<"
+          - terminal: ">>"
+          - terminal: ">>>"
+      - reference: "Expression"
+
+- name: "AddSubExpression"
+  kind: "Rule"
+  unversioned:
+    associativity: "Left"
+    sequence:
+      - reference: "Expression"
+      - choice:
+          - terminal: "+"
+          - terminal: "-"
+      - reference: "Expression"
+
+- name: "MulDivModExpression"
+  kind: "Rule"
+  unversioned:
+    associativity: "Left"
+    sequence:
+      - reference: "Expression"
+      - choice:
+          - terminal: "*"
+          - terminal: "/"
+          - terminal: "%"
+      - reference: "Expression"
+
+- name: "ExponentiationExpression"
+  kind: "Rule"
+  versioned:
+    0.4.11:
+      associativity: "Left"
+      sequence:
+        - reference: "Expression"
+        - terminal: "**"
+        - reference: "Expression"
+    0.6.0:
+      associativity: "Right"
+      sequence:
+        - reference: "Expression"
+        - terminal: "**"
+        - reference: "Expression"

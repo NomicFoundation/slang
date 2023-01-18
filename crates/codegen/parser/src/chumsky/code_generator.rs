@@ -3,7 +3,7 @@ use std::{
     path::PathBuf,
 };
 
-use codegen_schema::Grammar;
+use codegen_schema::grammar::Grammar;
 use codegen_utils::context::CodegenContext;
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};

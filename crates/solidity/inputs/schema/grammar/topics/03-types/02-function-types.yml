@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
+
+- name: "FunctionType"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "function"
+      - reference: "ParameterList"
+      - zeroOrMore:
+          choice:
+            - terminal: "internal"
+            - terminal: "external"
+            - terminal: "private"
+            - terminal: "public"
+            - terminal: "pure"
+            - terminal: "view"
+            - terminal: "payable"
+      - optional:
+          sequence:
+            - terminal: "returns"
+            - reference: "ParameterList"
