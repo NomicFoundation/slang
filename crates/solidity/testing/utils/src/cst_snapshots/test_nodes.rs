@@ -1,5 +1,6 @@
 use std::{ops::Range, rc::Rc};
 
+use anyhow::Result;
 use solidity_rust_lib::generated::{
     cst,
     kinds::{RuleKind, TokenKind},
@@ -155,5 +156,40 @@ impl TestNode {
 
         // Will return `None` if no ranges are found:
         return Some(ranges.first()?.start..ranges.last()?.end);
+    }
+
+    pub fn render_contents(&self, source: &str) -> Result<String> {
+        if !self.children.is_empty() {
+            return Ok("".to_owned());
+        }
+
+        let mut contents = match &self.range {
+            Some(range) => source[range.to_owned()].to_owned(),
+            None => "".to_owned(),
+        };
+
+        // Trim long lines:
+        let max_length = 50;
+        if contents.len() > max_length {
+            let separator = "...";
+            contents = contents[0..(max_length - separator.len())].to_owned() + separator
+        }
+
+        // Double quote, and escape line breaks:
+        contents = serde_json::to_string(&contents)?;
+
+        return Ok(contents);
+    }
+}
+
+impl std::fmt::Display for TestNodeKind {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        return match self {
+            TestNodeKind::Rule(kind) => write!(f, "{kind:?} (Rule)"),
+            TestNodeKind::Group => write!(f, "Group"),
+            TestNodeKind::Token(kind) => write!(f, "{kind:?} (Token)"),
+            TestNodeKind::Trivia(kind) => write!(f, "{kind:?} (Trivia)"),
+            TestNodeKind::Contents => write!(f, "Contents"),
+        };
     }
 }

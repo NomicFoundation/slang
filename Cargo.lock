@@ -1055,6 +1055,7 @@ version = "0.0.0"
 dependencies = [
  "anyhow",
  "semver",
+ "serde_json",
  "solidity_rust_lib",
 ]
 

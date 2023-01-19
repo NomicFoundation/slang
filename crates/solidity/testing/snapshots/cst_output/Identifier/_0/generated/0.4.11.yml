@@ -1,5 +1,9 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Errors: 0
+Source: >
+  1  │ _0                                                                               │ 0..2
 
-► Token(Identifier) - (0..2)     │ _0
+Errors: []
+
+Tree:
+  - Identifier (Token): "_0" # 0..2

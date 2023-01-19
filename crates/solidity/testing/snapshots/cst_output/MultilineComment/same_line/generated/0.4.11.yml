@@ -1,5 +1,9 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Errors: 0
+Source: >
+  1  │ /* this is on the same line */                                                   │ 0..30
 
-► Token(MultilineComment) - (0..30)     │ /* this is on the same line */
+Errors: []
+
+Tree:
+  - MultilineComment (Token): "/* this is on the same line */" # 0..30

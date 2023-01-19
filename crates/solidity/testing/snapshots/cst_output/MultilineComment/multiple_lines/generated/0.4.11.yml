@@ -1,5 +1,12 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Errors: 0
+Source: >
+  1  │ /*                                                                               │ 0..2
+  2  │  * This is defined                                                               │ 3..21
+  3  │  * on multiple lines.                                                            │ 22..43
+  4  │  */                                                                              │ 44..47
 
-► Token(MultilineComment) - (0..47)     │ /*\n * This is defined\n * on multiple lines.\n */
+Errors: []
+
+Tree:
+  - MultilineComment (Token): "/*\n * This is defined\n * on multiple lines.\n */" # 0..47

@@ -1,11 +1,15 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Errors: 0
+Source: >
+  1  │ x[]                                                                              │ 0..3
 
-█ Rule(Expression) - (0..3)                   │
-└──█ Rule(IndexAccessExpression) - (0..3)     │
-   ├──█ Rule(PrimaryExpression) - (0..1)      │
-   │  └──► Token(Identifier) - (0..1)         │ x
-   └──█ Group - (1..3)                        │
-      ├──► Token(OpenBracket) - (1..2)        │ [
-      └──► Token(CloseBracket) - (2..3)       │ ]
+Errors: []
+
+Tree:
+  - Expression (Rule): # 0..3
+      - IndexAccessExpression (Rule): # 0..3
+          - PrimaryExpression (Rule): # 0..1
+              - Identifier (Token): "x" # 0..1
+          - Group: # 1..3
+              - OpenBracket (Token): "[" # 1..2
+              - CloseBracket (Token): "]" # 2..3

@@ -31,7 +31,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
 
         for version in BREAKING_VERSIONS {
             let version = Version::parse(version)?;
-            let snapshot_path = test_dir.join(format!("generated/{version}.snap"));
+            let snapshot_path = test_dir.join(format!("generated/{version}.yml"));
 
             let output = Language::new(version)
                 .get_parser(

@@ -4,11 +4,6 @@ use crate::cst_output::runner::run;
 use anyhow::Result;
 
 #[test]
-fn member_access_index_access() -> Result<()> {
-    return run("Expression", " member_access_index_access");
-}
-
-#[test]
 fn add_mul() -> Result<()> {
     return run("Expression", "add_mul");
 }
@@ -56,4 +51,9 @@ fn member_access_chain() -> Result<()> {
 #[test]
 fn member_access_function_call() -> Result<()> {
     return run("Expression", "member_access_function_call");
+}
+
+#[test]
+fn member_access_index_access() -> Result<()> {
+    return run("Expression", "member_access_index_access");
 }
