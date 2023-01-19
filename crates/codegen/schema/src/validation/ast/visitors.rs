@@ -137,7 +137,7 @@ impl Receiver for ExpressionRef {
             VisitorResponse::StepIn => { /* Continue */ }
         };
 
-        match &self.ebnf {
+        match &self.ebnf.value {
             EBNF::Choice(expressions) | EBNF::Sequence(expressions) => {
                 for expression in expressions {
                     expression.receive(visitor, reporter);
