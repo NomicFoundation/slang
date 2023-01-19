@@ -64,7 +64,7 @@ pub type ExpressionRef = std::rc::Rc<Expression>;
 
 pub struct Expression {
     pub config: ExpressionConfig,
-    pub ebnf: EBNF,
+    pub ebnf: Node<EBNF>,
 }
 
 impl Expression {
@@ -120,76 +120,112 @@ pub struct EBNFSeparatedBy {
 }
 
 impl EBNF {
-    pub fn new(syntax: &cst::NodeRef, value: types::productions::EBNF) -> Self {
-        return match value {
+    pub fn new(syntax: &cst::NodeRef, value: types::productions::EBNF) -> Node<Self> {
+        match value {
             types::productions::EBNF::Choice(value) => {
-                let syntax = &syntax.unwrap_field("choice").value;
-                Self::Choice(syntax.zip_array(value, Expression::new))
+                let syntax = syntax.unwrap_field("choice");
+                return Node::new(
+                    &syntax.key,
+                    Self::Choice(syntax.value.zip_array(value, Expression::new)),
+                );
             }
             types::productions::EBNF::DelimitedBy(value) => {
-                let syntax = &syntax.unwrap_field("delimitedBy").value;
-                Self::DelimitedBy(EBNFDelimitedBy {
-                    open: ast_value!(syntax, value, open),
-                    expression: ast_value!(syntax, value, expression, Expression),
-                    close: ast_value!(syntax, value, close),
-                })
+                let syntax = syntax.unwrap_field("delimitedBy");
+                return Node::new(
+                    &syntax.key,
+                    Self::DelimitedBy(EBNFDelimitedBy {
+                        open: ast_value!(syntax.value, value, open),
+                        expression: ast_value!(syntax.value, value, expression, Expression),
+                        close: ast_value!(syntax.value, value, close),
+                    }),
+                );
             }
             types::productions::EBNF::Difference(value) => {
-                let syntax = &syntax.unwrap_field("difference").value;
-                Self::Difference(EBNFDifference {
-                    minuend: ast_value!(syntax, value, minuend, Expression),
-                    subtrahend: ast_value!(syntax, value, subtrahend, Expression),
-                })
+                let syntax = syntax.unwrap_field("difference");
+                return Node::new(
+                    &syntax.key,
+                    Self::Difference(EBNFDifference {
+                        minuend: ast_value!(syntax.value, value, minuend, Expression),
+                        subtrahend: ast_value!(syntax.value, value, subtrahend, Expression),
+                    }),
+                );
             }
             types::productions::EBNF::Not(value) => {
-                let syntax = &syntax.unwrap_field("not").value;
-                Self::Not(Expression::new(syntax, value))
+                let syntax = syntax.unwrap_field("not");
+                return Node::new(
+                    &syntax.key,
+                    Self::Not(Expression::new(&syntax.value, value)),
+                );
             }
             types::productions::EBNF::OneOrMore(value) => {
-                let syntax = &syntax.unwrap_field("oneOrMore").value;
-                Self::OneOrMore(Expression::new(syntax, value))
+                let syntax = syntax.unwrap_field("oneOrMore");
+                return Node::new(
+                    &syntax.key,
+                    Self::OneOrMore(Expression::new(&syntax.value, value)),
+                );
             }
             types::productions::EBNF::Optional(value) => {
-                let syntax = &syntax.unwrap_field("optional").value;
-                Self::Optional(Expression::new(syntax, value))
+                let syntax = syntax.unwrap_field("optional");
+                return Node::new(
+                    &syntax.key,
+                    Self::Optional(Expression::new(&syntax.value, value)),
+                );
             }
             types::productions::EBNF::Range(value) => {
-                let syntax = &syntax.unwrap_field("range").value;
-                Self::Range(EBNFRange {
-                    from: ast_value!(syntax, value, from),
-                    to: ast_value!(syntax, value, to),
-                })
+                let syntax = syntax.unwrap_field("range");
+                return Node::new(
+                    &syntax.key,
+                    Self::Range(EBNFRange {
+                        from: ast_value!(syntax.value, value, from),
+                        to: ast_value!(syntax.value, value, to),
+                    }),
+                );
             }
             types::productions::EBNF::Reference(value) => {
-                let syntax = &syntax.unwrap_field("reference").value;
-                Self::Reference(Node::new(syntax, value))
+                let syntax = syntax.unwrap_field("reference");
+                return Node::new(
+                    &syntax.key,
+                    Self::Reference(Node::new(&syntax.value, value)),
+                );
             }
             types::productions::EBNF::Repeat(value) => {
-                let syntax = &syntax.unwrap_field("repeat").value;
-                Self::Repeat(EBNFRepeat {
-                    min: ast_value!(syntax, value, min),
-                    max: ast_value!(syntax, value, max),
-                    expression: ast_value!(syntax, value, expression, Expression),
-                })
+                let syntax = syntax.unwrap_field("repeat");
+                return Node::new(
+                    &syntax.key,
+                    Self::Repeat(EBNFRepeat {
+                        min: ast_value!(syntax.value, value, min),
+                        max: ast_value!(syntax.value, value, max),
+                        expression: ast_value!(syntax.value, value, expression, Expression),
+                    }),
+                );
             }
             types::productions::EBNF::SeparatedBy(value) => {
-                let syntax = &syntax.unwrap_field("separatedBy").value;
-                Self::SeparatedBy(EBNFSeparatedBy {
-                    separator: ast_value!(syntax, value, separator),
-                    expression: ast_value!(syntax, value, expression, Expression),
-                })
+                let syntax = syntax.unwrap_field("separatedBy");
+                return Node::new(
+                    &syntax.key,
+                    Self::SeparatedBy(EBNFSeparatedBy {
+                        separator: ast_value!(syntax.value, value, separator),
+                        expression: ast_value!(syntax.value, value, expression, Expression),
+                    }),
+                );
             }
             types::productions::EBNF::Sequence(value) => {
-                let syntax = &syntax.unwrap_field("sequence").value;
-                Self::Sequence(syntax.zip_array(value, Expression::new))
+                let syntax = syntax.unwrap_field("sequence");
+                return Node::new(
+                    &syntax.key,
+                    Self::Sequence(syntax.value.zip_array(value, Expression::new)),
+                );
             }
             types::productions::EBNF::Terminal(value) => {
-                let syntax = &syntax.unwrap_field("terminal").value;
-                Self::Terminal(Node::new(syntax, value))
+                let syntax = syntax.unwrap_field("terminal");
+                return Node::new(&syntax.key, Self::Terminal(Node::new(&syntax.value, value)));
             }
             types::productions::EBNF::ZeroOrMore(value) => {
-                let syntax = &syntax.unwrap_field("zeroOrMore").value;
-                Self::ZeroOrMore(Expression::new(syntax, value))
+                let syntax = syntax.unwrap_field("zeroOrMore");
+                return Node::new(
+                    &syntax.key,
+                    Self::ZeroOrMore(Expression::new(&syntax.value, value)),
+                );
             }
         };
     }
