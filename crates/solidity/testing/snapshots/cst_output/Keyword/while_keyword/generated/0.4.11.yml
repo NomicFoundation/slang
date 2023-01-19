@@ -1,5 +1,9 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Errors: 0
+Source: >
+  1  │ while                                                                            │ 0..5
 
-► Token(Keyword) - (0..5)     │ while
+Errors: []
+
+Tree:
+  - Keyword (Token): "while" # 0..5

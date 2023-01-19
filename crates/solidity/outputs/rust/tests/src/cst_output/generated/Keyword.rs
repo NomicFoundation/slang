@@ -4,8 +4,8 @@ use crate::cst_output::runner::run;
 use anyhow::Result;
 
 #[test]
-fn after() -> Result<()> {
-    return run("Keyword", "after");
+fn after_keyword() -> Result<()> {
+    return run("Keyword", "after_keyword");
 }
 
 #[test]

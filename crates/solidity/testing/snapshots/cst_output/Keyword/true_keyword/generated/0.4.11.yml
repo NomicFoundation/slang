@@ -1,5 +1,9 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Errors: 0
+Source: >
+  1  │ true                                                                             │ 0..4
 
-► Token(Keyword) - (0..4)     │ true
+Errors: []
+
+Tree:
+  - Keyword (Token): "true" # 0..4

@@ -1,17 +1,21 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Errors: 0
+Source: >
+  1  │ x()()                                                                            │ 0..5
 
-█ Rule(Expression) - (0..5)                       │
-└──█ Rule(FunctionCallExpression) - (0..5)        │
-   ├──█ Rule(FunctionCallExpression) - (0..3)     │
-   │  ├──█ Rule(PrimaryExpression) - (0..1)       │
-   │  │  └──► Token(Identifier) - (0..1)          │ x
-   │  └──█ Group - (1..3)                         │
-   │     └──█ Rule(ArgumentList) - (1..3)         │
-   │        ├──► Token(OpenParen) - (1..2)        │ (
-   │        └──► Token(CloseParen) - (2..3)       │ )
-   └──█ Group - (3..5)                            │
-      └──█ Rule(ArgumentList) - (3..5)            │
-         ├──► Token(OpenParen) - (3..4)           │ (
-         └──► Token(CloseParen) - (4..5)          │ )
+Errors: []
+
+Tree:
+  - Expression (Rule): # 0..5
+      - FunctionCallExpression (Rule): # 0..5
+          - FunctionCallExpression (Rule): # 0..3
+              - PrimaryExpression (Rule): # 0..1
+                  - Identifier (Token): "x" # 0..1
+              - Group: # 1..3
+                  - ArgumentList (Rule): # 1..3
+                      - OpenParen (Token): "(" # 1..2
+                      - CloseParen (Token): ")" # 2..3
+          - Group: # 3..5
+              - ArgumentList (Rule): # 3..5
+                  - OpenParen (Token): "(" # 3..4
+                  - CloseParen (Token): ")" # 4..5

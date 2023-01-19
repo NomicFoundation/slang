@@ -1,19 +1,23 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Errors: 0
+Source: >
+  1  │ a * b + c * d                                                                    │ 0..13
 
-█ Rule(Expression) - (0..7)                     │
-└──█ Rule(AddSubExpression) - (0..7)            │
-   ├──█ Rule(MulDivModExpression) - (0..3)      │
-   │  ├──█ Rule(PrimaryExpression) - (0..1)     │
-   │  │  └──► Token(Identifier) - (0..1)        │ a
-   │  ├──► Token(Star) - (1..2)                 │ *
-   │  └──█ Rule(PrimaryExpression) - (2..3)     │
-   │     └──► Token(Identifier) - (2..3)        │ b
-   ├──► Token(Plus) - (3..4)                    │ +
-   └──█ Rule(MulDivModExpression) - (4..7)      │
-      ├──█ Rule(PrimaryExpression) - (4..5)     │
-      │  └──► Token(Identifier) - (4..5)        │ c
-      ├──► Token(Star) - (5..6)                 │ *
-      └──█ Rule(PrimaryExpression) - (6..7)     │
-         └──► Token(Identifier) - (6..7)        │ d
+Errors: []
+
+Tree:
+  - Expression (Rule): # 0..13
+      - AddSubExpression (Rule): # 0..13
+          - MulDivModExpression (Rule): # 0..5
+              - PrimaryExpression (Rule): # 0..1
+                  - Identifier (Token): "a" # 0..1
+              - Star (Token): "*" # 2..3
+              - PrimaryExpression (Rule): # 4..5
+                  - Identifier (Token): "b" # 4..5
+          - Plus (Token): "+" # 6..7
+          - MulDivModExpression (Rule): # 8..13
+              - PrimaryExpression (Rule): # 8..9
+                  - Identifier (Token): "c" # 8..9
+              - Star (Token): "*" # 10..11
+              - PrimaryExpression (Rule): # 12..13
+                  - Identifier (Token): "d" # 12..13

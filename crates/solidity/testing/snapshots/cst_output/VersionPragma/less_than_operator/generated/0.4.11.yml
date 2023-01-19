@@ -1,15 +1,19 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Errors: 0
+Source: >
+  1  │ solidity <1.0.0                                                                  │ 0..15
 
-█ Rule(VersionPragma) - (0..15)                        │
-├──► Token(Solidity) - (0..8)                          │ solidity
-└──█ Group - (9..15)                                   │
-   └──█ Rule(VersionPragmaSpecifier) - (9..15)         │
-      ├──► Token(VersionPragmaOperator) - (9..10)      │ <
-      └──█ Group - (10..15)                            │
-         ├──► Token(VersionPragmaValue) - (10..11)     │ 1
-         ├──► Token(Period) - (11..12)                 │ .
-         ├──► Token(VersionPragmaValue) - (12..13)     │ 0
-         ├──► Token(Period) - (13..14)                 │ .
-         └──► Token(VersionPragmaValue) - (14..15)     │ 0
+Errors: []
+
+Tree:
+  - VersionPragma (Rule): # 0..15
+      - Solidity (Token): "solidity" # 0..8
+      - Group: # 9..15
+          - VersionPragmaSpecifier (Rule): # 9..15
+              - VersionPragmaOperator (Token): "<" # 9..10
+              - Group: # 10..15
+                  - VersionPragmaValue (Token): "1" # 10..11
+                  - Period (Token): "." # 11..12
+                  - VersionPragmaValue (Token): "0" # 12..13
+                  - Period (Token): "." # 13..14
+                  - VersionPragmaValue (Token): "0" # 14..15

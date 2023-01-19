@@ -1,5 +1,9 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-Errors: 0
+Source: >
+  1  │ returna                                                                          │ 0..7
 
-► Token(Identifier) - (0..7)     │ returna
+Errors: []
+
+Tree:
+  - Identifier (Token): "returna" # 0..7
