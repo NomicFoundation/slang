@@ -1,0 +1,14 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Sample {}                                                               │ 0..18
+
+Errors: []
+
+Tree:
+  - ContractDefinition (Rule): # 0..18
+      - Contract (Token): "contract" # 0..8
+      - Identifier (Token): "Sample" # 9..15
+      - Group: # 16..18
+          - OpenBrace (Token): "{" # 16..17
+          - CloseBrace (Token): "}" # 17..18

@@ -7,4 +7,5 @@ edition.workspace = true
 [dependencies]
 anyhow = { workspace = true }
 semver = { workspace = true }
+serde_json = { workspace = true }
 solidity_rust_lib = { workspace = true }

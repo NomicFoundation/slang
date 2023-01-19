@@ -3,7 +3,6 @@
   "recommendations": [
     // Language Support
     "igochkov.vscode-ebnf",
-    "mitsuhiko.insta",
     "NomicFoundation.hardhat-solidity",
     "redhat.vscode-yaml",
     "rust-lang.rust-analyzer",

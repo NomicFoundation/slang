@@ -1,0 +1,59 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ interface ICounter {                                                             │ 0..20
+  2  │     // returns the current count                                                 │ 21..53
+  3  │     function count() external view returns (uint);                               │ 54..104
+  4  │                                                                                  │ 105..105
+  5  │     // increments the counter                                                    │ 106..135
+  6  │     function increment() external;                                               │ 136..170
+  7  │ }                                                                                │ 171..172
+
+Errors: []
+
+Tree:
+  - InterfaceDefinition (Rule): # 0..172
+      - Interface (Token): "interface" # 0..9
+      - Identifier (Token): "ICounter" # 10..18
+      - Group: # 19..172
+          - OpenBrace (Token): "{" # 19..20
+          - Group: # 25..170
+              - ContractBodyElement (Rule): # 25..104
+                  - FunctionDefinition (Rule): # 25..104
+                      - Function (Token): # 25..66
+                          - SingleLineComment (Trivia): "// returns the current count" # 25..53
+                          - Contents: "function" # 58..66
+                      - Identifier (Token): "count" # 67..72
+                      - ParameterList (Rule): # 72..74
+                          - OpenParen (Token): "(" # 72..73
+                          - CloseParen (Token): ")" # 73..74
+                      - Group: # 75..88
+                          - FunctionAttribute (Rule): # 75..83
+                              - External (Token): "external" # 75..83
+                          - FunctionAttribute (Rule): # 84..88
+                              - View (Token): "view" # 84..88
+                      - Group: # 89..103
+                          - Returns (Token): "returns" # 89..96
+                          - ParameterList (Rule): # 97..103
+                              - OpenParen (Token): "(" # 97..98
+                              - Group: # 98..102
+                                  - ParameterDeclaration (Rule): # 98..102
+                                      - TypeName (Rule): # 98..102
+                                          - ElementaryType (Rule): # 98..102
+                                              - UnsignedIntegerType (Token): "uint" # 98..102
+                              - CloseParen (Token): ")" # 102..103
+                      - Semicolon (Token): ";" # 103..104
+              - ContractBodyElement (Rule): # 110..170
+                  - FunctionDefinition (Rule): # 110..170
+                      - Function (Token): # 110..148
+                          - SingleLineComment (Trivia): "// increments the counter" # 110..135
+                          - Contents: "function" # 140..148
+                      - Identifier (Token): "increment" # 149..158
+                      - ParameterList (Rule): # 158..160
+                          - OpenParen (Token): "(" # 158..159
+                          - CloseParen (Token): ")" # 159..160
+                      - Group: # 161..169
+                          - FunctionAttribute (Rule): # 161..169
+                              - External (Token): "external" # 161..169
+                      - Semicolon (Token): ";" # 169..170
+          - CloseBrace (Token): "}" # 171..172

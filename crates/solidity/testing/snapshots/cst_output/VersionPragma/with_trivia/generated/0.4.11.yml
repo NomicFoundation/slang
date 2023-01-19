@@ -1,0 +1,26 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ solidity /* comments */ 0 /* are */ . /* allowed */ 0 . /* here */ 0             │ 0..68
+
+Errors: []
+
+Tree:
+  - VersionPragma (Rule): # 0..68
+      - Solidity (Token): "solidity" # 0..8
+      - Group: # 9..68
+          - VersionPragmaSpecifier (Rule): # 9..68
+              - Group: # 9..68
+                  - VersionPragmaValue (Token): # 9..25
+                      - MultilineComment (Trivia): "/* comments */" # 9..23
+                      - Contents: "0" # 24..25
+                  - Period (Token): # 26..37
+                      - MultilineComment (Trivia): "/* are */" # 26..35
+                      - Contents: "." # 36..37
+                  - VersionPragmaValue (Token): # 38..53
+                      - MultilineComment (Trivia): "/* allowed */" # 38..51
+                      - Contents: "0" # 52..53
+                  - Period (Token): "." # 54..55
+                  - VersionPragmaValue (Token): # 56..68
+                      - MultilineComment (Trivia): "/* here */" # 56..66
+                      - Contents: "0" # 67..68

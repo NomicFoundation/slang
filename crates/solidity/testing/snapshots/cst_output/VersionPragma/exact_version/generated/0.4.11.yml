@@ -1,0 +1,18 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ solidity 0.8.0                                                                   │ 0..14
+
+Errors: []
+
+Tree:
+  - VersionPragma (Rule): # 0..14
+      - Solidity (Token): "solidity" # 0..8
+      - Group: # 9..14
+          - VersionPragmaSpecifier (Rule): # 9..14
+              - Group: # 9..14
+                  - VersionPragmaValue (Token): "0" # 9..10
+                  - Period (Token): "." # 10..11
+                  - VersionPragmaValue (Token): "8" # 11..12
+                  - Period (Token): "." # 12..13
+                  - VersionPragmaValue (Token): "0" # 13..14

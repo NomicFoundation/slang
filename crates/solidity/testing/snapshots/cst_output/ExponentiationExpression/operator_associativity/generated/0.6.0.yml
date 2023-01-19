@@ -1,0 +1,15 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ x ** y ** z                                                                      │ 0..11
+
+Errors: []
+
+Tree:
+  - ExponentiationExpression (Rule): # 0..11
+      - Identifier (Token): "x" # 0..1
+      - StarStar (Token): "**" # 2..4
+      - ExponentiationExpression (Rule): # 5..11
+          - Identifier (Token): "y" # 5..6
+          - StarStar (Token): "**" # 7..9
+          - Identifier (Token): "z" # 10..11
