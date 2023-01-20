@@ -26,34 +26,28 @@
   unversioned:
     sequence:
       - choice:
-          - reference: "DecimalInteger"
-          - reference: "DecimalFloat"
+          - sequence:
+              - reference: "DecimalInteger"
+              - optional:
+                  sequence:
+                    - terminal: "."
+                    - reference: "DecimalInteger"
+          - sequence:
+              - terminal: "."
+              - reference: "DecimalInteger"
       - optional:
           reference: "DecimalExponent"
 
 - name: "DecimalInteger"
   kind: "Token"
   unversioned:
-    sequence:
-      - range:
-          from: "0"
-          to: "9"
-      - zeroOrMore:
-          sequence:
-            - optional:
-                terminal: "_"
-            - range:
-                from: "0"
-                to: "9"
-
-- name: "DecimalFloat"
-  kind: "Token"
-  unversioned:
-    sequence:
-      - optional:
-          reference: "DecimalInteger"
-      - terminal: "."
-      - reference: "DecimalInteger"
+    separatedBy:
+      separator: "_"
+      expression:
+        oneOrMore:
+          range:
+            from: "0"
+            to: "9"
 
 - name: "DecimalExponent"
   kind: "Token"
