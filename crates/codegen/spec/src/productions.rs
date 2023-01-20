@@ -3,8 +3,7 @@ use std::{collections::HashMap, io::Write};
 use codegen_schema::types::{
     grammar::Grammar,
     productions::{
-        EBNFDelimitedBy, EBNFDifference, EBNFRange, EBNFRepeat, EBNFSeparatedBy, ExpressionRef,
-        Production, ProductionKind, ProductionVersioning, EBNF,
+        ExpressionParser, ExpressionRef, Production, ProductionKind, ProductionVersioning,
     },
 };
 use itertools::Itertools;
@@ -59,8 +58,8 @@ fn write_version<T: Write>(
 }
 
 fn write_expression<T: Write>(w: &mut T, expr: &ExpressionRef, context: &SpecProductionContext) {
-    match &expr.ebnf {
-        EBNF::Choice(sub_exprs) => {
+    match &expr.parser {
+        ExpressionParser::Choice(sub_exprs) => {
             let mut first = true;
             for sub_expr in sub_exprs {
                 if first {
@@ -72,11 +71,11 @@ fn write_expression<T: Write>(w: &mut T, expr: &ExpressionRef, context: &SpecPro
             }
         }
 
-        EBNF::DelimitedBy(EBNFDelimitedBy {
+        ExpressionParser::DelimitedBy {
             open,
             expression,
             close,
-        }) => {
+        } => {
             write_token(w, TokenKind::string, &format_string_literal(open));
             write_token(w, TokenKind::operator, " ");
             write_subexpression(w, expression, expression, context);
@@ -84,34 +83,34 @@ fn write_expression<T: Write>(w: &mut T, expr: &ExpressionRef, context: &SpecPro
             write_token(w, TokenKind::string, &format_string_literal(close));
         }
 
-        EBNF::Difference(EBNFDifference {
+        ExpressionParser::Difference {
             minuend,
             subtrahend,
-        }) => {
+        } => {
             write_subexpression(w, expr, minuend, context);
             write_token(w, TokenKind::operator, " - ");
             write_subexpression(w, expr, subtrahend, context);
         }
 
-        EBNF::Not(sub_expr) => {
+        ExpressionParser::Not(sub_expr) => {
             write_token(w, TokenKind::operator, "¬");
             write_subexpression(w, expr, sub_expr, context);
         }
 
-        EBNF::OneOrMore(expr) => {
+        ExpressionParser::OneOrMore(expr) => {
             write_token(w, TokenKind::constant, "1");
             write_token(w, TokenKind::operator, "…");
             write_expression(w, expr, context);
             write_token(w, TokenKind::operator, "}");
         }
 
-        EBNF::Optional(expr) => {
+        ExpressionParser::Optional(expr) => {
             write_token(w, TokenKind::operator, "[");
             write_expression(w, expr, context);
             write_token(w, TokenKind::operator, "]");
         }
 
-        EBNF::Range(EBNFRange { from, to }) => {
+        ExpressionParser::Range { from, to } => {
             write_token(
                 w,
                 TokenKind::string,
@@ -125,7 +124,7 @@ fn write_expression<T: Write>(w: &mut T, expr: &ExpressionRef, context: &SpecPro
             );
         }
 
-        EBNF::Reference(name) => {
+        ExpressionParser::Reference(name) => {
             let referenced = &context.grammar.productions[name];
             let location = context.productions_location.get(name).expect(name);
             write_token(
@@ -140,11 +139,11 @@ fn write_expression<T: Write>(w: &mut T, expr: &ExpressionRef, context: &SpecPro
             );
         }
 
-        EBNF::Repeat(EBNFRepeat {
+        ExpressionParser::Repeat {
             min,
             max,
             expression,
-        }) => {
+        } => {
             write_token(w, TokenKind::constant, &min.to_string());
             write_token(w, TokenKind::operator, "…");
             write_token(w, TokenKind::constant, &max.to_string());
@@ -153,10 +152,10 @@ fn write_expression<T: Write>(w: &mut T, expr: &ExpressionRef, context: &SpecPro
             write_token(w, TokenKind::operator, "}");
         }
 
-        EBNF::SeparatedBy(EBNFSeparatedBy {
+        ExpressionParser::SeparatedBy {
             expression,
             separator,
-        }) => {
+        } => {
             write_subexpression(w, expression, expression, context);
             write_token(w, TokenKind::operator, " { ");
             write_subexpression(w, expression, expression, context);
@@ -166,7 +165,7 @@ fn write_expression<T: Write>(w: &mut T, expr: &ExpressionRef, context: &SpecPro
             write_token(w, TokenKind::operator, " }");
         }
 
-        EBNF::Sequence(sub_exprs) => {
+        ExpressionParser::Sequence(sub_exprs) => {
             let mut first = true;
             for sub_expr in sub_exprs {
                 if first {
@@ -178,11 +177,11 @@ fn write_expression<T: Write>(w: &mut T, expr: &ExpressionRef, context: &SpecPro
             }
         }
 
-        EBNF::Terminal(string) => {
+        ExpressionParser::Terminal(string) => {
             write_token(w, TokenKind::string, &format_string_literal(string));
         }
 
-        EBNF::ZeroOrMore(expr) => {
+        ExpressionParser::ZeroOrMore(expr) => {
             write_token(w, TokenKind::operator, "{");
             write_expression(w, expr, context);
             write_token(w, TokenKind::operator, "}");
@@ -206,19 +205,19 @@ fn write_subexpression<T: Write>(
 }
 
 fn expression_precedence(expression: &ExpressionRef) -> u8 {
-    match expression.ebnf {
-        EBNF::OneOrMore(..)
-        | EBNF::Optional(..)
-        | EBNF::Range { .. }
-        | EBNF::Reference(..)
-        | EBNF::Repeat(..)
-        | EBNF::SeparatedBy(..)
-        | EBNF::Terminal(..)
-        | EBNF::ZeroOrMore(..) => 0,
-        EBNF::Not(..) => 1,
-        EBNF::Difference { .. } => 2,
-        EBNF::DelimitedBy(..) | EBNF::Sequence(..) => 3,
-        EBNF::Choice(..) => 4,
+    match expression.parser {
+        ExpressionParser::OneOrMore(..)
+        | ExpressionParser::Optional(..)
+        | ExpressionParser::Range { .. }
+        | ExpressionParser::Reference(..)
+        | ExpressionParser::Repeat { .. }
+        | ExpressionParser::SeparatedBy { .. }
+        | ExpressionParser::Terminal(..)
+        | ExpressionParser::ZeroOrMore(..) => 0,
+        ExpressionParser::Not(..) => 1,
+        ExpressionParser::Difference { .. } => 2,
+        ExpressionParser::DelimitedBy { .. } | ExpressionParser::Sequence(..) => 3,
+        ExpressionParser::Choice(..) => 4,
     }
 }
 

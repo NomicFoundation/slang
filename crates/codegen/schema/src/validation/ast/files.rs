@@ -44,7 +44,7 @@ impl TopicFile {
             value,
         } = syntax_file;
 
-        let value = syntax.zip_array(value.to_owned(), Production::new);
+        let value = syntax.zip(value.to_owned(), Production::new);
 
         return Self {
             path: FilePathRef::new(path.to_owned()),

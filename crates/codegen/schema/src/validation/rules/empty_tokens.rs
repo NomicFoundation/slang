@@ -4,7 +4,7 @@ use crate::{
     types::productions::ProductionKind,
     validation::{
         ast::{
-            productions::{EBNFRepeat, ExpressionRef, ProductionRef, ProductionVersioning, EBNF},
+            productions::{ExpressionParser, ExpressionRef, ProductionRef, ProductionVersioning},
             visitors::{Reporter, Visitor, VisitorExtensions, VisitorResponse},
         },
         Model,
@@ -55,23 +55,23 @@ impl Visitor for EmptyTokensVisitor {
 
 impl EmptyTokensVisitor {
     fn check_empty(&mut self, expression: &ExpressionRef, reporter: &mut Reporter) {
-        match &expression.ebnf.value {
-            EBNF::Choice(_)
-            | EBNF::DelimitedBy(_)
-            | EBNF::Difference(_)
-            | EBNF::Not(_)
-            | EBNF::OneOrMore(_)
-            | EBNF::Range(_)
-            | EBNF::Reference(_)
-            | EBNF::SeparatedBy(_)
-            | EBNF::Sequence(_)
-            | EBNF::Terminal(_) => {
+        match &expression.parser.value {
+            ExpressionParser::Choice(_)
+            | ExpressionParser::DelimitedBy { .. }
+            | ExpressionParser::Difference { .. }
+            | ExpressionParser::Not { .. }
+            | ExpressionParser::OneOrMore(_)
+            | ExpressionParser::Range { .. }
+            | ExpressionParser::Reference(_)
+            | ExpressionParser::SeparatedBy { .. }
+            | ExpressionParser::Sequence(_)
+            | ExpressionParser::Terminal(_) => {
                 // Cannot be empty
             }
-            EBNF::Optional(_) | EBNF::ZeroOrMore(_) => {
-                reporter.report(&expression.ebnf.syntax, Errors::PossibleEmptyRoot);
+            ExpressionParser::Optional(_) | ExpressionParser::ZeroOrMore(_) => {
+                reporter.report(&expression.parser.syntax, Errors::PossibleEmptyRoot);
             }
-            EBNF::Repeat(EBNFRepeat { min, .. }) => {
+            ExpressionParser::Repeat { min, .. } => {
                 if min.value == 0 {
                     reporter.report(&min.syntax, Errors::PossibleEmptyRoot);
                 }

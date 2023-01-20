@@ -1,4 +1,4 @@
-use codegen_schema::types::productions::{EBNFDifference, EBNFRange, ExpressionRef, EBNF};
+use codegen_schema::types::productions::{ExpressionParser, ExpressionRef};
 use proc_macro2::TokenStream;
 use quote::quote;
 
@@ -29,14 +29,16 @@ impl<'context> CharacterFilter<'context> {
         expression: &ExpressionRef,
         inline_references: bool,
     ) -> Option<&'context CharacterFilter<'context>> {
-        match &expression.ebnf {
-            EBNF::Not(child) => Self::new(tree, child, inline_references).map(|child| {
-                tree.context
-                    .alloc_character_filter(Self::Negation { child })
-                    as &CharacterFilter<'context> // removes the mutability
-            }),
+        match &expression.parser {
+            ExpressionParser::Not(child) => {
+                Self::new(tree, child, inline_references).map(|child| {
+                    tree.context
+                        .alloc_character_filter(Self::Negation { child })
+                        as &CharacterFilter<'context> // removes the mutability
+                })
+            }
 
-            EBNF::Choice(children) => {
+            ExpressionParser::Choice(children) => {
                 let nodes = children
                     .iter()
                     .filter_map(|c| Self::new(tree, c, inline_references))
@@ -51,7 +53,7 @@ impl<'context> CharacterFilter<'context> {
                 }
             }
 
-            EBNF::Terminal(string) => {
+            ExpressionParser::Terminal(string) => {
                 if string.chars().count() == 1 {
                     Some({
                         let char = string.chars().next().unwrap();
@@ -62,17 +64,17 @@ impl<'context> CharacterFilter<'context> {
                 }
             }
 
-            EBNF::Range(EBNFRange { from, to }) => Some({
+            ExpressionParser::Range { from, to } => Some({
                 let from = *from;
                 let to = *to;
                 tree.context
                     .alloc_character_filter(Self::Range { from, to })
             }),
 
-            EBNF::Difference(EBNFDifference {
+            ExpressionParser::Difference {
                 minuend,
                 subtrahend,
-            }) => {
+            } => {
                 if let (Some(minuend), Some(subtrahend)) = (
                     Self::new(tree, minuend, inline_references),
                     Self::new(tree, subtrahend, inline_references),
@@ -91,7 +93,7 @@ impl<'context> CharacterFilter<'context> {
                 }
             }
 
-            EBNF::Reference(name) => {
+            ExpressionParser::Reference(name) => {
                 if inline_references {
                     Self::new(
                         tree,

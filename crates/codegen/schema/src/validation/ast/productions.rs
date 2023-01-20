@@ -1,7 +1,7 @@
 use indexmap::IndexMap;
 use semver::Version;
 
-use crate::{ast_optional, ast_value, types, validation::ast::Node, yaml::cst};
+use crate::{types, validation::ast::Node, yaml::cst};
 
 pub type ProductionRef = std::rc::Rc<Production>;
 
@@ -14,8 +14,8 @@ pub struct Production {
 impl Production {
     pub fn new(syntax: &cst::NodeRef, value: types::productions::ProductionRef) -> ProductionRef {
         return ProductionRef::new(Self {
-            name: ast_value!(syntax, value, name),
-            kind: ast_value!(syntax, value, kind),
+            name: Node::new(syntax.get("name"), value.name.to_owned()),
+            kind: Node::new(syntax.get("kind"), value.kind),
             versioning: ProductionVersioning::new(syntax, value.versioning.to_owned()),
         });
     }
@@ -33,19 +33,19 @@ impl ProductionVersioning {
     ) -> Node<Self> {
         match value {
             types::productions::ProductionVersioning::Unversioned(value) => {
-                let syntax = &syntax.unwrap_field("unversioned").value;
+                let syntax = &syntax.get("unversioned");
                 let value = Self::Unversioned(Expression::new(&syntax, value));
 
                 return Node::new(syntax, value);
             }
 
             types::productions::ProductionVersioning::Versioned(value) => {
-                let syntax = &syntax.unwrap_field("versioned").value;
+                let syntax = &syntax.get("versioned");
                 let value = Self::Versioned(
                     value
                         .into_iter()
                         .map(|(version, expression)| {
-                            let field = syntax.unwrap_field(&version.to_string());
+                            let field = syntax.field(&version.to_string());
                             (
                                 Node::new(&field.key, version),
                                 Expression::new(&field.value, expression),
@@ -64,164 +64,168 @@ pub type ExpressionRef = std::rc::Rc<Expression>;
 
 pub struct Expression {
     pub config: ExpressionConfig,
-    pub ebnf: Node<EBNF>,
+    pub parser: Node<ExpressionParser>,
 }
 
 impl Expression {
     pub fn new(syntax: &cst::NodeRef, value: types::productions::ExpressionRef) -> ExpressionRef {
         return ExpressionRef::new(Self {
             config: ExpressionConfig::new(syntax, value.config.to_owned()),
-            ebnf: EBNF::new(syntax, value.ebnf.to_owned()),
+            parser: ExpressionParser::new(syntax, value.parser.to_owned()),
         });
     }
 }
 
-pub enum EBNF {
+pub enum ExpressionParser {
     Choice(Vec<ExpressionRef>),
-    DelimitedBy(EBNFDelimitedBy),
-    Difference(EBNFDifference),
+    DelimitedBy {
+        open: Node<String>,
+        expression: ExpressionRef,
+        close: Node<String>,
+    },
+    Difference {
+        minuend: ExpressionRef,
+        subtrahend: ExpressionRef,
+    },
     Not(ExpressionRef),
     OneOrMore(ExpressionRef),
     Optional(ExpressionRef),
-    Range(EBNFRange),
+    Range {
+        from: Node<char>,
+        to: Node<char>,
+    },
     Reference(Node<String>),
-    Repeat(EBNFRepeat),
-    SeparatedBy(EBNFSeparatedBy),
+    Repeat {
+        min: Node<usize>,
+        max: Node<usize>,
+        expression: ExpressionRef,
+    },
+    SeparatedBy {
+        separator: Node<String>,
+        expression: ExpressionRef,
+    },
     Sequence(Vec<ExpressionRef>),
     Terminal(Node<String>),
     ZeroOrMore(ExpressionRef),
 }
 
-pub struct EBNFDelimitedBy {
-    pub open: Node<String>,
-    pub expression: ExpressionRef,
-    pub close: Node<String>,
-}
-
-pub struct EBNFDifference {
-    pub minuend: ExpressionRef,
-    pub subtrahend: ExpressionRef,
-}
-
-pub struct EBNFRange {
-    pub from: Node<char>,
-    pub to: Node<char>,
-}
-
-pub struct EBNFRepeat {
-    pub min: Node<usize>,
-    pub max: Node<usize>,
-    pub expression: ExpressionRef,
-}
-
-pub struct EBNFSeparatedBy {
-    pub separator: Node<String>,
-    pub expression: ExpressionRef,
-}
-
-impl EBNF {
-    pub fn new(syntax: &cst::NodeRef, value: types::productions::EBNF) -> Node<Self> {
+impl ExpressionParser {
+    pub fn new(syntax: &cst::NodeRef, value: types::productions::ExpressionParser) -> Node<Self> {
         match value {
-            types::productions::EBNF::Choice(value) => {
-                let syntax = syntax.unwrap_field("choice");
+            types::productions::ExpressionParser::Choice(value) => {
+                let syntax = syntax.field("choice");
                 return Node::new(
                     &syntax.key,
-                    Self::Choice(syntax.value.zip_array(value, Expression::new)),
+                    Self::Choice(syntax.value.zip(value, Expression::new)),
                 );
             }
-            types::productions::EBNF::DelimitedBy(value) => {
-                let syntax = syntax.unwrap_field("delimitedBy");
+            types::productions::ExpressionParser::DelimitedBy {
+                open,
+                expression,
+                close,
+            } => {
+                let syntax = syntax.field("delimitedBy");
                 return Node::new(
                     &syntax.key,
-                    Self::DelimitedBy(EBNFDelimitedBy {
-                        open: ast_value!(syntax.value, value, open),
-                        expression: ast_value!(syntax.value, value, expression, Expression),
-                        close: ast_value!(syntax.value, value, close),
-                    }),
+                    Self::DelimitedBy {
+                        open: Node::new(&syntax.value.get("open"), open),
+                        expression: Expression::new(&syntax.value.get("expression"), expression),
+                        close: Node::new(&syntax.value.get("close"), close),
+                    },
                 );
             }
-            types::productions::EBNF::Difference(value) => {
-                let syntax = syntax.unwrap_field("difference");
+            types::productions::ExpressionParser::Difference {
+                minuend,
+                subtrahend,
+            } => {
+                let syntax = syntax.field("difference");
                 return Node::new(
                     &syntax.key,
-                    Self::Difference(EBNFDifference {
-                        minuend: ast_value!(syntax.value, value, minuend, Expression),
-                        subtrahend: ast_value!(syntax.value, value, subtrahend, Expression),
-                    }),
+                    Self::Difference {
+                        minuend: Expression::new(&syntax.value.get("minuend"), minuend),
+                        subtrahend: Expression::new(&syntax.value.get("subtrahend"), subtrahend),
+                    },
                 );
             }
-            types::productions::EBNF::Not(value) => {
-                let syntax = syntax.unwrap_field("not");
+            types::productions::ExpressionParser::Not(value) => {
+                let syntax = syntax.field("not");
                 return Node::new(
                     &syntax.key,
                     Self::Not(Expression::new(&syntax.value, value)),
                 );
             }
-            types::productions::EBNF::OneOrMore(value) => {
-                let syntax = syntax.unwrap_field("oneOrMore");
+            types::productions::ExpressionParser::OneOrMore(value) => {
+                let syntax = syntax.field("oneOrMore");
                 return Node::new(
                     &syntax.key,
                     Self::OneOrMore(Expression::new(&syntax.value, value)),
                 );
             }
-            types::productions::EBNF::Optional(value) => {
-                let syntax = syntax.unwrap_field("optional");
+            types::productions::ExpressionParser::Optional(value) => {
+                let syntax = syntax.field("optional");
                 return Node::new(
                     &syntax.key,
                     Self::Optional(Expression::new(&syntax.value, value)),
                 );
             }
-            types::productions::EBNF::Range(value) => {
-                let syntax = syntax.unwrap_field("range");
+            types::productions::ExpressionParser::Range { from, to } => {
+                let syntax = syntax.field("range");
                 return Node::new(
                     &syntax.key,
-                    Self::Range(EBNFRange {
-                        from: ast_value!(syntax.value, value, from),
-                        to: ast_value!(syntax.value, value, to),
-                    }),
+                    Self::Range {
+                        from: Node::new(&syntax.value.get("from"), from),
+                        to: Node::new(&syntax.value.get("to"), to),
+                    },
                 );
             }
-            types::productions::EBNF::Reference(value) => {
-                let syntax = syntax.unwrap_field("reference");
+            types::productions::ExpressionParser::Reference(value) => {
+                let syntax = syntax.field("reference");
                 return Node::new(
                     &syntax.key,
                     Self::Reference(Node::new(&syntax.value, value)),
                 );
             }
-            types::productions::EBNF::Repeat(value) => {
-                let syntax = syntax.unwrap_field("repeat");
+            types::productions::ExpressionParser::Repeat {
+                min,
+                max,
+                expression,
+            } => {
+                let syntax = syntax.field("repeat");
                 return Node::new(
                     &syntax.key,
-                    Self::Repeat(EBNFRepeat {
-                        min: ast_value!(syntax.value, value, min),
-                        max: ast_value!(syntax.value, value, max),
-                        expression: ast_value!(syntax.value, value, expression, Expression),
-                    }),
+                    Self::Repeat {
+                        min: Node::new(&syntax.value.get("min"), min),
+                        max: Node::new(&syntax.value.get("max"), max),
+                        expression: Expression::new(&syntax.value.get("expression"), expression),
+                    },
                 );
             }
-            types::productions::EBNF::SeparatedBy(value) => {
-                let syntax = syntax.unwrap_field("separatedBy");
+            types::productions::ExpressionParser::SeparatedBy {
+                separator,
+                expression,
+            } => {
+                let syntax = syntax.field("separatedBy");
                 return Node::new(
                     &syntax.key,
-                    Self::SeparatedBy(EBNFSeparatedBy {
-                        separator: ast_value!(syntax.value, value, separator),
-                        expression: ast_value!(syntax.value, value, expression, Expression),
-                    }),
+                    Self::SeparatedBy {
+                        separator: Node::new(&syntax.value.get("separator"), separator),
+                        expression: Expression::new(&syntax.value.get("expression"), expression),
+                    },
                 );
             }
-            types::productions::EBNF::Sequence(value) => {
-                let syntax = syntax.unwrap_field("sequence");
+            types::productions::ExpressionParser::Sequence(value) => {
+                let syntax = syntax.field("sequence");
                 return Node::new(
                     &syntax.key,
-                    Self::Sequence(syntax.value.zip_array(value, Expression::new)),
+                    Self::Sequence(syntax.value.zip(value, Expression::new)),
                 );
             }
-            types::productions::EBNF::Terminal(value) => {
-                let syntax = syntax.unwrap_field("terminal");
+            types::productions::ExpressionParser::Terminal(value) => {
+                let syntax = syntax.field("terminal");
                 return Node::new(&syntax.key, Self::Terminal(Node::new(&syntax.value, value)));
             }
-            types::productions::EBNF::ZeroOrMore(value) => {
-                let syntax = syntax.unwrap_field("zeroOrMore");
+            types::productions::ExpressionParser::ZeroOrMore(value) => {
+                let syntax = syntax.field("zeroOrMore");
                 return Node::new(
                     &syntax.key,
                     Self::ZeroOrMore(Expression::new(&syntax.value, value)),
@@ -241,10 +245,18 @@ pub struct ExpressionConfig {
 impl ExpressionConfig {
     pub fn new(syntax: &cst::NodeRef, value: types::productions::ExpressionConfig) -> Self {
         return Self {
-            name: ast_optional!(syntax, value, name),
-            parser_type: ast_optional!(syntax, value, parser_type),
-            lookahead: ast_optional!(syntax, value, lookahead, Expression),
-            associativity: ast_optional!(syntax, value, associativity),
+            name: value.name.and_then(|name| {
+                return Some(Node::new(syntax.get("name"), name));
+            }),
+            parser_type: value.parser_type.and_then(|parser_type| {
+                return Some(Node::new(syntax.get("parserType"), parser_type));
+            }),
+            lookahead: value.lookahead.and_then(|lookahead| {
+                return Some(Expression::new(syntax.get("lookahead"), lookahead));
+            }),
+            associativity: value.associativity.and_then(|associativity| {
+                return Some(Node::new(syntax.get("associativity"), associativity));
+            }),
         };
     }
 }

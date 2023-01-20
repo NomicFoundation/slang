@@ -1,6 +1,5 @@
 use codegen_schema::types::productions::{
-    EBNFDelimitedBy, EBNFDifference, EBNFRepeat, EBNFSeparatedBy, ExpressionRef, ParserType,
-    ProductionKind, EBNF,
+    ExpressionParser, ExpressionRef, ParserType, ProductionKind,
 };
 use itertools::Itertools;
 
@@ -109,9 +108,9 @@ impl<'context> CombinatorNode<'context> {
 
         if tree.production.kind == ProductionKind::Rule {
             if let Some(ParserType::Precedence) = expression.config.parser_type {
-                if let EBNF::Choice(exprs) = &expression.ebnf {
+                if let ExpressionParser::Choice(exprs) = &expression.parser {
                     let members = exprs.iter().map(|e| {
-                    if let EBNF::Reference(prod_name) = &e.ebnf {
+                    if let ExpressionParser::Reference(prod_name) = &e.parser {
                        tree.context.get_tree_by_name(prod_name)
                     } else {
                         unreachable!("Validation should have checked this: The Expression pattern is only applicable to a choice of references")
@@ -126,8 +125,8 @@ impl<'context> CombinatorNode<'context> {
             }
         }
 
-        tree.context.alloc_node(match &expression.ebnf {
-            EBNF::Choice(exprs) => {
+        tree.context.alloc_node(match &expression.parser {
+            ExpressionParser::Choice(exprs) => {
                 enum TN<'c> {
                     Trie(TerminalTrie),
                     Node(&'c CombinatorNode<'c>),
@@ -150,26 +149,26 @@ impl<'context> CombinatorNode<'context> {
                 Self::Choice { name, elements }
             }
 
-            EBNF::DelimitedBy(EBNFDelimitedBy {
+            ExpressionParser::DelimitedBy {
                 open,
                 expression,
                 close,
-            }) => Self::DelimitedBy {
+            } => Self::DelimitedBy {
                 name,
                 open: open.clone(),
                 expr: Self::new(tree, expression),
                 close: close.clone(),
             },
 
-            EBNF::Difference(EBNFDifference {
+            ExpressionParser::Difference {
                 minuend,
                 subtrahend,
-            }) => Self::Difference {
+            } => Self::Difference {
                 minuend: Self::new(tree, minuend),
                 subtrahend: Self::new(tree, subtrahend),
             },
 
-            EBNF::Not(_) => {
+            ExpressionParser::Not(_) => {
                 if let Some(filter) = CharacterFilter::new(tree, expression, true) {
                     Self::CharacterFilter { name, filter }
                 } else {
@@ -177,21 +176,21 @@ impl<'context> CombinatorNode<'context> {
                 }
             }
 
-            EBNF::OneOrMore(expr) => Self::OneOrMore {
+            ExpressionParser::OneOrMore(expr) => Self::OneOrMore {
                 name,
                 expr: Self::new(tree, expr),
             },
 
-            EBNF::Optional(expr) => Self::Optional {
+            ExpressionParser::Optional(expr) => Self::Optional {
                 expr: Self::new(tree, expr),
             },
 
-            EBNF::Range(_) => Self::CharacterFilter {
+            ExpressionParser::Range { .. } => Self::CharacterFilter {
                 name,
                 filter: CharacterFilter::new(tree, expression, true).unwrap(),
             },
 
-            EBNF::Reference(name) => Self::Reference {
+            ExpressionParser::Reference(name) => Self::Reference {
                 tree: tree
                     .context
                     .trees_by_name
@@ -200,36 +199,36 @@ impl<'context> CombinatorNode<'context> {
                     .expect("Production not found"),
             },
 
-            EBNF::Repeat(EBNFRepeat {
+            ExpressionParser::Repeat {
                 expression,
                 min,
                 max,
-            }) => Self::Repeated {
+            } => Self::Repeated {
                 name,
                 expr: Self::new(tree, expression),
                 min: *min,
                 max: *max,
             },
 
-            EBNF::SeparatedBy(EBNFSeparatedBy {
+            ExpressionParser::SeparatedBy {
                 expression,
                 separator,
-            }) => Self::SeparatedBy {
+            } => Self::SeparatedBy {
                 name,
                 expr: Self::new(tree, expression),
                 separator: separator.clone(),
             },
 
-            EBNF::Sequence(exprs) => Self::Sequence {
+            ExpressionParser::Sequence(exprs) => Self::Sequence {
                 name,
                 elements: exprs.iter().map(|e| Self::new(tree, e)).collect(),
             },
 
-            EBNF::Terminal(_) => Self::TerminalTrie {
+            ExpressionParser::Terminal(_) => Self::TerminalTrie {
                 trie: TerminalTrie::new(tree, expression).unwrap(),
             },
 
-            EBNF::ZeroOrMore(expr) => Self::ZeroOrMore {
+            ExpressionParser::ZeroOrMore(expr) => Self::ZeroOrMore {
                 name,
                 expr: Self::new(tree, expr),
             },

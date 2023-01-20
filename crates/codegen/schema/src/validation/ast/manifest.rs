@@ -1,6 +1,6 @@
 use semver::Version;
 
-use crate::{ast_array, ast_optional, ast_value, types, validation::ast::Node, yaml::cst};
+use crate::{types, validation::ast::Node, yaml::cst};
 
 pub struct Manifest {
     pub title: Node<String>,
@@ -12,10 +12,12 @@ pub struct Manifest {
 impl Manifest {
     pub fn new(syntax: &cst::NodeRef, value: types::manifest::Manifest) -> Self {
         return Self {
-            title: ast_value!(syntax, value, title),
-            root_production: ast_value!(syntax, value, root_production),
-            sections: ast_array!(syntax, value, sections, ManifestSection),
-            versions: ast_array!(syntax, value, versions),
+            title: Node::new(syntax.get("title"), value.title),
+            root_production: Node::new(syntax.get("rootProduction"), value.root_production),
+            sections: syntax
+                .get("sections")
+                .zip(value.sections, ManifestSection::new),
+            versions: syntax.get("versions").zip(value.versions, Node::new),
         };
     }
 }
@@ -28,8 +30,8 @@ pub struct ManifestSection {
 impl ManifestSection {
     pub fn new(syntax: &cst::NodeRef, value: types::manifest::ManifestSection) -> Self {
         return Self {
-            title: ast_value!(syntax, value, title),
-            topics: ast_array!(syntax, value, topics, ManifestTopic),
+            title: Node::new(syntax.get("title"), value.title),
+            topics: syntax.get("topics").zip(value.topics, ManifestTopic::new),
         };
     }
 }
@@ -42,8 +44,10 @@ pub struct ManifestTopic {
 impl ManifestTopic {
     pub fn new(syntax: &cst::NodeRef, value: types::manifest::ManifestTopic) -> Self {
         return Self {
-            title: ast_value!(syntax, value, title),
-            definition: ast_optional!(syntax, value, definition),
+            title: Node::new(syntax.get("title"), value.title),
+            definition: value.definition.and_then(|definition| {
+                return Some(Node::new(syntax.get("definition"), definition));
+            }),
         };
     }
 }
