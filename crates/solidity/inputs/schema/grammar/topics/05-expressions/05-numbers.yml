@@ -5,10 +5,21 @@
   unversioned:
     sequence:
       - choice:
-          - reference: "DecimalNumber"
           - reference: "HexNumber"
+          - reference: "DecimalNumber"
       - optional:
           reference: "NumberUnit"
+
+- name: "HexNumber"
+  kind: "Token"
+  unversioned:
+    sequence:
+      - terminal: "0x"
+      - separatedBy:
+          separator: "_"
+          expression:
+            oneOrMore:
+              reference: "HexCharacter"
 
 - name: "DecimalNumber"
   kind: "Token"
@@ -54,19 +65,6 @@
       - optional:
           terminal: "-"
       - reference: "DecimalInteger"
-
-- name: "HexNumber"
-  kind: "Token"
-  unversioned:
-    sequence:
-      - terminal: "0x"
-      - sequence:
-          - reference: "HexCharacter"
-          - zeroOrMore:
-              sequence:
-                - optional:
-                    terminal: "_"
-                - reference: "HexCharacter"
 
 - name: "NumberUnit"
   kind: "Token"
