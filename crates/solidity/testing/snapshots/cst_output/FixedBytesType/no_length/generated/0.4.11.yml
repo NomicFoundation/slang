@@ -1,0 +1,16 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ bytes                                                                            │ 0..5
+
+Errors: # 1 total
+  - >
+    Error: Expected '1' or '2' or '3' or '4' or '5' or '6' or '7' or '8' or '9'.
+       ╭─[crates/solidity/testing/snapshots/cst_output/FixedBytesType/no_length/input.sol:1:6]
+       │
+     1 │ bytes
+       ·      │ 
+       ·      ╰─ Found end of input.
+    ───╯
+
+Tree: null
