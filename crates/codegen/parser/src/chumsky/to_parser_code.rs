@@ -196,56 +196,167 @@ impl<'context> CombinatorNode<'context> {
             /**********************************************************************
              * Precedence parsing
              */
-            Self::PrecedenceRule { members, .. } => {
-                let first_parser_name = format_ident!("{}", members[0].production.name);
-                quote!(rule!(#first_parser_name))
-            }
-
-            Self::PrecedenceRuleMember {
-                tree,
-                next_sibling,
-                operator,
-                operator_model,
+            Self::PrecedenceRule {
+                trailing_rules,
+                operators,
                 ..
             } => {
-                let kind = code.add_rule_kind(tree.production.name.clone());
-                let operator = operator.to_parser_code(is_trivia, code);
-                let next_sibling = next_sibling
-                    .clone()
-                    .map(|next| format_ident!("{}", next.production.name));
-
-                match operator_model {
-                    OperatorModel::None => match next_sibling {
-                        Some(next_sibling) => quote!( choice((#operator, #next_sibling.clone())) ),
-                        None => operator,
-                    },
-
-                    OperatorModel::BinaryLeftAssociative => {
-                        let next_sibling = next_sibling
-                            .expect("Cannot have binary operator as last expression member");
-                        quote!(left_associative_binary_expression!(#kind, #next_sibling, #operator))
-                    }
-
-                    OperatorModel::BinaryRightAssociative => {
-                        let next_sibling = next_sibling
-                            .expect("Cannot have binary operator as last expression member");
-                        quote!(
-                            right_associative_binary_expression!(#kind, #next_sibling, #operator)
-                        )
-                    }
-
-                    OperatorModel::UnaryPrefix => {
-                        let next_sibling = next_sibling
-                            .expect("Cannot have unary operator as last expression member");
-                        quote!(unary_prefix_expression!(#kind, #next_sibling, #operator))
-                    }
-
-                    OperatorModel::UnarySuffix => {
-                        let next_sibling = next_sibling
-                            .expect("Cannot have unary operator as last expression member");
-                        quote!(unary_suffix_expression!(#kind, #next_sibling, #operator))
+                let mut binary_operators = Vec::new();
+                let mut prefix_operators = Vec::new();
+                let mut suffix_operators = Vec::new();
+                // TODO: the `rev()` is a hack to make up for the lack of terminal trie with
+                // precedence support, required to do longest match for operators such as `*` vs. `**`.
+                // It just happens to work for the solidity grammer, but it's not a general solution.
+                for (index, operator) in operators.iter().enumerate().rev() {
+                    let operator_code = operator.operator.to_parser_code(is_trivia, code);
+                    let binding_power = (1 + index * 2) as u8;
+                    let name = code.add_rule_kind(operator.name.clone());
+                    match operator.model {
+                        OperatorModel::BinaryLeftAssociative => {
+                            binary_operators.push(quote!(
+                                #operator_code.map(|node| Pratt::Operator {
+                                    node, kind: RuleKind::#name, left_binding_power: #binding_power, right_binding_power: #binding_power + 1
+                                })
+                            ))
+                        }
+                        OperatorModel::BinaryRightAssociative => {
+                            binary_operators.push(quote!(
+                                #operator_code.map(|node| Pratt::Operator {
+                                    node, kind: RuleKind::#name, left_binding_power: #binding_power + 1, right_binding_power: #binding_power
+                                })
+                            ))
+                        }
+                        OperatorModel::UnaryPrefix => {
+                            prefix_operators.push(quote!(
+                                #operator_code.map(|node| Pratt::Operator {
+                                    node, kind: RuleKind::#name, left_binding_power: 255, right_binding_power: #binding_power
+                                })
+                            ))
+                        }
+                        OperatorModel::UnarySuffix => {
+                            suffix_operators.push(quote!(
+                                #operator_code.map(|node| Pratt::Operator {
+                                    node, kind: RuleKind::#name, left_binding_power: #binding_power, right_binding_power: 255
+                                })
+                            ))
+                        }
                     }
                 }
+                fn maybe_choice(mut operators: Vec<TokenStream>) -> TokenStream {
+                    if operators.len() == 1 {
+                        operators.pop().unwrap()
+                    } else {
+                        quote!(choice!( #(#operators),* ))
+                    }
+                }
+                let binary_operators = maybe_choice(binary_operators);
+                let prefix_operators = maybe_choice(prefix_operators);
+                let suffix_operators = maybe_choice(suffix_operators);
+
+                let trailing_rules = maybe_choice(
+                    trailing_rules
+                        .iter()
+                        .map(|tree| {
+                            let rule_name = format_ident!("{}", tree.production.name);
+                            quote!(rule!(#rule_name))
+                        })
+                        .collect::<Vec<_>>(),
+                );
+
+                quote!({
+                    let prefix_operators = #prefix_operators;
+                    let suffix_operators = #suffix_operators;
+                    let primary = #trailing_rules;
+                    let prefixes_primary_suffixes = prefix_operators.repeated().then(primary).then(suffix_operators.repeated());
+                    type PPS = ((Vec<Pratt>, Option<Rc<cst::Node>>), Vec<Pratt>);
+                    let binary_operator = #binary_operators;
+                    prefixes_primary_suffixes.clone().then(binary_operator.then(prefixes_primary_suffixes).repeated()).map(
+                        |(pps, tail): (PPS, Vec<(Pratt, PPS)>)| {
+                            let mut elements = Vec::new();
+                            let ((prefixes, expr), suffixes) = pps;
+                            elements.extend(prefixes.into_iter());
+                            elements.push(Pratt::Node(expr));
+                            elements.extend(suffixes.into_iter());
+                            for (op, pps) in tail.into_iter() {
+                                elements.push(op);
+                                let ((prefixes, expr), suffixes) = pps;
+                                elements.extend(prefixes.into_iter());
+                                elements.push(Pratt::Node(expr));
+                                elements.extend(suffixes.into_iter());
+                            }
+
+                            let mut i = 0;
+                            while elements.len() > 1 {
+                                if let Pratt::Operator { right_binding_power, left_binding_power, .. } = &elements[i] {
+                                    let next_left_binding_power = if elements.len() == i + 1 {
+                                        0
+                                    } else if let Pratt::Operator { left_binding_power, .. } = &elements[i + 1] {
+                                        *left_binding_power
+                                    } else if elements.len() == i + 2 {
+                                        0
+                                    } else if let Pratt::Operator { left_binding_power, .. } = &elements[i + 2] {
+                                        *left_binding_power
+                                    } else {
+                                        0
+                                    };
+                                    if *right_binding_power <= next_left_binding_power {
+                                        i += 1;
+                                        continue;
+                                    }
+                                    if *right_binding_power == 255 {
+                                        let left = elements.remove(i - 1);
+                                        let op = elements.remove(i - 1);
+                                        if let (Pratt::Node(left), Pratt::Operator { node: op, kind, .. }) = (left, op) {
+                                            let node = cst::Node::rule(
+                                                kind,
+                                                vec![left, op],
+                                            );
+                                            elements.insert(i - 1, Pratt::Node(node));
+                                            i = 0; // TODO: just move back one
+                                        } else {
+                                            unreachable!()
+                                        }
+                                    } else  if *left_binding_power == 255 {
+                                        let op = elements.remove(i);
+                                        let right = elements.remove(i);
+                                        if let (Pratt::Operator { node: op, kind, .. }, Pratt::Node(right)) = (op, right) {
+                                            let node = cst::Node::rule(
+                                                kind,
+                                                vec![op, right],
+                                            );
+                                            elements.insert(i, Pratt::Node(node));
+                                            i = 0; // TODO: just move back one
+                                        } else {
+                                            unreachable!()
+                                        }
+                                    } else {
+                                        let left = elements.remove(i - 1);
+                                        let op = elements.remove(i - 1);
+                                        let right = elements.remove(i - 1);
+                                        if let (Pratt::Node(left), Pratt::Operator { node: op, kind, .. }, Pratt::Node(right)) = (left, op, right) {
+                                            let node = cst::Node::rule(
+                                                kind,
+                                                vec![left, op, right],
+                                            );
+                                            elements.insert(i - 1, Pratt::Node(node));
+                                            i = 0; // TODO: just move back one
+                                        } else {
+                                            unreachable!()
+                                        }
+                                    }
+                                } else {
+                                    i += 1;
+                                }
+                            }
+
+                            if let Pratt::Node(node) = elements.pop().unwrap() {
+                                node
+                            } else {
+                                unreachable!()
+                            }
+                        }
+                    )
+                })
             }
 
             /**********************************************************************
@@ -278,6 +389,16 @@ impl<'context> CombinatorNode<'context> {
 }
 pub fn parse_macros() -> TokenStream {
     quote!(
+        enum Pratt {
+            Operator {
+                kind: RuleKind,
+                node: Option<Rc<cst::Node>>,
+                left_binding_power: u8,
+                right_binding_power: u8,
+            },
+            Node(Option<Rc<cst::Node>>),
+        }
+
         #[allow(unused_macros)]
         macro_rules! trivia_terminal {
             ($kind:ident, $literal:literal) => {
@@ -676,23 +797,6 @@ pub fn parse_macros() -> TokenStream {
         macro_rules! define_rule {
             ($kind:ident, $expr:expr) => {
                 $kind.define($expr.map(|node| cst::Node::rule(RuleKind::$kind, vec![node])));
-                parsers.insert(
-                    ProductionKind::$kind,
-                    Parser::new(
-                        $kind
-                            .clone()
-                            .map(|node| cst::Node::top_level_rule(RuleKind::$kind, node))
-                            .then_ignore(end())
-                            .boxed(),
-                    ),
-                );
-            };
-        }
-
-        #[allow(unused_macros)]
-        macro_rules! define_precedence_rule_member {
-            ($kind:ident, $expr:expr) => {
-                $kind.define($expr);
                 parsers.insert(
                     ProductionKind::$kind,
                     Parser::new(

@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Errors: 0
+
+█ Rule(Expression) - (0..3)                    │
+└──█ Rule(MemberAccessExpression) - (0..3)     │
+   ├──█ Rule(PrimaryExpression) - (0..1)       │
+   │  └──► Token(Identifier) - (0..1)          │ x
+   └──█ Group - (1..3)                         │
+      ├──► Token(Period) - (1..2)              │ .
+      └──► Token(Identifier) - (2..3)          │ y

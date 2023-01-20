@@ -29,14 +29,8 @@ pub enum CombinatorNode<'context> {
     },
     PrecedenceRule {
         tree: &'context CombinatorTree<'context>,
-        members: Vec<&'context CombinatorTree<'context>>,
-    },
-    PrecedenceRuleMember {
-        tree: &'context CombinatorTree<'context>,
-        parent: &'context CombinatorTree<'context>,
-        next_sibling: Option<&'context CombinatorTree<'context>>,
-        operator: &'context CombinatorNode<'context>,
-        operator_model: OperatorModel,
+        operators: Vec<PrecedenceRuleOperator<'context>>,
+        trailing_rules: Vec<&'context CombinatorTree<'context>>,
     },
     #[allow(dead_code)]
     Lookahead {
@@ -77,9 +71,14 @@ pub enum CombinatorNode<'context> {
     },
 }
 
+pub struct PrecedenceRuleOperator<'context> {
+    pub name: String,
+    pub model: OperatorModel,
+    pub operator: &'context CombinatorNode<'context>,
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum OperatorModel {
-    None,
     BinaryLeftAssociative,
     BinaryRightAssociative,
     UnaryPrefix,
@@ -91,9 +90,38 @@ impl<'context> CombinatorNode<'context> {
         tree: &'context CombinatorTree<'context>,
         expression: &ExpressionRef,
     ) -> &'context CombinatorNode<'context> {
-        let name = expression.config.name.clone();
+        if let Some(ParserType::Precedence) = expression.config.parser_type {
+            if tree.production.kind == ProductionKind::Rule {
+                if let EBNF::Choice(exprs) = &expression.ebnf {
+                    let mut trailing_rules = Vec::new();
+                    let mut operators = Vec::new();
+                    for expr in exprs {
+                        if let EBNF::Reference(prod_name) = &expr.ebnf {
+                            let operator_tree = tree.context.get_tree_by_name(prod_name);
+                            if let Some(operator) = operator_tree.to_precedence_rule_operator(tree)
+                            {
+                                operators.push(operator);
+                            } else {
+                                trailing_rules.push(operator_tree);
+                            }
+                        } else {
+                            unreachable!("Validation should have checked this: The precedence parser type is only applicable to a choice of references")
+                        }
+                    }
+                    return tree.context.alloc_node(Self::PrecedenceRule {
+                        tree,
+                        operators,
+                        trailing_rules,
+                    });
+                } else {
+                    unreachable!("Validation should have checked this: The precedence parser type is only applicable to a choice of references")
+                }
+            } else {
+                unreachable!("Validation should have checked this: The precendence parser type is only applicable to rules")
+            }
+        }
 
-        // Terminals in choices are merged, and represented as a trie
+        let name = expression.config.name.clone();
 
         if tree.production.kind == ProductionKind::Token {
             if let Some(filter) = CharacterFilter::new(tree, expression, true) {
@@ -107,27 +135,10 @@ impl<'context> CombinatorNode<'context> {
             return tree.context.alloc_node(Self::TerminalTrie { trie });
         }
 
-        if tree.production.kind == ProductionKind::Rule {
-            if let Some(ParserType::Precedence) = expression.config.parser_type {
-                if let EBNF::Choice(exprs) = &expression.ebnf {
-                    let members = exprs.iter().map(|e| {
-                    if let EBNF::Reference(prod_name) = &e.ebnf {
-                       tree.context.get_tree_by_name(prod_name)
-                    } else {
-                        unreachable!("Validation should have checked this: The Expression pattern is only applicable to a choice of references")
-                    }
-                }).collect();
-                    return tree
-                        .context
-                        .alloc_node(Self::PrecedenceRule { tree, members });
-                } else {
-                    unreachable!("Validation should have checked this: The Expression pattern is only applicable to a choice of references")
-                }
-            }
-        }
-
         tree.context.alloc_node(match &expression.ebnf {
             EBNF::Choice(exprs) => {
+                // Terminals in choices are merged, and represented as a trie
+
                 enum TN<'c> {
                     Trie(TerminalTrie),
                     Node(&'c CombinatorNode<'c>),
@@ -238,9 +249,7 @@ impl<'context> CombinatorNode<'context> {
 
     pub fn has_named_structure(&self) -> bool {
         match self {
-            Self::Reference { .. }
-            | Self::PrecedenceRule { .. }
-            | Self::PrecedenceRuleMember { .. } => false,
+            Self::Reference { .. } | Self::PrecedenceRule { .. } => false,
 
             Self::CharacterFilter { name, .. } => name.is_some(),
 
@@ -274,12 +283,7 @@ impl<'context> CombinatorNode<'context> {
 
             Self::Reference { tree } => tree.can_be_empty(),
 
-            Self::PrecedenceRule { members, .. } => members[0].can_be_empty(),
-
-            // TODO: Maybe next_sibling shouldn't be optional?
-            Self::PrecedenceRuleMember { next_sibling, .. } => {
-                next_sibling.map(|ns| ns.can_be_empty()).unwrap_or(true)
-            }
+            Self::PrecedenceRule { .. } => false,
 
             // TODO: choice should limit members to those that cannot be empty
             Self::Choice { elements, .. } => elements.iter().any(|e| e.can_be_empty()),
