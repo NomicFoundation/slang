@@ -99,5 +99,5 @@
   unversioned:
     sequence:
       - terminal: "delete"
-      - reference: "Identifier"
+      - reference: "Expression"
       - terminal: ";"

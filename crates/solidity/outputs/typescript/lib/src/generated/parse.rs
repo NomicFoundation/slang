@@ -1242,12 +1242,12 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         )
     );
 
-    // DeleteStatement = 'delete' «Identifier» ';' ;
+    // DeleteStatement = 'delete' Expression ';' ;
     define_rule!(
         DeleteStatement,
         seq!(
             trie!(trieleaf!(Delete, "delete")),
-            token!(Identifier),
+            rule!(Expression),
             trie!(trieleaf!(Semicolon, ";"))
         )
     );
