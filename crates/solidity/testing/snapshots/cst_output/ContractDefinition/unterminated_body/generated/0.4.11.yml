@@ -5,7 +5,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected '/' or 'a' or 'b' or 'c' or 'e' or 'f' or 'i' or 'm' or 'r' or 's' or 't' or 'u' or '}'.
+    Error: Expected '/' or 'a' or 'b' or 'c' or 'e' or 'f' or 'i' or 'm' or 'p' or 'r' or 's' or 't' or 'u' or '}'.
        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/unterminated_body/input.sol:1:18]
        │
      1 │ contract Sample {

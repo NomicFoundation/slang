@@ -1,0 +1,23 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ address payable(value)                                                           │ 0..22
+
+Errors: []
+
+Tree:
+  - Expression (Rule): # 0..22
+      - FunctionCallExpression (Rule): # 0..22
+          - PrimaryExpression (Rule): # 0..15
+              - ElementaryType (Rule): # 0..15
+                  - AddressType (Rule): # 0..15
+                      - Address (Token): "address" # 0..7
+                      - Payable (Token): "payable" # 8..15
+          - Group: # 15..22
+              - ArgumentList (Rule): # 15..22
+                  - OpenParen (Token): "(" # 15..16
+                  - PositionalArgumentList (Rule): # 16..21
+                      - Expression (Rule): # 16..21
+                          - PrimaryExpression (Rule): # 16..21
+                              - Identifier (Token): "value" # 16..21
+                  - CloseParen (Token): ")" # 21..22

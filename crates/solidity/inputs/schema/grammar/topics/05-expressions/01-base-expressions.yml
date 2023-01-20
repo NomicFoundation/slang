@@ -86,14 +86,7 @@
     sequence:
       - reference: "Expression"
       - optional:
-          delimitedBy:
-            open: "{"
-            expression:
-              separatedBy:
-                separator: ","
-                expression:
-                  reference: "NamedArgument"
-            close: "}"
+          reference: "NamedArgumentList"
       - reference: "ArgumentList"
 
 - name: "MemberAccessExpression"

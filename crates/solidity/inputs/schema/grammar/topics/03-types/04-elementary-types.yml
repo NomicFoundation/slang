@@ -7,11 +7,25 @@
       - terminal: "bool"
       - terminal: "string"
       - reference: "AddressType"
+      - reference: "PayableType"
       - reference: "FixedBytesType"
       - reference: "SignedIntegerType"
       - reference: "UnsignedIntegerType"
       - reference: "SignedFixedType"
       - reference: "UnsignedFixedType"
+
+- name: "AddressType"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - terminal: "address"
+      - optional:
+          terminal: "payable"
+
+- name: "PayableType"
+  kind: "Rule"
+  unversioned:
+    terminal: "payable"
 
 - name: "FixedBytesType"
   kind: "Token"

@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ address(value)                                                                   │ 0..14
+
+Errors: []
+
+Tree:
+  - Expression (Rule): # 0..14
+      - FunctionCallExpression (Rule): # 0..14
+          - PrimaryExpression (Rule): # 0..7
+              - ElementaryType (Rule): # 0..7
+                  - AddressType (Rule): # 0..7
+                      - Address (Token): "address" # 0..7
+          - Group: # 7..14
+              - ArgumentList (Rule): # 7..14
+                  - OpenParen (Token): "(" # 7..8
+                  - PositionalArgumentList (Rule): # 8..13
+                      - Expression (Rule): # 8..13
+                          - PrimaryExpression (Rule): # 8..13
+                              - Identifier (Token): "value" # 8..13
+                  - CloseParen (Token): ")" # 13..14

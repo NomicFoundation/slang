@@ -1,9 +1,0 @@
-# yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
-
-- name: "AddressType"
-  kind: "Rule"
-  unversioned:
-    sequence:
-      - terminal: "address"
-      - optional:
-          terminal: "payable"
