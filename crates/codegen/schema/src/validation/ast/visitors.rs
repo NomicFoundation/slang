@@ -4,10 +4,7 @@ use crate::{
     validation::{
         ast::{
             files::{FilePathRef, ManifestFile, TopicFile},
-            productions::{
-                EBNFDelimitedBy, EBNFRepeat, EBNFSeparatedBy, ExpressionRef, ProductionRef,
-                ProductionVersioning, EBNF,
-            },
+            productions::{ExpressionParser, ExpressionRef, ProductionRef, ProductionVersioning},
         },
         Model,
     },
@@ -137,26 +134,31 @@ impl Receiver for ExpressionRef {
             VisitorResponse::StepIn => { /* Continue */ }
         };
 
-        match &self.ebnf.value {
-            EBNF::Choice(expressions) | EBNF::Sequence(expressions) => {
+        match &self.parser.value {
+            ExpressionParser::Choice(expressions) | ExpressionParser::Sequence(expressions) => {
                 for expression in expressions {
                     expression.receive(visitor, reporter);
                 }
             }
-            EBNF::DelimitedBy(EBNFDelimitedBy { expression, .. })
-            | EBNF::Repeat(EBNFRepeat { expression, .. })
-            | EBNF::SeparatedBy(EBNFSeparatedBy { expression, .. })
-            | EBNF::Not(expression)
-            | EBNF::OneOrMore(expression)
-            | EBNF::Optional(expression)
-            | EBNF::ZeroOrMore(expression) => {
+            ExpressionParser::DelimitedBy { expression, .. }
+            | ExpressionParser::Repeat { expression, .. }
+            | ExpressionParser::SeparatedBy { expression, .. }
+            | ExpressionParser::Not(expression)
+            | ExpressionParser::OneOrMore(expression)
+            | ExpressionParser::Optional(expression)
+            | ExpressionParser::ZeroOrMore(expression) => {
                 expression.receive(visitor, reporter);
             }
-            EBNF::Difference(expression) => {
-                expression.minuend.receive(visitor, reporter);
-                expression.subtrahend.receive(visitor, reporter);
+            ExpressionParser::Difference {
+                minuend,
+                subtrahend,
+            } => {
+                minuend.receive(visitor, reporter);
+                subtrahend.receive(visitor, reporter);
             }
-            EBNF::Range(_) | EBNF::Reference(_) | EBNF::Terminal(_) => {}
+            ExpressionParser::Range { .. }
+            | ExpressionParser::Reference(_)
+            | ExpressionParser::Terminal(_) => {}
         };
     }
 }

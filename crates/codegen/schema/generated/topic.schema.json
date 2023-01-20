@@ -67,7 +67,19 @@
           "required": ["delimitedBy"],
           "properties": {
             "delimitedBy": {
-              "$ref": "#/definitions/EBNFDelimitedBy"
+              "type": "object",
+              "required": ["close", "expression", "open"],
+              "properties": {
+                "open": {
+                  "type": "string"
+                },
+                "expression": {
+                  "$ref": "#/definitions/Expression"
+                },
+                "close": {
+                  "type": "string"
+                }
+              }
             }
           }
         },
@@ -77,7 +89,16 @@
           "required": ["difference"],
           "properties": {
             "difference": {
-              "$ref": "#/definitions/EBNFDifference"
+              "type": "object",
+              "required": ["minuend", "subtrahend"],
+              "properties": {
+                "minuend": {
+                  "$ref": "#/definitions/Expression"
+                },
+                "subtrahend": {
+                  "$ref": "#/definitions/Expression"
+                }
+              }
             }
           }
         },
@@ -117,7 +138,20 @@
           "required": ["range"],
           "properties": {
             "range": {
-              "$ref": "#/definitions/EBNFRange"
+              "type": "object",
+              "required": ["from", "to"],
+              "properties": {
+                "from": {
+                  "type": "string",
+                  "maxLength": 1,
+                  "minLength": 1
+                },
+                "to": {
+                  "type": "string",
+                  "maxLength": 1,
+                  "minLength": 1
+                }
+              }
             }
           }
         },
@@ -137,7 +171,23 @@
           "required": ["repeat"],
           "properties": {
             "repeat": {
-              "$ref": "#/definitions/EBNFRepeat"
+              "type": "object",
+              "required": ["expression", "max", "min"],
+              "properties": {
+                "min": {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                "max": {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                "expression": {
+                  "$ref": "#/definitions/Expression"
+                }
+              }
             }
           }
         },
@@ -147,7 +197,16 @@
           "required": ["separatedBy"],
           "properties": {
             "separatedBy": {
-              "$ref": "#/definitions/EBNFSeparatedBy"
+              "type": "object",
+              "required": ["expression", "separator"],
+              "properties": {
+                "separator": {
+                  "type": "string"
+                },
+                "expression": {
+                  "$ref": "#/definitions/Expression"
+                }
+              }
             }
           }
         },
@@ -232,80 +291,6 @@
     "ExpressionAssociativity": {
       "type": "string",
       "enum": ["Left", "Right"]
-    },
-    "EBNFDelimitedBy": {
-      "type": "object",
-      "required": ["close", "expression", "open"],
-      "properties": {
-        "open": {
-          "type": "string"
-        },
-        "expression": {
-          "$ref": "#/definitions/Expression"
-        },
-        "close": {
-          "type": "string"
-        }
-      }
-    },
-    "EBNFDifference": {
-      "type": "object",
-      "required": ["minuend", "subtrahend"],
-      "properties": {
-        "minuend": {
-          "$ref": "#/definitions/Expression"
-        },
-        "subtrahend": {
-          "$ref": "#/definitions/Expression"
-        }
-      }
-    },
-    "EBNFRange": {
-      "type": "object",
-      "required": ["from", "to"],
-      "properties": {
-        "from": {
-          "type": "string",
-          "maxLength": 1,
-          "minLength": 1
-        },
-        "to": {
-          "type": "string",
-          "maxLength": 1,
-          "minLength": 1
-        }
-      }
-    },
-    "EBNFRepeat": {
-      "type": "object",
-      "required": ["expression", "max", "min"],
-      "properties": {
-        "min": {
-          "type": "integer",
-          "format": "uint",
-          "minimum": 0.0
-        },
-        "max": {
-          "type": "integer",
-          "format": "uint",
-          "minimum": 0.0
-        },
-        "expression": {
-          "$ref": "#/definitions/Expression"
-        }
-      }
-    },
-    "EBNFSeparatedBy": {
-      "type": "object",
-      "required": ["expression", "separator"],
-      "properties": {
-        "separator": {
-          "type": "string"
-        },
-        "expression": {
-          "$ref": "#/definitions/Expression"
-        }
-      }
     }
   }
 }

@@ -1,4 +1,4 @@
-use codegen_schema::types::productions::{ExpressionRef, ProductionKind, EBNF};
+use codegen_schema::types::productions::{ExpressionParser, ExpressionRef, ProductionKind};
 use patricia_tree::{node::Node, PatriciaMap};
 use proc_macro2::TokenStream;
 
@@ -39,12 +39,12 @@ impl TerminalTrie {
         expression: &ExpressionRef,
         force_all_entries_to_be_named: bool,
     ) -> bool {
-        match &expression.ebnf {
-            EBNF::Choice(exprs) => exprs.iter().fold(true, |accum, e| {
+        match &expression.parser {
+            ExpressionParser::Choice(exprs) => exprs.iter().fold(true, |accum, e| {
                 accum && self.collect_terminals(tree, e, force_all_entries_to_be_named)
             }),
 
-            EBNF::Terminal(string) => {
+            ExpressionParser::Terminal(string) => {
                 self.0.insert(
                     string.clone(),
                     TreeEntry {
@@ -62,7 +62,7 @@ impl TerminalTrie {
                 true
             }
 
-            EBNF::Reference(name) => {
+            ExpressionParser::Reference(name) => {
                 tree.production.kind == ProductionKind::Token
                     && self.collect_terminals(
                         tree,
