@@ -7,6 +7,8 @@ mod DeleteStatement;
 #[allow(non_snake_case)]
 mod Expression;
 #[allow(non_snake_case)]
+mod FixedBytesType;
+#[allow(non_snake_case)]
 mod HexNumber;
 #[allow(non_snake_case)]
 mod Identifier;
@@ -19,9 +21,13 @@ mod MultilineComment;
 #[allow(non_snake_case)]
 mod NumericLiteral;
 #[allow(non_snake_case)]
+mod SignedIntegerType;
+#[allow(non_snake_case)]
 mod SingleLineComment;
 #[allow(non_snake_case)]
 mod SourceUnit;
+#[allow(non_snake_case)]
+mod UnsignedIntegerType;
 #[allow(non_snake_case)]
 mod VersionPragma;
 

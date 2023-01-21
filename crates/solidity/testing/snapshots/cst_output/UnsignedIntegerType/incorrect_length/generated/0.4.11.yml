@@ -1,0 +1,16 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ uint320                                                                          │ 0..7
+
+Errors: # 1 total
+  - >
+    Error: Expected end of input.
+       ╭─[crates/solidity/testing/snapshots/cst_output/UnsignedIntegerType/incorrect_length/input.sol:1:7]
+       │
+     1 │ uint320
+       ·       ┬  
+       ·       ╰── Found '0'.
+    ───╯
+
+Tree: null
