@@ -19,6 +19,21 @@ fn address_payable_call() -> Result<()> {
 }
 
 #[test]
+fn conditional_expression_identifier_base() -> Result<()> {
+    return run("Expression", "conditional_expression_identifier_base");
+}
+
+#[test]
+fn conditional_expression_nested_base() -> Result<()> {
+    return run("Expression", "conditional_expression_nested_base");
+}
+
+#[test]
+fn conditional_expression_nested_conditions() -> Result<()> {
+    return run("Expression", "conditional_expression_nested_conditions");
+}
+
+#[test]
 fn exponentiation_operator_associativity() -> Result<()> {
     return run("Expression", "exponentiation_operator_associativity");
 }
@@ -76,4 +91,19 @@ fn member_access_index_access() -> Result<()> {
 #[test]
 fn payable_call() -> Result<()> {
     return run("Expression", "payable_call");
+}
+
+#[test]
+fn postfix_decrement() -> Result<()> {
+    return run("Expression", "postfix_decrement");
+}
+
+#[test]
+fn prefix_decrement() -> Result<()> {
+    return run("Expression", "prefix_decrement");
+}
+
+#[test]
+fn prefix_minus() -> Result<()> {
+    return run("Expression", "prefix_minus");
 }
