@@ -39,7 +39,7 @@ impl Visitor for ReferencesCollector<'_> {
         expression: &ExpressionRef,
         reporter: &mut Reporter,
     ) -> VisitorResponse {
-        if let EBNF::Reference(reference) = &expression.ebnf {
+        if let EBNF::Reference(reference) = &expression.ebnf.value {
             let Node { syntax, value } = reference;
             if self.definitions.expressions.contains_key(value) {
                 reporter.report(syntax, Errors::Illegal(value.to_owned()))

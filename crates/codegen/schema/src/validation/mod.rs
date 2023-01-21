@@ -33,6 +33,7 @@ impl Model {
 
         rules::versions::check(&self, &mut errors);
         rules::references::check(&self, &definitions, &mut errors);
+        rules::empty_productions::check(&self, &mut errors);
 
         return errors.err_or(());
     }
