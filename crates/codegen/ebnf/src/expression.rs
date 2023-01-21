@@ -2,10 +2,7 @@ use std::fmt::Write;
 
 use codegen_schema::types::{
     grammar::Grammar,
-    productions::{
-        EBNFDelimitedBy, EBNFDifference, EBNFRange, EBNFRepeat, EBNFSeparatedBy, Expression,
-        ExpressionRef, EBNF,
-    },
+    productions::{Expression, ExpressionParser, ExpressionRef},
 };
 
 use crate::production::ProductionEBNFPrivateExtensions;
@@ -39,8 +36,8 @@ impl ExpressionEBNFPrivateExtensions for Expression {
             }
         }
 
-        match &self.ebnf {
-            EBNF::Choice(exprs) => {
+        match &self.parser {
+            ExpressionParser::Choice(exprs) => {
                 let mut first = true;
                 for expr in exprs {
                     if first {
@@ -52,11 +49,11 @@ impl ExpressionEBNFPrivateExtensions for Expression {
                 }
             }
 
-            EBNF::DelimitedBy(EBNFDelimitedBy {
+            ExpressionParser::DelimitedBy {
                 open,
                 expression,
                 close,
-            }) => {
+            } => {
                 write!(w, "'").unwrap();
                 for c in open.chars() {
                     write_char(w, c);
@@ -70,34 +67,34 @@ impl ExpressionEBNFPrivateExtensions for Expression {
                 write!(w, "' ").unwrap();
             }
 
-            EBNF::Difference(EBNFDifference {
+            ExpressionParser::Difference {
                 minuend,
                 subtrahend,
-            }) => {
+            } => {
                 self.generate_ebnf_subexpression(grammar, w, minuend);
                 write!(w, "- ").unwrap();
                 self.generate_ebnf_subexpression(grammar, w, subtrahend);
             }
 
-            EBNF::Not(expr) => {
+            ExpressionParser::Not(expr) => {
                 write!(w, "¬").unwrap();
                 self.generate_ebnf_subexpression(grammar, w, expr);
             }
 
-            EBNF::OneOrMore(expr) => {
+            ExpressionParser::OneOrMore(expr) => {
                 write!(w, "1…").unwrap();
                 write!(w, "*{{ ").unwrap();
                 expr.generate_ebnf(grammar, w);
                 write!(w, "}} ").unwrap();
             }
 
-            EBNF::Optional(expr) => {
+            ExpressionParser::Optional(expr) => {
                 write!(w, "[ ").unwrap();
                 expr.generate_ebnf(grammar, w);
                 write!(w, "] ").unwrap();
             }
 
-            EBNF::Range(EBNFRange { from, to }) => {
+            ExpressionParser::Range { from, to } => {
                 write!(w, "'").unwrap();
                 write_char(w, *from);
                 write!(w, "'…'").unwrap();
@@ -105,17 +102,17 @@ impl ExpressionEBNFPrivateExtensions for Expression {
                 write!(w, "' ").unwrap();
             }
 
-            EBNF::Reference(name) => {
+            ExpressionParser::Reference(name) => {
                 let production = &grammar.productions[name];
                 write!(w, "{} ", production.ebnf_display_name()).unwrap();
             }
 
-            EBNF::Repeat(EBNFRepeat {
+            ExpressionParser::Repeat {
                 expression,
                 min,
                 max,
                 ..
-            }) => {
+            } => {
                 write!(w, "{}", min).unwrap();
                 write!(w, "…").unwrap();
                 write!(w, "{}", max).unwrap();
@@ -124,10 +121,10 @@ impl ExpressionEBNFPrivateExtensions for Expression {
                 write!(w, "}} ").unwrap();
             }
 
-            EBNF::SeparatedBy(EBNFSeparatedBy {
+            ExpressionParser::SeparatedBy {
                 expression,
                 separator,
-            }) => {
+            } => {
                 self.generate_ebnf_subexpression(grammar, w, expression);
                 write!(w, " {{ '").unwrap();
                 for c in separator.chars() {
@@ -138,13 +135,13 @@ impl ExpressionEBNFPrivateExtensions for Expression {
                 write!(w, "}} ").unwrap();
             }
 
-            EBNF::Sequence(exprs) => {
+            ExpressionParser::Sequence(exprs) => {
                 for expr in exprs {
                     self.generate_ebnf_subexpression(grammar, w, expr);
                 }
             }
 
-            EBNF::Terminal(string) => {
+            ExpressionParser::Terminal(string) => {
                 write!(w, "'").unwrap();
                 for c in string.chars() {
                     write_char(w, c);
@@ -152,7 +149,7 @@ impl ExpressionEBNFPrivateExtensions for Expression {
                 write!(w, "' ").unwrap();
             }
 
-            EBNF::ZeroOrMore(expr) => {
+            ExpressionParser::ZeroOrMore(expr) => {
                 write!(w, "{{ ").unwrap();
                 expr.generate_ebnf(grammar, w);
                 write!(w, "}} ").unwrap();
@@ -176,18 +173,20 @@ impl ExpressionEBNFPrivateExtensions for Expression {
     }
 
     fn ebnf_precedence(&self) -> u8 {
-        match self.ebnf {
-            EBNF::Choice(..) => 4,
-            EBNF::DelimitedBy(..) | EBNF::SeparatedBy(..) | EBNF::Sequence(..) => 3,
-            EBNF::Difference { .. } => 2,
-            EBNF::OneOrMore(..)
-            | EBNF::Optional(..)
-            | EBNF::Range { .. }
-            | EBNF::Reference(..)
-            | EBNF::Repeat(..)
-            | EBNF::Terminal(..)
-            | EBNF::ZeroOrMore(..) => 0,
-            EBNF::Not(..) => 1,
+        match self.parser {
+            ExpressionParser::Choice(..) => 4,
+            ExpressionParser::DelimitedBy { .. }
+            | ExpressionParser::SeparatedBy { .. }
+            | ExpressionParser::Sequence(..) => 3,
+            ExpressionParser::Difference { .. } => 2,
+            ExpressionParser::OneOrMore(..)
+            | ExpressionParser::Optional(..)
+            | ExpressionParser::Range { .. }
+            | ExpressionParser::Reference(..)
+            | ExpressionParser::Repeat { .. }
+            | ExpressionParser::Terminal(..)
+            | ExpressionParser::ZeroOrMore(..) => 0,
+            ExpressionParser::Not(..) => 1,
         }
     }
 }

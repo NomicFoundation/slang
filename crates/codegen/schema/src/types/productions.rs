@@ -39,7 +39,7 @@ pub struct Expression {
     #[serde(default, flatten)]
     pub config: ExpressionConfig,
     #[serde(flatten)]
-    pub ebnf: EBNF,
+    pub parser: ExpressionParser,
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq, Deserialize, Serialize, JsonSchema, Hash)]
@@ -70,15 +70,22 @@ pub enum ExpressionAssociativity {
 
 #[derive(Clone, Debug, Deserialize, Serialize, JsonSchema, PartialEq, Eq, Hash)]
 #[serde(deny_unknown_fields, rename_all = "camelCase")]
-pub enum EBNF {
+pub enum ExpressionParser {
     #[schemars(title = "Choice Expression")]
     Choice(Vec<ExpressionRef>),
 
     #[schemars(title = "DelimitedBy Expression")]
-    DelimitedBy(EBNFDelimitedBy),
+    DelimitedBy {
+        open: String,
+        expression: ExpressionRef,
+        close: String,
+    },
 
     #[schemars(title = "Difference Expression")]
-    Difference(EBNFDifference),
+    Difference {
+        minuend: ExpressionRef,
+        subtrahend: ExpressionRef,
+    },
 
     #[schemars(title = "Not Expression")]
     Not(ExpressionRef),
@@ -90,17 +97,23 @@ pub enum EBNF {
     Optional(ExpressionRef),
 
     #[schemars(title = "Range Expression")]
-    Range(EBNFRange),
+    Range { from: char, to: char },
 
     #[schemars(title = "Reference Expression")]
     Reference(String),
 
     #[schemars(title = "Repeat Expression")]
-    Repeat(EBNFRepeat),
+    Repeat {
+        min: usize,
+        max: usize,
+        expression: ExpressionRef,
+    },
 
     #[schemars(title = "SeparatedBy Expression")]
-    SeparatedBy(EBNFSeparatedBy),
-
+    SeparatedBy {
+        separator: String,
+        expression: ExpressionRef,
+    },
     #[schemars(title = "Sequence Expression")]
     Sequence(Vec<ExpressionRef>),
 
@@ -109,41 +122,4 @@ pub enum EBNF {
 
     #[schemars(title = "ZeroOrMore Expression")]
     ZeroOrMore(ExpressionRef),
-}
-
-#[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize, JsonSchema, Hash)]
-#[serde(deny_unknown_fields)]
-pub struct EBNFDelimitedBy {
-    pub open: String,
-    pub expression: ExpressionRef,
-    pub close: String,
-}
-
-#[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize, JsonSchema, Hash)]
-#[serde(deny_unknown_fields)]
-pub struct EBNFDifference {
-    pub minuend: ExpressionRef,
-    pub subtrahend: ExpressionRef,
-}
-
-#[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize, JsonSchema, Hash)]
-#[serde(deny_unknown_fields)]
-pub struct EBNFRange {
-    pub from: char,
-    pub to: char,
-}
-
-#[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize, JsonSchema, Hash)]
-#[serde(deny_unknown_fields)]
-pub struct EBNFRepeat {
-    pub min: usize,
-    pub max: usize,
-    pub expression: ExpressionRef,
-}
-
-#[derive(Clone, Debug, PartialEq, Eq, Deserialize, Serialize, JsonSchema, Hash)]
-#[serde(deny_unknown_fields)]
-pub struct EBNFSeparatedBy {
-    pub separator: String,
-    pub expression: ExpressionRef,
 }

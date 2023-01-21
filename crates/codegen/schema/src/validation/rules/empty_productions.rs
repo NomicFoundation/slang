@@ -1,12 +1,14 @@
 use codegen_utils::errors::CodegenErrors;
 
-use crate::validation::{
-    ast::{
-        productions::{EBNFRepeat, ExpressionRef, ProductionRef, EBNF},
-        visitors::{Reporter, Visitor, VisitorExtensions, VisitorResponse},
-    },
+use crate::{
     types::productions::ProductionKind,
-    Model,
+    validation::{
+        ast::{
+            productions::{ExpressionParser, ExpressionRef, ProductionRef},
+            visitors::{Reporter, Visitor, VisitorExtensions, VisitorResponse},
+        },
+        Model,
+    },
 };
 
 pub fn check(model: &Model, errors: &mut CodegenErrors) {
@@ -46,23 +48,23 @@ impl Visitor for EmptyProductionsVisitor {
         expression: &ExpressionRef,
         reporter: &mut Reporter,
     ) -> VisitorResponse {
-        match &expression.ebnf.value {
-            EBNF::Choice(_)
-            | EBNF::DelimitedBy(_)
-            | EBNF::Difference(_)
-            | EBNF::Not(_)
-            | EBNF::OneOrMore(_)
-            | EBNF::Range(_)
-            | EBNF::Reference(_)
-            | EBNF::SeparatedBy(_)
-            | EBNF::Sequence(_)
-            | EBNF::Terminal(_) => {
+        match &expression.parser.value {
+            ExpressionParser::Choice(_)
+            | ExpressionParser::DelimitedBy { .. }
+            | ExpressionParser::Difference { .. }
+            | ExpressionParser::Not { .. }
+            | ExpressionParser::OneOrMore(_)
+            | ExpressionParser::Range { .. }
+            | ExpressionParser::Reference(_)
+            | ExpressionParser::SeparatedBy { .. }
+            | ExpressionParser::Sequence(_)
+            | ExpressionParser::Terminal(_) => {
                 // Cannot be optionally empty. Do nothing.
             }
-            EBNF::Optional(_) | EBNF::ZeroOrMore(_) => {
-                reporter.report(&expression.ebnf.syntax, Errors::PossibleEmptyRoot);
+            ExpressionParser::Optional(_) | ExpressionParser::ZeroOrMore(_) => {
+                reporter.report(&expression.parser.syntax, Errors::PossibleEmptyRoot);
             }
-            EBNF::Repeat(EBNFRepeat { min, .. }) => {
+            ExpressionParser::Repeat { min, .. } => {
                 if min.value == 0 {
                     reporter.report(&min.syntax, Errors::PossibleEmptyRoot);
                 }
