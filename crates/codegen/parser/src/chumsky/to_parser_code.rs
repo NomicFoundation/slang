@@ -36,22 +36,78 @@ impl<'context> CharacterFilter<'context> {
 impl TerminalTrie {
     pub fn to_parser_code(&self, is_trivia: bool, code: &mut CodeGenerator) -> TokenStream {
         let code = RefCell::new(code);
-        let parsers = self.generate(
-            &|label, children| quote!(trieprefix!(#label, [ #(#children),* ])),
-            &|name, label| {
-                let kind = code.borrow_mut().add_token_kind(name.unwrap().clone());
+        let parser = self.generate(
+            &|label, children| quote!( just(#label).ignore_then(choice!( #(#children),* )) ),
+            &|entry, label| {
+                let kind = code
+                    .borrow_mut()
+                    .add_token_kind(entry.name.clone().unwrap());
                 if label.is_empty() {
-                    quote!(trieleaf!(#kind))
+                    quote!( empty().to(TokenKind::#kind) )
                 } else {
-                    quote!(trieleaf!(#kind, #label))
+                    quote!( just(#label).to(TokenKind::#kind) )
                 }
             },
         );
         if is_trivia {
-            quote!(trivia_trie!(#(#parsers),*))
+            quote!(
+                #parser.map_with_span(|kind, span: SpanType| {
+                    cst::Node::trivia_token(kind, lex::Node::chars_unwrapped(span))
+                })
+            )
         } else {
-            quote!(trie!(#(#parsers),*))
+            quote!(with_trivia!(
+                #parser.map_with_span(|kind, span: SpanType| (kind, span))
+            )
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }))
         }
+    }
+
+    pub fn to_operator_parser_code(&self, code: &mut CodeGenerator) -> TokenStream {
+        let code = RefCell::new(code);
+        let parser = self.generate(
+            &|label, children| quote!( just(#label).ignore_then(choice!( #(#children),* )) ),
+            &|entry, label| {
+                let kind = code
+                    .borrow_mut()
+                    .add_token_kind(entry.name.clone().unwrap());
+                let payload = &entry.payload;
+                if label.is_empty() {
+                    quote!( empty().to((TokenKind::#kind, #payload)) )
+                } else {
+                    quote!( just(#label).to((TokenKind::#kind, #payload)) )
+                }
+            },
+        );
+        quote!(with_trivia!(
+            #parser.map_with_span(|payload, span: SpanType| (payload, span))
+        )
+        .map(
+            |(
+                (
+                    leading_trivia,
+                    ((token_kind, left_binding_power, right_binding_power, kind), range),
+                ),
+                trailing_trivia,
+            )| Pratt::Operator {
+                node: cst::Node::token(
+                    token_kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia
+                ),
+                kind,
+                left_binding_power,
+                right_binding_power
+            }
+        ))
     }
 }
 
@@ -196,52 +252,100 @@ impl<'context> CombinatorNode<'context> {
             /**********************************************************************
              * Precedence parsing
              */
-            Self::PrecedenceRule {
-                trailing_rules,
+            Self::PrecedenceExpressionRule {
+                primary_expressions,
                 operators,
                 ..
             } => {
-                let mut binary_operators = Vec::new();
+                if is_trivia {
+                    unreachable!("Precedence expressions cannot be used in trivia productions")
+                }
+
                 let mut prefix_operators = Vec::new();
+                let mut prefix_operator_trie = TerminalTrie::new();
                 let mut suffix_operators = Vec::new();
-                // TODO: the `rev()` is a hack to make up for the lack of terminal trie with
-                // precedence support, required to do longest match for operators such as `*` vs. `**`.
-                // It just happens to work for the solidity grammer, but it's not a general solution.
-                for (index, operator) in operators.iter().enumerate().rev() {
-                    let operator_code = operator.operator.to_parser_code(is_trivia, code);
+                let mut suffix_operator_trie = TerminalTrie::new();
+                let mut binary_operators = Vec::new();
+                let mut binary_operator_trie = TerminalTrie::new();
+                for (index, operator) in operators.iter().enumerate() {
                     let binding_power = (1 + index * 2) as u8;
                     let name = code.add_rule_kind(operator.name.clone());
                     match operator.model {
                         OperatorModel::BinaryLeftAssociative => {
-                            binary_operators.push(quote!(
+                            if let Self::TerminalTrie { trie, .. } = &operator.operator {
+                                let mut trie = trie.clone();
+                                trie.set_payloads(
+                                    quote!(#binding_power, #binding_power + 1, RuleKind::#name),
+                                );
+                                binary_operator_trie =
+                                    binary_operator_trie.merged_with(trie.clone());
+                            } else {
+                                let operator_code =
+                                    operator.operator.to_parser_code(is_trivia, code);
+                                binary_operators.push(quote!(
                                 #operator_code.map(|node| Pratt::Operator {
                                     node, kind: RuleKind::#name, left_binding_power: #binding_power, right_binding_power: #binding_power + 1
                                 })
                             ))
+                            }
                         }
                         OperatorModel::BinaryRightAssociative => {
-                            binary_operators.push(quote!(
+                            if let Self::TerminalTrie { trie, .. } = &operator.operator {
+                                let mut trie = trie.clone();
+                                trie.set_payloads(
+                                    quote!(#binding_power + 1, #binding_power, RuleKind::#name),
+                                );
+                                binary_operator_trie =
+                                    binary_operator_trie.merged_with(trie.clone());
+                            } else {
+                                let operator_code =
+                                    operator.operator.to_parser_code(is_trivia, code);
+                                binary_operators.push(quote!(
                                 #operator_code.map(|node| Pratt::Operator {
                                     node, kind: RuleKind::#name, left_binding_power: #binding_power + 1, right_binding_power: #binding_power
                                 })
                             ))
+                            }
                         }
                         OperatorModel::UnaryPrefix => {
-                            prefix_operators.push(quote!(
+                            if let Self::TerminalTrie { trie, .. } = &operator.operator {
+                                let mut trie = trie.clone();
+                                trie.set_payloads(quote!(255, #binding_power, RuleKind::#name));
+                                prefix_operator_trie =
+                                    prefix_operator_trie.merged_with(trie.clone());
+                            } else {
+                                let operator_code =
+                                    operator.operator.to_parser_code(is_trivia, code);
+                                prefix_operators.push(quote!(
                                 #operator_code.map(|node| Pratt::Operator {
                                     node, kind: RuleKind::#name, left_binding_power: 255, right_binding_power: #binding_power
                                 })
                             ))
+                            }
                         }
                         OperatorModel::UnarySuffix => {
-                            suffix_operators.push(quote!(
+                            if let Self::TerminalTrie { trie, .. } = &operator.operator {
+                                let mut trie = trie.clone();
+                                trie.set_payloads(quote!(#binding_power, 255, RuleKind::#name));
+                                suffix_operator_trie =
+                                    suffix_operator_trie.merged_with(trie.clone());
+                            } else {
+                                let operator_code =
+                                    operator.operator.to_parser_code(is_trivia, code);
+                                suffix_operators.push(quote!(
                                 #operator_code.map(|node| Pratt::Operator {
                                     node, kind: RuleKind::#name, left_binding_power: #binding_power, right_binding_power: 255
                                 })
                             ))
+                            }
                         }
                     }
                 }
+
+                binary_operators.insert(0, binary_operator_trie.to_operator_parser_code(code));
+                prefix_operators.insert(0, prefix_operator_trie.to_operator_parser_code(code));
+                suffix_operators.insert(0, suffix_operator_trie.to_operator_parser_code(code));
+
                 fn maybe_choice(mut operators: Vec<TokenStream>) -> TokenStream {
                     if operators.len() == 1 {
                         operators.pop().unwrap()
@@ -253,8 +357,8 @@ impl<'context> CombinatorNode<'context> {
                 let prefix_operators = maybe_choice(prefix_operators);
                 let suffix_operators = maybe_choice(suffix_operators);
 
-                let trailing_rules = maybe_choice(
-                    trailing_rules
+                let primary_expressions = maybe_choice(
+                    primary_expressions
                         .iter()
                         .map(|tree| {
                             let rule_name = format_ident!("{}", tree.production.name);
@@ -264,10 +368,19 @@ impl<'context> CombinatorNode<'context> {
                 );
 
                 quote!({
-                    let prefix_operators = #prefix_operators;
-                    let suffix_operators = #suffix_operators;
-                    let primary = #trailing_rules;
-                    let prefixes_primary_suffixes = prefix_operators.repeated().then(primary).then(suffix_operators.repeated());
+                    enum Pratt {
+                        Operator {
+                            kind: RuleKind,
+                            node: Option<Rc<cst::Node>>,
+                            left_binding_power: u8,
+                            right_binding_power: u8,
+                        },
+                        Node(Option<Rc<cst::Node>>),
+                    }
+                    let prefix_operator = #prefix_operators;
+                    let suffix_operator = #suffix_operators;
+                    let primary_expression = #primary_expressions;
+                    let prefixes_primary_suffixes = prefix_operator.repeated().then(primary_expression).then(suffix_operator.repeated());
                     type PPS = ((Vec<Pratt>, Option<Rc<cst::Node>>), Vec<Pratt>);
                     let binary_operator = #binary_operators;
                     prefixes_primary_suffixes.clone().then(binary_operator.then(prefixes_primary_suffixes).repeated()).map(
@@ -277,8 +390,8 @@ impl<'context> CombinatorNode<'context> {
                             elements.extend(prefixes.into_iter());
                             elements.push(Pratt::Node(expr));
                             elements.extend(suffixes.into_iter());
-                            for (op, pps) in tail.into_iter() {
-                                elements.push(op);
+                            for (binary_operator, pps) in tail.into_iter() {
+                                elements.push(binary_operator);
                                 let ((prefixes, expr), suffixes) = pps;
                                 elements.extend(prefixes.into_iter());
                                 elements.push(Pratt::Node(expr));
@@ -312,7 +425,7 @@ impl<'context> CombinatorNode<'context> {
                                                 vec![left, op],
                                             );
                                             elements.insert(i - 1, Pratt::Node(node));
-                                            i = 0; // TODO: just move back one
+                                            i = i.saturating_sub(2);
                                         } else {
                                             unreachable!()
                                         }
@@ -325,7 +438,7 @@ impl<'context> CombinatorNode<'context> {
                                                 vec![op, right],
                                             );
                                             elements.insert(i, Pratt::Node(node));
-                                            i = 0; // TODO: just move back one
+                                            i = i.saturating_sub(1);
                                         } else {
                                             unreachable!()
                                         }
@@ -339,7 +452,7 @@ impl<'context> CombinatorNode<'context> {
                                                 vec![left, op, right],
                                             );
                                             elements.insert(i - 1, Pratt::Node(node));
-                                            i = 0; // TODO: just move back one
+                                            i = i.saturating_sub(2);
                                         } else {
                                             unreachable!()
                                         }
@@ -389,32 +502,26 @@ impl<'context> CombinatorNode<'context> {
 }
 pub fn parse_macros() -> TokenStream {
     quote!(
-        enum Pratt {
-            Operator {
-                kind: RuleKind,
-                node: Option<Rc<cst::Node>>,
-                left_binding_power: u8,
-                right_binding_power: u8,
-            },
-            Node(Option<Rc<cst::Node>>),
+        #[allow(unused_macros)]
+        macro_rules! with_trivia {
+            ($expr:expr) => {
+                LeadingTrivia
+                    .clone()
+                    .then($expr)
+                    .then(TrailingTrivia.clone())
+            };
         }
 
         #[allow(unused_macros)]
         macro_rules! trivia_terminal {
             ($kind:ident, $literal:literal) => {
                 just($literal).map_with_span(|_, span: SpanType| {
-                    cst::Node::trivia_token(
-                        TokenKind::$kind,
-                        lex::Node::chars_unwrapped(span.start()..span.end()),
-                    )
+                    cst::Node::trivia_token(TokenKind::$kind, lex::Node::chars_unwrapped(span))
                 })
             };
             ($kind:ident, $filter:expr) => {
                 filter($filter).map_with_span(|_, span: SpanType| {
-                    cst::Node::trivia_token(
-                        TokenKind::$kind,
-                        lex::Node::chars_unwrapped(span.start()..span.end()),
-                    )
+                    cst::Node::trivia_token(TokenKind::$kind, lex::Node::chars_unwrapped(span))
                 })
             };
         }
@@ -422,43 +529,35 @@ pub fn parse_macros() -> TokenStream {
         #[allow(unused_macros)]
         macro_rules! terminal {
             ($kind:ident, $literal:literal) => {
-                LeadingTrivia
-                    .clone()
-                    .then(
-                        just($literal).map_with_span(|_, span: SpanType| span.start()..span.end()),
-                    )
-                    .then(TrailingTrivia.clone())
-                    .map(|((leading_trivia, range), trailing_trivia)| {
+                with_trivia!(just($literal).map_with_span(|_, span: SpanType| span)).map(
+                    |((leading_trivia, range), trailing_trivia)| {
                         cst::Node::token(
                             TokenKind::$kind,
                             lex::Node::chars_unwrapped(range),
                             leading_trivia,
                             trailing_trivia,
                         )
-                    })
+                    },
+                )
             };
             ($kind:ident, $filter:expr) => {
-                LeadingTrivia
-                    .clone()
-                    .then(
-                        filter($filter).map_with_span(|_, span: SpanType| span.start()..span.end()),
-                    )
-                    .then(TrailingTrivia.clone())
-                    .map(|((leading_trivia, range), trailing_trivia)| {
+                with_trivia!(filter($filter).map_with_span(|_, span: SpanType| span)).map(
+                    |((leading_trivia, range), trailing_trivia)| {
                         cst::Node::token(
                             TokenKind::$kind,
                             lex::Node::chars_unwrapped(range),
                             leading_trivia,
                             trailing_trivia,
                         )
-                    })
+                    },
+                )
             };
         }
 
         #[allow(unused_macros)]
         macro_rules! trivia_token {
             ($token_rule:ident) => {
-                $token_rule.clone().map(|token: Option<Rc<lex::Node>>| {
+                rule!($token_rule).map(|token: Option<Rc<lex::Node>>| {
                     let token = token.unwrap(); // token rule should always return a token
                     if let lex::Node::Named(kind, element) = token.as_ref() {
                         cst::Node::trivia_token(*kind, element.clone())
@@ -472,9 +571,7 @@ pub fn parse_macros() -> TokenStream {
         #[allow(unused_macros)]
         macro_rules! token {
             ($token_rule:ident) => {
-                LeadingTrivia.clone()
-                    .then($token_rule.clone())
-                    .then(TrailingTrivia.clone())
+                with_trivia!($token_rule.clone())
                     .map(|((leading_trivia, token), trailing_trivia): ((_, Option<Rc<lex::Node>>), _)| {
                         let token = token.unwrap(); // token rule should always return a token
                         if let lex::Node::Named(kind, element) = token.as_ref() {
@@ -495,11 +592,14 @@ pub fn parse_macros() -> TokenStream {
 
         #[allow(unused_macros)]
         macro_rules! choice {
-            ($kind:ident, $($expr:expr),*) => {
+            ( $kind:ident, $($expr:expr),* ) => {
                 choice::<_, ErrorType>(($($expr),* ))
             };
-            ($($expr:expr),* ) => {
-                choice::<_, ErrorType>(($($expr),* ))
+            ( $head:expr, $($tail:expr),+ ) => {
+                choice::<_, ErrorType>(( $head, $($tail),+ ))
+            };
+            ( $expr:expr ) => {
+                $expr
             };
         }
 
@@ -634,162 +734,12 @@ pub fn parse_macros() -> TokenStream {
         }
 
         #[allow(unused_macros)]
-        macro_rules! left_associative_binary_expression {
-            ($kind:ident, $next_sibling:ident, $operator:expr) => {
-                $next_sibling
-                    .clone()
-                    .then($operator.then($next_sibling.clone()).repeated())
-                    .map(|(first, rest)| {
-                        if rest.is_empty() {
-                            first
-                        } else {
-                            // a [ (X b) (Y c) (Z d) ] => { { { a X b } Y c } Z d }
-                            rest.into_iter().fold(
-                                first,
-                                |left_operand, (operator, right_operand)| {
-                                    cst::Node::rule(
-                                        RuleKind::$kind,
-                                        vec![left_operand, operator, right_operand],
-                                    )
-                                },
-                            )
-                        }
-                    })
-            };
-        }
-
-        #[allow(unused_macros)]
-        macro_rules! right_associative_binary_expression {
-            ($kind:ident, $next_sibling:ident, $operator:expr) => {
-                $next_sibling
-                    .clone()
-                    .then($operator.then($next_sibling.clone()).repeated())
-                    .map(|(first, rest)| {
-                        if rest.is_empty() {
-                            first
-                        } else {
-                            // a [ (X b) (Y c) (Z d) ] => [ (a X) (b Y) (c Z) ] d
-                            let mut last_operand = first;
-                            let mut operand_operator_pairs = vec![];
-                            for (operator, right_operand) in rest.into_iter() {
-                                let left_operand =
-                                    std::mem::replace(&mut last_operand, right_operand);
-                                operand_operator_pairs.push((left_operand, operator))
-                            }
-                            // [ (a X) (b Y) (c Z) ] d => { a X { b Y { c Z d } } }
-                            operand_operator_pairs.into_iter().rfold(
-                                last_operand,
-                                |right_operand, (left_operand, operator)| {
-                                    cst::Node::rule(
-                                        RuleKind::$kind,
-                                        vec![left_operand, operator, right_operand],
-                                    )
-                                },
-                            )
-                        }
-                    })
-            };
-        }
-
-        #[allow(unused_macros)]
-        macro_rules! unary_prefix_expression {
-            ($kind:ident, $next_sibling:ident, $operator:expr) => {
-                $operator
-                    .repeated()
-                    .then($next_sibling.clone())
-                    .map(|(mut operators, operand)| {
-                        if operators.is_empty() {
-                            operand
-                        } else {
-                            operators.reverse();
-                            operators
-                                .into_iter()
-                                .fold(operand, |right_operand, operator| {
-                                    cst::Node::rule(RuleKind::$kind, vec![operator, right_operand])
-                                })
-                        }
-                    })
-            };
-        }
-
-        #[allow(unused_macros)]
-        macro_rules! unary_suffix_expression {
-            ($kind:ident, $next_sibling:ident, $operator:expr) => {
-                $next_sibling
-                    .clone()
-                    .then($operator.repeated())
-                    .map(|(operand, operators)| {
-                        if operators.is_empty() {
-                            operand
-                        } else {
-                            operators
-                                .into_iter()
-                                .fold(operand, |left_operand, operator| {
-                                    cst::Node::rule(RuleKind::$kind, vec![left_operand, operator])
-                                })
-                        }
-                    })
-            };
-        }
-
-        #[allow(unused_macros)]
         macro_rules! delimited_by {
             ($kind:ident, $open:expr, $expr:expr, $close:expr) => {
                 seq!($kind, $open, $expr, $close)
             };
             ($open:expr, $expr:expr, $close:expr) => {
                 seq!($open, $expr, $close)
-            };
-        }
-
-        #[allow(unused_macros)]
-        macro_rules! trie {
-            ($kind:ident, $($expr:expr),* ) => {
-                trie!($($expr),*).map(|child| cst::Node::rule(RuleKind::$kind, vec![child]))
-            };
-            ( $expr:expr ) => {
-                LeadingTrivia.clone()
-                    .then($expr.map_with_span(|kind, span: SpanType| (kind, span)))
-                    .then(TrailingTrivia.clone())
-                    .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
-                        cst::Node::token(kind, lex::Node::chars_unwrapped(range), leading_trivia, trailing_trivia)
-                    })
-            };
-            ( $($expr:expr),+ ) => {
-                LeadingTrivia.clone()
-                    .then(choice::<_, ErrorType>(($($expr),+)).map_with_span(|kind, span: SpanType| (kind, span)))
-                    .then(TrailingTrivia.clone())
-                    .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
-                        cst::Node::token(kind, lex::Node::chars_unwrapped(range), leading_trivia, trailing_trivia)
-                    })
-            };
-        }
-
-        #[allow(unused_macros)]
-        macro_rules! trivia_trie {
-            ( $expr:expr ) => {
-                $expr.map_with_span(|kind, span: SpanType| cst::Node::trivia_token(kind, lex::Node::chars_unwrapped(span)))
-            };
-            ( $($expr:expr),+ ) => {
-                choice::<_, ErrorType>(($($expr),+))
-                    .map_with_span(|kind, span: SpanType| cst::Node::trivia_token(kind, lex::Node::chars_unwrapped(span)))
-            };
-        }
-
-        #[allow(unused_macros)]
-        macro_rules! trieprefix {
-            ($string:literal , [ $($expr:expr),+ ] ) => (
-                just($string).ignore_then(choice::<_, ErrorType>(($($expr),+)))
-            )
-        }
-
-        #[allow(unused_macros)]
-        macro_rules! trieleaf {
-            ( $kind:ident, $string:literal ) => {
-                just($string).to(TokenKind::$kind)
-            };
-            ( $kind:ident ) => {
-                empty().to(TokenKind::$kind)
             };
         }
 

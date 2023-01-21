@@ -3,6 +3,8 @@
 - name: "Expression"
   kind: "Rule"
   versioned:
+    # These are versioned so that we generate different code for the exponentation operator.
+    # This is temporary until we change the schema for pratt parsers
     0.4.11:
       parserType: "Precedence"
       choice:
@@ -51,7 +53,6 @@
 - name: "AssignmentExpression"
   kind: "Rule"
   unversioned:
-    associativity: "Left"
     sequence:
       - reference: "Expression"
       - choice:
@@ -102,7 +103,6 @@
 - name: "IndexAccessExpression"
   kind: "Rule"
   unversioned:
-    associativity: "Left"
     sequence:
       - reference: "Expression"
       - delimitedBy:

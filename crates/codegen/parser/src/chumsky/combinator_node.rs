@@ -26,10 +26,10 @@ pub enum CombinatorNode<'context> {
         minuend: &'context CombinatorNode<'context>,
         subtrahend: &'context CombinatorNode<'context>,
     },
-    PrecedenceRule {
+    PrecedenceExpressionRule {
         tree: &'context CombinatorTree<'context>,
         operators: Vec<PrecedenceRuleOperator<'context>>,
-        trailing_rules: Vec<&'context CombinatorTree<'context>>,
+        primary_expressions: Vec<&'context CombinatorTree<'context>>,
     },
     #[allow(dead_code)]
     Lookahead {
@@ -92,7 +92,7 @@ impl<'context> CombinatorNode<'context> {
         if let Some(ParserType::Precedence) = expression.config.parser_type {
             if tree.production.kind == ProductionKind::Rule {
                 if let ExpressionParser::Choice(exprs) = &expression.parser {
-                    let mut trailing_rules = Vec::new();
+                    let mut primary_expressions = Vec::new();
                     let mut operators = Vec::new();
                     for expr in exprs {
                         if let ExpressionParser::Reference(prod_name) = &expr.parser {
@@ -101,16 +101,16 @@ impl<'context> CombinatorNode<'context> {
                             {
                                 operators.push(operator);
                             } else {
-                                trailing_rules.push(operator_tree);
+                                primary_expressions.push(operator_tree);
                             }
                         } else {
                             unreachable!("Validation should have checked this: The precedence parser type is only applicable to a choice of references")
                         }
                     }
-                    return tree.context.alloc_node(Self::PrecedenceRule {
+                    return tree.context.alloc_node(Self::PrecedenceExpressionRule {
                         tree,
                         operators,
-                        trailing_rules,
+                        primary_expressions,
                     });
                 } else {
                     unreachable!("Validation should have checked this: The precedence parser type is only applicable to a choice of references")
@@ -130,7 +130,7 @@ impl<'context> CombinatorNode<'context> {
             }
         }
 
-        if let Some(trie) = TerminalTrie::new(tree, expression) {
+        if let Some(trie) = TerminalTrie::from_expression(tree, expression) {
             return tree.context.alloc_node(Self::TerminalTrie { trie });
         }
 
@@ -144,7 +144,7 @@ impl<'context> CombinatorNode<'context> {
                 }
                 let elements = exprs
                     .iter()
-                    .map(|expr| match TerminalTrie::new(tree, expr) {
+                    .map(|expr| match TerminalTrie::from_expression(tree, expr) {
                         None => TN::Node(Self::new(tree, expr)),
                         Some(trie) => TN::Trie(trie),
                     })
@@ -236,7 +236,7 @@ impl<'context> CombinatorNode<'context> {
             },
 
             ExpressionParser::Terminal(_) => Self::TerminalTrie {
-                trie: TerminalTrie::new(tree, expression).unwrap(),
+                trie: TerminalTrie::from_expression(tree, expression).unwrap(),
             },
 
             ExpressionParser::ZeroOrMore(expr) => Self::ZeroOrMore {
@@ -248,7 +248,7 @@ impl<'context> CombinatorNode<'context> {
 
     pub fn has_named_structure(&self) -> bool {
         match self {
-            Self::Reference { .. } | Self::PrecedenceRule { .. } => false,
+            Self::Reference { .. } | Self::PrecedenceExpressionRule { .. } => false,
 
             Self::CharacterFilter { name, .. } => name.is_some(),
 
@@ -282,7 +282,7 @@ impl<'context> CombinatorNode<'context> {
 
             Self::Reference { tree } => tree.can_be_empty(),
 
-            Self::PrecedenceRule { .. } => false,
+            Self::PrecedenceExpressionRule { .. } => false,
 
             // TODO: choice should limit members to those that cannot be empty
             Self::Choice { elements, .. } => elements.iter().any(|e| e.can_be_empty()),
