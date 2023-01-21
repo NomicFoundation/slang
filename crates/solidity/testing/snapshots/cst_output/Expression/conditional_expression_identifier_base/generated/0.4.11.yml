@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ foo ? true : false                                                               │ 0..18
+
+Errors: []
+
+Tree:
+  - Expression (Rule): # 0..18
+      - ConditionalExpression (Rule): # 0..18
+          - PrimaryExpression (Rule): # 0..3
+              - Identifier (Token): "foo" # 0..3
+          - Group: # 4..18
+              - Question (Token): "?" # 4..5
+              - Expression (Rule): # 6..10
+                  - PrimaryExpression (Rule): # 6..10
+                      - BooleanLiteral (Token): "true" # 6..10
+              - Colon (Token): ":" # 11..12
+              - Expression (Rule): # 13..18
+                  - PrimaryExpression (Rule): # 13..18
+                      - BooleanLiteral (Token): "false" # 13..18

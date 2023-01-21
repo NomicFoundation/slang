@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ --foo                                                                            │ 0..5
+
+Errors: []
+
+Tree:
+  - Expression (Rule): # 0..5
+      - UnaryPrefixExpression (Rule): # 0..5
+          - MinusMinus (Token): "--" # 0..2
+          - PrimaryExpression (Rule): # 2..5
+              - Identifier (Token): "foo" # 2..5

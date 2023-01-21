@@ -1,0 +1,31 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ (foo == bar) ? true : false                                                      │ 0..27
+
+Errors: []
+
+Tree:
+  - Expression (Rule): # 0..27
+      - ConditionalExpression (Rule): # 0..27
+          - PrimaryExpression (Rule): # 0..12
+              - ParenthesisExpression (Rule): # 0..12
+                  - OpenParen (Token): "(" # 0..1
+                  - Group: # 1..11
+                      - Expression (Rule): # 1..11
+                          - EqualityComparisonExpression (Rule): # 1..11
+                              - PrimaryExpression (Rule): # 1..4
+                                  - Identifier (Token): "foo" # 1..4
+                              - EqualEqual (Token): "==" # 5..7
+                              - PrimaryExpression (Rule): # 8..11
+                                  - Identifier (Token): "bar" # 8..11
+                  - CloseParen (Token): ")" # 11..12
+          - Group: # 13..27
+              - Question (Token): "?" # 13..14
+              - Expression (Rule): # 15..19
+                  - PrimaryExpression (Rule): # 15..19
+                      - BooleanLiteral (Token): "true" # 15..19
+              - Colon (Token): ":" # 20..21
+              - Expression (Rule): # 22..27
+                  - PrimaryExpression (Rule): # 22..27
+                      - BooleanLiteral (Token): "false" # 22..27

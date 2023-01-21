@@ -74,7 +74,7 @@
   unversioned:
     sequence:
       - reference: "Expression"
-      - sequence: # This subsequence gives the correct form to the AST
+      - sequence: # This subsequence forms the correct CST for the suffix expression parser
           - terminal: "?"
           - reference: "Expression"
           - terminal: ":"
