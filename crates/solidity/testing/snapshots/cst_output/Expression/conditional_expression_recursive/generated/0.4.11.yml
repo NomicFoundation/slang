@@ -1,0 +1,75 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ foo ? a == b ? a + b * c : a + b * c + d : !bar ? e + f : g + h                  │ 0..63
+
+Errors: []
+
+Tree:
+  - Expression (Rule): # 0..63
+      - ConditionalExpression (Rule): # 0..63
+          - PrimaryExpression (Rule): # 0..3
+              - Identifier (Token): "foo" # 0..3
+          - Group: # 4..63
+              - Question (Token): "?" # 4..5
+              - Expression (Rule): # 6..40
+                  - ConditionalExpression (Rule): # 6..40
+                      - EqualityComparisonExpression (Rule): # 6..12
+                          - PrimaryExpression (Rule): # 6..7
+                              - Identifier (Token): "a" # 6..7
+                          - EqualEqual (Token): "==" # 8..10
+                          - PrimaryExpression (Rule): # 11..12
+                              - Identifier (Token): "b" # 11..12
+                      - Group: # 13..40
+                          - Question (Token): "?" # 13..14
+                          - Expression (Rule): # 15..24
+                              - AddSubExpression (Rule): # 15..24
+                                  - PrimaryExpression (Rule): # 15..16
+                                      - Identifier (Token): "a" # 15..16
+                                  - Plus (Token): "+" # 17..18
+                                  - MulDivModExpression (Rule): # 19..24
+                                      - PrimaryExpression (Rule): # 19..20
+                                          - Identifier (Token): "b" # 19..20
+                                      - Star (Token): "*" # 21..22
+                                      - PrimaryExpression (Rule): # 23..24
+                                          - Identifier (Token): "c" # 23..24
+                          - Colon (Token): ":" # 25..26
+                          - Expression (Rule): # 27..40
+                              - AddSubExpression (Rule): # 27..40
+                                  - AddSubExpression (Rule): # 27..36
+                                      - PrimaryExpression (Rule): # 27..28
+                                          - Identifier (Token): "a" # 27..28
+                                      - Plus (Token): "+" # 29..30
+                                      - MulDivModExpression (Rule): # 31..36
+                                          - PrimaryExpression (Rule): # 31..32
+                                              - Identifier (Token): "b" # 31..32
+                                          - Star (Token): "*" # 33..34
+                                          - PrimaryExpression (Rule): # 35..36
+                                              - Identifier (Token): "c" # 35..36
+                                  - Plus (Token): "+" # 37..38
+                                  - PrimaryExpression (Rule): # 39..40
+                                      - Identifier (Token): "d" # 39..40
+              - Colon (Token): ":" # 41..42
+              - Expression (Rule): # 43..63
+                  - ConditionalExpression (Rule): # 43..63
+                      - UnaryPrefixExpression (Rule): # 43..47
+                          - Bang (Token): "!" # 43..44
+                          - PrimaryExpression (Rule): # 44..47
+                              - Identifier (Token): "bar" # 44..47
+                      - Group: # 48..63
+                          - Question (Token): "?" # 48..49
+                          - Expression (Rule): # 50..55
+                              - AddSubExpression (Rule): # 50..55
+                                  - PrimaryExpression (Rule): # 50..51
+                                      - Identifier (Token): "e" # 50..51
+                                  - Plus (Token): "+" # 52..53
+                                  - PrimaryExpression (Rule): # 54..55
+                                      - Identifier (Token): "f" # 54..55
+                          - Colon (Token): ":" # 56..57
+                          - Expression (Rule): # 58..63
+                              - AddSubExpression (Rule): # 58..63
+                                  - PrimaryExpression (Rule): # 58..59
+                                      - Identifier (Token): "g" # 58..59
+                                  - Plus (Token): "+" # 60..61
+                                  - PrimaryExpression (Rule): # 62..63
+                                      - Identifier (Token): "h" # 62..63
