@@ -53,8 +53,6 @@ sections:
         definition: "topics/03-types/03-mapping-types.yml"
       - title: "Elementary Types"
         definition: "topics/03-types/04-elementary-types.yml"
-      - title: "Addresses"
-        definition: "topics/03-types/05-addresses.yml"
   - title: "Statements"
     topics:
       - title: "Blocks"

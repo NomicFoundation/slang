@@ -50,8 +50,6 @@ nav:
           - "": "specification/notes/03-types/03-mapping-types/index.md"
           - 3.4. Elementary Types: "specification/generated/03-types/04-elementary-types/index.md"
           - "": "specification/notes/03-types/04-elementary-types/index.md"
-          - 3.5. Addresses: "specification/generated/03-types/05-addresses/index.md"
-          - "": "specification/notes/03-types/05-addresses/index.md"
       - 4. Statements:
           - 4.1. Blocks: "specification/generated/04-statements/01-blocks/index.md"
           - "": "specification/notes/04-statements/01-blocks/index.md"

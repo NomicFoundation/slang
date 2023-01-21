@@ -205,7 +205,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     declare_rule!(ParameterDeclaration);
     declare_rule!(ParameterList);
     declare_rule!(ParenthesisExpression);
-    declare_rule!(PayableExpression);
+    declare_rule!(PayableType);
     declare_rule!(PositionalArgumentList);
     declare_token!(PossiblySeparatedPairsOfHexDigits);
     declare_rule!(PragmaDirective);
@@ -1369,12 +1369,13 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         ))
     );
 
-    // ElementaryType = 'bool' | 'string' | AddressType | «FixedBytesType» | «SignedIntegerType» | «UnsignedIntegerType» | «SignedFixedType» | «UnsignedFixedType» ;
+    // ElementaryType = 'bool' | 'string' | AddressType | PayableType | «FixedBytesType» | «SignedIntegerType» | «UnsignedIntegerType» | «SignedFixedType» | «UnsignedFixedType» ;
     define_rule!(
         ElementaryType,
         choice!(
             trie!(trieleaf!(Bool, "bool"), trieleaf!(String, "string")),
             rule!(AddressType),
+            rule!(PayableType),
             token!(FixedBytesType),
             token!(SignedIntegerType),
             token!(UnsignedIntegerType),
@@ -1599,19 +1600,13 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                         left_binding_power: 33u8,
                         right_binding_power: 255
                     }),
-                    seq!(
-                        optional!(delimited_by!(
-                            terminal!(OpenBrace, "{"),
-                            separated_by!(rule!(NamedArgument), terminal!(Comma, ",")),
-                            terminal!(CloseBrace, "}")
-                        )),
-                        rule!(ArgumentList)
-                    )
-                    .map(|node| Pratt::Operator {
-                        node,
-                        kind: RuleKind::FunctionCallExpression,
-                        left_binding_power: 31u8,
-                        right_binding_power: 255
+                    seq!(optional!(rule!(NamedArgumentList)), rule!(ArgumentList)).map(|node| {
+                        Pratt::Operator {
+                            node,
+                            kind: RuleKind::FunctionCallExpression,
+                            left_binding_power: 31u8,
+                            right_binding_power: 255,
+                        }
                     }),
                     trie!(trieleaf!(PlusPlus, "++"), trieleaf!(MinusMinus, "--")).map(|node| {
                         Pratt::Operator {
@@ -1900,19 +1895,13 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                         left_binding_power: 33u8,
                         right_binding_power: 255
                     }),
-                    seq!(
-                        optional!(delimited_by!(
-                            terminal!(OpenBrace, "{"),
-                            separated_by!(rule!(NamedArgument), terminal!(Comma, ",")),
-                            terminal!(CloseBrace, "}")
-                        )),
-                        rule!(ArgumentList)
-                    )
-                    .map(|node| Pratt::Operator {
-                        node,
-                        kind: RuleKind::FunctionCallExpression,
-                        left_binding_power: 31u8,
-                        right_binding_power: 255
+                    seq!(optional!(rule!(NamedArgumentList)), rule!(ArgumentList)).map(|node| {
+                        Pratt::Operator {
+                            node,
+                            kind: RuleKind::FunctionCallExpression,
+                            left_binding_power: 31u8,
+                            right_binding_power: 255,
+                        }
                     }),
                     trie!(trieleaf!(PlusPlus, "++"), trieleaf!(MinusMinus, "--")).map(|node| {
                         Pratt::Operator {
@@ -2294,16 +2283,12 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         )
     );
 
-    // FunctionCallExpression = Expression [ '{' NamedArgument  { ',' NamedArgument } '}' ] ArgumentList ;
+    // FunctionCallExpression = Expression [ NamedArgumentList ] ArgumentList ;
     define_rule!(
         FunctionCallExpression,
         seq!(
             rule!(Expression),
-            optional!(delimited_by!(
-                terminal!(OpenBrace, "{"),
-                separated_by!(rule!(NamedArgument), terminal!(Comma, ",")),
-                terminal!(CloseBrace, "}")
-            )),
+            optional!(rule!(NamedArgumentList)),
             rule!(ArgumentList)
         )
     );
@@ -3502,11 +3487,8 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         )
     );
 
-    // PayableExpression = 'payable' ArgumentList ;
-    define_rule!(
-        PayableExpression,
-        seq!(trie!(trieleaf!(Payable, "payable")), rule!(ArgumentList))
-    );
+    // PayableType = 'payable' ;
+    define_rule!(PayableType, trie!(trieleaf!(Payable, "payable")));
 
     // PositionalArgumentList = Expression  { ',' Expression } ;
     define_rule!(
@@ -3552,14 +3534,14 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         )
     );
 
-    // PrimaryExpression = PayableExpression | TypeExpression | NewExpression | ParenthesisExpression | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | NumericLiteral | «BooleanLiteral» | «Identifier» ;
+    // PrimaryExpression = TypeExpression | NewExpression | ParenthesisExpression | ElementaryType | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | NumericLiteral | «BooleanLiteral» | «Identifier» ;
     define_rule!(
         PrimaryExpression,
         choice!(
-            rule!(PayableExpression),
             rule!(TypeExpression),
             rule!(NewExpression),
             rule!(ParenthesisExpression),
+            rule!(ElementaryType),
             rule!(ArrayLiteral),
             token!(AsciiStringLiteral),
             token!(UnicodeStringLiteral),

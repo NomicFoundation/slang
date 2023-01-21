@@ -1,0 +1,20 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ function_name(value)                                                             │ 0..20
+
+Errors: []
+
+Tree:
+  - Expression (Rule): # 0..20
+      - FunctionCallExpression (Rule): # 0..20
+          - PrimaryExpression (Rule): # 0..13
+              - Identifier (Token): "function_name" # 0..13
+          - Group: # 13..20
+              - ArgumentList (Rule): # 13..20
+                  - OpenParen (Token): "(" # 13..14
+                  - PositionalArgumentList (Rule): # 14..19
+                      - Expression (Rule): # 14..19
+                          - PrimaryExpression (Rule): # 14..19
+                              - Identifier (Token): "value" # 14..19
+                  - CloseParen (Token): ")" # 19..20

@@ -4,10 +4,10 @@
   kind: "Rule"
   unversioned:
     choice:
-      - reference: "PayableExpression"
       - reference: "TypeExpression"
       - reference: "NewExpression"
       - reference: "ParenthesisExpression"
+      - reference: "ElementaryType"
       - reference: "ArrayLiteral"
       - reference: "AsciiStringLiteral"
       - reference: "UnicodeStringLiteral"
@@ -15,13 +15,6 @@
       - reference: "NumericLiteral"
       - reference: "BooleanLiteral"
       - reference: "Identifier"
-
-- name: "PayableExpression"
-  kind: "Rule"
-  unversioned:
-    sequence:
-      - terminal: "payable"
-      - reference: "ArgumentList"
 
 - name: "TypeExpression"
   kind: "Rule"

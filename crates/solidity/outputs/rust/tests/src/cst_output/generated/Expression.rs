@@ -9,6 +9,16 @@ fn add_mul() -> Result<()> {
 }
 
 #[test]
+fn address_call() -> Result<()> {
+    return run("Expression", "address_call");
+}
+
+#[test]
+fn address_payable_call() -> Result<()> {
+    return run("Expression", "address_payable_call");
+}
+
+#[test]
 fn exponentiation_operator_associativity() -> Result<()> {
     return run("Expression", "exponentiation_operator_associativity");
 }
@@ -26,6 +36,11 @@ fn function_call_chain() -> Result<()> {
 #[test]
 fn function_call_member_access() -> Result<()> {
     return run("Expression", "function_call_member_access");
+}
+
+#[test]
+fn identifier_call() -> Result<()> {
+    return run("Expression", "identifier_call");
 }
 
 #[test]
@@ -56,4 +71,9 @@ fn member_access_function_call() -> Result<()> {
 #[test]
 fn member_access_index_access() -> Result<()> {
     return run("Expression", "member_access_index_access");
+}
+
+#[test]
+fn payable_call() -> Result<()> {
+    return run("Expression", "payable_call");
 }
