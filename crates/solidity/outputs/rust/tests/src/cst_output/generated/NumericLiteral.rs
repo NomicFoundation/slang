@@ -9,6 +9,16 @@ fn days_unit() -> Result<()> {
 }
 
 #[test]
+fn decimal_no_unit() -> Result<()> {
+    return run("NumericLiteral", "decimal_no_unit");
+}
+
+#[test]
 fn ether_unit() -> Result<()> {
     return run("NumericLiteral", "ether_unit");
+}
+
+#[test]
+fn hex_no_unit() -> Result<()> {
+    return run("NumericLiteral", "hex_no_unit");
 }

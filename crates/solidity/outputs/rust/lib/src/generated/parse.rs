@@ -2379,21 +2379,16 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
             || ('A' <= c && c <= 'F')))
     );
 
-    // «HexNumber» = '0x' «HexCharacter» { [ '_' ] «HexCharacter» } ;
+    // «HexNumber» = '0x' 1…*{ «HexCharacter» }  { '_' 1…*{ «HexCharacter» } } ;
     define_token!(
         HexNumber,
         scan_make_node!(scan_seq!(
             scan_trie!(scan_trieleaf!("0x")),
-            scan_seq!(
-                scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
+            scan_separated_by!(
+                scan_one_or_more!(scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
                     || ('a' <= c && c <= 'f')
-                    || ('A' <= c && c <= 'F')),
-                scan_zero_or_more!(scan_seq!(
-                    scan_optional!(scan_terminal!('_')),
-                    scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
-                        || ('a' <= c && c <= 'f')
-                        || ('A' <= c && c <= 'F'))
-                ))
+                    || ('A' <= c && c <= 'F'))),
+                scan_terminal!("_")
             )
         ))
     );
@@ -3429,11 +3424,11 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         ))
     );
 
-    // NumericLiteral = ( «DecimalNumber» | «HexNumber» ) [ «NumberUnit» ] ;
+    // NumericLiteral = ( «HexNumber» | «DecimalNumber» ) [ «NumberUnit» ] ;
     define_rule!(
         NumericLiteral,
         seq!(
-            choice!(token!(DecimalNumber), token!(HexNumber)),
+            choice!(token!(HexNumber), token!(DecimalNumber)),
             optional!(token!(NumberUnit))
         )
     );

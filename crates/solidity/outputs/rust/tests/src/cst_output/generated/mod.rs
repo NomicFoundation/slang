@@ -7,6 +7,8 @@ mod DeleteStatement;
 #[allow(non_snake_case)]
 mod Expression;
 #[allow(non_snake_case)]
+mod HexNumber;
+#[allow(non_snake_case)]
 mod Identifier;
 #[allow(non_snake_case)]
 mod InterfaceDefinition;
