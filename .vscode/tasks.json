@@ -18,7 +18,12 @@
        */
       "label": "Validate Solidity Grammar",
       "type": "shell",
-      "command": "scripts/solidity/problem-matcher.sh",
+      "command": "scripts/solidity/check-grammar.sh",
+      "options": {
+        "env": {
+          "VSCODE_PROBLEM_MATCHER": "true"
+        }
+      },
       "problemMatcher": {
         "owner": "solidity",
         "source": "codegen_utils",
@@ -26,7 +31,7 @@
         "fileLocation": "absolute",
         "pattern": [
           {
-            "regexp": "^\\s*([^:]+):([^:]+):([^-]+)-([^:]+):([^:]+): ([^:]+): (.+)$",
+            "regexp": "^\\s*slang-problem-matcher:([^:]+):([^:]+):([^-]+)-([^:]+):([^:]+): ([^:]+): (.+)$",
             "file": 1,
             "line": 2,
             "column": 3,
