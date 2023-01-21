@@ -3,6 +3,8 @@
 #[allow(non_snake_case)]
 mod ContractDefinition;
 #[allow(non_snake_case)]
+mod DecimalNumber;
+#[allow(non_snake_case)]
 mod DeleteStatement;
 #[allow(non_snake_case)]
 mod Expression;

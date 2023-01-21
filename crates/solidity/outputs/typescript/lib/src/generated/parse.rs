@@ -137,7 +137,6 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     declare_rule!(ContractDefinition);
     declare_rule!(DataLocation);
     declare_token!(DecimalExponent);
-    declare_token!(DecimalFloat);
     declare_token!(DecimalInteger);
     declare_token!(DecimalNumber);
     declare_rule!(Definition);
@@ -1130,89 +1129,54 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         scan_make_node!(scan_seq!(
             scan_terminal!(|&c: &char| c == 'e' || c == 'E'),
             scan_optional!(scan_terminal!('-')),
-            scan_seq!(
-                scan_terminal!(|&c: &char| ('0' <= c && c <= '9')),
-                scan_zero_or_more!(scan_seq!(
-                    scan_optional!(scan_terminal!('_')),
-                    scan_terminal!(|&c: &char| ('0' <= c && c <= '9'))
-                ))
+            scan_separated_by!(
+                scan_one_or_more!(scan_terminal!(|&c: &char| ('0' <= c && c <= '9'))),
+                scan_terminal!("_")
             )
         ))
     );
 
-    // «DecimalFloat» = [ «DecimalInteger» ] '.' «DecimalInteger» ;
-    define_token!(
-        DecimalFloat,
-        scan_make_node!(scan_seq!(
-            scan_optional!(scan_seq!(
-                scan_terminal!(|&c: &char| ('0' <= c && c <= '9')),
-                scan_zero_or_more!(scan_seq!(
-                    scan_optional!(scan_terminal!('_')),
-                    scan_terminal!(|&c: &char| ('0' <= c && c <= '9'))
-                ))
-            )),
-            scan_terminal!('.'),
-            scan_seq!(
-                scan_terminal!(|&c: &char| ('0' <= c && c <= '9')),
-                scan_zero_or_more!(scan_seq!(
-                    scan_optional!(scan_terminal!('_')),
-                    scan_terminal!(|&c: &char| ('0' <= c && c <= '9'))
-                ))
-            )
-        ))
-    );
-
-    // «DecimalInteger» = '0'…'9' { [ '_' ] '0'…'9' } ;
+    // «DecimalInteger» = 1…*{ '0'…'9' }  { '_' 1…*{ '0'…'9' } } ;
     define_token!(
         DecimalInteger,
-        scan_make_node!(scan_seq!(
-            scan_terminal!(|&c: &char| ('0' <= c && c <= '9')),
-            scan_zero_or_more!(scan_seq!(
-                scan_optional!(scan_terminal!('_')),
-                scan_terminal!(|&c: &char| ('0' <= c && c <= '9'))
-            ))
+        scan_make_node!(scan_separated_by!(
+            scan_one_or_more!(scan_terminal!(|&c: &char| ('0' <= c && c <= '9'))),
+            scan_terminal!("_")
         ))
     );
 
-    // «DecimalNumber» = ( «DecimalInteger» | «DecimalFloat» ) [ «DecimalExponent» ] ;
+    // «DecimalNumber» = ( «DecimalInteger» [ '.' «DecimalInteger» ] | '.' «DecimalInteger» ) [ «DecimalExponent» ] ;
     define_token!(
         DecimalNumber,
         scan_make_node!(scan_seq!(
             scan_choice!(
                 scan_seq!(
-                    scan_terminal!(|&c: &char| ('0' <= c && c <= '9')),
-                    scan_zero_or_more!(scan_seq!(
-                        scan_optional!(scan_terminal!('_')),
-                        scan_terminal!(|&c: &char| ('0' <= c && c <= '9'))
+                    scan_separated_by!(
+                        scan_one_or_more!(scan_terminal!(|&c: &char| ('0' <= c && c <= '9'))),
+                        scan_terminal!("_")
+                    ),
+                    scan_optional!(scan_seq!(
+                        scan_terminal!('.'),
+                        scan_separated_by!(
+                            scan_one_or_more!(scan_terminal!(|&c: &char| ('0' <= c && c <= '9'))),
+                            scan_terminal!("_")
+                        )
                     ))
                 ),
                 scan_seq!(
-                    scan_optional!(scan_seq!(
-                        scan_terminal!(|&c: &char| ('0' <= c && c <= '9')),
-                        scan_zero_or_more!(scan_seq!(
-                            scan_optional!(scan_terminal!('_')),
-                            scan_terminal!(|&c: &char| ('0' <= c && c <= '9'))
-                        ))
-                    )),
                     scan_terminal!('.'),
-                    scan_seq!(
-                        scan_terminal!(|&c: &char| ('0' <= c && c <= '9')),
-                        scan_zero_or_more!(scan_seq!(
-                            scan_optional!(scan_terminal!('_')),
-                            scan_terminal!(|&c: &char| ('0' <= c && c <= '9'))
-                        ))
+                    scan_separated_by!(
+                        scan_one_or_more!(scan_terminal!(|&c: &char| ('0' <= c && c <= '9'))),
+                        scan_terminal!("_")
                     )
                 )
             ),
             scan_optional!(scan_seq!(
                 scan_terminal!(|&c: &char| c == 'e' || c == 'E'),
                 scan_optional!(scan_terminal!('-')),
-                scan_seq!(
-                    scan_terminal!(|&c: &char| ('0' <= c && c <= '9')),
-                    scan_zero_or_more!(scan_seq!(
-                        scan_optional!(scan_terminal!('_')),
-                        scan_terminal!(|&c: &char| ('0' <= c && c <= '9'))
-                    ))
+                scan_separated_by!(
+                    scan_one_or_more!(scan_terminal!(|&c: &char| ('0' <= c && c <= '9'))),
+                    scan_terminal!("_")
                 )
             ))
         ))
