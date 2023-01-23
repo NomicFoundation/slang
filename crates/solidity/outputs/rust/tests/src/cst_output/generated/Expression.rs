@@ -34,6 +34,11 @@ fn conditional_expression_nested_conditions() -> Result<()> {
 }
 
 #[test]
+fn conditional_expression_recursive() -> Result<()> {
+    return run("Expression", "conditional_expression_recursive");
+}
+
+#[test]
 fn exponentiation_operator_associativity() -> Result<()> {
     return run("Expression", "exponentiation_operator_associativity");
 }
