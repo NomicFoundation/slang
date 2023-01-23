@@ -287,7 +287,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     #[allow(unused_macros)]
     macro_rules ! scan_choice { ($ ($ expr : expr) , *) => { choice :: < _ , ErrorType > (($ ($ expr) , *)) } ; }
     #[allow(unused_macros)]
-    macro_rules ! scan_seq { ($ head : expr , $ ($ tail : expr) , +) => { $ head . then_ignore (scan_seq ! ($ ($ tail) , +)) } ; ($ head : expr) => { $ head . ignored () } ; }
+    macro_rules ! scan_seq { ($ head : expr , $ ($ tail : expr) , +) => { $ head . ignored () . then_ignore (scan_seq ! ($ ($ tail) , +)) } ; ($ head : expr) => { $ head . ignored () } ; }
     #[allow(unused_macros)]
     macro_rules! scan_zero_or_more {
         ($ expr : expr) => {
@@ -318,19 +318,6 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
             $expr.then_ignore($separator.then_ignore($expr).repeated())
         };
     }
-    #[allow(unused_macros)]
-    macro_rules ! scan_trie { ($ expr : expr) => { $ expr } ; ($ ($ expr : expr) , +) => { choice :: < _ , ErrorType > (($ ($ expr) , +)) } ; }
-    #[allow(unused_macros)]
-    macro_rules! scan_trieleaf {
-        ($ string : literal) => {
-            just($string).ignored()
-        };
-        () => {
-            empty()
-        };
-    }
-    #[allow(unused_macros)]
-    macro_rules ! scan_trieprefix { ($ string : literal , [$ ($ expr : expr) , +]) => (just ($ string) . ignore_then (choice :: < _ , ErrorType > (($ ($ expr) , +)))) }
     #[allow(unused_macros)]
     macro_rules! scan_make_node {
         ($ expr : expr) => {
@@ -424,19 +411,6 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         };
     }
     #[allow(unused_macros)]
-    macro_rules ! lex_trie { ($ expr : expr) => { $ expr . map_with_span (| _ , span : SpanType | lex :: Node :: chars (span)) } ; ($ ($ expr : expr) , +) => { choice :: < _ , ErrorType > (($ ($ expr) , +)) . map_with_span (| _ , span : SpanType | lex :: Node :: chars (span)) } ; }
-    #[allow(unused_macros)]
-    macro_rules! lex_trieleaf {
-        ($ kind : ident , $ string : literal) => {
-            just($string).to(TokenKind::$kind)
-        };
-        ($ kind : ident) => {
-            empty().to(TokenKind::$kind)
-        };
-    }
-    #[allow(unused_macros)]
-    macro_rules ! lex_trieprefix { ($ string : literal , [$ ($ expr : expr) , +]) => (just ($ string) . ignore_then (choice :: < _ , ErrorType > (($ ($ expr) , +)))) }
-    #[allow(unused_macros)]
     macro_rules! define_token {
         ($ kind : ident , $ expr : expr) => {
             $kind.define($expr.map(|node| lex::Node::named(TokenKind::$kind, node)));
@@ -452,69 +426,59 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
             );
         };
     }
-    enum Pratt {
-        Operator {
-            kind: RuleKind,
-            node: Option<Rc<cst::Node>>,
-            left_binding_power: u8,
-            right_binding_power: u8,
-        },
-        Node(Option<Rc<cst::Node>>),
+    #[allow(unused_macros)]
+    macro_rules! with_trivia {
+        ($ expr : expr) => {
+            LeadingTrivia
+                .clone()
+                .then($expr)
+                .then(TrailingTrivia.clone())
+        };
     }
     #[allow(unused_macros)]
     macro_rules! trivia_terminal {
         ($ kind : ident , $ literal : literal) => {
             just($literal).map_with_span(|_, span: SpanType| {
-                cst::Node::trivia_token(
-                    TokenKind::$kind,
-                    lex::Node::chars_unwrapped(span.start()..span.end()),
-                )
+                cst::Node::trivia_token(TokenKind::$kind, lex::Node::chars_unwrapped(span))
             })
         };
         ($ kind : ident , $ filter : expr) => {
             filter($filter).map_with_span(|_, span: SpanType| {
-                cst::Node::trivia_token(
-                    TokenKind::$kind,
-                    lex::Node::chars_unwrapped(span.start()..span.end()),
-                )
+                cst::Node::trivia_token(TokenKind::$kind, lex::Node::chars_unwrapped(span))
             })
         };
     }
     #[allow(unused_macros)]
     macro_rules! terminal {
         ($ kind : ident , $ literal : literal) => {
-            LeadingTrivia
-                .clone()
-                .then(just($literal).map_with_span(|_, span: SpanType| span.start()..span.end()))
-                .then(TrailingTrivia.clone())
-                .map(|((leading_trivia, range), trailing_trivia)| {
+            with_trivia!(just($literal).map_with_span(|_, span: SpanType| span)).map(
+                |((leading_trivia, range), trailing_trivia)| {
                     cst::Node::token(
                         TokenKind::$kind,
                         lex::Node::chars_unwrapped(range),
                         leading_trivia,
                         trailing_trivia,
                     )
-                })
+                },
+            )
         };
         ($ kind : ident , $ filter : expr) => {
-            LeadingTrivia
-                .clone()
-                .then(filter($filter).map_with_span(|_, span: SpanType| span.start()..span.end()))
-                .then(TrailingTrivia.clone())
-                .map(|((leading_trivia, range), trailing_trivia)| {
+            with_trivia!(filter($filter).map_with_span(|_, span: SpanType| span)).map(
+                |((leading_trivia, range), trailing_trivia)| {
                     cst::Node::token(
                         TokenKind::$kind,
                         lex::Node::chars_unwrapped(range),
                         leading_trivia,
                         trailing_trivia,
                     )
-                })
+                },
+            )
         };
     }
     #[allow(unused_macros)]
-    macro_rules ! trivia_token { ($ token_rule : ident) => { $ token_rule . clone () . map (| token : Option < Rc < lex :: Node >> | { let token = token . unwrap () ; if let lex :: Node :: Named (kind , element) = token . as_ref () { cst :: Node :: trivia_token (* kind , element . clone ()) } else { unreachable ! ("a token rule should always return a named token, but rule {} returned {:?}" , stringify ! ($ token_rule) , token) } }) } ; }
+    macro_rules ! trivia_token { ($ token_rule : ident) => { rule ! ($ token_rule) . map (| token : Option < Rc < lex :: Node >> | { let token = token . unwrap () ; if let lex :: Node :: Named (kind , element) = token . as_ref () { cst :: Node :: trivia_token (* kind , element . clone ()) } else { unreachable ! ("a token rule should always return a named token, but rule {} returned {:?}" , stringify ! ($ token_rule) , token) } }) } ; }
     #[allow(unused_macros)]
-    macro_rules ! token { ($ token_rule : ident) => { LeadingTrivia . clone () . then ($ token_rule . clone ()) . then (TrailingTrivia . clone ()) . map (| ((leading_trivia , token) , trailing_trivia) : ((_ , Option < Rc < lex :: Node >>) , _) | { let token = token . unwrap () ; if let lex :: Node :: Named (kind , element) = token . as_ref () { cst :: Node :: token (* kind , element . clone () , leading_trivia , trailing_trivia) } else { unreachable ! ("a token rule should always return a named token, but rule {} returned {:?}" , stringify ! ($ token_rule) , token) } }) } ; }
+    macro_rules ! token { ($ token_rule : ident) => { with_trivia ! ($ token_rule . clone ()) . map (| ((leading_trivia , token) , trailing_trivia) : ((_ , Option < Rc < lex :: Node >>) , _) | { let token = token . unwrap () ; if let lex :: Node :: Named (kind , element) = token . as_ref () { cst :: Node :: token (* kind , element . clone () , leading_trivia , trailing_trivia) } else { unreachable ! ("a token rule should always return a named token, but rule {} returned {:?}" , stringify ! ($ token_rule) , token) } }) } ; }
     #[allow(unused_macros)]
     macro_rules! rule {
         ($ rule : ident) => {
@@ -522,7 +486,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         };
     }
     #[allow(unused_macros)]
-    macro_rules ! choice { ($ kind : ident , $ ($ expr : expr) , *) => { choice :: < _ , ErrorType > (($ ($ expr) , *)) } ; ($ ($ expr : expr) , *) => { choice :: < _ , ErrorType > (($ ($ expr) , *)) } ; }
+    macro_rules ! choice { ($ kind : ident , $ ($ expr : expr) , *) => { choice :: < _ , ErrorType > (($ ($ expr) , *)) } ; ($ head : expr , $ ($ tail : expr) , +) => { choice :: < _ , ErrorType > (($ head , $ ($ tail) , +)) } ; ($ expr : expr) => { $ expr } ; }
     #[allow(unused_macros)]
     macro_rules ! seq { (@ exp $ head : expr , $ ($ tail : expr) , +) => { $ head . then (seq ! (@ exp $ ($ tail) , +)) } ; (@ exp $ head : expr) => { $ head } ; (@ args [$ ($ accum : expr ,) *] , $ current : expr , $ head : expr , $ ($ tail : expr) , +) => { seq ! (@ args [$ ($ accum ,) * $ current . 0 ,] , $ current . 1 , $ ($ tail) , +) } ; (@ args [$ ($ accum : expr ,) *] , $ current : expr , $ head : expr) => { vec ! [$ ($ accum ,) * $ current] } ; ($ kind : ident , $ ($ expr : expr) , +) => { seq ! (@ exp $ ($ expr) , +) . map (| v | cst :: Node :: rule (RuleKind :: $ kind , seq ! (@ args [] , v , $ ($ expr) , +))) } ; ($ ($ expr : expr) , +) => { seq ! (@ exp $ ($ expr) , +) . map (| v | cst :: Node :: group (seq ! (@ args [] , v , $ ($ expr) , +))) } ; }
     #[allow(unused_macros)]
@@ -602,116 +566,12 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         };
     }
     #[allow(unused_macros)]
-    macro_rules! left_associative_binary_expression {
-        ($ kind : ident , $ next_sibling : ident , $ operator : expr) => {
-            $next_sibling
-                .clone()
-                .then($operator.then($next_sibling.clone()).repeated())
-                .map(|(first, rest)| {
-                    if rest.is_empty() {
-                        first
-                    } else {
-                        rest.into_iter()
-                            .fold(first, |left_operand, (operator, right_operand)| {
-                                cst::Node::rule(
-                                    RuleKind::$kind,
-                                    vec![left_operand, operator, right_operand],
-                                )
-                            })
-                    }
-                })
-        };
-    }
-    #[allow(unused_macros)]
-    macro_rules! right_associative_binary_expression {
-        ($ kind : ident , $ next_sibling : ident , $ operator : expr) => {
-            $next_sibling
-                .clone()
-                .then($operator.then($next_sibling.clone()).repeated())
-                .map(|(first, rest)| {
-                    if rest.is_empty() {
-                        first
-                    } else {
-                        let mut last_operand = first;
-                        let mut operand_operator_pairs = vec![];
-                        for (operator, right_operand) in rest.into_iter() {
-                            let left_operand = std::mem::replace(&mut last_operand, right_operand);
-                            operand_operator_pairs.push((left_operand, operator))
-                        }
-                        operand_operator_pairs.into_iter().rfold(
-                            last_operand,
-                            |right_operand, (left_operand, operator)| {
-                                cst::Node::rule(
-                                    RuleKind::$kind,
-                                    vec![left_operand, operator, right_operand],
-                                )
-                            },
-                        )
-                    }
-                })
-        };
-    }
-    #[allow(unused_macros)]
-    macro_rules! unary_prefix_expression {
-        ($ kind : ident , $ next_sibling : ident , $ operator : expr) => {
-            $operator
-                .repeated()
-                .then($next_sibling.clone())
-                .map(|(mut operators, operand)| {
-                    if operators.is_empty() {
-                        operand
-                    } else {
-                        operators.reverse();
-                        operators
-                            .into_iter()
-                            .fold(operand, |right_operand, operator| {
-                                cst::Node::rule(RuleKind::$kind, vec![operator, right_operand])
-                            })
-                    }
-                })
-        };
-    }
-    #[allow(unused_macros)]
-    macro_rules! unary_suffix_expression {
-        ($ kind : ident , $ next_sibling : ident , $ operator : expr) => {
-            $next_sibling
-                .clone()
-                .then($operator.repeated())
-                .map(|(operand, operators)| {
-                    if operators.is_empty() {
-                        operand
-                    } else {
-                        operators
-                            .into_iter()
-                            .fold(operand, |left_operand, operator| {
-                                cst::Node::rule(RuleKind::$kind, vec![left_operand, operator])
-                            })
-                    }
-                })
-        };
-    }
-    #[allow(unused_macros)]
     macro_rules! delimited_by {
         ($ kind : ident , $ open : expr , $ expr : expr , $ close : expr) => {
             seq!($kind, $open, $expr, $close)
         };
         ($ open : expr , $ expr : expr , $ close : expr) => {
             seq!($open, $expr, $close)
-        };
-    }
-    #[allow(unused_macros)]
-    macro_rules ! trie { ($ kind : ident , $ ($ expr : expr) , *) => { trie ! ($ ($ expr) , *) . map (| child | cst :: Node :: rule (RuleKind :: $ kind , vec ! [child])) } ; ($ expr : expr) => { LeadingTrivia . clone () . then ($ expr . map_with_span (| kind , span : SpanType | (kind , span))) . then (TrailingTrivia . clone ()) . map (| ((leading_trivia , (kind , range)) , trailing_trivia) | { cst :: Node :: token (kind , lex :: Node :: chars_unwrapped (range) , leading_trivia , trailing_trivia) }) } ; ($ ($ expr : expr) , +) => { LeadingTrivia . clone () . then (choice :: < _ , ErrorType > (($ ($ expr) , +)) . map_with_span (| kind , span : SpanType | (kind , span))) . then (TrailingTrivia . clone ()) . map (| ((leading_trivia , (kind , range)) , trailing_trivia) | { cst :: Node :: token (kind , lex :: Node :: chars_unwrapped (range) , leading_trivia , trailing_trivia) }) } ; }
-    #[allow(unused_macros)]
-    macro_rules ! trivia_trie { ($ expr : expr) => { $ expr . map_with_span (| kind , span : SpanType | cst :: Node :: trivia_token (kind , lex :: Node :: chars_unwrapped (span))) } ; ($ ($ expr : expr) , +) => { choice :: < _ , ErrorType > (($ ($ expr) , +)) . map_with_span (| kind , span : SpanType | cst :: Node :: trivia_token (kind , lex :: Node :: chars_unwrapped (span))) } ; }
-    #[allow(unused_macros)]
-    macro_rules ! trieprefix { ($ string : literal , [$ ($ expr : expr) , +]) => (just ($ string) . ignore_then (choice :: < _ , ErrorType > (($ ($ expr) , +)))) }
-    #[allow(unused_macros)]
-    macro_rules! trieleaf {
-        ($ kind : ident , $ string : literal) => {
-            just($string).to(TokenKind::$kind)
-        };
-        ($ kind : ident) => {
-            empty().to(TokenKind::$kind)
         };
     }
     #[allow(unused_macros)]
@@ -736,7 +596,20 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // ABICoderPragma = 'abicoder' «Identifier» ;
     define_rule!(
         ABICoderPragma,
-        seq!(trie!(trieleaf!(Abicoder, "abicoder")), token!(Identifier))
+        seq!(
+            with_trivia!(just("abicoder")
+                .to(TokenKind::Abicoder)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
+            token!(Identifier)
+        )
     );
 
     // AddSubExpression = Expression ( '+' | '-' ) Expression ;
@@ -744,7 +617,19 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         AddSubExpression,
         seq!(
             rule!(Expression),
-            trie!(trieleaf!(Plus, "+"), trieleaf!(Minus, "-")),
+            with_trivia!(choice!(
+                just("+").to(TokenKind::Plus),
+                just("-").to(TokenKind::Minus)
+            )
+            .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(Expression)
         )
     );
@@ -753,8 +638,28 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         AddressType,
         seq!(
-            trie!(trieleaf!(Address, "address")),
-            optional!(trie!(trieleaf!(Payable, "payable")))
+            with_trivia!(just("address")
+                .to(TokenKind::Address)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
+            optional!(with_trivia!(just("payable")
+                .to(TokenKind::Payable)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }))
         )
     );
 
@@ -763,7 +668,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         AndExpression,
         seq!(
             rule!(Expression),
-            trie!(trieleaf!(AmpersandAmpersand, "&&")),
+            with_trivia!(just("&&")
+                .to(TokenKind::AmpersandAmpersand)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(Expression)
         )
     );
@@ -817,15 +732,15 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                     scan_seq!(
                         scan_terminal!('\\'),
                         scan_choice!(
-                            scan_trie!(
-                                scan_trieleaf!("\n"),
-                                scan_trieleaf!("\r"),
-                                scan_trieleaf!("\""),
-                                scan_trieleaf!("'"),
-                                scan_trieleaf!("\\"),
-                                scan_trieleaf!("n"),
-                                scan_trieleaf!("r"),
-                                scan_trieleaf!("t")
+                            choice!(
+                                just("\n").ignored(),
+                                just("\r").ignored(),
+                                just("\"").ignored(),
+                                just("'").ignored(),
+                                just("\\").ignored(),
+                                just("n").ignored(),
+                                just("r").ignored(),
+                                just("t").ignored()
                             ),
                             scan_seq!(
                                 scan_terminal!('x'),
@@ -861,15 +776,15 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                     scan_seq!(
                         scan_terminal!('\\'),
                         scan_choice!(
-                            scan_trie!(
-                                scan_trieleaf!("\n"),
-                                scan_trieleaf!("\r"),
-                                scan_trieleaf!("\""),
-                                scan_trieleaf!("'"),
-                                scan_trieleaf!("\\"),
-                                scan_trieleaf!("n"),
-                                scan_trieleaf!("r"),
-                                scan_trieleaf!("t")
+                            choice!(
+                                just("\n").ignored(),
+                                just("\r").ignored(),
+                                just("\"").ignored(),
+                                just("'").ignored(),
+                                just("\\").ignored(),
+                                just("n").ignored(),
+                                just("r").ignored(),
+                                just("t").ignored()
                             ),
                             scan_seq!(
                                 scan_terminal!('x'),
@@ -916,8 +831,28 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         AssemblyStatement,
         seq!(
-            trie!(trieleaf!(Assembly, "assembly")),
-            optional!(trie!(trieleaf!(DoubleQuoteEvmasmDoubleQuote, "\"evmasm\""))),
+            with_trivia!(just("assembly")
+                .to(TokenKind::Assembly)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
+            optional!(with_trivia!(just("\"evmasm\"")
+                .to(TokenKind::DoubleQuoteEvmasmDoubleQuote)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })),
             optional!(rule!(AssemblyFlags)),
             rule!(YulBlock)
         )
@@ -928,25 +863,31 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         AssignmentExpression,
         seq!(
             rule!(Expression),
-            trie!(
-                trieleaf!(PercentEqual, "%="),
-                trieleaf!(AmpersandEqual, "&="),
-                trieleaf!(StarEqual, "*="),
-                trieleaf!(PlusEqual, "+="),
-                trieleaf!(MinusEqual, "-="),
-                trieleaf!(SlashEqual, "/="),
-                trieleaf!(LessLessEqual, "<<="),
-                trieleaf!(Equal, "="),
-                trieprefix!(
-                    ">>",
-                    [
-                        trieleaf!(GreaterGreaterEqual, "="),
-                        trieleaf!(GreaterGreaterGreaterEqual, ">=")
-                    ]
-                ),
-                trieleaf!(CaretEqual, "^="),
-                trieleaf!(PipeEqual, "|=")
-            ),
+            with_trivia!(choice!(
+                just("%=").to(TokenKind::PercentEqual),
+                just("&=").to(TokenKind::AmpersandEqual),
+                just("*=").to(TokenKind::StarEqual),
+                just("+=").to(TokenKind::PlusEqual),
+                just("-=").to(TokenKind::MinusEqual),
+                just("/=").to(TokenKind::SlashEqual),
+                just("<<=").to(TokenKind::LessLessEqual),
+                just("=").to(TokenKind::Equal),
+                just(">>").ignore_then(choice!(
+                    just("=").to(TokenKind::GreaterGreaterEqual),
+                    just(">=").to(TokenKind::GreaterGreaterGreaterEqual)
+                )),
+                just("^=").to(TokenKind::CaretEqual),
+                just("|=").to(TokenKind::PipeEqual)
+            )
+            .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(Expression)
         )
     );
@@ -956,7 +897,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         BitAndExpression,
         seq!(
             rule!(Expression),
-            trie!(trieleaf!(Ampersand, "&")),
+            with_trivia!(just("&")
+                .to(TokenKind::Ampersand)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(Expression)
         )
     );
@@ -966,7 +917,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         BitOrExpression,
         seq!(
             rule!(Expression),
-            trie!(trieleaf!(Pipe, "|")),
+            with_trivia!(just("|")
+                .to(TokenKind::Pipe)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(Expression)
         )
     );
@@ -976,7 +937,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         BitXOrExpression,
         seq!(
             rule!(Expression),
-            trie!(trieleaf!(Caret, "^")),
+            with_trivia!(just("^")
+                .to(TokenKind::Caret)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(Expression)
         )
     );
@@ -994,15 +965,35 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // «BooleanLiteral» = 'true' | 'false' ;
     define_token!(
         BooleanLiteral,
-        scan_make_node!(scan_trie!(scan_trieleaf!("false"), scan_trieleaf!("true")))
+        scan_make_node!(choice!(just("false").ignored(), just("true").ignored()))
     );
 
     // BreakStatement = 'break' ';' ;
     define_rule!(
         BreakStatement,
         seq!(
-            trie!(trieleaf!(Break, "break")),
-            trie!(trieleaf!(Semicolon, ";"))
+            with_trivia!(just("break")
+                .to(TokenKind::Break)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
+            with_trivia!(just(";")
+                .to(TokenKind::Semicolon)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })
         )
     );
 
@@ -1010,7 +1001,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         CatchClause,
         seq!(
-            trie!(trieleaf!(Catch, "catch")),
+            with_trivia!(just("catch")
+                .to(TokenKind::Catch)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             optional!(seq!(optional!(token!(Identifier)), rule!(ParameterList))),
             rule!(Block)
         )
@@ -1022,9 +1023,29 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         seq!(
             rule!(Expression),
             seq!(
-                trie!(trieleaf!(Question, "?")),
+                with_trivia!(just("?")
+                    .to(TokenKind::Question)
+                    .map_with_span(|kind, span: SpanType| (kind, span)))
+                .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                    cst::Node::token(
+                        kind,
+                        lex::Node::chars_unwrapped(range),
+                        leading_trivia,
+                        trailing_trivia,
+                    )
+                }),
                 rule!(Expression),
-                trie!(trieleaf!(Colon, ":")),
+                with_trivia!(just(":")
+                    .to(TokenKind::Colon)
+                    .map_with_span(|kind, span: SpanType| (kind, span)))
+                .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                    cst::Node::token(
+                        kind,
+                        lex::Node::chars_unwrapped(range),
+                        leading_trivia,
+                        trailing_trivia,
+                    )
+                }),
                 rule!(Expression)
             )
         )
@@ -1035,11 +1056,41 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         ConstantDefinition,
         seq!(
             rule!(TypeName),
-            trie!(trieleaf!(Constant, "constant")),
+            with_trivia!(just("constant")
+                .to(TokenKind::Constant)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             token!(Identifier),
-            trie!(trieleaf!(Equal, "=")),
+            with_trivia!(just("=")
+                .to(TokenKind::Equal)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(Expression),
-            trie!(trieleaf!(Semicolon, ";"))
+            with_trivia!(just(";")
+                .to(TokenKind::Semicolon)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })
         )
     );
 
@@ -1048,13 +1099,22 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         ConstructorAttribute,
         choice!(
             rule!(ModifierInvocation),
-            trie!(
-                trieleaf!(Internal, "internal"),
-                trieprefix!(
-                    "p",
-                    [trieleaf!(Payable, "ayable"), trieleaf!(Public, "ublic")]
-                )
+            with_trivia!(choice!(
+                just("internal").to(TokenKind::Internal),
+                just("p").ignore_then(choice!(
+                    just("ayable").to(TokenKind::Payable),
+                    just("ublic").to(TokenKind::Public)
+                ))
             )
+            .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })
         )
     );
 
@@ -1062,7 +1122,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ConstructorDefinition,
         seq!(
-            trie!(trieleaf!(Constructor, "constructor")),
+            with_trivia!(just("constructor")
+                .to(TokenKind::Constructor)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(ParameterList),
             zero_or_more!(rule!(ConstructorAttribute)),
             rule!(Block)
@@ -1073,8 +1143,28 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ContinueStatement,
         seq!(
-            trie!(trieleaf!(Continue, "continue")),
-            trie!(trieleaf!(Semicolon, ";"))
+            with_trivia!(just("continue")
+                .to(TokenKind::Continue)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
+            with_trivia!(just(";")
+                .to(TokenKind::Semicolon)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })
         )
     );
 
@@ -1101,8 +1191,28 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ContractDefinition,
         seq!(
-            optional!(trie!(trieleaf!(Abstract, "abstract"))),
-            trie!(trieleaf!(Contract, "contract")),
+            optional!(with_trivia!(just("abstract")
+                .to(TokenKind::Abstract)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })),
+            with_trivia!(just("contract")
+                .to(TokenKind::Contract)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             token!(Identifier),
             optional!(rule!(InheritanceSpecifierList)),
             delimited_by!(
@@ -1116,11 +1226,20 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // DataLocation = 'memory' | 'storage' | 'calldata' ;
     define_rule!(
         DataLocation,
-        trie!(
-            trieleaf!(Calldata, "calldata"),
-            trieleaf!(Memory, "memory"),
-            trieleaf!(Storage, "storage")
+        with_trivia!(choice!(
+            just("calldata").to(TokenKind::Calldata),
+            just("memory").to(TokenKind::Memory),
+            just("storage").to(TokenKind::Storage)
         )
+        .map_with_span(|kind, span: SpanType| (kind, span)))
+        .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+            cst::Node::token(
+                kind,
+                lex::Node::chars_unwrapped(range),
+                leading_trivia,
+                trailing_trivia,
+            )
+        })
     );
 
     // «DecimalExponent» = ( 'e' | 'E' ) [ '-' ] «DecimalInteger» ;
@@ -1202,9 +1321,29 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         DeleteStatement,
         seq!(
-            trie!(trieleaf!(Delete, "delete")),
+            with_trivia!(just("delete")
+                .to(TokenKind::Delete)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(Expression),
-            trie!(trieleaf!(Semicolon, ";"))
+            with_trivia!(just(";")
+                .to(TokenKind::Semicolon)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })
         )
     );
 
@@ -1222,15 +1361,45 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         DoWhileStatement,
         seq!(
-            trie!(trieleaf!(Do, "do")),
+            with_trivia!(just("do")
+                .to(TokenKind::Do)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(Statement),
-            trie!(trieleaf!(While, "while")),
+            with_trivia!(just("while")
+                .to(TokenKind::While)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             delimited_by!(
                 terminal!(OpenParen, "("),
                 rule!(Expression),
                 terminal!(CloseParen, ")")
             ),
-            trie!(trieleaf!(Semicolon, ";"))
+            with_trivia!(just(";")
+                .to(TokenKind::Semicolon)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })
         )
     );
 
@@ -1246,15 +1415,15 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                 scan_seq!(
                     scan_terminal!('\\'),
                     scan_choice!(
-                        scan_trie!(
-                            scan_trieleaf!("\n"),
-                            scan_trieleaf!("\r"),
-                            scan_trieleaf!("\""),
-                            scan_trieleaf!("'"),
-                            scan_trieleaf!("\\"),
-                            scan_trieleaf!("n"),
-                            scan_trieleaf!("r"),
-                            scan_trieleaf!("t")
+                        choice!(
+                            just("\n").ignored(),
+                            just("\r").ignored(),
+                            just("\"").ignored(),
+                            just("'").ignored(),
+                            just("\\").ignored(),
+                            just("n").ignored(),
+                            just("r").ignored(),
+                            just("t").ignored()
                         ),
                         scan_seq!(
                             scan_terminal!('x'),
@@ -1296,15 +1465,15 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                 scan_seq!(
                     scan_terminal!('\\'),
                     scan_choice!(
-                        scan_trie!(
-                            scan_trieleaf!("\n"),
-                            scan_trieleaf!("\r"),
-                            scan_trieleaf!("\""),
-                            scan_trieleaf!("'"),
-                            scan_trieleaf!("\\"),
-                            scan_trieleaf!("n"),
-                            scan_trieleaf!("r"),
-                            scan_trieleaf!("t")
+                        choice!(
+                            just("\n").ignored(),
+                            just("\r").ignored(),
+                            just("\"").ignored(),
+                            just("'").ignored(),
+                            just("\\").ignored(),
+                            just("n").ignored(),
+                            just("r").ignored(),
+                            just("t").ignored()
                         ),
                         scan_seq!(
                             scan_terminal!('x'),
@@ -1337,7 +1506,19 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ElementaryType,
         choice!(
-            trie!(trieleaf!(Bool, "bool"), trieleaf!(String, "string")),
+            with_trivia!(choice!(
+                just("bool").to(TokenKind::Bool),
+                just("string").to(TokenKind::String)
+            )
+            .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(AddressType),
             rule!(PayableType),
             token!(FixedBytesType),
@@ -1352,10 +1533,30 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         EmitStatement,
         seq!(
-            trie!(trieleaf!(Emit, "emit")),
+            with_trivia!(just("emit")
+                .to(TokenKind::Emit)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(IdentifierPath),
             rule!(ArgumentList),
-            trie!(trieleaf!(Semicolon, ";"))
+            with_trivia!(just(";")
+                .to(TokenKind::Semicolon)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })
         )
     );
 
@@ -1381,7 +1582,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         EnumDefinition,
         seq!(
-            trie!(trieleaf!(Enum, "enum")),
+            with_trivia!(just("enum")
+                .to(TokenKind::Enum)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             token!(Identifier),
             delimited_by!(
                 terminal!(OpenBrace, "{"),
@@ -1396,7 +1607,19 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         EqualityComparisonExpression,
         seq!(
             rule!(Expression),
-            trie!(trieleaf!(BangEqual, "!="), trieleaf!(EqualEqual, "==")),
+            with_trivia!(choice!(
+                just("!=").to(TokenKind::BangEqual),
+                just("==").to(TokenKind::EqualEqual)
+            )
+            .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(Expression)
         )
     );
@@ -1405,14 +1628,34 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ErrorDefinition,
         seq!(
-            trie!(trieleaf!(Error, "error")),
+            with_trivia!(just("error")
+                .to(TokenKind::Error)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             token!(Identifier),
             delimited_by!(
                 terminal!(OpenParen, "("),
                 optional!(separated_by!(rule!(ErrorParameter), terminal!(Comma, ","))),
                 terminal!(CloseParen, ")")
             ),
-            trie!(trieleaf!(Semicolon, ";"))
+            with_trivia!(just(";")
+                .to(TokenKind::Semicolon)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })
         )
     );
 
@@ -1428,15 +1671,15 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         scan_make_node!(scan_seq!(
             scan_terminal!('\\'),
             scan_choice!(
-                scan_trie!(
-                    scan_trieleaf!("\n"),
-                    scan_trieleaf!("\r"),
-                    scan_trieleaf!("\""),
-                    scan_trieleaf!("'"),
-                    scan_trieleaf!("\\"),
-                    scan_trieleaf!("n"),
-                    scan_trieleaf!("r"),
-                    scan_trieleaf!("t")
+                choice!(
+                    just("\n").ignored(),
+                    just("\r").ignored(),
+                    just("\"").ignored(),
+                    just("'").ignored(),
+                    just("\\").ignored(),
+                    just("n").ignored(),
+                    just("r").ignored(),
+                    just("t").ignored()
                 ),
                 scan_seq!(
                     scan_terminal!('x'),
@@ -1466,15 +1709,45 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         EventDefinition,
         seq!(
-            trie!(trieleaf!(Event, "event")),
+            with_trivia!(just("event")
+                .to(TokenKind::Event)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             token!(Identifier),
             delimited_by!(
                 terminal!(OpenParen, "("),
                 optional!(separated_by!(rule!(EventParameter), terminal!(Comma, ","))),
                 terminal!(CloseParen, ")")
             ),
-            optional!(trie!(trieleaf!(Anonymous, "anonymous"))),
-            trie!(trieleaf!(Semicolon, ";"))
+            optional!(with_trivia!(just("anonymous")
+                .to(TokenKind::Anonymous)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })),
+            with_trivia!(just(";")
+                .to(TokenKind::Semicolon)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })
         )
     );
 
@@ -1483,7 +1756,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         EventParameter,
         seq!(
             rule!(TypeName),
-            optional!(trie!(trieleaf!(Indexed, "indexed"))),
+            optional!(with_trivia!(just("indexed")
+                .to(TokenKind::Indexed)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })),
             optional!(token!(Identifier))
         )
     );
@@ -1492,7 +1775,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ExperimentalPragma,
         seq!(
-            trie!(trieleaf!(Experimental, "experimental")),
+            with_trivia!(just("experimental")
+                .to(TokenKind::Experimental)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             token!(Identifier)
         )
     );
@@ -1504,14 +1797,34 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         if version_0_6_0 <= version {
             seq!(
                 rule!(Expression),
-                trie!(trieleaf!(StarStar, "**")),
+                with_trivia!(just("**")
+                    .to(TokenKind::StarStar)
+                    .map_with_span(|kind, span: SpanType| (kind, span)))
+                .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                    cst::Node::token(
+                        kind,
+                        lex::Node::chars_unwrapped(range),
+                        leading_trivia,
+                        trailing_trivia,
+                    )
+                }),
                 rule!(Expression)
             )
             .boxed()
         } else {
             seq!(
                 rule!(Expression),
-                trie!(trieleaf!(StarStar, "**")),
+                with_trivia!(just("**")
+                    .to(TokenKind::StarStar)
+                    .map_with_span(|kind, span: SpanType| (kind, span)))
+                .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                    cst::Node::token(
+                        kind,
+                        lex::Node::chars_unwrapped(range),
+                        leading_trivia,
+                        trailing_trivia,
+                    )
+                }),
                 rule!(Expression)
             )
             .boxed()
@@ -1524,44 +1837,122 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         Expression,
         if version_0_6_0 <= version {
             {
-                let prefix_operators = trie!(
-                    trieleaf!(Bang, "!"),
-                    trieleaf!(PlusPlus, "++"),
-                    trieprefix!("-", [trieleaf!(MinusMinus, "-"), trieleaf!(Minus)]),
-                    trieleaf!(Tilde, "~")
+                enum Pratt {
+                    Operator {
+                        kind: RuleKind,
+                        node: Option<Rc<cst::Node>>,
+                        left_binding_power: u8,
+                        right_binding_power: u8,
+                    },
+                    Node(Option<Rc<cst::Node>>),
+                }
+                let prefix_operator = with_trivia!(choice!(
+                    just("!").to((TokenKind::Bang, 255, 29u8, RuleKind::UnaryPrefixExpression)),
+                    just("++").to((
+                        TokenKind::PlusPlus,
+                        255,
+                        29u8,
+                        RuleKind::UnaryPrefixExpression
+                    )),
+                    just("-").ignore_then(choice!(
+                        just("-").to((
+                            TokenKind::MinusMinus,
+                            255,
+                            29u8,
+                            RuleKind::UnaryPrefixExpression
+                        )),
+                        empty().to((TokenKind::Minus, 255, 29u8, RuleKind::UnaryPrefixExpression))
+                    )),
+                    just("~").to((TokenKind::Tilde, 255, 29u8, RuleKind::UnaryPrefixExpression))
                 )
-                .map(|node| Pratt::Operator {
-                    node,
-                    kind: RuleKind::UnaryPrefixExpression,
-                    left_binding_power: 255,
-                    right_binding_power: 29u8,
-                });
-                let suffix_operators = choice!(
-                    delimited_by!(
-                        terminal!(OpenBracket, "["),
-                        seq!(
-                            optional!(rule!(Expression)),
-                            optional!(seq!(
-                                trie!(trieleaf!(Colon, ":")),
-                                optional!(rule!(Expression))
-                            ))
+                .map_with_span(|payload, span: SpanType| (payload, span)))
+                .map(
+                    |(
+                        (
+                            leading_trivia,
+                            ((token_kind, left_binding_power, right_binding_power, kind), range),
                         ),
-                        terminal!(CloseBracket, "]")
+                        trailing_trivia,
+                    )| Pratt::Operator {
+                        node: cst::Node::token(
+                            token_kind,
+                            lex::Node::chars_unwrapped(range),
+                            leading_trivia,
+                            trailing_trivia,
+                        ),
+                        kind,
+                        left_binding_power,
+                        right_binding_power,
+                    },
+                );
+                let suffix_operator = choice!(
+                    with_trivia!(choice!(
+                        just("++").to((
+                            TokenKind::PlusPlus,
+                            27u8,
+                            255,
+                            RuleKind::UnarySuffixExpression
+                        )),
+                        just("--").to((
+                            TokenKind::MinusMinus,
+                            27u8,
+                            255,
+                            RuleKind::UnarySuffixExpression
+                        ))
                     )
-                    .map(|node| Pratt::Operator {
-                        node,
-                        kind: RuleKind::IndexAccessExpression,
-                        left_binding_power: 35u8,
-                        right_binding_power: 255
-                    }),
+                    .map_with_span(|payload, span: SpanType| (payload, span)))
+                    .map(
+                        |(
+                            (
+                                leading_trivia,
+                                (
+                                    (token_kind, left_binding_power, right_binding_power, kind),
+                                    range,
+                                ),
+                            ),
+                            trailing_trivia,
+                        )| Pratt::Operator {
+                            node: cst::Node::token(
+                                token_kind,
+                                lex::Node::chars_unwrapped(range),
+                                leading_trivia,
+                                trailing_trivia
+                            ),
+                            kind,
+                            left_binding_power,
+                            right_binding_power
+                        }
+                    ),
                     seq!(
-                        trie!(trieleaf!(Period, ".")),
-                        choice!(token!(Identifier), trie!(trieleaf!(Address, "address")))
+                        with_trivia!(just("?")
+                            .to(TokenKind::Question)
+                            .map_with_span(|kind, span: SpanType| (kind, span)))
+                        .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                            cst::Node::token(
+                                kind,
+                                lex::Node::chars_unwrapped(range),
+                                leading_trivia,
+                                trailing_trivia,
+                            )
+                        }),
+                        rule!(Expression),
+                        with_trivia!(just(":")
+                            .to(TokenKind::Colon)
+                            .map_with_span(|kind, span: SpanType| (kind, span)))
+                        .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                            cst::Node::token(
+                                kind,
+                                lex::Node::chars_unwrapped(range),
+                                leading_trivia,
+                                trailing_trivia,
+                            )
+                        }),
+                        rule!(Expression)
                     )
                     .map(|node| Pratt::Operator {
                         node,
-                        kind: RuleKind::MemberAccessExpression,
-                        left_binding_power: 33u8,
+                        kind: RuleKind::ConditionalExpression,
+                        left_binding_power: 3u8,
                         right_binding_power: 255
                     }),
                     seq!(optional!(rule!(NamedArgumentList)), rule!(ArgumentList)).map(|node| {
@@ -1572,148 +1963,289 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                             right_binding_power: 255,
                         }
                     }),
-                    trie!(trieleaf!(PlusPlus, "++"), trieleaf!(MinusMinus, "--")).map(|node| {
-                        Pratt::Operator {
-                            node,
-                            kind: RuleKind::UnarySuffixExpression,
-                            left_binding_power: 27u8,
-                            right_binding_power: 255,
-                        }
-                    }),
                     seq!(
-                        trie!(trieleaf!(Question, "?")),
-                        rule!(Expression),
-                        trie!(trieleaf!(Colon, ":")),
-                        rule!(Expression)
-                    )
-                    .map(|node| Pratt::Operator {
-                        node,
-                        kind: RuleKind::ConditionalExpression,
-                        left_binding_power: 3u8,
-                        right_binding_power: 255
-                    })
-                );
-                let primary = rule!(PrimaryExpression);
-                let prefixes_primary_suffixes = prefix_operators
-                    .repeated()
-                    .then(primary)
-                    .then(suffix_operators.repeated());
-                type PPS = ((Vec<Pratt>, Option<Rc<cst::Node>>), Vec<Pratt>);
-                let binary_operator = choice!(
-                    trie!(trieleaf!(StarStar, "**")).map(|node| Pratt::Operator {
-                        node,
-                        kind: RuleKind::ExponentiationExpression,
-                        left_binding_power: 25u8 + 1,
-                        right_binding_power: 25u8
-                    }),
-                    trie!(
-                        trieleaf!(Percent, "%"),
-                        trieleaf!(Star, "*"),
-                        trieleaf!(Slash, "/")
-                    )
-                    .map(|node| Pratt::Operator {
-                        node,
-                        kind: RuleKind::MulDivModExpression,
-                        left_binding_power: 23u8,
-                        right_binding_power: 23u8 + 1
-                    }),
-                    trie!(trieleaf!(Plus, "+"), trieleaf!(Minus, "-")).map(|node| {
-                        Pratt::Operator {
-                            node,
-                            kind: RuleKind::AddSubExpression,
-                            left_binding_power: 21u8,
-                            right_binding_power: 21u8 + 1,
-                        }
-                    }),
-                    trie!(
-                        trieleaf!(LessLess, "<<"),
-                        trieprefix!(
-                            ">>",
-                            [
-                                trieleaf!(GreaterGreaterGreater, ">"),
-                                trieleaf!(GreaterGreater)
-                            ]
+                        with_trivia!(just(".")
+                            .to(TokenKind::Period)
+                            .map_with_span(|kind, span: SpanType| (kind, span)))
+                        .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                            cst::Node::token(
+                                kind,
+                                lex::Node::chars_unwrapped(range),
+                                leading_trivia,
+                                trailing_trivia,
+                            )
+                        }),
+                        choice!(
+                            token!(Identifier),
+                            with_trivia!(just("address")
+                                .to(TokenKind::Address)
+                                .map_with_span(|kind, span: SpanType| (kind, span)))
+                            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                                cst::Node::token(
+                                    kind,
+                                    lex::Node::chars_unwrapped(range),
+                                    leading_trivia,
+                                    trailing_trivia,
+                                )
+                            })
                         )
                     )
                     .map(|node| Pratt::Operator {
                         node,
-                        kind: RuleKind::ShiftExpression,
-                        left_binding_power: 19u8,
-                        right_binding_power: 19u8 + 1
+                        kind: RuleKind::MemberAccessExpression,
+                        left_binding_power: 33u8,
+                        right_binding_power: 255
                     }),
-                    trie!(trieleaf!(Ampersand, "&")).map(|node| Pratt::Operator {
-                        node,
-                        kind: RuleKind::BitAndExpression,
-                        left_binding_power: 17u8,
-                        right_binding_power: 17u8 + 1
-                    }),
-                    trie!(trieleaf!(Caret, "^")).map(|node| Pratt::Operator {
-                        node,
-                        kind: RuleKind::BitXOrExpression,
-                        left_binding_power: 15u8,
-                        right_binding_power: 15u8 + 1
-                    }),
-                    trie!(trieleaf!(Pipe, "|")).map(|node| Pratt::Operator {
-                        node,
-                        kind: RuleKind::BitOrExpression,
-                        left_binding_power: 13u8,
-                        right_binding_power: 13u8 + 1
-                    }),
-                    trie!(
-                        trieprefix!("<", [trieleaf!(LessEqual, "="), trieleaf!(Less)]),
-                        trieprefix!(">", [trieleaf!(GreaterEqual, "="), trieleaf!(Greater)])
-                    )
-                    .map(|node| Pratt::Operator {
-                        node,
-                        kind: RuleKind::OrderComparisonExpression,
-                        left_binding_power: 11u8,
-                        right_binding_power: 11u8 + 1
-                    }),
-                    trie!(trieleaf!(BangEqual, "!="), trieleaf!(EqualEqual, "==")).map(|node| {
-                        Pratt::Operator {
-                            node,
-                            kind: RuleKind::EqualityComparisonExpression,
-                            left_binding_power: 9u8,
-                            right_binding_power: 9u8 + 1,
-                        }
-                    }),
-                    trie!(trieleaf!(AmpersandAmpersand, "&&")).map(|node| Pratt::Operator {
-                        node,
-                        kind: RuleKind::AndExpression,
-                        left_binding_power: 7u8,
-                        right_binding_power: 7u8 + 1
-                    }),
-                    trie!(trieleaf!(PipePipe, "||")).map(|node| Pratt::Operator {
-                        node,
-                        kind: RuleKind::OrExpression,
-                        left_binding_power: 5u8,
-                        right_binding_power: 5u8 + 1
-                    }),
-                    trie!(
-                        trieleaf!(PercentEqual, "%="),
-                        trieleaf!(AmpersandEqual, "&="),
-                        trieleaf!(StarEqual, "*="),
-                        trieleaf!(PlusEqual, "+="),
-                        trieleaf!(MinusEqual, "-="),
-                        trieleaf!(SlashEqual, "/="),
-                        trieleaf!(LessLessEqual, "<<="),
-                        trieleaf!(Equal, "="),
-                        trieprefix!(
-                            ">>",
-                            [
-                                trieleaf!(GreaterGreaterEqual, "="),
-                                trieleaf!(GreaterGreaterGreaterEqual, ">=")
-                            ]
+                    delimited_by!(
+                        terminal!(OpenBracket, "["),
+                        seq!(
+                            optional!(rule!(Expression)),
+                            optional!(seq!(
+                                with_trivia!(just(":")
+                                    .to(TokenKind::Colon)
+                                    .map_with_span(|kind, span: SpanType| (kind, span)))
+                                .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                                    cst::Node::token(
+                                        kind,
+                                        lex::Node::chars_unwrapped(range),
+                                        leading_trivia,
+                                        trailing_trivia,
+                                    )
+                                }),
+                                optional!(rule!(Expression))
+                            ))
                         ),
-                        trieleaf!(CaretEqual, "^="),
-                        trieleaf!(PipeEqual, "|=")
+                        terminal!(CloseBracket, "]")
                     )
                     .map(|node| Pratt::Operator {
                         node,
-                        kind: RuleKind::AssignmentExpression,
-                        left_binding_power: 1u8,
-                        right_binding_power: 1u8 + 1
+                        kind: RuleKind::IndexAccessExpression,
+                        left_binding_power: 35u8,
+                        right_binding_power: 255
                     })
+                );
+                let primary_expression = rule!(PrimaryExpression);
+                let prefixes_primary_suffixes = prefix_operator
+                    .repeated()
+                    .then(primary_expression)
+                    .then(suffix_operator.repeated());
+                type PPS = ((Vec<Pratt>, Option<Rc<cst::Node>>), Vec<Pratt>);
+                let binary_operator = with_trivia!(choice!(
+                    just("!=").to((
+                        TokenKind::BangEqual,
+                        9u8,
+                        9u8 + 1,
+                        RuleKind::EqualityComparisonExpression
+                    )),
+                    just("%").ignore_then(choice!(
+                        just("=").to((
+                            TokenKind::PercentEqual,
+                            1u8,
+                            1u8 + 1,
+                            RuleKind::AssignmentExpression
+                        )),
+                        empty().to((
+                            TokenKind::Percent,
+                            23u8,
+                            23u8 + 1,
+                            RuleKind::MulDivModExpression
+                        ))
+                    )),
+                    just("&").ignore_then(choice!(
+                        just("&").to((
+                            TokenKind::AmpersandAmpersand,
+                            7u8,
+                            7u8 + 1,
+                            RuleKind::AndExpression
+                        )),
+                        just("=").to((
+                            TokenKind::AmpersandEqual,
+                            1u8,
+                            1u8 + 1,
+                            RuleKind::AssignmentExpression
+                        )),
+                        empty().to((
+                            TokenKind::Ampersand,
+                            17u8,
+                            17u8 + 1,
+                            RuleKind::BitAndExpression
+                        ))
+                    )),
+                    just("*").ignore_then(choice!(
+                        just("*").to((
+                            TokenKind::StarStar,
+                            25u8 + 1,
+                            25u8,
+                            RuleKind::ExponentiationExpression
+                        )),
+                        just("=").to((
+                            TokenKind::StarEqual,
+                            1u8,
+                            1u8 + 1,
+                            RuleKind::AssignmentExpression
+                        )),
+                        empty().to((
+                            TokenKind::Star,
+                            23u8,
+                            23u8 + 1,
+                            RuleKind::MulDivModExpression
+                        ))
+                    )),
+                    just("+").ignore_then(choice!(
+                        just("=").to((
+                            TokenKind::PlusEqual,
+                            1u8,
+                            1u8 + 1,
+                            RuleKind::AssignmentExpression
+                        )),
+                        empty().to((TokenKind::Plus, 21u8, 21u8 + 1, RuleKind::AddSubExpression))
+                    )),
+                    just("-").ignore_then(choice!(
+                        just("=").to((
+                            TokenKind::MinusEqual,
+                            1u8,
+                            1u8 + 1,
+                            RuleKind::AssignmentExpression
+                        )),
+                        empty().to((TokenKind::Minus, 21u8, 21u8 + 1, RuleKind::AddSubExpression))
+                    )),
+                    just("/").ignore_then(choice!(
+                        just("=").to((
+                            TokenKind::SlashEqual,
+                            1u8,
+                            1u8 + 1,
+                            RuleKind::AssignmentExpression
+                        )),
+                        empty().to((
+                            TokenKind::Slash,
+                            23u8,
+                            23u8 + 1,
+                            RuleKind::MulDivModExpression
+                        ))
+                    )),
+                    just("<").ignore_then(choice!(
+                        just("<").ignore_then(choice!(
+                            just("=").to((
+                                TokenKind::LessLessEqual,
+                                1u8,
+                                1u8 + 1,
+                                RuleKind::AssignmentExpression
+                            )),
+                            empty().to((
+                                TokenKind::LessLess,
+                                19u8,
+                                19u8 + 1,
+                                RuleKind::ShiftExpression
+                            ))
+                        )),
+                        just("=").to((
+                            TokenKind::LessEqual,
+                            11u8,
+                            11u8 + 1,
+                            RuleKind::OrderComparisonExpression
+                        )),
+                        empty().to((
+                            TokenKind::Less,
+                            11u8,
+                            11u8 + 1,
+                            RuleKind::OrderComparisonExpression
+                        ))
+                    )),
+                    just("=").ignore_then(choice!(
+                        just("=").to((
+                            TokenKind::EqualEqual,
+                            9u8,
+                            9u8 + 1,
+                            RuleKind::EqualityComparisonExpression
+                        )),
+                        empty().to((
+                            TokenKind::Equal,
+                            1u8,
+                            1u8 + 1,
+                            RuleKind::AssignmentExpression
+                        ))
+                    )),
+                    just(">").ignore_then(choice!(
+                        just("=").to((
+                            TokenKind::GreaterEqual,
+                            11u8,
+                            11u8 + 1,
+                            RuleKind::OrderComparisonExpression
+                        )),
+                        just(">").ignore_then(choice!(
+                            just("=").to((
+                                TokenKind::GreaterGreaterEqual,
+                                1u8,
+                                1u8 + 1,
+                                RuleKind::AssignmentExpression
+                            )),
+                            just(">").ignore_then(choice!(
+                                just("=").to((
+                                    TokenKind::GreaterGreaterGreaterEqual,
+                                    1u8,
+                                    1u8 + 1,
+                                    RuleKind::AssignmentExpression
+                                )),
+                                empty().to((
+                                    TokenKind::GreaterGreaterGreater,
+                                    19u8,
+                                    19u8 + 1,
+                                    RuleKind::ShiftExpression
+                                ))
+                            )),
+                            empty().to((
+                                TokenKind::GreaterGreater,
+                                19u8,
+                                19u8 + 1,
+                                RuleKind::ShiftExpression
+                            ))
+                        )),
+                        empty().to((
+                            TokenKind::Greater,
+                            11u8,
+                            11u8 + 1,
+                            RuleKind::OrderComparisonExpression
+                        ))
+                    )),
+                    just("^").ignore_then(choice!(
+                        just("=").to((
+                            TokenKind::CaretEqual,
+                            1u8,
+                            1u8 + 1,
+                            RuleKind::AssignmentExpression
+                        )),
+                        empty().to((TokenKind::Caret, 15u8, 15u8 + 1, RuleKind::BitXOrExpression))
+                    )),
+                    just("|").ignore_then(choice!(
+                        just("=").to((
+                            TokenKind::PipeEqual,
+                            1u8,
+                            1u8 + 1,
+                            RuleKind::AssignmentExpression
+                        )),
+                        just("|").to((TokenKind::PipePipe, 5u8, 5u8 + 1, RuleKind::OrExpression)),
+                        empty().to((TokenKind::Pipe, 13u8, 13u8 + 1, RuleKind::BitOrExpression))
+                    ))
+                )
+                .map_with_span(|payload, span: SpanType| (payload, span)))
+                .map(
+                    |(
+                        (
+                            leading_trivia,
+                            ((token_kind, left_binding_power, right_binding_power, kind), range),
+                        ),
+                        trailing_trivia,
+                    )| Pratt::Operator {
+                        node: cst::Node::token(
+                            token_kind,
+                            lex::Node::chars_unwrapped(range),
+                            leading_trivia,
+                            trailing_trivia,
+                        ),
+                        kind,
+                        left_binding_power,
+                        right_binding_power,
+                    },
                 );
                 prefixes_primary_suffixes
                     .clone()
@@ -1724,8 +2256,8 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                         elements.extend(prefixes.into_iter());
                         elements.push(Pratt::Node(expr));
                         elements.extend(suffixes.into_iter());
-                        for (op, pps) in tail.into_iter() {
-                            elements.push(op);
+                        for (binary_operator, pps) in tail.into_iter() {
+                            elements.push(binary_operator);
                             let ((prefixes, expr), suffixes) = pps;
                             elements.extend(prefixes.into_iter());
                             elements.push(Pratt::Node(expr));
@@ -1770,7 +2302,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                                     {
                                         let node = cst::Node::rule(kind, vec![left, op]);
                                         elements.insert(i - 1, Pratt::Node(node));
-                                        i = 0;
+                                        i = i.saturating_sub(2);
                                     } else {
                                         unreachable!()
                                     }
@@ -1784,7 +2316,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                                     {
                                         let node = cst::Node::rule(kind, vec![op, right]);
                                         elements.insert(i, Pratt::Node(node));
-                                        i = 0;
+                                        i = i.saturating_sub(1);
                                     } else {
                                         unreachable!()
                                     }
@@ -1800,7 +2332,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                                     {
                                         let node = cst::Node::rule(kind, vec![left, op, right]);
                                         elements.insert(i - 1, Pratt::Node(node));
-                                        i = 0;
+                                        i = i.saturating_sub(2);
                                     } else {
                                         unreachable!()
                                     }
@@ -1819,44 +2351,122 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
             .boxed()
         } else {
             {
-                let prefix_operators = trie!(
-                    trieleaf!(Bang, "!"),
-                    trieleaf!(PlusPlus, "++"),
-                    trieprefix!("-", [trieleaf!(MinusMinus, "-"), trieleaf!(Minus)]),
-                    trieleaf!(Tilde, "~")
+                enum Pratt {
+                    Operator {
+                        kind: RuleKind,
+                        node: Option<Rc<cst::Node>>,
+                        left_binding_power: u8,
+                        right_binding_power: u8,
+                    },
+                    Node(Option<Rc<cst::Node>>),
+                }
+                let prefix_operator = with_trivia!(choice!(
+                    just("!").to((TokenKind::Bang, 255, 29u8, RuleKind::UnaryPrefixExpression)),
+                    just("++").to((
+                        TokenKind::PlusPlus,
+                        255,
+                        29u8,
+                        RuleKind::UnaryPrefixExpression
+                    )),
+                    just("-").ignore_then(choice!(
+                        just("-").to((
+                            TokenKind::MinusMinus,
+                            255,
+                            29u8,
+                            RuleKind::UnaryPrefixExpression
+                        )),
+                        empty().to((TokenKind::Minus, 255, 29u8, RuleKind::UnaryPrefixExpression))
+                    )),
+                    just("~").to((TokenKind::Tilde, 255, 29u8, RuleKind::UnaryPrefixExpression))
                 )
-                .map(|node| Pratt::Operator {
-                    node,
-                    kind: RuleKind::UnaryPrefixExpression,
-                    left_binding_power: 255,
-                    right_binding_power: 29u8,
-                });
-                let suffix_operators = choice!(
-                    delimited_by!(
-                        terminal!(OpenBracket, "["),
-                        seq!(
-                            optional!(rule!(Expression)),
-                            optional!(seq!(
-                                trie!(trieleaf!(Colon, ":")),
-                                optional!(rule!(Expression))
-                            ))
+                .map_with_span(|payload, span: SpanType| (payload, span)))
+                .map(
+                    |(
+                        (
+                            leading_trivia,
+                            ((token_kind, left_binding_power, right_binding_power, kind), range),
                         ),
-                        terminal!(CloseBracket, "]")
+                        trailing_trivia,
+                    )| Pratt::Operator {
+                        node: cst::Node::token(
+                            token_kind,
+                            lex::Node::chars_unwrapped(range),
+                            leading_trivia,
+                            trailing_trivia,
+                        ),
+                        kind,
+                        left_binding_power,
+                        right_binding_power,
+                    },
+                );
+                let suffix_operator = choice!(
+                    with_trivia!(choice!(
+                        just("++").to((
+                            TokenKind::PlusPlus,
+                            27u8,
+                            255,
+                            RuleKind::UnarySuffixExpression
+                        )),
+                        just("--").to((
+                            TokenKind::MinusMinus,
+                            27u8,
+                            255,
+                            RuleKind::UnarySuffixExpression
+                        ))
                     )
-                    .map(|node| Pratt::Operator {
-                        node,
-                        kind: RuleKind::IndexAccessExpression,
-                        left_binding_power: 35u8,
-                        right_binding_power: 255
-                    }),
+                    .map_with_span(|payload, span: SpanType| (payload, span)))
+                    .map(
+                        |(
+                            (
+                                leading_trivia,
+                                (
+                                    (token_kind, left_binding_power, right_binding_power, kind),
+                                    range,
+                                ),
+                            ),
+                            trailing_trivia,
+                        )| Pratt::Operator {
+                            node: cst::Node::token(
+                                token_kind,
+                                lex::Node::chars_unwrapped(range),
+                                leading_trivia,
+                                trailing_trivia
+                            ),
+                            kind,
+                            left_binding_power,
+                            right_binding_power
+                        }
+                    ),
                     seq!(
-                        trie!(trieleaf!(Period, ".")),
-                        choice!(token!(Identifier), trie!(trieleaf!(Address, "address")))
+                        with_trivia!(just("?")
+                            .to(TokenKind::Question)
+                            .map_with_span(|kind, span: SpanType| (kind, span)))
+                        .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                            cst::Node::token(
+                                kind,
+                                lex::Node::chars_unwrapped(range),
+                                leading_trivia,
+                                trailing_trivia,
+                            )
+                        }),
+                        rule!(Expression),
+                        with_trivia!(just(":")
+                            .to(TokenKind::Colon)
+                            .map_with_span(|kind, span: SpanType| (kind, span)))
+                        .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                            cst::Node::token(
+                                kind,
+                                lex::Node::chars_unwrapped(range),
+                                leading_trivia,
+                                trailing_trivia,
+                            )
+                        }),
+                        rule!(Expression)
                     )
                     .map(|node| Pratt::Operator {
                         node,
-                        kind: RuleKind::MemberAccessExpression,
-                        left_binding_power: 33u8,
+                        kind: RuleKind::ConditionalExpression,
+                        left_binding_power: 3u8,
                         right_binding_power: 255
                     }),
                     seq!(optional!(rule!(NamedArgumentList)), rule!(ArgumentList)).map(|node| {
@@ -1867,148 +2477,289 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                             right_binding_power: 255,
                         }
                     }),
-                    trie!(trieleaf!(PlusPlus, "++"), trieleaf!(MinusMinus, "--")).map(|node| {
-                        Pratt::Operator {
-                            node,
-                            kind: RuleKind::UnarySuffixExpression,
-                            left_binding_power: 27u8,
-                            right_binding_power: 255,
-                        }
-                    }),
                     seq!(
-                        trie!(trieleaf!(Question, "?")),
-                        rule!(Expression),
-                        trie!(trieleaf!(Colon, ":")),
-                        rule!(Expression)
-                    )
-                    .map(|node| Pratt::Operator {
-                        node,
-                        kind: RuleKind::ConditionalExpression,
-                        left_binding_power: 3u8,
-                        right_binding_power: 255
-                    })
-                );
-                let primary = rule!(PrimaryExpression);
-                let prefixes_primary_suffixes = prefix_operators
-                    .repeated()
-                    .then(primary)
-                    .then(suffix_operators.repeated());
-                type PPS = ((Vec<Pratt>, Option<Rc<cst::Node>>), Vec<Pratt>);
-                let binary_operator = choice!(
-                    trie!(trieleaf!(StarStar, "**")).map(|node| Pratt::Operator {
-                        node,
-                        kind: RuleKind::ExponentiationExpression,
-                        left_binding_power: 25u8,
-                        right_binding_power: 25u8 + 1
-                    }),
-                    trie!(
-                        trieleaf!(Percent, "%"),
-                        trieleaf!(Star, "*"),
-                        trieleaf!(Slash, "/")
-                    )
-                    .map(|node| Pratt::Operator {
-                        node,
-                        kind: RuleKind::MulDivModExpression,
-                        left_binding_power: 23u8,
-                        right_binding_power: 23u8 + 1
-                    }),
-                    trie!(trieleaf!(Plus, "+"), trieleaf!(Minus, "-")).map(|node| {
-                        Pratt::Operator {
-                            node,
-                            kind: RuleKind::AddSubExpression,
-                            left_binding_power: 21u8,
-                            right_binding_power: 21u8 + 1,
-                        }
-                    }),
-                    trie!(
-                        trieleaf!(LessLess, "<<"),
-                        trieprefix!(
-                            ">>",
-                            [
-                                trieleaf!(GreaterGreaterGreater, ">"),
-                                trieleaf!(GreaterGreater)
-                            ]
+                        with_trivia!(just(".")
+                            .to(TokenKind::Period)
+                            .map_with_span(|kind, span: SpanType| (kind, span)))
+                        .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                            cst::Node::token(
+                                kind,
+                                lex::Node::chars_unwrapped(range),
+                                leading_trivia,
+                                trailing_trivia,
+                            )
+                        }),
+                        choice!(
+                            token!(Identifier),
+                            with_trivia!(just("address")
+                                .to(TokenKind::Address)
+                                .map_with_span(|kind, span: SpanType| (kind, span)))
+                            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                                cst::Node::token(
+                                    kind,
+                                    lex::Node::chars_unwrapped(range),
+                                    leading_trivia,
+                                    trailing_trivia,
+                                )
+                            })
                         )
                     )
                     .map(|node| Pratt::Operator {
                         node,
-                        kind: RuleKind::ShiftExpression,
-                        left_binding_power: 19u8,
-                        right_binding_power: 19u8 + 1
+                        kind: RuleKind::MemberAccessExpression,
+                        left_binding_power: 33u8,
+                        right_binding_power: 255
                     }),
-                    trie!(trieleaf!(Ampersand, "&")).map(|node| Pratt::Operator {
-                        node,
-                        kind: RuleKind::BitAndExpression,
-                        left_binding_power: 17u8,
-                        right_binding_power: 17u8 + 1
-                    }),
-                    trie!(trieleaf!(Caret, "^")).map(|node| Pratt::Operator {
-                        node,
-                        kind: RuleKind::BitXOrExpression,
-                        left_binding_power: 15u8,
-                        right_binding_power: 15u8 + 1
-                    }),
-                    trie!(trieleaf!(Pipe, "|")).map(|node| Pratt::Operator {
-                        node,
-                        kind: RuleKind::BitOrExpression,
-                        left_binding_power: 13u8,
-                        right_binding_power: 13u8 + 1
-                    }),
-                    trie!(
-                        trieprefix!("<", [trieleaf!(LessEqual, "="), trieleaf!(Less)]),
-                        trieprefix!(">", [trieleaf!(GreaterEqual, "="), trieleaf!(Greater)])
-                    )
-                    .map(|node| Pratt::Operator {
-                        node,
-                        kind: RuleKind::OrderComparisonExpression,
-                        left_binding_power: 11u8,
-                        right_binding_power: 11u8 + 1
-                    }),
-                    trie!(trieleaf!(BangEqual, "!="), trieleaf!(EqualEqual, "==")).map(|node| {
-                        Pratt::Operator {
-                            node,
-                            kind: RuleKind::EqualityComparisonExpression,
-                            left_binding_power: 9u8,
-                            right_binding_power: 9u8 + 1,
-                        }
-                    }),
-                    trie!(trieleaf!(AmpersandAmpersand, "&&")).map(|node| Pratt::Operator {
-                        node,
-                        kind: RuleKind::AndExpression,
-                        left_binding_power: 7u8,
-                        right_binding_power: 7u8 + 1
-                    }),
-                    trie!(trieleaf!(PipePipe, "||")).map(|node| Pratt::Operator {
-                        node,
-                        kind: RuleKind::OrExpression,
-                        left_binding_power: 5u8,
-                        right_binding_power: 5u8 + 1
-                    }),
-                    trie!(
-                        trieleaf!(PercentEqual, "%="),
-                        trieleaf!(AmpersandEqual, "&="),
-                        trieleaf!(StarEqual, "*="),
-                        trieleaf!(PlusEqual, "+="),
-                        trieleaf!(MinusEqual, "-="),
-                        trieleaf!(SlashEqual, "/="),
-                        trieleaf!(LessLessEqual, "<<="),
-                        trieleaf!(Equal, "="),
-                        trieprefix!(
-                            ">>",
-                            [
-                                trieleaf!(GreaterGreaterEqual, "="),
-                                trieleaf!(GreaterGreaterGreaterEqual, ">=")
-                            ]
+                    delimited_by!(
+                        terminal!(OpenBracket, "["),
+                        seq!(
+                            optional!(rule!(Expression)),
+                            optional!(seq!(
+                                with_trivia!(just(":")
+                                    .to(TokenKind::Colon)
+                                    .map_with_span(|kind, span: SpanType| (kind, span)))
+                                .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                                    cst::Node::token(
+                                        kind,
+                                        lex::Node::chars_unwrapped(range),
+                                        leading_trivia,
+                                        trailing_trivia,
+                                    )
+                                }),
+                                optional!(rule!(Expression))
+                            ))
                         ),
-                        trieleaf!(CaretEqual, "^="),
-                        trieleaf!(PipeEqual, "|=")
+                        terminal!(CloseBracket, "]")
                     )
                     .map(|node| Pratt::Operator {
                         node,
-                        kind: RuleKind::AssignmentExpression,
-                        left_binding_power: 1u8,
-                        right_binding_power: 1u8 + 1
+                        kind: RuleKind::IndexAccessExpression,
+                        left_binding_power: 35u8,
+                        right_binding_power: 255
                     })
+                );
+                let primary_expression = rule!(PrimaryExpression);
+                let prefixes_primary_suffixes = prefix_operator
+                    .repeated()
+                    .then(primary_expression)
+                    .then(suffix_operator.repeated());
+                type PPS = ((Vec<Pratt>, Option<Rc<cst::Node>>), Vec<Pratt>);
+                let binary_operator = with_trivia!(choice!(
+                    just("!=").to((
+                        TokenKind::BangEqual,
+                        9u8,
+                        9u8 + 1,
+                        RuleKind::EqualityComparisonExpression
+                    )),
+                    just("%").ignore_then(choice!(
+                        just("=").to((
+                            TokenKind::PercentEqual,
+                            1u8,
+                            1u8 + 1,
+                            RuleKind::AssignmentExpression
+                        )),
+                        empty().to((
+                            TokenKind::Percent,
+                            23u8,
+                            23u8 + 1,
+                            RuleKind::MulDivModExpression
+                        ))
+                    )),
+                    just("&").ignore_then(choice!(
+                        just("&").to((
+                            TokenKind::AmpersandAmpersand,
+                            7u8,
+                            7u8 + 1,
+                            RuleKind::AndExpression
+                        )),
+                        just("=").to((
+                            TokenKind::AmpersandEqual,
+                            1u8,
+                            1u8 + 1,
+                            RuleKind::AssignmentExpression
+                        )),
+                        empty().to((
+                            TokenKind::Ampersand,
+                            17u8,
+                            17u8 + 1,
+                            RuleKind::BitAndExpression
+                        ))
+                    )),
+                    just("*").ignore_then(choice!(
+                        just("*").to((
+                            TokenKind::StarStar,
+                            25u8,
+                            25u8 + 1,
+                            RuleKind::ExponentiationExpression
+                        )),
+                        just("=").to((
+                            TokenKind::StarEqual,
+                            1u8,
+                            1u8 + 1,
+                            RuleKind::AssignmentExpression
+                        )),
+                        empty().to((
+                            TokenKind::Star,
+                            23u8,
+                            23u8 + 1,
+                            RuleKind::MulDivModExpression
+                        ))
+                    )),
+                    just("+").ignore_then(choice!(
+                        just("=").to((
+                            TokenKind::PlusEqual,
+                            1u8,
+                            1u8 + 1,
+                            RuleKind::AssignmentExpression
+                        )),
+                        empty().to((TokenKind::Plus, 21u8, 21u8 + 1, RuleKind::AddSubExpression))
+                    )),
+                    just("-").ignore_then(choice!(
+                        just("=").to((
+                            TokenKind::MinusEqual,
+                            1u8,
+                            1u8 + 1,
+                            RuleKind::AssignmentExpression
+                        )),
+                        empty().to((TokenKind::Minus, 21u8, 21u8 + 1, RuleKind::AddSubExpression))
+                    )),
+                    just("/").ignore_then(choice!(
+                        just("=").to((
+                            TokenKind::SlashEqual,
+                            1u8,
+                            1u8 + 1,
+                            RuleKind::AssignmentExpression
+                        )),
+                        empty().to((
+                            TokenKind::Slash,
+                            23u8,
+                            23u8 + 1,
+                            RuleKind::MulDivModExpression
+                        ))
+                    )),
+                    just("<").ignore_then(choice!(
+                        just("<").ignore_then(choice!(
+                            just("=").to((
+                                TokenKind::LessLessEqual,
+                                1u8,
+                                1u8 + 1,
+                                RuleKind::AssignmentExpression
+                            )),
+                            empty().to((
+                                TokenKind::LessLess,
+                                19u8,
+                                19u8 + 1,
+                                RuleKind::ShiftExpression
+                            ))
+                        )),
+                        just("=").to((
+                            TokenKind::LessEqual,
+                            11u8,
+                            11u8 + 1,
+                            RuleKind::OrderComparisonExpression
+                        )),
+                        empty().to((
+                            TokenKind::Less,
+                            11u8,
+                            11u8 + 1,
+                            RuleKind::OrderComparisonExpression
+                        ))
+                    )),
+                    just("=").ignore_then(choice!(
+                        just("=").to((
+                            TokenKind::EqualEqual,
+                            9u8,
+                            9u8 + 1,
+                            RuleKind::EqualityComparisonExpression
+                        )),
+                        empty().to((
+                            TokenKind::Equal,
+                            1u8,
+                            1u8 + 1,
+                            RuleKind::AssignmentExpression
+                        ))
+                    )),
+                    just(">").ignore_then(choice!(
+                        just("=").to((
+                            TokenKind::GreaterEqual,
+                            11u8,
+                            11u8 + 1,
+                            RuleKind::OrderComparisonExpression
+                        )),
+                        just(">").ignore_then(choice!(
+                            just("=").to((
+                                TokenKind::GreaterGreaterEqual,
+                                1u8,
+                                1u8 + 1,
+                                RuleKind::AssignmentExpression
+                            )),
+                            just(">").ignore_then(choice!(
+                                just("=").to((
+                                    TokenKind::GreaterGreaterGreaterEqual,
+                                    1u8,
+                                    1u8 + 1,
+                                    RuleKind::AssignmentExpression
+                                )),
+                                empty().to((
+                                    TokenKind::GreaterGreaterGreater,
+                                    19u8,
+                                    19u8 + 1,
+                                    RuleKind::ShiftExpression
+                                ))
+                            )),
+                            empty().to((
+                                TokenKind::GreaterGreater,
+                                19u8,
+                                19u8 + 1,
+                                RuleKind::ShiftExpression
+                            ))
+                        )),
+                        empty().to((
+                            TokenKind::Greater,
+                            11u8,
+                            11u8 + 1,
+                            RuleKind::OrderComparisonExpression
+                        ))
+                    )),
+                    just("^").ignore_then(choice!(
+                        just("=").to((
+                            TokenKind::CaretEqual,
+                            1u8,
+                            1u8 + 1,
+                            RuleKind::AssignmentExpression
+                        )),
+                        empty().to((TokenKind::Caret, 15u8, 15u8 + 1, RuleKind::BitXOrExpression))
+                    )),
+                    just("|").ignore_then(choice!(
+                        just("=").to((
+                            TokenKind::PipeEqual,
+                            1u8,
+                            1u8 + 1,
+                            RuleKind::AssignmentExpression
+                        )),
+                        just("|").to((TokenKind::PipePipe, 5u8, 5u8 + 1, RuleKind::OrExpression)),
+                        empty().to((TokenKind::Pipe, 13u8, 13u8 + 1, RuleKind::BitOrExpression))
+                    ))
+                )
+                .map_with_span(|payload, span: SpanType| (payload, span)))
+                .map(
+                    |(
+                        (
+                            leading_trivia,
+                            ((token_kind, left_binding_power, right_binding_power, kind), range),
+                        ),
+                        trailing_trivia,
+                    )| Pratt::Operator {
+                        node: cst::Node::token(
+                            token_kind,
+                            lex::Node::chars_unwrapped(range),
+                            leading_trivia,
+                            trailing_trivia,
+                        ),
+                        kind,
+                        left_binding_power,
+                        right_binding_power,
+                    },
                 );
                 prefixes_primary_suffixes
                     .clone()
@@ -2019,8 +2770,8 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                         elements.extend(prefixes.into_iter());
                         elements.push(Pratt::Node(expr));
                         elements.extend(suffixes.into_iter());
-                        for (op, pps) in tail.into_iter() {
-                            elements.push(op);
+                        for (binary_operator, pps) in tail.into_iter() {
+                            elements.push(binary_operator);
                             let ((prefixes, expr), suffixes) = pps;
                             elements.extend(prefixes.into_iter());
                             elements.push(Pratt::Node(expr));
@@ -2065,7 +2816,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                                     {
                                         let node = cst::Node::rule(kind, vec![left, op]);
                                         elements.insert(i - 1, Pratt::Node(node));
-                                        i = 0;
+                                        i = i.saturating_sub(2);
                                     } else {
                                         unreachable!()
                                     }
@@ -2079,7 +2830,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                                     {
                                         let node = cst::Node::rule(kind, vec![op, right]);
                                         elements.insert(i, Pratt::Node(node));
-                                        i = 0;
+                                        i = i.saturating_sub(1);
                                     } else {
                                         unreachable!()
                                     }
@@ -2095,7 +2846,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                                     {
                                         let node = cst::Node::rule(kind, vec![left, op, right]);
                                         elements.insert(i - 1, Pratt::Node(node));
-                                        i = 0;
+                                        i = i.saturating_sub(2);
                                     } else {
                                         unreachable!()
                                     }
@@ -2118,7 +2869,20 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // ExpressionStatement = Expression ';' ;
     define_rule!(
         ExpressionStatement,
-        seq!(rule!(Expression), trie!(trieleaf!(Semicolon, ";")))
+        seq!(
+            rule!(Expression),
+            with_trivia!(just(";")
+                .to(TokenKind::Semicolon)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })
+        )
     );
 
     // FallbackFunctionAttribute = ModifierInvocation | OverrideSpecifier | 'external' | 'payable' | 'pure' | 'view' | 'virtual' ;
@@ -2127,11 +2891,26 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         choice!(
             rule!(ModifierInvocation),
             rule!(OverrideSpecifier),
-            trie!(
-                trieleaf!(External, "external"),
-                trieprefix!("p", [trieleaf!(Payable, "ayable"), trieleaf!(Pure, "ure")]),
-                trieprefix!("vi", [trieleaf!(View, "ew"), trieleaf!(Virtual, "rtual")])
+            with_trivia!(choice!(
+                just("external").to(TokenKind::External),
+                just("p").ignore_then(choice!(
+                    just("ayable").to(TokenKind::Payable),
+                    just("ure").to(TokenKind::Pure)
+                )),
+                just("vi").ignore_then(choice!(
+                    just("ew").to(TokenKind::View),
+                    just("rtual").to(TokenKind::Virtual)
+                ))
             )
+            .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })
         )
     );
 
@@ -2139,14 +2918,47 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         FallbackFunctionDefinition,
         seq!(
-            trie!(trieleaf!(Fallback, "fallback")),
+            with_trivia!(just("fallback")
+                .to(TokenKind::Fallback)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(ParameterList),
             zero_or_more!(rule!(FallbackFunctionAttribute)),
             optional!(seq!(
-                trie!(trieleaf!(Returns, "returns")),
+                with_trivia!(just("returns")
+                    .to(TokenKind::Returns)
+                    .map_with_span(|kind, span: SpanType| (kind, span)))
+                .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                    cst::Node::token(
+                        kind,
+                        lex::Node::chars_unwrapped(range),
+                        leading_trivia,
+                        trailing_trivia,
+                    )
+                }),
                 rule!(ParameterList)
             )),
-            choice!(trie!(trieleaf!(Semicolon, ";")), rule!(Block))
+            choice!(
+                with_trivia!(just(";")
+                    .to(TokenKind::Semicolon)
+                    .map_with_span(|kind, span: SpanType| (kind, span)))
+                .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                    cst::Node::token(
+                        kind,
+                        lex::Node::chars_unwrapped(range),
+                        leading_trivia,
+                        trailing_trivia,
+                    )
+                }),
+                rule!(Block)
+            )
         )
     );
 
@@ -2154,55 +2966,46 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_token!(
         FixedBytesType,
         scan_make_node!(scan_seq!(
-            scan_trie!(scan_trieleaf!("bytes")),
-            scan_trie!(
-                scan_trieprefix!(
-                    "1",
-                    [
-                        scan_trieleaf!("0"),
-                        scan_trieleaf!("1"),
-                        scan_trieleaf!("2"),
-                        scan_trieleaf!("3"),
-                        scan_trieleaf!("4"),
-                        scan_trieleaf!("5"),
-                        scan_trieleaf!("6"),
-                        scan_trieleaf!("7"),
-                        scan_trieleaf!("8"),
-                        scan_trieleaf!("9"),
-                        scan_trieleaf!()
-                    ]
-                ),
-                scan_trieprefix!(
-                    "2",
-                    [
-                        scan_trieleaf!("0"),
-                        scan_trieleaf!("1"),
-                        scan_trieleaf!("2"),
-                        scan_trieleaf!("3"),
-                        scan_trieleaf!("4"),
-                        scan_trieleaf!("5"),
-                        scan_trieleaf!("6"),
-                        scan_trieleaf!("7"),
-                        scan_trieleaf!("8"),
-                        scan_trieleaf!("9"),
-                        scan_trieleaf!()
-                    ]
-                ),
-                scan_trieprefix!(
-                    "3",
-                    [
-                        scan_trieleaf!("0"),
-                        scan_trieleaf!("1"),
-                        scan_trieleaf!("2"),
-                        scan_trieleaf!()
-                    ]
-                ),
-                scan_trieleaf!("4"),
-                scan_trieleaf!("5"),
-                scan_trieleaf!("6"),
-                scan_trieleaf!("7"),
-                scan_trieleaf!("8"),
-                scan_trieleaf!("9")
+            just("bytes").ignored(),
+            choice!(
+                just("1").ignore_then(choice!(
+                    just("0").ignored(),
+                    just("1").ignored(),
+                    just("2").ignored(),
+                    just("3").ignored(),
+                    just("4").ignored(),
+                    just("5").ignored(),
+                    just("6").ignored(),
+                    just("7").ignored(),
+                    just("8").ignored(),
+                    just("9").ignored(),
+                    empty()
+                )),
+                just("2").ignore_then(choice!(
+                    just("0").ignored(),
+                    just("1").ignored(),
+                    just("2").ignored(),
+                    just("3").ignored(),
+                    just("4").ignored(),
+                    just("5").ignored(),
+                    just("6").ignored(),
+                    just("7").ignored(),
+                    just("8").ignored(),
+                    just("9").ignored(),
+                    empty()
+                )),
+                just("3").ignore_then(choice!(
+                    just("0").ignored(),
+                    just("1").ignored(),
+                    just("2").ignored(),
+                    empty()
+                )),
+                just("4").ignored(),
+                just("5").ignored(),
+                just("6").ignored(),
+                just("7").ignored(),
+                just("8").ignored(),
+                just("9").ignored()
             )
         ))
     );
@@ -2211,12 +3014,48 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ForStatement,
         seq!(
-            trie!(trieleaf!(For, "for")),
+            with_trivia!(just("for")
+                .to(TokenKind::For)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             delimited_by!(
                 terminal!(OpenParen, "("),
                 seq!(
-                    choice!(rule!(SimpleStatement), trie!(trieleaf!(Semicolon, ";"))),
-                    choice!(rule!(ExpressionStatement), trie!(trieleaf!(Semicolon, ";"))),
+                    choice!(
+                        rule!(SimpleStatement),
+                        with_trivia!(just(";")
+                            .to(TokenKind::Semicolon)
+                            .map_with_span(|kind, span: SpanType| (kind, span)))
+                        .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                            cst::Node::token(
+                                kind,
+                                lex::Node::chars_unwrapped(range),
+                                leading_trivia,
+                                trailing_trivia,
+                            )
+                        })
+                    ),
+                    choice!(
+                        rule!(ExpressionStatement),
+                        with_trivia!(just(";")
+                            .to(TokenKind::Semicolon)
+                            .map_with_span(|kind, span: SpanType| (kind, span)))
+                        .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                            cst::Node::token(
+                                kind,
+                                lex::Node::chars_unwrapped(range),
+                                leading_trivia,
+                                trailing_trivia,
+                            )
+                        })
+                    ),
                     optional!(rule!(Expression))
                 ),
                 terminal!(CloseParen, ")")
@@ -2231,19 +3070,31 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         choice!(
             rule!(ModifierInvocation),
             rule!(OverrideSpecifier),
-            trie!(
-                trieleaf!(External, "external"),
-                trieleaf!(Internal, "internal"),
-                trieprefix!(
-                    "p",
-                    [
-                        trieleaf!(Payable, "ayable"),
-                        trieleaf!(Private, "rivate"),
-                        trieprefix!("u", [trieleaf!(Public, "blic"), trieleaf!(Pure, "re")])
-                    ]
-                ),
-                trieprefix!("vi", [trieleaf!(View, "ew"), trieleaf!(Virtual, "rtual")])
+            with_trivia!(choice!(
+                just("external").to(TokenKind::External),
+                just("internal").to(TokenKind::Internal),
+                just("p").ignore_then(choice!(
+                    just("ayable").to(TokenKind::Payable),
+                    just("rivate").to(TokenKind::Private),
+                    just("u").ignore_then(choice!(
+                        just("blic").to(TokenKind::Public),
+                        just("re").to(TokenKind::Pure)
+                    ))
+                )),
+                just("vi").ignore_then(choice!(
+                    just("ew").to(TokenKind::View),
+                    just("rtual").to(TokenKind::Virtual)
+                ))
             )
+            .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })
         )
     );
 
@@ -2261,21 +3112,63 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         FunctionDefinition,
         seq!(
-            trie!(trieleaf!(Function, "function")),
+            with_trivia!(just("function")
+                .to(TokenKind::Function)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             choice!(
                 token!(Identifier),
-                trie!(
-                    trieleaf!(Fallback, "fallback"),
-                    trieleaf!(Receive, "receive")
+                with_trivia!(choice!(
+                    just("fallback").to(TokenKind::Fallback),
+                    just("receive").to(TokenKind::Receive)
                 )
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+                .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                    cst::Node::token(
+                        kind,
+                        lex::Node::chars_unwrapped(range),
+                        leading_trivia,
+                        trailing_trivia,
+                    )
+                })
             ),
             rule!(ParameterList),
             zero_or_more!(rule!(FunctionAttribute)),
             optional!(seq!(
-                trie!(trieleaf!(Returns, "returns")),
+                with_trivia!(just("returns")
+                    .to(TokenKind::Returns)
+                    .map_with_span(|kind, span: SpanType| (kind, span)))
+                .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                    cst::Node::token(
+                        kind,
+                        lex::Node::chars_unwrapped(range),
+                        leading_trivia,
+                        trailing_trivia,
+                    )
+                }),
                 rule!(ParameterList)
             )),
-            choice!(trie!(trieleaf!(Semicolon, ";")), rule!(Block))
+            choice!(
+                with_trivia!(just(";")
+                    .to(TokenKind::Semicolon)
+                    .map_with_span(|kind, span: SpanType| (kind, span)))
+                .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                    cst::Node::token(
+                        kind,
+                        lex::Node::chars_unwrapped(range),
+                        leading_trivia,
+                        trailing_trivia,
+                    )
+                }),
+                rule!(Block)
+            )
         )
     );
 
@@ -2283,23 +3176,52 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         FunctionType,
         seq!(
-            trie!(trieleaf!(Function, "function")),
+            with_trivia!(just("function")
+                .to(TokenKind::Function)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(ParameterList),
-            zero_or_more!(trie!(
-                trieleaf!(External, "external"),
-                trieleaf!(Internal, "internal"),
-                trieprefix!(
-                    "p",
-                    [
-                        trieleaf!(Payable, "ayable"),
-                        trieleaf!(Private, "rivate"),
-                        trieprefix!("u", [trieleaf!(Public, "blic"), trieleaf!(Pure, "re")])
-                    ]
-                ),
-                trieleaf!(View, "view")
-            )),
+            zero_or_more!(with_trivia!(choice!(
+                just("external").to(TokenKind::External),
+                just("internal").to(TokenKind::Internal),
+                just("p").ignore_then(choice!(
+                    just("ayable").to(TokenKind::Payable),
+                    just("rivate").to(TokenKind::Private),
+                    just("u").ignore_then(choice!(
+                        just("blic").to(TokenKind::Public),
+                        just("re").to(TokenKind::Pure)
+                    ))
+                )),
+                just("view").to(TokenKind::View)
+            )
+            .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })),
             optional!(seq!(
-                trie!(trieleaf!(Returns, "returns")),
+                with_trivia!(just("returns")
+                    .to(TokenKind::Returns)
+                    .map_with_span(|kind, span: SpanType| (kind, span)))
+                .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                    cst::Node::token(
+                        kind,
+                        lex::Node::chars_unwrapped(range),
+                        leading_trivia,
+                        trailing_trivia,
+                    )
+                }),
                 rule!(ParameterList)
             ))
         )
@@ -2332,7 +3254,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_token!(
         HexNumber,
         scan_make_node!(scan_seq!(
-            scan_trie!(scan_trieleaf!("0x")),
+            just("0x").ignored(),
             scan_separated_by!(
                 scan_one_or_more!(scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
                     || ('a' <= c && c <= 'f')
@@ -2346,7 +3268,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_token!(
         HexStringLiteral,
         scan_make_node!(scan_seq!(
-            scan_trie!(scan_trieleaf!("hex")),
+            just("hex").ignored(),
             scan_choice!(
                 scan_seq!(
                     scan_terminal!("\""),
@@ -2414,363 +3336,285 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                     || ('0' <= c && c <= '9')))
             ),
             scan_choice!(
-                scan_trie!(scan_trieleaf!("false"), scan_trieleaf!("true")),
+                choice!(just("false").ignored(), just("true").ignored()),
                 scan_seq!(
-                    scan_trie!(scan_trieleaf!("bytes")),
-                    scan_trie!(
-                        scan_trieprefix!(
-                            "1",
-                            [
-                                scan_trieleaf!("0"),
-                                scan_trieleaf!("1"),
-                                scan_trieleaf!("2"),
-                                scan_trieleaf!("3"),
-                                scan_trieleaf!("4"),
-                                scan_trieleaf!("5"),
-                                scan_trieleaf!("6"),
-                                scan_trieleaf!("7"),
-                                scan_trieleaf!("8"),
-                                scan_trieleaf!("9"),
-                                scan_trieleaf!()
-                            ]
-                        ),
-                        scan_trieprefix!(
-                            "2",
-                            [
-                                scan_trieleaf!("0"),
-                                scan_trieleaf!("1"),
-                                scan_trieleaf!("2"),
-                                scan_trieleaf!("3"),
-                                scan_trieleaf!("4"),
-                                scan_trieleaf!("5"),
-                                scan_trieleaf!("6"),
-                                scan_trieleaf!("7"),
-                                scan_trieleaf!("8"),
-                                scan_trieleaf!("9"),
-                                scan_trieleaf!()
-                            ]
-                        ),
-                        scan_trieprefix!(
-                            "3",
-                            [
-                                scan_trieleaf!("0"),
-                                scan_trieleaf!("1"),
-                                scan_trieleaf!("2"),
-                                scan_trieleaf!()
-                            ]
-                        ),
-                        scan_trieleaf!("4"),
-                        scan_trieleaf!("5"),
-                        scan_trieleaf!("6"),
-                        scan_trieleaf!("7"),
-                        scan_trieleaf!("8"),
-                        scan_trieleaf!("9")
+                    just("bytes").ignored(),
+                    choice!(
+                        just("1").ignore_then(choice!(
+                            just("0").ignored(),
+                            just("1").ignored(),
+                            just("2").ignored(),
+                            just("3").ignored(),
+                            just("4").ignored(),
+                            just("5").ignored(),
+                            just("6").ignored(),
+                            just("7").ignored(),
+                            just("8").ignored(),
+                            just("9").ignored(),
+                            empty()
+                        )),
+                        just("2").ignore_then(choice!(
+                            just("0").ignored(),
+                            just("1").ignored(),
+                            just("2").ignored(),
+                            just("3").ignored(),
+                            just("4").ignored(),
+                            just("5").ignored(),
+                            just("6").ignored(),
+                            just("7").ignored(),
+                            just("8").ignored(),
+                            just("9").ignored(),
+                            empty()
+                        )),
+                        just("3").ignore_then(choice!(
+                            just("0").ignored(),
+                            just("1").ignored(),
+                            just("2").ignored(),
+                            empty()
+                        )),
+                        just("4").ignored(),
+                        just("5").ignored(),
+                        just("6").ignored(),
+                        just("7").ignored(),
+                        just("8").ignored(),
+                        just("9").ignored()
                     )
                 ),
-                scan_trie!(
-                    scan_trieprefix!(
-                        "a",
-                        [
-                            scan_trieleaf!("fter"),
-                            scan_trieleaf!("lias"),
-                            scan_trieleaf!("pply"),
-                            scan_trieleaf!("uto")
-                        ]
-                    ),
-                    scan_trieleaf!("byte"),
-                    scan_trieprefix!("c", [scan_trieleaf!("ase"), scan_trieleaf!("opyof")]),
-                    scan_trieprefix!(
-                        "d",
-                        [
-                            scan_trieleaf!("ays"),
-                            scan_trieprefix!("ef", [scan_trieleaf!("ault"), scan_trieleaf!("ine")])
-                        ]
-                    ),
-                    scan_trieleaf!("ether"),
-                    scan_trieprefix!("fin", [scan_trieleaf!("al"), scan_trieleaf!("ney")]),
-                    scan_trieleaf!("gwei"),
-                    scan_trieleaf!("hours"),
-                    scan_trieprefix!(
-                        "i",
-                        [
-                            scan_trieleaf!("mplements"),
-                            scan_trieprefix!("n", [scan_trieleaf!("line"), scan_trieleaf!()])
-                        ]
-                    ),
-                    scan_trieleaf!("let"),
-                    scan_trieprefix!(
-                        "m",
-                        [
-                            scan_trieprefix!("a", [scan_trieleaf!("cro"), scan_trieleaf!("tch")]),
-                            scan_trieleaf!("inutes"),
-                            scan_trieleaf!("utable")
-                        ]
-                    ),
-                    scan_trieleaf!("null"),
-                    scan_trieleaf!("of"),
-                    scan_trieprefix!("p", [scan_trieleaf!("artial"), scan_trieleaf!("romise")]),
-                    scan_trieprefix!(
-                        "re",
-                        [scan_trieleaf!("ference"), scan_trieleaf!("locatable")]
-                    ),
-                    scan_trieprefix!(
-                        "s",
-                        [
-                            scan_trieprefix!(
-                                "e",
-                                [scan_trieleaf!("aled"), scan_trieleaf!("conds")]
-                            ),
-                            scan_trieleaf!("izeof"),
-                            scan_trieleaf!("tatic"),
-                            scan_trieleaf!("upports"),
-                            scan_trieleaf!("witch"),
-                            scan_trieleaf!("zabo")
-                        ]
-                    ),
-                    scan_trieprefix!("type", [scan_trieleaf!("def"), scan_trieleaf!("of")]),
-                    scan_trieleaf!("var"),
-                    scan_trieprefix!("we", [scan_trieleaf!("eks"), scan_trieleaf!("i")]),
-                    scan_trieleaf!("years")
+                choice!(
+                    just("a").ignore_then(choice!(
+                        just("fter").ignored(),
+                        just("lias").ignored(),
+                        just("pply").ignored(),
+                        just("uto").ignored()
+                    )),
+                    just("byte").ignored(),
+                    just("c").ignore_then(choice!(just("ase").ignored(), just("opyof").ignored())),
+                    just("d").ignore_then(choice!(
+                        just("ays").ignored(),
+                        just("ef")
+                            .ignore_then(choice!(just("ault").ignored(), just("ine").ignored()))
+                    )),
+                    just("ether").ignored(),
+                    just("fin").ignore_then(choice!(just("al").ignored(), just("ney").ignored())),
+                    just("gwei").ignored(),
+                    just("hours").ignored(),
+                    just("i").ignore_then(choice!(
+                        just("mplements").ignored(),
+                        just("n").ignore_then(choice!(just("line").ignored(), empty()))
+                    )),
+                    just("let").ignored(),
+                    just("m").ignore_then(choice!(
+                        just("a")
+                            .ignore_then(choice!(just("cro").ignored(), just("tch").ignored())),
+                        just("inutes").ignored(),
+                        just("utable").ignored()
+                    )),
+                    just("null").ignored(),
+                    just("of").ignored(),
+                    just("p")
+                        .ignore_then(choice!(just("artial").ignored(), just("romise").ignored())),
+                    just("re").ignore_then(choice!(
+                        just("ference").ignored(),
+                        just("locatable").ignored()
+                    )),
+                    just("s").ignore_then(choice!(
+                        just("e")
+                            .ignore_then(choice!(just("aled").ignored(), just("conds").ignored())),
+                        just("izeof").ignored(),
+                        just("tatic").ignored(),
+                        just("upports").ignored(),
+                        just("witch").ignored(),
+                        just("zabo").ignored()
+                    )),
+                    just("type").ignore_then(choice!(just("def").ignored(), just("of").ignored())),
+                    just("var").ignored(),
+                    just("we").ignore_then(choice!(just("eks").ignored(), just("i").ignored())),
+                    just("years").ignored()
                 ),
                 scan_seq!(
-                    scan_trie!(scan_trieleaf!("int")),
-                    scan_optional!(scan_trie!(
-                        scan_trieprefix!(
-                            "1",
-                            [
-                                scan_trieleaf!("04"),
-                                scan_trieleaf!("12"),
-                                scan_trieprefix!("2", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
-                                scan_trieleaf!("36"),
-                                scan_trieleaf!("44"),
-                                scan_trieleaf!("52"),
-                                scan_trieprefix!(
-                                    "6",
-                                    [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
-                                ),
-                                scan_trieleaf!("76"),
-                                scan_trieleaf!("84"),
-                                scan_trieleaf!("92")
-                            ]
-                        ),
-                        scan_trieprefix!(
-                            "2",
-                            [
-                                scan_trieprefix!("0", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
-                                scan_trieleaf!("16"),
-                                scan_trieleaf!("24"),
-                                scan_trieleaf!("32"),
-                                scan_trieprefix!(
-                                    "4",
-                                    [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
-                                ),
-                                scan_trieleaf!("56")
-                            ]
-                        ),
-                        scan_trieleaf!("32"),
-                        scan_trieprefix!("4", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
-                        scan_trieleaf!("56"),
-                        scan_trieleaf!("64"),
-                        scan_trieleaf!("72"),
-                        scan_trieprefix!(
-                            "8",
-                            [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
-                        ),
-                        scan_trieleaf!("96")
+                    just("int").ignored(),
+                    scan_optional!(choice!(
+                        just("1").ignore_then(choice!(
+                            just("04").ignored(),
+                            just("12").ignored(),
+                            just("2")
+                                .ignore_then(choice!(just("0").ignored(), just("8").ignored())),
+                            just("36").ignored(),
+                            just("44").ignored(),
+                            just("52").ignored(),
+                            just("6").ignore_then(choice!(
+                                just("0").ignored(),
+                                just("8").ignored(),
+                                empty()
+                            )),
+                            just("76").ignored(),
+                            just("84").ignored(),
+                            just("92").ignored()
+                        )),
+                        just("2").ignore_then(choice!(
+                            just("0")
+                                .ignore_then(choice!(just("0").ignored(), just("8").ignored())),
+                            just("16").ignored(),
+                            just("24").ignored(),
+                            just("32").ignored(),
+                            just("4").ignore_then(choice!(
+                                just("0").ignored(),
+                                just("8").ignored(),
+                                empty()
+                            )),
+                            just("56").ignored()
+                        )),
+                        just("32").ignored(),
+                        just("4").ignore_then(choice!(just("0").ignored(), just("8").ignored())),
+                        just("56").ignored(),
+                        just("64").ignored(),
+                        just("72").ignored(),
+                        just("8").ignore_then(choice!(
+                            just("0").ignored(),
+                            just("8").ignored(),
+                            empty()
+                        )),
+                        just("96").ignored()
                     ))
                 ),
                 scan_seq!(
                     scan_terminal!('u'),
                     scan_seq!(
-                        scan_trie!(scan_trieleaf!("int")),
-                        scan_optional!(scan_trie!(
-                            scan_trieprefix!(
-                                "1",
-                                [
-                                    scan_trieleaf!("04"),
-                                    scan_trieleaf!("12"),
-                                    scan_trieprefix!(
-                                        "2",
-                                        [scan_trieleaf!("0"), scan_trieleaf!("8")]
-                                    ),
-                                    scan_trieleaf!("36"),
-                                    scan_trieleaf!("44"),
-                                    scan_trieleaf!("52"),
-                                    scan_trieprefix!(
-                                        "6",
-                                        [
-                                            scan_trieleaf!("0"),
-                                            scan_trieleaf!("8"),
-                                            scan_trieleaf!()
-                                        ]
-                                    ),
-                                    scan_trieleaf!("76"),
-                                    scan_trieleaf!("84"),
-                                    scan_trieleaf!("92")
-                                ]
-                            ),
-                            scan_trieprefix!(
-                                "2",
-                                [
-                                    scan_trieprefix!(
-                                        "0",
-                                        [scan_trieleaf!("0"), scan_trieleaf!("8")]
-                                    ),
-                                    scan_trieleaf!("16"),
-                                    scan_trieleaf!("24"),
-                                    scan_trieleaf!("32"),
-                                    scan_trieprefix!(
-                                        "4",
-                                        [
-                                            scan_trieleaf!("0"),
-                                            scan_trieleaf!("8"),
-                                            scan_trieleaf!()
-                                        ]
-                                    ),
-                                    scan_trieleaf!("56")
-                                ]
-                            ),
-                            scan_trieleaf!("32"),
-                            scan_trieprefix!("4", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
-                            scan_trieleaf!("56"),
-                            scan_trieleaf!("64"),
-                            scan_trieleaf!("72"),
-                            scan_trieprefix!(
-                                "8",
-                                [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
-                            ),
-                            scan_trieleaf!("96")
+                        just("int").ignored(),
+                        scan_optional!(choice!(
+                            just("1").ignore_then(choice!(
+                                just("04").ignored(),
+                                just("12").ignored(),
+                                just("2")
+                                    .ignore_then(choice!(just("0").ignored(), just("8").ignored())),
+                                just("36").ignored(),
+                                just("44").ignored(),
+                                just("52").ignored(),
+                                just("6").ignore_then(choice!(
+                                    just("0").ignored(),
+                                    just("8").ignored(),
+                                    empty()
+                                )),
+                                just("76").ignored(),
+                                just("84").ignored(),
+                                just("92").ignored()
+                            )),
+                            just("2").ignore_then(choice!(
+                                just("0")
+                                    .ignore_then(choice!(just("0").ignored(), just("8").ignored())),
+                                just("16").ignored(),
+                                just("24").ignored(),
+                                just("32").ignored(),
+                                just("4").ignore_then(choice!(
+                                    just("0").ignored(),
+                                    just("8").ignored(),
+                                    empty()
+                                )),
+                                just("56").ignored()
+                            )),
+                            just("32").ignored(),
+                            just("4")
+                                .ignore_then(choice!(just("0").ignored(), just("8").ignored())),
+                            just("56").ignored(),
+                            just("64").ignored(),
+                            just("72").ignored(),
+                            just("8").ignore_then(choice!(
+                                just("0").ignored(),
+                                just("8").ignored(),
+                                empty()
+                            )),
+                            just("96").ignored()
                         ))
                     )
                 ),
-                scan_trie!(
-                    scan_trieprefix!(
-                        "a",
-                        [
-                            scan_trieleaf!("bstract"),
-                            scan_trieleaf!("ddress"),
-                            scan_trieleaf!("nonymous"),
-                            scan_trieprefix!("s", [scan_trieleaf!("sembly"), scan_trieleaf!()])
-                        ]
-                    ),
-                    scan_trieprefix!("b", [scan_trieleaf!("ool"), scan_trieleaf!("reak")]),
-                    scan_trieprefix!(
-                        "c",
-                        [
-                            scan_trieprefix!(
-                                "a",
-                                [scan_trieleaf!("lldata"), scan_trieleaf!("tch")]
-                            ),
-                            scan_trieprefix!(
-                                "on",
-                                [
-                                    scan_trieprefix!(
-                                        "st",
-                                        [scan_trieleaf!("ant"), scan_trieleaf!("ructor")]
-                                    ),
-                                    scan_trieprefix!(
-                                        "t",
-                                        [scan_trieleaf!("inue"), scan_trieleaf!("ract")]
-                                    )
-                                ]
-                            )
-                        ]
-                    ),
-                    scan_trieprefix!("d", [scan_trieleaf!("elete"), scan_trieleaf!("o")]),
-                    scan_trieprefix!(
-                        "e",
-                        [
-                            scan_trieleaf!("lse"),
-                            scan_trieleaf!("mit"),
-                            scan_trieleaf!("num"),
-                            scan_trieleaf!("vent"),
-                            scan_trieleaf!("xternal")
-                        ]
-                    ),
-                    scan_trieprefix!(
-                        "f",
-                        [
-                            scan_trieprefix!("al", [scan_trieleaf!("lback"), scan_trieleaf!("se")]),
-                            scan_trieleaf!("ixed"),
-                            scan_trieleaf!("or"),
-                            scan_trieleaf!("unction")
-                        ]
-                    ),
-                    scan_trieleaf!("hex"),
-                    scan_trieprefix!(
-                        "i",
-                        [
-                            scan_trieleaf!("f"),
-                            scan_trieprefix!(
-                                "m",
-                                [scan_trieleaf!("mutable"), scan_trieleaf!("port")]
-                            ),
-                            scan_trieprefix!(
-                                "n",
-                                [
-                                    scan_trieleaf!("dexed"),
-                                    scan_trieprefix!(
-                                        "ter",
-                                        [scan_trieleaf!("face"), scan_trieleaf!("nal")]
-                                    )
-                                ]
-                            ),
-                            scan_trieleaf!("s")
-                        ]
-                    ),
-                    scan_trieleaf!("library"),
-                    scan_trieprefix!(
-                        "m",
-                        [
-                            scan_trieleaf!("apping"),
-                            scan_trieleaf!("emory"),
-                            scan_trieleaf!("odifier")
-                        ]
-                    ),
-                    scan_trieleaf!("new"),
-                    scan_trieleaf!("override"),
-                    scan_trieprefix!(
-                        "p",
-                        [
-                            scan_trieleaf!("ayable"),
-                            scan_trieprefix!(
-                                "r",
-                                [scan_trieleaf!("agma"), scan_trieleaf!("ivate")]
-                            ),
-                            scan_trieprefix!("u", [scan_trieleaf!("blic"), scan_trieleaf!("re")])
-                        ]
-                    ),
-                    scan_trieprefix!(
-                        "re",
-                        [
-                            scan_trieleaf!("ceive"),
-                            scan_trieprefix!("turn", [scan_trieleaf!("s"), scan_trieleaf!()])
-                        ]
-                    ),
-                    scan_trieprefix!(
-                        "st",
-                        [
-                            scan_trieleaf!("orage"),
-                            scan_trieprefix!("r", [scan_trieleaf!("ing"), scan_trieleaf!("uct")])
-                        ]
-                    ),
-                    scan_trieprefix!(
-                        "t",
-                        [
-                            scan_trieprefix!("r", [scan_trieleaf!("ue"), scan_trieleaf!("y")]),
-                            scan_trieleaf!("ype")
-                        ]
-                    ),
-                    scan_trieprefix!(
-                        "u",
-                        [
-                            scan_trieleaf!("fixed"),
-                            scan_trieleaf!("nchecked"),
-                            scan_trieleaf!("sing")
-                        ]
-                    ),
-                    scan_trieprefix!("vi", [scan_trieleaf!("ew"), scan_trieleaf!("rtual")]),
-                    scan_trieleaf!("while")
+                choice!(
+                    just("a").ignore_then(choice!(
+                        just("bstract").ignored(),
+                        just("ddress").ignored(),
+                        just("nonymous").ignored(),
+                        just("s").ignore_then(choice!(just("sembly").ignored(), empty()))
+                    )),
+                    just("b").ignore_then(choice!(just("ool").ignored(), just("reak").ignored())),
+                    just("c").ignore_then(choice!(
+                        just("a")
+                            .ignore_then(choice!(just("lldata").ignored(), just("tch").ignored())),
+                        just("on").ignore_then(choice!(
+                            just("st").ignore_then(choice!(
+                                just("ant").ignored(),
+                                just("ructor").ignored()
+                            )),
+                            just("t").ignore_then(choice!(
+                                just("inue").ignored(),
+                                just("ract").ignored()
+                            ))
+                        ))
+                    )),
+                    just("d").ignore_then(choice!(just("elete").ignored(), just("o").ignored())),
+                    just("e").ignore_then(choice!(
+                        just("lse").ignored(),
+                        just("mit").ignored(),
+                        just("num").ignored(),
+                        just("vent").ignored(),
+                        just("xternal").ignored()
+                    )),
+                    just("f").ignore_then(choice!(
+                        just("al")
+                            .ignore_then(choice!(just("lback").ignored(), just("se").ignored())),
+                        just("ixed").ignored(),
+                        just("or").ignored(),
+                        just("unction").ignored()
+                    )),
+                    just("hex").ignored(),
+                    just("i").ignore_then(choice!(
+                        just("f").ignored(),
+                        just("m").ignore_then(choice!(
+                            just("mutable").ignored(),
+                            just("port").ignored()
+                        )),
+                        just("n").ignore_then(choice!(
+                            just("dexed").ignored(),
+                            just("ter").ignore_then(choice!(
+                                just("face").ignored(),
+                                just("nal").ignored()
+                            ))
+                        )),
+                        just("s").ignored()
+                    )),
+                    just("library").ignored(),
+                    just("m").ignore_then(choice!(
+                        just("apping").ignored(),
+                        just("emory").ignored(),
+                        just("odifier").ignored()
+                    )),
+                    just("new").ignored(),
+                    just("override").ignored(),
+                    just("p").ignore_then(choice!(
+                        just("ayable").ignored(),
+                        just("r")
+                            .ignore_then(choice!(just("agma").ignored(), just("ivate").ignored())),
+                        just("u")
+                            .ignore_then(choice!(just("blic").ignored(), just("re").ignored()))
+                    )),
+                    just("re").ignore_then(choice!(
+                        just("ceive").ignored(),
+                        just("turn").ignore_then(choice!(just("s").ignored(), empty()))
+                    )),
+                    just("st").ignore_then(choice!(
+                        just("orage").ignored(),
+                        just("r")
+                            .ignore_then(choice!(just("ing").ignored(), just("uct").ignored()))
+                    )),
+                    just("t").ignore_then(choice!(
+                        just("r").ignore_then(choice!(just("ue").ignored(), just("y").ignored())),
+                        just("ype").ignored()
+                    )),
+                    just("u").ignore_then(choice!(
+                        just("fixed").ignored(),
+                        just("nchecked").ignored(),
+                        just("sing").ignored()
+                    )),
+                    just("vi").ignore_then(choice!(just("ew").ignored(), just("rtual").ignored())),
+                    just("while").ignored()
                 )
             )
         ))
@@ -2805,14 +3649,37 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         IfStatement,
         seq!(
-            trie!(trieleaf!(If, "if")),
+            with_trivia!(just("if")
+                .to(TokenKind::If)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             delimited_by!(
                 terminal!(OpenParen, "("),
                 rule!(Expression),
                 terminal!(CloseParen, ")")
             ),
             rule!(Statement),
-            optional!(seq!(trie!(trieleaf!(Else, "else")), rule!(Statement)))
+            optional!(seq!(
+                with_trivia!(just("else")
+                    .to(TokenKind::Else)
+                    .map_with_span(|kind, span: SpanType| (kind, span)))
+                .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                    cst::Node::token(
+                        kind,
+                        lex::Node::chars_unwrapped(range),
+                        leading_trivia,
+                        trailing_trivia,
+                    )
+                }),
+                rule!(Statement)
+            ))
         )
     );
 
@@ -2820,13 +3687,33 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ImportDirective,
         seq!(
-            trie!(trieleaf!(Import, "import")),
+            with_trivia!(just("import")
+                .to(TokenKind::Import)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             choice!(
                 rule!(SimpleImportDirective),
                 rule!(StarImportDirective),
                 rule!(SelectingImportDirective)
             ),
-            trie!(trieleaf!(Semicolon, ";"))
+            with_trivia!(just(";")
+                .to(TokenKind::Semicolon)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })
         )
     );
 
@@ -2843,7 +3730,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                 seq!(
                     optional!(rule!(Expression)),
                     optional!(seq!(
-                        trie!(trieleaf!(Colon, ":")),
+                        with_trivia!(just(":")
+                            .to(TokenKind::Colon)
+                            .map_with_span(|kind, span: SpanType| (kind, span)))
+                        .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                            cst::Node::token(
+                                kind,
+                                lex::Node::chars_unwrapped(range),
+                                leading_trivia,
+                                trailing_trivia,
+                            )
+                        }),
                         optional!(rule!(Expression))
                     ))
                 ),
@@ -2862,7 +3759,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         InheritanceSpecifierList,
         seq!(
-            trie!(trieleaf!(Is, "is")),
+            with_trivia!(just("is")
+                .to(TokenKind::Is)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             separated_by!(rule!(InheritanceSpecifier), terminal!(Comma, ","))
         )
     );
@@ -2871,7 +3778,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         InterfaceDefinition,
         seq!(
-            trie!(trieleaf!(Interface, "interface")),
+            with_trivia!(just("interface")
+                .to(TokenKind::Interface)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             token!(Identifier),
             optional!(rule!(InheritanceSpecifierList)),
             delimited_by!(
@@ -2886,337 +3803,265 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_token!(
         Keyword,
         scan_make_node!(scan_choice!(
-            scan_trie!(scan_trieleaf!("false"), scan_trieleaf!("true")),
+            choice!(just("false").ignored(), just("true").ignored()),
             scan_seq!(
-                scan_trie!(scan_trieleaf!("bytes")),
-                scan_trie!(
-                    scan_trieprefix!(
-                        "1",
-                        [
-                            scan_trieleaf!("0"),
-                            scan_trieleaf!("1"),
-                            scan_trieleaf!("2"),
-                            scan_trieleaf!("3"),
-                            scan_trieleaf!("4"),
-                            scan_trieleaf!("5"),
-                            scan_trieleaf!("6"),
-                            scan_trieleaf!("7"),
-                            scan_trieleaf!("8"),
-                            scan_trieleaf!("9"),
-                            scan_trieleaf!()
-                        ]
-                    ),
-                    scan_trieprefix!(
-                        "2",
-                        [
-                            scan_trieleaf!("0"),
-                            scan_trieleaf!("1"),
-                            scan_trieleaf!("2"),
-                            scan_trieleaf!("3"),
-                            scan_trieleaf!("4"),
-                            scan_trieleaf!("5"),
-                            scan_trieleaf!("6"),
-                            scan_trieleaf!("7"),
-                            scan_trieleaf!("8"),
-                            scan_trieleaf!("9"),
-                            scan_trieleaf!()
-                        ]
-                    ),
-                    scan_trieprefix!(
-                        "3",
-                        [
-                            scan_trieleaf!("0"),
-                            scan_trieleaf!("1"),
-                            scan_trieleaf!("2"),
-                            scan_trieleaf!()
-                        ]
-                    ),
-                    scan_trieleaf!("4"),
-                    scan_trieleaf!("5"),
-                    scan_trieleaf!("6"),
-                    scan_trieleaf!("7"),
-                    scan_trieleaf!("8"),
-                    scan_trieleaf!("9")
+                just("bytes").ignored(),
+                choice!(
+                    just("1").ignore_then(choice!(
+                        just("0").ignored(),
+                        just("1").ignored(),
+                        just("2").ignored(),
+                        just("3").ignored(),
+                        just("4").ignored(),
+                        just("5").ignored(),
+                        just("6").ignored(),
+                        just("7").ignored(),
+                        just("8").ignored(),
+                        just("9").ignored(),
+                        empty()
+                    )),
+                    just("2").ignore_then(choice!(
+                        just("0").ignored(),
+                        just("1").ignored(),
+                        just("2").ignored(),
+                        just("3").ignored(),
+                        just("4").ignored(),
+                        just("5").ignored(),
+                        just("6").ignored(),
+                        just("7").ignored(),
+                        just("8").ignored(),
+                        just("9").ignored(),
+                        empty()
+                    )),
+                    just("3").ignore_then(choice!(
+                        just("0").ignored(),
+                        just("1").ignored(),
+                        just("2").ignored(),
+                        empty()
+                    )),
+                    just("4").ignored(),
+                    just("5").ignored(),
+                    just("6").ignored(),
+                    just("7").ignored(),
+                    just("8").ignored(),
+                    just("9").ignored()
                 )
             ),
-            scan_trie!(
-                scan_trieprefix!(
-                    "a",
-                    [
-                        scan_trieleaf!("fter"),
-                        scan_trieleaf!("lias"),
-                        scan_trieleaf!("pply"),
-                        scan_trieleaf!("uto")
-                    ]
-                ),
-                scan_trieleaf!("byte"),
-                scan_trieprefix!("c", [scan_trieleaf!("ase"), scan_trieleaf!("opyof")]),
-                scan_trieprefix!(
-                    "d",
-                    [
-                        scan_trieleaf!("ays"),
-                        scan_trieprefix!("ef", [scan_trieleaf!("ault"), scan_trieleaf!("ine")])
-                    ]
-                ),
-                scan_trieleaf!("ether"),
-                scan_trieprefix!("fin", [scan_trieleaf!("al"), scan_trieleaf!("ney")]),
-                scan_trieleaf!("gwei"),
-                scan_trieleaf!("hours"),
-                scan_trieprefix!(
-                    "i",
-                    [
-                        scan_trieleaf!("mplements"),
-                        scan_trieprefix!("n", [scan_trieleaf!("line"), scan_trieleaf!()])
-                    ]
-                ),
-                scan_trieleaf!("let"),
-                scan_trieprefix!(
-                    "m",
-                    [
-                        scan_trieprefix!("a", [scan_trieleaf!("cro"), scan_trieleaf!("tch")]),
-                        scan_trieleaf!("inutes"),
-                        scan_trieleaf!("utable")
-                    ]
-                ),
-                scan_trieleaf!("null"),
-                scan_trieleaf!("of"),
-                scan_trieprefix!("p", [scan_trieleaf!("artial"), scan_trieleaf!("romise")]),
-                scan_trieprefix!(
-                    "re",
-                    [scan_trieleaf!("ference"), scan_trieleaf!("locatable")]
-                ),
-                scan_trieprefix!(
-                    "s",
-                    [
-                        scan_trieprefix!("e", [scan_trieleaf!("aled"), scan_trieleaf!("conds")]),
-                        scan_trieleaf!("izeof"),
-                        scan_trieleaf!("tatic"),
-                        scan_trieleaf!("upports"),
-                        scan_trieleaf!("witch"),
-                        scan_trieleaf!("zabo")
-                    ]
-                ),
-                scan_trieprefix!("type", [scan_trieleaf!("def"), scan_trieleaf!("of")]),
-                scan_trieleaf!("var"),
-                scan_trieprefix!("we", [scan_trieleaf!("eks"), scan_trieleaf!("i")]),
-                scan_trieleaf!("years")
+            choice!(
+                just("a").ignore_then(choice!(
+                    just("fter").ignored(),
+                    just("lias").ignored(),
+                    just("pply").ignored(),
+                    just("uto").ignored()
+                )),
+                just("byte").ignored(),
+                just("c").ignore_then(choice!(just("ase").ignored(), just("opyof").ignored())),
+                just("d").ignore_then(choice!(
+                    just("ays").ignored(),
+                    just("ef").ignore_then(choice!(just("ault").ignored(), just("ine").ignored()))
+                )),
+                just("ether").ignored(),
+                just("fin").ignore_then(choice!(just("al").ignored(), just("ney").ignored())),
+                just("gwei").ignored(),
+                just("hours").ignored(),
+                just("i").ignore_then(choice!(
+                    just("mplements").ignored(),
+                    just("n").ignore_then(choice!(just("line").ignored(), empty()))
+                )),
+                just("let").ignored(),
+                just("m").ignore_then(choice!(
+                    just("a").ignore_then(choice!(just("cro").ignored(), just("tch").ignored())),
+                    just("inutes").ignored(),
+                    just("utable").ignored()
+                )),
+                just("null").ignored(),
+                just("of").ignored(),
+                just("p").ignore_then(choice!(just("artial").ignored(), just("romise").ignored())),
+                just("re").ignore_then(choice!(
+                    just("ference").ignored(),
+                    just("locatable").ignored()
+                )),
+                just("s").ignore_then(choice!(
+                    just("e").ignore_then(choice!(just("aled").ignored(), just("conds").ignored())),
+                    just("izeof").ignored(),
+                    just("tatic").ignored(),
+                    just("upports").ignored(),
+                    just("witch").ignored(),
+                    just("zabo").ignored()
+                )),
+                just("type").ignore_then(choice!(just("def").ignored(), just("of").ignored())),
+                just("var").ignored(),
+                just("we").ignore_then(choice!(just("eks").ignored(), just("i").ignored())),
+                just("years").ignored()
             ),
             scan_seq!(
-                scan_trie!(scan_trieleaf!("int")),
-                scan_optional!(scan_trie!(
-                    scan_trieprefix!(
-                        "1",
-                        [
-                            scan_trieleaf!("04"),
-                            scan_trieleaf!("12"),
-                            scan_trieprefix!("2", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
-                            scan_trieleaf!("36"),
-                            scan_trieleaf!("44"),
-                            scan_trieleaf!("52"),
-                            scan_trieprefix!(
-                                "6",
-                                [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
-                            ),
-                            scan_trieleaf!("76"),
-                            scan_trieleaf!("84"),
-                            scan_trieleaf!("92")
-                        ]
-                    ),
-                    scan_trieprefix!(
-                        "2",
-                        [
-                            scan_trieprefix!("0", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
-                            scan_trieleaf!("16"),
-                            scan_trieleaf!("24"),
-                            scan_trieleaf!("32"),
-                            scan_trieprefix!(
-                                "4",
-                                [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
-                            ),
-                            scan_trieleaf!("56")
-                        ]
-                    ),
-                    scan_trieleaf!("32"),
-                    scan_trieprefix!("4", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
-                    scan_trieleaf!("56"),
-                    scan_trieleaf!("64"),
-                    scan_trieleaf!("72"),
-                    scan_trieprefix!(
-                        "8",
-                        [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
-                    ),
-                    scan_trieleaf!("96")
+                just("int").ignored(),
+                scan_optional!(choice!(
+                    just("1").ignore_then(choice!(
+                        just("04").ignored(),
+                        just("12").ignored(),
+                        just("2").ignore_then(choice!(just("0").ignored(), just("8").ignored())),
+                        just("36").ignored(),
+                        just("44").ignored(),
+                        just("52").ignored(),
+                        just("6").ignore_then(choice!(
+                            just("0").ignored(),
+                            just("8").ignored(),
+                            empty()
+                        )),
+                        just("76").ignored(),
+                        just("84").ignored(),
+                        just("92").ignored()
+                    )),
+                    just("2").ignore_then(choice!(
+                        just("0").ignore_then(choice!(just("0").ignored(), just("8").ignored())),
+                        just("16").ignored(),
+                        just("24").ignored(),
+                        just("32").ignored(),
+                        just("4").ignore_then(choice!(
+                            just("0").ignored(),
+                            just("8").ignored(),
+                            empty()
+                        )),
+                        just("56").ignored()
+                    )),
+                    just("32").ignored(),
+                    just("4").ignore_then(choice!(just("0").ignored(), just("8").ignored())),
+                    just("56").ignored(),
+                    just("64").ignored(),
+                    just("72").ignored(),
+                    just("8").ignore_then(choice!(
+                        just("0").ignored(),
+                        just("8").ignored(),
+                        empty()
+                    )),
+                    just("96").ignored()
                 ))
             ),
             scan_seq!(
                 scan_terminal!('u'),
                 scan_seq!(
-                    scan_trie!(scan_trieleaf!("int")),
-                    scan_optional!(scan_trie!(
-                        scan_trieprefix!(
-                            "1",
-                            [
-                                scan_trieleaf!("04"),
-                                scan_trieleaf!("12"),
-                                scan_trieprefix!("2", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
-                                scan_trieleaf!("36"),
-                                scan_trieleaf!("44"),
-                                scan_trieleaf!("52"),
-                                scan_trieprefix!(
-                                    "6",
-                                    [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
-                                ),
-                                scan_trieleaf!("76"),
-                                scan_trieleaf!("84"),
-                                scan_trieleaf!("92")
-                            ]
-                        ),
-                        scan_trieprefix!(
-                            "2",
-                            [
-                                scan_trieprefix!("0", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
-                                scan_trieleaf!("16"),
-                                scan_trieleaf!("24"),
-                                scan_trieleaf!("32"),
-                                scan_trieprefix!(
-                                    "4",
-                                    [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
-                                ),
-                                scan_trieleaf!("56")
-                            ]
-                        ),
-                        scan_trieleaf!("32"),
-                        scan_trieprefix!("4", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
-                        scan_trieleaf!("56"),
-                        scan_trieleaf!("64"),
-                        scan_trieleaf!("72"),
-                        scan_trieprefix!(
-                            "8",
-                            [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
-                        ),
-                        scan_trieleaf!("96")
+                    just("int").ignored(),
+                    scan_optional!(choice!(
+                        just("1").ignore_then(choice!(
+                            just("04").ignored(),
+                            just("12").ignored(),
+                            just("2")
+                                .ignore_then(choice!(just("0").ignored(), just("8").ignored())),
+                            just("36").ignored(),
+                            just("44").ignored(),
+                            just("52").ignored(),
+                            just("6").ignore_then(choice!(
+                                just("0").ignored(),
+                                just("8").ignored(),
+                                empty()
+                            )),
+                            just("76").ignored(),
+                            just("84").ignored(),
+                            just("92").ignored()
+                        )),
+                        just("2").ignore_then(choice!(
+                            just("0")
+                                .ignore_then(choice!(just("0").ignored(), just("8").ignored())),
+                            just("16").ignored(),
+                            just("24").ignored(),
+                            just("32").ignored(),
+                            just("4").ignore_then(choice!(
+                                just("0").ignored(),
+                                just("8").ignored(),
+                                empty()
+                            )),
+                            just("56").ignored()
+                        )),
+                        just("32").ignored(),
+                        just("4").ignore_then(choice!(just("0").ignored(), just("8").ignored())),
+                        just("56").ignored(),
+                        just("64").ignored(),
+                        just("72").ignored(),
+                        just("8").ignore_then(choice!(
+                            just("0").ignored(),
+                            just("8").ignored(),
+                            empty()
+                        )),
+                        just("96").ignored()
                     ))
                 )
             ),
-            scan_trie!(
-                scan_trieprefix!(
-                    "a",
-                    [
-                        scan_trieleaf!("bstract"),
-                        scan_trieleaf!("ddress"),
-                        scan_trieleaf!("nonymous"),
-                        scan_trieprefix!("s", [scan_trieleaf!("sembly"), scan_trieleaf!()])
-                    ]
-                ),
-                scan_trieprefix!("b", [scan_trieleaf!("ool"), scan_trieleaf!("reak")]),
-                scan_trieprefix!(
-                    "c",
-                    [
-                        scan_trieprefix!("a", [scan_trieleaf!("lldata"), scan_trieleaf!("tch")]),
-                        scan_trieprefix!(
-                            "on",
-                            [
-                                scan_trieprefix!(
-                                    "st",
-                                    [scan_trieleaf!("ant"), scan_trieleaf!("ructor")]
-                                ),
-                                scan_trieprefix!(
-                                    "t",
-                                    [scan_trieleaf!("inue"), scan_trieleaf!("ract")]
-                                )
-                            ]
-                        )
-                    ]
-                ),
-                scan_trieprefix!("d", [scan_trieleaf!("elete"), scan_trieleaf!("o")]),
-                scan_trieprefix!(
-                    "e",
-                    [
-                        scan_trieleaf!("lse"),
-                        scan_trieleaf!("mit"),
-                        scan_trieleaf!("num"),
-                        scan_trieleaf!("vent"),
-                        scan_trieleaf!("xternal")
-                    ]
-                ),
-                scan_trieprefix!(
-                    "f",
-                    [
-                        scan_trieprefix!("al", [scan_trieleaf!("lback"), scan_trieleaf!("se")]),
-                        scan_trieleaf!("ixed"),
-                        scan_trieleaf!("or"),
-                        scan_trieleaf!("unction")
-                    ]
-                ),
-                scan_trieleaf!("hex"),
-                scan_trieprefix!(
-                    "i",
-                    [
-                        scan_trieleaf!("f"),
-                        scan_trieprefix!("m", [scan_trieleaf!("mutable"), scan_trieleaf!("port")]),
-                        scan_trieprefix!(
-                            "n",
-                            [
-                                scan_trieleaf!("dexed"),
-                                scan_trieprefix!(
-                                    "ter",
-                                    [scan_trieleaf!("face"), scan_trieleaf!("nal")]
-                                )
-                            ]
-                        ),
-                        scan_trieleaf!("s")
-                    ]
-                ),
-                scan_trieleaf!("library"),
-                scan_trieprefix!(
-                    "m",
-                    [
-                        scan_trieleaf!("apping"),
-                        scan_trieleaf!("emory"),
-                        scan_trieleaf!("odifier")
-                    ]
-                ),
-                scan_trieleaf!("new"),
-                scan_trieleaf!("override"),
-                scan_trieprefix!(
-                    "p",
-                    [
-                        scan_trieleaf!("ayable"),
-                        scan_trieprefix!("r", [scan_trieleaf!("agma"), scan_trieleaf!("ivate")]),
-                        scan_trieprefix!("u", [scan_trieleaf!("blic"), scan_trieleaf!("re")])
-                    ]
-                ),
-                scan_trieprefix!(
-                    "re",
-                    [
-                        scan_trieleaf!("ceive"),
-                        scan_trieprefix!("turn", [scan_trieleaf!("s"), scan_trieleaf!()])
-                    ]
-                ),
-                scan_trieprefix!(
-                    "st",
-                    [
-                        scan_trieleaf!("orage"),
-                        scan_trieprefix!("r", [scan_trieleaf!("ing"), scan_trieleaf!("uct")])
-                    ]
-                ),
-                scan_trieprefix!(
-                    "t",
-                    [
-                        scan_trieprefix!("r", [scan_trieleaf!("ue"), scan_trieleaf!("y")]),
-                        scan_trieleaf!("ype")
-                    ]
-                ),
-                scan_trieprefix!(
-                    "u",
-                    [
-                        scan_trieleaf!("fixed"),
-                        scan_trieleaf!("nchecked"),
-                        scan_trieleaf!("sing")
-                    ]
-                ),
-                scan_trieprefix!("vi", [scan_trieleaf!("ew"), scan_trieleaf!("rtual")]),
-                scan_trieleaf!("while")
+            choice!(
+                just("a").ignore_then(choice!(
+                    just("bstract").ignored(),
+                    just("ddress").ignored(),
+                    just("nonymous").ignored(),
+                    just("s").ignore_then(choice!(just("sembly").ignored(), empty()))
+                )),
+                just("b").ignore_then(choice!(just("ool").ignored(), just("reak").ignored())),
+                just("c").ignore_then(choice!(
+                    just("a").ignore_then(choice!(just("lldata").ignored(), just("tch").ignored())),
+                    just("on").ignore_then(choice!(
+                        just("st")
+                            .ignore_then(choice!(just("ant").ignored(), just("ructor").ignored())),
+                        just("t")
+                            .ignore_then(choice!(just("inue").ignored(), just("ract").ignored()))
+                    ))
+                )),
+                just("d").ignore_then(choice!(just("elete").ignored(), just("o").ignored())),
+                just("e").ignore_then(choice!(
+                    just("lse").ignored(),
+                    just("mit").ignored(),
+                    just("num").ignored(),
+                    just("vent").ignored(),
+                    just("xternal").ignored()
+                )),
+                just("f").ignore_then(choice!(
+                    just("al").ignore_then(choice!(just("lback").ignored(), just("se").ignored())),
+                    just("ixed").ignored(),
+                    just("or").ignored(),
+                    just("unction").ignored()
+                )),
+                just("hex").ignored(),
+                just("i").ignore_then(choice!(
+                    just("f").ignored(),
+                    just("m")
+                        .ignore_then(choice!(just("mutable").ignored(), just("port").ignored())),
+                    just("n").ignore_then(choice!(
+                        just("dexed").ignored(),
+                        just("ter")
+                            .ignore_then(choice!(just("face").ignored(), just("nal").ignored()))
+                    )),
+                    just("s").ignored()
+                )),
+                just("library").ignored(),
+                just("m").ignore_then(choice!(
+                    just("apping").ignored(),
+                    just("emory").ignored(),
+                    just("odifier").ignored()
+                )),
+                just("new").ignored(),
+                just("override").ignored(),
+                just("p").ignore_then(choice!(
+                    just("ayable").ignored(),
+                    just("r").ignore_then(choice!(just("agma").ignored(), just("ivate").ignored())),
+                    just("u").ignore_then(choice!(just("blic").ignored(), just("re").ignored()))
+                )),
+                just("re").ignore_then(choice!(
+                    just("ceive").ignored(),
+                    just("turn").ignore_then(choice!(just("s").ignored(), empty()))
+                )),
+                just("st").ignore_then(choice!(
+                    just("orage").ignored(),
+                    just("r").ignore_then(choice!(just("ing").ignored(), just("uct").ignored()))
+                )),
+                just("t").ignore_then(choice!(
+                    just("r").ignore_then(choice!(just("ue").ignored(), just("y").ignored())),
+                    just("ype").ignored()
+                )),
+                just("u").ignore_then(choice!(
+                    just("fixed").ignored(),
+                    just("nchecked").ignored(),
+                    just("sing").ignored()
+                )),
+                just("vi").ignore_then(choice!(just("ew").ignored(), just("rtual").ignored())),
+                just("while").ignored()
             )
         ))
     );
@@ -3236,7 +4081,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         LibraryDefinition,
         seq!(
-            trie!(trieleaf!(Library, "library")),
+            with_trivia!(just("library")
+                .to(TokenKind::Library)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             token!(Identifier),
             delimited_by!(
                 terminal!(OpenBrace, "{"),
@@ -3250,12 +4105,32 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         MappingType,
         seq!(
-            trie!(trieleaf!(Mapping, "mapping")),
+            with_trivia!(just("mapping")
+                .to(TokenKind::Mapping)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             delimited_by!(
                 terminal!(OpenParen, "("),
                 seq!(
                     choice!(rule!(ElementaryType), rule!(IdentifierPath)),
-                    trie!(trieleaf!(EqualGreater, "=>")),
+                    with_trivia!(just("=>")
+                        .to(TokenKind::EqualGreater)
+                        .map_with_span(|kind, span: SpanType| (kind, span)))
+                    .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                        cst::Node::token(
+                            kind,
+                            lex::Node::chars_unwrapped(range),
+                            leading_trivia,
+                            trailing_trivia,
+                        )
+                    }),
                     rule!(TypeName)
                 ),
                 terminal!(CloseParen, ")")
@@ -3268,8 +4143,31 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         MemberAccessExpression,
         seq!(
             rule!(Expression),
-            trie!(trieleaf!(Period, ".")),
-            choice!(token!(Identifier), trie!(trieleaf!(Address, "address")))
+            with_trivia!(just(".")
+                .to(TokenKind::Period)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
+            choice!(
+                token!(Identifier),
+                with_trivia!(just("address")
+                    .to(TokenKind::Address)
+                    .map_with_span(|kind, span: SpanType| (kind, span)))
+                .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                    cst::Node::token(
+                        kind,
+                        lex::Node::chars_unwrapped(range),
+                        leading_trivia,
+                        trailing_trivia,
+                    )
+                })
+            )
         )
     );
 
@@ -3278,7 +4176,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         ModifierAttribute,
         choice!(
             rule!(OverrideSpecifier),
-            trie!(trieleaf!(Virtual, "virtual"))
+            with_trivia!(just("virtual")
+                .to(TokenKind::Virtual)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })
         )
     );
 
@@ -3286,11 +4194,34 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ModifierDefinition,
         seq!(
-            trie!(trieleaf!(Modifier, "modifier")),
+            with_trivia!(just("modifier")
+                .to(TokenKind::Modifier)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             token!(Identifier),
             optional!(rule!(ParameterList)),
             zero_or_more!(rule!(ModifierAttribute)),
-            choice!(trie!(trieleaf!(Semicolon, ";")), rule!(Block))
+            choice!(
+                with_trivia!(just(";")
+                    .to(TokenKind::Semicolon)
+                    .map_with_span(|kind, span: SpanType| (kind, span)))
+                .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                    cst::Node::token(
+                        kind,
+                        lex::Node::chars_unwrapped(range),
+                        leading_trivia,
+                        trailing_trivia,
+                    )
+                }),
+                rule!(Block)
+            )
         )
     );
 
@@ -3305,11 +4236,20 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         MulDivModExpression,
         seq!(
             rule!(Expression),
-            trie!(
-                trieleaf!(Percent, "%"),
-                trieleaf!(Star, "*"),
-                trieleaf!(Slash, "/")
-            ),
+            with_trivia!(choice!(
+                just("%").to(TokenKind::Percent),
+                just("*").to(TokenKind::Star),
+                just("/").to(TokenKind::Slash)
+            )
+            .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(Expression)
         )
     );
@@ -3332,7 +4272,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         NamedArgument,
         seq!(
             token!(Identifier),
-            trie!(trieleaf!(Colon, ":")),
+            with_trivia!(just(":")
+                .to(TokenKind::Colon)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(Expression)
         )
     );
@@ -3351,7 +4301,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         NewExpression,
         seq!(
-            trie!(trieleaf!(New, "new")),
+            with_trivia!(just("new")
+                .to(TokenKind::New)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(IdentifierPath),
             rule!(ArgumentList)
         )
@@ -3360,16 +4320,16 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // «NumberUnit» = 'days' | 'ether' | 'finney' | 'gwei' | 'hours' | 'minutes' | 'seconds' | 'szabo' | 'weeks' | 'wei' | 'years' ;
     define_token!(
         NumberUnit,
-        scan_make_node!(scan_trie!(
-            scan_trieleaf!("days"),
-            scan_trieleaf!("ether"),
-            scan_trieleaf!("finney"),
-            scan_trieleaf!("gwei"),
-            scan_trieleaf!("hours"),
-            scan_trieleaf!("minutes"),
-            scan_trieprefix!("s", [scan_trieleaf!("econds"), scan_trieleaf!("zabo")]),
-            scan_trieprefix!("we", [scan_trieleaf!("eks"), scan_trieleaf!("i")]),
-            scan_trieleaf!("years")
+        scan_make_node!(choice!(
+            just("days").ignored(),
+            just("ether").ignored(),
+            just("finney").ignored(),
+            just("gwei").ignored(),
+            just("hours").ignored(),
+            just("minutes").ignored(),
+            just("s").ignore_then(choice!(just("econds").ignored(), just("zabo").ignored())),
+            just("we").ignore_then(choice!(just("eks").ignored(), just("i").ignored())),
+            just("years").ignored()
         ))
     );
 
@@ -3387,7 +4347,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         OrExpression,
         seq!(
             rule!(Expression),
-            trie!(trieleaf!(PipePipe, "||")),
+            with_trivia!(just("||")
+                .to(TokenKind::PipePipe)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(Expression)
         )
     );
@@ -3397,10 +4367,25 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         OrderComparisonExpression,
         seq!(
             rule!(Expression),
-            trie!(
-                trieprefix!("<", [trieleaf!(LessEqual, "="), trieleaf!(Less)]),
-                trieprefix!(">", [trieleaf!(GreaterEqual, "="), trieleaf!(Greater)])
-            ),
+            with_trivia!(choice!(
+                just("<").ignore_then(choice!(
+                    just("=").to(TokenKind::LessEqual),
+                    empty().to(TokenKind::Less)
+                )),
+                just(">").ignore_then(choice!(
+                    just("=").to(TokenKind::GreaterEqual),
+                    empty().to(TokenKind::Greater)
+                ))
+            )
+            .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(Expression)
         )
     );
@@ -3409,7 +4394,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         OverrideSpecifier,
         seq!(
-            trie!(trieleaf!(Override, "override")),
+            with_trivia!(just("override")
+                .to(TokenKind::Override)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             optional!(delimited_by!(
                 terminal!(OpenParen, "("),
                 separated_by!(rule!(IdentifierPath), terminal!(Comma, ",")),
@@ -3452,7 +4447,20 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     );
 
     // PayableType = 'payable' ;
-    define_rule!(PayableType, trie!(trieleaf!(Payable, "payable")));
+    define_rule!(
+        PayableType,
+        with_trivia!(just("payable")
+            .to(TokenKind::Payable)
+            .map_with_span(|kind, span: SpanType| (kind, span)))
+        .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+            cst::Node::token(
+                kind,
+                lex::Node::chars_unwrapped(range),
+                leading_trivia,
+                trailing_trivia,
+            )
+        })
+    );
 
     // PositionalArgumentList = Expression  { ',' Expression } ;
     define_rule!(
@@ -3488,31 +4496,51 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         PragmaDirective,
         seq!(
-            trie!(trieleaf!(Pragma, "pragma")),
+            with_trivia!(just("pragma")
+                .to(TokenKind::Pragma)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             choice!(
                 rule!(VersionPragma),
                 rule!(ABICoderPragma),
                 rule!(ExperimentalPragma)
             ),
-            trie!(trieleaf!(Semicolon, ";"))
+            with_trivia!(just(";")
+                .to(TokenKind::Semicolon)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })
         )
     );
 
-    // PrimaryExpression = TypeExpression | NewExpression | ParenthesisExpression | ElementaryType | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | NumericLiteral | «BooleanLiteral» | «Identifier» ;
+    // PrimaryExpression = «Identifier» | ParenthesisExpression | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | NumericLiteral | «BooleanLiteral» | NewExpression | TypeExpression | ElementaryType ;
     define_rule!(
         PrimaryExpression,
         choice!(
-            rule!(TypeExpression),
-            rule!(NewExpression),
+            token!(Identifier),
             rule!(ParenthesisExpression),
-            rule!(ElementaryType),
             rule!(ArrayLiteral),
             token!(AsciiStringLiteral),
             token!(UnicodeStringLiteral),
             token!(HexStringLiteral),
             rule!(NumericLiteral),
             token!(BooleanLiteral),
-            token!(Identifier)
+            rule!(NewExpression),
+            rule!(TypeExpression),
+            rule!(ElementaryType)
         )
     );
 
@@ -3538,11 +4566,20 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         choice!(
             rule!(ModifierInvocation),
             rule!(OverrideSpecifier),
-            trie!(
-                trieleaf!(External, "external"),
-                trieleaf!(Payable, "payable"),
-                trieleaf!(Virtual, "virtual")
+            with_trivia!(choice!(
+                just("external").to(TokenKind::External),
+                just("payable").to(TokenKind::Payable),
+                just("virtual").to(TokenKind::Virtual)
             )
+            .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })
         )
     );
 
@@ -3550,64 +4587,75 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ReceiveFunctionDefinition,
         seq!(
-            trie!(trieleaf!(Receive, "receive")),
+            with_trivia!(just("receive")
+                .to(TokenKind::Receive)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(ParameterList),
             zero_or_more!(rule!(ReceiveFunctionAttribute)),
-            choice!(trie!(trieleaf!(Semicolon, ";")), rule!(Block))
+            choice!(
+                with_trivia!(just(";")
+                    .to(TokenKind::Semicolon)
+                    .map_with_span(|kind, span: SpanType| (kind, span)))
+                .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                    cst::Node::token(
+                        kind,
+                        lex::Node::chars_unwrapped(range),
+                        leading_trivia,
+                        trailing_trivia,
+                    )
+                }),
+                rule!(Block)
+            )
         )
     );
 
     // «ReservedKeyword» = 'after' | 'alias' | 'apply' | 'auto' | 'byte' | 'case' | 'copyof' | 'default' | 'define' | 'final' | 'implements' | 'in' | 'inline' | 'let' | 'macro' | 'match' | 'mutable' | 'null' | 'of' | 'partial' | 'promise' | 'reference' | 'relocatable' | 'sealed' | 'sizeof' | 'static' | 'supports' | 'switch' | 'typedef' | 'typeof' | 'var' ;
     define_token!(
         ReservedKeyword,
-        scan_make_node!(scan_trie!(
-            scan_trieprefix!(
-                "a",
-                [
-                    scan_trieleaf!("fter"),
-                    scan_trieleaf!("lias"),
-                    scan_trieleaf!("pply"),
-                    scan_trieleaf!("uto")
-                ]
-            ),
-            scan_trieleaf!("byte"),
-            scan_trieprefix!("c", [scan_trieleaf!("ase"), scan_trieleaf!("opyof")]),
-            scan_trieprefix!("def", [scan_trieleaf!("ault"), scan_trieleaf!("ine")]),
-            scan_trieleaf!("final"),
-            scan_trieprefix!(
-                "i",
-                [
-                    scan_trieleaf!("mplements"),
-                    scan_trieprefix!("n", [scan_trieleaf!("line"), scan_trieleaf!()])
-                ]
-            ),
-            scan_trieleaf!("let"),
-            scan_trieprefix!(
-                "m",
-                [
-                    scan_trieprefix!("a", [scan_trieleaf!("cro"), scan_trieleaf!("tch")]),
-                    scan_trieleaf!("utable")
-                ]
-            ),
-            scan_trieleaf!("null"),
-            scan_trieleaf!("of"),
-            scan_trieprefix!("p", [scan_trieleaf!("artial"), scan_trieleaf!("romise")]),
-            scan_trieprefix!(
-                "re",
-                [scan_trieleaf!("ference"), scan_trieleaf!("locatable")]
-            ),
-            scan_trieprefix!(
-                "s",
-                [
-                    scan_trieleaf!("ealed"),
-                    scan_trieleaf!("izeof"),
-                    scan_trieleaf!("tatic"),
-                    scan_trieleaf!("upports"),
-                    scan_trieleaf!("witch")
-                ]
-            ),
-            scan_trieprefix!("type", [scan_trieleaf!("def"), scan_trieleaf!("of")]),
-            scan_trieleaf!("var")
+        scan_make_node!(choice!(
+            just("a").ignore_then(choice!(
+                just("fter").ignored(),
+                just("lias").ignored(),
+                just("pply").ignored(),
+                just("uto").ignored()
+            )),
+            just("byte").ignored(),
+            just("c").ignore_then(choice!(just("ase").ignored(), just("opyof").ignored())),
+            just("def").ignore_then(choice!(just("ault").ignored(), just("ine").ignored())),
+            just("final").ignored(),
+            just("i").ignore_then(choice!(
+                just("mplements").ignored(),
+                just("n").ignore_then(choice!(just("line").ignored(), empty()))
+            )),
+            just("let").ignored(),
+            just("m").ignore_then(choice!(
+                just("a").ignore_then(choice!(just("cro").ignored(), just("tch").ignored())),
+                just("utable").ignored()
+            )),
+            just("null").ignored(),
+            just("of").ignored(),
+            just("p").ignore_then(choice!(just("artial").ignored(), just("romise").ignored())),
+            just("re").ignore_then(choice!(
+                just("ference").ignored(),
+                just("locatable").ignored()
+            )),
+            just("s").ignore_then(choice!(
+                just("ealed").ignored(),
+                just("izeof").ignored(),
+                just("tatic").ignored(),
+                just("upports").ignored(),
+                just("witch").ignored()
+            )),
+            just("type").ignore_then(choice!(just("def").ignored(), just("of").ignored())),
+            just("var").ignored()
         ))
     );
 
@@ -3615,9 +4663,29 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         ReturnStatement,
         seq!(
-            trie!(trieleaf!(Return, "return")),
+            with_trivia!(just("return")
+                .to(TokenKind::Return)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             optional!(rule!(Expression)),
-            trie!(trieleaf!(Semicolon, ";"))
+            with_trivia!(just(";")
+                .to(TokenKind::Semicolon)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })
         )
     );
 
@@ -3625,10 +4693,30 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         RevertStatement,
         seq!(
-            trie!(trieleaf!(Revert, "revert")),
+            with_trivia!(just("revert")
+                .to(TokenKind::Revert)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             optional!(rule!(IdentifierPath)),
             rule!(ArgumentList),
-            trie!(trieleaf!(Semicolon, ";"))
+            with_trivia!(just(";")
+                .to(TokenKind::Semicolon)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })
         )
     );
 
@@ -3637,7 +4725,20 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         SelectedImport,
         seq!(
             token!(Identifier),
-            optional!(seq!(trie!(trieleaf!(As, "as")), token!(Identifier)))
+            optional!(seq!(
+                with_trivia!(just("as")
+                    .to(TokenKind::As)
+                    .map_with_span(|kind, span: SpanType| (kind, span)))
+                .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                    cst::Node::token(
+                        kind,
+                        lex::Node::chars_unwrapped(range),
+                        leading_trivia,
+                        trailing_trivia,
+                    )
+                }),
+                token!(Identifier)
+            ))
         )
     );
 
@@ -3650,7 +4751,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                 separated_by!(rule!(SelectedImport), terminal!(Comma, ",")),
                 terminal!(CloseBrace, "}")
             ),
-            trie!(trieleaf!(From, "from")),
+            with_trivia!(just("from")
+                .to(TokenKind::From)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(ImportPath)
         )
     );
@@ -3660,16 +4771,22 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         ShiftExpression,
         seq!(
             rule!(Expression),
-            trie!(
-                trieleaf!(LessLess, "<<"),
-                trieprefix!(
-                    ">>",
-                    [
-                        trieleaf!(GreaterGreaterGreater, ">"),
-                        trieleaf!(GreaterGreater)
-                    ]
+            with_trivia!(choice!(
+                just("<<").to(TokenKind::LessLess),
+                just(">>").ignore_then(choice!(
+                    just(">").to(TokenKind::GreaterGreaterGreater),
+                    empty().to(TokenKind::GreaterGreater)
+                ))
+            )
+            .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
                 )
-            ),
+            }),
             rule!(Expression)
         )
     );
@@ -3678,7 +4795,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_token!(
         SignedFixedType,
         scan_make_node!(scan_seq!(
-            scan_trie!(scan_trieleaf!("fixed")),
+            just("fixed").ignored(),
             scan_optional!(scan_seq!(
                 scan_one_or_more!(scan_terminal!(|&c: &char| ('0' <= c && c <= '9'))),
                 scan_terminal!('x'),
@@ -3691,50 +4808,43 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_token!(
         SignedIntegerType,
         scan_make_node!(scan_seq!(
-            scan_trie!(scan_trieleaf!("int")),
-            scan_optional!(scan_trie!(
-                scan_trieprefix!(
-                    "1",
-                    [
-                        scan_trieleaf!("04"),
-                        scan_trieleaf!("12"),
-                        scan_trieprefix!("2", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
-                        scan_trieleaf!("36"),
-                        scan_trieleaf!("44"),
-                        scan_trieleaf!("52"),
-                        scan_trieprefix!(
-                            "6",
-                            [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
-                        ),
-                        scan_trieleaf!("76"),
-                        scan_trieleaf!("84"),
-                        scan_trieleaf!("92")
-                    ]
-                ),
-                scan_trieprefix!(
-                    "2",
-                    [
-                        scan_trieprefix!("0", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
-                        scan_trieleaf!("16"),
-                        scan_trieleaf!("24"),
-                        scan_trieleaf!("32"),
-                        scan_trieprefix!(
-                            "4",
-                            [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
-                        ),
-                        scan_trieleaf!("56")
-                    ]
-                ),
-                scan_trieleaf!("32"),
-                scan_trieprefix!("4", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
-                scan_trieleaf!("56"),
-                scan_trieleaf!("64"),
-                scan_trieleaf!("72"),
-                scan_trieprefix!(
-                    "8",
-                    [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
-                ),
-                scan_trieleaf!("96")
+            just("int").ignored(),
+            scan_optional!(choice!(
+                just("1").ignore_then(choice!(
+                    just("04").ignored(),
+                    just("12").ignored(),
+                    just("2").ignore_then(choice!(just("0").ignored(), just("8").ignored())),
+                    just("36").ignored(),
+                    just("44").ignored(),
+                    just("52").ignored(),
+                    just("6").ignore_then(choice!(
+                        just("0").ignored(),
+                        just("8").ignored(),
+                        empty()
+                    )),
+                    just("76").ignored(),
+                    just("84").ignored(),
+                    just("92").ignored()
+                )),
+                just("2").ignore_then(choice!(
+                    just("0").ignore_then(choice!(just("0").ignored(), just("8").ignored())),
+                    just("16").ignored(),
+                    just("24").ignored(),
+                    just("32").ignored(),
+                    just("4").ignore_then(choice!(
+                        just("0").ignored(),
+                        just("8").ignored(),
+                        empty()
+                    )),
+                    just("56").ignored()
+                )),
+                just("32").ignored(),
+                just("4").ignore_then(choice!(just("0").ignored(), just("8").ignored())),
+                just("56").ignored(),
+                just("64").ignored(),
+                just("72").ignored(),
+                just("8").ignore_then(choice!(just("0").ignored(), just("8").ignored(), empty())),
+                just("96").ignored()
             ))
         ))
     );
@@ -3744,7 +4854,20 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         SimpleImportDirective,
         seq!(
             rule!(ImportPath),
-            zero_or_more!(seq!(trie!(trieleaf!(As, "as")), token!(Identifier)))
+            zero_or_more!(seq!(
+                with_trivia!(just("as")
+                    .to(TokenKind::As)
+                    .map_with_span(|kind, span: SpanType| (kind, span)))
+                .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                    cst::Node::token(
+                        kind,
+                        lex::Node::chars_unwrapped(range),
+                        leading_trivia,
+                        trailing_trivia,
+                    )
+                }),
+                token!(Identifier)
+            ))
         )
     );
 
@@ -3762,7 +4885,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_token!(
         SingleLineComment,
         scan_make_node!(scan_seq!(
-            scan_trie!(scan_trieleaf!("//")),
+            just("//").ignored(),
             scan_zero_or_more!(scan_terminal!(|&c: &char| c != '\r' && c != '\n'))
         ))
     );
@@ -3779,15 +4902,15 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                 scan_seq!(
                     scan_terminal!('\\'),
                     scan_choice!(
-                        scan_trie!(
-                            scan_trieleaf!("\n"),
-                            scan_trieleaf!("\r"),
-                            scan_trieleaf!("\""),
-                            scan_trieleaf!("'"),
-                            scan_trieleaf!("\\"),
-                            scan_trieleaf!("n"),
-                            scan_trieleaf!("r"),
-                            scan_trieleaf!("t")
+                        choice!(
+                            just("\n").ignored(),
+                            just("\r").ignored(),
+                            just("\"").ignored(),
+                            just("'").ignored(),
+                            just("\\").ignored(),
+                            just("n").ignored(),
+                            just("r").ignored(),
+                            just("t").ignored()
                         ),
                         scan_seq!(
                             scan_terminal!('x'),
@@ -3829,15 +4952,15 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                 scan_seq!(
                     scan_terminal!('\\'),
                     scan_choice!(
-                        scan_trie!(
-                            scan_trieleaf!("\n"),
-                            scan_trieleaf!("\r"),
-                            scan_trieleaf!("\""),
-                            scan_trieleaf!("'"),
-                            scan_trieleaf!("\\"),
-                            scan_trieleaf!("n"),
-                            scan_trieleaf!("r"),
-                            scan_trieleaf!("t")
+                        choice!(
+                            just("\n").ignored(),
+                            just("\r").ignored(),
+                            just("\"").ignored(),
+                            just("'").ignored(),
+                            just("\\").ignored(),
+                            just("n").ignored(),
+                            just("r").ignored(),
+                            just("t").ignored()
                         ),
                         scan_seq!(
                             scan_terminal!('x'),
@@ -3880,10 +5003,40 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         StarImportDirective,
         seq!(
-            trie!(trieleaf!(Star, "*")),
-            trie!(trieleaf!(As, "as")),
+            with_trivia!(just("*")
+                .to(TokenKind::Star)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
+            with_trivia!(just("as")
+                .to(TokenKind::As)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             token!(Identifier),
-            trie!(trieleaf!(From, "from")),
+            with_trivia!(just("from")
+                .to(TokenKind::From)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(ImportPath)
         )
     );
@@ -3893,20 +5046,26 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         StateVariableAttribute,
         choice!(
             rule!(OverrideSpecifier),
-            trie!(
-                trieleaf!(Constant, "constant"),
-                trieprefix!(
-                    "i",
-                    [
-                        trieleaf!(Immutable, "mmutable"),
-                        trieleaf!(Internal, "nternal")
-                    ]
-                ),
-                trieprefix!(
-                    "p",
-                    [trieleaf!(Private, "rivate"), trieleaf!(Public, "ublic")]
-                )
+            with_trivia!(choice!(
+                just("constant").to(TokenKind::Constant),
+                just("i").ignore_then(choice!(
+                    just("mmutable").to(TokenKind::Immutable),
+                    just("nternal").to(TokenKind::Internal)
+                )),
+                just("p").ignore_then(choice!(
+                    just("rivate").to(TokenKind::Private),
+                    just("ublic").to(TokenKind::Public)
+                ))
             )
+            .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })
         )
     );
 
@@ -3917,8 +5076,31 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
             rule!(TypeName),
             zero_or_more!(rule!(StateVariableAttribute)),
             token!(Identifier),
-            optional!(seq!(trie!(trieleaf!(Equal, "=")), rule!(Expression))),
-            trie!(trieleaf!(Semicolon, ";"))
+            optional!(seq!(
+                with_trivia!(just("=")
+                    .to(TokenKind::Equal)
+                    .map_with_span(|kind, span: SpanType| (kind, span)))
+                .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                    cst::Node::token(
+                        kind,
+                        lex::Node::chars_unwrapped(range),
+                        leading_trivia,
+                        trailing_trivia,
+                    )
+                }),
+                rule!(Expression)
+            )),
+            with_trivia!(just(";")
+                .to(TokenKind::Semicolon)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })
         )
     );
 
@@ -3947,7 +5129,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         StructDefinition,
         seq!(
-            trie!(trieleaf!(Struct, "struct")),
+            with_trivia!(just("struct")
+                .to(TokenKind::Struct)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             token!(Identifier),
             delimited_by!(
                 terminal!(OpenBrace, "{"),
@@ -3963,7 +5155,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         seq!(
             rule!(TypeName),
             token!(Identifier),
-            trie!(trieleaf!(Semicolon, ";"))
+            with_trivia!(just(";")
+                .to(TokenKind::Semicolon)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })
         )
     );
 
@@ -3983,10 +5185,30 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         TryStatement,
         seq!(
-            trie!(trieleaf!(Try, "try")),
+            with_trivia!(just("try")
+                .to(TokenKind::Try)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(Expression),
             optional!(seq!(
-                trie!(trieleaf!(Returns, "returns")),
+                with_trivia!(just("returns")
+                    .to(TokenKind::Returns)
+                    .map_with_span(|kind, span: SpanType| (kind, span)))
+                .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                    cst::Node::token(
+                        kind,
+                        lex::Node::chars_unwrapped(range),
+                        leading_trivia,
+                        trailing_trivia,
+                    )
+                }),
                 rule!(ParameterList)
             )),
             rule!(Block),
@@ -4006,9 +5228,29 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                 )),
                 terminal!(CloseParen, ")")
             ),
-            trie!(trieleaf!(Equal, "=")),
+            with_trivia!(just("=")
+                .to(TokenKind::Equal)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(Expression),
-            trie!(trieleaf!(Semicolon, ";"))
+            with_trivia!(just(";")
+                .to(TokenKind::Semicolon)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })
         )
     );
 
@@ -4016,7 +5258,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         TypeExpression,
         seq!(
-            trie!(trieleaf!(Type, "type")),
+            with_trivia!(just("type")
+                .to(TokenKind::Type)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             delimited_by!(
                 terminal!(OpenParen, "("),
                 rule!(TypeName),
@@ -4047,12 +5299,24 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         UnaryPrefixExpression,
         seq!(
-            trie!(
-                trieleaf!(Bang, "!"),
-                trieleaf!(PlusPlus, "++"),
-                trieprefix!("-", [trieleaf!(MinusMinus, "-"), trieleaf!(Minus)]),
-                trieleaf!(Tilde, "~")
-            ),
+            with_trivia!(choice!(
+                just("!").to(TokenKind::Bang),
+                just("++").to(TokenKind::PlusPlus),
+                just("-").ignore_then(choice!(
+                    just("-").to(TokenKind::MinusMinus),
+                    empty().to(TokenKind::Minus)
+                )),
+                just("~").to(TokenKind::Tilde)
+            )
+            .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(Expression)
         )
     );
@@ -4062,14 +5326,39 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         UnarySuffixExpression,
         seq!(
             rule!(Expression),
-            trie!(trieleaf!(PlusPlus, "++"), trieleaf!(MinusMinus, "--"))
+            with_trivia!(choice!(
+                just("++").to(TokenKind::PlusPlus),
+                just("--").to(TokenKind::MinusMinus)
+            )
+            .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })
         )
     );
 
     // UncheckedBlock = 'unchecked' Block ;
     define_rule!(
         UncheckedBlock,
-        seq!(trie!(trieleaf!(Unchecked, "unchecked")), rule!(Block))
+        seq!(
+            with_trivia!(just("unchecked")
+                .to(TokenKind::Unchecked)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
+            rule!(Block)
+        )
     );
 
     // «UnicodeEscape» = 'u' 4…4*{ «HexCharacter» } ;
@@ -4101,15 +5390,15 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                     scan_seq!(
                         scan_terminal!('\\'),
                         scan_choice!(
-                            scan_trie!(
-                                scan_trieleaf!("\n"),
-                                scan_trieleaf!("\r"),
-                                scan_trieleaf!("\""),
-                                scan_trieleaf!("'"),
-                                scan_trieleaf!("\\"),
-                                scan_trieleaf!("n"),
-                                scan_trieleaf!("r"),
-                                scan_trieleaf!("t")
+                            choice!(
+                                just("\n").ignored(),
+                                just("\r").ignored(),
+                                just("\"").ignored(),
+                                just("'").ignored(),
+                                just("\\").ignored(),
+                                just("n").ignored(),
+                                just("r").ignored(),
+                                just("t").ignored()
                             ),
                             scan_seq!(
                                 scan_terminal!('x'),
@@ -4146,15 +5435,15 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                     scan_seq!(
                         scan_terminal!('\\'),
                         scan_choice!(
-                            scan_trie!(
-                                scan_trieleaf!("\n"),
-                                scan_trieleaf!("\r"),
-                                scan_trieleaf!("\""),
-                                scan_trieleaf!("'"),
-                                scan_trieleaf!("\\"),
-                                scan_trieleaf!("n"),
-                                scan_trieleaf!("r"),
-                                scan_trieleaf!("t")
+                            choice!(
+                                just("\n").ignored(),
+                                just("\r").ignored(),
+                                just("\"").ignored(),
+                                just("'").ignored(),
+                                just("\\").ignored(),
+                                just("n").ignored(),
+                                just("r").ignored(),
+                                just("t").ignored()
                             ),
                             scan_seq!(
                                 scan_terminal!('x'),
@@ -4190,7 +5479,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         scan_make_node!(scan_seq!(
             scan_terminal!('u'),
             scan_seq!(
-                scan_trie!(scan_trieleaf!("fixed")),
+                just("fixed").ignored(),
                 scan_optional!(scan_seq!(
                     scan_one_or_more!(scan_terminal!(|&c: &char| ('0' <= c && c <= '9'))),
                     scan_terminal!('x'),
@@ -4206,50 +5495,47 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         scan_make_node!(scan_seq!(
             scan_terminal!('u'),
             scan_seq!(
-                scan_trie!(scan_trieleaf!("int")),
-                scan_optional!(scan_trie!(
-                    scan_trieprefix!(
-                        "1",
-                        [
-                            scan_trieleaf!("04"),
-                            scan_trieleaf!("12"),
-                            scan_trieprefix!("2", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
-                            scan_trieleaf!("36"),
-                            scan_trieleaf!("44"),
-                            scan_trieleaf!("52"),
-                            scan_trieprefix!(
-                                "6",
-                                [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
-                            ),
-                            scan_trieleaf!("76"),
-                            scan_trieleaf!("84"),
-                            scan_trieleaf!("92")
-                        ]
-                    ),
-                    scan_trieprefix!(
-                        "2",
-                        [
-                            scan_trieprefix!("0", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
-                            scan_trieleaf!("16"),
-                            scan_trieleaf!("24"),
-                            scan_trieleaf!("32"),
-                            scan_trieprefix!(
-                                "4",
-                                [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
-                            ),
-                            scan_trieleaf!("56")
-                        ]
-                    ),
-                    scan_trieleaf!("32"),
-                    scan_trieprefix!("4", [scan_trieleaf!("0"), scan_trieleaf!("8")]),
-                    scan_trieleaf!("56"),
-                    scan_trieleaf!("64"),
-                    scan_trieleaf!("72"),
-                    scan_trieprefix!(
-                        "8",
-                        [scan_trieleaf!("0"), scan_trieleaf!("8"), scan_trieleaf!()]
-                    ),
-                    scan_trieleaf!("96")
+                just("int").ignored(),
+                scan_optional!(choice!(
+                    just("1").ignore_then(choice!(
+                        just("04").ignored(),
+                        just("12").ignored(),
+                        just("2").ignore_then(choice!(just("0").ignored(), just("8").ignored())),
+                        just("36").ignored(),
+                        just("44").ignored(),
+                        just("52").ignored(),
+                        just("6").ignore_then(choice!(
+                            just("0").ignored(),
+                            just("8").ignored(),
+                            empty()
+                        )),
+                        just("76").ignored(),
+                        just("84").ignored(),
+                        just("92").ignored()
+                    )),
+                    just("2").ignore_then(choice!(
+                        just("0").ignore_then(choice!(just("0").ignored(), just("8").ignored())),
+                        just("16").ignored(),
+                        just("24").ignored(),
+                        just("32").ignored(),
+                        just("4").ignore_then(choice!(
+                            just("0").ignored(),
+                            just("8").ignored(),
+                            empty()
+                        )),
+                        just("56").ignored()
+                    )),
+                    just("32").ignored(),
+                    just("4").ignore_then(choice!(just("0").ignored(), just("8").ignored())),
+                    just("56").ignored(),
+                    just("64").ignored(),
+                    just("72").ignored(),
+                    just("8").ignore_then(choice!(
+                        just("0").ignored(),
+                        just("8").ignored(),
+                        empty()
+                    )),
+                    just("96").ignored()
                 ))
             )
         ))
@@ -4259,11 +5545,41 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         UserDefinedValueTypeDefinition,
         seq!(
-            trie!(trieleaf!(Type, "type")),
+            with_trivia!(just("type")
+                .to(TokenKind::Type)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             token!(Identifier),
-            trie!(trieleaf!(Is, "is")),
+            with_trivia!(just("is")
+                .to(TokenKind::Is)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(ElementaryType),
-            trie!(trieleaf!(Semicolon, ";"))
+            with_trivia!(just(";")
+                .to(TokenKind::Semicolon)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })
         )
     );
 
@@ -4271,7 +5587,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         UsingDirective,
         seq!(
-            trie!(trieleaf!(Using, "using")),
+            with_trivia!(just("using")
+                .to(TokenKind::Using)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             choice!(
                 rule!(IdentifierPath),
                 delimited_by!(
@@ -4280,10 +5606,53 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                     terminal!(CloseBrace, "}")
                 )
             ),
-            trie!(trieleaf!(For, "for")),
-            choice!(trie!(trieleaf!(Star, "*")), rule!(TypeName)),
-            optional!(trie!(trieleaf!(Global, "global"))),
-            trie!(trieleaf!(Semicolon, ";"))
+            with_trivia!(just("for")
+                .to(TokenKind::For)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
+            choice!(
+                with_trivia!(just("*")
+                    .to(TokenKind::Star)
+                    .map_with_span(|kind, span: SpanType| (kind, span)))
+                .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                    cst::Node::token(
+                        kind,
+                        lex::Node::chars_unwrapped(range),
+                        leading_trivia,
+                        trailing_trivia,
+                    )
+                }),
+                rule!(TypeName)
+            ),
+            optional!(with_trivia!(just("global")
+                .to(TokenKind::Global)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })),
+            with_trivia!(just(";")
+                .to(TokenKind::Semicolon)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })
         )
     );
 
@@ -4294,8 +5663,31 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
             rule!(TypeName),
             optional!(rule!(DataLocation)),
             token!(Identifier),
-            optional!(seq!(trie!(trieleaf!(Equal, "=")), rule!(Expression))),
-            trie!(trieleaf!(Semicolon, ";"))
+            optional!(seq!(
+                with_trivia!(just("=")
+                    .to(TokenKind::Equal)
+                    .map_with_span(|kind, span: SpanType| (kind, span)))
+                .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                    cst::Node::token(
+                        kind,
+                        lex::Node::chars_unwrapped(range),
+                        leading_trivia,
+                        trailing_trivia,
+                    )
+                }),
+                rule!(Expression)
+            )),
+            with_trivia!(just(";")
+                .to(TokenKind::Semicolon)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            })
         )
     );
 
@@ -4303,7 +5695,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         VersionPragma,
         seq!(
-            trie!(trieleaf!(Solidity, "solidity")),
+            with_trivia!(just("solidity")
+                .to(TokenKind::Solidity)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             one_or_more!(rule!(VersionPragmaSpecifier))
         )
     );
@@ -4311,12 +5713,12 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // «VersionPragmaOperator» = '^' | '~' | '=' | '<' | '>' | '<=' | '>=' ;
     define_token!(
         VersionPragmaOperator,
-        scan_make_node!(scan_trie!(
-            scan_trieprefix!("<", [scan_trieleaf!("="), scan_trieleaf!()]),
-            scan_trieleaf!("="),
-            scan_trieprefix!(">", [scan_trieleaf!("="), scan_trieleaf!()]),
-            scan_trieleaf!("^"),
-            scan_trieleaf!("~")
+        scan_make_node!(choice!(
+            just("<").ignore_then(choice!(just("=").ignored(), empty())),
+            just("=").ignored(),
+            just(">").ignore_then(choice!(just("=").ignored(), empty())),
+            just("^").ignored(),
+            just("~").ignored()
         ))
     );
 
@@ -4343,7 +5745,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         WhileStatement,
         seq!(
-            trie!(trieleaf!(While, "while")),
+            with_trivia!(just("while")
+                .to(TokenKind::While)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             delimited_by!(
                 terminal!(OpenParen, "("),
                 rule!(Expression),
@@ -4366,7 +5778,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         YulAssignmentStatement,
         seq!(
             separated_by!(rule!(YulIdentifierPath), terminal!(Comma, ",")),
-            trie!(trieleaf!(ColonEqual, ":=")),
+            with_trivia!(just(":=")
+                .to(TokenKind::ColonEqual)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(YulExpression)
         )
     );
@@ -4382,16 +5804,42 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     );
 
     // YulBreakStatement = 'break' ;
-    define_rule!(YulBreakStatement, trie!(trieleaf!(Break, "break")));
+    define_rule!(
+        YulBreakStatement,
+        with_trivia!(just("break")
+            .to(TokenKind::Break)
+            .map_with_span(|kind, span: SpanType| (kind, span)))
+        .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+            cst::Node::token(
+                kind,
+                lex::Node::chars_unwrapped(range),
+                leading_trivia,
+                trailing_trivia,
+            )
+        })
+    );
 
     // YulContinueStatement = 'continue' ;
-    define_rule!(YulContinueStatement, trie!(trieleaf!(Continue, "continue")));
+    define_rule!(
+        YulContinueStatement,
+        with_trivia!(just("continue")
+            .to(TokenKind::Continue)
+            .map_with_span(|kind, span: SpanType| (kind, span)))
+        .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+            cst::Node::token(
+                kind,
+                lex::Node::chars_unwrapped(range),
+                leading_trivia,
+                trailing_trivia,
+            )
+        })
+    );
 
     // «YulDecimalNumberLiteral» = '0' | '1'…'9' { '0'…'9' } ;
     define_token!(
         YulDecimalNumberLiteral,
         scan_make_node!(scan_choice!(
-            scan_trie!(scan_trieleaf!("0")),
+            just("0").ignored(),
             scan_seq!(
                 scan_terminal!(|&c: &char| ('1' <= c && c <= '9')),
                 scan_zero_or_more!(scan_terminal!(|&c: &char| ('0' <= c && c <= '9')))
@@ -4413,7 +5861,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         YulForStatement,
         seq!(
-            trie!(trieleaf!(For, "for")),
+            with_trivia!(just("for")
+                .to(TokenKind::For)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(YulBlock),
             rule!(YulExpression),
             rule!(YulBlock),
@@ -4438,7 +5896,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         YulFunctionDefinition,
         seq!(
-            trie!(trieleaf!(Function, "function")),
+            with_trivia!(just("function")
+                .to(TokenKind::Function)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             token!(YulIdentifier),
             delimited_by!(
                 terminal!(OpenParen, "("),
@@ -4450,7 +5918,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                 terminal!(CloseParen, ")")
             ),
             optional!(seq!(
-                trie!(trieleaf!(MinusGreater, "->")),
+                with_trivia!(just("->")
+                    .to(TokenKind::MinusGreater)
+                    .map_with_span(|kind, span: SpanType| (kind, span)))
+                .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                    cst::Node::token(
+                        kind,
+                        lex::Node::chars_unwrapped(range),
+                        leading_trivia,
+                        trailing_trivia,
+                    )
+                }),
                 separated_by!(Results, token!(YulIdentifier), terminal!(Comma, ","))
             )),
             rule!(YulBlock)
@@ -4461,7 +5939,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_token!(
         YulHexLiteral,
         scan_make_node!(scan_seq!(
-            scan_trie!(scan_trieleaf!("0x")),
+            just("0x").ignored(),
             scan_one_or_more!(scan_terminal!(|&c: &char| ('0' <= c && c <= '9')
                 || ('a' <= c && c <= 'f')
                 || ('A' <= c && c <= 'F')))
@@ -4483,23 +5961,20 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                     || ('A' <= c && c <= 'Z')
                     || ('0' <= c && c <= '9')))
             ),
-            scan_trie!(
-                scan_trieleaf!("break"),
-                scan_trieprefix!("c", [scan_trieleaf!("ase"), scan_trieleaf!("ontinue")]),
-                scan_trieleaf!("default"),
-                scan_trieprefix!(
-                    "f",
-                    [
-                        scan_trieleaf!("alse"),
-                        scan_trieleaf!("or"),
-                        scan_trieleaf!("unction")
-                    ]
-                ),
-                scan_trieleaf!("hex"),
-                scan_trieleaf!("if"),
-                scan_trieprefix!("le", [scan_trieleaf!("ave"), scan_trieleaf!("t")]),
-                scan_trieleaf!("switch"),
-                scan_trieleaf!("true")
+            choice!(
+                just("break").ignored(),
+                just("c").ignore_then(choice!(just("ase").ignored(), just("ontinue").ignored())),
+                just("default").ignored(),
+                just("f").ignore_then(choice!(
+                    just("alse").ignored(),
+                    just("or").ignored(),
+                    just("unction").ignored()
+                )),
+                just("hex").ignored(),
+                just("if").ignored(),
+                just("le").ignore_then(choice!(just("ave").ignored(), just("t").ignored())),
+                just("switch").ignored(),
+                just("true").ignored()
             )
         ))
     );
@@ -4514,7 +5989,17 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         YulIfStatement,
         seq!(
-            trie!(trieleaf!(If, "if")),
+            with_trivia!(just("if")
+                .to(TokenKind::If)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(YulExpression),
             rule!(YulBlock)
         )
@@ -4523,28 +6008,38 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // «YulKeyword» = «BooleanLiteral» | 'break' | 'case' | 'continue' | 'default' | 'for' | 'function' | 'hex' | 'if' | 'leave' | 'let' | 'switch' ;
     define_token!(
         YulKeyword,
-        scan_make_node!(scan_trie!(
-            scan_trieleaf!("break"),
-            scan_trieprefix!("c", [scan_trieleaf!("ase"), scan_trieleaf!("ontinue")]),
-            scan_trieleaf!("default"),
-            scan_trieprefix!(
-                "f",
-                [
-                    scan_trieleaf!("alse"),
-                    scan_trieleaf!("or"),
-                    scan_trieleaf!("unction")
-                ]
-            ),
-            scan_trieleaf!("hex"),
-            scan_trieleaf!("if"),
-            scan_trieprefix!("le", [scan_trieleaf!("ave"), scan_trieleaf!("t")]),
-            scan_trieleaf!("switch"),
-            scan_trieleaf!("true")
+        scan_make_node!(choice!(
+            just("break").ignored(),
+            just("c").ignore_then(choice!(just("ase").ignored(), just("ontinue").ignored())),
+            just("default").ignored(),
+            just("f").ignore_then(choice!(
+                just("alse").ignored(),
+                just("or").ignored(),
+                just("unction").ignored()
+            )),
+            just("hex").ignored(),
+            just("if").ignored(),
+            just("le").ignore_then(choice!(just("ave").ignored(), just("t").ignored())),
+            just("switch").ignored(),
+            just("true").ignored()
         ))
     );
 
     // YulLeaveStatement = 'leave' ;
-    define_rule!(YulLeaveStatement, trie!(trieleaf!(Leave, "leave")));
+    define_rule!(
+        YulLeaveStatement,
+        with_trivia!(just("leave")
+            .to(TokenKind::Leave)
+            .map_with_span(|kind, span: SpanType| (kind, span)))
+        .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+            cst::Node::token(
+                kind,
+                lex::Node::chars_unwrapped(range),
+                leading_trivia,
+                trailing_trivia,
+            )
+        })
+    );
 
     // YulLiteral = «YulDecimalNumberLiteral» | «YulHexLiteral» | «AsciiStringLiteral» | «BooleanLiteral» | «HexStringLiteral» ;
     define_rule!(
@@ -4580,12 +6075,45 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         YulSwitchStatement,
         seq!(
-            trie!(trieleaf!(Switch, "switch")),
+            with_trivia!(just("switch")
+                .to(TokenKind::Switch)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             rule!(YulExpression),
             one_or_more!(seq!(
                 choice!(
-                    seq!(trie!(trieleaf!(Case, "case")), rule!(YulLiteral)),
-                    trie!(trieleaf!(Default, "default"))
+                    seq!(
+                        with_trivia!(just("case")
+                            .to(TokenKind::Case)
+                            .map_with_span(|kind, span: SpanType| (kind, span)))
+                        .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                            cst::Node::token(
+                                kind,
+                                lex::Node::chars_unwrapped(range),
+                                leading_trivia,
+                                trailing_trivia,
+                            )
+                        }),
+                        rule!(YulLiteral)
+                    ),
+                    with_trivia!(just("default")
+                        .to(TokenKind::Default)
+                        .map_with_span(|kind, span: SpanType| (kind, span)))
+                    .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                        cst::Node::token(
+                            kind,
+                            lex::Node::chars_unwrapped(range),
+                            leading_trivia,
+                            trailing_trivia,
+                        )
+                    })
                 ),
                 rule!(YulBlock)
             ))
@@ -4596,10 +6124,30 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     define_rule!(
         YulVariableDeclaration,
         seq!(
-            trie!(trieleaf!(Let, "let")),
+            with_trivia!(just("let")
+                .to(TokenKind::Let)
+                .map_with_span(|kind, span: SpanType| (kind, span)))
+            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                cst::Node::token(
+                    kind,
+                    lex::Node::chars_unwrapped(range),
+                    leading_trivia,
+                    trailing_trivia,
+                )
+            }),
             separated_by!(rule!(YulIdentifierPath), terminal!(Comma, ",")),
             optional!(seq!(
-                trie!(trieleaf!(ColonEqual, ":=")),
+                with_trivia!(just(":=")
+                    .to(TokenKind::ColonEqual)
+                    .map_with_span(|kind, span: SpanType| (kind, span)))
+                .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                    cst::Node::token(
+                        kind,
+                        lex::Node::chars_unwrapped(range),
+                        leading_trivia,
+                        trailing_trivia,
+                    )
+                }),
                 rule!(YulExpression)
             ))
         )

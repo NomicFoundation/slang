@@ -4,17 +4,17 @@
   kind: "Rule"
   unversioned:
     choice:
-      - reference: "TypeExpression"
-      - reference: "NewExpression"
+      - reference: "Identifier"
       - reference: "ParenthesisExpression"
-      - reference: "ElementaryType"
       - reference: "ArrayLiteral"
       - reference: "AsciiStringLiteral"
       - reference: "UnicodeStringLiteral"
       - reference: "HexStringLiteral"
       - reference: "NumericLiteral"
       - reference: "BooleanLiteral"
-      - reference: "Identifier"
+      - reference: "NewExpression"
+      - reference: "TypeExpression"
+      - reference: "ElementaryType"
 
 - name: "TypeExpression"
   kind: "Rule"

@@ -49,6 +49,14 @@ fn function_call() -> Result<()> {
 }
 
 #[test]
+fn function_call_argument_has_type_name_as_prefix() -> Result<()> {
+    return run(
+        "Expression",
+        "function_call_argument_has_type_name_as_prefix",
+    );
+}
+
+#[test]
 fn function_call_chain() -> Result<()> {
     return run("Expression", "function_call_chain");
 }
@@ -91,6 +99,11 @@ fn member_access_function_call() -> Result<()> {
 #[test]
 fn member_access_index_access() -> Result<()> {
     return run("Expression", "member_access_index_access");
+}
+
+#[test]
+fn overlapping_operators() -> Result<()> {
+    return run("Expression", "overlapping_operators");
 }
 
 #[test]

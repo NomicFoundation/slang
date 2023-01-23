@@ -24,18 +24,20 @@ impl<'context> CharacterFilter<'context> {
 impl TerminalTrie {
     pub fn to_lexer_code(&self, code: &mut CodeGenerator) -> TokenStream {
         let code = RefCell::new(code);
-        let lexers = self.generate(
-            &|label, children| quote!(lex_trieprefix!(#label, [ #(#children),* ])),
-            &|name, label| {
-                let kind = code.borrow_mut().add_token_kind(name.cloned().unwrap());
+        let lexer = self.generate(
+            &|label, children| quote!( just(#label).ignore_then(choice!( #(#children),* )) ),
+            &|entry, label| {
+                let kind = code
+                    .borrow_mut()
+                    .add_token_kind(entry.name.clone().unwrap());
                 if label.is_empty() {
-                    quote!(lex_trieleaf!(#kind))
+                    quote!( empty().to(TokenKind::#kind) )
                 } else {
-                    quote!(lex_trieleaf!(#kind, #label))
+                    quote!( just(#label).to(TokenKind::#kind) )
                 }
             },
         );
-        quote!(lex_trie!(#(#lexers),*))
+        quote!( #lexer.map_with_span(|_, span: SpanType| lex::Node::chars(span)) )
     }
 }
 
@@ -172,7 +174,7 @@ impl<'context> CombinatorNode<'context> {
             /**********************************************************************
              * Precedence parsing
              */
-            Self::PrecedenceRule { .. } => unreachable!(),
+            Self::PrecedenceExpressionRule { .. } => unreachable!(),
 
             /**********************************************************************
              * Terminals and their utilities
@@ -350,34 +352,6 @@ pub fn parse_macros() -> TokenStream {
                         lex::Node::sequence(v)
                     })
             };
-        }
-
-        #[allow(unused_macros)]
-        macro_rules! lex_trie {
-            ( $expr:expr ) => {
-                $expr.map_with_span(|_, span: SpanType| lex::Node::chars(span))
-            };
-            ( $($expr:expr),+ ) => {
-                choice::<_, ErrorType>(($($expr),+)).map_with_span(|_, span: SpanType|
-                    lex::Node::chars(span))
-            };
-        }
-
-        #[allow(unused_macros)]
-        macro_rules! lex_trieleaf {
-            ( $kind:ident, $string:literal ) => {
-                just($string).to(TokenKind::$kind)
-            };
-            ( $kind:ident ) => {
-                empty().to(TokenKind::$kind)
-            };
-        }
-
-        #[allow(unused_macros)]
-        macro_rules! lex_trieprefix {
-            ($string:literal , [ $($expr:expr),+ ] ) => (
-                just($string).ignore_then(choice::<_, ErrorType>(($($expr),+)))
-            )
         }
 
         #[allow(unused_macros)]

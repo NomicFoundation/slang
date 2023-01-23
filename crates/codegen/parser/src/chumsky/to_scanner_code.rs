@@ -20,17 +20,16 @@ impl<'context> CharacterFilter<'context> {
 
 impl TerminalTrie {
     pub fn to_scanner_code(&self) -> TokenStream {
-        let scanners = self.generate(
-            &|label, children| quote!(scan_trieprefix!(#label, [ #(#children),* ])),
+        self.generate(
+            &|label, children| quote!( just(#label).ignore_then(choice!( #(#children),* )) ),
             &|_, label| {
                 if label.is_empty() {
-                    quote!(scan_trieleaf!())
+                    quote!(empty())
                 } else {
-                    quote!(scan_trieleaf!(#label))
+                    quote!(just(#label).ignored())
                 }
             },
-        );
-        quote!(scan_trie!(#(#scanners),*))
+        )
     }
 }
 
@@ -108,7 +107,7 @@ impl<'context> CombinatorNode<'context> {
             /**********************************************************************
              * Precedence parsing
              */
-            Self::PrecedenceRule { .. } => unreachable!(),
+            Self::PrecedenceExpressionRule { .. } => unreachable!(),
 
             /**********************************************************************
              * Terminals and their utilities
@@ -157,7 +156,7 @@ pub(crate) fn parse_macros() -> TokenStream {
         #[allow(unused_macros)]
         macro_rules! scan_seq {
             ( $head:expr , $($tail:expr),+ ) => {
-                $head.then_ignore(scan_seq!($($tail),+ ))
+                $head.ignored().then_ignore(scan_seq!($($tail),+ ))
             };
 
             ( $head:expr ) => {
@@ -198,33 +197,6 @@ pub(crate) fn parse_macros() -> TokenStream {
             ($expr:expr, $separator:expr) => {
                 $expr.then_ignore($separator.then_ignore($expr).repeated())
             };
-        }
-
-        #[allow(unused_macros)]
-        macro_rules! scan_trie {
-            ($expr:expr) => {
-                $expr
-            };
-            ($($expr:expr),+ ) => {
-                choice::<_, ErrorType>(($($expr),+))
-            };
-        }
-
-        #[allow(unused_macros)]
-        macro_rules! scan_trieleaf {
-            ( $string:literal ) => {
-                just($string).ignored()
-            };
-            () => {
-                empty()
-            };
-        }
-
-        #[allow(unused_macros)]
-        macro_rules! scan_trieprefix {
-            ($string:literal , [ $($expr:expr),+ ] ) => (
-                just($string).ignore_then(choice::<_, ErrorType>(($($expr),+)))
-            )
         }
 
         #[allow(unused_macros)]
