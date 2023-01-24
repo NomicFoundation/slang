@@ -6,10 +6,10 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..3
-      - IndexAccessExpression (Rule): # 0..3
-          - PrimaryExpression (Rule): # 0..1
+  - Expression (Rule): # 0..3 "x[]"
+      - IndexAccessExpression (Rule): # 0..3 "x[]"
+          - PrimaryExpression (Rule): # 0..1 "x"
               - Identifier (Token): "x" # 0..1
-          - Group: # 1..3
+          - Group: # 1..3 "[]"
               - OpenBracket (Token): "[" # 1..2
               - CloseBracket (Token): "]" # 2..3

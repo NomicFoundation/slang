@@ -6,21 +6,21 @@ Source: >
 Errors: []
 
 Tree:
-  - VersionPragma (Rule): # 0..68
+  - VersionPragma (Rule): # 0..68 "solidity /* comments */ 0 /* are */ . /* allowed *..."
       - Solidity (Token): "solidity" # 0..8
-      - Group: # 9..68
-          - VersionPragmaSpecifier (Rule): # 9..68
-              - Group: # 9..68
-                  - VersionPragmaValue (Token): # 9..25
+      - Group: # 9..68 "/* comments */ 0 /* are */ . /* allowed */ 0 . /* ..."
+          - VersionPragmaSpecifier (Rule): # 9..68 "/* comments */ 0 /* are */ . /* allowed */ 0 . /* ..."
+              - Group: # 9..68 "/* comments */ 0 /* are */ . /* allowed */ 0 . /* ..."
+                  - VersionPragmaValue (Token): # 9..25 "/* comments */ 0"
                       - MultilineComment (Trivia): "/* comments */" # 9..23
                       - Contents: "0" # 24..25
-                  - Period (Token): # 26..37
+                  - Period (Token): # 26..37 "/* are */ ."
                       - MultilineComment (Trivia): "/* are */" # 26..35
                       - Contents: "." # 36..37
-                  - VersionPragmaValue (Token): # 38..53
+                  - VersionPragmaValue (Token): # 38..53 "/* allowed */ 0"
                       - MultilineComment (Trivia): "/* allowed */" # 38..51
                       - Contents: "0" # 52..53
                   - Period (Token): "." # 54..55
-                  - VersionPragmaValue (Token): # 56..68
+                  - VersionPragmaValue (Token): # 56..68 "/* here */ 0"
                       - MultilineComment (Trivia): "/* here */" # 56..66
                       - Contents: "0" # 67..68

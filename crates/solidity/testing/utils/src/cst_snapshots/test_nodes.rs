@@ -158,21 +158,22 @@ impl TestNode {
         return Some(ranges.first()?.start..ranges.last()?.end);
     }
 
-    pub fn render_contents(&self, source: &str) -> Result<String> {
-        if !self.children.is_empty() {
-            return Ok("".to_owned());
-        }
+    pub fn render_preview(&self, source: &str, range: &Range<usize>) -> Result<String> {
+        let mut contents = source
+            .chars()
+            .skip(range.start)
+            .take(range.end - range.start)
+            .collect::<String>();
 
-        let mut contents = match &self.range {
-            Some(range) => source[range.to_owned()].to_owned(),
-            None => "".to_owned(),
-        };
-
-        // Trim long lines:
+        // Trim long values:
         let max_length = 50;
         if contents.len() > max_length {
             let separator = "...";
-            contents = contents[0..(max_length - separator.len())].to_owned() + separator
+            contents = contents
+                .chars()
+                .take(max_length)
+                .chain(separator.chars())
+                .collect();
         }
 
         // Double quote, and escape line breaks:

@@ -6,8 +6,8 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..4
-      - UnaryPrefixExpression (Rule): # 0..4
+  - Expression (Rule): # 0..4 "-foo"
+      - UnaryPrefixExpression (Rule): # 0..4 "-foo"
           - Minus (Token): "-" # 0..1
-          - PrimaryExpression (Rule): # 1..4
+          - PrimaryExpression (Rule): # 1..4 "foo"
               - Identifier (Token): "foo" # 1..4

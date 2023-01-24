@@ -6,9 +6,9 @@ Source: >
 Errors: []
 
 Tree:
-  - DeleteStatement (Rule): # 0..11
+  - DeleteStatement (Rule): # 0..11 "delete foo;"
       - Delete (Token): "delete" # 0..6
-      - Expression (Rule): # 7..10
-          - PrimaryExpression (Rule): # 7..10
+      - Expression (Rule): # 7..10 "foo"
+          - PrimaryExpression (Rule): # 7..10 "foo"
               - Identifier (Token): "foo" # 7..10
       - Semicolon (Token): ";" # 10..11

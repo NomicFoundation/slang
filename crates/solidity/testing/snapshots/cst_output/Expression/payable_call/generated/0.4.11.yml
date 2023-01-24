@@ -6,17 +6,17 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..14
-      - FunctionCallExpression (Rule): # 0..14
-          - PrimaryExpression (Rule): # 0..7
-              - ElementaryType (Rule): # 0..7
-                  - PayableType (Rule): # 0..7
+  - Expression (Rule): # 0..14 "payable(value)"
+      - FunctionCallExpression (Rule): # 0..14 "payable(value)"
+          - PrimaryExpression (Rule): # 0..7 "payable"
+              - ElementaryType (Rule): # 0..7 "payable"
+                  - PayableType (Rule): # 0..7 "payable"
                       - Payable (Token): "payable" # 0..7
-          - Group: # 7..14
-              - ArgumentList (Rule): # 7..14
+          - Group: # 7..14 "(value)"
+              - ArgumentList (Rule): # 7..14 "(value)"
                   - OpenParen (Token): "(" # 7..8
-                  - PositionalArgumentList (Rule): # 8..13
-                      - Expression (Rule): # 8..13
-                          - PrimaryExpression (Rule): # 8..13
+                  - PositionalArgumentList (Rule): # 8..13 "value"
+                      - Expression (Rule): # 8..13 "value"
+                          - PrimaryExpression (Rule): # 8..13 "value"
                               - Identifier (Token): "value" # 8..13
                   - CloseParen (Token): ")" # 13..14

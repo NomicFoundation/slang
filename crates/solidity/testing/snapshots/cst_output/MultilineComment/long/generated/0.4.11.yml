@@ -25,4 +25,4 @@ Source: >
 Errors: []
 
 Tree:
-  - MultilineComment (Token): "/*\n * Lorem ipsum dolor sit amet, consectetur a..." # 0..1985
+  - MultilineComment (Token): "/*\n * Lorem ipsum dolor sit amet, consectetur adip..." # 0..1985
