@@ -476,9 +476,9 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         };
     }
     #[allow(unused_macros)]
-    macro_rules ! trivia_token { ($ token_rule : ident) => { rule ! ($ token_rule) . map (| token : Option < Rc < lex :: Node >> | { let token = token . unwrap () ; if let lex :: Node :: Named (kind , element) = token . as_ref () { cst :: Node :: trivia_token (* kind , element . clone ()) } else { unreachable ! ("a token rule should always return a named token, but rule {} returned {:?}" , stringify ! ($ token_rule) , token) } }) } ; }
+    macro_rules ! trivia_token { ($ token_rule : ident) => { rule ! ($ token_rule) . map (| token : Option < Rc < lex :: Node >> | { let token = token . unwrap () ; if let lex :: NodeContents :: Named (kind , element) = & token . contents { cst :: Node :: trivia_token (* kind , element . clone ()) } else { unreachable ! ("a token rule should always return a named token, but rule {} returned {:?}" , stringify ! ($ token_rule) , token) } }) } ; }
     #[allow(unused_macros)]
-    macro_rules ! token { ($ token_rule : ident) => { with_trivia ! ($ token_rule . clone ()) . map (| ((leading_trivia , token) , trailing_trivia) : ((_ , Option < Rc < lex :: Node >>) , _) | { let token = token . unwrap () ; if let lex :: Node :: Named (kind , element) = token . as_ref () { cst :: Node :: token (* kind , element . clone () , leading_trivia , trailing_trivia) } else { unreachable ! ("a token rule should always return a named token, but rule {} returned {:?}" , stringify ! ($ token_rule) , token) } }) } ; }
+    macro_rules ! token { ($ token_rule : ident) => { with_trivia ! ($ token_rule . clone ()) . map (| ((leading_trivia , token) , trailing_trivia) : ((_ , Option < Rc < lex :: Node >>) , _) | { let token = token . unwrap () ; if let lex :: NodeContents :: Named (kind , element) = & token . contents { cst :: Node :: token (* kind , element . clone () , leading_trivia , trailing_trivia) } else { unreachable ! ("a token rule should always return a named token, but rule {} returned {:?}" , stringify ! ($ token_rule) , token) } }) } ; }
     #[allow(unused_macros)]
     macro_rules! rule {
         ($ rule : ident) => {
