@@ -8,12 +8,18 @@ source "$(dirname "${BASH_SOURCE[0]}")/../_common.sh"
 export RUST_BACKTRACE="full"
 
 if [[ "${CI:-}" ]]; then
-  # Strict checks for rustc
+  # Strict checks for CI
   declare -a rust_flags=(
     "${RUSTFLAGS:-}"
     "--warn unused_crate_dependencies"
     "--deny warnings"
   )
-
-  export RUSTFLAGS="${rust_flags[*]}"
+else
+  # Optimizations for local development
+  declare -a rust_flags=(
+    "${RUSTFLAGS:-}"
+    "--codegen target-cpu=native"
+  )
 fi
+
+export RUSTFLAGS="${rust_flags[*]}"

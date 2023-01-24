@@ -7,15 +7,11 @@ use crate::compatible_versions::filter_compatible_versions;
 #[test]
 fn exact_single_version() -> Result<()> {
     return test_aux(
-        &[
-            Version::parse("0.6.0")?,
-            Version::parse("0.7.0")?,
-            Version::parse("0.8.0")?,
-        ],
+        &["0.6.0", "0.7.0", "0.8.0"],
         "
             pragma solidity 0.7.0;
         ",
-        &vec![&Version::parse("0.7.0")?],
+        &["0.7.0"],
     );
 }
 
@@ -23,22 +19,12 @@ fn exact_single_version() -> Result<()> {
 fn version_range() -> Result<()> {
     return test_aux(
         &[
-            Version::parse("0.7.0")?,
-            Version::parse("0.7.1")?,
-            Version::parse("0.7.2")?,
-            Version::parse("0.7.3")?,
-            Version::parse("0.7.4")?,
-            Version::parse("0.7.5")?,
-            Version::parse("0.7.6")?,
+            "0.7.0", "0.7.1", "0.7.2", "0.7.3", "0.7.4", "0.7.5", "0.7.6",
         ],
         "
             pragma solidity >=0.7.2 <=0.7.4;
         ",
-        &vec![
-            &Version::parse("0.7.2")?,
-            &Version::parse("0.7.3")?,
-            &Version::parse("0.7.4")?,
-        ],
+        &["0.7.2", "0.7.3", "0.7.4"],
     );
 }
 
@@ -46,32 +32,23 @@ fn version_range() -> Result<()> {
 fn multiple_version_pragmas() -> Result<()> {
     return test_aux(
         &[
-            Version::parse("0.8.0")?,
-            Version::parse("0.8.1")?,
-            Version::parse("0.8.2")?,
-            Version::parse("0.8.3")?,
-            Version::parse("0.8.4")?,
-            Version::parse("0.8.5")?,
-            Version::parse("0.8.6")?,
-            Version::parse("0.8.7")?,
-            Version::parse("0.8.8")?,
-            Version::parse("0.8.9")?,
+            "0.8.0", "0.8.1", "0.8.2", "0.8.3", "0.8.4", "0.8.5", "0.8.6", "0.8.7", "0.8.8",
+            "0.8.9",
         ],
         "
             pragma solidity ^0.8.3;
             pragma solidity <0.8.7;
         ",
-        &vec![
-            &Version::parse("0.8.3")?,
-            &Version::parse("0.8.4")?,
-            &Version::parse("0.8.5")?,
-            &Version::parse("0.8.6")?,
-        ],
+        &["0.8.3", "0.8.4", "0.8.5", "0.8.6"],
     );
 }
 
-fn test_aux(all_versions: &[Version], source: &str, expected: &Vec<&Version>) -> Result<()> {
-    let source_id = "test.sol";
+fn test_aux(all_versions: &[&str], source: &str, expected: &[&str]) -> Result<()> {
+    let all_versions = all_versions
+        .iter()
+        .map(|version| Version::parse(version))
+        .collect::<Result<Vec<Version>, semver::Error>>()?;
+
     let latest_version = all_versions.last().context("No versions provided")?;
     let output = Language::new(latest_version.to_owned())
         .get_parser(ProductionKind::SourceUnit)
@@ -80,6 +57,7 @@ fn test_aux(all_versions: &[Version], source: &str, expected: &Vec<&Version>) ->
     let parse_tree = if let Some(root_node) = output.parse_tree() {
         root_node
     } else {
+        let source_id = "test.sol";
         let errors = output
             .errors_as_strings(source_id, source, /* with_colour */ true)
             .join("\n");
@@ -87,8 +65,10 @@ fn test_aux(all_versions: &[Version], source: &str, expected: &Vec<&Version>) ->
         bail!("Failed to produce CST using latest version {latest_version}:\n{errors}");
     };
 
-    let actual =
-        &filter_compatible_versions(all_versions, &parse_tree, source)?.collect::<Vec<&Version>>();
+    let actual = filter_compatible_versions(&all_versions, &parse_tree, source)?
+        .iter()
+        .map(|version| version.to_string())
+        .collect::<Vec<String>>();
 
     assert_eq!(expected, actual);
 

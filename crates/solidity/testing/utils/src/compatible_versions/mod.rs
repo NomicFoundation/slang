@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod tests;
 
-use std::rc::Rc;
+use std::{collections::BTreeSet, rc::Rc};
 
 use anyhow::{Context, Error, Result};
 use semver::{Comparator, Version};
@@ -11,10 +11,10 @@ use solidity_rust_lib::generated::{
 };
 
 pub fn filter_compatible_versions<'a>(
-    versions: &'a [Version],
+    versions: &'a Vec<Version>,
     parse_tree: &Rc<cst::Node>,
     source: &str,
-) -> Result<impl Iterator<Item = &'a Version>> {
+) -> Result<BTreeSet<&'a Version>> {
     let mut collector = VersionSpecifierCollector {
         source,
         comparators: vec![],
@@ -22,12 +22,15 @@ pub fn filter_compatible_versions<'a>(
 
     parse_tree.visit(&mut collector)?;
 
-    let compatible_versions = versions.iter().filter(move |version| {
-        collector
-            .comparators
-            .iter()
-            .all(|comparator| comparator.matches(version))
-    });
+    let compatible_versions = versions
+        .iter()
+        .filter(move |version| {
+            collector
+                .comparators
+                .iter()
+                .all(|comparator| comparator.matches(version))
+        })
+        .collect();
 
     return Ok(compatible_versions);
 }
@@ -49,10 +52,13 @@ impl<'a> Visitor<Error> for VersionSpecifierCollector<'a> {
             return Ok(VisitorEntryResponse::StepIn);
         }
 
-        let mut specifier = String::new();
-        self.collect_non_trivia_parts(node, &mut specifier)?;
+        let mut parts = String::new();
+        self.collect_non_trivia_parts(node, &mut parts)?;
 
-        let comparator = Comparator::parse(&specifier)?;
+        let comparator = Comparator::parse(&parts)
+            .context(format!("Failed to parse specifier: '{parts}'"))
+            .context(format!("Failed to extract specifier from node: {node:?}"))?;
+
         self.comparators.push(comparator);
 
         return Ok(VisitorEntryResponse::StepOver);
@@ -60,19 +66,20 @@ impl<'a> Visitor<Error> for VersionSpecifierCollector<'a> {
 }
 
 impl<'a> VersionSpecifierCollector<'a> {
-    fn collect_non_trivia_parts(&mut self, node: &Node, specifier: &mut String) -> Result<()> {
+    fn collect_non_trivia_parts(&mut self, node: &Node, parts: &mut String) -> Result<()> {
         match node {
             Node::Token { lex_node, .. } => {
                 let range = lex_node.range();
-                let part = &self.source.get(range.to_owned()).context(format!(
-                    "Failed to extract source part at range '{range:?}'"
-                ))?;
-
-                specifier.push_str(part);
+                parts.extend(
+                    self.source
+                        .chars()
+                        .skip(range.start)
+                        .take(range.end - range.start),
+                );
             }
             Node::Rule { children, .. } | Node::Group { children, .. } => {
                 for child in children {
-                    self.collect_non_trivia_parts(child, specifier)?;
+                    self.collect_non_trivia_parts(child, parts)?;
                 }
             }
         };

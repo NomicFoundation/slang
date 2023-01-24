@@ -1,9 +1,12 @@
 mod datasets;
 mod reporting;
 
-use std::path::PathBuf;
+use std::{
+    collections::{BTreeMap, BTreeSet},
+    path::PathBuf,
+};
 
-use anyhow::{Context, Result};
+use anyhow::Result;
 use codegen_schema::types::grammar::Grammar;
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 use semver::Version;
@@ -48,7 +51,11 @@ fn process_dataset(dataset: &impl Dataset, all_versions: &Vec<Version>) -> Resul
 
     source_files
         .par_iter()
-        .map(|file_path| process_source_file(file_path, all_versions, &reporter))
+        .map(|file_path| {
+            process_source_file(file_path, all_versions, &reporter)?;
+            reporter.report_file_completed();
+            return Ok(());
+        })
         .collect::<Result<()>>()?;
 
     let total_errors = reporter.finish();
@@ -67,31 +74,48 @@ fn process_source_file(
     let source_id = file_path.to_str().unwrap();
     let source = &std::fs::read_to_string(file_path)?;
 
-    let compatible_versions = {
-        let latest_version = all_versions.last().context("No versions found.")?;
-        let output = &Language::new(latest_version.to_owned())
-            .get_parser(ProductionKind::SourceUnit)
-            .parse(source);
-        reporter.report_test_result(source_id, source, latest_version, output);
+    let latest_version = all_versions.last().expect("No versions found.");
+    let output = &Language::new(latest_version.to_owned())
+        .get_parser(ProductionKind::SourceUnit)
+        .parse(source);
 
-        if let Some(parse_tree) = output.parse_tree() {
-            filter_compatible_versions(all_versions, &parse_tree, source).context(format!(
-                "Failed to extract compatible versions for file: {source_id}"
-            ))?
-        } else {
-            // Skip this file if we failed to filter compatible versions.
-            return Ok(());
-        }
+    reporter.report_test_result(source_id, source, latest_version, output);
+
+    let parse_tree = if let Some(parse_tree) = output.parse_tree() {
+        parse_tree
+    } else {
+        // Skip this file if we failed to filter compatible versions.
+        return Ok(());
     };
 
-    for version in compatible_versions {
+    let compatible_versions = filter_compatible_versions(all_versions, &parse_tree, source).expect(
+        &format!("Failed to extract compatible versions from file: {source_id}"),
+    );
+
+    let test_versions = filter_test_versions(compatible_versions);
+
+    for version in test_versions {
         let output = &Language::new(version.to_owned())
             .get_parser(ProductionKind::SourceUnit)
             .parse(source);
-        reporter.report_test_result(source_id, source, version, output);
+
+        reporter.report_test_result(source_id, source, &version, output);
     }
 
-    reporter.report_file_completed();
-
     return Ok(());
+}
+
+fn filter_test_versions<'a>(
+    compatible_versions: BTreeSet<&'a Version>,
+) -> impl Iterator<Item = &'a Version> {
+    // solc doesn't follow SemVer, and introduces breaking changes during minor version upgrades.
+    // Let's run against the latest release of each minor release.
+    let mut test_versions = BTreeMap::new();
+
+    for version in compatible_versions {
+        let key = version.major ^ version.minor;
+        test_versions.insert(key, version);
+    }
+
+    return test_versions.into_values();
 }
