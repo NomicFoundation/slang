@@ -7,5 +7,5 @@ Errors: []
 
 Tree:
   - NumericLiteral (Rule): # 0..8 "10 ether"
-      - DecimalNumber (Token): "10" # 0..2
+      - DecimalLiteral (Token): "10" # 0..2
       - NumberUnit (Token): "ether" # 3..8

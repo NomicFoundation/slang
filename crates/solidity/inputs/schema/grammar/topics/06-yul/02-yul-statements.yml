@@ -77,21 +77,6 @@
       - terminal: ":="
       - reference: "YulExpression"
 
-- name: "YulFunctionCall"
-  kind: "Rule"
-  unversioned:
-    sequence:
-      - reference: "YulIdentifier"
-      - delimitedBy:
-          open: "("
-          expression:
-            optional:
-              separatedBy:
-                separator: ","
-                expression:
-                  reference: "YulExpression"
-          close: ")"
-
 - name: "YulIfStatement"
   kind: "Rule"
   unversioned:

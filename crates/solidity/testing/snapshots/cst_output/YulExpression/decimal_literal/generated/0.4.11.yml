@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 123                                                                              │ 0..3
+
+Errors: []
+
+Tree:
+  - YulExpression (Rule): # 0..3 "123"
+      - YulLiteral (Rule): # 0..3 "123"
+          - YulDecimalLiteral (Token): "123" # 0..3

@@ -17,10 +17,10 @@ Tree:
                       - Expression (Rule): # 2..3 "1"
                           - PrimaryExpression (Rule): # 2..3 "1"
                               - NumericLiteral (Rule): # 2..3 "1"
-                                  - DecimalNumber (Token): "1" # 2..3
+                                  - DecimalLiteral (Token): "1" # 2..3
                       - Comma (Token): "," # 3..4
                       - Expression (Rule): # 5..6 "2"
                           - PrimaryExpression (Rule): # 5..6 "2"
                               - NumericLiteral (Rule): # 5..6 "2"
-                                  - DecimalNumber (Token): "2" # 5..6
+                                  - DecimalLiteral (Token): "2" # 5..6
                   - CloseParen (Token): ")" # 6..7
