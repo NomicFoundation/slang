@@ -4297,7 +4297,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         )
     );
 
-    // NewExpression = 'new' IdentifierPath ArgumentList ;
+    // NewExpression = 'new' TypeName ;
     define_rule!(
         NewExpression,
         seq!(
@@ -4312,8 +4312,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                     trailing_trivia,
                 )
             }),
-            rule!(IdentifierPath),
-            rule!(ArgumentList)
+            rule!(TypeName)
         )
     );
 

@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ new Foo[]                                                                        │ 0..9
+
+Errors: []
+
+Tree:
+  - NewExpression (Rule): # 0..9 "new Foo[]"
+      - New (Token): "new" # 0..3
+      - TypeName (Rule): # 4..9 "Foo[]"
+          - IdentifierPath (Rule): # 4..7 "Foo"
+              - Identifier (Token): "Foo" # 4..7
+          - Group: # 7..9 "[]"
+              - Group: # 7..9 "[]"
+                  - OpenBracket (Token): "[" # 7..8
+                  - CloseBracket (Token): "]" # 8..9

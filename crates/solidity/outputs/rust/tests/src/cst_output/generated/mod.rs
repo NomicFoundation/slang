@@ -21,6 +21,8 @@ mod Keyword;
 #[allow(non_snake_case)]
 mod MultilineComment;
 #[allow(non_snake_case)]
+mod NewExpression;
+#[allow(non_snake_case)]
 mod NumericLiteral;
 #[allow(non_snake_case)]
 mod SignedIntegerType;
