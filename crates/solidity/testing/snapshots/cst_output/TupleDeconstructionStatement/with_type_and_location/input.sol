@@ -1,0 +1,1 @@
+(bool memory x, bool storage y) = rhs;

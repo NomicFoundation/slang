@@ -1,0 +1,1 @@
+(memory with_location, without_location) = rhs;
