@@ -1,7 +1,4 @@
-use std::collections::BTreeSet;
-
 use codegen_schema::types::grammar::Grammar;
-use codegen_schema::types::productions::ProductionVersioning;
 use codegen_utils::context::CodegenContext;
 
 use super::code_generator::CodeGenerator;
@@ -47,17 +44,7 @@ impl GrammarParserGeneratorExtensions for Grammar {
 
 impl PrivateGrammarParserGeneratorExtensions for Grammar {
     fn create_code_generator(&self) -> CodeGenerator {
-        let mut version_breaks = BTreeSet::new();
-        version_breaks.insert(self.versions.first().unwrap());
-
-        for production in self.productions.values() {
-            match &production.versioning {
-                ProductionVersioning::Unversioned(_) => {}
-                ProductionVersioning::Versioned(versions) => {
-                    version_breaks.extend(versions.keys());
-                }
-            }
-        }
+        let version_breaks = self.collect_version_breaks();
 
         let mut generated_code = CodeGenerator::default();
 
