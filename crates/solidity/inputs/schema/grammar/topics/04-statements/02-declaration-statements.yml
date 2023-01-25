@@ -12,10 +12,16 @@
                 separator: ","
                 expression:
                   optional:
-                    sequence:
-                      - optional:
-                          reference: "TypeName"
-                      - reference: "Identifier"
+                    choice:
+                      - sequence:
+                          - reference: "TypeName"
+                          - optional:
+                              reference: "DataLocation"
+                          - reference: "Identifier"
+                      - sequence:
+                          - optional:
+                              reference: "DataLocation"
+                          - reference: "Identifier"
           close: ")"
       - terminal: "="
       - reference: "Expression"

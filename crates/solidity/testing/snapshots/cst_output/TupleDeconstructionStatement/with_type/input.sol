@@ -1,0 +1,1 @@
+(bool with_type, without_type) = rhs;

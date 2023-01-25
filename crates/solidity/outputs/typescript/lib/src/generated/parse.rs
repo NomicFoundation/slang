@@ -5216,14 +5216,21 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         )
     );
 
-    // TupleDeconstructionStatement = '(' [ [ [ TypeName ] «Identifier» ]  { ',' [ [ TypeName ] «Identifier» ] } ] ')' '=' Expression ';' ;
+    // TupleDeconstructionStatement = '(' [ [ TypeName [ DataLocation ] «Identifier» | [ DataLocation ] «Identifier» ]  { ',' [ TypeName [ DataLocation ] «Identifier» | [ DataLocation ] «Identifier» ] } ] ')' '=' Expression ';' ;
     define_rule!(
         TupleDeconstructionStatement,
         seq!(
             delimited_by!(
                 terminal!(OpenParen, "("),
                 optional!(separated_by!(
-                    optional!(seq!(optional!(rule!(TypeName)), token!(Identifier))),
+                    optional!(choice!(
+                        seq!(
+                            rule!(TypeName),
+                            optional!(rule!(DataLocation)),
+                            token!(Identifier)
+                        ),
+                        seq!(optional!(rule!(DataLocation)), token!(Identifier))
+                    )),
                     terminal!(Comma, ",")
                 )),
                 terminal!(CloseParen, ")")

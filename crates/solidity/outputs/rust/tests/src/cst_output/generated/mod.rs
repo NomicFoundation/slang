@@ -29,6 +29,8 @@ mod SingleLineComment;
 #[allow(non_snake_case)]
 mod SourceUnit;
 #[allow(non_snake_case)]
+mod TupleDeconstructionStatement;
+#[allow(non_snake_case)]
 mod UnsignedIntegerType;
 #[allow(non_snake_case)]
 mod VersionPragma;
