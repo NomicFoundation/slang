@@ -3,7 +3,7 @@
 #[allow(non_snake_case)]
 mod ContractDefinition;
 #[allow(non_snake_case)]
-mod DecimalNumber;
+mod DecimalLiteral;
 #[allow(non_snake_case)]
 mod DeleteStatement;
 #[allow(non_snake_case)]
@@ -11,7 +11,7 @@ mod Expression;
 #[allow(non_snake_case)]
 mod FixedBytesType;
 #[allow(non_snake_case)]
-mod HexNumber;
+mod HexLiteral;
 #[allow(non_snake_case)]
 mod Identifier;
 #[allow(non_snake_case)]
@@ -32,5 +32,7 @@ mod SourceUnit;
 mod UnsignedIntegerType;
 #[allow(non_snake_case)]
 mod VersionPragma;
+#[allow(non_snake_case)]
+mod YulExpression;
 
 pub const VERSION_BREAKS: [&str; 3] = ["0.4.11", "0.6.0", "0.8.17"];

@@ -7,4 +7,4 @@ Errors: []
 
 Tree:
   - NumericLiteral (Rule): # 0..9 "123456789"
-      - DecimalNumber (Token): "123456789" # 0..9
+      - DecimalLiteral (Token): "123456789" # 0..9

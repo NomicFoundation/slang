@@ -4,9 +4,26 @@
   kind: "Rule"
   unversioned:
     choice:
-      - reference: "YulIdentifierPath"
       - reference: "YulFunctionCall"
       - reference: "YulLiteral"
+
+- name: "YulFunctionCall"
+  kind: "Rule"
+  unversioned:
+    sequence:
+      - reference: "YulIdentifierPath"
+      # TODO: temporary hack until precedence is implemented properly here.
+      # `YulIdentifierPath` should be promoted to a `YulExpression` choice, and the `optional` removed from here.
+      - optional:
+          delimitedBy:
+            open: "("
+            expression:
+              optional:
+                separatedBy:
+                  separator: ","
+                  expression:
+                    reference: "YulExpression"
+            close: ")"
 
 - name: "YulIdentifierPath"
   kind: "Rule"
@@ -15,16 +32,6 @@
       separator: "."
       expression:
         reference: "YulIdentifier"
-
-- name: "YulLiteral"
-  kind: "Rule"
-  unversioned:
-    choice:
-      - reference: "YulDecimalNumberLiteral"
-      - reference: "YulHexLiteral"
-      - reference: "AsciiStringLiteral"
-      - reference: "BooleanLiteral"
-      - reference: "HexStringLiteral"
 
 - name: "YulIdentifier"
   kind: "Token"
@@ -52,7 +59,25 @@
       - terminal: "let"
       - terminal: "switch"
 
-- name: "YulDecimalNumberLiteral"
+- name: "YulLiteral"
+  kind: "Rule"
+  unversioned:
+    choice:
+      - reference: "BooleanLiteral"
+      - reference: "YulHexLiteral"
+      - reference: "YulDecimalLiteral"
+      - reference: "HexStringLiteral"
+      - reference: "AsciiStringLiteral"
+
+- name: "YulHexLiteral"
+  kind: "Token"
+  unversioned:
+    sequence:
+      - terminal: "0x"
+      - oneOrMore:
+          reference: "HexCharacter"
+
+- name: "YulDecimalLiteral"
   kind: "Token"
   unversioned:
     choice:
@@ -65,11 +90,3 @@
               range:
                 from: "0"
                 to: "9"
-
-- name: "YulHexLiteral"
-  kind: "Token"
-  unversioned:
-    sequence:
-      - terminal: "0x"
-      - oneOrMore:
-          reference: "HexCharacter"

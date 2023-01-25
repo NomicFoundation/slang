@@ -137,7 +137,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     declare_rule!(ContractDefinition);
     declare_rule!(DataLocation);
     declare_token!(DecimalExponent);
-    declare_token!(DecimalInteger);
+    declare_token!(DecimalLiteral);
     declare_token!(DecimalNumber);
     declare_rule!(Definition);
     declare_rule!(DeleteStatement);
@@ -170,7 +170,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     declare_rule!(FunctionType);
     declare_token!(HexByteEscape);
     declare_token!(HexCharacter);
-    declare_token!(HexNumber);
+    declare_token!(HexLiteral);
     declare_token!(HexStringLiteral);
     declare_token!(Identifier);
     declare_token!(IdentifierPart);
@@ -257,7 +257,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     declare_rule!(YulBlock);
     declare_rule!(YulBreakStatement);
     declare_rule!(YulContinueStatement);
-    declare_token!(YulDecimalNumberLiteral);
+    declare_token!(YulDecimalLiteral);
     declare_rule!(YulExpression);
     declare_rule!(YulForStatement);
     declare_rule!(YulFunctionCall);
@@ -1242,7 +1242,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         })
     );
 
-    // «DecimalExponent» = ( 'e' | 'E' ) [ '-' ] «DecimalInteger» ;
+    // «DecimalExponent» = ( 'e' | 'E' ) [ '-' ] «DecimalNumber» ;
     define_token!(
         DecimalExponent,
         scan_make_node!(scan_seq!(
@@ -1255,18 +1255,9 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         ))
     );
 
-    // «DecimalInteger» = 1…*{ '0'…'9' }  { '_' 1…*{ '0'…'9' } } ;
+    // «DecimalLiteral» = ( «DecimalNumber» [ '.' «DecimalNumber» ] | '.' «DecimalNumber» ) [ «DecimalExponent» ] ;
     define_token!(
-        DecimalInteger,
-        scan_make_node!(scan_separated_by!(
-            scan_one_or_more!(scan_terminal!(|&c: &char| ('0' <= c && c <= '9'))),
-            scan_terminal!("_")
-        ))
-    );
-
-    // «DecimalNumber» = ( «DecimalInteger» [ '.' «DecimalInteger» ] | '.' «DecimalInteger» ) [ «DecimalExponent» ] ;
-    define_token!(
-        DecimalNumber,
+        DecimalLiteral,
         scan_make_node!(scan_seq!(
             scan_choice!(
                 scan_seq!(
@@ -1298,6 +1289,15 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                     scan_terminal!("_")
                 )
             ))
+        ))
+    );
+
+    // «DecimalNumber» = 1…*{ '0'…'9' }  { '_' 1…*{ '0'…'9' } } ;
+    define_token!(
+        DecimalNumber,
+        scan_make_node!(scan_separated_by!(
+            scan_one_or_more!(scan_terminal!(|&c: &char| ('0' <= c && c <= '9'))),
+            scan_terminal!("_")
         ))
     );
 
@@ -3250,9 +3250,9 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
             || ('A' <= c && c <= 'F')))
     );
 
-    // «HexNumber» = '0x' 1…*{ «HexCharacter» }  { '_' 1…*{ «HexCharacter» } } ;
+    // «HexLiteral» = '0x' 1…*{ «HexCharacter» }  { '_' 1…*{ «HexCharacter» } } ;
     define_token!(
-        HexNumber,
+        HexLiteral,
         scan_make_node!(scan_seq!(
             just("0x").ignored(),
             scan_separated_by!(
@@ -4333,11 +4333,11 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         ))
     );
 
-    // NumericLiteral = ( «HexNumber» | «DecimalNumber» ) [ «NumberUnit» ] ;
+    // NumericLiteral = ( «HexLiteral» | «DecimalLiteral» ) [ «NumberUnit» ] ;
     define_rule!(
         NumericLiteral,
         seq!(
-            choice!(token!(HexNumber), token!(DecimalNumber)),
+            choice!(token!(HexLiteral), token!(DecimalLiteral)),
             optional!(token!(NumberUnit))
         )
     );
@@ -5835,9 +5835,9 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         })
     );
 
-    // «YulDecimalNumberLiteral» = '0' | '1'…'9' { '0'…'9' } ;
+    // «YulDecimalLiteral» = '0' | '1'…'9' { '0'…'9' } ;
     define_token!(
-        YulDecimalNumberLiteral,
+        YulDecimalLiteral,
         scan_make_node!(scan_choice!(
             just("0").ignored(),
             scan_seq!(
@@ -5847,14 +5847,10 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         ))
     );
 
-    // YulExpression = YulIdentifierPath | YulFunctionCall | YulLiteral ;
+    // YulExpression = YulFunctionCall | YulLiteral ;
     define_rule!(
         YulExpression,
-        choice!(
-            rule!(YulIdentifierPath),
-            rule!(YulFunctionCall),
-            rule!(YulLiteral)
-        )
+        choice!(rule!(YulFunctionCall), rule!(YulLiteral))
     );
 
     // YulForStatement = 'for' YulBlock YulExpression YulBlock YulBlock ;
@@ -5879,16 +5875,16 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         )
     );
 
-    // YulFunctionCall = «YulIdentifier» '(' [ YulExpression  { ',' YulExpression } ] ')' ;
+    // YulFunctionCall = YulIdentifierPath [ '(' [ YulExpression  { ',' YulExpression } ] ')' ] ;
     define_rule!(
         YulFunctionCall,
         seq!(
-            token!(YulIdentifier),
-            delimited_by!(
+            rule!(YulIdentifierPath),
+            optional!(delimited_by!(
                 terminal!(OpenParen, "("),
                 optional!(separated_by!(rule!(YulExpression), terminal!(Comma, ","))),
                 terminal!(CloseParen, ")")
-            )
+            ))
         )
     );
 
@@ -6041,15 +6037,15 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         })
     );
 
-    // YulLiteral = «YulDecimalNumberLiteral» | «YulHexLiteral» | «AsciiStringLiteral» | «BooleanLiteral» | «HexStringLiteral» ;
+    // YulLiteral = «BooleanLiteral» | «YulHexLiteral» | «YulDecimalLiteral» | «HexStringLiteral» | «AsciiStringLiteral» ;
     define_rule!(
         YulLiteral,
         choice!(
-            token!(YulDecimalNumberLiteral),
-            token!(YulHexLiteral),
-            token!(AsciiStringLiteral),
             token!(BooleanLiteral),
-            token!(HexStringLiteral)
+            token!(YulHexLiteral),
+            token!(YulDecimalLiteral),
+            token!(HexStringLiteral),
+            token!(AsciiStringLiteral)
         )
     );
 

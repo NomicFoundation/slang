@@ -1,9 +1,0 @@
-# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
-
-Source: >
-  1  │ 0x12_3_45_6                                                                      │ 0..11
-
-Errors: []
-
-Tree:
-  - HexNumber (Token): "0x12_3_45_6" # 0..11

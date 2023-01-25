@@ -5,12 +5,12 @@
   unversioned:
     sequence:
       - choice:
-          - reference: "HexNumber"
-          - reference: "DecimalNumber"
+          - reference: "HexLiteral"
+          - reference: "DecimalLiteral"
       - optional:
           reference: "NumberUnit"
 
-- name: "HexNumber"
+- name: "HexLiteral"
   kind: "Token"
   unversioned:
     sequence:
@@ -21,24 +21,24 @@
             oneOrMore:
               reference: "HexCharacter"
 
-- name: "DecimalNumber"
+- name: "DecimalLiteral"
   kind: "Token"
   unversioned:
     sequence:
       - choice:
           - sequence:
-              - reference: "DecimalInteger"
+              - reference: "DecimalNumber"
               - optional:
                   sequence:
                     - terminal: "."
-                    - reference: "DecimalInteger"
+                    - reference: "DecimalNumber"
           - sequence:
               - terminal: "."
-              - reference: "DecimalInteger"
+              - reference: "DecimalNumber"
       - optional:
           reference: "DecimalExponent"
 
-- name: "DecimalInteger"
+- name: "DecimalNumber"
   kind: "Token"
   unversioned:
     separatedBy:
@@ -58,7 +58,7 @@
           - terminal: "E"
       - optional:
           terminal: "-"
-      - reference: "DecimalInteger"
+      - reference: "DecimalNumber"
 
 - name: "NumberUnit"
   kind: "Token"

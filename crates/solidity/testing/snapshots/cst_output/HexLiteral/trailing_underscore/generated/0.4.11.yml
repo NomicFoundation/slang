@@ -1,0 +1,16 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 0x1_                                                                             │ 0..4
+
+Errors: # 1 total
+  - >
+    Error: Expected something else.
+       ╭─[crates/solidity/testing/snapshots/cst_output/HexLiteral/trailing_underscore/input.sol:1:5]
+       │
+     1 │ 0x1_
+       ·     │ 
+       ·     ╰─ Found end of input.
+    ───╯
+
+Tree: null

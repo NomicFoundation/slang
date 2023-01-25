@@ -7,5 +7,5 @@ Errors: []
 
 Tree:
   - NumericLiteral (Rule): # 0..7 "10 days"
-      - DecimalNumber (Token): "10" # 0..2
+      - DecimalLiteral (Token): "10" # 0..2
       - NumberUnit (Token): "days" # 3..7
