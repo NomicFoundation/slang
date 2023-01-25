@@ -62,9 +62,6 @@ url = { version = "2.3.1" }
 walkdir = { version = "2.3.2" }
 yaml-rust = { version = "0.4.5" }
 
-[profile.dev]
-debug = 2
-incremental = true
-
 [profile.release]
+incremental = true
 lto = true

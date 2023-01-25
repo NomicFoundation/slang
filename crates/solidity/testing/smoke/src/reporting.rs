@@ -10,16 +10,16 @@ use solidity_rust_lib::generated::language::ParserOutput;
 
 pub struct Reporter {
     progress_bar: ProgressBar,
-    total_parses: AtomicUsize,
-    total_errors: AtomicUsize,
+    total_tests: AtomicUsize,
+    failed_tests: AtomicUsize,
 }
 
 impl Reporter {
-    const MAX_PRINTED_ERRORS: usize = 100;
+    const MAX_PRINTED_FAILURES: usize = 100;
 
     pub fn new(total_files: usize) -> Result<Self> {
         let bar_style = indicatif::ProgressStyle::with_template(
-            "\n[{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} ({percent}%) │ ETA: {eta_precise} │ {msg}",
+            "\n[{elapsed_precise}] [{bar:40.cyan/blue}] {pos}/{len} files checked ({percent}%) │ {msg} │ ETA: {eta_precise}",
         )?.progress_chars("#>-");
 
         let progress_bar = indicatif::ProgressBar::new(total_files as u64);
@@ -28,24 +28,26 @@ impl Reporter {
 
         Ok(Self {
             progress_bar,
-            total_parses: AtomicUsize::new(0),
-            total_errors: AtomicUsize::new(0),
+            total_tests: AtomicUsize::new(0),
+            failed_tests: AtomicUsize::new(0),
         })
     }
 
     pub fn finish(&self) -> usize {
         self.progress_bar.finish();
 
-        return self.total_errors.load(Ordering::Relaxed);
+        return self.failed_tests.load(Ordering::Relaxed);
     }
 
     pub fn report_file_completed(&self) {
         self.progress_bar.inc(1);
 
+        let failed_tests = self.failed_tests.load(Ordering::Relaxed);
+        let total_tests = self.total_tests.load(Ordering::Relaxed);
+        let failure_percent = (100_f64 * (failed_tests as f64) / (total_tests as f64)) as usize;
+
         self.progress_bar.set_message(format!(
-            "{total_parses} tests | {total_errors} errors",
-            total_parses = self.total_parses.load(Ordering::Relaxed),
-            total_errors = self.total_errors.load(Ordering::Relaxed),
+            "{failed_tests}/{total_tests} tests failed ({failure_percent}%)",
         ));
     }
 
@@ -56,28 +58,33 @@ impl Reporter {
         version: &Version,
         output: &ParserOutput,
     ) {
-        self.total_parses.fetch_add(1, Ordering::Relaxed);
+        self.total_tests.fetch_add(1, Ordering::Relaxed);
 
-        let current_errors = output.error_count();
-        if current_errors == 0 {
+        if output.error_count() == 0 {
             return;
         }
 
-        let errors_before_update = self
-            .total_errors
-            .fetch_add(current_errors, Ordering::Relaxed);
+        let failures_before_update = self.failed_tests.fetch_add(1, Ordering::Relaxed);
 
-        if errors_before_update < Self::MAX_PRINTED_ERRORS {
+        if failures_before_update < Self::MAX_PRINTED_FAILURES {
             let errors = output.errors_as_strings(source_id, source, /* with_colour */ true);
 
             self.progress_bar.suspend(|| {
                 for error in errors
                     .iter()
-                    .take(Self::MAX_PRINTED_ERRORS - errors_before_update)
+                    .take(Self::MAX_PRINTED_FAILURES - failures_before_update)
                 {
                     eprintln!();
                     eprintln!("[{version}] {error}");
                 }
+            });
+        } else if failures_before_update == Self::MAX_PRINTED_FAILURES {
+            self.progress_bar.suspend(|| {
+                eprintln!();
+                eprintln!(
+                    "More than {} tests failed. Further errors will not be shown.",
+                    Self::MAX_PRINTED_FAILURES
+                );
             });
         }
     }
