@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ new Foo.Bar.Baz                                                                  │ 0..15
+
+Errors: []
+
+Tree:
+  - NewExpression (Rule): # 0..15 "new Foo.Bar.Baz"
+      - New (Token): "new" # 0..3
+      - TypeName (Rule): # 4..15 "Foo.Bar.Baz"
+          - IdentifierPath (Rule): # 4..15 "Foo.Bar.Baz"
+              - Identifier (Token): "Foo" # 4..7
+              - Period (Token): "." # 7..8
+              - Identifier (Token): "Bar" # 8..11
+              - Period (Token): "." # 11..12
+              - Identifier (Token): "Baz" # 12..15

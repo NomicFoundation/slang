@@ -32,8 +32,7 @@
   unversioned:
     sequence:
       - terminal: "new"
-      - reference: "IdentifierPath"
-      - reference: "ArgumentList"
+      - reference: "TypeName"
 
 - name: "ParenthesisExpression"
   kind: "Rule"
