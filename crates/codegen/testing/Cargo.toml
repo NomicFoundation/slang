@@ -8,5 +8,4 @@ edition.workspace = true
 anyhow = { workspace = true }
 codegen_schema = { workspace = true }
 codegen_utils = { workspace = true }
-semver = { workspace = true }
 walkdir = { workspace = true }

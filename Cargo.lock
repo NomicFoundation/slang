@@ -243,7 +243,6 @@ dependencies = [
  "anyhow",
  "codegen_schema",
  "codegen_utils",
- "semver",
  "walkdir",
 ]
 

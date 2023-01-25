@@ -9,7 +9,7 @@ use solidity_rust_lib::generated::{
 };
 use solidity_testing_utils::cst_snapshots::ParserOutputTestSnapshotExtensions;
 
-use crate::cst_output::generated::BREAKING_VERSIONS;
+use crate::cst_output::generated::VERSION_BREAKS;
 
 pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
     return CodegenContext::with_context(|codegen| {
@@ -29,7 +29,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
 
         let mut last_output: Option<ParserOutput> = None;
 
-        for version in BREAKING_VERSIONS {
+        for version in VERSION_BREAKS {
             let version = Version::parse(version)?;
             let snapshot_path = test_dir.join(format!("generated/{version}.yml"));
 

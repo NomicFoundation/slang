@@ -6,10 +6,7 @@ use std::{
 use anyhow::{bail, Context, Result};
 use codegen_schema::types::grammar::Grammar;
 use codegen_utils::context::CodegenContext;
-use semver::Version;
 use walkdir::WalkDir;
-
-use crate::GrammarTestingGeneratorExtensions;
 
 pub fn generate_cst_output_tests(
     grammar: &Grammar,
@@ -17,15 +14,9 @@ pub fn generate_cst_output_tests(
     data_dir: &PathBuf,
     output_dir: &PathBuf,
 ) -> Result<()> {
-    let breaking_versions = grammar.collect_breaking_versions();
+    let mod_file_path = output_dir.join("mod.rs");
     let parser_tests = &collect_parser_tests(codegen, data_dir)?;
-
-    generate_mod_file(
-        codegen,
-        parser_tests,
-        &breaking_versions,
-        &output_dir.join("mod.rs"),
-    )?;
+    generate_mod_file(grammar, codegen, &mod_file_path, parser_tests)?;
 
     for (parser_name, test_names) in parser_tests {
         generate_unit_test_file(
@@ -84,19 +75,19 @@ fn collect_parser_tests(
 }
 
 fn generate_mod_file(
+    grammar: &Grammar,
     codegen: &mut CodegenContext,
-    parser_tests: &BTreeMap<String, BTreeSet<String>>,
-    breaking_versions: &BTreeSet<&Version>,
     mod_file_path: &PathBuf,
+    parser_tests: &BTreeMap<String, BTreeSet<String>>,
 ) -> Result<()> {
     let module_declarations = parser_tests
         .keys()
         .map(|parser_name| format!("#[allow(non_snake_case)] mod {parser_name};"))
         .collect::<String>();
 
-    let breaking_versions_size = breaking_versions.len();
-
-    let breaking_versions = breaking_versions
+    let version_breaks = grammar.collect_version_breaks();
+    let version_breaks_len = version_breaks.len();
+    let version_breaks_str = version_breaks
         .iter()
         .map(|version| format!("\"{version}\","))
         .collect::<String>();
@@ -105,10 +96,10 @@ fn generate_mod_file(
         "
             {module_declarations}
 
-            pub const BREAKING_VERSIONS: [&str; {breaking_versions_size}] = [
-                {breaking_versions}
+            pub const VERSION_BREAKS: [&str; {version_breaks_len}] = [
+                {version_breaks_str}
             ];
-        "
+        ",
     );
 
     return codegen.write_file(mod_file_path, &contents);
