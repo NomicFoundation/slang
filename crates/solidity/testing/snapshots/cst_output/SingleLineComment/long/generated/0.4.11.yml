@@ -6,4 +6,4 @@ Source: >
 Errors: []
 
 Tree:
-  - SingleLineComment (Token): "// Lorem ipsum dolor sit amet, consectetur adip..." # 0..330
+  - SingleLineComment (Token): "// Lorem ipsum dolor sit amet, consectetur adipisc..." # 0..330

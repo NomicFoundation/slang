@@ -6,15 +6,15 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..20
-      - FunctionCallExpression (Rule): # 0..20
-          - PrimaryExpression (Rule): # 0..13
+  - Expression (Rule): # 0..20 "function_name(value)"
+      - FunctionCallExpression (Rule): # 0..20 "function_name(value)"
+          - PrimaryExpression (Rule): # 0..13 "function_name"
               - Identifier (Token): "function_name" # 0..13
-          - Group: # 13..20
-              - ArgumentList (Rule): # 13..20
+          - Group: # 13..20 "(value)"
+              - ArgumentList (Rule): # 13..20 "(value)"
                   - OpenParen (Token): "(" # 13..14
-                  - PositionalArgumentList (Rule): # 14..19
-                      - Expression (Rule): # 14..19
-                          - PrimaryExpression (Rule): # 14..19
+                  - PositionalArgumentList (Rule): # 14..19 "value"
+                      - Expression (Rule): # 14..19 "value"
+                          - PrimaryExpression (Rule): # 14..19 "value"
                               - Identifier (Token): "value" # 14..19
                   - CloseParen (Token): ")" # 19..20

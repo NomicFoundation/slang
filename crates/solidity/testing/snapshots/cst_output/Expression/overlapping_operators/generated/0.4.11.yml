@@ -6,14 +6,14 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..10
-      - AndExpression (Rule): # 0..10
-          - BitAndExpression (Rule): # 0..5
-              - PrimaryExpression (Rule): # 0..1
+  - Expression (Rule): # 0..10 "a & b && c"
+      - AndExpression (Rule): # 0..10 "a & b && c"
+          - BitAndExpression (Rule): # 0..5 "a & b"
+              - PrimaryExpression (Rule): # 0..1 "a"
                   - Identifier (Token): "a" # 0..1
               - Ampersand (Token): "&" # 2..3
-              - PrimaryExpression (Rule): # 4..5
+              - PrimaryExpression (Rule): # 4..5 "b"
                   - Identifier (Token): "b" # 4..5
           - AmpersandAmpersand (Token): "&&" # 6..8
-          - PrimaryExpression (Rule): # 9..10
+          - PrimaryExpression (Rule): # 9..10 "c"
               - Identifier (Token): "c" # 9..10

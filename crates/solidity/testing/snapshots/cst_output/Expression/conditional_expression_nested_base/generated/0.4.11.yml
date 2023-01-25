@@ -6,26 +6,26 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..27
-      - ConditionalExpression (Rule): # 0..27
-          - PrimaryExpression (Rule): # 0..12
-              - ParenthesisExpression (Rule): # 0..12
+  - Expression (Rule): # 0..27 "(foo == bar) ? true : false"
+      - ConditionalExpression (Rule): # 0..27 "(foo == bar) ? true : false"
+          - PrimaryExpression (Rule): # 0..12 "(foo == bar)"
+              - ParenthesisExpression (Rule): # 0..12 "(foo == bar)"
                   - OpenParen (Token): "(" # 0..1
-                  - Group: # 1..11
-                      - Expression (Rule): # 1..11
-                          - EqualityComparisonExpression (Rule): # 1..11
-                              - PrimaryExpression (Rule): # 1..4
+                  - Group: # 1..11 "foo == bar"
+                      - Expression (Rule): # 1..11 "foo == bar"
+                          - EqualityComparisonExpression (Rule): # 1..11 "foo == bar"
+                              - PrimaryExpression (Rule): # 1..4 "foo"
                                   - Identifier (Token): "foo" # 1..4
                               - EqualEqual (Token): "==" # 5..7
-                              - PrimaryExpression (Rule): # 8..11
+                              - PrimaryExpression (Rule): # 8..11 "bar"
                                   - Identifier (Token): "bar" # 8..11
                   - CloseParen (Token): ")" # 11..12
-          - Group: # 13..27
+          - Group: # 13..27 "? true : false"
               - Question (Token): "?" # 13..14
-              - Expression (Rule): # 15..19
-                  - PrimaryExpression (Rule): # 15..19
+              - Expression (Rule): # 15..19 "true"
+                  - PrimaryExpression (Rule): # 15..19 "true"
                       - BooleanLiteral (Token): "true" # 15..19
               - Colon (Token): ":" # 20..21
-              - Expression (Rule): # 22..27
-                  - PrimaryExpression (Rule): # 22..27
+              - Expression (Rule): # 22..27 "false"
+                  - PrimaryExpression (Rule): # 22..27 "false"
                       - BooleanLiteral (Token): "false" # 22..27

@@ -6,21 +6,21 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..7
-      - FunctionCallExpression (Rule): # 0..7
-          - PrimaryExpression (Rule): # 0..1
+  - Expression (Rule): # 0..7 "x(1, 2)"
+      - FunctionCallExpression (Rule): # 0..7 "x(1, 2)"
+          - PrimaryExpression (Rule): # 0..1 "x"
               - Identifier (Token): "x" # 0..1
-          - Group: # 1..7
-              - ArgumentList (Rule): # 1..7
+          - Group: # 1..7 "(1, 2)"
+              - ArgumentList (Rule): # 1..7 "(1, 2)"
                   - OpenParen (Token): "(" # 1..2
-                  - PositionalArgumentList (Rule): # 2..6
-                      - Expression (Rule): # 2..3
-                          - PrimaryExpression (Rule): # 2..3
-                              - NumericLiteral (Rule): # 2..3
+                  - PositionalArgumentList (Rule): # 2..6 "1, 2"
+                      - Expression (Rule): # 2..3 "1"
+                          - PrimaryExpression (Rule): # 2..3 "1"
+                              - NumericLiteral (Rule): # 2..3 "1"
                                   - DecimalNumber (Token): "1" # 2..3
                       - Comma (Token): "," # 3..4
-                      - Expression (Rule): # 5..6
-                          - PrimaryExpression (Rule): # 5..6
-                              - NumericLiteral (Rule): # 5..6
+                      - Expression (Rule): # 5..6 "2"
+                          - PrimaryExpression (Rule): # 5..6 "2"
+                              - NumericLiteral (Rule): # 5..6 "2"
                                   - DecimalNumber (Token): "2" # 5..6
                   - CloseParen (Token): ")" # 6..7

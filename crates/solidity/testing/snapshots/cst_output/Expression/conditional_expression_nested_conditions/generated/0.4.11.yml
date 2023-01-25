@@ -6,36 +6,36 @@ Source: >
 Errors: []
 
 Tree:
-  - Expression (Rule): # 0..23
-      - ConditionalExpression (Rule): # 0..23
-          - PrimaryExpression (Rule): # 0..3
+  - Expression (Rule): # 0..23 "foo ? (a + b) : (c + d)"
+      - ConditionalExpression (Rule): # 0..23 "foo ? (a + b) : (c + d)"
+          - PrimaryExpression (Rule): # 0..3 "foo"
               - Identifier (Token): "foo" # 0..3
-          - Group: # 4..23
+          - Group: # 4..23 "? (a + b) : (c + d)"
               - Question (Token): "?" # 4..5
-              - Expression (Rule): # 6..13
-                  - PrimaryExpression (Rule): # 6..13
-                      - ParenthesisExpression (Rule): # 6..13
+              - Expression (Rule): # 6..13 "(a + b)"
+                  - PrimaryExpression (Rule): # 6..13 "(a + b)"
+                      - ParenthesisExpression (Rule): # 6..13 "(a + b)"
                           - OpenParen (Token): "(" # 6..7
-                          - Group: # 7..12
-                              - Expression (Rule): # 7..12
-                                  - AddSubExpression (Rule): # 7..12
-                                      - PrimaryExpression (Rule): # 7..8
+                          - Group: # 7..12 "a + b"
+                              - Expression (Rule): # 7..12 "a + b"
+                                  - AddSubExpression (Rule): # 7..12 "a + b"
+                                      - PrimaryExpression (Rule): # 7..8 "a"
                                           - Identifier (Token): "a" # 7..8
                                       - Plus (Token): "+" # 9..10
-                                      - PrimaryExpression (Rule): # 11..12
+                                      - PrimaryExpression (Rule): # 11..12 "b"
                                           - Identifier (Token): "b" # 11..12
                           - CloseParen (Token): ")" # 12..13
               - Colon (Token): ":" # 14..15
-              - Expression (Rule): # 16..23
-                  - PrimaryExpression (Rule): # 16..23
-                      - ParenthesisExpression (Rule): # 16..23
+              - Expression (Rule): # 16..23 "(c + d)"
+                  - PrimaryExpression (Rule): # 16..23 "(c + d)"
+                      - ParenthesisExpression (Rule): # 16..23 "(c + d)"
                           - OpenParen (Token): "(" # 16..17
-                          - Group: # 17..22
-                              - Expression (Rule): # 17..22
-                                  - AddSubExpression (Rule): # 17..22
-                                      - PrimaryExpression (Rule): # 17..18
+                          - Group: # 17..22 "c + d"
+                              - Expression (Rule): # 17..22 "c + d"
+                                  - AddSubExpression (Rule): # 17..22 "c + d"
+                                      - PrimaryExpression (Rule): # 17..18 "c"
                                           - Identifier (Token): "c" # 17..18
                                       - Plus (Token): "+" # 19..20
-                                      - PrimaryExpression (Rule): # 21..22
+                                      - PrimaryExpression (Rule): # 21..22 "d"
                                           - Identifier (Token): "d" # 21..22
                           - CloseParen (Token): ")" # 22..23

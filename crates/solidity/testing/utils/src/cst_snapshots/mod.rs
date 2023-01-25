@@ -111,17 +111,22 @@ fn write_node<W: Write>(
     source: &str,
     indentation: usize,
 ) -> Result<()> {
+    let (node_value, node_comment) = if let Some(range) = &node.range {
+        let preview = node.render_preview(source, range)?;
+        if node.children.is_empty() {
+            (preview, format!("{range:?}"))
+        } else {
+            ("".to_owned(), format!("{range:?} {preview}"))
+        }
+    } else {
+        ("\"\"".to_owned(), "<empty>".to_owned())
+    };
+
     writeln!(
         w,
-        "{indentation}  - {kind}: {contents} # {range}",
+        "{indentation}  - {kind}: {node_value} # {node_comment}",
         indentation = " ".repeat(4 * indentation),
         kind = node.kind,
-        contents = node.render_contents(source)?,
-        range = if let Some(range) = &node.range {
-            format!("{range:?}")
-        } else {
-            "<empty>".to_owned()
-        },
     )?;
 
     for child in &node.children {
