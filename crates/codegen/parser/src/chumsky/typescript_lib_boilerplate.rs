@@ -56,8 +56,8 @@ pub fn lex_head() -> TokenStream {
 
             #[napi(getter)]
             pub fn range(&self) -> TokenRange {
-                match self.0.as_ref() {
-                    Node::Chars(range) => TokenRange { start: range.start as u32, end: range.end as u32 },
+                match &self.0.contents {
+                    NodeContents::Chars(range) => TokenRange { start: range.start as u32, end: range.end as u32 },
                     _  => unreachable!()
                 }
             }
@@ -76,8 +76,8 @@ pub fn lex_head() -> TokenStream {
 
             #[napi(ts_return_type = "(LexCharsNode | LexSequenceNode | LexNamedNode)[]")]
             pub fn children(&self, env: Env) -> Vec<JsObject> {
-                match self.0.as_ref() {
-                    Node::Sequence(children) => children.iter().map(|child| child.to_js(&env)).collect(),
+                match &self.0.contents {
+                    NodeContents::Sequence(children) => children.iter().map(|child| child.to_js(&env)).collect(),
                     _  => unreachable!()
                 }
             }
@@ -96,16 +96,16 @@ pub fn lex_head() -> TokenStream {
 
             #[napi(getter)]
             pub fn kind(&self) -> TokenKind {
-                match self.0.as_ref() {
-                    Node::Named(kind, _) => *kind,
+                match &self.0.contents {
+                    NodeContents::Named(kind, _) => *kind,
                     _  => unreachable!()
                 }
             }
 
             #[napi(ts_return_type = "LexCharsNode | LexSequenceNode | LexNamedNode")]
             pub fn child(&self, env: Env) -> JsObject {
-                match self.0.as_ref() {
-                    Node::Named(_, child) => child.to_js(&env),
+                match &self.0.contents {
+                    NodeContents::Named(_, child) => child.to_js(&env),
                     _  => unreachable!()
                 }
             }
@@ -117,10 +117,10 @@ pub fn lex_head() -> TokenStream {
 
         impl RcNodeExtensions for Rc<Node> {
             fn to_js(&self, env: &Env) -> JsObject {
-                let obj = match self.as_ref() {
-                    Node::Chars(_) => unsafe { <LexCharsNode as ToNapiValue>::to_napi_value(env.raw(), LexCharsNode(self.clone())) }
-                    Node::Sequence(_) => unsafe { <LexSequenceNode as ToNapiValue>::to_napi_value(env.raw(), LexSequenceNode(self.clone())) }
-                    Node::Named(_, _) => unsafe { <LexNamedNode as ToNapiValue>::to_napi_value(env.raw(), LexNamedNode(self.clone())) }
+                let obj = match &self.contents {
+                    NodeContents::Chars(_) => unsafe { <LexCharsNode as ToNapiValue>::to_napi_value(env.raw(), LexCharsNode(self.clone())) }
+                    NodeContents::Sequence(_) => unsafe { <LexSequenceNode as ToNapiValue>::to_napi_value(env.raw(), LexSequenceNode(self.clone())) }
+                    NodeContents::Named(_, _) => unsafe { <LexNamedNode as ToNapiValue>::to_napi_value(env.raw(), LexNamedNode(self.clone())) }
                 };
                 return unsafe { JsObject::from_raw_unchecked(env.raw(), obj.unwrap()) };
             }

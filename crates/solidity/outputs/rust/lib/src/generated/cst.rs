@@ -71,7 +71,7 @@ impl Node {
     }
     pub fn top_level_token(lex_node: Option<Rc<lex::Node>>) -> Rc<Self> {
         if let Some(lex_node) = lex_node {
-            if let lex::Node::Named(kind, lex_node) = lex_node.as_ref() {
+            if let lex::NodeContents::Named(kind, lex_node) = &lex_node.contents {
                 Rc::new(Self::Token {
                     kind: *kind,
                     lex_node: lex_node.clone(),
