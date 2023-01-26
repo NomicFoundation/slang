@@ -158,9 +158,7 @@ fn write_expression<T: Write>(w: &mut T, expr: &ExpressionRef, context: &SpecPro
         } => {
             write_subexpression(w, expression, expression, context);
             write_token(w, TokenKind::operator, " { ");
-            write_subexpression(w, expression, expression, context);
             write_token(w, TokenKind::string, &format_string_literal(separator));
-            write_token(w, TokenKind::operator, " ");
             write_subexpression(w, expression, expression, context);
             write_token(w, TokenKind::operator, " }");
         }
