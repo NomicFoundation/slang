@@ -2,6 +2,7 @@
   "editor.formatOnSave": true,
   "editor.rulers": [120],
   "files.eol": "\n",
+  "rust-analyzer.server.path": "${workspaceFolder}/bin/rust-analyzer",
   "search.exclude": {
     "**/.hermit/": true,
     "**/generated/": true,
