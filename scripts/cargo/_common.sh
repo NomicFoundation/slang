@@ -7,19 +7,15 @@ source "$(dirname "${BASH_SOURCE[0]}")/../_common.sh"
 # Enable stack traces for any errors
 export RUST_BACKTRACE="full"
 
+RUSTFLAGS="${RUSTFLAGS:-}"
+RUSTFLAGS="$(_try_append_arg "$RUSTFLAGS" "--warn unused_crate_dependencies")"
+
 if [[ "${CI:-}" ]]; then
   # Strict checks for CI
-  declare -a rust_flags=(
-    "${RUSTFLAGS:-}"
-    "--warn unused_crate_dependencies"
-    "--deny warnings"
-  )
+  RUSTFLAGS="$(_try_append_arg "$RUSTFLAGS" "--deny warnings")"
 else
   # Optimizations for local development
-  declare -a rust_flags=(
-    "${RUSTFLAGS:-}"
-    "--codegen target-cpu=native"
-  )
+  RUSTFLAGS="$(_try_append_arg "$RUSTFLAGS" "--codegen target-cpu=native")"
 fi
 
-export RUSTFLAGS="${rust_flags[*]}"
+export RUSTFLAGS
