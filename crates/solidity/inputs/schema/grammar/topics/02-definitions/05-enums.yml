@@ -9,8 +9,9 @@
       - delimitedBy:
           open: "{"
           expression:
-            separatedBy:
-              separator: ","
-              expression:
-                reference: "Identifier"
+            optional:
+              separatedBy:
+                separator: ","
+                expression:
+                  reference: "Identifier"
           close: "}"
