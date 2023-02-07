@@ -1,0 +1,10 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ "foo"                                                                            │ 0..5
+
+Errors: []
+
+Tree:
+  - StringExpression (Rule): # 0..5 "\"foo\""
+      - AsciiStringLiteral (Token): '"foo"' # 0..5

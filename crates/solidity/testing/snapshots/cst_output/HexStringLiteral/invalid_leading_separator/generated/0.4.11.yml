@@ -1,0 +1,16 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ hex"_1234"                                                                       │ 0..10
+
+Errors: # 1 total
+  - >
+    Error: Expected '"'.
+       ╭─[crates/solidity/testing/snapshots/cst_output/HexStringLiteral/invalid_leading_separator/input.sol:1:5]
+       │
+     1 │ hex"_1234"
+       ·     ┬  
+       ·     ╰── Found '_'.
+    ───╯
+
+Tree: null

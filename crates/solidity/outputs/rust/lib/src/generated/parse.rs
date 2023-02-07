@@ -229,6 +229,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     declare_rule!(StateVariableAttribute);
     declare_rule!(StateVariableDeclaration);
     declare_rule!(Statement);
+    declare_rule!(StringExpression);
     declare_rule!(StructDefinition);
     declare_rule!(StructMember);
     declare_rule!(TrailingTrivia);
@@ -726,9 +727,6 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
             scan_seq!(
                 scan_terminal!("'"),
                 scan_zero_or_more!(scan_choice!(
-                    scan_one_or_more!(scan_terminal!(|&c: &char| (' ' <= c && c <= '~')
-                        && c != '\''
-                        && c != '\\')),
                     scan_seq!(
                         scan_terminal!('\\'),
                         scan_choice!(
@@ -763,16 +761,14 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                                 )
                             )
                         )
-                    )
+                    ),
+                    scan_terminal!(|&c: &char| (' ' <= c && c <= '~') && c != '\'' && c != '\\')
                 )),
                 scan_terminal!("'")
             ),
             scan_seq!(
                 scan_terminal!("\""),
                 scan_zero_or_more!(scan_choice!(
-                    scan_one_or_more!(scan_terminal!(|&c: &char| (' ' <= c && c <= '~')
-                        && c != '"'
-                        && c != '\\')),
                     scan_seq!(
                         scan_terminal!('\\'),
                         scan_choice!(
@@ -807,7 +803,8 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                                 )
                             )
                         )
-                    )
+                    ),
+                    scan_terminal!(|&c: &char| (' ' <= c && c <= '~') && c != '"' && c != '\\')
                 )),
                 scan_terminal!("\"")
             )
@@ -1403,15 +1400,12 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         )
     );
 
-    // «DoubleQuotedAsciiStringLiteral» = '"' { 1…*{ '\u{20}'…'~' - ( '"' | '\\' ) } | «EscapeSequence» } '"' ;
+    // «DoubleQuotedAsciiStringLiteral» = '"' { «EscapeSequence» | '\u{20}'…'~' - ( '"' | '\\' ) } '"' ;
     define_token!(
         DoubleQuotedAsciiStringLiteral,
         scan_make_node!(scan_seq!(
             scan_terminal!("\""),
             scan_zero_or_more!(scan_choice!(
-                scan_one_or_more!(scan_terminal!(|&c: &char| (' ' <= c && c <= '~')
-                    && c != '"'
-                    && c != '\\')),
                 scan_seq!(
                     scan_terminal!('\\'),
                     scan_choice!(
@@ -1446,22 +1440,19 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                             )
                         )
                     )
-                )
+                ),
+                scan_terminal!(|&c: &char| (' ' <= c && c <= '~') && c != '"' && c != '\\')
             )),
             scan_terminal!("\"")
         ))
     );
 
-    // «DoubleQuotedUnicodeStringLiteral» = 'unicode"' { 1…*{ ¬( '"' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '"' ;
+    // «DoubleQuotedUnicodeStringLiteral» = 'unicode"' { «EscapeSequence» | ¬( '"' | '\\' | '\u{a}' | '\u{d}' ) } '"' ;
     define_token!(
         DoubleQuotedUnicodeStringLiteral,
         scan_make_node!(scan_seq!(
             scan_terminal!("unicode\""),
             scan_zero_or_more!(scan_choice!(
-                scan_one_or_more!(scan_terminal!(|&c: &char| c != '"'
-                    && c != '\\'
-                    && c != '\n'
-                    && c != '\r')),
                 scan_seq!(
                     scan_terminal!('\\'),
                     scan_choice!(
@@ -1496,7 +1487,8 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                             )
                         )
                     )
-                )
+                ),
+                scan_terminal!(|&c: &char| c != '"' && c != '\\' && c != '\n' && c != '\r')
             )),
             scan_terminal!("\"")
         ))
@@ -4515,16 +4507,14 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         )
     );
 
-    // PrimaryExpression = «Identifier» | TupleExpression | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | NumericLiteral | «BooleanLiteral» | NewExpression | TypeExpression | ElementaryType ;
+    // PrimaryExpression = «Identifier» | TupleExpression | ArrayLiteral | StringExpression | NumericLiteral | «BooleanLiteral» | NewExpression | TypeExpression | ElementaryType ;
     define_rule!(
         PrimaryExpression,
         choice!(
             token!(Identifier),
             rule!(TupleExpression),
             rule!(ArrayLiteral),
-            token!(AsciiStringLiteral),
-            token!(UnicodeStringLiteral),
-            token!(HexStringLiteral),
+            rule!(StringExpression),
             rule!(NumericLiteral),
             token!(BooleanLiteral),
             rule!(NewExpression),
@@ -4879,15 +4869,12 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         ))
     );
 
-    // «SingleQuotedAsciiStringLiteral» = '\'' { 1…*{ '\u{20}'…'~' - ( '\'' | '\\' ) } | «EscapeSequence» } '\'' ;
+    // «SingleQuotedAsciiStringLiteral» = '\'' { «EscapeSequence» | '\u{20}'…'~' - ( '\'' | '\\' ) } '\'' ;
     define_token!(
         SingleQuotedAsciiStringLiteral,
         scan_make_node!(scan_seq!(
             scan_terminal!("'"),
             scan_zero_or_more!(scan_choice!(
-                scan_one_or_more!(scan_terminal!(|&c: &char| (' ' <= c && c <= '~')
-                    && c != '\''
-                    && c != '\\')),
                 scan_seq!(
                     scan_terminal!('\\'),
                     scan_choice!(
@@ -4922,22 +4909,19 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                             )
                         )
                     )
-                )
+                ),
+                scan_terminal!(|&c: &char| (' ' <= c && c <= '~') && c != '\'' && c != '\\')
             )),
             scan_terminal!("'")
         ))
     );
 
-    // «SingleQuotedUnicodeStringLiteral» = 'unicode\'' { 1…*{ ¬( '\'' | '\\' | '\u{a}' | '\u{d}' ) } | «EscapeSequence» } '\'' ;
+    // «SingleQuotedUnicodeStringLiteral» = 'unicode\'' { «EscapeSequence» | ¬( '\'' | '\\' | '\u{a}' | '\u{d}' ) } '\'' ;
     define_token!(
         SingleQuotedUnicodeStringLiteral,
         scan_make_node!(scan_seq!(
             scan_terminal!("unicode'"),
             scan_zero_or_more!(scan_choice!(
-                scan_one_or_more!(scan_terminal!(|&c: &char| c != '\''
-                    && c != '\\'
-                    && c != '\n'
-                    && c != '\r')),
                 scan_seq!(
                     scan_terminal!('\\'),
                     scan_choice!(
@@ -4972,7 +4956,8 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                             )
                         )
                     )
-                )
+                ),
+                scan_terminal!(|&c: &char| c != '\'' && c != '\\' && c != '\n' && c != '\r')
             )),
             scan_terminal!("'")
         ))
@@ -5111,6 +5096,16 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
             rule!(RevertStatement),
             rule!(DeleteStatement),
             rule!(AssemblyStatement)
+        )
+    );
+
+    // StringExpression = 1…*{ «HexStringLiteral» } | 1…*{ «AsciiStringLiteral» } | 1…*{ «UnicodeStringLiteral» } ;
+    define_rule!(
+        StringExpression,
+        choice!(
+            one_or_more!(token!(HexStringLiteral)),
+            one_or_more!(token!(AsciiStringLiteral)),
+            one_or_more!(token!(UnicodeStringLiteral))
         )
     );
 
@@ -5389,10 +5384,6 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
             scan_seq!(
                 scan_terminal!("unicode'"),
                 scan_zero_or_more!(scan_choice!(
-                    scan_one_or_more!(scan_terminal!(|&c: &char| c != '\''
-                        && c != '\\'
-                        && c != '\n'
-                        && c != '\r')),
                     scan_seq!(
                         scan_terminal!('\\'),
                         scan_choice!(
@@ -5427,17 +5418,14 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                                 )
                             )
                         )
-                    )
+                    ),
+                    scan_terminal!(|&c: &char| c != '\'' && c != '\\' && c != '\n' && c != '\r')
                 )),
                 scan_terminal!("'")
             ),
             scan_seq!(
                 scan_terminal!("unicode\""),
                 scan_zero_or_more!(scan_choice!(
-                    scan_one_or_more!(scan_terminal!(|&c: &char| c != '"'
-                        && c != '\\'
-                        && c != '\n'
-                        && c != '\r')),
                     scan_seq!(
                         scan_terminal!('\\'),
                         scan_choice!(
@@ -5472,7 +5460,8 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                                 )
                             )
                         )
-                    )
+                    ),
+                    scan_terminal!(|&c: &char| c != '"' && c != '\\' && c != '\n' && c != '\r')
                 )),
                 scan_terminal!("\"")
             )
