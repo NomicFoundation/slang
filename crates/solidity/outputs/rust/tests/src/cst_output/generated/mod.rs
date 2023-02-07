@@ -23,6 +23,8 @@ mod InterfaceDefinition;
 #[allow(non_snake_case)]
 mod Keyword;
 #[allow(non_snake_case)]
+mod MappingType;
+#[allow(non_snake_case)]
 mod MultilineComment;
 #[allow(non_snake_case)]
 mod NewExpression;
@@ -47,4 +49,4 @@ mod VersionPragma;
 #[allow(non_snake_case)]
 mod YulExpression;
 
-pub const VERSION_BREAKS: [&str; 3] = ["0.4.11", "0.6.0", "0.8.17"];
+pub const VERSION_BREAKS: [&str; 3] = ["0.4.11", "0.6.0", "0.8.18"];
