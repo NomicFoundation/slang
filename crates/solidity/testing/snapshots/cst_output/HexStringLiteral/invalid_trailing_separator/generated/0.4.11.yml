@@ -1,0 +1,16 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ hex"1234_"                                                                       │ 0..10
+
+Errors: # 1 total
+  - >
+    Error: Expected something else.
+       ╭─[crates/solidity/testing/snapshots/cst_output/HexStringLiteral/invalid_trailing_separator/input.sol:1:10]
+       │
+     1 │ hex"1234_"
+       ·          ┬  
+       ·          ╰── Found '"'.
+    ───╯
+
+Tree: null

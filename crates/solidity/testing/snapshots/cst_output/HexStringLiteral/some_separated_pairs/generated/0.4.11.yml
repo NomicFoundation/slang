@@ -1,0 +1,9 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ hex"1234_5678_90ab_cdef"                                                         │ 0..24
+
+Errors: []
+
+Tree:
+  - HexStringLiteral (Token): 'hex"1234_5678_90ab_cdef"' # 0..24
