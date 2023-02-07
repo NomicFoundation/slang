@@ -1,1 +1,1 @@
-x[]
+arr[index]

@@ -82,6 +82,31 @@ fn index_access_chain() -> Result<()> {
 }
 
 #[test]
+fn index_missing() -> Result<()> {
+    return run("Expression", "index_missing");
+}
+
+#[test]
+fn index_slice_end() -> Result<()> {
+    return run("Expression", "index_slice_end");
+}
+
+#[test]
+fn index_slice_start() -> Result<()> {
+    return run("Expression", "index_slice_start");
+}
+
+#[test]
+fn index_slice_start_end() -> Result<()> {
+    return run("Expression", "index_slice_start_end");
+}
+
+#[test]
+fn index_slice_unbounded() -> Result<()> {
+    return run("Expression", "index_slice_unbounded");
+}
+
+#[test]
 fn member_access() -> Result<()> {
     return run("Expression", "member_access");
 }

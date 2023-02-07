@@ -1993,9 +1993,25 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                     }),
                     delimited_by!(
                         terminal!(OpenBracket, "["),
-                        seq!(
-                            optional!(rule!(Expression)),
-                            optional!(seq!(
+                        choice!(
+                            seq!(
+                                rule!(Expression),
+                                optional!(seq!(
+                                    with_trivia!(just(":")
+                                        .to(TokenKind::Colon)
+                                        .map_with_span(|kind, span: SpanType| (kind, span)))
+                                    .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                                        cst::Node::token(
+                                            kind,
+                                            lex::Node::chars_unwrapped(range),
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        )
+                                    }),
+                                    optional!(rule!(Expression))
+                                ))
+                            ),
+                            seq!(
                                 with_trivia!(just(":")
                                     .to(TokenKind::Colon)
                                     .map_with_span(|kind, span: SpanType| (kind, span)))
@@ -2008,7 +2024,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                                     )
                                 }),
                                 optional!(rule!(Expression))
-                            ))
+                            )
                         ),
                         terminal!(CloseBracket, "]")
                     )
@@ -2507,9 +2523,25 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                     }),
                     delimited_by!(
                         terminal!(OpenBracket, "["),
-                        seq!(
-                            optional!(rule!(Expression)),
-                            optional!(seq!(
+                        choice!(
+                            seq!(
+                                rule!(Expression),
+                                optional!(seq!(
+                                    with_trivia!(just(":")
+                                        .to(TokenKind::Colon)
+                                        .map_with_span(|kind, span: SpanType| (kind, span)))
+                                    .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                                        cst::Node::token(
+                                            kind,
+                                            lex::Node::chars_unwrapped(range),
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        )
+                                    }),
+                                    optional!(rule!(Expression))
+                                ))
+                            ),
+                            seq!(
                                 with_trivia!(just(":")
                                     .to(TokenKind::Colon)
                                     .map_with_span(|kind, span: SpanType| (kind, span)))
@@ -2522,7 +2554,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                                     )
                                 }),
                                 optional!(rule!(Expression))
-                            ))
+                            )
                         ),
                         terminal!(CloseBracket, "]")
                     )
@@ -3715,16 +3747,32 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // ImportPath = «AsciiStringLiteral» ;
     define_rule!(ImportPath, token!(AsciiStringLiteral));
 
-    // IndexAccessExpression = Expression '[' [ Expression ] [ ':' [ Expression ] ] ']' ;
+    // IndexAccessExpression = Expression '[' ( Expression [ ':' [ Expression ] ] | ':' [ Expression ] ) ']' ;
     define_rule!(
         IndexAccessExpression,
         seq!(
             rule!(Expression),
             delimited_by!(
                 terminal!(OpenBracket, "["),
-                seq!(
-                    optional!(rule!(Expression)),
-                    optional!(seq!(
+                choice!(
+                    seq!(
+                        rule!(Expression),
+                        optional!(seq!(
+                            with_trivia!(just(":")
+                                .to(TokenKind::Colon)
+                                .map_with_span(|kind, span: SpanType| (kind, span)))
+                            .map(|((leading_trivia, (kind, range)), trailing_trivia)| {
+                                cst::Node::token(
+                                    kind,
+                                    lex::Node::chars_unwrapped(range),
+                                    leading_trivia,
+                                    trailing_trivia,
+                                )
+                            }),
+                            optional!(rule!(Expression))
+                        ))
+                    ),
+                    seq!(
                         with_trivia!(just(":")
                             .to(TokenKind::Colon)
                             .map_with_span(|kind, span: SpanType| (kind, span)))
@@ -3737,7 +3785,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                             )
                         }),
                         optional!(rule!(Expression))
-                    ))
+                    )
                 ),
                 terminal!(CloseBracket, "]")
             )
