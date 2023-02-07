@@ -108,12 +108,16 @@
       - delimitedBy:
           open: "["
           expression:
-            sequence:
-              - optional:
-                  reference: "Expression"
-              - optional:
-                  sequence:
-                    - terminal: ":"
-                    - optional:
-                        reference: "Expression"
+            choice:
+              - sequence:
+                  - reference: "Expression"
+                  - optional:
+                      sequence:
+                        - terminal: ":"
+                        - optional:
+                            reference: "Expression"
+              - sequence:
+                  - terminal: ":"
+                  - optional:
+                      reference: "Expression"
           close: "]"

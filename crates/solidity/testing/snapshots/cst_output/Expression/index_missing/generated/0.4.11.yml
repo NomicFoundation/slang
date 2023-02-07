@@ -1,0 +1,16 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ arr[]                                                                            │ 0..5
+
+Errors: # 1 total
+  - >
+    Error: Expected '!' or '"' or ''' or '(' or '+' or '-' or '.' or '/' or '0' or ':' or '[' or 'a' or 'b' or 'f' or 'h' or 'i' or 'n' or 'p' or 's' or 't' or 'u' or '~'.
+       ╭─[crates/solidity/testing/snapshots/cst_output/Expression/index_missing/input.sol:1:5]
+       │
+     1 │ arr[]
+       ·     ┬  
+       ·     ╰── Found ']'.
+    ───╯
+
+Tree: null

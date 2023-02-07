@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ arr[start:]                                                                      │ 0..11
+
+Errors: []
+
+Tree:
+  - Expression (Rule): # 0..11 "arr[start:]"
+      - IndexAccessExpression (Rule): # 0..11 "arr[start:]"
+          - PrimaryExpression (Rule): # 0..3 "arr"
+              - Identifier (Token): "arr" # 0..3
+          - Group: # 3..11 "[start:]"
+              - OpenBracket (Token): "[" # 3..4
+              - Group: # 4..10 "start:"
+                  - Expression (Rule): # 4..9 "start"
+                      - PrimaryExpression (Rule): # 4..9 "start"
+                          - Identifier (Token): "start" # 4..9
+                  - Group: # 9..10 ":"
+                      - Colon (Token): ":" # 9..10
+              - CloseBracket (Token): "]" # 10..11

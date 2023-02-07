@@ -1,0 +1,17 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ arr[:]                                                                           │ 0..6
+
+Errors: []
+
+Tree:
+  - Expression (Rule): # 0..6 "arr[:]"
+      - IndexAccessExpression (Rule): # 0..6 "arr[:]"
+          - PrimaryExpression (Rule): # 0..3 "arr"
+              - Identifier (Token): "arr" # 0..3
+          - Group: # 3..6 "[:]"
+              - OpenBracket (Token): "[" # 3..4
+              - Group: # 4..5 ":"
+                  - Colon (Token): ":" # 4..5
+              - CloseBracket (Token): "]" # 5..6
