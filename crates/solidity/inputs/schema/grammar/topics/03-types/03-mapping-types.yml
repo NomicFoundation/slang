@@ -9,9 +9,35 @@
           open: "("
           expression:
             sequence:
-              - choice:
-                  - reference: "ElementaryType"
-                  - reference: "IdentifierPath"
+              - reference: "MappingKeyType"
               - terminal: "=>"
-              - reference: "TypeName"
+              - reference: "MappingValueType"
           close: ")"
+
+- name: "MappingKeyType"
+  kind: "Rule"
+  versioned:
+    0.4.11:
+      sequence:
+        - choice:
+            - reference: "ElementaryType"
+            - reference: "IdentifierPath"
+    0.8.18:
+      sequence:
+        - choice:
+            - reference: "ElementaryType"
+            - reference: "IdentifierPath"
+        - optional:
+            reference: "Identifier"
+
+- name: "MappingValueType"
+  kind: "Rule"
+  versioned:
+    0.4.11:
+      sequence:
+        - reference: "TypeName"
+    0.8.18:
+      sequence:
+        - reference: "TypeName"
+        - optional:
+            reference: "Identifier"

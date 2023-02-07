@@ -107,6 +107,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     // Declare all versions -----------------------------
 
     let version_0_6_0 = &Version::parse("0.6.0").unwrap();
+    let version_0_8_18 = &Version::parse("0.8.18").unwrap();
 
     // Declare all productions --------------------------
 
@@ -186,7 +187,9 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     declare_token!(Keyword);
     declare_rule!(LeadingTrivia);
     declare_rule!(LibraryDefinition);
+    declare_rule!(MappingKeyType);
     declare_rule!(MappingType);
+    declare_rule!(MappingValueType);
     declare_rule!(MemberAccessExpression);
     declare_rule!(ModifierAttribute);
     declare_rule!(ModifierDefinition);
@@ -4093,7 +4096,22 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         )
     );
 
-    // MappingType = 'mapping' '(' ( ElementaryType | IdentifierPath ) '=>' TypeName ')' ;
+    // (* 0.4.11 *) MappingKeyType = ( ElementaryType | IdentifierPath ) ;
+    // (* 0.8.18 *) MappingKeyType = ( ElementaryType | IdentifierPath ) [ «Identifier» ] ;
+    define_rule!(
+        MappingKeyType,
+        if version_0_8_18 <= version {
+            seq!(
+                choice!(rule!(ElementaryType), rule!(IdentifierPath)),
+                optional!(token!(Identifier))
+            )
+            .boxed()
+        } else {
+            seq!(choice!(rule!(ElementaryType), rule!(IdentifierPath))).boxed()
+        }
+    );
+
+    // MappingType = 'mapping' '(' MappingKeyType '=>' MappingValueType ')' ;
     define_rule!(
         MappingType,
         seq!(
@@ -4111,7 +4129,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
             delimited_by!(
                 terminal!(OpenParen, "("),
                 seq!(
-                    choice!(rule!(ElementaryType), rule!(IdentifierPath)),
+                    rule!(MappingKeyType),
                     with_trivia!(just("=>")
                         .to(TokenKind::EqualGreater)
                         .map_with_span(|kind, span: SpanType| (kind, span)))
@@ -4123,11 +4141,22 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                             trailing_trivia,
                         )
                     }),
-                    rule!(TypeName)
+                    rule!(MappingValueType)
                 ),
                 terminal!(CloseParen, ")")
             )
         )
+    );
+
+    // (* 0.4.11 *) MappingValueType = TypeName ;
+    // (* 0.8.18 *) MappingValueType = TypeName [ «Identifier» ] ;
+    define_rule!(
+        MappingValueType,
+        if version_0_8_18 <= version {
+            seq!(rule!(TypeName), optional!(token!(Identifier))).boxed()
+        } else {
+            seq!(rule!(TypeName)).boxed()
+        }
     );
 
     // MemberAccessExpression = Expression '.' ( «Identifier» | 'address' ) ;

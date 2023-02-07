@@ -1,0 +1,23 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ mapping(string Foo => bytes32)                                                   │ 0..30
+
+Errors: []
+
+Tree:
+  - MappingType (Rule): # 0..30 "mapping(string Foo => bytes32)"
+      - Mapping (Token): "mapping" # 0..7
+      - Group: # 7..30 "(string Foo => bytes32)"
+          - OpenParen (Token): "(" # 7..8
+          - Group: # 8..29 "string Foo => bytes32"
+              - MappingKeyType (Rule): # 8..18 "string Foo"
+                  - ElementaryType (Rule): # 8..14 "string"
+                      - String (Token): "string" # 8..14
+                  - Identifier (Token): "Foo" # 15..18
+              - EqualGreater (Token): "=>" # 19..21
+              - MappingValueType (Rule): # 22..29 "bytes32"
+                  - TypeName (Rule): # 22..29 "bytes32"
+                      - ElementaryType (Rule): # 22..29 "bytes32"
+                          - FixedBytesType (Token): "bytes32" # 22..29
+          - CloseParen (Token): ")" # 29..30
