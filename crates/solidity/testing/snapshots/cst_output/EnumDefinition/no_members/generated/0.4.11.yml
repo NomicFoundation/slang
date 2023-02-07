@@ -1,0 +1,14 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ enum Foo { }                                                                     │ 0..12
+
+Errors: []
+
+Tree:
+  - EnumDefinition (Rule): # 0..12 "enum Foo { }"
+      - Enum (Token): "enum" # 0..4
+      - Identifier (Token): "Foo" # 5..8
+      - Group: # 9..12 "{ }"
+          - OpenBrace (Token): "{" # 9..10
+          - CloseBrace (Token): "}" # 11..12

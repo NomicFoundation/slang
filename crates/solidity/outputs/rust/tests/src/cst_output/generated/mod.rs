@@ -7,6 +7,8 @@ mod DecimalLiteral;
 #[allow(non_snake_case)]
 mod DeleteStatement;
 #[allow(non_snake_case)]
+mod EnumDefinition;
+#[allow(non_snake_case)]
 mod Expression;
 #[allow(non_snake_case)]
 mod FixedBytesType;

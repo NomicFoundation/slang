@@ -1,0 +1,24 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ enum Foo {                                                                       │ 0..10
+  2  │     Bar1,                                                                        │ 11..20
+  3  │     Bar2,                                                                        │ 21..30
+  4  │     Bar3                                                                         │ 31..39
+  5  │ }                                                                                │ 40..41
+
+Errors: []
+
+Tree:
+  - EnumDefinition (Rule): # 0..41 "enum Foo {\n    Bar1,\n    Bar2,\n    Bar3\n}"
+      - Enum (Token): "enum" # 0..4
+      - Identifier (Token): "Foo" # 5..8
+      - Group: # 9..41 "{\n    Bar1,\n    Bar2,\n    Bar3\n}"
+          - OpenBrace (Token): "{" # 9..10
+          - Group: # 15..39 "Bar1,\n    Bar2,\n    Bar3"
+              - Identifier (Token): "Bar1" # 15..19
+              - Comma (Token): "," # 19..20
+              - Identifier (Token): "Bar2" # 25..29
+              - Comma (Token): "," # 29..30
+              - Identifier (Token): "Bar3" # 35..39
+          - CloseBrace (Token): "}" # 40..41

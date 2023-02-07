@@ -1570,7 +1570,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         )))
     );
 
-    // EnumDefinition = 'enum' «Identifier» '{' «Identifier»  { ',' «Identifier» } '}' ;
+    // EnumDefinition = 'enum' «Identifier» '{' [ «Identifier»  { ',' «Identifier» } ] '}' ;
     define_rule!(
         EnumDefinition,
         seq!(
@@ -1588,7 +1588,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
             token!(Identifier),
             delimited_by!(
                 terminal!(OpenBrace, "{"),
-                separated_by!(token!(Identifier), terminal!(Comma, ",")),
+                optional!(separated_by!(token!(Identifier), terminal!(Comma, ","))),
                 terminal!(CloseBrace, "}")
             )
         )
