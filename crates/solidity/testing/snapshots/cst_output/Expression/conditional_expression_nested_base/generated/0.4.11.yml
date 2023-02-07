@@ -9,7 +9,7 @@ Tree:
   - Expression (Rule): # 0..27 "(foo == bar) ? true : false"
       - ConditionalExpression (Rule): # 0..27 "(foo == bar) ? true : false"
           - PrimaryExpression (Rule): # 0..12 "(foo == bar)"
-              - ParenthesisExpression (Rule): # 0..12 "(foo == bar)"
+              - TupleExpression (Rule): # 0..12 "(foo == bar)"
                   - OpenParen (Token): "(" # 0..1
                   - Group: # 1..11 "foo == bar"
                       - Expression (Rule): # 1..11 "foo == bar"

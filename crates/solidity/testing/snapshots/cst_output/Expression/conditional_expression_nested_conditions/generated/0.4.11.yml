@@ -14,7 +14,7 @@ Tree:
               - Question (Token): "?" # 4..5
               - Expression (Rule): # 6..13 "(a + b)"
                   - PrimaryExpression (Rule): # 6..13 "(a + b)"
-                      - ParenthesisExpression (Rule): # 6..13 "(a + b)"
+                      - TupleExpression (Rule): # 6..13 "(a + b)"
                           - OpenParen (Token): "(" # 6..7
                           - Group: # 7..12 "a + b"
                               - Expression (Rule): # 7..12 "a + b"
@@ -28,7 +28,7 @@ Tree:
               - Colon (Token): ":" # 14..15
               - Expression (Rule): # 16..23 "(c + d)"
                   - PrimaryExpression (Rule): # 16..23 "(c + d)"
-                      - ParenthesisExpression (Rule): # 16..23 "(c + d)"
+                      - TupleExpression (Rule): # 16..23 "(c + d)"
                           - OpenParen (Token): "(" # 16..17
                           - Group: # 17..22 "c + d"
                               - Expression (Rule): # 17..22 "c + d"
