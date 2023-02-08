@@ -2,23 +2,36 @@
 
 - name: "FunctionDefinition"
   kind: "Rule"
-  unversioned:
-    sequence:
-      - terminal: "function"
-      - choice:
-          - reference: "Identifier"
-          - terminal: "fallback"
-          - terminal: "receive"
-      - reference: "ParameterList"
-      - zeroOrMore:
-          reference: "FunctionAttribute"
-      - optional:
-          sequence:
-            - terminal: "returns"
-            - reference: "ParameterList"
-      - choice:
-          - terminal: ";"
-          - reference: "Block"
+  versioned:
+    0.4.11: # optional identifier before 0.6.0 to indicate fallback functions
+      sequence:
+        - terminal: "function"
+        - optional:
+            reference: "Identifier"
+        - reference: "ParameterList"
+        - zeroOrMore:
+            reference: "FunctionAttribute"
+        - optional:
+            sequence:
+              - terminal: "returns"
+              - reference: "ParameterList"
+        - choice:
+            - terminal: ";"
+            - reference: "Block"
+    0.6.0: # required identifier after 0.6.0 as a new `fallback` keyword was introduced
+      sequence:
+        - terminal: "function"
+        - reference: "Identifier"
+        - reference: "ParameterList"
+        - zeroOrMore:
+            reference: "FunctionAttribute"
+        - optional:
+            sequence:
+              - terminal: "returns"
+              - reference: "ParameterList"
+        - choice:
+            - terminal: ";"
+            - reference: "Block"
 
 - name: "FunctionAttribute"
   kind: "Rule"
@@ -116,13 +129,14 @@
 
 - name: "ConstructorDefinition"
   kind: "Rule"
-  unversioned:
-    sequence:
-      - terminal: "constructor"
-      - reference: "ParameterList"
-      - zeroOrMore:
-          reference: "ConstructorAttribute"
-      - reference: "Block"
+  versioned:
+    0.4.22:
+      sequence:
+        - terminal: "constructor"
+        - reference: "ParameterList"
+        - zeroOrMore:
+            reference: "ConstructorAttribute"
+        - reference: "Block"
 
 - name: "ConstructorAttribute"
   kind: "Rule"
@@ -135,19 +149,20 @@
 
 - name: "FallbackFunctionDefinition"
   kind: "Rule"
-  unversioned:
-    sequence:
-      - terminal: "fallback"
-      - reference: "ParameterList"
-      - zeroOrMore:
-          reference: "FallbackFunctionAttribute"
-      - optional:
-          sequence:
-            - terminal: "returns"
-            - reference: "ParameterList"
-      - choice:
-          - terminal: ";"
-          - reference: "Block"
+  versioned:
+    0.6.0:
+      sequence:
+        - terminal: "fallback"
+        - reference: "ParameterList"
+        - zeroOrMore:
+            reference: "FallbackFunctionAttribute"
+        - optional:
+            sequence:
+              - terminal: "returns"
+              - reference: "ParameterList"
+        - choice:
+            - terminal: ";"
+            - reference: "Block"
 
 - name: "FallbackFunctionAttribute"
   kind: "Rule"
@@ -163,15 +178,16 @@
 
 - name: "ReceiveFunctionDefinition"
   kind: "Rule"
-  unversioned:
-    sequence:
-      - terminal: "receive"
-      - reference: "ParameterList"
-      - zeroOrMore:
-          reference: "ReceiveFunctionAttribute"
-      - choice:
-          - terminal: ";"
-          - reference: "Block"
+  versioned:
+    0.6.0:
+      sequence:
+        - terminal: "receive"
+        - reference: "ParameterList"
+        - zeroOrMore:
+            reference: "ReceiveFunctionAttribute"
+        - choice:
+            - terminal: ";"
+            - reference: "Block"
 
 - name: "ReceiveFunctionAttribute"
   kind: "Rule"
