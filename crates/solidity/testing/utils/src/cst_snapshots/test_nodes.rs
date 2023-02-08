@@ -26,7 +26,12 @@ impl TestNode {
     pub fn from_cst(node: &Rc<cst::Node>) -> Self {
         return match node.as_ref() {
             cst::Node::Rule { kind, children } => {
-                let children = children.iter().map(|child| Self::from_cst(child)).collect();
+                let children = children
+                    .iter()
+                    .filter(|child| !Self::is_whitespace(child))
+                    .map(|child| Self::from_cst(child))
+                    .collect();
+
                 let range = Self::calculate_range(&children);
 
                 Self {
@@ -36,7 +41,12 @@ impl TestNode {
                 }
             }
             cst::Node::Group { children } => {
-                let children = children.iter().map(|child| Self::from_cst(child)).collect();
+                let children = children
+                    .iter()
+                    .filter(|child| !Self::is_whitespace(child))
+                    .map(|child| Self::from_cst(child))
+                    .collect();
+
                 let range = Self::calculate_range(&children);
 
                 Self {
@@ -114,6 +124,10 @@ impl TestNode {
     }
 
     fn from_trivia(trivia: &Rc<cst::Node>) -> Option<Self> {
+        if Self::is_whitespace(trivia) {
+            return None;
+        }
+
         match trivia.as_ref() {
             cst::Node::Rule { .. } | cst::Node::Group { .. } => {
                 unreachable!("Unexpected trivia: {trivia:?}")
@@ -129,10 +143,6 @@ impl TestNode {
                 );
 
                 match kind {
-                    TokenKind::Whitespace | TokenKind::EndOfLine => {
-                        // hide this from snapshots
-                        return None;
-                    }
                     TokenKind::SingleLineComment | TokenKind::MultilineComment => {
                         return Some(Self {
                             kind: TestNodeKind::Trivia(*kind),
@@ -145,6 +155,16 @@ impl TestNode {
                     }
                 }
             }
+        };
+    }
+
+    fn is_whitespace(token: &Rc<cst::Node>) -> bool {
+        return match token.as_ref() {
+            cst::Node::Token { kind, .. } => match kind {
+                TokenKind::Whitespace | TokenKind::EndOfLine => true,
+                _ => false,
+            },
+            _ => false,
         };
     }
 
