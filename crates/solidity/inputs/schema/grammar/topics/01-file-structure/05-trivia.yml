@@ -29,6 +29,7 @@
     zeroOrMore:
       choice:
         - reference: "Whitespace"
+        - reference: "EndOfLine"
         - reference: "MultilineComment"
         - reference: "SingleLineComment"
 
