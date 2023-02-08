@@ -13,15 +13,13 @@
 - name: "TrailingTrivia"
   kind: "Trivia"
   unversioned:
-    optional:
-      sequence:
-        - zeroOrMore:
-            choice:
-              - reference: "Whitespace"
-              - reference: "MultilineComment"
-        - choice:
-            - reference: "EndOfLine"
-            - reference: "SingleLineComment"
+    sequence:
+      - zeroOrMore:
+          reference: "Whitespace"
+      - optional:
+          reference: "SingleLineComment"
+      - optional:
+          reference: "EndOfLine"
 
 - name: "EndOfFileTrivia"
   kind: "Trivia"
