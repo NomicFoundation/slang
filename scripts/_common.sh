@@ -17,5 +17,23 @@ function _list_source_files() {
   pattern="$1"
 
   cd "$REPO_ROOT"
-  rg --files --hidden --sort "path" --glob '!.git/**' --glob "$pattern" | xargs realpath --canonicalize-existing
+  rg \
+    --files --sort "path" \
+    --hidden --glob '!.git/**' --glob '!.hermit/**' \
+    --glob "$pattern" \
+    | xargs realpath --canonicalize-existing
+}
+
+#
+# Optionally appends an argument to a string if it doesn't already contain it.
+#
+function _try_append_arg() {
+  original="$1"
+  arg="$2"
+
+  if [[ "$original" == *"$arg"* ]]; then
+    echo "$original"
+  else
+    echo "$original $arg"
+  fi
 }
