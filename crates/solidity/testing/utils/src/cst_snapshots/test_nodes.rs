@@ -81,14 +81,13 @@ impl TestNode {
                     children: trivium_children,
                 } => {
                     for trivium_child in trivium_children {
-                        let test_trivium_child = match Self::from_trivia(trivium_child) {
-                            Some(value) => value,
-                            None => continue,
-                        };
-
                         match trivium_kind {
-                            RuleKind::LeadingTrivia => leading.push(test_trivium_child),
-                            RuleKind::TrailingTrivia => trailing.push(test_trivium_child),
+                            RuleKind::LeadingTrivia => {
+                                Self::collect_trivia(trivium_child, &mut leading);
+                            }
+                            RuleKind::TrailingTrivia => {
+                                Self::collect_trivia(trivium_child, &mut trailing);
+                            }
                             _ => unreachable!("Unexpected trivium kind: {trivium_kind:?}"),
                         }
                     }
@@ -123,14 +122,16 @@ impl TestNode {
         };
     }
 
-    fn from_trivia(trivia: &Rc<cst::Node>) -> Option<Self> {
-        if Self::is_whitespace(trivia) {
-            return None;
+    fn collect_trivia(node: &Rc<cst::Node>, collection: &mut Vec<Self>) {
+        if Self::is_whitespace(node) {
+            return;
         }
 
-        match trivia.as_ref() {
-            cst::Node::Rule { .. } | cst::Node::Group { .. } => {
-                unreachable!("Unexpected trivia: {trivia:?}")
+        match node.as_ref() {
+            cst::Node::Rule { children, .. } | cst::Node::Group { children, .. } => {
+                for child in children {
+                    Self::collect_trivia(child, collection);
+                }
             }
             cst::Node::Token {
                 kind,
@@ -144,7 +145,7 @@ impl TestNode {
 
                 match kind {
                     TokenKind::SingleLineComment | TokenKind::MultilineComment => {
-                        return Some(Self {
+                        collection.push(Self {
                             kind: TestNodeKind::Trivia(*kind),
                             range: Some(lex_node.range()),
                             children: vec![],
@@ -153,7 +154,7 @@ impl TestNode {
                     other => {
                         unreachable!("Unexpected trivia token kind: {other:?}")
                     }
-                }
+                };
             }
         };
     }

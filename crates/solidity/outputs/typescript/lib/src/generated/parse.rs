@@ -5231,16 +5231,14 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         )
     );
 
-    // TrailingTrivia = [ { «Whitespace» | «MultilineComment» } ( «EndOfLine» | «SingleLineComment» ) ] ;
+    // TrailingTrivia = { «Whitespace» } [ «SingleLineComment» ] [ «EndOfLine» ] ;
     define_rule!(
         TrailingTrivia,
-        optional!(seq!(
-            zero_or_more!(choice!(
-                trivia_token!(Whitespace),
-                trivia_token!(MultilineComment)
-            )),
-            choice!(trivia_token!(EndOfLine), trivia_token!(SingleLineComment))
-        ))
+        seq!(
+            zero_or_more!(trivia_token!(Whitespace)),
+            optional!(trivia_token!(SingleLineComment)),
+            optional!(trivia_token!(EndOfLine))
+        )
     );
 
     // TryStatement = 'try' Expression [ 'returns' ParameterList ] Block 1…*{ CatchClause } ;
