@@ -7,3 +7,8 @@ use anyhow::Result;
 fn empty_file() -> Result<()> {
     return run("SourceUnit", "empty_file");
 }
+
+#[test]
+fn end_of_file_trivia() -> Result<()> {
+    return run("SourceUnit", "end_of_file_trivia");
+}

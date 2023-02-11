@@ -1555,11 +1555,12 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         )
     );
 
-    // EndOfFileTrivia = { «Whitespace» | «MultilineComment» | «SingleLineComment» } ;
+    // EndOfFileTrivia = { «Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment» } ;
     define_rule!(
         EndOfFileTrivia,
         zero_or_more!(choice!(
             trivia_token!(Whitespace),
+            trivia_token!(EndOfLine),
             trivia_token!(MultilineComment),
             trivia_token!(SingleLineComment)
         ))
