@@ -1,0 +1,11 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ ( )                                                                              │ 0..3
+
+Errors: []
+
+Tree:
+  - TupleExpression (Rule): # 0..3 "( )"
+      - OpenParen (Token): "(" # 0..1
+      - CloseParen (Token): ")" # 2..3

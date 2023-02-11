@@ -5,7 +5,7 @@
   unversioned:
     choice:
       - reference: "Identifier"
-      - reference: "ParenthesisExpression"
+      - reference: "TupleExpression"
       - reference: "ArrayLiteral"
       - reference: "AsciiStringLiteral"
       - reference: "UnicodeStringLiteral"
@@ -34,7 +34,7 @@
       - terminal: "new"
       - reference: "TypeName"
 
-- name: "ParenthesisExpression"
+- name: "TupleExpression"
   kind: "Rule"
   unversioned:
     delimitedBy:

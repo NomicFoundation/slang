@@ -203,7 +203,6 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     declare_rule!(OverrideSpecifier);
     declare_rule!(ParameterDeclaration);
     declare_rule!(ParameterList);
-    declare_rule!(ParenthesisExpression);
     declare_rule!(PayableType);
     declare_rule!(PositionalArgumentList);
     declare_token!(PossiblySeparatedPairsOfHexDigits);
@@ -235,6 +234,7 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
     declare_rule!(TrailingTrivia);
     declare_rule!(TryStatement);
     declare_rule!(TupleDeconstructionStatement);
+    declare_rule!(TupleExpression);
     declare_rule!(TypeExpression);
     declare_rule!(TypeName);
     declare_rule!(UnaryPrefixExpression);
@@ -4435,16 +4435,6 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         )
     );
 
-    // ParenthesisExpression = '(' [ Expression ]  { ',' [ Expression ] } ')' ;
-    define_rule!(
-        ParenthesisExpression,
-        delimited_by!(
-            terminal!(OpenParen, "("),
-            separated_by!(optional!(rule!(Expression)), terminal!(Comma, ",")),
-            terminal!(CloseParen, ")")
-        )
-    );
-
     // PayableType = 'payable' ;
     define_rule!(
         PayableType,
@@ -4525,12 +4515,12 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
         )
     );
 
-    // PrimaryExpression = «Identifier» | ParenthesisExpression | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | NumericLiteral | «BooleanLiteral» | NewExpression | TypeExpression | ElementaryType ;
+    // PrimaryExpression = «Identifier» | TupleExpression | ArrayLiteral | «AsciiStringLiteral» | «UnicodeStringLiteral» | «HexStringLiteral» | NumericLiteral | «BooleanLiteral» | NewExpression | TypeExpression | ElementaryType ;
     define_rule!(
         PrimaryExpression,
         choice!(
             token!(Identifier),
-            rule!(ParenthesisExpression),
+            rule!(TupleExpression),
             rule!(ArrayLiteral),
             token!(AsciiStringLiteral),
             token!(UnicodeStringLiteral),
@@ -5257,6 +5247,16 @@ pub fn create_parsers(version: &Version) -> BTreeMap<ProductionKind, Parser> {
                     trailing_trivia,
                 )
             })
+        )
+    );
+
+    // TupleExpression = '(' [ Expression ]  { ',' [ Expression ] } ')' ;
+    define_rule!(
+        TupleExpression,
+        delimited_by!(
+            terminal!(OpenParen, "("),
+            separated_by!(optional!(rule!(Expression)), terminal!(Comma, ",")),
+            terminal!(CloseParen, ")")
         )
     );
 
