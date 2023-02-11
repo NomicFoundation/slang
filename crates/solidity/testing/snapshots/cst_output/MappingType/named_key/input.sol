@@ -1,0 +1,1 @@
+mapping(string Foo => bytes32)
