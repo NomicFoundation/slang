@@ -1,0 +1,1 @@
+unicode"happy 😃" unicode'sad 😔'

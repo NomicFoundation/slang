@@ -1,0 +1,16 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ hex"1_2"                                                                         │ 0..8
+
+Errors: # 1 total
+  - >
+    Error: Expected something else.
+       ╭─[crates/solidity/testing/snapshots/cst_output/HexStringLiteral/invalid_separator_after_single_char/input.sol:1:6]
+       │
+     1 │ hex"1_2"
+       ·      ┬  
+       ·      ╰── Found '_'.
+    ───╯
+
+Tree: null

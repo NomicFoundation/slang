@@ -13,6 +13,8 @@ mod FixedBytesType;
 #[allow(non_snake_case)]
 mod HexLiteral;
 #[allow(non_snake_case)]
+mod HexStringLiteral;
+#[allow(non_snake_case)]
 mod Identifier;
 #[allow(non_snake_case)]
 mod InterfaceDefinition;
@@ -30,6 +32,8 @@ mod SignedIntegerType;
 mod SingleLineComment;
 #[allow(non_snake_case)]
 mod SourceUnit;
+#[allow(non_snake_case)]
+mod StringExpression;
 #[allow(non_snake_case)]
 mod TupleDeconstructionStatement;
 #[allow(non_snake_case)]
