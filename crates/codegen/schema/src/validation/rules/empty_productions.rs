@@ -48,32 +48,60 @@ impl Visitor for EmptyProductionsVisitor {
         expression: &ExpressionRef,
         reporter: &mut Reporter,
     ) -> VisitorResponse {
-        match &expression.parser.value {
-            ExpressionParser::Choice(_)
-            | ExpressionParser::DelimitedBy { .. }
-            | ExpressionParser::Difference { .. }
-            | ExpressionParser::Not { .. }
-            | ExpressionParser::OneOrMore(_)
-            | ExpressionParser::Range { .. }
-            | ExpressionParser::Reference(_)
-            | ExpressionParser::SeparatedBy { .. }
-            | ExpressionParser::Sequence(_)
-            | ExpressionParser::Terminal(_) => {
-                // Cannot be optionally empty. Do nothing.
-            }
-            ExpressionParser::Optional(_) | ExpressionParser::ZeroOrMore(_) => {
-                reporter.report(&expression.parser.syntax, Errors::PossibleEmptyRoot);
-            }
-            ExpressionParser::Repeat { min, .. } => {
-                if min.value == 0 {
-                    reporter.report(&min.syntax, Errors::PossibleEmptyRoot);
-                }
-            }
-        };
+        if let Some(syntax) = find_empty_node(expression) {
+            reporter.report(syntax, Errors::PossibleEmptyRoot);
+        }
 
         // Only check the top-most expression. Ignore nested ones.
         return VisitorResponse::StepOut;
     }
+}
+
+fn find_empty_node<'a>(expression: &'a ExpressionRef) -> Option<&'a crate::yaml::cst::NodeRef> {
+    match &expression.parser.value {
+        ExpressionParser::Choice(choices) => {
+            return choices.iter().find_map(|choice| find_empty_node(choice));
+        }
+
+        ExpressionParser::Difference { minuend, .. } => {
+            return find_empty_node(minuend);
+        }
+
+        ExpressionParser::OneOrMore(expression)
+        | ExpressionParser::SeparatedBy { expression, .. } => {
+            return find_empty_node(expression);
+        }
+
+        ExpressionParser::Optional(_) | ExpressionParser::ZeroOrMore(_) => {
+            return Some(&expression.parser.syntax);
+        }
+
+        ExpressionParser::Sequence(sequence) => {
+            if sequence.iter().all(|item| find_empty_node(item).is_some()) {
+                return Some(&expression.parser.syntax);
+            } else {
+                return None;
+            }
+        }
+
+        ExpressionParser::Repeat {
+            min, expression, ..
+        } => {
+            if min.value > 0 {
+                return find_empty_node(expression);
+            } else {
+                return Some(&min.syntax);
+            }
+        }
+
+        ExpressionParser::DelimitedBy { .. }
+        | ExpressionParser::Not { .. }
+        | ExpressionParser::Range { .. }
+        | ExpressionParser::Reference(_)
+        | ExpressionParser::Terminal(_) => {
+            return None; // Cannot be empty.
+        }
+    };
 }
 
 #[derive(thiserror::Error, Debug)]
