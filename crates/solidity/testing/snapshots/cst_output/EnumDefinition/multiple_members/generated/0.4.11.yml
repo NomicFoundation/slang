@@ -13,9 +13,9 @@ Tree:
   - EnumDefinition (Rule): # 0..41 "enum Foo {\n    Bar1,\n    Bar2,\n    Bar3\n}"
       - Enum (Token): "enum" # 0..4
       - Identifier (Token): "Foo" # 5..8
-      - Group: # 9..41 "{\n    Bar1,\n    Bar2,\n    Bar3\n}"
+      - _DELIMITEDBY (Rule): # 8..41 " {\n    Bar1,\n    Bar2,\n    Bar3\n}"
           - OpenBrace (Token): "{" # 9..10
-          - Group: # 15..39 "Bar1,\n    Bar2,\n    Bar3"
+          - _SEPARATEDBY (Rule): # 11..40 "    Bar1,\n    Bar2,\n    Bar3\n"
               - Identifier (Token): "Bar1" # 15..19
               - Comma (Token): "," # 19..20
               - Identifier (Token): "Bar2" # 25..29

@@ -15,44 +15,46 @@ Tree:
   - InterfaceDefinition (Rule): # 0..172 "interface ICounter {\n    // returns the current co..."
       - Interface (Token): "interface" # 0..9
       - Identifier (Token): "ICounter" # 10..18
-      - Group: # 19..172 "{\n    // returns the current count\n    function co..."
+      - _DELIMITEDBY (Rule): # 18..172 " {\n    // returns the current count\n    function c..."
           - OpenBrace (Token): "{" # 19..20
-          - Group: # 25..170 "// returns the current count\n    function count() ..."
-              - ContractBodyElement (Rule): # 25..104 "// returns the current count\n    function count() ..."
-                  - FunctionDefinition (Rule): # 25..104 "// returns the current count\n    function count() ..."
-                      - Function (Token): # 25..66 "// returns the current count\n    function"
+          - _REPEATED (Rule): # 21..171 "    // returns the current count\n    function coun..."
+              - ContractBodyElement (Rule): # 21..106 "    // returns the current count\n    function coun..."
+                  - FunctionDefinition (Rule): # 21..106 "    // returns the current count\n    function coun..."
+                      - Function (Token): # 21..66 "    // returns the current count\n    function"
                           - SingleLineComment (Trivia): "// returns the current count" # 25..53
                           - Contents: "function" # 58..66
                       - Identifier (Token): "count" # 67..72
                       - ParameterList (Rule): # 72..74 "()"
-                          - OpenParen (Token): "(" # 72..73
-                          - CloseParen (Token): ")" # 73..74
-                      - Group: # 75..88 "external view"
+                          - _DELIMITEDBY (Rule): # 72..74 "()"
+                              - OpenParen (Token): "(" # 72..73
+                              - CloseParen (Token): ")" # 73..74
+                      - _REPEATED (Rule): # 75..88 "external view"
                           - FunctionAttribute (Rule): # 75..83 "external"
                               - External (Token): "external" # 75..83
                           - FunctionAttribute (Rule): # 84..88 "view"
                               - View (Token): "view" # 84..88
-                      - Group: # 89..103 "returns (uint)"
-                          - Returns (Token): "returns" # 89..96
-                          - ParameterList (Rule): # 97..103 "(uint)"
+                      - Returns (Token): "returns" # 89..96
+                      - ParameterList (Rule): # 96..103 " (uint)"
+                          - _DELIMITEDBY (Rule): # 96..103 " (uint)"
                               - OpenParen (Token): "(" # 97..98
-                              - Group: # 98..102 "uint"
+                              - _SEPARATEDBY (Rule): # 98..102 "uint"
                                   - ParameterDeclaration (Rule): # 98..102 "uint"
                                       - TypeName (Rule): # 98..102 "uint"
                                           - ElementaryType (Rule): # 98..102 "uint"
                                               - UnsignedIntegerType (Token): "uint" # 98..102
                               - CloseParen (Token): ")" # 102..103
                       - Semicolon (Token): ";" # 103..104
-              - ContractBodyElement (Rule): # 110..170 "// increments the counter\n    function increment()..."
-                  - FunctionDefinition (Rule): # 110..170 "// increments the counter\n    function increment()..."
-                      - Function (Token): # 110..148 "// increments the counter\n    function"
+              - ContractBodyElement (Rule): # 106..171 "    // increments the counter\n    function increme..."
+                  - FunctionDefinition (Rule): # 106..171 "    // increments the counter\n    function increme..."
+                      - Function (Token): # 106..148 "    // increments the counter\n    function"
                           - SingleLineComment (Trivia): "// increments the counter" # 110..135
                           - Contents: "function" # 140..148
                       - Identifier (Token): "increment" # 149..158
                       - ParameterList (Rule): # 158..160 "()"
-                          - OpenParen (Token): "(" # 158..159
-                          - CloseParen (Token): ")" # 159..160
-                      - Group: # 161..169 "external"
+                          - _DELIMITEDBY (Rule): # 158..160 "()"
+                              - OpenParen (Token): "(" # 158..159
+                              - CloseParen (Token): ")" # 159..160
+                      - _REPEATED (Rule): # 161..169 "external"
                           - FunctionAttribute (Rule): # 161..169 "external"
                               - External (Token): "external" # 161..169
                       - Semicolon (Token): ";" # 169..170

@@ -293,6 +293,11 @@ pub enum RuleKind {
     YulStatement,
     YulSwitchStatement,
     YulVariableDeclaration,
+    _DELIMITEDBY,
+    _OPTIONAL,
+    _REPEATED,
+    _SEPARATEDBY,
+    _SEQUENCE,
 }
 
 #[derive(

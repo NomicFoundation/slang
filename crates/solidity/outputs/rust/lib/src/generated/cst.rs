@@ -1,53 +1,100 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use super::kinds::{RuleKind, TokenKind};
-use super::lex;
-use serde::Serialize;
+use std::cmp::{max, min};
+use std::ops::Range;
 use std::rc::Rc;
+
+use serde::Serialize;
+
+use super::kinds::*;
+
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 pub enum Node {
     Rule {
         kind: RuleKind,
+        range: Range<usize>,
         children: Vec<Rc<Node>>,
     },
     Token {
         kind: TokenKind,
-        lex_node: Rc<lex::Node>,
+        range: Range<usize>,
         #[serde(skip_serializing_if = "Vec::is_empty")]
         trivia: Vec<Rc<Node>>,
     },
-    #[doc = r" For anonymous groups referenced from AST nodes i.e. `delimited_by`"]
-    Group { children: Vec<Rc<Node>> },
 }
+
 impl Node {
-    pub fn rule(kind: RuleKind, children: Vec<Option<Rc<Self>>>) -> Option<Rc<Self>> {
-        let children: Vec<_> = children.into_iter().filter_map(|e| e).collect();
-        if children.is_empty() {
-            return None;
+    pub fn range(&self) -> Range<usize> {
+        match self {
+            Self::Rule { range, .. } => range.clone(),
+            Self::Token { range, .. } => range.clone(),
         }
-        if children.len() == 1 {
-            if let Self::Group { children } = children[0].as_ref() {
-                return Some(Rc::new(Self::Rule {
-                    kind,
-                    children: children.clone(),
-                }));
+    }
+
+    pub fn range_including_trivia(&self) -> Range<usize> {
+        match self {
+            Self::Rule { range, .. } => range.clone(),
+            Self::Token { range, trivia, .. } => {
+                if trivia.is_empty() {
+                    range.clone()
+                } else {
+                    Range {
+                        start: min(
+                            range.start,
+                            trivia.first().unwrap().range_including_trivia().start,
+                        ),
+                        end: max(
+                            range.end,
+                            trivia.last().unwrap().range_including_trivia().end,
+                        ),
+                    }
+                }
             }
         }
-        return Some(Rc::new(Self::Rule { kind, children }));
     }
-    pub fn trivia_token(kind: TokenKind, lex_node: Rc<lex::Node>) -> Option<Rc<Self>> {
-        Some(Rc::new(Self::Token {
+
+    pub fn rule(kind: RuleKind, children: Vec<Rc<Self>>) -> Rc<Self> {
+        let mut flattened_children: Vec<Rc<Self>> = Vec::new();
+        for child in children.into_iter() {
+            match child.as_ref() {
+                Node::Rule { children, .. } if children.is_empty() => {}
+                Node::Rule {
+                    kind: RuleKind::_SEQUENCE,
+                    children,
+                    ..
+                } => flattened_children.extend(children.iter().cloned()),
+                _ => flattened_children.push(child.clone()),
+            }
+        }
+        let range = if flattened_children.is_empty() {
+            Range { start: 0, end: 0 }
+        } else {
+            Range {
+                start: flattened_children
+                    .first()
+                    .unwrap()
+                    .range_including_trivia()
+                    .start,
+                end: flattened_children
+                    .last()
+                    .unwrap()
+                    .range_including_trivia()
+                    .end,
+            }
+        };
+        return Rc::new(Self::Rule {
             kind,
-            lex_node,
-            trivia: vec![],
-        }))
+            range,
+            children: flattened_children,
+        });
     }
+
     pub fn token(
         kind: TokenKind,
-        lex_node: Rc<lex::Node>,
+        range: Range<usize>,
         leading_trivia: Option<Rc<Self>>,
         trailing_trivia: Option<Rc<Self>>,
-    ) -> Option<Rc<Self>> {
+    ) -> Rc<Self> {
         let mut trivia = vec![];
         if let Some(leading_trivia) = leading_trivia {
             trivia.push(leading_trivia)
@@ -55,192 +102,31 @@ impl Node {
         if let Some(trailing_trivia) = trailing_trivia {
             trivia.push(trailing_trivia)
         }
-        Some(Rc::new(Self::Token {
+        Rc::new(Self::Token {
             kind,
-            lex_node,
+            range,
             trivia,
-        }))
-    }
-    pub fn group(children: Vec<Option<Rc<Self>>>) -> Option<Rc<Self>> {
-        let children: Vec<_> = children.into_iter().filter_map(|e| e).collect();
-        if children.is_empty() {
-            None
-        } else {
-            Some(Rc::new(Self::Group { children }))
-        }
-    }
-    pub fn top_level_token(lex_node: Option<Rc<lex::Node>>) -> Rc<Self> {
-        if let Some(lex_node) = lex_node {
-            if let lex::NodeContents::Named(kind, lex_node) = &lex_node.contents {
-                Rc::new(Self::Token {
-                    kind: *kind,
-                    lex_node: lex_node.clone(),
-                    trivia: vec![],
-                })
-            } else {
-                unreachable!("Top level token unexpected result: {:?}", lex_node)
-            }
-        } else {
-            unreachable!("Top level token unexpected None")
-        }
-    }
-    pub fn top_level_rule(kind: RuleKind, node: Option<Rc<Self>>) -> Rc<Self> {
-        node.unwrap_or_else(|| {
-            Rc::new(Self::Rule {
-                kind,
-                children: vec![],
-            })
         })
     }
-}
-#[allow(unused_variables)]
-pub trait Visitor<E> {
-    fn enter_rule(
-        &mut self,
-        kind: RuleKind,
-        children: &Vec<Rc<Node>>,
-        node: &Rc<Node>,
-        path: &Vec<Rc<Node>>,
-    ) -> Result<VisitorEntryResponse, E> {
-        Ok(VisitorEntryResponse::StepIn)
-    }
-    fn exit_rule(
-        &mut self,
-        kind: RuleKind,
-        children: &Vec<Rc<Node>>,
-        node: &Rc<Node>,
-        path: &Vec<Rc<Node>>,
-    ) -> Result<VisitorExitResponse, E> {
-        Ok(VisitorExitResponse::StepIn)
-    }
-    fn enter_token(
-        &mut self,
-        kind: TokenKind,
-        lex_node: &Rc<lex::Node>,
-        trivia: &Vec<Rc<Node>>,
-        node: &Rc<Node>,
-        path: &Vec<Rc<Node>>,
-    ) -> Result<VisitorEntryResponse, E> {
-        Ok(VisitorEntryResponse::StepIn)
-    }
-    fn exit_token(
-        &mut self,
-        kind: TokenKind,
-        lex_node: &Rc<lex::Node>,
-        trivia: &Vec<Rc<Node>>,
-        node: &Rc<Node>,
-        path: &Vec<Rc<Node>>,
-    ) -> Result<VisitorExitResponse, E> {
-        Ok(VisitorExitResponse::StepIn)
-    }
-    fn enter_group(
-        &mut self,
-        children: &Vec<Rc<Node>>,
-        node: &Rc<Node>,
-        path: &Vec<Rc<Node>>,
-    ) -> Result<VisitorEntryResponse, E> {
-        Ok(VisitorEntryResponse::StepIn)
-    }
-    fn exit_group(
-        &mut self,
-        children: &Vec<Rc<Node>>,
-        node: &Rc<Node>,
-        path: &Vec<Rc<Node>>,
-    ) -> Result<VisitorExitResponse, E> {
-        Ok(VisitorExitResponse::StepIn)
-    }
-}
-pub enum VisitorEntryResponse {
-    Quit,
-    StepIn,
-    StepOver,
-}
-pub enum VisitorExitResponse {
-    Quit,
-    StepIn,
-}
-pub trait Visitable<T: Visitor<E>, E> {
-    fn visit(&self, visitor: &mut T) -> Result<VisitorExitResponse, E>;
-    fn visit_with_path(
-        &self,
-        visitor: &mut T,
-        path: &mut Vec<Rc<Node>>,
-    ) -> Result<VisitorExitResponse, E>;
-}
-impl<T: Visitor<E>, E> Visitable<T, E> for Rc<Node> {
-    fn visit(&self, visitor: &mut T) -> Result<VisitorExitResponse, E> {
-        self.visit_with_path(visitor, &mut Vec::new())
-    }
-    fn visit_with_path(
-        &self,
-        visitor: &mut T,
-        path: &mut Vec<Rc<Node>>,
-    ) -> Result<VisitorExitResponse, E> {
-        match self.as_ref() {
-            Node::Rule { kind, children } => {
-                match visitor.enter_rule(*kind, children, self, path)? {
-                    VisitorEntryResponse::Quit => return Ok(VisitorExitResponse::Quit),
-                    VisitorEntryResponse::StepOver => {}
-                    VisitorEntryResponse::StepIn => {
-                        path.push(self.clone());
-                        for child in children {
-                            match child.visit_with_path(visitor, path)? {
-                                VisitorExitResponse::Quit => {
-                                    path.pop();
-                                    return Ok(VisitorExitResponse::Quit);
-                                }
-                                VisitorExitResponse::StepIn => {}
-                            }
-                        }
-                        path.pop();
-                    }
-                }
-                visitor.exit_rule(*kind, children, self, path)
-            }
-            Node::Token {
+
+    pub fn top_level_rule(kind: RuleKind, node: Rc<Self>) -> Rc<Self> {
+        if let Self::Rule {
+            kind: RuleKind::_SEQUENCE,
+            range,
+            children,
+        } = node.as_ref()
+        {
+            Rc::new(Self::Rule {
                 kind,
-                lex_node,
-                trivia,
-            } => {
-                match visitor.enter_token(*kind, lex_node, trivia, self, path)? {
-                    VisitorEntryResponse::Quit => return Ok(VisitorExitResponse::Quit),
-                    VisitorEntryResponse::StepOver => {}
-                    VisitorEntryResponse::StepIn => {
-                        path.push(self.clone());
-                        for child in trivia {
-                            match child.visit_with_path(visitor, path)? {
-                                VisitorExitResponse::Quit => {
-                                    path.pop();
-                                    return Ok(VisitorExitResponse::Quit);
-                                }
-                                VisitorExitResponse::StepIn => {}
-                            }
-                        }
-                        path.pop();
-                    }
-                }
-                visitor.exit_token(*kind, lex_node, trivia, self, path)
-            }
-            Node::Group { children } => {
-                match visitor.enter_group(children, self, path)? {
-                    VisitorEntryResponse::Quit => return Ok(VisitorExitResponse::Quit),
-                    VisitorEntryResponse::StepOver => {}
-                    VisitorEntryResponse::StepIn => {
-                        path.push(self.clone());
-                        for child in children {
-                            match child.visit_with_path(visitor, path)? {
-                                VisitorExitResponse::Quit => {
-                                    path.pop();
-                                    return Ok(VisitorExitResponse::Quit);
-                                }
-                                VisitorExitResponse::StepIn => {}
-                            }
-                        }
-                        path.pop();
-                    }
-                }
-                visitor.exit_group(children, self, path)
-            }
+                range: range.clone(),
+                children: children.clone(),
+            })
+        } else {
+            Rc::new(Self::Rule {
+                kind,
+                range: node.range(),
+                children: vec![node],
+            })
         }
     }
 }

@@ -5,7 +5,6 @@ use codegen_schema::types::grammar::Grammar;
 use semver::Version;
 use typed_arena::Arena;
 
-use super::character_filter::CharacterFilter;
 use super::combinator_node::CombinatorNode;
 use super::combinator_tree::CombinatorTree;
 
@@ -15,7 +14,6 @@ pub struct CombinatorContext<'context> {
     pub trees_by_name: RefCell<BTreeMap<String, &'context CombinatorTree<'context>>>,
     tree_arena: Arena<CombinatorTree<'context>>,
     node_arena: Arena<CombinatorNode<'context>>,
-    character_filter_arena: Arena<CharacterFilter<'context>>,
 }
 
 impl<'context> CombinatorContext<'context> {
@@ -26,7 +24,6 @@ impl<'context> CombinatorContext<'context> {
             trees_by_name: Default::default(),
             tree_arena: Arena::new(),
             node_arena: Arena::new(),
-            character_filter_arena: Arena::new(),
         }
     }
 
@@ -42,13 +39,6 @@ impl<'context> CombinatorContext<'context> {
         node: CombinatorNode<'context>,
     ) -> &'context mut CombinatorNode<'context> {
         self.node_arena.alloc(node)
-    }
-
-    pub fn alloc_character_filter(
-        &'context self,
-        filter: CharacterFilter<'context>,
-    ) -> &'context mut CharacterFilter<'context> {
-        self.character_filter_arena.alloc(filter)
     }
 
     pub fn get_tree_by_name(&'context self, name: &str) -> &'context CombinatorTree<'context> {

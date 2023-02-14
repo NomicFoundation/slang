@@ -4,12 +4,12 @@
   kind: "Rule"
   unversioned:
     sequence:
-      - reference: "LeadingTrivia"
-      - zeroOrMore:
+      - oneOrMore:
           choice:
             - reference: "Directive"
             - reference: "Definition"
-      - reference: "EndOfFileTrivia"
+      - optional:
+          reference: "EndOfFileTrivia"
 
 - name: "Directive"
   kind: "Rule"

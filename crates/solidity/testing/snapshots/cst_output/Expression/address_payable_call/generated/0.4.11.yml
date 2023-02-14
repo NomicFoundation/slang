@@ -13,11 +13,12 @@ Tree:
                   - AddressType (Rule): # 0..15 "address payable"
                       - Address (Token): "address" # 0..7
                       - Payable (Token): "payable" # 8..15
-          - Group: # 15..22 "(value)"
-              - ArgumentList (Rule): # 15..22 "(value)"
+          - ArgumentList (Rule): # 15..22 "(value)"
+              - _DELIMITEDBY (Rule): # 15..22 "(value)"
                   - OpenParen (Token): "(" # 15..16
                   - PositionalArgumentList (Rule): # 16..21 "value"
-                      - Expression (Rule): # 16..21 "value"
-                          - PrimaryExpression (Rule): # 16..21 "value"
-                              - Identifier (Token): "value" # 16..21
+                      - _SEPARATEDBY (Rule): # 16..21 "value"
+                          - Expression (Rule): # 16..21 "value"
+                              - PrimaryExpression (Rule): # 16..21 "value"
+                                  - Identifier (Token): "value" # 16..21
                   - CloseParen (Token): ")" # 21..22

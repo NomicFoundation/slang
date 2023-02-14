@@ -50,9 +50,7 @@ fn test_aux(all_versions: &[&str], source: &str, expected: &[&str]) -> Result<()
         .collect::<Result<Vec<Version>, semver::Error>>()?;
 
     let latest_version = all_versions.last().context("No versions provided")?;
-    let output = Language::new(latest_version.to_owned())
-        .get_parser(ProductionKind::SourceUnit)
-        .parse(source);
+    let output = Language::new(latest_version.to_owned()).parse(ProductionKind::SourceUnit, source);
 
     let parse_tree = if let Some(root_node) = output.parse_tree() {
         root_node

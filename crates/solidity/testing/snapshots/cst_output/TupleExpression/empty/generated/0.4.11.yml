@@ -7,5 +7,6 @@ Errors: []
 
 Tree:
   - TupleExpression (Rule): # 0..3 "( )"
-      - OpenParen (Token): "(" # 0..1
-      - CloseParen (Token): ")" # 2..3
+      - _DELIMITEDBY (Rule): # 0..3 "( )"
+          - OpenParen (Token): "(" # 0..1
+          - CloseParen (Token): ")" # 2..3

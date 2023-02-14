@@ -5,8 +5,10 @@ use codegen_schema::types::productions::{
     ExpressionAssociativity, ExpressionRef, ProductionKind, ProductionRef, ProductionVersioning,
 };
 
+use crate::first_set::FirstSet;
+
 use super::{
-    code_generator::{CodeGenerator, ParserResultType},
+    code_generator::CodeGenerator,
     combinator_context::CombinatorContext,
     combinator_node::{CombinatorNode, OperatorModel, PrecedenceRuleOperator},
 };
@@ -29,15 +31,17 @@ impl<'context> CombinatorTree<'context> {
         })
     }
 
-    pub fn can_be_empty(&self) -> bool {
-        self.root_node.get().unwrap().can_be_empty()
+    pub fn first_set(&self) -> FirstSet {
+        self.root_node.get().unwrap().first_set()
     }
 
     pub fn ensure_tree_is_built(&'context self) {
         if self.root_node.get().is_none() {
-            let expression = &self.expression();
-            let node = CombinatorNode::new(self, expression);
-            self.root_node.set(Some(node));
+            self.root_node.set(
+                self.maybe_expression()
+                    .as_ref()
+                    .map(|expression| CombinatorNode::new(self, expression)),
+            );
         }
     }
 
@@ -64,29 +68,32 @@ impl<'context> CombinatorTree<'context> {
             ProductionKind::Rule => {
                 code.add_rule_kind(self.production.name.clone());
                 let parser = self.root_node.get().unwrap().to_parser_code(false, code);
-                code.add_parser(name, version, comment, parser, ParserResultType::Rule);
+                code.add_parser(name, version, comment, parser);
             }
 
             ProductionKind::Trivia => {
                 code.add_rule_kind(self.production.name.clone());
                 let parser = self.root_node.get().unwrap().to_parser_code(true, code);
-                code.add_parser(name, version, comment, parser, ParserResultType::Rule);
+                code.add_parser(name, version, comment, parser);
             }
 
             ProductionKind::Token => {
-                if self.can_be_empty() {
+                if self.first_set().includes_epsilon {
                     unreachable!("Validation should have discovered that token production {} can generate empty results", name);
                 }
                 code.add_token_kind(self.production.name.clone());
-                let parser = self.root_node.get().unwrap().to_lexer_code(code);
-                code.add_parser(name, version, comment, parser, ParserResultType::Token);
+
+                let root_node = self.root_node.get().unwrap();
+
+                let scanner = root_node.to_scanner_code(code);
+                code.add_scanner(name, version, comment, scanner);
             }
         }
     }
 
-    pub fn expression(&self) -> ExpressionRef {
+    fn maybe_expression(&self) -> Option<ExpressionRef> {
         return match &self.production.versioning {
-            ProductionVersioning::Unversioned(expression) => expression.clone(),
+            ProductionVersioning::Unversioned(expression) => Some(expression.clone()),
             ProductionVersioning::Versioned(versions) => {
                 let version = &self.context.version;
                 versions
@@ -94,12 +101,15 @@ impl<'context> CombinatorTree<'context> {
                     .filter(|(v, _)| *v <= version)
                     .last()
                     .map(|(_, e)| e.clone())
-                    .expect(&format!(
-                        "Production {} has no content for version {}",
-                        self.production.name, version
-                    ))
             }
         };
+    }
+
+    pub fn expression(&self) -> ExpressionRef {
+        self.maybe_expression().expect(&format!(
+            "Production {} has no content for version {}",
+            self.production.name, self.context.version
+        ))
     }
 
     pub(crate) fn to_precedence_rule_operator(

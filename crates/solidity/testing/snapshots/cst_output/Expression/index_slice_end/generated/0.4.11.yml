@@ -10,11 +10,10 @@ Tree:
       - IndexAccessExpression (Rule): # 0..9 "arr[:end]"
           - PrimaryExpression (Rule): # 0..3 "arr"
               - Identifier (Token): "arr" # 0..3
-          - Group: # 3..9 "[:end]"
+          - _DELIMITEDBY (Rule): # 3..9 "[:end]"
               - OpenBracket (Token): "[" # 3..4
-              - Group: # 4..8 ":end"
-                  - Colon (Token): ":" # 4..5
-                  - Expression (Rule): # 5..8 "end"
-                      - PrimaryExpression (Rule): # 5..8 "end"
-                          - Identifier (Token): "end" # 5..8
+              - Colon (Token): ":" # 4..5
+              - Expression (Rule): # 5..8 "end"
+                  - PrimaryExpression (Rule): # 5..8 "end"
+                      - Identifier (Token): "end" # 5..8
               - CloseBracket (Token): "]" # 8..9

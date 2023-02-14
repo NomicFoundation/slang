@@ -4,13 +4,11 @@ use anyhow::Result;
 use solidity_rust_lib::generated::{
     cst,
     kinds::{RuleKind, TokenKind},
-    lex,
 };
 
 #[derive(Debug)]
 pub enum TestNodeKind {
     Rule(RuleKind),
-    Group,
     Token(TokenKind),
     Trivia(TokenKind),
     Contents,
@@ -25,47 +23,35 @@ pub struct TestNode {
 impl TestNode {
     pub fn from_cst(node: &Rc<cst::Node>) -> Self {
         return match node.as_ref() {
-            cst::Node::Rule { kind, children } => {
+            cst::Node::Rule {
+                kind,
+                range,
+                children,
+            } => {
                 let children = children
                     .iter()
                     .filter(|child| !Self::is_whitespace(child))
                     .map(|child| Self::from_cst(child))
                     .collect();
-
-                let range = Self::calculate_range(&children);
 
                 Self {
                     kind: TestNodeKind::Rule(*kind),
-                    range,
-                    children,
-                }
-            }
-            cst::Node::Group { children } => {
-                let children = children
-                    .iter()
-                    .filter(|child| !Self::is_whitespace(child))
-                    .map(|child| Self::from_cst(child))
-                    .collect();
-
-                let range = Self::calculate_range(&children);
-
-                Self {
-                    kind: TestNodeKind::Group,
-                    range,
+                    range: Some(range.clone()),
                     children,
                 }
             }
             cst::Node::Token {
                 kind,
-                lex_node,
+                range,
                 trivia,
-            } => Self::from_token(kind, lex_node, trivia),
+            } => Self::from_token(kind, range, node.range_including_trivia(), trivia),
         };
     }
 
     fn from_token(
         token_kind: &TokenKind,
-        token_lex_node: &Rc<lex::Node>,
+        token_range: &Range<usize>,
+        node_range: Range<usize>,
         token_trivia: &Vec<Rc<cst::Node>>,
     ) -> Self {
         let mut leading = vec![];
@@ -73,12 +59,13 @@ impl TestNode {
 
         for trivium in token_trivia {
             match trivium.as_ref() {
-                cst::Node::Group { .. } | cst::Node::Token { .. } => {
+                cst::Node::Token { .. } => {
                     unreachable!("Trivium should always be a Rule: {trivium:?}")
                 }
                 cst::Node::Rule {
                     kind: trivium_kind,
                     children: trivium_children,
+                    ..
                 } => {
                     for trivium_child in trivium_children {
                         match trivium_kind {
@@ -99,14 +86,14 @@ impl TestNode {
         if leading.is_empty() && trailing.is_empty() {
             return Self {
                 kind: TestNodeKind::Token(*token_kind),
-                range: Some(token_lex_node.range()),
+                range: Some(token_range.clone()),
                 children: vec![],
             };
         }
 
         let contents_node = Self {
             kind: TestNodeKind::Contents,
-            range: Some(token_lex_node.range()),
+            range: Some(token_range.clone()),
             children: vec![],
         };
 
@@ -117,7 +104,7 @@ impl TestNode {
 
         return Self {
             kind: TestNodeKind::Token(*token_kind),
-            range: Self::calculate_range(&children),
+            range: Some(node_range),
             children,
         };
     }
@@ -128,7 +115,7 @@ impl TestNode {
         }
 
         match node.as_ref() {
-            cst::Node::Rule { children, .. } | cst::Node::Group { children, .. } => {
+            cst::Node::Rule { children, .. } => {
                 for child in children {
                     Self::collect_trivia(child, collection);
                 }
@@ -136,7 +123,7 @@ impl TestNode {
             cst::Node::Token {
                 kind,
                 trivia,
-                lex_node,
+                range,
             } => {
                 assert!(
                     trivia.is_empty(),
@@ -147,7 +134,7 @@ impl TestNode {
                     TokenKind::SingleLineComment | TokenKind::MultilineComment => {
                         collection.push(Self {
                             kind: TestNodeKind::Trivia(*kind),
-                            range: Some(lex_node.range()),
+                            range: Some(range.clone()),
                             children: vec![],
                         });
                     }
@@ -167,16 +154,6 @@ impl TestNode {
             },
             _ => false,
         };
-    }
-
-    fn calculate_range(children: &Vec<Self>) -> Option<Range<usize>> {
-        let ranges: Vec<&Range<usize>> = children
-            .iter()
-            .filter_map(|child| child.range.as_ref())
-            .collect();
-
-        // Will return `None` if no ranges are found:
-        return Some(ranges.first()?.start..ranges.last()?.end);
     }
 
     pub fn render_preview(&self, source: &str, range: &Range<usize>) -> Result<String> {
@@ -208,7 +185,6 @@ impl std::fmt::Display for TestNodeKind {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         return match self {
             TestNodeKind::Rule(kind) => write!(f, "{kind:?} (Rule)"),
-            TestNodeKind::Group => write!(f, "Group"),
             TestNodeKind::Token(kind) => write!(f, "{kind:?} (Token)"),
             TestNodeKind::Trivia(kind) => write!(f, "{kind:?} (Trivia)"),
             TestNodeKind::Contents => write!(f, "Contents"),

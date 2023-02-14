@@ -7,4 +7,5 @@ Errors: []
 
 Tree:
   - StringExpression (Rule): # 0..11 "hex\"abcdef\""
-      - HexStringLiteral (Token): 'hex"abcdef"' # 0..11
+      - _REPEATED (Rule): # 0..11 "hex\"abcdef\""
+          - HexStringLiteral (Token): 'hex"abcdef"' # 0..11

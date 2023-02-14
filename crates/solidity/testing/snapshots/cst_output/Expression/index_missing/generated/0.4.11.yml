@@ -5,12 +5,12 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected '!' or '"' or ''' or '(' or '+' or '-' or '.' or '/' or '0' or ':' or '[' or 'a' or 'b' or 'f' or 'h' or 'i' or 'n' or 'p' or 's' or 't' or 'u' or '~'.
-       ╭─[crates/solidity/testing/snapshots/cst_output/Expression/index_missing/input.sol:1:5]
+    Error: Expected end of input
+       ╭─[crates/solidity/testing/snapshots/cst_output/Expression/index_missing/input.sol:1:4]
        │
      1 │ arr[]
-       ·     ┬  
-       ·     ╰── Found ']'.
+       ·    │ 
+       ·    ╰─ Error occurred here.
     ───╯
 
 Tree: null
