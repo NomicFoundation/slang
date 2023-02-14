@@ -9,6 +9,6 @@ Tree:
   - ContractDefinition (Rule): # 0..18 "contract Sample {}"
       - Contract (Token): "contract" # 0..8
       - Identifier (Token): "Sample" # 9..15
-      - Group: # 16..18 "{}"
+      - _ANON (Rule): # 16..18 "{}"
           - OpenBrace (Token): "{" # 16..17
           - CloseBrace (Token): "}" # 17..18

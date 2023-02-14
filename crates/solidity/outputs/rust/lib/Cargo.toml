@@ -13,7 +13,6 @@ solidity_schema = { workspace = true }
 
 [dependencies]
 ariadne = { workspace = true }
-chumsky = { workspace = true }
 semver = { workspace = true }
 serde = { workspace = true }
 strum = { workspace = true }

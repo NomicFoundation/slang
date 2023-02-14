@@ -5,12 +5,12 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected something else.
-       ╭─[crates/solidity/testing/snapshots/cst_output/HexStringLiteral/invalid_trailing_separator/input.sol:1:10]
+    Error: Expected HexStringLiteral
+       ╭─[crates/solidity/testing/snapshots/cst_output/HexStringLiteral/invalid_trailing_separator/input.sol:1:4]
        │
      1 │ hex"1234_"
-       ·          ┬  
-       ·          ╰── Found '"'.
+       ·    │ 
+       ·    ╰─ Error occurred here.
     ───╯
 
 Tree: null

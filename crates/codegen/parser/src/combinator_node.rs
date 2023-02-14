@@ -4,13 +4,16 @@ use codegen_schema::types::productions::{
 use itertools::Itertools;
 
 use super::{
-    character_filter::CharacterFilter, combinator_tree::CombinatorTree, terminal_trie::TerminalTrie,
+    char_set::CharSet,
+    combinator_tree::CombinatorTree,
+    first_set::FirstSet,
+    trie::{self, TerminalTrie},
 };
 
 pub enum CombinatorNode<'context> {
     CharacterFilter {
         name: Option<String>,
-        filter: &'context CharacterFilter<'context>,
+        filter: CharSet,
     },
     Choice {
         name: Option<String>,
@@ -123,15 +126,15 @@ impl<'context> CombinatorNode<'context> {
         let name = expression.config.name.clone();
 
         if tree.production.kind == ProductionKind::Token {
-            if let Some(filter) = CharacterFilter::new(tree, expression, true) {
+            if let Some(filter) = CharSet::from_expression(tree, expression, true) {
                 return tree
                     .context
                     .alloc_node(Self::CharacterFilter { name, filter });
             }
-        }
 
-        if let Some(trie) = TerminalTrie::from_expression(tree, expression) {
-            return tree.context.alloc_node(Self::TerminalTrie { trie });
+            if let Some(trie) = trie::from_expression(tree, expression) {
+                return tree.context.alloc_node(Self::TerminalTrie { trie });
+            }
         }
 
         tree.context.alloc_node(match &expression.parser {
@@ -139,25 +142,33 @@ impl<'context> CombinatorNode<'context> {
                 // Terminals in choices are merged, and represented as a trie
 
                 enum TN<'c> {
-                    Trie(TerminalTrie),
+                    Trie(trie::TerminalTrie),
                     Node(&'c CombinatorNode<'c>),
                 }
-                let elements = exprs
+                let mut elements = exprs
                     .iter()
-                    .map(|expr| match TerminalTrie::from_expression(tree, expr) {
+                    .map(|expr| match trie::from_expression(tree, expr) {
                         None => TN::Node(Self::new(tree, expr)),
                         Some(trie) => TN::Trie(trie),
                     })
                     .coalesce(|prev, curr| match (prev, curr) {
-                        (TN::Trie(prev), TN::Trie(curr)) => Ok(TN::Trie(prev.merged_with(curr))),
+                        (TN::Trie(prev), TN::Trie(curr)) => Ok(TN::Trie({
+                            let mut n = prev.clone();
+                            n.extend(curr);
+                            n
+                        })),
                         pair => Err(pair),
                     })
                     .map(|either| match either {
                         TN::Node(node) => node,
                         TN::Trie(trie) => tree.context.alloc_node(Self::TerminalTrie { trie }),
                     })
-                    .collect();
-                Self::Choice { name, elements }
+                    .collect::<Vec<_>>();
+                if elements.len() == 1 {
+                    return elements.pop().unwrap();
+                } else {
+                    Self::Choice { name, elements }
+                }
             }
 
             ExpressionParser::DelimitedBy {
@@ -180,7 +191,7 @@ impl<'context> CombinatorNode<'context> {
             },
 
             ExpressionParser::Not(_) => {
-                if let Some(filter) = CharacterFilter::new(tree, expression, true) {
+                if let Some(filter) = CharSet::from_expression(tree, expression, true) {
                     Self::CharacterFilter { name, filter }
                 } else {
                     unimplemented!("¬ is only supported on characters or sets thereof")
@@ -198,7 +209,7 @@ impl<'context> CombinatorNode<'context> {
 
             ExpressionParser::Range { .. } => Self::CharacterFilter {
                 name,
-                filter: CharacterFilter::new(tree, expression, true).unwrap(),
+                filter: CharSet::from_expression(tree, expression, true).unwrap(),
             },
 
             ExpressionParser::Reference(name) => Self::Reference {
@@ -235,9 +246,15 @@ impl<'context> CombinatorNode<'context> {
                 elements: exprs.iter().map(|e| Self::new(tree, e)).collect(),
             },
 
-            ExpressionParser::Terminal(_) => Self::TerminalTrie {
-                trie: TerminalTrie::from_expression(tree, expression).unwrap(),
-            },
+            ExpressionParser::Terminal(_) => {
+                if let Some(filter) = CharSet::from_expression(tree, expression, true) {
+                    Self::CharacterFilter { name, filter }
+                } else {
+                    Self::TerminalTrie {
+                        trie: trie::from_expression(tree, expression).unwrap(),
+                    }
+                }
+            }
 
             ExpressionParser::ZeroOrMore(expr) => Self::ZeroOrMore {
                 name,
@@ -246,53 +263,64 @@ impl<'context> CombinatorNode<'context> {
         })
     }
 
-    pub fn has_named_structure(&self) -> bool {
+    pub fn first_set(&self) -> FirstSet {
         match self {
-            Self::Reference { .. } | Self::PrecedenceExpressionRule { .. } => false,
+            Self::CharacterFilter { filter, .. } => FirstSet::from_char_set(filter.clone()),
 
-            Self::CharacterFilter { name, .. } => name.is_some(),
+            Self::TerminalTrie {
+                trie: TerminalTrie { subtries, .. },
+                ..
+            } => FirstSet::multiple(subtries.keys().copied()),
 
-            Self::TerminalTrie { trie } => trie.has_named_structure(),
+            Self::DelimitedBy { open, .. } => FirstSet::single(open.chars().next().unwrap()),
 
-            Self::Choice { name, elements } | Self::Sequence { name, elements } => {
-                name.is_some() || elements.iter().any(|e| e.has_named_structure())
+            Self::PrecedenceExpressionRule {
+                operators,
+                primary_expressions,
+                ..
+            } => primary_expressions.iter().fold(
+                operators
+                    .iter()
+                    .filter(|op| op.model == OperatorModel::UnaryPrefix)
+                    .fold(FirstSet::new(), |accum, expr| {
+                        accum.union_with(expr.operator.first_set())
+                    }),
+                |accum, expr| accum.union_with(expr.root_node.get().unwrap().first_set()),
+            ),
+
+            Self::Optional { expr }
+            | Self::ZeroOrMore { expr, .. }
+            | Self::Repeated { min: 0, expr, .. } => expr.first_set().with_epsilon(),
+
+            Self::SeparatedBy {
+                expr, separator, ..
+            } => expr
+                .first_set()
+                .follow_by(FirstSet::single(separator.chars().next().unwrap())),
+
+            Self::Reference { tree } => tree.first_set(),
+
+            Self::Repeated { expr, .. }
+            | Self::OneOrMore { expr, .. }
+            | Self::Lookahead { expr, .. }
+            | Self::Difference { minuend: expr, .. } => expr.first_set(),
+
+            Self::Choice { elements, .. } => {
+                elements.iter().fold(FirstSet::new(), |accum, expr| {
+                    accum.union_with(expr.first_set())
+                })
             }
 
-            Self::DelimitedBy { name, expr, .. }
-            | Self::OneOrMore { name, expr }
-            | Self::Repeated { name, expr, .. }
-            | Self::SeparatedBy { name, expr, .. }
-            | Self::ZeroOrMore { name, expr } => name.is_some() || expr.has_named_structure(),
-
-            Self::Difference { minuend: expr, .. }
-            | Self::Lookahead { expr, .. }
-            | Self::Optional { expr } => expr.has_named_structure(),
-        }
-    }
-
-    pub fn can_be_empty(&self) -> bool {
-        match self {
-            Self::CharacterFilter { .. } | Self::TerminalTrie { .. } | Self::DelimitedBy { .. } => {
-                false
+            Self::Sequence { elements, .. } => {
+                elements.iter().fold(FirstSet::epsilon(), |accum, expr| {
+                    // have to do this check here to avoid infinite recursion
+                    if accum.includes_epsilon {
+                        accum.follow_by(expr.first_set())
+                    } else {
+                        accum
+                    }
+                })
             }
-
-            Self::Optional { .. } | Self::ZeroOrMore { .. } => true,
-
-            Self::Repeated { expr, min, .. } => *min == 0 || expr.can_be_empty(),
-
-            Self::Reference { tree } => tree.can_be_empty(),
-
-            Self::PrecedenceExpressionRule { .. } => false,
-
-            // TODO: choice should limit members to those that cannot be empty
-            Self::Choice { elements, .. } => elements.iter().any(|e| e.can_be_empty()),
-
-            Self::Sequence { elements, .. } => elements.iter().all(|e| e.can_be_empty()),
-
-            Self::OneOrMore { expr, .. }
-            | Self::SeparatedBy { expr, .. }
-            | Self::Lookahead { expr, .. }
-            | Self::Difference { minuend: expr, .. } => expr.can_be_empty(),
         }
     }
 }

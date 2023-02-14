@@ -10,7 +10,7 @@ Tree:
       - FunctionCallExpression (Rule): # 0..20 "function_name(value)"
           - PrimaryExpression (Rule): # 0..13 "function_name"
               - Identifier (Token): "function_name" # 0..13
-          - Group: # 13..20 "(value)"
+          - _ANON (Rule): # 13..20 "(value)"
               - ArgumentList (Rule): # 13..20 "(value)"
                   - OpenParen (Token): "(" # 13..14
                   - PositionalArgumentList (Rule): # 14..19 "value"

@@ -5,4 +5,4 @@ Source: ""
 Errors: []
 
 Tree:
-  - SourceUnit (Rule): "" # <empty>
+  - SourceUnit (Rule): "" # 0..0

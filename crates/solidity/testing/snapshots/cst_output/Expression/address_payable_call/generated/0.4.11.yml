@@ -13,7 +13,7 @@ Tree:
                   - AddressType (Rule): # 0..15 "address payable"
                       - Address (Token): "address" # 0..7
                       - Payable (Token): "payable" # 8..15
-          - Group: # 15..22 "(value)"
+          - _ANON (Rule): # 15..22 "(value)"
               - ArgumentList (Rule): # 15..22 "(value)"
                   - OpenParen (Token): "(" # 15..16
                   - PositionalArgumentList (Rule): # 16..21 "value"

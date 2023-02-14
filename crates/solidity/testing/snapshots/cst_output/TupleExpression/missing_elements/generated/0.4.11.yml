@@ -8,7 +8,7 @@ Errors: []
 Tree:
   - TupleExpression (Rule): # 0..20 "(, second, , fourth)"
       - OpenParen (Token): "(" # 0..1
-      - Group: # 1..19 ", second, , fourth"
+      - _ANON (Rule): # 1..19 ", second, , fourth"
           - Comma (Token): "," # 1..2
           - Expression (Rule): # 3..9 "second"
               - PrimaryExpression (Rule): # 3..9 "second"

@@ -10,8 +10,8 @@ Tree:
       - IndexAccessExpression (Rule): # 0..6 "arr[:]"
           - PrimaryExpression (Rule): # 0..3 "arr"
               - Identifier (Token): "arr" # 0..3
-          - Group: # 3..6 "[:]"
+          - _ANON (Rule): # 3..6 "[:]"
               - OpenBracket (Token): "[" # 3..4
-              - Group: # 4..5 ":"
+              - _ANON (Rule): # 4..5 ":"
                   - Colon (Token): ":" # 4..5
               - CloseBracket (Token): "]" # 5..6

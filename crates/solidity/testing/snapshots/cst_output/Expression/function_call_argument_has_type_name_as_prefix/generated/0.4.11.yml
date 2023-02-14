@@ -10,7 +10,7 @@ Tree:
       - FunctionCallExpression (Rule): # 0..13 "x(interested)"
           - PrimaryExpression (Rule): # 0..1 "x"
               - Identifier (Token): "x" # 0..1
-          - Group: # 1..13 "(interested)"
+          - _ANON (Rule): # 1..13 "(interested)"
               - ArgumentList (Rule): # 1..13 "(interested)"
                   - OpenParen (Token): "(" # 1..2
                   - PositionalArgumentList (Rule): # 2..12 "interested"

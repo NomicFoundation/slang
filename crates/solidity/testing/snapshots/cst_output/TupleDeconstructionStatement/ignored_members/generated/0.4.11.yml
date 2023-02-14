@@ -7,15 +7,15 @@ Errors: []
 
 Tree:
   - TupleDeconstructionStatement (Rule): # 0..27 "(, second, , fourth) = rhs;"
-      - Group: # 0..20 "(, second, , fourth)"
+      - _ANON (Rule): # 0..20 "(, second, , fourth)"
           - OpenParen (Token): "(" # 0..1
-          - Group: # 1..19 ", second, , fourth"
+          - _ANON (Rule): # 1..19 ", second, , fourth"
               - Comma (Token): "," # 1..2
-              - Group: # 3..9 "second"
+              - _ANON (Rule): # 3..9 "second"
                   - Identifier (Token): "second" # 3..9
               - Comma (Token): "," # 9..10
               - Comma (Token): "," # 11..12
-              - Group: # 13..19 "fourth"
+              - _ANON (Rule): # 13..19 "fourth"
                   - Identifier (Token): "fourth" # 13..19
           - CloseParen (Token): ")" # 19..20
       - Equal (Token): "=" # 21..22

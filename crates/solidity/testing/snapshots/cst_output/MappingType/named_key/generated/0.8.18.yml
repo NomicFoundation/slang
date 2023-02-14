@@ -8,9 +8,9 @@ Errors: []
 Tree:
   - MappingType (Rule): # 0..30 "mapping(string Foo => bytes32)"
       - Mapping (Token): "mapping" # 0..7
-      - Group: # 7..30 "(string Foo => bytes32)"
+      - _ANON (Rule): # 7..30 "(string Foo => bytes32)"
           - OpenParen (Token): "(" # 7..8
-          - Group: # 8..29 "string Foo => bytes32"
+          - _ANON (Rule): # 8..29 "string Foo => bytes32"
               - MappingKeyType (Rule): # 8..18 "string Foo"
                   - ElementaryType (Rule): # 8..14 "string"
                       - String (Token): "string" # 8..14

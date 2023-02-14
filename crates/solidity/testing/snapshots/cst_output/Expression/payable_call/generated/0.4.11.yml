@@ -12,7 +12,7 @@ Tree:
               - ElementaryType (Rule): # 0..7 "payable"
                   - PayableType (Rule): # 0..7 "payable"
                       - Payable (Token): "payable" # 0..7
-          - Group: # 7..14 "(value)"
+          - _ANON (Rule): # 7..14 "(value)"
               - ArgumentList (Rule): # 7..14 "(value)"
                   - OpenParen (Token): "(" # 7..8
                   - PositionalArgumentList (Rule): # 8..13 "value"

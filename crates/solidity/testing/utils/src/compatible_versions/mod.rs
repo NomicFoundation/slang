@@ -1,12 +1,13 @@
 #[cfg(test)]
 mod tests;
 
-use std::{collections::BTreeSet, rc::Rc};
+use std::{collections::BTreeSet, ops::Range, rc::Rc};
 
 use anyhow::{Context, Error, Result};
 use semver::{Comparator, Version};
 use solidity_rust_lib::generated::{
-    cst::{self, Node, Visitable, Visitor, VisitorEntryResponse},
+    cst::{self, Node},
+    cst_visitor::{Visitable, Visitor, VisitorEntryResponse},
     kinds::RuleKind,
 };
 
@@ -44,6 +45,7 @@ impl<'a> Visitor<Error> for VersionSpecifierCollector<'a> {
     fn enter_rule(
         &mut self,
         kind: RuleKind,
+        _span: &Range<usize>,
         _children: &Vec<Rc<Node>>,
         node: &Rc<Node>,
         _path: &Vec<Rc<Node>>,
@@ -68,8 +70,8 @@ impl<'a> Visitor<Error> for VersionSpecifierCollector<'a> {
 impl<'a> VersionSpecifierCollector<'a> {
     fn collect_non_trivia_parts(&mut self, node: &Node, parts: &mut String) -> Result<()> {
         match node {
-            Node::Token { lex_node, .. } => {
-                let range = lex_node.range();
+            Node::Token { span, .. } => {
+                let range = span;
                 parts.extend(
                     self.source
                         .chars()
@@ -77,7 +79,7 @@ impl<'a> VersionSpecifierCollector<'a> {
                         .take(range.end - range.start),
                 );
             }
-            Node::Rule { children, .. } | Node::Group { children, .. } => {
+            Node::Rule { children, .. } => {
                 for child in children {
                     self.collect_non_trivia_parts(child, parts)?;
                 }

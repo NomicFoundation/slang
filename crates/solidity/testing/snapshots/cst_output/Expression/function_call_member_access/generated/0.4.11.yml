@@ -11,10 +11,10 @@ Tree:
           - FunctionCallExpression (Rule): # 0..3 "x()"
               - PrimaryExpression (Rule): # 0..1 "x"
                   - Identifier (Token): "x" # 0..1
-              - Group: # 1..3 "()"
+              - _ANON (Rule): # 1..3 "()"
                   - ArgumentList (Rule): # 1..3 "()"
                       - OpenParen (Token): "(" # 1..2
                       - CloseParen (Token): ")" # 2..3
-          - Group: # 3..5 ".y"
+          - _ANON (Rule): # 3..5 ".y"
               - Period (Token): "." # 3..4
               - Identifier (Token): "y" # 4..5

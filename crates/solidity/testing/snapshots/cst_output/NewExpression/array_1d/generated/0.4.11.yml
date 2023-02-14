@@ -11,7 +11,6 @@ Tree:
       - TypeName (Rule): # 4..9 "Foo[]"
           - IdentifierPath (Rule): # 4..7 "Foo"
               - Identifier (Token): "Foo" # 4..7
-          - Group: # 7..9 "[]"
-              - Group: # 7..9 "[]"
-                  - OpenBracket (Token): "[" # 7..8
-                  - CloseBracket (Token): "]" # 8..9
+          - _ANON (Rule): # 7..9 "[]"
+              - OpenBracket (Token): "[" # 7..8
+              - CloseBracket (Token): "]" # 8..9

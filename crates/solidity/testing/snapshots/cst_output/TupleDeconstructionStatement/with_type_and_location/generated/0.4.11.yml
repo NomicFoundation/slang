@@ -7,10 +7,10 @@ Errors: []
 
 Tree:
   - TupleDeconstructionStatement (Rule): # 0..38 "(bool memory x, bool storage y) = rhs;"
-      - Group: # 0..31 "(bool memory x, bool storage y)"
+      - _ANON (Rule): # 0..31 "(bool memory x, bool storage y)"
           - OpenParen (Token): "(" # 0..1
-          - Group: # 1..30 "bool memory x, bool storage y"
-              - Group: # 1..14 "bool memory x"
+          - _ANON (Rule): # 1..30 "bool memory x, bool storage y"
+              - _ANON (Rule): # 1..14 "bool memory x"
                   - TypeName (Rule): # 1..5 "bool"
                       - ElementaryType (Rule): # 1..5 "bool"
                           - Bool (Token): "bool" # 1..5
@@ -18,7 +18,7 @@ Tree:
                       - Memory (Token): "memory" # 6..12
                   - Identifier (Token): "x" # 13..14
               - Comma (Token): "," # 14..15
-              - Group: # 16..30 "bool storage y"
+              - _ANON (Rule): # 16..30 "bool storage y"
                   - TypeName (Rule): # 16..20 "bool"
                       - ElementaryType (Rule): # 16..20 "bool"
                           - Bool (Token): "bool" # 16..20

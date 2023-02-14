@@ -10,13 +10,13 @@ Tree:
       - IndexAccessExpression (Rule): # 0..14 "arr[start:end]"
           - PrimaryExpression (Rule): # 0..3 "arr"
               - Identifier (Token): "arr" # 0..3
-          - Group: # 3..14 "[start:end]"
+          - _ANON (Rule): # 3..14 "[start:end]"
               - OpenBracket (Token): "[" # 3..4
-              - Group: # 4..13 "start:end"
+              - _ANON (Rule): # 4..13 "start:end"
                   - Expression (Rule): # 4..9 "start"
                       - PrimaryExpression (Rule): # 4..9 "start"
                           - Identifier (Token): "start" # 4..9
-                  - Group: # 9..13 ":end"
+                  - _ANON (Rule): # 9..13 ":end"
                       - Colon (Token): ":" # 9..10
                       - Expression (Rule): # 10..13 "end"
                           - PrimaryExpression (Rule): # 10..13 "end"

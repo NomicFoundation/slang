@@ -11,10 +11,10 @@ Tree:
       - TypeName (Rule): # 4..11 "Foo[][]"
           - IdentifierPath (Rule): # 4..7 "Foo"
               - Identifier (Token): "Foo" # 4..7
-          - Group: # 7..11 "[][]"
-              - Group: # 7..9 "[]"
+          - _ANON (Rule): # 7..11 "[][]"
+              - _ANON (Rule): # 7..9 "[]"
                   - OpenBracket (Token): "[" # 7..8
                   - CloseBracket (Token): "]" # 8..9
-              - Group: # 9..11 "[]"
+              - _ANON (Rule): # 9..11 "[]"
                   - OpenBracket (Token): "[" # 9..10
                   - CloseBracket (Token): "]" # 10..11

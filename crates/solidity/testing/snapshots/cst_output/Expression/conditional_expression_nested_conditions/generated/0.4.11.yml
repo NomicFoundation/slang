@@ -10,13 +10,13 @@ Tree:
       - ConditionalExpression (Rule): # 0..23 "foo ? (a + b) : (c + d)"
           - PrimaryExpression (Rule): # 0..3 "foo"
               - Identifier (Token): "foo" # 0..3
-          - Group: # 4..23 "? (a + b) : (c + d)"
+          - _ANON (Rule): # 4..23 "? (a + b) : (c + d)"
               - Question (Token): "?" # 4..5
               - Expression (Rule): # 6..13 "(a + b)"
                   - PrimaryExpression (Rule): # 6..13 "(a + b)"
                       - TupleExpression (Rule): # 6..13 "(a + b)"
                           - OpenParen (Token): "(" # 6..7
-                          - Group: # 7..12 "a + b"
+                          - _ANON (Rule): # 7..12 "a + b"
                               - Expression (Rule): # 7..12 "a + b"
                                   - AddSubExpression (Rule): # 7..12 "a + b"
                                       - PrimaryExpression (Rule): # 7..8 "a"
@@ -30,7 +30,7 @@ Tree:
                   - PrimaryExpression (Rule): # 16..23 "(c + d)"
                       - TupleExpression (Rule): # 16..23 "(c + d)"
                           - OpenParen (Token): "(" # 16..17
-                          - Group: # 17..22 "c + d"
+                          - _ANON (Rule): # 17..22 "c + d"
                               - Expression (Rule): # 17..22 "c + d"
                                   - AddSubExpression (Rule): # 17..22 "c + d"
                                       - PrimaryExpression (Rule): # 17..18 "c"
