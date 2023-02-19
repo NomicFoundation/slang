@@ -3,7 +3,6 @@ use std::{
     path::PathBuf,
 };
 
-use codegen_schema::types::grammar::Grammar;
 use codegen_utils::context::CodegenContext;
 use inflector::Inflector;
 use proc_macro2::{Ident, TokenStream};
@@ -24,7 +23,8 @@ impl VersionedFunctionBody {
         self.versions.insert(version.clone(), body);
     }
 
-    fn to_function_body(&self, first_version: &Version) -> TokenStream {
+    fn to_function_body(&self) -> TokenStream {
+        let first_version = self.versions.iter().next().unwrap().0;
         self.versions
             .iter()
             .rev()
@@ -159,13 +159,12 @@ impl CodeGenerator {
             .collect()
     }
 
-    pub fn scanner_functions(&self, grammar: &Grammar) -> Vec<String> {
-        let first_version = grammar.versions.first().unwrap();
+    pub fn scanner_functions(&self) -> Vec<String> {
         self.scanners
             .iter()
             .map(|(name, scanner)| {
                 let function_name = format_ident!("scan_{}", name.to_snake_case());
-                let body = scanner.to_function_body(first_version);
+                let body = scanner.to_function_body();
                 format!(
                     "{}\n{}",
                     scanner.to_comment_string(),
@@ -180,14 +179,13 @@ impl CodeGenerator {
             .collect()
     }
 
-    pub fn parser_functions(&self, grammar: &Grammar) -> Vec<String> {
-        let first_version = grammar.versions.first().unwrap();
+    pub fn parser_functions(&self) -> Vec<String> {
         self.parsers
             .iter()
             .map(|(name, parser)| {
                 let kind = format_ident!("{}", name);
                 let function_name = format_ident!("parse_{}", name.to_snake_case());
-                let body = parser.to_function_body(first_version);
+                let body = parser.to_function_body();
                 format!(
                     "{}\n{}",
                     parser.to_comment_string(),
@@ -250,16 +248,11 @@ impl CodeGenerator {
             .collect()
     }
 
-    pub fn write_common_sources(
-        &self,
-        grammar: &Grammar,
-        codegen: &mut CodegenContext,
-        output_dir: &PathBuf,
-    ) {
+    pub fn write_common_sources(&self, codegen: &mut CodegenContext, output_dir: &PathBuf) {
         let scanning_macros = include_str!("../../parser_templates/src/shared/macros.rs");
 
         {
-            let scanner_functions = self.scanner_functions(grammar).join("\n\n");
+            let scanner_functions = self.scanner_functions().join("\n\n");
             codegen
                 .write_file(
                     &output_dir.join("scanners.rs"),
@@ -279,7 +272,7 @@ impl CodeGenerator {
         }
 
         {
-            let parser_functions = self.parser_functions(grammar).join("\n\n");
+            let parser_functions = self.parser_functions().join("\n\n");
             let trivia_functions = quote! {
                 fn optional_leading_trivia(&self, stream: &mut Stream) -> Option<Rc<cst::Node>> {
                     let save = stream.position();

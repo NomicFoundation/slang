@@ -37,9 +37,11 @@ impl<'context> CombinatorTree<'context> {
 
     pub fn ensure_tree_is_built(&'context self) {
         if self.root_node.get().is_none() {
-            let expression = &self.expression();
-            let node = CombinatorNode::new(self, expression);
-            self.root_node.set(Some(node));
+            self.root_node.set(
+                self.maybe_expression()
+                    .as_ref()
+                    .map(|expression| CombinatorNode::new(self, expression)),
+            );
         }
     }
 
@@ -89,9 +91,9 @@ impl<'context> CombinatorTree<'context> {
         }
     }
 
-    pub fn expression(&self) -> ExpressionRef {
+    fn maybe_expression(&self) -> Option<ExpressionRef> {
         return match &self.production.versioning {
-            ProductionVersioning::Unversioned(expression) => expression.clone(),
+            ProductionVersioning::Unversioned(expression) => Some(expression.clone()),
             ProductionVersioning::Versioned(versions) => {
                 let version = &self.context.version;
                 versions
@@ -99,12 +101,15 @@ impl<'context> CombinatorTree<'context> {
                     .filter(|(v, _)| *v <= version)
                     .last()
                     .map(|(_, e)| e.clone())
-                    .expect(&format!(
-                        "Production {} has no content for version {}",
-                        self.production.name, version
-                    ))
             }
         };
+    }
+
+    pub fn expression(&self) -> ExpressionRef {
+        self.maybe_expression().expect(&format!(
+            "Production {} has no content for version {}",
+            self.production.name, self.context.version
+        ))
     }
 
     pub(crate) fn to_precedence_rule_operator(

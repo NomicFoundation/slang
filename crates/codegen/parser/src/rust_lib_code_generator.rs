@@ -1,19 +1,13 @@
 use quote::quote;
 use std::path::PathBuf;
 
-use codegen_schema::types::grammar::Grammar;
 use codegen_utils::context::CodegenContext;
 
 use super::code_generator::CodeGenerator;
 
 impl CodeGenerator {
-    pub fn write_rust_lib_sources(
-        &self,
-        grammar: &Grammar,
-        codegen: &mut CodegenContext,
-        output_dir: &PathBuf,
-    ) {
-        self.write_common_sources(grammar, codegen, output_dir);
+    pub fn write_rust_lib_sources(&self, codegen: &mut CodegenContext, output_dir: &PathBuf) {
+        self.write_common_sources(codegen, output_dir);
 
         codegen
             .write_file(
