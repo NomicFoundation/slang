@@ -67,6 +67,16 @@ impl CodegenContext {
         return files::read_file(file_path);
     }
 
+    pub fn copy_file(&mut self, source_path: &PathBuf, destination_path: &PathBuf) -> Result<()> {
+        // Go through read_file() API, to record the correct metadata for it.
+        let contents = self.read_file(source_path)?;
+
+        // Go through write_file() API, to only touch/update the file if it changed.
+        self.write_file(destination_path, &contents)?;
+
+        return Ok(());
+    }
+
     pub fn write_file(&mut self, file_path: &PathBuf, contents: &str) -> Result<()> {
         if !file_path.starts_with(&self.repo_root) {
             bail!("Generated file is outside repository: {file_path:?}");
