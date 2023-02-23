@@ -2,9 +2,7 @@ use std::path::PathBuf;
 
 use anyhow::{bail, Context, Result};
 
-use crate::{
-    commands::run_command, context::CodegenContext, internal::formatting::format_source_file,
-};
+use crate::{context::CodegenContext, internal::formatting::format_source_file};
 
 pub fn read_file(file_path: &PathBuf) -> Result<String> {
     return std::fs::read_to_string(file_path)
@@ -57,25 +55,4 @@ pub fn verify_file(codegen: &CodegenContext, file_path: &PathBuf, contents: &str
     );
 
     return Ok(());
-}
-
-pub fn calculate_repo_root() -> Result<PathBuf> {
-    if let Ok(repo_root) = std::env::var("REPO_ROOT") {
-        return Ok(PathBuf::from(repo_root));
-    }
-
-    // If this environment variable is not set, it means we are running outside the Hermit environment.
-    // Most likely, it is the rust-analyzer extension running inside VSCode.
-    // Try to locate the repository root by looking for the ".git" directory.
-
-    let git_dir = run_command(
-        &std::env::current_dir()?,
-        &["git", "rev-parse", "--git-dir"],
-        None,
-    )?;
-
-    let git_dir = PathBuf::from(git_dir);
-    let repo_root = git_dir.parent().unwrap().canonicalize()?;
-
-    return Ok(repo_root);
 }

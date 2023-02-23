@@ -6,10 +6,7 @@ use std::{
 use anyhow::{bail, Result};
 use walkdir::WalkDir;
 
-use crate::{
-    errors::CodegenErrors,
-    internal::files::{self, calculate_repo_root},
-};
+use crate::{errors::CodegenErrors, internal::files};
 
 pub struct CodegenContext {
     input_dirs: HashSet<PathBuf>,
@@ -28,7 +25,7 @@ impl CodegenContext {
             generated_files: HashSet::new(),
             check_only: std::env::var("CI").is_ok(),
 
-            repo_root: calculate_repo_root()?,
+            repo_root: PathBuf::from(std::env::var("REPO_ROOT")?),
         };
 
         if let Err(error) = operation(&mut context) {
