@@ -1,7 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-# shellcheck source=/dev/null
 source "$(dirname "${BASH_SOURCE[0]}")/../_common.sh"
 
 # This is used to prepare the devcontainer after it has been created.
