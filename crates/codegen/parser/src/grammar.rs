@@ -57,8 +57,8 @@ impl PrivateGrammarParserGeneratorExtensions for Grammar {
 
                 for production in self.productions.values() {
                     trees_by_name.insert(
-                        production.name.clone(),
-                        CombinatorTree::new(&context, &production),
+                        production.name().clone(),
+                        CombinatorTree::new(&context, production),
                     );
                 }
             }

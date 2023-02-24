@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use semver::Version;
 use serde::{Deserialize, Serialize};
 
-use crate::types::productions::ProductionRef;
+use super::production::ProductionRef;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(deny_unknown_fields)]

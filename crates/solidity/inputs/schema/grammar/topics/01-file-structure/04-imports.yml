@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
 
 - name: "ImportDirective"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "import"
@@ -12,7 +12,7 @@
       - terminal: ";"
 
 - name: "SimpleImportDirective"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - reference: "ImportPath"
@@ -22,7 +22,7 @@
             - reference: "Identifier"
 
 - name: "StarImportDirective"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "*"
@@ -32,7 +32,7 @@
       - reference: "ImportPath"
 
 - name: "SelectingImportDirective"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - delimitedBy:
@@ -47,7 +47,7 @@
       - reference: "ImportPath"
 
 - name: "SelectedImport"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - reference: "Identifier"
@@ -57,12 +57,12 @@
             - reference: "Identifier"
 
 - name: "ImportPath"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     reference: "AsciiStringLiteral"
 
 - name: "UsingDirective"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "using"

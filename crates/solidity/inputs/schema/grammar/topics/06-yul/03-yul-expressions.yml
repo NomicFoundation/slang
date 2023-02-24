@@ -1,14 +1,14 @@
 # yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
 
 - name: "YulExpression"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     choice:
       - reference: "YulFunctionCall"
       - reference: "YulLiteral"
 
 - name: "YulFunctionCall"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - reference: "YulIdentifierPath"
@@ -26,7 +26,7 @@
             close: ")"
 
 - name: "YulIdentifierPath"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     separatedBy:
       separator: "."
@@ -34,7 +34,7 @@
         reference: "YulIdentifier"
 
 - name: "YulIdentifier"
-  kind: "Token"
+  kind: "Scanner"
   unversioned:
     difference:
       minuend:
@@ -43,7 +43,7 @@
         reference: "YulKeyword"
 
 - name: "YulKeyword"
-  kind: "Token"
+  kind: "Scanner"
   unversioned:
     choice:
       - reference: "BooleanLiteral"
@@ -60,7 +60,7 @@
       - terminal: "switch"
 
 - name: "YulLiteral"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     choice:
       - reference: "BooleanLiteral"
@@ -70,7 +70,7 @@
       - reference: "AsciiStringLiteral"
 
 - name: "YulHexLiteral"
-  kind: "Token"
+  kind: "Scanner"
   unversioned:
     sequence:
       - terminal: "0x"
@@ -78,7 +78,7 @@
           reference: "HexCharacter"
 
 - name: "YulDecimalLiteral"
-  kind: "Token"
+  kind: "Scanner"
   unversioned:
     choice:
       - terminal: "0"

@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
 
 - name: "PragmaDirective"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "pragma"
@@ -12,7 +12,7 @@
       - terminal: ";"
 
 - name: "VersionPragma"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "solidity"
@@ -20,7 +20,7 @@
           reference: "VersionPragmaSpecifier"
 
 - name: "VersionPragmaSpecifier"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - optional:
@@ -31,7 +31,7 @@
             reference: "VersionPragmaValue"
 
 - name: "VersionPragmaOperator"
-  kind: "Token"
+  kind: "Scanner"
   unversioned:
     choice:
       - terminal: "^"
@@ -43,7 +43,7 @@
       - terminal: ">="
 
 - name: "VersionPragmaValue"
-  kind: "Token"
+  kind: "Scanner"
   unversioned:
     oneOrMore:
       choice:
@@ -55,14 +55,14 @@
         - terminal: "*"
 
 - name: "ABICoderPragma"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "abicoder"
       - reference: "Identifier"
 
 - name: "ExperimentalPragma"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "experimental"

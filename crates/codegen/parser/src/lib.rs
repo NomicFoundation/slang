@@ -1,4 +1,5 @@
 mod char_set;
+mod code_comment_ebnf_writer;
 mod code_generator;
 mod combinator_context;
 mod combinator_node;

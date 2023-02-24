@@ -1,35 +1,33 @@
-use crate::{
-    types,
-    validation::ast::{
-        manifest::Manifest,
-        productions::{Production, ProductionRef},
-        Node,
-    },
-    yaml,
+use crate::{types, yaml};
+
+use super::{
+    manifest::Manifest,
+    node::Node,
+    production::{Production, ProductionRef},
 };
 
-pub type FilePathRef = std::rc::Rc<std::path::PathBuf>;
+pub type PathBufRef = std::rc::Rc<std::path::PathBuf>;
 
 pub struct File<T> {
-    pub path: FilePathRef,
+    pub path: PathBufRef,
     pub ast: Node<T>,
 }
 
 pub type ManifestFile = File<Manifest>;
 
 impl ManifestFile {
-    pub fn new(syntax_file: &yaml::files::File<types::manifest::ManifestFile>) -> Self {
+    pub fn new(file: &yaml::files::File<types::manifest::ManifestFile>) -> Self {
         let yaml::files::File {
             path,
-            syntax,
+            cst_node,
             value,
-        } = syntax_file;
+        } = file;
 
-        let value = Manifest::new(syntax, value.to_owned());
+        let value = Manifest::new(cst_node, value.to_owned());
 
         return Self {
-            path: FilePathRef::new(path.to_owned()),
-            ast: Node::new(syntax, value),
+            path: PathBufRef::new(path.to_owned()),
+            ast: Node::new(cst_node, value),
         };
     }
 }
@@ -37,18 +35,18 @@ impl ManifestFile {
 pub type TopicFile = File<Vec<ProductionRef>>;
 
 impl TopicFile {
-    pub fn new(syntax_file: &yaml::files::File<types::manifest::TopicFile>) -> Self {
+    pub fn new(file: &yaml::files::File<types::manifest::TopicFile>) -> Self {
         let yaml::files::File {
             path,
-            syntax,
+            cst_node,
             value,
-        } = syntax_file;
+        } = file;
 
-        let value = syntax.zip(value.to_owned(), Production::new);
+        let value = cst_node.zip(value.to_owned(), Production::new);
 
         return Self {
-            path: FilePathRef::new(path.to_owned()),
-            ast: Node::new(syntax, value),
+            path: PathBufRef::new(path.to_owned()),
+            ast: Node::new(cst_node, value),
         };
     }
 }

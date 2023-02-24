@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
 
 - name: "TryStatement"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "try"
@@ -15,7 +15,7 @@
           reference: "CatchClause"
 
 - name: "CatchClause"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "catch"
@@ -27,7 +27,7 @@
       - reference: "Block"
 
 - name: "RevertStatement"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "revert"

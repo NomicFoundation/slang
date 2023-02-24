@@ -6,4 +6,3 @@ edition.workspace = true
 
 [dependencies]
 codegen_schema = { workspace = true }
-codegen_utils = { workspace = true }

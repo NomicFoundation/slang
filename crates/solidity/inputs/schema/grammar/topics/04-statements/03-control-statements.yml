@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
 
 - name: "IfStatement"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "if"
@@ -17,7 +17,7 @@
             - reference: "Statement"
 
 - name: "ForStatement"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "for"
@@ -37,7 +37,7 @@
       - reference: "Statement"
 
 - name: "WhileStatement"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "while"
@@ -49,7 +49,7 @@
       - reference: "Statement"
 
 - name: "DoWhileStatement"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "do"
@@ -63,21 +63,21 @@
       - terminal: ";"
 
 - name: "ContinueStatement"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "continue"
       - terminal: ";"
 
 - name: "BreakStatement"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "break"
       - terminal: ";"
 
 - name: "ReturnStatement"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "return"
@@ -86,7 +86,7 @@
       - terminal: ";"
 
 - name: "EmitStatement"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "emit"
@@ -95,7 +95,7 @@
       - terminal: ";"
 
 - name: "DeleteStatement"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "delete"

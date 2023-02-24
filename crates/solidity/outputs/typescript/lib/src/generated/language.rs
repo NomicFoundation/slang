@@ -526,13 +526,7 @@ impl Language {
             ProductionKind::ABICoderPragma => {
                 call_parser(self, input, Language::parse_abi_coder_pragma)
             }
-            ProductionKind::AddSubExpression => {
-                call_parser(self, input, Language::parse_add_sub_expression)
-            }
             ProductionKind::AddressType => call_parser(self, input, Language::parse_address_type),
-            ProductionKind::AndExpression => {
-                call_parser(self, input, Language::parse_and_expression)
-            }
             ProductionKind::ArgumentList => call_parser(self, input, Language::parse_argument_list),
             ProductionKind::ArrayLiteral => call_parser(self, input, Language::parse_array_literal),
             ProductionKind::AssemblyFlags => {
@@ -541,26 +535,11 @@ impl Language {
             ProductionKind::AssemblyStatement => {
                 call_parser(self, input, Language::parse_assembly_statement)
             }
-            ProductionKind::AssignmentExpression => {
-                call_parser(self, input, Language::parse_assignment_expression)
-            }
-            ProductionKind::BitAndExpression => {
-                call_parser(self, input, Language::parse_bit_and_expression)
-            }
-            ProductionKind::BitOrExpression => {
-                call_parser(self, input, Language::parse_bit_or_expression)
-            }
-            ProductionKind::BitXOrExpression => {
-                call_parser(self, input, Language::parse_bit_x_or_expression)
-            }
             ProductionKind::Block => call_parser(self, input, Language::parse_block),
             ProductionKind::BreakStatement => {
                 call_parser(self, input, Language::parse_break_statement)
             }
             ProductionKind::CatchClause => call_parser(self, input, Language::parse_catch_clause),
-            ProductionKind::ConditionalExpression => {
-                call_parser(self, input, Language::parse_conditional_expression)
-            }
             ProductionKind::ConstantDefinition => {
                 call_parser(self, input, Language::parse_constant_definition)
             }
@@ -600,9 +579,6 @@ impl Language {
             ProductionKind::EnumDefinition => {
                 call_parser(self, input, Language::parse_enum_definition)
             }
-            ProductionKind::EqualityComparisonExpression => {
-                call_parser(self, input, Language::parse_equality_comparison_expression)
-            }
             ProductionKind::ErrorDefinition => {
                 call_parser(self, input, Language::parse_error_definition)
             }
@@ -618,9 +594,6 @@ impl Language {
             ProductionKind::ExperimentalPragma => {
                 call_parser(self, input, Language::parse_experimental_pragma)
             }
-            ProductionKind::ExponentiationExpression => {
-                call_parser(self, input, Language::parse_exponentiation_expression)
-            }
             ProductionKind::Expression => call_parser(self, input, Language::parse_expression),
             ProductionKind::ExpressionStatement => {
                 call_parser(self, input, Language::parse_expression_statement)
@@ -635,9 +608,6 @@ impl Language {
             ProductionKind::FunctionAttribute => {
                 call_parser(self, input, Language::parse_function_attribute)
             }
-            ProductionKind::FunctionCallExpression => {
-                call_parser(self, input, Language::parse_function_call_expression)
-            }
             ProductionKind::FunctionDefinition => {
                 call_parser(self, input, Language::parse_function_definition)
             }
@@ -650,9 +620,6 @@ impl Language {
                 call_parser(self, input, Language::parse_import_directive)
             }
             ProductionKind::ImportPath => call_parser(self, input, Language::parse_import_path),
-            ProductionKind::IndexAccessExpression => {
-                call_parser(self, input, Language::parse_index_access_expression)
-            }
             ProductionKind::InheritanceSpecifier => {
                 call_parser(self, input, Language::parse_inheritance_specifier)
             }
@@ -675,9 +642,6 @@ impl Language {
             ProductionKind::MappingValueType => {
                 call_parser(self, input, Language::parse_mapping_value_type)
             }
-            ProductionKind::MemberAccessExpression => {
-                call_parser(self, input, Language::parse_member_access_expression)
-            }
             ProductionKind::ModifierAttribute => {
                 call_parser(self, input, Language::parse_modifier_attribute)
             }
@@ -686,9 +650,6 @@ impl Language {
             }
             ProductionKind::ModifierInvocation => {
                 call_parser(self, input, Language::parse_modifier_invocation)
-            }
-            ProductionKind::MulDivModExpression => {
-                call_parser(self, input, Language::parse_mul_div_mod_expression)
             }
             ProductionKind::NamedArgument => {
                 call_parser(self, input, Language::parse_named_argument)
@@ -701,10 +662,6 @@ impl Language {
             }
             ProductionKind::NumericLiteral => {
                 call_parser(self, input, Language::parse_numeric_literal)
-            }
-            ProductionKind::OrExpression => call_parser(self, input, Language::parse_or_expression),
-            ProductionKind::OrderComparisonExpression => {
-                call_parser(self, input, Language::parse_order_comparison_expression)
             }
             ProductionKind::OverrideSpecifier => {
                 call_parser(self, input, Language::parse_override_specifier)
@@ -742,9 +699,6 @@ impl Language {
             }
             ProductionKind::SelectingImportDirective => {
                 call_parser(self, input, Language::parse_selecting_import_directive)
-            }
-            ProductionKind::ShiftExpression => {
-                call_parser(self, input, Language::parse_shift_expression)
             }
             ProductionKind::SimpleImportDirective => {
                 call_parser(self, input, Language::parse_simple_import_directive)
@@ -784,12 +738,6 @@ impl Language {
                 call_parser(self, input, Language::parse_type_expression)
             }
             ProductionKind::TypeName => call_parser(self, input, Language::parse_type_name),
-            ProductionKind::UnaryPrefixExpression => {
-                call_parser(self, input, Language::parse_unary_prefix_expression)
-            }
-            ProductionKind::UnarySuffixExpression => {
-                call_parser(self, input, Language::parse_unary_suffix_expression)
-            }
             ProductionKind::UncheckedBlock => {
                 call_parser(self, input, Language::parse_unchecked_block)
             }

@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
 
 - name: "MappingType"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "mapping"
@@ -15,7 +15,7 @@
           close: ")"
 
 - name: "MappingKeyType"
-  kind: "Rule"
+  kind: "Parser"
   versioned:
     0.4.11:
       sequence:
@@ -31,7 +31,7 @@
             reference: "Identifier"
 
 - name: "MappingValueType"
-  kind: "Rule"
+  kind: "Parser"
   versioned:
     0.4.11:
       sequence:

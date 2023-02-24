@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
 
 - name: "LeadingTrivia"
-  kind: "Trivia"
+  kind: "TriviaParser"
   unversioned:
     oneOrMore:
       choice:
@@ -11,7 +11,7 @@
         - reference: "SingleLineComment"
 
 - name: "TrailingTrivia"
-  kind: "Trivia"
+  kind: "TriviaParser"
   unversioned:
     sequence:
       - zeroOrMore:
@@ -21,7 +21,7 @@
       - reference: "EndOfLine"
 
 - name: "EndOfFileTrivia"
-  kind: "Trivia"
+  kind: "TriviaParser"
   unversioned:
     oneOrMore:
       choice:
@@ -31,7 +31,7 @@
         - reference: "SingleLineComment"
 
 - name: "Whitespace"
-  kind: "Token"
+  kind: "Scanner"
   unversioned:
     oneOrMore:
       choice:
@@ -39,7 +39,7 @@
         - terminal: "\t"
 
 - name: "EndOfLine"
-  kind: "Token"
+  kind: "Scanner"
   unversioned:
     oneOrMore:
       choice:
@@ -47,7 +47,7 @@
         - terminal: "\n"
 
 - name: "MultilineComment"
-  kind: "Token"
+  kind: "Scanner"
   unversioned:
     delimitedBy:
       open: "/*"
@@ -63,7 +63,7 @@
       close: "*/"
 
 - name: "SingleLineComment"
-  kind: "Token"
+  kind: "Scanner"
   unversioned:
     sequence:
       - terminal: "//"

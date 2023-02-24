@@ -1,0 +1,197 @@
+# yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
+
+- name: "StringExpression"
+  kind: "Parser"
+  unversioned:
+    choice:
+      - oneOrMore:
+          reference: "HexStringLiteral"
+      - oneOrMore:
+          reference: "AsciiStringLiteral"
+      - oneOrMore:
+          reference: "UnicodeStringLiteral"
+
+- name: "HexStringLiteral"
+  kind: "Scanner"
+  unversioned:
+    sequence:
+      - terminal: "hex"
+      - choice:
+          - delimitedBy:
+              open: '"'
+              expression:
+                optional:
+                  reference: "PossiblySeparatedPairsOfHexDigits"
+              close: '"'
+          - delimitedBy:
+              open: "'"
+              expression:
+                optional:
+                  reference: "PossiblySeparatedPairsOfHexDigits"
+              close: "'"
+
+- name: "PossiblySeparatedPairsOfHexDigits"
+  kind: "Scanner"
+  unversioned:
+    sequence:
+      - repeat:
+          min: 2
+          max: 2
+          expression:
+            reference: "HexCharacter"
+      - zeroOrMore:
+          sequence:
+            - optional:
+                terminal: "_"
+            - repeat:
+                min: 2
+                max: 2
+                expression:
+                  reference: "HexCharacter"
+
+- name: "HexCharacter"
+  kind: "Scanner"
+  unversioned:
+    choice:
+      - range:
+          from: "0"
+          to: "9"
+      - range:
+          from: "a"
+          to: "f"
+      - range:
+          from: "A"
+          to: "F"
+
+- name: "AsciiStringLiteral"
+  kind: "Scanner"
+  unversioned:
+    choice:
+      - reference: "SingleQuotedAsciiStringLiteral"
+      - reference: "DoubleQuotedAsciiStringLiteral"
+
+- name: "SingleQuotedAsciiStringLiteral"
+  kind: "Scanner"
+  unversioned:
+    delimitedBy:
+      open: "'"
+      expression:
+        zeroOrMore:
+          choice:
+            - reference: "EscapeSequence"
+            - difference:
+                minuend:
+                  range:
+                    from: " "
+                    to: "~"
+                subtrahend:
+                  choice:
+                    - terminal: "'"
+                    - terminal: "\\"
+      close: "'"
+
+- name: "DoubleQuotedAsciiStringLiteral"
+  kind: "Scanner"
+  unversioned:
+    delimitedBy:
+      open: '"'
+      expression:
+        zeroOrMore:
+          choice:
+            - reference: "EscapeSequence"
+            - difference:
+                minuend:
+                  range:
+                    from: " "
+                    to: "~"
+                subtrahend:
+                  choice:
+                    - terminal: '"'
+                    - terminal: "\\"
+      close: '"'
+
+- name: "UnicodeStringLiteral"
+  kind: "Scanner"
+  unversioned:
+    choice:
+      - reference: "SingleQuotedUnicodeStringLiteral"
+      - reference: "DoubleQuotedUnicodeStringLiteral"
+
+- name: "SingleQuotedUnicodeStringLiteral"
+  kind: "Scanner"
+  unversioned:
+    delimitedBy:
+      open: "unicode'"
+      expression:
+        zeroOrMore:
+          choice:
+            - reference: "EscapeSequence"
+            - not:
+                choice:
+                  - terminal: "'"
+                  - terminal: "\\"
+                  - terminal: "\n"
+                  - terminal: "\r"
+      close: "'"
+
+- name: "DoubleQuotedUnicodeStringLiteral"
+  kind: "Scanner"
+  unversioned:
+    delimitedBy:
+      open: 'unicode"'
+      expression:
+        zeroOrMore:
+          choice:
+            - reference: "EscapeSequence"
+            - not:
+                choice:
+                  - terminal: '"'
+                  - terminal: "\\"
+                  - terminal: "\n"
+                  - terminal: "\r"
+      close: '"'
+
+- name: "EscapeSequence"
+  kind: "Scanner"
+  unversioned:
+    sequence:
+      - terminal: "\\"
+      - choice:
+          - reference: "AsciiEscape"
+          - reference: "HexByteEscape"
+          - reference: "UnicodeEscape"
+
+- name: "AsciiEscape"
+  kind: "Scanner"
+  unversioned:
+    choice:
+      - terminal: "n"
+      - terminal: "r"
+      - terminal: "t"
+      - terminal: "'"
+      - terminal: '"'
+      - terminal: "\\"
+      - terminal: "\n"
+      - terminal: "\r"
+
+- name: "HexByteEscape"
+  kind: "Scanner"
+  unversioned:
+    sequence:
+      - terminal: "x"
+      - repeat:
+          min: 2
+          max: 2
+          expression:
+            reference: "HexCharacter"
+
+- name: "UnicodeEscape"
+  kind: "Scanner"
+  unversioned:
+    sequence:
+      - terminal: "u"
+      - repeat:
+          min: 4
+          max: 4
+          expression:
+            reference: "HexCharacter"

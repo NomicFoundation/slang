@@ -4,13 +4,16 @@ use codegen_utils::errors::CodegenErrors;
 
 use crate::validation::{
     ast::{
-        productions::{ExpressionParser, ExpressionRef},
+        node::Node,
+        parser::{ParserDefinition, ParserRef},
+        precedence_parser::Reference,
+        scanner::{ScannerDefinition, ScannerRef},
         visitors::{Reporter, Visitor, VisitorExtensions, VisitorResponse},
-        Node,
     },
-    rules::definitions::Definitions,
     Model,
 };
+
+use super::definitions::Definitions;
 
 pub fn check(model: &Model, definitions: &Definitions, errors: &mut CodegenErrors) {
     let mut collector = ReferencesCollector::new(definitions);
@@ -34,17 +37,13 @@ impl<'v> ReferencesCollector<'v> {
 }
 
 impl Visitor for ReferencesCollector<'_> {
-    fn visit_expression(
-        &mut self,
-        expression: &ExpressionRef,
-        reporter: &mut Reporter,
-    ) -> VisitorResponse {
-        if let ExpressionParser::Reference(reference) = &expression.parser.value {
-            let Node { syntax, value } = reference;
-            if self.definitions.expressions.contains_key(value) {
-                reporter.report(syntax, Errors::Illegal(value.to_owned()))
+    fn visit_scanner(&mut self, scanner: &ScannerRef, reporter: &mut Reporter) -> VisitorResponse {
+        if let ScannerDefinition::Reference(reference) = &scanner.definition.value {
+            let Node { cst_node, value } = reference;
+            if self.definitions.parsers.contains_key(value) {
+                reporter.report(cst_node, Errors::Illegal(value.to_owned()))
             } else if !self.definitions.productions.contains_key(value) {
-                reporter.report(syntax, Errors::NotFound(value.to_owned()))
+                reporter.report(cst_node, Errors::NotFound(value.to_owned()))
             } else {
                 self.references.insert(reference.value.to_owned());
             }
@@ -53,6 +52,40 @@ impl Visitor for ReferencesCollector<'_> {
         } else {
             return VisitorResponse::StepIn;
         }
+    }
+
+    fn visit_parser(&mut self, parser: &ParserRef, reporter: &mut Reporter) -> VisitorResponse {
+        if let ParserDefinition::Reference(reference) = &parser.definition.value {
+            let Node { cst_node, value } = reference;
+            if self.definitions.parsers.contains_key(value) {
+                reporter.report(cst_node, Errors::Illegal(value.to_owned()))
+            } else if !self.definitions.productions.contains_key(value) {
+                reporter.report(cst_node, Errors::NotFound(value.to_owned()))
+            } else {
+                self.references.insert(reference.value.to_owned());
+            }
+
+            return VisitorResponse::StepOut;
+        } else {
+            return VisitorResponse::StepIn;
+        }
+    }
+
+    fn visit_primary_expression_reference(
+        &mut self,
+        reference: &Reference,
+        reporter: &mut Reporter,
+    ) -> VisitorResponse {
+        let Node { cst_node, value } = &reference.reference;
+        if self.definitions.parsers.contains_key(value) {
+            reporter.report(cst_node, Errors::Illegal(value.to_owned()))
+        } else if !self.definitions.productions.contains_key(value) {
+            reporter.report(cst_node, Errors::NotFound(value.to_owned()))
+        } else {
+            self.references.insert(value.to_owned());
+        }
+
+        return VisitorResponse::StepOut;
     }
 }
 
@@ -66,7 +99,7 @@ impl<'v> ReferencesCollector<'v> {
             if !self.references.contains(name) {
                 errors.push(
                     &production.path,
-                    production.syntax.range(),
+                    production.cst_node.range(),
                     Errors::Unused(name.to_owned()),
                 );
             }

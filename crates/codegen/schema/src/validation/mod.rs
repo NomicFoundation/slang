@@ -1,30 +1,27 @@
 mod ast;
 mod rules;
+use ast::files::{ManifestFile, TopicFile};
 
 use codegen_utils::errors::{CodegenErrors, CodegenResult};
 
-use crate::{
-    types,
-    validation::ast::files::{ManifestFile, TopicFile},
-    yaml,
-};
+use crate::{types, yaml};
 
 pub struct Model {
-    manifest: ManifestFile,
-    topics: Vec<TopicFile>,
+    manifest_file: ManifestFile,
+    topic_files: Vec<TopicFile>,
 }
 
 impl Model {
     pub fn new(manifest_file: &yaml::files::File<types::manifest::ManifestFile>) -> Self {
         return Self {
-            manifest: ast::files::ManifestFile::new(manifest_file),
-            topics: vec![],
+            manifest_file: ast::files::ManifestFile::new(manifest_file),
+            topic_files: vec![],
         };
     }
 
     pub fn add_topic(&mut self, topic_file: &yaml::files::File<types::manifest::TopicFile>) {
         let topic_file = ast::files::TopicFile::new(topic_file);
-        self.topics.push(topic_file);
+        self.topic_files.push(topic_file);
     }
 
     pub fn validate(&self) -> CodegenResult<()> {

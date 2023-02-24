@@ -1,10 +1,11 @@
 use std::{collections::HashMap, io::Write, path::PathBuf};
 
+use codegen_ebnf::ebnf_writer::EBNFWritable;
 use codegen_schema::types::grammar::Grammar;
 use codegen_utils::context::CodegenContext;
 
-use crate::{
-    productions::{write_production, SpecProductionContext},
+use super::{
+    html_ebnf_writer::{HTMLEBNFWriter, SpecProductionContext},
     NavigationEntry,
 };
 
@@ -77,7 +78,8 @@ pub fn generate_spec_sections(
                             .iter()
                             .for_each(|production| {
                                 writeln!(w).unwrap();
-                                write_production(&mut w, production, &context);
+                                let mut writer = HTMLEBNFWriter { w: &mut w, context: &context };
+                                production.write_ebnf("", &mut writer);
                             });
 
                         writeln!(w).unwrap();
@@ -108,7 +110,8 @@ fn generate_context(grammar: &Grammar) -> SpecProductionContext {
             let topic_slug = generate_topic_slug(grammar, section_index, topic_index);
 
             for production in &topic.productions {
-                productions_location.insert(production.name.clone(), format!("../../{topic_slug}"));
+                productions_location
+                    .insert(production.name().clone(), format!("../../{topic_slug}"));
             }
         }
     }

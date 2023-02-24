@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
 
 - name: "StateVariableDeclaration"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - reference: "TypeName"
@@ -15,7 +15,7 @@
       - terminal: ";"
 
 - name: "StateVariableAttribute"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     choice:
       - reference: "OverrideSpecifier"

@@ -25,31 +25,23 @@ impl CodeGenerator {
             )
             .unwrap();
 
-        {
-            let cst_types = codegen
-                .read_file(
-                    &codegen
-                        .repo_root
-                        .join("crates/codegen/parser_templates/src/typescript/cst_types.rs"),
-                )
-                .unwrap();
-            codegen
-                .write_file(&output_dir.join("cst_types.rs"), &cst_types)
-                .unwrap();
-        }
+        codegen
+            .copy_file(
+                &codegen
+                    .repo_root
+                    .join("crates/codegen/parser_templates/src/typescript/cst_types.rs"),
+                &output_dir.join("cst_types.rs"),
+            )
+            .unwrap();
 
-        {
-            let parser_output = codegen
-                .read_file(
-                    &codegen
-                        .repo_root
-                        .join("crates/codegen/parser_templates/src/typescript/parser_output.rs"),
-                )
-                .unwrap();
-            codegen
-                .write_file(&output_dir.join("parser_output.rs"), &parser_output)
-                .unwrap();
-        }
+        codegen
+            .copy_file(
+                &codegen
+                    .repo_root
+                    .join("crates/codegen/parser_templates/src/typescript/parser_output.rs"),
+                &output_dir.join("parser_output.rs"),
+            )
+            .unwrap();
 
         {
             let language_boilerplate_common = codegen

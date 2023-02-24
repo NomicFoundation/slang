@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
 
 - name: "ModifierDefinition"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "modifier"
@@ -15,14 +15,14 @@
           - reference: "Block"
 
 - name: "ModifierAttribute"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     choice:
       - reference: "OverrideSpecifier"
       - terminal: "virtual"
 
 - name: "ModifierInvocation"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - reference: "IdentifierPath"

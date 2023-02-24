@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
 
 - name: "ElementaryType"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     choice:
       - terminal: "bool"
@@ -15,7 +15,7 @@
       - reference: "UnsignedFixedType"
 
 - name: "AddressType"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "address"
@@ -23,12 +23,12 @@
           terminal: "payable"
 
 - name: "PayableType"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     terminal: "payable"
 
 - name: "FixedBytesType"
-  kind: "Token"
+  kind: "Scanner"
   unversioned:
     sequence:
       - terminal: "bytes"
@@ -74,7 +74,7 @@
           - terminal: "32"
 
 - name: "SignedIntegerType"
-  kind: "Token"
+  kind: "Scanner"
   unversioned:
     sequence:
       - terminal: "int"
@@ -121,14 +121,14 @@
             - terminal: "256"
 
 - name: "UnsignedIntegerType"
-  kind: "Token"
+  kind: "Scanner"
   unversioned:
     sequence:
       - terminal: "u"
       - reference: "SignedIntegerType"
 
 - name: "SignedFixedType"
-  kind: "Token"
+  kind: "Scanner"
   unversioned:
     sequence:
       - terminal: "fixed"
@@ -145,7 +145,7 @@
                   to: "9"
 
 - name: "UnsignedFixedType"
-  kind: "Token"
+  kind: "Scanner"
   unversioned:
     sequence:
       - terminal: "u"

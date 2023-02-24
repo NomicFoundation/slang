@@ -1,50 +1,60 @@
-use std::fmt::Write;
+use codegen_schema::types::production::{Production, VersionMap};
 
-use codegen_schema::types::{
-    grammar::Grammar,
-    productions::{Production, ProductionKind, ProductionVersioning},
-};
+use super::ebnf_writer::{EBNFWritable, EBNFWriter};
 
-use super::expression::ExpressionEBNFPrivateExtensions;
+impl<T: EBNFWriter> EBNFWritable<T> for Production {
+    fn write_ebnf(&self, _name: &str, writer: &mut T) {
+        writer.write_prelude();
 
-pub trait ProductionEBNFGeneratorExtensions {
-    fn generate_ebnf(&self, grammar: &Grammar) -> Vec<String>;
-}
+        match &self {
+            Production::Scanner { version_map, name } => match version_map {
+                VersionMap::Unversioned(scanner) => {
+                    writer.write_line_start();
+                    scanner.write_ebnf(name, writer);
+                    writer.write_line_break();
+                }
+                VersionMap::Versioned(versions) => {
+                    for (version, scanner) in versions {
+                        writer.write_line_start();
+                        writer.write_comment(&format!("(* v{} *) ", version));
+                        scanner.write_ebnf(name, writer);
+                        writer.write_line_break();
+                    }
+                }
+            },
+            Production::TriviaParser { version_map, name }
+            | Production::Parser { version_map, name } => match version_map {
+                VersionMap::Unversioned(parser) => {
+                    writer.write_line_start();
+                    parser.write_ebnf(name, writer);
+                    writer.write_line_break();
+                }
+                VersionMap::Versioned(versions) => {
+                    for (version, parser) in versions {
+                        writer.write_line_start();
+                        writer.write_comment(&format!("(* v{} *) ", version));
+                        parser.write_ebnf(name, writer);
+                        writer.write_line_break();
+                    }
+                }
+            },
+            Production::PrecedenceParser { version_map, name } => match version_map {
+                VersionMap::Unversioned(precedence_parser) => {
+                    writer.write_line_start();
+                    precedence_parser.write_ebnf(name, writer);
+                    writer.write_line_break();
+                }
+                VersionMap::Versioned(versions) => {
+                    for (version, precedence_parser) in versions {
+                        writer.write_line_start();
+                        writer.write_comment(&format!("(* v{} *) ", version));
+                        precedence_parser.write_ebnf(name, writer);
+                        writer.write_line_break();
+                    }
+                }
+            },
+        };
 
-pub(crate) trait ProductionEBNFPrivateExtensions {
-    fn ebnf_display_name(&self) -> String;
-}
-
-impl ProductionEBNFGeneratorExtensions for Production {
-    fn generate_ebnf(&self, grammar: &Grammar) -> Vec<String> {
-        match &self.versioning {
-            ProductionVersioning::Unversioned(expression) => {
-                let mut w = String::new();
-                write!(w, "{} = ", self.ebnf_display_name()).unwrap();
-                expression.generate_ebnf(grammar, &mut w);
-                write!(w, ";").unwrap();
-                vec![w]
-            }
-            ProductionVersioning::Versioned(versions) => versions
-                .iter()
-                .map(|(version, expr)| {
-                    let mut w = String::new();
-                    write!(w, "(* {} *) {} = ", version, self.ebnf_display_name()).unwrap();
-                    expr.generate_ebnf(grammar, &mut w);
-                    write!(w, ";").unwrap();
-                    w
-                })
-                .collect(),
-        }
-    }
-}
-
-impl ProductionEBNFPrivateExtensions for Production {
-    fn ebnf_display_name(&self) -> String {
-        if self.kind == ProductionKind::Token {
-            format!("«{}»", self.name)
-        } else {
-            self.name.clone()
-        }
+        writer.write_postlude();
     }
 }

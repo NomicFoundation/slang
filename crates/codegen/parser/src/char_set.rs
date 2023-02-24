@@ -3,7 +3,10 @@ use std::{
     ops::Range,
 };
 
-use codegen_schema::types::productions::{ExpressionParser, ExpressionRef};
+use codegen_schema::types::{
+    production::Production,
+    scanner::{ScannerDefinition, ScannerRef},
+};
 use proc_macro2::TokenStream;
 use quote::quote;
 
@@ -130,26 +133,19 @@ impl CharSet {
         }
     }
 
-    pub fn from_expression(
-        tree: &CombinatorTree<'_>,
-        expression: &ExpressionRef,
-        inline_references: bool,
-    ) -> Option<CharSet> {
-        match &expression.parser {
-            ExpressionParser::Not(child) => {
-                Self::from_expression(tree, child, inline_references).map(Self::not)
-            }
+    pub fn from_scanner(tree: &CombinatorTree<'_>, scanner: ScannerRef) -> Option<CharSet> {
+        match &scanner.definition {
+            ScannerDefinition::Not(child) => Self::from_scanner(tree, child.clone()).map(Self::not),
 
-            ExpressionParser::Choice(children) => {
+            ScannerDefinition::Choice(children) => {
                 children.iter().fold(Some(Self::empty()), |acc, child| {
                     acc.and_then(|acc| {
-                        Self::from_expression(tree, child, inline_references)
-                            .map(|child| acc.union(child))
+                        Self::from_scanner(tree, child.clone()).map(|child| acc.union(child))
                     })
                 })
             }
 
-            ExpressionParser::Terminal(string) => {
+            ScannerDefinition::Terminal(string) => {
                 if string.chars().count() == 1 {
                     Some(Self::single(string.chars().next().unwrap()))
                 } else {
@@ -157,15 +153,15 @@ impl CharSet {
                 }
             }
 
-            ExpressionParser::Range { from, to } => Some(Self::range(*from, *to)),
+            ScannerDefinition::Range { from, to } => Some(Self::range(*from, *to)),
 
-            ExpressionParser::Difference {
+            ScannerDefinition::Difference {
                 minuend,
                 subtrahend,
             } => {
                 if let (Some(minuend), Some(subtrahend)) = (
-                    Self::from_expression(tree, minuend, inline_references),
-                    Self::from_expression(tree, subtrahend, inline_references),
+                    Self::from_scanner(tree, minuend.clone()),
+                    Self::from_scanner(tree, subtrahend.clone()),
                 ) {
                     Some(minuend.intersection(subtrahend.not()))
                 } else {
@@ -173,17 +169,23 @@ impl CharSet {
                 }
             }
 
-            ExpressionParser::Reference(name) => {
-                if inline_references {
-                    Self::from_expression(
-                        tree,
-                        &tree.context.get_tree_by_name(name).expression(),
-                        inline_references,
-                    )
-                } else {
-                    None
-                }
-            }
+            ScannerDefinition::Reference(name) => Self::from_scanner(
+                tree,
+                match tree.context.get_tree_by_name(name).production.as_ref() {
+                    Production::Scanner { name, version_map } => {
+                        version_map.get_for_version(&tree.context.version).expect(
+                            &format!("Validation should have ensured: no version of {} exists for version {}", name, tree.context.version)
+                        ).clone()
+                    }
+                    Production::TriviaParser { .. }
+                    | Production::Parser { .. }
+                    | Production::PrecedenceParser { .. } => {
+                        unreachable!(
+                            "Validation should have ensured: scanners can only reference scanners"
+                        )
+                    }
+                },
+            ),
 
             _ => None,
         }
