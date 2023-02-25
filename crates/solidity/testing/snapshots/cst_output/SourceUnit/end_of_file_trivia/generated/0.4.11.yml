@@ -11,15 +11,16 @@ Source: >
 Errors: []
 
 Tree:
-  - SourceUnit (Rule): # 0..69 "contract X { }\n    \n// spaces before this\n\n/* new ..."
-      - Group: # 0..14 "contract X { }"
-          - Definition (Rule): # 0..14 "contract X { }"
-              - ContractDefinition (Rule): # 0..14 "contract X { }"
+  - SourceUnit (Rule): # 0..71 "contract X { }\n    \n// spaces before this\n\n/* new ..."
+      - _REPEATED (Rule): # 0..15 "contract X { }\n"
+          - Definition (Rule): # 0..15 "contract X { }\n"
+              - ContractDefinition (Rule): # 0..15 "contract X { }\n"
                   - Contract (Token): "contract" # 0..8
                   - Identifier (Token): "X" # 9..10
-                  - Group: # 11..14 "{ }"
+                  - _DELIMITEDBY (Rule): # 10..15 " { }\n"
                       - OpenBrace (Token): "{" # 11..12
                       - CloseBrace (Token): "}" # 13..14
-      - EndOfFileTrivia (Rule): # 20..69 "// spaces before this\n\n/* new lines after this */"
-          - SingleLineComment (Token): "// spaces before this" # 20..41
-          - MultilineComment (Token): "/* new lines after this */" # 43..69
+      - EndOfFileTrivia (Rule): # 15..71 "    \n// spaces before this\n\n/* new lines after thi..."
+          - _REPEATED (Rule): # 15..71 "    \n// spaces before this\n\n/* new lines after thi..."
+              - SingleLineComment (Token): "// spaces before this" # 20..41
+              - MultilineComment (Token): "/* new lines after this */" # 43..69

@@ -9,6 +9,6 @@ Tree:
   - EnumDefinition (Rule): # 0..12 "enum Foo { }"
       - Enum (Token): "enum" # 0..4
       - Identifier (Token): "Foo" # 5..8
-      - Group: # 9..12 "{ }"
+      - _DELIMITEDBY (Rule): # 8..12 " { }"
           - OpenBrace (Token): "{" # 9..10
           - CloseBrace (Token): "}" # 11..12

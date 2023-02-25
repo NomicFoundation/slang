@@ -4,7 +4,7 @@ use napi::bindgen_prelude::*;
 use napi_derive::napi;
 use serde::Serialize;
 
-#[derive(Debug, PartialEq, Eq, Serialize)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Serialize)]
 #[napi]
 pub enum TokenKind {
     Abicoder,
@@ -166,7 +166,7 @@ pub enum TokenKind {
     YulKeyword,
 }
 
-#[derive(Debug, PartialEq, Eq, Serialize)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Serialize)]
 #[napi]
 pub enum RuleKind {
     ABICoderPragma,
@@ -296,6 +296,11 @@ pub enum RuleKind {
     YulStatement,
     YulSwitchStatement,
     YulVariableDeclaration,
+    _DELIMITEDBY,
+    _OPTIONAL,
+    _REPEATED,
+    _SEPARATEDBY,
+    _SEQUENCE,
 }
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Serialize)]

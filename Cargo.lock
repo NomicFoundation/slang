@@ -141,15 +141,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
-name = "chumsky"
-version = "0.8.0"
-source = "git+https://github.com/NomicFoundation/chumsky.git?branch=slang#b731fa517e127fc2d54c9a7773897265b9c304e6"
-dependencies = [
- "hashbrown",
- "stacker",
-]
-
-[[package]]
 name = "clap"
 version = "4.0.32"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -203,12 +194,25 @@ dependencies = [
  "codegen_schema",
  "codegen_utils",
  "itertools",
- "patricia_tree",
  "proc-macro2",
  "quote",
  "semver",
  "typed-arena",
  "unicode_names2",
+]
+
+[[package]]
+name = "codegen_parser_templates"
+version = "0.0.0"
+dependencies = [
+ "ariadne",
+ "napi",
+ "napi-build",
+ "napi-derive",
+ "semver",
+ "serde",
+ "strum",
+ "strum_macros",
 ]
 
 [[package]]
@@ -401,9 +405,6 @@ name = "hashbrown"
 version = "0.12.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8a9ee70c43aaf417c914396645a0fa852624801b24ebb7ae78fe8272889ac888"
-dependencies = [
- "ahash",
-]
 
 [[package]]
 name = "heck"
@@ -649,15 +650,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9b7820b9daea5457c9f21c69448905d723fbd21136ccf521748f23fd49e723ee"
 
 [[package]]
-name = "patricia_tree"
-version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d032705f0802f0879b8e53a0f39fad9af53b5a2010f3d578573f2438a49e9038"
-dependencies = [
- "bitflags",
-]
-
-[[package]]
 name = "percent-encoding"
 version = "2.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -706,15 +698,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "57a8eca9f9c4ffde41714334dee777596264c7825420f521abc92b5b5deb63a5"
 dependencies = [
  "unicode-ident",
-]
-
-[[package]]
-name = "psm"
-version = "0.1.21"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5787f7cda34e3033a72192c018bc5883100330f362ef279a8cbccfce8bb4e874"
-dependencies = [
- "cc",
 ]
 
 [[package]]
@@ -996,7 +979,6 @@ version = "0.0.0"
 dependencies = [
  "anyhow",
  "ariadne",
- "chumsky",
  "codegen_parser",
  "codegen_schema",
  "codegen_utils",
@@ -1064,7 +1046,6 @@ version = "0.0.0"
 dependencies = [
  "anyhow",
  "ariadne",
- "chumsky",
  "codegen_parser",
  "codegen_schema",
  "codegen_utils",
@@ -1074,19 +1055,6 @@ dependencies = [
  "semver",
  "serde",
  "solidity_schema",
-]
-
-[[package]]
-name = "stacker"
-version = "0.1.15"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c886bd4480155fd3ef527d45e9ac8dd7118a898a46530b7b94c3e21866259fce"
-dependencies = [
- "cc",
- "cfg-if",
- "libc",
- "psm",
- "winapi",
 ]
 
 [[package]]

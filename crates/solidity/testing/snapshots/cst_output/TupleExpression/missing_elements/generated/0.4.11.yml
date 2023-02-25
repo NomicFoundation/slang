@@ -7,15 +7,16 @@ Errors: []
 
 Tree:
   - TupleExpression (Rule): # 0..20 "(, second, , fourth)"
-      - OpenParen (Token): "(" # 0..1
-      - Group: # 1..19 ", second, , fourth"
-          - Comma (Token): "," # 1..2
-          - Expression (Rule): # 3..9 "second"
-              - PrimaryExpression (Rule): # 3..9 "second"
-                  - Identifier (Token): "second" # 3..9
-          - Comma (Token): "," # 9..10
-          - Comma (Token): "," # 11..12
-          - Expression (Rule): # 13..19 "fourth"
-              - PrimaryExpression (Rule): # 13..19 "fourth"
-                  - Identifier (Token): "fourth" # 13..19
-      - CloseParen (Token): ")" # 19..20
+      - _DELIMITEDBY (Rule): # 0..20 "(, second, , fourth)"
+          - OpenParen (Token): "(" # 0..1
+          - _SEPARATEDBY (Rule): # 1..19 ", second, , fourth"
+              - Comma (Token): "," # 1..2
+              - Expression (Rule): # 3..9 "second"
+                  - PrimaryExpression (Rule): # 3..9 "second"
+                      - Identifier (Token): "second" # 3..9
+              - Comma (Token): "," # 9..10
+              - Comma (Token): "," # 11..12
+              - Expression (Rule): # 13..19 "fourth"
+                  - PrimaryExpression (Rule): # 13..19 "fourth"
+                      - Identifier (Token): "fourth" # 13..19
+          - CloseParen (Token): ")" # 19..20

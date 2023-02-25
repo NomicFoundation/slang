@@ -6,6 +6,7 @@ Source: >
 Errors: []
 
 Tree:
-  - StringExpression (Rule): # 0..31 "unicode\"happy 😃\" unicode'sad 😔'"
-      - UnicodeStringLiteral (Token): 'unicode"happy 😃"' # 0..16
-      - UnicodeStringLiteral (Token): "unicode'sad 😔'" # 17..31
+  - StringExpression (Rule): # 0..37 "unicode\"happy 😃\" unicode'sad 😔'"
+      - _REPEATED (Rule): # 0..37 "unicode\"happy 😃\" unicode'sad 😔'"
+          - UnicodeStringLiteral (Token): 'unicode"happy 😃" un' # 0..19
+          - UnicodeStringLiteral (Token): "code'sad 😔'" # 20..37

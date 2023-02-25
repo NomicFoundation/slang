@@ -15,7 +15,7 @@ A single-line comment is terminated by any unicode line terminator (`LF`, `VF`, 
 
 ## Multi-line Comments
 
-Comments starting with `/*` and ending with `*/` are allowed to span multiple lines:
+Comments starting with `/*` and ending with `*/` are allowed to range multiple lines:
 
 ```solidity
 /*

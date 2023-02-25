@@ -8,10 +8,11 @@ Errors: []
 Tree:
   - NewExpression (Rule): # 0..15 "new Foo.Bar.Baz"
       - New (Token): "new" # 0..3
-      - TypeName (Rule): # 4..15 "Foo.Bar.Baz"
-          - IdentifierPath (Rule): # 4..15 "Foo.Bar.Baz"
-              - Identifier (Token): "Foo" # 4..7
-              - Period (Token): "." # 7..8
-              - Identifier (Token): "Bar" # 8..11
-              - Period (Token): "." # 11..12
-              - Identifier (Token): "Baz" # 12..15
+      - TypeName (Rule): # 3..15 " Foo.Bar.Baz"
+          - IdentifierPath (Rule): # 3..15 " Foo.Bar.Baz"
+              - _SEPARATEDBY (Rule): # 3..15 " Foo.Bar.Baz"
+                  - Identifier (Token): "Foo" # 4..7
+                  - Period (Token): "." # 7..8
+                  - Identifier (Token): "Bar" # 8..11
+                  - Period (Token): "." # 11..12
+                  - Identifier (Token): "Baz" # 12..15

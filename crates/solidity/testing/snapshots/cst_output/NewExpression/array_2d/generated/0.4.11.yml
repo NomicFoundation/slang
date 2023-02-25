@@ -8,13 +8,14 @@ Errors: []
 Tree:
   - NewExpression (Rule): # 0..11 "new Foo[][]"
       - New (Token): "new" # 0..3
-      - TypeName (Rule): # 4..11 "Foo[][]"
-          - IdentifierPath (Rule): # 4..7 "Foo"
-              - Identifier (Token): "Foo" # 4..7
-          - Group: # 7..11 "[][]"
-              - Group: # 7..9 "[]"
+      - TypeName (Rule): # 3..11 " Foo[][]"
+          - IdentifierPath (Rule): # 3..7 " Foo"
+              - _SEPARATEDBY (Rule): # 3..7 " Foo"
+                  - Identifier (Token): "Foo" # 4..7
+          - _REPEATED (Rule): # 7..11 "[][]"
+              - _DELIMITEDBY (Rule): # 7..9 "[]"
                   - OpenBracket (Token): "[" # 7..8
                   - CloseBracket (Token): "]" # 8..9
-              - Group: # 9..11 "[]"
+              - _DELIMITEDBY (Rule): # 9..11 "[]"
                   - OpenBracket (Token): "[" # 9..10
                   - CloseBracket (Token): "]" # 10..11

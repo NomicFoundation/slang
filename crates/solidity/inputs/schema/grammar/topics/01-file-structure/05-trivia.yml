@@ -3,7 +3,7 @@
 - name: "LeadingTrivia"
   kind: "Trivia"
   unversioned:
-    zeroOrMore:
+    oneOrMore:
       choice:
         - reference: "Whitespace"
         - reference: "EndOfLine"
@@ -15,16 +15,15 @@
   unversioned:
     sequence:
       - zeroOrMore:
-          reference: "Whitespace"
-      - optional:
-          reference: "SingleLineComment"
-      - optional:
-          reference: "EndOfLine"
+          choice:
+            - reference: "Whitespace"
+            - reference: "SingleLineComment"
+      - reference: "EndOfLine"
 
 - name: "EndOfFileTrivia"
   kind: "Trivia"
   unversioned:
-    zeroOrMore:
+    oneOrMore:
       choice:
         - reference: "Whitespace"
         - reference: "EndOfLine"

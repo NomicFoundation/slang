@@ -5,12 +5,12 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected '/' or '='.
+    Error: Expected '=>'
        ╭─[crates/solidity/testing/snapshots/cst_output/MappingType/named_key/input.sol:1:16]
        │
      1 │ mapping(string Foo => bytes32)
-       ·                ┬  
-       ·                ╰── Found 'F'.
+       ·                │ 
+       ·                ╰─ Error occurred here.
     ───╯
 
 Tree: null

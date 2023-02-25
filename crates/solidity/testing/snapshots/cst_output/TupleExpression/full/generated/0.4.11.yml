@@ -7,21 +7,22 @@ Errors: []
 
 Tree:
   - TupleExpression (Rule): # 0..30 "(first, second, third, fourth)"
-      - OpenParen (Token): "(" # 0..1
-      - Group: # 1..29 "first, second, third, fourth"
-          - Expression (Rule): # 1..6 "first"
-              - PrimaryExpression (Rule): # 1..6 "first"
-                  - Identifier (Token): "first" # 1..6
-          - Comma (Token): "," # 6..7
-          - Expression (Rule): # 8..14 "second"
-              - PrimaryExpression (Rule): # 8..14 "second"
-                  - Identifier (Token): "second" # 8..14
-          - Comma (Token): "," # 14..15
-          - Expression (Rule): # 16..21 "third"
-              - PrimaryExpression (Rule): # 16..21 "third"
-                  - Identifier (Token): "third" # 16..21
-          - Comma (Token): "," # 21..22
-          - Expression (Rule): # 23..29 "fourth"
-              - PrimaryExpression (Rule): # 23..29 "fourth"
-                  - Identifier (Token): "fourth" # 23..29
-      - CloseParen (Token): ")" # 29..30
+      - _DELIMITEDBY (Rule): # 0..30 "(first, second, third, fourth)"
+          - OpenParen (Token): "(" # 0..1
+          - _SEPARATEDBY (Rule): # 1..29 "first, second, third, fourth"
+              - Expression (Rule): # 1..6 "first"
+                  - PrimaryExpression (Rule): # 1..6 "first"
+                      - Identifier (Token): "first" # 1..6
+              - Comma (Token): "," # 6..7
+              - Expression (Rule): # 8..14 "second"
+                  - PrimaryExpression (Rule): # 8..14 "second"
+                      - Identifier (Token): "second" # 8..14
+              - Comma (Token): "," # 14..15
+              - Expression (Rule): # 16..21 "third"
+                  - PrimaryExpression (Rule): # 16..21 "third"
+                      - Identifier (Token): "third" # 16..21
+              - Comma (Token): "," # 21..22
+              - Expression (Rule): # 23..29 "fourth"
+                  - PrimaryExpression (Rule): # 23..29 "fourth"
+                      - Identifier (Token): "fourth" # 23..29
+          - CloseParen (Token): ")" # 29..30

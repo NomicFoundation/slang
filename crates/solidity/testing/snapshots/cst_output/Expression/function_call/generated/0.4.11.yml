@@ -10,17 +10,18 @@ Tree:
       - FunctionCallExpression (Rule): # 0..7 "x(1, 2)"
           - PrimaryExpression (Rule): # 0..1 "x"
               - Identifier (Token): "x" # 0..1
-          - Group: # 1..7 "(1, 2)"
-              - ArgumentList (Rule): # 1..7 "(1, 2)"
+          - ArgumentList (Rule): # 1..7 "(1, 2)"
+              - _DELIMITEDBY (Rule): # 1..7 "(1, 2)"
                   - OpenParen (Token): "(" # 1..2
                   - PositionalArgumentList (Rule): # 2..6 "1, 2"
-                      - Expression (Rule): # 2..3 "1"
-                          - PrimaryExpression (Rule): # 2..3 "1"
-                              - NumericLiteral (Rule): # 2..3 "1"
-                                  - DecimalLiteral (Token): "1" # 2..3
-                      - Comma (Token): "," # 3..4
-                      - Expression (Rule): # 5..6 "2"
-                          - PrimaryExpression (Rule): # 5..6 "2"
-                              - NumericLiteral (Rule): # 5..6 "2"
-                                  - DecimalLiteral (Token): "2" # 5..6
+                      - _SEPARATEDBY (Rule): # 2..6 "1, 2"
+                          - Expression (Rule): # 2..3 "1"
+                              - PrimaryExpression (Rule): # 2..3 "1"
+                                  - NumericLiteral (Rule): # 2..3 "1"
+                                      - DecimalLiteral (Token): "1" # 2..3
+                          - Comma (Token): "," # 3..4
+                          - Expression (Rule): # 4..6 " 2"
+                              - PrimaryExpression (Rule): # 4..6 " 2"
+                                  - NumericLiteral (Rule): # 4..6 " 2"
+                                      - DecimalLiteral (Token): "2" # 5..6
                   - CloseParen (Token): ")" # 6..7

@@ -2,6 +2,7 @@
 members = [
     "crates/codegen/ebnf",
     "crates/codegen/parser",
+    "crates/codegen/parser_templates",
     "crates/codegen/schema",
     "crates/codegen/spec",
     "crates/codegen/testing",
@@ -25,7 +26,6 @@ edition = "2021"
 anyhow = { version = "1.0.66", features = ["backtrace", "std"] }
 ariadne = { version = "0.1.5" }
 bson = { version = "2.4.0" }
-chumsky = { git = "https://github.com/NomicFoundation/chumsky.git", branch = "slang" }
 clap = { version = "4.0.14", features = ["derive"] }
 codegen_ebnf = { path = "crates/codegen/ebnf" }
 codegen_parser = { path = "crates/codegen/parser" }
@@ -40,7 +40,6 @@ itertools = { version = "0.10.3" }
 napi = { version = "2.10.1", features = ["compat-mode", "napi8", "serde-json"] }
 napi-build = { version = "2.0.1" }
 napi-derive = { version = "2.9.1" }
-patricia_tree = { version = "0.4.0" }
 proc-macro2 = { version = "1.0.38" }
 quote = { version = "1.0.18" }
 rayon = { version = "1.6.1" }

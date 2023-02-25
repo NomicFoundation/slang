@@ -8,17 +8,16 @@ Errors: []
 Tree:
   - MappingType (Rule): # 0..34 "mapping(string Foo => bytes32 Bar)"
       - Mapping (Token): "mapping" # 0..7
-      - Group: # 7..34 "(string Foo => bytes32 Bar)"
+      - _DELIMITEDBY (Rule): # 7..34 "(string Foo => bytes32 Bar)"
           - OpenParen (Token): "(" # 7..8
-          - Group: # 8..33 "string Foo => bytes32 Bar"
-              - MappingKeyType (Rule): # 8..18 "string Foo"
-                  - ElementaryType (Rule): # 8..14 "string"
-                      - String (Token): "string" # 8..14
-                  - Identifier (Token): "Foo" # 15..18
-              - EqualGreater (Token): "=>" # 19..21
-              - MappingValueType (Rule): # 22..33 "bytes32 Bar"
-                  - TypeName (Rule): # 22..29 "bytes32"
-                      - ElementaryType (Rule): # 22..29 "bytes32"
-                          - FixedBytesType (Token): "bytes32" # 22..29
-                  - Identifier (Token): "Bar" # 30..33
+          - MappingKeyType (Rule): # 8..18 "string Foo"
+              - ElementaryType (Rule): # 8..14 "string"
+                  - String (Token): "string" # 8..14
+              - Identifier (Token): "Foo" # 15..18
+          - EqualGreater (Token): "=>" # 19..21
+          - MappingValueType (Rule): # 22..33 "bytes32 Bar"
+              - TypeName (Rule): # 22..29 "bytes32"
+                  - ElementaryType (Rule): # 22..29 "bytes32"
+                      - FixedBytesType (Token): "bytes32" # 22..29
+              - Identifier (Token): "Bar" # 30..33
           - CloseParen (Token): ")" # 33..34

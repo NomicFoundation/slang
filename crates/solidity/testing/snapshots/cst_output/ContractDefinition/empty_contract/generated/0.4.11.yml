@@ -6,9 +6,9 @@ Source: >
 Errors: []
 
 Tree:
-  - ContractDefinition (Rule): # 0..18 "contract Sample {}"
+  - ContractDefinition (Rule): # 0..19 "contract Sample {}\n"
       - Contract (Token): "contract" # 0..8
       - Identifier (Token): "Sample" # 9..15
-      - Group: # 16..18 "{}"
+      - _DELIMITEDBY (Rule): # 15..19 " {}\n"
           - OpenBrace (Token): "{" # 16..17
           - CloseBrace (Token): "}" # 17..18

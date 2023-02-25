@@ -9,10 +9,11 @@ Tree:
   - YulExpression (Rule): # 0..6 "foo(1)"
       - YulFunctionCall (Rule): # 0..6 "foo(1)"
           - YulIdentifierPath (Rule): # 0..3 "foo"
-              - YulIdentifier (Token): "foo" # 0..3
-          - Group: # 3..6 "(1)"
+              - _SEPARATEDBY (Rule): # 0..3 "foo"
+                  - YulIdentifier (Token): "foo" # 0..3
+          - _DELIMITEDBY (Rule): # 3..6 "(1)"
               - OpenParen (Token): "(" # 3..4
-              - Group: # 4..5 "1"
+              - _SEPARATEDBY (Rule): # 4..5 "1"
                   - YulExpression (Rule): # 4..5 "1"
                       - YulLiteral (Rule): # 4..5 "1"
                           - YulDecimalLiteral (Token): "1" # 4..5
