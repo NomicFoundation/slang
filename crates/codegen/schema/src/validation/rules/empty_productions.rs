@@ -1,14 +1,11 @@
 use codegen_utils::errors::CodegenErrors;
 
-use crate::{
-    types::productions::ProductionKind,
-    validation::{
-        ast::{
-            productions::{ExpressionParser, ExpressionRef, ProductionRef},
-            visitors::{Reporter, Visitor, VisitorExtensions, VisitorResponse},
-        },
-        Model,
+use crate::validation::{
+    ast::{
+        productions::{ExpressionParser, ExpressionRef},
+        visitors::{Reporter, Visitor, VisitorExtensions, VisitorResponse},
     },
+    Model,
 };
 
 pub fn check(model: &Model, errors: &mut CodegenErrors) {
@@ -26,23 +23,6 @@ impl EmptyProductionsVisitor {
 }
 
 impl Visitor for EmptyProductionsVisitor {
-    fn visit_production(
-        &mut self,
-        production: &ProductionRef,
-        _reporter: &mut Reporter,
-    ) -> VisitorResponse {
-        match production.kind.value {
-            ProductionKind::Trivia => {
-                // Skip. Allowed to be empty.
-                return VisitorResponse::StepOut;
-            }
-            ProductionKind::Token | ProductionKind::Rule => {
-                // Check the root expression.
-                return VisitorResponse::StepIn;
-            }
-        };
-    }
-
     fn visit_expression(
         &mut self,
         expression: &ExpressionRef,
