@@ -171,3 +171,16 @@ macro_rules! scan_difference {
             })
     }};
 }
+
+#[allow(unused_macros)]
+macro_rules! scan_not_followed_by {
+    ($stream:ident, $expression:expr, $not_followed_by:expr) => {
+        ($expression)
+            && ({
+                let end = $stream.position();
+                let following = $not_followed_by;
+                $stream.set_position(end);
+                !following
+            })
+    };
+}

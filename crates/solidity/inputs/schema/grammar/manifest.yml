@@ -17,6 +17,8 @@ sections:
       - title: "Trivia"
         definition: "topics/01-file-structure/05-trivia.yml"
       - title: "Natspec Format"
+      - title: "Keywords"
+        definition: "topics/01-file-structure/07-keywords.yml"
   - title: "Definitions"
     topics:
       - title: "Contracts"

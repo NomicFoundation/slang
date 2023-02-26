@@ -4,7 +4,7 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "if"
+      - reference: "IfKeyword"
       - delimitedBy:
           open: "("
           expression:
@@ -13,14 +13,14 @@
       - reference: "Statement"
       - optional:
           sequence:
-            - terminal: "else"
+            - reference: "ElseKeyword"
             - reference: "Statement"
 
 - name: "ForStatement"
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "for"
+      - reference: "ForKeyword"
       - delimitedBy:
           open: "("
           expression:
@@ -40,7 +40,7 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "while"
+      - reference: "WhileKeyword"
       - delimitedBy:
           open: "("
           expression:
@@ -52,9 +52,9 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "do"
+      - reference: "DoKeyword"
       - reference: "Statement"
-      - terminal: "while"
+      - reference: "WhileKeyword"
       - delimitedBy:
           open: "("
           expression:
@@ -66,21 +66,21 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "continue"
+      - reference: "ContinueKeyword"
       - terminal: ";"
 
 - name: "BreakStatement"
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "break"
+      - reference: "BreakKeyword"
       - terminal: ";"
 
 - name: "ReturnStatement"
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "return"
+      - reference: "ReturnKeyword"
       - optional:
           reference: "Expression"
       - terminal: ";"
@@ -89,7 +89,7 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "emit"
+      - reference: "EmitKeyword"
       - reference: "IdentifierPath"
       - reference: "ArgumentList"
       - terminal: ";"
@@ -98,6 +98,6 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "delete"
+      - reference: "DeleteKeyword"
       - reference: "Expression"
       - terminal: ";"

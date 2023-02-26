@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - DeleteStatement (Rule): # 0..16 "delete foo[bar];"
-      - Delete (Token): "delete" # 0..6
+      - DeleteKeyword (Token): "delete" # 0..6
       - Expression (Rule): # 7..15 "foo[bar]"
           - IndexAccessExpression (Rule): # 7..15 "foo[bar]"
               - PrimaryExpression (Rule): # 7..10 "foo"

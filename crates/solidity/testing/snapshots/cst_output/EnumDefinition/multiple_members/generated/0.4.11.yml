@@ -11,7 +11,7 @@ Errors: []
 
 Tree:
   - EnumDefinition (Rule): # 0..41 "enum Foo {\n    Bar1,\n    Bar2,\n    Bar3\n}"
-      - Enum (Token): "enum" # 0..4
+      - EnumKeyword (Token): "enum" # 0..4
       - Identifier (Token): "Foo" # 5..8
       - _DELIMITEDBY (Rule): # 8..41 " {\n    Bar1,\n    Bar2,\n    Bar3\n}"
           - OpenBrace (Token): "{" # 9..10

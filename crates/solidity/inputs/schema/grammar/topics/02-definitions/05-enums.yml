@@ -4,7 +4,7 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "enum"
+      - reference: "EnumKeyword"
       - reference: "Identifier"
       - delimitedBy:
           open: "{"

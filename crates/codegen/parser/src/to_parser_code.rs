@@ -685,9 +685,11 @@ impl<'context> CombinatorNode<'context> {
 
             Self::TerminalTrie { trie, .. } => trie.to_parser_code(is_trivia, code),
 
-            Self::Difference { .. } => todo!("Handle difference in rules"),
+            Self::TrailingContext { .. } => {
+                unreachable!("No trailingContext: operator in parsers")
+            }
 
-            Self::Lookahead { .. } => todo!("Handle lookahead in rules"),
+            Self::Difference { .. } => unreachable!("No difference: operator in parsers"),
         }
     }
 }

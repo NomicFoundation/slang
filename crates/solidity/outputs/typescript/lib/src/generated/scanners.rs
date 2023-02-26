@@ -176,7 +176,105 @@ macro_rules! scan_difference {
     }};
 }
 
+#[allow(unused_macros)]
+macro_rules! scan_not_followed_by {
+    ($stream:ident, $expression:expr, $not_followed_by:expr) => {
+        ($expression)
+            && ({
+                let end = $stream.position();
+                let following = $not_followed_by;
+                $stream.set_position(end);
+                !following
+            })
+    };
+}
+
 impl Language {
+    // «AbicoderKeyword» = "abicoder" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_abicoder_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'a', 'b', 'i', 'c', 'o', 'd', 'e', 'r'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «AbstractKeyword» = "abstract" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_abstract_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'a', 'b', 's', 't', 'r', 'a', 'c', 't'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «AddressKeyword» = "address" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_address_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'a', 'd', 'd', 'r', 'e', 's', 's'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «AnonymousKeyword» = "anonymous" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_anonymous_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'a', 'n', 'o', 'n', 'y', 'm', 'o', 'u', 's'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «AsKeyword» = "as" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_as_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'a', 's'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
     // «AsciiEscape» = 'n' | 'r' | 't' | "\'" | '"' | '\\' | '\u{a}' | '\u{d}' ;
 
     #[allow(unused_assignments, unused_parens)]
@@ -206,15 +304,189 @@ impl Language {
         }
     }
 
-    // «BooleanLiteral» = "true" | "false" ;
+    // «AssemblyKeyword» = "assembly" ;
 
     #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn scan_boolean_literal(&self, stream: &mut Stream) -> bool {
+    pub(crate) fn scan_assembly_keyword(&self, stream: &mut Stream) -> bool {
         {
-            scan_trie!(
+            scan_not_followed_by!(
                 stream,
-                'f' + scan_chars!(stream, 'a', 'l', 's', 'e'),
-                't' + scan_chars!(stream, 'r', 'u', 'e')
+                scan_chars!(stream, 'a', 's', 's', 'e', 'm', 'b', 'l', 'y'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «BoolKeyword» = "bool" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_bool_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'b', 'o', 'o', 'l'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «BreakKeyword» = "break" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_break_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'b', 'r', 'e', 'a', 'k'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «CalldataKeyword» = "calldata" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_calldata_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'c', 'a', 'l', 'l', 'd', 'a', 't', 'a'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «CaseKeyword» = "case" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_case_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'c', 'a', 's', 'e'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «CatchKeyword» = "catch" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_catch_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'c', 'a', 't', 'c', 'h'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «ConstantKeyword» = "constant" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_constant_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'c', 'o', 'n', 's', 't', 'a', 'n', 't'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «ConstructorKeyword» = "constructor" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_constructor_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'c', 'o', 'n', 's', 't', 'r', 'u', 'c', 't', 'o', 'r'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «ContinueKeyword» = "continue" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_continue_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'c', 'o', 'n', 't', 'i', 'n', 'u', 'e'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «ContractKeyword» = "contract" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_contract_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'c', 'o', 'n', 't', 'r', 'a', 'c', 't'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «DaysKeyword» = "days" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_days_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'd', 'a', 'y', 's'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
             )
         }
     }
@@ -270,6 +542,57 @@ impl Language {
         }
     }
 
+    // «DefaultKeyword» = "default" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_default_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'd', 'e', 'f', 'a', 'u', 'l', 't'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «DeleteKeyword» = "delete" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_delete_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'd', 'e', 'l', 'e', 't', 'e'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «DoKeyword» = "do" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_do_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'd', 'o'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
     // «DoubleQuotedAsciiStringLiteral» = '"' { «EscapeSequence» | '\u{20}'…'~' - ( '"' | '\\' ) } '"' ;
 
     #[allow(unused_assignments, unused_parens)]
@@ -317,12 +640,80 @@ impl Language {
         }
     }
 
+    // «ElseKeyword» = "else" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_else_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'e', 'l', 's', 'e'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «EmitKeyword» = "emit" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_emit_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'e', 'm', 'i', 't'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
     // «EndOfLine» = 1…{ '\u{d}' | '\u{a}' } ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_end_of_line(&self, stream: &mut Stream) -> bool {
         {
             scan_one_or_more!(stream, scan_predicate!(stream, |c| c == '\n' || c == '\r'))
+        }
+    }
+
+    // «EnumKeyword» = "enum" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_enum_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'e', 'n', 'u', 'm'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «ErrorKeyword» = "error" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_error_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'e', 'r', 'r', 'o', 'r'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
         }
     }
 
@@ -343,28 +734,240 @@ impl Language {
         }
     }
 
+    // «EtherKeyword» = "ether" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_ether_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'e', 't', 'h', 'e', 'r'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «EventKeyword» = "event" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_event_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'e', 'v', 'e', 'n', 't'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «ExperimentalKeyword» = "experimental" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_experimental_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'e', 'x', 'p', 'e', 'r', 'i', 'm', 'e', 'n', 't', 'a', 'l'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «ExternalKeyword» = "external" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_external_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'e', 'x', 't', 'e', 'r', 'n', 'a', 'l'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «FallbackKeyword» = "fallback" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_fallback_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'f', 'a', 'l', 'l', 'b', 'a', 'c', 'k'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «FalseKeyword» = "false" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_false_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'f', 'a', 'l', 's', 'e'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «FinneyKeyword» = "finney" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_finney_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'f', 'i', 'n', 'n', 'e', 'y'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
     // «FixedBytesType» = "bytes" ( '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19" | "20" | "21" | "22" | "23" | "24" | "25" | "26" | "27" | "28" | "29" | "30" | "31" | "32" ) ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_fixed_bytes_type(&self, stream: &mut Stream) -> bool {
         {
-            scan_sequence!(
-                scan_chars!(stream, 'b', 'y', 't', 'e', 's'),
-                scan_trie!(
-                    stream,
-                    ['4' | '5' | '6' | '7' | '8' | '9'],
-                    '1' + scan_trie!(
+            scan_not_followed_by!(
+                stream,
+                scan_sequence!(
+                    scan_chars!(stream, 'b', 'y', 't', 'e', 's'),
+                    scan_trie!(
                         stream,
-                        EMPTY,
-                        ['0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9']
-                    ),
-                    '2' + scan_trie!(
-                        stream,
-                        EMPTY,
-                        ['0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9']
-                    ),
-                    '3' + scan_trie!(stream, EMPTY, ['0' | '1' | '2'])
-                )
+                        ['4' | '5' | '6' | '7' | '8' | '9'],
+                        '1' + scan_trie!(
+                            stream,
+                            EMPTY,
+                            ['0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9']
+                        ),
+                        '2' + scan_trie!(
+                            stream,
+                            EMPTY,
+                            ['0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9']
+                        ),
+                        '3' + scan_trie!(stream, EMPTY, ['0' | '1' | '2'])
+                    )
+                ),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «ForKeyword» = "for" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_for_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'f', 'o', 'r'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «FromKeyword» = "from" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_from_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'f', 'r', 'o', 'm'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «FunctionKeyword» = "function" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_function_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'f', 'u', 'n', 'c', 't', 'i', 'o', 'n'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «GlobalKeyword» = "global" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_global_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'g', 'l', 'o', 'b', 'a', 'l'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «GweiKeyword» = "gwei" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_gwei_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'g', 'w', 'e', 'i'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
             )
         }
     }
@@ -452,6 +1055,23 @@ impl Language {
         }
     }
 
+    // «HoursKeyword» = "hours" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_hours_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'h', 'o', 'u', 'r', 's'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
     // «Identifier» = «RawIdentifier» - «Keyword» ;
 
     #[allow(unused_assignments, unused_parens)]
@@ -490,7 +1110,126 @@ impl Language {
         }
     }
 
-    // «Keyword» = «BooleanLiteral» | «FixedBytesType» | «NumberUnit» | «ReservedKeyword» | «SignedIntegerType» | «UnsignedIntegerType» | "abstract" | "address" | "anonymous" | "as" | "assembly" | "bool" | "break" | "calldata" | "catch" | "constant" | "constructor" | "continue" | "contract" | "delete" | "do" | "else" | "emit" | "enum" | "event" | "external" | "fallback" | "false" | "fixed" | "for" | "function" | "hex" | "if" | "immutable" | "import" | "indexed" | "interface" | "internal" | "is" | "library" | "mapping" | "memory" | "modifier" | "new" | "override" | "payable" | "pragma" | "private" | "public" | "pure" | "receive" | "return" | "returns" | "storage" | "string" | "struct" | "true" | "try" | "type" | "ufixed" | "unchecked" | "using" | "view" | "virtual" | "while" ;
+    // «IfKeyword» = "if" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_if_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'i', 'f'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «ImmutableKeyword» = "immutable" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_immutable_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'i', 'm', 'm', 'u', 't', 'a', 'b', 'l', 'e'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «ImportKeyword» = "import" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_import_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'i', 'm', 'p', 'o', 'r', 't'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «IndexedKeyword» = "indexed" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_indexed_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'i', 'n', 'd', 'e', 'x', 'e', 'd'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «InterfaceKeyword» = "interface" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_interface_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'i', 'n', 't', 'e', 'r', 'f', 'a', 'c', 'e'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «InternalKeyword» = "internal" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_internal_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'i', 'n', 't', 'e', 'r', 'n', 'a', 'l'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «IsKeyword» = "is" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_is_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'i', 's'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «Keyword» = "true" | "false" | «FixedBytesType» | «ReservedKeyword» | «SignedIntegerType» | «UnsignedIntegerType» | "days" | "ether" | "finney" | "gwei" | "hours" | "minutes" | "seconds" | "szabo" | "weeks" | "wei" | "years" | "abstract" | "address" | "anonymous" | "as" | "assembly" | "bool" | "break" | "calldata" | "catch" | "constant" | "constructor" | "continue" | "contract" | "delete" | "do" | "else" | "emit" | "enum" | "event" | "external" | "fallback" | "false" | "fixed" | "for" | "function" | "hex" | "if" | "immutable" | "import" | "indexed" | "interface" | "internal" | "is" | "library" | "mapping" | "memory" | "modifier" | "new" | "override" | "payable" | "pragma" | "private" | "public" | "pure" | "receive" | "return" | "returns" | "storage" | "string" | "struct" | "true" | "try" | "type" | "ufixed" | "unchecked" | "using" | "view" | "virtual" | "while" ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_keyword(&self, stream: &mut Stream) -> bool {
@@ -518,29 +1257,15 @@ impl Language {
                         'a' + scan_chars!(stream, 's', 'e'),
                         'o' + scan_chars!(stream, 'p', 'y', 'o', 'f')
                     ),
-                    'd' + scan_trie!(
-                        stream,
-                        'a' + scan_chars!(stream, 'y', 's'),
-                        'e' + scan_sequence!(
-                            scan_chars!(stream, 'f'),
-                            scan_trie!(
-                                stream,
-                                'a' + scan_chars!(stream, 'u', 'l', 't'),
-                                'i' + scan_chars!(stream, 'n', 'e')
-                            )
-                        )
-                    ),
-                    'e' + scan_chars!(stream, 't', 'h', 'e', 'r'),
-                    'f' + scan_sequence!(
-                        scan_chars!(stream, 'i', 'n'),
+                    'd' + scan_sequence!(
+                        scan_chars!(stream, 'e', 'f'),
                         scan_trie!(
                             stream,
-                            'a' + scan_chars!(stream, 'l'),
-                            'n' + scan_chars!(stream, 'e', 'y')
+                            'a' + scan_chars!(stream, 'u', 'l', 't'),
+                            'i' + scan_chars!(stream, 'n', 'e')
                         )
                     ),
-                    'g' + scan_chars!(stream, 'w', 'e', 'i'),
-                    'h' + scan_chars!(stream, 'o', 'u', 'r', 's'),
+                    'f' + scan_chars!(stream, 'i', 'n', 'a', 'l'),
                     'i' + scan_trie!(
                         stream,
                         'm' + scan_chars!(stream, 'p', 'l', 'e', 'm', 'e', 'n', 't', 's'),
@@ -554,7 +1279,6 @@ impl Language {
                             'c' + scan_chars!(stream, 'r', 'o'),
                             't' + scan_chars!(stream, 'c', 'h')
                         ),
-                        'i' + scan_chars!(stream, 'n', 'u', 't', 'e', 's'),
                         'u' + scan_chars!(stream, 't', 'a', 'b', 'l', 'e')
                     ),
                     'n' + scan_chars!(stream, 'u', 'l', 'l'),
@@ -574,16 +1298,11 @@ impl Language {
                     ),
                     's' + scan_trie!(
                         stream,
-                        'e' + scan_trie!(
-                            stream,
-                            'a' + scan_chars!(stream, 'l', 'e', 'd'),
-                            'c' + scan_chars!(stream, 'o', 'n', 'd', 's')
-                        ),
+                        'e' + scan_chars!(stream, 'a', 'l', 'e', 'd'),
                         'i' + scan_chars!(stream, 'z', 'e', 'o', 'f'),
                         't' + scan_chars!(stream, 'a', 't', 'i', 'c'),
                         'u' + scan_chars!(stream, 'p', 'p', 'o', 'r', 't', 's'),
-                        'w' + scan_chars!(stream, 'i', 't', 'c', 'h'),
-                        'z' + scan_chars!(stream, 'a', 'b', 'o')
+                        'w' + scan_chars!(stream, 'i', 't', 'c', 'h')
                     ),
                     't' + scan_sequence!(
                         scan_chars!(stream, 'y', 'p', 'e'),
@@ -593,12 +1312,7 @@ impl Language {
                             'o' + scan_chars!(stream, 'f')
                         )
                     ),
-                    'v' + scan_chars!(stream, 'a', 'r'),
-                    'w' + scan_sequence!(
-                        scan_chars!(stream, 'e'),
-                        scan_trie!(stream, ['i'], 'e' + scan_chars!(stream, 'k', 's'))
-                    ),
-                    'y' + scan_chars!(stream, 'e', 'a', 'r', 's')
+                    'v' + scan_chars!(stream, 'a', 'r')
                 ),
                 self.scan_signed_integer_type(stream),
                 self.scan_unsigned_integer_type(stream),
@@ -647,12 +1361,18 @@ impl Language {
                             )
                         )
                     ),
-                    'd' + scan_trie!(stream, ['o'], 'e' + scan_chars!(stream, 'l', 'e', 't', 'e')),
+                    'd' + scan_trie!(
+                        stream,
+                        ['o'],
+                        'a' + scan_chars!(stream, 'y', 's'),
+                        'e' + scan_chars!(stream, 'l', 'e', 't', 'e')
+                    ),
                     'e' + scan_trie!(
                         stream,
                         'l' + scan_chars!(stream, 's', 'e'),
                         'm' + scan_chars!(stream, 'i', 't'),
                         'n' + scan_chars!(stream, 'u', 'm'),
+                        't' + scan_chars!(stream, 'h', 'e', 'r'),
                         'v' + scan_chars!(stream, 'e', 'n', 't'),
                         'x' + scan_chars!(stream, 't', 'e', 'r', 'n', 'a', 'l')
                     ),
@@ -666,11 +1386,20 @@ impl Language {
                                 's' + scan_chars!(stream, 'e')
                             )
                         ),
-                        'i' + scan_chars!(stream, 'x', 'e', 'd'),
+                        'i' + scan_trie!(
+                            stream,
+                            'n' + scan_chars!(stream, 'n', 'e', 'y'),
+                            'x' + scan_chars!(stream, 'e', 'd')
+                        ),
                         'o' + scan_chars!(stream, 'r'),
                         'u' + scan_chars!(stream, 'n', 'c', 't', 'i', 'o', 'n')
                     ),
-                    'h' + scan_chars!(stream, 'e', 'x'),
+                    'g' + scan_chars!(stream, 'w', 'e', 'i'),
+                    'h' + scan_trie!(
+                        stream,
+                        'e' + scan_chars!(stream, 'x'),
+                        'o' + scan_chars!(stream, 'u', 'r', 's')
+                    ),
                     'i' + scan_trie!(
                         stream,
                         ['f' | 's'],
@@ -697,6 +1426,7 @@ impl Language {
                         stream,
                         'a' + scan_chars!(stream, 'p', 'p', 'i', 'n', 'g'),
                         'e' + scan_chars!(stream, 'm', 'o', 'r', 'y'),
+                        'i' + scan_chars!(stream, 'n', 'u', 't', 'e', 's'),
                         'o' + scan_chars!(stream, 'd', 'i', 'f', 'i', 'e', 'r')
                     ),
                     'n' + scan_chars!(stream, 'e', 'w'),
@@ -726,9 +1456,10 @@ impl Language {
                             )
                         )
                     ),
-                    's' + scan_sequence!(
-                        scan_chars!(stream, 't'),
-                        scan_trie!(
+                    's' + scan_trie!(
+                        stream,
+                        'e' + scan_chars!(stream, 'c', 'o', 'n', 'd', 's'),
+                        't' + scan_trie!(
                             stream,
                             'o' + scan_chars!(stream, 'r', 'a', 'g', 'e'),
                             'r' + scan_trie!(
@@ -736,7 +1467,8 @@ impl Language {
                                 'i' + scan_chars!(stream, 'n', 'g'),
                                 'u' + scan_chars!(stream, 'c', 't')
                             )
-                        )
+                        ),
+                        'z' + scan_chars!(stream, 'a', 'b', 'o')
                     ),
                     't' + scan_trie!(
                         stream,
@@ -757,8 +1489,132 @@ impl Language {
                             'r' + scan_chars!(stream, 't', 'u', 'a', 'l')
                         )
                     ),
-                    'w' + scan_chars!(stream, 'h', 'i', 'l', 'e')
+                    'w' + scan_trie!(
+                        stream,
+                        'e' + scan_trie!(stream, ['i'], 'e' + scan_chars!(stream, 'k', 's')),
+                        'h' + scan_chars!(stream, 'i', 'l', 'e')
+                    ),
+                    'y' + scan_chars!(stream, 'e', 'a', 'r', 's')
                 )
+            )
+        }
+    }
+
+    // «LeaveKeyword» = "leave" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_leave_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'l', 'e', 'a', 'v', 'e'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «LetKeyword» = "let" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_let_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'l', 'e', 't'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «LibraryKeyword» = "library" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_library_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'l', 'i', 'b', 'r', 'a', 'r', 'y'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «MappingKeyword» = "mapping" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_mapping_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'm', 'a', 'p', 'p', 'i', 'n', 'g'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «MemoryKeyword» = "memory" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_memory_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'm', 'e', 'm', 'o', 'r', 'y'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «MinutesKeyword» = "minutes" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_minutes_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'm', 'i', 'n', 'u', 't', 'e', 's'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «ModifierKeyword» = "modifier" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_modifier_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'm', 'o', 'd', 'i', 'f', 'i', 'e', 'r'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
             )
         }
     }
@@ -787,29 +1643,53 @@ impl Language {
         }
     }
 
-    // «NumberUnit» = "days" | "ether" | "finney" | "gwei" | "hours" | "minutes" | "seconds" | "szabo" | "weeks" | "wei" | "years" ;
+    // «NewKeyword» = "new" ;
 
     #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn scan_number_unit(&self, stream: &mut Stream) -> bool {
+    pub(crate) fn scan_new_keyword(&self, stream: &mut Stream) -> bool {
         {
-            scan_trie!(
+            scan_not_followed_by!(
                 stream,
-                'd' + scan_chars!(stream, 'a', 'y', 's'),
-                'e' + scan_chars!(stream, 't', 'h', 'e', 'r'),
-                'f' + scan_chars!(stream, 'i', 'n', 'n', 'e', 'y'),
-                'g' + scan_chars!(stream, 'w', 'e', 'i'),
-                'h' + scan_chars!(stream, 'o', 'u', 'r', 's'),
-                'm' + scan_chars!(stream, 'i', 'n', 'u', 't', 'e', 's'),
-                's' + scan_trie!(
-                    stream,
-                    'e' + scan_chars!(stream, 'c', 'o', 'n', 'd', 's'),
-                    'z' + scan_chars!(stream, 'a', 'b', 'o')
-                ),
-                'w' + scan_sequence!(
-                    scan_chars!(stream, 'e'),
-                    scan_trie!(stream, ['i'], 'e' + scan_chars!(stream, 'k', 's'))
-                ),
-                'y' + scan_chars!(stream, 'e', 'a', 'r', 's')
+                scan_chars!(stream, 'n', 'e', 'w'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «OverrideKeyword» = "override" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_override_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'o', 'v', 'e', 'r', 'r', 'i', 'd', 'e'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «PayableKeyword» = "payable" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_payable_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'p', 'a', 'y', 'a', 'b', 'l', 'e'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
             )
         }
     }
@@ -846,6 +1726,74 @@ impl Language {
         }
     }
 
+    // «PragmaKeyword» = "pragma" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_pragma_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'p', 'r', 'a', 'g', 'm', 'a'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «PrivateKeyword» = "private" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_private_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'p', 'r', 'i', 'v', 'a', 't', 'e'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «PublicKeyword» = "public" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_public_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'p', 'u', 'b', 'l', 'i', 'c'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «PureKeyword» = "pure" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_pure_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'p', 'u', 'r', 'e'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
     // «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;
 
     #[allow(unused_assignments, unused_parens)]
@@ -864,6 +1812,23 @@ impl Language {
                         || c == '_'
                         || ('a' <= c && c <= 'z'))
                 )
+            )
+        }
+    }
+
+    // «ReceiveKeyword» = "receive" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_receive_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'r', 'e', 'c', 'e', 'i', 'v', 'e'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
             )
         }
     }
@@ -948,27 +1913,103 @@ impl Language {
         }
     }
 
+    // «ReturnKeyword» = "return" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_return_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'r', 'e', 't', 'u', 'r', 'n'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «ReturnsKeyword» = "returns" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_returns_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'r', 'e', 't', 'u', 'r', 'n', 's'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «RevertKeyword» = "revert" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_revert_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'r', 'e', 'v', 'e', 'r', 't'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «SecondsKeyword» = "seconds" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_seconds_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 's', 'e', 'c', 'o', 'n', 'd', 's'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
     // «SignedFixedType» = "fixed" [ 1…{ '0'…'9' } 'x' 1…{ '0'…'9' } ] ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_signed_fixed_type(&self, stream: &mut Stream) -> bool {
         {
-            scan_sequence!(
-                scan_chars!(stream, 'f', 'i', 'x', 'e', 'd'),
-                scan_optional!(
-                    stream,
-                    scan_sequence!(
-                        scan_one_or_more!(
-                            stream,
-                            scan_predicate!(stream, |c| ('0' <= c && c <= '9'))
-                        ),
-                        scan_chars!(stream, 'x'),
-                        scan_one_or_more!(
-                            stream,
-                            scan_predicate!(stream, |c| ('0' <= c && c <= '9'))
+            scan_not_followed_by!(
+                stream,
+                scan_sequence!(
+                    scan_chars!(stream, 'f', 'i', 'x', 'e', 'd'),
+                    scan_optional!(
+                        stream,
+                        scan_sequence!(
+                            scan_one_or_more!(
+                                stream,
+                                scan_predicate!(stream, |c| ('0' <= c && c <= '9'))
+                            ),
+                            scan_chars!(stream, 'x'),
+                            scan_one_or_more!(
+                                stream,
+                                scan_predicate!(stream, |c| ('0' <= c && c <= '9'))
+                            )
                         )
                     )
-                )
+                ),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
             )
         }
     }
@@ -978,43 +2019,51 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_signed_integer_type(&self, stream: &mut Stream) -> bool {
         {
-            scan_sequence!(
-                scan_chars!(stream, 'i', 'n', 't'),
-                scan_optional!(
-                    stream,
-                    scan_trie!(
+            scan_not_followed_by!(
+                stream,
+                scan_sequence!(
+                    scan_chars!(stream, 'i', 'n', 't'),
+                    scan_optional!(
                         stream,
-                        '1' + scan_trie!(
+                        scan_trie!(
                             stream,
-                            '0' + scan_chars!(stream, '4'),
-                            '1' + scan_chars!(stream, '2'),
-                            '2' + scan_trie!(stream, ['0' | '8']),
-                            '3' + scan_chars!(stream, '6'),
-                            '4' + scan_chars!(stream, '4'),
-                            '5' + scan_chars!(stream, '2'),
-                            '6' + scan_trie!(stream, EMPTY, ['0' | '8']),
-                            '7' + scan_chars!(stream, '6'),
-                            '8' + scan_chars!(stream, '4'),
-                            '9' + scan_chars!(stream, '2')
-                        ),
-                        '2' + scan_trie!(
-                            stream,
-                            '0' + scan_trie!(stream, ['0' | '8']),
-                            '1' + scan_chars!(stream, '6'),
-                            '2' + scan_chars!(stream, '4'),
+                            '1' + scan_trie!(
+                                stream,
+                                '0' + scan_chars!(stream, '4'),
+                                '1' + scan_chars!(stream, '2'),
+                                '2' + scan_trie!(stream, ['0' | '8']),
+                                '3' + scan_chars!(stream, '6'),
+                                '4' + scan_chars!(stream, '4'),
+                                '5' + scan_chars!(stream, '2'),
+                                '6' + scan_trie!(stream, EMPTY, ['0' | '8']),
+                                '7' + scan_chars!(stream, '6'),
+                                '8' + scan_chars!(stream, '4'),
+                                '9' + scan_chars!(stream, '2')
+                            ),
+                            '2' + scan_trie!(
+                                stream,
+                                '0' + scan_trie!(stream, ['0' | '8']),
+                                '1' + scan_chars!(stream, '6'),
+                                '2' + scan_chars!(stream, '4'),
+                                '3' + scan_chars!(stream, '2'),
+                                '4' + scan_trie!(stream, EMPTY, ['0' | '8']),
+                                '5' + scan_chars!(stream, '6')
+                            ),
                             '3' + scan_chars!(stream, '2'),
-                            '4' + scan_trie!(stream, EMPTY, ['0' | '8']),
-                            '5' + scan_chars!(stream, '6')
-                        ),
-                        '3' + scan_chars!(stream, '2'),
-                        '4' + scan_trie!(stream, ['0' | '8']),
-                        '5' + scan_chars!(stream, '6'),
-                        '6' + scan_chars!(stream, '4'),
-                        '7' + scan_chars!(stream, '2'),
-                        '8' + scan_trie!(stream, EMPTY, ['0' | '8']),
-                        '9' + scan_chars!(stream, '6')
+                            '4' + scan_trie!(stream, ['0' | '8']),
+                            '5' + scan_chars!(stream, '6'),
+                            '6' + scan_chars!(stream, '4'),
+                            '7' + scan_chars!(stream, '2'),
+                            '8' + scan_trie!(stream, EMPTY, ['0' | '8']),
+                            '9' + scan_chars!(stream, '6')
+                        )
                     )
-                )
+                ),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
             )
         }
     }
@@ -1078,6 +2127,176 @@ impl Language {
         }
     }
 
+    // «SolidityKeyword» = "solidity" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_solidity_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 's', 'o', 'l', 'i', 'd', 'i', 't', 'y'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «StorageKeyword» = "storage" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_storage_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 's', 't', 'o', 'r', 'a', 'g', 'e'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «StringKeyword» = "string" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_string_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 's', 't', 'r', 'i', 'n', 'g'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «StructKeyword» = "struct" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_struct_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 's', 't', 'r', 'u', 'c', 't'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «SwitchKeyword» = "switch" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_switch_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 's', 'w', 'i', 't', 'c', 'h'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «SzaboKeyword» = "szabo" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_szabo_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 's', 'z', 'a', 'b', 'o'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «TrueKeyword» = "true" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_true_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 't', 'r', 'u', 'e'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «TryKeyword» = "try" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_try_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 't', 'r', 'y'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «TypeKeyword» = "type" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_type_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 't', 'y', 'p', 'e'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «UncheckedKeyword» = "unchecked" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_unchecked_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'u', 'n', 'c', 'h', 'e', 'c', 'k', 'e', 'd'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
     // «UnicodeEscape» = 'u' 4…4{ «HexCharacter» } ;
 
     #[allow(unused_assignments, unused_parens)]
@@ -1134,6 +2353,23 @@ impl Language {
         }
     }
 
+    // «UsingKeyword» = "using" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_using_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'u', 's', 'i', 'n', 'g'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
     // «VersionPragmaOperator» = '^' | '~' | '=' | '<' | '>' | "<=" | ">=" ;
 
     #[allow(unused_assignments, unused_parens)]
@@ -1163,12 +2399,114 @@ impl Language {
         }
     }
 
+    // «ViewKeyword» = "view" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_view_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'v', 'i', 'e', 'w'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «VirtualKeyword» = "virtual" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_virtual_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'v', 'i', 'r', 't', 'u', 'a', 'l'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «WeeksKeyword» = "weeks" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_weeks_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'w', 'e', 'e', 'k', 's'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «WeiKeyword» = "wei" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_wei_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'w', 'e', 'i'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
+    // «WhileKeyword» = "while" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_while_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'w', 'h', 'i', 'l', 'e'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
+        }
+    }
+
     // «Whitespace» = 1…{ '\u{20}' | '\u{9}' } ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_whitespace(&self, stream: &mut Stream) -> bool {
         {
             scan_one_or_more!(stream, scan_predicate!(stream, |c| c == '\t' || c == ' '))
+        }
+    }
+
+    // «YearsKeyword» = "years" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_years_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, 'y', 'e', 'a', 'r', 's'),
+                scan_predicate!(stream, |c| c == '$'
+                    || ('0' <= c && c <= '9')
+                    || ('A' <= c && c <= 'Z')
+                    || c == '_'
+                    || ('a' <= c && c <= 'z'))
+            )
         }
     }
 
@@ -1241,7 +2579,7 @@ impl Language {
         }
     }
 
-    // «YulKeyword» = «BooleanLiteral» | "break" | "case" | "continue" | "default" | "for" | "function" | "hex" | "if" | "leave" | "let" | "switch" ;
+    // «YulKeyword» = "false" | "true" | "break" | "case" | "continue" | "default" | "for" | "function" | "hex" | "if" | "leave" | "let" | "switch" ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_yul_keyword(&self, stream: &mut Stream) -> bool {

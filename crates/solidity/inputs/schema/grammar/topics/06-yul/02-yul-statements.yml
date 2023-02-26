@@ -30,7 +30,7 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "let"
+      - reference: "LetKeyword"
       - separatedBy:
           separator: ","
           expression:
@@ -44,7 +44,7 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "function"
+      - reference: "FunctionKeyword"
       - reference: "YulIdentifier"
       - delimitedBy:
           open: "("
@@ -81,30 +81,30 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "if"
+      - reference: "IfKeyword"
       - reference: "YulExpression"
       - reference: "YulBlock"
 
 - name: "YulLeaveStatement"
   kind: "Parser"
   unversioned:
-    terminal: "leave"
+    reference: "LeaveKeyword"
 
 - name: "YulBreakStatement"
   kind: "Parser"
   unversioned:
-    terminal: "break"
+    reference: "BreakKeyword"
 
 - name: "YulContinueStatement"
   kind: "Parser"
   unversioned:
-    terminal: "continue"
+    reference: "ContinueKeyword"
 
 - name: "YulForStatement"
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "for"
+      - reference: "ForKeyword"
       - reference: "YulBlock"
       - reference: "YulExpression"
       - reference: "YulBlock"
@@ -114,13 +114,13 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "switch"
+      - reference: "SwitchKeyword"
       - reference: "YulExpression"
       - oneOrMore:
           sequence:
             - choice:
                 - sequence:
-                    - terminal: "case"
+                    - reference: "CaseKeyword"
                     - reference: "YulLiteral"
-                - terminal: "default"
+                - reference: "DefaultKeyword"
             - reference: "YulBlock"

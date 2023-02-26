@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - ContractDefinition (Rule): # 0..19 "contract Sample {}\n"
-      - Contract (Token): "contract" # 0..8
+      - ContractKeyword (Token): "contract" # 0..8
       - Identifier (Token): "Sample" # 9..15
       - _DELIMITEDBY (Rule): # 15..19 " {}\n"
           - OpenBrace (Token): "{" # 16..17

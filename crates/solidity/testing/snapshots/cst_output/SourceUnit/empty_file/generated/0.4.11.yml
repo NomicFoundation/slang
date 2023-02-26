@@ -4,7 +4,7 @@ Source: ""
 
 Errors: # 1 total
   - >
-    Error: Expected 'error', or 'type', or 'enum', or 'struct', or Identifier, or 'mapping', or 'function', or UnsignedFixedType, or SignedFixedType, or UnsignedIntegerType, or SignedIntegerType, or FixedBytesType, or 'payable', or 'address', or 'bool', or 'string', or 'function', or 'library', or 'interface', or 'abstract', or 'contract', or 'using', or 'import', or 'pragma'
+    Error: Expected ErrorKeyword, or TypeKeyword, or EnumKeyword, or StructKeyword, or Identifier, or MappingKeyword, or FunctionKeyword, or UnsignedFixedType, or SignedFixedType, or UnsignedIntegerType, or SignedIntegerType, or FixedBytesType, or PayableKeyword, or AddressKeyword, or StringKeyword, or BoolKeyword, or FunctionKeyword, or LibraryKeyword, or InterfaceKeyword, or AbstractKeyword, or ContractKeyword, or UsingKeyword, or ImportKeyword, or PragmaKeyword
        ─[crates/solidity/testing/snapshots/cst_output/SourceUnit/empty_file/input.sol:0:0]
 
 Tree: null

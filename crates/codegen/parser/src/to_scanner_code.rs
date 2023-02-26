@@ -110,7 +110,14 @@ impl<'context> CombinatorNode<'context> {
                 quote! { scan_difference!(stream, #minuend, #subtrahend) }
             }
 
-            Self::Lookahead { .. } => todo!(),
+            Self::TrailingContext {
+                expression,
+                not_followed_by,
+            } => {
+                let expression = expression.to_scanner_code(code);
+                let not_followed_by = not_followed_by.to_scanner_code(code);
+                quote! { scan_not_followed_by!(stream, #expression, #not_followed_by) }
+            }
         }
     }
 }

@@ -12,7 +12,7 @@ Tree:
           - _SEPARATEDBY (Rule): # 1..29 "bool with_type, without_type"
               - TypeName (Rule): # 1..5 "bool"
                   - ElementaryType (Rule): # 1..5 "bool"
-                      - Bool (Token): "bool" # 1..5
+                      - BoolKeyword (Token): "bool" # 1..5
               - Identifier (Token): "with_type" # 6..15
               - Comma (Token): "," # 15..16
               - Identifier (Token): "without_type" # 17..29

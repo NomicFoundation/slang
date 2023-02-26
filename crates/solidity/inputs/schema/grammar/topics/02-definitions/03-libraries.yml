@@ -4,7 +4,7 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "library"
+      - reference: "LibraryKeyword"
       - reference: "Identifier"
       - delimitedBy:
           open: "{"

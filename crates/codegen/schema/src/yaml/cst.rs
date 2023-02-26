@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::{ops::Deref, rc::Rc};
 
 use codegen_utils::errors::{Position, Range};
 use indexmap::IndexMap;
@@ -53,5 +53,13 @@ impl Node {
             }),
         }
         .or_else(|| Some(self));
+    }
+}
+
+impl Deref for NodeField {
+    type Target = NodeRef;
+
+    fn deref(&self) -> &Self::Target {
+        &self.value
     }
 }

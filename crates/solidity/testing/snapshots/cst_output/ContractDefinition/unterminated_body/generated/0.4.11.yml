@@ -5,7 +5,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected Identifier, or 'mapping', or 'function', or UnsignedFixedType, or SignedFixedType, or UnsignedIntegerType, or SignedIntegerType, or FixedBytesType, or 'payable', or 'address', or 'bool', or 'string', or 'error', or 'event', or 'type', or 'enum', or 'struct', or 'modifier', or 'receive', or 'fallback', or 'function', or 'constructor', or 'using', or '}'
+    Error: Expected Identifier, or MappingKeyword, or FunctionKeyword, or UnsignedFixedType, or SignedFixedType, or UnsignedIntegerType, or SignedIntegerType, or FixedBytesType, or PayableKeyword, or AddressKeyword, or StringKeyword, or BoolKeyword, or ErrorKeyword, or EventKeyword, or TypeKeyword, or EnumKeyword, or StructKeyword, or ModifierKeyword, or ReceiveKeyword, or FallbackKeyword, or FunctionKeyword, or ConstructorKeyword, or UsingKeyword, or '}'
        ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/unterminated_body/input.sol:1:18]
        │
      1 │ contract Sample {

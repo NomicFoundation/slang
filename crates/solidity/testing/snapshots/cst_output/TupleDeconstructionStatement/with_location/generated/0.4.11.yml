@@ -11,7 +11,7 @@ Tree:
           - OpenParen (Token): "(" # 0..1
           - _SEPARATEDBY (Rule): # 1..39 "memory with_location, without_location"
               - DataLocation (Rule): # 1..7 "memory"
-                  - Memory (Token): "memory" # 1..7
+                  - MemoryKeyword (Token): "memory" # 1..7
               - Identifier (Token): "with_location" # 8..21
               - Comma (Token): "," # 21..22
               - Identifier (Token): "without_location" # 23..39

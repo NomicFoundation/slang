@@ -8,4 +8,5 @@ Errors: []
 Tree:
   - NumericLiteral (Rule): # 0..8 "10 ether"
       - DecimalLiteral (Token): "10" # 0..2
-      - NumberUnit (Token): "ether" # 3..8
+      - NumberUnit (Rule): # 3..8 "ether"
+          - EtherKeyword (Token): "ether" # 3..8

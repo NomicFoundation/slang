@@ -66,6 +66,7 @@ fn find_empty_scanner_node<'a>(scanner: &'a ScannerRef) -> Option<&'a crate::yam
         }
 
         ScannerDefinition::OneOrMore(expression)
+        | ScannerDefinition::TrailingContext { expression, .. }
         | ScannerDefinition::SeparatedBy { expression, .. } => {
             return find_empty_scanner_node(expression);
         }
@@ -111,10 +112,6 @@ fn find_empty_parser_node<'a>(parser: &'a ParserRef) -> Option<&'a crate::yaml::
             return choices
                 .iter()
                 .find_map(|choice| find_empty_parser_node(choice));
-        }
-
-        ParserDefinition::Difference { minuend, .. } => {
-            return find_empty_parser_node(minuend);
         }
 
         ParserDefinition::OneOrMore(expression)

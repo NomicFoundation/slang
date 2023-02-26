@@ -38,15 +38,6 @@ impl<T: EBNFWriter> EBNFWritable<T> for ParserDefinition {
                 w.write_string(close);
             }
 
-            ParserDefinition::Difference {
-                minuend,
-                subtrahend,
-            } => {
-                write_nested(w, self, &minuend.definition);
-                w.write_operator(" - ");
-                write_nested(w, self, &subtrahend.definition);
-            }
-
             ParserDefinition::OneOrMore(expr) => {
                 w.write_constant("1");
                 w.write_operator("…");
@@ -136,8 +127,7 @@ fn precedence(parser_definition: &ParserDefinition) -> u8 {
         | ParserDefinition::SeparatedBy { .. }
         | ParserDefinition::Terminal(..)
         | ParserDefinition::ZeroOrMore(..) => 0,
-        ParserDefinition::Difference { .. } => 2,
-        ParserDefinition::DelimitedBy { .. } | ParserDefinition::Sequence(..) => 3,
-        ParserDefinition::Choice(..) => 4,
+        ParserDefinition::DelimitedBy { .. } | ParserDefinition::Sequence(..) => 1,
+        ParserDefinition::Choice(..) => 2,
     }
 }

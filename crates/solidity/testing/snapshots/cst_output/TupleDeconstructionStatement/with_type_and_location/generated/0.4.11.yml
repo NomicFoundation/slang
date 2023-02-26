@@ -12,16 +12,16 @@ Tree:
           - _SEPARATEDBY (Rule): # 1..30 "bool memory x, bool storage y"
               - TypeName (Rule): # 1..5 "bool"
                   - ElementaryType (Rule): # 1..5 "bool"
-                      - Bool (Token): "bool" # 1..5
+                      - BoolKeyword (Token): "bool" # 1..5
               - DataLocation (Rule): # 6..12 "memory"
-                  - Memory (Token): "memory" # 6..12
+                  - MemoryKeyword (Token): "memory" # 6..12
               - Identifier (Token): "x" # 13..14
               - Comma (Token): "," # 14..15
               - TypeName (Rule): # 16..20 "bool"
                   - ElementaryType (Rule): # 16..20 "bool"
-                      - Bool (Token): "bool" # 16..20
+                      - BoolKeyword (Token): "bool" # 16..20
               - DataLocation (Rule): # 21..28 "storage"
-                  - Storage (Token): "storage" # 21..28
+                  - StorageKeyword (Token): "storage" # 21..28
               - Identifier (Token): "y" # 29..30
           - CloseParen (Token): ")" # 30..31
       - Equal (Token): "=" # 32..33

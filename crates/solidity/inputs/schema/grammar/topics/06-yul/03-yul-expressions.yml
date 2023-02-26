@@ -46,7 +46,8 @@
   kind: "Scanner"
   unversioned:
     choice:
-      - reference: "BooleanLiteral"
+      - terminal: "false"
+      - terminal: "true"
       - terminal: "break"
       - terminal: "case"
       - terminal: "continue"

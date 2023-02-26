@@ -333,6 +333,25 @@
           }
         },
         {
+          "title": "TrailingContext Expression",
+          "type": "object",
+          "required": ["trailingContext"],
+          "properties": {
+            "trailingContext": {
+              "type": "object",
+              "required": ["expression", "notFollowedBy"],
+              "properties": {
+                "expression": {
+                  "$ref": "#/definitions/Scanner"
+                },
+                "notFollowedBy": {
+                  "$ref": "#/definitions/Scanner"
+                }
+              }
+            }
+          }
+        },
+        {
           "title": "Terminal Expression",
           "type": "object",
           "required": ["terminal"],
@@ -352,20 +371,7 @@
             }
           }
         }
-      ],
-      "properties": {
-        "lookahead": {
-          "default": null,
-          "anyOf": [
-            {
-              "$ref": "#/definitions/Scanner"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        }
-      }
+      ]
     },
     "Parser": {
       "type": "object",
@@ -400,25 +406,6 @@
                 },
                 "close": {
                   "type": "string"
-                }
-              }
-            }
-          }
-        },
-        {
-          "title": "Difference Expression",
-          "type": "object",
-          "required": ["difference"],
-          "properties": {
-            "difference": {
-              "type": "object",
-              "required": ["minuend", "subtrahend"],
-              "properties": {
-                "minuend": {
-                  "$ref": "#/definitions/Parser"
-                },
-                "subtrahend": {
-                  "$ref": "#/definitions/Parser"
                 }
               }
             }
@@ -537,17 +524,6 @@
         "name": {
           "default": null,
           "type": ["string", "null"]
-        },
-        "lookahead": {
-          "default": null,
-          "anyOf": [
-            {
-              "$ref": "#/definitions/Parser"
-            },
-            {
-              "type": "null"
-            }
-          ]
         }
       }
     },
@@ -608,25 +584,6 @@
                 },
                 "close": {
                   "type": "string"
-                }
-              }
-            }
-          }
-        },
-        {
-          "title": "Difference Expression",
-          "type": "object",
-          "required": ["difference"],
-          "properties": {
-            "difference": {
-              "type": "object",
-              "required": ["minuend", "subtrahend"],
-              "properties": {
-                "minuend": {
-                  "$ref": "#/definitions/Parser"
-                },
-                "subtrahend": {
-                  "$ref": "#/definitions/Parser"
                 }
               }
             }

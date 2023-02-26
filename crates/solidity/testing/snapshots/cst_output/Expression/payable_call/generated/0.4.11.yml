@@ -11,7 +11,7 @@ Tree:
           - PrimaryExpression (Rule): # 0..7 "payable"
               - ElementaryType (Rule): # 0..7 "payable"
                   - PayableType (Rule): # 0..7 "payable"
-                      - Payable (Token): "payable" # 0..7
+                      - PayableKeyword (Token): "payable" # 0..7
           - ArgumentList (Rule): # 7..14 "(value)"
               - _DELIMITEDBY (Rule): # 7..14 "(value)"
                   - OpenParen (Token): "(" # 7..8

@@ -4,18 +4,18 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "function"
+      - reference: "FunctionKeyword"
       - reference: "ParameterList"
       - zeroOrMore:
           choice:
-            - terminal: "internal"
-            - terminal: "external"
-            - terminal: "private"
-            - terminal: "public"
-            - terminal: "pure"
-            - terminal: "view"
-            - terminal: "payable"
+            - reference: "InternalKeyword"
+            - reference: "ExternalKeyword"
+            - reference: "PrivateKeyword"
+            - reference: "PublicKeyword"
+            - reference: "PureKeyword"
+            - reference: "ViewKeyword"
+            - reference: "PayableKeyword"
       - optional:
           sequence:
-            - terminal: "returns"
+            - reference: "ReturnsKeyword"
             - reference: "ParameterList"

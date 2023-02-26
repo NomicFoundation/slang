@@ -91,7 +91,7 @@ impl<T: EBNFWriter> EBNFWritable<T> for ScannerDefinition {
                 expression,
                 separator,
             } => {
-                write_nested(writer, &expression.definition, &expression.definition);
+                write_nested(writer, self, &expression.definition);
                 writer.write_operator(" { ");
                 writer.write_string(separator);
                 writer.write_operator(" ");
@@ -113,6 +113,10 @@ impl<T: EBNFWriter> EBNFWritable<T> for ScannerDefinition {
 
             ScannerDefinition::Terminal(string) => {
                 writer.write_string(string);
+            }
+
+            ScannerDefinition::TrailingContext { expression, .. } => {
+                write_nested(writer, self, &expression.definition);
             }
 
             ScannerDefinition::ZeroOrMore(expr) => {
@@ -150,7 +154,9 @@ fn precedence(scanner_definition: &ScannerDefinition) -> u8 {
         | ScannerDefinition::ZeroOrMore(..) => 0,
         ScannerDefinition::Not(..) => 1,
         ScannerDefinition::Difference { .. } => 2,
-        ScannerDefinition::DelimitedBy { .. } | ScannerDefinition::Sequence(..) => 3,
+        ScannerDefinition::DelimitedBy { .. }
+        | ScannerDefinition::Sequence(..)
+        | ScannerDefinition::TrailingContext { .. } => 3,
         ScannerDefinition::Choice(..) => 4,
     }
 }

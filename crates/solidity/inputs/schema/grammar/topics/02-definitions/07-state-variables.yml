@@ -19,8 +19,8 @@
   unversioned:
     choice:
       - reference: "OverrideSpecifier"
-      - terminal: "constant"
-      - terminal: "immutable"
-      - terminal: "internal"
-      - terminal: "private"
-      - terminal: "public"
+      - reference: "ConstantKeyword"
+      - reference: "ImmutableKeyword"
+      - reference: "InternalKeyword"
+      - reference: "PrivateKeyword"
+      - reference: "PublicKeyword"

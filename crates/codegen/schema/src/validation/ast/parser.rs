@@ -8,7 +8,6 @@ pub type ParserRef = Rc<Parser>;
 
 pub struct Parser {
     pub name: Option<Node<String>>,
-    pub lookahead: Option<ParserRef>,
     pub definition: Node<ParserDefinition>,
 }
 
@@ -18,10 +17,7 @@ impl ConcreteAbstractPair for Parser {
     fn new(cst_node: &cst::NodeRef, value: Rc<Self::AbstractType>) -> Rc<Self> {
         return Rc::new(Self {
             name: value.name.clone().and_then(|name| {
-                return Some(Node::new(cst_node.get("name"), name));
-            }),
-            lookahead: value.lookahead.clone().and_then(|lookahead| {
-                return Some(Parser::new(cst_node.get("lookahead"), lookahead));
+                return Some(Node::new(cst_node.value_of_field("name"), name));
             }),
             definition: ParserDefinition::new(cst_node, value.definition.clone()),
         });
@@ -34,10 +30,6 @@ pub enum ParserDefinition {
         open: Node<String>,
         expression: ParserRef,
         close: Node<String>,
-    },
-    Difference {
-        minuend: ParserRef,
-        subtrahend: ParserRef,
     },
     OneOrMore(ParserRef),
     Optional(ParserRef),
@@ -63,7 +55,7 @@ impl ParserDefinition {
                 let cst_node = cst_node.field("choice");
                 return Node::new(
                     &cst_node.key,
-                    Self::Choice(cst_node.value.zip(value, Parser::new)),
+                    Self::Choice(cst_node.zip(value, Parser::new)),
                 );
             }
             types::parser::ParserDefinition::DelimitedBy {
@@ -75,22 +67,9 @@ impl ParserDefinition {
                 return Node::new(
                     &cst_node.key,
                     Self::DelimitedBy {
-                        open: Node::new(&cst_node.value.get("open"), open),
-                        expression: Parser::new(&cst_node.value.get("expression"), expression),
-                        close: Node::new(&cst_node.value.get("close"), close),
-                    },
-                );
-            }
-            types::parser::ParserDefinition::Difference {
-                minuend,
-                subtrahend,
-            } => {
-                let cst_node = cst_node.field("difference");
-                return Node::new(
-                    &cst_node.key,
-                    Self::Difference {
-                        minuend: Parser::new(&cst_node.value.get("minuend"), minuend),
-                        subtrahend: Parser::new(&cst_node.value.get("subtrahend"), subtrahend),
+                        open: Node::new(&cst_node.value_of_field("open"), open),
+                        expression: Parser::new(&cst_node.value_of_field("expression"), expression),
+                        close: Node::new(&cst_node.value_of_field("close"), close),
                     },
                 );
             }
@@ -124,9 +103,9 @@ impl ParserDefinition {
                 return Node::new(
                     &cst_node.key,
                     Self::Repeat {
-                        min: Node::new(&cst_node.value.get("min"), min),
-                        max: Node::new(&cst_node.value.get("max"), max),
-                        expression: Parser::new(&cst_node.value.get("expression"), expression),
+                        min: Node::new(&cst_node.value_of_field("min"), min),
+                        max: Node::new(&cst_node.value_of_field("max"), max),
+                        expression: Parser::new(&cst_node.value_of_field("expression"), expression),
                     },
                 );
             }
@@ -138,8 +117,8 @@ impl ParserDefinition {
                 return Node::new(
                     &cst_node.key,
                     Self::SeparatedBy {
-                        separator: Node::new(&cst_node.value.get("separator"), separator),
-                        expression: Parser::new(&cst_node.value.get("expression"), expression),
+                        separator: Node::new(&cst_node.value_of_field("separator"), separator),
+                        expression: Parser::new(&cst_node.value_of_field("expression"), expression),
                     },
                 );
             }
@@ -147,7 +126,7 @@ impl ParserDefinition {
                 let cst_node = cst_node.field("sequence");
                 return Node::new(
                     &cst_node.key,
-                    Self::Sequence(cst_node.value.zip(value, Parser::new)),
+                    Self::Sequence(cst_node.zip(value, Parser::new)),
                 );
             }
             types::parser::ParserDefinition::Terminal(value) => {

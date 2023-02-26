@@ -4,7 +4,7 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "modifier"
+      - reference: "ModifierKeyword"
       - reference: "Identifier"
       - optional:
           reference: "ParameterList"
@@ -19,7 +19,7 @@
   unversioned:
     choice:
       - reference: "OverrideSpecifier"
-      - terminal: "virtual"
+      - reference: "VirtualKeyword"
 
 - name: "ModifierInvocation"
   kind: "Parser"

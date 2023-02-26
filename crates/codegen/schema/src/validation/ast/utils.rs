@@ -13,7 +13,7 @@ impl cst::Node {
         };
     }
 
-    pub fn get<'a>(&'a self, key: &str) -> &'a cst::NodeRef {
+    pub fn value_of_field<'a>(&'a self, key: &str) -> &'a cst::NodeRef {
         return &self.field(key).value;
     }
 

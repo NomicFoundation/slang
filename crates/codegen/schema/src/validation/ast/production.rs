@@ -35,28 +35,28 @@ impl Production {
                 name,
                 version_map: versioning,
             } => Rc::new(Self::Scanner {
-                name: Node::new(cst_node.get("name"), name.to_owned()),
+                name: Node::new(cst_node.value_of_field("name"), name.to_owned()),
                 version_map: VersionMap::new(cst_node, versioning.to_owned()),
             }),
             types::production::Production::TriviaParser {
                 name,
                 version_map: versioning,
             } => Rc::new(Self::TriviaParser {
-                name: Node::new(cst_node.get("name"), name.to_owned()),
+                name: Node::new(cst_node.value_of_field("name"), name.to_owned()),
                 version_map: VersionMap::new(cst_node, versioning.to_owned()),
             }),
             types::production::Production::Parser {
                 name,
                 version_map: versioning,
             } => Rc::new(Self::Parser {
-                name: Node::new(cst_node.get("name"), name.to_owned()),
+                name: Node::new(cst_node.value_of_field("name"), name.to_owned()),
                 version_map: VersionMap::new(cst_node, versioning.to_owned()),
             }),
             types::production::Production::PrecedenceParser {
                 name,
                 version_map: versioning,
             } => Rc::new(Self::PrecedenceParser {
-                name: Node::new(cst_node.get("name"), name.to_owned()),
+                name: Node::new(cst_node.value_of_field("name"), name.to_owned()),
                 version_map: VersionMap::new(cst_node, versioning.to_owned()),
             }),
         }
@@ -119,14 +119,14 @@ impl<T: ConcreteAbstractPair> VersionMap<T> {
     ) -> Node<Self> {
         match value {
             types::production::VersionMap::Unversioned(value) => {
-                let cst_node = &cst_node.get("unversioned");
+                let cst_node = &cst_node.value_of_field("unversioned");
                 let value = Self::Unversioned(T::new(&cst_node, value));
 
                 return Node::new(cst_node, value);
             }
 
             types::production::VersionMap::Versioned(value) => {
-                let cst_node = &cst_node.get("versioned");
+                let cst_node = &cst_node.value_of_field("versioned");
                 let value = Self::Versioned(
                     value
                         .into_iter()

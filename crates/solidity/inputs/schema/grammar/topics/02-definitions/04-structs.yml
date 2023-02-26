@@ -4,7 +4,7 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "struct"
+      - reference: "StructKeyword"
       - reference: "Identifier"
       - delimitedBy:
           open: "{"

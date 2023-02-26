@@ -4,11 +4,11 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "try"
+      - reference: "TryKeyword"
       - reference: "Expression"
       - optional:
           sequence:
-            - terminal: "returns"
+            - reference: "ReturnsKeyword"
             - reference: "ParameterList"
       - reference: "Block"
       - oneOrMore:
@@ -18,7 +18,7 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "catch"
+      - reference: "CatchKeyword"
       - optional:
           sequence:
             - optional:
@@ -30,7 +30,7 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "revert"
+      - reference: "RevertKeyword"
       - optional:
           reference: "IdentifierPath"
       - reference: "ArgumentList"

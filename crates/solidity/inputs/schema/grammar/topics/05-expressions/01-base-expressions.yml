@@ -115,7 +115,7 @@
             - terminal: "."
             - choice:
                 - reference: "Identifier"
-                - terminal: "address"
+                - reference: "AddressKeyword"
 
         - name: "IndexAccessExpression"
           model: "UnarySuffix"
@@ -251,7 +251,7 @@
             - terminal: "."
             - choice:
                 - reference: "Identifier"
-                - terminal: "address"
+                - reference: "AddressKeyword"
 
         - name: "IndexAccessExpression"
           model: "UnarySuffix"

@@ -15,7 +15,7 @@ Tree:
       - _REPEATED (Rule): # 0..15 "contract X { }\n"
           - Definition (Rule): # 0..15 "contract X { }\n"
               - ContractDefinition (Rule): # 0..15 "contract X { }\n"
-                  - Contract (Token): "contract" # 0..8
+                  - ContractKeyword (Token): "contract" # 0..8
                   - Identifier (Token): "X" # 9..10
                   - _DELIMITEDBY (Rule): # 10..15 " { }\n"
                       - OpenBrace (Token): "{" # 11..12
