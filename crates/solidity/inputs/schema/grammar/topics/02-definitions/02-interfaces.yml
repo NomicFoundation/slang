@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
 
 - name: "InterfaceDefinition"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "interface"

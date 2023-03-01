@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
 
 - name: "ContractDefinition"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - optional:
@@ -18,7 +18,7 @@
           close: "}"
 
 - name: "InheritanceSpecifierList"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "is"
@@ -28,7 +28,7 @@
             reference: "InheritanceSpecifier"
 
 - name: "InheritanceSpecifier"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - reference: "IdentifierPath"
@@ -36,7 +36,7 @@
           reference: "ArgumentList"
 
 - name: "ContractBodyElement"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     choice:
       - reference: "UsingDirective"

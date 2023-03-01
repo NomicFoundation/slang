@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
 
 - name: "AssemblyStatement"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "assembly"
@@ -12,7 +12,7 @@
       - reference: "YulBlock"
 
 - name: "AssemblyFlags"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     delimitedBy:
       open: "("

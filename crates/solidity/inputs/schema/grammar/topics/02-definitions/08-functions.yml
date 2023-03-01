@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
 
 - name: "FunctionDefinition"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "function"
@@ -21,7 +21,7 @@
           - reference: "Block"
 
 - name: "FunctionAttribute"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     choice:
       - reference: "ModifierInvocation"
@@ -36,7 +36,7 @@
       - terminal: "virtual"
 
 - name: "OverrideSpecifier"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "override"
@@ -51,7 +51,7 @@
             close: ")"
 
 - name: "ParameterList"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     delimitedBy:
       open: "("
@@ -64,7 +64,7 @@
       close: ")"
 
 - name: "ParameterDeclaration"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - reference: "TypeName"
@@ -74,7 +74,7 @@
           reference: "Identifier"
 
 - name: "ArgumentList"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     delimitedBy:
       open: "("
@@ -86,7 +86,7 @@
       close: ")"
 
 - name: "PositionalArgumentList"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     separatedBy:
       separator: ","
@@ -94,7 +94,7 @@
         reference: "Expression"
 
 - name: "NamedArgumentList"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     delimitedBy:
       open: "{"
@@ -107,7 +107,7 @@
       close: "}"
 
 - name: "NamedArgument"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - reference: "Identifier"
@@ -115,7 +115,7 @@
       - reference: "Expression"
 
 - name: "ConstructorDefinition"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "constructor"
@@ -125,7 +125,7 @@
       - reference: "Block"
 
 - name: "ConstructorAttribute"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     choice:
       - reference: "ModifierInvocation"
@@ -134,7 +134,7 @@
       - terminal: "public"
 
 - name: "FallbackFunctionDefinition"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "fallback"
@@ -150,7 +150,7 @@
           - reference: "Block"
 
 - name: "FallbackFunctionAttribute"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     choice:
       - reference: "ModifierInvocation"
@@ -162,7 +162,7 @@
       - terminal: "virtual"
 
 - name: "ReceiveFunctionDefinition"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "receive"
@@ -174,7 +174,7 @@
           - reference: "Block"
 
 - name: "ReceiveFunctionAttribute"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     choice:
       - reference: "ModifierInvocation"

@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
 
 - name: "TupleDeconstructionStatement"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - delimitedBy:
@@ -28,7 +28,7 @@
       - terminal: ";"
 
 - name: "VariableDeclarationStatement"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - reference: "TypeName"
@@ -42,7 +42,7 @@
       - terminal: ";"
 
 - name: "DataLocation"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     choice:
       - terminal: "memory"

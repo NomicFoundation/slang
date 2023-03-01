@@ -5,7 +5,7 @@ use self::{grammar::generate_spec_grammar, topics::generate_spec_sections};
 use std::{io::Write, path::PathBuf};
 
 mod grammar;
-mod productions;
+mod html_ebnf_writer;
 mod topics;
 
 pub struct NavigationEntry {

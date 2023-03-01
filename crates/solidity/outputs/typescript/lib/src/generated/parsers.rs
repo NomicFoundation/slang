@@ -198,7 +198,8 @@ impl Language {
             Pass { node, .. } => Some(node),
         }
     }
-    // ABICoderPragma = 'abicoder' «Identifier» ;
+    // ABICoderPragma = "abicoder" «Identifier» ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_abi_coder_pragma(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -280,88 +281,8 @@ impl Language {
         }
     }
 
-    // AddSubExpression = Expression ( '+' | '-' ) Expression ;
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn parse_add_sub_expression(&self, stream: &mut Stream) -> ParseResult {
-        match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_1 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    match {
-                        match stream.next() {
-                            Some('+') => Ok(TokenKind::Plus),
-                            Some('-') => Ok(TokenKind::Minus),
-                            _ => Err(ParseError::new(stream.position(), "'+', or '-'")),
-                        }
-                    } {
-                        Err(mut error) => {
-                            error.position = start;
-                            Fail { error }
-                        }
-                        Ok(kind) => {
-                            let end = stream.position();
-                            let trailing_trivia = self.optional_trailing_trivia(stream);
-                            Pass {
-                                node: cst::Node::token(
-                                    kind,
-                                    Range { start, end },
-                                    leading_trivia,
-                                    trailing_trivia,
-                                ),
-                                error: None,
-                            }
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_2 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
-                    error: furthest_error,
-                };
-            }
-        } {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::AddSubExpression, node),
-                error,
-            },
-            fail => fail,
-        }
-    }
+    // AddressType = "address" [ "payable" ] ;
 
-    // AddressType = 'address' [ 'payable' ] ;
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_address_type(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -455,80 +376,8 @@ impl Language {
         }
     }
 
-    // AndExpression = Expression '&&' Expression ;
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn parse_and_expression(&self, stream: &mut Stream) -> ParseResult {
-        match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_1 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, '&', '&') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::AmpersandAmpersand,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "'&&'"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_2 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
-                    error: furthest_error,
-                };
-            }
-        } {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::AndExpression, node),
-                error,
-            },
-            fail => fail,
-        }
-    }
-
     // ArgumentList = '(' [ PositionalArgumentList | NamedArgumentList ] ')' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_argument_list(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -639,7 +488,8 @@ impl Language {
         }
     }
 
-    // ArrayLiteral = '[' Expression  { ',' Expression } ']' ;
+    // ArrayLiteral = '[' Expression { ',' Expression } ']' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_array_literal(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -769,7 +619,8 @@ impl Language {
         }
     }
 
-    // AssemblyFlags = '(' «DoubleQuotedAsciiStringLiteral»  { ',' «DoubleQuotedAsciiStringLiteral» } ')' ;
+    // AssemblyFlags = '(' «DoubleQuotedAsciiStringLiteral» { ',' «DoubleQuotedAsciiStringLiteral» } ')' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_assembly_flags(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -922,7 +773,8 @@ impl Language {
         }
     }
 
-    // AssemblyStatement = 'assembly' [ '"evmasm"' ] [ AssemblyFlags ] YulBlock ;
+    // AssemblyStatement = "assembly" [ '"evmasm"' ] [ AssemblyFlags ] YulBlock ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_assembly_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -1053,303 +905,8 @@ impl Language {
         }
     }
 
-    // AssignmentExpression = Expression ( '=' | '|=' | '^=' | '&=' | '<<=' | '>>=' | '>>>=' | '+=' | '-=' | '*=' | '/=' | '%=' ) Expression ;
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn parse_assignment_expression(&self, stream: &mut Stream) -> ParseResult {
-        match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_1 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    match {
-                        match stream . next () { Some ('%') => if scan_chars ! (stream , '=') { Ok (TokenKind :: PercentEqual) } else { Err (ParseError :: new (stream . position () , "'%='")) } , Some ('&') => if scan_chars ! (stream , '=') { Ok (TokenKind :: AmpersandEqual) } else { Err (ParseError :: new (stream . position () , "'&='")) } , Some ('*') => if scan_chars ! (stream , '=') { Ok (TokenKind :: StarEqual) } else { Err (ParseError :: new (stream . position () , "'*='")) } , Some ('+') => if scan_chars ! (stream , '=') { Ok (TokenKind :: PlusEqual) } else { Err (ParseError :: new (stream . position () , "'+='")) } , Some ('-') => if scan_chars ! (stream , '=') { Ok (TokenKind :: MinusEqual) } else { Err (ParseError :: new (stream . position () , "'-='")) } , Some ('/') => if scan_chars ! (stream , '=') { Ok (TokenKind :: SlashEqual) } else { Err (ParseError :: new (stream . position () , "'/='")) } , Some ('<') => if scan_chars ! (stream , '<' , '=') { Ok (TokenKind :: LessLessEqual) } else { Err (ParseError :: new (stream . position () , "'<<='")) } , Some ('=') => Ok (TokenKind :: Equal) , Some ('>') => { if scan_chars ! (stream , '>') { match stream . next () { Some ('=') => Ok (TokenKind :: GreaterGreaterEqual) , Some ('>') => if scan_chars ! (stream , '=') { Ok (TokenKind :: GreaterGreaterGreaterEqual) } else { Err (ParseError :: new (stream . position () , "'>>>='")) } , _ => Err (ParseError :: new (stream . position () , "'>>=', or '>>>='")) } } else { Err (ParseError :: new (stream . position () , "'>>=', or '>>>='")) } } , Some ('^') => if scan_chars ! (stream , '=') { Ok (TokenKind :: CaretEqual) } else { Err (ParseError :: new (stream . position () , "'^='")) } , Some ('|') => if scan_chars ! (stream , '=') { Ok (TokenKind :: PipeEqual) } else { Err (ParseError :: new (stream . position () , "'|='")) } , _ => Err (ParseError :: new (stream . position () , "'%=', or '&=', or '*=', or '+=', or '-=', or '/=', or '<<=', or '=', or '>>=', or '>>>=', or '^=', or '|='")) }
-                    } {
-                        Err(mut error) => {
-                            error.position = start;
-                            Fail { error }
-                        }
-                        Ok(kind) => {
-                            let end = stream.position();
-                            let trailing_trivia = self.optional_trailing_trivia(stream);
-                            Pass {
-                                node: cst::Node::token(
-                                    kind,
-                                    Range { start, end },
-                                    leading_trivia,
-                                    trailing_trivia,
-                                ),
-                                error: None,
-                            }
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_2 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
-                    error: furthest_error,
-                };
-            }
-        } {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::AssignmentExpression, node),
-                error,
-            },
-            fail => fail,
-        }
-    }
-
-    // BitAndExpression = Expression '&' Expression ;
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn parse_bit_and_expression(&self, stream: &mut Stream) -> ParseResult {
-        match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_1 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, '&') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Ampersand,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "Ampersand"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_2 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
-                    error: furthest_error,
-                };
-            }
-        } {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::BitAndExpression, node),
-                error,
-            },
-            fail => fail,
-        }
-    }
-
-    // BitOrExpression = Expression '|' Expression ;
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn parse_bit_or_expression(&self, stream: &mut Stream) -> ParseResult {
-        match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_1 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, '|') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Pipe,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "Pipe"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_2 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
-                    error: furthest_error,
-                };
-            }
-        } {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::BitOrExpression, node),
-                error,
-            },
-            fail => fail,
-        }
-    }
-
-    // BitXOrExpression = Expression '^' Expression ;
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn parse_bit_x_or_expression(&self, stream: &mut Stream) -> ParseResult {
-        match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_1 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, '^') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Caret,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "Caret"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_2 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
-                    error: furthest_error,
-                };
-            }
-        } {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::BitXOrExpression, node),
-                error,
-            },
-            fail => fail,
-        }
-    }
-
     // Block = '{' { Statement | UncheckedBlock } '}' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_block(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -1463,7 +1020,8 @@ impl Language {
         }
     }
 
-    // BreakStatement = 'break' ';' ;
+    // BreakStatement = "break" ';' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_break_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -1517,7 +1075,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Semicolon"),
+                            error: ParseError::new(start, "';'"),
                         }
                     }
                 } {
@@ -1545,7 +1103,8 @@ impl Language {
         }
     }
 
-    // CatchClause = 'catch' [ [ «Identifier» ] ParameterList ] Block ;
+    // CatchClause = "catch" [ [ «Identifier» ] ParameterList ] Block ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_catch_clause(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -1692,146 +1251,8 @@ impl Language {
         }
     }
 
-    // ConditionalExpression = Expression '?' Expression ':' Expression ;
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn parse_conditional_expression(&self, stream: &mut Stream) -> ParseResult {
-        match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_1 = match loop {
-                    let mut furthest_error = None;
-                    let result_0 = match {
-                        let leading_trivia = self.optional_leading_trivia(stream);
-                        let start = stream.position();
-                        if scan_chars!(stream, '?') {
-                            let end = stream.position();
-                            let trailing_trivia = self.optional_trailing_trivia(stream);
-                            Pass {
-                                node: cst::Node::token(
-                                    TokenKind::Question,
-                                    Range { start, end },
-                                    leading_trivia,
-                                    trailing_trivia,
-                                ),
-                                error: None,
-                            }
-                        } else {
-                            Fail {
-                                error: ParseError::new(start, "Question"),
-                            }
-                        }
-                    } {
-                        Pass { node, error } => {
-                            furthest_error =
-                                error.map(|error| error.maybe_merge_with(furthest_error));
-                            node
-                        }
-                        Fail { error } => {
-                            break Fail {
-                                error: error.maybe_merge_with(furthest_error),
-                            }
-                        }
-                    };
-                    let result_1 = match self.parse_expression(stream) {
-                        Pass { node, error } => {
-                            furthest_error =
-                                error.map(|error| error.maybe_merge_with(furthest_error));
-                            node
-                        }
-                        Fail { error } => {
-                            break Fail {
-                                error: error.maybe_merge_with(furthest_error),
-                            }
-                        }
-                    };
-                    let result_2 = match {
-                        let leading_trivia = self.optional_leading_trivia(stream);
-                        let start = stream.position();
-                        if scan_chars!(stream, ':') {
-                            let end = stream.position();
-                            let trailing_trivia = self.optional_trailing_trivia(stream);
-                            Pass {
-                                node: cst::Node::token(
-                                    TokenKind::Colon,
-                                    Range { start, end },
-                                    leading_trivia,
-                                    trailing_trivia,
-                                ),
-                                error: None,
-                            }
-                        } else {
-                            Fail {
-                                error: ParseError::new(start, "Colon"),
-                            }
-                        }
-                    } {
-                        Pass { node, error } => {
-                            furthest_error =
-                                error.map(|error| error.maybe_merge_with(furthest_error));
-                            node
-                        }
-                        Fail { error } => {
-                            break Fail {
-                                error: error.maybe_merge_with(furthest_error),
-                            }
-                        }
-                    };
-                    let result_3 = match self.parse_expression(stream) {
-                        Pass { node, error } => {
-                            furthest_error =
-                                error.map(|error| error.maybe_merge_with(furthest_error));
-                            node
-                        }
-                        Fail { error } => {
-                            break Fail {
-                                error: error.maybe_merge_with(furthest_error),
-                            }
-                        }
-                    };
-                    break Pass {
-                        node: cst::Node::rule(
-                            RuleKind::_SEQUENCE,
-                            vec![result_0, result_1, result_2, result_3],
-                        ),
-                        error: furthest_error,
-                    };
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
-                    error: furthest_error,
-                };
-            }
-        } {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::ConditionalExpression, node),
-                error,
-            },
-            fail => fail,
-        }
-    }
+    // ConstantDefinition = TypeName "constant" «Identifier» '=' Expression ';' ;
 
-    // ConstantDefinition = TypeName 'constant' «Identifier» '=' Expression ';' ;
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_constant_definition(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -1927,7 +1348,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Equal"),
+                            error: ParseError::new(start, "'='"),
                         }
                     }
                 } {
@@ -1969,7 +1390,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Semicolon"),
+                            error: ParseError::new(start, "';'"),
                         }
                     }
                 } {
@@ -2000,7 +1421,8 @@ impl Language {
         }
     }
 
-    // ConstructorAttribute = ModifierInvocation | 'internal' | 'payable' | 'public' ;
+    // ConstructorAttribute = ModifierInvocation | "internal" | "payable" | "public" ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_constructor_attribute(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -2085,7 +1507,8 @@ impl Language {
         }
     }
 
-    // ConstructorDefinition = 'constructor' ParameterList { ConstructorAttribute } Block ;
+    // ConstructorDefinition = "constructor" ParameterList { ConstructorAttribute } Block ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_constructor_definition(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -2187,7 +1610,8 @@ impl Language {
         }
     }
 
-    // ContinueStatement = 'continue' ';' ;
+    // ContinueStatement = "continue" ';' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_continue_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -2241,7 +1665,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Semicolon"),
+                            error: ParseError::new(start, "';'"),
                         }
                     }
                 } {
@@ -2270,6 +1694,7 @@ impl Language {
     }
 
     // ContractBodyElement = UsingDirective | ConstructorDefinition | FunctionDefinition | FallbackFunctionDefinition | ReceiveFunctionDefinition | ModifierDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | EventDefinition | ErrorDefinition | StateVariableDeclaration ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_contract_body_element(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -2348,7 +1773,8 @@ impl Language {
         }
     }
 
-    // ContractDefinition = [ 'abstract' ] 'contract' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
+    // ContractDefinition = [ "abstract" ] "contract" «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_contract_definition(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -2596,7 +2022,8 @@ impl Language {
         }
     }
 
-    // DataLocation = 'memory' | 'storage' | 'calldata' ;
+    // DataLocation = "memory" | "storage" | "calldata" ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_data_location(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -2661,6 +2088,7 @@ impl Language {
     }
 
     // Definition = ContractDefinition | InterfaceDefinition | LibraryDefinition | FunctionDefinition | ConstantDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | ErrorDefinition ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_definition(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -2724,7 +2152,8 @@ impl Language {
         }
     }
 
-    // DeleteStatement = 'delete' Expression ';' ;
+    // DeleteStatement = "delete" Expression ';' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_delete_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -2789,7 +2218,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Semicolon"),
+                            error: ParseError::new(start, "';'"),
                         }
                     }
                 } {
@@ -2818,6 +2247,7 @@ impl Language {
     }
 
     // Directive = PragmaDirective | ImportDirective | UsingDirective ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_directive(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -2851,7 +2281,8 @@ impl Language {
         }
     }
 
-    // DoWhileStatement = 'do' Statement 'while' '(' Expression ')' ';' ;
+    // DoWhileStatement = "do" Statement "while" '(' Expression ')' ';' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_do_while_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -3026,7 +2457,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Semicolon"),
+                            error: ParseError::new(start, "';'"),
                         }
                     }
                 } {
@@ -3057,7 +2488,8 @@ impl Language {
         }
     }
 
-    // ElementaryType = 'bool' | 'string' | AddressType | PayableType | «FixedBytesType» | «SignedIntegerType» | «UnsignedIntegerType» | «SignedFixedType» | «UnsignedFixedType» ;
+    // ElementaryType = "bool" | "string" | AddressType | PayableType | «FixedBytesType» | «SignedIntegerType» | «UnsignedIntegerType» | «SignedFixedType» | «UnsignedFixedType» ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_elementary_type(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -3256,7 +2688,8 @@ impl Language {
         }
     }
 
-    // EmitStatement = 'emit' IdentifierPath ArgumentList ';' ;
+    // EmitStatement = "emit" IdentifierPath ArgumentList ';' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_emit_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -3332,7 +2765,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Semicolon"),
+                            error: ParseError::new(start, "';'"),
                         }
                     }
                 } {
@@ -3363,7 +2796,8 @@ impl Language {
         }
     }
 
-    // EndOfFileTrivia = 1…*{ «Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment» } ;
+    // EndOfFileTrivia = 1…{ «Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment» } ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_end_of_file_trivia(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -3492,7 +2926,8 @@ impl Language {
         }
     }
 
-    // EnumDefinition = 'enum' «Identifier» '{' [ «Identifier»  { ',' «Identifier» } ] '}' ;
+    // EnumDefinition = "enum" «Identifier» '{' [ «Identifier» { ',' «Identifier» } ] '}' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_enum_definition(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -3736,100 +3171,8 @@ impl Language {
         }
     }
 
-    // EqualityComparisonExpression = Expression ( '==' | '!=' ) Expression ;
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn parse_equality_comparison_expression(&self, stream: &mut Stream) -> ParseResult {
-        match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_1 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    match {
-                        match stream.next() {
-                            Some('!') => {
-                                if scan_chars!(stream, '=') {
-                                    Ok(TokenKind::BangEqual)
-                                } else {
-                                    Err(ParseError::new(stream.position(), "'!='"))
-                                }
-                            }
-                            Some('=') => {
-                                if scan_chars!(stream, '=') {
-                                    Ok(TokenKind::EqualEqual)
-                                } else {
-                                    Err(ParseError::new(stream.position(), "'=='"))
-                                }
-                            }
-                            _ => Err(ParseError::new(stream.position(), "'!=', or '=='")),
-                        }
-                    } {
-                        Err(mut error) => {
-                            error.position = start;
-                            Fail { error }
-                        }
-                        Ok(kind) => {
-                            let end = stream.position();
-                            let trailing_trivia = self.optional_trailing_trivia(stream);
-                            Pass {
-                                node: cst::Node::token(
-                                    kind,
-                                    Range { start, end },
-                                    leading_trivia,
-                                    trailing_trivia,
-                                ),
-                                error: None,
-                            }
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_2 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
-                    error: furthest_error,
-                };
-            }
-        } {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::EqualityComparisonExpression, node),
-                error,
-            },
-            fail => fail,
-        }
-    }
+    // ErrorDefinition = "error" «Identifier» '(' [ ErrorParameter { ',' ErrorParameter } ] ')' ';' ;
 
-    // ErrorDefinition = 'error' «Identifier» '(' [ ErrorParameter  { ',' ErrorParameter } ] ')' ';' ;
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_error_definition(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -4054,7 +3397,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Semicolon"),
+                            error: ParseError::new(start, "';'"),
                         }
                     }
                 } {
@@ -4086,6 +3429,7 @@ impl Language {
     }
 
     // ErrorParameter = TypeName [ «Identifier» ] ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_error_parameter(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -4159,7 +3503,8 @@ impl Language {
         }
     }
 
-    // EventDefinition = 'event' «Identifier» '(' [ EventParameter  { ',' EventParameter } ] ')' [ 'anonymous' ] ';' ;
+    // EventDefinition = "event" «Identifier» '(' [ EventParameter { ',' EventParameter } ] ')' [ "anonymous" ] ';' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_event_definition(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -4427,7 +3772,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Semicolon"),
+                            error: ParseError::new(start, "';'"),
                         }
                     }
                 } {
@@ -4458,7 +3803,8 @@ impl Language {
         }
     }
 
-    // EventParameter = TypeName [ 'indexed' ] [ «Identifier» ] ;
+    // EventParameter = TypeName [ "indexed" ] [ «Identifier» ] ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_event_parameter(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -4575,7 +3921,8 @@ impl Language {
         }
     }
 
-    // ExperimentalPragma = 'experimental' «Identifier» ;
+    // ExperimentalPragma = "experimental" «Identifier» ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_experimental_pragma(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -4659,143 +4006,45 @@ impl Language {
         }
     }
 
-    // (* 0.4.11 *) ExponentiationExpression = Expression '**' Expression ;
-    // (* 0.6.0 *) ExponentiationExpression = Expression '**' Expression ;
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn parse_exponentiation_expression(&self, stream: &mut Stream) -> ParseResult {
-        match if self.version_is_equal_to_or_greater_than_0_6_0 {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_1 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, '*', '*') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::StarStar,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "'**'"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_2 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
-                    error: furthest_error,
-                };
-            }
-        } else {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_1 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, '*', '*') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::StarStar,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "'**'"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_2 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
-                    error: furthest_error,
-                };
-            }
-        } {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::ExponentiationExpression, node),
-                error,
-            },
-            fail => fail,
-        }
-    }
+    // (* v0.4.11 *) Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnarySuffixExpression | UnaryPrefixExpression | FunctionCallExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
+    // AssignmentExpression = Expression ( '=' | "|=" | "^=" | "&=" | "<<=" | ">>=" | ">>>=" | "+=" | "-=" | "*=" | "/=" | "%=" ) Expression ;
+    // ConditionalExpression = Expression ( '?' Expression ':' Expression ) ;
+    // OrExpression = Expression ( "||" ) Expression ;
+    // AndExpression = Expression ( "&&" ) Expression ;
+    // EqualityComparisonExpression = Expression ( "==" | "!=" ) Expression ;
+    // OrderComparisonExpression = Expression ( '<' | '>' | "<=" | ">=" ) Expression ;
+    // BitOrExpression = Expression ( '|' ) Expression ;
+    // BitXOrExpression = Expression ( '^' ) Expression ;
+    // BitAndExpression = Expression ( '&' ) Expression ;
+    // ShiftExpression = Expression ( "<<" | ">>" | ">>>" ) Expression ;
+    // AddSubExpression = Expression ( '+' | '-' ) Expression ;
+    // MulDivModExpression = Expression ( '*' | '/' | '%' ) Expression ;
+    // ExponentiationExpression = Expression ( "**" ) Expression ;
+    // UnarySuffixExpression = Expression ( "++" | "--" ) ;
+    // UnaryPrefixExpression = ( "++" | "--" | '!' | '~' | '-' ) Expression ;
+    // FunctionCallExpression = Expression ( [ NamedArgumentList ] ArgumentList ) ;
+    // MemberAccessExpression = Expression ( '.' ( «Identifier» | "address" ) ) ;
+    // IndexAccessExpression = Expression ( '[' Expression [ ':' [ Expression ] ] | ':' [ Expression ] ']' ) ;
+    // (* v0.6.0 *) Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnarySuffixExpression | UnaryPrefixExpression | FunctionCallExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
+    // AssignmentExpression = Expression ( '=' | "|=" | "^=" | "&=" | "<<=" | ">>=" | ">>>=" | "+=" | "-=" | "*=" | "/=" | "%=" ) Expression ;
+    // ConditionalExpression = Expression ( '?' Expression ':' Expression ) ;
+    // OrExpression = Expression ( "||" ) Expression ;
+    // AndExpression = Expression ( "&&" ) Expression ;
+    // EqualityComparisonExpression = Expression ( "==" | "!=" ) Expression ;
+    // OrderComparisonExpression = Expression ( '<' | '>' | "<=" | ">=" ) Expression ;
+    // BitOrExpression = Expression ( '|' ) Expression ;
+    // BitXOrExpression = Expression ( '^' ) Expression ;
+    // BitAndExpression = Expression ( '&' ) Expression ;
+    // ShiftExpression = Expression ( "<<" | ">>" | ">>>" ) Expression ;
+    // AddSubExpression = Expression ( '+' | '-' ) Expression ;
+    // MulDivModExpression = Expression ( '*' | '/' | '%' ) Expression ;
+    // ExponentiationExpression = Expression ( "**" ) Expression ;
+    // UnarySuffixExpression = Expression ( "++" | "--" ) ;
+    // UnaryPrefixExpression = ( "++" | "--" | '!' | '~' | '-' ) Expression ;
+    // FunctionCallExpression = Expression ( [ NamedArgumentList ] ArgumentList ) ;
+    // MemberAccessExpression = Expression ( '.' ( «Identifier» | "address" ) ) ;
+    // IndexAccessExpression = Expression ( '[' Expression [ ':' [ Expression ] ] | ':' [ Expression ] ']' ) ;
 
-    // (* 0.4.11 *) Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnarySuffixExpression | UnaryPrefixExpression | FunctionCallExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
-    // (* 0.6.0 *) Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnarySuffixExpression | UnaryPrefixExpression | FunctionCallExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_expression(&self, stream: &mut Stream) -> ParseResult {
         match if self.version_is_equal_to_or_greater_than_0_6_0 {
@@ -4995,7 +4244,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "Question"),
+                                                error: ParseError::new(start, "'?'"),
                                             }
                                         }
                                     } {
@@ -5042,7 +4291,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "Colon"),
+                                                error: ParseError::new(start, "':'"),
                                             }
                                         }
                                     } {
@@ -5196,7 +4445,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "Period"),
+                                                error: ParseError::new(start, "'.'"),
                                             }
                                         }
                                     } {
@@ -5396,7 +4645,7 @@ impl Language {
                                                                 } else {
                                                                     Fail {
                                                                         error: ParseError::new(
-                                                                            start, "Colon",
+                                                                            start, "':'",
                                                                         ),
                                                                     }
                                                                 }
@@ -5528,7 +4777,7 @@ impl Language {
                                                         } else {
                                                             Fail {
                                                                 error: ParseError::new(
-                                                                    start, "Colon",
+                                                                    start, "':'",
                                                                 ),
                                                             }
                                                         }
@@ -5681,174 +4930,34 @@ impl Language {
                         }
                     }
                     let start_position = stream.position();
-                    match loop {
-                        let start_position = stream.position();
-                        let mut furthest_error;
+                    match {
+                        let leading_trivia = self.optional_leading_trivia(stream);
+                        let start = stream.position();
                         match {
-                            let leading_trivia = self.optional_leading_trivia(stream);
-                            let start = stream.position();
-                            match {
-                                match stream . next () { Some ('!') => if scan_chars ! (stream , '=') { Ok ((TokenKind :: BangEqual , RuleKind :: EqualityComparisonExpression , 9u8 , 10u8)) } else { Err (ParseError :: new (stream . position () , "'!='")) } , Some ('%') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: PercentEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Percent , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } None => Ok ((TokenKind :: Percent , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } } , Some ('&') => { match stream . next () { Some ('&') => Ok ((TokenKind :: AmpersandAmpersand , RuleKind :: AndExpression , 7u8 , 8u8)) , Some ('=') => Ok ((TokenKind :: AmpersandEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , _ => Err (ParseError :: new (stream . position () , "'&&', or '&='")) } } , Some ('*') => { let start_position = stream . position () ; match stream . next () { Some ('*') => Ok ((TokenKind :: StarStar , RuleKind :: ExponentiationExpression , 26u8 , 25u8)) , Some ('=') => Ok ((TokenKind :: StarEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Star , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } None => Ok ((TokenKind :: Star , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } } , Some ('+') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: PlusEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Plus , RuleKind :: AddSubExpression , 21u8 , 22u8)) } None => Ok ((TokenKind :: Plus , RuleKind :: AddSubExpression , 21u8 , 22u8)) } } , Some ('-') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: MinusEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Minus , RuleKind :: AddSubExpression , 21u8 , 22u8)) } None => Ok ((TokenKind :: Minus , RuleKind :: AddSubExpression , 21u8 , 22u8)) } } , Some ('/') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: SlashEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Slash , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } None => Ok ((TokenKind :: Slash , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } } , Some ('<') => { let start_position = stream . position () ; match stream . next () { Some ('<') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: LessLessEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: LessLess , RuleKind :: ShiftExpression , 19u8 , 20u8)) } None => Ok ((TokenKind :: LessLess , RuleKind :: ShiftExpression , 19u8 , 20u8)) } } , Some ('=') => Ok ((TokenKind :: LessEqual , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Less , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) } None => Ok ((TokenKind :: Less , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) } } , Some ('=') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: EqualEqual , RuleKind :: EqualityComparisonExpression , 9u8 , 10u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Equal , RuleKind :: AssignmentExpression , 1u8 , 2u8)) } None => Ok ((TokenKind :: Equal , RuleKind :: AssignmentExpression , 1u8 , 2u8)) } } , Some ('>') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: GreaterEqual , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) , Some ('>') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: GreaterGreaterEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some ('>') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: GreaterGreaterGreaterEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: GreaterGreaterGreater , RuleKind :: ShiftExpression , 19u8 , 20u8)) } None => Ok ((TokenKind :: GreaterGreaterGreater , RuleKind :: ShiftExpression , 19u8 , 20u8)) } } , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: GreaterGreater , RuleKind :: ShiftExpression , 19u8 , 20u8)) } None => Ok ((TokenKind :: GreaterGreater , RuleKind :: ShiftExpression , 19u8 , 20u8)) } } , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Greater , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) } None => Ok ((TokenKind :: Greater , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) } } , Some ('^') => if scan_chars ! (stream , '=') { Ok ((TokenKind :: CaretEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) } else { Err (ParseError :: new (stream . position () , "'^='")) } , Some ('|') => { match stream . next () { Some ('=') => Ok ((TokenKind :: PipeEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some ('|') => Ok ((TokenKind :: PipePipe , RuleKind :: OrExpression , 5u8 , 6u8)) , _ => Err (ParseError :: new (stream . position () , "'|=', or '||'")) } } , _ => Err (ParseError :: new (stream . position () , "'!=', or '%', or '%=', or '&&', or '&=', or '*', or '**', or '*=', or '+', or '+=', or '-', or '-=', or '/', or '/=', or '<', or '<<', or '<<=', or '<=', or '=', or '==', or '>', or '>=', or '>>', or '>>=', or '>>>', or '>>>=', or '^=', or '|=', or '||'")) }
-                            } {
-                                Ok((
-                                    token_kind,
-                                    rule_kind,
+                            match stream . next () { Some ('!') => if scan_chars ! (stream , '=') { Ok ((TokenKind :: BangEqual , RuleKind :: EqualityComparisonExpression , 9u8 , 10u8)) } else { Err (ParseError :: new (stream . position () , "'!='")) } , Some ('%') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: PercentEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Percent , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } None => Ok ((TokenKind :: Percent , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } } , Some ('&') => { let start_position = stream . position () ; match stream . next () { Some ('&') => Ok ((TokenKind :: AmpersandAmpersand , RuleKind :: AndExpression , 7u8 , 8u8)) , Some ('=') => Ok ((TokenKind :: AmpersandEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Ampersand , RuleKind :: BitAndExpression , 17u8 , 18u8)) } None => Ok ((TokenKind :: Ampersand , RuleKind :: BitAndExpression , 17u8 , 18u8)) } } , Some ('*') => { let start_position = stream . position () ; match stream . next () { Some ('*') => Ok ((TokenKind :: StarStar , RuleKind :: ExponentiationExpression , 26u8 , 25u8)) , Some ('=') => Ok ((TokenKind :: StarEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Star , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } None => Ok ((TokenKind :: Star , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } } , Some ('+') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: PlusEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Plus , RuleKind :: AddSubExpression , 21u8 , 22u8)) } None => Ok ((TokenKind :: Plus , RuleKind :: AddSubExpression , 21u8 , 22u8)) } } , Some ('-') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: MinusEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Minus , RuleKind :: AddSubExpression , 21u8 , 22u8)) } None => Ok ((TokenKind :: Minus , RuleKind :: AddSubExpression , 21u8 , 22u8)) } } , Some ('/') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: SlashEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Slash , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } None => Ok ((TokenKind :: Slash , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } } , Some ('<') => { let start_position = stream . position () ; match stream . next () { Some ('<') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: LessLessEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: LessLess , RuleKind :: ShiftExpression , 19u8 , 20u8)) } None => Ok ((TokenKind :: LessLess , RuleKind :: ShiftExpression , 19u8 , 20u8)) } } , Some ('=') => Ok ((TokenKind :: LessEqual , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Less , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) } None => Ok ((TokenKind :: Less , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) } } , Some ('=') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: EqualEqual , RuleKind :: EqualityComparisonExpression , 9u8 , 10u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Equal , RuleKind :: AssignmentExpression , 1u8 , 2u8)) } None => Ok ((TokenKind :: Equal , RuleKind :: AssignmentExpression , 1u8 , 2u8)) } } , Some ('>') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: GreaterEqual , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) , Some ('>') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: GreaterGreaterEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some ('>') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: GreaterGreaterGreaterEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: GreaterGreaterGreater , RuleKind :: ShiftExpression , 19u8 , 20u8)) } None => Ok ((TokenKind :: GreaterGreaterGreater , RuleKind :: ShiftExpression , 19u8 , 20u8)) } } , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: GreaterGreater , RuleKind :: ShiftExpression , 19u8 , 20u8)) } None => Ok ((TokenKind :: GreaterGreater , RuleKind :: ShiftExpression , 19u8 , 20u8)) } } , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Greater , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) } None => Ok ((TokenKind :: Greater , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) } } , Some ('^') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: CaretEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Caret , RuleKind :: BitXOrExpression , 15u8 , 16u8)) } None => Ok ((TokenKind :: Caret , RuleKind :: BitXOrExpression , 15u8 , 16u8)) } } , Some ('|') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: PipeEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some ('|') => Ok ((TokenKind :: PipePipe , RuleKind :: OrExpression , 5u8 , 6u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Pipe , RuleKind :: BitOrExpression , 13u8 , 14u8)) } None => Ok ((TokenKind :: Pipe , RuleKind :: BitOrExpression , 13u8 , 14u8)) } } , _ => Err (ParseError :: new (stream . position () , "'!=', or '%', or '%=', or '&', or '&&', or '&=', or '*', or '**', or '*=', or '+', or '+=', or '-', or '-=', or '/', or '/=', or '<', or '<<', or '<<=', or '<=', or '=', or '==', or '>', or '>=', or '>>', or '>>=', or '>>>', or '>>>=', or '^', or '^=', or '|', or '|=', or '||'")) }
+                        } {
+                            Ok((
+                                token_kind,
+                                rule_kind,
+                                left_binding_power,
+                                right_binding_power,
+                            )) => {
+                                let end = stream.position();
+                                let trailing_trivia = self.optional_trailing_trivia(stream);
+                                Ok(Pratt::Operator {
+                                    node: cst::Node::token(
+                                        token_kind,
+                                        Range { start, end },
+                                        leading_trivia,
+                                        trailing_trivia,
+                                    ),
+                                    kind: rule_kind,
                                     left_binding_power,
                                     right_binding_power,
-                                )) => {
-                                    let end = stream.position();
-                                    let trailing_trivia = self.optional_trailing_trivia(stream);
-                                    Ok(Pratt::Operator {
-                                        node: cst::Node::token(
-                                            token_kind,
-                                            Range { start, end },
-                                            leading_trivia,
-                                            trailing_trivia,
-                                        ),
-                                        kind: rule_kind,
-                                        left_binding_power,
-                                        right_binding_power,
-                                    })
-                                }
-                                Err(error) => Err(error),
+                                })
                             }
-                        } {
-                            Err(error) => furthest_error = error,
-                            ok => break ok,
+                            Err(error) => Err(error),
                         }
-                        stream.set_position(start_position);
-                        match {
-                            match {
-                                let leading_trivia = self.optional_leading_trivia(stream);
-                                let start = stream.position();
-                                if scan_chars!(stream, '|') {
-                                    let end = stream.position();
-                                    let trailing_trivia = self.optional_trailing_trivia(stream);
-                                    Pass {
-                                        node: cst::Node::token(
-                                            TokenKind::Pipe,
-                                            Range { start, end },
-                                            leading_trivia,
-                                            trailing_trivia,
-                                        ),
-                                        error: None,
-                                    }
-                                } else {
-                                    Fail {
-                                        error: ParseError::new(start, "Pipe"),
-                                    }
-                                }
-                            } {
-                                Pass { node, .. } => Ok(Pratt::Operator {
-                                    node,
-                                    kind: RuleKind::BitOrExpression,
-                                    left_binding_power: 13u8,
-                                    right_binding_power: 13u8 + 1,
-                                }),
-                                Fail { error } => Err(error),
-                            }
-                        } {
-                            Err(error) => {
-                                if furthest_error.position < error.position {
-                                    furthest_error = error
-                                } else if furthest_error.position == error.position {
-                                    furthest_error.expected = format!(
-                                        "{}, or {}",
-                                        furthest_error.expected, error.expected
-                                    )
-                                }
-                            }
-                            ok => break ok,
-                        }
-                        stream.set_position(start_position);
-                        match {
-                            match {
-                                let leading_trivia = self.optional_leading_trivia(stream);
-                                let start = stream.position();
-                                if scan_chars!(stream, '^') {
-                                    let end = stream.position();
-                                    let trailing_trivia = self.optional_trailing_trivia(stream);
-                                    Pass {
-                                        node: cst::Node::token(
-                                            TokenKind::Caret,
-                                            Range { start, end },
-                                            leading_trivia,
-                                            trailing_trivia,
-                                        ),
-                                        error: None,
-                                    }
-                                } else {
-                                    Fail {
-                                        error: ParseError::new(start, "Caret"),
-                                    }
-                                }
-                            } {
-                                Pass { node, .. } => Ok(Pratt::Operator {
-                                    node,
-                                    kind: RuleKind::BitXOrExpression,
-                                    left_binding_power: 15u8,
-                                    right_binding_power: 15u8 + 1,
-                                }),
-                                Fail { error } => Err(error),
-                            }
-                        } {
-                            Err(error) => {
-                                if furthest_error.position < error.position {
-                                    furthest_error = error
-                                } else if furthest_error.position == error.position {
-                                    furthest_error.expected = format!(
-                                        "{}, or {}",
-                                        furthest_error.expected, error.expected
-                                    )
-                                }
-                            }
-                            ok => break ok,
-                        }
-                        stream.set_position(start_position);
-                        match {
-                            match {
-                                let leading_trivia = self.optional_leading_trivia(stream);
-                                let start = stream.position();
-                                if scan_chars!(stream, '&') {
-                                    let end = stream.position();
-                                    let trailing_trivia = self.optional_trailing_trivia(stream);
-                                    Pass {
-                                        node: cst::Node::token(
-                                            TokenKind::Ampersand,
-                                            Range { start, end },
-                                            leading_trivia,
-                                            trailing_trivia,
-                                        ),
-                                        error: None,
-                                    }
-                                } else {
-                                    Fail {
-                                        error: ParseError::new(start, "Ampersand"),
-                                    }
-                                }
-                            } {
-                                Pass { node, .. } => Ok(Pratt::Operator {
-                                    node,
-                                    kind: RuleKind::BitAndExpression,
-                                    left_binding_power: 17u8,
-                                    right_binding_power: 17u8 + 1,
-                                }),
-                                Fail { error } => Err(error),
-                            }
-                        } {
-                            Err(error) => {
-                                if furthest_error.position < error.position {
-                                    furthest_error = error
-                                } else if furthest_error.position == error.position {
-                                    furthest_error.expected = format!(
-                                        "{}, or {}",
-                                        furthest_error.expected, error.expected
-                                    )
-                                }
-                            }
-                            ok => break ok,
-                        }
-                        break Err(furthest_error);
                     } {
                         Err(_) => {
                             stream.set_position(start_position);
@@ -6139,7 +5248,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "Question"),
+                                                error: ParseError::new(start, "'?'"),
                                             }
                                         }
                                     } {
@@ -6186,7 +5295,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "Colon"),
+                                                error: ParseError::new(start, "':'"),
                                             }
                                         }
                                     } {
@@ -6340,7 +5449,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "Period"),
+                                                error: ParseError::new(start, "'.'"),
                                             }
                                         }
                                     } {
@@ -6540,7 +5649,7 @@ impl Language {
                                                                 } else {
                                                                     Fail {
                                                                         error: ParseError::new(
-                                                                            start, "Colon",
+                                                                            start, "':'",
                                                                         ),
                                                                     }
                                                                 }
@@ -6672,7 +5781,7 @@ impl Language {
                                                         } else {
                                                             Fail {
                                                                 error: ParseError::new(
-                                                                    start, "Colon",
+                                                                    start, "':'",
                                                                 ),
                                                             }
                                                         }
@@ -6825,174 +5934,34 @@ impl Language {
                         }
                     }
                     let start_position = stream.position();
-                    match loop {
-                        let start_position = stream.position();
-                        let mut furthest_error;
+                    match {
+                        let leading_trivia = self.optional_leading_trivia(stream);
+                        let start = stream.position();
                         match {
-                            let leading_trivia = self.optional_leading_trivia(stream);
-                            let start = stream.position();
-                            match {
-                                match stream . next () { Some ('!') => if scan_chars ! (stream , '=') { Ok ((TokenKind :: BangEqual , RuleKind :: EqualityComparisonExpression , 9u8 , 10u8)) } else { Err (ParseError :: new (stream . position () , "'!='")) } , Some ('%') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: PercentEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Percent , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } None => Ok ((TokenKind :: Percent , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } } , Some ('&') => { match stream . next () { Some ('&') => Ok ((TokenKind :: AmpersandAmpersand , RuleKind :: AndExpression , 7u8 , 8u8)) , Some ('=') => Ok ((TokenKind :: AmpersandEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , _ => Err (ParseError :: new (stream . position () , "'&&', or '&='")) } } , Some ('*') => { let start_position = stream . position () ; match stream . next () { Some ('*') => Ok ((TokenKind :: StarStar , RuleKind :: ExponentiationExpression , 25u8 , 26u8)) , Some ('=') => Ok ((TokenKind :: StarEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Star , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } None => Ok ((TokenKind :: Star , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } } , Some ('+') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: PlusEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Plus , RuleKind :: AddSubExpression , 21u8 , 22u8)) } None => Ok ((TokenKind :: Plus , RuleKind :: AddSubExpression , 21u8 , 22u8)) } } , Some ('-') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: MinusEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Minus , RuleKind :: AddSubExpression , 21u8 , 22u8)) } None => Ok ((TokenKind :: Minus , RuleKind :: AddSubExpression , 21u8 , 22u8)) } } , Some ('/') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: SlashEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Slash , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } None => Ok ((TokenKind :: Slash , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } } , Some ('<') => { let start_position = stream . position () ; match stream . next () { Some ('<') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: LessLessEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: LessLess , RuleKind :: ShiftExpression , 19u8 , 20u8)) } None => Ok ((TokenKind :: LessLess , RuleKind :: ShiftExpression , 19u8 , 20u8)) } } , Some ('=') => Ok ((TokenKind :: LessEqual , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Less , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) } None => Ok ((TokenKind :: Less , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) } } , Some ('=') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: EqualEqual , RuleKind :: EqualityComparisonExpression , 9u8 , 10u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Equal , RuleKind :: AssignmentExpression , 1u8 , 2u8)) } None => Ok ((TokenKind :: Equal , RuleKind :: AssignmentExpression , 1u8 , 2u8)) } } , Some ('>') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: GreaterEqual , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) , Some ('>') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: GreaterGreaterEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some ('>') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: GreaterGreaterGreaterEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: GreaterGreaterGreater , RuleKind :: ShiftExpression , 19u8 , 20u8)) } None => Ok ((TokenKind :: GreaterGreaterGreater , RuleKind :: ShiftExpression , 19u8 , 20u8)) } } , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: GreaterGreater , RuleKind :: ShiftExpression , 19u8 , 20u8)) } None => Ok ((TokenKind :: GreaterGreater , RuleKind :: ShiftExpression , 19u8 , 20u8)) } } , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Greater , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) } None => Ok ((TokenKind :: Greater , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) } } , Some ('^') => if scan_chars ! (stream , '=') { Ok ((TokenKind :: CaretEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) } else { Err (ParseError :: new (stream . position () , "'^='")) } , Some ('|') => { match stream . next () { Some ('=') => Ok ((TokenKind :: PipeEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some ('|') => Ok ((TokenKind :: PipePipe , RuleKind :: OrExpression , 5u8 , 6u8)) , _ => Err (ParseError :: new (stream . position () , "'|=', or '||'")) } } , _ => Err (ParseError :: new (stream . position () , "'!=', or '%', or '%=', or '&&', or '&=', or '*', or '**', or '*=', or '+', or '+=', or '-', or '-=', or '/', or '/=', or '<', or '<<', or '<<=', or '<=', or '=', or '==', or '>', or '>=', or '>>', or '>>=', or '>>>', or '>>>=', or '^=', or '|=', or '||'")) }
-                            } {
-                                Ok((
-                                    token_kind,
-                                    rule_kind,
+                            match stream . next () { Some ('!') => if scan_chars ! (stream , '=') { Ok ((TokenKind :: BangEqual , RuleKind :: EqualityComparisonExpression , 9u8 , 10u8)) } else { Err (ParseError :: new (stream . position () , "'!='")) } , Some ('%') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: PercentEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Percent , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } None => Ok ((TokenKind :: Percent , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } } , Some ('&') => { let start_position = stream . position () ; match stream . next () { Some ('&') => Ok ((TokenKind :: AmpersandAmpersand , RuleKind :: AndExpression , 7u8 , 8u8)) , Some ('=') => Ok ((TokenKind :: AmpersandEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Ampersand , RuleKind :: BitAndExpression , 17u8 , 18u8)) } None => Ok ((TokenKind :: Ampersand , RuleKind :: BitAndExpression , 17u8 , 18u8)) } } , Some ('*') => { let start_position = stream . position () ; match stream . next () { Some ('*') => Ok ((TokenKind :: StarStar , RuleKind :: ExponentiationExpression , 25u8 , 26u8)) , Some ('=') => Ok ((TokenKind :: StarEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Star , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } None => Ok ((TokenKind :: Star , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } } , Some ('+') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: PlusEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Plus , RuleKind :: AddSubExpression , 21u8 , 22u8)) } None => Ok ((TokenKind :: Plus , RuleKind :: AddSubExpression , 21u8 , 22u8)) } } , Some ('-') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: MinusEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Minus , RuleKind :: AddSubExpression , 21u8 , 22u8)) } None => Ok ((TokenKind :: Minus , RuleKind :: AddSubExpression , 21u8 , 22u8)) } } , Some ('/') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: SlashEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Slash , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } None => Ok ((TokenKind :: Slash , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } } , Some ('<') => { let start_position = stream . position () ; match stream . next () { Some ('<') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: LessLessEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: LessLess , RuleKind :: ShiftExpression , 19u8 , 20u8)) } None => Ok ((TokenKind :: LessLess , RuleKind :: ShiftExpression , 19u8 , 20u8)) } } , Some ('=') => Ok ((TokenKind :: LessEqual , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Less , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) } None => Ok ((TokenKind :: Less , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) } } , Some ('=') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: EqualEqual , RuleKind :: EqualityComparisonExpression , 9u8 , 10u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Equal , RuleKind :: AssignmentExpression , 1u8 , 2u8)) } None => Ok ((TokenKind :: Equal , RuleKind :: AssignmentExpression , 1u8 , 2u8)) } } , Some ('>') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: GreaterEqual , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) , Some ('>') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: GreaterGreaterEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some ('>') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: GreaterGreaterGreaterEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: GreaterGreaterGreater , RuleKind :: ShiftExpression , 19u8 , 20u8)) } None => Ok ((TokenKind :: GreaterGreaterGreater , RuleKind :: ShiftExpression , 19u8 , 20u8)) } } , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: GreaterGreater , RuleKind :: ShiftExpression , 19u8 , 20u8)) } None => Ok ((TokenKind :: GreaterGreater , RuleKind :: ShiftExpression , 19u8 , 20u8)) } } , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Greater , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) } None => Ok ((TokenKind :: Greater , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) } } , Some ('^') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: CaretEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Caret , RuleKind :: BitXOrExpression , 15u8 , 16u8)) } None => Ok ((TokenKind :: Caret , RuleKind :: BitXOrExpression , 15u8 , 16u8)) } } , Some ('|') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: PipeEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some ('|') => Ok ((TokenKind :: PipePipe , RuleKind :: OrExpression , 5u8 , 6u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Pipe , RuleKind :: BitOrExpression , 13u8 , 14u8)) } None => Ok ((TokenKind :: Pipe , RuleKind :: BitOrExpression , 13u8 , 14u8)) } } , _ => Err (ParseError :: new (stream . position () , "'!=', or '%', or '%=', or '&', or '&&', or '&=', or '*', or '**', or '*=', or '+', or '+=', or '-', or '-=', or '/', or '/=', or '<', or '<<', or '<<=', or '<=', or '=', or '==', or '>', or '>=', or '>>', or '>>=', or '>>>', or '>>>=', or '^', or '^=', or '|', or '|=', or '||'")) }
+                        } {
+                            Ok((
+                                token_kind,
+                                rule_kind,
+                                left_binding_power,
+                                right_binding_power,
+                            )) => {
+                                let end = stream.position();
+                                let trailing_trivia = self.optional_trailing_trivia(stream);
+                                Ok(Pratt::Operator {
+                                    node: cst::Node::token(
+                                        token_kind,
+                                        Range { start, end },
+                                        leading_trivia,
+                                        trailing_trivia,
+                                    ),
+                                    kind: rule_kind,
                                     left_binding_power,
                                     right_binding_power,
-                                )) => {
-                                    let end = stream.position();
-                                    let trailing_trivia = self.optional_trailing_trivia(stream);
-                                    Ok(Pratt::Operator {
-                                        node: cst::Node::token(
-                                            token_kind,
-                                            Range { start, end },
-                                            leading_trivia,
-                                            trailing_trivia,
-                                        ),
-                                        kind: rule_kind,
-                                        left_binding_power,
-                                        right_binding_power,
-                                    })
-                                }
-                                Err(error) => Err(error),
+                                })
                             }
-                        } {
-                            Err(error) => furthest_error = error,
-                            ok => break ok,
+                            Err(error) => Err(error),
                         }
-                        stream.set_position(start_position);
-                        match {
-                            match {
-                                let leading_trivia = self.optional_leading_trivia(stream);
-                                let start = stream.position();
-                                if scan_chars!(stream, '|') {
-                                    let end = stream.position();
-                                    let trailing_trivia = self.optional_trailing_trivia(stream);
-                                    Pass {
-                                        node: cst::Node::token(
-                                            TokenKind::Pipe,
-                                            Range { start, end },
-                                            leading_trivia,
-                                            trailing_trivia,
-                                        ),
-                                        error: None,
-                                    }
-                                } else {
-                                    Fail {
-                                        error: ParseError::new(start, "Pipe"),
-                                    }
-                                }
-                            } {
-                                Pass { node, .. } => Ok(Pratt::Operator {
-                                    node,
-                                    kind: RuleKind::BitOrExpression,
-                                    left_binding_power: 13u8,
-                                    right_binding_power: 13u8 + 1,
-                                }),
-                                Fail { error } => Err(error),
-                            }
-                        } {
-                            Err(error) => {
-                                if furthest_error.position < error.position {
-                                    furthest_error = error
-                                } else if furthest_error.position == error.position {
-                                    furthest_error.expected = format!(
-                                        "{}, or {}",
-                                        furthest_error.expected, error.expected
-                                    )
-                                }
-                            }
-                            ok => break ok,
-                        }
-                        stream.set_position(start_position);
-                        match {
-                            match {
-                                let leading_trivia = self.optional_leading_trivia(stream);
-                                let start = stream.position();
-                                if scan_chars!(stream, '^') {
-                                    let end = stream.position();
-                                    let trailing_trivia = self.optional_trailing_trivia(stream);
-                                    Pass {
-                                        node: cst::Node::token(
-                                            TokenKind::Caret,
-                                            Range { start, end },
-                                            leading_trivia,
-                                            trailing_trivia,
-                                        ),
-                                        error: None,
-                                    }
-                                } else {
-                                    Fail {
-                                        error: ParseError::new(start, "Caret"),
-                                    }
-                                }
-                            } {
-                                Pass { node, .. } => Ok(Pratt::Operator {
-                                    node,
-                                    kind: RuleKind::BitXOrExpression,
-                                    left_binding_power: 15u8,
-                                    right_binding_power: 15u8 + 1,
-                                }),
-                                Fail { error } => Err(error),
-                            }
-                        } {
-                            Err(error) => {
-                                if furthest_error.position < error.position {
-                                    furthest_error = error
-                                } else if furthest_error.position == error.position {
-                                    furthest_error.expected = format!(
-                                        "{}, or {}",
-                                        furthest_error.expected, error.expected
-                                    )
-                                }
-                            }
-                            ok => break ok,
-                        }
-                        stream.set_position(start_position);
-                        match {
-                            match {
-                                let leading_trivia = self.optional_leading_trivia(stream);
-                                let start = stream.position();
-                                if scan_chars!(stream, '&') {
-                                    let end = stream.position();
-                                    let trailing_trivia = self.optional_trailing_trivia(stream);
-                                    Pass {
-                                        node: cst::Node::token(
-                                            TokenKind::Ampersand,
-                                            Range { start, end },
-                                            leading_trivia,
-                                            trailing_trivia,
-                                        ),
-                                        error: None,
-                                    }
-                                } else {
-                                    Fail {
-                                        error: ParseError::new(start, "Ampersand"),
-                                    }
-                                }
-                            } {
-                                Pass { node, .. } => Ok(Pratt::Operator {
-                                    node,
-                                    kind: RuleKind::BitAndExpression,
-                                    left_binding_power: 17u8,
-                                    right_binding_power: 17u8 + 1,
-                                }),
-                                Fail { error } => Err(error),
-                            }
-                        } {
-                            Err(error) => {
-                                if furthest_error.position < error.position {
-                                    furthest_error = error
-                                } else if furthest_error.position == error.position {
-                                    furthest_error.expected = format!(
-                                        "{}, or {}",
-                                        furthest_error.expected, error.expected
-                                    )
-                                }
-                            }
-                            ok => break ok,
-                        }
-                        break Err(furthest_error);
                     } {
                         Err(_) => {
                             stream.set_position(start_position);
@@ -7096,6 +6065,7 @@ impl Language {
     }
 
     // ExpressionStatement = Expression ';' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_expression_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -7129,7 +6099,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Semicolon"),
+                            error: ParseError::new(start, "';'"),
                         }
                     }
                 } {
@@ -7157,7 +6127,8 @@ impl Language {
         }
     }
 
-    // FallbackFunctionAttribute = ModifierInvocation | OverrideSpecifier | 'external' | 'payable' | 'pure' | 'view' | 'virtual' ;
+    // FallbackFunctionAttribute = ModifierInvocation | OverrideSpecifier | "external" | "payable" | "pure" | "view" | "virtual" ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_fallback_function_attribute(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -7272,7 +6243,8 @@ impl Language {
         }
     }
 
-    // FallbackFunctionDefinition = 'fallback' ParameterList { FallbackFunctionAttribute } [ 'returns' ParameterList ] ( ';' | Block ) ;
+    // FallbackFunctionDefinition = "fallback" ParameterList { FallbackFunctionAttribute } [ "returns" ParameterList ] ( ';' | Block ) ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_fallback_function_definition(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -7482,7 +6454,8 @@ impl Language {
         }
     }
 
-    // ForStatement = 'for' '(' ( SimpleStatement | ';' ) ( ExpressionStatement | ';' ) [ Expression ] ')' Statement ;
+    // ForStatement = "for" '(' ( SimpleStatement | ';' ) ( ExpressionStatement | ';' ) [ Expression ] ')' Statement ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_for_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -7755,7 +6728,8 @@ impl Language {
         }
     }
 
-    // FunctionAttribute = ModifierInvocation | OverrideSpecifier | 'external' | 'internal' | 'payable' | 'private' | 'public' | 'pure' | 'view' | 'virtual' ;
+    // FunctionAttribute = ModifierInvocation | OverrideSpecifier | "external" | "internal" | "payable" | "private" | "public" | "pure" | "view" | "virtual" ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_function_attribute(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -7813,72 +6787,8 @@ impl Language {
         }
     }
 
-    // FunctionCallExpression = Expression [ NamedArgumentList ] ArgumentList ;
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn parse_function_call_expression(&self, stream: &mut Stream) -> ParseResult {
-        match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_1 = match {
-                    let start_position = stream.position();
-                    match self.parse_named_argument_list(stream) {
-                        Fail { error } => {
-                            stream.set_position(start_position);
-                            Pass {
-                                node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
-                                error: Some(error),
-                            }
-                        }
-                        pass => pass,
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_2 = match self.parse_argument_list(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
-                    error: furthest_error,
-                };
-            }
-        } {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::FunctionCallExpression, node),
-                error,
-            },
-            fail => fail,
-        }
-    }
+    // FunctionDefinition = "function" ( «Identifier» | "fallback" | "receive" ) ParameterList { FunctionAttribute } [ "returns" ParameterList ] ( ';' | Block ) ;
 
-    // FunctionDefinition = 'function' ( «Identifier» | 'fallback' | 'receive' ) ParameterList { FunctionAttribute } [ 'returns' ParameterList ] ( ';' | Block ) ;
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_function_definition(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -8177,7 +7087,8 @@ impl Language {
         }
     }
 
-    // FunctionType = 'function' ParameterList { 'internal' | 'external' | 'private' | 'public' | 'pure' | 'view' | 'payable' } [ 'returns' ParameterList ] ;
+    // FunctionType = "function" ParameterList { "internal" | "external" | "private" | "public" | "pure" | "view" | "payable" } [ "returns" ParameterList ] ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_function_type(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -8365,7 +7276,8 @@ impl Language {
         }
     }
 
-    // IdentifierPath = «Identifier»  { '.' «Identifier» } ;
+    // IdentifierPath = «Identifier» { '.' «Identifier» } ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_identifier_path(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -8440,7 +7352,8 @@ impl Language {
         }
     }
 
-    // IfStatement = 'if' '(' Expression ')' Statement [ 'else' Statement ] ;
+    // IfStatement = "if" '(' Expression ')' Statement [ "else" Statement ] ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_if_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -8657,7 +7570,8 @@ impl Language {
         }
     }
 
-    // ImportDirective = 'import' ( SimpleImportDirective | StarImportDirective | SelectingImportDirective ) ';' ;
+    // ImportDirective = "import" ( SimpleImportDirective | StarImportDirective | SelectingImportDirective ) ';' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_import_directive(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -8742,7 +7656,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Semicolon"),
+                            error: ParseError::new(start, "';'"),
                         }
                     }
                 } {
@@ -8771,6 +7685,7 @@ impl Language {
     }
 
     // ImportPath = «AsciiStringLiteral» ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_import_path(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -8804,330 +7719,8 @@ impl Language {
         }
     }
 
-    // IndexAccessExpression = Expression '[' ( Expression [ ':' [ Expression ] ] | ':' [ Expression ] ) ']' ;
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn parse_index_access_expression(&self, stream: &mut Stream) -> ParseResult {
-        match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_1 = match {
-                    match {
-                        let leading_trivia = self.optional_leading_trivia(stream);
-                        let start = stream.position();
-                        if scan_chars!(stream, '[') {
-                            let end = stream.position();
-                            let trailing_trivia = self.optional_trailing_trivia(stream);
-                            Pass {
-                                node: cst::Node::token(
-                                    TokenKind::OpenBracket,
-                                    Range { start, end },
-                                    leading_trivia,
-                                    trailing_trivia,
-                                ),
-                                error: None,
-                            }
-                        } else {
-                            Fail {
-                                error: ParseError::new(start, "'['"),
-                            }
-                        }
-                    } {
-                        err @ Fail { .. } => err,
-                        Pass {
-                            node: open_node, ..
-                        } => {
-                            match loop {
-                                let start_position = stream.position();
-                                let mut furthest_error;
-                                match loop {
-                                    let mut furthest_error = None;
-                                    let result_0 = match self.parse_expression(stream) {
-                                        Pass { node, error } => {
-                                            furthest_error = error.map(|error| {
-                                                error.maybe_merge_with(furthest_error)
-                                            });
-                                            node
-                                        }
-                                        Fail { error } => {
-                                            break Fail {
-                                                error: error.maybe_merge_with(furthest_error),
-                                            }
-                                        }
-                                    };
-                                    let result_1 = match {
-                                        let start_position = stream.position();
-                                        match loop {
-                                            let mut furthest_error = None;
-                                            let result_0 = match {
-                                                let leading_trivia =
-                                                    self.optional_leading_trivia(stream);
-                                                let start = stream.position();
-                                                if scan_chars!(stream, ':') {
-                                                    let end = stream.position();
-                                                    let trailing_trivia =
-                                                        self.optional_trailing_trivia(stream);
-                                                    Pass {
-                                                        node: cst::Node::token(
-                                                            TokenKind::Colon,
-                                                            Range { start, end },
-                                                            leading_trivia,
-                                                            trailing_trivia,
-                                                        ),
-                                                        error: None,
-                                                    }
-                                                } else {
-                                                    Fail {
-                                                        error: ParseError::new(start, "Colon"),
-                                                    }
-                                                }
-                                            } {
-                                                Pass { node, error } => {
-                                                    furthest_error = error.map(|error| {
-                                                        error.maybe_merge_with(furthest_error)
-                                                    });
-                                                    node
-                                                }
-                                                Fail { error } => {
-                                                    break Fail {
-                                                        error: error
-                                                            .maybe_merge_with(furthest_error),
-                                                    }
-                                                }
-                                            };
-                                            let result_1 = match {
-                                                let start_position = stream.position();
-                                                match self.parse_expression(stream) {
-                                                    Fail { error } => {
-                                                        stream.set_position(start_position);
-                                                        Pass {
-                                                            node: cst::Node::rule(
-                                                                RuleKind::_OPTIONAL,
-                                                                vec![],
-                                                            ),
-                                                            error: Some(error),
-                                                        }
-                                                    }
-                                                    pass => pass,
-                                                }
-                                            } {
-                                                Pass { node, error } => {
-                                                    furthest_error = error.map(|error| {
-                                                        error.maybe_merge_with(furthest_error)
-                                                    });
-                                                    node
-                                                }
-                                                Fail { error } => {
-                                                    break Fail {
-                                                        error: error
-                                                            .maybe_merge_with(furthest_error),
-                                                    }
-                                                }
-                                            };
-                                            break Pass {
-                                                node: cst::Node::rule(
-                                                    RuleKind::_SEQUENCE,
-                                                    vec![result_0, result_1],
-                                                ),
-                                                error: furthest_error,
-                                            };
-                                        } {
-                                            Fail { error } => {
-                                                stream.set_position(start_position);
-                                                Pass {
-                                                    node: cst::Node::rule(
-                                                        RuleKind::_OPTIONAL,
-                                                        vec![],
-                                                    ),
-                                                    error: Some(error),
-                                                }
-                                            }
-                                            pass => pass,
-                                        }
-                                    } {
-                                        Pass { node, error } => {
-                                            furthest_error = error.map(|error| {
-                                                error.maybe_merge_with(furthest_error)
-                                            });
-                                            node
-                                        }
-                                        Fail { error } => {
-                                            break Fail {
-                                                error: error.maybe_merge_with(furthest_error),
-                                            }
-                                        }
-                                    };
-                                    break Pass {
-                                        node: cst::Node::rule(
-                                            RuleKind::_SEQUENCE,
-                                            vec![result_0, result_1],
-                                        ),
-                                        error: furthest_error,
-                                    };
-                                } {
-                                    Fail { error } => furthest_error = error,
-                                    pass => break pass,
-                                }
-                                stream.set_position(start_position);
-                                match loop {
-                                    let mut furthest_error = None;
-                                    let result_0 = match {
-                                        let leading_trivia = self.optional_leading_trivia(stream);
-                                        let start = stream.position();
-                                        if scan_chars!(stream, ':') {
-                                            let end = stream.position();
-                                            let trailing_trivia =
-                                                self.optional_trailing_trivia(stream);
-                                            Pass {
-                                                node: cst::Node::token(
-                                                    TokenKind::Colon,
-                                                    Range { start, end },
-                                                    leading_trivia,
-                                                    trailing_trivia,
-                                                ),
-                                                error: None,
-                                            }
-                                        } else {
-                                            Fail {
-                                                error: ParseError::new(start, "Colon"),
-                                            }
-                                        }
-                                    } {
-                                        Pass { node, error } => {
-                                            furthest_error = error.map(|error| {
-                                                error.maybe_merge_with(furthest_error)
-                                            });
-                                            node
-                                        }
-                                        Fail { error } => {
-                                            break Fail {
-                                                error: error.maybe_merge_with(furthest_error),
-                                            }
-                                        }
-                                    };
-                                    let result_1 = match {
-                                        let start_position = stream.position();
-                                        match self.parse_expression(stream) {
-                                            Fail { error } => {
-                                                stream.set_position(start_position);
-                                                Pass {
-                                                    node: cst::Node::rule(
-                                                        RuleKind::_OPTIONAL,
-                                                        vec![],
-                                                    ),
-                                                    error: Some(error),
-                                                }
-                                            }
-                                            pass => pass,
-                                        }
-                                    } {
-                                        Pass { node, error } => {
-                                            furthest_error = error.map(|error| {
-                                                error.maybe_merge_with(furthest_error)
-                                            });
-                                            node
-                                        }
-                                        Fail { error } => {
-                                            break Fail {
-                                                error: error.maybe_merge_with(furthest_error),
-                                            }
-                                        }
-                                    };
-                                    break Pass {
-                                        node: cst::Node::rule(
-                                            RuleKind::_SEQUENCE,
-                                            vec![result_0, result_1],
-                                        ),
-                                        error: furthest_error,
-                                    };
-                                } {
-                                    Fail { error } => furthest_error.merge_with(error),
-                                    pass => break pass,
-                                }
-                                break Fail {
-                                    error: furthest_error,
-                                };
-                            } {
-                                err @ Fail { .. } => err,
-                                Pass {
-                                    node: expr_node,
-                                    error: expr_error,
-                                } => {
-                                    match {
-                                        let leading_trivia = self.optional_leading_trivia(stream);
-                                        let start = stream.position();
-                                        if scan_chars!(stream, ']') {
-                                            let end = stream.position();
-                                            let trailing_trivia =
-                                                self.optional_trailing_trivia(stream);
-                                            Pass {
-                                                node: cst::Node::token(
-                                                    TokenKind::CloseBracket,
-                                                    Range { start, end },
-                                                    leading_trivia,
-                                                    trailing_trivia,
-                                                ),
-                                                error: None,
-                                            }
-                                        } else {
-                                            Fail {
-                                                error: ParseError::new(start, "']'"),
-                                            }
-                                        }
-                                    } {
-                                        Fail { error } => Fail {
-                                            error: error.maybe_merge_with(expr_error),
-                                        },
-                                        Pass {
-                                            node: close_node, ..
-                                        } => Pass {
-                                            node: cst::Node::rule(
-                                                RuleKind::_DELIMITEDBY,
-                                                vec![open_node, expr_node, close_node],
-                                            ),
-                                            error: None,
-                                        },
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
-                    error: furthest_error,
-                };
-            }
-        } {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::IndexAccessExpression, node),
-                error,
-            },
-            fail => fail,
-        }
-    }
-
     // InheritanceSpecifier = IdentifierPath [ ArgumentList ] ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_inheritance_specifier(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -9181,7 +7774,8 @@ impl Language {
         }
     }
 
-    // InheritanceSpecifierList = 'is' InheritanceSpecifier  { ',' InheritanceSpecifier } ;
+    // InheritanceSpecifierList = "is" InheritanceSpecifier { ',' InheritanceSpecifier } ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_inheritance_specifier_list(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -9284,7 +7878,8 @@ impl Language {
         }
     }
 
-    // InterfaceDefinition = 'interface' «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
+    // InterfaceDefinition = "interface" «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_interface_definition(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -9489,7 +8084,8 @@ impl Language {
         }
     }
 
-    // LeadingTrivia = 1…*{ «Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment» } ;
+    // LeadingTrivia = 1…{ «Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment» } ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_leading_trivia(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -9618,7 +8214,8 @@ impl Language {
         }
     }
 
-    // LibraryDefinition = 'library' «Identifier» '{' { ContractBodyElement } '}' ;
+    // LibraryDefinition = "library" «Identifier» '{' { ContractBodyElement } '}' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_library_definition(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -9797,8 +8394,9 @@ impl Language {
         }
     }
 
-    // (* 0.4.11 *) MappingKeyType = ( ElementaryType | IdentifierPath ) ;
-    // (* 0.8.18 *) MappingKeyType = ( ElementaryType | IdentifierPath ) [ «Identifier» ] ;
+    // (* v0.4.11 *) MappingKeyType = ( ElementaryType | IdentifierPath ) ;
+    // (* v0.8.18 *) MappingKeyType = ( ElementaryType | IdentifierPath ) [ «Identifier» ] ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_mapping_key_type(&self, stream: &mut Stream) -> ParseResult {
         match if self.version_is_equal_to_or_greater_than_0_8_18 {
@@ -9921,7 +8519,8 @@ impl Language {
         }
     }
 
-    // MappingType = 'mapping' '(' MappingKeyType '=>' MappingValueType ')' ;
+    // MappingType = "mapping" '(' MappingKeyType "=>" MappingValueType ')' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_mapping_type(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -10119,8 +8718,9 @@ impl Language {
         }
     }
 
-    // (* 0.4.11 *) MappingValueType = TypeName ;
-    // (* 0.8.18 *) MappingValueType = TypeName [ «Identifier» ] ;
+    // (* v0.4.11 *) MappingValueType = TypeName ;
+    // (* v0.8.18 *) MappingValueType = TypeName [ «Identifier» ] ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_mapping_value_type(&self, stream: &mut Stream) -> ParseResult {
         match if self.version_is_equal_to_or_greater_than_0_8_18 {
@@ -10213,135 +8813,8 @@ impl Language {
         }
     }
 
-    // MemberAccessExpression = Expression '.' ( «Identifier» | 'address' ) ;
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn parse_member_access_expression(&self, stream: &mut Stream) -> ParseResult {
-        match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_1 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, '.') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Period,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "Period"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_2 = match loop {
-                    let start_position = stream.position();
-                    let mut furthest_error;
-                    match {
-                        let leading_trivia = self.optional_leading_trivia(stream);
-                        let start = stream.position();
-                        if self.scan_identifier(stream) {
-                            let end = stream.position();
-                            let trailing_trivia = self.optional_trailing_trivia(stream);
-                            Pass {
-                                node: cst::Node::token(
-                                    TokenKind::Identifier,
-                                    Range { start, end },
-                                    leading_trivia,
-                                    trailing_trivia,
-                                ),
-                                error: None,
-                            }
-                        } else {
-                            Fail {
-                                error: ParseError::new(start, "Identifier"),
-                            }
-                        }
-                    } {
-                        Fail { error } => furthest_error = error,
-                        pass => break pass,
-                    }
-                    stream.set_position(start_position);
-                    match {
-                        let leading_trivia = self.optional_leading_trivia(stream);
-                        let start = stream.position();
-                        if scan_chars!(stream, 'a', 'd', 'd', 'r', 'e', 's', 's') {
-                            let end = stream.position();
-                            let trailing_trivia = self.optional_trailing_trivia(stream);
-                            Pass {
-                                node: cst::Node::token(
-                                    TokenKind::Address,
-                                    Range { start, end },
-                                    leading_trivia,
-                                    trailing_trivia,
-                                ),
-                                error: None,
-                            }
-                        } else {
-                            Fail {
-                                error: ParseError::new(start, "'address'"),
-                            }
-                        }
-                    } {
-                        Fail { error } => furthest_error.merge_with(error),
-                        pass => break pass,
-                    }
-                    break Fail {
-                        error: furthest_error,
-                    };
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
-                    error: furthest_error,
-                };
-            }
-        } {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::MemberAccessExpression, node),
-                error,
-            },
-            fail => fail,
-        }
-    }
+    // ModifierAttribute = OverrideSpecifier | "virtual" ;
 
-    // ModifierAttribute = OverrideSpecifier | 'virtual' ;
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_modifier_attribute(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -10390,7 +8863,8 @@ impl Language {
         }
     }
 
-    // ModifierDefinition = 'modifier' «Identifier» [ ParameterList ] { ModifierAttribute } ( ';' | Block ) ;
+    // ModifierDefinition = "modifier" «Identifier» [ ParameterList ] { ModifierAttribute } ( ';' | Block ) ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_modifier_definition(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -10571,6 +9045,7 @@ impl Language {
     }
 
     // ModifierInvocation = IdentifierPath [ ArgumentList ] ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_modifier_invocation(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -10624,89 +9099,8 @@ impl Language {
         }
     }
 
-    // MulDivModExpression = Expression ( '*' | '/' | '%' ) Expression ;
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn parse_mul_div_mod_expression(&self, stream: &mut Stream) -> ParseResult {
-        match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_1 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    match {
-                        match stream.next() {
-                            Some('%') => Ok(TokenKind::Percent),
-                            Some('*') => Ok(TokenKind::Star),
-                            Some('/') => Ok(TokenKind::Slash),
-                            _ => Err(ParseError::new(stream.position(), "'%', or '*', or '/'")),
-                        }
-                    } {
-                        Err(mut error) => {
-                            error.position = start;
-                            Fail { error }
-                        }
-                        Ok(kind) => {
-                            let end = stream.position();
-                            let trailing_trivia = self.optional_trailing_trivia(stream);
-                            Pass {
-                                node: cst::Node::token(
-                                    kind,
-                                    Range { start, end },
-                                    leading_trivia,
-                                    trailing_trivia,
-                                ),
-                                error: None,
-                            }
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_2 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
-                    error: furthest_error,
-                };
-            }
-        } {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::MulDivModExpression, node),
-                error,
-            },
-            fail => fail,
-        }
-    }
-
     // NamedArgument = «Identifier» ':' Expression ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_named_argument(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -10760,7 +9154,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Colon"),
+                            error: ParseError::new(start, "':'"),
                         }
                     }
                 } {
@@ -10799,7 +9193,8 @@ impl Language {
         }
     }
 
-    // NamedArgumentList = '{' [ NamedArgument  { ',' NamedArgument } ] '}' ;
+    // NamedArgumentList = '{' [ NamedArgument { ',' NamedArgument } ] '}' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_named_argument_list(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -10941,7 +9336,8 @@ impl Language {
         }
     }
 
-    // NewExpression = 'new' TypeName ;
+    // NewExpression = "new" TypeName ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_new_expression(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -11004,6 +9400,7 @@ impl Language {
     }
 
     // NumericLiteral = ( «HexLiteral» | «DecimalLiteral» ) [ «NumberUnit» ] ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_numeric_literal(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -11132,184 +9529,8 @@ impl Language {
         }
     }
 
-    // OrExpression = Expression '||' Expression ;
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn parse_or_expression(&self, stream: &mut Stream) -> ParseResult {
-        match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_1 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, '|', '|') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::PipePipe,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "'||'"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_2 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
-                    error: furthest_error,
-                };
-            }
-        } {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::OrExpression, node),
-                error,
-            },
-            fail => fail,
-        }
-    }
+    // OverrideSpecifier = "override" [ '(' IdentifierPath { ',' IdentifierPath } ')' ] ;
 
-    // OrderComparisonExpression = Expression ( '<' | '>' | '<=' | '>=' ) Expression ;
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn parse_order_comparison_expression(&self, stream: &mut Stream) -> ParseResult {
-        match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_1 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    match {
-                        match stream.next() {
-                            Some('<') => {
-                                let start_position = stream.position();
-                                match stream.next() {
-                                    Some('=') => Ok(TokenKind::LessEqual),
-                                    Some(_) => {
-                                        stream.set_position(start_position);
-                                        Ok(TokenKind::Less)
-                                    }
-                                    None => Ok(TokenKind::Less),
-                                }
-                            }
-                            Some('>') => {
-                                let start_position = stream.position();
-                                match stream.next() {
-                                    Some('=') => Ok(TokenKind::GreaterEqual),
-                                    Some(_) => {
-                                        stream.set_position(start_position);
-                                        Ok(TokenKind::Greater)
-                                    }
-                                    None => Ok(TokenKind::Greater),
-                                }
-                            }
-                            _ => Err(ParseError::new(
-                                stream.position(),
-                                "'<', or '<=', or '>', or '>='",
-                            )),
-                        }
-                    } {
-                        Err(mut error) => {
-                            error.position = start;
-                            Fail { error }
-                        }
-                        Ok(kind) => {
-                            let end = stream.position();
-                            let trailing_trivia = self.optional_trailing_trivia(stream);
-                            Pass {
-                                node: cst::Node::token(
-                                    kind,
-                                    Range { start, end },
-                                    leading_trivia,
-                                    trailing_trivia,
-                                ),
-                                error: None,
-                            }
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_2 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
-                    error: furthest_error,
-                };
-            }
-        } {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::OrderComparisonExpression, node),
-                error,
-            },
-            fail => fail,
-        }
-    }
-
-    // OverrideSpecifier = 'override' [ '(' IdentifierPath  { ',' IdentifierPath } ')' ] ;
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_override_specifier(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -11502,6 +9723,7 @@ impl Language {
     }
 
     // ParameterDeclaration = TypeName [ DataLocation ] [ «Identifier» ] ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_parameter_declaration(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -11598,7 +9820,8 @@ impl Language {
         }
     }
 
-    // ParameterList = '(' [ ParameterDeclaration  { ',' ParameterDeclaration } ] ')' ;
+    // ParameterList = '(' [ ParameterDeclaration { ',' ParameterDeclaration } ] ')' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_parameter_list(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -11740,7 +9963,8 @@ impl Language {
         }
     }
 
-    // PayableType = 'payable' ;
+    // PayableType = "payable" ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_payable_type(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -11774,7 +9998,8 @@ impl Language {
         }
     }
 
-    // PositionalArgumentList = Expression  { ',' Expression } ;
+    // PositionalArgumentList = Expression { ',' Expression } ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_positional_argument_list(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -11829,7 +10054,8 @@ impl Language {
         }
     }
 
-    // PragmaDirective = 'pragma' ( VersionPragma | ABICoderPragma | ExperimentalPragma ) ';' ;
+    // PragmaDirective = "pragma" ( VersionPragma | ABICoderPragma | ExperimentalPragma ) ';' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_pragma_directive(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -11914,7 +10140,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Semicolon"),
+                            error: ParseError::new(start, "';'"),
                         }
                     }
                 } {
@@ -11943,6 +10169,7 @@ impl Language {
     }
 
     // PrimaryExpression = «Identifier» | TupleExpression | ArrayLiteral | StringExpression | NumericLiteral | «BooleanLiteral» | NewExpression | TypeExpression | ElementaryType ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_primary_expression(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -12046,7 +10273,8 @@ impl Language {
         }
     }
 
-    // ReceiveFunctionAttribute = ModifierInvocation | OverrideSpecifier | 'external' | 'payable' | 'virtual' ;
+    // ReceiveFunctionAttribute = ModifierInvocation | OverrideSpecifier | "external" | "payable" | "virtual" ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_receive_function_attribute(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -12130,7 +10358,8 @@ impl Language {
         }
     }
 
-    // ReceiveFunctionDefinition = 'receive' ParameterList { ReceiveFunctionAttribute } ( ';' | Block ) ;
+    // ReceiveFunctionDefinition = "receive" ParameterList { ReceiveFunctionAttribute } ( ';' | Block ) ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_receive_function_definition(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -12267,7 +10496,8 @@ impl Language {
         }
     }
 
-    // ReturnStatement = 'return' [ Expression ] ';' ;
+    // ReturnStatement = "return" [ Expression ] ';' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_return_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -12344,7 +10574,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Semicolon"),
+                            error: ParseError::new(start, "';'"),
                         }
                     }
                 } {
@@ -12372,7 +10602,8 @@ impl Language {
         }
     }
 
-    // RevertStatement = 'revert' [ IdentifierPath ] ArgumentList ';' ;
+    // RevertStatement = "revert" [ IdentifierPath ] ArgumentList ';' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_revert_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -12460,7 +10691,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Semicolon"),
+                            error: ParseError::new(start, "';'"),
                         }
                     }
                 } {
@@ -12491,7 +10722,8 @@ impl Language {
         }
     }
 
-    // SelectedImport = «Identifier» [ 'as' «Identifier» ] ;
+    // SelectedImport = «Identifier» [ "as" «Identifier» ] ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_selected_import(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -12635,7 +10867,8 @@ impl Language {
         }
     }
 
-    // SelectingImportDirective = '{' SelectedImport  { ',' SelectedImport } '}' 'from' ImportPath ;
+    // SelectingImportDirective = '{' SelectedImport { ',' SelectedImport } '}' "from" ImportPath ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_selecting_import_directive(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -12825,111 +11058,8 @@ impl Language {
         }
     }
 
-    // ShiftExpression = Expression ( '<<' | '>>' | '>>>' ) Expression ;
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn parse_shift_expression(&self, stream: &mut Stream) -> ParseResult {
-        match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_1 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    match {
-                        match stream.next() {
-                            Some('<') => {
-                                if scan_chars!(stream, '<') {
-                                    Ok(TokenKind::LessLess)
-                                } else {
-                                    Err(ParseError::new(stream.position(), "'<<'"))
-                                }
-                            }
-                            Some('>') => {
-                                if scan_chars!(stream, '>') {
-                                    let start_position = stream.position();
-                                    match stream.next() {
-                                        Some('>') => Ok(TokenKind::GreaterGreaterGreater),
-                                        Some(_) => {
-                                            stream.set_position(start_position);
-                                            Ok(TokenKind::GreaterGreater)
-                                        }
-                                        None => Ok(TokenKind::GreaterGreater),
-                                    }
-                                } else {
-                                    Err(ParseError::new(stream.position(), "'>>', or '>>>'"))
-                                }
-                            }
-                            _ => Err(ParseError::new(
-                                stream.position(),
-                                "'<<', or '>>', or '>>>'",
-                            )),
-                        }
-                    } {
-                        Err(mut error) => {
-                            error.position = start;
-                            Fail { error }
-                        }
-                        Ok(kind) => {
-                            let end = stream.position();
-                            let trailing_trivia = self.optional_trailing_trivia(stream);
-                            Pass {
-                                node: cst::Node::token(
-                                    kind,
-                                    Range { start, end },
-                                    leading_trivia,
-                                    trailing_trivia,
-                                ),
-                                error: None,
-                            }
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_2 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
-                    error: furthest_error,
-                };
-            }
-        } {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::ShiftExpression, node),
-                error,
-            },
-            fail => fail,
-        }
-    }
+    // SimpleImportDirective = ImportPath { "as" «Identifier» } ;
 
-    // SimpleImportDirective = ImportPath { 'as' «Identifier» } ;
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_simple_import_directive(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -13060,6 +11190,7 @@ impl Language {
     }
 
     // SimpleStatement = TupleDeconstructionStatement | VariableDeclarationStatement | ExpressionStatement ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_simple_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -13093,7 +11224,8 @@ impl Language {
         }
     }
 
-    // SourceUnit = 1…*{ Directive | Definition } [ EndOfFileTrivia ] ;
+    // SourceUnit = 1…{ Directive | Definition } [ EndOfFileTrivia ] ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_source_unit(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -13180,7 +11312,8 @@ impl Language {
         }
     }
 
-    // StarImportDirective = '*' 'as' «Identifier» 'from' ImportPath ;
+    // StarImportDirective = '*' "as" «Identifier» "from" ImportPath ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_star_import_directive(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -13203,7 +11336,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Star"),
+                            error: ParseError::new(start, "'*'"),
                         }
                     }
                 } {
@@ -13338,7 +11471,8 @@ impl Language {
         }
     }
 
-    // StateVariableAttribute = OverrideSpecifier | 'constant' | 'immutable' | 'internal' | 'private' | 'public' ;
+    // StateVariableAttribute = OverrideSpecifier | "constant" | "immutable" | "internal" | "private" | "public" ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_state_variable_attribute(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -13392,6 +11526,7 @@ impl Language {
     }
 
     // StateVariableDeclaration = TypeName { StateVariableAttribute } «Identifier» [ '=' Expression ] ';' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_state_variable_declaration(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -13486,7 +11621,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "Equal"),
+                                    error: ParseError::new(start, "'='"),
                                 }
                             }
                         } {
@@ -13555,7 +11690,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Semicolon"),
+                            error: ParseError::new(start, "';'"),
                         }
                     }
                 } {
@@ -13587,6 +11722,7 @@ impl Language {
     }
 
     // Statement = Block | SimpleStatement | IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | TryStatement | ReturnStatement | EmitStatement | RevertStatement | DeleteStatement | AssemblyStatement ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -13675,7 +11811,8 @@ impl Language {
         }
     }
 
-    // StringExpression = 1…*{ «HexStringLiteral» } | 1…*{ «AsciiStringLiteral» } | 1…*{ «UnicodeStringLiteral» } ;
+    // StringExpression = 1…{ «HexStringLiteral» } | 1…{ «AsciiStringLiteral» } | 1…{ «UnicodeStringLiteral» } ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_string_expression(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -13823,7 +11960,8 @@ impl Language {
         }
     }
 
-    // StructDefinition = 'struct' «Identifier» '{' 1…*{ StructMember } '}' ;
+    // StructDefinition = "struct" «Identifier» '{' 1…{ StructMember } '}' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_struct_definition(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -14006,6 +12144,7 @@ impl Language {
     }
 
     // StructMember = TypeName «Identifier» ';' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_struct_member(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -14070,7 +12209,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Semicolon"),
+                            error: ParseError::new(start, "';'"),
                         }
                     }
                 } {
@@ -14099,6 +12238,7 @@ impl Language {
     }
 
     // TrailingTrivia = { «Whitespace» | «SingleLineComment» } «EndOfLine» ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_trailing_trivia(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -14224,7 +12364,8 @@ impl Language {
         }
     }
 
-    // TryStatement = 'try' Expression [ 'returns' ParameterList ] Block 1…*{ CatchClause } ;
+    // TryStatement = "try" Expression [ "returns" ParameterList ] Block 1…{ CatchClause } ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_try_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -14402,7 +12543,8 @@ impl Language {
         }
     }
 
-    // TupleDeconstructionStatement = '(' [ [ TypeName [ DataLocation ] «Identifier» | [ DataLocation ] «Identifier» ]  { ',' [ TypeName [ DataLocation ] «Identifier» | [ DataLocation ] «Identifier» ] } ] ')' '=' Expression ';' ;
+    // TupleDeconstructionStatement = '(' [ [ TypeName [ DataLocation ] «Identifier» | [ DataLocation ] «Identifier» ] { ',' [ TypeName [ DataLocation ] «Identifier» | [ DataLocation ] «Identifier» ] } ] ')' '=' Expression ';' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_tuple_deconstruction_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -14782,7 +12924,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Equal"),
+                            error: ParseError::new(start, "'='"),
                         }
                     }
                 } {
@@ -14824,7 +12966,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Semicolon"),
+                            error: ParseError::new(start, "';'"),
                         }
                     }
                 } {
@@ -14855,7 +12997,8 @@ impl Language {
         }
     }
 
-    // TupleExpression = '(' [ Expression ]  { ',' [ Expression ] } ')' ;
+    // TupleExpression = '(' [ Expression ] { ',' [ Expression ] } ')' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_tuple_expression(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -14997,7 +13140,8 @@ impl Language {
         }
     }
 
-    // TypeExpression = 'type' '(' TypeName ')' ;
+    // TypeExpression = "type" '(' TypeName ')' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_type_expression(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -15128,6 +13272,7 @@ impl Language {
     }
 
     // TypeName = ( ElementaryType | FunctionType | MappingType | IdentifierPath ) { '[' [ Expression ] ']' } ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_type_name(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -15296,180 +13441,8 @@ impl Language {
         }
     }
 
-    // UnaryPrefixExpression = ( '++' | '--' | '!' | '~' | '-' ) Expression ;
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn parse_unary_prefix_expression(&self, stream: &mut Stream) -> ParseResult {
-        match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    match {
-                        match stream.next() {
-                            Some('!') => Ok(TokenKind::Bang),
-                            Some('+') => {
-                                if scan_chars!(stream, '+') {
-                                    Ok(TokenKind::PlusPlus)
-                                } else {
-                                    Err(ParseError::new(stream.position(), "'++'"))
-                                }
-                            }
-                            Some('-') => {
-                                let start_position = stream.position();
-                                match stream.next() {
-                                    Some('-') => Ok(TokenKind::MinusMinus),
-                                    Some(_) => {
-                                        stream.set_position(start_position);
-                                        Ok(TokenKind::Minus)
-                                    }
-                                    None => Ok(TokenKind::Minus),
-                                }
-                            }
-                            Some('~') => Ok(TokenKind::Tilde),
-                            _ => Err(ParseError::new(
-                                stream.position(),
-                                "'!', or '++', or '-', or '--', or '~'",
-                            )),
-                        }
-                    } {
-                        Err(mut error) => {
-                            error.position = start;
-                            Fail { error }
-                        }
-                        Ok(kind) => {
-                            let end = stream.position();
-                            let trailing_trivia = self.optional_trailing_trivia(stream);
-                            Pass {
-                                node: cst::Node::token(
-                                    kind,
-                                    Range { start, end },
-                                    leading_trivia,
-                                    trailing_trivia,
-                                ),
-                                error: None,
-                            }
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_1 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
-                    error: furthest_error,
-                };
-            }
-        } {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::UnaryPrefixExpression, node),
-                error,
-            },
-            fail => fail,
-        }
-    }
+    // UncheckedBlock = "unchecked" Block ;
 
-    // UnarySuffixExpression = Expression ( '++' | '--' ) ;
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn parse_unary_suffix_expression(&self, stream: &mut Stream) -> ParseResult {
-        match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_1 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    match {
-                        match stream.next() {
-                            Some('+') => {
-                                if scan_chars!(stream, '+') {
-                                    Ok(TokenKind::PlusPlus)
-                                } else {
-                                    Err(ParseError::new(stream.position(), "'++'"))
-                                }
-                            }
-                            Some('-') => {
-                                if scan_chars!(stream, '-') {
-                                    Ok(TokenKind::MinusMinus)
-                                } else {
-                                    Err(ParseError::new(stream.position(), "'--'"))
-                                }
-                            }
-                            _ => Err(ParseError::new(stream.position(), "'++', or '--'")),
-                        }
-                    } {
-                        Err(mut error) => {
-                            error.position = start;
-                            Fail { error }
-                        }
-                        Ok(kind) => {
-                            let end = stream.position();
-                            let trailing_trivia = self.optional_trailing_trivia(stream);
-                            Pass {
-                                node: cst::Node::token(
-                                    kind,
-                                    Range { start, end },
-                                    leading_trivia,
-                                    trailing_trivia,
-                                ),
-                                error: None,
-                            }
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
-                    error: furthest_error,
-                };
-            }
-        } {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::UnarySuffixExpression, node),
-                error,
-            },
-            fail => fail,
-        }
-    }
-
-    // UncheckedBlock = 'unchecked' Block ;
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_unchecked_block(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -15531,7 +13504,8 @@ impl Language {
         }
     }
 
-    // UserDefinedValueTypeDefinition = 'type' «Identifier» 'is' ElementaryType ';' ;
+    // UserDefinedValueTypeDefinition = "type" «Identifier» "is" ElementaryType ';' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_user_defined_value_type_definition(
         &self,
@@ -15661,7 +13635,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Semicolon"),
+                            error: ParseError::new(start, "';'"),
                         }
                     }
                 } {
@@ -15692,7 +13666,8 @@ impl Language {
         }
     }
 
-    // UsingDirective = 'using' ( IdentifierPath | '{' IdentifierPath  { ',' IdentifierPath } '}' ) 'for' ( '*' | TypeName ) [ 'global' ] ';' ;
+    // UsingDirective = "using" ( IdentifierPath | '{' IdentifierPath { ',' IdentifierPath } '}' ) "for" ( '*' | TypeName ) [ "global" ] ';' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_using_directive(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -16010,7 +13985,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Semicolon"),
+                            error: ParseError::new(start, "';'"),
                         }
                     }
                 } {
@@ -16042,6 +14017,7 @@ impl Language {
     }
 
     // VariableDeclarationStatement = TypeName [ DataLocation ] «Identifier» [ '=' Expression ] ';' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_variable_declaration_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -16133,7 +14109,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "Equal"),
+                                    error: ParseError::new(start, "'='"),
                                 }
                             }
                         } {
@@ -16202,7 +14178,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "Semicolon"),
+                            error: ParseError::new(start, "';'"),
                         }
                     }
                 } {
@@ -16233,7 +14209,8 @@ impl Language {
         }
     }
 
-    // VersionPragma = 'solidity' 1…*{ VersionPragmaSpecifier } ;
+    // VersionPragma = "solidity" 1…{ VersionPragmaSpecifier } ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_version_pragma(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -16313,7 +14290,8 @@ impl Language {
         }
     }
 
-    // VersionPragmaSpecifier = [ «VersionPragmaOperator» ] «VersionPragmaValue»  { '.' «VersionPragmaValue» } ;
+    // VersionPragmaSpecifier = [ «VersionPragmaOperator» ] «VersionPragmaValue» { '.' «VersionPragmaValue» } ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_version_pragma_specifier(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -16448,7 +14426,8 @@ impl Language {
         }
     }
 
-    // WhileStatement = 'while' '(' Expression ')' Statement ;
+    // WhileStatement = "while" '(' Expression ')' Statement ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_while_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -16589,7 +14568,8 @@ impl Language {
         }
     }
 
-    // YulAssignmentStatement = YulIdentifierPath  { ',' YulIdentifierPath } ':=' YulExpression ;
+    // YulAssignmentStatement = YulIdentifierPath { ',' YulIdentifierPath } ":=" YulExpression ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_assignment_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -16704,6 +14684,7 @@ impl Language {
     }
 
     // YulBlock = '{' { YulStatement } '}' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_block(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -16802,7 +14783,8 @@ impl Language {
         }
     }
 
-    // YulBreakStatement = 'break' ;
+    // YulBreakStatement = "break" ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_break_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -16836,7 +14818,8 @@ impl Language {
         }
     }
 
-    // YulContinueStatement = 'continue' ;
+    // YulContinueStatement = "continue" ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_continue_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -16871,6 +14854,7 @@ impl Language {
     }
 
     // YulExpression = YulFunctionCall | YulLiteral ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_expression(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -16899,7 +14883,8 @@ impl Language {
         }
     }
 
-    // YulForStatement = 'for' YulBlock YulExpression YulBlock YulBlock ;
+    // YulForStatement = "for" YulBlock YulExpression YulBlock YulBlock ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_for_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -16997,7 +14982,8 @@ impl Language {
         }
     }
 
-    // YulFunctionCall = YulIdentifierPath [ '(' [ YulExpression  { ',' YulExpression } ] ')' ] ;
+    // YulFunctionCall = YulIdentifierPath [ '(' [ YulExpression { ',' YulExpression } ] ')' ] ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_function_call(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -17183,7 +15169,8 @@ impl Language {
         }
     }
 
-    // YulFunctionDefinition = 'function' «YulIdentifier» '(' [ «YulIdentifier»  { ',' «YulIdentifier» } ] ')' [ '->' «YulIdentifier»  { ',' «YulIdentifier» } ] YulBlock ;
+    // YulFunctionDefinition = "function" «YulIdentifier» '(' [ «YulIdentifier» { ',' «YulIdentifier» } ] ')' [ "->" «YulIdentifier» { ',' «YulIdentifier» } ] YulBlock ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_function_definition(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -17580,7 +15567,8 @@ impl Language {
         }
     }
 
-    // YulIdentifierPath = «YulIdentifier»  { '.' «YulIdentifier» } ;
+    // YulIdentifierPath = «YulIdentifier» { '.' «YulIdentifier» } ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_identifier_path(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -17655,7 +15643,8 @@ impl Language {
         }
     }
 
-    // YulIfStatement = 'if' YulExpression YulBlock ;
+    // YulIfStatement = "if" YulExpression YulBlock ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_if_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -17728,7 +15717,8 @@ impl Language {
         }
     }
 
-    // YulLeaveStatement = 'leave' ;
+    // YulLeaveStatement = "leave" ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_leave_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -17763,6 +15753,7 @@ impl Language {
     }
 
     // YulLiteral = «BooleanLiteral» | «YulHexLiteral» | «YulDecimalLiteral» | «HexStringLiteral» | «AsciiStringLiteral» ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_literal(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -17907,6 +15898,7 @@ impl Language {
     }
 
     // YulStatement = YulBlock | YulVariableDeclaration | YulFunctionDefinition | YulAssignmentStatement | YulFunctionCall | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -17980,7 +15972,8 @@ impl Language {
         }
     }
 
-    // YulSwitchStatement = 'switch' YulExpression 1…*{ ( 'case' YulLiteral | 'default' ) YulBlock } ;
+    // YulSwitchStatement = "switch" YulExpression 1…{ ( "case" YulLiteral | "default" ) YulBlock } ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_switch_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
@@ -18195,7 +16188,8 @@ impl Language {
         }
     }
 
-    // YulVariableDeclaration = 'let' YulIdentifierPath  { ',' YulIdentifierPath } [ ':=' YulExpression ] ;
+    // YulVariableDeclaration = "let" YulIdentifierPath { ',' YulIdentifierPath } [ ":=" YulExpression ] ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_variable_declaration(&self, stream: &mut Stream) -> ParseResult {
         match {

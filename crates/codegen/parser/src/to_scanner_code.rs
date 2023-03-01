@@ -1,6 +1,6 @@
 use std::collections::BTreeSet;
 
-use codegen_schema::types::productions::ProductionKind;
+use codegen_schema::types::production::Production;
 use inflector::Inflector;
 use proc_macro2::TokenStream;
 use quote::{format_ident, quote};
@@ -16,14 +16,15 @@ impl<'context> CombinatorNode<'context> {
             /**********************************************************************
              * Simple Reference
              */
-            Self::Reference { tree } => match tree.production.kind {
-                ProductionKind::Rule | ProductionKind::Trivia => {
-                    unreachable!("Token productions can only reference other token productions")
-                }
-                ProductionKind::Token => {
-                    let scanner_function_name =
-                        format_ident!("scan_{}", tree.production.name.to_snake_case());
+            Self::Reference { tree } => match tree.production.as_ref() {
+                Production::Scanner { name, .. } => {
+                    let scanner_function_name = format_ident!("scan_{}", name.to_snake_case());
                     quote! { self.#scanner_function_name(stream) }
+                }
+                Production::TriviaParser { .. }
+                | Production::Parser { .. }
+                | Production::PrecedenceParser { .. } => {
+                    unreachable!("Token productions can only reference other token productions")
                 }
             },
 

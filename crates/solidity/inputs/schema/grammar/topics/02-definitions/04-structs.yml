@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
 
 - name: "StructDefinition"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "struct"
@@ -14,7 +14,7 @@
           close: "}"
 
 - name: "StructMember"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - reference: "TypeName"

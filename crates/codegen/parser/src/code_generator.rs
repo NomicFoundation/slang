@@ -13,12 +13,12 @@ use super::naming;
 
 #[derive(Clone, Debug, Default)]
 pub struct VersionedFunctionBody {
-    pub comment: Vec<String>,
+    pub comment: String,
     pub versions: BTreeMap<Version, TokenStream>,
 }
 
 impl VersionedFunctionBody {
-    fn insert(&mut self, comment: Vec<String>, version: &Version, body: TokenStream) {
+    fn insert(&mut self, comment: String, version: &Version, body: TokenStream) {
         self.comment = comment;
         self.versions.insert(version.clone(), body);
     }
@@ -41,14 +41,6 @@ impl VersionedFunctionBody {
             })
             .reduce(|a, b| quote! { #a else #b })
             .unwrap()
-    }
-
-    fn to_comment_string(&self) -> String {
-        self.comment
-            .iter()
-            .map(|s| format!("// {}", s))
-            .collect::<Vec<_>>()
-            .join("\n")
     }
 }
 
@@ -82,7 +74,7 @@ impl CodeGenerator {
         &mut self,
         name: String,
         version: &Version,
-        comment: Vec<String>,
+        comment: String,
         body: TokenStream,
     ) {
         self.scanners
@@ -102,7 +94,7 @@ impl CodeGenerator {
         &mut self,
         name: String,
         version: &Version,
-        comment: Vec<String>,
+        comment: String,
         body: TokenStream,
     ) {
         self.parsers
@@ -167,7 +159,7 @@ impl CodeGenerator {
                 let body = scanner.to_function_body();
                 format!(
                     "{}\n{}",
-                    scanner.to_comment_string(),
+                    scanner.comment,
                     quote! {
                         #[allow(unused_assignments, unused_parens)]
                         pub(crate) fn #function_name(&self, stream: &mut Stream) -> bool {
@@ -188,7 +180,7 @@ impl CodeGenerator {
                 let body = parser.to_function_body();
                 format!(
                     "{}\n{}",
-                    parser.to_comment_string(),
+                    parser.comment,
                     quote! {
                         #[allow(unused_assignments, unused_parens)]
                         pub(crate) fn #function_name(&self, stream: &mut Stream) -> ParseResult {
@@ -252,15 +244,13 @@ impl CodeGenerator {
     }
 
     pub fn write_common_sources(&self, codegen: &mut CodegenContext, output_dir: &PathBuf) {
-        let cst = codegen
-            .read_file(
+        codegen
+            .copy_file(
                 &codegen
                     .repo_root
                     .join("crates/codegen/parser_templates/src/shared/cst.rs"),
+                &output_dir.join("cst.rs"),
             )
-            .unwrap();
-        codegen
-            .write_file(&output_dir.join("cst.rs"), &cst)
             .unwrap();
 
         let scanning_macros = codegen

@@ -28,7 +28,7 @@ impl cst::Node {
                 return items
                     .into_iter()
                     .zip(value)
-                    .map(|(syntax, value)| mapper(syntax, value))
+                    .map(|(cst_node, value)| mapper(cst_node, value))
                     .collect();
             }
             Self::Value { .. } => {

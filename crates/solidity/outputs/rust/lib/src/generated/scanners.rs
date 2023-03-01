@@ -177,7 +177,8 @@ macro_rules! scan_difference {
 }
 
 impl Language {
-    // «AsciiEscape» = 'n' | 'r' | 't' | '\'' | '"' | '\\' | '\u{a}' | '\u{d}' ;
+    // «AsciiEscape» = 'n' | 'r' | 't' | "\'" | '"' | '\\' | '\u{a}' | '\u{d}' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_ascii_escape(&self, stream: &mut Stream) -> bool {
         {
@@ -193,6 +194,7 @@ impl Language {
     }
 
     // «AsciiStringLiteral» = «SingleQuotedAsciiStringLiteral» | «DoubleQuotedAsciiStringLiteral» ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_ascii_string_literal(&self, stream: &mut Stream) -> bool {
         {
@@ -204,7 +206,8 @@ impl Language {
         }
     }
 
-    // «BooleanLiteral» = 'true' | 'false' ;
+    // «BooleanLiteral» = "true" | "false" ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_boolean_literal(&self, stream: &mut Stream) -> bool {
         {
@@ -217,6 +220,7 @@ impl Language {
     }
 
     // «DecimalExponent» = ( 'e' | 'E' ) [ '-' ] «DecimalNumber» ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_decimal_exponent(&self, stream: &mut Stream) -> bool {
         {
@@ -229,6 +233,7 @@ impl Language {
     }
 
     // «DecimalLiteral» = ( «DecimalNumber» [ '.' «DecimalNumber» ] | '.' «DecimalNumber» ) [ «DecimalExponent» ] ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_decimal_literal(&self, stream: &mut Stream) -> bool {
         {
@@ -252,7 +257,8 @@ impl Language {
         }
     }
 
-    // «DecimalNumber» = 1…*{ '0'…'9' }  { '_' 1…*{ '0'…'9' } } ;
+    // «DecimalNumber» = 1…{ '0'…'9' } { '_' 1…{ '0'…'9' } } ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_decimal_number(&self, stream: &mut Stream) -> bool {
         {
@@ -265,6 +271,7 @@ impl Language {
     }
 
     // «DoubleQuotedAsciiStringLiteral» = '"' { «EscapeSequence» | '\u{20}'…'~' - ( '"' | '\\' ) } '"' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_double_quoted_ascii_string_literal(&self, stream: &mut Stream) -> bool {
         {
@@ -287,6 +294,7 @@ impl Language {
     }
 
     // «DoubleQuotedUnicodeStringLiteral» = 'unicode"' { «EscapeSequence» | ¬( '"' | '\\' | '\u{a}' | '\u{d}' ) } '"' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_double_quoted_unicode_string_literal(&self, stream: &mut Stream) -> bool {
         {
@@ -309,7 +317,8 @@ impl Language {
         }
     }
 
-    // «EndOfLine» = 1…*{ '\u{d}' | '\u{a}' } ;
+    // «EndOfLine» = 1…{ '\u{d}' | '\u{a}' } ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_end_of_line(&self, stream: &mut Stream) -> bool {
         {
@@ -318,6 +327,7 @@ impl Language {
     }
 
     // «EscapeSequence» = '\\' ( «AsciiEscape» | «HexByteEscape» | «UnicodeEscape» ) ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_escape_sequence(&self, stream: &mut Stream) -> bool {
         {
@@ -333,7 +343,8 @@ impl Language {
         }
     }
 
-    // «FixedBytesType» = 'bytes' ( '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12' | '13' | '14' | '15' | '16' | '17' | '18' | '19' | '20' | '21' | '22' | '23' | '24' | '25' | '26' | '27' | '28' | '29' | '30' | '31' | '32' ) ;
+    // «FixedBytesType» = "bytes" ( '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19" | "20" | "21" | "22" | "23" | "24" | "25" | "26" | "27" | "28" | "29" | "30" | "31" | "32" ) ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_fixed_bytes_type(&self, stream: &mut Stream) -> bool {
         {
@@ -358,7 +369,8 @@ impl Language {
         }
     }
 
-    // «HexByteEscape» = 'x' 2…2*{ «HexCharacter» } ;
+    // «HexByteEscape» = 'x' 2…2{ «HexCharacter» } ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_hex_byte_escape(&self, stream: &mut Stream) -> bool {
         {
@@ -377,6 +389,7 @@ impl Language {
     }
 
     // «HexCharacter» = '0'…'9' | 'a'…'f' | 'A'…'F' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_hex_character(&self, stream: &mut Stream) -> bool {
         {
@@ -386,7 +399,8 @@ impl Language {
         }
     }
 
-    // «HexLiteral» = '0x' 1…*{ «HexCharacter» }  { '_' 1…*{ «HexCharacter» } } ;
+    // «HexLiteral» = "0x" 1…{ «HexCharacter» } { '_' 1…{ «HexCharacter» } } ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_hex_literal(&self, stream: &mut Stream) -> bool {
         {
@@ -406,7 +420,8 @@ impl Language {
         }
     }
 
-    // «HexStringLiteral» = 'hex' ( '"' [ «PossiblySeparatedPairsOfHexDigits» ] '"' | '\'' [ «PossiblySeparatedPairsOfHexDigits» ] '\'' ) ;
+    // «HexStringLiteral» = "hex" ( '"' [ «PossiblySeparatedPairsOfHexDigits» ] '"' | "\'" [ «PossiblySeparatedPairsOfHexDigits» ] "\'" ) ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_hex_string_literal(&self, stream: &mut Stream) -> bool {
         {
@@ -438,6 +453,7 @@ impl Language {
     }
 
     // «Identifier» = «RawIdentifier» - «Keyword» ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_identifier(&self, stream: &mut Stream) -> bool {
         {
@@ -450,6 +466,7 @@ impl Language {
     }
 
     // «IdentifierPart» = «IdentifierStart» | '0'…'9' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_identifier_part(&self, stream: &mut Stream) -> bool {
         {
@@ -462,6 +479,7 @@ impl Language {
     }
 
     // «IdentifierStart» = '_' | '$' | 'a'…'z' | 'A'…'Z' ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_identifier_start(&self, stream: &mut Stream) -> bool {
         {
@@ -472,7 +490,8 @@ impl Language {
         }
     }
 
-    // «Keyword» = «BooleanLiteral» | «FixedBytesType» | «NumberUnit» | «ReservedKeyword» | «SignedIntegerType» | «UnsignedIntegerType» | 'abstract' | 'address' | 'anonymous' | 'as' | 'assembly' | 'bool' | 'break' | 'calldata' | 'catch' | 'constant' | 'constructor' | 'continue' | 'contract' | 'delete' | 'do' | 'else' | 'emit' | 'enum' | 'event' | 'external' | 'fallback' | 'false' | 'fixed' | 'for' | 'function' | 'hex' | 'if' | 'immutable' | 'import' | 'indexed' | 'interface' | 'internal' | 'is' | 'library' | 'mapping' | 'memory' | 'modifier' | 'new' | 'override' | 'payable' | 'pragma' | 'private' | 'public' | 'pure' | 'receive' | 'return' | 'returns' | 'storage' | 'string' | 'struct' | 'true' | 'try' | 'type' | 'ufixed' | 'unchecked' | 'using' | 'view' | 'virtual' | 'while' ;
+    // «Keyword» = «BooleanLiteral» | «FixedBytesType» | «NumberUnit» | «ReservedKeyword» | «SignedIntegerType» | «UnsignedIntegerType» | "abstract" | "address" | "anonymous" | "as" | "assembly" | "bool" | "break" | "calldata" | "catch" | "constant" | "constructor" | "continue" | "contract" | "delete" | "do" | "else" | "emit" | "enum" | "event" | "external" | "fallback" | "false" | "fixed" | "for" | "function" | "hex" | "if" | "immutable" | "import" | "indexed" | "interface" | "internal" | "is" | "library" | "mapping" | "memory" | "modifier" | "new" | "override" | "payable" | "pragma" | "private" | "public" | "pure" | "receive" | "return" | "returns" | "storage" | "string" | "struct" | "true" | "try" | "type" | "ufixed" | "unchecked" | "using" | "view" | "virtual" | "while" ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_keyword(&self, stream: &mut Stream) -> bool {
         {
@@ -744,7 +763,8 @@ impl Language {
         }
     }
 
-    // «MultilineComment» = '/*' { ¬'*' | '*' ¬'/' } '*/' ;
+    // «MultilineComment» = "/*" { ¬'*' | '*' ¬'/' } "*/" ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_multiline_comment(&self, stream: &mut Stream) -> bool {
         {
@@ -767,7 +787,8 @@ impl Language {
         }
     }
 
-    // «NumberUnit» = 'days' | 'ether' | 'finney' | 'gwei' | 'hours' | 'minutes' | 'seconds' | 'szabo' | 'weeks' | 'wei' | 'years' ;
+    // «NumberUnit» = "days" | "ether" | "finney" | "gwei" | "hours" | "minutes" | "seconds" | "szabo" | "weeks" | "wei" | "years" ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_number_unit(&self, stream: &mut Stream) -> bool {
         {
@@ -793,7 +814,8 @@ impl Language {
         }
     }
 
-    // «PossiblySeparatedPairsOfHexDigits» = 2…2*{ «HexCharacter» } { [ '_' ] 2…2*{ «HexCharacter» } } ;
+    // «PossiblySeparatedPairsOfHexDigits» = 2…2{ «HexCharacter» } { [ '_' ] 2…2{ «HexCharacter» } } ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_possibly_separated_pairs_of_hex_digits(&self, stream: &mut Stream) -> bool {
         {
@@ -825,6 +847,7 @@ impl Language {
     }
 
     // «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_raw_identifier(&self, stream: &mut Stream) -> bool {
         {
@@ -845,7 +868,8 @@ impl Language {
         }
     }
 
-    // «ReservedKeyword» = 'after' | 'alias' | 'apply' | 'auto' | 'byte' | 'case' | 'copyof' | 'default' | 'define' | 'final' | 'implements' | 'in' | 'inline' | 'let' | 'macro' | 'match' | 'mutable' | 'null' | 'of' | 'partial' | 'promise' | 'reference' | 'relocatable' | 'sealed' | 'sizeof' | 'static' | 'supports' | 'switch' | 'typedef' | 'typeof' | 'var' ;
+    // «ReservedKeyword» = "after" | "alias" | "apply" | "auto" | "byte" | "case" | "copyof" | "default" | "define" | "final" | "implements" | "in" | "inline" | "let" | "macro" | "match" | "mutable" | "null" | "of" | "partial" | "promise" | "reference" | "relocatable" | "sealed" | "sizeof" | "static" | "supports" | "switch" | "typedef" | "typeof" | "var" ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_reserved_keyword(&self, stream: &mut Stream) -> bool {
         {
@@ -924,7 +948,8 @@ impl Language {
         }
     }
 
-    // «SignedFixedType» = 'fixed' [ 1…*{ '0'…'9' } 'x' 1…*{ '0'…'9' } ] ;
+    // «SignedFixedType» = "fixed" [ 1…{ '0'…'9' } 'x' 1…{ '0'…'9' } ] ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_signed_fixed_type(&self, stream: &mut Stream) -> bool {
         {
@@ -948,7 +973,8 @@ impl Language {
         }
     }
 
-    // «SignedIntegerType» = 'int' [ '8' | '16' | '24' | '32' | '40' | '48' | '56' | '64' | '72' | '80' | '88' | '96' | '104' | '112' | '120' | '128' | '136' | '144' | '152' | '160' | '168' | '176' | '184' | '192' | '200' | '208' | '216' | '224' | '232' | '240' | '248' | '256' ] ;
+    // «SignedIntegerType» = "int" [ '8' | "16" | "24" | "32" | "40" | "48" | "56" | "64" | "72" | "80" | "88" | "96" | "104" | "112" | "120" | "128" | "136" | "144" | "152" | "160" | "168" | "176" | "184" | "192" | "200" | "208" | "216" | "224" | "232" | "240" | "248" | "256" ] ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_signed_integer_type(&self, stream: &mut Stream) -> bool {
         {
@@ -993,7 +1019,8 @@ impl Language {
         }
     }
 
-    // «SingleLineComment» = '//' { ¬( '\u{d}' | '\u{a}' ) } ;
+    // «SingleLineComment» = "//" { ¬( '\u{d}' | '\u{a}' ) } ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_single_line_comment(&self, stream: &mut Stream) -> bool {
         {
@@ -1004,7 +1031,8 @@ impl Language {
         }
     }
 
-    // «SingleQuotedAsciiStringLiteral» = '\'' { «EscapeSequence» | '\u{20}'…'~' - ( '\'' | '\\' ) } '\'' ;
+    // «SingleQuotedAsciiStringLiteral» = "\'" { «EscapeSequence» | '\u{20}'…'~' - ( "\'" | '\\' ) } "\'" ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_single_quoted_ascii_string_literal(&self, stream: &mut Stream) -> bool {
         {
@@ -1026,7 +1054,8 @@ impl Language {
         }
     }
 
-    // «SingleQuotedUnicodeStringLiteral» = 'unicode\'' { «EscapeSequence» | ¬( '\'' | '\\' | '\u{a}' | '\u{d}' ) } '\'' ;
+    // «SingleQuotedUnicodeStringLiteral» = "unicode\'" { «EscapeSequence» | ¬( "\'" | '\\' | '\u{a}' | '\u{d}' ) } "\'" ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_single_quoted_unicode_string_literal(&self, stream: &mut Stream) -> bool {
         {
@@ -1049,7 +1078,8 @@ impl Language {
         }
     }
 
-    // «UnicodeEscape» = 'u' 4…4*{ «HexCharacter» } ;
+    // «UnicodeEscape» = 'u' 4…4{ «HexCharacter» } ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_unicode_escape(&self, stream: &mut Stream) -> bool {
         {
@@ -1068,6 +1098,7 @@ impl Language {
     }
 
     // «UnicodeStringLiteral» = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral» ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_unicode_string_literal(&self, stream: &mut Stream) -> bool {
         {
@@ -1080,6 +1111,7 @@ impl Language {
     }
 
     // «UnsignedFixedType» = 'u' «SignedFixedType» ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_unsigned_fixed_type(&self, stream: &mut Stream) -> bool {
         {
@@ -1091,6 +1123,7 @@ impl Language {
     }
 
     // «UnsignedIntegerType» = 'u' «SignedIntegerType» ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_unsigned_integer_type(&self, stream: &mut Stream) -> bool {
         {
@@ -1101,7 +1134,8 @@ impl Language {
         }
     }
 
-    // «VersionPragmaOperator» = '^' | '~' | '=' | '<' | '>' | '<=' | '>=' ;
+    // «VersionPragmaOperator» = '^' | '~' | '=' | '<' | '>' | "<=" | ">=" ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_version_pragma_operator(&self, stream: &mut Stream) -> bool {
         {
@@ -1114,7 +1148,8 @@ impl Language {
         }
     }
 
-    // «VersionPragmaValue» = 1…*{ '0'…'9' | 'x' | 'X' | '*' } ;
+    // «VersionPragmaValue» = 1…{ '0'…'9' | 'x' | 'X' | '*' } ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_version_pragma_value(&self, stream: &mut Stream) -> bool {
         {
@@ -1128,7 +1163,8 @@ impl Language {
         }
     }
 
-    // «Whitespace» = 1…*{ '\u{20}' | '\u{9}' } ;
+    // «Whitespace» = 1…{ '\u{20}' | '\u{9}' } ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_whitespace(&self, stream: &mut Stream) -> bool {
         {
@@ -1137,6 +1173,7 @@ impl Language {
     }
 
     // «YulDecimalLiteral» = '0' | '1'…'9' { '0'…'9' } ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_yul_decimal_literal(&self, stream: &mut Stream) -> bool {
         {
@@ -1151,7 +1188,8 @@ impl Language {
         }
     }
 
-    // «YulHexLiteral» = '0x' 1…*{ «HexCharacter» } ;
+    // «YulHexLiteral» = "0x" 1…{ «HexCharacter» } ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_yul_hex_literal(&self, stream: &mut Stream) -> bool {
         {
@@ -1168,6 +1206,7 @@ impl Language {
     }
 
     // «YulIdentifier» = «RawIdentifier» - «YulKeyword» ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_yul_identifier(&self, stream: &mut Stream) -> bool {
         {
@@ -1202,7 +1241,8 @@ impl Language {
         }
     }
 
-    // «YulKeyword» = «BooleanLiteral» | 'break' | 'case' | 'continue' | 'default' | 'for' | 'function' | 'hex' | 'if' | 'leave' | 'let' | 'switch' ;
+    // «YulKeyword» = «BooleanLiteral» | "break" | "case" | "continue" | "default" | "for" | "function" | "hex" | "if" | "leave" | "let" | "switch" ;
+
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_yul_keyword(&self, stream: &mut Stream) -> bool {
         {

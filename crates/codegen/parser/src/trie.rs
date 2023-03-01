@@ -1,4 +1,8 @@
-use codegen_schema::types::productions::{ExpressionParser, ExpressionRef, ProductionKind};
+use codegen_schema::types::{
+    parser::ParserDefinition,
+    production::Production,
+    scanner::{ScannerDefinition, ScannerRef},
+};
 
 use super::{combinator_tree::CombinatorTree, naming};
 use std::{collections::BTreeMap, fmt::Debug};
@@ -57,14 +61,6 @@ impl<P: Clone + Debug> Trie<P> {
         self.subtries.is_empty() && self.payload.is_none()
     }
 
-    pub fn any_payload<F>(&self, f: F) -> bool
-    where
-        F: Fn(&P) -> bool,
-    {
-        // TODO: This is not efficient
-        self.iter().any(|(_, payload)| f(payload))
-    }
-
     pub fn iter(&self) -> TrieIterator<P> {
         TrieIterator {
             subtrie_iterators: vec![self.subtries.iter()],
@@ -111,42 +107,87 @@ impl<'iter, P: Clone + Debug> Iterator for TrieIterator<'iter, P> {
 pub type TerminalTriePayload = Option<String>;
 pub type TerminalTrie = Trie<TerminalTriePayload>;
 
-pub fn from_expression(tree: &CombinatorTree, expression: &ExpressionRef) -> Option<TerminalTrie> {
+pub fn from_scanner(tree: &CombinatorTree, scanner: ScannerRef) -> Option<TerminalTrie> {
     fn collect_terminals(
         trie: &mut TerminalTrie,
         tree: &CombinatorTree,
-        expression: &ExpressionRef,
-        force_all_entries_to_be_named: bool,
+        scanner: ScannerRef,
     ) -> bool {
-        match &expression.parser {
-            ExpressionParser::Choice(exprs) => exprs.iter().fold(true, |accum, e| {
-                accum && collect_terminals(trie, tree, e, force_all_entries_to_be_named)
+        match &scanner.definition {
+            ScannerDefinition::Choice(exprs) => exprs.iter().fold(true, |accum, scanner| {
+                accum && collect_terminals(trie, tree, scanner.clone())
             }),
 
-            ExpressionParser::Terminal(string) => {
+            ScannerDefinition::Terminal(string) => {
                 trie.insert(
                     &string,
-                    expression.config.name.clone().or_else(|| {
-                        if tree.production.kind == ProductionKind::Token
-                            && !force_all_entries_to_be_named
-                        {
-                            None
-                        } else {
-                            Some(naming::name_of_terminal_string(&string))
-                        }
-                    }),
+                        None
                 );
                 true
             }
 
-            ExpressionParser::Reference(name) => {
-                tree.production.kind == ProductionKind::Token
+            ScannerDefinition::Reference(name) => collect_terminals(
+                trie,
+                tree,
+                match tree.context.get_tree_by_name(name).production.as_ref() {
+                    Production::Scanner { name, version_map } => {
+                        version_map.get_for_version(&tree.context.version).expect(
+                            &format!("Validation should have ensured: no version of {} exists for version {}", name, tree.context.version)
+                        ).clone()
+                    }
+                    Production::TriviaParser { .. }
+                    | Production::Parser { .. }
+                    | Production::PrecedenceParser { .. } => {
+                        unreachable!(
+                            "Validation should have ensured: scanners can only reference scanners"
+                        )
+                    }
+                },
+            ),
+
+            _ => false,
+        }
+    }
+
+    let mut trie = TerminalTrie::new();
+    if collect_terminals(&mut trie, tree, scanner.clone()) && !trie.is_empty() {
+        Some(trie)
+    } else {
+        None
+    }
+}
+
+pub fn from_parser_definition(
+    tree: &CombinatorTree,
+    name: Option<String>,
+    parser_definition: &ParserDefinition,
+) -> Option<TerminalTrie> {
+    fn collect_terminals(
+        trie: &mut TerminalTrie,
+        tree: &CombinatorTree,
+        name: Option<String>,
+        parser_definition: &ParserDefinition,
+        force_all_entries_to_be_named: bool,
+    ) -> bool {
+        match parser_definition {
+            ParserDefinition::Choice(exprs) => exprs.iter().fold(true, |accum, e| {
+                accum
                     && collect_terminals(
                         trie,
                         tree,
-                        &tree.context.get_tree_by_name(name).expression(),
+                        e.name.clone(),
+                        &e.definition,
                         force_all_entries_to_be_named,
                     )
+            }),
+
+            ParserDefinition::Terminal(string) => {
+                trie.insert(
+                    &string,
+                    name.clone()
+                        .or_else(|| Some(naming::name_of_terminal_string(&string))),
+                );
+                true
             }
 
             _ => false,
@@ -154,17 +195,7 @@ pub fn from_expression(tree: &CombinatorTree, expression: &ExpressionRef) -> Opt
     }
 
     let mut trie = TerminalTrie::new();
-    if collect_terminals(
-        &mut trie,
-        tree,
-        expression,
-        tree.production.kind != ProductionKind::Token,
-    ) && !trie.is_empty()
-    {
-        if tree.production.kind == ProductionKind::Token && trie.any_payload(Option::is_some) {
-            trie = TerminalTrie::new();
-            collect_terminals(&mut trie, tree, expression, true);
-        }
+    if collect_terminals(&mut trie, tree, name, parser_definition, true) && !trie.is_empty() {
         Some(trie)
     } else {
         None

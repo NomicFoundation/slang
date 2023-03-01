@@ -1,0 +1,23 @@
+=== "📝 input.sol"
+
+    ```solidity
+    --8<-- "specification/notes/05-expressions/03-numbers/tests/units/finney/input.sol"
+    ```
+
+=== "✅ 0.4.13"
+
+    ```json
+    --8<-- "specification/notes/05-expressions/03-numbers/tests/units/finney/generated/0.4.13"
+    ```
+
+=== "❌ 0.7.0"
+
+    ```log
+    --8<-- "specification/notes/05-expressions/03-numbers/tests/units/finney/generated/0.7.0"
+    ```
+
+=== "❌ 0.8.0"
+
+    ```log
+    --8<-- "specification/notes/05-expressions/03-numbers/tests/units/finney/generated/0.8.0"
+    ```

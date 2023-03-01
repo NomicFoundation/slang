@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
 
 - name: "SourceUnit"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - oneOrMore:
@@ -12,7 +12,7 @@
           reference: "EndOfFileTrivia"
 
 - name: "Directive"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     choice:
       - reference: "PragmaDirective"
@@ -20,7 +20,7 @@
       - reference: "UsingDirective"
 
 - name: "Definition"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     choice:
       - reference: "ContractDefinition"

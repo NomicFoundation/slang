@@ -26,7 +26,7 @@ impl Grammar {
             .iter()
             .flat_map(|section| &section.topics)
             .flat_map(|topic| &topic.productions)
-            .map(|production| (production.name.to_owned(), production.clone()))
+            .map(|production| (production.name().to_owned(), production.clone()))
             .collect();
 
         return Ok(Grammar {

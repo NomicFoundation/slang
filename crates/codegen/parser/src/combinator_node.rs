@@ -1,5 +1,7 @@
-use codegen_schema::types::productions::{
-    ExpressionParser, ExpressionRef, ParserType, ProductionKind,
+use codegen_schema::types::{
+    parser::{ParserDefinition, ParserRef},
+    precedence_parser::{OperatorModel, PrecedenceParserRef},
+    scanner::{ScannerDefinition, ScannerRef},
 };
 use itertools::Itertools;
 
@@ -79,66 +81,23 @@ pub struct PrecedenceRuleOperator<'context> {
     pub operator: &'context CombinatorNode<'context>,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum OperatorModel {
-    BinaryLeftAssociative,
-    BinaryRightAssociative,
-    UnaryPrefix,
-    UnarySuffix,
-}
-
 impl<'context> CombinatorNode<'context> {
-    pub fn new(
+    pub fn from_scanner(
         tree: &'context CombinatorTree<'context>,
-        expression: &ExpressionRef,
+        scanner: &ScannerRef,
     ) -> &'context CombinatorNode<'context> {
-        if let Some(ParserType::Precedence) = expression.config.parser_type {
-            if tree.production.kind == ProductionKind::Rule {
-                if let ExpressionParser::Choice(exprs) = &expression.parser {
-                    let mut primary_expressions = Vec::new();
-                    let mut operators = Vec::new();
-                    for expr in exprs {
-                        if let ExpressionParser::Reference(prod_name) = &expr.parser {
-                            let operator_tree = tree.context.get_tree_by_name(prod_name);
-                            if let Some(operator) = operator_tree.to_precedence_rule_operator(tree)
-                            {
-                                operators.push(operator);
-                            } else {
-                                primary_expressions.push(operator_tree);
-                            }
-                        } else {
-                            unreachable!("Validation should have checked this: The precedence parser type is only applicable to a choice of references")
-                        }
-                    }
-                    return tree.context.alloc_node(Self::PrecedenceExpressionRule {
-                        tree,
-                        operators,
-                        primary_expressions,
-                    });
-                } else {
-                    unreachable!("Validation should have checked this: The precedence parser type is only applicable to a choice of references")
-                }
-            } else {
-                unreachable!("Validation should have checked this: The precendence parser type is only applicable to rules")
-            }
+        if let Some(filter) = CharSet::from_scanner(tree, scanner.clone()) {
+            return tree
+                .context
+                .alloc_node(Self::CharacterFilter { name: None, filter });
         }
 
-        let name = expression.config.name.clone();
-
-        if tree.production.kind == ProductionKind::Token {
-            if let Some(filter) = CharSet::from_expression(tree, expression, true) {
-                return tree
-                    .context
-                    .alloc_node(Self::CharacterFilter { name, filter });
-            }
-
-            if let Some(trie) = trie::from_expression(tree, expression) {
-                return tree.context.alloc_node(Self::TerminalTrie { trie });
-            }
+        if let Some(trie) = trie::from_scanner(tree, scanner.clone()) {
+            return tree.context.alloc_node(Self::TerminalTrie { trie });
         }
 
-        tree.context.alloc_node(match &expression.parser {
-            ExpressionParser::Choice(exprs) => {
+        tree.context.alloc_node(match &scanner.definition {
+            ScannerDefinition::Choice(exprs) => {
                 // Terminals in choices are merged, and represented as a trie
 
                 enum TN<'c> {
@@ -147,9 +106,180 @@ impl<'context> CombinatorNode<'context> {
                 }
                 let mut elements = exprs
                     .iter()
-                    .map(|expr| match trie::from_expression(tree, expr) {
-                        None => TN::Node(Self::new(tree, expr)),
+                    .map(|expr| match trie::from_scanner(tree, expr.clone()) {
+                        None => TN::Node(Self::from_scanner(tree, expr)),
                         Some(trie) => TN::Trie(trie),
+                    })
+                    .coalesce(|prev, curr| match (prev, curr) {
+                        (TN::Trie(prev), TN::Trie(curr)) => Ok(TN::Trie({
+                            let mut n = prev.clone();
+                            n.extend(curr);
+                            n
+                        })),
+                        pair => Err(pair),
+                    })
+                    .map(|either| match either {
+                        TN::Node(node) => node,
+                        TN::Trie(trie) => tree.context.alloc_node(Self::TerminalTrie { trie }),
+                    })
+                    .collect::<Vec<_>>();
+                if elements.len() == 1 {
+                    return elements.pop().unwrap();
+                } else {
+                    Self::Choice {
+                        name: None,
+                        elements,
+                    }
+                }
+            }
+
+            ScannerDefinition::DelimitedBy {
+                open,
+                expression,
+                close,
+            } => Self::DelimitedBy {
+                name: None,
+                open: open.clone(),
+                expr: Self::from_scanner(tree, expression),
+                close: close.clone(),
+            },
+
+            ScannerDefinition::Difference {
+                minuend,
+                subtrahend,
+            } => Self::Difference {
+                minuend: Self::from_scanner(tree, minuend),
+                subtrahend: Self::from_scanner(tree, subtrahend),
+            },
+
+            ScannerDefinition::Not(_) => {
+                if let Some(filter) = CharSet::from_scanner(tree, scanner.clone()) {
+                    Self::CharacterFilter { name: None, filter }
+                } else {
+                    unimplemented!("¬ is only supported on characters or sets thereof")
+                }
+            }
+
+            ScannerDefinition::OneOrMore(expr) => Self::OneOrMore {
+                name: None,
+                expr: Self::from_scanner(tree, expr),
+            },
+
+            ScannerDefinition::Optional(expr) => Self::Optional {
+                expr: Self::from_scanner(tree, expr),
+            },
+
+            ScannerDefinition::Range { .. } => Self::CharacterFilter {
+                name: None,
+                filter: CharSet::from_scanner(tree, scanner.clone()).unwrap(),
+            },
+
+            ScannerDefinition::Reference(name) => Self::Reference {
+                tree: tree.context.get_tree_by_name(name),
+            },
+
+            ScannerDefinition::Repeat {
+                expression,
+                min,
+                max,
+            } => Self::Repeated {
+                name: None,
+                expr: Self::from_scanner(tree, expression),
+                min: *min,
+                max: *max,
+            },
+
+            ScannerDefinition::SeparatedBy {
+                expression,
+                separator,
+            } => Self::SeparatedBy {
+                name: None,
+                expr: Self::from_scanner(tree, expression),
+                separator: separator.clone(),
+            },
+
+            ScannerDefinition::Sequence(exprs) => Self::Sequence {
+                name: None,
+                elements: exprs.iter().map(|e| Self::from_scanner(tree, e)).collect(),
+            },
+
+            ScannerDefinition::Terminal(_) => {
+                if let Some(filter) = CharSet::from_scanner(tree, scanner.clone()) {
+                    Self::CharacterFilter { name: None, filter }
+                } else {
+                    Self::TerminalTrie {
+                        trie: trie::from_scanner(tree, scanner.clone()).unwrap(),
+                    }
+                }
+            }
+
+            ScannerDefinition::ZeroOrMore(expr) => Self::ZeroOrMore {
+                name: None,
+                expr: Self::from_scanner(tree, expr),
+            },
+        })
+    }
+
+    pub fn from_parser(
+        tree: &'context CombinatorTree<'context>,
+        parser: &ParserRef,
+    ) -> &'context CombinatorNode<'context> {
+        Self::from_parser_definition(tree, parser.name.clone(), &parser.definition)
+    }
+
+    pub fn from_precedence_parser(
+        tree: &'context CombinatorTree<'context>,
+        parser: &PrecedenceParserRef,
+    ) -> &'context CombinatorNode<'context> {
+        let primary_expressions: Vec<&CombinatorTree> = parser
+            .definition
+            .primary_expressions
+            .iter()
+            .map(|r| tree.context.get_tree_by_name(&r.reference))
+            .collect();
+        let operators: Vec<PrecedenceRuleOperator> = parser
+            .definition
+            .operators
+            .iter()
+            .map(|operator| -> PrecedenceRuleOperator {
+                PrecedenceRuleOperator {
+                    name: operator.name.clone(),
+                    model: operator.model,
+                    operator: Self::from_parser_definition(tree, None, &operator.definition),
+                }
+            })
+            .collect();
+        return tree.context.alloc_node(Self::PrecedenceExpressionRule {
+            tree,
+            operators,
+            primary_expressions,
+        });
+    }
+
+    fn from_parser_definition(
+        tree: &'context CombinatorTree<'context>,
+        name: Option<String>,
+        parser_definition: &ParserDefinition,
+    ) -> &'context CombinatorNode<'context> {
+        tree.context.alloc_node(match &parser_definition {
+            ParserDefinition::Choice(exprs) => {
+                // Terminals in choices are merged, and represented as a trie
+
+                enum TN<'c> {
+                    Trie(trie::TerminalTrie),
+                    Node(&'c CombinatorNode<'c>),
+                }
+                let mut elements = exprs
+                    .iter()
+                    .map(|expr| {
+                        match trie::from_parser_definition(
+                            tree,
+                            expr.name.clone(),
+                            &expr.definition,
+                        ) {
+                            None => TN::Node(Self::from_parser(tree, expr)),
+                            Some(trie) => TN::Trie(trie),
+                        }
                     })
                     .coalesce(|prev, curr| match (prev, curr) {
                         (TN::Trie(prev), TN::Trie(curr)) => Ok(TN::Trie({
@@ -171,94 +301,70 @@ impl<'context> CombinatorNode<'context> {
                 }
             }
 
-            ExpressionParser::DelimitedBy {
+            ParserDefinition::DelimitedBy {
                 open,
                 expression,
                 close,
             } => Self::DelimitedBy {
                 name,
                 open: open.clone(),
-                expr: Self::new(tree, expression),
+                expr: Self::from_parser(tree, expression),
                 close: close.clone(),
             },
 
-            ExpressionParser::Difference {
+            ParserDefinition::Difference {
                 minuend,
                 subtrahend,
             } => Self::Difference {
-                minuend: Self::new(tree, minuend),
-                subtrahend: Self::new(tree, subtrahend),
+                minuend: Self::from_parser(tree, minuend),
+                subtrahend: Self::from_parser(tree, subtrahend),
             },
 
-            ExpressionParser::Not(_) => {
-                if let Some(filter) = CharSet::from_expression(tree, expression, true) {
-                    Self::CharacterFilter { name, filter }
-                } else {
-                    unimplemented!("¬ is only supported on characters or sets thereof")
-                }
-            }
-
-            ExpressionParser::OneOrMore(expr) => Self::OneOrMore {
+            ParserDefinition::OneOrMore(expr) => Self::OneOrMore {
                 name,
-                expr: Self::new(tree, expr),
+                expr: Self::from_parser(tree, expr),
             },
 
-            ExpressionParser::Optional(expr) => Self::Optional {
-                expr: Self::new(tree, expr),
+            ParserDefinition::Optional(expr) => Self::Optional {
+                expr: Self::from_parser(tree, expr),
             },
 
-            ExpressionParser::Range { .. } => Self::CharacterFilter {
-                name,
-                filter: CharSet::from_expression(tree, expression, true).unwrap(),
+            ParserDefinition::Reference(name) => Self::Reference {
+                tree: tree.context.get_tree_by_name(name),
             },
 
-            ExpressionParser::Reference(name) => Self::Reference {
-                tree: tree
-                    .context
-                    .trees_by_name
-                    .borrow()
-                    .get(name)
-                    .expect("Production not found"),
-            },
-
-            ExpressionParser::Repeat {
+            ParserDefinition::Repeat {
                 expression,
                 min,
                 max,
             } => Self::Repeated {
                 name,
-                expr: Self::new(tree, expression),
+                expr: Self::from_parser(tree, expression),
                 min: *min,
                 max: *max,
             },
 
-            ExpressionParser::SeparatedBy {
+            ParserDefinition::SeparatedBy {
                 expression,
                 separator,
             } => Self::SeparatedBy {
                 name,
-                expr: Self::new(tree, expression),
+                expr: Self::from_parser(tree, expression),
                 separator: separator.clone(),
             },
 
-            ExpressionParser::Sequence(exprs) => Self::Sequence {
+            ParserDefinition::Sequence(exprs) => Self::Sequence {
                 name,
-                elements: exprs.iter().map(|e| Self::new(tree, e)).collect(),
+                elements: exprs.iter().map(|e| Self::from_parser(tree, e)).collect(),
             },
 
-            ExpressionParser::Terminal(_) => {
-                if let Some(filter) = CharSet::from_expression(tree, expression, true) {
-                    Self::CharacterFilter { name, filter }
-                } else {
-                    Self::TerminalTrie {
-                        trie: trie::from_expression(tree, expression).unwrap(),
-                    }
-                }
-            }
+            ParserDefinition::Terminal(_) => Self::TerminalTrie {
+                trie: trie::from_parser_definition(tree, name, parser_definition).unwrap(),
+            },
 
-            ExpressionParser::ZeroOrMore(expr) => Self::ZeroOrMore {
+            ParserDefinition::ZeroOrMore(expr) => Self::ZeroOrMore {
                 name,
-                expr: Self::new(tree, expr),
+                expr: Self::from_parser(tree, expr),
             },
         })
     }

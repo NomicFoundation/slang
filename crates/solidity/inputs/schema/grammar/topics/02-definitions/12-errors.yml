@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
 
 - name: "ErrorDefinition"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "error"
@@ -18,7 +18,7 @@
       - terminal: ";"
 
 - name: "ErrorParameter"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - reference: "TypeName"

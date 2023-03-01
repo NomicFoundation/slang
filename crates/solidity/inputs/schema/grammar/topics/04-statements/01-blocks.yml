@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
 
 - name: "Block"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     delimitedBy:
       open: "{"
@@ -13,14 +13,14 @@
       close: "}"
 
 - name: "UncheckedBlock"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "unchecked"
       - reference: "Block"
 
 - name: "Statement"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     choice:
       - reference: "Block"
@@ -39,7 +39,7 @@
       - reference: "AssemblyStatement"
 
 - name: "SimpleStatement"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     choice:
       - reference: "TupleDeconstructionStatement"
@@ -47,7 +47,7 @@
       - reference: "ExpressionStatement"
 
 - name: "ExpressionStatement"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - reference: "Expression"

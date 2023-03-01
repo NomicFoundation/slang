@@ -1,10 +1,11 @@
 use std::{io::Write, path::PathBuf};
 
+use codegen_ebnf::ebnf_writer::EBNFWritable;
 use codegen_schema::types::grammar::Grammar;
 use codegen_utils::context::CodegenContext;
 
-use crate::{
-    productions::{write_production, SpecProductionContext},
+use super::{
+    html_ebnf_writer::{HTMLEBNFWriter, SpecProductionContext},
     NavigationEntry,
 };
 
@@ -44,7 +45,11 @@ pub fn generate_spec_grammar(
 
             for production in &topic.productions {
                 writeln!(w).unwrap();
-                write_production(&mut w, production, &context);
+                let mut writer = HTMLEBNFWriter {
+                    w: &mut w,
+                    context: &context,
+                };
+                production.write_ebnf("", &mut writer);
             }
         }
     });
@@ -63,7 +68,7 @@ fn generate_context(grammar: &Grammar) -> SpecProductionContext {
         productions_location: grammar
             .productions
             .iter()
-            .map(|(_, production)| (production.name.clone(), ".".to_string()))
+            .map(|(_, production)| (production.name().clone(), ".".to_string()))
             .collect(),
     };
     context

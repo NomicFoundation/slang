@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
 
 - name: "YulBlock"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     delimitedBy:
       open: "{"
@@ -11,7 +11,7 @@
       close: "}"
 
 - name: "YulStatement"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     choice:
       - reference: "YulBlock"
@@ -27,7 +27,7 @@
       - reference: "YulContinueStatement"
 
 - name: "YulVariableDeclaration"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "let"
@@ -41,7 +41,7 @@
             - reference: "YulExpression"
 
 - name: "YulFunctionDefinition"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "function"
@@ -67,7 +67,7 @@
       - reference: "YulBlock"
 
 - name: "YulAssignmentStatement"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - separatedBy:
@@ -78,7 +78,7 @@
       - reference: "YulExpression"
 
 - name: "YulIfStatement"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "if"
@@ -86,22 +86,22 @@
       - reference: "YulBlock"
 
 - name: "YulLeaveStatement"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     terminal: "leave"
 
 - name: "YulBreakStatement"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     terminal: "break"
 
 - name: "YulContinueStatement"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     terminal: "continue"
 
 - name: "YulForStatement"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "for"
@@ -111,7 +111,7 @@
       - reference: "YulBlock"
 
 - name: "YulSwitchStatement"
-  kind: "Rule"
+  kind: "Parser"
   unversioned:
     sequence:
       - terminal: "switch"

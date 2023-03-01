@@ -7,45 +7,154 @@
   },
   "definitions": {
     "Production": {
-      "type": "object",
       "anyOf": [
         {
           "type": "object",
-          "required": ["unversioned"],
+          "anyOf": [
+            {
+              "type": "object",
+              "required": ["unversioned"],
+              "properties": {
+                "unversioned": {
+                  "$ref": "#/definitions/Scanner"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "required": ["versioned"],
+              "properties": {
+                "versioned": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/definitions/Scanner"
+                  }
+                }
+              }
+            }
+          ],
+          "required": ["kind", "name"],
           "properties": {
-            "unversioned": {
-              "$ref": "#/definitions/Expression"
+            "kind": {
+              "type": "string",
+              "enum": ["Scanner"]
+            },
+            "name": {
+              "type": "string"
             }
           }
         },
         {
           "type": "object",
-          "required": ["versioned"],
-          "properties": {
-            "versioned": {
+          "anyOf": [
+            {
               "type": "object",
-              "additionalProperties": {
-                "$ref": "#/definitions/Expression"
+              "required": ["unversioned"],
+              "properties": {
+                "unversioned": {
+                  "$ref": "#/definitions/Parser"
+                }
               }
+            },
+            {
+              "type": "object",
+              "required": ["versioned"],
+              "properties": {
+                "versioned": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/definitions/Parser"
+                  }
+                }
+              }
+            }
+          ],
+          "required": ["kind", "name"],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": ["TriviaParser"]
+            },
+            "name": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "anyOf": [
+            {
+              "type": "object",
+              "required": ["unversioned"],
+              "properties": {
+                "unversioned": {
+                  "$ref": "#/definitions/Parser"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "required": ["versioned"],
+              "properties": {
+                "versioned": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/definitions/Parser"
+                  }
+                }
+              }
+            }
+          ],
+          "required": ["kind", "name"],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": ["Parser"]
+            },
+            "name": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "anyOf": [
+            {
+              "type": "object",
+              "required": ["unversioned"],
+              "properties": {
+                "unversioned": {
+                  "$ref": "#/definitions/PrecedenceParser"
+                }
+              }
+            },
+            {
+              "type": "object",
+              "required": ["versioned"],
+              "properties": {
+                "versioned": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "$ref": "#/definitions/PrecedenceParser"
+                  }
+                }
+              }
+            }
+          ],
+          "required": ["kind", "name"],
+          "properties": {
+            "kind": {
+              "type": "string",
+              "enum": ["PrecedenceParser"]
+            },
+            "name": {
+              "type": "string"
             }
           }
         }
-      ],
-      "required": ["kind", "name"],
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "kind": {
-          "$ref": "#/definitions/ProductionKind"
-        }
-      }
+      ]
     },
-    "ProductionKind": {
-      "type": "string",
-      "enum": ["Rule", "Trivia", "Token"]
-    },
-    "Expression": {
+    "Scanner": {
       "type": "object",
       "anyOf": [
         {
@@ -56,7 +165,7 @@
             "choice": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/Expression"
+                "$ref": "#/definitions/Scanner"
               }
             }
           }
@@ -74,7 +183,7 @@
                   "type": "string"
                 },
                 "expression": {
-                  "$ref": "#/definitions/Expression"
+                  "$ref": "#/definitions/Scanner"
                 },
                 "close": {
                   "type": "string"
@@ -93,10 +202,10 @@
               "required": ["minuend", "subtrahend"],
               "properties": {
                 "minuend": {
-                  "$ref": "#/definitions/Expression"
+                  "$ref": "#/definitions/Scanner"
                 },
                 "subtrahend": {
-                  "$ref": "#/definitions/Expression"
+                  "$ref": "#/definitions/Scanner"
                 }
               }
             }
@@ -108,7 +217,7 @@
           "required": ["not"],
           "properties": {
             "not": {
-              "$ref": "#/definitions/Expression"
+              "$ref": "#/definitions/Scanner"
             }
           }
         },
@@ -118,7 +227,7 @@
           "required": ["oneOrMore"],
           "properties": {
             "oneOrMore": {
-              "$ref": "#/definitions/Expression"
+              "$ref": "#/definitions/Scanner"
             }
           }
         },
@@ -128,7 +237,7 @@
           "required": ["optional"],
           "properties": {
             "optional": {
-              "$ref": "#/definitions/Expression"
+              "$ref": "#/definitions/Scanner"
             }
           }
         },
@@ -185,7 +294,7 @@
                   "minimum": 0.0
                 },
                 "expression": {
-                  "$ref": "#/definitions/Expression"
+                  "$ref": "#/definitions/Scanner"
                 }
               }
             }
@@ -204,7 +313,7 @@
                   "type": "string"
                 },
                 "expression": {
-                  "$ref": "#/definitions/Expression"
+                  "$ref": "#/definitions/Scanner"
                 }
               }
             }
@@ -218,7 +327,7 @@
             "sequence": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/Expression"
+                "$ref": "#/definitions/Scanner"
               }
             }
           }
@@ -239,7 +348,187 @@
           "required": ["zeroOrMore"],
           "properties": {
             "zeroOrMore": {
-              "$ref": "#/definitions/Expression"
+              "$ref": "#/definitions/Scanner"
+            }
+          }
+        }
+      ],
+      "properties": {
+        "lookahead": {
+          "default": null,
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Scanner"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "Parser": {
+      "type": "object",
+      "anyOf": [
+        {
+          "title": "Choice Expression",
+          "type": "object",
+          "required": ["choice"],
+          "properties": {
+            "choice": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Parser"
+              }
+            }
+          }
+        },
+        {
+          "title": "DelimitedBy Expression",
+          "type": "object",
+          "required": ["delimitedBy"],
+          "properties": {
+            "delimitedBy": {
+              "type": "object",
+              "required": ["close", "expression", "open"],
+              "properties": {
+                "open": {
+                  "type": "string"
+                },
+                "expression": {
+                  "$ref": "#/definitions/Parser"
+                },
+                "close": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Difference Expression",
+          "type": "object",
+          "required": ["difference"],
+          "properties": {
+            "difference": {
+              "type": "object",
+              "required": ["minuend", "subtrahend"],
+              "properties": {
+                "minuend": {
+                  "$ref": "#/definitions/Parser"
+                },
+                "subtrahend": {
+                  "$ref": "#/definitions/Parser"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "OneOrMore Expression",
+          "type": "object",
+          "required": ["oneOrMore"],
+          "properties": {
+            "oneOrMore": {
+              "$ref": "#/definitions/Parser"
+            }
+          }
+        },
+        {
+          "title": "Optional Expression",
+          "type": "object",
+          "required": ["optional"],
+          "properties": {
+            "optional": {
+              "$ref": "#/definitions/Parser"
+            }
+          }
+        },
+        {
+          "title": "Reference Expression",
+          "type": "object",
+          "required": ["reference"],
+          "properties": {
+            "reference": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "Repeat Expression",
+          "type": "object",
+          "required": ["repeat"],
+          "properties": {
+            "repeat": {
+              "type": "object",
+              "required": ["expression", "max", "min"],
+              "properties": {
+                "min": {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                "max": {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                "expression": {
+                  "$ref": "#/definitions/Parser"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "SeparatedBy Expression",
+          "type": "object",
+          "required": ["separatedBy"],
+          "properties": {
+            "separatedBy": {
+              "type": "object",
+              "required": ["expression", "separator"],
+              "properties": {
+                "separator": {
+                  "type": "string"
+                },
+                "expression": {
+                  "$ref": "#/definitions/Parser"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Sequence Expression",
+          "type": "object",
+          "required": ["sequence"],
+          "properties": {
+            "sequence": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Parser"
+              }
+            }
+          }
+        },
+        {
+          "title": "Terminal Expression",
+          "type": "object",
+          "required": ["terminal"],
+          "properties": {
+            "terminal": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "ZeroOrMore Expression",
+          "type": "object",
+          "required": ["zeroOrMore"],
+          "properties": {
+            "zeroOrMore": {
+              "$ref": "#/definitions/Parser"
             }
           }
         }
@@ -249,33 +538,11 @@
           "default": null,
           "type": ["string", "null"]
         },
-        "parserType": {
-          "default": null,
-          "anyOf": [
-            {
-              "$ref": "#/definitions/ParserType"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
         "lookahead": {
           "default": null,
           "anyOf": [
             {
-              "$ref": "#/definitions/Expression"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "associativity": {
-          "default": null,
-          "anyOf": [
-            {
-              "$ref": "#/definitions/ExpressionAssociativity"
+              "$ref": "#/definitions/Parser"
             },
             {
               "type": "null"
@@ -284,13 +551,219 @@
         }
       }
     },
-    "ParserType": {
-      "type": "string",
-      "enum": ["Precedence"]
+    "PrecedenceParser": {
+      "type": "object",
+      "required": ["operators", "primaryExpressions"],
+      "properties": {
+        "name": {
+          "default": null,
+          "type": ["string", "null"]
+        },
+        "operators": {
+          "title": "Operator Definitions",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/OperatorDefinition"
+          }
+        },
+        "primaryExpressions": {
+          "title": "Primary Expression References",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Reference"
+          }
+        }
+      }
     },
-    "ExpressionAssociativity": {
+    "OperatorDefinition": {
+      "type": "object",
+      "anyOf": [
+        {
+          "title": "Choice Expression",
+          "type": "object",
+          "required": ["choice"],
+          "properties": {
+            "choice": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Parser"
+              }
+            }
+          }
+        },
+        {
+          "title": "DelimitedBy Expression",
+          "type": "object",
+          "required": ["delimitedBy"],
+          "properties": {
+            "delimitedBy": {
+              "type": "object",
+              "required": ["close", "expression", "open"],
+              "properties": {
+                "open": {
+                  "type": "string"
+                },
+                "expression": {
+                  "$ref": "#/definitions/Parser"
+                },
+                "close": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Difference Expression",
+          "type": "object",
+          "required": ["difference"],
+          "properties": {
+            "difference": {
+              "type": "object",
+              "required": ["minuend", "subtrahend"],
+              "properties": {
+                "minuend": {
+                  "$ref": "#/definitions/Parser"
+                },
+                "subtrahend": {
+                  "$ref": "#/definitions/Parser"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "OneOrMore Expression",
+          "type": "object",
+          "required": ["oneOrMore"],
+          "properties": {
+            "oneOrMore": {
+              "$ref": "#/definitions/Parser"
+            }
+          }
+        },
+        {
+          "title": "Optional Expression",
+          "type": "object",
+          "required": ["optional"],
+          "properties": {
+            "optional": {
+              "$ref": "#/definitions/Parser"
+            }
+          }
+        },
+        {
+          "title": "Reference Expression",
+          "type": "object",
+          "required": ["reference"],
+          "properties": {
+            "reference": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "Repeat Expression",
+          "type": "object",
+          "required": ["repeat"],
+          "properties": {
+            "repeat": {
+              "type": "object",
+              "required": ["expression", "max", "min"],
+              "properties": {
+                "min": {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                "max": {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                "expression": {
+                  "$ref": "#/definitions/Parser"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "SeparatedBy Expression",
+          "type": "object",
+          "required": ["separatedBy"],
+          "properties": {
+            "separatedBy": {
+              "type": "object",
+              "required": ["expression", "separator"],
+              "properties": {
+                "separator": {
+                  "type": "string"
+                },
+                "expression": {
+                  "$ref": "#/definitions/Parser"
+                }
+              }
+            }
+          }
+        },
+        {
+          "title": "Sequence Expression",
+          "type": "object",
+          "required": ["sequence"],
+          "properties": {
+            "sequence": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Parser"
+              }
+            }
+          }
+        },
+        {
+          "title": "Terminal Expression",
+          "type": "object",
+          "required": ["terminal"],
+          "properties": {
+            "terminal": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "title": "ZeroOrMore Expression",
+          "type": "object",
+          "required": ["zeroOrMore"],
+          "properties": {
+            "zeroOrMore": {
+              "$ref": "#/definitions/Parser"
+            }
+          }
+        }
+      ],
+      "required": ["model", "name"],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "model": {
+          "$ref": "#/definitions/OperatorModel"
+        }
+      }
+    },
+    "OperatorModel": {
       "type": "string",
-      "enum": ["Left", "Right"]
+      "enum": ["BinaryLeftAssociative", "BinaryRightAssociative", "UnaryPrefix", "UnarySuffix"]
+    },
+    "Reference": {
+      "type": "object",
+      "required": ["reference"],
+      "properties": {
+        "reference": {
+          "title": "Production Reference",
+          "type": "string"
+        }
+      }
     }
   }
 }

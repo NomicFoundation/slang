@@ -1,0 +1,65 @@
+# yaml-language-server: $schema=../../../../../../codegen/schema/generated/topic.schema.json
+
+- name: "PrimaryExpression"
+  kind: "Parser"
+  unversioned:
+    choice:
+      - reference: "Identifier"
+      - reference: "TupleExpression"
+      - reference: "ArrayLiteral"
+      - reference: "StringExpression"
+      - reference: "NumericLiteral"
+      - reference: "BooleanLiteral"
+      - reference: "NewExpression"
+      - reference: "TypeExpression"
+      - reference: "ElementaryType"
+
+- name: "TypeExpression"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - terminal: "type"
+      - delimitedBy:
+          open: "("
+          expression:
+            reference: "TypeName"
+          close: ")"
+
+- name: "NewExpression"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - terminal: "new"
+      - reference: "TypeName"
+
+- name: "TupleExpression"
+  kind: "Parser"
+  unversioned:
+    delimitedBy:
+      open: "("
+      expression:
+        separatedBy:
+          separator: ","
+          expression:
+            optional:
+              reference: "Expression"
+      close: ")"
+
+- name: "ArrayLiteral"
+  kind: "Parser"
+  unversioned:
+    delimitedBy:
+      open: "["
+      expression:
+        separatedBy:
+          separator: ","
+          expression:
+            reference: "Expression"
+      close: "]"
+
+- name: "BooleanLiteral"
+  kind: "Scanner"
+  unversioned:
+    choice:
+      - terminal: "true"
+      - terminal: "false"

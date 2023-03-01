@@ -1,4 +1,4 @@
-use codegen_schema::types::productions::ProductionKind;
+use codegen_schema::types::{precedence_parser::OperatorModel, production::Production};
 use inflector::Inflector;
 use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
@@ -7,7 +7,6 @@ use super::{
     char_set::CharSet,
     code_generator::CodeGenerator,
     combinator_node::CombinatorNode,
-    combinator_node::OperatorModel,
     naming::name_of_terminal_char,
     trie::{TerminalTrie, Trie},
 };
@@ -53,22 +52,27 @@ impl<'context> CombinatorNode<'context> {
             /**********************************************************************
              * Simple Reference
              */
-            Self::Reference { tree } => match tree.production.kind {
-                ProductionKind::Rule if is_trivia => unreachable!(
-                    "Trivia productions can only reference trivia or token productions"
-                ),
-                ProductionKind::Rule | ProductionKind::Trivia => {
-                    let function_name =
-                        format_ident!("parse_{}", tree.production.name.to_snake_case());
+            Self::Reference { tree } => match tree.production.as_ref() {
+                Production::Scanner { name, .. } => {
+                    let kind = format_ident!("{}", name.to_pascal_case());
+                    let function_name = format_ident!("scan_{}", name.to_snake_case());
+                    let scanner = quote! { self.#function_name(stream) };
+                    let error_message = name.to_pascal_case();
+                    create_token_parser_from_scanner(scanner, kind, &error_message, !is_trivia)
+                }
+                Production::TriviaParser { name, .. } => {
+                    let function_name = format_ident!("parse_{}", name.to_snake_case());
                     quote! { self.#function_name(stream) }
                 }
-                ProductionKind::Token => {
-                    let kind = format_ident!("{}", tree.production.name.to_pascal_case());
-                    let function_name =
-                        format_ident!("scan_{}", tree.production.name.to_snake_case());
-                    let scanner = quote! { self.#function_name(stream) };
-                    let error_message = tree.production.name.to_pascal_case();
-                    create_token_parser_from_scanner(scanner, kind, &error_message, !is_trivia)
+                Production::Parser { name, .. } | Production::PrecedenceParser { name, .. } => {
+                    if !is_trivia {
+                        let function_name = format_ident!("parse_{}", name.to_snake_case());
+                        quote! { self.#function_name(stream) }
+                    } else {
+                        unreachable!(
+                            "Trivia productions can only reference trivia or token productions"
+                        )
+                    }
                 }
             },
 
@@ -463,17 +467,25 @@ impl<'context> CombinatorNode<'context> {
                     }
                 }
 
-                binary_operators.insert(0, binary_operator_trie.to_parser_code());
-                prefix_operators.insert(0, prefix_operator_trie.to_parser_code());
-                suffix_operators.insert(0, suffix_operator_trie.to_parser_code());
+                if !binary_operator_trie.is_empty() {
+                    binary_operators.insert(0, binary_operator_trie.to_parser_code());
+                }
+                if !prefix_operator_trie.is_empty() {
+                    prefix_operators.insert(0, prefix_operator_trie.to_parser_code());
+                }
+                if !suffix_operator_trie.is_empty() {
+                    suffix_operators.insert(0, suffix_operator_trie.to_parser_code());
+                }
 
-                fn maybe_choice(mut elements: Vec<TokenStream>) -> TokenStream {
-                    if elements.len() == 1 {
-                        elements.pop().unwrap()
+                fn maybe_choice(mut elements: Vec<TokenStream>) -> Option<TokenStream> {
+                    if elements.is_empty() {
+                        None
+                    } else if elements.len() == 1 {
+                        elements.pop()
                     } else {
                         let mut elements = elements.into_iter();
                         let first_element = elements.next().unwrap();
-                        quote! {
+                        Some(quote! {
                             loop {
                                 let start_position = stream.position();
                                 let mut furthest_error;
@@ -495,22 +507,79 @@ impl<'context> CombinatorNode<'context> {
                                 )*
                                 break Err(furthest_error);
                             }
-                        }
+                        })
                     }
                 }
-                let binary_operators = maybe_choice(binary_operators);
-                let prefix_operators = maybe_choice(prefix_operators);
-                let suffix_operators = maybe_choice(suffix_operators);
+
+                let binary_operators = maybe_choice(binary_operators)
+                    .map(|binary_operators| {
+                        quote! {
+                            let start_position = stream.position();
+                            match #binary_operators {
+                                Err(_) => {
+                                    stream.set_position(start_position);
+                                    break None
+                                }
+                                Ok(operator) => elements.push(operator),
+                            }
+                        }
+                    })
+                    .unwrap_or_else(|| {
+                        quote! {
+                            break None
+                        }
+                    });
+
+                let prefix_operators = maybe_choice(prefix_operators).map(|prefix_operators| {
+                    quote! {
+                        loop {
+                            let start_position = stream.position();
+                            match #prefix_operators {
+                                Err(_) => {
+                                    stream.set_position(start_position);
+                                    break;
+                                }
+                                Ok(operator) => elements.push(operator),
+                            }
+                        }
+                    }
+                });
+
+                let suffix_operators = maybe_choice(suffix_operators).map(|suffix_operators| {
+                    quote! {
+                        loop {
+                            let start_position = stream.position();
+                            match #suffix_operators {
+                                Err(_) => {
+                                    stream.set_position(start_position);
+                                    break;
+                                }
+                                Ok(operator) => elements.push(operator),
+                            }
+                        }
+                    }
+                });
 
                 let primary_expressions = maybe_choice(
                     primary_expressions
                         .iter()
                         .map(|tree| {
                             let function_name =
-                                format_ident!("parse_{}", tree.production.name.to_snake_case());
+                                format_ident!("parse_{}", tree.production.name().to_snake_case());
                             quote! { self.#function_name(stream) }
                         })
                         .collect::<Vec<_>>(),
+                )
+                .map(|primary_expressions| {
+                    quote! {
+                        match #primary_expressions {
+                            Fail{ error } => break Some(error),
+                            Pass{ node, .. } => elements.push(Pratt::Node(node)),
+                        }
+                    }
+                })
+                .expect(
+                    "Validation should have ensured that we have at least one primary expression",
                 );
 
                 quote! {
@@ -526,38 +595,10 @@ impl<'context> CombinatorNode<'context> {
                         }
                         let mut elements = Vec::new();
                         if let Some(error) = loop {
-                            loop {
-                                let start_position = stream.position();
-                                match #prefix_operators {
-                                    Err(_) => {
-                                        stream.set_position(start_position);
-                                        break;
-                                    }
-                                    Ok(operator) => elements.push(operator),
-                                }
-                            }
-                            match #primary_expressions {
-                                Fail{ error } => break Some(error),
-                                Pass{ node, .. } => elements.push(Pratt::Node(node)),
-                            }
-                            loop {
-                                let start_position = stream.position();
-                                match #suffix_operators {
-                                    Err(_) => {
-                                        stream.set_position(start_position);
-                                        break;
-                                    }
-                                    Ok(operator) => elements.push(operator),
-                                }
-                            }
-                            let start_position = stream.position();
-                            match #binary_operators {
-                                Err(_) => {
-                                    stream.set_position(start_position);
-                                    break None
-                                }
-                                Ok(operator) => elements.push(operator),
-                            }
+                            #prefix_operators
+                            #primary_expressions
+                            #suffix_operators
+                            #binary_operators
                         } {
                             Fail{ error }
                         } else {

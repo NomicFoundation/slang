@@ -7,9 +7,9 @@ use crate::{
     validation::{
         ast::{
             files::ManifestFile,
-            productions::{ProductionRef, ProductionVersioning},
+            node::Node,
+            production::ProductionRef,
             visitors::{Reporter, Visitor, VisitorExtensions, VisitorResponse},
-            Node,
         },
         Model,
     },
@@ -29,7 +29,7 @@ struct VersionsChecker<'v> {
 impl<'v> VersionsChecker<'v> {
     fn new(model: &'v Model) -> Self {
         let manifest_versions = model
-            .manifest
+            .manifest_file
             .ast
             .value
             .versions
@@ -44,13 +44,13 @@ impl<'v> VersionsChecker<'v> {
 impl Visitor for VersionsChecker<'_> {
     fn visit_manifest(
         &mut self,
-        manifest: &ManifestFile,
+        manifest_file: &ManifestFile,
         reporter: &mut Reporter,
     ) -> VisitorResponse {
-        let manifest = &manifest.ast.value;
+        let manifest = &manifest_file.ast.value;
 
         self.check_order(
-            &manifest.title.syntax,
+            &manifest.title.cst_node,
             &manifest.versions.iter().collect(),
             reporter,
         );
@@ -63,19 +63,15 @@ impl Visitor for VersionsChecker<'_> {
         production: &ProductionRef,
         reporter: &mut Reporter,
     ) -> VisitorResponse {
-        let versions = match &production.versioning.value {
-            ProductionVersioning::Versioned(versions) => versions.keys().collect::<Vec<_>>(),
-            ProductionVersioning::Unversioned(_) => return VisitorResponse::StepOut,
-        };
-
-        for version in &versions {
-            let Node { syntax, value } = version;
-            if !self.manifest_versions.contains(value) {
-                reporter.report(syntax, Errors::Unknown(value.to_owned()));
+        if let Some(versions) = production.versions() {
+            for version in &versions {
+                let Node { cst_node, value } = version;
+                if !self.manifest_versions.contains(value) {
+                    reporter.report(cst_node, Errors::Unknown(value.to_owned()));
+                }
             }
+            self.check_order(&production.version_map_cst_node(), &versions, reporter);
         }
-
-        self.check_order(&production.versioning.syntax, &versions, reporter);
 
         return VisitorResponse::StepOut;
     }
@@ -84,19 +80,19 @@ impl Visitor for VersionsChecker<'_> {
 impl<'v> VersionsChecker<'v> {
     fn check_order(
         &self,
-        parent_syntax: &cst::NodeRef,
+        parent_node: &cst::NodeRef,
         versions: &Vec<&Node<Version>>,
         reporter: &mut Reporter,
     ) {
         if versions.is_empty() {
-            reporter.report(&parent_syntax, Errors::Empty);
+            reporter.report(&parent_node, Errors::Empty);
             return;
         }
 
         for window in versions.windows(2) {
             if let [current, next] = window {
                 if current.value >= next.value {
-                    reporter.report(&next.syntax, Errors::NotSorted);
+                    reporter.report(&next.cst_node, Errors::NotSorted);
                     break;
                 }
             } else {

@@ -25,31 +25,23 @@ impl CodeGenerator {
             )
             .unwrap();
 
-        {
-            let cst_visitor = codegen
-                .read_file(
-                    &codegen
-                        .repo_root
-                        .join("crates/codegen/parser_templates/src/rust/cst_visitor.rs"),
-                )
-                .unwrap();
-            codegen
-                .write_file(&output_dir.join("cst_visitor.rs"), &cst_visitor)
-                .unwrap();
-        }
+        codegen
+            .copy_file(
+                &codegen
+                    .repo_root
+                    .join("crates/codegen/parser_templates/src/rust/cst_visitor.rs"),
+                &output_dir.join("cst_visitor.rs"),
+            )
+            .unwrap();
 
-        {
-            let parser_output = codegen
-                .read_file(
-                    &codegen
-                        .repo_root
-                        .join("crates/codegen/parser_templates/src/rust/parser_output.rs"),
-                )
-                .unwrap();
-            codegen
-                .write_file(&output_dir.join("parser_output.rs"), &parser_output)
-                .unwrap();
-        }
+        codegen
+            .copy_file(
+                &codegen
+                    .repo_root
+                    .join("crates/codegen/parser_templates/src/rust/parser_output.rs"),
+                &output_dir.join("parser_output.rs"),
+            )
+            .unwrap();
 
         {
             let language_boilerplate_common = codegen
