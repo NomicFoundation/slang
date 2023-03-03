@@ -36,12 +36,12 @@ fn collect_parser_tests(
 ) -> Result<BTreeMap<String, BTreeSet<String>>> {
     let mut parser_tests = BTreeMap::<String, BTreeSet<String>>::new();
 
-    // Rerun if input files are added/removed
-    codegen.mark_input_dir(data_dir);
+    // Rebuild if input files are added/removed
+    codegen.track_input_dir(data_dir);
 
     let walker = WalkDir::new(data_dir).into_iter().filter_entry(|entry| {
         // skip generated files
-        codegen.get_generated_dir(entry.path()).is_none()
+        codegen.get_generated_dir(entry.path()).is_err()
     });
 
     for entry in walker {

@@ -1,0 +1,13 @@
+# how to do the build.rs without an actual crate?
+[package]
+name = "solidity_spec"
+version.workspace = true
+rust-version.workspace = true
+edition.workspace = true
+
+[build-dependencies]
+anyhow = { workspace = true }
+codegen_schema = { workspace = true }
+codegen_spec = { workspace = true }
+codegen_utils = { workspace = true }
+solidity_schema = { workspace = true }

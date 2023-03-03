@@ -6,11 +6,14 @@ use codegen_utils::context::CodegenContext;
 
 fn main() -> Result<()> {
     return CodegenContext::with_context(|codegen| {
-        let manifest_path = codegen
+        let manifest_dir = codegen
             .repo_root
-            .join("crates/solidity/inputs/schema/grammar/manifest.yml");
+            .join("crates/solidity/inputs/schema/grammar");
 
-        let grammar = Grammar::compile(codegen, manifest_path)?;
+        // Rebuild if input files are added/removed
+        codegen.track_input_dir(&manifest_dir);
+
+        let grammar = Grammar::compile(codegen, manifest_dir)?;
 
         let mut buffer = Vec::new();
         bson::to_document(&grammar)?.to_writer(&mut buffer)?;

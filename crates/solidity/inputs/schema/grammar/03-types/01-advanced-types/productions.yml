@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../../../../../../codegen/schema/generated/productions.schema.json
+
+- name: "TypeName"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - choice:
+          - reference: "ElementaryType"
+          - reference: "FunctionType"
+          - reference: "MappingType"
+          - reference: "IdentifierPath"
+      - zeroOrMore:
+          delimitedBy:
+            open: "["
+            expression:
+              optional:
+                reference: "Expression"
+            close: "]"

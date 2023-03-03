@@ -3,7 +3,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
-use anyhow::{bail, Result};
+use anyhow::{anyhow, bail, Result};
 use walkdir::WalkDir;
 
 use crate::{errors::CodegenErrors, internal::files};
@@ -42,7 +42,7 @@ impl CodegenContext {
         return Ok(());
     }
 
-    pub fn mark_input_dir(&mut self, path: &PathBuf) {
+    pub fn track_input_dir(&mut self, path: &PathBuf) {
         // Skip if same path (or a parent) is already marked
         for input_dir in &self.input_dirs {
             if path.starts_with(input_dir) {
@@ -59,9 +59,16 @@ impl CodegenContext {
     }
 
     pub fn read_file(&mut self, file_path: &PathBuf) -> Result<String> {
-        self.mark_input_dir(&file_path.parent().unwrap().to_path_buf());
+        for input_dir in &self.input_dirs {
+            if file_path.starts_with(input_dir) {
+                return files::read_file(file_path);
+            }
+        }
 
-        return files::read_file(file_path);
+        bail!(
+            anyhow!("Input file is not under any tracked directory: {file_path:?}")
+                .context("Please use CodegenContext::track_input_dir() to ensure all input files are tracked correctly."),
+        );
     }
 
     pub fn copy_file(&mut self, source_path: &PathBuf, destination_path: &PathBuf) -> Result<()> {
@@ -83,11 +90,8 @@ impl CodegenContext {
             bail!("File was generated twice: {file_path:?}")
         }
 
-        if let Some(generated_dir) = self.get_generated_dir(file_path) {
-            self.generated_dirs.insert(generated_dir.to_owned());
-        } else {
-            bail!("All generated files should be under a 'generated' parent dir: {file_path:?}");
-        }
+        let generated_dirs = self.get_generated_dir(file_path)?;
+        self.generated_dirs.insert(generated_dirs);
 
         return if self.check_only {
             files::verify_file(self, file_path, contents)
@@ -96,10 +100,21 @@ impl CodegenContext {
         };
     }
 
-    pub fn get_generated_dir(&self, file_path: &Path) -> Option<PathBuf> {
-        let generated_index = file_path.iter().enumerate().find(|p| p.1 == "generated")?.0;
+    pub fn get_generated_dir(&self, file_path: &Path) -> Result<PathBuf> {
+        let generated_indexes: Vec<_> = file_path
+            .iter()
+            .enumerate()
+            .filter(|p| p.1 == "generated")
+            .collect();
+
+        let generated_index = match generated_indexes.len() {
+            0 => bail!("Generated file path should have a 'generated' ancestor dir: {file_path:?}"),
+            1 => generated_indexes[0].0,
+            _ => bail!("Multiple 'generated' dirs in path: {file_path:?}"),
+        };
+
         let generated_dir: PathBuf = file_path.iter().take(generated_index + 1).collect();
-        return Some(generated_dir);
+        return Ok(generated_dir);
     }
 
     fn validate_orphaned_files(&self) -> Result<()> {

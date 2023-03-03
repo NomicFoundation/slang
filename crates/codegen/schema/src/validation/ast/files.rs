@@ -32,10 +32,10 @@ impl ManifestFile {
     }
 }
 
-pub type TopicFile = File<Vec<ProductionRef>>;
+pub type ProductionsFile = File<Vec<ProductionRef>>;
 
-impl TopicFile {
-    pub fn new(file: &yaml::files::File<types::manifest::TopicFile>) -> Self {
+impl ProductionsFile {
+    pub fn new(file: &yaml::files::File<types::manifest::ProductionsFile>) -> Self {
         let yaml::files::File {
             path,
             cst_node,

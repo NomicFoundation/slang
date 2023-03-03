@@ -174,8 +174,22 @@ impl TestNode {
                 .collect();
         }
 
-        // Double quote, and escape line breaks:
-        contents = serde_json::to_string(&contents)?;
+        // Escape line breaks:
+        contents = contents
+            .replace("\t", "\\t")
+            .replace("\r", "\\r")
+            .replace("\n", "\\n");
+
+        // Surround by quotes:
+        let contents = {
+            let delimiter = if contents.contains("\"") && !contents.contains("'") {
+                "'"
+            } else {
+                "\""
+            };
+            let contents = contents.replace(delimiter, &format!("\\{delimiter}"));
+            format!("{delimiter}{contents}{delimiter}")
+        };
 
         return Ok(contents);
     }

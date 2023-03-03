@@ -72,10 +72,9 @@ fn generate_header(file_path: &PathBuf) -> Result<String> {
         "This file is generated automatically by infrastructure scripts. Please don't edit by hand.";
 
     return match get_extension(file_path)? {
-        "ebnf" => Ok(format!("(* {warning_line} *)")),
         "json" => Ok(format!("")),
-        "md" => Ok(format!("<!-- {warning_line} -->")),
-        "rs" | "ts" => Ok(format!("// {warning_line}")),
+        "html" | "md" => Ok(format!("<!-- {warning_line} -->")),
+        "rs" => Ok(format!("// {warning_line}")),
         "yml" => Ok(format!("# {warning_line}")),
         ext => bail!("Unsupported extension to generate a header for: {ext}"),
     };
@@ -95,9 +94,14 @@ mod formatters {
     pub fn run(codegen: &CodegenContext, file_path: &PathBuf, contents: &str) -> Result<String> {
         return match get_extension(file_path)? {
             "rs" => run_rustfmt(codegen, file_path, contents),
-            "json" | "md" | "yml" => run_prettier(codegen, file_path, contents),
-            "ebnf" => Ok(contents.to_owned()), // we don't format these files (yet)
-            ext => bail!("Unsupported extension to format: {ext}"),
+            "json" => run_prettier(codegen, file_path, contents),
+            "html" | "md" | "yml" => {
+                // We already generate formatted content for these, so no need to run expensive formatting.
+                Ok(contents.to_owned())
+            }
+            ext => {
+                bail!("Unsupported extension to format: {ext}");
+            }
         };
     }
 

@@ -1,0 +1,184 @@
+# yaml-language-server: $schema=../../../../../../../codegen/schema/generated/productions.schema.json
+
+- name: "FunctionDefinition"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "FunctionKeyword"
+      - choice:
+          - reference: "Identifier"
+          - reference: "FallbackKeyword"
+          - reference: "ReceiveKeyword"
+      - reference: "ParameterList"
+      - zeroOrMore:
+          reference: "FunctionAttribute"
+      - optional:
+          sequence:
+            - reference: "ReturnsKeyword"
+            - reference: "ParameterList"
+      - choice:
+          - terminal: ";"
+          - reference: "Block"
+
+- name: "FunctionAttribute"
+  kind: "Parser"
+  unversioned:
+    choice:
+      - reference: "ModifierInvocation"
+      - reference: "OverrideSpecifier"
+      - reference: "ExternalKeyword"
+      - reference: "InternalKeyword"
+      - reference: "PayableKeyword"
+      - reference: "PrivateKeyword"
+      - reference: "PublicKeyword"
+      - reference: "PureKeyword"
+      - reference: "ViewKeyword"
+      - reference: "VirtualKeyword"
+
+- name: "OverrideSpecifier"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "OverrideKeyword"
+      - optional:
+          delimitedBy:
+            open: "("
+            expression:
+              separatedBy:
+                separator: ","
+                expression:
+                  reference: "IdentifierPath"
+            close: ")"
+
+- name: "ParameterList"
+  kind: "Parser"
+  unversioned:
+    delimitedBy:
+      open: "("
+      expression:
+        optional:
+          separatedBy:
+            separator: ","
+            expression:
+              reference: "ParameterDeclaration"
+      close: ")"
+
+- name: "ParameterDeclaration"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "TypeName"
+      - optional:
+          reference: "DataLocation"
+      - optional:
+          reference: "Identifier"
+
+- name: "ArgumentList"
+  kind: "Parser"
+  unversioned:
+    delimitedBy:
+      open: "("
+      expression:
+        optional:
+          choice:
+            - reference: "PositionalArgumentList"
+            - reference: "NamedArgumentList"
+      close: ")"
+
+- name: "PositionalArgumentList"
+  kind: "Parser"
+  unversioned:
+    separatedBy:
+      separator: ","
+      expression:
+        reference: "Expression"
+
+- name: "NamedArgumentList"
+  kind: "Parser"
+  unversioned:
+    delimitedBy:
+      open: "{"
+      expression:
+        optional:
+          separatedBy:
+            separator: ","
+            expression:
+              reference: "NamedArgument"
+      close: "}"
+
+- name: "NamedArgument"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "Identifier"
+      - terminal: ":"
+      - reference: "Expression"
+
+- name: "ConstructorDefinition"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "ConstructorKeyword"
+      - reference: "ParameterList"
+      - zeroOrMore:
+          reference: "ConstructorAttribute"
+      - reference: "Block"
+
+- name: "ConstructorAttribute"
+  kind: "Parser"
+  unversioned:
+    choice:
+      - reference: "ModifierInvocation"
+      - reference: "InternalKeyword"
+      - reference: "PayableKeyword"
+      - reference: "PublicKeyword"
+
+- name: "FallbackFunctionDefinition"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "FallbackKeyword"
+      - reference: "ParameterList"
+      - zeroOrMore:
+          reference: "FallbackFunctionAttribute"
+      - optional:
+          sequence:
+            - reference: "ReturnsKeyword"
+            - reference: "ParameterList"
+      - choice:
+          - terminal: ";"
+          - reference: "Block"
+
+- name: "FallbackFunctionAttribute"
+  kind: "Parser"
+  unversioned:
+    choice:
+      - reference: "ModifierInvocation"
+      - reference: "OverrideSpecifier"
+      - reference: "ExternalKeyword"
+      - reference: "PayableKeyword"
+      - reference: "PureKeyword"
+      - reference: "ViewKeyword"
+      - reference: "VirtualKeyword"
+
+- name: "ReceiveFunctionDefinition"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "ReceiveKeyword"
+      - reference: "ParameterList"
+      - zeroOrMore:
+          reference: "ReceiveFunctionAttribute"
+      - choice:
+          - terminal: ";"
+          - reference: "Block"
+
+- name: "ReceiveFunctionAttribute"
+  kind: "Parser"
+  unversioned:
+    choice:
+      - reference: "ModifierInvocation"
+      - reference: "OverrideSpecifier"
+      - reference: "ExternalKeyword"
+      - reference: "PayableKeyword"
+      - reference: "VirtualKeyword"

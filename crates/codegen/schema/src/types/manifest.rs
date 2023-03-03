@@ -6,7 +6,7 @@ use super::production::ProductionRef;
 
 pub type ManifestFile = Manifest;
 
-pub type TopicFile = Vec<ProductionRef>;
+pub type ProductionsFile = Vec<ProductionRef>;
 
 #[derive(Deserialize, Serialize, JsonSchema, Clone, Debug)]
 #[serde(deny_unknown_fields, rename_all = "camelCase")]
@@ -22,6 +22,7 @@ pub struct Manifest {
 #[serde(deny_unknown_fields)]
 pub struct ManifestSection {
     pub title: String,
+    pub path: String,
     pub topics: Vec<ManifestTopic>,
 }
 
@@ -29,5 +30,5 @@ pub struct ManifestSection {
 #[serde(deny_unknown_fields)]
 pub struct ManifestTopic {
     pub title: String,
-    pub definition: Option<String>,
+    pub path: String,
 }

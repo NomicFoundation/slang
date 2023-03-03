@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../../../../../../codegen/schema/generated/productions.schema.json
+
+- name: "UserDefinedValueTypeDefinition"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "TypeKeyword"
+      - reference: "Identifier"
+      - reference: "IsKeyword"
+      - reference: "ElementaryType"
+      - terminal: ";"

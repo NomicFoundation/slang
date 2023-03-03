@@ -234,6 +234,8 @@ dependencies = [
 name = "codegen_spec"
 version = "0.0.0"
 dependencies = [
+ "Inflector",
+ "anyhow",
  "codegen_ebnf",
  "codegen_schema",
  "codegen_utils",
@@ -950,17 +952,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "solidity_documentation"
-version = "0.0.0"
-dependencies = [
- "anyhow",
- "codegen_schema",
- "codegen_spec",
- "codegen_utils",
- "solidity_schema",
-]
-
-[[package]]
 name = "solidity_rust_cli"
 version = "0.0.0"
 dependencies = [
@@ -1030,12 +1021,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "solidity_spec"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "codegen_schema",
+ "codegen_spec",
+ "codegen_utils",
+ "solidity_schema",
+]
+
+[[package]]
 name = "solidity_testing_utils"
 version = "0.0.0"
 dependencies = [
  "anyhow",
  "semver",
- "serde_json",
  "solidity_rust_lib",
 ]
 

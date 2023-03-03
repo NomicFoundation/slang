@@ -26,9 +26,12 @@
   "definitions": {
     "ManifestSection": {
       "type": "object",
-      "required": ["title", "topics"],
+      "required": ["path", "title", "topics"],
       "properties": {
         "title": {
+          "type": "string"
+        },
+        "path": {
           "type": "string"
         },
         "topics": {
@@ -41,13 +44,13 @@
     },
     "ManifestTopic": {
       "type": "object",
-      "required": ["title"],
+      "required": ["path", "title"],
       "properties": {
         "title": {
           "type": "string"
         },
-        "definition": {
-          "type": ["string", "null"]
+        "path": {
+          "type": "string"
         }
       }
     }

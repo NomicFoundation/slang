@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../../../../../../codegen/schema/generated/productions.schema.json
+
+- name: "LibraryDefinition"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "LibraryKeyword"
+      - reference: "Identifier"
+      - delimitedBy:
+          open: "{"
+          expression:
+            zeroOrMore:
+              reference: "ContractBodyElement"
+          close: "}"

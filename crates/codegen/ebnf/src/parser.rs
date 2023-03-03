@@ -4,7 +4,7 @@ use crate::ebnf_writer::{EBNFWritable, EBNFWriter};
 
 impl<T: EBNFWriter> EBNFWritable<T> for ParserRef {
     fn write_ebnf(&self, name: &str, writer: &mut T) {
-        writer.write_production_definition(name);
+        writer.write_global_definition(name);
         writer.write_operator(" = ");
         self.definition.write_ebnf("", writer);
         writer.write_operator(" ;");
@@ -52,7 +52,7 @@ impl<T: EBNFWriter> EBNFWritable<T> for ParserDefinition {
                 w.write_operator(" ]");
             }
 
-            ParserDefinition::Reference(name) => w.write_production_reference(name),
+            ParserDefinition::Reference(name) => w.write_global_reference(name),
 
             ParserDefinition::Repeat {
                 min,

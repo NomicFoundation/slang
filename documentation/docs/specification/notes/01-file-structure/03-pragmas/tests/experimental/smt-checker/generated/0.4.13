@@ -1,3 +1,0 @@
-input.sol:4:1: SyntaxError: Unknown pragma "experimental"
-pragma experimental SMTChecker;
-^-----------------------------^

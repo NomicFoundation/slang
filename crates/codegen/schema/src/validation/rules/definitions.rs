@@ -5,7 +5,7 @@ use codegen_utils::errors::CodegenErrors;
 use crate::{
     validation::{
         ast::{
-            files::{PathBufRef, TopicFile},
+            files::{PathBufRef, ProductionsFile},
             node::Node,
             parser::ParserRef,
             production::{Production, ProductionRef},
@@ -39,14 +39,14 @@ pub fn collect(model: &Model, errors: &mut CodegenErrors) -> Definitions {
 }
 
 struct DefinitionCollector {
-    current_topic_path: Option<PathBufRef>,
+    current_file_path: Option<PathBufRef>,
     definitions: Definitions,
 }
 
 impl DefinitionCollector {
     fn new() -> Self {
         return Self {
-            current_topic_path: None,
+            current_file_path: None,
             definitions: Definitions {
                 required: HashSet::new(),
                 top_level_scanners: HashMap::new(),
@@ -58,8 +58,12 @@ impl DefinitionCollector {
 }
 
 impl Visitor for DefinitionCollector {
-    fn visit_topic(&mut self, topic: &TopicFile, _reporter: &mut Reporter) -> VisitorResponse {
-        self.current_topic_path = Some(topic.path.to_owned());
+    fn visit_productions_file(
+        &mut self,
+        productions_file: &ProductionsFile,
+        _reporter: &mut Reporter,
+    ) -> VisitorResponse {
+        self.current_file_path = Some(productions_file.path.to_owned());
 
         return VisitorResponse::StepIn;
     }
@@ -71,7 +75,7 @@ impl Visitor for DefinitionCollector {
     ) -> VisitorResponse {
         if self.check_uniqueness(production.name_node(), reporter) {
             let definition = Definition {
-                path: self.current_topic_path.as_ref().unwrap().to_owned(),
+                path: self.current_file_path.as_ref().unwrap().to_owned(),
                 cst_node: production.name_node().cst_node.to_owned(),
                 value: production.to_owned(),
             };
@@ -101,7 +105,7 @@ impl Visitor for DefinitionCollector {
 
         if self.check_uniqueness(&name, reporter) {
             let definition = Definition {
-                path: self.current_topic_path.as_ref().unwrap().to_owned(),
+                path: self.current_file_path.as_ref().unwrap().to_owned(),
                 cst_node: name.cst_node.to_owned(),
                 value: parser.to_owned(),
             };

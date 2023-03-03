@@ -1,0 +1,93 @@
+# yaml-language-server: $schema=../../../../../../../codegen/schema/generated/productions.schema.json
+
+- name: "YulExpression"
+  kind: "Parser"
+  unversioned:
+    choice:
+      - reference: "YulFunctionCall"
+      - reference: "YulLiteral"
+
+- name: "YulFunctionCall"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "YulIdentifierPath"
+      # TODO: temporary hack until precedence is implemented properly here.
+      # `YulIdentifierPath` should be promoted to a `YulExpression` choice, and the `optional` removed from here.
+      - optional:
+          delimitedBy:
+            open: "("
+            expression:
+              optional:
+                separatedBy:
+                  separator: ","
+                  expression:
+                    reference: "YulExpression"
+            close: ")"
+
+- name: "YulIdentifierPath"
+  kind: "Parser"
+  unversioned:
+    separatedBy:
+      separator: "."
+      expression:
+        reference: "YulIdentifier"
+
+- name: "YulIdentifier"
+  kind: "Scanner"
+  unversioned:
+    difference:
+      minuend:
+        reference: "RawIdentifier"
+      subtrahend:
+        reference: "YulKeyword"
+
+- name: "YulKeyword"
+  kind: "Scanner"
+  unversioned:
+    choice:
+      - terminal: "false"
+      - terminal: "true"
+      - terminal: "break"
+      - terminal: "case"
+      - terminal: "continue"
+      - terminal: "default"
+      - terminal: "for"
+      - terminal: "function"
+      - terminal: "hex"
+      - terminal: "if"
+      - terminal: "leave"
+      - terminal: "let"
+      - terminal: "switch"
+
+- name: "YulLiteral"
+  kind: "Parser"
+  unversioned:
+    choice:
+      - reference: "BooleanLiteral"
+      - reference: "YulHexLiteral"
+      - reference: "YulDecimalLiteral"
+      - reference: "HexStringLiteral"
+      - reference: "AsciiStringLiteral"
+
+- name: "YulHexLiteral"
+  kind: "Scanner"
+  unversioned:
+    sequence:
+      - terminal: "0x"
+      - oneOrMore:
+          reference: "HexCharacter"
+
+- name: "YulDecimalLiteral"
+  kind: "Scanner"
+  unversioned:
+    choice:
+      - terminal: "0"
+      - sequence:
+          - range:
+              from: "1"
+              to: "9"
+          - zeroOrMore:
+              range:
+                from: "0"
+                to: "9"
