@@ -45,6 +45,6 @@
   kind: "Parser"
   unversioned:
     choice:
-      - terminal: "memory"
-      - terminal: "storage"
-      - terminal: "calldata"
+      - reference: "MemoryKeyword"
+      - reference: "StorageKeyword"
+      - reference: "CalldataKeyword"

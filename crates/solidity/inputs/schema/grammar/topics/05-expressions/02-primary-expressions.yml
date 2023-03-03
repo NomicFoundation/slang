@@ -18,7 +18,7 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "type"
+      - reference: "TypeKeyword"
       - delimitedBy:
           open: "("
           expression:
@@ -29,7 +29,7 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "new"
+      - reference: "NewKeyword"
       - reference: "TypeName"
 
 - name: "TupleExpression"
@@ -58,8 +58,8 @@
       close: "]"
 
 - name: "BooleanLiteral"
-  kind: "Scanner"
+  kind: "Parser"
   unversioned:
     choice:
-      - terminal: "true"
-      - terminal: "false"
+      - reference: "TrueKeyword"
+      - reference: "FalseKeyword"

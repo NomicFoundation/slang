@@ -8,4 +8,5 @@ Errors: []
 Tree:
   - NumericLiteral (Rule): # 0..7 "10 days"
       - DecimalLiteral (Token): "10" # 0..2
-      - NumberUnit (Token): "days" # 3..7
+      - NumberUnit (Rule): # 3..7 "days"
+          - DaysKeyword (Token): "days" # 3..7

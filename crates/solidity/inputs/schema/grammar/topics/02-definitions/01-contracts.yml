@@ -5,8 +5,8 @@
   unversioned:
     sequence:
       - optional:
-          terminal: "abstract"
-      - terminal: "contract"
+          reference: "AbstractKeyword"
+      - reference: "ContractKeyword"
       - reference: "Identifier"
       - optional:
           reference: "InheritanceSpecifierList"
@@ -21,7 +21,7 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "is"
+      - reference: "IsKeyword"
       - separatedBy:
           separator: ","
           expression:

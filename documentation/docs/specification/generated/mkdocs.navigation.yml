@@ -16,6 +16,8 @@ nav:
           - "": "specification/notes/01-file-structure/05-trivia/index.md"
           - 1.6. Natspec Format: "specification/generated/01-file-structure/06-natspec-format/index.md"
           - "": "specification/notes/01-file-structure/06-natspec-format/index.md"
+          - 1.7. Keywords: "specification/generated/01-file-structure/07-keywords/index.md"
+          - "": "specification/notes/01-file-structure/07-keywords/index.md"
       - 2. Definitions:
           - 2.1. Contracts: "specification/generated/02-definitions/01-contracts/index.md"
           - "": "specification/notes/02-definitions/01-contracts/index.md"

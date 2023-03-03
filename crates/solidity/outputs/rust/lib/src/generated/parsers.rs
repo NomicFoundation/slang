@@ -177,6 +177,19 @@ macro_rules! scan_difference {
     }};
 }
 
+#[allow(unused_macros)]
+macro_rules! scan_not_followed_by {
+    ($stream:ident, $expression:expr, $not_followed_by:expr) => {
+        ($expression)
+            && ({
+                let end = $stream.position();
+                let following = $not_followed_by;
+                $stream.set_position(end);
+                !following
+            })
+    };
+}
+
 impl Language {
     fn optional_leading_trivia(&self, stream: &mut Stream) -> Option<Rc<cst::Node>> {
         let save = stream.position();
@@ -198,7 +211,7 @@ impl Language {
             Pass { node, .. } => Some(node),
         }
     }
-    // ABICoderPragma = "abicoder" «Identifier» ;
+    // ABICoderPragma = «AbicoderKeyword» «Identifier» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_abi_coder_pragma(&self, stream: &mut Stream) -> ParseResult {
@@ -208,12 +221,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'a', 'b', 'i', 'c', 'o', 'd', 'e', 'r') {
+                    if self.scan_abicoder_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Abicoder,
+                                TokenKind::AbicoderKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -222,7 +235,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'abicoder'"),
+                            error: ParseError::new(start, "AbicoderKeyword"),
                         }
                     }
                 } {
@@ -281,7 +294,7 @@ impl Language {
         }
     }
 
-    // AddressType = "address" [ "payable" ] ;
+    // AddressType = «AddressKeyword» [ «PayableKeyword» ] ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_address_type(&self, stream: &mut Stream) -> ParseResult {
@@ -291,12 +304,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'a', 'd', 'd', 'r', 'e', 's', 's') {
+                    if self.scan_address_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Address,
+                                TokenKind::AddressKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -305,7 +318,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'address'"),
+                            error: ParseError::new(start, "AddressKeyword"),
                         }
                     }
                 } {
@@ -324,12 +337,12 @@ impl Language {
                     match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        if scan_chars!(stream, 'p', 'a', 'y', 'a', 'b', 'l', 'e') {
+                        if self.scan_payable_keyword(stream) {
                             let end = stream.position();
                             let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
                                 node: cst::Node::token(
-                                    TokenKind::Payable,
+                                    TokenKind::PayableKeyword,
                                     Range { start, end },
                                     leading_trivia,
                                     trailing_trivia,
@@ -338,7 +351,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "'payable'"),
+                                error: ParseError::new(start, "PayableKeyword"),
                             }
                         }
                     } {
@@ -773,7 +786,7 @@ impl Language {
         }
     }
 
-    // AssemblyStatement = "assembly" [ '"evmasm"' ] [ AssemblyFlags ] YulBlock ;
+    // AssemblyStatement = «AssemblyKeyword» [ '"evmasm"' ] [ AssemblyFlags ] YulBlock ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_assembly_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -783,12 +796,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'a', 's', 's', 'e', 'm', 'b', 'l', 'y') {
+                    if self.scan_assembly_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Assembly,
+                                TokenKind::AssemblyKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -797,7 +810,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'assembly'"),
+                            error: ParseError::new(start, "AssemblyKeyword"),
                         }
                     }
                 } {
@@ -1020,7 +1033,77 @@ impl Language {
         }
     }
 
-    // BreakStatement = "break" ';' ;
+    // BooleanLiteral = «TrueKeyword» | «FalseKeyword» ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn parse_boolean_literal(&self, stream: &mut Stream) -> ParseResult {
+        match {
+            loop {
+                let start_position = stream.position();
+                let mut furthest_error;
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_true_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::TrueKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "TrueKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error = error,
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_false_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::FalseKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "FalseKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                break Fail {
+                    error: furthest_error,
+                };
+            }
+        } {
+            Pass { node, error } => Pass {
+                node: cst::Node::top_level_rule(RuleKind::BooleanLiteral, node),
+                error,
+            },
+            fail => fail,
+        }
+    }
+
+    // BreakStatement = «BreakKeyword» ';' ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_break_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -1030,12 +1113,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'b', 'r', 'e', 'a', 'k') {
+                    if self.scan_break_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Break,
+                                TokenKind::BreakKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -1044,7 +1127,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'break'"),
+                            error: ParseError::new(start, "BreakKeyword"),
                         }
                     }
                 } {
@@ -1103,7 +1186,7 @@ impl Language {
         }
     }
 
-    // CatchClause = "catch" [ [ «Identifier» ] ParameterList ] Block ;
+    // CatchClause = «CatchKeyword» [ [ «Identifier» ] ParameterList ] Block ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_catch_clause(&self, stream: &mut Stream) -> ParseResult {
@@ -1113,12 +1196,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'c', 'a', 't', 'c', 'h') {
+                    if self.scan_catch_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Catch,
+                                TokenKind::CatchKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -1127,7 +1210,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'catch'"),
+                            error: ParseError::new(start, "CatchKeyword"),
                         }
                     }
                 } {
@@ -1251,7 +1334,7 @@ impl Language {
         }
     }
 
-    // ConstantDefinition = TypeName "constant" «Identifier» '=' Expression ';' ;
+    // ConstantDefinition = TypeName «ConstantKeyword» «Identifier» '=' Expression ';' ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_constant_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -1272,12 +1355,12 @@ impl Language {
                 let result_1 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'c', 'o', 'n', 's', 't', 'a', 'n', 't') {
+                    if self.scan_constant_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Constant,
+                                TokenKind::ConstantKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -1286,7 +1369,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'constant'"),
+                            error: ParseError::new(start, "ConstantKeyword"),
                         }
                     }
                 } {
@@ -1421,7 +1504,7 @@ impl Language {
         }
     }
 
-    // ConstructorAttribute = ModifierInvocation | "internal" | "payable" | "public" ;
+    // ConstructorAttribute = ModifierInvocation | «InternalKeyword» | «PayableKeyword» | «PublicKeyword» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_constructor_attribute(&self, stream: &mut Stream) -> ParseResult {
@@ -1437,57 +1520,71 @@ impl Language {
                 match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    match {
-                        match stream.next() {
-                            Some('i') => {
-                                if scan_chars!(stream, 'n', 't', 'e', 'r', 'n', 'a', 'l') {
-                                    Ok(TokenKind::Internal)
-                                } else {
-                                    Err(ParseError::new(stream.position(), "'internal'"))
-                                }
-                            }
-                            Some('p') => match stream.next() {
-                                Some('a') => {
-                                    if scan_chars!(stream, 'y', 'a', 'b', 'l', 'e') {
-                                        Ok(TokenKind::Payable)
-                                    } else {
-                                        Err(ParseError::new(stream.position(), "'payable'"))
-                                    }
-                                }
-                                Some('u') => {
-                                    if scan_chars!(stream, 'b', 'l', 'i', 'c') {
-                                        Ok(TokenKind::Public)
-                                    } else {
-                                        Err(ParseError::new(stream.position(), "'public'"))
-                                    }
-                                }
-                                _ => Err(ParseError::new(
-                                    stream.position(),
-                                    "'payable', or 'public'",
-                                )),
-                            },
-                            _ => Err(ParseError::new(
-                                stream.position(),
-                                "'internal', or 'payable', or 'public'",
-                            )),
+                    if self.scan_internal_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::InternalKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
                         }
-                    } {
-                        Err(mut error) => {
-                            error.position = start;
-                            Fail { error }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "InternalKeyword"),
                         }
-                        Ok(kind) => {
-                            let end = stream.position();
-                            let trailing_trivia = self.optional_trailing_trivia(stream);
-                            Pass {
-                                node: cst::Node::token(
-                                    kind,
-                                    Range { start, end },
-                                    leading_trivia,
-                                    trailing_trivia,
-                                ),
-                                error: None,
-                            }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_payable_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::PayableKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "PayableKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_public_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::PublicKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "PublicKeyword"),
                         }
                     }
                 } {
@@ -1507,7 +1604,7 @@ impl Language {
         }
     }
 
-    // ConstructorDefinition = "constructor" ParameterList { ConstructorAttribute } Block ;
+    // ConstructorDefinition = «ConstructorKeyword» ParameterList { ConstructorAttribute } Block ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_constructor_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -1517,12 +1614,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'c', 'o', 'n', 's', 't', 'r', 'u', 'c', 't', 'o', 'r') {
+                    if self.scan_constructor_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Constructor,
+                                TokenKind::ConstructorKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -1531,7 +1628,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'constructor'"),
+                            error: ParseError::new(start, "ConstructorKeyword"),
                         }
                     }
                 } {
@@ -1610,7 +1707,7 @@ impl Language {
         }
     }
 
-    // ContinueStatement = "continue" ';' ;
+    // ContinueStatement = «ContinueKeyword» ';' ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_continue_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -1620,12 +1717,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'c', 'o', 'n', 't', 'i', 'n', 'u', 'e') {
+                    if self.scan_continue_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Continue,
+                                TokenKind::ContinueKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -1634,7 +1731,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'continue'"),
+                            error: ParseError::new(start, "ContinueKeyword"),
                         }
                     }
                 } {
@@ -1773,7 +1870,7 @@ impl Language {
         }
     }
 
-    // ContractDefinition = [ "abstract" ] "contract" «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
+    // ContractDefinition = [ «AbstractKeyword» ] «ContractKeyword» «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_contract_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -1785,12 +1882,12 @@ impl Language {
                     match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        if scan_chars!(stream, 'a', 'b', 's', 't', 'r', 'a', 'c', 't') {
+                        if self.scan_abstract_keyword(stream) {
                             let end = stream.position();
                             let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
                                 node: cst::Node::token(
-                                    TokenKind::Abstract,
+                                    TokenKind::AbstractKeyword,
                                     Range { start, end },
                                     leading_trivia,
                                     trailing_trivia,
@@ -1799,7 +1896,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "'abstract'"),
+                                error: ParseError::new(start, "AbstractKeyword"),
                             }
                         }
                     } {
@@ -1826,12 +1923,12 @@ impl Language {
                 let result_1 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'c', 'o', 'n', 't', 'r', 'a', 'c', 't') {
+                    if self.scan_contract_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Contract,
+                                TokenKind::ContractKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -1840,7 +1937,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'contract'"),
+                            error: ParseError::new(start, "ContractKeyword"),
                         }
                     }
                 } {
@@ -2022,61 +2119,91 @@ impl Language {
         }
     }
 
-    // DataLocation = "memory" | "storage" | "calldata" ;
+    // DataLocation = «MemoryKeyword» | «StorageKeyword» | «CalldataKeyword» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_data_location(&self, stream: &mut Stream) -> ParseResult {
         match {
-            {
-                let leading_trivia = self.optional_leading_trivia(stream);
-                let start = stream.position();
+            loop {
+                let start_position = stream.position();
+                let mut furthest_error;
                 match {
-                    match stream.next() {
-                        Some('c') => {
-                            if scan_chars!(stream, 'a', 'l', 'l', 'd', 'a', 't', 'a') {
-                                Ok(TokenKind::Calldata)
-                            } else {
-                                Err(ParseError::new(stream.position(), "'calldata'"))
-                            }
-                        }
-                        Some('m') => {
-                            if scan_chars!(stream, 'e', 'm', 'o', 'r', 'y') {
-                                Ok(TokenKind::Memory)
-                            } else {
-                                Err(ParseError::new(stream.position(), "'memory'"))
-                            }
-                        }
-                        Some('s') => {
-                            if scan_chars!(stream, 't', 'o', 'r', 'a', 'g', 'e') {
-                                Ok(TokenKind::Storage)
-                            } else {
-                                Err(ParseError::new(stream.position(), "'storage'"))
-                            }
-                        }
-                        _ => Err(ParseError::new(
-                            stream.position(),
-                            "'calldata', or 'memory', or 'storage'",
-                        )),
-                    }
-                } {
-                    Err(mut error) => {
-                        error.position = start;
-                        Fail { error }
-                    }
-                    Ok(kind) => {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_memory_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                kind,
+                                TokenKind::MemoryKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
                             ),
                             error: None,
                         }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "MemoryKeyword"),
+                        }
                     }
+                } {
+                    Fail { error } => furthest_error = error,
+                    pass => break pass,
                 }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_storage_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::StorageKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "StorageKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_calldata_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::CalldataKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "CalldataKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                break Fail {
+                    error: furthest_error,
+                };
             }
         } {
             Pass { node, error } => Pass {
@@ -2152,7 +2279,7 @@ impl Language {
         }
     }
 
-    // DeleteStatement = "delete" Expression ';' ;
+    // DeleteStatement = «DeleteKeyword» Expression ';' ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_delete_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -2162,12 +2289,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'd', 'e', 'l', 'e', 't', 'e') {
+                    if self.scan_delete_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Delete,
+                                TokenKind::DeleteKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -2176,7 +2303,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'delete'"),
+                            error: ParseError::new(start, "DeleteKeyword"),
                         }
                     }
                 } {
@@ -2281,7 +2408,7 @@ impl Language {
         }
     }
 
-    // DoWhileStatement = "do" Statement "while" '(' Expression ')' ';' ;
+    // DoWhileStatement = «DoKeyword» Statement «WhileKeyword» '(' Expression ')' ';' ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_do_while_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -2291,12 +2418,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'd', 'o') {
+                    if self.scan_do_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Do,
+                                TokenKind::DoKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -2305,7 +2432,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'do'"),
+                            error: ParseError::new(start, "DoKeyword"),
                         }
                     }
                 } {
@@ -2333,12 +2460,12 @@ impl Language {
                 let result_2 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'w', 'h', 'i', 'l', 'e') {
+                    if self.scan_while_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::While,
+                                TokenKind::WhileKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -2347,7 +2474,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'while'"),
+                            error: ParseError::new(start, "WhileKeyword"),
                         }
                     }
                 } {
@@ -2488,7 +2615,7 @@ impl Language {
         }
     }
 
-    // ElementaryType = "bool" | "string" | AddressType | PayableType | «FixedBytesType» | «SignedIntegerType» | «UnsignedIntegerType» | «SignedFixedType» | «UnsignedFixedType» ;
+    // ElementaryType = «BoolKeyword» | «StringKeyword» | AddressType | PayableType | «FixedBytesType» | «SignedIntegerType» | «UnsignedIntegerType» | «SignedFixedType» | «UnsignedFixedType» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_elementary_type(&self, stream: &mut Stream) -> ParseResult {
@@ -2499,45 +2626,50 @@ impl Language {
                 match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    match {
-                        match stream.next() {
-                            Some('b') => {
-                                if scan_chars!(stream, 'o', 'o', 'l') {
-                                    Ok(TokenKind::Bool)
-                                } else {
-                                    Err(ParseError::new(stream.position(), "'bool'"))
-                                }
-                            }
-                            Some('s') => {
-                                if scan_chars!(stream, 't', 'r', 'i', 'n', 'g') {
-                                    Ok(TokenKind::String)
-                                } else {
-                                    Err(ParseError::new(stream.position(), "'string'"))
-                                }
-                            }
-                            _ => Err(ParseError::new(stream.position(), "'bool', or 'string'")),
+                    if self.scan_bool_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::BoolKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
                         }
-                    } {
-                        Err(mut error) => {
-                            error.position = start;
-                            Fail { error }
-                        }
-                        Ok(kind) => {
-                            let end = stream.position();
-                            let trailing_trivia = self.optional_trailing_trivia(stream);
-                            Pass {
-                                node: cst::Node::token(
-                                    kind,
-                                    Range { start, end },
-                                    leading_trivia,
-                                    trailing_trivia,
-                                ),
-                                error: None,
-                            }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "BoolKeyword"),
                         }
                     }
                 } {
                     Fail { error } => furthest_error = error,
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_string_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::StringKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "StringKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
                     pass => break pass,
                 }
                 stream.set_position(start_position);
@@ -2688,7 +2820,7 @@ impl Language {
         }
     }
 
-    // EmitStatement = "emit" IdentifierPath ArgumentList ';' ;
+    // EmitStatement = «EmitKeyword» IdentifierPath ArgumentList ';' ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_emit_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -2698,12 +2830,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'e', 'm', 'i', 't') {
+                    if self.scan_emit_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Emit,
+                                TokenKind::EmitKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -2712,7 +2844,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'emit'"),
+                            error: ParseError::new(start, "EmitKeyword"),
                         }
                     }
                 } {
@@ -2926,7 +3058,7 @@ impl Language {
         }
     }
 
-    // EnumDefinition = "enum" «Identifier» '{' [ «Identifier» { ',' «Identifier» } ] '}' ;
+    // EnumDefinition = «EnumKeyword» «Identifier» '{' [ «Identifier» { ',' «Identifier» } ] '}' ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_enum_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -2936,12 +3068,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'e', 'n', 'u', 'm') {
+                    if self.scan_enum_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Enum,
+                                TokenKind::EnumKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -2950,7 +3082,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'enum'"),
+                            error: ParseError::new(start, "EnumKeyword"),
                         }
                     }
                 } {
@@ -3171,7 +3303,7 @@ impl Language {
         }
     }
 
-    // ErrorDefinition = "error" «Identifier» '(' [ ErrorParameter { ',' ErrorParameter } ] ')' ';' ;
+    // ErrorDefinition = «ErrorKeyword» «Identifier» '(' [ ErrorParameter { ',' ErrorParameter } ] ')' ';' ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_error_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -3181,12 +3313,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'e', 'r', 'r', 'o', 'r') {
+                    if self.scan_error_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Error,
+                                TokenKind::ErrorKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -3195,7 +3327,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'error'"),
+                            error: ParseError::new(start, "ErrorKeyword"),
                         }
                     }
                 } {
@@ -3503,7 +3635,7 @@ impl Language {
         }
     }
 
-    // EventDefinition = "event" «Identifier» '(' [ EventParameter { ',' EventParameter } ] ')' [ "anonymous" ] ';' ;
+    // EventDefinition = «EventKeyword» «Identifier» '(' [ EventParameter { ',' EventParameter } ] ')' [ «AnonymousKeyword» ] ';' ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_event_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -3513,12 +3645,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'e', 'v', 'e', 'n', 't') {
+                    if self.scan_event_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Event,
+                                TokenKind::EventKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -3527,7 +3659,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'event'"),
+                            error: ParseError::new(start, "EventKeyword"),
                         }
                     }
                 } {
@@ -3717,12 +3849,12 @@ impl Language {
                     match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        if scan_chars!(stream, 'a', 'n', 'o', 'n', 'y', 'm', 'o', 'u', 's') {
+                        if self.scan_anonymous_keyword(stream) {
                             let end = stream.position();
                             let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
                                 node: cst::Node::token(
-                                    TokenKind::Anonymous,
+                                    TokenKind::AnonymousKeyword,
                                     Range { start, end },
                                     leading_trivia,
                                     trailing_trivia,
@@ -3731,7 +3863,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "'anonymous'"),
+                                error: ParseError::new(start, "AnonymousKeyword"),
                             }
                         }
                     } {
@@ -3803,7 +3935,7 @@ impl Language {
         }
     }
 
-    // EventParameter = TypeName [ "indexed" ] [ «Identifier» ] ;
+    // EventParameter = TypeName [ «IndexedKeyword» ] [ «Identifier» ] ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_event_parameter(&self, stream: &mut Stream) -> ParseResult {
@@ -3826,12 +3958,12 @@ impl Language {
                     match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        if scan_chars!(stream, 'i', 'n', 'd', 'e', 'x', 'e', 'd') {
+                        if self.scan_indexed_keyword(stream) {
                             let end = stream.position();
                             let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
                                 node: cst::Node::token(
-                                    TokenKind::Indexed,
+                                    TokenKind::IndexedKeyword,
                                     Range { start, end },
                                     leading_trivia,
                                     trailing_trivia,
@@ -3840,7 +3972,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "'indexed'"),
+                                error: ParseError::new(start, "IndexedKeyword"),
                             }
                         }
                     } {
@@ -3921,7 +4053,7 @@ impl Language {
         }
     }
 
-    // ExperimentalPragma = "experimental" «Identifier» ;
+    // ExperimentalPragma = «ExperimentalKeyword» «Identifier» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_experimental_pragma(&self, stream: &mut Stream) -> ParseResult {
@@ -3931,14 +4063,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(
-                        stream, 'e', 'x', 'p', 'e', 'r', 'i', 'm', 'e', 'n', 't', 'a', 'l'
-                    ) {
+                    if self.scan_experimental_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Experimental,
+                                TokenKind::ExperimentalKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -3947,7 +4077,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'experimental'"),
+                            error: ParseError::new(start, "ExperimentalKeyword"),
                         }
                     }
                 } {
@@ -4023,7 +4153,7 @@ impl Language {
     // UnarySuffixExpression = Expression ( "++" | "--" ) ;
     // UnaryPrefixExpression = ( "++" | "--" | '!' | '~' | '-' ) Expression ;
     // FunctionCallExpression = Expression ( [ NamedArgumentList ] ArgumentList ) ;
-    // MemberAccessExpression = Expression ( '.' ( «Identifier» | "address" ) ) ;
+    // MemberAccessExpression = Expression ( '.' ( «Identifier» | «AddressKeyword» ) ) ;
     // IndexAccessExpression = Expression ( '[' Expression [ ':' [ Expression ] ] | ':' [ Expression ] ']' ) ;
     // (* v0.6.0 *) Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnarySuffixExpression | UnaryPrefixExpression | FunctionCallExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
     // AssignmentExpression = Expression ( '=' | "|=" | "^=" | "&=" | "<<=" | ">>=" | ">>>=" | "+=" | "-=" | "*=" | "/=" | "%=" ) Expression ;
@@ -4042,7 +4172,7 @@ impl Language {
     // UnarySuffixExpression = Expression ( "++" | "--" ) ;
     // UnaryPrefixExpression = ( "++" | "--" | '!' | '~' | '-' ) Expression ;
     // FunctionCallExpression = Expression ( [ NamedArgumentList ] ArgumentList ) ;
-    // MemberAccessExpression = Expression ( '.' ( «Identifier» | "address" ) ) ;
+    // MemberAccessExpression = Expression ( '.' ( «Identifier» | «AddressKeyword» ) ) ;
     // IndexAccessExpression = Expression ( '[' Expression [ ':' [ Expression ] ] | ':' [ Expression ] ']' ) ;
 
     #[allow(unused_assignments, unused_parens)]
@@ -4495,15 +4625,13 @@ impl Language {
                                             let leading_trivia =
                                                 self.optional_leading_trivia(stream);
                                             let start = stream.position();
-                                            if scan_chars!(
-                                                stream, 'a', 'd', 'd', 'r', 'e', 's', 's'
-                                            ) {
+                                            if self.scan_address_keyword(stream) {
                                                 let end = stream.position();
                                                 let trailing_trivia =
                                                     self.optional_trailing_trivia(stream);
                                                 Pass {
                                                     node: cst::Node::token(
-                                                        TokenKind::Address,
+                                                        TokenKind::AddressKeyword,
                                                         Range { start, end },
                                                         leading_trivia,
                                                         trailing_trivia,
@@ -4512,7 +4640,7 @@ impl Language {
                                                 }
                                             } else {
                                                 Fail {
-                                                    error: ParseError::new(start, "'address'"),
+                                                    error: ParseError::new(start, "AddressKeyword"),
                                                 }
                                             }
                                         } {
@@ -5499,15 +5627,13 @@ impl Language {
                                             let leading_trivia =
                                                 self.optional_leading_trivia(stream);
                                             let start = stream.position();
-                                            if scan_chars!(
-                                                stream, 'a', 'd', 'd', 'r', 'e', 's', 's'
-                                            ) {
+                                            if self.scan_address_keyword(stream) {
                                                 let end = stream.position();
                                                 let trailing_trivia =
                                                     self.optional_trailing_trivia(stream);
                                                 Pass {
                                                     node: cst::Node::token(
-                                                        TokenKind::Address,
+                                                        TokenKind::AddressKeyword,
                                                         Range { start, end },
                                                         leading_trivia,
                                                         trailing_trivia,
@@ -5516,7 +5642,7 @@ impl Language {
                                                 }
                                             } else {
                                                 Fail {
-                                                    error: ParseError::new(start, "'address'"),
+                                                    error: ParseError::new(start, "AddressKeyword"),
                                                 }
                                             }
                                         } {
@@ -6127,7 +6253,7 @@ impl Language {
         }
     }
 
-    // FallbackFunctionAttribute = ModifierInvocation | OverrideSpecifier | "external" | "payable" | "pure" | "view" | "virtual" ;
+    // FallbackFunctionAttribute = ModifierInvocation | OverrideSpecifier | «ExternalKeyword» | «PayableKeyword» | «PureKeyword» | «ViewKeyword» | «VirtualKeyword» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_fallback_function_attribute(&self, stream: &mut Stream) -> ParseResult {
@@ -6148,82 +6274,121 @@ impl Language {
                 match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    match {
-                        match stream.next() {
-                            Some('e') => {
-                                if scan_chars!(stream, 'x', 't', 'e', 'r', 'n', 'a', 'l') {
-                                    Ok(TokenKind::External)
-                                } else {
-                                    Err(ParseError::new(stream.position(), "'external'"))
-                                }
-                            }
-                            Some('p') => match stream.next() {
-                                Some('a') => {
-                                    if scan_chars!(stream, 'y', 'a', 'b', 'l', 'e') {
-                                        Ok(TokenKind::Payable)
-                                    } else {
-                                        Err(ParseError::new(stream.position(), "'payable'"))
-                                    }
-                                }
-                                Some('u') => {
-                                    if scan_chars!(stream, 'r', 'e') {
-                                        Ok(TokenKind::Pure)
-                                    } else {
-                                        Err(ParseError::new(stream.position(), "'pure'"))
-                                    }
-                                }
-                                _ => {
-                                    Err(ParseError::new(stream.position(), "'payable', or 'pure'"))
-                                }
-                            },
-                            Some('v') => {
-                                if scan_chars!(stream, 'i') {
-                                    match stream.next() {
-                                        Some('e') => {
-                                            if scan_chars!(stream, 'w') {
-                                                Ok(TokenKind::View)
-                                            } else {
-                                                Err(ParseError::new(stream.position(), "'view'"))
-                                            }
-                                        }
-                                        Some('r') => {
-                                            if scan_chars!(stream, 't', 'u', 'a', 'l') {
-                                                Ok(TokenKind::Virtual)
-                                            } else {
-                                                Err(ParseError::new(stream.position(), "'virtual'"))
-                                            }
-                                        }
-                                        _ => Err(ParseError::new(
-                                            stream.position(),
-                                            "'view', or 'virtual'",
-                                        )),
-                                    }
-                                } else {
-                                    Err(ParseError::new(stream.position(), "'view', or 'virtual'"))
-                                }
-                            }
-                            _ => Err(ParseError::new(
-                                stream.position(),
-                                "'external', or 'payable', or 'pure', or 'view', or 'virtual'",
-                            )),
+                    if self.scan_external_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::ExternalKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
                         }
-                    } {
-                        Err(mut error) => {
-                            error.position = start;
-                            Fail { error }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "ExternalKeyword"),
                         }
-                        Ok(kind) => {
-                            let end = stream.position();
-                            let trailing_trivia = self.optional_trailing_trivia(stream);
-                            Pass {
-                                node: cst::Node::token(
-                                    kind,
-                                    Range { start, end },
-                                    leading_trivia,
-                                    trailing_trivia,
-                                ),
-                                error: None,
-                            }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_payable_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::PayableKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "PayableKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_pure_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::PureKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "PureKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_view_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::ViewKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "ViewKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_virtual_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::VirtualKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "VirtualKeyword"),
                         }
                     }
                 } {
@@ -6243,7 +6408,7 @@ impl Language {
         }
     }
 
-    // FallbackFunctionDefinition = "fallback" ParameterList { FallbackFunctionAttribute } [ "returns" ParameterList ] ( ';' | Block ) ;
+    // FallbackFunctionDefinition = «FallbackKeyword» ParameterList { FallbackFunctionAttribute } [ «ReturnsKeyword» ParameterList ] ( ';' | Block ) ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_fallback_function_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -6253,12 +6418,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'f', 'a', 'l', 'l', 'b', 'a', 'c', 'k') {
+                    if self.scan_fallback_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Fallback,
+                                TokenKind::FallbackKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -6267,7 +6432,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'fallback'"),
+                            error: ParseError::new(start, "FallbackKeyword"),
                         }
                     }
                 } {
@@ -6325,12 +6490,12 @@ impl Language {
                         let result_0 = match {
                             let leading_trivia = self.optional_leading_trivia(stream);
                             let start = stream.position();
-                            if scan_chars!(stream, 'r', 'e', 't', 'u', 'r', 'n', 's') {
+                            if self.scan_returns_keyword(stream) {
                                 let end = stream.position();
                                 let trailing_trivia = self.optional_trailing_trivia(stream);
                                 Pass {
                                     node: cst::Node::token(
-                                        TokenKind::Returns,
+                                        TokenKind::ReturnsKeyword,
                                         Range { start, end },
                                         leading_trivia,
                                         trailing_trivia,
@@ -6339,7 +6504,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "'returns'"),
+                                    error: ParseError::new(start, "ReturnsKeyword"),
                                 }
                             }
                         } {
@@ -6454,7 +6619,7 @@ impl Language {
         }
     }
 
-    // ForStatement = "for" '(' ( SimpleStatement | ';' ) ( ExpressionStatement | ';' ) [ Expression ] ')' Statement ;
+    // ForStatement = «ForKeyword» '(' ( SimpleStatement | ';' ) ( ExpressionStatement | ';' ) [ Expression ] ')' Statement ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_for_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -6464,12 +6629,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'f', 'o', 'r') {
+                    if self.scan_for_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::For,
+                                TokenKind::ForKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -6478,7 +6643,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'for'"),
+                            error: ParseError::new(start, "ForKeyword"),
                         }
                     }
                 } {
@@ -6728,7 +6893,7 @@ impl Language {
         }
     }
 
-    // FunctionAttribute = ModifierInvocation | OverrideSpecifier | "external" | "internal" | "payable" | "private" | "public" | "pure" | "view" | "virtual" ;
+    // FunctionAttribute = ModifierInvocation | OverrideSpecifier | «ExternalKeyword» | «InternalKeyword» | «PayableKeyword» | «PrivateKeyword» | «PublicKeyword» | «PureKeyword» | «ViewKeyword» | «VirtualKeyword» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_function_attribute(&self, stream: &mut Stream) -> ParseResult {
@@ -6749,25 +6914,196 @@ impl Language {
                 match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    match {
-                        match stream . next () { Some ('e') => if scan_chars ! (stream , 'x' , 't' , 'e' , 'r' , 'n' , 'a' , 'l') { Ok (TokenKind :: External) } else { Err (ParseError :: new (stream . position () , "'external'")) } , Some ('i') => if scan_chars ! (stream , 'n' , 't' , 'e' , 'r' , 'n' , 'a' , 'l') { Ok (TokenKind :: Internal) } else { Err (ParseError :: new (stream . position () , "'internal'")) } , Some ('p') => { match stream . next () { Some ('a') => if scan_chars ! (stream , 'y' , 'a' , 'b' , 'l' , 'e') { Ok (TokenKind :: Payable) } else { Err (ParseError :: new (stream . position () , "'payable'")) } , Some ('r') => if scan_chars ! (stream , 'i' , 'v' , 'a' , 't' , 'e') { Ok (TokenKind :: Private) } else { Err (ParseError :: new (stream . position () , "'private'")) } , Some ('u') => { match stream . next () { Some ('b') => if scan_chars ! (stream , 'l' , 'i' , 'c') { Ok (TokenKind :: Public) } else { Err (ParseError :: new (stream . position () , "'public'")) } , Some ('r') => if scan_chars ! (stream , 'e') { Ok (TokenKind :: Pure) } else { Err (ParseError :: new (stream . position () , "'pure'")) } , _ => Err (ParseError :: new (stream . position () , "'public', or 'pure'")) } } , _ => Err (ParseError :: new (stream . position () , "'payable', or 'private', or 'public', or 'pure'")) } } , Some ('v') => { if scan_chars ! (stream , 'i') { match stream . next () { Some ('e') => if scan_chars ! (stream , 'w') { Ok (TokenKind :: View) } else { Err (ParseError :: new (stream . position () , "'view'")) } , Some ('r') => if scan_chars ! (stream , 't' , 'u' , 'a' , 'l') { Ok (TokenKind :: Virtual) } else { Err (ParseError :: new (stream . position () , "'virtual'")) } , _ => Err (ParseError :: new (stream . position () , "'view', or 'virtual'")) } } else { Err (ParseError :: new (stream . position () , "'view', or 'virtual'")) } } , _ => Err (ParseError :: new (stream . position () , "'external', or 'internal', or 'payable', or 'private', or 'public', or 'pure', or 'view', or 'virtual'")) }
-                    } {
-                        Err(mut error) => {
-                            error.position = start;
-                            Fail { error }
+                    if self.scan_external_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::ExternalKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
                         }
-                        Ok(kind) => {
-                            let end = stream.position();
-                            let trailing_trivia = self.optional_trailing_trivia(stream);
-                            Pass {
-                                node: cst::Node::token(
-                                    kind,
-                                    Range { start, end },
-                                    leading_trivia,
-                                    trailing_trivia,
-                                ),
-                                error: None,
-                            }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "ExternalKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_internal_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::InternalKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "InternalKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_payable_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::PayableKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "PayableKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_private_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::PrivateKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "PrivateKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_public_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::PublicKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "PublicKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_pure_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::PureKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "PureKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_view_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::ViewKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "ViewKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_virtual_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::VirtualKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "VirtualKeyword"),
                         }
                     }
                 } {
@@ -6787,7 +7123,7 @@ impl Language {
         }
     }
 
-    // FunctionDefinition = "function" ( «Identifier» | "fallback" | "receive" ) ParameterList { FunctionAttribute } [ "returns" ParameterList ] ( ';' | Block ) ;
+    // FunctionDefinition = «FunctionKeyword» ( «Identifier» | «FallbackKeyword» | «ReceiveKeyword» ) ParameterList { FunctionAttribute } [ «ReturnsKeyword» ParameterList ] ( ';' | Block ) ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_function_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -6797,12 +7133,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'f', 'u', 'n', 'c', 't', 'i', 'o', 'n') {
+                    if self.scan_function_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Function,
+                                TokenKind::FunctionKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -6811,7 +7147,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'function'"),
+                            error: ParseError::new(start, "FunctionKeyword"),
                         }
                     }
                 } {
@@ -6856,44 +7192,46 @@ impl Language {
                     match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        match {
-                            match stream.next() {
-                                Some('f') => {
-                                    if scan_chars!(stream, 'a', 'l', 'l', 'b', 'a', 'c', 'k') {
-                                        Ok(TokenKind::Fallback)
-                                    } else {
-                                        Err(ParseError::new(stream.position(), "'fallback'"))
-                                    }
-                                }
-                                Some('r') => {
-                                    if scan_chars!(stream, 'e', 'c', 'e', 'i', 'v', 'e') {
-                                        Ok(TokenKind::Receive)
-                                    } else {
-                                        Err(ParseError::new(stream.position(), "'receive'"))
-                                    }
-                                }
-                                _ => Err(ParseError::new(
-                                    stream.position(),
-                                    "'fallback', or 'receive'",
-                                )),
+                        if self.scan_fallback_keyword(stream) {
+                            let end = stream.position();
+                            let trailing_trivia = self.optional_trailing_trivia(stream);
+                            Pass {
+                                node: cst::Node::token(
+                                    TokenKind::FallbackKeyword,
+                                    Range { start, end },
+                                    leading_trivia,
+                                    trailing_trivia,
+                                ),
+                                error: None,
                             }
-                        } {
-                            Err(mut error) => {
-                                error.position = start;
-                                Fail { error }
+                        } else {
+                            Fail {
+                                error: ParseError::new(start, "FallbackKeyword"),
                             }
-                            Ok(kind) => {
-                                let end = stream.position();
-                                let trailing_trivia = self.optional_trailing_trivia(stream);
-                                Pass {
-                                    node: cst::Node::token(
-                                        kind,
-                                        Range { start, end },
-                                        leading_trivia,
-                                        trailing_trivia,
-                                    ),
-                                    error: None,
-                                }
+                        }
+                    } {
+                        Fail { error } => furthest_error.merge_with(error),
+                        pass => break pass,
+                    }
+                    stream.set_position(start_position);
+                    match {
+                        let leading_trivia = self.optional_leading_trivia(stream);
+                        let start = stream.position();
+                        if self.scan_receive_keyword(stream) {
+                            let end = stream.position();
+                            let trailing_trivia = self.optional_trailing_trivia(stream);
+                            Pass {
+                                node: cst::Node::token(
+                                    TokenKind::ReceiveKeyword,
+                                    Range { start, end },
+                                    leading_trivia,
+                                    trailing_trivia,
+                                ),
+                                error: None,
+                            }
+                        } else {
+                            Fail {
+                                error: ParseError::new(start, "ReceiveKeyword"),
                             }
                         }
                     } {
@@ -6958,12 +7296,12 @@ impl Language {
                         let result_0 = match {
                             let leading_trivia = self.optional_leading_trivia(stream);
                             let start = stream.position();
-                            if scan_chars!(stream, 'r', 'e', 't', 'u', 'r', 'n', 's') {
+                            if self.scan_returns_keyword(stream) {
                                 let end = stream.position();
                                 let trailing_trivia = self.optional_trailing_trivia(stream);
                                 Pass {
                                     node: cst::Node::token(
-                                        TokenKind::Returns,
+                                        TokenKind::ReturnsKeyword,
                                         Range { start, end },
                                         leading_trivia,
                                         trailing_trivia,
@@ -6972,7 +7310,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "'returns'"),
+                                    error: ParseError::new(start, "ReturnsKeyword"),
                                 }
                             }
                         } {
@@ -7087,7 +7425,7 @@ impl Language {
         }
     }
 
-    // FunctionType = "function" ParameterList { "internal" | "external" | "private" | "public" | "pure" | "view" | "payable" } [ "returns" ParameterList ] ;
+    // FunctionType = «FunctionKeyword» ParameterList { «InternalKeyword» | «ExternalKeyword» | «PrivateKeyword» | «PublicKeyword» | «PureKeyword» | «ViewKeyword» | «PayableKeyword» } [ «ReturnsKeyword» ParameterList ] ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_function_type(&self, stream: &mut Stream) -> ParseResult {
@@ -7097,12 +7435,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'f', 'u', 'n', 'c', 't', 'i', 'o', 'n') {
+                    if self.scan_function_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Function,
+                                TokenKind::FunctionKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -7111,7 +7449,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'function'"),
+                            error: ParseError::new(start, "FunctionKeyword"),
                         }
                     }
                 } {
@@ -7140,30 +7478,186 @@ impl Language {
                     let mut result = Vec::new();
                     loop {
                         let start_position = stream.position();
-                        match {
-                            let leading_trivia = self.optional_leading_trivia(stream);
-                            let start = stream.position();
+                        match loop {
+                            let start_position = stream.position();
+                            let mut furthest_error;
                             match {
-                                match stream . next () { Some ('e') => if scan_chars ! (stream , 'x' , 't' , 'e' , 'r' , 'n' , 'a' , 'l') { Ok (TokenKind :: External) } else { Err (ParseError :: new (stream . position () , "'external'")) } , Some ('i') => if scan_chars ! (stream , 'n' , 't' , 'e' , 'r' , 'n' , 'a' , 'l') { Ok (TokenKind :: Internal) } else { Err (ParseError :: new (stream . position () , "'internal'")) } , Some ('p') => { match stream . next () { Some ('a') => if scan_chars ! (stream , 'y' , 'a' , 'b' , 'l' , 'e') { Ok (TokenKind :: Payable) } else { Err (ParseError :: new (stream . position () , "'payable'")) } , Some ('r') => if scan_chars ! (stream , 'i' , 'v' , 'a' , 't' , 'e') { Ok (TokenKind :: Private) } else { Err (ParseError :: new (stream . position () , "'private'")) } , Some ('u') => { match stream . next () { Some ('b') => if scan_chars ! (stream , 'l' , 'i' , 'c') { Ok (TokenKind :: Public) } else { Err (ParseError :: new (stream . position () , "'public'")) } , Some ('r') => if scan_chars ! (stream , 'e') { Ok (TokenKind :: Pure) } else { Err (ParseError :: new (stream . position () , "'pure'")) } , _ => Err (ParseError :: new (stream . position () , "'public', or 'pure'")) } } , _ => Err (ParseError :: new (stream . position () , "'payable', or 'private', or 'public', or 'pure'")) } } , Some ('v') => if scan_chars ! (stream , 'i' , 'e' , 'w') { Ok (TokenKind :: View) } else { Err (ParseError :: new (stream . position () , "'view'")) } , _ => Err (ParseError :: new (stream . position () , "'external', or 'internal', or 'payable', or 'private', or 'public', or 'pure', or 'view'")) }
-                            } {
-                                Err(mut error) => {
-                                    error.position = start;
-                                    Fail { error }
-                                }
-                                Ok(kind) => {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_internal_keyword(stream) {
                                     let end = stream.position();
                                     let trailing_trivia = self.optional_trailing_trivia(stream);
                                     Pass {
                                         node: cst::Node::token(
-                                            kind,
+                                            TokenKind::InternalKeyword,
                                             Range { start, end },
                                             leading_trivia,
                                             trailing_trivia,
                                         ),
                                         error: None,
                                     }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "InternalKeyword"),
+                                    }
                                 }
+                            } {
+                                Fail { error } => furthest_error = error,
+                                pass => break pass,
                             }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_external_keyword(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::ExternalKeyword,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "ExternalKeyword"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_private_keyword(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::PrivateKeyword,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "PrivateKeyword"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_public_keyword(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::PublicKeyword,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "PublicKeyword"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_pure_keyword(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::PureKeyword,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "PureKeyword"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_view_keyword(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::ViewKeyword,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "ViewKeyword"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_payable_keyword(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::PayableKeyword,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "PayableKeyword"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            break Fail {
+                                error: furthest_error,
+                            };
                         } {
                             Fail { error } => {
                                 stream.set_position(start_position);
@@ -7193,12 +7687,12 @@ impl Language {
                         let result_0 = match {
                             let leading_trivia = self.optional_leading_trivia(stream);
                             let start = stream.position();
-                            if scan_chars!(stream, 'r', 'e', 't', 'u', 'r', 'n', 's') {
+                            if self.scan_returns_keyword(stream) {
                                 let end = stream.position();
                                 let trailing_trivia = self.optional_trailing_trivia(stream);
                                 Pass {
                                     node: cst::Node::token(
-                                        TokenKind::Returns,
+                                        TokenKind::ReturnsKeyword,
                                         Range { start, end },
                                         leading_trivia,
                                         trailing_trivia,
@@ -7207,7 +7701,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "'returns'"),
+                                    error: ParseError::new(start, "ReturnsKeyword"),
                                 }
                             }
                         } {
@@ -7352,7 +7846,7 @@ impl Language {
         }
     }
 
-    // IfStatement = "if" '(' Expression ')' Statement [ "else" Statement ] ;
+    // IfStatement = «IfKeyword» '(' Expression ')' Statement [ «ElseKeyword» Statement ] ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_if_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -7362,12 +7856,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'i', 'f') {
+                    if self.scan_if_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::If,
+                                TokenKind::IfKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -7376,7 +7870,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'if'"),
+                            error: ParseError::new(start, "IfKeyword"),
                         }
                     }
                 } {
@@ -7487,12 +7981,12 @@ impl Language {
                         let result_0 = match {
                             let leading_trivia = self.optional_leading_trivia(stream);
                             let start = stream.position();
-                            if scan_chars!(stream, 'e', 'l', 's', 'e') {
+                            if self.scan_else_keyword(stream) {
                                 let end = stream.position();
                                 let trailing_trivia = self.optional_trailing_trivia(stream);
                                 Pass {
                                     node: cst::Node::token(
-                                        TokenKind::Else,
+                                        TokenKind::ElseKeyword,
                                         Range { start, end },
                                         leading_trivia,
                                         trailing_trivia,
@@ -7501,7 +7995,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "'else'"),
+                                    error: ParseError::new(start, "ElseKeyword"),
                                 }
                             }
                         } {
@@ -7570,7 +8064,7 @@ impl Language {
         }
     }
 
-    // ImportDirective = "import" ( SimpleImportDirective | StarImportDirective | SelectingImportDirective ) ';' ;
+    // ImportDirective = «ImportKeyword» ( SimpleImportDirective | StarImportDirective | SelectingImportDirective ) ';' ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_import_directive(&self, stream: &mut Stream) -> ParseResult {
@@ -7580,12 +8074,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'i', 'm', 'p', 'o', 'r', 't') {
+                    if self.scan_import_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Import,
+                                TokenKind::ImportKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -7594,7 +8088,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'import'"),
+                            error: ParseError::new(start, "ImportKeyword"),
                         }
                     }
                 } {
@@ -7774,7 +8268,7 @@ impl Language {
         }
     }
 
-    // InheritanceSpecifierList = "is" InheritanceSpecifier { ',' InheritanceSpecifier } ;
+    // InheritanceSpecifierList = «IsKeyword» InheritanceSpecifier { ',' InheritanceSpecifier } ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_inheritance_specifier_list(&self, stream: &mut Stream) -> ParseResult {
@@ -7784,12 +8278,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'i', 's') {
+                    if self.scan_is_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Is,
+                                TokenKind::IsKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -7798,7 +8292,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'is'"),
+                            error: ParseError::new(start, "IsKeyword"),
                         }
                     }
                 } {
@@ -7878,7 +8372,7 @@ impl Language {
         }
     }
 
-    // InterfaceDefinition = "interface" «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
+    // InterfaceDefinition = «InterfaceKeyword» «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_interface_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -7888,12 +8382,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'i', 'n', 't', 'e', 'r', 'f', 'a', 'c', 'e') {
+                    if self.scan_interface_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Interface,
+                                TokenKind::InterfaceKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -7902,7 +8396,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'interface'"),
+                            error: ParseError::new(start, "InterfaceKeyword"),
                         }
                     }
                 } {
@@ -8214,7 +8708,7 @@ impl Language {
         }
     }
 
-    // LibraryDefinition = "library" «Identifier» '{' { ContractBodyElement } '}' ;
+    // LibraryDefinition = «LibraryKeyword» «Identifier» '{' { ContractBodyElement } '}' ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_library_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -8224,12 +8718,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'l', 'i', 'b', 'r', 'a', 'r', 'y') {
+                    if self.scan_library_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Library,
+                                TokenKind::LibraryKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -8238,7 +8732,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'library'"),
+                            error: ParseError::new(start, "LibraryKeyword"),
                         }
                     }
                 } {
@@ -8519,7 +9013,7 @@ impl Language {
         }
     }
 
-    // MappingType = "mapping" '(' MappingKeyType "=>" MappingValueType ')' ;
+    // MappingType = «MappingKeyword» '(' MappingKeyType "=>" MappingValueType ')' ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_mapping_type(&self, stream: &mut Stream) -> ParseResult {
@@ -8529,12 +9023,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'm', 'a', 'p', 'p', 'i', 'n', 'g') {
+                    if self.scan_mapping_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Mapping,
+                                TokenKind::MappingKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -8543,7 +9037,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'mapping'"),
+                            error: ParseError::new(start, "MappingKeyword"),
                         }
                     }
                 } {
@@ -8813,7 +9307,7 @@ impl Language {
         }
     }
 
-    // ModifierAttribute = OverrideSpecifier | "virtual" ;
+    // ModifierAttribute = OverrideSpecifier | «VirtualKeyword» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_modifier_attribute(&self, stream: &mut Stream) -> ParseResult {
@@ -8829,12 +9323,12 @@ impl Language {
                 match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'v', 'i', 'r', 't', 'u', 'a', 'l') {
+                    if self.scan_virtual_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Virtual,
+                                TokenKind::VirtualKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -8843,7 +9337,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'virtual'"),
+                            error: ParseError::new(start, "VirtualKeyword"),
                         }
                     }
                 } {
@@ -8863,7 +9357,7 @@ impl Language {
         }
     }
 
-    // ModifierDefinition = "modifier" «Identifier» [ ParameterList ] { ModifierAttribute } ( ';' | Block ) ;
+    // ModifierDefinition = «ModifierKeyword» «Identifier» [ ParameterList ] { ModifierAttribute } ( ';' | Block ) ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_modifier_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -8873,12 +9367,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'm', 'o', 'd', 'i', 'f', 'i', 'e', 'r') {
+                    if self.scan_modifier_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Modifier,
+                                TokenKind::ModifierKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -8887,7 +9381,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'modifier'"),
+                            error: ParseError::new(start, "ModifierKeyword"),
                         }
                     }
                 } {
@@ -9336,7 +9830,7 @@ impl Language {
         }
     }
 
-    // NewExpression = "new" TypeName ;
+    // NewExpression = «NewKeyword» TypeName ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_new_expression(&self, stream: &mut Stream) -> ParseResult {
@@ -9346,12 +9840,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'n', 'e', 'w') {
+                    if self.scan_new_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::New,
+                                TokenKind::NewKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -9360,7 +9854,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'new'"),
+                            error: ParseError::new(start, "NewKeyword"),
                         }
                     }
                 } {
@@ -9399,7 +9893,302 @@ impl Language {
         }
     }
 
-    // NumericLiteral = ( «HexLiteral» | «DecimalLiteral» ) [ «NumberUnit» ] ;
+    // NumberUnit = «DaysKeyword» | «EtherKeyword» | «FinneyKeyword» | «GweiKeyword» | «HoursKeyword» | «MinutesKeyword» | «SecondsKeyword» | «SzaboKeyword» | «WeeksKeyword» | «WeiKeyword» | «YearsKeyword» ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn parse_number_unit(&self, stream: &mut Stream) -> ParseResult {
+        match {
+            loop {
+                let start_position = stream.position();
+                let mut furthest_error;
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_days_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::DaysKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "DaysKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error = error,
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_ether_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::EtherKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "EtherKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_finney_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::FinneyKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "FinneyKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_gwei_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::GweiKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "GweiKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_hours_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::HoursKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "HoursKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_minutes_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::MinutesKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "MinutesKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_seconds_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::SecondsKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "SecondsKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_szabo_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::SzaboKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "SzaboKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_weeks_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::WeeksKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "WeeksKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_wei_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::WeiKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "WeiKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_years_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::YearsKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "YearsKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                break Fail {
+                    error: furthest_error,
+                };
+            }
+        } {
+            Pass { node, error } => Pass {
+                node: cst::Node::top_level_rule(RuleKind::NumberUnit, node),
+                error,
+            },
+            fail => fail,
+        }
+    }
+
+    // NumericLiteral = ( «HexLiteral» | «DecimalLiteral» ) [ NumberUnit ] ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_numeric_literal(&self, stream: &mut Stream) -> ParseResult {
@@ -9474,27 +10263,7 @@ impl Language {
                 };
                 let result_1 = match {
                     let start_position = stream.position();
-                    match {
-                        let leading_trivia = self.optional_leading_trivia(stream);
-                        let start = stream.position();
-                        if self.scan_number_unit(stream) {
-                            let end = stream.position();
-                            let trailing_trivia = self.optional_trailing_trivia(stream);
-                            Pass {
-                                node: cst::Node::token(
-                                    TokenKind::NumberUnit,
-                                    Range { start, end },
-                                    leading_trivia,
-                                    trailing_trivia,
-                                ),
-                                error: None,
-                            }
-                        } else {
-                            Fail {
-                                error: ParseError::new(start, "NumberUnit"),
-                            }
-                        }
-                    } {
+                    match self.parse_number_unit(stream) {
                         Fail { error } => {
                             stream.set_position(start_position);
                             Pass {
@@ -9529,7 +10298,7 @@ impl Language {
         }
     }
 
-    // OverrideSpecifier = "override" [ '(' IdentifierPath { ',' IdentifierPath } ')' ] ;
+    // OverrideSpecifier = «OverrideKeyword» [ '(' IdentifierPath { ',' IdentifierPath } ')' ] ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_override_specifier(&self, stream: &mut Stream) -> ParseResult {
@@ -9539,12 +10308,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'o', 'v', 'e', 'r', 'r', 'i', 'd', 'e') {
+                    if self.scan_override_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Override,
+                                TokenKind::OverrideKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -9553,7 +10322,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'override'"),
+                            error: ParseError::new(start, "OverrideKeyword"),
                         }
                     }
                 } {
@@ -9963,7 +10732,7 @@ impl Language {
         }
     }
 
-    // PayableType = "payable" ;
+    // PayableType = «PayableKeyword» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_payable_type(&self, stream: &mut Stream) -> ParseResult {
@@ -9971,12 +10740,12 @@ impl Language {
             {
                 let leading_trivia = self.optional_leading_trivia(stream);
                 let start = stream.position();
-                if scan_chars!(stream, 'p', 'a', 'y', 'a', 'b', 'l', 'e') {
+                if self.scan_payable_keyword(stream) {
                     let end = stream.position();
                     let trailing_trivia = self.optional_trailing_trivia(stream);
                     Pass {
                         node: cst::Node::token(
-                            TokenKind::Payable,
+                            TokenKind::PayableKeyword,
                             Range { start, end },
                             leading_trivia,
                             trailing_trivia,
@@ -9985,7 +10754,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "'payable'"),
+                        error: ParseError::new(start, "PayableKeyword"),
                     }
                 }
             }
@@ -10054,7 +10823,7 @@ impl Language {
         }
     }
 
-    // PragmaDirective = "pragma" ( VersionPragma | ABICoderPragma | ExperimentalPragma ) ';' ;
+    // PragmaDirective = «PragmaKeyword» ( VersionPragma | ABICoderPragma | ExperimentalPragma ) ';' ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_pragma_directive(&self, stream: &mut Stream) -> ParseResult {
@@ -10064,12 +10833,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'p', 'r', 'a', 'g', 'm', 'a') {
+                    if self.scan_pragma_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Pragma,
+                                TokenKind::PragmaKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -10078,7 +10847,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'pragma'"),
+                            error: ParseError::new(start, "PragmaKeyword"),
                         }
                     }
                 } {
@@ -10168,7 +10937,7 @@ impl Language {
         }
     }
 
-    // PrimaryExpression = «Identifier» | TupleExpression | ArrayLiteral | StringExpression | NumericLiteral | «BooleanLiteral» | NewExpression | TypeExpression | ElementaryType ;
+    // PrimaryExpression = «Identifier» | TupleExpression | ArrayLiteral | StringExpression | NumericLiteral | BooleanLiteral | NewExpression | TypeExpression | ElementaryType ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_primary_expression(&self, stream: &mut Stream) -> ParseResult {
@@ -10221,27 +10990,7 @@ impl Language {
                     pass => break pass,
                 }
                 stream.set_position(start_position);
-                match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if self.scan_boolean_literal(stream) {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::BooleanLiteral,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "BooleanLiteral"),
-                        }
-                    }
-                } {
+                match self.parse_boolean_literal(stream) {
                     Fail { error } => furthest_error.merge_with(error),
                     pass => break pass,
                 }
@@ -10273,7 +11022,7 @@ impl Language {
         }
     }
 
-    // ReceiveFunctionAttribute = ModifierInvocation | OverrideSpecifier | "external" | "payable" | "virtual" ;
+    // ReceiveFunctionAttribute = ModifierInvocation | OverrideSpecifier | «ExternalKeyword» | «PayableKeyword» | «VirtualKeyword» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_receive_function_attribute(&self, stream: &mut Stream) -> ParseResult {
@@ -10294,51 +11043,71 @@ impl Language {
                 match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    match {
-                        match stream.next() {
-                            Some('e') => {
-                                if scan_chars!(stream, 'x', 't', 'e', 'r', 'n', 'a', 'l') {
-                                    Ok(TokenKind::External)
-                                } else {
-                                    Err(ParseError::new(stream.position(), "'external'"))
-                                }
-                            }
-                            Some('p') => {
-                                if scan_chars!(stream, 'a', 'y', 'a', 'b', 'l', 'e') {
-                                    Ok(TokenKind::Payable)
-                                } else {
-                                    Err(ParseError::new(stream.position(), "'payable'"))
-                                }
-                            }
-                            Some('v') => {
-                                if scan_chars!(stream, 'i', 'r', 't', 'u', 'a', 'l') {
-                                    Ok(TokenKind::Virtual)
-                                } else {
-                                    Err(ParseError::new(stream.position(), "'virtual'"))
-                                }
-                            }
-                            _ => Err(ParseError::new(
-                                stream.position(),
-                                "'external', or 'payable', or 'virtual'",
-                            )),
+                    if self.scan_external_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::ExternalKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
                         }
-                    } {
-                        Err(mut error) => {
-                            error.position = start;
-                            Fail { error }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "ExternalKeyword"),
                         }
-                        Ok(kind) => {
-                            let end = stream.position();
-                            let trailing_trivia = self.optional_trailing_trivia(stream);
-                            Pass {
-                                node: cst::Node::token(
-                                    kind,
-                                    Range { start, end },
-                                    leading_trivia,
-                                    trailing_trivia,
-                                ),
-                                error: None,
-                            }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_payable_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::PayableKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "PayableKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_virtual_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::VirtualKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "VirtualKeyword"),
                         }
                     }
                 } {
@@ -10358,7 +11127,7 @@ impl Language {
         }
     }
 
-    // ReceiveFunctionDefinition = "receive" ParameterList { ReceiveFunctionAttribute } ( ';' | Block ) ;
+    // ReceiveFunctionDefinition = «ReceiveKeyword» ParameterList { ReceiveFunctionAttribute } ( ';' | Block ) ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_receive_function_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -10368,12 +11137,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'r', 'e', 'c', 'e', 'i', 'v', 'e') {
+                    if self.scan_receive_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Receive,
+                                TokenKind::ReceiveKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -10382,7 +11151,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'receive'"),
+                            error: ParseError::new(start, "ReceiveKeyword"),
                         }
                     }
                 } {
@@ -10496,7 +11265,7 @@ impl Language {
         }
     }
 
-    // ReturnStatement = "return" [ Expression ] ';' ;
+    // ReturnStatement = «ReturnKeyword» [ Expression ] ';' ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_return_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -10506,12 +11275,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'r', 'e', 't', 'u', 'r', 'n') {
+                    if self.scan_return_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Return,
+                                TokenKind::ReturnKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -10520,7 +11289,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'return'"),
+                            error: ParseError::new(start, "ReturnKeyword"),
                         }
                     }
                 } {
@@ -10602,7 +11371,7 @@ impl Language {
         }
     }
 
-    // RevertStatement = "revert" [ IdentifierPath ] ArgumentList ';' ;
+    // RevertStatement = «RevertKeyword» [ IdentifierPath ] ArgumentList ';' ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_revert_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -10612,12 +11381,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'r', 'e', 'v', 'e', 'r', 't') {
+                    if self.scan_revert_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Revert,
+                                TokenKind::RevertKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -10626,7 +11395,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'revert'"),
+                            error: ParseError::new(start, "RevertKeyword"),
                         }
                     }
                 } {
@@ -10722,7 +11491,7 @@ impl Language {
         }
     }
 
-    // SelectedImport = «Identifier» [ "as" «Identifier» ] ;
+    // SelectedImport = «Identifier» [ «AsKeyword» «Identifier» ] ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_selected_import(&self, stream: &mut Stream) -> ParseResult {
@@ -10767,12 +11536,12 @@ impl Language {
                         let result_0 = match {
                             let leading_trivia = self.optional_leading_trivia(stream);
                             let start = stream.position();
-                            if scan_chars!(stream, 'a', 's') {
+                            if self.scan_as_keyword(stream) {
                                 let end = stream.position();
                                 let trailing_trivia = self.optional_trailing_trivia(stream);
                                 Pass {
                                     node: cst::Node::token(
-                                        TokenKind::As,
+                                        TokenKind::AsKeyword,
                                         Range { start, end },
                                         leading_trivia,
                                         trailing_trivia,
@@ -10781,7 +11550,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "'as'"),
+                                    error: ParseError::new(start, "AsKeyword"),
                                 }
                             }
                         } {
@@ -10867,7 +11636,7 @@ impl Language {
         }
     }
 
-    // SelectingImportDirective = '{' SelectedImport { ',' SelectedImport } '}' "from" ImportPath ;
+    // SelectingImportDirective = '{' SelectedImport { ',' SelectedImport } '}' «FromKeyword» ImportPath ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_selecting_import_directive(&self, stream: &mut Stream) -> ParseResult {
@@ -11005,12 +11774,12 @@ impl Language {
                 let result_1 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'f', 'r', 'o', 'm') {
+                    if self.scan_from_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::From,
+                                TokenKind::FromKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -11019,7 +11788,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'from'"),
+                            error: ParseError::new(start, "FromKeyword"),
                         }
                     }
                 } {
@@ -11058,7 +11827,7 @@ impl Language {
         }
     }
 
-    // SimpleImportDirective = ImportPath { "as" «Identifier» } ;
+    // SimpleImportDirective = ImportPath { «AsKeyword» «Identifier» } ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_simple_import_directive(&self, stream: &mut Stream) -> ParseResult {
@@ -11085,12 +11854,12 @@ impl Language {
                             let result_0 = match {
                                 let leading_trivia = self.optional_leading_trivia(stream);
                                 let start = stream.position();
-                                if scan_chars!(stream, 'a', 's') {
+                                if self.scan_as_keyword(stream) {
                                     let end = stream.position();
                                     let trailing_trivia = self.optional_trailing_trivia(stream);
                                     Pass {
                                         node: cst::Node::token(
-                                            TokenKind::As,
+                                            TokenKind::AsKeyword,
                                             Range { start, end },
                                             leading_trivia,
                                             trailing_trivia,
@@ -11099,7 +11868,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "'as'"),
+                                        error: ParseError::new(start, "AsKeyword"),
                                     }
                                 }
                             } {
@@ -11312,7 +12081,7 @@ impl Language {
         }
     }
 
-    // StarImportDirective = '*' "as" «Identifier» "from" ImportPath ;
+    // StarImportDirective = '*' «AsKeyword» «Identifier» «FromKeyword» ImportPath ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_star_import_directive(&self, stream: &mut Stream) -> ParseResult {
@@ -11353,12 +12122,12 @@ impl Language {
                 let result_1 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'a', 's') {
+                    if self.scan_as_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::As,
+                                TokenKind::AsKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -11367,7 +12136,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'as'"),
+                            error: ParseError::new(start, "AsKeyword"),
                         }
                     }
                 } {
@@ -11415,12 +12184,12 @@ impl Language {
                 let result_3 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'f', 'r', 'o', 'm') {
+                    if self.scan_from_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::From,
+                                TokenKind::FromKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -11429,7 +12198,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'from'"),
+                            error: ParseError::new(start, "FromKeyword"),
                         }
                     }
                 } {
@@ -11471,7 +12240,7 @@ impl Language {
         }
     }
 
-    // StateVariableAttribute = OverrideSpecifier | "constant" | "immutable" | "internal" | "private" | "public" ;
+    // StateVariableAttribute = OverrideSpecifier | «ConstantKeyword» | «ImmutableKeyword» | «InternalKeyword» | «PrivateKeyword» | «PublicKeyword» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_state_variable_attribute(&self, stream: &mut Stream) -> ParseResult {
@@ -11487,25 +12256,121 @@ impl Language {
                 match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    match {
-                        match stream . next () { Some ('c') => if scan_chars ! (stream , 'o' , 'n' , 's' , 't' , 'a' , 'n' , 't') { Ok (TokenKind :: Constant) } else { Err (ParseError :: new (stream . position () , "'constant'")) } , Some ('i') => { match stream . next () { Some ('m') => if scan_chars ! (stream , 'm' , 'u' , 't' , 'a' , 'b' , 'l' , 'e') { Ok (TokenKind :: Immutable) } else { Err (ParseError :: new (stream . position () , "'immutable'")) } , Some ('n') => if scan_chars ! (stream , 't' , 'e' , 'r' , 'n' , 'a' , 'l') { Ok (TokenKind :: Internal) } else { Err (ParseError :: new (stream . position () , "'internal'")) } , _ => Err (ParseError :: new (stream . position () , "'immutable', or 'internal'")) } } , Some ('p') => { match stream . next () { Some ('r') => if scan_chars ! (stream , 'i' , 'v' , 'a' , 't' , 'e') { Ok (TokenKind :: Private) } else { Err (ParseError :: new (stream . position () , "'private'")) } , Some ('u') => if scan_chars ! (stream , 'b' , 'l' , 'i' , 'c') { Ok (TokenKind :: Public) } else { Err (ParseError :: new (stream . position () , "'public'")) } , _ => Err (ParseError :: new (stream . position () , "'private', or 'public'")) } } , _ => Err (ParseError :: new (stream . position () , "'constant', or 'immutable', or 'internal', or 'private', or 'public'")) }
-                    } {
-                        Err(mut error) => {
-                            error.position = start;
-                            Fail { error }
+                    if self.scan_constant_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::ConstantKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
                         }
-                        Ok(kind) => {
-                            let end = stream.position();
-                            let trailing_trivia = self.optional_trailing_trivia(stream);
-                            Pass {
-                                node: cst::Node::token(
-                                    kind,
-                                    Range { start, end },
-                                    leading_trivia,
-                                    trailing_trivia,
-                                ),
-                                error: None,
-                            }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "ConstantKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_immutable_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::ImmutableKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "ImmutableKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_internal_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::InternalKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "InternalKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_private_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::PrivateKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "PrivateKeyword"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_public_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::PublicKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "PublicKeyword"),
                         }
                     }
                 } {
@@ -11960,7 +12825,7 @@ impl Language {
         }
     }
 
-    // StructDefinition = "struct" «Identifier» '{' 1…{ StructMember } '}' ;
+    // StructDefinition = «StructKeyword» «Identifier» '{' 1…{ StructMember } '}' ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_struct_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -11970,12 +12835,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 's', 't', 'r', 'u', 'c', 't') {
+                    if self.scan_struct_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Struct,
+                                TokenKind::StructKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -11984,7 +12849,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'struct'"),
+                            error: ParseError::new(start, "StructKeyword"),
                         }
                     }
                 } {
@@ -12364,7 +13229,7 @@ impl Language {
         }
     }
 
-    // TryStatement = "try" Expression [ "returns" ParameterList ] Block 1…{ CatchClause } ;
+    // TryStatement = «TryKeyword» Expression [ «ReturnsKeyword» ParameterList ] Block 1…{ CatchClause } ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_try_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -12374,12 +13239,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 't', 'r', 'y') {
+                    if self.scan_try_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Try,
+                                TokenKind::TryKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -12388,7 +13253,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'try'"),
+                            error: ParseError::new(start, "TryKeyword"),
                         }
                     }
                 } {
@@ -12420,12 +13285,12 @@ impl Language {
                         let result_0 = match {
                             let leading_trivia = self.optional_leading_trivia(stream);
                             let start = stream.position();
-                            if scan_chars!(stream, 'r', 'e', 't', 'u', 'r', 'n', 's') {
+                            if self.scan_returns_keyword(stream) {
                                 let end = stream.position();
                                 let trailing_trivia = self.optional_trailing_trivia(stream);
                                 Pass {
                                     node: cst::Node::token(
-                                        TokenKind::Returns,
+                                        TokenKind::ReturnsKeyword,
                                         Range { start, end },
                                         leading_trivia,
                                         trailing_trivia,
@@ -12434,7 +13299,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "'returns'"),
+                                    error: ParseError::new(start, "ReturnsKeyword"),
                                 }
                             }
                         } {
@@ -13140,7 +14005,7 @@ impl Language {
         }
     }
 
-    // TypeExpression = "type" '(' TypeName ')' ;
+    // TypeExpression = «TypeKeyword» '(' TypeName ')' ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_type_expression(&self, stream: &mut Stream) -> ParseResult {
@@ -13150,12 +14015,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 't', 'y', 'p', 'e') {
+                    if self.scan_type_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Type,
+                                TokenKind::TypeKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -13164,7 +14029,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'type'"),
+                            error: ParseError::new(start, "TypeKeyword"),
                         }
                     }
                 } {
@@ -13441,7 +14306,7 @@ impl Language {
         }
     }
 
-    // UncheckedBlock = "unchecked" Block ;
+    // UncheckedBlock = «UncheckedKeyword» Block ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_unchecked_block(&self, stream: &mut Stream) -> ParseResult {
@@ -13451,12 +14316,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'u', 'n', 'c', 'h', 'e', 'c', 'k', 'e', 'd') {
+                    if self.scan_unchecked_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Unchecked,
+                                TokenKind::UncheckedKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -13465,7 +14330,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'unchecked'"),
+                            error: ParseError::new(start, "UncheckedKeyword"),
                         }
                     }
                 } {
@@ -13504,7 +14369,7 @@ impl Language {
         }
     }
 
-    // UserDefinedValueTypeDefinition = "type" «Identifier» "is" ElementaryType ';' ;
+    // UserDefinedValueTypeDefinition = «TypeKeyword» «Identifier» «IsKeyword» ElementaryType ';' ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_user_defined_value_type_definition(
@@ -13517,12 +14382,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 't', 'y', 'p', 'e') {
+                    if self.scan_type_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Type,
+                                TokenKind::TypeKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -13531,7 +14396,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'type'"),
+                            error: ParseError::new(start, "TypeKeyword"),
                         }
                     }
                 } {
@@ -13579,12 +14444,12 @@ impl Language {
                 let result_2 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'i', 's') {
+                    if self.scan_is_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Is,
+                                TokenKind::IsKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -13593,7 +14458,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'is'"),
+                            error: ParseError::new(start, "IsKeyword"),
                         }
                     }
                 } {
@@ -13666,7 +14531,7 @@ impl Language {
         }
     }
 
-    // UsingDirective = "using" ( IdentifierPath | '{' IdentifierPath { ',' IdentifierPath } '}' ) "for" ( '*' | TypeName ) [ "global" ] ';' ;
+    // UsingDirective = «UsingKeyword» ( IdentifierPath | '{' IdentifierPath { ',' IdentifierPath } '}' ) «ForKeyword» ( '*' | TypeName ) [ «GlobalKeyword» ] ';' ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_using_directive(&self, stream: &mut Stream) -> ParseResult {
@@ -13676,12 +14541,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'u', 's', 'i', 'n', 'g') {
+                    if self.scan_using_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Using,
+                                TokenKind::UsingKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -13690,7 +14555,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'using'"),
+                            error: ParseError::new(start, "UsingKeyword"),
                         }
                     }
                 } {
@@ -13851,12 +14716,12 @@ impl Language {
                 let result_2 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'f', 'o', 'r') {
+                    if self.scan_for_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::For,
+                                TokenKind::ForKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -13865,7 +14730,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'for'"),
+                            error: ParseError::new(start, "ForKeyword"),
                         }
                     }
                 } {
@@ -13930,12 +14795,12 @@ impl Language {
                     match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        if scan_chars!(stream, 'g', 'l', 'o', 'b', 'a', 'l') {
+                        if self.scan_global_keyword(stream) {
                             let end = stream.position();
                             let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
                                 node: cst::Node::token(
-                                    TokenKind::Global,
+                                    TokenKind::GlobalKeyword,
                                     Range { start, end },
                                     leading_trivia,
                                     trailing_trivia,
@@ -13944,7 +14809,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "'global'"),
+                                error: ParseError::new(start, "GlobalKeyword"),
                             }
                         }
                     } {
@@ -14209,7 +15074,7 @@ impl Language {
         }
     }
 
-    // VersionPragma = "solidity" 1…{ VersionPragmaSpecifier } ;
+    // VersionPragma = «SolidityKeyword» 1…{ VersionPragmaSpecifier } ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_version_pragma(&self, stream: &mut Stream) -> ParseResult {
@@ -14219,12 +15084,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 's', 'o', 'l', 'i', 'd', 'i', 't', 'y') {
+                    if self.scan_solidity_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Solidity,
+                                TokenKind::SolidityKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -14233,7 +15098,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'solidity'"),
+                            error: ParseError::new(start, "SolidityKeyword"),
                         }
                     }
                 } {
@@ -14426,7 +15291,7 @@ impl Language {
         }
     }
 
-    // WhileStatement = "while" '(' Expression ')' Statement ;
+    // WhileStatement = «WhileKeyword» '(' Expression ')' Statement ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_while_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -14436,12 +15301,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'w', 'h', 'i', 'l', 'e') {
+                    if self.scan_while_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::While,
+                                TokenKind::WhileKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -14450,7 +15315,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'while'"),
+                            error: ParseError::new(start, "WhileKeyword"),
                         }
                     }
                 } {
@@ -14783,7 +15648,7 @@ impl Language {
         }
     }
 
-    // YulBreakStatement = "break" ;
+    // YulBreakStatement = «BreakKeyword» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_break_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -14791,12 +15656,12 @@ impl Language {
             {
                 let leading_trivia = self.optional_leading_trivia(stream);
                 let start = stream.position();
-                if scan_chars!(stream, 'b', 'r', 'e', 'a', 'k') {
+                if self.scan_break_keyword(stream) {
                     let end = stream.position();
                     let trailing_trivia = self.optional_trailing_trivia(stream);
                     Pass {
                         node: cst::Node::token(
-                            TokenKind::Break,
+                            TokenKind::BreakKeyword,
                             Range { start, end },
                             leading_trivia,
                             trailing_trivia,
@@ -14805,7 +15670,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "'break'"),
+                        error: ParseError::new(start, "BreakKeyword"),
                     }
                 }
             }
@@ -14818,7 +15683,7 @@ impl Language {
         }
     }
 
-    // YulContinueStatement = "continue" ;
+    // YulContinueStatement = «ContinueKeyword» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_continue_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -14826,12 +15691,12 @@ impl Language {
             {
                 let leading_trivia = self.optional_leading_trivia(stream);
                 let start = stream.position();
-                if scan_chars!(stream, 'c', 'o', 'n', 't', 'i', 'n', 'u', 'e') {
+                if self.scan_continue_keyword(stream) {
                     let end = stream.position();
                     let trailing_trivia = self.optional_trailing_trivia(stream);
                     Pass {
                         node: cst::Node::token(
-                            TokenKind::Continue,
+                            TokenKind::ContinueKeyword,
                             Range { start, end },
                             leading_trivia,
                             trailing_trivia,
@@ -14840,7 +15705,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "'continue'"),
+                        error: ParseError::new(start, "ContinueKeyword"),
                     }
                 }
             }
@@ -14883,7 +15748,7 @@ impl Language {
         }
     }
 
-    // YulForStatement = "for" YulBlock YulExpression YulBlock YulBlock ;
+    // YulForStatement = «ForKeyword» YulBlock YulExpression YulBlock YulBlock ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_for_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -14893,12 +15758,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'f', 'o', 'r') {
+                    if self.scan_for_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::For,
+                                TokenKind::ForKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -14907,7 +15772,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'for'"),
+                            error: ParseError::new(start, "ForKeyword"),
                         }
                     }
                 } {
@@ -15169,7 +16034,7 @@ impl Language {
         }
     }
 
-    // YulFunctionDefinition = "function" «YulIdentifier» '(' [ «YulIdentifier» { ',' «YulIdentifier» } ] ')' [ "->" «YulIdentifier» { ',' «YulIdentifier» } ] YulBlock ;
+    // YulFunctionDefinition = «FunctionKeyword» «YulIdentifier» '(' [ «YulIdentifier» { ',' «YulIdentifier» } ] ')' [ "->" «YulIdentifier» { ',' «YulIdentifier» } ] YulBlock ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_function_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -15179,12 +16044,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'f', 'u', 'n', 'c', 't', 'i', 'o', 'n') {
+                    if self.scan_function_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Function,
+                                TokenKind::FunctionKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -15193,7 +16058,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'function'"),
+                            error: ParseError::new(start, "FunctionKeyword"),
                         }
                     }
                 } {
@@ -15643,7 +16508,7 @@ impl Language {
         }
     }
 
-    // YulIfStatement = "if" YulExpression YulBlock ;
+    // YulIfStatement = «IfKeyword» YulExpression YulBlock ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_if_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -15653,12 +16518,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'i', 'f') {
+                    if self.scan_if_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::If,
+                                TokenKind::IfKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -15667,7 +16532,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'if'"),
+                            error: ParseError::new(start, "IfKeyword"),
                         }
                     }
                 } {
@@ -15717,7 +16582,7 @@ impl Language {
         }
     }
 
-    // YulLeaveStatement = "leave" ;
+    // YulLeaveStatement = «LeaveKeyword» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_leave_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -15725,12 +16590,12 @@ impl Language {
             {
                 let leading_trivia = self.optional_leading_trivia(stream);
                 let start = stream.position();
-                if scan_chars!(stream, 'l', 'e', 'a', 'v', 'e') {
+                if self.scan_leave_keyword(stream) {
                     let end = stream.position();
                     let trailing_trivia = self.optional_trailing_trivia(stream);
                     Pass {
                         node: cst::Node::token(
-                            TokenKind::Leave,
+                            TokenKind::LeaveKeyword,
                             Range { start, end },
                             leading_trivia,
                             trailing_trivia,
@@ -15739,7 +16604,7 @@ impl Language {
                     }
                 } else {
                     Fail {
-                        error: ParseError::new(start, "'leave'"),
+                        error: ParseError::new(start, "LeaveKeyword"),
                     }
                 }
             }
@@ -15752,7 +16617,7 @@ impl Language {
         }
     }
 
-    // YulLiteral = «BooleanLiteral» | «YulHexLiteral» | «YulDecimalLiteral» | «HexStringLiteral» | «AsciiStringLiteral» ;
+    // YulLiteral = BooleanLiteral | «YulHexLiteral» | «YulDecimalLiteral» | «HexStringLiteral» | «AsciiStringLiteral» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_literal(&self, stream: &mut Stream) -> ParseResult {
@@ -15760,27 +16625,7 @@ impl Language {
             loop {
                 let start_position = stream.position();
                 let mut furthest_error;
-                match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if self.scan_boolean_literal(stream) {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::BooleanLiteral,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "BooleanLiteral"),
-                        }
-                    }
-                } {
+                match self.parse_boolean_literal(stream) {
                     Fail { error } => furthest_error = error,
                     pass => break pass,
                 }
@@ -15972,7 +16817,7 @@ impl Language {
         }
     }
 
-    // YulSwitchStatement = "switch" YulExpression 1…{ ( "case" YulLiteral | "default" ) YulBlock } ;
+    // YulSwitchStatement = «SwitchKeyword» YulExpression 1…{ ( «CaseKeyword» YulLiteral | «DefaultKeyword» ) YulBlock } ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_switch_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -15982,12 +16827,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 's', 'w', 'i', 't', 'c', 'h') {
+                    if self.scan_switch_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Switch,
+                                TokenKind::SwitchKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -15996,7 +16841,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'switch'"),
+                            error: ParseError::new(start, "SwitchKeyword"),
                         }
                     }
                 } {
@@ -16035,13 +16880,13 @@ impl Language {
                                     let result_0 = match {
                                         let leading_trivia = self.optional_leading_trivia(stream);
                                         let start = stream.position();
-                                        if scan_chars!(stream, 'c', 'a', 's', 'e') {
+                                        if self.scan_case_keyword(stream) {
                                             let end = stream.position();
                                             let trailing_trivia =
                                                 self.optional_trailing_trivia(stream);
                                             Pass {
                                                 node: cst::Node::token(
-                                                    TokenKind::Case,
+                                                    TokenKind::CaseKeyword,
                                                     Range { start, end },
                                                     leading_trivia,
                                                     trailing_trivia,
@@ -16050,7 +16895,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "'case'"),
+                                                error: ParseError::new(start, "CaseKeyword"),
                                             }
                                         }
                                     } {
@@ -16094,12 +16939,12 @@ impl Language {
                                 match {
                                     let leading_trivia = self.optional_leading_trivia(stream);
                                     let start = stream.position();
-                                    if scan_chars!(stream, 'd', 'e', 'f', 'a', 'u', 'l', 't') {
+                                    if self.scan_default_keyword(stream) {
                                         let end = stream.position();
                                         let trailing_trivia = self.optional_trailing_trivia(stream);
                                         Pass {
                                             node: cst::Node::token(
-                                                TokenKind::Default,
+                                                TokenKind::DefaultKeyword,
                                                 Range { start, end },
                                                 leading_trivia,
                                                 trailing_trivia,
@@ -16108,7 +16953,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "'default'"),
+                                            error: ParseError::new(start, "DefaultKeyword"),
                                         }
                                     }
                                 } {
@@ -16188,7 +17033,7 @@ impl Language {
         }
     }
 
-    // YulVariableDeclaration = "let" YulIdentifierPath { ',' YulIdentifierPath } [ ":=" YulExpression ] ;
+    // YulVariableDeclaration = «LetKeyword» YulIdentifierPath { ',' YulIdentifierPath } [ ":=" YulExpression ] ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_variable_declaration(&self, stream: &mut Stream) -> ParseResult {
@@ -16198,12 +17043,12 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, 'l', 'e', 't') {
+                    if self.scan_let_keyword(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
                             node: cst::Node::token(
-                                TokenKind::Let,
+                                TokenKind::LetKeyword,
                                 Range { start, end },
                                 leading_trivia,
                                 trailing_trivia,
@@ -16212,7 +17057,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'let'"),
+                            error: ParseError::new(start, "LetKeyword"),
                         }
                     }
                 } {

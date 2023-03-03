@@ -7,7 +7,6 @@ use super::{node::Node, production::ConcreteAbstractPair};
 pub type ScannerRef = Rc<Scanner>;
 
 pub struct Scanner {
-    pub lookahead: Option<ScannerRef>,
     pub definition: Node<ScannerDefinition>,
 }
 
@@ -16,9 +15,6 @@ impl ConcreteAbstractPair for Scanner {
 
     fn new(cst_node: &cst::NodeRef, value: Rc<Self::AbstractType>) -> Rc<Self> {
         return Rc::new(Self {
-            lookahead: value.lookahead.clone().and_then(|lookahead| {
-                return Some(Scanner::new(cst_node.get("lookahead"), lookahead));
-            }),
             definition: ScannerDefinition::new(cst_node, value.definition.clone()),
         });
     }
@@ -54,6 +50,10 @@ pub enum ScannerDefinition {
     },
     Sequence(Vec<ScannerRef>),
     Terminal(Node<String>),
+    TrailingContext {
+        expression: ScannerRef,
+        not_followed_by: ScannerRef,
+    },
     ZeroOrMore(ScannerRef),
 }
 
@@ -64,7 +64,7 @@ impl ScannerDefinition {
                 let cst_node = cst_node.field("choice");
                 return Node::new(
                     &cst_node.key,
-                    Self::Choice(cst_node.value.zip(value, Scanner::new)),
+                    Self::Choice(cst_node.zip(value, Scanner::new)),
                 );
             }
             types::scanner::ScannerDefinition::DelimitedBy {
@@ -76,9 +76,12 @@ impl ScannerDefinition {
                 return Node::new(
                     &cst_node.key,
                     Self::DelimitedBy {
-                        open: Node::new(&cst_node.value.get("open"), open),
-                        expression: Scanner::new(&cst_node.value.get("expression"), expression),
-                        close: Node::new(&cst_node.value.get("close"), close),
+                        open: Node::new(&cst_node.value_of_field("open"), open),
+                        expression: Scanner::new(
+                            &cst_node.value_of_field("expression"),
+                            expression,
+                        ),
+                        close: Node::new(&cst_node.value_of_field("close"), close),
                     },
                 );
             }
@@ -90,8 +93,11 @@ impl ScannerDefinition {
                 return Node::new(
                     &cst_node.key,
                     Self::Difference {
-                        minuend: Scanner::new(&cst_node.value.get("minuend"), minuend),
-                        subtrahend: Scanner::new(&cst_node.value.get("subtrahend"), subtrahend),
+                        minuend: Scanner::new(&cst_node.value_of_field("minuend"), minuend),
+                        subtrahend: Scanner::new(
+                            &cst_node.value_of_field("subtrahend"),
+                            subtrahend,
+                        ),
                     },
                 );
             }
@@ -121,8 +127,8 @@ impl ScannerDefinition {
                 return Node::new(
                     &cst_node.key,
                     Self::Range {
-                        from: Node::new(&cst_node.value.get("from"), from),
-                        to: Node::new(&cst_node.value.get("to"), to),
+                        from: Node::new(&cst_node.value_of_field("from"), from),
+                        to: Node::new(&cst_node.value_of_field("to"), to),
                     },
                 );
             }
@@ -142,9 +148,12 @@ impl ScannerDefinition {
                 return Node::new(
                     &cst_node.key,
                     Self::Repeat {
-                        min: Node::new(&cst_node.value.get("min"), min),
-                        max: Node::new(&cst_node.value.get("max"), max),
-                        expression: Scanner::new(&cst_node.value.get("expression"), expression),
+                        min: Node::new(&cst_node.value_of_field("min"), min),
+                        max: Node::new(&cst_node.value_of_field("max"), max),
+                        expression: Scanner::new(
+                            &cst_node.value_of_field("expression"),
+                            expression,
+                        ),
                     },
                 );
             }
@@ -156,8 +165,11 @@ impl ScannerDefinition {
                 return Node::new(
                     &cst_node.key,
                     Self::SeparatedBy {
-                        separator: Node::new(&cst_node.value.get("separator"), separator),
-                        expression: Scanner::new(&cst_node.value.get("expression"), expression),
+                        separator: Node::new(&cst_node.value_of_field("separator"), separator),
+                        expression: Scanner::new(
+                            &cst_node.value_of_field("expression"),
+                            expression,
+                        ),
                     },
                 );
             }
@@ -165,7 +177,7 @@ impl ScannerDefinition {
                 let cst_node = cst_node.field("sequence");
                 return Node::new(
                     &cst_node.key,
-                    Self::Sequence(cst_node.value.zip(value, Scanner::new)),
+                    Self::Sequence(cst_node.zip(value, Scanner::new)),
                 );
             }
             types::scanner::ScannerDefinition::Terminal(value) => {
@@ -173,6 +185,25 @@ impl ScannerDefinition {
                 return Node::new(
                     &cst_node.key,
                     Self::Terminal(Node::new(&cst_node.value, value)),
+                );
+            }
+            types::scanner::ScannerDefinition::TrailingContext {
+                expression,
+                not_followed_by,
+            } => {
+                let cst_node = cst_node.field("trailingContext");
+                return Node::new(
+                    &cst_node.key,
+                    Self::TrailingContext {
+                        expression: Scanner::new(
+                            &cst_node.value_of_field("expression"),
+                            expression,
+                        ),
+                        not_followed_by: Scanner::new(
+                            &cst_node.value_of_field("notFollowedBy"),
+                            not_followed_by,
+                        ),
+                    },
                 );
             }
             types::scanner::ScannerDefinition::ZeroOrMore(value) => {

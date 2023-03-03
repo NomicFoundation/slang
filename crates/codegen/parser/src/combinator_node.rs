@@ -31,22 +31,17 @@ pub enum CombinatorNode<'context> {
         minuend: &'context CombinatorNode<'context>,
         subtrahend: &'context CombinatorNode<'context>,
     },
-    PrecedenceExpressionRule {
-        tree: &'context CombinatorTree<'context>,
-        operators: Vec<PrecedenceRuleOperator<'context>>,
-        primary_expressions: Vec<&'context CombinatorTree<'context>>,
-    },
-    #[allow(dead_code)]
-    Lookahead {
-        expr: &'context CombinatorNode<'context>,
-        lookahead: &'context CombinatorNode<'context>,
-    },
     OneOrMore {
         name: Option<String>,
         expr: &'context CombinatorNode<'context>,
     },
     Optional {
         expr: &'context CombinatorNode<'context>,
+    },
+    PrecedenceExpressionRule {
+        tree: &'context CombinatorTree<'context>,
+        operators: Vec<PrecedenceRuleOperator<'context>>,
+        primary_expressions: Vec<&'context CombinatorTree<'context>>,
     },
     Reference {
         tree: &'context CombinatorTree<'context>,
@@ -68,6 +63,10 @@ pub enum CombinatorNode<'context> {
     },
     TerminalTrie {
         trie: TerminalTrie,
+    },
+    TrailingContext {
+        expression: &'context CombinatorNode<'context>,
+        not_followed_by: &'context CombinatorNode<'context>,
     },
     ZeroOrMore {
         name: Option<String>,
@@ -213,6 +212,14 @@ impl<'context> CombinatorNode<'context> {
                 }
             }
 
+            ScannerDefinition::TrailingContext {
+                expression,
+                not_followed_by,
+            } => Self::TrailingContext {
+                expression: Self::from_scanner(tree, expression),
+                not_followed_by: Self::from_scanner(tree, not_followed_by),
+            },
+
             ScannerDefinition::ZeroOrMore(expr) => Self::ZeroOrMore {
                 name: None,
                 expr: Self::from_scanner(tree, expr),
@@ -312,14 +319,6 @@ impl<'context> CombinatorNode<'context> {
                 close: close.clone(),
             },
 
-            ParserDefinition::Difference {
-                minuend,
-                subtrahend,
-            } => Self::Difference {
-                minuend: Self::from_parser(tree, minuend),
-                subtrahend: Self::from_parser(tree, subtrahend),
-            },
-
             ParserDefinition::OneOrMore(expr) => Self::OneOrMore {
                 name,
                 expr: Self::from_parser(tree, expr),
@@ -407,8 +406,10 @@ impl<'context> CombinatorNode<'context> {
             Self::Reference { tree } => tree.first_set(),
 
             Self::Repeated { expr, .. }
+            | Self::TrailingContext {
+                expression: expr, ..
+            }
             | Self::OneOrMore { expr, .. }
-            | Self::Lookahead { expr, .. }
             | Self::Difference { minuend: expr, .. } => expr.first_set(),
 
             Self::Choice { elements, .. } => {

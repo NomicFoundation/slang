@@ -17,7 +17,7 @@ impl ConcreteAbstractPair for PrecedenceParser {
     fn new(cst_node: &cst::NodeRef, value: Rc<Self::AbstractType>) -> Rc<Self> {
         return Rc::new(Self {
             name: value.name.clone().and_then(|name| {
-                return Some(Node::new(cst_node.get("name"), name));
+                return Some(Node::new(cst_node.value_of_field("name"), name));
             }),
             definition: PrecedenceParserDefinition::new(cst_node, value.definition.clone()),
         });
@@ -37,7 +37,7 @@ impl PrecedenceParserDefinition {
         return Self {
             operators: {
                 let cst_node = cst_node.field("operators");
-                cst_node.value.zip(value.operators, OperatorDefinition::new)
+                cst_node.zip(value.operators, OperatorDefinition::new)
             },
             primary_expressions: {
                 let cst_node = cst_node.field("primaryExpressions");
@@ -63,8 +63,8 @@ impl OperatorDefinition {
         return Node::new(
             &cst_node,
             OperatorDefinition {
-                name: Node::new(cst_node.get("name"), value.name),
-                model: Node::new(cst_node.get("model"), value.model),
+                name: Node::new(cst_node.value_of_field("name"), value.name),
+                model: Node::new(cst_node.value_of_field("model"), value.model),
                 definition: ParserDefinition::new(cst_node, value.definition),
             },
         );

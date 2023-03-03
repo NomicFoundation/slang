@@ -6,8 +6,6 @@ pub type ScannerRef = std::rc::Rc<Scanner>;
 #[derive(Clone, Debug, Deserialize, Serialize, JsonSchema, PartialEq, Eq, Hash)]
 #[serde(deny_unknown_fields)]
 pub struct Scanner {
-    #[serde(default)]
-    pub lookahead: Option<ScannerRef>,
     #[serde(flatten)]
     pub definition: ScannerDefinition,
 }
@@ -61,6 +59,13 @@ pub enum ScannerDefinition {
 
     #[schemars(title = "Sequence Expression")]
     Sequence(Vec<ScannerRef>),
+
+    #[schemars(title = "TrailingContext Expression")]
+    #[serde(rename_all = "camelCase")]
+    TrailingContext {
+        expression: ScannerRef,
+        not_followed_by: ScannerRef,
+    },
 
     #[schemars(title = "Terminal Expression")]
     Terminal(String),

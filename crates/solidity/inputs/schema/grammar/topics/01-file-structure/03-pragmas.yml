@@ -4,7 +4,7 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "pragma"
+      - reference: "PragmaKeyword"
       - choice:
           - reference: "VersionPragma"
           - reference: "ABICoderPragma"
@@ -15,7 +15,7 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "solidity"
+      - reference: "SolidityKeyword"
       - oneOrMore:
           reference: "VersionPragmaSpecifier"
 
@@ -58,12 +58,12 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "abicoder"
+      - reference: "AbicoderKeyword"
       - reference: "Identifier"
 
 - name: "ExperimentalPragma"
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "experimental"
+      - reference: "ExperimentalKeyword"
       - reference: "Identifier"

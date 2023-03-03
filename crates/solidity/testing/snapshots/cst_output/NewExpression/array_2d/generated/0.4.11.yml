@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - NewExpression (Rule): # 0..11 "new Foo[][]"
-      - New (Token): "new" # 0..3
+      - NewKeyword (Token): "new" # 0..3
       - TypeName (Rule): # 3..11 " Foo[][]"
           - IdentifierPath (Rule): # 3..7 " Foo"
               - _SEPARATEDBY (Rule): # 3..7 " Foo"

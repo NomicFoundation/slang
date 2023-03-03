@@ -7,7 +7,7 @@ Errors: []
 
 Tree:
   - NewExpression (Rule): # 0..15 "new Foo.Bar.Baz"
-      - New (Token): "new" # 0..3
+      - NewKeyword (Token): "new" # 0..3
       - TypeName (Rule): # 3..15 " Foo.Bar.Baz"
           - IdentifierPath (Rule): # 3..15 " Foo.Bar.Baz"
               - _SEPARATEDBY (Rule): # 3..15 " Foo.Bar.Baz"

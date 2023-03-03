@@ -4,7 +4,7 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "import"
+      - reference: "ImportKeyword"
       - choice:
           - reference: "SimpleImportDirective"
           - reference: "StarImportDirective"
@@ -18,7 +18,7 @@
       - reference: "ImportPath"
       - zeroOrMore:
           sequence:
-            - terminal: "as"
+            - reference: "AsKeyword"
             - reference: "Identifier"
 
 - name: "StarImportDirective"
@@ -26,9 +26,9 @@
   unversioned:
     sequence:
       - terminal: "*"
-      - terminal: "as"
+      - reference: "AsKeyword"
       - reference: "Identifier"
-      - terminal: "from"
+      - reference: "FromKeyword"
       - reference: "ImportPath"
 
 - name: "SelectingImportDirective"
@@ -43,7 +43,7 @@
               expression:
                 reference: "SelectedImport"
           close: "}"
-      - terminal: "from"
+      - reference: "FromKeyword"
       - reference: "ImportPath"
 
 - name: "SelectedImport"
@@ -53,7 +53,7 @@
       - reference: "Identifier"
       - optional:
           sequence:
-            - terminal: "as"
+            - reference: "AsKeyword"
             - reference: "Identifier"
 
 - name: "ImportPath"
@@ -65,7 +65,7 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "using"
+      - reference: "UsingKeyword"
       - choice:
           - reference: "IdentifierPath"
           - delimitedBy:
@@ -76,10 +76,10 @@
                   expression:
                     reference: "IdentifierPath"
               close: "}"
-      - terminal: "for"
+      - reference: "ForKeyword"
       - choice:
           - terminal: "*"
           - reference: "TypeName"
       - optional:
-          terminal: "global"
+          reference: "GlobalKeyword"
       - terminal: ";"

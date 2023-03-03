@@ -16,7 +16,7 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "unchecked"
+      - reference: "UncheckedKeyword"
       - reference: "Block"
 
 - name: "Statement"

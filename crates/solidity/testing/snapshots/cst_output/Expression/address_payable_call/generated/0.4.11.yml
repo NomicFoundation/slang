@@ -11,8 +11,8 @@ Tree:
           - PrimaryExpression (Rule): # 0..15 "address payable"
               - ElementaryType (Rule): # 0..15 "address payable"
                   - AddressType (Rule): # 0..15 "address payable"
-                      - Address (Token): "address" # 0..7
-                      - Payable (Token): "payable" # 8..15
+                      - AddressKeyword (Token): "address" # 0..7
+                      - PayableKeyword (Token): "payable" # 8..15
           - ArgumentList (Rule): # 15..22 "(value)"
               - _DELIMITEDBY (Rule): # 15..22 "(value)"
                   - OpenParen (Token): "(" # 15..16

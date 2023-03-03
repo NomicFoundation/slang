@@ -8,8 +8,6 @@ pub type ParserRef = std::rc::Rc<Parser>;
 pub struct Parser {
     #[serde(default)]
     pub name: Option<String>,
-    #[serde(default)]
-    pub lookahead: Option<ParserRef>,
     #[serde(flatten)]
     pub definition: ParserDefinition,
 }
@@ -25,12 +23,6 @@ pub enum ParserDefinition {
         open: String,
         expression: ParserRef,
         close: String,
-    },
-
-    #[schemars(title = "Difference Expression")]
-    Difference {
-        minuend: ParserRef,
-        subtrahend: ParserRef,
     },
 
     #[schemars(title = "OneOrMore Expression")]

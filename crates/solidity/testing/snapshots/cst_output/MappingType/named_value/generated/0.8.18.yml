@@ -7,12 +7,12 @@ Errors: []
 
 Tree:
   - MappingType (Rule): # 0..30 "mapping(string => bytes32 Bar)"
-      - Mapping (Token): "mapping" # 0..7
+      - MappingKeyword (Token): "mapping" # 0..7
       - _DELIMITEDBY (Rule): # 7..30 "(string => bytes32 Bar)"
           - OpenParen (Token): "(" # 7..8
           - MappingKeyType (Rule): # 8..14 "string"
               - ElementaryType (Rule): # 8..14 "string"
-                  - String (Token): "string" # 8..14
+                  - StringKeyword (Token): "string" # 8..14
           - EqualGreater (Token): "=>" # 15..17
           - MappingValueType (Rule): # 18..29 "bytes32 Bar"
               - TypeName (Rule): # 18..25 "bytes32"

@@ -8,7 +8,7 @@ use crate::{
             files::{PathBufRef, TopicFile},
             node::Node,
             parser::ParserRef,
-            production::ProductionRef,
+            production::{Production, ProductionRef},
             visitors::{Reporter, Visitor, VisitorExtensions, VisitorResponse},
         },
         Model,
@@ -18,8 +18,9 @@ use crate::{
 
 pub struct Definitions {
     pub required: HashSet<String>,
-    pub productions: HashMap<String, Definition<ProductionRef>>,
-    pub parsers: HashMap<String, Definition<ParserRef>>,
+    pub top_level_scanners: HashMap<String, Definition<ProductionRef>>,
+    pub top_level_parsers: HashMap<String, Definition<ProductionRef>>,
+    pub internal_named_parsers: HashMap<String, Definition<ParserRef>>,
 }
 
 pub struct Definition<T> {
@@ -48,8 +49,9 @@ impl DefinitionCollector {
             current_topic_path: None,
             definitions: Definitions {
                 required: HashSet::new(),
-                productions: HashMap::new(),
-                parsers: HashMap::new(),
+                top_level_scanners: HashMap::new(),
+                top_level_parsers: HashMap::new(),
+                internal_named_parsers: HashMap::new(),
             },
         };
     }
@@ -74,9 +76,18 @@ impl Visitor for DefinitionCollector {
                 value: production.to_owned(),
             };
 
-            self.definitions
-                .productions
-                .insert(production.name_node().value.to_owned(), definition);
+            match production.as_ref() {
+                Production::Scanner { name, .. } => self
+                    .definitions
+                    .top_level_scanners
+                    .insert(name.value.to_owned(), definition),
+                Production::TriviaParser { name, .. }
+                | Production::Parser { name, .. }
+                | Production::PrecedenceParser { name, .. } => self
+                    .definitions
+                    .top_level_parsers
+                    .insert(name.value.to_owned(), definition),
+            };
         }
 
         return VisitorResponse::StepIn;
@@ -96,7 +107,7 @@ impl Visitor for DefinitionCollector {
             };
 
             self.definitions
-                .parsers
+                .internal_named_parsers
                 .insert(name.value.to_owned(), definition);
         }
 
@@ -106,18 +117,34 @@ impl Visitor for DefinitionCollector {
 
 impl DefinitionCollector {
     fn check_uniqueness(&self, name: &Node<String>, reporter: &mut Reporter) -> bool {
-        if self.definitions.productions.contains_key(&name.value) {
+        if self.definitions.top_level_parsers.contains_key(&name.value) {
             reporter.report(
                 &name.cst_node,
-                Errors::ExistingProduction(name.value.to_owned()),
+                Errors::DuplicateProduction(name.value.to_owned()),
             );
             return false;
         }
 
-        if self.definitions.parsers.contains_key(&name.value) {
+        if self
+            .definitions
+            .top_level_scanners
+            .contains_key(&name.value)
+        {
             reporter.report(
                 &name.cst_node,
-                Errors::ExistingExpression(name.value.to_owned()),
+                Errors::DuplicateProduction(name.value.to_owned()),
+            );
+            return false;
+        }
+
+        if self
+            .definitions
+            .internal_named_parsers
+            .contains_key(&name.value)
+        {
+            reporter.report(
+                &name.cst_node,
+                Errors::DuplicateProduction(name.value.to_owned()),
             );
             return false;
         }
@@ -131,24 +158,24 @@ impl DefinitionCollector {
         for name in ["LeadingTrivia", "TrailingTrivia"] {
             self.definitions.required.insert(name.to_owned());
 
-            if !self.definitions.productions.contains_key(name) {
+            if !self.definitions.top_level_parsers.contains_key(name) {
                 errors.push(
                     &model.manifest_file.path,
                     manifest.title.cst_node.range(),
-                    Errors::Missing(name.to_owned()),
+                    Errors::MissingRequiredParser(name.to_owned()),
                 );
             }
         }
 
         {
-            let Node { cst_node, value } = &manifest.root_production_name;
+            let Node { cst_node, value } = &manifest.root_production;
             self.definitions.required.insert(value.to_owned());
 
-            if !self.definitions.productions.contains_key(value) {
+            if !self.definitions.top_level_parsers.contains_key(value) {
                 errors.push(
                     &model.manifest_file.path,
                     cst_node.range(),
-                    Errors::Missing(value.to_owned()),
+                    Errors::MissingRootProduction(value.to_owned()),
                 );
             }
         }
@@ -157,10 +184,10 @@ impl DefinitionCollector {
 
 #[derive(thiserror::Error, Debug)]
 enum Errors {
-    #[error("Production '{0}' is not defined.")]
-    Missing(String),
-    #[error("Production '{0}' is already defined.")]
-    ExistingProduction(String),
-    #[error("Expression '{0}' is already defined.")]
-    ExistingExpression(String),
+    #[error("Duplicate Definition '{0}'.")]
+    DuplicateProduction(String),
+    #[error("Required Parser '{0}' is not defined.")]
+    MissingRequiredParser(String),
+    #[error("Root Production '{0}' is not defined.")]
+    MissingRootProduction(String),
 }

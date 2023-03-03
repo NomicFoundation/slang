@@ -4,17 +4,17 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "function"
+      - reference: "FunctionKeyword"
       - choice:
           - reference: "Identifier"
-          - terminal: "fallback"
-          - terminal: "receive"
+          - reference: "FallbackKeyword"
+          - reference: "ReceiveKeyword"
       - reference: "ParameterList"
       - zeroOrMore:
           reference: "FunctionAttribute"
       - optional:
           sequence:
-            - terminal: "returns"
+            - reference: "ReturnsKeyword"
             - reference: "ParameterList"
       - choice:
           - terminal: ";"
@@ -26,20 +26,20 @@
     choice:
       - reference: "ModifierInvocation"
       - reference: "OverrideSpecifier"
-      - terminal: "external"
-      - terminal: "internal"
-      - terminal: "payable"
-      - terminal: "private"
-      - terminal: "public"
-      - terminal: "pure"
-      - terminal: "view"
-      - terminal: "virtual"
+      - reference: "ExternalKeyword"
+      - reference: "InternalKeyword"
+      - reference: "PayableKeyword"
+      - reference: "PrivateKeyword"
+      - reference: "PublicKeyword"
+      - reference: "PureKeyword"
+      - reference: "ViewKeyword"
+      - reference: "VirtualKeyword"
 
 - name: "OverrideSpecifier"
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "override"
+      - reference: "OverrideKeyword"
       - optional:
           delimitedBy:
             open: "("
@@ -118,7 +118,7 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "constructor"
+      - reference: "ConstructorKeyword"
       - reference: "ParameterList"
       - zeroOrMore:
           reference: "ConstructorAttribute"
@@ -129,21 +129,21 @@
   unversioned:
     choice:
       - reference: "ModifierInvocation"
-      - terminal: "internal"
-      - terminal: "payable"
-      - terminal: "public"
+      - reference: "InternalKeyword"
+      - reference: "PayableKeyword"
+      - reference: "PublicKeyword"
 
 - name: "FallbackFunctionDefinition"
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "fallback"
+      - reference: "FallbackKeyword"
       - reference: "ParameterList"
       - zeroOrMore:
           reference: "FallbackFunctionAttribute"
       - optional:
           sequence:
-            - terminal: "returns"
+            - reference: "ReturnsKeyword"
             - reference: "ParameterList"
       - choice:
           - terminal: ";"
@@ -155,17 +155,17 @@
     choice:
       - reference: "ModifierInvocation"
       - reference: "OverrideSpecifier"
-      - terminal: "external"
-      - terminal: "payable"
-      - terminal: "pure"
-      - terminal: "view"
-      - terminal: "virtual"
+      - reference: "ExternalKeyword"
+      - reference: "PayableKeyword"
+      - reference: "PureKeyword"
+      - reference: "ViewKeyword"
+      - reference: "VirtualKeyword"
 
 - name: "ReceiveFunctionDefinition"
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "receive"
+      - reference: "ReceiveKeyword"
       - reference: "ParameterList"
       - zeroOrMore:
           reference: "ReceiveFunctionAttribute"
@@ -179,6 +179,6 @@
     choice:
       - reference: "ModifierInvocation"
       - reference: "OverrideSpecifier"
-      - terminal: "external"
-      - terminal: "payable"
-      - terminal: "virtual"
+      - reference: "ExternalKeyword"
+      - reference: "PayableKeyword"
+      - reference: "VirtualKeyword"

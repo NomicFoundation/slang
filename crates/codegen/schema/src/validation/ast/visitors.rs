@@ -212,6 +212,13 @@ impl Receiver for ScannerDefinition {
             | ScannerDefinition::ZeroOrMore(expression) => {
                 expression.receive(visitor, reporter);
             }
+            ScannerDefinition::TrailingContext {
+                expression,
+                not_followed_by,
+            } => {
+                expression.receive(visitor, reporter);
+                not_followed_by.receive(visitor, reporter);
+            }
             ScannerDefinition::Difference {
                 minuend,
                 subtrahend,
@@ -249,13 +256,6 @@ impl Receiver for ParserDefinition {
             | ParserDefinition::Optional(expression)
             | ParserDefinition::ZeroOrMore(expression) => {
                 expression.receive(visitor, reporter);
-            }
-            ParserDefinition::Difference {
-                minuend,
-                subtrahend,
-            } => {
-                minuend.receive(visitor, reporter);
-                subtrahend.receive(visitor, reporter);
             }
             ParserDefinition::Reference(_) | ParserDefinition::Terminal(_) => {}
         };

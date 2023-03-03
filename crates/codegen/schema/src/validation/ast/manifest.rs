@@ -6,7 +6,7 @@ use super::node::Node;
 
 pub struct Manifest {
     pub title: Node<String>,
-    pub root_production_name: Node<String>,
+    pub root_production: Node<String>,
     pub sections: Vec<ManifestSection>,
     pub versions: Vec<Node<Version>>,
 }
@@ -14,12 +14,17 @@ pub struct Manifest {
 impl Manifest {
     pub fn new(cst_node: &cst::NodeRef, value: types::manifest::Manifest) -> Self {
         return Self {
-            title: Node::new(cst_node.get("title"), value.title),
-            root_production_name: Node::new(cst_node.get("rootProduction"), value.root_production),
+            title: Node::new(cst_node.value_of_field("title"), value.title),
+            root_production: Node::new(
+                cst_node.value_of_field("rootProduction"),
+                value.root_production,
+            ),
             sections: cst_node
-                .get("sections")
+                .value_of_field("sections")
                 .zip(value.sections, ManifestSection::new),
-            versions: cst_node.get("versions").zip(value.versions, Node::new),
+            versions: cst_node
+                .value_of_field("versions")
+                .zip(value.versions, Node::new),
         };
     }
 }
@@ -32,8 +37,10 @@ pub struct ManifestSection {
 impl ManifestSection {
     pub fn new(cst_node: &cst::NodeRef, value: types::manifest::ManifestSection) -> Self {
         return Self {
-            title: Node::new(cst_node.get("title"), value.title),
-            topics: cst_node.get("topics").zip(value.topics, ManifestTopic::new),
+            title: Node::new(cst_node.value_of_field("title"), value.title),
+            topics: cst_node
+                .value_of_field("topics")
+                .zip(value.topics, ManifestTopic::new),
         };
     }
 }
@@ -46,9 +53,9 @@ pub struct ManifestTopic {
 impl ManifestTopic {
     pub fn new(cst_node: &cst::NodeRef, value: types::manifest::ManifestTopic) -> Self {
         return Self {
-            title: Node::new(cst_node.get("title"), value.title),
+            title: Node::new(cst_node.value_of_field("title"), value.title),
             definition: value.definition.and_then(|definition| {
-                return Some(Node::new(cst_node.get("definition"), definition));
+                return Some(Node::new(cst_node.value_of_field("definition"), definition));
             }),
         };
     }

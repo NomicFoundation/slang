@@ -11,7 +11,7 @@ Tree:
           - PrimaryExpression (Rule): # 0..7 "address"
               - ElementaryType (Rule): # 0..7 "address"
                   - AddressType (Rule): # 0..7 "address"
-                      - Address (Token): "address" # 0..7
+                      - AddressKeyword (Token): "address" # 0..7
           - ArgumentList (Rule): # 7..14 "(value)"
               - _DELIMITEDBY (Rule): # 7..14 "(value)"
                   - OpenParen (Token): "(" # 7..8

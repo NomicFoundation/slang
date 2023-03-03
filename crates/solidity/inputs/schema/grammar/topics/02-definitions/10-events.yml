@@ -4,7 +4,7 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "event"
+      - reference: "EventKeyword"
       - reference: "Identifier"
       - delimitedBy:
           open: "("
@@ -16,7 +16,7 @@
                   reference: "EventParameter"
           close: ")"
       - optional:
-          terminal: "anonymous"
+          reference: "AnonymousKeyword"
       - terminal: ";"
 
 - name: "EventParameter"
@@ -25,6 +25,6 @@
     sequence:
       - reference: "TypeName"
       - optional:
-          terminal: "indexed"
+          reference: "IndexedKeyword"
       - optional:
           reference: "Identifier"

@@ -4,8 +4,8 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "type"
+      - reference: "TypeKeyword"
       - reference: "Identifier"
-      - terminal: "is"
+      - reference: "IsKeyword"
       - reference: "ElementaryType"
       - terminal: ";"
