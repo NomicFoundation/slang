@@ -9,6 +9,5 @@ Tree:
   - ContractDefinition (Rule): # 0..19 "contract Sample {}\n"
       - ContractKeyword (Token): "contract" # 0..8
       - Identifier (Token): "Sample" # 9..15
-      - _DELIMITEDBY (Rule): # 15..19 " {}\n"
-          - OpenBrace (Token): "{" # 16..17
-          - CloseBrace (Token): "}" # 17..18
+      - OpenBrace (Token): "{" # 16..17
+      - CloseBrace (Token): "}" # 17..18

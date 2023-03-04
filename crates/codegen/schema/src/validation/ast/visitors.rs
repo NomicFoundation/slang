@@ -7,7 +7,7 @@ use crate::{validation::Model, yaml::cst};
 use super::{
     files::{ManifestFile, PathBufRef, ProductionsFile},
     parser::{Parser, ParserDefinition, ParserRef},
-    precedence_parser::{OperatorDefinition, PrecedenceParser, PrecedenceParserRef, Reference},
+    precedence_parser::{OperatorDefinition, PrecedenceParser, PrecedenceParserRef},
     production::{Production, ProductionRef, VersionMap},
     scanner::{Scanner, ScannerDefinition, ScannerRef},
 };
@@ -66,7 +66,23 @@ pub trait Visitor {
         return VisitorResponse::StepIn;
     }
 
+    fn visit_scanner_definition(
+        &mut self,
+        _definition: &ScannerDefinition,
+        _reporter: &mut Reporter,
+    ) -> VisitorResponse {
+        return VisitorResponse::StepIn;
+    }
+
     fn visit_parser(&mut self, _parser: &Rc<Parser>, _reporter: &mut Reporter) -> VisitorResponse {
+        return VisitorResponse::StepIn;
+    }
+
+    fn visit_parser_definition(
+        &mut self,
+        _definition: &ParserDefinition,
+        _reporter: &mut Reporter,
+    ) -> VisitorResponse {
         return VisitorResponse::StepIn;
     }
 
@@ -81,14 +97,6 @@ pub trait Visitor {
     fn visit_operator_definition(
         &mut self,
         _operator_definition: &OperatorDefinition,
-        _reporter: &mut Reporter,
-    ) -> VisitorResponse {
-        return VisitorResponse::StepIn;
-    }
-
-    fn visit_primary_expression_reference(
-        &mut self,
-        _reference: &Reference,
         _reporter: &mut Reporter,
     ) -> VisitorResponse {
         return VisitorResponse::StepIn;
@@ -197,39 +205,40 @@ impl Receiver for ScannerRef {
 
 impl Receiver for ScannerDefinition {
     fn receive<V: Visitor>(&self, visitor: &mut V, reporter: &mut Reporter) {
-        match &self {
-            ScannerDefinition::Choice(expressions) | ScannerDefinition::Sequence(expressions) => {
-                for expression in expressions {
+        if visitor.visit_scanner_definition(self, reporter) == VisitorResponse::StepIn {
+            match &self {
+                ScannerDefinition::Choice(expressions)
+                | ScannerDefinition::Sequence(expressions) => {
+                    for expression in expressions {
+                        expression.receive(visitor, reporter);
+                    }
+                }
+                ScannerDefinition::Repeat { expression, .. }
+                | ScannerDefinition::Not(expression)
+                | ScannerDefinition::OneOrMore(expression)
+                | ScannerDefinition::Optional(expression)
+                | ScannerDefinition::ZeroOrMore(expression) => {
                     expression.receive(visitor, reporter);
                 }
-            }
-            ScannerDefinition::DelimitedBy { expression, .. }
-            | ScannerDefinition::Repeat { expression, .. }
-            | ScannerDefinition::SeparatedBy { expression, .. }
-            | ScannerDefinition::Not(expression)
-            | ScannerDefinition::OneOrMore(expression)
-            | ScannerDefinition::Optional(expression)
-            | ScannerDefinition::ZeroOrMore(expression) => {
-                expression.receive(visitor, reporter);
-            }
-            ScannerDefinition::TrailingContext {
-                expression,
-                not_followed_by,
-            } => {
-                expression.receive(visitor, reporter);
-                not_followed_by.receive(visitor, reporter);
-            }
-            ScannerDefinition::Difference {
-                minuend,
-                subtrahend,
-            } => {
-                minuend.receive(visitor, reporter);
-                subtrahend.receive(visitor, reporter);
-            }
-            ScannerDefinition::Range { .. }
-            | ScannerDefinition::Reference(_)
-            | ScannerDefinition::Terminal(_) => {}
-        };
+                ScannerDefinition::TrailingContext {
+                    expression,
+                    not_followed_by,
+                } => {
+                    expression.receive(visitor, reporter);
+                    not_followed_by.receive(visitor, reporter);
+                }
+                ScannerDefinition::Difference {
+                    minuend,
+                    subtrahend,
+                } => {
+                    minuend.receive(visitor, reporter);
+                    subtrahend.receive(visitor, reporter);
+                }
+                ScannerDefinition::Range { .. }
+                | ScannerDefinition::Reference(_)
+                | ScannerDefinition::Terminal(_) => {}
+            };
+        }
     }
 }
 
@@ -243,22 +252,25 @@ impl Receiver for ParserRef {
 
 impl Receiver for ParserDefinition {
     fn receive<V: Visitor>(&self, visitor: &mut V, reporter: &mut Reporter) {
-        match &self {
-            ParserDefinition::Choice(expressions) | ParserDefinition::Sequence(expressions) => {
-                for expression in expressions {
+        if visitor.visit_parser_definition(self, reporter) == VisitorResponse::StepIn {
+            match &self {
+                ParserDefinition::Choice(expressions) | ParserDefinition::Sequence(expressions) => {
+                    for expression in expressions {
+                        expression.receive(visitor, reporter);
+                    }
+                }
+                ParserDefinition::DelimitedBy { expression, .. }
+                | ParserDefinition::SeparatedBy { expression, .. }
+                | ParserDefinition::TerminatedBy { expression, .. }
+                | ParserDefinition::Repeat { expression, .. }
+                | ParserDefinition::OneOrMore(expression)
+                | ParserDefinition::Optional(expression)
+                | ParserDefinition::ZeroOrMore(expression) => {
                     expression.receive(visitor, reporter);
                 }
-            }
-            ParserDefinition::DelimitedBy { expression, .. }
-            | ParserDefinition::Repeat { expression, .. }
-            | ParserDefinition::SeparatedBy { expression, .. }
-            | ParserDefinition::OneOrMore(expression)
-            | ParserDefinition::Optional(expression)
-            | ParserDefinition::ZeroOrMore(expression) => {
-                expression.receive(visitor, reporter);
-            }
-            ParserDefinition::Reference(_) | ParserDefinition::Terminal(_) => {}
-        };
+                ParserDefinition::Reference(_) => {}
+            };
+        }
     }
 }
 
@@ -267,9 +279,6 @@ impl Receiver for PrecedenceParserRef {
         if visitor.visit_precedence_parser(self, reporter) == VisitorResponse::StepIn {
             for operator in &self.definition.operators {
                 operator.value.receive(visitor, reporter);
-            }
-            for primary_expression in &self.definition.primary_expressions {
-                primary_expression.value.receive(visitor, reporter);
             }
         }
     }
@@ -280,11 +289,5 @@ impl Receiver for OperatorDefinition {
         if visitor.visit_operator_definition(self, reporter) == VisitorResponse::StepIn {
             self.definition.value.receive(visitor, reporter)
         }
-    }
-}
-
-impl Receiver for Reference {
-    fn receive<V: Visitor>(&self, visitor: &mut V, reporter: &mut Reporter) {
-        visitor.visit_primary_expression_reference(self, reporter);
     }
 }

@@ -3,19 +3,25 @@
 - name: "ErrorDefinition"
   kind: "Parser"
   unversioned:
-    sequence:
-      - reference: "ErrorKeyword"
-      - reference: "Identifier"
-      - delimitedBy:
-          open: "("
-          expression:
-            optional:
-              separatedBy:
-                separator: ","
-                expression:
-                  reference: "ErrorParameter"
-          close: ")"
-      - terminal: ";"
+    terminatedBy:
+      expression:
+        sequence:
+          - reference: "ErrorKeyword"
+          - reference: "Identifier"
+          - delimitedBy:
+              open:
+                reference: "OpenParen"
+              expression:
+                optional:
+                  separatedBy:
+                    separator:
+                      reference: "Comma"
+                    expression:
+                      reference: "ErrorParameter"
+              close:
+                reference: "CloseParen"
+      terminator:
+        reference: "Semicolon"
 
 - name: "ErrorParameter"
   kind: "Parser"

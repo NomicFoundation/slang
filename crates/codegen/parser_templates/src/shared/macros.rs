@@ -134,27 +134,6 @@ macro_rules! scan_optional {
 }
 
 #[allow(unused_macros)]
-macro_rules! scan_delimited_by {
-    ($stream:ident, [$($open:literal),*], $expr:expr, [$($close:literal),*]) => {
-        scan_chars!($stream, $($open),*) && ($expr) && scan_chars!($stream, $($close),*)
-    };
-}
-
-#[allow(unused_macros)]
-macro_rules! scan_separated_by {
-    ($stream:ident, $expr:expr, [$($separator:literal),*]) => {
-        loop {
-            if !($expr) { break false };
-            let save = $stream.position();
-            if !(scan_chars!($stream, $($separator),*)) {
-                $stream.set_position(save);
-                break true
-            }
-        }
-    };
-}
-
-#[allow(unused_macros)]
 macro_rules! scan_difference {
     ($stream:ident, $minuend:expr, $subtrahend:expr) => {{
         let start = $stream.position();

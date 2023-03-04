@@ -31,11 +31,11 @@ impl<T: EBNFWriter> EBNFWritable<T> for ParserDefinition {
                 expression,
                 close,
             } => {
-                w.write_string(open);
+                w.write_global_reference(&open.reference);
                 w.write_operator(" ");
                 write_nested(w, &expression.definition, &expression.definition);
                 w.write_operator(" ");
-                w.write_string(close);
+                w.write_global_reference(&close.reference);
             }
 
             ParserDefinition::OneOrMore(expr) => {
@@ -72,8 +72,9 @@ impl<T: EBNFWriter> EBNFWritable<T> for ParserDefinition {
                 separator,
             } => {
                 write_nested(w, &expression.definition, &expression.definition);
+                w.write_global_reference(&separator.reference);
                 w.write_operator(" { ");
-                w.write_string(separator);
+                w.write_global_reference(&separator.reference);
                 w.write_operator(" ");
                 write_nested(w, &expression.definition, &expression.definition);
                 w.write_operator(" }");
@@ -91,8 +92,13 @@ impl<T: EBNFWriter> EBNFWritable<T> for ParserDefinition {
                 }
             }
 
-            ParserDefinition::Terminal(string) => {
-                w.write_string(string);
+            ParserDefinition::TerminatedBy {
+                expression,
+                terminator,
+            } => {
+                write_nested(w, &expression.definition, &expression.definition);
+                w.write_operator(" ");
+                w.write_global_reference(&terminator.reference);
             }
 
             ParserDefinition::ZeroOrMore(expr) => {
@@ -125,7 +131,7 @@ fn precedence(parser_definition: &ParserDefinition) -> u8 {
         | ParserDefinition::Reference(..)
         | ParserDefinition::Repeat { .. }
         | ParserDefinition::SeparatedBy { .. }
-        | ParserDefinition::Terminal(..)
+        | ParserDefinition::TerminatedBy { .. }
         | ParserDefinition::ZeroOrMore(..) => 0,
         ParserDefinition::DelimitedBy { .. } | ParserDefinition::Sequence(..) => 1,
         ParserDefinition::Choice(..) => 2,

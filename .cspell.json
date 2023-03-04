@@ -8,11 +8,13 @@
     "devcontainer",
     "Doxygen",
     "ebnf",
+    "evmasm",
     "inheritdoc",
     "IPFS",
     "mkdocs",
     "NatSpec",
     "struct",
+    "paren",
     "structs",
     "ufixed"
   ]

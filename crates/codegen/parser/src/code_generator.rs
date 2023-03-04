@@ -9,8 +9,6 @@ use proc_macro2::{Ident, TokenStream};
 use quote::{format_ident, quote};
 use semver::Version;
 
-use super::naming;
-
 #[derive(Clone, Debug, Default)]
 pub struct VersionedFunctionBody {
     pub comment: String,
@@ -60,13 +58,6 @@ impl CodeGenerator {
         let name = name;
         let ident = format_ident!("{}", name);
         self.token_kinds.insert(name, None);
-        ident
-    }
-
-    pub fn add_terminal_kind(&mut self, terminal: String) -> Ident {
-        let kind = naming::name_of_terminal_string(&terminal);
-        let ident = format_ident!("{}", kind);
-        self.token_kinds.insert(kind, Some(terminal));
         ident
     }
 

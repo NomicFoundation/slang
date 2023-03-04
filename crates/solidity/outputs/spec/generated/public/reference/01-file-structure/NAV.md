@@ -9,3 +9,4 @@
 - [1.5. Trivia](./05-trivia/index.md)
 - [1.6. NatSpec Format](./06-nat-spec-format/index.md)
 - [1.7. Keywords](./07-keywords/index.md)
+- [1.8 Punctuation](./08-punctuation/index.md)

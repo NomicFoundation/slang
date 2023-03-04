@@ -16,20 +16,24 @@
       # `YulIdentifierPath` should be promoted to a `YulExpression` choice, and the `optional` removed from here.
       - optional:
           delimitedBy:
-            open: "("
+            open:
+              reference: "OpenParen"
             expression:
               optional:
                 separatedBy:
-                  separator: ","
+                  separator:
+                    reference: "Comma"
                   expression:
                     reference: "YulExpression"
-            close: ")"
+            close:
+              reference: "CloseParen"
 
 - name: "YulIdentifierPath"
   kind: "Parser"
   unversioned:
     separatedBy:
-      separator: "."
+      separator:
+        reference: "Period"
       expression:
         reference: "YulIdentifier"
 

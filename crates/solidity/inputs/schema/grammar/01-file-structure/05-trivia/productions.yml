@@ -49,10 +49,9 @@
 - name: "MultilineComment"
   kind: "Scanner"
   unversioned:
-    delimitedBy:
-      open: "/*"
-      expression:
-        zeroOrMore:
+    sequence:
+      - terminal: "/*"
+      - zeroOrMore:
           choice:
             - not:
                 terminal: "*"
@@ -60,7 +59,7 @@
                 - terminal: "*"
                 - not:
                     terminal: "/"
-      close: "*/"
+      - terminal: "*/"
 
 - name: "SingleLineComment"
   kind: "Scanner"

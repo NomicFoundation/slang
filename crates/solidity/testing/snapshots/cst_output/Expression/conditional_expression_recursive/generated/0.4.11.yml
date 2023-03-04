@@ -10,7 +10,7 @@ Tree:
       - ConditionalExpression (Rule): # 0..63 "foo ? a == b ? a + b * c : a + b * c + d : !bar ? ..."
           - PrimaryExpression (Rule): # 0..3 "foo"
               - Identifier (Token): "foo" # 0..3
-          - Question (Token): "?" # 4..5
+          - QuestionMark (Token): "?" # 4..5
           - Expression (Rule): # 6..40 "a == b ? a + b * c : a + b * c + d"
               - ConditionalExpression (Rule): # 6..40 "a == b ? a + b * c : a + b * c + d"
                   - EqualityComparisonExpression (Rule): # 6..12 "a == b"
@@ -19,7 +19,7 @@ Tree:
                       - EqualEqual (Token): "==" # 8..10
                       - PrimaryExpression (Rule): # 11..12 "b"
                           - Identifier (Token): "b" # 11..12
-                  - Question (Token): "?" # 13..14
+                  - QuestionMark (Token): "?" # 13..14
                   - Expression (Rule): # 15..24 "a + b * c"
                       - AddSubExpression (Rule): # 15..24 "a + b * c"
                           - PrimaryExpression (Rule): # 15..16 "a"
@@ -54,7 +54,7 @@ Tree:
                       - Bang (Token): "!" # 43..44
                       - PrimaryExpression (Rule): # 44..47 "bar"
                           - Identifier (Token): "bar" # 44..47
-                  - Question (Token): "?" # 48..49
+                  - QuestionMark (Token): "?" # 48..49
                   - Expression (Rule): # 50..55 "e + f"
                       - AddSubExpression (Rule): # 50..55 "e + f"
                           - PrimaryExpression (Rule): # 50..51 "e"

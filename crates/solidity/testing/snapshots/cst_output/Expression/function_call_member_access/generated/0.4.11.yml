@@ -12,8 +12,7 @@ Tree:
               - PrimaryExpression (Rule): # 0..1 "x"
                   - Identifier (Token): "x" # 0..1
               - ArgumentList (Rule): # 1..3 "()"
-                  - _DELIMITEDBY (Rule): # 1..3 "()"
-                      - OpenParen (Token): "(" # 1..2
-                      - CloseParen (Token): ")" # 2..3
+                  - OpenParen (Token): "(" # 1..2
+                  - CloseParen (Token): ")" # 2..3
           - Period (Token): "." # 3..4
           - Identifier (Token): "y" # 4..5

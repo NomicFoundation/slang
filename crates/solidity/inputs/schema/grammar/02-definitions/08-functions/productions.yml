@@ -17,7 +17,7 @@
             - reference: "ReturnsKeyword"
             - reference: "ParameterList"
       - choice:
-          - terminal: ";"
+          - reference: "Semicolon"
           - reference: "Block"
 
 - name: "FunctionAttribute"
@@ -42,26 +42,32 @@
       - reference: "OverrideKeyword"
       - optional:
           delimitedBy:
-            open: "("
+            open:
+              reference: "OpenParen"
             expression:
               separatedBy:
-                separator: ","
+                separator:
+                  reference: "Comma"
                 expression:
                   reference: "IdentifierPath"
-            close: ")"
+            close:
+              reference: "CloseParen"
 
 - name: "ParameterList"
   kind: "Parser"
   unversioned:
     delimitedBy:
-      open: "("
+      open:
+        reference: "OpenParen"
       expression:
         optional:
           separatedBy:
-            separator: ","
+            separator:
+              reference: "Comma"
             expression:
               reference: "ParameterDeclaration"
-      close: ")"
+      close:
+        reference: "CloseParen"
 
 - name: "ParameterDeclaration"
   kind: "Parser"
@@ -77,19 +83,22 @@
   kind: "Parser"
   unversioned:
     delimitedBy:
-      open: "("
+      open:
+        reference: "OpenParen"
       expression:
         optional:
           choice:
             - reference: "PositionalArgumentList"
             - reference: "NamedArgumentList"
-      close: ")"
+      close:
+        reference: "CloseParen"
 
 - name: "PositionalArgumentList"
   kind: "Parser"
   unversioned:
     separatedBy:
-      separator: ","
+      separator:
+        reference: "Comma"
       expression:
         reference: "Expression"
 
@@ -97,21 +106,24 @@
   kind: "Parser"
   unversioned:
     delimitedBy:
-      open: "{"
+      open:
+        reference: "OpenBrace"
       expression:
         optional:
           separatedBy:
-            separator: ","
+            separator:
+              reference: "Comma"
             expression:
               reference: "NamedArgument"
-      close: "}"
+      close:
+        reference: "CloseBrace"
 
 - name: "NamedArgument"
   kind: "Parser"
   unversioned:
     sequence:
       - reference: "Identifier"
-      - terminal: ":"
+      - reference: "Colon"
       - reference: "Expression"
 
 - name: "ConstructorDefinition"
@@ -146,7 +158,7 @@
             - reference: "ReturnsKeyword"
             - reference: "ParameterList"
       - choice:
-          - terminal: ";"
+          - reference: "Semicolon"
           - reference: "Block"
 
 - name: "FallbackFunctionAttribute"
@@ -170,7 +182,7 @@
       - zeroOrMore:
           reference: "ReceiveFunctionAttribute"
       - choice:
-          - terminal: ";"
+          - reference: "Semicolon"
           - reference: "Block"
 
 - name: "ReceiveFunctionAttribute"

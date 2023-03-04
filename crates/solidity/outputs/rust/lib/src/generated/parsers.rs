@@ -139,27 +139,6 @@ macro_rules! scan_optional {
 }
 
 #[allow(unused_macros)]
-macro_rules! scan_delimited_by {
-    ($stream:ident, [$($open:literal),*], $expr:expr, [$($close:literal),*]) => {
-        scan_chars!($stream, $($open),*) && ($expr) && scan_chars!($stream, $($close),*)
-    };
-}
-
-#[allow(unused_macros)]
-macro_rules! scan_separated_by {
-    ($stream:ident, $expr:expr, [$($separator:literal),*]) => {
-        loop {
-            if !($expr) { break false };
-            let save = $stream.position();
-            if !(scan_chars!($stream, $($separator),*)) {
-                $stream.set_position(save);
-                break true
-            }
-        }
-    };
-}
-
-#[allow(unused_macros)]
 macro_rules! scan_difference {
     ($stream:ident, $minuend:expr, $subtrahend:expr) => {{
         let start = $stream.position();
@@ -389,7 +368,7 @@ impl Language {
         }
     }
 
-    // ArgumentList = '(' [ PositionalArgumentList | NamedArgumentList ] ')' ;
+    // ArgumentList = «OpenParen» [ PositionalArgumentList | NamedArgumentList ] «CloseParen» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_argument_list(&self, stream: &mut Stream) -> ParseResult {
@@ -398,7 +377,7 @@ impl Language {
                 match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, '(') {
+                    if self.scan_open_paren(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
@@ -412,7 +391,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'('"),
+                            error: ParseError::new(start, "OpenParen"),
                         }
                     }
                 } {
@@ -456,7 +435,7 @@ impl Language {
                                 match {
                                     let leading_trivia = self.optional_leading_trivia(stream);
                                     let start = stream.position();
-                                    if scan_chars!(stream, ')') {
+                                    if self.scan_close_paren(stream) {
                                         let end = stream.position();
                                         let trailing_trivia = self.optional_trailing_trivia(stream);
                                         Pass {
@@ -470,7 +449,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "')'"),
+                                            error: ParseError::new(start, "CloseParen"),
                                         }
                                     }
                                 } {
@@ -501,7 +480,7 @@ impl Language {
         }
     }
 
-    // ArrayLiteral = '[' Expression { ',' Expression } ']' ;
+    // ArrayLiteral = «OpenBracket» Expression«Comma» { «Comma» Expression } «CloseBracket» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_array_literal(&self, stream: &mut Stream) -> ParseResult {
@@ -510,7 +489,7 @@ impl Language {
                 match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, '[') {
+                    if self.scan_open_bracket(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
@@ -524,7 +503,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'['"),
+                            error: ParseError::new(start, "OpenBracket"),
                         }
                     }
                 } {
@@ -544,7 +523,7 @@ impl Language {
                                             let leading_trivia =
                                                 self.optional_leading_trivia(stream);
                                             let start = stream.position();
-                                            if scan_chars!(stream, ',') {
+                                            if self.scan_comma(stream) {
                                                 let end = stream.position();
                                                 let trailing_trivia =
                                                     self.optional_trailing_trivia(stream);
@@ -559,7 +538,7 @@ impl Language {
                                                 }
                                             } else {
                                                 Fail {
-                                                    error: ParseError::new(start, "','"),
+                                                    error: ParseError::new(start, "Comma"),
                                                 }
                                             }
                                         } {
@@ -587,7 +566,7 @@ impl Language {
                                 match {
                                     let leading_trivia = self.optional_leading_trivia(stream);
                                     let start = stream.position();
-                                    if scan_chars!(stream, ']') {
+                                    if self.scan_close_bracket(stream) {
                                         let end = stream.position();
                                         let trailing_trivia = self.optional_trailing_trivia(stream);
                                         Pass {
@@ -601,7 +580,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "']'"),
+                                            error: ParseError::new(start, "CloseBracket"),
                                         }
                                     }
                                 } {
@@ -632,7 +611,7 @@ impl Language {
         }
     }
 
-    // AssemblyFlags = '(' «DoubleQuotedAsciiStringLiteral» { ',' «DoubleQuotedAsciiStringLiteral» } ')' ;
+    // AssemblyFlags = «OpenParen» «DoubleQuotedAsciiStringLiteral» { «Comma» «DoubleQuotedAsciiStringLiteral» } «CloseParen» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_assembly_flags(&self, stream: &mut Stream) -> ParseResult {
@@ -641,7 +620,7 @@ impl Language {
                 match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, '(') {
+                    if self.scan_open_paren(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
@@ -655,7 +634,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'('"),
+                            error: ParseError::new(start, "OpenParen"),
                         }
                     }
                 } {
@@ -663,42 +642,54 @@ impl Language {
                     Pass {
                         node: open_node, ..
                     } => {
-                        match {
-                            let mut result = Vec::new();
-                            loop {
-                                match {
-                                    let leading_trivia = self.optional_leading_trivia(stream);
-                                    let start = stream.position();
-                                    if self.scan_double_quoted_ascii_string_literal(stream) {
-                                        let end = stream.position();
-                                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                                        Pass {
-                                            node: cst::Node::token(
-                                                TokenKind::DoubleQuotedAsciiStringLiteral,
-                                                Range { start, end },
-                                                leading_trivia,
-                                                trailing_trivia,
-                                            ),
-                                            error: None,
-                                        }
-                                    } else {
-                                        Fail {
-                                            error: ParseError::new(
-                                                start,
-                                                "DoubleQuotedAsciiStringLiteral",
-                                            ),
-                                        }
+                        match loop {
+                            let mut furthest_error = None;
+                            let result_0 = match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_double_quoted_ascii_string_literal(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::DoubleQuotedAsciiStringLiteral,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
                                     }
-                                } {
-                                    err @ Fail { .. } => break err,
-                                    Pass { node, .. } => {
-                                        result.push(node);
-                                        let save = stream.position();
-                                        match {
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(
+                                            start,
+                                            "DoubleQuotedAsciiStringLiteral",
+                                        ),
+                                    }
+                                }
+                            } {
+                                Pass { node, error } => {
+                                    furthest_error =
+                                        error.map(|error| error.maybe_merge_with(furthest_error));
+                                    node
+                                }
+                                Fail { error } => {
+                                    break Fail {
+                                        error: error.maybe_merge_with(furthest_error),
+                                    }
+                                }
+                            };
+                            let result_1 = match {
+                                let mut result = Vec::new();
+                                loop {
+                                    let start_position = stream.position();
+                                    match loop {
+                                        let mut furthest_error = None;
+                                        let result_0 = match {
                                             let leading_trivia =
                                                 self.optional_leading_trivia(stream);
                                             let start = stream.position();
-                                            if scan_chars!(stream, ',') {
+                                            if self.scan_comma(stream) {
                                                 let end = stream.position();
                                                 let trailing_trivia =
                                                     self.optional_trailing_trivia(stream);
@@ -713,25 +704,98 @@ impl Language {
                                                 }
                                             } else {
                                                 Fail {
-                                                    error: ParseError::new(start, "','"),
+                                                    error: ParseError::new(start, "Comma"),
                                                 }
                                             }
                                         } {
-                                            Fail { error } => {
-                                                stream.set_position(save);
-                                                break Pass {
-                                                    node: cst::Node::rule(
-                                                        RuleKind::_SEPARATEDBY,
-                                                        result,
-                                                    ),
-                                                    error: Some(error),
-                                                };
+                                            Pass { node, error } => {
+                                                furthest_error = error.map(|error| {
+                                                    error.maybe_merge_with(furthest_error)
+                                                });
+                                                node
                                             }
-                                            Pass { node, .. } => result.push(node),
+                                            Fail { error } => {
+                                                break Fail {
+                                                    error: error.maybe_merge_with(furthest_error),
+                                                }
+                                            }
+                                        };
+                                        let result_1 = match {
+                                            let leading_trivia =
+                                                self.optional_leading_trivia(stream);
+                                            let start = stream.position();
+                                            if self.scan_double_quoted_ascii_string_literal(stream)
+                                            {
+                                                let end = stream.position();
+                                                let trailing_trivia =
+                                                    self.optional_trailing_trivia(stream);
+                                                Pass {
+                                                    node: cst::Node::token(
+                                                        TokenKind::DoubleQuotedAsciiStringLiteral,
+                                                        Range { start, end },
+                                                        leading_trivia,
+                                                        trailing_trivia,
+                                                    ),
+                                                    error: None,
+                                                }
+                                            } else {
+                                                Fail {
+                                                    error: ParseError::new(
+                                                        start,
+                                                        "DoubleQuotedAsciiStringLiteral",
+                                                    ),
+                                                }
+                                            }
+                                        } {
+                                            Pass { node, error } => {
+                                                furthest_error = error.map(|error| {
+                                                    error.maybe_merge_with(furthest_error)
+                                                });
+                                                node
+                                            }
+                                            Fail { error } => {
+                                                break Fail {
+                                                    error: error.maybe_merge_with(furthest_error),
+                                                }
+                                            }
+                                        };
+                                        break Pass {
+                                            node: cst::Node::rule(
+                                                RuleKind::_SEQUENCE,
+                                                vec![result_0, result_1],
+                                            ),
+                                            error: furthest_error,
+                                        };
+                                    } {
+                                        Fail { error } => {
+                                            stream.set_position(start_position);
+                                            break Pass {
+                                                node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                                error: Some(error),
+                                            };
                                         }
+                                        Pass { node, .. } => result.push(node),
                                     }
                                 }
-                            }
+                            } {
+                                Pass { node, error } => {
+                                    furthest_error =
+                                        error.map(|error| error.maybe_merge_with(furthest_error));
+                                    node
+                                }
+                                Fail { error } => {
+                                    break Fail {
+                                        error: error.maybe_merge_with(furthest_error),
+                                    }
+                                }
+                            };
+                            break Pass {
+                                node: cst::Node::rule(
+                                    RuleKind::_SEQUENCE,
+                                    vec![result_0, result_1],
+                                ),
+                                error: furthest_error,
+                            };
                         } {
                             err @ Fail { .. } => err,
                             Pass {
@@ -741,7 +805,7 @@ impl Language {
                                 match {
                                     let leading_trivia = self.optional_leading_trivia(stream);
                                     let start = stream.position();
-                                    if scan_chars!(stream, ')') {
+                                    if self.scan_close_paren(stream) {
                                         let end = stream.position();
                                         let trailing_trivia = self.optional_trailing_trivia(stream);
                                         Pass {
@@ -755,7 +819,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "')'"),
+                                            error: ParseError::new(start, "CloseParen"),
                                         }
                                     }
                                 } {
@@ -786,7 +850,7 @@ impl Language {
         }
     }
 
-    // AssemblyStatement = «AssemblyKeyword» [ '"evmasm"' ] [ AssemblyFlags ] YulBlock ;
+    // AssemblyStatement = «AssemblyKeyword» [ «Evmasm» ] [ AssemblyFlags ] YulBlock ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_assembly_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -829,12 +893,12 @@ impl Language {
                     match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        if scan_chars!(stream, '"', 'e', 'v', 'm', 'a', 's', 'm', '"') {
+                        if self.scan_evmasm(stream) {
                             let end = stream.position();
                             let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
                                 node: cst::Node::token(
-                                    TokenKind::DoubleQuoteEvmasmDoubleQuote,
+                                    TokenKind::Evmasm,
                                     Range { start, end },
                                     leading_trivia,
                                     trailing_trivia,
@@ -843,7 +907,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "'\"evmasm\"'"),
+                                error: ParseError::new(start, "Evmasm"),
                             }
                         }
                     } {
@@ -918,7 +982,7 @@ impl Language {
         }
     }
 
-    // Block = '{' { Statement | UncheckedBlock } '}' ;
+    // Block = «OpenBrace» { Statement | UncheckedBlock } «CloseBrace» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_block(&self, stream: &mut Stream) -> ParseResult {
@@ -927,7 +991,7 @@ impl Language {
                 match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, '{') {
+                    if self.scan_open_brace(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
@@ -941,7 +1005,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'{'"),
+                            error: ParseError::new(start, "OpenBrace"),
                         }
                     }
                 } {
@@ -988,7 +1052,7 @@ impl Language {
                                 match {
                                     let leading_trivia = self.optional_leading_trivia(stream);
                                     let start = stream.position();
-                                    if scan_chars!(stream, '}') {
+                                    if self.scan_close_brace(stream) {
                                         let end = stream.position();
                                         let trailing_trivia = self.optional_trailing_trivia(stream);
                                         Pass {
@@ -1002,7 +1066,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "'}'"),
+                                            error: ParseError::new(start, "CloseBrace"),
                                         }
                                     }
                                 } {
@@ -1103,14 +1167,13 @@ impl Language {
         }
     }
 
-    // BreakStatement = «BreakKeyword» ';' ;
+    // BreakStatement = «BreakKeyword» «Semicolon» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_break_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match {
+            {
+                match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
                     if self.scan_break_keyword(stream) {
@@ -1131,51 +1194,48 @@ impl Language {
                         }
                     }
                 } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
+                    err @ Fail { .. } => err,
+                    Pass {
+                        node: expr_node,
+                        error: expr_error,
+                    } => {
+                        match {
+                            let leading_trivia = self.optional_leading_trivia(stream);
+                            let start = stream.position();
+                            if self.scan_semicolon(stream) {
+                                let end = stream.position();
+                                let trailing_trivia = self.optional_trailing_trivia(stream);
+                                Pass {
+                                    node: cst::Node::token(
+                                        TokenKind::Semicolon,
+                                        Range { start, end },
+                                        leading_trivia,
+                                        trailing_trivia,
+                                    ),
+                                    error: None,
+                                }
+                            } else {
+                                Fail {
+                                    error: ParseError::new(start, "Semicolon"),
+                                }
+                            }
+                        } {
+                            Fail { error } => Fail {
+                                error: error.maybe_merge_with(expr_error),
+                            },
+                            Pass {
+                                node: terminator_node,
+                                ..
+                            } => Pass {
+                                node: cst::Node::rule(
+                                    RuleKind::_TERMINATEDBY,
+                                    vec![expr_node, terminator_node],
+                                ),
+                                error: None,
+                            },
                         }
                     }
-                };
-                let result_1 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, ';') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Semicolon,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "';'"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
-                    error: furthest_error,
-                };
+                }
             }
         } {
             Pass { node, error } => Pass {
@@ -1334,166 +1394,184 @@ impl Language {
         }
     }
 
-    // ConstantDefinition = TypeName «ConstantKeyword» «Identifier» '=' Expression ';' ;
+    // ConstantDefinition = TypeName «ConstantKeyword» «Identifier» «Equal» Expression «Semicolon» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_constant_definition(&self, stream: &mut Stream) -> ParseResult {
         match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match self.parse_type_name(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
+            {
+                match loop {
+                    let mut furthest_error = None;
+                    let result_0 = match self.parse_type_name(stream) {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
                         }
-                    }
-                };
-                let result_1 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if self.scan_constant_keyword(stream) {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::ConstantKeyword,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
                         }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "ConstantKeyword"),
+                    };
+                    let result_1 = match {
+                        let leading_trivia = self.optional_leading_trivia(stream);
+                        let start = stream.position();
+                        if self.scan_constant_keyword(stream) {
+                            let end = stream.position();
+                            let trailing_trivia = self.optional_trailing_trivia(stream);
+                            Pass {
+                                node: cst::Node::token(
+                                    TokenKind::ConstantKeyword,
+                                    Range { start, end },
+                                    leading_trivia,
+                                    trailing_trivia,
+                                ),
+                                error: None,
+                            }
+                        } else {
+                            Fail {
+                                error: ParseError::new(start, "ConstantKeyword"),
+                            }
                         }
-                    }
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_2 = match {
+                        let leading_trivia = self.optional_leading_trivia(stream);
+                        let start = stream.position();
+                        if self.scan_identifier(stream) {
+                            let end = stream.position();
+                            let trailing_trivia = self.optional_trailing_trivia(stream);
+                            Pass {
+                                node: cst::Node::token(
+                                    TokenKind::Identifier,
+                                    Range { start, end },
+                                    leading_trivia,
+                                    trailing_trivia,
+                                ),
+                                error: None,
+                            }
+                        } else {
+                            Fail {
+                                error: ParseError::new(start, "Identifier"),
+                            }
+                        }
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_3 = match {
+                        let leading_trivia = self.optional_leading_trivia(stream);
+                        let start = stream.position();
+                        if self.scan_equal(stream) {
+                            let end = stream.position();
+                            let trailing_trivia = self.optional_trailing_trivia(stream);
+                            Pass {
+                                node: cst::Node::token(
+                                    TokenKind::Equal,
+                                    Range { start, end },
+                                    leading_trivia,
+                                    trailing_trivia,
+                                ),
+                                error: None,
+                            }
+                        } else {
+                            Fail {
+                                error: ParseError::new(start, "Equal"),
+                            }
+                        }
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_4 = match self.parse_expression(stream) {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    break Pass {
+                        node: cst::Node::rule(
+                            RuleKind::_SEQUENCE,
+                            vec![result_0, result_1, result_2, result_3, result_4],
+                        ),
+                        error: furthest_error,
+                    };
                 } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
+                    err @ Fail { .. } => err,
+                    Pass {
+                        node: expr_node,
+                        error: expr_error,
+                    } => {
+                        match {
+                            let leading_trivia = self.optional_leading_trivia(stream);
+                            let start = stream.position();
+                            if self.scan_semicolon(stream) {
+                                let end = stream.position();
+                                let trailing_trivia = self.optional_trailing_trivia(stream);
+                                Pass {
+                                    node: cst::Node::token(
+                                        TokenKind::Semicolon,
+                                        Range { start, end },
+                                        leading_trivia,
+                                        trailing_trivia,
+                                    ),
+                                    error: None,
+                                }
+                            } else {
+                                Fail {
+                                    error: ParseError::new(start, "Semicolon"),
+                                }
+                            }
+                        } {
+                            Fail { error } => Fail {
+                                error: error.maybe_merge_with(expr_error),
+                            },
+                            Pass {
+                                node: terminator_node,
+                                ..
+                            } => Pass {
+                                node: cst::Node::rule(
+                                    RuleKind::_TERMINATEDBY,
+                                    vec![expr_node, terminator_node],
+                                ),
+                                error: None,
+                            },
                         }
                     }
-                };
-                let result_2 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if self.scan_identifier(stream) {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Identifier,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "Identifier"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_3 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, '=') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Equal,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "'='"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_4 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_5 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, ';') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Semicolon,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "';'"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(
-                        RuleKind::_SEQUENCE,
-                        vec![result_0, result_1, result_2, result_3, result_4, result_5],
-                    ),
-                    error: furthest_error,
-                };
+                }
             }
         } {
             Pass { node, error } => Pass {
@@ -1707,14 +1785,13 @@ impl Language {
         }
     }
 
-    // ContinueStatement = «ContinueKeyword» ';' ;
+    // ContinueStatement = «ContinueKeyword» «Semicolon» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_continue_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match {
+            {
+                match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
                     if self.scan_continue_keyword(stream) {
@@ -1735,51 +1812,48 @@ impl Language {
                         }
                     }
                 } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
+                    err @ Fail { .. } => err,
+                    Pass {
+                        node: expr_node,
+                        error: expr_error,
+                    } => {
+                        match {
+                            let leading_trivia = self.optional_leading_trivia(stream);
+                            let start = stream.position();
+                            if self.scan_semicolon(stream) {
+                                let end = stream.position();
+                                let trailing_trivia = self.optional_trailing_trivia(stream);
+                                Pass {
+                                    node: cst::Node::token(
+                                        TokenKind::Semicolon,
+                                        Range { start, end },
+                                        leading_trivia,
+                                        trailing_trivia,
+                                    ),
+                                    error: None,
+                                }
+                            } else {
+                                Fail {
+                                    error: ParseError::new(start, "Semicolon"),
+                                }
+                            }
+                        } {
+                            Fail { error } => Fail {
+                                error: error.maybe_merge_with(expr_error),
+                            },
+                            Pass {
+                                node: terminator_node,
+                                ..
+                            } => Pass {
+                                node: cst::Node::rule(
+                                    RuleKind::_TERMINATEDBY,
+                                    vec![expr_node, terminator_node],
+                                ),
+                                error: None,
+                            },
                         }
                     }
-                };
-                let result_1 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, ';') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Semicolon,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "';'"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
-                    error: furthest_error,
-                };
+                }
             }
         } {
             Pass { node, error } => Pass {
@@ -1870,7 +1944,7 @@ impl Language {
         }
     }
 
-    // ContractDefinition = [ «AbstractKeyword» ] «ContractKeyword» «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
+    // ContractDefinition = [ «AbstractKeyword» ] «ContractKeyword» «Identifier» [ InheritanceSpecifierList ] «OpenBrace» { ContractBodyElement } «CloseBrace» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_contract_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -2009,7 +2083,7 @@ impl Language {
                     match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        if scan_chars!(stream, '{') {
+                        if self.scan_open_brace(stream) {
                             let end = stream.position();
                             let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
@@ -2023,7 +2097,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "'{'"),
+                                error: ParseError::new(start, "OpenBrace"),
                             }
                         }
                     } {
@@ -2055,7 +2129,7 @@ impl Language {
                                     match {
                                         let leading_trivia = self.optional_leading_trivia(stream);
                                         let start = stream.position();
-                                        if scan_chars!(stream, '}') {
+                                        if self.scan_close_brace(stream) {
                                             let end = stream.position();
                                             let trailing_trivia =
                                                 self.optional_trailing_trivia(stream);
@@ -2070,7 +2144,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "'}'"),
+                                                error: ParseError::new(start, "CloseBrace"),
                                             }
                                         }
                                     } {
@@ -2279,90 +2353,105 @@ impl Language {
         }
     }
 
-    // DeleteStatement = «DeleteKeyword» Expression ';' ;
+    // DeleteStatement = «DeleteKeyword» Expression «Semicolon» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_delete_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if self.scan_delete_keyword(stream) {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::DeleteKeyword,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
+            {
+                match loop {
+                    let mut furthest_error = None;
+                    let result_0 = match {
+                        let leading_trivia = self.optional_leading_trivia(stream);
+                        let start = stream.position();
+                        if self.scan_delete_keyword(stream) {
+                            let end = stream.position();
+                            let trailing_trivia = self.optional_trailing_trivia(stream);
+                            Pass {
+                                node: cst::Node::token(
+                                    TokenKind::DeleteKeyword,
+                                    Range { start, end },
+                                    leading_trivia,
+                                    trailing_trivia,
+                                ),
+                                error: None,
+                            }
+                        } else {
+                            Fail {
+                                error: ParseError::new(start, "DeleteKeyword"),
+                            }
                         }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "DeleteKeyword"),
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
                         }
-                    }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_1 = match self.parse_expression(stream) {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    break Pass {
+                        node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                        error: furthest_error,
+                    };
                 } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
+                    err @ Fail { .. } => err,
+                    Pass {
+                        node: expr_node,
+                        error: expr_error,
+                    } => {
+                        match {
+                            let leading_trivia = self.optional_leading_trivia(stream);
+                            let start = stream.position();
+                            if self.scan_semicolon(stream) {
+                                let end = stream.position();
+                                let trailing_trivia = self.optional_trailing_trivia(stream);
+                                Pass {
+                                    node: cst::Node::token(
+                                        TokenKind::Semicolon,
+                                        Range { start, end },
+                                        leading_trivia,
+                                        trailing_trivia,
+                                    ),
+                                    error: None,
+                                }
+                            } else {
+                                Fail {
+                                    error: ParseError::new(start, "Semicolon"),
+                                }
+                            }
+                        } {
+                            Fail { error } => Fail {
+                                error: error.maybe_merge_with(expr_error),
+                            },
+                            Pass {
+                                node: terminator_node,
+                                ..
+                            } => Pass {
+                                node: cst::Node::rule(
+                                    RuleKind::_TERMINATEDBY,
+                                    vec![expr_node, terminator_node],
+                                ),
+                                error: None,
+                            },
                         }
                     }
-                };
-                let result_1 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_2 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, ';') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Semicolon,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "';'"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
-                    error: furthest_error,
-                };
+                }
             }
         } {
             Pass { node, error } => Pass {
@@ -2408,96 +2497,23 @@ impl Language {
         }
     }
 
-    // DoWhileStatement = «DoKeyword» Statement «WhileKeyword» '(' Expression ')' ';' ;
+    // DoWhileStatement = «DoKeyword» Statement «WhileKeyword» «OpenParen» Expression «CloseParen» «Semicolon» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_do_while_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if self.scan_do_keyword(stream) {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::DoKeyword,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "DoKeyword"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_1 = match self.parse_statement(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_2 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if self.scan_while_keyword(stream) {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::WhileKeyword,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "WhileKeyword"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_3 = match {
-                    match {
+            {
+                match loop {
+                    let mut furthest_error = None;
+                    let result_0 = match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        if scan_chars!(stream, '(') {
+                        if self.scan_do_keyword(stream) {
                             let end = stream.position();
                             let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
                                 node: cst::Node::token(
-                                    TokenKind::OpenParen,
+                                    TokenKind::DoKeyword,
                                     Range { start, end },
                                     leading_trivia,
                                     trailing_trivia,
@@ -2506,105 +2522,196 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "'('"),
+                                error: ParseError::new(start, "DoKeyword"),
                             }
                         }
                     } {
-                        err @ Fail { .. } => err,
-                        Pass {
-                            node: open_node, ..
-                        } => match self.parse_expression(stream) {
-                            err @ Fail { .. } => err,
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_1 = match self.parse_statement(stream) {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_2 = match {
+                        let leading_trivia = self.optional_leading_trivia(stream);
+                        let start = stream.position();
+                        if self.scan_while_keyword(stream) {
+                            let end = stream.position();
+                            let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
-                                node: expr_node,
-                                error: expr_error,
-                            } => {
-                                match {
-                                    let leading_trivia = self.optional_leading_trivia(stream);
-                                    let start = stream.position();
-                                    if scan_chars!(stream, ')') {
-                                        let end = stream.position();
-                                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                                        Pass {
-                                            node: cst::Node::token(
-                                                TokenKind::CloseParen,
-                                                Range { start, end },
-                                                leading_trivia,
-                                                trailing_trivia,
-                                            ),
-                                            error: None,
-                                        }
-                                    } else {
-                                        Fail {
-                                            error: ParseError::new(start, "')'"),
-                                        }
-                                    }
-                                } {
-                                    Fail { error } => Fail {
-                                        error: error.maybe_merge_with(expr_error),
-                                    },
-                                    Pass {
-                                        node: close_node, ..
-                                    } => Pass {
-                                        node: cst::Node::rule(
-                                            RuleKind::_DELIMITEDBY,
-                                            vec![open_node, expr_node, close_node],
-                                        ),
-                                        error: None,
-                                    },
+                                node: cst::Node::token(
+                                    TokenKind::WhileKeyword,
+                                    Range { start, end },
+                                    leading_trivia,
+                                    trailing_trivia,
+                                ),
+                                error: None,
+                            }
+                        } else {
+                            Fail {
+                                error: ParseError::new(start, "WhileKeyword"),
+                            }
+                        }
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_3 = match {
+                        match {
+                            let leading_trivia = self.optional_leading_trivia(stream);
+                            let start = stream.position();
+                            if self.scan_open_paren(stream) {
+                                let end = stream.position();
+                                let trailing_trivia = self.optional_trailing_trivia(stream);
+                                Pass {
+                                    node: cst::Node::token(
+                                        TokenKind::OpenParen,
+                                        Range { start, end },
+                                        leading_trivia,
+                                        trailing_trivia,
+                                    ),
+                                    error: None,
+                                }
+                            } else {
+                                Fail {
+                                    error: ParseError::new(start, "OpenParen"),
                                 }
                             }
-                        },
-                    }
+                        } {
+                            err @ Fail { .. } => err,
+                            Pass {
+                                node: open_node, ..
+                            } => match self.parse_expression(stream) {
+                                err @ Fail { .. } => err,
+                                Pass {
+                                    node: expr_node,
+                                    error: expr_error,
+                                } => {
+                                    match {
+                                        let leading_trivia = self.optional_leading_trivia(stream);
+                                        let start = stream.position();
+                                        if self.scan_close_paren(stream) {
+                                            let end = stream.position();
+                                            let trailing_trivia =
+                                                self.optional_trailing_trivia(stream);
+                                            Pass {
+                                                node: cst::Node::token(
+                                                    TokenKind::CloseParen,
+                                                    Range { start, end },
+                                                    leading_trivia,
+                                                    trailing_trivia,
+                                                ),
+                                                error: None,
+                                            }
+                                        } else {
+                                            Fail {
+                                                error: ParseError::new(start, "CloseParen"),
+                                            }
+                                        }
+                                    } {
+                                        Fail { error } => Fail {
+                                            error: error.maybe_merge_with(expr_error),
+                                        },
+                                        Pass {
+                                            node: close_node, ..
+                                        } => Pass {
+                                            node: cst::Node::rule(
+                                                RuleKind::_DELIMITEDBY,
+                                                vec![open_node, expr_node, close_node],
+                                            ),
+                                            error: None,
+                                        },
+                                    }
+                                }
+                            },
+                        }
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    break Pass {
+                        node: cst::Node::rule(
+                            RuleKind::_SEQUENCE,
+                            vec![result_0, result_1, result_2, result_3],
+                        ),
+                        error: furthest_error,
+                    };
                 } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
+                    err @ Fail { .. } => err,
+                    Pass {
+                        node: expr_node,
+                        error: expr_error,
+                    } => {
+                        match {
+                            let leading_trivia = self.optional_leading_trivia(stream);
+                            let start = stream.position();
+                            if self.scan_semicolon(stream) {
+                                let end = stream.position();
+                                let trailing_trivia = self.optional_trailing_trivia(stream);
+                                Pass {
+                                    node: cst::Node::token(
+                                        TokenKind::Semicolon,
+                                        Range { start, end },
+                                        leading_trivia,
+                                        trailing_trivia,
+                                    ),
+                                    error: None,
+                                }
+                            } else {
+                                Fail {
+                                    error: ParseError::new(start, "Semicolon"),
+                                }
+                            }
+                        } {
+                            Fail { error } => Fail {
+                                error: error.maybe_merge_with(expr_error),
+                            },
+                            Pass {
+                                node: terminator_node,
+                                ..
+                            } => Pass {
+                                node: cst::Node::rule(
+                                    RuleKind::_TERMINATEDBY,
+                                    vec![expr_node, terminator_node],
+                                ),
+                                error: None,
+                            },
                         }
                     }
-                };
-                let result_4 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, ';') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Semicolon,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "';'"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(
-                        RuleKind::_SEQUENCE,
-                        vec![result_0, result_1, result_2, result_3, result_4],
-                    ),
-                    error: furthest_error,
-                };
+                }
             }
         } {
             Pass { node, error } => Pass {
@@ -2820,104 +2927,120 @@ impl Language {
         }
     }
 
-    // EmitStatement = «EmitKeyword» IdentifierPath ArgumentList ';' ;
+    // EmitStatement = «EmitKeyword» IdentifierPath ArgumentList «Semicolon» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_emit_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if self.scan_emit_keyword(stream) {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::EmitKeyword,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
+            {
+                match loop {
+                    let mut furthest_error = None;
+                    let result_0 = match {
+                        let leading_trivia = self.optional_leading_trivia(stream);
+                        let start = stream.position();
+                        if self.scan_emit_keyword(stream) {
+                            let end = stream.position();
+                            let trailing_trivia = self.optional_trailing_trivia(stream);
+                            Pass {
+                                node: cst::Node::token(
+                                    TokenKind::EmitKeyword,
+                                    Range { start, end },
+                                    leading_trivia,
+                                    trailing_trivia,
+                                ),
+                                error: None,
+                            }
+                        } else {
+                            Fail {
+                                error: ParseError::new(start, "EmitKeyword"),
+                            }
                         }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "EmitKeyword"),
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
                         }
-                    }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_1 = match self.parse_identifier_path(stream) {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_2 = match self.parse_argument_list(stream) {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    break Pass {
+                        node: cst::Node::rule(
+                            RuleKind::_SEQUENCE,
+                            vec![result_0, result_1, result_2],
+                        ),
+                        error: furthest_error,
+                    };
                 } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
+                    err @ Fail { .. } => err,
+                    Pass {
+                        node: expr_node,
+                        error: expr_error,
+                    } => {
+                        match {
+                            let leading_trivia = self.optional_leading_trivia(stream);
+                            let start = stream.position();
+                            if self.scan_semicolon(stream) {
+                                let end = stream.position();
+                                let trailing_trivia = self.optional_trailing_trivia(stream);
+                                Pass {
+                                    node: cst::Node::token(
+                                        TokenKind::Semicolon,
+                                        Range { start, end },
+                                        leading_trivia,
+                                        trailing_trivia,
+                                    ),
+                                    error: None,
+                                }
+                            } else {
+                                Fail {
+                                    error: ParseError::new(start, "Semicolon"),
+                                }
+                            }
+                        } {
+                            Fail { error } => Fail {
+                                error: error.maybe_merge_with(expr_error),
+                            },
+                            Pass {
+                                node: terminator_node,
+                                ..
+                            } => Pass {
+                                node: cst::Node::rule(
+                                    RuleKind::_TERMINATEDBY,
+                                    vec![expr_node, terminator_node],
+                                ),
+                                error: None,
+                            },
                         }
                     }
-                };
-                let result_1 = match self.parse_identifier_path(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_2 = match self.parse_argument_list(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_3 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, ';') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Semicolon,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "';'"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(
-                        RuleKind::_SEQUENCE,
-                        vec![result_0, result_1, result_2, result_3],
-                    ),
-                    error: furthest_error,
-                };
+                }
             }
         } {
             Pass { node, error } => Pass {
@@ -3058,7 +3181,7 @@ impl Language {
         }
     }
 
-    // EnumDefinition = «EnumKeyword» «Identifier» '{' [ «Identifier» { ',' «Identifier» } ] '}' ;
+    // EnumDefinition = «EnumKeyword» «Identifier» «OpenBrace» [ «Identifier»«Comma» { «Comma» «Identifier» } ] «CloseBrace» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_enum_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -3131,7 +3254,7 @@ impl Language {
                     match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        if scan_chars!(stream, '{') {
+                        if self.scan_open_brace(stream) {
                             let end = stream.position();
                             let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
@@ -3145,7 +3268,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "'{'"),
+                                error: ParseError::new(start, "OpenBrace"),
                             }
                         }
                     } {
@@ -3189,7 +3312,7 @@ impl Language {
                                                     let leading_trivia =
                                                         self.optional_leading_trivia(stream);
                                                     let start = stream.position();
-                                                    if scan_chars!(stream, ',') {
+                                                    if self.scan_comma(stream) {
                                                         let end = stream.position();
                                                         let trailing_trivia =
                                                             self.optional_trailing_trivia(stream);
@@ -3204,7 +3327,7 @@ impl Language {
                                                         }
                                                     } else {
                                                         Fail {
-                                                            error: ParseError::new(start, "','"),
+                                                            error: ParseError::new(start, "Comma"),
                                                         }
                                                     }
                                                 } {
@@ -3242,7 +3365,7 @@ impl Language {
                                     match {
                                         let leading_trivia = self.optional_leading_trivia(stream);
                                         let start = stream.position();
-                                        if scan_chars!(stream, '}') {
+                                        if self.scan_close_brace(stream) {
                                             let end = stream.position();
                                             let trailing_trivia =
                                                 self.optional_trailing_trivia(stream);
@@ -3257,7 +3380,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "'}'"),
+                                                error: ParseError::new(start, "CloseBrace"),
                                             }
                                         }
                                     } {
@@ -3303,85 +3426,23 @@ impl Language {
         }
     }
 
-    // ErrorDefinition = «ErrorKeyword» «Identifier» '(' [ ErrorParameter { ',' ErrorParameter } ] ')' ';' ;
+    // ErrorDefinition = «ErrorKeyword» «Identifier» «OpenParen» [ ErrorParameter«Comma» { «Comma» ErrorParameter } ] «CloseParen» «Semicolon» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_error_definition(&self, stream: &mut Stream) -> ParseResult {
         match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if self.scan_error_keyword(stream) {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::ErrorKeyword,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "ErrorKeyword"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_1 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if self.scan_identifier(stream) {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Identifier,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "Identifier"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_2 = match {
-                    match {
+            {
+                match loop {
+                    let mut furthest_error = None;
+                    let result_0 = match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        if scan_chars!(stream, '(') {
+                        if self.scan_error_keyword(stream) {
                             let end = stream.position();
                             let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
                                 node: cst::Node::token(
-                                    TokenKind::OpenParen,
+                                    TokenKind::ErrorKeyword,
                                     Range { start, end },
                                     leading_trivia,
                                     trailing_trivia,
@@ -3390,166 +3451,247 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "'('"),
+                                error: ParseError::new(start, "ErrorKeyword"),
                             }
                         }
                     } {
-                        err @ Fail { .. } => err,
-                        Pass {
-                            node: open_node, ..
-                        } => {
-                            match {
-                                let start_position = stream.position();
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_1 = match {
+                        let leading_trivia = self.optional_leading_trivia(stream);
+                        let start = stream.position();
+                        if self.scan_identifier(stream) {
+                            let end = stream.position();
+                            let trailing_trivia = self.optional_trailing_trivia(stream);
+                            Pass {
+                                node: cst::Node::token(
+                                    TokenKind::Identifier,
+                                    Range { start, end },
+                                    leading_trivia,
+                                    trailing_trivia,
+                                ),
+                                error: None,
+                            }
+                        } else {
+                            Fail {
+                                error: ParseError::new(start, "Identifier"),
+                            }
+                        }
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_2 = match {
+                        match {
+                            let leading_trivia = self.optional_leading_trivia(stream);
+                            let start = stream.position();
+                            if self.scan_open_paren(stream) {
+                                let end = stream.position();
+                                let trailing_trivia = self.optional_trailing_trivia(stream);
+                                Pass {
+                                    node: cst::Node::token(
+                                        TokenKind::OpenParen,
+                                        Range { start, end },
+                                        leading_trivia,
+                                        trailing_trivia,
+                                    ),
+                                    error: None,
+                                }
+                            } else {
+                                Fail {
+                                    error: ParseError::new(start, "OpenParen"),
+                                }
+                            }
+                        } {
+                            err @ Fail { .. } => err,
+                            Pass {
+                                node: open_node, ..
+                            } => {
                                 match {
-                                    let mut result = Vec::new();
-                                    loop {
-                                        match self.parse_error_parameter(stream) {
-                                            err @ Fail { .. } => break err,
-                                            Pass { node, .. } => {
-                                                result.push(node);
-                                                let save = stream.position();
-                                                match {
-                                                    let leading_trivia =
-                                                        self.optional_leading_trivia(stream);
-                                                    let start = stream.position();
-                                                    if scan_chars!(stream, ',') {
-                                                        let end = stream.position();
-                                                        let trailing_trivia =
-                                                            self.optional_trailing_trivia(stream);
-                                                        Pass {
-                                                            node: cst::Node::token(
-                                                                TokenKind::Comma,
-                                                                Range { start, end },
-                                                                leading_trivia,
-                                                                trailing_trivia,
-                                                            ),
-                                                            error: None,
+                                    let start_position = stream.position();
+                                    match {
+                                        let mut result = Vec::new();
+                                        loop {
+                                            match self.parse_error_parameter(stream) {
+                                                err @ Fail { .. } => break err,
+                                                Pass { node, .. } => {
+                                                    result.push(node);
+                                                    let save = stream.position();
+                                                    match {
+                                                        let leading_trivia =
+                                                            self.optional_leading_trivia(stream);
+                                                        let start = stream.position();
+                                                        if self.scan_comma(stream) {
+                                                            let end = stream.position();
+                                                            let trailing_trivia = self
+                                                                .optional_trailing_trivia(stream);
+                                                            Pass {
+                                                                node: cst::Node::token(
+                                                                    TokenKind::Comma,
+                                                                    Range { start, end },
+                                                                    leading_trivia,
+                                                                    trailing_trivia,
+                                                                ),
+                                                                error: None,
+                                                            }
+                                                        } else {
+                                                            Fail {
+                                                                error: ParseError::new(
+                                                                    start, "Comma",
+                                                                ),
+                                                            }
                                                         }
-                                                    } else {
-                                                        Fail {
-                                                            error: ParseError::new(start, "','"),
+                                                    } {
+                                                        Fail { error } => {
+                                                            stream.set_position(save);
+                                                            break Pass {
+                                                                node: cst::Node::rule(
+                                                                    RuleKind::_SEPARATEDBY,
+                                                                    result,
+                                                                ),
+                                                                error: Some(error),
+                                                            };
                                                         }
+                                                        Pass { node, .. } => result.push(node),
                                                     }
-                                                } {
-                                                    Fail { error } => {
-                                                        stream.set_position(save);
-                                                        break Pass {
-                                                            node: cst::Node::rule(
-                                                                RuleKind::_SEPARATEDBY,
-                                                                result,
-                                                            ),
-                                                            error: Some(error),
-                                                        };
-                                                    }
-                                                    Pass { node, .. } => result.push(node),
                                                 }
                                             }
                                         }
+                                    } {
+                                        Fail { error } => {
+                                            stream.set_position(start_position);
+                                            Pass {
+                                                node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                                error: Some(error),
+                                            }
+                                        }
+                                        pass => pass,
                                     }
                                 } {
-                                    Fail { error } => {
-                                        stream.set_position(start_position);
-                                        Pass {
-                                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
-                                            error: Some(error),
-                                        }
-                                    }
-                                    pass => pass,
-                                }
-                            } {
-                                err @ Fail { .. } => err,
-                                Pass {
-                                    node: expr_node,
-                                    error: expr_error,
-                                } => {
-                                    match {
-                                        let leading_trivia = self.optional_leading_trivia(stream);
-                                        let start = stream.position();
-                                        if scan_chars!(stream, ')') {
-                                            let end = stream.position();
-                                            let trailing_trivia =
-                                                self.optional_trailing_trivia(stream);
+                                    err @ Fail { .. } => err,
+                                    Pass {
+                                        node: expr_node,
+                                        error: expr_error,
+                                    } => {
+                                        match {
+                                            let leading_trivia =
+                                                self.optional_leading_trivia(stream);
+                                            let start = stream.position();
+                                            if self.scan_close_paren(stream) {
+                                                let end = stream.position();
+                                                let trailing_trivia =
+                                                    self.optional_trailing_trivia(stream);
+                                                Pass {
+                                                    node: cst::Node::token(
+                                                        TokenKind::CloseParen,
+                                                        Range { start, end },
+                                                        leading_trivia,
+                                                        trailing_trivia,
+                                                    ),
+                                                    error: None,
+                                                }
+                                            } else {
+                                                Fail {
+                                                    error: ParseError::new(start, "CloseParen"),
+                                                }
+                                            }
+                                        } {
+                                            Fail { error } => Fail {
+                                                error: error.maybe_merge_with(expr_error),
+                                            },
                                             Pass {
-                                                node: cst::Node::token(
-                                                    TokenKind::CloseParen,
-                                                    Range { start, end },
-                                                    leading_trivia,
-                                                    trailing_trivia,
+                                                node: close_node, ..
+                                            } => Pass {
+                                                node: cst::Node::rule(
+                                                    RuleKind::_DELIMITEDBY,
+                                                    vec![open_node, expr_node, close_node],
                                                 ),
                                                 error: None,
-                                            }
-                                        } else {
-                                            Fail {
-                                                error: ParseError::new(start, "')'"),
-                                            }
+                                            },
                                         }
-                                    } {
-                                        Fail { error } => Fail {
-                                            error: error.maybe_merge_with(expr_error),
-                                        },
-                                        Pass {
-                                            node: close_node, ..
-                                        } => Pass {
-                                            node: cst::Node::rule(
-                                                RuleKind::_DELIMITEDBY,
-                                                vec![open_node, expr_node, close_node],
-                                            ),
-                                            error: None,
-                                        },
                                     }
                                 }
                             }
                         }
-                    }
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    break Pass {
+                        node: cst::Node::rule(
+                            RuleKind::_SEQUENCE,
+                            vec![result_0, result_1, result_2],
+                        ),
+                        error: furthest_error,
+                    };
                 } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
+                    err @ Fail { .. } => err,
+                    Pass {
+                        node: expr_node,
+                        error: expr_error,
+                    } => {
+                        match {
+                            let leading_trivia = self.optional_leading_trivia(stream);
+                            let start = stream.position();
+                            if self.scan_semicolon(stream) {
+                                let end = stream.position();
+                                let trailing_trivia = self.optional_trailing_trivia(stream);
+                                Pass {
+                                    node: cst::Node::token(
+                                        TokenKind::Semicolon,
+                                        Range { start, end },
+                                        leading_trivia,
+                                        trailing_trivia,
+                                    ),
+                                    error: None,
+                                }
+                            } else {
+                                Fail {
+                                    error: ParseError::new(start, "Semicolon"),
+                                }
+                            }
+                        } {
+                            Fail { error } => Fail {
+                                error: error.maybe_merge_with(expr_error),
+                            },
+                            Pass {
+                                node: terminator_node,
+                                ..
+                            } => Pass {
+                                node: cst::Node::rule(
+                                    RuleKind::_TERMINATEDBY,
+                                    vec![expr_node, terminator_node],
+                                ),
+                                error: None,
+                            },
                         }
                     }
-                };
-                let result_3 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, ';') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Semicolon,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "';'"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(
-                        RuleKind::_SEQUENCE,
-                        vec![result_0, result_1, result_2, result_3],
-                    ),
-                    error: furthest_error,
-                };
+                }
             }
         } {
             Pass { node, error } => Pass {
@@ -3635,85 +3777,23 @@ impl Language {
         }
     }
 
-    // EventDefinition = «EventKeyword» «Identifier» '(' [ EventParameter { ',' EventParameter } ] ')' [ «AnonymousKeyword» ] ';' ;
+    // EventDefinition = «EventKeyword» «Identifier» «OpenParen» [ EventParameter«Comma» { «Comma» EventParameter } ] «CloseParen» [ «AnonymousKeyword» ] «Semicolon» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_event_definition(&self, stream: &mut Stream) -> ParseResult {
         match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if self.scan_event_keyword(stream) {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::EventKeyword,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "EventKeyword"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_1 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if self.scan_identifier(stream) {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Identifier,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "Identifier"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_2 = match {
-                    match {
+            {
+                match loop {
+                    let mut furthest_error = None;
+                    let result_0 = match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        if scan_chars!(stream, '(') {
+                        if self.scan_event_keyword(stream) {
                             let end = stream.position();
                             let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
                                 node: cst::Node::token(
-                                    TokenKind::OpenParen,
+                                    TokenKind::EventKeyword,
                                     Range { start, end },
                                     leading_trivia,
                                     trailing_trivia,
@@ -3722,209 +3802,291 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "'('"),
+                                error: ParseError::new(start, "EventKeyword"),
                             }
                         }
                     } {
-                        err @ Fail { .. } => err,
-                        Pass {
-                            node: open_node, ..
-                        } => {
-                            match {
-                                let start_position = stream.position();
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_1 = match {
+                        let leading_trivia = self.optional_leading_trivia(stream);
+                        let start = stream.position();
+                        if self.scan_identifier(stream) {
+                            let end = stream.position();
+                            let trailing_trivia = self.optional_trailing_trivia(stream);
+                            Pass {
+                                node: cst::Node::token(
+                                    TokenKind::Identifier,
+                                    Range { start, end },
+                                    leading_trivia,
+                                    trailing_trivia,
+                                ),
+                                error: None,
+                            }
+                        } else {
+                            Fail {
+                                error: ParseError::new(start, "Identifier"),
+                            }
+                        }
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_2 = match {
+                        match {
+                            let leading_trivia = self.optional_leading_trivia(stream);
+                            let start = stream.position();
+                            if self.scan_open_paren(stream) {
+                                let end = stream.position();
+                                let trailing_trivia = self.optional_trailing_trivia(stream);
+                                Pass {
+                                    node: cst::Node::token(
+                                        TokenKind::OpenParen,
+                                        Range { start, end },
+                                        leading_trivia,
+                                        trailing_trivia,
+                                    ),
+                                    error: None,
+                                }
+                            } else {
+                                Fail {
+                                    error: ParseError::new(start, "OpenParen"),
+                                }
+                            }
+                        } {
+                            err @ Fail { .. } => err,
+                            Pass {
+                                node: open_node, ..
+                            } => {
                                 match {
-                                    let mut result = Vec::new();
-                                    loop {
-                                        match self.parse_event_parameter(stream) {
-                                            err @ Fail { .. } => break err,
-                                            Pass { node, .. } => {
-                                                result.push(node);
-                                                let save = stream.position();
-                                                match {
-                                                    let leading_trivia =
-                                                        self.optional_leading_trivia(stream);
-                                                    let start = stream.position();
-                                                    if scan_chars!(stream, ',') {
-                                                        let end = stream.position();
-                                                        let trailing_trivia =
-                                                            self.optional_trailing_trivia(stream);
-                                                        Pass {
-                                                            node: cst::Node::token(
-                                                                TokenKind::Comma,
-                                                                Range { start, end },
-                                                                leading_trivia,
-                                                                trailing_trivia,
-                                                            ),
-                                                            error: None,
+                                    let start_position = stream.position();
+                                    match {
+                                        let mut result = Vec::new();
+                                        loop {
+                                            match self.parse_event_parameter(stream) {
+                                                err @ Fail { .. } => break err,
+                                                Pass { node, .. } => {
+                                                    result.push(node);
+                                                    let save = stream.position();
+                                                    match {
+                                                        let leading_trivia =
+                                                            self.optional_leading_trivia(stream);
+                                                        let start = stream.position();
+                                                        if self.scan_comma(stream) {
+                                                            let end = stream.position();
+                                                            let trailing_trivia = self
+                                                                .optional_trailing_trivia(stream);
+                                                            Pass {
+                                                                node: cst::Node::token(
+                                                                    TokenKind::Comma,
+                                                                    Range { start, end },
+                                                                    leading_trivia,
+                                                                    trailing_trivia,
+                                                                ),
+                                                                error: None,
+                                                            }
+                                                        } else {
+                                                            Fail {
+                                                                error: ParseError::new(
+                                                                    start, "Comma",
+                                                                ),
+                                                            }
                                                         }
-                                                    } else {
-                                                        Fail {
-                                                            error: ParseError::new(start, "','"),
+                                                    } {
+                                                        Fail { error } => {
+                                                            stream.set_position(save);
+                                                            break Pass {
+                                                                node: cst::Node::rule(
+                                                                    RuleKind::_SEPARATEDBY,
+                                                                    result,
+                                                                ),
+                                                                error: Some(error),
+                                                            };
                                                         }
+                                                        Pass { node, .. } => result.push(node),
                                                     }
-                                                } {
-                                                    Fail { error } => {
-                                                        stream.set_position(save);
-                                                        break Pass {
-                                                            node: cst::Node::rule(
-                                                                RuleKind::_SEPARATEDBY,
-                                                                result,
-                                                            ),
-                                                            error: Some(error),
-                                                        };
-                                                    }
-                                                    Pass { node, .. } => result.push(node),
                                                 }
                                             }
                                         }
+                                    } {
+                                        Fail { error } => {
+                                            stream.set_position(start_position);
+                                            Pass {
+                                                node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                                error: Some(error),
+                                            }
+                                        }
+                                        pass => pass,
                                     }
                                 } {
-                                    Fail { error } => {
-                                        stream.set_position(start_position);
-                                        Pass {
-                                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
-                                            error: Some(error),
-                                        }
-                                    }
-                                    pass => pass,
-                                }
-                            } {
-                                err @ Fail { .. } => err,
-                                Pass {
-                                    node: expr_node,
-                                    error: expr_error,
-                                } => {
-                                    match {
-                                        let leading_trivia = self.optional_leading_trivia(stream);
-                                        let start = stream.position();
-                                        if scan_chars!(stream, ')') {
-                                            let end = stream.position();
-                                            let trailing_trivia =
-                                                self.optional_trailing_trivia(stream);
+                                    err @ Fail { .. } => err,
+                                    Pass {
+                                        node: expr_node,
+                                        error: expr_error,
+                                    } => {
+                                        match {
+                                            let leading_trivia =
+                                                self.optional_leading_trivia(stream);
+                                            let start = stream.position();
+                                            if self.scan_close_paren(stream) {
+                                                let end = stream.position();
+                                                let trailing_trivia =
+                                                    self.optional_trailing_trivia(stream);
+                                                Pass {
+                                                    node: cst::Node::token(
+                                                        TokenKind::CloseParen,
+                                                        Range { start, end },
+                                                        leading_trivia,
+                                                        trailing_trivia,
+                                                    ),
+                                                    error: None,
+                                                }
+                                            } else {
+                                                Fail {
+                                                    error: ParseError::new(start, "CloseParen"),
+                                                }
+                                            }
+                                        } {
+                                            Fail { error } => Fail {
+                                                error: error.maybe_merge_with(expr_error),
+                                            },
                                             Pass {
-                                                node: cst::Node::token(
-                                                    TokenKind::CloseParen,
-                                                    Range { start, end },
-                                                    leading_trivia,
-                                                    trailing_trivia,
+                                                node: close_node, ..
+                                            } => Pass {
+                                                node: cst::Node::rule(
+                                                    RuleKind::_DELIMITEDBY,
+                                                    vec![open_node, expr_node, close_node],
                                                 ),
                                                 error: None,
-                                            }
-                                        } else {
-                                            Fail {
-                                                error: ParseError::new(start, "')'"),
-                                            }
+                                            },
                                         }
-                                    } {
-                                        Fail { error } => Fail {
-                                            error: error.maybe_merge_with(expr_error),
-                                        },
-                                        Pass {
-                                            node: close_node, ..
-                                        } => Pass {
-                                            node: cst::Node::rule(
-                                                RuleKind::_DELIMITEDBY,
-                                                vec![open_node, expr_node, close_node],
-                                            ),
-                                            error: None,
-                                        },
                                     }
                                 }
-                            }
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_3 = match {
-                    let start_position = stream.position();
-                    match {
-                        let leading_trivia = self.optional_leading_trivia(stream);
-                        let start = stream.position();
-                        if self.scan_anonymous_keyword(stream) {
-                            let end = stream.position();
-                            let trailing_trivia = self.optional_trailing_trivia(stream);
-                            Pass {
-                                node: cst::Node::token(
-                                    TokenKind::AnonymousKeyword,
-                                    Range { start, end },
-                                    leading_trivia,
-                                    trailing_trivia,
-                                ),
-                                error: None,
-                            }
-                        } else {
-                            Fail {
-                                error: ParseError::new(start, "AnonymousKeyword"),
                             }
                         }
                     } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
                         Fail { error } => {
-                            stream.set_position(start_position);
-                            Pass {
-                                node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
-                                error: Some(error),
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
                             }
                         }
-                        pass => pass,
-                    }
+                    };
+                    let result_3 = match {
+                        let start_position = stream.position();
+                        match {
+                            let leading_trivia = self.optional_leading_trivia(stream);
+                            let start = stream.position();
+                            if self.scan_anonymous_keyword(stream) {
+                                let end = stream.position();
+                                let trailing_trivia = self.optional_trailing_trivia(stream);
+                                Pass {
+                                    node: cst::Node::token(
+                                        TokenKind::AnonymousKeyword,
+                                        Range { start, end },
+                                        leading_trivia,
+                                        trailing_trivia,
+                                    ),
+                                    error: None,
+                                }
+                            } else {
+                                Fail {
+                                    error: ParseError::new(start, "AnonymousKeyword"),
+                                }
+                            }
+                        } {
+                            Fail { error } => {
+                                stream.set_position(start_position);
+                                Pass {
+                                    node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                    error: Some(error),
+                                }
+                            }
+                            pass => pass,
+                        }
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    break Pass {
+                        node: cst::Node::rule(
+                            RuleKind::_SEQUENCE,
+                            vec![result_0, result_1, result_2, result_3],
+                        ),
+                        error: furthest_error,
+                    };
                 } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
+                    err @ Fail { .. } => err,
+                    Pass {
+                        node: expr_node,
+                        error: expr_error,
+                    } => {
+                        match {
+                            let leading_trivia = self.optional_leading_trivia(stream);
+                            let start = stream.position();
+                            if self.scan_semicolon(stream) {
+                                let end = stream.position();
+                                let trailing_trivia = self.optional_trailing_trivia(stream);
+                                Pass {
+                                    node: cst::Node::token(
+                                        TokenKind::Semicolon,
+                                        Range { start, end },
+                                        leading_trivia,
+                                        trailing_trivia,
+                                    ),
+                                    error: None,
+                                }
+                            } else {
+                                Fail {
+                                    error: ParseError::new(start, "Semicolon"),
+                                }
+                            }
+                        } {
+                            Fail { error } => Fail {
+                                error: error.maybe_merge_with(expr_error),
+                            },
+                            Pass {
+                                node: terminator_node,
+                                ..
+                            } => Pass {
+                                node: cst::Node::rule(
+                                    RuleKind::_TERMINATEDBY,
+                                    vec![expr_node, terminator_node],
+                                ),
+                                error: None,
+                            },
                         }
                     }
-                };
-                let result_4 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, ';') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Semicolon,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "';'"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(
-                        RuleKind::_SEQUENCE,
-                        vec![result_0, result_1, result_2, result_3, result_4],
-                    ),
-                    error: furthest_error,
-                };
+                }
             }
         } {
             Pass { node, error } => Pass {
@@ -4136,44 +4298,44 @@ impl Language {
         }
     }
 
-    // (* v0.4.11 *) Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnarySuffixExpression | UnaryPrefixExpression | FunctionCallExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
-    // AssignmentExpression = Expression ( '=' | "|=" | "^=" | "&=" | "<<=" | ">>=" | ">>>=" | "+=" | "-=" | "*=" | "/=" | "%=" ) Expression ;
-    // ConditionalExpression = Expression ( '?' Expression ':' Expression ) ;
-    // OrExpression = Expression ( "||" ) Expression ;
-    // AndExpression = Expression ( "&&" ) Expression ;
-    // EqualityComparisonExpression = Expression ( "==" | "!=" ) Expression ;
-    // OrderComparisonExpression = Expression ( '<' | '>' | "<=" | ">=" ) Expression ;
-    // BitOrExpression = Expression ( '|' ) Expression ;
-    // BitXOrExpression = Expression ( '^' ) Expression ;
-    // BitAndExpression = Expression ( '&' ) Expression ;
-    // ShiftExpression = Expression ( "<<" | ">>" | ">>>" ) Expression ;
-    // AddSubExpression = Expression ( '+' | '-' ) Expression ;
-    // MulDivModExpression = Expression ( '*' | '/' | '%' ) Expression ;
-    // ExponentiationExpression = Expression ( "**" ) Expression ;
-    // UnarySuffixExpression = Expression ( "++" | "--" ) ;
-    // UnaryPrefixExpression = ( "++" | "--" | '!' | '~' | '-' ) Expression ;
+    // (* v0.4.11 *) Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnaryPostfixExpression | UnaryPrefixExpression | FunctionCallExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
+    // AssignmentExpression = Expression ( «Equal» | «BarEqual» | «CaretEqual» | «AmpersandEqual» | «LessThanLessThanEqual» | «GreaterThanGreaterThanEqual» | «GreaterThanGreaterThanGreaterThanEqual» | «PlusEqual» | «MinusEqual» | «StarEqual» | «SlashEqual» | «PercentEqual» ) Expression ;
+    // ConditionalExpression = Expression ( «QuestionMark» Expression «Colon» Expression ) ;
+    // OrExpression = Expression ( «BarBar» ) Expression ;
+    // AndExpression = Expression ( «AmpersandAmpersand» ) Expression ;
+    // EqualityComparisonExpression = Expression ( «EqualEqual» | «BangEqual» ) Expression ;
+    // OrderComparisonExpression = Expression ( «LessThan» | «GreaterThan» | «LessThanEqual» | «GreaterThanEqual» ) Expression ;
+    // BitOrExpression = Expression ( «Bar» ) Expression ;
+    // BitXOrExpression = Expression ( «Caret» ) Expression ;
+    // BitAndExpression = Expression ( «Ampersand» ) Expression ;
+    // ShiftExpression = Expression ( «LessThanLessThan» | «GreaterThanGreaterThan» | «GreaterThanGreaterThanGreaterThan» ) Expression ;
+    // AddSubExpression = Expression ( «Plus» | «Minus» ) Expression ;
+    // MulDivModExpression = Expression ( «Star» | «Slash» | «Percent» ) Expression ;
+    // ExponentiationExpression = Expression ( «StarStar» ) Expression ;
+    // UnaryPostfixExpression = Expression ( «PlusPlus» | «MinusMinus» ) ;
+    // UnaryPrefixExpression = ( «PlusPlus» | «MinusMinus» | «Tilde» | «Bang» | «Minus» ) Expression ;
     // FunctionCallExpression = Expression ( [ NamedArgumentList ] ArgumentList ) ;
-    // MemberAccessExpression = Expression ( '.' ( «Identifier» | «AddressKeyword» ) ) ;
-    // IndexAccessExpression = Expression ( '[' Expression [ ':' [ Expression ] ] | ':' [ Expression ] ']' ) ;
-    // (* v0.6.0 *) Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnarySuffixExpression | UnaryPrefixExpression | FunctionCallExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
-    // AssignmentExpression = Expression ( '=' | "|=" | "^=" | "&=" | "<<=" | ">>=" | ">>>=" | "+=" | "-=" | "*=" | "/=" | "%=" ) Expression ;
-    // ConditionalExpression = Expression ( '?' Expression ':' Expression ) ;
-    // OrExpression = Expression ( "||" ) Expression ;
-    // AndExpression = Expression ( "&&" ) Expression ;
-    // EqualityComparisonExpression = Expression ( "==" | "!=" ) Expression ;
-    // OrderComparisonExpression = Expression ( '<' | '>' | "<=" | ">=" ) Expression ;
-    // BitOrExpression = Expression ( '|' ) Expression ;
-    // BitXOrExpression = Expression ( '^' ) Expression ;
-    // BitAndExpression = Expression ( '&' ) Expression ;
-    // ShiftExpression = Expression ( "<<" | ">>" | ">>>" ) Expression ;
-    // AddSubExpression = Expression ( '+' | '-' ) Expression ;
-    // MulDivModExpression = Expression ( '*' | '/' | '%' ) Expression ;
-    // ExponentiationExpression = Expression ( "**" ) Expression ;
-    // UnarySuffixExpression = Expression ( "++" | "--" ) ;
-    // UnaryPrefixExpression = ( "++" | "--" | '!' | '~' | '-' ) Expression ;
+    // MemberAccessExpression = Expression ( «Period» ( «Identifier» | «AddressKeyword» ) ) ;
+    // IndexAccessExpression = Expression ( «OpenBracket» Expression [ «Colon» [ Expression ] ] | «Colon» [ Expression ] «CloseBracket» ) ;
+    // (* v0.6.0 *) Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnaryPostfixExpression | UnaryPrefixExpression | FunctionCallExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
+    // AssignmentExpression = Expression ( «Equal» | «BarEqual» | «CaretEqual» | «AmpersandEqual» | «LessThanLessThanEqual» | «GreaterThanGreaterThanEqual» | «GreaterThanGreaterThanGreaterThanEqual» | «PlusEqual» | «MinusEqual» | «StarEqual» | «SlashEqual» | «PercentEqual» ) Expression ;
+    // ConditionalExpression = Expression ( «QuestionMark» Expression «Colon» Expression ) ;
+    // OrExpression = Expression ( «BarBar» ) Expression ;
+    // AndExpression = Expression ( «AmpersandAmpersand» ) Expression ;
+    // EqualityComparisonExpression = Expression ( «EqualEqual» | «BangEqual» ) Expression ;
+    // OrderComparisonExpression = Expression ( «LessThan» | «GreaterThan» | «LessThanEqual» | «GreaterThanEqual» ) Expression ;
+    // BitOrExpression = Expression ( «Bar» ) Expression ;
+    // BitXOrExpression = Expression ( «Caret» ) Expression ;
+    // BitAndExpression = Expression ( «Ampersand» ) Expression ;
+    // ShiftExpression = Expression ( «LessThanLessThan» | «GreaterThanGreaterThan» | «GreaterThanGreaterThanGreaterThan» ) Expression ;
+    // AddSubExpression = Expression ( «Plus» | «Minus» ) Expression ;
+    // MulDivModExpression = Expression ( «Star» | «Slash» | «Percent» ) Expression ;
+    // ExponentiationExpression = Expression ( «StarStar» ) Expression ;
+    // UnaryPostfixExpression = Expression ( «PlusPlus» | «MinusMinus» ) ;
+    // UnaryPrefixExpression = ( «PlusPlus» | «MinusMinus» | «Tilde» | «Bang» | «Minus» ) Expression ;
     // FunctionCallExpression = Expression ( [ NamedArgumentList ] ArgumentList ) ;
-    // MemberAccessExpression = Expression ( '.' ( «Identifier» | «AddressKeyword» ) ) ;
-    // IndexAccessExpression = Expression ( '[' Expression [ ':' [ Expression ] ] | ':' [ Expression ] ']' ) ;
+    // MemberAccessExpression = Expression ( «Period» ( «Identifier» | «AddressKeyword» ) ) ;
+    // IndexAccessExpression = Expression ( «OpenBracket» Expression [ «Colon» [ Expression ] ] | «Colon» [ Expression ] «CloseBracket» ) ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_expression(&self, stream: &mut Stream) -> ParseResult {
@@ -4192,89 +4354,144 @@ impl Language {
                 if let Some(error) = loop {
                     loop {
                         let start_position = stream.position();
-                        match {
-                            let leading_trivia = self.optional_leading_trivia(stream);
-                            let start = stream.position();
+                        match match loop {
+                            let start_position = stream.position();
+                            let mut furthest_error;
                             match {
-                                match stream.next() {
-                                    Some('!') => Ok((
-                                        TokenKind::Bang,
-                                        RuleKind::UnaryPrefixExpression,
-                                        255u8,
-                                        29u8,
-                                    )),
-                                    Some('+') => {
-                                        if scan_chars!(stream, '+') {
-                                            Ok((
-                                                TokenKind::PlusPlus,
-                                                RuleKind::UnaryPrefixExpression,
-                                                255u8,
-                                                29u8,
-                                            ))
-                                        } else {
-                                            Err(ParseError::new(stream.position(), "'++'"))
-                                        }
-                                    }
-                                    Some('-') => {
-                                        let start_position = stream.position();
-                                        match stream.next() {
-                                            Some('-') => Ok((
-                                                TokenKind::MinusMinus,
-                                                RuleKind::UnaryPrefixExpression,
-                                                255u8,
-                                                29u8,
-                                            )),
-                                            Some(_) => {
-                                                stream.set_position(start_position);
-                                                Ok((
-                                                    TokenKind::Minus,
-                                                    RuleKind::UnaryPrefixExpression,
-                                                    255u8,
-                                                    29u8,
-                                                ))
-                                            }
-                                            None => Ok((
-                                                TokenKind::Minus,
-                                                RuleKind::UnaryPrefixExpression,
-                                                255u8,
-                                                29u8,
-                                            )),
-                                        }
-                                    }
-                                    Some('~') => Ok((
-                                        TokenKind::Tilde,
-                                        RuleKind::UnaryPrefixExpression,
-                                        255u8,
-                                        29u8,
-                                    )),
-                                    _ => Err(ParseError::new(
-                                        stream.position(),
-                                        "'!', or '++', or '-', or '--', or '~'",
-                                    )),
-                                }
-                            } {
-                                Ok((
-                                    token_kind,
-                                    rule_kind,
-                                    left_binding_power,
-                                    right_binding_power,
-                                )) => {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_plus_plus(stream) {
                                     let end = stream.position();
                                     let trailing_trivia = self.optional_trailing_trivia(stream);
-                                    Ok(Pratt::Operator {
+                                    Pass {
                                         node: cst::Node::token(
-                                            token_kind,
+                                            TokenKind::PlusPlus,
                                             Range { start, end },
                                             leading_trivia,
                                             trailing_trivia,
                                         ),
-                                        kind: rule_kind,
-                                        left_binding_power,
-                                        right_binding_power,
-                                    })
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "PlusPlus"),
+                                    }
                                 }
-                                Err(error) => Err(error),
+                            } {
+                                Fail { error } => furthest_error = error,
+                                pass => break pass,
                             }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_minus_minus(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::MinusMinus,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "MinusMinus"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_tilde(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::Tilde,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "Tilde"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_bang(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::Bang,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "Bang"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_minus(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::Minus,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "Minus"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            break Fail {
+                                error: furthest_error,
+                            };
+                        } {
+                            Pass { node, .. } => Ok(Pratt::Operator {
+                                node,
+                                kind: RuleKind::UnaryPrefixExpression,
+                                left_binding_power: 255,
+                                right_binding_power: 29u8,
+                            }),
+                            Fail { error } => Err(error),
                         } {
                             Err(_) => {
                                 stream.set_position(start_position);
@@ -4292,62 +4509,111 @@ impl Language {
                         match loop {
                             let start_position = stream.position();
                             let mut furthest_error;
-                            match {
-                                let leading_trivia = self.optional_leading_trivia(stream);
-                                let start = stream.position();
-                                match {
-                                    match stream.next() {
-                                        Some('+') => {
-                                            if scan_chars!(stream, '+') {
-                                                Ok((
-                                                    TokenKind::PlusPlus,
-                                                    RuleKind::UnarySuffixExpression,
-                                                    27u8,
-                                                    255u8,
-                                                ))
-                                            } else {
-                                                Err(ParseError::new(stream.position(), "'++'"))
-                                            }
-                                        }
-                                        Some('-') => {
-                                            if scan_chars!(stream, '-') {
-                                                Ok((
-                                                    TokenKind::MinusMinus,
-                                                    RuleKind::UnarySuffixExpression,
-                                                    27u8,
-                                                    255u8,
-                                                ))
-                                            } else {
-                                                Err(ParseError::new(stream.position(), "'--'"))
-                                            }
-                                        }
-                                        _ => {
-                                            Err(ParseError::new(stream.position(), "'++', or '--'"))
-                                        }
-                                    }
-                                } {
-                                    Ok((
-                                        token_kind,
-                                        rule_kind,
-                                        left_binding_power,
-                                        right_binding_power,
-                                    )) => {
+                            match match loop {
+                                let mut furthest_error = None;
+                                let result_0 = match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_question_mark(stream) {
                                         let end = stream.position();
                                         let trailing_trivia = self.optional_trailing_trivia(stream);
-                                        Ok(Pratt::Operator {
+                                        Pass {
                                             node: cst::Node::token(
-                                                token_kind,
+                                                TokenKind::QuestionMark,
                                                 Range { start, end },
                                                 leading_trivia,
                                                 trailing_trivia,
                                             ),
-                                            kind: rule_kind,
-                                            left_binding_power,
-                                            right_binding_power,
-                                        })
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "QuestionMark"),
+                                        }
                                     }
-                                    Err(error) => Err(error),
-                                }
+                                } {
+                                    Pass { node, error } => {
+                                        furthest_error = error
+                                            .map(|error| error.maybe_merge_with(furthest_error));
+                                        node
+                                    }
+                                    Fail { error } => {
+                                        break Fail {
+                                            error: error.maybe_merge_with(furthest_error),
+                                        }
+                                    }
+                                };
+                                let result_1 = match self.parse_expression(stream) {
+                                    Pass { node, error } => {
+                                        furthest_error = error
+                                            .map(|error| error.maybe_merge_with(furthest_error));
+                                        node
+                                    }
+                                    Fail { error } => {
+                                        break Fail {
+                                            error: error.maybe_merge_with(furthest_error),
+                                        }
+                                    }
+                                };
+                                let result_2 = match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_colon(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::Colon,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "Colon"),
+                                        }
+                                    }
+                                } {
+                                    Pass { node, error } => {
+                                        furthest_error = error
+                                            .map(|error| error.maybe_merge_with(furthest_error));
+                                        node
+                                    }
+                                    Fail { error } => {
+                                        break Fail {
+                                            error: error.maybe_merge_with(furthest_error),
+                                        }
+                                    }
+                                };
+                                let result_3 = match self.parse_expression(stream) {
+                                    Pass { node, error } => {
+                                        furthest_error = error
+                                            .map(|error| error.maybe_merge_with(furthest_error));
+                                        node
+                                    }
+                                    Fail { error } => {
+                                        break Fail {
+                                            error: error.maybe_merge_with(furthest_error),
+                                        }
+                                    }
+                                };
+                                break Pass {
+                                    node: cst::Node::rule(
+                                        RuleKind::_SEQUENCE,
+                                        vec![result_0, result_1, result_2, result_3],
+                                    ),
+                                    error: furthest_error,
+                                };
+                            } {
+                                Pass { node, .. } => Ok(Pratt::Operator {
+                                    node,
+                                    kind: RuleKind::ConditionalExpression,
+                                    left_binding_power: 3u8,
+                                    right_binding_power: 255,
+                                }),
+                                Fail { error } => Err(error),
                             } {
                                 Err(error) => furthest_error = error,
                                 ok => break ok,
@@ -4355,17 +4621,18 @@ impl Language {
                             stream.set_position(start_position);
                             match {
                                 match loop {
-                                    let mut furthest_error = None;
-                                    let result_0 = match {
+                                    let start_position = stream.position();
+                                    let mut furthest_error;
+                                    match {
                                         let leading_trivia = self.optional_leading_trivia(stream);
                                         let start = stream.position();
-                                        if scan_chars!(stream, '?') {
+                                        if self.scan_plus_plus(stream) {
                                             let end = stream.position();
                                             let trailing_trivia =
                                                 self.optional_trailing_trivia(stream);
                                             Pass {
                                                 node: cst::Node::token(
-                                                    TokenKind::Question,
+                                                    TokenKind::PlusPlus,
                                                     Range { start, end },
                                                     leading_trivia,
                                                     trailing_trivia,
@@ -4374,45 +4641,24 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "'?'"),
+                                                error: ParseError::new(start, "PlusPlus"),
                                             }
                                         }
                                     } {
-                                        Pass { node, error } => {
-                                            furthest_error = error.map(|error| {
-                                                error.maybe_merge_with(furthest_error)
-                                            });
-                                            node
-                                        }
-                                        Fail { error } => {
-                                            break Fail {
-                                                error: error.maybe_merge_with(furthest_error),
-                                            }
-                                        }
-                                    };
-                                    let result_1 = match self.parse_expression(stream) {
-                                        Pass { node, error } => {
-                                            furthest_error = error.map(|error| {
-                                                error.maybe_merge_with(furthest_error)
-                                            });
-                                            node
-                                        }
-                                        Fail { error } => {
-                                            break Fail {
-                                                error: error.maybe_merge_with(furthest_error),
-                                            }
-                                        }
-                                    };
-                                    let result_2 = match {
+                                        Fail { error } => furthest_error = error,
+                                        pass => break pass,
+                                    }
+                                    stream.set_position(start_position);
+                                    match {
                                         let leading_trivia = self.optional_leading_trivia(stream);
                                         let start = stream.position();
-                                        if scan_chars!(stream, ':') {
+                                        if self.scan_minus_minus(stream) {
                                             let end = stream.position();
                                             let trailing_trivia =
                                                 self.optional_trailing_trivia(stream);
                                             Pass {
                                                 node: cst::Node::token(
-                                                    TokenKind::Colon,
+                                                    TokenKind::MinusMinus,
                                                     Range { start, end },
                                                     leading_trivia,
                                                     trailing_trivia,
@@ -4421,47 +4667,21 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "':'"),
+                                                error: ParseError::new(start, "MinusMinus"),
                                             }
                                         }
                                     } {
-                                        Pass { node, error } => {
-                                            furthest_error = error.map(|error| {
-                                                error.maybe_merge_with(furthest_error)
-                                            });
-                                            node
-                                        }
-                                        Fail { error } => {
-                                            break Fail {
-                                                error: error.maybe_merge_with(furthest_error),
-                                            }
-                                        }
-                                    };
-                                    let result_3 = match self.parse_expression(stream) {
-                                        Pass { node, error } => {
-                                            furthest_error = error.map(|error| {
-                                                error.maybe_merge_with(furthest_error)
-                                            });
-                                            node
-                                        }
-                                        Fail { error } => {
-                                            break Fail {
-                                                error: error.maybe_merge_with(furthest_error),
-                                            }
-                                        }
-                                    };
-                                    break Pass {
-                                        node: cst::Node::rule(
-                                            RuleKind::_SEQUENCE,
-                                            vec![result_0, result_1, result_2, result_3],
-                                        ),
+                                        Fail { error } => furthest_error.merge_with(error),
+                                        pass => break pass,
+                                    }
+                                    break Fail {
                                         error: furthest_error,
                                     };
                                 } {
                                     Pass { node, .. } => Ok(Pratt::Operator {
                                         node,
-                                        kind: RuleKind::ConditionalExpression,
-                                        left_binding_power: 3u8,
+                                        kind: RuleKind::UnaryPostfixExpression,
+                                        left_binding_power: 27u8,
                                         right_binding_power: 255,
                                     }),
                                     Fail { error } => Err(error),
@@ -4560,7 +4780,7 @@ impl Language {
                                     let result_0 = match {
                                         let leading_trivia = self.optional_leading_trivia(stream);
                                         let start = stream.position();
-                                        if scan_chars!(stream, '.') {
+                                        if self.scan_period(stream) {
                                             let end = stream.position();
                                             let trailing_trivia =
                                                 self.optional_trailing_trivia(stream);
@@ -4575,7 +4795,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "'.'"),
+                                                error: ParseError::new(start, "Period"),
                                             }
                                         }
                                     } {
@@ -4698,7 +4918,7 @@ impl Language {
                                     match {
                                         let leading_trivia = self.optional_leading_trivia(stream);
                                         let start = stream.position();
-                                        if scan_chars!(stream, '[') {
+                                        if self.scan_open_bracket(stream) {
                                             let end = stream.position();
                                             let trailing_trivia =
                                                 self.optional_trailing_trivia(stream);
@@ -4713,7 +4933,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "'['"),
+                                                error: ParseError::new(start, "OpenBracket"),
                                             }
                                         }
                                     } {
@@ -4755,7 +4975,7 @@ impl Language {
                                                                         stream,
                                                                     );
                                                                 let start = stream.position();
-                                                                if scan_chars!(stream, ':') {
+                                                                if self.scan_colon(stream) {
                                                                     let end = stream.position();
                                                                     let trailing_trivia = self
                                                                         .optional_trailing_trivia(
@@ -4773,7 +4993,7 @@ impl Language {
                                                                 } else {
                                                                     Fail {
                                                                         error: ParseError::new(
-                                                                            start, "':'",
+                                                                            start, "Colon",
                                                                         ),
                                                                     }
                                                                 }
@@ -4889,7 +5109,7 @@ impl Language {
                                                         let leading_trivia =
                                                             self.optional_leading_trivia(stream);
                                                         let start = stream.position();
-                                                        if scan_chars!(stream, ':') {
+                                                        if self.scan_colon(stream) {
                                                             let end = stream.position();
                                                             let trailing_trivia = self
                                                                 .optional_trailing_trivia(stream);
@@ -4905,7 +5125,7 @@ impl Language {
                                                         } else {
                                                             Fail {
                                                                 error: ParseError::new(
-                                                                    start, "':'",
+                                                                    start, "Colon",
                                                                 ),
                                                             }
                                                         }
@@ -4984,7 +5204,7 @@ impl Language {
                                                         let leading_trivia =
                                                             self.optional_leading_trivia(stream);
                                                         let start = stream.position();
-                                                        if scan_chars!(stream, ']') {
+                                                        if self.scan_close_bracket(stream) {
                                                             let end = stream.position();
                                                             let trailing_trivia = self
                                                                 .optional_trailing_trivia(stream);
@@ -5000,7 +5220,8 @@ impl Language {
                                                         } else {
                                                             Fail {
                                                                 error: ParseError::new(
-                                                                    start, "']'",
+                                                                    start,
+                                                                    "CloseBracket",
                                                                 ),
                                                             }
                                                         }
@@ -5058,34 +5279,1095 @@ impl Language {
                         }
                     }
                     let start_position = stream.position();
-                    match {
-                        let leading_trivia = self.optional_leading_trivia(stream);
-                        let start = stream.position();
-                        match {
-                            match stream . next () { Some ('!') => if scan_chars ! (stream , '=') { Ok ((TokenKind :: BangEqual , RuleKind :: EqualityComparisonExpression , 9u8 , 10u8)) } else { Err (ParseError :: new (stream . position () , "'!='")) } , Some ('%') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: PercentEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Percent , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } None => Ok ((TokenKind :: Percent , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } } , Some ('&') => { let start_position = stream . position () ; match stream . next () { Some ('&') => Ok ((TokenKind :: AmpersandAmpersand , RuleKind :: AndExpression , 7u8 , 8u8)) , Some ('=') => Ok ((TokenKind :: AmpersandEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Ampersand , RuleKind :: BitAndExpression , 17u8 , 18u8)) } None => Ok ((TokenKind :: Ampersand , RuleKind :: BitAndExpression , 17u8 , 18u8)) } } , Some ('*') => { let start_position = stream . position () ; match stream . next () { Some ('*') => Ok ((TokenKind :: StarStar , RuleKind :: ExponentiationExpression , 26u8 , 25u8)) , Some ('=') => Ok ((TokenKind :: StarEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Star , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } None => Ok ((TokenKind :: Star , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } } , Some ('+') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: PlusEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Plus , RuleKind :: AddSubExpression , 21u8 , 22u8)) } None => Ok ((TokenKind :: Plus , RuleKind :: AddSubExpression , 21u8 , 22u8)) } } , Some ('-') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: MinusEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Minus , RuleKind :: AddSubExpression , 21u8 , 22u8)) } None => Ok ((TokenKind :: Minus , RuleKind :: AddSubExpression , 21u8 , 22u8)) } } , Some ('/') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: SlashEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Slash , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } None => Ok ((TokenKind :: Slash , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } } , Some ('<') => { let start_position = stream . position () ; match stream . next () { Some ('<') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: LessLessEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: LessLess , RuleKind :: ShiftExpression , 19u8 , 20u8)) } None => Ok ((TokenKind :: LessLess , RuleKind :: ShiftExpression , 19u8 , 20u8)) } } , Some ('=') => Ok ((TokenKind :: LessEqual , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Less , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) } None => Ok ((TokenKind :: Less , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) } } , Some ('=') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: EqualEqual , RuleKind :: EqualityComparisonExpression , 9u8 , 10u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Equal , RuleKind :: AssignmentExpression , 1u8 , 2u8)) } None => Ok ((TokenKind :: Equal , RuleKind :: AssignmentExpression , 1u8 , 2u8)) } } , Some ('>') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: GreaterEqual , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) , Some ('>') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: GreaterGreaterEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some ('>') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: GreaterGreaterGreaterEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: GreaterGreaterGreater , RuleKind :: ShiftExpression , 19u8 , 20u8)) } None => Ok ((TokenKind :: GreaterGreaterGreater , RuleKind :: ShiftExpression , 19u8 , 20u8)) } } , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: GreaterGreater , RuleKind :: ShiftExpression , 19u8 , 20u8)) } None => Ok ((TokenKind :: GreaterGreater , RuleKind :: ShiftExpression , 19u8 , 20u8)) } } , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Greater , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) } None => Ok ((TokenKind :: Greater , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) } } , Some ('^') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: CaretEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Caret , RuleKind :: BitXOrExpression , 15u8 , 16u8)) } None => Ok ((TokenKind :: Caret , RuleKind :: BitXOrExpression , 15u8 , 16u8)) } } , Some ('|') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: PipeEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some ('|') => Ok ((TokenKind :: PipePipe , RuleKind :: OrExpression , 5u8 , 6u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Pipe , RuleKind :: BitOrExpression , 13u8 , 14u8)) } None => Ok ((TokenKind :: Pipe , RuleKind :: BitOrExpression , 13u8 , 14u8)) } } , _ => Err (ParseError :: new (stream . position () , "'!=', or '%', or '%=', or '&', or '&&', or '&=', or '*', or '**', or '*=', or '+', or '+=', or '-', or '-=', or '/', or '/=', or '<', or '<<', or '<<=', or '<=', or '=', or '==', or '>', or '>=', or '>>', or '>>=', or '>>>', or '>>>=', or '^', or '^=', or '|', or '|=', or '||'")) }
-                        } {
-                            Ok((
-                                token_kind,
-                                rule_kind,
-                                left_binding_power,
-                                right_binding_power,
-                            )) => {
-                                let end = stream.position();
-                                let trailing_trivia = self.optional_trailing_trivia(stream);
-                                Ok(Pratt::Operator {
-                                    node: cst::Node::token(
-                                        token_kind,
-                                        Range { start, end },
-                                        leading_trivia,
-                                        trailing_trivia,
-                                    ),
-                                    kind: rule_kind,
-                                    left_binding_power,
-                                    right_binding_power,
-                                })
+                    match loop {
+                        let start_position = stream.position();
+                        let mut furthest_error;
+                        match match loop {
+                            let start_position = stream.position();
+                            let mut furthest_error;
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_equal(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::Equal,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "Equal"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error = error,
+                                pass => break pass,
                             }
-                            Err(error) => Err(error),
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_bar_equal(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::BarEqual,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "BarEqual"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_caret_equal(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::CaretEqual,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "CaretEqual"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_ampersand_equal(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::AmpersandEqual,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "AmpersandEqual"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_less_than_less_than_equal(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::LessThanLessThanEqual,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "LessThanLessThanEqual"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_greater_than_greater_than_equal(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::GreaterThanGreaterThanEqual,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(
+                                            start,
+                                            "GreaterThanGreaterThanEqual",
+                                        ),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_greater_than_greater_than_greater_than_equal(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::GreaterThanGreaterThanGreaterThanEqual,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(
+                                            start,
+                                            "GreaterThanGreaterThanGreaterThanEqual",
+                                        ),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_plus_equal(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::PlusEqual,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "PlusEqual"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_minus_equal(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::MinusEqual,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "MinusEqual"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_star_equal(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::StarEqual,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "StarEqual"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_slash_equal(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::SlashEqual,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "SlashEqual"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_percent_equal(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::PercentEqual,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "PercentEqual"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            break Fail {
+                                error: furthest_error,
+                            };
+                        } {
+                            Pass { node, .. } => Ok(Pratt::Operator {
+                                node,
+                                kind: RuleKind::AssignmentExpression,
+                                left_binding_power: 1u8,
+                                right_binding_power: 1u8 + 1,
+                            }),
+                            Fail { error } => Err(error),
+                        } {
+                            Err(error) => furthest_error = error,
+                            ok => break ok,
                         }
+                        stream.set_position(start_position);
+                        match {
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_bar_bar(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::BarBar,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "BarBar"),
+                                    }
+                                }
+                            } {
+                                Pass { node, .. } => Ok(Pratt::Operator {
+                                    node,
+                                    kind: RuleKind::OrExpression,
+                                    left_binding_power: 5u8,
+                                    right_binding_power: 5u8 + 1,
+                                }),
+                                Fail { error } => Err(error),
+                            }
+                        } {
+                            Err(error) => {
+                                if furthest_error.position < error.position {
+                                    furthest_error = error
+                                } else if furthest_error.position == error.position {
+                                    furthest_error.expected = format!(
+                                        "{}, or {}",
+                                        furthest_error.expected, error.expected
+                                    )
+                                }
+                            }
+                            ok => break ok,
+                        }
+                        stream.set_position(start_position);
+                        match {
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_ampersand_ampersand(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::AmpersandAmpersand,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "AmpersandAmpersand"),
+                                    }
+                                }
+                            } {
+                                Pass { node, .. } => Ok(Pratt::Operator {
+                                    node,
+                                    kind: RuleKind::AndExpression,
+                                    left_binding_power: 7u8,
+                                    right_binding_power: 7u8 + 1,
+                                }),
+                                Fail { error } => Err(error),
+                            }
+                        } {
+                            Err(error) => {
+                                if furthest_error.position < error.position {
+                                    furthest_error = error
+                                } else if furthest_error.position == error.position {
+                                    furthest_error.expected = format!(
+                                        "{}, or {}",
+                                        furthest_error.expected, error.expected
+                                    )
+                                }
+                            }
+                            ok => break ok,
+                        }
+                        stream.set_position(start_position);
+                        match {
+                            match loop {
+                                let start_position = stream.position();
+                                let mut furthest_error;
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_equal_equal(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::EqualEqual,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "EqualEqual"),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => furthest_error = error,
+                                    pass => break pass,
+                                }
+                                stream.set_position(start_position);
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_bang_equal(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::BangEqual,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "BangEqual"),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => furthest_error.merge_with(error),
+                                    pass => break pass,
+                                }
+                                break Fail {
+                                    error: furthest_error,
+                                };
+                            } {
+                                Pass { node, .. } => Ok(Pratt::Operator {
+                                    node,
+                                    kind: RuleKind::EqualityComparisonExpression,
+                                    left_binding_power: 9u8,
+                                    right_binding_power: 9u8 + 1,
+                                }),
+                                Fail { error } => Err(error),
+                            }
+                        } {
+                            Err(error) => {
+                                if furthest_error.position < error.position {
+                                    furthest_error = error
+                                } else if furthest_error.position == error.position {
+                                    furthest_error.expected = format!(
+                                        "{}, or {}",
+                                        furthest_error.expected, error.expected
+                                    )
+                                }
+                            }
+                            ok => break ok,
+                        }
+                        stream.set_position(start_position);
+                        match {
+                            match loop {
+                                let start_position = stream.position();
+                                let mut furthest_error;
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_less_than(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::LessThan,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "LessThan"),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => furthest_error = error,
+                                    pass => break pass,
+                                }
+                                stream.set_position(start_position);
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_greater_than(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::GreaterThan,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "GreaterThan"),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => furthest_error.merge_with(error),
+                                    pass => break pass,
+                                }
+                                stream.set_position(start_position);
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_less_than_equal(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::LessThanEqual,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "LessThanEqual"),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => furthest_error.merge_with(error),
+                                    pass => break pass,
+                                }
+                                stream.set_position(start_position);
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_greater_than_equal(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::GreaterThanEqual,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "GreaterThanEqual"),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => furthest_error.merge_with(error),
+                                    pass => break pass,
+                                }
+                                break Fail {
+                                    error: furthest_error,
+                                };
+                            } {
+                                Pass { node, .. } => Ok(Pratt::Operator {
+                                    node,
+                                    kind: RuleKind::OrderComparisonExpression,
+                                    left_binding_power: 11u8,
+                                    right_binding_power: 11u8 + 1,
+                                }),
+                                Fail { error } => Err(error),
+                            }
+                        } {
+                            Err(error) => {
+                                if furthest_error.position < error.position {
+                                    furthest_error = error
+                                } else if furthest_error.position == error.position {
+                                    furthest_error.expected = format!(
+                                        "{}, or {}",
+                                        furthest_error.expected, error.expected
+                                    )
+                                }
+                            }
+                            ok => break ok,
+                        }
+                        stream.set_position(start_position);
+                        match {
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_bar(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::Bar,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "Bar"),
+                                    }
+                                }
+                            } {
+                                Pass { node, .. } => Ok(Pratt::Operator {
+                                    node,
+                                    kind: RuleKind::BitOrExpression,
+                                    left_binding_power: 13u8,
+                                    right_binding_power: 13u8 + 1,
+                                }),
+                                Fail { error } => Err(error),
+                            }
+                        } {
+                            Err(error) => {
+                                if furthest_error.position < error.position {
+                                    furthest_error = error
+                                } else if furthest_error.position == error.position {
+                                    furthest_error.expected = format!(
+                                        "{}, or {}",
+                                        furthest_error.expected, error.expected
+                                    )
+                                }
+                            }
+                            ok => break ok,
+                        }
+                        stream.set_position(start_position);
+                        match {
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_caret(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::Caret,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "Caret"),
+                                    }
+                                }
+                            } {
+                                Pass { node, .. } => Ok(Pratt::Operator {
+                                    node,
+                                    kind: RuleKind::BitXOrExpression,
+                                    left_binding_power: 15u8,
+                                    right_binding_power: 15u8 + 1,
+                                }),
+                                Fail { error } => Err(error),
+                            }
+                        } {
+                            Err(error) => {
+                                if furthest_error.position < error.position {
+                                    furthest_error = error
+                                } else if furthest_error.position == error.position {
+                                    furthest_error.expected = format!(
+                                        "{}, or {}",
+                                        furthest_error.expected, error.expected
+                                    )
+                                }
+                            }
+                            ok => break ok,
+                        }
+                        stream.set_position(start_position);
+                        match {
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_ampersand(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::Ampersand,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "Ampersand"),
+                                    }
+                                }
+                            } {
+                                Pass { node, .. } => Ok(Pratt::Operator {
+                                    node,
+                                    kind: RuleKind::BitAndExpression,
+                                    left_binding_power: 17u8,
+                                    right_binding_power: 17u8 + 1,
+                                }),
+                                Fail { error } => Err(error),
+                            }
+                        } {
+                            Err(error) => {
+                                if furthest_error.position < error.position {
+                                    furthest_error = error
+                                } else if furthest_error.position == error.position {
+                                    furthest_error.expected = format!(
+                                        "{}, or {}",
+                                        furthest_error.expected, error.expected
+                                    )
+                                }
+                            }
+                            ok => break ok,
+                        }
+                        stream.set_position(start_position);
+                        match {
+                            match loop {
+                                let start_position = stream.position();
+                                let mut furthest_error;
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_less_than_less_than(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::LessThanLessThan,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "LessThanLessThan"),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => furthest_error = error,
+                                    pass => break pass,
+                                }
+                                stream.set_position(start_position);
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_greater_than_greater_than(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::GreaterThanGreaterThan,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "GreaterThanGreaterThan"),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => furthest_error.merge_with(error),
+                                    pass => break pass,
+                                }
+                                stream.set_position(start_position);
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_greater_than_greater_than_greater_than(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::GreaterThanGreaterThanGreaterThan,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(
+                                                start,
+                                                "GreaterThanGreaterThanGreaterThan",
+                                            ),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => furthest_error.merge_with(error),
+                                    pass => break pass,
+                                }
+                                break Fail {
+                                    error: furthest_error,
+                                };
+                            } {
+                                Pass { node, .. } => Ok(Pratt::Operator {
+                                    node,
+                                    kind: RuleKind::ShiftExpression,
+                                    left_binding_power: 19u8,
+                                    right_binding_power: 19u8 + 1,
+                                }),
+                                Fail { error } => Err(error),
+                            }
+                        } {
+                            Err(error) => {
+                                if furthest_error.position < error.position {
+                                    furthest_error = error
+                                } else if furthest_error.position == error.position {
+                                    furthest_error.expected = format!(
+                                        "{}, or {}",
+                                        furthest_error.expected, error.expected
+                                    )
+                                }
+                            }
+                            ok => break ok,
+                        }
+                        stream.set_position(start_position);
+                        match {
+                            match loop {
+                                let start_position = stream.position();
+                                let mut furthest_error;
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_plus(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::Plus,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "Plus"),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => furthest_error = error,
+                                    pass => break pass,
+                                }
+                                stream.set_position(start_position);
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_minus(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::Minus,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "Minus"),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => furthest_error.merge_with(error),
+                                    pass => break pass,
+                                }
+                                break Fail {
+                                    error: furthest_error,
+                                };
+                            } {
+                                Pass { node, .. } => Ok(Pratt::Operator {
+                                    node,
+                                    kind: RuleKind::AddSubExpression,
+                                    left_binding_power: 21u8,
+                                    right_binding_power: 21u8 + 1,
+                                }),
+                                Fail { error } => Err(error),
+                            }
+                        } {
+                            Err(error) => {
+                                if furthest_error.position < error.position {
+                                    furthest_error = error
+                                } else if furthest_error.position == error.position {
+                                    furthest_error.expected = format!(
+                                        "{}, or {}",
+                                        furthest_error.expected, error.expected
+                                    )
+                                }
+                            }
+                            ok => break ok,
+                        }
+                        stream.set_position(start_position);
+                        match {
+                            match loop {
+                                let start_position = stream.position();
+                                let mut furthest_error;
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_star(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::Star,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "Star"),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => furthest_error = error,
+                                    pass => break pass,
+                                }
+                                stream.set_position(start_position);
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_slash(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::Slash,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "Slash"),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => furthest_error.merge_with(error),
+                                    pass => break pass,
+                                }
+                                stream.set_position(start_position);
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_percent(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::Percent,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "Percent"),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => furthest_error.merge_with(error),
+                                    pass => break pass,
+                                }
+                                break Fail {
+                                    error: furthest_error,
+                                };
+                            } {
+                                Pass { node, .. } => Ok(Pratt::Operator {
+                                    node,
+                                    kind: RuleKind::MulDivModExpression,
+                                    left_binding_power: 23u8,
+                                    right_binding_power: 23u8 + 1,
+                                }),
+                                Fail { error } => Err(error),
+                            }
+                        } {
+                            Err(error) => {
+                                if furthest_error.position < error.position {
+                                    furthest_error = error
+                                } else if furthest_error.position == error.position {
+                                    furthest_error.expected = format!(
+                                        "{}, or {}",
+                                        furthest_error.expected, error.expected
+                                    )
+                                }
+                            }
+                            ok => break ok,
+                        }
+                        stream.set_position(start_position);
+                        match {
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_star_star(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::StarStar,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "StarStar"),
+                                    }
+                                }
+                            } {
+                                Pass { node, .. } => Ok(Pratt::Operator {
+                                    node,
+                                    kind: RuleKind::ExponentiationExpression,
+                                    left_binding_power: 25u8 + 1,
+                                    right_binding_power: 25u8,
+                                }),
+                                Fail { error } => Err(error),
+                            }
+                        } {
+                            Err(error) => {
+                                if furthest_error.position < error.position {
+                                    furthest_error = error
+                                } else if furthest_error.position == error.position {
+                                    furthest_error.expected = format!(
+                                        "{}, or {}",
+                                        furthest_error.expected, error.expected
+                                    )
+                                }
+                            }
+                            ok => break ok,
+                        }
+                        break Err(furthest_error);
                     } {
                         Err(_) => {
                             stream.set_position(start_position);
@@ -5194,89 +6476,144 @@ impl Language {
                 if let Some(error) = loop {
                     loop {
                         let start_position = stream.position();
-                        match {
-                            let leading_trivia = self.optional_leading_trivia(stream);
-                            let start = stream.position();
+                        match match loop {
+                            let start_position = stream.position();
+                            let mut furthest_error;
                             match {
-                                match stream.next() {
-                                    Some('!') => Ok((
-                                        TokenKind::Bang,
-                                        RuleKind::UnaryPrefixExpression,
-                                        255u8,
-                                        29u8,
-                                    )),
-                                    Some('+') => {
-                                        if scan_chars!(stream, '+') {
-                                            Ok((
-                                                TokenKind::PlusPlus,
-                                                RuleKind::UnaryPrefixExpression,
-                                                255u8,
-                                                29u8,
-                                            ))
-                                        } else {
-                                            Err(ParseError::new(stream.position(), "'++'"))
-                                        }
-                                    }
-                                    Some('-') => {
-                                        let start_position = stream.position();
-                                        match stream.next() {
-                                            Some('-') => Ok((
-                                                TokenKind::MinusMinus,
-                                                RuleKind::UnaryPrefixExpression,
-                                                255u8,
-                                                29u8,
-                                            )),
-                                            Some(_) => {
-                                                stream.set_position(start_position);
-                                                Ok((
-                                                    TokenKind::Minus,
-                                                    RuleKind::UnaryPrefixExpression,
-                                                    255u8,
-                                                    29u8,
-                                                ))
-                                            }
-                                            None => Ok((
-                                                TokenKind::Minus,
-                                                RuleKind::UnaryPrefixExpression,
-                                                255u8,
-                                                29u8,
-                                            )),
-                                        }
-                                    }
-                                    Some('~') => Ok((
-                                        TokenKind::Tilde,
-                                        RuleKind::UnaryPrefixExpression,
-                                        255u8,
-                                        29u8,
-                                    )),
-                                    _ => Err(ParseError::new(
-                                        stream.position(),
-                                        "'!', or '++', or '-', or '--', or '~'",
-                                    )),
-                                }
-                            } {
-                                Ok((
-                                    token_kind,
-                                    rule_kind,
-                                    left_binding_power,
-                                    right_binding_power,
-                                )) => {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_plus_plus(stream) {
                                     let end = stream.position();
                                     let trailing_trivia = self.optional_trailing_trivia(stream);
-                                    Ok(Pratt::Operator {
+                                    Pass {
                                         node: cst::Node::token(
-                                            token_kind,
+                                            TokenKind::PlusPlus,
                                             Range { start, end },
                                             leading_trivia,
                                             trailing_trivia,
                                         ),
-                                        kind: rule_kind,
-                                        left_binding_power,
-                                        right_binding_power,
-                                    })
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "PlusPlus"),
+                                    }
                                 }
-                                Err(error) => Err(error),
+                            } {
+                                Fail { error } => furthest_error = error,
+                                pass => break pass,
                             }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_minus_minus(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::MinusMinus,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "MinusMinus"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_tilde(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::Tilde,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "Tilde"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_bang(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::Bang,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "Bang"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_minus(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::Minus,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "Minus"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            break Fail {
+                                error: furthest_error,
+                            };
+                        } {
+                            Pass { node, .. } => Ok(Pratt::Operator {
+                                node,
+                                kind: RuleKind::UnaryPrefixExpression,
+                                left_binding_power: 255,
+                                right_binding_power: 29u8,
+                            }),
+                            Fail { error } => Err(error),
                         } {
                             Err(_) => {
                                 stream.set_position(start_position);
@@ -5294,62 +6631,111 @@ impl Language {
                         match loop {
                             let start_position = stream.position();
                             let mut furthest_error;
-                            match {
-                                let leading_trivia = self.optional_leading_trivia(stream);
-                                let start = stream.position();
-                                match {
-                                    match stream.next() {
-                                        Some('+') => {
-                                            if scan_chars!(stream, '+') {
-                                                Ok((
-                                                    TokenKind::PlusPlus,
-                                                    RuleKind::UnarySuffixExpression,
-                                                    27u8,
-                                                    255u8,
-                                                ))
-                                            } else {
-                                                Err(ParseError::new(stream.position(), "'++'"))
-                                            }
-                                        }
-                                        Some('-') => {
-                                            if scan_chars!(stream, '-') {
-                                                Ok((
-                                                    TokenKind::MinusMinus,
-                                                    RuleKind::UnarySuffixExpression,
-                                                    27u8,
-                                                    255u8,
-                                                ))
-                                            } else {
-                                                Err(ParseError::new(stream.position(), "'--'"))
-                                            }
-                                        }
-                                        _ => {
-                                            Err(ParseError::new(stream.position(), "'++', or '--'"))
-                                        }
-                                    }
-                                } {
-                                    Ok((
-                                        token_kind,
-                                        rule_kind,
-                                        left_binding_power,
-                                        right_binding_power,
-                                    )) => {
+                            match match loop {
+                                let mut furthest_error = None;
+                                let result_0 = match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_question_mark(stream) {
                                         let end = stream.position();
                                         let trailing_trivia = self.optional_trailing_trivia(stream);
-                                        Ok(Pratt::Operator {
+                                        Pass {
                                             node: cst::Node::token(
-                                                token_kind,
+                                                TokenKind::QuestionMark,
                                                 Range { start, end },
                                                 leading_trivia,
                                                 trailing_trivia,
                                             ),
-                                            kind: rule_kind,
-                                            left_binding_power,
-                                            right_binding_power,
-                                        })
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "QuestionMark"),
+                                        }
                                     }
-                                    Err(error) => Err(error),
-                                }
+                                } {
+                                    Pass { node, error } => {
+                                        furthest_error = error
+                                            .map(|error| error.maybe_merge_with(furthest_error));
+                                        node
+                                    }
+                                    Fail { error } => {
+                                        break Fail {
+                                            error: error.maybe_merge_with(furthest_error),
+                                        }
+                                    }
+                                };
+                                let result_1 = match self.parse_expression(stream) {
+                                    Pass { node, error } => {
+                                        furthest_error = error
+                                            .map(|error| error.maybe_merge_with(furthest_error));
+                                        node
+                                    }
+                                    Fail { error } => {
+                                        break Fail {
+                                            error: error.maybe_merge_with(furthest_error),
+                                        }
+                                    }
+                                };
+                                let result_2 = match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_colon(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::Colon,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "Colon"),
+                                        }
+                                    }
+                                } {
+                                    Pass { node, error } => {
+                                        furthest_error = error
+                                            .map(|error| error.maybe_merge_with(furthest_error));
+                                        node
+                                    }
+                                    Fail { error } => {
+                                        break Fail {
+                                            error: error.maybe_merge_with(furthest_error),
+                                        }
+                                    }
+                                };
+                                let result_3 = match self.parse_expression(stream) {
+                                    Pass { node, error } => {
+                                        furthest_error = error
+                                            .map(|error| error.maybe_merge_with(furthest_error));
+                                        node
+                                    }
+                                    Fail { error } => {
+                                        break Fail {
+                                            error: error.maybe_merge_with(furthest_error),
+                                        }
+                                    }
+                                };
+                                break Pass {
+                                    node: cst::Node::rule(
+                                        RuleKind::_SEQUENCE,
+                                        vec![result_0, result_1, result_2, result_3],
+                                    ),
+                                    error: furthest_error,
+                                };
+                            } {
+                                Pass { node, .. } => Ok(Pratt::Operator {
+                                    node,
+                                    kind: RuleKind::ConditionalExpression,
+                                    left_binding_power: 3u8,
+                                    right_binding_power: 255,
+                                }),
+                                Fail { error } => Err(error),
                             } {
                                 Err(error) => furthest_error = error,
                                 ok => break ok,
@@ -5357,17 +6743,18 @@ impl Language {
                             stream.set_position(start_position);
                             match {
                                 match loop {
-                                    let mut furthest_error = None;
-                                    let result_0 = match {
+                                    let start_position = stream.position();
+                                    let mut furthest_error;
+                                    match {
                                         let leading_trivia = self.optional_leading_trivia(stream);
                                         let start = stream.position();
-                                        if scan_chars!(stream, '?') {
+                                        if self.scan_plus_plus(stream) {
                                             let end = stream.position();
                                             let trailing_trivia =
                                                 self.optional_trailing_trivia(stream);
                                             Pass {
                                                 node: cst::Node::token(
-                                                    TokenKind::Question,
+                                                    TokenKind::PlusPlus,
                                                     Range { start, end },
                                                     leading_trivia,
                                                     trailing_trivia,
@@ -5376,45 +6763,24 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "'?'"),
+                                                error: ParseError::new(start, "PlusPlus"),
                                             }
                                         }
                                     } {
-                                        Pass { node, error } => {
-                                            furthest_error = error.map(|error| {
-                                                error.maybe_merge_with(furthest_error)
-                                            });
-                                            node
-                                        }
-                                        Fail { error } => {
-                                            break Fail {
-                                                error: error.maybe_merge_with(furthest_error),
-                                            }
-                                        }
-                                    };
-                                    let result_1 = match self.parse_expression(stream) {
-                                        Pass { node, error } => {
-                                            furthest_error = error.map(|error| {
-                                                error.maybe_merge_with(furthest_error)
-                                            });
-                                            node
-                                        }
-                                        Fail { error } => {
-                                            break Fail {
-                                                error: error.maybe_merge_with(furthest_error),
-                                            }
-                                        }
-                                    };
-                                    let result_2 = match {
+                                        Fail { error } => furthest_error = error,
+                                        pass => break pass,
+                                    }
+                                    stream.set_position(start_position);
+                                    match {
                                         let leading_trivia = self.optional_leading_trivia(stream);
                                         let start = stream.position();
-                                        if scan_chars!(stream, ':') {
+                                        if self.scan_minus_minus(stream) {
                                             let end = stream.position();
                                             let trailing_trivia =
                                                 self.optional_trailing_trivia(stream);
                                             Pass {
                                                 node: cst::Node::token(
-                                                    TokenKind::Colon,
+                                                    TokenKind::MinusMinus,
                                                     Range { start, end },
                                                     leading_trivia,
                                                     trailing_trivia,
@@ -5423,47 +6789,21 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "':'"),
+                                                error: ParseError::new(start, "MinusMinus"),
                                             }
                                         }
                                     } {
-                                        Pass { node, error } => {
-                                            furthest_error = error.map(|error| {
-                                                error.maybe_merge_with(furthest_error)
-                                            });
-                                            node
-                                        }
-                                        Fail { error } => {
-                                            break Fail {
-                                                error: error.maybe_merge_with(furthest_error),
-                                            }
-                                        }
-                                    };
-                                    let result_3 = match self.parse_expression(stream) {
-                                        Pass { node, error } => {
-                                            furthest_error = error.map(|error| {
-                                                error.maybe_merge_with(furthest_error)
-                                            });
-                                            node
-                                        }
-                                        Fail { error } => {
-                                            break Fail {
-                                                error: error.maybe_merge_with(furthest_error),
-                                            }
-                                        }
-                                    };
-                                    break Pass {
-                                        node: cst::Node::rule(
-                                            RuleKind::_SEQUENCE,
-                                            vec![result_0, result_1, result_2, result_3],
-                                        ),
+                                        Fail { error } => furthest_error.merge_with(error),
+                                        pass => break pass,
+                                    }
+                                    break Fail {
                                         error: furthest_error,
                                     };
                                 } {
                                     Pass { node, .. } => Ok(Pratt::Operator {
                                         node,
-                                        kind: RuleKind::ConditionalExpression,
-                                        left_binding_power: 3u8,
+                                        kind: RuleKind::UnaryPostfixExpression,
+                                        left_binding_power: 27u8,
                                         right_binding_power: 255,
                                     }),
                                     Fail { error } => Err(error),
@@ -5562,7 +6902,7 @@ impl Language {
                                     let result_0 = match {
                                         let leading_trivia = self.optional_leading_trivia(stream);
                                         let start = stream.position();
-                                        if scan_chars!(stream, '.') {
+                                        if self.scan_period(stream) {
                                             let end = stream.position();
                                             let trailing_trivia =
                                                 self.optional_trailing_trivia(stream);
@@ -5577,7 +6917,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "'.'"),
+                                                error: ParseError::new(start, "Period"),
                                             }
                                         }
                                     } {
@@ -5700,7 +7040,7 @@ impl Language {
                                     match {
                                         let leading_trivia = self.optional_leading_trivia(stream);
                                         let start = stream.position();
-                                        if scan_chars!(stream, '[') {
+                                        if self.scan_open_bracket(stream) {
                                             let end = stream.position();
                                             let trailing_trivia =
                                                 self.optional_trailing_trivia(stream);
@@ -5715,7 +7055,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "'['"),
+                                                error: ParseError::new(start, "OpenBracket"),
                                             }
                                         }
                                     } {
@@ -5757,7 +7097,7 @@ impl Language {
                                                                         stream,
                                                                     );
                                                                 let start = stream.position();
-                                                                if scan_chars!(stream, ':') {
+                                                                if self.scan_colon(stream) {
                                                                     let end = stream.position();
                                                                     let trailing_trivia = self
                                                                         .optional_trailing_trivia(
@@ -5775,7 +7115,7 @@ impl Language {
                                                                 } else {
                                                                     Fail {
                                                                         error: ParseError::new(
-                                                                            start, "':'",
+                                                                            start, "Colon",
                                                                         ),
                                                                     }
                                                                 }
@@ -5891,7 +7231,7 @@ impl Language {
                                                         let leading_trivia =
                                                             self.optional_leading_trivia(stream);
                                                         let start = stream.position();
-                                                        if scan_chars!(stream, ':') {
+                                                        if self.scan_colon(stream) {
                                                             let end = stream.position();
                                                             let trailing_trivia = self
                                                                 .optional_trailing_trivia(stream);
@@ -5907,7 +7247,7 @@ impl Language {
                                                         } else {
                                                             Fail {
                                                                 error: ParseError::new(
-                                                                    start, "':'",
+                                                                    start, "Colon",
                                                                 ),
                                                             }
                                                         }
@@ -5986,7 +7326,7 @@ impl Language {
                                                         let leading_trivia =
                                                             self.optional_leading_trivia(stream);
                                                         let start = stream.position();
-                                                        if scan_chars!(stream, ']') {
+                                                        if self.scan_close_bracket(stream) {
                                                             let end = stream.position();
                                                             let trailing_trivia = self
                                                                 .optional_trailing_trivia(stream);
@@ -6002,7 +7342,8 @@ impl Language {
                                                         } else {
                                                             Fail {
                                                                 error: ParseError::new(
-                                                                    start, "']'",
+                                                                    start,
+                                                                    "CloseBracket",
                                                                 ),
                                                             }
                                                         }
@@ -6060,34 +7401,1095 @@ impl Language {
                         }
                     }
                     let start_position = stream.position();
-                    match {
-                        let leading_trivia = self.optional_leading_trivia(stream);
-                        let start = stream.position();
-                        match {
-                            match stream . next () { Some ('!') => if scan_chars ! (stream , '=') { Ok ((TokenKind :: BangEqual , RuleKind :: EqualityComparisonExpression , 9u8 , 10u8)) } else { Err (ParseError :: new (stream . position () , "'!='")) } , Some ('%') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: PercentEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Percent , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } None => Ok ((TokenKind :: Percent , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } } , Some ('&') => { let start_position = stream . position () ; match stream . next () { Some ('&') => Ok ((TokenKind :: AmpersandAmpersand , RuleKind :: AndExpression , 7u8 , 8u8)) , Some ('=') => Ok ((TokenKind :: AmpersandEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Ampersand , RuleKind :: BitAndExpression , 17u8 , 18u8)) } None => Ok ((TokenKind :: Ampersand , RuleKind :: BitAndExpression , 17u8 , 18u8)) } } , Some ('*') => { let start_position = stream . position () ; match stream . next () { Some ('*') => Ok ((TokenKind :: StarStar , RuleKind :: ExponentiationExpression , 25u8 , 26u8)) , Some ('=') => Ok ((TokenKind :: StarEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Star , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } None => Ok ((TokenKind :: Star , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } } , Some ('+') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: PlusEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Plus , RuleKind :: AddSubExpression , 21u8 , 22u8)) } None => Ok ((TokenKind :: Plus , RuleKind :: AddSubExpression , 21u8 , 22u8)) } } , Some ('-') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: MinusEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Minus , RuleKind :: AddSubExpression , 21u8 , 22u8)) } None => Ok ((TokenKind :: Minus , RuleKind :: AddSubExpression , 21u8 , 22u8)) } } , Some ('/') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: SlashEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Slash , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } None => Ok ((TokenKind :: Slash , RuleKind :: MulDivModExpression , 23u8 , 24u8)) } } , Some ('<') => { let start_position = stream . position () ; match stream . next () { Some ('<') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: LessLessEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: LessLess , RuleKind :: ShiftExpression , 19u8 , 20u8)) } None => Ok ((TokenKind :: LessLess , RuleKind :: ShiftExpression , 19u8 , 20u8)) } } , Some ('=') => Ok ((TokenKind :: LessEqual , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Less , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) } None => Ok ((TokenKind :: Less , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) } } , Some ('=') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: EqualEqual , RuleKind :: EqualityComparisonExpression , 9u8 , 10u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Equal , RuleKind :: AssignmentExpression , 1u8 , 2u8)) } None => Ok ((TokenKind :: Equal , RuleKind :: AssignmentExpression , 1u8 , 2u8)) } } , Some ('>') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: GreaterEqual , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) , Some ('>') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: GreaterGreaterEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some ('>') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: GreaterGreaterGreaterEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: GreaterGreaterGreater , RuleKind :: ShiftExpression , 19u8 , 20u8)) } None => Ok ((TokenKind :: GreaterGreaterGreater , RuleKind :: ShiftExpression , 19u8 , 20u8)) } } , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: GreaterGreater , RuleKind :: ShiftExpression , 19u8 , 20u8)) } None => Ok ((TokenKind :: GreaterGreater , RuleKind :: ShiftExpression , 19u8 , 20u8)) } } , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Greater , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) } None => Ok ((TokenKind :: Greater , RuleKind :: OrderComparisonExpression , 11u8 , 12u8)) } } , Some ('^') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: CaretEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Caret , RuleKind :: BitXOrExpression , 15u8 , 16u8)) } None => Ok ((TokenKind :: Caret , RuleKind :: BitXOrExpression , 15u8 , 16u8)) } } , Some ('|') => { let start_position = stream . position () ; match stream . next () { Some ('=') => Ok ((TokenKind :: PipeEqual , RuleKind :: AssignmentExpression , 1u8 , 2u8)) , Some ('|') => Ok ((TokenKind :: PipePipe , RuleKind :: OrExpression , 5u8 , 6u8)) , Some (_) => { stream . set_position (start_position) ; Ok ((TokenKind :: Pipe , RuleKind :: BitOrExpression , 13u8 , 14u8)) } None => Ok ((TokenKind :: Pipe , RuleKind :: BitOrExpression , 13u8 , 14u8)) } } , _ => Err (ParseError :: new (stream . position () , "'!=', or '%', or '%=', or '&', or '&&', or '&=', or '*', or '**', or '*=', or '+', or '+=', or '-', or '-=', or '/', or '/=', or '<', or '<<', or '<<=', or '<=', or '=', or '==', or '>', or '>=', or '>>', or '>>=', or '>>>', or '>>>=', or '^', or '^=', or '|', or '|=', or '||'")) }
-                        } {
-                            Ok((
-                                token_kind,
-                                rule_kind,
-                                left_binding_power,
-                                right_binding_power,
-                            )) => {
-                                let end = stream.position();
-                                let trailing_trivia = self.optional_trailing_trivia(stream);
-                                Ok(Pratt::Operator {
-                                    node: cst::Node::token(
-                                        token_kind,
-                                        Range { start, end },
-                                        leading_trivia,
-                                        trailing_trivia,
-                                    ),
-                                    kind: rule_kind,
-                                    left_binding_power,
-                                    right_binding_power,
-                                })
+                    match loop {
+                        let start_position = stream.position();
+                        let mut furthest_error;
+                        match match loop {
+                            let start_position = stream.position();
+                            let mut furthest_error;
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_equal(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::Equal,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "Equal"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error = error,
+                                pass => break pass,
                             }
-                            Err(error) => Err(error),
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_bar_equal(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::BarEqual,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "BarEqual"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_caret_equal(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::CaretEqual,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "CaretEqual"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_ampersand_equal(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::AmpersandEqual,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "AmpersandEqual"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_less_than_less_than_equal(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::LessThanLessThanEqual,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "LessThanLessThanEqual"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_greater_than_greater_than_equal(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::GreaterThanGreaterThanEqual,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(
+                                            start,
+                                            "GreaterThanGreaterThanEqual",
+                                        ),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_greater_than_greater_than_greater_than_equal(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::GreaterThanGreaterThanGreaterThanEqual,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(
+                                            start,
+                                            "GreaterThanGreaterThanGreaterThanEqual",
+                                        ),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_plus_equal(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::PlusEqual,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "PlusEqual"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_minus_equal(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::MinusEqual,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "MinusEqual"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_star_equal(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::StarEqual,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "StarEqual"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_slash_equal(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::SlashEqual,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "SlashEqual"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            stream.set_position(start_position);
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_percent_equal(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::PercentEqual,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "PercentEqual"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => furthest_error.merge_with(error),
+                                pass => break pass,
+                            }
+                            break Fail {
+                                error: furthest_error,
+                            };
+                        } {
+                            Pass { node, .. } => Ok(Pratt::Operator {
+                                node,
+                                kind: RuleKind::AssignmentExpression,
+                                left_binding_power: 1u8,
+                                right_binding_power: 1u8 + 1,
+                            }),
+                            Fail { error } => Err(error),
+                        } {
+                            Err(error) => furthest_error = error,
+                            ok => break ok,
                         }
+                        stream.set_position(start_position);
+                        match {
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_bar_bar(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::BarBar,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "BarBar"),
+                                    }
+                                }
+                            } {
+                                Pass { node, .. } => Ok(Pratt::Operator {
+                                    node,
+                                    kind: RuleKind::OrExpression,
+                                    left_binding_power: 5u8,
+                                    right_binding_power: 5u8 + 1,
+                                }),
+                                Fail { error } => Err(error),
+                            }
+                        } {
+                            Err(error) => {
+                                if furthest_error.position < error.position {
+                                    furthest_error = error
+                                } else if furthest_error.position == error.position {
+                                    furthest_error.expected = format!(
+                                        "{}, or {}",
+                                        furthest_error.expected, error.expected
+                                    )
+                                }
+                            }
+                            ok => break ok,
+                        }
+                        stream.set_position(start_position);
+                        match {
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_ampersand_ampersand(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::AmpersandAmpersand,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "AmpersandAmpersand"),
+                                    }
+                                }
+                            } {
+                                Pass { node, .. } => Ok(Pratt::Operator {
+                                    node,
+                                    kind: RuleKind::AndExpression,
+                                    left_binding_power: 7u8,
+                                    right_binding_power: 7u8 + 1,
+                                }),
+                                Fail { error } => Err(error),
+                            }
+                        } {
+                            Err(error) => {
+                                if furthest_error.position < error.position {
+                                    furthest_error = error
+                                } else if furthest_error.position == error.position {
+                                    furthest_error.expected = format!(
+                                        "{}, or {}",
+                                        furthest_error.expected, error.expected
+                                    )
+                                }
+                            }
+                            ok => break ok,
+                        }
+                        stream.set_position(start_position);
+                        match {
+                            match loop {
+                                let start_position = stream.position();
+                                let mut furthest_error;
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_equal_equal(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::EqualEqual,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "EqualEqual"),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => furthest_error = error,
+                                    pass => break pass,
+                                }
+                                stream.set_position(start_position);
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_bang_equal(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::BangEqual,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "BangEqual"),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => furthest_error.merge_with(error),
+                                    pass => break pass,
+                                }
+                                break Fail {
+                                    error: furthest_error,
+                                };
+                            } {
+                                Pass { node, .. } => Ok(Pratt::Operator {
+                                    node,
+                                    kind: RuleKind::EqualityComparisonExpression,
+                                    left_binding_power: 9u8,
+                                    right_binding_power: 9u8 + 1,
+                                }),
+                                Fail { error } => Err(error),
+                            }
+                        } {
+                            Err(error) => {
+                                if furthest_error.position < error.position {
+                                    furthest_error = error
+                                } else if furthest_error.position == error.position {
+                                    furthest_error.expected = format!(
+                                        "{}, or {}",
+                                        furthest_error.expected, error.expected
+                                    )
+                                }
+                            }
+                            ok => break ok,
+                        }
+                        stream.set_position(start_position);
+                        match {
+                            match loop {
+                                let start_position = stream.position();
+                                let mut furthest_error;
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_less_than(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::LessThan,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "LessThan"),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => furthest_error = error,
+                                    pass => break pass,
+                                }
+                                stream.set_position(start_position);
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_greater_than(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::GreaterThan,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "GreaterThan"),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => furthest_error.merge_with(error),
+                                    pass => break pass,
+                                }
+                                stream.set_position(start_position);
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_less_than_equal(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::LessThanEqual,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "LessThanEqual"),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => furthest_error.merge_with(error),
+                                    pass => break pass,
+                                }
+                                stream.set_position(start_position);
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_greater_than_equal(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::GreaterThanEqual,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "GreaterThanEqual"),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => furthest_error.merge_with(error),
+                                    pass => break pass,
+                                }
+                                break Fail {
+                                    error: furthest_error,
+                                };
+                            } {
+                                Pass { node, .. } => Ok(Pratt::Operator {
+                                    node,
+                                    kind: RuleKind::OrderComparisonExpression,
+                                    left_binding_power: 11u8,
+                                    right_binding_power: 11u8 + 1,
+                                }),
+                                Fail { error } => Err(error),
+                            }
+                        } {
+                            Err(error) => {
+                                if furthest_error.position < error.position {
+                                    furthest_error = error
+                                } else if furthest_error.position == error.position {
+                                    furthest_error.expected = format!(
+                                        "{}, or {}",
+                                        furthest_error.expected, error.expected
+                                    )
+                                }
+                            }
+                            ok => break ok,
+                        }
+                        stream.set_position(start_position);
+                        match {
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_bar(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::Bar,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "Bar"),
+                                    }
+                                }
+                            } {
+                                Pass { node, .. } => Ok(Pratt::Operator {
+                                    node,
+                                    kind: RuleKind::BitOrExpression,
+                                    left_binding_power: 13u8,
+                                    right_binding_power: 13u8 + 1,
+                                }),
+                                Fail { error } => Err(error),
+                            }
+                        } {
+                            Err(error) => {
+                                if furthest_error.position < error.position {
+                                    furthest_error = error
+                                } else if furthest_error.position == error.position {
+                                    furthest_error.expected = format!(
+                                        "{}, or {}",
+                                        furthest_error.expected, error.expected
+                                    )
+                                }
+                            }
+                            ok => break ok,
+                        }
+                        stream.set_position(start_position);
+                        match {
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_caret(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::Caret,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "Caret"),
+                                    }
+                                }
+                            } {
+                                Pass { node, .. } => Ok(Pratt::Operator {
+                                    node,
+                                    kind: RuleKind::BitXOrExpression,
+                                    left_binding_power: 15u8,
+                                    right_binding_power: 15u8 + 1,
+                                }),
+                                Fail { error } => Err(error),
+                            }
+                        } {
+                            Err(error) => {
+                                if furthest_error.position < error.position {
+                                    furthest_error = error
+                                } else if furthest_error.position == error.position {
+                                    furthest_error.expected = format!(
+                                        "{}, or {}",
+                                        furthest_error.expected, error.expected
+                                    )
+                                }
+                            }
+                            ok => break ok,
+                        }
+                        stream.set_position(start_position);
+                        match {
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_ampersand(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::Ampersand,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "Ampersand"),
+                                    }
+                                }
+                            } {
+                                Pass { node, .. } => Ok(Pratt::Operator {
+                                    node,
+                                    kind: RuleKind::BitAndExpression,
+                                    left_binding_power: 17u8,
+                                    right_binding_power: 17u8 + 1,
+                                }),
+                                Fail { error } => Err(error),
+                            }
+                        } {
+                            Err(error) => {
+                                if furthest_error.position < error.position {
+                                    furthest_error = error
+                                } else if furthest_error.position == error.position {
+                                    furthest_error.expected = format!(
+                                        "{}, or {}",
+                                        furthest_error.expected, error.expected
+                                    )
+                                }
+                            }
+                            ok => break ok,
+                        }
+                        stream.set_position(start_position);
+                        match {
+                            match loop {
+                                let start_position = stream.position();
+                                let mut furthest_error;
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_less_than_less_than(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::LessThanLessThan,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "LessThanLessThan"),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => furthest_error = error,
+                                    pass => break pass,
+                                }
+                                stream.set_position(start_position);
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_greater_than_greater_than(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::GreaterThanGreaterThan,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "GreaterThanGreaterThan"),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => furthest_error.merge_with(error),
+                                    pass => break pass,
+                                }
+                                stream.set_position(start_position);
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_greater_than_greater_than_greater_than(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::GreaterThanGreaterThanGreaterThan,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(
+                                                start,
+                                                "GreaterThanGreaterThanGreaterThan",
+                                            ),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => furthest_error.merge_with(error),
+                                    pass => break pass,
+                                }
+                                break Fail {
+                                    error: furthest_error,
+                                };
+                            } {
+                                Pass { node, .. } => Ok(Pratt::Operator {
+                                    node,
+                                    kind: RuleKind::ShiftExpression,
+                                    left_binding_power: 19u8,
+                                    right_binding_power: 19u8 + 1,
+                                }),
+                                Fail { error } => Err(error),
+                            }
+                        } {
+                            Err(error) => {
+                                if furthest_error.position < error.position {
+                                    furthest_error = error
+                                } else if furthest_error.position == error.position {
+                                    furthest_error.expected = format!(
+                                        "{}, or {}",
+                                        furthest_error.expected, error.expected
+                                    )
+                                }
+                            }
+                            ok => break ok,
+                        }
+                        stream.set_position(start_position);
+                        match {
+                            match loop {
+                                let start_position = stream.position();
+                                let mut furthest_error;
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_plus(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::Plus,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "Plus"),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => furthest_error = error,
+                                    pass => break pass,
+                                }
+                                stream.set_position(start_position);
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_minus(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::Minus,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "Minus"),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => furthest_error.merge_with(error),
+                                    pass => break pass,
+                                }
+                                break Fail {
+                                    error: furthest_error,
+                                };
+                            } {
+                                Pass { node, .. } => Ok(Pratt::Operator {
+                                    node,
+                                    kind: RuleKind::AddSubExpression,
+                                    left_binding_power: 21u8,
+                                    right_binding_power: 21u8 + 1,
+                                }),
+                                Fail { error } => Err(error),
+                            }
+                        } {
+                            Err(error) => {
+                                if furthest_error.position < error.position {
+                                    furthest_error = error
+                                } else if furthest_error.position == error.position {
+                                    furthest_error.expected = format!(
+                                        "{}, or {}",
+                                        furthest_error.expected, error.expected
+                                    )
+                                }
+                            }
+                            ok => break ok,
+                        }
+                        stream.set_position(start_position);
+                        match {
+                            match loop {
+                                let start_position = stream.position();
+                                let mut furthest_error;
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_star(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::Star,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "Star"),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => furthest_error = error,
+                                    pass => break pass,
+                                }
+                                stream.set_position(start_position);
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_slash(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::Slash,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "Slash"),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => furthest_error.merge_with(error),
+                                    pass => break pass,
+                                }
+                                stream.set_position(start_position);
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_percent(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::Percent,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "Percent"),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => furthest_error.merge_with(error),
+                                    pass => break pass,
+                                }
+                                break Fail {
+                                    error: furthest_error,
+                                };
+                            } {
+                                Pass { node, .. } => Ok(Pratt::Operator {
+                                    node,
+                                    kind: RuleKind::MulDivModExpression,
+                                    left_binding_power: 23u8,
+                                    right_binding_power: 23u8 + 1,
+                                }),
+                                Fail { error } => Err(error),
+                            }
+                        } {
+                            Err(error) => {
+                                if furthest_error.position < error.position {
+                                    furthest_error = error
+                                } else if furthest_error.position == error.position {
+                                    furthest_error.expected = format!(
+                                        "{}, or {}",
+                                        furthest_error.expected, error.expected
+                                    )
+                                }
+                            }
+                            ok => break ok,
+                        }
+                        stream.set_position(start_position);
+                        match {
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_star_star(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::StarStar,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "StarStar"),
+                                    }
+                                }
+                            } {
+                                Pass { node, .. } => Ok(Pratt::Operator {
+                                    node,
+                                    kind: RuleKind::ExponentiationExpression,
+                                    left_binding_power: 25u8,
+                                    right_binding_power: 25u8 + 1,
+                                }),
+                                Fail { error } => Err(error),
+                            }
+                        } {
+                            Err(error) => {
+                                if furthest_error.position < error.position {
+                                    furthest_error = error
+                                } else if furthest_error.position == error.position {
+                                    furthest_error.expected = format!(
+                                        "{}, or {}",
+                                        furthest_error.expected, error.expected
+                                    )
+                                }
+                            }
+                            ok => break ok,
+                        }
+                        break Err(furthest_error);
                     } {
                         Err(_) => {
                             stream.set_position(start_position);
@@ -6190,59 +8592,55 @@ impl Language {
         }
     }
 
-    // ExpressionStatement = Expression ';' ;
+    // ExpressionStatement = Expression «Semicolon» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_expression_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
+            {
+                match self.parse_expression(stream) {
+                    err @ Fail { .. } => err,
+                    Pass {
+                        node: expr_node,
+                        error: expr_error,
+                    } => {
+                        match {
+                            let leading_trivia = self.optional_leading_trivia(stream);
+                            let start = stream.position();
+                            if self.scan_semicolon(stream) {
+                                let end = stream.position();
+                                let trailing_trivia = self.optional_trailing_trivia(stream);
+                                Pass {
+                                    node: cst::Node::token(
+                                        TokenKind::Semicolon,
+                                        Range { start, end },
+                                        leading_trivia,
+                                        trailing_trivia,
+                                    ),
+                                    error: None,
+                                }
+                            } else {
+                                Fail {
+                                    error: ParseError::new(start, "Semicolon"),
+                                }
+                            }
+                        } {
+                            Fail { error } => Fail {
+                                error: error.maybe_merge_with(expr_error),
+                            },
+                            Pass {
+                                node: terminator_node,
+                                ..
+                            } => Pass {
+                                node: cst::Node::rule(
+                                    RuleKind::_TERMINATEDBY,
+                                    vec![expr_node, terminator_node],
+                                ),
+                                error: None,
+                            },
                         }
                     }
-                };
-                let result_1 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, ';') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Semicolon,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "';'"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
-                    error: furthest_error,
-                };
+                }
             }
         } {
             Pass { node, error } => Pass {
@@ -6408,7 +8806,7 @@ impl Language {
         }
     }
 
-    // FallbackFunctionDefinition = «FallbackKeyword» ParameterList { FallbackFunctionAttribute } [ «ReturnsKeyword» ParameterList ] ( ';' | Block ) ;
+    // FallbackFunctionDefinition = «FallbackKeyword» ParameterList { FallbackFunctionAttribute } [ «ReturnsKeyword» ParameterList ] ( «Semicolon» | Block ) ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_fallback_function_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -6562,7 +8960,7 @@ impl Language {
                     match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        if scan_chars!(stream, ';') {
+                        if self.scan_semicolon(stream) {
                             let end = stream.position();
                             let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
@@ -6576,7 +8974,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "';'"),
+                                error: ParseError::new(start, "Semicolon"),
                             }
                         }
                     } {
@@ -6619,7 +9017,7 @@ impl Language {
         }
     }
 
-    // ForStatement = «ForKeyword» '(' ( SimpleStatement | ';' ) ( ExpressionStatement | ';' ) [ Expression ] ')' Statement ;
+    // ForStatement = «ForKeyword» «OpenParen» ( SimpleStatement | «Semicolon» ) ( ExpressionStatement | «Semicolon» ) [ Expression ] «CloseParen» Statement ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_for_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -6661,7 +9059,7 @@ impl Language {
                     match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        if scan_chars!(stream, '(') {
+                        if self.scan_open_paren(stream) {
                             let end = stream.position();
                             let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
@@ -6675,7 +9073,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "'('"),
+                                error: ParseError::new(start, "OpenParen"),
                             }
                         }
                     } {
@@ -6696,7 +9094,7 @@ impl Language {
                                     match {
                                         let leading_trivia = self.optional_leading_trivia(stream);
                                         let start = stream.position();
-                                        if scan_chars!(stream, ';') {
+                                        if self.scan_semicolon(stream) {
                                             let end = stream.position();
                                             let trailing_trivia =
                                                 self.optional_trailing_trivia(stream);
@@ -6711,7 +9109,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "';'"),
+                                                error: ParseError::new(start, "Semicolon"),
                                             }
                                         }
                                     } {
@@ -6744,7 +9142,7 @@ impl Language {
                                     match {
                                         let leading_trivia = self.optional_leading_trivia(stream);
                                         let start = stream.position();
-                                        if scan_chars!(stream, ';') {
+                                        if self.scan_semicolon(stream) {
                                             let end = stream.position();
                                             let trailing_trivia =
                                                 self.optional_trailing_trivia(stream);
@@ -6759,7 +9157,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "';'"),
+                                                error: ParseError::new(start, "Semicolon"),
                                             }
                                         }
                                     } {
@@ -6821,7 +9219,7 @@ impl Language {
                                     match {
                                         let leading_trivia = self.optional_leading_trivia(stream);
                                         let start = stream.position();
-                                        if scan_chars!(stream, ')') {
+                                        if self.scan_close_paren(stream) {
                                             let end = stream.position();
                                             let trailing_trivia =
                                                 self.optional_trailing_trivia(stream);
@@ -6836,7 +9234,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "')'"),
+                                                error: ParseError::new(start, "CloseParen"),
                                             }
                                         }
                                     } {
@@ -7123,7 +9521,7 @@ impl Language {
         }
     }
 
-    // FunctionDefinition = «FunctionKeyword» ( «Identifier» | «FallbackKeyword» | «ReceiveKeyword» ) ParameterList { FunctionAttribute } [ «ReturnsKeyword» ParameterList ] ( ';' | Block ) ;
+    // FunctionDefinition = «FunctionKeyword» ( «Identifier» | «FallbackKeyword» | «ReceiveKeyword» ) ParameterList { FunctionAttribute } [ «ReturnsKeyword» ParameterList ] ( «Semicolon» | Block ) ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_function_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -7368,7 +9766,7 @@ impl Language {
                     match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        if scan_chars!(stream, ';') {
+                        if self.scan_semicolon(stream) {
                             let end = stream.position();
                             let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
@@ -7382,7 +9780,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "';'"),
+                                error: ParseError::new(start, "Semicolon"),
                             }
                         }
                     } {
@@ -7770,7 +10168,7 @@ impl Language {
         }
     }
 
-    // IdentifierPath = «Identifier» { '.' «Identifier» } ;
+    // IdentifierPath = «Identifier»«Period» { «Period» «Identifier» } ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_identifier_path(&self, stream: &mut Stream) -> ParseResult {
@@ -7806,7 +10204,7 @@ impl Language {
                             match {
                                 let leading_trivia = self.optional_leading_trivia(stream);
                                 let start = stream.position();
-                                if scan_chars!(stream, '.') {
+                                if self.scan_period(stream) {
                                     let end = stream.position();
                                     let trailing_trivia = self.optional_trailing_trivia(stream);
                                     Pass {
@@ -7820,7 +10218,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "'.'"),
+                                        error: ParseError::new(start, "Period"),
                                     }
                                 }
                             } {
@@ -7846,7 +10244,7 @@ impl Language {
         }
     }
 
-    // IfStatement = «IfKeyword» '(' Expression ')' Statement [ «ElseKeyword» Statement ] ;
+    // IfStatement = «IfKeyword» «OpenParen» Expression «CloseParen» Statement [ «ElseKeyword» Statement ] ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_if_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -7888,7 +10286,7 @@ impl Language {
                     match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        if scan_chars!(stream, '(') {
+                        if self.scan_open_paren(stream) {
                             let end = stream.position();
                             let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
@@ -7902,7 +10300,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "'('"),
+                                error: ParseError::new(start, "OpenParen"),
                             }
                         }
                     } {
@@ -7918,7 +10316,7 @@ impl Language {
                                 match {
                                     let leading_trivia = self.optional_leading_trivia(stream);
                                     let start = stream.position();
-                                    if scan_chars!(stream, ')') {
+                                    if self.scan_close_paren(stream) {
                                         let end = stream.position();
                                         let trailing_trivia = self.optional_trailing_trivia(stream);
                                         Pass {
@@ -7932,7 +10330,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "')'"),
+                                            error: ParseError::new(start, "CloseParen"),
                                         }
                                     }
                                 } {
@@ -8064,110 +10462,125 @@ impl Language {
         }
     }
 
-    // ImportDirective = «ImportKeyword» ( SimpleImportDirective | StarImportDirective | SelectingImportDirective ) ';' ;
+    // ImportDirective = «ImportKeyword» ( SimpleImportDirective | StarImportDirective | SelectingImportDirective ) «Semicolon» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_import_directive(&self, stream: &mut Stream) -> ParseResult {
         match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if self.scan_import_keyword(stream) {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::ImportKeyword,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
+            {
+                match loop {
+                    let mut furthest_error = None;
+                    let result_0 = match {
+                        let leading_trivia = self.optional_leading_trivia(stream);
+                        let start = stream.position();
+                        if self.scan_import_keyword(stream) {
+                            let end = stream.position();
+                            let trailing_trivia = self.optional_trailing_trivia(stream);
+                            Pass {
+                                node: cst::Node::token(
+                                    TokenKind::ImportKeyword,
+                                    Range { start, end },
+                                    leading_trivia,
+                                    trailing_trivia,
+                                ),
+                                error: None,
+                            }
+                        } else {
+                            Fail {
+                                error: ParseError::new(start, "ImportKeyword"),
+                            }
                         }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "ImportKeyword"),
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
                         }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_1 = match loop {
+                        let start_position = stream.position();
+                        let mut furthest_error;
+                        match self.parse_simple_import_directive(stream) {
+                            Fail { error } => furthest_error = error,
+                            pass => break pass,
+                        }
+                        stream.set_position(start_position);
+                        match self.parse_star_import_directive(stream) {
+                            Fail { error } => furthest_error.merge_with(error),
+                            pass => break pass,
+                        }
+                        stream.set_position(start_position);
+                        match self.parse_selecting_import_directive(stream) {
+                            Fail { error } => furthest_error.merge_with(error),
+                            pass => break pass,
+                        }
                         break Fail {
-                            error: error.maybe_merge_with(furthest_error),
+                            error: furthest_error,
+                        };
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
                         }
-                    }
-                };
-                let result_1 = match loop {
-                    let start_position = stream.position();
-                    let mut furthest_error;
-                    match self.parse_simple_import_directive(stream) {
-                        Fail { error } => furthest_error = error,
-                        pass => break pass,
-                    }
-                    stream.set_position(start_position);
-                    match self.parse_star_import_directive(stream) {
-                        Fail { error } => furthest_error.merge_with(error),
-                        pass => break pass,
-                    }
-                    stream.set_position(start_position);
-                    match self.parse_selecting_import_directive(stream) {
-                        Fail { error } => furthest_error.merge_with(error),
-                        pass => break pass,
-                    }
-                    break Fail {
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    break Pass {
+                        node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
                         error: furthest_error,
                     };
                 } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
+                    err @ Fail { .. } => err,
+                    Pass {
+                        node: expr_node,
+                        error: expr_error,
+                    } => {
+                        match {
+                            let leading_trivia = self.optional_leading_trivia(stream);
+                            let start = stream.position();
+                            if self.scan_semicolon(stream) {
+                                let end = stream.position();
+                                let trailing_trivia = self.optional_trailing_trivia(stream);
+                                Pass {
+                                    node: cst::Node::token(
+                                        TokenKind::Semicolon,
+                                        Range { start, end },
+                                        leading_trivia,
+                                        trailing_trivia,
+                                    ),
+                                    error: None,
+                                }
+                            } else {
+                                Fail {
+                                    error: ParseError::new(start, "Semicolon"),
+                                }
+                            }
+                        } {
+                            Fail { error } => Fail {
+                                error: error.maybe_merge_with(expr_error),
+                            },
+                            Pass {
+                                node: terminator_node,
+                                ..
+                            } => Pass {
+                                node: cst::Node::rule(
+                                    RuleKind::_TERMINATEDBY,
+                                    vec![expr_node, terminator_node],
+                                ),
+                                error: None,
+                            },
                         }
                     }
-                };
-                let result_2 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, ';') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Semicolon,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "';'"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
-                    error: furthest_error,
-                };
+                }
             }
         } {
             Pass { node, error } => Pass {
@@ -8268,7 +10681,7 @@ impl Language {
         }
     }
 
-    // InheritanceSpecifierList = «IsKeyword» InheritanceSpecifier { ',' InheritanceSpecifier } ;
+    // InheritanceSpecifierList = «IsKeyword» InheritanceSpecifier«Comma» { «Comma» InheritanceSpecifier } ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_inheritance_specifier_list(&self, stream: &mut Stream) -> ParseResult {
@@ -8317,7 +10730,7 @@ impl Language {
                                 match {
                                     let leading_trivia = self.optional_leading_trivia(stream);
                                     let start = stream.position();
-                                    if scan_chars!(stream, ',') {
+                                    if self.scan_comma(stream) {
                                         let end = stream.position();
                                         let trailing_trivia = self.optional_trailing_trivia(stream);
                                         Pass {
@@ -8331,7 +10744,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "','"),
+                                            error: ParseError::new(start, "Comma"),
                                         }
                                     }
                                 } {
@@ -8372,7 +10785,7 @@ impl Language {
         }
     }
 
-    // InterfaceDefinition = «InterfaceKeyword» «Identifier» [ InheritanceSpecifierList ] '{' { ContractBodyElement } '}' ;
+    // InterfaceDefinition = «InterfaceKeyword» «Identifier» [ InheritanceSpecifierList ] «OpenBrace» { ContractBodyElement } «CloseBrace» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_interface_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -8468,7 +10881,7 @@ impl Language {
                     match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        if scan_chars!(stream, '{') {
+                        if self.scan_open_brace(stream) {
                             let end = stream.position();
                             let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
@@ -8482,7 +10895,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "'{'"),
+                                error: ParseError::new(start, "OpenBrace"),
                             }
                         }
                     } {
@@ -8514,7 +10927,7 @@ impl Language {
                                     match {
                                         let leading_trivia = self.optional_leading_trivia(stream);
                                         let start = stream.position();
-                                        if scan_chars!(stream, '}') {
+                                        if self.scan_close_brace(stream) {
                                             let end = stream.position();
                                             let trailing_trivia =
                                                 self.optional_trailing_trivia(stream);
@@ -8529,7 +10942,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "'}'"),
+                                                error: ParseError::new(start, "CloseBrace"),
                                             }
                                         }
                                     } {
@@ -8708,7 +11121,7 @@ impl Language {
         }
     }
 
-    // LibraryDefinition = «LibraryKeyword» «Identifier» '{' { ContractBodyElement } '}' ;
+    // LibraryDefinition = «LibraryKeyword» «Identifier» «OpenBrace» { ContractBodyElement } «CloseBrace» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_library_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -8781,7 +11194,7 @@ impl Language {
                     match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        if scan_chars!(stream, '{') {
+                        if self.scan_open_brace(stream) {
                             let end = stream.position();
                             let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
@@ -8795,7 +11208,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "'{'"),
+                                error: ParseError::new(start, "OpenBrace"),
                             }
                         }
                     } {
@@ -8827,7 +11240,7 @@ impl Language {
                                     match {
                                         let leading_trivia = self.optional_leading_trivia(stream);
                                         let start = stream.position();
-                                        if scan_chars!(stream, '}') {
+                                        if self.scan_close_brace(stream) {
                                             let end = stream.position();
                                             let trailing_trivia =
                                                 self.optional_trailing_trivia(stream);
@@ -8842,7 +11255,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "'}'"),
+                                                error: ParseError::new(start, "CloseBrace"),
                                             }
                                         }
                                     } {
@@ -9013,7 +11426,7 @@ impl Language {
         }
     }
 
-    // MappingType = «MappingKeyword» '(' MappingKeyType "=>" MappingValueType ')' ;
+    // MappingType = «MappingKeyword» «OpenParen» MappingKeyType «EqualGreaterThan» MappingValueType «CloseParen» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_mapping_type(&self, stream: &mut Stream) -> ParseResult {
@@ -9055,7 +11468,7 @@ impl Language {
                     match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        if scan_chars!(stream, '(') {
+                        if self.scan_open_paren(stream) {
                             let end = stream.position();
                             let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
@@ -9069,7 +11482,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "'('"),
+                                error: ParseError::new(start, "OpenParen"),
                             }
                         }
                     } {
@@ -9094,12 +11507,12 @@ impl Language {
                                 let result_1 = match {
                                     let leading_trivia = self.optional_leading_trivia(stream);
                                     let start = stream.position();
-                                    if scan_chars!(stream, '=', '>') {
+                                    if self.scan_equal_greater_than(stream) {
                                         let end = stream.position();
                                         let trailing_trivia = self.optional_trailing_trivia(stream);
                                         Pass {
                                             node: cst::Node::token(
-                                                TokenKind::EqualGreater,
+                                                TokenKind::EqualGreaterThan,
                                                 Range { start, end },
                                                 leading_trivia,
                                                 trailing_trivia,
@@ -9108,7 +11521,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "'=>'"),
+                                            error: ParseError::new(start, "EqualGreaterThan"),
                                         }
                                     }
                                 } {
@@ -9151,7 +11564,7 @@ impl Language {
                                     match {
                                         let leading_trivia = self.optional_leading_trivia(stream);
                                         let start = stream.position();
-                                        if scan_chars!(stream, ')') {
+                                        if self.scan_close_paren(stream) {
                                             let end = stream.position();
                                             let trailing_trivia =
                                                 self.optional_trailing_trivia(stream);
@@ -9166,7 +11579,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "')'"),
+                                                error: ParseError::new(start, "CloseParen"),
                                             }
                                         }
                                     } {
@@ -9357,7 +11770,7 @@ impl Language {
         }
     }
 
-    // ModifierDefinition = «ModifierKeyword» «Identifier» [ ParameterList ] { ModifierAttribute } ( ';' | Block ) ;
+    // ModifierDefinition = «ModifierKeyword» «Identifier» [ ParameterList ] { ModifierAttribute } ( «Semicolon» | Block ) ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_modifier_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -9481,7 +11894,7 @@ impl Language {
                     match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        if scan_chars!(stream, ';') {
+                        if self.scan_semicolon(stream) {
                             let end = stream.position();
                             let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
@@ -9495,7 +11908,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "';'"),
+                                error: ParseError::new(start, "Semicolon"),
                             }
                         }
                     } {
@@ -9593,7 +12006,7 @@ impl Language {
         }
     }
 
-    // NamedArgument = «Identifier» ':' Expression ;
+    // NamedArgument = «Identifier» «Colon» Expression ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_named_argument(&self, stream: &mut Stream) -> ParseResult {
@@ -9634,7 +12047,7 @@ impl Language {
                 let result_1 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, ':') {
+                    if self.scan_colon(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
@@ -9648,7 +12061,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "':'"),
+                            error: ParseError::new(start, "Colon"),
                         }
                     }
                 } {
@@ -9687,7 +12100,7 @@ impl Language {
         }
     }
 
-    // NamedArgumentList = '{' [ NamedArgument { ',' NamedArgument } ] '}' ;
+    // NamedArgumentList = «OpenBrace» [ NamedArgument«Comma» { «Comma» NamedArgument } ] «CloseBrace» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_named_argument_list(&self, stream: &mut Stream) -> ParseResult {
@@ -9696,7 +12109,7 @@ impl Language {
                 match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, '{') {
+                    if self.scan_open_brace(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
@@ -9710,7 +12123,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'{'"),
+                            error: ParseError::new(start, "OpenBrace"),
                         }
                     }
                 } {
@@ -9732,7 +12145,7 @@ impl Language {
                                                 let leading_trivia =
                                                     self.optional_leading_trivia(stream);
                                                 let start = stream.position();
-                                                if scan_chars!(stream, ',') {
+                                                if self.scan_comma(stream) {
                                                     let end = stream.position();
                                                     let trailing_trivia =
                                                         self.optional_trailing_trivia(stream);
@@ -9747,7 +12160,7 @@ impl Language {
                                                     }
                                                 } else {
                                                     Fail {
-                                                        error: ParseError::new(start, "','"),
+                                                        error: ParseError::new(start, "Comma"),
                                                     }
                                                 }
                                             } {
@@ -9785,7 +12198,7 @@ impl Language {
                                 match {
                                     let leading_trivia = self.optional_leading_trivia(stream);
                                     let start = stream.position();
-                                    if scan_chars!(stream, '}') {
+                                    if self.scan_close_brace(stream) {
                                         let end = stream.position();
                                         let trailing_trivia = self.optional_trailing_trivia(stream);
                                         Pass {
@@ -9799,7 +12212,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "'}'"),
+                                            error: ParseError::new(start, "CloseBrace"),
                                         }
                                     }
                                 } {
@@ -10298,7 +12711,7 @@ impl Language {
         }
     }
 
-    // OverrideSpecifier = «OverrideKeyword» [ '(' IdentifierPath { ',' IdentifierPath } ')' ] ;
+    // OverrideSpecifier = «OverrideKeyword» [ «OpenParen» IdentifierPath«Comma» { «Comma» IdentifierPath } «CloseParen» ] ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_override_specifier(&self, stream: &mut Stream) -> ParseResult {
@@ -10342,7 +12755,7 @@ impl Language {
                         match {
                             let leading_trivia = self.optional_leading_trivia(stream);
                             let start = stream.position();
-                            if scan_chars!(stream, '(') {
+                            if self.scan_open_paren(stream) {
                                 let end = stream.position();
                                 let trailing_trivia = self.optional_trailing_trivia(stream);
                                 Pass {
@@ -10356,7 +12769,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "'('"),
+                                    error: ParseError::new(start, "OpenParen"),
                                 }
                             }
                         } {
@@ -10376,7 +12789,7 @@ impl Language {
                                                     let leading_trivia =
                                                         self.optional_leading_trivia(stream);
                                                     let start = stream.position();
-                                                    if scan_chars!(stream, ',') {
+                                                    if self.scan_comma(stream) {
                                                         let end = stream.position();
                                                         let trailing_trivia =
                                                             self.optional_trailing_trivia(stream);
@@ -10391,7 +12804,7 @@ impl Language {
                                                         }
                                                     } else {
                                                         Fail {
-                                                            error: ParseError::new(start, "','"),
+                                                            error: ParseError::new(start, "Comma"),
                                                         }
                                                     }
                                                 } {
@@ -10420,7 +12833,7 @@ impl Language {
                                             let leading_trivia =
                                                 self.optional_leading_trivia(stream);
                                             let start = stream.position();
-                                            if scan_chars!(stream, ')') {
+                                            if self.scan_close_paren(stream) {
                                                 let end = stream.position();
                                                 let trailing_trivia =
                                                     self.optional_trailing_trivia(stream);
@@ -10435,7 +12848,7 @@ impl Language {
                                                 }
                                             } else {
                                                 Fail {
-                                                    error: ParseError::new(start, "')'"),
+                                                    error: ParseError::new(start, "CloseParen"),
                                                 }
                                             }
                                         } {
@@ -10589,7 +13002,7 @@ impl Language {
         }
     }
 
-    // ParameterList = '(' [ ParameterDeclaration { ',' ParameterDeclaration } ] ')' ;
+    // ParameterList = «OpenParen» [ ParameterDeclaration«Comma» { «Comma» ParameterDeclaration } ] «CloseParen» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_parameter_list(&self, stream: &mut Stream) -> ParseResult {
@@ -10598,7 +13011,7 @@ impl Language {
                 match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, '(') {
+                    if self.scan_open_paren(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
@@ -10612,7 +13025,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'('"),
+                            error: ParseError::new(start, "OpenParen"),
                         }
                     }
                 } {
@@ -10634,7 +13047,7 @@ impl Language {
                                                 let leading_trivia =
                                                     self.optional_leading_trivia(stream);
                                                 let start = stream.position();
-                                                if scan_chars!(stream, ',') {
+                                                if self.scan_comma(stream) {
                                                     let end = stream.position();
                                                     let trailing_trivia =
                                                         self.optional_trailing_trivia(stream);
@@ -10649,7 +13062,7 @@ impl Language {
                                                     }
                                                 } else {
                                                     Fail {
-                                                        error: ParseError::new(start, "','"),
+                                                        error: ParseError::new(start, "Comma"),
                                                     }
                                                 }
                                             } {
@@ -10687,7 +13100,7 @@ impl Language {
                                 match {
                                     let leading_trivia = self.optional_leading_trivia(stream);
                                     let start = stream.position();
-                                    if scan_chars!(stream, ')') {
+                                    if self.scan_close_paren(stream) {
                                         let end = stream.position();
                                         let trailing_trivia = self.optional_trailing_trivia(stream);
                                         Pass {
@@ -10701,7 +13114,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "')'"),
+                                            error: ParseError::new(start, "CloseParen"),
                                         }
                                     }
                                 } {
@@ -10767,7 +13180,7 @@ impl Language {
         }
     }
 
-    // PositionalArgumentList = Expression { ',' Expression } ;
+    // PositionalArgumentList = Expression«Comma» { «Comma» Expression } ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_positional_argument_list(&self, stream: &mut Stream) -> ParseResult {
@@ -10783,7 +13196,7 @@ impl Language {
                             match {
                                 let leading_trivia = self.optional_leading_trivia(stream);
                                 let start = stream.position();
-                                if scan_chars!(stream, ',') {
+                                if self.scan_comma(stream) {
                                     let end = stream.position();
                                     let trailing_trivia = self.optional_trailing_trivia(stream);
                                     Pass {
@@ -10797,7 +13210,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "','"),
+                                        error: ParseError::new(start, "Comma"),
                                     }
                                 }
                             } {
@@ -10823,110 +13236,125 @@ impl Language {
         }
     }
 
-    // PragmaDirective = «PragmaKeyword» ( VersionPragma | ABICoderPragma | ExperimentalPragma ) ';' ;
+    // PragmaDirective = «PragmaKeyword» ( VersionPragma | ABICoderPragma | ExperimentalPragma ) «Semicolon» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_pragma_directive(&self, stream: &mut Stream) -> ParseResult {
         match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if self.scan_pragma_keyword(stream) {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::PragmaKeyword,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
+            {
+                match loop {
+                    let mut furthest_error = None;
+                    let result_0 = match {
+                        let leading_trivia = self.optional_leading_trivia(stream);
+                        let start = stream.position();
+                        if self.scan_pragma_keyword(stream) {
+                            let end = stream.position();
+                            let trailing_trivia = self.optional_trailing_trivia(stream);
+                            Pass {
+                                node: cst::Node::token(
+                                    TokenKind::PragmaKeyword,
+                                    Range { start, end },
+                                    leading_trivia,
+                                    trailing_trivia,
+                                ),
+                                error: None,
+                            }
+                        } else {
+                            Fail {
+                                error: ParseError::new(start, "PragmaKeyword"),
+                            }
                         }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "PragmaKeyword"),
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
                         }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_1 = match loop {
+                        let start_position = stream.position();
+                        let mut furthest_error;
+                        match self.parse_version_pragma(stream) {
+                            Fail { error } => furthest_error = error,
+                            pass => break pass,
+                        }
+                        stream.set_position(start_position);
+                        match self.parse_abi_coder_pragma(stream) {
+                            Fail { error } => furthest_error.merge_with(error),
+                            pass => break pass,
+                        }
+                        stream.set_position(start_position);
+                        match self.parse_experimental_pragma(stream) {
+                            Fail { error } => furthest_error.merge_with(error),
+                            pass => break pass,
+                        }
                         break Fail {
-                            error: error.maybe_merge_with(furthest_error),
+                            error: furthest_error,
+                        };
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
                         }
-                    }
-                };
-                let result_1 = match loop {
-                    let start_position = stream.position();
-                    let mut furthest_error;
-                    match self.parse_version_pragma(stream) {
-                        Fail { error } => furthest_error = error,
-                        pass => break pass,
-                    }
-                    stream.set_position(start_position);
-                    match self.parse_abi_coder_pragma(stream) {
-                        Fail { error } => furthest_error.merge_with(error),
-                        pass => break pass,
-                    }
-                    stream.set_position(start_position);
-                    match self.parse_experimental_pragma(stream) {
-                        Fail { error } => furthest_error.merge_with(error),
-                        pass => break pass,
-                    }
-                    break Fail {
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    break Pass {
+                        node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
                         error: furthest_error,
                     };
                 } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
+                    err @ Fail { .. } => err,
+                    Pass {
+                        node: expr_node,
+                        error: expr_error,
+                    } => {
+                        match {
+                            let leading_trivia = self.optional_leading_trivia(stream);
+                            let start = stream.position();
+                            if self.scan_semicolon(stream) {
+                                let end = stream.position();
+                                let trailing_trivia = self.optional_trailing_trivia(stream);
+                                Pass {
+                                    node: cst::Node::token(
+                                        TokenKind::Semicolon,
+                                        Range { start, end },
+                                        leading_trivia,
+                                        trailing_trivia,
+                                    ),
+                                    error: None,
+                                }
+                            } else {
+                                Fail {
+                                    error: ParseError::new(start, "Semicolon"),
+                                }
+                            }
+                        } {
+                            Fail { error } => Fail {
+                                error: error.maybe_merge_with(expr_error),
+                            },
+                            Pass {
+                                node: terminator_node,
+                                ..
+                            } => Pass {
+                                node: cst::Node::rule(
+                                    RuleKind::_TERMINATEDBY,
+                                    vec![expr_node, terminator_node],
+                                ),
+                                error: None,
+                            },
                         }
                     }
-                };
-                let result_2 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, ';') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Semicolon,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "';'"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
-                    error: furthest_error,
-                };
+                }
             }
         } {
             Pass { node, error } => Pass {
@@ -11127,7 +13555,7 @@ impl Language {
         }
     }
 
-    // ReceiveFunctionDefinition = «ReceiveKeyword» ParameterList { ReceiveFunctionAttribute } ( ';' | Block ) ;
+    // ReceiveFunctionDefinition = «ReceiveKeyword» ParameterList { ReceiveFunctionAttribute } ( «Semicolon» | Block ) ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_receive_function_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -11208,7 +13636,7 @@ impl Language {
                     match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        if scan_chars!(stream, ';') {
+                        if self.scan_semicolon(stream) {
                             let end = stream.position();
                             let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
@@ -11222,7 +13650,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "';'"),
+                                error: ParseError::new(start, "Semicolon"),
                             }
                         }
                     } {
@@ -11265,102 +13693,117 @@ impl Language {
         }
     }
 
-    // ReturnStatement = «ReturnKeyword» [ Expression ] ';' ;
+    // ReturnStatement = «ReturnKeyword» [ Expression ] «Semicolon» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_return_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if self.scan_return_keyword(stream) {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::ReturnKeyword,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "ReturnKeyword"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_1 = match {
-                    let start_position = stream.position();
-                    match self.parse_expression(stream) {
-                        Fail { error } => {
-                            stream.set_position(start_position);
+            {
+                match loop {
+                    let mut furthest_error = None;
+                    let result_0 = match {
+                        let leading_trivia = self.optional_leading_trivia(stream);
+                        let start = stream.position();
+                        if self.scan_return_keyword(stream) {
+                            let end = stream.position();
+                            let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
-                                node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
-                                error: Some(error),
+                                node: cst::Node::token(
+                                    TokenKind::ReturnKeyword,
+                                    Range { start, end },
+                                    leading_trivia,
+                                    trailing_trivia,
+                                ),
+                                error: None,
+                            }
+                        } else {
+                            Fail {
+                                error: ParseError::new(start, "ReturnKeyword"),
                             }
                         }
-                        pass => pass,
-                    }
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_1 = match {
+                        let start_position = stream.position();
+                        match self.parse_expression(stream) {
+                            Fail { error } => {
+                                stream.set_position(start_position);
+                                Pass {
+                                    node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                    error: Some(error),
+                                }
+                            }
+                            pass => pass,
+                        }
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    break Pass {
+                        node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                        error: furthest_error,
+                    };
                 } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
+                    err @ Fail { .. } => err,
+                    Pass {
+                        node: expr_node,
+                        error: expr_error,
+                    } => {
+                        match {
+                            let leading_trivia = self.optional_leading_trivia(stream);
+                            let start = stream.position();
+                            if self.scan_semicolon(stream) {
+                                let end = stream.position();
+                                let trailing_trivia = self.optional_trailing_trivia(stream);
+                                Pass {
+                                    node: cst::Node::token(
+                                        TokenKind::Semicolon,
+                                        Range { start, end },
+                                        leading_trivia,
+                                        trailing_trivia,
+                                    ),
+                                    error: None,
+                                }
+                            } else {
+                                Fail {
+                                    error: ParseError::new(start, "Semicolon"),
+                                }
+                            }
+                        } {
+                            Fail { error } => Fail {
+                                error: error.maybe_merge_with(expr_error),
+                            },
+                            Pass {
+                                node: terminator_node,
+                                ..
+                            } => Pass {
+                                node: cst::Node::rule(
+                                    RuleKind::_TERMINATEDBY,
+                                    vec![expr_node, terminator_node],
+                                ),
+                                error: None,
+                            },
                         }
                     }
-                };
-                let result_2 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, ';') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Semicolon,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "';'"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
-                    error: furthest_error,
-                };
+                }
             }
         } {
             Pass { node, error } => Pass {
@@ -11371,116 +13814,132 @@ impl Language {
         }
     }
 
-    // RevertStatement = «RevertKeyword» [ IdentifierPath ] ArgumentList ';' ;
+    // RevertStatement = «RevertKeyword» [ IdentifierPath ] ArgumentList «Semicolon» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_revert_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if self.scan_revert_keyword(stream) {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::RevertKeyword,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "RevertKeyword"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_1 = match {
-                    let start_position = stream.position();
-                    match self.parse_identifier_path(stream) {
-                        Fail { error } => {
-                            stream.set_position(start_position);
+            {
+                match loop {
+                    let mut furthest_error = None;
+                    let result_0 = match {
+                        let leading_trivia = self.optional_leading_trivia(stream);
+                        let start = stream.position();
+                        if self.scan_revert_keyword(stream) {
+                            let end = stream.position();
+                            let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
-                                node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
-                                error: Some(error),
+                                node: cst::Node::token(
+                                    TokenKind::RevertKeyword,
+                                    Range { start, end },
+                                    leading_trivia,
+                                    trailing_trivia,
+                                ),
+                                error: None,
+                            }
+                        } else {
+                            Fail {
+                                error: ParseError::new(start, "RevertKeyword"),
                             }
                         }
-                        pass => pass,
-                    }
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_1 = match {
+                        let start_position = stream.position();
+                        match self.parse_identifier_path(stream) {
+                            Fail { error } => {
+                                stream.set_position(start_position);
+                                Pass {
+                                    node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                    error: Some(error),
+                                }
+                            }
+                            pass => pass,
+                        }
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_2 = match self.parse_argument_list(stream) {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    break Pass {
+                        node: cst::Node::rule(
+                            RuleKind::_SEQUENCE,
+                            vec![result_0, result_1, result_2],
+                        ),
+                        error: furthest_error,
+                    };
                 } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
+                    err @ Fail { .. } => err,
+                    Pass {
+                        node: expr_node,
+                        error: expr_error,
+                    } => {
+                        match {
+                            let leading_trivia = self.optional_leading_trivia(stream);
+                            let start = stream.position();
+                            if self.scan_semicolon(stream) {
+                                let end = stream.position();
+                                let trailing_trivia = self.optional_trailing_trivia(stream);
+                                Pass {
+                                    node: cst::Node::token(
+                                        TokenKind::Semicolon,
+                                        Range { start, end },
+                                        leading_trivia,
+                                        trailing_trivia,
+                                    ),
+                                    error: None,
+                                }
+                            } else {
+                                Fail {
+                                    error: ParseError::new(start, "Semicolon"),
+                                }
+                            }
+                        } {
+                            Fail { error } => Fail {
+                                error: error.maybe_merge_with(expr_error),
+                            },
+                            Pass {
+                                node: terminator_node,
+                                ..
+                            } => Pass {
+                                node: cst::Node::rule(
+                                    RuleKind::_TERMINATEDBY,
+                                    vec![expr_node, terminator_node],
+                                ),
+                                error: None,
+                            },
                         }
                     }
-                };
-                let result_2 = match self.parse_argument_list(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_3 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, ';') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Semicolon,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "';'"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(
-                        RuleKind::_SEQUENCE,
-                        vec![result_0, result_1, result_2, result_3],
-                    ),
-                    error: furthest_error,
-                };
+                }
             }
         } {
             Pass { node, error } => Pass {
@@ -11636,7 +14095,7 @@ impl Language {
         }
     }
 
-    // SelectingImportDirective = '{' SelectedImport { ',' SelectedImport } '}' «FromKeyword» ImportPath ;
+    // SelectingImportDirective = «OpenBrace» SelectedImport«Comma» { «Comma» SelectedImport } «CloseBrace» «FromKeyword» ImportPath ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_selecting_import_directive(&self, stream: &mut Stream) -> ParseResult {
@@ -11647,7 +14106,7 @@ impl Language {
                     match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        if scan_chars!(stream, '{') {
+                        if self.scan_open_brace(stream) {
                             let end = stream.position();
                             let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
@@ -11661,7 +14120,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "'{'"),
+                                error: ParseError::new(start, "OpenBrace"),
                             }
                         }
                     } {
@@ -11681,7 +14140,7 @@ impl Language {
                                                 let leading_trivia =
                                                     self.optional_leading_trivia(stream);
                                                 let start = stream.position();
-                                                if scan_chars!(stream, ',') {
+                                                if self.scan_comma(stream) {
                                                     let end = stream.position();
                                                     let trailing_trivia =
                                                         self.optional_trailing_trivia(stream);
@@ -11696,7 +14155,7 @@ impl Language {
                                                     }
                                                 } else {
                                                     Fail {
-                                                        error: ParseError::new(start, "','"),
+                                                        error: ParseError::new(start, "Comma"),
                                                     }
                                                 }
                                             } {
@@ -11724,7 +14183,7 @@ impl Language {
                                     match {
                                         let leading_trivia = self.optional_leading_trivia(stream);
                                         let start = stream.position();
-                                        if scan_chars!(stream, '}') {
+                                        if self.scan_close_brace(stream) {
                                             let end = stream.position();
                                             let trailing_trivia =
                                                 self.optional_trailing_trivia(stream);
@@ -11739,7 +14198,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "'}'"),
+                                                error: ParseError::new(start, "CloseBrace"),
                                             }
                                         }
                                     } {
@@ -12081,7 +14540,7 @@ impl Language {
         }
     }
 
-    // StarImportDirective = '*' «AsKeyword» «Identifier» «FromKeyword» ImportPath ;
+    // StarImportDirective = «Star» «AsKeyword» «Identifier» «FromKeyword» ImportPath ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_star_import_directive(&self, stream: &mut Stream) -> ParseResult {
@@ -12091,7 +14550,7 @@ impl Language {
                 let result_0 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, '*') {
+                    if self.scan_star(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
@@ -12105,7 +14564,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'*'"),
+                            error: ParseError::new(start, "Star"),
                         }
                     }
                 } {
@@ -12390,94 +14849,184 @@ impl Language {
         }
     }
 
-    // StateVariableDeclaration = TypeName { StateVariableAttribute } «Identifier» [ '=' Expression ] ';' ;
+    // StateVariableDeclaration = TypeName { StateVariableAttribute } «Identifier» [ «Equal» Expression ] «Semicolon» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_state_variable_declaration(&self, stream: &mut Stream) -> ParseResult {
         match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match self.parse_type_name(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
+            {
+                match loop {
+                    let mut furthest_error = None;
+                    let result_0 = match self.parse_type_name(stream) {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
                         }
-                    }
-                };
-                let result_1 = match {
-                    let mut result = Vec::new();
-                    loop {
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_1 = match {
+                        let mut result = Vec::new();
+                        loop {
+                            let start_position = stream.position();
+                            match self.parse_state_variable_attribute(stream) {
+                                Fail { error } => {
+                                    stream.set_position(start_position);
+                                    break Pass {
+                                        node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                        error: Some(error),
+                                    };
+                                }
+                                Pass { node, .. } => result.push(node),
+                            }
+                        }
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_2 = match {
+                        let leading_trivia = self.optional_leading_trivia(stream);
+                        let start = stream.position();
+                        if self.scan_identifier(stream) {
+                            let end = stream.position();
+                            let trailing_trivia = self.optional_trailing_trivia(stream);
+                            Pass {
+                                node: cst::Node::token(
+                                    TokenKind::Identifier,
+                                    Range { start, end },
+                                    leading_trivia,
+                                    trailing_trivia,
+                                ),
+                                error: None,
+                            }
+                        } else {
+                            Fail {
+                                error: ParseError::new(start, "Identifier"),
+                            }
+                        }
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_3 = match {
                         let start_position = stream.position();
-                        match self.parse_state_variable_attribute(stream) {
+                        match loop {
+                            let mut furthest_error = None;
+                            let result_0 = match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_equal(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::Equal,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "Equal"),
+                                    }
+                                }
+                            } {
+                                Pass { node, error } => {
+                                    furthest_error =
+                                        error.map(|error| error.maybe_merge_with(furthest_error));
+                                    node
+                                }
+                                Fail { error } => {
+                                    break Fail {
+                                        error: error.maybe_merge_with(furthest_error),
+                                    }
+                                }
+                            };
+                            let result_1 = match self.parse_expression(stream) {
+                                Pass { node, error } => {
+                                    furthest_error =
+                                        error.map(|error| error.maybe_merge_with(furthest_error));
+                                    node
+                                }
+                                Fail { error } => {
+                                    break Fail {
+                                        error: error.maybe_merge_with(furthest_error),
+                                    }
+                                }
+                            };
+                            break Pass {
+                                node: cst::Node::rule(
+                                    RuleKind::_SEQUENCE,
+                                    vec![result_0, result_1],
+                                ),
+                                error: furthest_error,
+                            };
+                        } {
                             Fail { error } => {
                                 stream.set_position(start_position);
-                                break Pass {
-                                    node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                Pass {
+                                    node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
                                     error: Some(error),
-                                };
+                                }
                             }
-                            Pass { node, .. } => result.push(node),
+                            pass => pass,
                         }
-                    }
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    break Pass {
+                        node: cst::Node::rule(
+                            RuleKind::_SEQUENCE,
+                            vec![result_0, result_1, result_2, result_3],
+                        ),
+                        error: furthest_error,
+                    };
                 } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_2 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if self.scan_identifier(stream) {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Identifier,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "Identifier"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_3 = match {
-                    let start_position = stream.position();
-                    match loop {
-                        let mut furthest_error = None;
-                        let result_0 = match {
+                    err @ Fail { .. } => err,
+                    Pass {
+                        node: expr_node,
+                        error: expr_error,
+                    } => {
+                        match {
                             let leading_trivia = self.optional_leading_trivia(stream);
                             let start = stream.position();
-                            if scan_chars!(stream, '=') {
+                            if self.scan_semicolon(stream) {
                                 let end = stream.position();
                                 let trailing_trivia = self.optional_trailing_trivia(stream);
                                 Pass {
                                     node: cst::Node::token(
-                                        TokenKind::Equal,
+                                        TokenKind::Semicolon,
                                         Range { start, end },
                                         leading_trivia,
                                         trailing_trivia,
@@ -12486,96 +15035,26 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "'='"),
+                                    error: ParseError::new(start, "Semicolon"),
                                 }
                             }
                         } {
-                            Pass { node, error } => {
-                                furthest_error =
-                                    error.map(|error| error.maybe_merge_with(furthest_error));
-                                node
-                            }
-                            Fail { error } => {
-                                break Fail {
-                                    error: error.maybe_merge_with(furthest_error),
-                                }
-                            }
-                        };
-                        let result_1 = match self.parse_expression(stream) {
-                            Pass { node, error } => {
-                                furthest_error =
-                                    error.map(|error| error.maybe_merge_with(furthest_error));
-                                node
-                            }
-                            Fail { error } => {
-                                break Fail {
-                                    error: error.maybe_merge_with(furthest_error),
-                                }
-                            }
-                        };
-                        break Pass {
-                            node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
-                            error: furthest_error,
-                        };
-                    } {
-                        Fail { error } => {
-                            stream.set_position(start_position);
+                            Fail { error } => Fail {
+                                error: error.maybe_merge_with(expr_error),
+                            },
                             Pass {
-                                node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
-                                error: Some(error),
-                            }
-                        }
-                        pass => pass,
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
+                                node: terminator_node,
+                                ..
+                            } => Pass {
+                                node: cst::Node::rule(
+                                    RuleKind::_TERMINATEDBY,
+                                    vec![expr_node, terminator_node],
+                                ),
+                                error: None,
+                            },
                         }
                     }
-                };
-                let result_4 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, ';') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Semicolon,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "';'"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(
-                        RuleKind::_SEQUENCE,
-                        vec![result_0, result_1, result_2, result_3, result_4],
-                    ),
-                    error: furthest_error,
-                };
+                }
             }
         } {
             Pass { node, error } => Pass {
@@ -12825,7 +15304,7 @@ impl Language {
         }
     }
 
-    // StructDefinition = «StructKeyword» «Identifier» '{' 1…{ StructMember } '}' ;
+    // StructDefinition = «StructKeyword» «Identifier» «OpenBrace» 1…{ StructMember } «CloseBrace» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_struct_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -12898,7 +15377,7 @@ impl Language {
                     match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        if scan_chars!(stream, '{') {
+                        if self.scan_open_brace(stream) {
                             let end = stream.position();
                             let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
@@ -12912,7 +15391,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "'{'"),
+                                error: ParseError::new(start, "OpenBrace"),
                             }
                         }
                     } {
@@ -12947,7 +15426,7 @@ impl Language {
                                     match {
                                         let leading_trivia = self.optional_leading_trivia(stream);
                                         let start = stream.position();
-                                        if scan_chars!(stream, '}') {
+                                        if self.scan_close_brace(stream) {
                                             let end = stream.position();
                                             let trailing_trivia =
                                                 self.optional_trailing_trivia(stream);
@@ -12962,7 +15441,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "'}'"),
+                                                error: ParseError::new(start, "CloseBrace"),
                                             }
                                         }
                                     } {
@@ -13008,90 +15487,105 @@ impl Language {
         }
     }
 
-    // StructMember = TypeName «Identifier» ';' ;
+    // StructMember = TypeName «Identifier» «Semicolon» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_struct_member(&self, stream: &mut Stream) -> ParseResult {
         match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match self.parse_type_name(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
+            {
+                match loop {
+                    let mut furthest_error = None;
+                    let result_0 = match self.parse_type_name(stream) {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
                         }
-                    }
-                };
-                let result_1 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if self.scan_identifier(stream) {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Identifier,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
                         }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "Identifier"),
+                    };
+                    let result_1 = match {
+                        let leading_trivia = self.optional_leading_trivia(stream);
+                        let start = stream.position();
+                        if self.scan_identifier(stream) {
+                            let end = stream.position();
+                            let trailing_trivia = self.optional_trailing_trivia(stream);
+                            Pass {
+                                node: cst::Node::token(
+                                    TokenKind::Identifier,
+                                    Range { start, end },
+                                    leading_trivia,
+                                    trailing_trivia,
+                                ),
+                                error: None,
+                            }
+                        } else {
+                            Fail {
+                                error: ParseError::new(start, "Identifier"),
+                            }
                         }
-                    }
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    break Pass {
+                        node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                        error: furthest_error,
+                    };
                 } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
+                    err @ Fail { .. } => err,
+                    Pass {
+                        node: expr_node,
+                        error: expr_error,
+                    } => {
+                        match {
+                            let leading_trivia = self.optional_leading_trivia(stream);
+                            let start = stream.position();
+                            if self.scan_semicolon(stream) {
+                                let end = stream.position();
+                                let trailing_trivia = self.optional_trailing_trivia(stream);
+                                Pass {
+                                    node: cst::Node::token(
+                                        TokenKind::Semicolon,
+                                        Range { start, end },
+                                        leading_trivia,
+                                        trailing_trivia,
+                                    ),
+                                    error: None,
+                                }
+                            } else {
+                                Fail {
+                                    error: ParseError::new(start, "Semicolon"),
+                                }
+                            }
+                        } {
+                            Fail { error } => Fail {
+                                error: error.maybe_merge_with(expr_error),
+                            },
+                            Pass {
+                                node: terminator_node,
+                                ..
+                            } => Pass {
+                                node: cst::Node::rule(
+                                    RuleKind::_TERMINATEDBY,
+                                    vec![expr_node, terminator_node],
+                                ),
+                                error: None,
+                            },
                         }
                     }
-                };
-                let result_2 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, ';') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Semicolon,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "';'"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
-                    error: furthest_error,
-                };
+                }
             }
         } {
             Pass { node, error } => Pass {
@@ -13408,23 +15902,397 @@ impl Language {
         }
     }
 
-    // TupleDeconstructionStatement = '(' [ [ TypeName [ DataLocation ] «Identifier» | [ DataLocation ] «Identifier» ] { ',' [ TypeName [ DataLocation ] «Identifier» | [ DataLocation ] «Identifier» ] } ] ')' '=' Expression ';' ;
+    // TupleDeconstructionStatement = «OpenParen» [ [ TypeName [ DataLocation ] «Identifier» | [ DataLocation ] «Identifier» ]«Comma» { «Comma» [ TypeName [ DataLocation ] «Identifier» | [ DataLocation ] «Identifier» ] } ] «CloseParen» «Equal» Expression «Semicolon» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_tuple_deconstruction_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match {
-                    match {
+            {
+                match loop {
+                    let mut furthest_error = None;
+                    let result_0 = match {
+                        match {
+                            let leading_trivia = self.optional_leading_trivia(stream);
+                            let start = stream.position();
+                            if self.scan_open_paren(stream) {
+                                let end = stream.position();
+                                let trailing_trivia = self.optional_trailing_trivia(stream);
+                                Pass {
+                                    node: cst::Node::token(
+                                        TokenKind::OpenParen,
+                                        Range { start, end },
+                                        leading_trivia,
+                                        trailing_trivia,
+                                    ),
+                                    error: None,
+                                }
+                            } else {
+                                Fail {
+                                    error: ParseError::new(start, "OpenParen"),
+                                }
+                            }
+                        } {
+                            err @ Fail { .. } => err,
+                            Pass {
+                                node: open_node, ..
+                            } => {
+                                match {
+                                    let start_position = stream.position();
+                                    match {
+                                        let mut result = Vec::new();
+                                        loop {
+                                            match {
+                                                let start_position = stream.position();
+                                                match loop {
+                                                    let start_position = stream.position();
+                                                    let mut furthest_error;
+                                                    match loop {
+                                                        let mut furthest_error = None;
+                                                        let result_0 = match self
+                                                            .parse_type_name(stream)
+                                                        {
+                                                            Pass { node, error } => {
+                                                                furthest_error =
+                                                                    error.map(|error| {
+                                                                        error.maybe_merge_with(
+                                                                            furthest_error,
+                                                                        )
+                                                                    });
+                                                                node
+                                                            }
+                                                            Fail { error } => {
+                                                                break Fail {
+                                                                    error: error.maybe_merge_with(
+                                                                        furthest_error,
+                                                                    ),
+                                                                }
+                                                            }
+                                                        };
+                                                        let result_1 = match {
+                                                            let start_position = stream.position();
+                                                            match self.parse_data_location(stream) {
+                                                                Fail { error } => {
+                                                                    stream.set_position(
+                                                                        start_position,
+                                                                    );
+                                                                    Pass {
+                                                                        node: cst::Node::rule(
+                                                                            RuleKind::_OPTIONAL,
+                                                                            vec![],
+                                                                        ),
+                                                                        error: Some(error),
+                                                                    }
+                                                                }
+                                                                pass => pass,
+                                                            }
+                                                        } {
+                                                            Pass { node, error } => {
+                                                                furthest_error =
+                                                                    error.map(|error| {
+                                                                        error.maybe_merge_with(
+                                                                            furthest_error,
+                                                                        )
+                                                                    });
+                                                                node
+                                                            }
+                                                            Fail { error } => {
+                                                                break Fail {
+                                                                    error: error.maybe_merge_with(
+                                                                        furthest_error,
+                                                                    ),
+                                                                }
+                                                            }
+                                                        };
+                                                        let result_2 = match {
+                                                            let leading_trivia = self
+                                                                .optional_leading_trivia(stream);
+                                                            let start = stream.position();
+                                                            if self.scan_identifier(stream) {
+                                                                let end = stream.position();
+                                                                let trailing_trivia = self
+                                                                    .optional_trailing_trivia(
+                                                                        stream,
+                                                                    );
+                                                                Pass {
+                                                                    node: cst::Node::token(
+                                                                        TokenKind::Identifier,
+                                                                        Range { start, end },
+                                                                        leading_trivia,
+                                                                        trailing_trivia,
+                                                                    ),
+                                                                    error: None,
+                                                                }
+                                                            } else {
+                                                                Fail {
+                                                                    error: ParseError::new(
+                                                                        start,
+                                                                        "Identifier",
+                                                                    ),
+                                                                }
+                                                            }
+                                                        } {
+                                                            Pass { node, error } => {
+                                                                furthest_error =
+                                                                    error.map(|error| {
+                                                                        error.maybe_merge_with(
+                                                                            furthest_error,
+                                                                        )
+                                                                    });
+                                                                node
+                                                            }
+                                                            Fail { error } => {
+                                                                break Fail {
+                                                                    error: error.maybe_merge_with(
+                                                                        furthest_error,
+                                                                    ),
+                                                                }
+                                                            }
+                                                        };
+                                                        break Pass {
+                                                            node: cst::Node::rule(
+                                                                RuleKind::_SEQUENCE,
+                                                                vec![result_0, result_1, result_2],
+                                                            ),
+                                                            error: furthest_error,
+                                                        };
+                                                    } {
+                                                        Fail { error } => furthest_error = error,
+                                                        pass => break pass,
+                                                    }
+                                                    stream.set_position(start_position);
+                                                    match loop {
+                                                        let mut furthest_error = None;
+                                                        let result_0 = match {
+                                                            let start_position = stream.position();
+                                                            match self.parse_data_location(stream) {
+                                                                Fail { error } => {
+                                                                    stream.set_position(
+                                                                        start_position,
+                                                                    );
+                                                                    Pass {
+                                                                        node: cst::Node::rule(
+                                                                            RuleKind::_OPTIONAL,
+                                                                            vec![],
+                                                                        ),
+                                                                        error: Some(error),
+                                                                    }
+                                                                }
+                                                                pass => pass,
+                                                            }
+                                                        } {
+                                                            Pass { node, error } => {
+                                                                furthest_error =
+                                                                    error.map(|error| {
+                                                                        error.maybe_merge_with(
+                                                                            furthest_error,
+                                                                        )
+                                                                    });
+                                                                node
+                                                            }
+                                                            Fail { error } => {
+                                                                break Fail {
+                                                                    error: error.maybe_merge_with(
+                                                                        furthest_error,
+                                                                    ),
+                                                                }
+                                                            }
+                                                        };
+                                                        let result_1 = match {
+                                                            let leading_trivia = self
+                                                                .optional_leading_trivia(stream);
+                                                            let start = stream.position();
+                                                            if self.scan_identifier(stream) {
+                                                                let end = stream.position();
+                                                                let trailing_trivia = self
+                                                                    .optional_trailing_trivia(
+                                                                        stream,
+                                                                    );
+                                                                Pass {
+                                                                    node: cst::Node::token(
+                                                                        TokenKind::Identifier,
+                                                                        Range { start, end },
+                                                                        leading_trivia,
+                                                                        trailing_trivia,
+                                                                    ),
+                                                                    error: None,
+                                                                }
+                                                            } else {
+                                                                Fail {
+                                                                    error: ParseError::new(
+                                                                        start,
+                                                                        "Identifier",
+                                                                    ),
+                                                                }
+                                                            }
+                                                        } {
+                                                            Pass { node, error } => {
+                                                                furthest_error =
+                                                                    error.map(|error| {
+                                                                        error.maybe_merge_with(
+                                                                            furthest_error,
+                                                                        )
+                                                                    });
+                                                                node
+                                                            }
+                                                            Fail { error } => {
+                                                                break Fail {
+                                                                    error: error.maybe_merge_with(
+                                                                        furthest_error,
+                                                                    ),
+                                                                }
+                                                            }
+                                                        };
+                                                        break Pass {
+                                                            node: cst::Node::rule(
+                                                                RuleKind::_SEQUENCE,
+                                                                vec![result_0, result_1],
+                                                            ),
+                                                            error: furthest_error,
+                                                        };
+                                                    } {
+                                                        Fail { error } => {
+                                                            furthest_error.merge_with(error)
+                                                        }
+                                                        pass => break pass,
+                                                    }
+                                                    break Fail {
+                                                        error: furthest_error,
+                                                    };
+                                                } {
+                                                    Fail { error } => {
+                                                        stream.set_position(start_position);
+                                                        Pass {
+                                                            node: cst::Node::rule(
+                                                                RuleKind::_OPTIONAL,
+                                                                vec![],
+                                                            ),
+                                                            error: Some(error),
+                                                        }
+                                                    }
+                                                    pass => pass,
+                                                }
+                                            } {
+                                                err @ Fail { .. } => break err,
+                                                Pass { node, .. } => {
+                                                    result.push(node);
+                                                    let save = stream.position();
+                                                    match {
+                                                        let leading_trivia =
+                                                            self.optional_leading_trivia(stream);
+                                                        let start = stream.position();
+                                                        if self.scan_comma(stream) {
+                                                            let end = stream.position();
+                                                            let trailing_trivia = self
+                                                                .optional_trailing_trivia(stream);
+                                                            Pass {
+                                                                node: cst::Node::token(
+                                                                    TokenKind::Comma,
+                                                                    Range { start, end },
+                                                                    leading_trivia,
+                                                                    trailing_trivia,
+                                                                ),
+                                                                error: None,
+                                                            }
+                                                        } else {
+                                                            Fail {
+                                                                error: ParseError::new(
+                                                                    start, "Comma",
+                                                                ),
+                                                            }
+                                                        }
+                                                    } {
+                                                        Fail { error } => {
+                                                            stream.set_position(save);
+                                                            break Pass {
+                                                                node: cst::Node::rule(
+                                                                    RuleKind::_SEPARATEDBY,
+                                                                    result,
+                                                                ),
+                                                                error: Some(error),
+                                                            };
+                                                        }
+                                                        Pass { node, .. } => result.push(node),
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    } {
+                                        Fail { error } => {
+                                            stream.set_position(start_position);
+                                            Pass {
+                                                node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                                error: Some(error),
+                                            }
+                                        }
+                                        pass => pass,
+                                    }
+                                } {
+                                    err @ Fail { .. } => err,
+                                    Pass {
+                                        node: expr_node,
+                                        error: expr_error,
+                                    } => {
+                                        match {
+                                            let leading_trivia =
+                                                self.optional_leading_trivia(stream);
+                                            let start = stream.position();
+                                            if self.scan_close_paren(stream) {
+                                                let end = stream.position();
+                                                let trailing_trivia =
+                                                    self.optional_trailing_trivia(stream);
+                                                Pass {
+                                                    node: cst::Node::token(
+                                                        TokenKind::CloseParen,
+                                                        Range { start, end },
+                                                        leading_trivia,
+                                                        trailing_trivia,
+                                                    ),
+                                                    error: None,
+                                                }
+                                            } else {
+                                                Fail {
+                                                    error: ParseError::new(start, "CloseParen"),
+                                                }
+                                            }
+                                        } {
+                                            Fail { error } => Fail {
+                                                error: error.maybe_merge_with(expr_error),
+                                            },
+                                            Pass {
+                                                node: close_node, ..
+                                            } => Pass {
+                                                node: cst::Node::rule(
+                                                    RuleKind::_DELIMITEDBY,
+                                                    vec![open_node, expr_node, close_node],
+                                                ),
+                                                error: None,
+                                            },
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_1 = match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        if scan_chars!(stream, '(') {
+                        if self.scan_equal(stream) {
                             let end = stream.position();
                             let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
                                 node: cst::Node::token(
-                                    TokenKind::OpenParen,
+                                    TokenKind::Equal,
                                     Range { start, end },
                                     leading_trivia,
                                     trailing_trivia,
@@ -13433,425 +16301,83 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "'('"),
+                                error: ParseError::new(start, "Equal"),
                             }
                         }
                     } {
-                        err @ Fail { .. } => err,
-                        Pass {
-                            node: open_node, ..
-                        } => {
-                            match {
-                                let start_position = stream.position();
-                                match {
-                                    let mut result = Vec::new();
-                                    loop {
-                                        match {
-                                            let start_position = stream.position();
-                                            match loop {
-                                                let start_position = stream.position();
-                                                let mut furthest_error;
-                                                match loop {
-                                                    let mut furthest_error = None;
-                                                    let result_0 = match self
-                                                        .parse_type_name(stream)
-                                                    {
-                                                        Pass { node, error } => {
-                                                            furthest_error = error.map(|error| {
-                                                                error.maybe_merge_with(
-                                                                    furthest_error,
-                                                                )
-                                                            });
-                                                            node
-                                                        }
-                                                        Fail { error } => {
-                                                            break Fail {
-                                                                error: error.maybe_merge_with(
-                                                                    furthest_error,
-                                                                ),
-                                                            }
-                                                        }
-                                                    };
-                                                    let result_1 = match {
-                                                        let start_position = stream.position();
-                                                        match self.parse_data_location(stream) {
-                                                            Fail { error } => {
-                                                                stream.set_position(start_position);
-                                                                Pass {
-                                                                    node: cst::Node::rule(
-                                                                        RuleKind::_OPTIONAL,
-                                                                        vec![],
-                                                                    ),
-                                                                    error: Some(error),
-                                                                }
-                                                            }
-                                                            pass => pass,
-                                                        }
-                                                    } {
-                                                        Pass { node, error } => {
-                                                            furthest_error = error.map(|error| {
-                                                                error.maybe_merge_with(
-                                                                    furthest_error,
-                                                                )
-                                                            });
-                                                            node
-                                                        }
-                                                        Fail { error } => {
-                                                            break Fail {
-                                                                error: error.maybe_merge_with(
-                                                                    furthest_error,
-                                                                ),
-                                                            }
-                                                        }
-                                                    };
-                                                    let result_2 = match {
-                                                        let leading_trivia =
-                                                            self.optional_leading_trivia(stream);
-                                                        let start = stream.position();
-                                                        if self.scan_identifier(stream) {
-                                                            let end = stream.position();
-                                                            let trailing_trivia = self
-                                                                .optional_trailing_trivia(stream);
-                                                            Pass {
-                                                                node: cst::Node::token(
-                                                                    TokenKind::Identifier,
-                                                                    Range { start, end },
-                                                                    leading_trivia,
-                                                                    trailing_trivia,
-                                                                ),
-                                                                error: None,
-                                                            }
-                                                        } else {
-                                                            Fail {
-                                                                error: ParseError::new(
-                                                                    start,
-                                                                    "Identifier",
-                                                                ),
-                                                            }
-                                                        }
-                                                    } {
-                                                        Pass { node, error } => {
-                                                            furthest_error = error.map(|error| {
-                                                                error.maybe_merge_with(
-                                                                    furthest_error,
-                                                                )
-                                                            });
-                                                            node
-                                                        }
-                                                        Fail { error } => {
-                                                            break Fail {
-                                                                error: error.maybe_merge_with(
-                                                                    furthest_error,
-                                                                ),
-                                                            }
-                                                        }
-                                                    };
-                                                    break Pass {
-                                                        node: cst::Node::rule(
-                                                            RuleKind::_SEQUENCE,
-                                                            vec![result_0, result_1, result_2],
-                                                        ),
-                                                        error: furthest_error,
-                                                    };
-                                                } {
-                                                    Fail { error } => furthest_error = error,
-                                                    pass => break pass,
-                                                }
-                                                stream.set_position(start_position);
-                                                match loop {
-                                                    let mut furthest_error = None;
-                                                    let result_0 = match {
-                                                        let start_position = stream.position();
-                                                        match self.parse_data_location(stream) {
-                                                            Fail { error } => {
-                                                                stream.set_position(start_position);
-                                                                Pass {
-                                                                    node: cst::Node::rule(
-                                                                        RuleKind::_OPTIONAL,
-                                                                        vec![],
-                                                                    ),
-                                                                    error: Some(error),
-                                                                }
-                                                            }
-                                                            pass => pass,
-                                                        }
-                                                    } {
-                                                        Pass { node, error } => {
-                                                            furthest_error = error.map(|error| {
-                                                                error.maybe_merge_with(
-                                                                    furthest_error,
-                                                                )
-                                                            });
-                                                            node
-                                                        }
-                                                        Fail { error } => {
-                                                            break Fail {
-                                                                error: error.maybe_merge_with(
-                                                                    furthest_error,
-                                                                ),
-                                                            }
-                                                        }
-                                                    };
-                                                    let result_1 = match {
-                                                        let leading_trivia =
-                                                            self.optional_leading_trivia(stream);
-                                                        let start = stream.position();
-                                                        if self.scan_identifier(stream) {
-                                                            let end = stream.position();
-                                                            let trailing_trivia = self
-                                                                .optional_trailing_trivia(stream);
-                                                            Pass {
-                                                                node: cst::Node::token(
-                                                                    TokenKind::Identifier,
-                                                                    Range { start, end },
-                                                                    leading_trivia,
-                                                                    trailing_trivia,
-                                                                ),
-                                                                error: None,
-                                                            }
-                                                        } else {
-                                                            Fail {
-                                                                error: ParseError::new(
-                                                                    start,
-                                                                    "Identifier",
-                                                                ),
-                                                            }
-                                                        }
-                                                    } {
-                                                        Pass { node, error } => {
-                                                            furthest_error = error.map(|error| {
-                                                                error.maybe_merge_with(
-                                                                    furthest_error,
-                                                                )
-                                                            });
-                                                            node
-                                                        }
-                                                        Fail { error } => {
-                                                            break Fail {
-                                                                error: error.maybe_merge_with(
-                                                                    furthest_error,
-                                                                ),
-                                                            }
-                                                        }
-                                                    };
-                                                    break Pass {
-                                                        node: cst::Node::rule(
-                                                            RuleKind::_SEQUENCE,
-                                                            vec![result_0, result_1],
-                                                        ),
-                                                        error: furthest_error,
-                                                    };
-                                                } {
-                                                    Fail { error } => {
-                                                        furthest_error.merge_with(error)
-                                                    }
-                                                    pass => break pass,
-                                                }
-                                                break Fail {
-                                                    error: furthest_error,
-                                                };
-                                            } {
-                                                Fail { error } => {
-                                                    stream.set_position(start_position);
-                                                    Pass {
-                                                        node: cst::Node::rule(
-                                                            RuleKind::_OPTIONAL,
-                                                            vec![],
-                                                        ),
-                                                        error: Some(error),
-                                                    }
-                                                }
-                                                pass => pass,
-                                            }
-                                        } {
-                                            err @ Fail { .. } => break err,
-                                            Pass { node, .. } => {
-                                                result.push(node);
-                                                let save = stream.position();
-                                                match {
-                                                    let leading_trivia =
-                                                        self.optional_leading_trivia(stream);
-                                                    let start = stream.position();
-                                                    if scan_chars!(stream, ',') {
-                                                        let end = stream.position();
-                                                        let trailing_trivia =
-                                                            self.optional_trailing_trivia(stream);
-                                                        Pass {
-                                                            node: cst::Node::token(
-                                                                TokenKind::Comma,
-                                                                Range { start, end },
-                                                                leading_trivia,
-                                                                trailing_trivia,
-                                                            ),
-                                                            error: None,
-                                                        }
-                                                    } else {
-                                                        Fail {
-                                                            error: ParseError::new(start, "','"),
-                                                        }
-                                                    }
-                                                } {
-                                                    Fail { error } => {
-                                                        stream.set_position(save);
-                                                        break Pass {
-                                                            node: cst::Node::rule(
-                                                                RuleKind::_SEPARATEDBY,
-                                                                result,
-                                                            ),
-                                                            error: Some(error),
-                                                        };
-                                                    }
-                                                    Pass { node, .. } => result.push(node),
-                                                }
-                                            }
-                                        }
-                                    }
-                                } {
-                                    Fail { error } => {
-                                        stream.set_position(start_position);
-                                        Pass {
-                                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
-                                            error: Some(error),
-                                        }
-                                    }
-                                    pass => pass,
-                                }
-                            } {
-                                err @ Fail { .. } => err,
-                                Pass {
-                                    node: expr_node,
-                                    error: expr_error,
-                                } => {
-                                    match {
-                                        let leading_trivia = self.optional_leading_trivia(stream);
-                                        let start = stream.position();
-                                        if scan_chars!(stream, ')') {
-                                            let end = stream.position();
-                                            let trailing_trivia =
-                                                self.optional_trailing_trivia(stream);
-                                            Pass {
-                                                node: cst::Node::token(
-                                                    TokenKind::CloseParen,
-                                                    Range { start, end },
-                                                    leading_trivia,
-                                                    trailing_trivia,
-                                                ),
-                                                error: None,
-                                            }
-                                        } else {
-                                            Fail {
-                                                error: ParseError::new(start, "')'"),
-                                            }
-                                        }
-                                    } {
-                                        Fail { error } => Fail {
-                                            error: error.maybe_merge_with(expr_error),
-                                        },
-                                        Pass {
-                                            node: close_node, ..
-                                        } => Pass {
-                                            node: cst::Node::rule(
-                                                RuleKind::_DELIMITEDBY,
-                                                vec![open_node, expr_node, close_node],
-                                            ),
-                                            error: None,
-                                        },
-                                    }
-                                }
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
                             }
                         }
-                    }
+                    };
+                    let result_2 = match self.parse_expression(stream) {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    break Pass {
+                        node: cst::Node::rule(
+                            RuleKind::_SEQUENCE,
+                            vec![result_0, result_1, result_2],
+                        ),
+                        error: furthest_error,
+                    };
                 } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
+                    err @ Fail { .. } => err,
+                    Pass {
+                        node: expr_node,
+                        error: expr_error,
+                    } => {
+                        match {
+                            let leading_trivia = self.optional_leading_trivia(stream);
+                            let start = stream.position();
+                            if self.scan_semicolon(stream) {
+                                let end = stream.position();
+                                let trailing_trivia = self.optional_trailing_trivia(stream);
+                                Pass {
+                                    node: cst::Node::token(
+                                        TokenKind::Semicolon,
+                                        Range { start, end },
+                                        leading_trivia,
+                                        trailing_trivia,
+                                    ),
+                                    error: None,
+                                }
+                            } else {
+                                Fail {
+                                    error: ParseError::new(start, "Semicolon"),
+                                }
+                            }
+                        } {
+                            Fail { error } => Fail {
+                                error: error.maybe_merge_with(expr_error),
+                            },
+                            Pass {
+                                node: terminator_node,
+                                ..
+                            } => Pass {
+                                node: cst::Node::rule(
+                                    RuleKind::_TERMINATEDBY,
+                                    vec![expr_node, terminator_node],
+                                ),
+                                error: None,
+                            },
                         }
                     }
-                };
-                let result_1 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, '=') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Equal,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "'='"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_2 = match self.parse_expression(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_3 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, ';') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Semicolon,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "';'"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(
-                        RuleKind::_SEQUENCE,
-                        vec![result_0, result_1, result_2, result_3],
-                    ),
-                    error: furthest_error,
-                };
+                }
             }
         } {
             Pass { node, error } => Pass {
@@ -13862,7 +16388,7 @@ impl Language {
         }
     }
 
-    // TupleExpression = '(' [ Expression ] { ',' [ Expression ] } ')' ;
+    // TupleExpression = «OpenParen» [ Expression ]«Comma» { «Comma» [ Expression ] } «CloseParen» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_tuple_expression(&self, stream: &mut Stream) -> ParseResult {
@@ -13871,7 +16397,7 @@ impl Language {
                 match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, '(') {
+                    if self.scan_open_paren(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
@@ -13885,7 +16411,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'('"),
+                            error: ParseError::new(start, "OpenParen"),
                         }
                     }
                 } {
@@ -13917,7 +16443,7 @@ impl Language {
                                             let leading_trivia =
                                                 self.optional_leading_trivia(stream);
                                             let start = stream.position();
-                                            if scan_chars!(stream, ',') {
+                                            if self.scan_comma(stream) {
                                                 let end = stream.position();
                                                 let trailing_trivia =
                                                     self.optional_trailing_trivia(stream);
@@ -13932,7 +16458,7 @@ impl Language {
                                                 }
                                             } else {
                                                 Fail {
-                                                    error: ParseError::new(start, "','"),
+                                                    error: ParseError::new(start, "Comma"),
                                                 }
                                             }
                                         } {
@@ -13960,7 +16486,7 @@ impl Language {
                                 match {
                                     let leading_trivia = self.optional_leading_trivia(stream);
                                     let start = stream.position();
-                                    if scan_chars!(stream, ')') {
+                                    if self.scan_close_paren(stream) {
                                         let end = stream.position();
                                         let trailing_trivia = self.optional_trailing_trivia(stream);
                                         Pass {
@@ -13974,7 +16500,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "')'"),
+                                            error: ParseError::new(start, "CloseParen"),
                                         }
                                     }
                                 } {
@@ -14005,7 +16531,7 @@ impl Language {
         }
     }
 
-    // TypeExpression = «TypeKeyword» '(' TypeName ')' ;
+    // TypeExpression = «TypeKeyword» «OpenParen» TypeName «CloseParen» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_type_expression(&self, stream: &mut Stream) -> ParseResult {
@@ -14047,7 +16573,7 @@ impl Language {
                     match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        if scan_chars!(stream, '(') {
+                        if self.scan_open_paren(stream) {
                             let end = stream.position();
                             let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
@@ -14061,7 +16587,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "'('"),
+                                error: ParseError::new(start, "OpenParen"),
                             }
                         }
                     } {
@@ -14077,7 +16603,7 @@ impl Language {
                                 match {
                                     let leading_trivia = self.optional_leading_trivia(stream);
                                     let start = stream.position();
-                                    if scan_chars!(stream, ')') {
+                                    if self.scan_close_paren(stream) {
                                         let end = stream.position();
                                         let trailing_trivia = self.optional_trailing_trivia(stream);
                                         Pass {
@@ -14091,7 +16617,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "')'"),
+                                            error: ParseError::new(start, "CloseParen"),
                                         }
                                     }
                                 } {
@@ -14136,7 +16662,7 @@ impl Language {
         }
     }
 
-    // TypeName = ( ElementaryType | FunctionType | MappingType | IdentifierPath ) { '[' [ Expression ] ']' } ;
+    // TypeName = ( ElementaryType | FunctionType | MappingType | IdentifierPath ) { «OpenBracket» [ Expression ] «CloseBracket» } ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_type_name(&self, stream: &mut Stream) -> ParseResult {
@@ -14187,7 +16713,7 @@ impl Language {
                             match {
                                 let leading_trivia = self.optional_leading_trivia(stream);
                                 let start = stream.position();
-                                if scan_chars!(stream, '[') {
+                                if self.scan_open_bracket(stream) {
                                     let end = stream.position();
                                     let trailing_trivia = self.optional_trailing_trivia(stream);
                                     Pass {
@@ -14201,7 +16727,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "'['"),
+                                        error: ParseError::new(start, "OpenBracket"),
                                     }
                                 }
                             } {
@@ -14234,7 +16760,7 @@ impl Language {
                                                 let leading_trivia =
                                                     self.optional_leading_trivia(stream);
                                                 let start = stream.position();
-                                                if scan_chars!(stream, ']') {
+                                                if self.scan_close_bracket(stream) {
                                                     let end = stream.position();
                                                     let trailing_trivia =
                                                         self.optional_trailing_trivia(stream);
@@ -14249,7 +16775,10 @@ impl Language {
                                                     }
                                                 } else {
                                                     Fail {
-                                                        error: ParseError::new(start, "']'"),
+                                                        error: ParseError::new(
+                                                            start,
+                                                            "CloseBracket",
+                                                        ),
                                                     }
                                                 }
                                             } {
@@ -14369,7 +16898,7 @@ impl Language {
         }
     }
 
-    // UserDefinedValueTypeDefinition = «TypeKeyword» «Identifier» «IsKeyword» ElementaryType ';' ;
+    // UserDefinedValueTypeDefinition = «TypeKeyword» «Identifier» «IsKeyword» ElementaryType «Semicolon» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_user_defined_value_type_definition(
@@ -14377,150 +16906,167 @@ impl Language {
         stream: &mut Stream,
     ) -> ParseResult {
         match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if self.scan_type_keyword(stream) {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::TypeKeyword,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
+            {
+                match loop {
+                    let mut furthest_error = None;
+                    let result_0 = match {
+                        let leading_trivia = self.optional_leading_trivia(stream);
+                        let start = stream.position();
+                        if self.scan_type_keyword(stream) {
+                            let end = stream.position();
+                            let trailing_trivia = self.optional_trailing_trivia(stream);
+                            Pass {
+                                node: cst::Node::token(
+                                    TokenKind::TypeKeyword,
+                                    Range { start, end },
+                                    leading_trivia,
+                                    trailing_trivia,
+                                ),
+                                error: None,
+                            }
+                        } else {
+                            Fail {
+                                error: ParseError::new(start, "TypeKeyword"),
+                            }
                         }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "TypeKeyword"),
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
                         }
-                    }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_1 = match {
+                        let leading_trivia = self.optional_leading_trivia(stream);
+                        let start = stream.position();
+                        if self.scan_identifier(stream) {
+                            let end = stream.position();
+                            let trailing_trivia = self.optional_trailing_trivia(stream);
+                            Pass {
+                                node: cst::Node::token(
+                                    TokenKind::Identifier,
+                                    Range { start, end },
+                                    leading_trivia,
+                                    trailing_trivia,
+                                ),
+                                error: None,
+                            }
+                        } else {
+                            Fail {
+                                error: ParseError::new(start, "Identifier"),
+                            }
+                        }
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_2 = match {
+                        let leading_trivia = self.optional_leading_trivia(stream);
+                        let start = stream.position();
+                        if self.scan_is_keyword(stream) {
+                            let end = stream.position();
+                            let trailing_trivia = self.optional_trailing_trivia(stream);
+                            Pass {
+                                node: cst::Node::token(
+                                    TokenKind::IsKeyword,
+                                    Range { start, end },
+                                    leading_trivia,
+                                    trailing_trivia,
+                                ),
+                                error: None,
+                            }
+                        } else {
+                            Fail {
+                                error: ParseError::new(start, "IsKeyword"),
+                            }
+                        }
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_3 = match self.parse_elementary_type(stream) {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    break Pass {
+                        node: cst::Node::rule(
+                            RuleKind::_SEQUENCE,
+                            vec![result_0, result_1, result_2, result_3],
+                        ),
+                        error: furthest_error,
+                    };
                 } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
+                    err @ Fail { .. } => err,
+                    Pass {
+                        node: expr_node,
+                        error: expr_error,
+                    } => {
+                        match {
+                            let leading_trivia = self.optional_leading_trivia(stream);
+                            let start = stream.position();
+                            if self.scan_semicolon(stream) {
+                                let end = stream.position();
+                                let trailing_trivia = self.optional_trailing_trivia(stream);
+                                Pass {
+                                    node: cst::Node::token(
+                                        TokenKind::Semicolon,
+                                        Range { start, end },
+                                        leading_trivia,
+                                        trailing_trivia,
+                                    ),
+                                    error: None,
+                                }
+                            } else {
+                                Fail {
+                                    error: ParseError::new(start, "Semicolon"),
+                                }
+                            }
+                        } {
+                            Fail { error } => Fail {
+                                error: error.maybe_merge_with(expr_error),
+                            },
+                            Pass {
+                                node: terminator_node,
+                                ..
+                            } => Pass {
+                                node: cst::Node::rule(
+                                    RuleKind::_TERMINATEDBY,
+                                    vec![expr_node, terminator_node],
+                                ),
+                                error: None,
+                            },
                         }
                     }
-                };
-                let result_1 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if self.scan_identifier(stream) {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Identifier,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "Identifier"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_2 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if self.scan_is_keyword(stream) {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::IsKeyword,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "IsKeyword"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_3 = match self.parse_elementary_type(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_4 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, ';') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Semicolon,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "';'"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(
-                        RuleKind::_SEQUENCE,
-                        vec![result_0, result_1, result_2, result_3, result_4],
-                    ),
-                    error: furthest_error,
-                };
+                }
             }
         } {
             Pass { node, error } => Pass {
@@ -14531,62 +17077,237 @@ impl Language {
         }
     }
 
-    // UsingDirective = «UsingKeyword» ( IdentifierPath | '{' IdentifierPath { ',' IdentifierPath } '}' ) «ForKeyword» ( '*' | TypeName ) [ «GlobalKeyword» ] ';' ;
+    // UsingDirective = «UsingKeyword» ( IdentifierPath | «OpenBrace» IdentifierPath«Comma» { «Comma» IdentifierPath } «CloseBrace» ) «ForKeyword» ( «Star» | TypeName ) [ «GlobalKeyword» ] «Semicolon» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_using_directive(&self, stream: &mut Stream) -> ParseResult {
         match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if self.scan_using_keyword(stream) {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::UsingKeyword,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
+            {
+                match loop {
+                    let mut furthest_error = None;
+                    let result_0 = match {
+                        let leading_trivia = self.optional_leading_trivia(stream);
+                        let start = stream.position();
+                        if self.scan_using_keyword(stream) {
+                            let end = stream.position();
+                            let trailing_trivia = self.optional_trailing_trivia(stream);
+                            Pass {
+                                node: cst::Node::token(
+                                    TokenKind::UsingKeyword,
+                                    Range { start, end },
+                                    leading_trivia,
+                                    trailing_trivia,
+                                ),
+                                error: None,
+                            }
+                        } else {
+                            Fail {
+                                error: ParseError::new(start, "UsingKeyword"),
+                            }
                         }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "UsingKeyword"),
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
                         }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_1 = match loop {
+                        let start_position = stream.position();
+                        let mut furthest_error;
+                        match self.parse_identifier_path(stream) {
+                            Fail { error } => furthest_error = error,
+                            pass => break pass,
+                        }
+                        stream.set_position(start_position);
+                        match {
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_open_brace(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::OpenBrace,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "OpenBrace"),
+                                    }
+                                }
+                            } {
+                                err @ Fail { .. } => err,
+                                Pass {
+                                    node: open_node, ..
+                                } => {
+                                    match {
+                                        let mut result = Vec::new();
+                                        loop {
+                                            match self.parse_identifier_path(stream) {
+                                                err @ Fail { .. } => break err,
+                                                Pass { node, .. } => {
+                                                    result.push(node);
+                                                    let save = stream.position();
+                                                    match {
+                                                        let leading_trivia =
+                                                            self.optional_leading_trivia(stream);
+                                                        let start = stream.position();
+                                                        if self.scan_comma(stream) {
+                                                            let end = stream.position();
+                                                            let trailing_trivia = self
+                                                                .optional_trailing_trivia(stream);
+                                                            Pass {
+                                                                node: cst::Node::token(
+                                                                    TokenKind::Comma,
+                                                                    Range { start, end },
+                                                                    leading_trivia,
+                                                                    trailing_trivia,
+                                                                ),
+                                                                error: None,
+                                                            }
+                                                        } else {
+                                                            Fail {
+                                                                error: ParseError::new(
+                                                                    start, "Comma",
+                                                                ),
+                                                            }
+                                                        }
+                                                    } {
+                                                        Fail { error } => {
+                                                            stream.set_position(save);
+                                                            break Pass {
+                                                                node: cst::Node::rule(
+                                                                    RuleKind::_SEPARATEDBY,
+                                                                    result,
+                                                                ),
+                                                                error: Some(error),
+                                                            };
+                                                        }
+                                                        Pass { node, .. } => result.push(node),
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    } {
+                                        err @ Fail { .. } => err,
+                                        Pass {
+                                            node: expr_node,
+                                            error: expr_error,
+                                        } => {
+                                            match {
+                                                let leading_trivia =
+                                                    self.optional_leading_trivia(stream);
+                                                let start = stream.position();
+                                                if self.scan_close_brace(stream) {
+                                                    let end = stream.position();
+                                                    let trailing_trivia =
+                                                        self.optional_trailing_trivia(stream);
+                                                    Pass {
+                                                        node: cst::Node::token(
+                                                            TokenKind::CloseBrace,
+                                                            Range { start, end },
+                                                            leading_trivia,
+                                                            trailing_trivia,
+                                                        ),
+                                                        error: None,
+                                                    }
+                                                } else {
+                                                    Fail {
+                                                        error: ParseError::new(start, "CloseBrace"),
+                                                    }
+                                                }
+                                            } {
+                                                Fail { error } => Fail {
+                                                    error: error.maybe_merge_with(expr_error),
+                                                },
+                                                Pass {
+                                                    node: close_node, ..
+                                                } => Pass {
+                                                    node: cst::Node::rule(
+                                                        RuleKind::_DELIMITEDBY,
+                                                        vec![open_node, expr_node, close_node],
+                                                    ),
+                                                    error: None,
+                                                },
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        } {
+                            Fail { error } => furthest_error.merge_with(error),
+                            pass => break pass,
+                        }
                         break Fail {
-                            error: error.maybe_merge_with(furthest_error),
+                            error: furthest_error,
+                        };
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
                         }
-                    }
-                };
-                let result_1 = match loop {
-                    let start_position = stream.position();
-                    let mut furthest_error;
-                    match self.parse_identifier_path(stream) {
-                        Fail { error } => furthest_error = error,
-                        pass => break pass,
-                    }
-                    stream.set_position(start_position);
-                    match {
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_2 = match {
+                        let leading_trivia = self.optional_leading_trivia(stream);
+                        let start = stream.position();
+                        if self.scan_for_keyword(stream) {
+                            let end = stream.position();
+                            let trailing_trivia = self.optional_trailing_trivia(stream);
+                            Pass {
+                                node: cst::Node::token(
+                                    TokenKind::ForKeyword,
+                                    Range { start, end },
+                                    leading_trivia,
+                                    trailing_trivia,
+                                ),
+                                error: None,
+                            }
+                        } else {
+                            Fail {
+                                error: ParseError::new(start, "ForKeyword"),
+                            }
+                        }
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_3 = match loop {
+                        let start_position = stream.position();
+                        let mut furthest_error;
                         match {
                             let leading_trivia = self.optional_leading_trivia(stream);
                             let start = stream.position();
-                            if scan_chars!(stream, '{') {
+                            if self.scan_star(stream) {
                                 let end = stream.position();
                                 let trailing_trivia = self.optional_trailing_trivia(stream);
                                 Pass {
                                     node: cst::Node::token(
-                                        TokenKind::OpenBrace,
+                                        TokenKind::Star,
                                         Range { start, end },
                                         leading_trivia,
                                         trailing_trivia,
@@ -14595,282 +17316,127 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "'{'"),
+                                    error: ParseError::new(start, "Star"),
                                 }
                             }
                         } {
-                            err @ Fail { .. } => err,
-                            Pass {
-                                node: open_node, ..
-                            } => {
-                                match {
-                                    let mut result = Vec::new();
-                                    loop {
-                                        match self.parse_identifier_path(stream) {
-                                            err @ Fail { .. } => break err,
-                                            Pass { node, .. } => {
-                                                result.push(node);
-                                                let save = stream.position();
-                                                match {
-                                                    let leading_trivia =
-                                                        self.optional_leading_trivia(stream);
-                                                    let start = stream.position();
-                                                    if scan_chars!(stream, ',') {
-                                                        let end = stream.position();
-                                                        let trailing_trivia =
-                                                            self.optional_trailing_trivia(stream);
-                                                        Pass {
-                                                            node: cst::Node::token(
-                                                                TokenKind::Comma,
-                                                                Range { start, end },
-                                                                leading_trivia,
-                                                                trailing_trivia,
-                                                            ),
-                                                            error: None,
-                                                        }
-                                                    } else {
-                                                        Fail {
-                                                            error: ParseError::new(start, "','"),
-                                                        }
-                                                    }
-                                                } {
-                                                    Fail { error } => {
-                                                        stream.set_position(save);
-                                                        break Pass {
-                                                            node: cst::Node::rule(
-                                                                RuleKind::_SEPARATEDBY,
-                                                                result,
-                                                            ),
-                                                            error: Some(error),
-                                                        };
-                                                    }
-                                                    Pass { node, .. } => result.push(node),
-                                                }
-                                            }
-                                        }
-                                    }
-                                } {
-                                    err @ Fail { .. } => err,
-                                    Pass {
-                                        node: expr_node,
-                                        error: expr_error,
-                                    } => {
-                                        match {
-                                            let leading_trivia =
-                                                self.optional_leading_trivia(stream);
-                                            let start = stream.position();
-                                            if scan_chars!(stream, '}') {
-                                                let end = stream.position();
-                                                let trailing_trivia =
-                                                    self.optional_trailing_trivia(stream);
-                                                Pass {
-                                                    node: cst::Node::token(
-                                                        TokenKind::CloseBrace,
-                                                        Range { start, end },
-                                                        leading_trivia,
-                                                        trailing_trivia,
-                                                    ),
-                                                    error: None,
-                                                }
-                                            } else {
-                                                Fail {
-                                                    error: ParseError::new(start, "'}'"),
-                                                }
-                                            }
-                                        } {
-                                            Fail { error } => Fail {
-                                                error: error.maybe_merge_with(expr_error),
-                                            },
-                                            Pass {
-                                                node: close_node, ..
-                                            } => Pass {
-                                                node: cst::Node::rule(
-                                                    RuleKind::_DELIMITEDBY,
-                                                    vec![open_node, expr_node, close_node],
-                                                ),
-                                                error: None,
-                                            },
-                                        }
-                                    }
+                            Fail { error } => furthest_error = error,
+                            pass => break pass,
+                        }
+                        stream.set_position(start_position);
+                        match self.parse_type_name(stream) {
+                            Fail { error } => furthest_error.merge_with(error),
+                            pass => break pass,
+                        }
+                        break Fail {
+                            error: furthest_error,
+                        };
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_4 = match {
+                        let start_position = stream.position();
+                        match {
+                            let leading_trivia = self.optional_leading_trivia(stream);
+                            let start = stream.position();
+                            if self.scan_global_keyword(stream) {
+                                let end = stream.position();
+                                let trailing_trivia = self.optional_trailing_trivia(stream);
+                                Pass {
+                                    node: cst::Node::token(
+                                        TokenKind::GlobalKeyword,
+                                        Range { start, end },
+                                        leading_trivia,
+                                        trailing_trivia,
+                                    ),
+                                    error: None,
+                                }
+                            } else {
+                                Fail {
+                                    error: ParseError::new(start, "GlobalKeyword"),
                                 }
                             }
+                        } {
+                            Fail { error } => {
+                                stream.set_position(start_position);
+                                Pass {
+                                    node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                    error: Some(error),
+                                }
+                            }
+                            pass => pass,
                         }
                     } {
-                        Fail { error } => furthest_error.merge_with(error),
-                        pass => break pass,
-                    }
-                    break Fail {
-                        error: furthest_error,
-                    };
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
                         }
-                    }
-                };
-                let result_2 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if self.scan_for_keyword(stream) {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::ForKeyword,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "ForKeyword"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_3 = match loop {
-                    let start_position = stream.position();
-                    let mut furthest_error;
-                    match {
-                        let leading_trivia = self.optional_leading_trivia(stream);
-                        let start = stream.position();
-                        if scan_chars!(stream, '*') {
-                            let end = stream.position();
-                            let trailing_trivia = self.optional_trailing_trivia(stream);
-                            Pass {
-                                node: cst::Node::token(
-                                    TokenKind::Star,
-                                    Range { start, end },
-                                    leading_trivia,
-                                    trailing_trivia,
-                                ),
-                                error: None,
-                            }
-                        } else {
-                            Fail {
-                                error: ParseError::new(start, "'*'"),
-                            }
-                        }
-                    } {
-                        Fail { error } => furthest_error = error,
-                        pass => break pass,
-                    }
-                    stream.set_position(start_position);
-                    match self.parse_type_name(stream) {
-                        Fail { error } => furthest_error.merge_with(error),
-                        pass => break pass,
-                    }
-                    break Fail {
-                        error: furthest_error,
-                    };
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_4 = match {
-                    let start_position = stream.position();
-                    match {
-                        let leading_trivia = self.optional_leading_trivia(stream);
-                        let start = stream.position();
-                        if self.scan_global_keyword(stream) {
-                            let end = stream.position();
-                            let trailing_trivia = self.optional_trailing_trivia(stream);
-                            Pass {
-                                node: cst::Node::token(
-                                    TokenKind::GlobalKeyword,
-                                    Range { start, end },
-                                    leading_trivia,
-                                    trailing_trivia,
-                                ),
-                                error: None,
-                            }
-                        } else {
-                            Fail {
-                                error: ParseError::new(start, "GlobalKeyword"),
-                            }
-                        }
-                    } {
                         Fail { error } => {
-                            stream.set_position(start_position);
-                            Pass {
-                                node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
-                                error: Some(error),
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
                             }
                         }
-                        pass => pass,
-                    }
+                    };
+                    break Pass {
+                        node: cst::Node::rule(
+                            RuleKind::_SEQUENCE,
+                            vec![result_0, result_1, result_2, result_3, result_4],
+                        ),
+                        error: furthest_error,
+                    };
                 } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
+                    err @ Fail { .. } => err,
+                    Pass {
+                        node: expr_node,
+                        error: expr_error,
+                    } => {
+                        match {
+                            let leading_trivia = self.optional_leading_trivia(stream);
+                            let start = stream.position();
+                            if self.scan_semicolon(stream) {
+                                let end = stream.position();
+                                let trailing_trivia = self.optional_trailing_trivia(stream);
+                                Pass {
+                                    node: cst::Node::token(
+                                        TokenKind::Semicolon,
+                                        Range { start, end },
+                                        leading_trivia,
+                                        trailing_trivia,
+                                    ),
+                                    error: None,
+                                }
+                            } else {
+                                Fail {
+                                    error: ParseError::new(start, "Semicolon"),
+                                }
+                            }
+                        } {
+                            Fail { error } => Fail {
+                                error: error.maybe_merge_with(expr_error),
+                            },
+                            Pass {
+                                node: terminator_node,
+                                ..
+                            } => Pass {
+                                node: cst::Node::rule(
+                                    RuleKind::_TERMINATEDBY,
+                                    vec![expr_node, terminator_node],
+                                ),
+                                error: None,
+                            },
                         }
                     }
-                };
-                let result_5 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, ';') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Semicolon,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "';'"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(
-                        RuleKind::_SEQUENCE,
-                        vec![result_0, result_1, result_2, result_3, result_4, result_5],
-                    ),
-                    error: furthest_error,
-                };
+                }
             }
         } {
             Pass { node, error } => Pass {
@@ -14881,91 +17447,181 @@ impl Language {
         }
     }
 
-    // VariableDeclarationStatement = TypeName [ DataLocation ] «Identifier» [ '=' Expression ] ';' ;
+    // VariableDeclarationStatement = TypeName [ DataLocation ] «Identifier» [ «Equal» Expression ] «Semicolon» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_variable_declaration_statement(&self, stream: &mut Stream) -> ParseResult {
         match {
-            loop {
-                let mut furthest_error = None;
-                let result_0 = match self.parse_type_name(stream) {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
+            {
+                match loop {
+                    let mut furthest_error = None;
+                    let result_0 = match self.parse_type_name(stream) {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
                         }
-                    }
-                };
-                let result_1 = match {
-                    let start_position = stream.position();
-                    match self.parse_data_location(stream) {
                         Fail { error } => {
-                            stream.set_position(start_position);
-                            Pass {
-                                node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
-                                error: Some(error),
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
                             }
                         }
-                        pass => pass,
-                    }
+                    };
+                    let result_1 = match {
+                        let start_position = stream.position();
+                        match self.parse_data_location(stream) {
+                            Fail { error } => {
+                                stream.set_position(start_position);
+                                Pass {
+                                    node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                    error: Some(error),
+                                }
+                            }
+                            pass => pass,
+                        }
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_2 = match {
+                        let leading_trivia = self.optional_leading_trivia(stream);
+                        let start = stream.position();
+                        if self.scan_identifier(stream) {
+                            let end = stream.position();
+                            let trailing_trivia = self.optional_trailing_trivia(stream);
+                            Pass {
+                                node: cst::Node::token(
+                                    TokenKind::Identifier,
+                                    Range { start, end },
+                                    leading_trivia,
+                                    trailing_trivia,
+                                ),
+                                error: None,
+                            }
+                        } else {
+                            Fail {
+                                error: ParseError::new(start, "Identifier"),
+                            }
+                        }
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_3 = match {
+                        let start_position = stream.position();
+                        match loop {
+                            let mut furthest_error = None;
+                            let result_0 = match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_equal(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::Equal,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "Equal"),
+                                    }
+                                }
+                            } {
+                                Pass { node, error } => {
+                                    furthest_error =
+                                        error.map(|error| error.maybe_merge_with(furthest_error));
+                                    node
+                                }
+                                Fail { error } => {
+                                    break Fail {
+                                        error: error.maybe_merge_with(furthest_error),
+                                    }
+                                }
+                            };
+                            let result_1 = match self.parse_expression(stream) {
+                                Pass { node, error } => {
+                                    furthest_error =
+                                        error.map(|error| error.maybe_merge_with(furthest_error));
+                                    node
+                                }
+                                Fail { error } => {
+                                    break Fail {
+                                        error: error.maybe_merge_with(furthest_error),
+                                    }
+                                }
+                            };
+                            break Pass {
+                                node: cst::Node::rule(
+                                    RuleKind::_SEQUENCE,
+                                    vec![result_0, result_1],
+                                ),
+                                error: furthest_error,
+                            };
+                        } {
+                            Fail { error } => {
+                                stream.set_position(start_position);
+                                Pass {
+                                    node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                    error: Some(error),
+                                }
+                            }
+                            pass => pass,
+                        }
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    break Pass {
+                        node: cst::Node::rule(
+                            RuleKind::_SEQUENCE,
+                            vec![result_0, result_1, result_2, result_3],
+                        ),
+                        error: furthest_error,
+                    };
                 } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_2 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if self.scan_identifier(stream) {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Identifier,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "Identifier"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                let result_3 = match {
-                    let start_position = stream.position();
-                    match loop {
-                        let mut furthest_error = None;
-                        let result_0 = match {
+                    err @ Fail { .. } => err,
+                    Pass {
+                        node: expr_node,
+                        error: expr_error,
+                    } => {
+                        match {
                             let leading_trivia = self.optional_leading_trivia(stream);
                             let start = stream.position();
-                            if scan_chars!(stream, '=') {
+                            if self.scan_semicolon(stream) {
                                 let end = stream.position();
                                 let trailing_trivia = self.optional_trailing_trivia(stream);
                                 Pass {
                                     node: cst::Node::token(
-                                        TokenKind::Equal,
+                                        TokenKind::Semicolon,
                                         Range { start, end },
                                         leading_trivia,
                                         trailing_trivia,
@@ -14974,96 +17630,26 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "'='"),
+                                    error: ParseError::new(start, "Semicolon"),
                                 }
                             }
                         } {
-                            Pass { node, error } => {
-                                furthest_error =
-                                    error.map(|error| error.maybe_merge_with(furthest_error));
-                                node
-                            }
-                            Fail { error } => {
-                                break Fail {
-                                    error: error.maybe_merge_with(furthest_error),
-                                }
-                            }
-                        };
-                        let result_1 = match self.parse_expression(stream) {
-                            Pass { node, error } => {
-                                furthest_error =
-                                    error.map(|error| error.maybe_merge_with(furthest_error));
-                                node
-                            }
-                            Fail { error } => {
-                                break Fail {
-                                    error: error.maybe_merge_with(furthest_error),
-                                }
-                            }
-                        };
-                        break Pass {
-                            node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
-                            error: furthest_error,
-                        };
-                    } {
-                        Fail { error } => {
-                            stream.set_position(start_position);
+                            Fail { error } => Fail {
+                                error: error.maybe_merge_with(expr_error),
+                            },
                             Pass {
-                                node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
-                                error: Some(error),
-                            }
-                        }
-                        pass => pass,
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
+                                node: terminator_node,
+                                ..
+                            } => Pass {
+                                node: cst::Node::rule(
+                                    RuleKind::_TERMINATEDBY,
+                                    vec![expr_node, terminator_node],
+                                ),
+                                error: None,
+                            },
                         }
                     }
-                };
-                let result_4 = match {
-                    let leading_trivia = self.optional_leading_trivia(stream);
-                    let start = stream.position();
-                    if scan_chars!(stream, ';') {
-                        let end = stream.position();
-                        let trailing_trivia = self.optional_trailing_trivia(stream);
-                        Pass {
-                            node: cst::Node::token(
-                                TokenKind::Semicolon,
-                                Range { start, end },
-                                leading_trivia,
-                                trailing_trivia,
-                            ),
-                            error: None,
-                        }
-                    } else {
-                        Fail {
-                            error: ParseError::new(start, "';'"),
-                        }
-                    }
-                } {
-                    Pass { node, error } => {
-                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                        node
-                    }
-                    Fail { error } => {
-                        break Fail {
-                            error: error.maybe_merge_with(furthest_error),
-                        }
-                    }
-                };
-                break Pass {
-                    node: cst::Node::rule(
-                        RuleKind::_SEQUENCE,
-                        vec![result_0, result_1, result_2, result_3, result_4],
-                    ),
-                    error: furthest_error,
-                };
+                }
             }
         } {
             Pass { node, error } => Pass {
@@ -15155,7 +17741,7 @@ impl Language {
         }
     }
 
-    // VersionPragmaSpecifier = [ «VersionPragmaOperator» ] «VersionPragmaValue» { '.' «VersionPragmaValue» } ;
+    // VersionPragmaSpecifier = [ «VersionPragmaOperator» ] «VersionPragmaValue»«Period» { «Period» «VersionPragmaValue» } ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_version_pragma_specifier(&self, stream: &mut Stream) -> ParseResult {
@@ -15236,7 +17822,7 @@ impl Language {
                                 match {
                                     let leading_trivia = self.optional_leading_trivia(stream);
                                     let start = stream.position();
-                                    if scan_chars!(stream, '.') {
+                                    if self.scan_period(stream) {
                                         let end = stream.position();
                                         let trailing_trivia = self.optional_trailing_trivia(stream);
                                         Pass {
@@ -15250,7 +17836,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "'.'"),
+                                            error: ParseError::new(start, "Period"),
                                         }
                                     }
                                 } {
@@ -15291,7 +17877,7 @@ impl Language {
         }
     }
 
-    // WhileStatement = «WhileKeyword» '(' Expression ')' Statement ;
+    // WhileStatement = «WhileKeyword» «OpenParen» Expression «CloseParen» Statement ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_while_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -15333,7 +17919,7 @@ impl Language {
                     match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        if scan_chars!(stream, '(') {
+                        if self.scan_open_paren(stream) {
                             let end = stream.position();
                             let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
@@ -15347,7 +17933,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "'('"),
+                                error: ParseError::new(start, "OpenParen"),
                             }
                         }
                     } {
@@ -15363,7 +17949,7 @@ impl Language {
                                 match {
                                     let leading_trivia = self.optional_leading_trivia(stream);
                                     let start = stream.position();
-                                    if scan_chars!(stream, ')') {
+                                    if self.scan_close_paren(stream) {
                                         let end = stream.position();
                                         let trailing_trivia = self.optional_trailing_trivia(stream);
                                         Pass {
@@ -15377,7 +17963,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "')'"),
+                                            error: ParseError::new(start, "CloseParen"),
                                         }
                                     }
                                 } {
@@ -15433,7 +18019,7 @@ impl Language {
         }
     }
 
-    // YulAssignmentStatement = YulIdentifierPath { ',' YulIdentifierPath } ":=" YulExpression ;
+    // YulAssignmentStatement = YulIdentifierPath«Comma» { «Comma» YulIdentifierPath } «ColonEqual» YulExpression ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_assignment_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -15451,7 +18037,7 @@ impl Language {
                                 match {
                                     let leading_trivia = self.optional_leading_trivia(stream);
                                     let start = stream.position();
-                                    if scan_chars!(stream, ',') {
+                                    if self.scan_comma(stream) {
                                         let end = stream.position();
                                         let trailing_trivia = self.optional_trailing_trivia(stream);
                                         Pass {
@@ -15465,7 +18051,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "','"),
+                                            error: ParseError::new(start, "Comma"),
                                         }
                                     }
                                 } {
@@ -15495,7 +18081,7 @@ impl Language {
                 let result_1 = match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, ':', '=') {
+                    if self.scan_colon_equal(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
@@ -15509,7 +18095,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "':='"),
+                            error: ParseError::new(start, "ColonEqual"),
                         }
                     }
                 } {
@@ -15548,7 +18134,7 @@ impl Language {
         }
     }
 
-    // YulBlock = '{' { YulStatement } '}' ;
+    // YulBlock = «OpenBrace» { YulStatement } «CloseBrace» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_block(&self, stream: &mut Stream) -> ParseResult {
@@ -15557,7 +18143,7 @@ impl Language {
                 match {
                     let leading_trivia = self.optional_leading_trivia(stream);
                     let start = stream.position();
-                    if scan_chars!(stream, '{') {
+                    if self.scan_open_brace(stream) {
                         let end = stream.position();
                         let trailing_trivia = self.optional_trailing_trivia(stream);
                         Pass {
@@ -15571,7 +18157,7 @@ impl Language {
                         }
                     } else {
                         Fail {
-                            error: ParseError::new(start, "'{'"),
+                            error: ParseError::new(start, "OpenBrace"),
                         }
                     }
                 } {
@@ -15603,7 +18189,7 @@ impl Language {
                                 match {
                                     let leading_trivia = self.optional_leading_trivia(stream);
                                     let start = stream.position();
-                                    if scan_chars!(stream, '}') {
+                                    if self.scan_close_brace(stream) {
                                         let end = stream.position();
                                         let trailing_trivia = self.optional_trailing_trivia(stream);
                                         Pass {
@@ -15617,7 +18203,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "'}'"),
+                                            error: ParseError::new(start, "CloseBrace"),
                                         }
                                     }
                                 } {
@@ -15847,7 +18433,7 @@ impl Language {
         }
     }
 
-    // YulFunctionCall = YulIdentifierPath [ '(' [ YulExpression { ',' YulExpression } ] ')' ] ;
+    // YulFunctionCall = YulIdentifierPath [ «OpenParen» [ YulExpression«Comma» { «Comma» YulExpression } ] «CloseParen» ] ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_function_call(&self, stream: &mut Stream) -> ParseResult {
@@ -15871,7 +18457,7 @@ impl Language {
                         match {
                             let leading_trivia = self.optional_leading_trivia(stream);
                             let start = stream.position();
-                            if scan_chars!(stream, '(') {
+                            if self.scan_open_paren(stream) {
                                 let end = stream.position();
                                 let trailing_trivia = self.optional_trailing_trivia(stream);
                                 Pass {
@@ -15885,7 +18471,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "'('"),
+                                    error: ParseError::new(start, "OpenParen"),
                                 }
                             }
                         } {
@@ -15907,7 +18493,7 @@ impl Language {
                                                         let leading_trivia =
                                                             self.optional_leading_trivia(stream);
                                                         let start = stream.position();
-                                                        if scan_chars!(stream, ',') {
+                                                        if self.scan_comma(stream) {
                                                             let end = stream.position();
                                                             let trailing_trivia = self
                                                                 .optional_trailing_trivia(stream);
@@ -15923,7 +18509,7 @@ impl Language {
                                                         } else {
                                                             Fail {
                                                                 error: ParseError::new(
-                                                                    start, "','",
+                                                                    start, "Comma",
                                                                 ),
                                                             }
                                                         }
@@ -15963,7 +18549,7 @@ impl Language {
                                             let leading_trivia =
                                                 self.optional_leading_trivia(stream);
                                             let start = stream.position();
-                                            if scan_chars!(stream, ')') {
+                                            if self.scan_close_paren(stream) {
                                                 let end = stream.position();
                                                 let trailing_trivia =
                                                     self.optional_trailing_trivia(stream);
@@ -15978,7 +18564,7 @@ impl Language {
                                                 }
                                             } else {
                                                 Fail {
-                                                    error: ParseError::new(start, "')'"),
+                                                    error: ParseError::new(start, "CloseParen"),
                                                 }
                                             }
                                         } {
@@ -16034,7 +18620,7 @@ impl Language {
         }
     }
 
-    // YulFunctionDefinition = «FunctionKeyword» «YulIdentifier» '(' [ «YulIdentifier» { ',' «YulIdentifier» } ] ')' [ "->" «YulIdentifier» { ',' «YulIdentifier» } ] YulBlock ;
+    // YulFunctionDefinition = «FunctionKeyword» «YulIdentifier» «OpenParen» [ «YulIdentifier»«Comma» { «Comma» «YulIdentifier» } ] «CloseParen» [ «MinusGreaterThan» «YulIdentifier»«Comma» { «Comma» «YulIdentifier» } ] YulBlock ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_function_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -16107,7 +18693,7 @@ impl Language {
                     match {
                         let leading_trivia = self.optional_leading_trivia(stream);
                         let start = stream.position();
-                        if scan_chars!(stream, '(') {
+                        if self.scan_open_paren(stream) {
                             let end = stream.position();
                             let trailing_trivia = self.optional_trailing_trivia(stream);
                             Pass {
@@ -16121,7 +18707,7 @@ impl Language {
                             }
                         } else {
                             Fail {
-                                error: ParseError::new(start, "'('"),
+                                error: ParseError::new(start, "OpenParen"),
                             }
                         }
                     } {
@@ -16165,7 +18751,7 @@ impl Language {
                                                     let leading_trivia =
                                                         self.optional_leading_trivia(stream);
                                                     let start = stream.position();
-                                                    if scan_chars!(stream, ',') {
+                                                    if self.scan_comma(stream) {
                                                         let end = stream.position();
                                                         let trailing_trivia =
                                                             self.optional_trailing_trivia(stream);
@@ -16180,7 +18766,7 @@ impl Language {
                                                         }
                                                     } else {
                                                         Fail {
-                                                            error: ParseError::new(start, "','"),
+                                                            error: ParseError::new(start, "Comma"),
                                                         }
                                                     }
                                                 } {
@@ -16218,7 +18804,7 @@ impl Language {
                                     match {
                                         let leading_trivia = self.optional_leading_trivia(stream);
                                         let start = stream.position();
-                                        if scan_chars!(stream, ')') {
+                                        if self.scan_close_paren(stream) {
                                             let end = stream.position();
                                             let trailing_trivia =
                                                 self.optional_trailing_trivia(stream);
@@ -16233,7 +18819,7 @@ impl Language {
                                             }
                                         } else {
                                             Fail {
-                                                error: ParseError::new(start, "')'"),
+                                                error: ParseError::new(start, "CloseParen"),
                                             }
                                         }
                                     } {
@@ -16272,12 +18858,12 @@ impl Language {
                         let result_0 = match {
                             let leading_trivia = self.optional_leading_trivia(stream);
                             let start = stream.position();
-                            if scan_chars!(stream, '-', '>') {
+                            if self.scan_minus_greater_than(stream) {
                                 let end = stream.position();
                                 let trailing_trivia = self.optional_trailing_trivia(stream);
                                 Pass {
                                     node: cst::Node::token(
-                                        TokenKind::MinusGreater,
+                                        TokenKind::MinusGreaterThan,
                                         Range { start, end },
                                         leading_trivia,
                                         trailing_trivia,
@@ -16286,7 +18872,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "'->'"),
+                                    error: ParseError::new(start, "MinusGreaterThan"),
                                 }
                             }
                         } {
@@ -16333,7 +18919,7 @@ impl Language {
                                             let leading_trivia =
                                                 self.optional_leading_trivia(stream);
                                             let start = stream.position();
-                                            if scan_chars!(stream, ',') {
+                                            if self.scan_comma(stream) {
                                                 let end = stream.position();
                                                 let trailing_trivia =
                                                     self.optional_trailing_trivia(stream);
@@ -16348,7 +18934,7 @@ impl Language {
                                                 }
                                             } else {
                                                 Fail {
-                                                    error: ParseError::new(start, "','"),
+                                                    error: ParseError::new(start, "Comma"),
                                                 }
                                             }
                                         } {
@@ -16432,7 +19018,7 @@ impl Language {
         }
     }
 
-    // YulIdentifierPath = «YulIdentifier» { '.' «YulIdentifier» } ;
+    // YulIdentifierPath = «YulIdentifier»«Period» { «Period» «YulIdentifier» } ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_identifier_path(&self, stream: &mut Stream) -> ParseResult {
@@ -16468,7 +19054,7 @@ impl Language {
                             match {
                                 let leading_trivia = self.optional_leading_trivia(stream);
                                 let start = stream.position();
-                                if scan_chars!(stream, '.') {
+                                if self.scan_period(stream) {
                                     let end = stream.position();
                                     let trailing_trivia = self.optional_trailing_trivia(stream);
                                     Pass {
@@ -16482,7 +19068,7 @@ impl Language {
                                     }
                                 } else {
                                     Fail {
-                                        error: ParseError::new(start, "'.'"),
+                                        error: ParseError::new(start, "Period"),
                                     }
                                 }
                             } {
@@ -17033,7 +19619,7 @@ impl Language {
         }
     }
 
-    // YulVariableDeclaration = «LetKeyword» YulIdentifierPath { ',' YulIdentifierPath } [ ":=" YulExpression ] ;
+    // YulVariableDeclaration = «LetKeyword» YulIdentifierPath«Comma» { «Comma» YulIdentifierPath } [ «ColonEqual» YulExpression ] ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_variable_declaration(&self, stream: &mut Stream) -> ParseResult {
@@ -17082,7 +19668,7 @@ impl Language {
                                 match {
                                     let leading_trivia = self.optional_leading_trivia(stream);
                                     let start = stream.position();
-                                    if scan_chars!(stream, ',') {
+                                    if self.scan_comma(stream) {
                                         let end = stream.position();
                                         let trailing_trivia = self.optional_trailing_trivia(stream);
                                         Pass {
@@ -17096,7 +19682,7 @@ impl Language {
                                         }
                                     } else {
                                         Fail {
-                                            error: ParseError::new(start, "','"),
+                                            error: ParseError::new(start, "Comma"),
                                         }
                                     }
                                 } {
@@ -17130,7 +19716,7 @@ impl Language {
                         let result_0 = match {
                             let leading_trivia = self.optional_leading_trivia(stream);
                             let start = stream.position();
-                            if scan_chars!(stream, ':', '=') {
+                            if self.scan_colon_equal(stream) {
                                 let end = stream.position();
                                 let trailing_trivia = self.optional_trailing_trivia(stream);
                                 Pass {
@@ -17144,7 +19730,7 @@ impl Language {
                                 }
                             } else {
                                 Fail {
-                                    error: ParseError::new(start, "':='"),
+                                    error: ParseError::new(start, "ColonEqual"),
                                 }
                             }
                         } {

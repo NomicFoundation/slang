@@ -4,11 +4,13 @@
   kind: "Parser"
   unversioned:
     delimitedBy:
-      open: "{"
+      open:
+        reference: "OpenBrace"
       expression:
         zeroOrMore:
           reference: "YulStatement"
-      close: "}"
+      close:
+        reference: "CloseBrace"
 
 - name: "YulStatement"
   kind: "Parser"
@@ -32,12 +34,13 @@
     sequence:
       - reference: "LetKeyword"
       - separatedBy:
-          separator: ","
+          separator:
+            reference: "Comma"
           expression:
             reference: "YulIdentifierPath"
       - optional:
           sequence:
-            - terminal: ":="
+            - reference: "ColonEqual"
             - reference: "YulExpression"
 
 - name: "YulFunctionDefinition"
@@ -47,21 +50,25 @@
       - reference: "FunctionKeyword"
       - reference: "YulIdentifier"
       - delimitedBy:
-          open: "("
+          open:
+            reference: "OpenParen"
           expression:
             optional:
               name: "Arguments"
               separatedBy:
-                separator: ","
+                separator:
+                  reference: "Comma"
                 expression:
                   reference: "YulIdentifier"
-          close: ")"
+          close:
+            reference: "CloseParen"
       - optional:
           sequence:
-            - terminal: "->"
+            - reference: "MinusGreaterThan"
             - name: "Results"
               separatedBy:
-                separator: ","
+                separator:
+                  reference: "Comma"
                 expression:
                   reference: "YulIdentifier"
       - reference: "YulBlock"
@@ -71,10 +78,11 @@
   unversioned:
     sequence:
       - separatedBy:
-          separator: ","
+          separator:
+            reference: "Comma"
           expression:
             reference: "YulIdentifierPath"
-      - terminal: ":="
+      - reference: "ColonEqual"
       - reference: "YulExpression"
 
 - name: "YulIfStatement"

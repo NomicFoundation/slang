@@ -26,18 +26,6 @@ impl<T: EBNFWriter> EBNFWritable<T> for ScannerDefinition {
                 }
             }
 
-            ScannerDefinition::DelimitedBy {
-                open,
-                expression,
-                close,
-            } => {
-                writer.write_string(open);
-                writer.write_operator(" ");
-                write_nested(writer, &expression.definition, &expression.definition);
-                writer.write_operator(" ");
-                writer.write_string(close);
-            }
-
             ScannerDefinition::Difference {
                 minuend,
                 subtrahend,
@@ -86,18 +74,6 @@ impl<T: EBNFWriter> EBNFWritable<T> for ScannerDefinition {
                 writer.write_constant(&max.to_string());
                 writer.write_operator("{ ");
                 expression.definition.write_ebnf("", writer);
-                writer.write_operator(" }");
-            }
-
-            ScannerDefinition::SeparatedBy {
-                expression,
-                separator,
-            } => {
-                write_nested(writer, self, &expression.definition);
-                writer.write_operator(" { ");
-                writer.write_string(separator);
-                writer.write_operator(" ");
-                write_nested(writer, &expression.definition, &expression.definition);
                 writer.write_operator(" }");
             }
 
@@ -151,14 +127,11 @@ fn precedence(scanner_definition: &ScannerDefinition) -> u8 {
         | ScannerDefinition::Range { .. }
         | ScannerDefinition::Reference(..)
         | ScannerDefinition::Repeat { .. }
-        | ScannerDefinition::SeparatedBy { .. }
         | ScannerDefinition::Terminal(..)
         | ScannerDefinition::ZeroOrMore(..) => 0,
         ScannerDefinition::Not(..) => 1,
         ScannerDefinition::Difference { .. } => 2,
-        ScannerDefinition::DelimitedBy { .. }
-        | ScannerDefinition::Sequence(..)
-        | ScannerDefinition::TrailingContext { .. } => 3,
+        ScannerDefinition::Sequence(..) | ScannerDefinition::TrailingContext { .. } => 3,
         ScannerDefinition::Choice(..) => 4,
     }
 }

@@ -20,13 +20,6 @@ impl FirstSet {
         }
     }
 
-    pub fn single(c: char) -> Self {
-        Self {
-            includes_epsilon: false,
-            char_set: CharSet::single(c),
-        }
-    }
-
     pub fn multiple<T: Iterator<Item = char>>(x: T) -> Self {
         Self {
             includes_epsilon: false,

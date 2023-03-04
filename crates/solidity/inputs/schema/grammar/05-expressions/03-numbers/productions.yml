@@ -15,11 +15,13 @@
   unversioned:
     sequence:
       - terminal: "0x"
-      - separatedBy:
-          separator: "_"
-          expression:
-            oneOrMore:
-              reference: "HexCharacter"
+      - oneOrMore:
+          reference: "HexCharacter"
+      - zeroOrMore:
+          sequence:
+            - terminal: "_"
+            - oneOrMore:
+                reference: "HexCharacter"
 
 - name: "DecimalLiteral"
   kind: "Scanner"
@@ -41,13 +43,18 @@
 - name: "DecimalNumber"
   kind: "Scanner"
   unversioned:
-    separatedBy:
-      separator: "_"
-      expression:
-        oneOrMore:
+    sequence:
+      - oneOrMore:
           range:
             from: "0"
             to: "9"
+      - zeroOrMore:
+          sequence:
+            - terminal: "_"
+            - oneOrMore:
+                range:
+                  from: "0"
+                  to: "9"
 
 - name: "DecimalExponent"
   kind: "Scanner"

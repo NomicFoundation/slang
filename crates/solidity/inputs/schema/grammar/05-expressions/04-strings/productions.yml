@@ -17,18 +17,16 @@
     sequence:
       - terminal: "hex"
       - choice:
-          - delimitedBy:
-              open: '"'
-              expression:
-                optional:
+          - sequence:
+              - terminal: '"'
+              - optional:
                   reference: "PossiblySeparatedPairsOfHexDigits"
-              close: '"'
-          - delimitedBy:
-              open: "'"
-              expression:
-                optional:
+              - terminal: '"'
+          - sequence:
+              - terminal: "'"
+              - optional:
                   reference: "PossiblySeparatedPairsOfHexDigits"
-              close: "'"
+              - terminal: "'"
 
 - name: "PossiblySeparatedPairsOfHexDigits"
   kind: "Scanner"
@@ -73,10 +71,9 @@
 - name: "SingleQuotedAsciiStringLiteral"
   kind: "Scanner"
   unversioned:
-    delimitedBy:
-      open: "'"
-      expression:
-        zeroOrMore:
+    sequence:
+      - terminal: "'"
+      - zeroOrMore:
           choice:
             - reference: "EscapeSequence"
             - difference:
@@ -88,15 +85,14 @@
                   choice:
                     - terminal: "'"
                     - terminal: "\\"
-      close: "'"
+      - terminal: "'"
 
 - name: "DoubleQuotedAsciiStringLiteral"
   kind: "Scanner"
   unversioned:
-    delimitedBy:
-      open: '"'
-      expression:
-        zeroOrMore:
+    sequence:
+      - terminal: '"'
+      - zeroOrMore:
           choice:
             - reference: "EscapeSequence"
             - difference:
@@ -108,7 +104,7 @@
                   choice:
                     - terminal: '"'
                     - terminal: "\\"
-      close: '"'
+      - terminal: '"'
 
 - name: "UnicodeStringLiteral"
   kind: "Scanner"
@@ -120,10 +116,9 @@
 - name: "SingleQuotedUnicodeStringLiteral"
   kind: "Scanner"
   unversioned:
-    delimitedBy:
-      open: "unicode'"
-      expression:
-        zeroOrMore:
+    sequence:
+      - terminal: "unicode'"
+      - zeroOrMore:
           choice:
             - reference: "EscapeSequence"
             - not:
@@ -132,15 +127,14 @@
                   - terminal: "\\"
                   - terminal: "\n"
                   - terminal: "\r"
-      close: "'"
+      - terminal: "'"
 
 - name: "DoubleQuotedUnicodeStringLiteral"
   kind: "Scanner"
   unversioned:
-    delimitedBy:
-      open: 'unicode"'
-      expression:
-        zeroOrMore:
+    sequence:
+      - terminal: 'unicode"'
+      - zeroOrMore:
           choice:
             - reference: "EscapeSequence"
             - not:
@@ -149,7 +143,7 @@
                   - terminal: "\\"
                   - terminal: "\n"
                   - terminal: "\r"
-      close: '"'
+      - terminal: '"'
 
 - name: "EscapeSequence"
   kind: "Scanner"

@@ -2,7 +2,11 @@ use std::rc::Rc;
 
 use crate::{types, yaml::cst};
 
-use super::{node::Node, parser::ParserDefinition, production::ConcreteAbstractPair};
+use super::{
+    node::Node,
+    parser::ParserDefinition,
+    production::{ConcreteAbstractPair, Reference},
+};
 
 pub type PrecedenceParserRef = Rc<PrecedenceParser>;
 
@@ -68,21 +72,5 @@ impl OperatorDefinition {
                 definition: ParserDefinition::new(cst_node, value.definition),
             },
         );
-    }
-}
-
-pub struct Reference {
-    pub reference: Node<String>,
-}
-
-impl Reference {
-    pub fn new(cst_node: &cst::NodeRef, value: types::precedence_parser::Reference) -> Node<Self> {
-        let cst_node = cst_node.field("reference");
-        Node::new(
-            &cst_node.key,
-            Self {
-                reference: Node::new(&cst_node.value, value.reference),
-            },
-        )
     }
 }

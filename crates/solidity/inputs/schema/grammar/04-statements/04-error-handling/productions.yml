@@ -29,9 +29,12 @@
 - name: "RevertStatement"
   kind: "Parser"
   unversioned:
-    sequence:
-      - reference: "RevertKeyword"
-      - optional:
-          reference: "IdentifierPath"
-      - reference: "ArgumentList"
-      - terminal: ";"
+    terminatedBy:
+      expression:
+        sequence:
+          - reference: "RevertKeyword"
+          - optional:
+              reference: "IdentifierPath"
+          - reference: "ArgumentList"
+      terminator:
+        reference: "Semicolon"

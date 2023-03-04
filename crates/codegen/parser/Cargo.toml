@@ -14,4 +14,3 @@ proc-macro2 = { workspace = true }
 quote = { workspace = true }
 semver = { workspace = true }
 typed-arena = { workspace = true }
-unicode_names2 = { workspace = true }

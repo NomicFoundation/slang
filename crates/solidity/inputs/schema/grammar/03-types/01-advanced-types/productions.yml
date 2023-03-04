@@ -11,8 +11,10 @@
           - reference: "IdentifierPath"
       - zeroOrMore:
           delimitedBy:
-            open: "["
+            open:
+              reference: "OpenBracket"
             expression:
               optional:
                 reference: "Expression"
-            close: "]"
+            close:
+              reference: "CloseBracket"

@@ -9,6 +9,8 @@ pub enum TokenKind {
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize)]
 pub enum RuleKind {
     _SEQUENCE,
+    _DELIMITEDBY,
+    _TERMINATEDBY,
     XXX,
 }
 

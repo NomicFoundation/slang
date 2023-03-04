@@ -56,7 +56,6 @@ strum = { version = "0.24" }
 strum_macros = { version = "0.24" }
 thiserror = { version = "1.0.38" }
 typed-arena = { version = "2.0.1" }
-unicode_names2 = { version = "0.6.0" }
 url = { version = "2.3.1" }
 walkdir = { version = "2.3.2" }
 yaml-rust = { version = "0.4.5" }

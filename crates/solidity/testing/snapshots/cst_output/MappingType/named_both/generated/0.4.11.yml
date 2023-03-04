@@ -5,7 +5,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected '=>'
+    Error: Expected EqualGreaterThan
        ╭─[crates/solidity/testing/snapshots/cst_output/MappingType/named_both/input.sol:1:16]
        │
      1 │ mapping(string Foo => bytes32 Bar)

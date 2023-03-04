@@ -13,6 +13,5 @@ Tree:
               - _SEPARATEDBY (Rule): # 3..7 " Foo"
                   - Identifier (Token): "Foo" # 4..7
           - _REPEATED (Rule): # 7..9 "[]"
-              - _DELIMITEDBY (Rule): # 7..9 "[]"
-                  - OpenBracket (Token): "[" # 7..8
-                  - CloseBracket (Token): "]" # 8..9
+              - OpenBracket (Token): "[" # 7..8
+              - CloseBracket (Token): "]" # 8..9

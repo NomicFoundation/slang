@@ -6,19 +6,28 @@
     sequence:
       - reference: "AssemblyKeyword"
       - optional:
-          terminal: '"evmasm"'
+          reference: "Evmasm"
       - optional:
           reference: "AssemblyFlags"
       - reference: "YulBlock"
+
+- name: "Evmasm"
+  kind: "Scanner"
+  unversioned:
+    terminal: '"evmasm"'
 
 - name: "AssemblyFlags"
   kind: "Parser"
   unversioned:
     delimitedBy:
-      open: "("
+      open:
+        reference: "OpenParen"
       expression:
-        separatedBy:
-          separator: ","
-          expression:
-            reference: "DoubleQuotedAsciiStringLiteral"
-      close: ")"
+        sequence:
+          - reference: "DoubleQuotedAsciiStringLiteral"
+          - zeroOrMore:
+              sequence:
+                - reference: "Comma"
+                - reference: "DoubleQuotedAsciiStringLiteral"
+      close:
+        reference: "CloseParen"

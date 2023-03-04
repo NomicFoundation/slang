@@ -3,13 +3,16 @@
 - name: "PragmaDirective"
   kind: "Parser"
   unversioned:
-    sequence:
-      - reference: "PragmaKeyword"
-      - choice:
-          - reference: "VersionPragma"
-          - reference: "ABICoderPragma"
-          - reference: "ExperimentalPragma"
-      - terminal: ";"
+    terminatedBy:
+      expression:
+        sequence:
+          - reference: "PragmaKeyword"
+          - choice:
+              - reference: "VersionPragma"
+              - reference: "ABICoderPragma"
+              - reference: "ExperimentalPragma"
+      terminator:
+        reference: "Semicolon"
 
 - name: "VersionPragma"
   kind: "Parser"
@@ -26,7 +29,8 @@
       - optional:
           reference: "VersionPragmaOperator"
       - separatedBy:
-          separator: "."
+          separator:
+            reference: "Period"
           expression:
             reference: "VersionPragmaValue"
 

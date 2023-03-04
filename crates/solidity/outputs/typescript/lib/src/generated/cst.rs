@@ -62,6 +62,16 @@ impl Node {
                     kind: RuleKind::_SEQUENCE,
                     children,
                     ..
+                }
+                | Node::Rule {
+                    kind: RuleKind::_DELIMITEDBY,
+                    children,
+                    ..
+                }
+                | Node::Rule {
+                    kind: RuleKind::_TERMINATEDBY,
+                    children,
+                    ..
                 } => flattened_children.extend(children.iter().cloned()),
                 _ => flattened_children.push(child.clone()),
             }
@@ -110,23 +120,31 @@ impl Node {
     }
 
     pub fn top_level_rule(kind: RuleKind, node: Rc<Self>) -> Rc<Self> {
-        if let Self::Rule {
-            kind: RuleKind::_SEQUENCE,
-            range,
-            children,
-        } = node.as_ref()
-        {
-            Rc::new(Self::Rule {
+        match node.as_ref() {
+            Self::Rule {
+                kind: RuleKind::_SEQUENCE,
+                range,
+                children,
+            }
+            | Self::Rule {
+                kind: RuleKind::_DELIMITEDBY,
+                range,
+                children,
+            }
+            | Self::Rule {
+                kind: RuleKind::_TERMINATEDBY,
+                range,
+                children,
+            } => Rc::new(Self::Rule {
                 kind,
                 range: range.clone(),
                 children: children.clone(),
-            })
-        } else {
-            Rc::new(Self::Rule {
+            }),
+            _ => Rc::new(Self::Rule {
                 kind,
                 range: node.range(),
                 children: vec![node],
-            })
+            }),
         }
     }
 }

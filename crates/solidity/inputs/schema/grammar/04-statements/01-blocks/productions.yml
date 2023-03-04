@@ -4,13 +4,15 @@
   kind: "Parser"
   unversioned:
     delimitedBy:
-      open: "{"
+      open:
+        reference: "OpenBrace"
       expression:
         zeroOrMore:
           choice:
             - reference: "Statement"
             - reference: "UncheckedBlock"
-      close: "}"
+      close:
+        reference: "CloseBrace"
 
 - name: "UncheckedBlock"
   kind: "Parser"
@@ -49,6 +51,8 @@
 - name: "ExpressionStatement"
   kind: "Parser"
   unversioned:
-    sequence:
-      - reference: "Expression"
-      - terminal: ";"
+    terminatedBy:
+      expression:
+        reference: "Expression"
+      terminator:
+        reference: "Semicolon"

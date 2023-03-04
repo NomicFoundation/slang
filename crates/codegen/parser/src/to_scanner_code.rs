@@ -72,27 +72,24 @@ impl<'context> CombinatorNode<'context> {
             /**********************************************************************
              * Special Structures
              */
-            Self::DelimitedBy {
-                open, expr, close, ..
-            } => {
-                let open = open.chars().collect::<Vec<_>>();
-                let expr = expr.to_scanner_code(code);
-                let close = close.chars().collect::<Vec<_>>();
-                quote! { scan_delimited_by!(stream, [#(#open),*], #expr, [#(#close),*]) }
+            Self::DelimitedBy { .. } => {
+                unreachable!("DelimitedBy cannot be generated from a scanner")
             }
 
-            Self::SeparatedBy {
-                expr, separator, ..
-            } => {
-                let expr = expr.to_scanner_code(code);
-                let separator = separator.chars();
-                quote! { scan_separated_by!(stream, #expr, [#(#separator),*]) }
+            Self::SeparatedBy { .. } => {
+                unreachable!("SeparatedBy cannot be generated from a scanner")
+            }
+
+            Self::TerminatedBy { .. } => {
+                unreachable!("TerminatedBy cannot be generated from a scanner")
             }
 
             /**********************************************************************
              * Precedence parsing
              */
-            Self::PrecedenceExpressionRule { .. } => unreachable!(),
+            Self::PrecedenceExpressionRule { .. } => {
+                unreachable!("PrecedenceExpressionRule cannot be generated from a scanner")
+            }
 
             /**********************************************************************
              * Terminals and their utilities

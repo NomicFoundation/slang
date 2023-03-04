@@ -3,13 +3,16 @@
 - name: "ImportDirective"
   kind: "Parser"
   unversioned:
-    sequence:
-      - reference: "ImportKeyword"
-      - choice:
-          - reference: "SimpleImportDirective"
-          - reference: "StarImportDirective"
-          - reference: "SelectingImportDirective"
-      - terminal: ";"
+    terminatedBy:
+      expression:
+        sequence:
+          - reference: "ImportKeyword"
+          - choice:
+              - reference: "SimpleImportDirective"
+              - reference: "StarImportDirective"
+              - reference: "SelectingImportDirective"
+      terminator:
+        reference: "Semicolon"
 
 - name: "SimpleImportDirective"
   kind: "Parser"
@@ -25,7 +28,7 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - terminal: "*"
+      - reference: "Star"
       - reference: "AsKeyword"
       - reference: "Identifier"
       - reference: "FromKeyword"
@@ -36,13 +39,16 @@
   unversioned:
     sequence:
       - delimitedBy:
-          open: "{"
+          open:
+            reference: "OpenBrace"
           expression:
             separatedBy:
-              separator: ","
+              separator:
+                reference: "Comma"
               expression:
                 reference: "SelectedImport"
-          close: "}"
+          close:
+            reference: "CloseBrace"
       - reference: "FromKeyword"
       - reference: "ImportPath"
 
@@ -64,22 +70,28 @@
 - name: "UsingDirective"
   kind: "Parser"
   unversioned:
-    sequence:
-      - reference: "UsingKeyword"
-      - choice:
-          - reference: "IdentifierPath"
-          - delimitedBy:
-              open: "{"
-              expression:
-                separatedBy:
-                  separator: ","
+    terminatedBy:
+      expression:
+        sequence:
+          - reference: "UsingKeyword"
+          - choice:
+              - reference: "IdentifierPath"
+              - delimitedBy:
+                  open:
+                    reference: "OpenBrace"
                   expression:
-                    reference: "IdentifierPath"
-              close: "}"
-      - reference: "ForKeyword"
-      - choice:
-          - terminal: "*"
-          - reference: "TypeName"
-      - optional:
-          reference: "GlobalKeyword"
-      - terminal: ";"
+                    separatedBy:
+                      separator:
+                        reference: "Comma"
+                      expression:
+                        reference: "IdentifierPath"
+                  close:
+                    reference: "CloseBrace"
+          - reference: "ForKeyword"
+          - choice:
+              - reference: "Star"
+              - reference: "TypeName"
+          - optional:
+              reference: "GlobalKeyword"
+      terminator:
+        reference: "Semicolon"

@@ -22,11 +22,6 @@ impl ConcreteAbstractPair for Scanner {
 
 pub enum ScannerDefinition {
     Choice(Vec<ScannerRef>),
-    DelimitedBy {
-        open: Node<String>,
-        expression: ScannerRef,
-        close: Node<String>,
-    },
     Difference {
         minuend: ScannerRef,
         subtrahend: ScannerRef,
@@ -42,10 +37,6 @@ pub enum ScannerDefinition {
     Repeat {
         min: Node<usize>,
         max: Node<usize>,
-        expression: ScannerRef,
-    },
-    SeparatedBy {
-        separator: Node<String>,
         expression: ScannerRef,
     },
     Sequence(Vec<ScannerRef>),
@@ -65,24 +56,6 @@ impl ScannerDefinition {
                 return Node::new(
                     &cst_node.key,
                     Self::Choice(cst_node.zip(value, Scanner::new)),
-                );
-            }
-            types::scanner::ScannerDefinition::DelimitedBy {
-                open,
-                expression,
-                close,
-            } => {
-                let cst_node = cst_node.field("delimitedBy");
-                return Node::new(
-                    &cst_node.key,
-                    Self::DelimitedBy {
-                        open: Node::new(&cst_node.value_of_field("open"), open),
-                        expression: Scanner::new(
-                            &cst_node.value_of_field("expression"),
-                            expression,
-                        ),
-                        close: Node::new(&cst_node.value_of_field("close"), close),
-                    },
                 );
             }
             types::scanner::ScannerDefinition::Difference {
@@ -150,22 +123,6 @@ impl ScannerDefinition {
                     Self::Repeat {
                         min: Node::new(&cst_node.value_of_field("min"), min),
                         max: Node::new(&cst_node.value_of_field("max"), max),
-                        expression: Scanner::new(
-                            &cst_node.value_of_field("expression"),
-                            expression,
-                        ),
-                    },
-                );
-            }
-            types::scanner::ScannerDefinition::SeparatedBy {
-                separator,
-                expression,
-            } => {
-                let cst_node = cst_node.field("separatedBy");
-                return Node::new(
-                    &cst_node.key,
-                    Self::SeparatedBy {
-                        separator: Node::new(&cst_node.value_of_field("separator"), separator),
                         expression: Scanner::new(
                             &cst_node.value_of_field("expression"),
                             expression,

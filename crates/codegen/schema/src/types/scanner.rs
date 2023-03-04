@@ -16,13 +16,6 @@ pub enum ScannerDefinition {
     #[schemars(title = "Choice Expression")]
     Choice(Vec<ScannerRef>),
 
-    #[schemars(title = "DelimitedBy Expression")]
-    DelimitedBy {
-        open: String,
-        expression: ScannerRef,
-        close: String,
-    },
-
     #[schemars(title = "Difference Expression")]
     Difference {
         minuend: ScannerRef,
@@ -46,15 +39,9 @@ pub enum ScannerDefinition {
 
     #[schemars(title = "Repeat Expression")]
     Repeat {
+        expression: ScannerRef,
         min: usize,
         max: usize,
-        expression: ScannerRef,
-    },
-
-    #[schemars(title = "SeparatedBy Expression")]
-    SeparatedBy {
-        separator: String,
-        expression: ScannerRef,
     },
 
     #[schemars(title = "Sequence Expression")]

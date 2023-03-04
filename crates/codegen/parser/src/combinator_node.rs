@@ -23,9 +23,9 @@ pub enum CombinatorNode<'context> {
     },
     DelimitedBy {
         name: Option<String>,
-        open: String,
+        open: &'context CombinatorTree<'context>,
         expr: &'context CombinatorNode<'context>,
-        close: String,
+        close: &'context CombinatorTree<'context>,
     },
     Difference {
         minuend: &'context CombinatorNode<'context>,
@@ -55,7 +55,7 @@ pub enum CombinatorNode<'context> {
     SeparatedBy {
         name: Option<String>,
         expr: &'context CombinatorNode<'context>,
-        separator: String,
+        separator: &'context CombinatorTree<'context>,
     },
     Sequence {
         name: Option<String>,
@@ -63,6 +63,11 @@ pub enum CombinatorNode<'context> {
     },
     TerminalTrie {
         trie: TerminalTrie,
+    },
+    TerminatedBy {
+        name: Option<String>,
+        expr: &'context CombinatorNode<'context>,
+        terminator: &'context CombinatorTree<'context>,
     },
     TrailingContext {
         expression: &'context CombinatorNode<'context>,
@@ -132,17 +137,6 @@ impl<'context> CombinatorNode<'context> {
                 }
             }
 
-            ScannerDefinition::DelimitedBy {
-                open,
-                expression,
-                close,
-            } => Self::DelimitedBy {
-                name: None,
-                open: open.clone(),
-                expr: Self::from_scanner(tree, expression),
-                close: close.clone(),
-            },
-
             ScannerDefinition::Difference {
                 minuend,
                 subtrahend,
@@ -186,15 +180,6 @@ impl<'context> CombinatorNode<'context> {
                 expr: Self::from_scanner(tree, expression),
                 min: *min,
                 max: *max,
-            },
-
-            ScannerDefinition::SeparatedBy {
-                expression,
-                separator,
-            } => Self::SeparatedBy {
-                name: None,
-                expr: Self::from_scanner(tree, expression),
-                separator: separator.clone(),
             },
 
             ScannerDefinition::Sequence(exprs) => Self::Sequence {
@@ -270,36 +255,9 @@ impl<'context> CombinatorNode<'context> {
     ) -> &'context CombinatorNode<'context> {
         tree.context.alloc_node(match &parser_definition {
             ParserDefinition::Choice(exprs) => {
-                // Terminals in choices are merged, and represented as a trie
-
-                enum TN<'c> {
-                    Trie(trie::TerminalTrie),
-                    Node(&'c CombinatorNode<'c>),
-                }
                 let mut elements = exprs
                     .iter()
-                    .map(|expr| {
-                        match trie::from_parser_definition(
-                            tree,
-                            expr.name.clone(),
-                            &expr.definition,
-                        ) {
-                            None => TN::Node(Self::from_parser(tree, expr)),
-                            Some(trie) => TN::Trie(trie),
-                        }
-                    })
-                    .coalesce(|prev, curr| match (prev, curr) {
-                        (TN::Trie(prev), TN::Trie(curr)) => Ok(TN::Trie({
-                            let mut n = prev.clone();
-                            n.extend(curr);
-                            n
-                        })),
-                        pair => Err(pair),
-                    })
-                    .map(|either| match either {
-                        TN::Node(node) => node,
-                        TN::Trie(trie) => tree.context.alloc_node(Self::TerminalTrie { trie }),
-                    })
+                    .map(|expr| Self::from_parser(tree, expr))
                     .collect::<Vec<_>>();
                 if elements.len() == 1 {
                     return elements.pop().unwrap();
@@ -314,9 +272,9 @@ impl<'context> CombinatorNode<'context> {
                 close,
             } => Self::DelimitedBy {
                 name,
-                open: open.clone(),
+                open: tree.context.get_tree_by_name(&open.reference),
                 expr: Self::from_parser(tree, expression),
-                close: close.clone(),
+                close: tree.context.get_tree_by_name(&close.reference),
             },
 
             ParserDefinition::OneOrMore(expr) => Self::OneOrMore {
@@ -349,7 +307,7 @@ impl<'context> CombinatorNode<'context> {
             } => Self::SeparatedBy {
                 name,
                 expr: Self::from_parser(tree, expression),
-                separator: separator.clone(),
+                separator: tree.context.get_tree_by_name(&separator.reference),
             },
 
             ParserDefinition::Sequence(exprs) => Self::Sequence {
@@ -357,8 +315,13 @@ impl<'context> CombinatorNode<'context> {
                 elements: exprs.iter().map(|e| Self::from_parser(tree, e)).collect(),
             },
 
-            ParserDefinition::Terminal(_) => Self::TerminalTrie {
-                trie: trie::from_parser_definition(tree, name, parser_definition).unwrap(),
+            ParserDefinition::TerminatedBy {
+                expression,
+                terminator,
+            } => Self::TerminatedBy {
+                name,
+                expr: Self::from_parser(tree, expression),
+                terminator: tree.context.get_tree_by_name(&terminator.reference),
             },
 
             ParserDefinition::ZeroOrMore(expr) => Self::ZeroOrMore {
@@ -377,7 +340,7 @@ impl<'context> CombinatorNode<'context> {
                 ..
             } => FirstSet::multiple(subtries.keys().copied()),
 
-            Self::DelimitedBy { open, .. } => FirstSet::single(open.chars().next().unwrap()),
+            Self::DelimitedBy { open, .. } => open.first_set(),
 
             Self::PrecedenceExpressionRule {
                 operators,
@@ -399,9 +362,11 @@ impl<'context> CombinatorNode<'context> {
 
             Self::SeparatedBy {
                 expr, separator, ..
-            } => expr
-                .first_set()
-                .follow_by(FirstSet::single(separator.chars().next().unwrap())),
+            } => expr.first_set().follow_by(separator.first_set()),
+
+            Self::TerminatedBy {
+                expr, terminator, ..
+            } => expr.first_set().follow_by(terminator.first_set()),
 
             Self::Reference { tree } => tree.first_set(),
 

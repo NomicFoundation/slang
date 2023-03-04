@@ -138,27 +138,6 @@ macro_rules! scan_optional {
 }
 
 #[allow(unused_macros)]
-macro_rules! scan_delimited_by {
-    ($stream:ident, [$($open:literal),*], $expr:expr, [$($close:literal),*]) => {
-        scan_chars!($stream, $($open),*) && ($expr) && scan_chars!($stream, $($close),*)
-    };
-}
-
-#[allow(unused_macros)]
-macro_rules! scan_separated_by {
-    ($stream:ident, $expr:expr, [$($separator:literal),*]) => {
-        loop {
-            if !($expr) { break false };
-            let save = $stream.position();
-            if !(scan_chars!($stream, $($separator),*)) {
-                $stream.set_position(save);
-                break true
-            }
-        }
-    };
-}
-
-#[allow(unused_macros)]
 macro_rules! scan_difference {
     ($stream:ident, $minuend:expr, $subtrahend:expr) => {{
         let start = $stream.position();
@@ -238,6 +217,37 @@ impl Language {
                     || c == '_'
                     || ('a' <= c && c <= 'z'))
             )
+        }
+    }
+
+    // «Ampersand» = '&' ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_ampersand(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, '&'),
+                scan_predicate!(stream, |c| c == '&' || c == '=')
+            )
+        }
+    }
+
+    // «AmpersandAmpersand» = "&&" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_ampersand_ampersand(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '&', '&')
+        }
+    }
+
+    // «AmpersandEqual» = "&=" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_ampersand_equal(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '&', '=')
         }
     }
 
@@ -321,6 +331,55 @@ impl Language {
         }
     }
 
+    // «Bang» = '!' ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_bang(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(stream, scan_chars!(stream, '!'), scan_chars!(stream, '='))
+        }
+    }
+
+    // «BangEqual» = "!=" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_bang_equal(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '!', '=')
+        }
+    }
+
+    // «Bar» = '|' ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_bar(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, '|'),
+                scan_predicate!(stream, |c| c == '=' || c == '|')
+            )
+        }
+    }
+
+    // «BarBar» = "||" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_bar_bar(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '|', '|')
+        }
+    }
+
+    // «BarEqual» = "|=" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_bar_equal(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '|', '=')
+        }
+    }
+
     // «BoolKeyword» = "bool" ;
 
     #[allow(unused_assignments, unused_parens)]
@@ -372,6 +431,24 @@ impl Language {
         }
     }
 
+    // «Caret» = '^' ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_caret(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(stream, scan_chars!(stream, '^'), scan_chars!(stream, '='))
+        }
+    }
+
+    // «CaretEqual» = "^=" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_caret_equal(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '^', '=')
+        }
+    }
+
     // «CaseKeyword» = "case" ;
 
     #[allow(unused_assignments, unused_parens)]
@@ -403,6 +480,60 @@ impl Language {
                     || c == '_'
                     || ('a' <= c && c <= 'z'))
             )
+        }
+    }
+
+    // «CloseBrace» = '}' ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_close_brace(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '}')
+        }
+    }
+
+    // «CloseBracket» = ']' ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_close_bracket(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, ']')
+        }
+    }
+
+    // «CloseParen» = ')' ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_close_paren(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, ')')
+        }
+    }
+
+    // «Colon» = ':' ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_colon(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(stream, scan_chars!(stream, ':'), scan_chars!(stream, '='))
+        }
+    }
+
+    // «ColonEqual» = ":=" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_colon_equal(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, ':', '=')
+        }
+    }
+
+    // «Comma» = ',' ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_comma(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, ',')
         }
     }
 
@@ -534,10 +665,18 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_decimal_number(&self, stream: &mut Stream) -> bool {
         {
-            scan_separated_by!(
-                stream,
+            scan_sequence!(
                 scan_one_or_more!(stream, scan_predicate!(stream, |c| ('0' <= c && c <= '9'))),
-                ['_']
+                scan_zero_or_more!(
+                    stream,
+                    scan_sequence!(
+                        scan_chars!(stream, '_'),
+                        scan_one_or_more!(
+                            stream,
+                            scan_predicate!(stream, |c| ('0' <= c && c <= '9'))
+                        )
+                    )
+                )
             )
         }
     }
@@ -598,9 +737,8 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_double_quoted_ascii_string_literal(&self, stream: &mut Stream) -> bool {
         {
-            scan_delimited_by!(
-                stream,
-                ['"'],
+            scan_sequence!(
+                scan_chars!(stream, '"'),
                 scan_zero_or_more!(
                     stream,
                     scan_choice!(
@@ -611,7 +749,7 @@ impl Language {
                             || (']' <= c && c <= '~'))
                     )
                 ),
-                ['"']
+                scan_chars!(stream, '"')
             )
         }
     }
@@ -621,9 +759,8 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_double_quoted_unicode_string_literal(&self, stream: &mut Stream) -> bool {
         {
-            scan_delimited_by!(
-                stream,
-                ['u', 'n', 'i', 'c', 'o', 'd', 'e', '"'],
+            scan_sequence!(
+                scan_chars!(stream, 'u', 'n', 'i', 'c', 'o', 'd', 'e', '"'),
                 scan_zero_or_more!(
                     stream,
                     scan_choice!(
@@ -635,7 +772,7 @@ impl Language {
                             && c != '\\')
                     )
                 ),
-                ['"']
+                scan_chars!(stream, '"')
             )
         }
     }
@@ -697,6 +834,37 @@ impl Language {
                     || c == '_'
                     || ('a' <= c && c <= 'z'))
             )
+        }
+    }
+
+    // «Equal» = '=' ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_equal(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, '='),
+                scan_predicate!(stream, |c| ('=' <= c && c <= '>'))
+            )
+        }
+    }
+
+    // «EqualEqual» = "==" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_equal_equal(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '=', '=')
+        }
+    }
+
+    // «EqualGreaterThan» = "=>" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_equal_greater_than(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '=', '>')
         }
     }
 
@@ -765,6 +933,15 @@ impl Language {
                     || c == '_'
                     || ('a' <= c && c <= 'z'))
             )
+        }
+    }
+
+    // «Evmasm» = '"evmasm"' ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_evmasm(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '"', 'e', 'v', 'm', 'a', 's', 'm', '"')
         }
     }
 
@@ -955,6 +1132,75 @@ impl Language {
         }
     }
 
+    // «GreaterThan» = '>' ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_greater_than(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, '>'),
+                scan_predicate!(stream, |c| ('=' <= c && c <= '>'))
+            )
+        }
+    }
+
+    // «GreaterThanEqual» = ">=" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_greater_than_equal(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '>', '=')
+        }
+    }
+
+    // «GreaterThanGreaterThan» = ">>" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_greater_than_greater_than(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, '>', '>'),
+                scan_predicate!(stream, |c| ('=' <= c && c <= '>'))
+            )
+        }
+    }
+
+    // «GreaterThanGreaterThanEqual» = ">>=" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_greater_than_greater_than_equal(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '>', '>', '=')
+        }
+    }
+
+    // «GreaterThanGreaterThanGreaterThan» = ">>>" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_greater_than_greater_than_greater_than(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, '>', '>', '>'),
+                scan_chars!(stream, '=')
+            )
+        }
+    }
+
+    // «GreaterThanGreaterThanGreaterThanEqual» = ">>>=" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_greater_than_greater_than_greater_than_equal(
+        &self,
+        stream: &mut Stream,
+    ) -> bool {
+        {
+            scan_chars!(stream, '>', '>', '>', '=')
+        }
+    }
+
     // «GweiKeyword» = "gwei" ;
 
     #[allow(unused_assignments, unused_parens)]
@@ -1009,15 +1255,23 @@ impl Language {
         {
             scan_sequence!(
                 scan_chars!(stream, '0', 'x'),
-                scan_separated_by!(
+                scan_one_or_more!(
                     stream,
-                    scan_one_or_more!(
-                        stream,
-                        scan_predicate!(stream, |c| ('0' <= c && c <= '9')
-                            || ('A' <= c && c <= 'F')
-                            || ('a' <= c && c <= 'f'))
-                    ),
-                    ['_']
+                    scan_predicate!(stream, |c| ('0' <= c && c <= '9')
+                        || ('A' <= c && c <= 'F')
+                        || ('a' <= c && c <= 'f'))
+                ),
+                scan_zero_or_more!(
+                    stream,
+                    scan_sequence!(
+                        scan_chars!(stream, '_'),
+                        scan_one_or_more!(
+                            stream,
+                            scan_predicate!(stream, |c| ('0' <= c && c <= '9')
+                                || ('A' <= c && c <= 'F')
+                                || ('a' <= c && c <= 'f'))
+                        )
+                    )
                 )
             )
         }
@@ -1032,23 +1286,21 @@ impl Language {
                 scan_chars!(stream, 'h', 'e', 'x'),
                 scan_choice!(
                     stream,
-                    scan_delimited_by!(
-                        stream,
-                        ['"'],
+                    scan_sequence!(
+                        scan_chars!(stream, '"'),
                         scan_optional!(
                             stream,
                             self.scan_possibly_separated_pairs_of_hex_digits(stream)
                         ),
-                        ['"']
+                        scan_chars!(stream, '"')
                     ),
-                    scan_delimited_by!(
-                        stream,
-                        ['\''],
+                    scan_sequence!(
+                        scan_chars!(stream, '\''),
                         scan_optional!(
                             stream,
                             self.scan_possibly_separated_pairs_of_hex_digits(stream)
                         ),
-                        ['\'']
+                        scan_chars!(stream, '\'')
                     )
                 )
             )
@@ -1517,6 +1769,50 @@ impl Language {
         }
     }
 
+    // «LessThan» = '<' ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_less_than(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, '<'),
+                scan_predicate!(stream, |c| ('<' <= c && c <= '='))
+            )
+        }
+    }
+
+    // «LessThanEqual» = "<=" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_less_than_equal(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '<', '=')
+        }
+    }
+
+    // «LessThanLessThan» = "<<" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_less_than_less_than(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, '<', '<'),
+                scan_chars!(stream, '=')
+            )
+        }
+    }
+
+    // «LessThanLessThanEqual» = "<<=" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_less_than_less_than_equal(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '<', '<', '=')
+        }
+    }
+
     // «LetKeyword» = "let" ;
 
     #[allow(unused_assignments, unused_parens)]
@@ -1585,6 +1881,46 @@ impl Language {
         }
     }
 
+    // «Minus» = '-' ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_minus(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, '-'),
+                scan_predicate!(stream, |c| c == '-' || ('=' <= c && c <= '>'))
+            )
+        }
+    }
+
+    // «MinusEqual» = "-=" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_minus_equal(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '-', '=')
+        }
+    }
+
+    // «MinusGreaterThan» = "->" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_minus_greater_than(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '-', '>')
+        }
+    }
+
+    // «MinusMinus» = "--" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_minus_minus(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '-', '-')
+        }
+    }
+
     // «MinutesKeyword» = "minutes" ;
 
     #[allow(unused_assignments, unused_parens)]
@@ -1624,9 +1960,8 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_multiline_comment(&self, stream: &mut Stream) -> bool {
         {
-            scan_delimited_by!(
-                stream,
-                ['/', '*'],
+            scan_sequence!(
+                scan_chars!(stream, '/', '*'),
                 scan_zero_or_more!(
                     stream,
                     scan_choice!(
@@ -1638,7 +1973,7 @@ impl Language {
                         )
                     )
                 ),
-                ['*', '/']
+                scan_chars!(stream, '*', '/')
             )
         }
     }
@@ -1657,6 +1992,33 @@ impl Language {
                     || c == '_'
                     || ('a' <= c && c <= 'z'))
             )
+        }
+    }
+
+    // «OpenBrace» = '{' ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_open_brace(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '{')
+        }
+    }
+
+    // «OpenBracket» = '[' ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_open_bracket(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '[')
+        }
+    }
+
+    // «OpenParen» = '(' ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_open_paren(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '(')
         }
     }
 
@@ -1691,6 +2053,64 @@ impl Language {
                     || c == '_'
                     || ('a' <= c && c <= 'z'))
             )
+        }
+    }
+
+    // «Percent» = '%' ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_percent(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(stream, scan_chars!(stream, '%'), scan_chars!(stream, '='))
+        }
+    }
+
+    // «PercentEqual» = "%=" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_percent_equal(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '%', '=')
+        }
+    }
+
+    // «Period» = '.' ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_period(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '.')
+        }
+    }
+
+    // «Plus» = '+' ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_plus(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, '+'),
+                scan_predicate!(stream, |c| c == '+' || c == '=')
+            )
+        }
+    }
+
+    // «PlusEqual» = "+=" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_plus_equal(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '+', '=')
+        }
+    }
+
+    // «PlusPlus» = "++" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_plus_plus(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '+', '+')
         }
     }
 
@@ -1791,6 +2211,15 @@ impl Language {
                     || c == '_'
                     || ('a' <= c && c <= 'z'))
             )
+        }
+    }
+
+    // «QuestionMark» = '?' ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_question_mark(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '?')
         }
     }
 
@@ -1981,6 +2410,15 @@ impl Language {
         }
     }
 
+    // «Semicolon» = ';' ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_semicolon(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, ';')
+        }
+    }
+
     // «SignedFixedType» = "fixed" [ 1…{ '0'…'9' } 'x' 1…{ '0'…'9' } ] ;
 
     #[allow(unused_assignments, unused_parens)]
@@ -2085,9 +2523,8 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_single_quoted_ascii_string_literal(&self, stream: &mut Stream) -> bool {
         {
-            scan_delimited_by!(
-                stream,
-                ['\''],
+            scan_sequence!(
+                scan_chars!(stream, '\''),
                 scan_zero_or_more!(
                     stream,
                     scan_choice!(
@@ -2098,7 +2535,7 @@ impl Language {
                             || (']' <= c && c <= '~'))
                     )
                 ),
-                ['\'']
+                scan_chars!(stream, '\'')
             )
         }
     }
@@ -2108,9 +2545,8 @@ impl Language {
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_single_quoted_unicode_string_literal(&self, stream: &mut Stream) -> bool {
         {
-            scan_delimited_by!(
-                stream,
-                ['u', 'n', 'i', 'c', 'o', 'd', 'e', '\''],
+            scan_sequence!(
+                scan_chars!(stream, 'u', 'n', 'i', 'c', 'o', 'd', 'e', '\''),
                 scan_zero_or_more!(
                     stream,
                     scan_choice!(
@@ -2122,8 +2558,26 @@ impl Language {
                             && c != '\\')
                     )
                 ),
-                ['\'']
+                scan_chars!(stream, '\'')
             )
+        }
+    }
+
+    // «Slash» = '/' ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_slash(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(stream, scan_chars!(stream, '/'), scan_chars!(stream, '='))
+        }
+    }
+
+    // «SlashEqual» = "/=" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_slash_equal(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '/', '=')
         }
     }
 
@@ -2141,6 +2595,37 @@ impl Language {
                     || c == '_'
                     || ('a' <= c && c <= 'z'))
             )
+        }
+    }
+
+    // «Star» = '*' ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_star(&self, stream: &mut Stream) -> bool {
+        {
+            scan_not_followed_by!(
+                stream,
+                scan_chars!(stream, '*'),
+                scan_predicate!(stream, |c| c == '*' || c == '=')
+            )
+        }
+    }
+
+    // «StarEqual» = "*=" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_star_equal(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '*', '=')
+        }
+    }
+
+    // «StarStar» = "**" ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_star_star(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '*', '*')
         }
     }
 
@@ -2226,6 +2711,15 @@ impl Language {
                     || c == '_'
                     || ('a' <= c && c <= 'z'))
             )
+        }
+    }
+
+    // «Tilde» = '~' ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_tilde(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, '~')
         }
     }
 

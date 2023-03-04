@@ -13,11 +13,10 @@ Tree:
                   - AddressType (Rule): # 0..7 "address"
                       - AddressKeyword (Token): "address" # 0..7
           - ArgumentList (Rule): # 7..14 "(value)"
-              - _DELIMITEDBY (Rule): # 7..14 "(value)"
-                  - OpenParen (Token): "(" # 7..8
-                  - PositionalArgumentList (Rule): # 8..13 "value"
-                      - _SEPARATEDBY (Rule): # 8..13 "value"
-                          - Expression (Rule): # 8..13 "value"
-                              - PrimaryExpression (Rule): # 8..13 "value"
-                                  - Identifier (Token): "value" # 8..13
-                  - CloseParen (Token): ")" # 13..14
+              - OpenParen (Token): "(" # 7..8
+              - PositionalArgumentList (Rule): # 8..13 "value"
+                  - _SEPARATEDBY (Rule): # 8..13 "value"
+                      - Expression (Rule): # 8..13 "value"
+                          - PrimaryExpression (Rule): # 8..13 "value"
+                              - Identifier (Token): "value" # 8..13
+              - CloseParen (Token): ")" # 13..14

@@ -7,15 +7,14 @@ Errors: []
 
 Tree:
   - TupleDeconstructionStatement (Rule): # 0..47 "(memory with_location, without_location) = rhs;"
-      - _DELIMITEDBY (Rule): # 0..40 "(memory with_location, without_location)"
-          - OpenParen (Token): "(" # 0..1
-          - _SEPARATEDBY (Rule): # 1..39 "memory with_location, without_location"
-              - DataLocation (Rule): # 1..7 "memory"
-                  - MemoryKeyword (Token): "memory" # 1..7
-              - Identifier (Token): "with_location" # 8..21
-              - Comma (Token): "," # 21..22
-              - Identifier (Token): "without_location" # 23..39
-          - CloseParen (Token): ")" # 39..40
+      - OpenParen (Token): "(" # 0..1
+      - _SEPARATEDBY (Rule): # 1..39 "memory with_location, without_location"
+          - DataLocation (Rule): # 1..7 "memory"
+              - MemoryKeyword (Token): "memory" # 1..7
+          - Identifier (Token): "with_location" # 8..21
+          - Comma (Token): "," # 21..22
+          - Identifier (Token): "without_location" # 23..39
+      - CloseParen (Token): ")" # 39..40
       - Equal (Token): "=" # 41..42
       - Expression (Rule): # 43..46 "rhs"
           - PrimaryExpression (Rule): # 43..46 "rhs"

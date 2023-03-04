@@ -8,133 +8,135 @@
         - name: "AssignmentExpression"
           model: "BinaryLeftAssociative"
           choice:
-            - terminal: "="
-            - terminal: "|="
-            - terminal: "^="
-            - terminal: "&="
-            - terminal: "<<="
-            - terminal: ">>="
-            - terminal: ">>>="
-            - terminal: "+="
-            - terminal: "-="
-            - terminal: "*="
-            - terminal: "/="
-            - terminal: "%="
+            - reference: "Equal"
+            - reference: "BarEqual"
+            - reference: "CaretEqual"
+            - reference: "AmpersandEqual"
+            - reference: "LessThanLessThanEqual"
+            - reference: "GreaterThanGreaterThanEqual"
+            - reference: "GreaterThanGreaterThanGreaterThanEqual"
+            - reference: "PlusEqual"
+            - reference: "MinusEqual"
+            - reference: "StarEqual"
+            - reference: "SlashEqual"
+            - reference: "PercentEqual"
 
         - name: "ConditionalExpression"
-          model: "UnarySuffix"
-          sequence: # This subsequence forms the correct CST for the suffix expression parser
-            - terminal: "?"
+          model: "UnaryPostfix"
+          sequence: # This subsequence forms the correct CST for the postfix expression parser
+            - reference: "QuestionMark"
             - reference: "Expression"
-            - terminal: ":"
+            - reference: "Colon"
             - reference: "Expression"
 
         - name: "OrExpression"
           model: "BinaryLeftAssociative"
-          terminal: "||"
+          reference: "BarBar"
 
         - name: "AndExpression"
           model: "BinaryLeftAssociative"
-          terminal: "&&"
+          reference: "AmpersandAmpersand"
 
         - name: "EqualityComparisonExpression"
           model: "BinaryLeftAssociative"
           choice:
-            - terminal: "=="
-            - terminal: "!="
+            - reference: "EqualEqual"
+            - reference: "BangEqual"
 
         - name: "OrderComparisonExpression"
           model: "BinaryLeftAssociative"
           choice:
-            - terminal: "<"
-            - terminal: ">"
-            - terminal: "<="
-            - terminal: ">="
+            - reference: "LessThan"
+            - reference: "GreaterThan"
+            - reference: "LessThanEqual"
+            - reference: "GreaterThanEqual"
 
         - name: "BitOrExpression"
           model: "BinaryLeftAssociative"
-          terminal: "|"
+          reference: "Bar"
 
         - name: "BitXOrExpression"
           model: "BinaryLeftAssociative"
-          terminal: "^"
+          reference: "Caret"
 
         - name: "BitAndExpression"
           model: "BinaryLeftAssociative"
-          terminal: "&"
+          reference: "Ampersand"
 
         - name: "ShiftExpression"
           model: "BinaryLeftAssociative"
           choice:
-            - terminal: "<<"
-            - terminal: ">>"
-            - terminal: ">>>"
+            - reference: "LessThanLessThan"
+            - reference: "GreaterThanGreaterThan"
+            - reference: "GreaterThanGreaterThanGreaterThan"
 
         - name: "AddSubExpression"
           model: "BinaryLeftAssociative"
           choice:
-            - terminal: "+"
-            - terminal: "-"
+            - reference: "Plus"
+            - reference: "Minus"
 
         - name: "MulDivModExpression"
           model: "BinaryLeftAssociative"
           choice:
-            - terminal: "*"
-            - terminal: "/"
-            - terminal: "%"
+            - reference: "Star"
+            - reference: "Slash"
+            - reference: "Percent"
 
         - name: "ExponentiationExpression"
           model: "BinaryLeftAssociative"
-          terminal: "**"
+          reference: "StarStar"
 
-        - name: "UnarySuffixExpression"
-          model: "UnarySuffix"
+        - name: "UnaryPostfixExpression"
+          model: "UnaryPostfix"
           choice:
-            - terminal: "++"
-            - terminal: "--"
+            - reference: "PlusPlus"
+            - reference: "MinusMinus"
 
         - name: "UnaryPrefixExpression"
           model: "UnaryPrefix"
           choice:
-            - terminal: "++"
-            - terminal: "--"
-            - terminal: "!"
-            - terminal: "~"
-            - terminal: "-"
+            - reference: "PlusPlus"
+            - reference: "MinusMinus"
+            - reference: "Tilde"
+            - reference: "Bang"
+            - reference: "Minus"
 
         - name: "FunctionCallExpression"
-          model: "UnarySuffix"
+          model: "UnaryPostfix"
           sequence:
             - optional:
                 reference: "NamedArgumentList"
             - reference: "ArgumentList"
 
         - name: "MemberAccessExpression"
-          model: "UnarySuffix"
+          model: "UnaryPostfix"
           sequence:
-            - terminal: "."
+            - reference: "Period"
             - choice:
                 - reference: "Identifier"
                 - reference: "AddressKeyword"
 
         - name: "IndexAccessExpression"
-          model: "UnarySuffix"
+          model: "UnaryPostfix"
           delimitedBy:
-            open: "["
+            open:
+              reference: "OpenBracket"
             expression:
               choice:
                 - sequence:
                     - reference: "Expression"
                     - optional:
                         sequence:
-                          - terminal: ":"
+                          - reference: "Colon"
                           - optional:
                               reference: "Expression"
                 - sequence:
-                    - terminal: ":"
+                    - reference: "Colon"
                     - optional:
                         reference: "Expression"
-            close: "]"
+            close:
+              reference: "CloseBracket"
 
       primaryExpressions:
         - reference: "PrimaryExpression"
@@ -144,133 +146,135 @@
         - name: "AssignmentExpression"
           model: "BinaryLeftAssociative"
           choice:
-            - terminal: "="
-            - terminal: "|="
-            - terminal: "^="
-            - terminal: "&="
-            - terminal: "<<="
-            - terminal: ">>="
-            - terminal: ">>>="
-            - terminal: "+="
-            - terminal: "-="
-            - terminal: "*="
-            - terminal: "/="
-            - terminal: "%="
+            - reference: "Equal"
+            - reference: "BarEqual"
+            - reference: "CaretEqual"
+            - reference: "AmpersandEqual"
+            - reference: "LessThanLessThanEqual"
+            - reference: "GreaterThanGreaterThanEqual"
+            - reference: "GreaterThanGreaterThanGreaterThanEqual"
+            - reference: "PlusEqual"
+            - reference: "MinusEqual"
+            - reference: "StarEqual"
+            - reference: "SlashEqual"
+            - reference: "PercentEqual"
 
         - name: "ConditionalExpression"
-          model: "UnarySuffix"
-          sequence: # This subsequence forms the correct CST for the suffix expression parser
-            - terminal: "?"
+          model: "UnaryPostfix"
+          sequence: # This subsequence forms the correct CST for the postfix expression parser
+            - reference: "QuestionMark"
             - reference: "Expression"
-            - terminal: ":"
+            - reference: "Colon"
             - reference: "Expression"
 
         - name: "OrExpression"
           model: "BinaryLeftAssociative"
-          terminal: "||"
+          reference: "BarBar"
 
         - name: "AndExpression"
           model: "BinaryLeftAssociative"
-          terminal: "&&"
+          reference: "AmpersandAmpersand"
 
         - name: "EqualityComparisonExpression"
           model: "BinaryLeftAssociative"
           choice:
-            - terminal: "=="
-            - terminal: "!="
+            - reference: "EqualEqual"
+            - reference: "BangEqual"
 
         - name: "OrderComparisonExpression"
           model: "BinaryLeftAssociative"
           choice:
-            - terminal: "<"
-            - terminal: ">"
-            - terminal: "<="
-            - terminal: ">="
+            - reference: "LessThan"
+            - reference: "GreaterThan"
+            - reference: "LessThanEqual"
+            - reference: "GreaterThanEqual"
 
         - name: "BitOrExpression"
           model: "BinaryLeftAssociative"
-          terminal: "|"
+          reference: "Bar"
 
         - name: "BitXOrExpression"
           model: "BinaryLeftAssociative"
-          terminal: "^"
+          reference: "Caret"
 
         - name: "BitAndExpression"
           model: "BinaryLeftAssociative"
-          terminal: "&"
+          reference: "Ampersand"
 
         - name: "ShiftExpression"
           model: "BinaryLeftAssociative"
           choice:
-            - terminal: "<<"
-            - terminal: ">>"
-            - terminal: ">>>"
+            - reference: "LessThanLessThan"
+            - reference: "GreaterThanGreaterThan"
+            - reference: "GreaterThanGreaterThanGreaterThan"
 
         - name: "AddSubExpression"
           model: "BinaryLeftAssociative"
           choice:
-            - terminal: "+"
-            - terminal: "-"
+            - reference: "Plus"
+            - reference: "Minus"
 
         - name: "MulDivModExpression"
           model: "BinaryLeftAssociative"
           choice:
-            - terminal: "*"
-            - terminal: "/"
-            - terminal: "%"
+            - reference: "Star"
+            - reference: "Slash"
+            - reference: "Percent"
 
         - name: "ExponentiationExpression"
           model: "BinaryRightAssociative"
-          terminal: "**"
+          reference: "StarStar"
 
-        - name: "UnarySuffixExpression"
-          model: "UnarySuffix"
+        - name: "UnaryPostfixExpression"
+          model: "UnaryPostfix"
           choice:
-            - terminal: "++"
-            - terminal: "--"
+            - reference: "PlusPlus"
+            - reference: "MinusMinus"
 
         - name: "UnaryPrefixExpression"
           model: "UnaryPrefix"
           choice:
-            - terminal: "++"
-            - terminal: "--"
-            - terminal: "!"
-            - terminal: "~"
-            - terminal: "-"
+            - reference: "PlusPlus"
+            - reference: "MinusMinus"
+            - reference: "Tilde"
+            - reference: "Bang"
+            - reference: "Minus"
 
         - name: "FunctionCallExpression"
-          model: "UnarySuffix"
+          model: "UnaryPostfix"
           sequence:
             - optional:
                 reference: "NamedArgumentList"
             - reference: "ArgumentList"
 
         - name: "MemberAccessExpression"
-          model: "UnarySuffix"
+          model: "UnaryPostfix"
           sequence:
-            - terminal: "."
+            - reference: "Period"
             - choice:
                 - reference: "Identifier"
                 - reference: "AddressKeyword"
 
         - name: "IndexAccessExpression"
-          model: "UnarySuffix"
+          model: "UnaryPostfix"
           delimitedBy:
-            open: "["
+            open:
+              reference: "OpenBracket"
             expression:
               choice:
                 - sequence:
                     - reference: "Expression"
                     - optional:
                         sequence:
-                          - terminal: ":"
+                          - reference: "Colon"
                           - optional:
                               reference: "Expression"
                 - sequence:
-                    - terminal: ":"
+                    - reference: "Colon"
                     - optional:
                         reference: "Expression"
-            close: "]"
+            close:
+              reference: "CloseBracket"
 
       primaryExpressions:
         - reference: "PrimaryExpression"

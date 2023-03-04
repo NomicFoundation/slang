@@ -9,8 +9,10 @@
       - optional:
           reference: "InheritanceSpecifierList"
       - delimitedBy:
-          open: "{"
+          open:
+            reference: "OpenBrace"
           expression:
             zeroOrMore:
               reference: "ContractBodyElement"
-          close: "}"
+          close:
+            reference: "CloseBrace"

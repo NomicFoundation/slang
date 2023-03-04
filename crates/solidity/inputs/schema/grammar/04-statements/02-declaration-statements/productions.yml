@@ -3,43 +3,52 @@
 - name: "TupleDeconstructionStatement"
   kind: "Parser"
   unversioned:
-    sequence:
-      - delimitedBy:
-          open: "("
-          expression:
-            optional:
-              separatedBy:
-                separator: ","
-                expression:
-                  optional:
-                    choice:
-                      - sequence:
-                          - reference: "TypeName"
-                          - optional:
-                              reference: "DataLocation"
-                          - reference: "Identifier"
-                      - sequence:
-                          - optional:
-                              reference: "DataLocation"
-                          - reference: "Identifier"
-          close: ")"
-      - terminal: "="
-      - reference: "Expression"
-      - terminal: ";"
+    terminatedBy:
+      expression:
+        sequence:
+          - delimitedBy:
+              open:
+                reference: "OpenParen"
+              expression:
+                optional:
+                  separatedBy:
+                    separator:
+                      reference: "Comma"
+                    expression:
+                      optional:
+                        choice:
+                          - sequence:
+                              - reference: "TypeName"
+                              - optional:
+                                  reference: "DataLocation"
+                              - reference: "Identifier"
+                          - sequence:
+                              - optional:
+                                  reference: "DataLocation"
+                              - reference: "Identifier"
+              close:
+                reference: "CloseParen"
+          - reference: "Equal"
+          - reference: "Expression"
+      terminator:
+        reference: "Semicolon"
 
 - name: "VariableDeclarationStatement"
   kind: "Parser"
   unversioned:
-    sequence:
-      - reference: "TypeName"
-      - optional:
-          reference: "DataLocation"
-      - reference: "Identifier"
-      - optional:
-          sequence:
-            - terminal: "="
-            - reference: "Expression"
-      - terminal: ";"
+    terminatedBy:
+      expression:
+        sequence:
+          - reference: "TypeName"
+          - optional:
+              reference: "DataLocation"
+          - reference: "Identifier"
+          - optional:
+              sequence:
+                - reference: "Equal"
+                - reference: "Expression"
+      terminator:
+        reference: "Semicolon"
 
 - name: "DataLocation"
   kind: "Parser"
