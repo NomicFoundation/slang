@@ -29,7 +29,7 @@ fn main() -> Result<()> {
     let input =
         fs::read_to_string(input_file).context(format!("Failed to read file: {input_file:?}"))?;
 
-    let output = Language::new(args.version).parse(ProductionKind::SourceUnit, &input);
+    let output = Language::new(args.version)?.parse(ProductionKind::SourceUnit, &input);
 
     for report in &output.errors_as_strings(
         input_file

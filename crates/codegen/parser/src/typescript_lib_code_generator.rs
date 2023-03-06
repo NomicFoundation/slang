@@ -1,12 +1,18 @@
 use quote::quote;
 use std::path::PathBuf;
 
+use codegen_schema::types::grammar::Grammar;
 use codegen_utils::context::CodegenContext;
 
 use super::code_generator::CodeGenerator;
 
 impl CodeGenerator {
-    pub fn write_typescript_lib_sources(&self, codegen: &mut CodegenContext, output_dir: &PathBuf) {
+    pub fn write_typescript_lib_sources(
+        &self,
+        grammar: &Grammar,
+        codegen: &mut CodegenContext,
+        output_dir: &PathBuf,
+    ) {
         self.write_common_sources(codegen, output_dir);
 
         codegen
@@ -55,6 +61,11 @@ impl CodeGenerator {
             let version_flag_initializers = self.version_flag_initializers().join(",");
             let scanner_invocations = self.scanner_invocations().join(",");
             let parser_invocations = self.parser_invocations().join(",");
+            let versions_array = {
+                let versions = grammar.versions.iter().map(|v| v.to_string());
+                quote! { static VERSIONS: &'static [&'static str] = &[ #(#versions),* ]; }
+            };
+            let language_name = &grammar.title;
 
             let trampolines = quote! {
                 fn call_scanner<F>(language: &Language, input: String, scanner: F, kind: TokenKind, error_message: &str) -> ParserOutput
@@ -97,10 +108,15 @@ impl CodeGenerator {
                         impl Language {{
                             #[napi(constructor)]
                             pub fn new(version: String) -> Self {{
+                                {versions_array}
                                 let version = Version::parse(&version).unwrap();
-                                Self {{
-                                    {version_flag_initializers},
-                                    version,
+                                if VERSIONS.contains(&version.to_string().as_str()) {{
+                                    Self {{
+                                        {version_flag_initializers},
+                                        version,
+                                    }}
+                                }} else {{
+                                    panic!(\"Invalid {language_name} language version: {{}}\", version);
                                 }}
                             }}
 
