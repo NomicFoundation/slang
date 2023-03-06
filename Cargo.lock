@@ -493,6 +493,12 @@ dependencies = [
 
 [[package]]
 name = "itoa"
+version = "0.4.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b71991ff56294aa922b450139ee08b3bfc70982c6b2c7562771375cf73542dd4"
+
+[[package]]
+name = "itoa"
 version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fad582f4b9e86b6caa621cabeb0963332d92eea04729ab12892c2533951e6440"
@@ -502,6 +508,29 @@ name = "lazy_static"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
+
+[[package]]
+name = "lexpr"
+version = "0.2.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ceee0b80e0043f17bf81130471e1b0975179af75fe657af45577d80e2698fe3b"
+dependencies = [
+ "itoa 0.4.8",
+ "lexpr-macros",
+ "proc-macro-hack",
+ "ryu",
+]
+
+[[package]]
+name = "lexpr-macros"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cd627fb38e19c00d8d068618259205f7a91c91aeade5c15bc35dbca037bb1c35"
+dependencies = [
+ "proc-macro-hack",
+ "proc-macro2",
+ "quote",
+]
 
 [[package]]
 name = "libc"
@@ -692,6 +721,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "proc-macro-hack"
+version = "0.5.20+deprecated"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dc375e1527247fe1a97d8b7156678dfe7c1af2fc075c9a4db3690ecd2a148068"
+
+[[package]]
 name = "proc-macro2"
 version = "1.0.49"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -875,6 +910,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "serde-lexpr"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4b305d32ef3ad5ebf721122b0b9aeecbf67e843e6fbafb6b5cefa4fb9dc3909f"
+dependencies = [
+ "lexpr",
+ "serde",
+]
+
+[[package]]
 name = "serde_bytes"
 version = "0.11.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -912,7 +957,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "877c235533714907a8c2464236f5c4b2a17262ef1bd71f38f35ea592c8da6883"
 dependencies = [
  "indexmap",
- "itoa",
+ "itoa 1.0.5",
  "ryu",
  "serde",
 ]
@@ -924,7 +969,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "92b5b431e8907b50339b51223b97d102db8d987ced36f6e4d03621db9316c834"
 dependencies = [
  "indexmap",
- "itoa",
+ "itoa 1.0.5",
  "ryu",
  "serde",
  "unsafe-libyaml",
@@ -957,6 +1002,7 @@ dependencies = [
  "anyhow",
  "clap",
  "semver",
+ "serde-lexpr",
  "serde_json",
  "serde_yaml",
  "solidity_rust_lib",
@@ -1136,7 +1182,7 @@ version = "0.3.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a561bf4617eebd33bca6434b988f39ed798e527f51a1e797d0ee4f61c0a38376"
 dependencies = [
- "itoa",
+ "itoa 1.0.5",
  "serde",
  "time-core",
  "time-macros",

@@ -48,6 +48,7 @@ semver = { version = "1.0.9", features = ["serde"] }
 serde = { version = "1.0.137", features = ["derive", "rc"] }
 serde_json = { version = "1.0.81", features = ["preserve_order"] }
 serde_yaml = { version = "0.9.14" }
+serde-lexpr = { version = "0.1.2" }
 similar-asserts = { version = "1.4.2" }
 solidity_rust_lib = { path = "crates/solidity/outputs/rust/lib" }
 solidity_schema = { path = "crates/solidity/inputs/schema" }
