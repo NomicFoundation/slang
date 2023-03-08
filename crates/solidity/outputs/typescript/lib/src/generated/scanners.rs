@@ -811,12 +811,15 @@ impl Language {
         }
     }
 
-    // «EndOfLine» = 1…{ '\u{d}' | '\u{a}' } ;
+    // «EndOfLine» = [ '\u{d}' ] '\u{a}' ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_end_of_line(&self, stream: &mut Stream) -> bool {
         {
-            scan_one_or_more!(stream, scan_predicate!(stream, |c| c == '\n' || c == '\r'))
+            scan_sequence!(
+                scan_optional!(stream, scan_chars!(stream, '\r')),
+                scan_chars!(stream, '\n')
+            )
         }
     }
 

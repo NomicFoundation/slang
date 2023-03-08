@@ -14,10 +14,10 @@
   kind: "TriviaParser"
   unversioned:
     sequence:
-      - zeroOrMore:
-          choice:
-            - reference: "Whitespace"
-            - reference: "SingleLineComment"
+      - optional:
+          reference: "Whitespace"
+      - optional:
+          reference: "SingleLineComment"
       - reference: "EndOfLine"
 
 - name: "EndOfFileTrivia"
@@ -41,10 +41,10 @@
 - name: "EndOfLine"
   kind: "Scanner"
   unversioned:
-    oneOrMore:
-      choice:
-        - terminal: "\r"
-        - terminal: "\n"
+    sequence:
+      - optional:
+          terminal: "\r"
+      - terminal: "\n"
 
 - name: "MultilineComment"
   kind: "Scanner"

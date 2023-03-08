@@ -15596,7 +15596,7 @@ impl Language {
         }
     }
 
-    // TrailingTrivia = { «Whitespace» | «SingleLineComment» } «EndOfLine» ;
+    // TrailingTrivia = [ «Whitespace» ] [ «SingleLineComment» ] «EndOfLine» ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_trailing_trivia(&self, stream: &mut Stream) -> ParseResult {
@@ -15604,70 +15604,34 @@ impl Language {
             loop {
                 let mut furthest_error = None;
                 let result_0 = match {
-                    let mut result = Vec::new();
-                    loop {
-                        let start_position = stream.position();
-                        match loop {
-                            let start_position = stream.position();
-                            let mut furthest_error;
-                            match {
-                                let start = stream.position();
-                                if self.scan_whitespace(stream) {
-                                    let end = stream.position();
-                                    Pass {
-                                        node: cst::Node::token(
-                                            TokenKind::Whitespace,
-                                            Range { start, end },
-                                            None,
-                                            None,
-                                        ),
-                                        error: None,
-                                    }
-                                } else {
-                                    Fail {
-                                        error: ParseError::new(start, "Whitespace"),
-                                    }
-                                }
-                            } {
-                                Fail { error } => furthest_error = error,
-                                pass => break pass,
+                    let start_position = stream.position();
+                    match {
+                        let start = stream.position();
+                        if self.scan_whitespace(stream) {
+                            let end = stream.position();
+                            Pass {
+                                node: cst::Node::token(
+                                    TokenKind::Whitespace,
+                                    Range { start, end },
+                                    None,
+                                    None,
+                                ),
+                                error: None,
                             }
-                            stream.set_position(start_position);
-                            match {
-                                let start = stream.position();
-                                if self.scan_single_line_comment(stream) {
-                                    let end = stream.position();
-                                    Pass {
-                                        node: cst::Node::token(
-                                            TokenKind::SingleLineComment,
-                                            Range { start, end },
-                                            None,
-                                            None,
-                                        ),
-                                        error: None,
-                                    }
-                                } else {
-                                    Fail {
-                                        error: ParseError::new(start, "SingleLineComment"),
-                                    }
-                                }
-                            } {
-                                Fail { error } => furthest_error.merge_with(error),
-                                pass => break pass,
+                        } else {
+                            Fail {
+                                error: ParseError::new(start, "Whitespace"),
                             }
-                            break Fail {
-                                error: furthest_error,
-                            };
-                        } {
-                            Fail { error } => {
-                                stream.set_position(start_position);
-                                break Pass {
-                                    node: cst::Node::rule(RuleKind::_REPEATED, result),
-                                    error: Some(error),
-                                };
-                            }
-                            Pass { node, .. } => result.push(node),
                         }
+                    } {
+                        Fail { error } => {
+                            stream.set_position(start_position);
+                            Pass {
+                                node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                error: Some(error),
+                            }
+                        }
+                        pass => pass,
                     }
                 } {
                     Pass { node, error } => {
@@ -15681,6 +15645,47 @@ impl Language {
                     }
                 };
                 let result_1 = match {
+                    let start_position = stream.position();
+                    match {
+                        let start = stream.position();
+                        if self.scan_single_line_comment(stream) {
+                            let end = stream.position();
+                            Pass {
+                                node: cst::Node::token(
+                                    TokenKind::SingleLineComment,
+                                    Range { start, end },
+                                    None,
+                                    None,
+                                ),
+                                error: None,
+                            }
+                        } else {
+                            Fail {
+                                error: ParseError::new(start, "SingleLineComment"),
+                            }
+                        }
+                    } {
+                        Fail { error } => {
+                            stream.set_position(start_position);
+                            Pass {
+                                node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                error: Some(error),
+                            }
+                        }
+                        pass => pass,
+                    }
+                } {
+                    Pass { node, error } => {
+                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
+                        node
+                    }
+                    Fail { error } => {
+                        break Fail {
+                            error: error.maybe_merge_with(furthest_error),
+                        }
+                    }
+                };
+                let result_2 = match {
                     let start = stream.position();
                     if self.scan_end_of_line(stream) {
                         let end = stream.position();
@@ -15710,7 +15715,7 @@ impl Language {
                     }
                 };
                 break Pass {
-                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                    node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
                     error: furthest_error,
                 };
             }
