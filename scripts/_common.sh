@@ -1,39 +1,16 @@
 #!/bin/bash
 set -euo pipefail
 
-# See https://github.com/actions/checkout/issues/766
-[[ "${GITHUB_WORKSPACE:-}" ]] && git config --global --add safe.directory "$GITHUB_WORKSPACE"
-
+# Import common utilities, after Hermit is activated:
 # shellcheck source=/dev/null
-[[ "${HERMIT_ENV:-}" ]] || source "$(dirname "${BASH_SOURCE[0]}")/../bin/activate-hermit"
+source "$(dirname "${BASH_SOURCE[0]}")/_utils.sh"
 
-#
-# Searches the repository for all files matching the passed globs:
-# - Globs should be relative to "$REPO_ROOT".
-# - Results are canonicalized (converted to full paths).
-# - It also excludes files hidden by ".gitignore".
-#
-function _list_source_files() {
-  pattern="$1"
+# Activate the Hermit environment:
+eval "$(_print_hermit_env)"
 
+# If running in GitHub CI, mark the repository as safe.directory in git:
+# See https://github.com/actions/checkout/issues/766
+if [[ "${CI:-}" && "${GITHUB_WORKSPACE:-}" ]]; then
   cd "$REPO_ROOT"
-  rg \
-    --files --sort "path" \
-    --hidden --glob '!.git/**' --glob '!.hermit/**' \
-    --glob "$pattern" \
-    | xargs realpath --canonicalize-existing
-}
-
-#
-# Optionally appends an argument to a string if it doesn't already contain it.
-#
-function _try_append_arg() {
-  original="$1"
-  arg="$2"
-
-  if [[ "$original" == *"$arg"* ]]; then
-    echo "$original"
-  else
-    echo "$original $arg"
-  fi
-}
+  git config --global --add safe.directory "$GITHUB_WORKSPACE"
+fi

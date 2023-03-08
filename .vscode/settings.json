@@ -2,6 +2,11 @@
   "editor.formatOnSave": true,
   "editor.rulers": [120],
   "files.eol": "\n",
+  "rust-analyzer.server.extraEnv": {
+    "CARGO": "${workspaceFolder}/bin/cargo",
+    "RUSTC": "${workspaceFolder}/bin/rustc",
+    "RUSTFMT": "${workspaceFolder}/bin/rustfmt"
+  },
   "rust-analyzer.server.path": "${workspaceFolder}/bin/rust-analyzer",
   "search.exclude": {
     "**/.hermit/": true,
