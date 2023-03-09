@@ -31,7 +31,7 @@ jobs:
       - name: "Upload artifacts"
         uses: "actions/upload-pages-artifact@v1.0.7"
         with:
-          path: "${{ steps.build.outputs.site_dir }}"
+          path: "target/documentation"
       - name: "Deploy to GitHub Pages"
         id: "deployment"
         uses: "actions/deploy-pages@v1.2.3"

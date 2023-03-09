@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../../../../../../codegen/schema/generated/productions.schema.json
+
+- name: "InterfaceDefinition"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "InterfaceKeyword"
+      - reference: "Identifier"
+      - optional:
+          reference: "InheritanceSpecifierList"
+      - delimitedBy:
+          open: "{"
+          expression:
+            zeroOrMore:
+              reference: "ContractBodyElement"
+          close: "}"

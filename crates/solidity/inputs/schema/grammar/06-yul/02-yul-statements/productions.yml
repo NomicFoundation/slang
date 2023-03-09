@@ -1,0 +1,126 @@
+# yaml-language-server: $schema=../../../../../../../codegen/schema/generated/productions.schema.json
+
+- name: "YulBlock"
+  kind: "Parser"
+  unversioned:
+    delimitedBy:
+      open: "{"
+      expression:
+        zeroOrMore:
+          reference: "YulStatement"
+      close: "}"
+
+- name: "YulStatement"
+  kind: "Parser"
+  unversioned:
+    choice:
+      - reference: "YulBlock"
+      - reference: "YulVariableDeclaration"
+      - reference: "YulFunctionDefinition"
+      - reference: "YulAssignmentStatement"
+      - reference: "YulFunctionCall"
+      - reference: "YulIfStatement"
+      - reference: "YulForStatement"
+      - reference: "YulSwitchStatement"
+      - reference: "YulLeaveStatement"
+      - reference: "YulBreakStatement"
+      - reference: "YulContinueStatement"
+
+- name: "YulVariableDeclaration"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "LetKeyword"
+      - separatedBy:
+          separator: ","
+          expression:
+            reference: "YulIdentifierPath"
+      - optional:
+          sequence:
+            - terminal: ":="
+            - reference: "YulExpression"
+
+- name: "YulFunctionDefinition"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "FunctionKeyword"
+      - reference: "YulIdentifier"
+      - delimitedBy:
+          open: "("
+          expression:
+            optional:
+              name: "Arguments"
+              separatedBy:
+                separator: ","
+                expression:
+                  reference: "YulIdentifier"
+          close: ")"
+      - optional:
+          sequence:
+            - terminal: "->"
+            - name: "Results"
+              separatedBy:
+                separator: ","
+                expression:
+                  reference: "YulIdentifier"
+      - reference: "YulBlock"
+
+- name: "YulAssignmentStatement"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - separatedBy:
+          separator: ","
+          expression:
+            reference: "YulIdentifierPath"
+      - terminal: ":="
+      - reference: "YulExpression"
+
+- name: "YulIfStatement"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "IfKeyword"
+      - reference: "YulExpression"
+      - reference: "YulBlock"
+
+- name: "YulLeaveStatement"
+  kind: "Parser"
+  unversioned:
+    reference: "LeaveKeyword"
+
+- name: "YulBreakStatement"
+  kind: "Parser"
+  unversioned:
+    reference: "BreakKeyword"
+
+- name: "YulContinueStatement"
+  kind: "Parser"
+  unversioned:
+    reference: "ContinueKeyword"
+
+- name: "YulForStatement"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "ForKeyword"
+      - reference: "YulBlock"
+      - reference: "YulExpression"
+      - reference: "YulBlock"
+      - reference: "YulBlock"
+
+- name: "YulSwitchStatement"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "SwitchKeyword"
+      - reference: "YulExpression"
+      - oneOrMore:
+          sequence:
+            - choice:
+                - sequence:
+                    - reference: "CaseKeyword"
+                    - reference: "YulLiteral"
+                - reference: "DefaultKeyword"
+            - reference: "YulBlock"

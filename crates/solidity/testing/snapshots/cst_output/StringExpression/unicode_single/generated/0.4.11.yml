@@ -6,6 +6,6 @@ Source: >
 Errors: []
 
 Tree:
-  - StringExpression (Rule): # 0..19 "unicode\"emoji 😃\""
-      - _REPEATED (Rule): # 0..19 "unicode\"emoji 😃\""
+  - StringExpression (Rule): # 0..19 'unicode"emoji 😃"'
+      - _REPEATED (Rule): # 0..19 'unicode"emoji 😃"'
           - UnicodeStringLiteral (Token): 'unicode"emoji 😃"' # 0..19

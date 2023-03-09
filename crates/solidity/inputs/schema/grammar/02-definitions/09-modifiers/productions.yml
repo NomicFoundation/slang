@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../../../../../../codegen/schema/generated/productions.schema.json
+
+- name: "ModifierDefinition"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "ModifierKeyword"
+      - reference: "Identifier"
+      - optional:
+          reference: "ParameterList"
+      - zeroOrMore:
+          reference: "ModifierAttribute"
+      - choice:
+          - terminal: ";"
+          - reference: "Block"
+
+- name: "ModifierAttribute"
+  kind: "Parser"
+  unversioned:
+    choice:
+      - reference: "OverrideSpecifier"
+      - reference: "VirtualKeyword"
+
+- name: "ModifierInvocation"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "IdentifierPath"
+      - optional:
+          reference: "ArgumentList"

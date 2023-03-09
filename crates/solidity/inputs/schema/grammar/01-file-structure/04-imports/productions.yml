@@ -1,0 +1,85 @@
+# yaml-language-server: $schema=../../../../../../../codegen/schema/generated/productions.schema.json
+
+- name: "ImportDirective"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "ImportKeyword"
+      - choice:
+          - reference: "SimpleImportDirective"
+          - reference: "StarImportDirective"
+          - reference: "SelectingImportDirective"
+      - terminal: ";"
+
+- name: "SimpleImportDirective"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "ImportPath"
+      - zeroOrMore:
+          sequence:
+            - reference: "AsKeyword"
+            - reference: "Identifier"
+
+- name: "StarImportDirective"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - terminal: "*"
+      - reference: "AsKeyword"
+      - reference: "Identifier"
+      - reference: "FromKeyword"
+      - reference: "ImportPath"
+
+- name: "SelectingImportDirective"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - delimitedBy:
+          open: "{"
+          expression:
+            separatedBy:
+              separator: ","
+              expression:
+                reference: "SelectedImport"
+          close: "}"
+      - reference: "FromKeyword"
+      - reference: "ImportPath"
+
+- name: "SelectedImport"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "Identifier"
+      - optional:
+          sequence:
+            - reference: "AsKeyword"
+            - reference: "Identifier"
+
+- name: "ImportPath"
+  kind: "Parser"
+  unversioned:
+    reference: "AsciiStringLiteral"
+
+- name: "UsingDirective"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "UsingKeyword"
+      - choice:
+          - reference: "IdentifierPath"
+          - delimitedBy:
+              open: "{"
+              expression:
+                separatedBy:
+                  separator: ","
+                  expression:
+                    reference: "IdentifierPath"
+              close: "}"
+      - reference: "ForKeyword"
+      - choice:
+          - terminal: "*"
+          - reference: "TypeName"
+      - optional:
+          reference: "GlobalKeyword"
+      - terminal: ";"

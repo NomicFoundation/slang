@@ -244,6 +244,13 @@ impl CodeGenerator {
     }
 
     pub fn write_common_sources(&self, codegen: &mut CodegenContext, output_dir: &PathBuf) {
+        // Rebuild if input files are added/removed
+        codegen.track_input_dir(
+            &codegen
+                .repo_root
+                .join("crates/codegen/parser_templates/src"),
+        );
+
         codegen
             .copy_file(
                 &codegen

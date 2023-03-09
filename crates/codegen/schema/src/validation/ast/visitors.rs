@@ -5,7 +5,7 @@ use codegen_utils::errors::CodegenErrors;
 use crate::{validation::Model, yaml::cst};
 
 use super::{
-    files::{ManifestFile, PathBufRef, TopicFile},
+    files::{ManifestFile, PathBufRef, ProductionsFile},
     parser::{Parser, ParserDefinition, ParserRef},
     precedence_parser::{OperatorDefinition, PrecedenceParser, PrecedenceParserRef, Reference},
     production::{Production, ProductionRef, VersionMap},
@@ -42,9 +42,9 @@ pub trait Visitor {
         return VisitorResponse::StepIn;
     }
 
-    fn visit_topic(
+    fn visit_productions_file(
         &mut self,
-        _topic_file: &TopicFile,
+        _productions_file: &ProductionsFile,
         _reporter: &mut Reporter,
     ) -> VisitorResponse {
         return VisitorResponse::StepIn;
@@ -106,9 +106,9 @@ impl<V: Visitor> VisitorExtensions for V {
             model.manifest_file.receive(self, &mut reporter);
         }
 
-        for topic in &model.topic_files {
-            let mut reporter = Reporter::new(&topic.path, errors);
-            topic.receive(self, &mut reporter);
+        for productions_file in &model.productions_files {
+            let mut reporter = Reporter::new(&productions_file.path, errors);
+            productions_file.receive(self, &mut reporter);
         }
     }
 }
@@ -123,9 +123,9 @@ impl Receiver for ManifestFile {
     }
 }
 
-impl Receiver for TopicFile {
+impl Receiver for ProductionsFile {
     fn receive<V: Visitor>(&self, visitor: &mut V, reporter: &mut Reporter) {
-        if visitor.visit_topic(self, reporter) == VisitorResponse::StepIn {
+        if visitor.visit_productions_file(self, reporter) == VisitorResponse::StepIn {
             for production in &self.ast.value {
                 production.receive(visitor, reporter);
             }

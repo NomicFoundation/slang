@@ -1,5 +1,19 @@
 {
   "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/v5.19.2/cspell.schema.json",
   "language": "en-US",
-  "files": ["**/*.md"]
+  "files": ["**/*.md"],
+  "ignoreWords": [
+    "abicoder",
+    "codegen",
+    "devcontainer",
+    "Doxygen",
+    "ebnf",
+    "inheritdoc",
+    "IPFS",
+    "mkdocs",
+    "NatSpec",
+    "struct",
+    "structs",
+    "ufixed"
+  ]
 }

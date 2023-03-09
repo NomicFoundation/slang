@@ -4,7 +4,7 @@ use super::ebnf_writer::{EBNFWritable, EBNFWriter};
 
 impl<T: EBNFWriter> EBNFWritable<T> for ScannerRef {
     fn write_ebnf(&self, name: &str, writer: &mut T) {
-        writer.write_production_definition(name);
+        writer.write_global_definition(name);
         writer.write_operator(" = ");
         self.definition.write_ebnf("", writer);
         writer.write_operator(" ;");
@@ -72,7 +72,9 @@ impl<T: EBNFWriter> EBNFWritable<T> for ScannerDefinition {
                 writer.write_string(&to.to_string());
             }
 
-            ScannerDefinition::Reference(name) => writer.write_production_reference(name),
+            ScannerDefinition::Reference(name) => {
+                writer.write_global_reference(name);
+            }
 
             ScannerDefinition::Repeat {
                 min,

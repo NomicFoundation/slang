@@ -1,5 +1,6 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, path::PathBuf};
 
+use indexmap::IndexMap;
 use semver::Version;
 use serde::{Deserialize, Serialize};
 
@@ -11,6 +12,8 @@ pub struct Grammar {
     pub title: String,
     pub sections: Vec<GrammarSection>,
     pub versions: Vec<Version>,
+
+    pub manifest_dir: PathBuf,
     pub productions: HashMap<String, ProductionRef>,
 }
 
@@ -18,6 +21,7 @@ pub struct Grammar {
 #[serde(deny_unknown_fields)]
 pub struct GrammarSection {
     pub title: String,
+    pub path: String,
     pub topics: Vec<GrammarTopic>,
 }
 
@@ -25,5 +29,22 @@ pub struct GrammarSection {
 #[serde(deny_unknown_fields)]
 pub struct GrammarTopic {
     pub title: String,
-    pub productions: Vec<ProductionRef>,
+    pub path: String,
+    pub productions: IndexMap<String, ProductionRef>,
+}
+
+impl GrammarTopic {
+    // TODO(OmarTawfik): This method is definetely used.
+    // Need to isolate and report the bug to the rustc team.
+    #[allow(dead_code)]
+    pub fn productions_file() -> String {
+        return "productions.yml".to_owned();
+    }
+
+    // TODO(OmarTawfik): This method is definetely used.
+    // Need to isolate and report the bug to the rustc team.
+    #[allow(dead_code)]
+    pub fn notes_file() -> String {
+        return "notes.md".to_owned();
+    }
 }

@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../../../../../../codegen/schema/generated/productions.schema.json
+
+- name: "EventDefinition"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "EventKeyword"
+      - reference: "Identifier"
+      - delimitedBy:
+          open: "("
+          expression:
+            optional:
+              separatedBy:
+                separator: ","
+                expression:
+                  reference: "EventParameter"
+          close: ")"
+      - optional:
+          reference: "AnonymousKeyword"
+      - terminal: ";"
+
+- name: "EventParameter"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "TypeName"
+      - optional:
+          reference: "IndexedKeyword"
+      - optional:
+          reference: "Identifier"

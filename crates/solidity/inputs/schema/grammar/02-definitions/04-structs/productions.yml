@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../../../../../../codegen/schema/generated/productions.schema.json
+
+- name: "StructDefinition"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "StructKeyword"
+      - reference: "Identifier"
+      - delimitedBy:
+          open: "{"
+          expression:
+            oneOrMore:
+              reference: "StructMember"
+          close: "}"
+
+- name: "StructMember"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "TypeName"
+      - reference: "Identifier"
+      - terminal: ";"

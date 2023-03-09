@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=../../../../../../../codegen/schema/generated/productions.schema.json
+
+- name: "TryStatement"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "TryKeyword"
+      - reference: "Expression"
+      - optional:
+          sequence:
+            - reference: "ReturnsKeyword"
+            - reference: "ParameterList"
+      - reference: "Block"
+      - oneOrMore:
+          reference: "CatchClause"
+
+- name: "CatchClause"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "CatchKeyword"
+      - optional:
+          sequence:
+            - optional:
+                reference: "Identifier"
+            - reference: "ParameterList"
+      - reference: "Block"
+
+- name: "RevertStatement"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "RevertKeyword"
+      - optional:
+          reference: "IdentifierPath"
+      - reference: "ArgumentList"
+      - terminal: ";"

@@ -1,0 +1,103 @@
+# yaml-language-server: $schema=../../../../../../../codegen/schema/generated/productions.schema.json
+
+- name: "IfStatement"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "IfKeyword"
+      - delimitedBy:
+          open: "("
+          expression:
+            reference: "Expression"
+          close: ")"
+      - reference: "Statement"
+      - optional:
+          sequence:
+            - reference: "ElseKeyword"
+            - reference: "Statement"
+
+- name: "ForStatement"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "ForKeyword"
+      - delimitedBy:
+          open: "("
+          expression:
+            sequence:
+              - choice:
+                  - reference: "SimpleStatement"
+                  - terminal: ";"
+              - choice:
+                  - reference: "ExpressionStatement"
+                  - terminal: ";"
+              - optional:
+                  reference: "Expression"
+          close: ")"
+      - reference: "Statement"
+
+- name: "WhileStatement"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "WhileKeyword"
+      - delimitedBy:
+          open: "("
+          expression:
+            reference: "Expression"
+          close: ")"
+      - reference: "Statement"
+
+- name: "DoWhileStatement"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "DoKeyword"
+      - reference: "Statement"
+      - reference: "WhileKeyword"
+      - delimitedBy:
+          open: "("
+          expression:
+            reference: "Expression"
+          close: ")"
+      - terminal: ";"
+
+- name: "ContinueStatement"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "ContinueKeyword"
+      - terminal: ";"
+
+- name: "BreakStatement"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "BreakKeyword"
+      - terminal: ";"
+
+- name: "ReturnStatement"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "ReturnKeyword"
+      - optional:
+          reference: "Expression"
+      - terminal: ";"
+
+- name: "EmitStatement"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "EmitKeyword"
+      - reference: "IdentifierPath"
+      - reference: "ArgumentList"
+      - terminal: ";"
+
+- name: "DeleteStatement"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "DeleteKeyword"
+      - reference: "Expression"
+      - terminal: ";"

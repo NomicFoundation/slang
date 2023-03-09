@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=../../../../../../../codegen/schema/generated/productions.schema.json
+
+- name: "TupleDeconstructionStatement"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - delimitedBy:
+          open: "("
+          expression:
+            optional:
+              separatedBy:
+                separator: ","
+                expression:
+                  optional:
+                    choice:
+                      - sequence:
+                          - reference: "TypeName"
+                          - optional:
+                              reference: "DataLocation"
+                          - reference: "Identifier"
+                      - sequence:
+                          - optional:
+                              reference: "DataLocation"
+                          - reference: "Identifier"
+          close: ")"
+      - terminal: "="
+      - reference: "Expression"
+      - terminal: ";"
+
+- name: "VariableDeclarationStatement"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "TypeName"
+      - optional:
+          reference: "DataLocation"
+      - reference: "Identifier"
+      - optional:
+          sequence:
+            - terminal: "="
+            - reference: "Expression"
+      - terminal: ";"
+
+- name: "DataLocation"
+  kind: "Parser"
+  unversioned:
+    choice:
+      - reference: "MemoryKeyword"
+      - reference: "StorageKeyword"
+      - reference: "CalldataKeyword"

@@ -1,0 +1,43 @@
+# yaml-language-server: $schema=../../../../../../../codegen/schema/generated/productions.schema.json
+
+- name: "MappingType"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - reference: "MappingKeyword"
+      - delimitedBy:
+          open: "("
+          expression:
+            sequence:
+              - reference: "MappingKeyType"
+              - terminal: "=>"
+              - reference: "MappingValueType"
+          close: ")"
+
+- name: "MappingKeyType"
+  kind: "Parser"
+  versioned:
+    0.4.11:
+      sequence:
+        - choice:
+            - reference: "ElementaryType"
+            - reference: "IdentifierPath"
+    0.8.18:
+      sequence:
+        - choice:
+            - reference: "ElementaryType"
+            - reference: "IdentifierPath"
+        - optional:
+            reference: "Identifier"
+
+- name: "MappingValueType"
+  kind: "Parser"
+  versioned:
+    0.4.11:
+      sequence:
+        - reference: "TypeName"
+    0.8.18:
+      sequence:
+        - reference: "TypeName"
+        - optional:
+            reference: "Identifier"

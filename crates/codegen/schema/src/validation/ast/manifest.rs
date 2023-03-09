@@ -31,6 +31,7 @@ impl Manifest {
 
 pub struct ManifestSection {
     pub title: Node<String>,
+    pub path: Node<String>,
     pub topics: Vec<ManifestTopic>,
 }
 
@@ -38,6 +39,7 @@ impl ManifestSection {
     pub fn new(cst_node: &cst::NodeRef, value: types::manifest::ManifestSection) -> Self {
         return Self {
             title: Node::new(cst_node.value_of_field("title"), value.title),
+            path: Node::new(cst_node.value_of_field("path"), value.path),
             topics: cst_node
                 .value_of_field("topics")
                 .zip(value.topics, ManifestTopic::new),
@@ -47,16 +49,14 @@ impl ManifestSection {
 
 pub struct ManifestTopic {
     pub title: Node<String>,
-    pub definition: Option<Node<String>>,
+    pub path: Node<String>,
 }
 
 impl ManifestTopic {
     pub fn new(cst_node: &cst::NodeRef, value: types::manifest::ManifestTopic) -> Self {
         return Self {
             title: Node::new(cst_node.value_of_field("title"), value.title),
-            definition: value.definition.and_then(|definition| {
-                return Some(Node::new(cst_node.value_of_field("definition"), definition));
-            }),
+            path: Node::new(cst_node.value_of_field("path"), value.path),
         };
     }
 }

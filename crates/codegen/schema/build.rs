@@ -6,7 +6,7 @@ use codegen_utils::context::CodegenContext;
 use schemars::{schema_for, JsonSchema};
 use serde_json::Value;
 
-use crate::types::manifest::{ManifestFile, TopicFile};
+use crate::types::manifest::{ManifestFile, ProductionsFile};
 
 fn main() -> Result<()> {
     return CodegenContext::with_context(|codegen| {
@@ -15,9 +15,9 @@ fn main() -> Result<()> {
             "crates/codegen/schema/generated/manifest.schema.json",
         )?;
 
-        write_schema_file::<TopicFile>(
+        write_schema_file::<ProductionsFile>(
             codegen,
-            "crates/codegen/schema/generated/topic.schema.json",
+            "crates/codegen/schema/generated/productions.schema.json",
         )?;
 
         return Ok(());

@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../../../../../../codegen/schema/generated/productions.schema.json
+
+- name: "SourceUnit"
+  kind: "Parser"
+  unversioned:
+    sequence:
+      - oneOrMore:
+          choice:
+            - reference: "Directive"
+            - reference: "Definition"
+      - optional:
+          reference: "EndOfFileTrivia"
+
+- name: "Directive"
+  kind: "Parser"
+  unversioned:
+    choice:
+      - reference: "PragmaDirective"
+      - reference: "ImportDirective"
+      - reference: "UsingDirective"
+
+- name: "Definition"
+  kind: "Parser"
+  unversioned:
+    choice:
+      - reference: "ContractDefinition"
+      - reference: "InterfaceDefinition"
+      - reference: "LibraryDefinition"
+      - reference: "FunctionDefinition"
+      - reference: "ConstantDefinition"
+      - reference: "StructDefinition"
+      - reference: "EnumDefinition"
+      - reference: "UserDefinedValueTypeDefinition"
+      - reference: "ErrorDefinition"
