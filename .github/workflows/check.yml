@@ -44,7 +44,7 @@ jobs:
         if: "success() || failure()" # run and report issues, even if previous steps failed
         uses: "./.devcontainer"
         with:
-          entrypoint: "scripts/linting/run.sh"
+          entrypoint: "scripts/lint/all.sh"
       - name: "Build documentation"
         if: "success() || failure()" # run and report issues, even if previous steps failed
         uses: "./.devcontainer"
