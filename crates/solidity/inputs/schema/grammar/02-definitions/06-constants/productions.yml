@@ -3,10 +3,13 @@
 - name: "ConstantDefinition"
   kind: "Parser"
   unversioned:
-    sequence:
-      - reference: "TypeName"
-      - reference: "ConstantKeyword"
-      - reference: "Identifier"
-      - terminal: "="
-      - reference: "Expression"
-      - terminal: ";"
+    terminatedBy:
+      expression:
+        sequence:
+          - reference: "TypeName"
+          - reference: "ConstantKeyword"
+          - reference: "Identifier"
+          - reference: "Equal"
+          - reference: "Expression"
+      terminator:
+        reference: "Semicolon"

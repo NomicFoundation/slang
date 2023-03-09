@@ -8,14 +8,13 @@ Errors: []
 Tree:
   - MappingType (Rule): # 0..26 "mapping(string => bytes32)"
       - MappingKeyword (Token): "mapping" # 0..7
-      - _DELIMITEDBY (Rule): # 7..26 "(string => bytes32)"
-          - OpenParen (Token): "(" # 7..8
-          - MappingKeyType (Rule): # 8..14 "string"
-              - ElementaryType (Rule): # 8..14 "string"
-                  - StringKeyword (Token): "string" # 8..14
-          - EqualGreater (Token): "=>" # 15..17
-          - MappingValueType (Rule): # 18..25 "bytes32"
-              - TypeName (Rule): # 18..25 "bytes32"
-                  - ElementaryType (Rule): # 18..25 "bytes32"
-                      - FixedBytesType (Token): "bytes32" # 18..25
-          - CloseParen (Token): ")" # 25..26
+      - OpenParen (Token): "(" # 7..8
+      - MappingKeyType (Rule): # 8..14 "string"
+          - ElementaryType (Rule): # 8..14 "string"
+              - StringKeyword (Token): "string" # 8..14
+      - EqualGreaterThan (Token): "=>" # 15..17
+      - MappingValueType (Rule): # 18..25 "bytes32"
+          - TypeName (Rule): # 18..25 "bytes32"
+              - ElementaryType (Rule): # 18..25 "bytes32"
+                  - FixedBytesType (Token): "bytes32" # 18..25
+      - CloseParen (Token): ")" # 25..26

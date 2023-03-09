@@ -6,13 +6,15 @@
     sequence:
       - reference: "MappingKeyword"
       - delimitedBy:
-          open: "("
+          open:
+            reference: "OpenParen"
           expression:
             sequence:
               - reference: "MappingKeyType"
-              - terminal: "=>"
+              - reference: "EqualGreaterThan"
               - reference: "MappingValueType"
-          close: ")"
+          close:
+            reference: "CloseParen"
 
 - name: "MappingKeyType"
   kind: "Parser"

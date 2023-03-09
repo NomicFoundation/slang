@@ -7,11 +7,14 @@
       - reference: "EnumKeyword"
       - reference: "Identifier"
       - delimitedBy:
-          open: "{"
+          open:
+            reference: "OpenBrace"
           expression:
             optional:
               separatedBy:
-                separator: ","
+                separator:
+                  reference: "Comma"
                 expression:
                   reference: "Identifier"
-          close: "}"
+          close:
+            reference: "CloseBrace"

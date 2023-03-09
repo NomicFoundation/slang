@@ -22,6 +22,8 @@ sections:
         path: "06-nat-spec-format"
       - title: "1.7. Keywords"
         path: "07-keywords"
+      - title: "1.8 Punctuation"
+        path: "08-punctuation"
   - title: "2. Definitions"
     path: "02-definitions"
     topics:

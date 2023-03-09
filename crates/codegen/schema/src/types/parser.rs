@@ -1,6 +1,8 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
+use super::production::Reference;
+
 pub type ParserRef = std::rc::Rc<Parser>;
 
 #[derive(Clone, Debug, Deserialize, Serialize, JsonSchema, PartialEq, Eq, Hash)]
@@ -20,9 +22,9 @@ pub enum ParserDefinition {
 
     #[schemars(title = "DelimitedBy Expression")]
     DelimitedBy {
-        open: String,
+        open: Reference,
         expression: ParserRef,
-        close: String,
+        close: Reference,
     },
 
     #[schemars(title = "OneOrMore Expression")]
@@ -36,22 +38,25 @@ pub enum ParserDefinition {
 
     #[schemars(title = "Repeat Expression")]
     Repeat {
+        expression: ParserRef,
         min: usize,
         max: usize,
-        expression: ParserRef,
     },
 
     #[schemars(title = "SeparatedBy Expression")]
     SeparatedBy {
-        separator: String,
         expression: ParserRef,
+        separator: Reference,
     },
 
     #[schemars(title = "Sequence Expression")]
     Sequence(Vec<ParserRef>),
 
-    #[schemars(title = "Terminal Expression")]
-    Terminal(String),
+    #[schemars(title = "TerminatedBy Expression")]
+    TerminatedBy {
+        expression: ParserRef,
+        terminator: Reference,
+    },
 
     #[schemars(title = "ZeroOrMore Expression")]
     ZeroOrMore(ParserRef),

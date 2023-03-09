@@ -89,3 +89,10 @@ impl<T> VersionMap<T> {
         }
     }
 }
+
+#[derive(Clone, Debug, Deserialize, Serialize, JsonSchema, PartialEq, Eq, Hash)]
+#[serde(deny_unknown_fields, rename_all = "camelCase")]
+pub struct Reference {
+    #[schemars(title = "Production Reference")]
+    pub reference: String,
+}

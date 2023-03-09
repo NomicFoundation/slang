@@ -1,7 +1,7 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use super::parser::ParserDefinition;
+use super::{parser::ParserDefinition, production::Reference};
 
 #[allow(dead_code)]
 pub type PrecedenceParserRef = std::rc::Rc<PrecedenceParser>;
@@ -40,12 +40,5 @@ pub enum OperatorModel {
     BinaryLeftAssociative,
     BinaryRightAssociative,
     UnaryPrefix,
-    UnarySuffix,
-}
-
-#[derive(Clone, Debug, Deserialize, Serialize, JsonSchema, PartialEq, Eq, Hash)]
-#[serde(deny_unknown_fields, rename_all = "camelCase")]
-pub struct Reference {
-    #[schemars(title = "Production Reference")]
-    pub reference: String,
+    UnaryPostfix,
 }

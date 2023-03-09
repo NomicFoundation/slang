@@ -6,7 +6,6 @@ mod combinator_node;
 mod combinator_tree;
 mod first_set;
 mod grammar;
-mod naming;
 mod rust_lib_code_generator;
 mod to_parser_code;
 mod to_scanner_code;

@@ -3,16 +3,19 @@
 - name: "StateVariableDeclaration"
   kind: "Parser"
   unversioned:
-    sequence:
-      - reference: "TypeName"
-      - zeroOrMore:
-          reference: "StateVariableAttribute"
-      - reference: "Identifier"
-      - optional:
-          sequence:
-            - terminal: "="
-            - reference: "Expression"
-      - terminal: ";"
+    terminatedBy:
+      expression:
+        sequence:
+          - reference: "TypeName"
+          - zeroOrMore:
+              reference: "StateVariableAttribute"
+          - reference: "Identifier"
+          - optional:
+              sequence:
+                - reference: "Equal"
+                - reference: "Expression"
+      terminator:
+        reference: "Semicolon"
 
 - name: "StateVariableAttribute"
   kind: "Parser"

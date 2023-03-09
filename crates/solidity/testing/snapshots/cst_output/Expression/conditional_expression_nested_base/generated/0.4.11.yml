@@ -10,18 +10,17 @@ Tree:
       - ConditionalExpression (Rule): # 0..27 "(foo == bar) ? true : false"
           - PrimaryExpression (Rule): # 0..12 "(foo == bar)"
               - TupleExpression (Rule): # 0..12 "(foo == bar)"
-                  - _DELIMITEDBY (Rule): # 0..12 "(foo == bar)"
-                      - OpenParen (Token): "(" # 0..1
-                      - _SEPARATEDBY (Rule): # 1..11 "foo == bar"
-                          - Expression (Rule): # 1..11 "foo == bar"
-                              - EqualityComparisonExpression (Rule): # 1..11 "foo == bar"
-                                  - PrimaryExpression (Rule): # 1..4 "foo"
-                                      - Identifier (Token): "foo" # 1..4
-                                  - EqualEqual (Token): "==" # 5..7
-                                  - PrimaryExpression (Rule): # 8..11 "bar"
-                                      - Identifier (Token): "bar" # 8..11
-                      - CloseParen (Token): ")" # 11..12
-          - Question (Token): "?" # 13..14
+                  - OpenParen (Token): "(" # 0..1
+                  - _SEPARATEDBY (Rule): # 1..11 "foo == bar"
+                      - Expression (Rule): # 1..11 "foo == bar"
+                          - EqualityComparisonExpression (Rule): # 1..11 "foo == bar"
+                              - PrimaryExpression (Rule): # 1..4 "foo"
+                                  - Identifier (Token): "foo" # 1..4
+                              - EqualEqual (Token): "==" # 5..7
+                              - PrimaryExpression (Rule): # 8..11 "bar"
+                                  - Identifier (Token): "bar" # 8..11
+                  - CloseParen (Token): ")" # 11..12
+          - QuestionMark (Token): "?" # 13..14
           - Expression (Rule): # 15..19 "true"
               - PrimaryExpression (Rule): # 15..19 "true"
                   - BooleanLiteral (Rule): # 15..19 "true"

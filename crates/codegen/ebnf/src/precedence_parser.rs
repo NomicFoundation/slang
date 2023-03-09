@@ -46,7 +46,7 @@ impl<T: EBNFWriter> EBNFWritable<T> for PrecedenceParserRef {
                     writer.write_global_reference(name);
                 }
 
-                OperatorModel::UnarySuffix => {
+                OperatorModel::UnaryPostfix => {
                     writer.write_global_reference(name);
                     writer.write_operator(" ( ");
                     operator.definition.write_ebnf("", writer);

@@ -11,7 +11,7 @@
       - zeroOrMore:
           reference: "ModifierAttribute"
       - choice:
-          - terminal: ";"
+          - reference: "Semicolon"
           - reference: "Block"
 
 - name: "ModifierAttribute"

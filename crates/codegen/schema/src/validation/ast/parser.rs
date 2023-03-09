@@ -2,7 +2,10 @@ use std::rc::Rc;
 
 use crate::{types, yaml::cst};
 
-use super::{node::Node, production::ConcreteAbstractPair};
+use super::{
+    node::Node,
+    production::{ConcreteAbstractPair, Reference},
+};
 
 pub type ParserRef = Rc<Parser>;
 
@@ -27,24 +30,27 @@ impl ConcreteAbstractPair for Parser {
 pub enum ParserDefinition {
     Choice(Vec<ParserRef>),
     DelimitedBy {
-        open: Node<String>,
+        open: Node<Reference>,
         expression: ParserRef,
-        close: Node<String>,
+        close: Node<Reference>,
     },
     OneOrMore(ParserRef),
     Optional(ParserRef),
     Reference(Node<String>),
     Repeat {
+        expression: ParserRef,
         min: Node<usize>,
         max: Node<usize>,
-        expression: ParserRef,
     },
     SeparatedBy {
-        separator: Node<String>,
         expression: ParserRef,
+        separator: Node<Reference>,
     },
     Sequence(Vec<ParserRef>),
-    Terminal(Node<String>),
+    TerminatedBy {
+        expression: ParserRef,
+        terminator: Node<Reference>,
+    },
     ZeroOrMore(ParserRef),
 }
 
@@ -67,9 +73,9 @@ impl ParserDefinition {
                 return Node::new(
                     &cst_node.key,
                     Self::DelimitedBy {
-                        open: Node::new(&cst_node.value_of_field("open"), open),
+                        open: Reference::new(&cst_node.value_of_field("open"), open),
                         expression: Parser::new(&cst_node.value_of_field("expression"), expression),
-                        close: Node::new(&cst_node.value_of_field("close"), close),
+                        close: Reference::new(&cst_node.value_of_field("close"), close),
                     },
                 );
             }
@@ -103,22 +109,22 @@ impl ParserDefinition {
                 return Node::new(
                     &cst_node.key,
                     Self::Repeat {
+                        expression: Parser::new(&cst_node.value_of_field("expression"), expression),
                         min: Node::new(&cst_node.value_of_field("min"), min),
                         max: Node::new(&cst_node.value_of_field("max"), max),
-                        expression: Parser::new(&cst_node.value_of_field("expression"), expression),
                     },
                 );
             }
             types::parser::ParserDefinition::SeparatedBy {
-                separator,
                 expression,
+                separator,
             } => {
                 let cst_node = cst_node.field("separatedBy");
                 return Node::new(
                     &cst_node.key,
                     Self::SeparatedBy {
-                        separator: Node::new(&cst_node.value_of_field("separator"), separator),
                         expression: Parser::new(&cst_node.value_of_field("expression"), expression),
+                        separator: Reference::new(&cst_node.value_of_field("separator"), separator),
                     },
                 );
             }
@@ -129,11 +135,20 @@ impl ParserDefinition {
                     Self::Sequence(cst_node.zip(value, Parser::new)),
                 );
             }
-            types::parser::ParserDefinition::Terminal(value) => {
-                let cst_node = cst_node.field("terminal");
+            types::parser::ParserDefinition::TerminatedBy {
+                expression,
+                terminator,
+            } => {
+                let cst_node = cst_node.field("terminatedBy");
                 return Node::new(
                     &cst_node.key,
-                    Self::Terminal(Node::new(&cst_node.value, value)),
+                    Self::TerminatedBy {
+                        expression: Parser::new(&cst_node.value_of_field("expression"), expression),
+                        terminator: Reference::new(
+                            &cst_node.value_of_field("terminator"),
+                            terminator,
+                        ),
+                    },
                 );
             }
             types::parser::ParserDefinition::ZeroOrMore(value) => {

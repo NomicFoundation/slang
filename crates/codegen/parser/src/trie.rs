@@ -1,10 +1,9 @@
 use codegen_schema::types::{
-    parser::ParserDefinition,
     production::Production,
     scanner::{ScannerDefinition, ScannerRef},
 };
 
-use super::{combinator_tree::CombinatorTree, naming};
+use super::combinator_tree::CombinatorTree;
 use std::{collections::BTreeMap, fmt::Debug};
 
 #[derive(Clone, Debug, Default)]
@@ -39,11 +38,6 @@ impl<P: Clone + Debug> Trie<P> {
         for (key, payload) in other.iter() {
             self.insert(&key, payload.clone());
         }
-    }
-
-    pub fn keys(&self) -> Vec<String> {
-        // TODO: This is not efficient
-        self.iter().map(|(k, _)| k.clone()).collect()
     }
 
     pub fn next_interesting_node(&self, prefix: Option<char>) -> (Vec<char>, &Trie<P>) {
@@ -151,51 +145,6 @@ pub fn from_scanner(tree: &CombinatorTree, scanner: ScannerRef) -> Option<Termin
 
     let mut trie = TerminalTrie::new();
     if collect_terminals(&mut trie, tree, scanner.clone()) && !trie.is_empty() {
-        Some(trie)
-    } else {
-        None
-    }
-}
-
-pub fn from_parser_definition(
-    tree: &CombinatorTree,
-    name: Option<String>,
-    parser_definition: &ParserDefinition,
-) -> Option<TerminalTrie> {
-    fn collect_terminals(
-        trie: &mut TerminalTrie,
-        tree: &CombinatorTree,
-        name: Option<String>,
-        parser_definition: &ParserDefinition,
-        force_all_entries_to_be_named: bool,
-    ) -> bool {
-        match parser_definition {
-            ParserDefinition::Choice(exprs) => exprs.iter().fold(true, |accum, e| {
-                accum
-                    && collect_terminals(
-                        trie,
-                        tree,
-                        e.name.clone(),
-                        &e.definition,
-                        force_all_entries_to_be_named,
-                    )
-            }),
-
-            ParserDefinition::Terminal(string) => {
-                trie.insert(
-                    &string,
-                    name.clone()
-                        .or_else(|| Some(naming::name_of_terminal_string(&string))),
-                );
-                true
-            }
-
-            _ => false,
-        }
-    }
-
-    let mut trie = TerminalTrie::new();
-    if collect_terminals(&mut trie, tree, name, parser_definition, true) && !trie.is_empty() {
         Some(trie)
     } else {
         None

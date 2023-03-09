@@ -14,6 +14,8 @@ pub enum TokenKind {
 #[napi]
 pub enum RuleKind {
     _SEQUENCE,
+    _DELIMITEDBY,
+    _TERMINATEDBY,
     XXX,
 }
 

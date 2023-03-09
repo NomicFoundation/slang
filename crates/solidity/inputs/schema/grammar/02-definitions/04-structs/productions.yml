@@ -7,16 +7,21 @@
       - reference: "StructKeyword"
       - reference: "Identifier"
       - delimitedBy:
-          open: "{"
+          open:
+            reference: "OpenBrace"
           expression:
             oneOrMore:
               reference: "StructMember"
-          close: "}"
+          close:
+            reference: "CloseBrace"
 
 - name: "StructMember"
   kind: "Parser"
   unversioned:
-    sequence:
-      - reference: "TypeName"
-      - reference: "Identifier"
-      - terminal: ";"
+    terminatedBy:
+      expression:
+        sequence:
+          - reference: "TypeName"
+          - reference: "Identifier"
+      terminator:
+        reference: "Semicolon"

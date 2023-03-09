@@ -122,6 +122,59 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/while-keyword.html"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/years-keyword.html"
 
+### 1.8 Punctuation
+
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/open-paren.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/close-paren.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/open-bracket.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/close-bracket.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/open-brace.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/close-brace.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/comma.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/period.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/question-mark.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/semicolon.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/colon.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/colon-equal.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/equal.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/equal-equal.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/equal-greater-than.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/star.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/star-equal.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/star-star.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/bar.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/bar-equal.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/bar-bar.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/ampersand.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/ampersand-equal.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/ampersand-ampersand.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/less-than.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/less-than-equal.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/less-than-less-than.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/less-than-less-than-equal.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/greater-than.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/greater-than-equal.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/greater-than-greater-than.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/greater-than-greater-than-equal.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/greater-than-greater-than-greater-than.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/greater-than-greater-than-greater-than-equal.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/plus.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/plus-equal.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/plus-plus.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/minus.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/minus-equal.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/minus-minus.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/minus-greater-than.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/slash.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/slash-equal.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/percent.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/percent-equal.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/bang.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/bang-equal.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/caret.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/caret-equal.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/08-punctuation/tilde.html"
+
 ## 2. Definitions
 
 ### 2.1. Contracts
@@ -312,6 +365,7 @@
 ### 6.1. Assembly Block
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/01-assembly-block/assembly-statement.html"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/01-assembly-block/evmasm.html"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/01-assembly-block/assembly-flags.html"
 
 ### 6.2. Yul Statements

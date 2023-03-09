@@ -20,10 +20,12 @@
     sequence:
       - reference: "TypeKeyword"
       - delimitedBy:
-          open: "("
+          open:
+            reference: "OpenParen"
           expression:
             reference: "TypeName"
-          close: ")"
+          close:
+            reference: "CloseParen"
 
 - name: "NewExpression"
   kind: "Parser"
@@ -36,26 +38,32 @@
   kind: "Parser"
   unversioned:
     delimitedBy:
-      open: "("
+      open:
+        reference: "OpenParen"
       expression:
         separatedBy:
-          separator: ","
+          separator:
+            reference: "Comma"
           expression:
             optional:
               reference: "Expression"
-      close: ")"
+      close:
+        reference: "CloseParen"
 
 - name: "ArrayLiteral"
   kind: "Parser"
   unversioned:
     delimitedBy:
-      open: "["
+      open:
+        reference: "OpenBracket"
       expression:
         separatedBy:
-          separator: ","
+          separator:
+            reference: "Comma"
           expression:
             reference: "Expression"
-      close: "]"
+      close:
+        reference: "CloseBracket"
 
 - name: "BooleanLiteral"
   kind: "Parser"

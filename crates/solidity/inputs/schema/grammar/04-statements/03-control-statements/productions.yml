@@ -6,10 +6,12 @@
     sequence:
       - reference: "IfKeyword"
       - delimitedBy:
-          open: "("
+          open:
+            reference: "OpenParen"
           expression:
             reference: "Expression"
-          close: ")"
+          close:
+            reference: "CloseParen"
       - reference: "Statement"
       - optional:
           sequence:
@@ -22,18 +24,20 @@
     sequence:
       - reference: "ForKeyword"
       - delimitedBy:
-          open: "("
+          open:
+            reference: "OpenParen"
           expression:
             sequence:
               - choice:
                   - reference: "SimpleStatement"
-                  - terminal: ";"
+                  - reference: "Semicolon"
               - choice:
                   - reference: "ExpressionStatement"
-                  - terminal: ";"
+                  - reference: "Semicolon"
               - optional:
                   reference: "Expression"
-          close: ")"
+          close:
+            reference: "CloseParen"
       - reference: "Statement"
 
 - name: "WhileStatement"
@@ -42,62 +46,82 @@
     sequence:
       - reference: "WhileKeyword"
       - delimitedBy:
-          open: "("
+          open:
+            reference: "OpenParen"
           expression:
             reference: "Expression"
-          close: ")"
+          close:
+            reference: "CloseParen"
       - reference: "Statement"
 
 - name: "DoWhileStatement"
   kind: "Parser"
   unversioned:
-    sequence:
-      - reference: "DoKeyword"
-      - reference: "Statement"
-      - reference: "WhileKeyword"
-      - delimitedBy:
-          open: "("
-          expression:
-            reference: "Expression"
-          close: ")"
-      - terminal: ";"
+    terminatedBy:
+      expression:
+        sequence:
+          - reference: "DoKeyword"
+          - reference: "Statement"
+          - reference: "WhileKeyword"
+          - delimitedBy:
+              open:
+                reference: "OpenParen"
+              expression:
+                reference: "Expression"
+              close:
+                reference: "CloseParen"
+      terminator:
+        reference: "Semicolon"
 
 - name: "ContinueStatement"
   kind: "Parser"
   unversioned:
-    sequence:
-      - reference: "ContinueKeyword"
-      - terminal: ";"
+    terminatedBy:
+      expression:
+        reference: "ContinueKeyword"
+      terminator:
+        reference: "Semicolon"
 
 - name: "BreakStatement"
   kind: "Parser"
   unversioned:
-    sequence:
-      - reference: "BreakKeyword"
-      - terminal: ";"
+    terminatedBy:
+      expression:
+        reference: "BreakKeyword"
+      terminator:
+        reference: "Semicolon"
 
 - name: "ReturnStatement"
   kind: "Parser"
   unversioned:
-    sequence:
-      - reference: "ReturnKeyword"
-      - optional:
-          reference: "Expression"
-      - terminal: ";"
+    terminatedBy:
+      expression:
+        sequence:
+          - reference: "ReturnKeyword"
+          - optional:
+              reference: "Expression"
+      terminator:
+        reference: "Semicolon"
 
 - name: "EmitStatement"
   kind: "Parser"
   unversioned:
-    sequence:
-      - reference: "EmitKeyword"
-      - reference: "IdentifierPath"
-      - reference: "ArgumentList"
-      - terminal: ";"
+    terminatedBy:
+      expression:
+        sequence:
+          - reference: "EmitKeyword"
+          - reference: "IdentifierPath"
+          - reference: "ArgumentList"
+      terminator:
+        reference: "Semicolon"
 
 - name: "DeleteStatement"
   kind: "Parser"
   unversioned:
-    sequence:
-      - reference: "DeleteKeyword"
-      - reference: "Expression"
-      - terminal: ";"
+    terminatedBy:
+      expression:
+        sequence:
+          - reference: "DeleteKeyword"
+          - reference: "Expression"
+      terminator:
+        reference: "Semicolon"

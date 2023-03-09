@@ -66,8 +66,7 @@ fn find_empty_scanner_node<'a>(scanner: &'a ScannerRef) -> Option<&'a crate::yam
         }
 
         ScannerDefinition::OneOrMore(expression)
-        | ScannerDefinition::TrailingContext { expression, .. }
-        | ScannerDefinition::SeparatedBy { expression, .. } => {
+        | ScannerDefinition::TrailingContext { expression, .. } => {
             return find_empty_scanner_node(expression);
         }
 
@@ -96,8 +95,7 @@ fn find_empty_scanner_node<'a>(scanner: &'a ScannerRef) -> Option<&'a crate::yam
             }
         }
 
-        ScannerDefinition::DelimitedBy { .. }
-        | ScannerDefinition::Not { .. }
+        ScannerDefinition::Not { .. }
         | ScannerDefinition::Range { .. }
         | ScannerDefinition::Reference(_)
         | ScannerDefinition::Terminal(_) => {
@@ -115,7 +113,8 @@ fn find_empty_parser_node<'a>(parser: &'a ParserRef) -> Option<&'a crate::yaml::
         }
 
         ParserDefinition::OneOrMore(expression)
-        | ParserDefinition::SeparatedBy { expression, .. } => {
+        | ParserDefinition::SeparatedBy { expression, .. }
+        | ParserDefinition::TerminatedBy { expression, .. } => {
             return find_empty_parser_node(expression);
         }
 
@@ -144,9 +143,7 @@ fn find_empty_parser_node<'a>(parser: &'a ParserRef) -> Option<&'a crate::yaml::
             }
         }
 
-        ParserDefinition::DelimitedBy { .. }
-        | ParserDefinition::Reference(_)
-        | ParserDefinition::Terminal(_) => {
+        ParserDefinition::DelimitedBy { .. } | ParserDefinition::Reference(_) => {
             return None; // Cannot be empty.
         }
     };

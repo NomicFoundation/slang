@@ -4,9 +4,10 @@
   kind: "Parser"
   unversioned:
     separatedBy:
-      separator: "."
       expression:
         reference: "Identifier"
+      separator:
+        reference: "Period"
 
 - name: "Identifier"
   kind: "Scanner"

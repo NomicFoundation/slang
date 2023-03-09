@@ -3,21 +3,27 @@
 - name: "EventDefinition"
   kind: "Parser"
   unversioned:
-    sequence:
-      - reference: "EventKeyword"
-      - reference: "Identifier"
-      - delimitedBy:
-          open: "("
-          expression:
-            optional:
-              separatedBy:
-                separator: ","
-                expression:
-                  reference: "EventParameter"
-          close: ")"
-      - optional:
-          reference: "AnonymousKeyword"
-      - terminal: ";"
+    terminatedBy:
+      expression:
+        sequence:
+          - reference: "EventKeyword"
+          - reference: "Identifier"
+          - delimitedBy:
+              open:
+                reference: "OpenParen"
+              expression:
+                optional:
+                  separatedBy:
+                    separator:
+                      reference: "Comma"
+                    expression:
+                      reference: "EventParameter"
+              close:
+                reference: "CloseParen"
+          - optional:
+              reference: "AnonymousKeyword"
+      terminator:
+        reference: "Semicolon"
 
 - name: "EventParameter"
   kind: "Parser"

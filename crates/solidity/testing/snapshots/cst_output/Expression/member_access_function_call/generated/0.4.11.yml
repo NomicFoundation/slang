@@ -14,6 +14,5 @@ Tree:
               - Period (Token): "." # 1..2
               - Identifier (Token): "y" # 2..3
           - ArgumentList (Rule): # 3..5 "()"
-              - _DELIMITEDBY (Rule): # 3..5 "()"
-                  - OpenParen (Token): "(" # 3..4
-                  - CloseParen (Token): ")" # 4..5
+              - OpenParen (Token): "(" # 3..4
+              - CloseParen (Token): ")" # 4..5

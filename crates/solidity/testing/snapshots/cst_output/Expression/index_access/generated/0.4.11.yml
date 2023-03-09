@@ -10,9 +10,8 @@ Tree:
       - IndexAccessExpression (Rule): # 0..10 "arr[index]"
           - PrimaryExpression (Rule): # 0..3 "arr"
               - Identifier (Token): "arr" # 0..3
-          - _DELIMITEDBY (Rule): # 3..10 "[index]"
-              - OpenBracket (Token): "[" # 3..4
-              - Expression (Rule): # 4..9 "index"
-                  - PrimaryExpression (Rule): # 4..9 "index"
-                      - Identifier (Token): "index" # 4..9
-              - CloseBracket (Token): "]" # 9..10
+          - OpenBracket (Token): "[" # 3..4
+          - Expression (Rule): # 4..9 "index"
+              - PrimaryExpression (Rule): # 4..9 "index"
+                  - Identifier (Token): "index" # 4..9
+          - CloseBracket (Token): "]" # 9..10

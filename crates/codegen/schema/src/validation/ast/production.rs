@@ -145,3 +145,19 @@ impl<T: ConcreteAbstractPair> VersionMap<T> {
         };
     }
 }
+
+pub struct Reference {
+    pub reference: Node<String>,
+}
+
+impl Reference {
+    pub fn new(cst_node: &cst::NodeRef, value: types::production::Reference) -> Node<Self> {
+        let cst_node = cst_node.field("reference");
+        Node::new(
+            &cst_node.key,
+            Self {
+                reference: Node::new(&cst_node.value, value.reference),
+            },
+        )
+    }
+}

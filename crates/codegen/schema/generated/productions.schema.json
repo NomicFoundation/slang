@@ -171,28 +171,6 @@
           }
         },
         {
-          "title": "DelimitedBy Expression",
-          "type": "object",
-          "required": ["delimitedBy"],
-          "properties": {
-            "delimitedBy": {
-              "type": "object",
-              "required": ["close", "expression", "open"],
-              "properties": {
-                "open": {
-                  "type": "string"
-                },
-                "expression": {
-                  "$ref": "#/definitions/Scanner"
-                },
-                "close": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        },
-        {
           "title": "Difference Expression",
           "type": "object",
           "required": ["difference"],
@@ -283,6 +261,9 @@
               "type": "object",
               "required": ["expression", "max", "min"],
               "properties": {
+                "expression": {
+                  "$ref": "#/definitions/Scanner"
+                },
                 "min": {
                   "type": "integer",
                   "format": "uint",
@@ -292,28 +273,6 @@
                   "type": "integer",
                   "format": "uint",
                   "minimum": 0.0
-                },
-                "expression": {
-                  "$ref": "#/definitions/Scanner"
-                }
-              }
-            }
-          }
-        },
-        {
-          "title": "SeparatedBy Expression",
-          "type": "object",
-          "required": ["separatedBy"],
-          "properties": {
-            "separatedBy": {
-              "type": "object",
-              "required": ["expression", "separator"],
-              "properties": {
-                "separator": {
-                  "type": "string"
-                },
-                "expression": {
-                  "$ref": "#/definitions/Scanner"
                 }
               }
             }
@@ -399,13 +358,13 @@
               "required": ["close", "expression", "open"],
               "properties": {
                 "open": {
-                  "type": "string"
+                  "$ref": "#/definitions/Reference"
                 },
                 "expression": {
                   "$ref": "#/definitions/Parser"
                 },
                 "close": {
-                  "type": "string"
+                  "$ref": "#/definitions/Reference"
                 }
               }
             }
@@ -450,6 +409,9 @@
               "type": "object",
               "required": ["expression", "max", "min"],
               "properties": {
+                "expression": {
+                  "$ref": "#/definitions/Parser"
+                },
                 "min": {
                   "type": "integer",
                   "format": "uint",
@@ -459,9 +421,6 @@
                   "type": "integer",
                   "format": "uint",
                   "minimum": 0.0
-                },
-                "expression": {
-                  "$ref": "#/definitions/Parser"
                 }
               }
             }
@@ -476,11 +435,11 @@
               "type": "object",
               "required": ["expression", "separator"],
               "properties": {
-                "separator": {
-                  "type": "string"
-                },
                 "expression": {
                   "$ref": "#/definitions/Parser"
+                },
+                "separator": {
+                  "$ref": "#/definitions/Reference"
                 }
               }
             }
@@ -500,12 +459,21 @@
           }
         },
         {
-          "title": "Terminal Expression",
+          "title": "TerminatedBy Expression",
           "type": "object",
-          "required": ["terminal"],
+          "required": ["terminatedBy"],
           "properties": {
-            "terminal": {
-              "type": "string"
+            "terminatedBy": {
+              "type": "object",
+              "required": ["expression", "terminator"],
+              "properties": {
+                "expression": {
+                  "$ref": "#/definitions/Parser"
+                },
+                "terminator": {
+                  "$ref": "#/definitions/Reference"
+                }
+              }
             }
           }
         },
@@ -524,6 +492,16 @@
         "name": {
           "default": null,
           "type": ["string", "null"]
+        }
+      }
+    },
+    "Reference": {
+      "type": "object",
+      "required": ["reference"],
+      "properties": {
+        "reference": {
+          "title": "Production Reference",
+          "type": "string"
         }
       }
     },
@@ -577,13 +555,13 @@
               "required": ["close", "expression", "open"],
               "properties": {
                 "open": {
-                  "type": "string"
+                  "$ref": "#/definitions/Reference"
                 },
                 "expression": {
                   "$ref": "#/definitions/Parser"
                 },
                 "close": {
-                  "type": "string"
+                  "$ref": "#/definitions/Reference"
                 }
               }
             }
@@ -628,6 +606,9 @@
               "type": "object",
               "required": ["expression", "max", "min"],
               "properties": {
+                "expression": {
+                  "$ref": "#/definitions/Parser"
+                },
                 "min": {
                   "type": "integer",
                   "format": "uint",
@@ -637,9 +618,6 @@
                   "type": "integer",
                   "format": "uint",
                   "minimum": 0.0
-                },
-                "expression": {
-                  "$ref": "#/definitions/Parser"
                 }
               }
             }
@@ -654,11 +632,11 @@
               "type": "object",
               "required": ["expression", "separator"],
               "properties": {
-                "separator": {
-                  "type": "string"
-                },
                 "expression": {
                   "$ref": "#/definitions/Parser"
+                },
+                "separator": {
+                  "$ref": "#/definitions/Reference"
                 }
               }
             }
@@ -678,12 +656,21 @@
           }
         },
         {
-          "title": "Terminal Expression",
+          "title": "TerminatedBy Expression",
           "type": "object",
-          "required": ["terminal"],
+          "required": ["terminatedBy"],
           "properties": {
-            "terminal": {
-              "type": "string"
+            "terminatedBy": {
+              "type": "object",
+              "required": ["expression", "terminator"],
+              "properties": {
+                "expression": {
+                  "$ref": "#/definitions/Parser"
+                },
+                "terminator": {
+                  "$ref": "#/definitions/Reference"
+                }
+              }
             }
           }
         },
@@ -710,17 +697,7 @@
     },
     "OperatorModel": {
       "type": "string",
-      "enum": ["BinaryLeftAssociative", "BinaryRightAssociative", "UnaryPrefix", "UnarySuffix"]
-    },
-    "Reference": {
-      "type": "object",
-      "required": ["reference"],
-      "properties": {
-        "reference": {
-          "title": "Production Reference",
-          "type": "string"
-        }
-      }
+      "enum": ["BinaryLeftAssociative", "BinaryRightAssociative", "UnaryPrefix", "UnaryPostfix"]
     }
   }
 }
