@@ -12,19 +12,23 @@
       "onAutoForward": "openPreview"
     }
   },
-  // Keep extensions list in-sync with "$REPO_ROOT/.vscode/extensions.json"
-  "extensions": [
-    // Language Support
-    "igochkov.vscode-ebnf",
-    "NomicFoundation.hardhat-solidity",
-    "redhat.vscode-yaml",
-    "rust-lang.rust-analyzer",
-    "tamasfe.even-better-toml",
-    "yzhang.markdown-all-in-one",
-    // Formatting/Linting
-    "DavidAnson.vscode-markdownlint",
-    "esbenp.prettier-vscode",
-    "streetsidesoftware.code-spell-checker",
-    "timonwong.shellcheck"
-  ]
+  "customizations": {
+    "vscode": {
+      // Keep extensions list in-sync with "$REPO_ROOT/.vscode/extensions.json"
+      "extensions": [
+        // Language Support
+        "igochkov.vscode-ebnf",
+        "NomicFoundation.hardhat-solidity",
+        "redhat.vscode-yaml",
+        "rust-lang.rust-analyzer",
+        "tamasfe.even-better-toml",
+        "yzhang.markdown-all-in-one",
+        // Formatting/Linting
+        "DavidAnson.vscode-markdownlint",
+        "esbenp.prettier-vscode",
+        "streetsidesoftware.code-spell-checker",
+        "timonwong.shellcheck"
+      ]
+    }
+  }
 }
