@@ -10,4 +10,5 @@ clap = { workspace = true }
 semver = { workspace = true }
 serde_json = { workspace = true }
 serde_yaml = { workspace = true }
+serde-lexpr = { workspace = true }
 solidity_rust_lib = { workspace = true }
