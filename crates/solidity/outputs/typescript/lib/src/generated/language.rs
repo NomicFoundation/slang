@@ -167,7 +167,9 @@ pub use super::parser_output::ParserOutput;
 #[napi]
 pub struct Language {
     version: Version,
+    #[allow(dead_code)]
     pub(crate) version_is_equal_to_or_greater_than_0_6_0: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_equal_to_or_greater_than_0_8_18: bool,
 }
 
