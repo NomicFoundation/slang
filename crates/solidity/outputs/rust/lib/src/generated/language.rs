@@ -167,6 +167,8 @@ pub use super::parser_output::ParserOutput;
 pub struct Language {
     version: Version,
     #[allow(dead_code)]
+    pub(crate) version_is_equal_to_or_greater_than_0_4_22: bool,
+    #[allow(dead_code)]
     pub(crate) version_is_equal_to_or_greater_than_0_6_0: bool,
     #[allow(dead_code)]
     pub(crate) version_is_equal_to_or_greater_than_0_8_18: bool,
@@ -193,6 +195,8 @@ impl Language {
         ];
         if VERSIONS.contains(&version.to_string().as_str()) {
             Ok(Self {
+                version_is_equal_to_or_greater_than_0_4_22: Version::parse("0.4.22").unwrap()
+                    <= version,
                 version_is_equal_to_or_greater_than_0_6_0: Version::parse("0.6.0").unwrap()
                     <= version,
                 version_is_equal_to_or_greater_than_0_8_18: Version::parse("0.8.18").unwrap()
@@ -1614,6 +1618,9 @@ impl Language {
             ProductionKind::TypeName => call_parser(self, input, Language::parse_type_name),
             ProductionKind::UncheckedBlock => {
                 call_parser(self, input, Language::parse_unchecked_block)
+            }
+            ProductionKind::UnnamedFunctionDefinition => {
+                call_parser(self, input, Language::parse_unnamed_function_definition)
             }
             ProductionKind::UserDefinedValueTypeDefinition => call_parser(
                 self,

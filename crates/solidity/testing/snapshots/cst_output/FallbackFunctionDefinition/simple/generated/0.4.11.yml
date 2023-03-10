@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ fallback () {                                                                    │ 0..13
+  2  │     // TODO: should have failed in earlier versions                              │ 14..65
+  3  │     // https://github.com/NomicFoundation/slang/issues/359                       │ 66..124
+  4  │ }                                                                                │ 125..126
+
+Errors: []
+
+Tree:
+  - FallbackFunctionDefinition (Rule): # 0..126 "fallback () {\n    // TODO: should have failed in e..."
+      - FallbackKeyword (Token): "fallback" # 0..8
+      - ParameterList (Rule): # 8..11 " ()"
+          - OpenParen (Token): "(" # 9..10
+          - CloseParen (Token): ")" # 10..11
+      - Block (Rule): # 11..126 " {\n    // TODO: should have failed in earlier vers..."
+          - OpenBrace (Token): "{" # 12..13
+          - CloseBrace (Token): # 14..126 "    // TODO: should have failed in earlier version..."
+              - SingleLineComment (Trivia): "// TODO: should have failed in earlier versions" # 18..65
+              - SingleLineComment (Trivia): "// https://github.com/NomicFoundation/slang/issues..." # 70..124
+              - Contents: "}" # 125..126

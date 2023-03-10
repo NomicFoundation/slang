@@ -128,13 +128,14 @@
 
 - name: "ConstructorDefinition"
   kind: "Parser"
-  unversioned:
-    sequence:
-      - reference: "ConstructorKeyword"
-      - reference: "ParameterList"
-      - zeroOrMore:
-          reference: "ConstructorAttribute"
-      - reference: "Block"
+  versioned:
+    0.4.22:
+      sequence:
+        - reference: "ConstructorKeyword"
+        - reference: "ParameterList"
+        - zeroOrMore:
+            reference: "ConstructorAttribute"
+        - reference: "Block"
 
 - name: "ConstructorAttribute"
   kind: "Parser"
@@ -145,21 +146,36 @@
       - reference: "PayableKeyword"
       - reference: "PublicKeyword"
 
-- name: "FallbackFunctionDefinition"
+- name: "UnnamedFunctionDefinition"
   kind: "Parser"
   unversioned:
+    # TODO: Deprecate and remove this production in `v0.6.0`, and add tests.
+    # Blocked on https://github.com/NomicFoundation/slang/issues/182
     sequence:
-      - reference: "FallbackKeyword"
+      - reference: "FunctionKeyword"
       - reference: "ParameterList"
       - zeroOrMore:
           reference: "FallbackFunctionAttribute"
-      - optional:
-          sequence:
-            - reference: "ReturnsKeyword"
-            - reference: "ParameterList"
       - choice:
           - reference: "Semicolon"
           - reference: "Block"
+
+- name: "FallbackFunctionDefinition"
+  kind: "Parser"
+  versioned:
+    0.6.0:
+      sequence:
+        - reference: "FallbackKeyword"
+        - reference: "ParameterList"
+        - zeroOrMore:
+            reference: "FallbackFunctionAttribute"
+        - optional:
+            sequence:
+              - reference: "ReturnsKeyword"
+              - reference: "ParameterList"
+        - choice:
+            - reference: "Semicolon"
+            - reference: "Block"
 
 - name: "FallbackFunctionAttribute"
   kind: "Parser"
@@ -175,15 +191,16 @@
 
 - name: "ReceiveFunctionDefinition"
   kind: "Parser"
-  unversioned:
-    sequence:
-      - reference: "ReceiveKeyword"
-      - reference: "ParameterList"
-      - zeroOrMore:
-          reference: "ReceiveFunctionAttribute"
-      - choice:
-          - reference: "Semicolon"
-          - reference: "Block"
+  versioned:
+    0.6.0:
+      sequence:
+        - reference: "ReceiveKeyword"
+        - reference: "ParameterList"
+        - zeroOrMore:
+            reference: "ReceiveFunctionAttribute"
+        - choice:
+            - reference: "Semicolon"
+            - reference: "Block"
 
 - name: "ReceiveFunctionAttribute"
   kind: "Parser"
