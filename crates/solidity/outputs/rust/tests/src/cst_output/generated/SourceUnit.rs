@@ -12,3 +12,8 @@ fn empty_file() -> Result<()> {
 fn end_of_file_trivia() -> Result<()> {
     return run("SourceUnit", "end_of_file_trivia");
 }
+
+#[test]
+fn trailing_trivia() -> Result<()> {
+    return run("SourceUnit", "trailing_trivia");
+}
