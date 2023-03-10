@@ -17,6 +17,9 @@ struct ProgramArgs {
 
     #[clap(long)]
     yaml: Option<String>,
+
+    #[clap(long)]
+    sexpr: Option<String>,
 }
 
 fn main() -> Result<()> {
@@ -26,7 +29,7 @@ fn main() -> Result<()> {
     let input =
         fs::read_to_string(input_file).context(format!("Failed to read file: {input_file:?}"))?;
 
-    let output = Language::new(args.version).parse(ProductionKind::SourceUnit, &input);
+    let output = Language::new(args.version)?.parse(ProductionKind::SourceUnit, &input);
 
     for report in &output.errors_as_strings(
         input_file
@@ -60,6 +63,18 @@ fn main() -> Result<()> {
                 let yaml_path = &PathBuf::from(yaml_path).canonicalize()?;
                 fs::write(&yaml_path, yaml)
                     .context(format!("Failed to write yaml file: {yaml_path:?}"))?;
+            }
+        }
+
+        if let Some(sexpr_path) = args.sexpr {
+            let sexpr = serde_lexpr::to_string(&root_node).context("Failed to write sexpr")?;
+
+            if sexpr_path == "-" {
+                println!("{}", sexpr);
+            } else {
+                let sexpr_path = &PathBuf::from(sexpr_path).canonicalize()?;
+                fs::write(sexpr_path, sexpr)
+                    .context(format!("Failed to write sexpr file: {sexpr_path:?}"))?;
             }
         }
     }
