@@ -76,7 +76,7 @@ fn process_source_file(
 
     let latest_version = all_versions.last().expect("No versions found.");
     let output =
-        &Language::new(latest_version.to_owned()).parse(ProductionKind::SourceUnit, source);
+        &Language::new(latest_version.to_owned())?.parse(ProductionKind::SourceUnit, source);
 
     reporter.report_test_result(source_id, source, latest_version, output);
 
@@ -94,7 +94,7 @@ fn process_source_file(
     let test_versions = filter_test_versions(compatible_versions);
 
     for version in test_versions {
-        let output = &Language::new(version.to_owned()).parse(ProductionKind::SourceUnit, source);
+        let output = &Language::new(version.to_owned())?.parse(ProductionKind::SourceUnit, source);
 
         reporter.report_test_result(source_id, source, &version, output);
     }

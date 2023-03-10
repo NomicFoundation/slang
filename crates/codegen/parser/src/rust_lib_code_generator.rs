@@ -1,12 +1,18 @@
 use quote::quote;
 use std::path::PathBuf;
 
+use codegen_schema::types::grammar::Grammar;
 use codegen_utils::context::CodegenContext;
 
 use super::code_generator::CodeGenerator;
 
 impl CodeGenerator {
-    pub fn write_rust_lib_sources(&self, codegen: &mut CodegenContext, output_dir: &PathBuf) {
+    pub fn write_rust_lib_sources(
+        &self,
+        grammar: &Grammar,
+        codegen: &mut CodegenContext,
+        output_dir: &PathBuf,
+    ) {
         self.write_common_sources(codegen, output_dir);
 
         codegen
@@ -55,6 +61,10 @@ impl CodeGenerator {
             let version_flag_initializers = self.version_flag_initializers().join(",");
             let scanner_invocations = self.scanner_invocations().join(",");
             let parser_invocations = self.parser_invocations().join(",");
+            let versions_array = {
+                let versions = grammar.versions.iter().map(|v| v.to_string());
+                quote! { static VERSIONS: &'static [&'static str] = &[ #(#versions),* ]; }
+            };
 
             let trampolines = quote! {
                 fn call_scanner<F>(language: &Language, input: &str, scanner: F, kind: TokenKind, error_message: &str) -> ParserOutput
@@ -78,6 +88,7 @@ impl CodeGenerator {
                     }
                 }
             };
+            let language_name = &grammar.title;
 
             codegen
                 .write_file(
@@ -92,11 +103,22 @@ impl CodeGenerator {
                             {version_flag_declarations}
                         }}
 
+                        #[derive(thiserror::Error, Debug)]
+                        pub enum Error {{
+                            #[error(\"Invalid {language_name} language version '{{0}}'.\")]
+                            InvalidLanguageVersion(Version),
+                        }}
+
                         impl Language {{
-                            pub fn new(version: Version) -> Self {{
-                                Self {{
-                                    {version_flag_initializers},
-                                    version,
+                            pub fn new(version: Version) -> Result<Self, Error> {{
+                                {versions_array}
+                                if VERSIONS.contains(&version.to_string().as_str()) {{
+                                    Ok(Self {{
+                                        {version_flag_initializers},
+                                        version,
+                                    }})
+                                }} else {{
+                                    Err(Error::InvalidLanguageVersion(version))
                                 }}
                             }}
 

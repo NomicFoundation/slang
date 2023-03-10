@@ -29,7 +29,7 @@ impl GrammarParserGeneratorExtensions for Grammar {
         output_dir: &std::path::PathBuf,
     ) {
         self.create_code_generator()
-            .write_rust_lib_sources(context, output_dir);
+            .write_rust_lib_sources(self, context, output_dir);
     }
 
     fn generate_typescript_lib_sources(
@@ -38,7 +38,7 @@ impl GrammarParserGeneratorExtensions for Grammar {
         output_dir: &std::path::PathBuf,
     ) {
         self.create_code_generator()
-            .write_typescript_lib_sources(context, output_dir);
+            .write_typescript_lib_sources(self, context, output_dir);
     }
 }
 
