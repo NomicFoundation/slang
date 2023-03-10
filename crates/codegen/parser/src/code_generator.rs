@@ -117,7 +117,7 @@ impl CodeGenerator {
                     "version_is_equal_to_or_greater_than_{}",
                     version.replace(".", "_")
                 );
-                quote! { pub(crate) #version_name: bool }.to_string()
+                quote! { #[allow(dead_code)] pub(crate) #version_name: bool }.to_string()
             })
             .collect()
     }
