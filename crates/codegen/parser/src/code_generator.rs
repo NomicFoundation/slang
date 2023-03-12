@@ -102,13 +102,19 @@ impl CodeGenerator {
         &self.errors
     }
 
-    pub fn version_flag_declarations(&self) -> Vec<String> {
+    fn scanner_and_parser_version_names(&self) -> BTreeSet<String> {
         self.scanners
             .values()
             .chain(self.parsers.values())
             .map(|v| v.versions.keys())
             .flatten()
-            .collect::<BTreeSet<_>>()
+            .map(|v| v.to_string())
+            .collect()
+    }
+
+    pub fn version_flag_declarations(&self) -> TokenStream {
+        let bindings = self.scanner_and_parser_version_names();
+        let declarations = bindings
             .iter()
             .skip(1) // Don't need the first version
             .map(|version| {
@@ -117,18 +123,14 @@ impl CodeGenerator {
                     "version_is_equal_to_or_greater_than_{version}",
                     version = version.replace(".", "_")
                 );
-                quote! { #[allow(dead_code)] pub(crate) #version_name: bool }.to_string()
-            })
-            .collect()
+                quote! { #[allow(dead_code)] pub(crate) #version_name: bool }
+            });
+        quote! { #(#declarations),* }
     }
 
-    pub fn version_flag_initializers(&self) -> Vec<String> {
-        self.scanners
-            .values()
-            .chain(self.parsers.values())
-            .map(|v| v.versions.keys())
-            .flatten()
-            .collect::<BTreeSet<_>>()
+    pub fn version_flag_initializers(&self) -> TokenStream {
+        let bindings = self.scanner_and_parser_version_names();
+        let initializers = bindings
             .iter()
             .skip(1) // Don't need the first version
             .map(|version| {
@@ -137,13 +139,14 @@ impl CodeGenerator {
                     "version_is_equal_to_or_greater_than_{version}",
                     version = version.replace(".", "_")
                 );
-                quote! { #version_name: Version::parse(#version).unwrap() <= version }.to_string()
-            })
-            .collect()
+                quote! { #version_name: Version::parse(#version).unwrap() <= version }
+            });
+        quote! { #(#initializers),* }
     }
 
-    pub fn scanner_functions(&self) -> Vec<String> {
-        self.scanners
+    pub fn scanner_functions(&self) -> String {
+        let functions = self
+            .scanners
             .iter()
             .map(|(name, scanner)| {
                 let function_name = format_ident!("scan_{name}", name = name.to_snake_case());
@@ -157,11 +160,24 @@ impl CodeGenerator {
                 };
                 format!("{comment}\n{function}")
             })
-            .collect()
+            .collect::<Vec<_>>();
+        functions.join("\n\n")
     }
 
-    pub fn parser_functions(&self) -> Vec<String> {
-        self.parsers
+    pub fn scanner_invocations(&self) -> TokenStream {
+        let invocations = self
+            .scanners
+            .keys()
+            .map(|name| {
+                let production_kind = format_ident!("{name}");
+                let function_name = format_ident!("scan_{name}", name = name.to_snake_case());
+                quote!{ ProductionKind::#production_kind => call_scanner(self, input, Language::#function_name, TokenKind::#production_kind, #name) }
+            });
+        quote! { #(#invocations),* }
+    }
+
+    pub fn parser_functions(&self) -> String {
+        let functions = self.parsers
             .iter()
             .map(|(name, parser)| {
                 let kind = format_ident!("{name}");
@@ -179,55 +195,56 @@ impl CodeGenerator {
                 };
                 format!("{comment}\n{function}")
             })
-            .collect()
+            .collect::<Vec<_>>();
+        functions.join("\n\n")
     }
 
-    pub fn scanner_invocations(&self) -> Vec<String> {
-        self.scanners
-            .keys()
-            .map(|name| {
-                let production_kind = format_ident!("{name}");
-                let function_name = format_ident!("scan_{name}", name = name.to_snake_case());
-                let error_message = name;
-                quote! {
-                    ProductionKind::#production_kind => call_scanner(self, input, Language::#function_name, TokenKind::#production_kind, #error_message)
-                }
-                .to_string()
-            })
-            .collect()
-    }
-
-    pub fn parser_invocations(&self) -> Vec<String> {
-        self.parsers
+    pub fn parser_invocations(&self) -> TokenStream {
+        let invocations = self
+            .parsers
             .keys()
             .map(|name| {
                 let production_kind = format_ident!("{name}");
                 let function_name = format_ident!("parse_{name}", name = name.to_snake_case());
-                quote! {
-                    ProductionKind::#production_kind => call_parser(self, input, Language::#function_name)
-                }
-                .to_string()
-            })
-            .collect()
+                quote!{ ProductionKind::#production_kind => call_parser(self, input, Language::#function_name) }
+            });
+        quote! { #(#invocations),* }
     }
 
-    pub fn token_kinds(&self) -> Vec<String> {
-        self.token_kinds.keys().cloned().collect()
+    pub fn token_kinds(&self) -> TokenStream {
+        let kinds = self
+            .token_kinds
+            .iter()
+            .map(|(name, _)| format_ident!("{name}"));
+        quote! {
+            pub enum TokenKind {
+                #(#kinds),*
+            }
+        }
     }
 
-    pub fn rule_kinds(&self) -> Vec<String> {
-        self.rule_kinds.iter().cloned().collect()
+    pub fn rule_kinds(&self) -> TokenStream {
+        let kinds = self.rule_kinds.iter().map(|name| format_ident!("{name}"));
+        quote! {
+            pub enum RuleKind {
+                #(#kinds),*
+            }
+        }
     }
 
-    pub fn production_kinds(&self) -> Vec<String> {
-        let mut result: Vec<_> = self
+    pub fn production_kinds(&self) -> TokenStream {
+        let mut kinds: Vec<_> = self
             .scanners
             .iter()
             .chain(self.parsers.iter())
-            .map(|(name, _)| name.clone())
+            .map(|(name, _)| format_ident!("{name}"))
             .collect();
-        result.sort();
-        result
+        kinds.sort();
+        quote! {
+            pub enum ProductionKind {
+                #(#kinds),*
+            }
+        }
     }
 
     pub fn write_common_sources(&self, codegen: &mut CodegenContext, output_dir: &PathBuf) {
@@ -254,67 +271,68 @@ impl CodeGenerator {
                     .join("crates/codegen/parser_templates/src/shared/macros.rs"),
             )
             .unwrap();
-        {
-            let scanner_functions = self.scanner_functions().join("\n\n");
-            codegen
-                .write_file(
-                    &output_dir.join("scanners.rs"),
-                    &format!(
-                        "
-                        use super::language::*;
 
-                        {scanning_macros}
-                            
-                        impl Language {{
-                            {scanner_functions}
-                        }}
-                        ",
-                    ),
-                )
+        {
+            // Use `format!` here because the content contains comments, that `quote!` throws away.
+            let content = format!(
+                "
+                use super::language::*;
+
+                {scanning_macros}
+                    
+                impl Language {{
+                    {scanner_functions}
+                }}
+                ",
+                scanner_functions = self.scanner_functions()
+            );
+
+            codegen
+                .write_file(&output_dir.join("scanners.rs"), &content)
                 .unwrap();
         }
 
         {
-            let parser_functions = self.parser_functions().join("\n\n");
-            let trivia_functions = quote! {
-                fn optional_leading_trivia(&self, stream: &mut Stream) -> Option<Rc<cst::Node>> {
-                    let save = stream.position();
-                    match self.parse_leading_trivia(stream) {
-                        Fail{ .. } => {
-                            stream.set_position(save);
-                            None
-                        },
-                        Pass{ node, .. } => Some(node),
-                    }
-                }
-                fn optional_trailing_trivia(&self, stream: &mut Stream) -> Option<Rc<cst::Node>> {
-                    let save = stream.position();
-                    match self.parse_trailing_trivia(stream) {
-                        Fail{ .. } => {
-                            stream.set_position(save);
-                            None
-                        },
-                        Pass{ node, .. } => Some(node),
-                    }
-                }
-            };
-            codegen
-                .write_file(
-                    &output_dir.join("parsers.rs"),
-                    &format!(
-                        "
-                        use super::language::*;
-                        use super::language::ParseResult::*;
+            // Use `format!` here because the content contains comments, that `quote!` throws away.
+            let content = format!(
+                "
+                use super::language::*;
+                use super::language::ParseResult::*;
 
-                        {scanning_macros}
-                            
-                        impl Language {{
-                            {trivia_functions}
-                            {parser_functions}
-                        }}
-                        ",
-                    ),
-                )
+                {scanning_macros}
+                    
+                impl Language {{
+                    {trivia_functions}
+                    {parser_functions}
+                }}
+                ",
+                trivia_functions = quote! {
+                    fn optional_leading_trivia(&self, stream: &mut Stream) -> Option<Rc<cst::Node>> {
+                        let save = stream.position();
+                        match self.parse_leading_trivia(stream) {
+                            Fail{ .. } => {
+                                stream.set_position(save);
+                                None
+                            },
+                            Pass{ node, .. } => Some(node),
+                        }
+                    }
+                    fn optional_trailing_trivia(&self, stream: &mut Stream) -> Option<Rc<cst::Node>> {
+                        let save = stream.position();
+                        match self.parse_trailing_trivia(stream) {
+                            Fail{ .. } => {
+                                stream.set_position(save);
+                                None
+                            },
+                            Pass{ node, .. } => Some(node),
+                        }
+                    }
+                },
+                parser_functions = self.parser_functions()
+            );
+
+            codegen
+                .write_file(&output_dir.join("parsers.rs"), &content)
                 .unwrap();
         }
     }

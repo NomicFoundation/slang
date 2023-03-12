@@ -8,6 +8,7 @@ use semver::Version;
 
 pub use super::cst;
 pub use super::kinds::*;
+pub use super::parser_output::ParserOutput;
 
 const DEBUG_ERROR_MERGING: bool = false;
 
@@ -177,8 +178,6 @@ pub(crate) fn render_error_report(
         .trim()
         .to_string();
 }
-
-pub use super::parser_output::ParserOutput;
 
 #[napi]
 pub struct Language {
