@@ -1,6 +1,8 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 #[allow(non_snake_case)]
+mod ConstructorDefinition;
+#[allow(non_snake_case)]
 mod ContractDefinition;
 #[allow(non_snake_case)]
 mod DecimalLiteral;
@@ -10,6 +12,8 @@ mod DeleteStatement;
 mod EnumDefinition;
 #[allow(non_snake_case)]
 mod Expression;
+#[allow(non_snake_case)]
+mod FallbackFunctionDefinition;
 #[allow(non_snake_case)]
 mod FixedBytesType;
 #[allow(non_snake_case)]
@@ -31,6 +35,8 @@ mod NewExpression;
 #[allow(non_snake_case)]
 mod NumericLiteral;
 #[allow(non_snake_case)]
+mod ReceiveFunctionDefinition;
+#[allow(non_snake_case)]
 mod SignedIntegerType;
 #[allow(non_snake_case)]
 mod SingleLineComment;
@@ -49,4 +55,4 @@ mod VersionPragma;
 #[allow(non_snake_case)]
 mod YulExpression;
 
-pub const VERSION_BREAKS: [&str; 3] = ["0.4.11", "0.6.0", "0.8.18"];
+pub const VERSION_BREAKS: [&str; 4] = ["0.4.11", "0.4.22", "0.6.0", "0.8.18"];

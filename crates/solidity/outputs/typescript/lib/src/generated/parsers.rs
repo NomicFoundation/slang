@@ -1682,7 +1682,7 @@ impl Language {
         }
     }
 
-    // ConstructorDefinition = «ConstructorKeyword» ParameterList { ConstructorAttribute } Block ;
+    // (* v0.4.22 *) ConstructorDefinition = «ConstructorKeyword» ParameterList { ConstructorAttribute } Block ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_constructor_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -1864,11 +1864,13 @@ impl Language {
         }
     }
 
-    // ContractBodyElement = UsingDirective | ConstructorDefinition | FunctionDefinition | FallbackFunctionDefinition | ReceiveFunctionDefinition | ModifierDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | EventDefinition | ErrorDefinition | StateVariableDeclaration ;
+    // (* v0.4.11 *) ContractBodyElement = UsingDirective | FunctionDefinition | UnnamedFunctionDefinition | ModifierDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | EventDefinition | ErrorDefinition | StateVariableDeclaration ;
+    // (* v0.4.22 *) ContractBodyElement = UsingDirective | ConstructorDefinition | FunctionDefinition | UnnamedFunctionDefinition | ModifierDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | EventDefinition | ErrorDefinition | StateVariableDeclaration ;
+    // (* v0.6.0 *) ContractBodyElement = UsingDirective | ConstructorDefinition | FunctionDefinition | FallbackFunctionDefinition | ReceiveFunctionDefinition | ModifierDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | EventDefinition | ErrorDefinition | StateVariableDeclaration ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_contract_body_element(&self, stream: &mut Stream) -> ParseResult {
-        match {
+        match if self.version_is_equal_to_or_greater_than_0_6_0 {
             loop {
                 let start_position = stream.position();
                 let mut furthest_error;
@@ -1893,6 +1895,125 @@ impl Language {
                 }
                 stream.set_position(start_position);
                 match self.parse_receive_function_definition(stream) {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match self.parse_modifier_definition(stream) {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match self.parse_struct_definition(stream) {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match self.parse_enum_definition(stream) {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match self.parse_user_defined_value_type_definition(stream) {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match self.parse_event_definition(stream) {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match self.parse_error_definition(stream) {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match self.parse_state_variable_declaration(stream) {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                break Fail {
+                    error: furthest_error,
+                };
+            }
+        } else if self.version_is_equal_to_or_greater_than_0_4_22 {
+            loop {
+                let start_position = stream.position();
+                let mut furthest_error;
+                match self.parse_using_directive(stream) {
+                    Fail { error } => furthest_error = error,
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match self.parse_constructor_definition(stream) {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match self.parse_function_definition(stream) {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match self.parse_unnamed_function_definition(stream) {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match self.parse_modifier_definition(stream) {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match self.parse_struct_definition(stream) {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match self.parse_enum_definition(stream) {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match self.parse_user_defined_value_type_definition(stream) {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match self.parse_event_definition(stream) {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match self.parse_error_definition(stream) {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match self.parse_state_variable_declaration(stream) {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                break Fail {
+                    error: furthest_error,
+                };
+            }
+        } else {
+            loop {
+                let start_position = stream.position();
+                let mut furthest_error;
+                match self.parse_using_directive(stream) {
+                    Fail { error } => furthest_error = error,
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match self.parse_function_definition(stream) {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match self.parse_unnamed_function_definition(stream) {
                     Fail { error } => furthest_error.merge_with(error),
                     pass => break pass,
                 }
@@ -8806,7 +8927,7 @@ impl Language {
         }
     }
 
-    // FallbackFunctionDefinition = «FallbackKeyword» ParameterList { FallbackFunctionAttribute } [ «ReturnsKeyword» ParameterList ] ( «Semicolon» | Block ) ;
+    // (* v0.6.0 *) FallbackFunctionDefinition = «FallbackKeyword» ParameterList { FallbackFunctionAttribute } [ «ReturnsKeyword» ParameterList ] ( «Semicolon» | Block ) ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_fallback_function_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -13555,7 +13676,7 @@ impl Language {
         }
     }
 
-    // ReceiveFunctionDefinition = «ReceiveKeyword» ParameterList { ReceiveFunctionAttribute } ( «Semicolon» | Block ) ;
+    // (* v0.6.0 *) ReceiveFunctionDefinition = «ReceiveKeyword» ParameterList { ReceiveFunctionAttribute } ( «Semicolon» | Block ) ;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_receive_function_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -16897,6 +17018,144 @@ impl Language {
         } {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::UncheckedBlock, node),
+                error,
+            },
+            fail => fail,
+        }
+    }
+
+    // UnnamedFunctionDefinition = «FunctionKeyword» ParameterList { FallbackFunctionAttribute } ( «Semicolon» | Block ) ;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn parse_unnamed_function_definition(&self, stream: &mut Stream) -> ParseResult {
+        match {
+            loop {
+                let mut furthest_error = None;
+                let result_0 = match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_function_keyword(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::FunctionKeyword,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "FunctionKeyword"),
+                        }
+                    }
+                } {
+                    Pass { node, error } => {
+                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
+                        node
+                    }
+                    Fail { error } => {
+                        break Fail {
+                            error: error.maybe_merge_with(furthest_error),
+                        }
+                    }
+                };
+                let result_1 = match self.parse_parameter_list(stream) {
+                    Pass { node, error } => {
+                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
+                        node
+                    }
+                    Fail { error } => {
+                        break Fail {
+                            error: error.maybe_merge_with(furthest_error),
+                        }
+                    }
+                };
+                let result_2 = match {
+                    let mut result = Vec::new();
+                    loop {
+                        let start_position = stream.position();
+                        match self.parse_fallback_function_attribute(stream) {
+                            Fail { error } => {
+                                stream.set_position(start_position);
+                                break Pass {
+                                    node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                    error: Some(error),
+                                };
+                            }
+                            Pass { node, .. } => result.push(node),
+                        }
+                    }
+                } {
+                    Pass { node, error } => {
+                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
+                        node
+                    }
+                    Fail { error } => {
+                        break Fail {
+                            error: error.maybe_merge_with(furthest_error),
+                        }
+                    }
+                };
+                let result_3 = match loop {
+                    let start_position = stream.position();
+                    let mut furthest_error;
+                    match {
+                        let leading_trivia = self.optional_leading_trivia(stream);
+                        let start = stream.position();
+                        if self.scan_semicolon(stream) {
+                            let end = stream.position();
+                            let trailing_trivia = self.optional_trailing_trivia(stream);
+                            Pass {
+                                node: cst::Node::token(
+                                    TokenKind::Semicolon,
+                                    Range { start, end },
+                                    leading_trivia,
+                                    trailing_trivia,
+                                ),
+                                error: None,
+                            }
+                        } else {
+                            Fail {
+                                error: ParseError::new(start, "Semicolon"),
+                            }
+                        }
+                    } {
+                        Fail { error } => furthest_error = error,
+                        pass => break pass,
+                    }
+                    stream.set_position(start_position);
+                    match self.parse_block(stream) {
+                        Fail { error } => furthest_error.merge_with(error),
+                        pass => break pass,
+                    }
+                    break Fail {
+                        error: furthest_error,
+                    };
+                } {
+                    Pass { node, error } => {
+                        furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
+                        node
+                    }
+                    Fail { error } => {
+                        break Fail {
+                            error: error.maybe_merge_with(furthest_error),
+                        }
+                    }
+                };
+                break Pass {
+                    node: cst::Node::rule(
+                        RuleKind::_SEQUENCE,
+                        vec![result_0, result_1, result_2, result_3],
+                    ),
+                    error: furthest_error,
+                };
+            }
+        } {
+            Pass { node, error } => Pass {
+                node: cst::Node::top_level_rule(RuleKind::UnnamedFunctionDefinition, node),
                 error,
             },
             fail => fail,

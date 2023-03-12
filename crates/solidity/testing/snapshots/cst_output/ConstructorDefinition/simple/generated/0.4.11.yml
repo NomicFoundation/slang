@@ -1,0 +1,22 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ constructor () {                                                                 │ 0..16
+  2  │     // TODO: should have failed in earlier versions                              │ 17..68
+  3  │     // https://github.com/NomicFoundation/slang/issues/359                       │ 69..127
+  4  │ }                                                                                │ 128..129
+
+Errors: []
+
+Tree:
+  - ConstructorDefinition (Rule): # 0..129 "constructor () {\n    // TODO: should have failed i..."
+      - ConstructorKeyword (Token): "constructor" # 0..11
+      - ParameterList (Rule): # 11..14 " ()"
+          - OpenParen (Token): "(" # 12..13
+          - CloseParen (Token): ")" # 13..14
+      - Block (Rule): # 14..129 " {\n    // TODO: should have failed in earlier vers..."
+          - OpenBrace (Token): "{" # 15..16
+          - CloseBrace (Token): # 17..129 "    // TODO: should have failed in earlier version..."
+              - SingleLineComment (Trivia): "// TODO: should have failed in earlier versions" # 21..68
+              - SingleLineComment (Trivia): "// https://github.com/NomicFoundation/slang/issues..." # 73..127
+              - Contents: "}" # 128..129

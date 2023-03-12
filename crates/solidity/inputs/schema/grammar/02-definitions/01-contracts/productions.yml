@@ -40,17 +40,47 @@
 
 - name: "ContractBodyElement"
   kind: "Parser"
-  unversioned:
-    choice:
-      - reference: "UsingDirective"
-      - reference: "ConstructorDefinition"
-      - reference: "FunctionDefinition"
-      - reference: "FallbackFunctionDefinition"
-      - reference: "ReceiveFunctionDefinition"
-      - reference: "ModifierDefinition"
-      - reference: "StructDefinition"
-      - reference: "EnumDefinition"
-      - reference: "UserDefinedValueTypeDefinition"
-      - reference: "EventDefinition"
-      - reference: "ErrorDefinition"
-      - reference: "StateVariableDeclaration"
+  versioned:
+    0.4.11:
+      choice:
+        - reference: "UsingDirective"
+        - reference: "FunctionDefinition"
+        - reference: "UnnamedFunctionDefinition"
+        - reference: "ModifierDefinition"
+        - reference: "StructDefinition"
+        - reference: "EnumDefinition"
+        - reference: "UserDefinedValueTypeDefinition"
+        - reference: "EventDefinition"
+        - reference: "ErrorDefinition"
+        - reference: "StateVariableDeclaration"
+    0.4.22:
+      # added: ConstructorDefinition
+      choice:
+        - reference: "UsingDirective"
+        - reference: "ConstructorDefinition"
+        - reference: "FunctionDefinition"
+        - reference: "UnnamedFunctionDefinition"
+        - reference: "ModifierDefinition"
+        - reference: "StructDefinition"
+        - reference: "EnumDefinition"
+        - reference: "UserDefinedValueTypeDefinition"
+        - reference: "EventDefinition"
+        - reference: "ErrorDefinition"
+        - reference: "StateVariableDeclaration"
+    0.6.0:
+      # added: ReceiveFunctionDefinition
+      # added: FallbackFunctionDefinition added
+      # removed: UnnamedFunctionDefinition
+      choice:
+        - reference: "UsingDirective"
+        - reference: "ConstructorDefinition"
+        - reference: "FunctionDefinition"
+        - reference: "FallbackFunctionDefinition"
+        - reference: "ReceiveFunctionDefinition"
+        - reference: "ModifierDefinition"
+        - reference: "StructDefinition"
+        - reference: "EnumDefinition"
+        - reference: "UserDefinedValueTypeDefinition"
+        - reference: "EventDefinition"
+        - reference: "ErrorDefinition"
+        - reference: "StateVariableDeclaration"
