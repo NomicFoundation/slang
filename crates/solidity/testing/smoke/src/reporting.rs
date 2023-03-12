@@ -82,8 +82,8 @@ impl Reporter {
             self.progress_bar.suspend(|| {
                 eprintln!();
                 eprintln!(
-                    "More than {} tests failed. Further errors will not be shown.",
-                    Self::MAX_PRINTED_FAILURES
+                    "More than {max_failures} tests failed. Further errors will not be shown.",
+                    max_failures = Self::MAX_PRINTED_FAILURES
                 );
             });
         }

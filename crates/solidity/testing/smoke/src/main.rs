@@ -37,7 +37,7 @@ fn main() {
 fn process_dataset(dataset: &impl Dataset, all_versions: &Vec<Version>) -> Result<()> {
     println!();
     println!();
-    println!("  🧪 Dataset: {}", dataset.get_title());
+    println!("  🧪 Dataset: {title}", title = dataset.get_title());
     println!();
     println!();
 
@@ -45,7 +45,10 @@ fn process_dataset(dataset: &impl Dataset, all_versions: &Vec<Version>) -> Resul
     let source_files = dataset.prepare()?;
 
     println!();
-    println!("Processing {} source files...", source_files.len());
+    println!(
+        "Processing {count} source files...",
+        count = source_files.len()
+    );
 
     let reporter = Reporter::new(source_files.len())?;
 

@@ -28,8 +28,8 @@ impl VersionedFunctionBody {
             .rev()
             .map(|(version, body)| {
                 let version_flag = format_ident!(
-                    "version_is_equal_to_or_greater_than_{}",
-                    version.to_string().replace(".", "_")
+                    "version_is_equal_to_or_greater_than_{version}",
+                    version = version.to_string().replace(".", "_")
                 );
                 if version == first_version {
                     quote! { { #body } }
@@ -56,7 +56,7 @@ pub struct CodeGenerator {
 impl CodeGenerator {
     pub fn add_token_kind(&mut self, name: String) -> Ident {
         let name = name;
-        let ident = format_ident!("{}", name);
+        let ident = format_ident!("{name}");
         self.token_kinds.insert(name, None);
         ident
     }
@@ -76,7 +76,7 @@ impl CodeGenerator {
 
     pub fn add_rule_kind(&mut self, name: String) -> Ident {
         let name = name;
-        let ident = format_ident!("{}", name);
+        let ident = format_ident!("{name}");
         self.rule_kinds.insert(name);
         ident
     }
@@ -114,8 +114,8 @@ impl CodeGenerator {
             .map(|version| {
                 let version = version.to_string();
                 let version_name = format_ident!(
-                    "version_is_equal_to_or_greater_than_{}",
-                    version.replace(".", "_")
+                    "version_is_equal_to_or_greater_than_{version}",
+                    version = version.replace(".", "_")
                 );
                 quote! { #[allow(dead_code)] pub(crate) #version_name: bool }.to_string()
             })
@@ -134,8 +134,8 @@ impl CodeGenerator {
             .map(|version| {
                 let version = version.to_string();
                 let version_name = format_ident!(
-                    "version_is_equal_to_or_greater_than_{}",
-                    version.replace(".", "_")
+                    "version_is_equal_to_or_greater_than_{version}",
+                    version = version.replace(".", "_")
                 );
                 quote! { #version_name: Version::parse(#version).unwrap() <= version }.to_string()
             })
@@ -146,18 +146,16 @@ impl CodeGenerator {
         self.scanners
             .iter()
             .map(|(name, scanner)| {
-                let function_name = format_ident!("scan_{}", name.to_snake_case());
+                let function_name = format_ident!("scan_{name}", name = name.to_snake_case());
                 let body = scanner.to_function_body();
-                format!(
-                    "{}\n{}",
-                    scanner.comment,
-                    quote! {
-                        #[allow(unused_assignments, unused_parens)]
-                        pub(crate) fn #function_name(&self, stream: &mut Stream) -> bool {
-                            #body
-                        }
+                let comment = &scanner.comment;
+                let function = quote! {
+                    #[allow(unused_assignments, unused_parens)]
+                    pub(crate) fn #function_name(&self, stream: &mut Stream) -> bool {
+                        #body
                     }
-                )
+                };
+                format!("{comment}\n{function}")
             })
             .collect()
     }
@@ -166,22 +164,20 @@ impl CodeGenerator {
         self.parsers
             .iter()
             .map(|(name, parser)| {
-                let kind = format_ident!("{}", name);
-                let function_name = format_ident!("parse_{}", name.to_snake_case());
+                let kind = format_ident!("{name}");
+                let function_name = format_ident!("parse_{name}", name = name.to_snake_case());
                 let body = parser.to_function_body();
-                format!(
-                    "{}\n{}",
-                    parser.comment,
-                    quote! {
-                        #[allow(unused_assignments, unused_parens)]
-                        pub(crate) fn #function_name(&self, stream: &mut Stream) -> ParseResult {
-                            match #body {
-                        Pass{ node, error } => Pass{ node: cst::Node::top_level_rule(RuleKind::#kind, node), error },
-                                fail => fail
-                            }
+                let comment = &parser.comment;
+                let function = quote! {
+                    #[allow(unused_assignments, unused_parens)]
+                    pub(crate) fn #function_name(&self, stream: &mut Stream) -> ParseResult {
+                        match #body {
+                            Pass{ node, error } => Pass{ node: cst::Node::top_level_rule(RuleKind::#kind, node), error },
+                            fail => fail
                         }
                     }
-                )
+                };
+                format!("{comment}\n{function}")
             })
             .collect()
     }
@@ -190,8 +186,8 @@ impl CodeGenerator {
         self.scanners
             .keys()
             .map(|name| {
-                let production_kind = format_ident!("{}", name);
-                let function_name = format_ident!("scan_{}", name.to_snake_case());
+                let production_kind = format_ident!("{name}");
+                let function_name = format_ident!("scan_{name}", name = name.to_snake_case());
                 let error_message = name;
                 quote! {
                     ProductionKind::#production_kind => call_scanner(self, input, Language::#function_name, TokenKind::#production_kind, #error_message)
@@ -205,8 +201,8 @@ impl CodeGenerator {
         self.parsers
             .keys()
             .map(|name| {
-                let production_kind = format_ident!("{}", name);
-                let function_name = format_ident!("parse_{}", name.to_snake_case());
+                let production_kind = format_ident!("{name}");
+                let function_name = format_ident!("parse_{name}", name = name.to_snake_case());
                 quote! {
                     ProductionKind::#production_kind => call_parser(self, input, Language::#function_name)
                 }

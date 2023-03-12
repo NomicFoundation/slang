@@ -16,7 +16,7 @@ impl<T: EBNFWriter> EBNFWritable<T> for Production {
                 VersionMap::Versioned(versions) => {
                     for (version, scanner) in versions {
                         writer.write_line_start();
-                        writer.write_comment(&format!("(* v{} *) ", version));
+                        writer.write_comment(&format!("(* v{version} *) "));
                         scanner.write_ebnf(name, writer);
                         writer.write_line_end();
                     }
@@ -32,7 +32,7 @@ impl<T: EBNFWriter> EBNFWritable<T> for Production {
                 VersionMap::Versioned(versions) => {
                     for (version, parser) in versions {
                         writer.write_line_start();
-                        writer.write_comment(&format!("(* v{} *) ", version));
+                        writer.write_comment(&format!("(* v{version} *) "));
                         parser.write_ebnf(name, writer);
                         writer.write_line_end();
                     }
@@ -47,7 +47,7 @@ impl<T: EBNFWriter> EBNFWritable<T> for Production {
                 VersionMap::Versioned(versions) => {
                     for (version, precedence_parser) in versions {
                         writer.write_line_start();
-                        writer.write_comment(&format!("(* v{} *) ", version));
+                        writer.write_comment(&format!("(* v{version} *) "));
                         precedence_parser.write_ebnf(name, writer);
                         writer.write_line_end();
                     }

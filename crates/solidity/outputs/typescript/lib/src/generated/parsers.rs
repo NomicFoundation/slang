@@ -4813,8 +4813,9 @@ impl Language {
                                         furthest_error = error
                                     } else if furthest_error.position == error.position {
                                         furthest_error.expected = format!(
-                                            "{}, or {}",
-                                            furthest_error.expected, error.expected
+                                            "{prev_expected}, or {expected}",
+                                            prev_expected = furthest_error.expected,
+                                            expected = error.expected
                                         )
                                     }
                                 }
@@ -4887,8 +4888,9 @@ impl Language {
                                         furthest_error = error
                                     } else if furthest_error.position == error.position {
                                         furthest_error.expected = format!(
-                                            "{}, or {}",
-                                            furthest_error.expected, error.expected
+                                            "{prev_expected}, or {expected}",
+                                            prev_expected = furthest_error.expected,
+                                            expected = error.expected
                                         )
                                     }
                                 }
@@ -5026,8 +5028,9 @@ impl Language {
                                         furthest_error = error
                                     } else if furthest_error.position == error.position {
                                         furthest_error.expected = format!(
-                                            "{}, or {}",
-                                            furthest_error.expected, error.expected
+                                            "{prev_expected}, or {expected}",
+                                            prev_expected = furthest_error.expected,
+                                            expected = error.expected
                                         )
                                     }
                                 }
@@ -5383,8 +5386,9 @@ impl Language {
                                         furthest_error = error
                                     } else if furthest_error.position == error.position {
                                         furthest_error.expected = format!(
-                                            "{}, or {}",
-                                            furthest_error.expected, error.expected
+                                            "{prev_expected}, or {expected}",
+                                            prev_expected = furthest_error.expected,
+                                            expected = error.expected
                                         )
                                     }
                                 }
@@ -5763,8 +5767,9 @@ impl Language {
                                     furthest_error = error
                                 } else if furthest_error.position == error.position {
                                     furthest_error.expected = format!(
-                                        "{}, or {}",
-                                        furthest_error.expected, error.expected
+                                        "{prev_expected}, or {expected}",
+                                        prev_expected = furthest_error.expected,
+                                        expected = error.expected
                                     )
                                 }
                             }
@@ -5807,8 +5812,9 @@ impl Language {
                                     furthest_error = error
                                 } else if furthest_error.position == error.position {
                                     furthest_error.expected = format!(
-                                        "{}, or {}",
-                                        furthest_error.expected, error.expected
+                                        "{prev_expected}, or {expected}",
+                                        prev_expected = furthest_error.expected,
+                                        expected = error.expected
                                     )
                                 }
                             }
@@ -5886,8 +5892,9 @@ impl Language {
                                     furthest_error = error
                                 } else if furthest_error.position == error.position {
                                     furthest_error.expected = format!(
-                                        "{}, or {}",
-                                        furthest_error.expected, error.expected
+                                        "{prev_expected}, or {expected}",
+                                        prev_expected = furthest_error.expected,
+                                        expected = error.expected
                                     )
                                 }
                             }
@@ -6015,8 +6022,9 @@ impl Language {
                                     furthest_error = error
                                 } else if furthest_error.position == error.position {
                                     furthest_error.expected = format!(
-                                        "{}, or {}",
-                                        furthest_error.expected, error.expected
+                                        "{prev_expected}, or {expected}",
+                                        prev_expected = furthest_error.expected,
+                                        expected = error.expected
                                     )
                                 }
                             }
@@ -6059,8 +6067,9 @@ impl Language {
                                     furthest_error = error
                                 } else if furthest_error.position == error.position {
                                     furthest_error.expected = format!(
-                                        "{}, or {}",
-                                        furthest_error.expected, error.expected
+                                        "{prev_expected}, or {expected}",
+                                        prev_expected = furthest_error.expected,
+                                        expected = error.expected
                                     )
                                 }
                             }
@@ -6103,8 +6112,9 @@ impl Language {
                                     furthest_error = error
                                 } else if furthest_error.position == error.position {
                                     furthest_error.expected = format!(
-                                        "{}, or {}",
-                                        furthest_error.expected, error.expected
+                                        "{prev_expected}, or {expected}",
+                                        prev_expected = furthest_error.expected,
+                                        expected = error.expected
                                     )
                                 }
                             }
@@ -6147,8 +6157,9 @@ impl Language {
                                     furthest_error = error
                                 } else if furthest_error.position == error.position {
                                     furthest_error.expected = format!(
-                                        "{}, or {}",
-                                        furthest_error.expected, error.expected
+                                        "{prev_expected}, or {expected}",
+                                        prev_expected = furthest_error.expected,
+                                        expected = error.expected
                                     )
                                 }
                             }
@@ -6254,8 +6265,9 @@ impl Language {
                                     furthest_error = error
                                 } else if furthest_error.position == error.position {
                                     furthest_error.expected = format!(
-                                        "{}, or {}",
-                                        furthest_error.expected, error.expected
+                                        "{prev_expected}, or {expected}",
+                                        prev_expected = furthest_error.expected,
+                                        expected = error.expected
                                     )
                                 }
                             }
@@ -6333,8 +6345,9 @@ impl Language {
                                     furthest_error = error
                                 } else if furthest_error.position == error.position {
                                     furthest_error.expected = format!(
-                                        "{}, or {}",
-                                        furthest_error.expected, error.expected
+                                        "{prev_expected}, or {expected}",
+                                        prev_expected = furthest_error.expected,
+                                        expected = error.expected
                                     )
                                 }
                             }
@@ -6437,8 +6450,9 @@ impl Language {
                                     furthest_error = error
                                 } else if furthest_error.position == error.position {
                                     furthest_error.expected = format!(
-                                        "{}, or {}",
-                                        furthest_error.expected, error.expected
+                                        "{prev_expected}, or {expected}",
+                                        prev_expected = furthest_error.expected,
+                                        expected = error.expected
                                     )
                                 }
                             }
@@ -6481,8 +6495,9 @@ impl Language {
                                     furthest_error = error
                                 } else if furthest_error.position == error.position {
                                     furthest_error.expected = format!(
-                                        "{}, or {}",
-                                        furthest_error.expected, error.expected
+                                        "{prev_expected}, or {expected}",
+                                        prev_expected = furthest_error.expected,
+                                        expected = error.expected
                                     )
                                 }
                             }
@@ -6935,8 +6950,9 @@ impl Language {
                                         furthest_error = error
                                     } else if furthest_error.position == error.position {
                                         furthest_error.expected = format!(
-                                            "{}, or {}",
-                                            furthest_error.expected, error.expected
+                                            "{prev_expected}, or {expected}",
+                                            prev_expected = furthest_error.expected,
+                                            expected = error.expected
                                         )
                                     }
                                 }
@@ -7009,8 +7025,9 @@ impl Language {
                                         furthest_error = error
                                     } else if furthest_error.position == error.position {
                                         furthest_error.expected = format!(
-                                            "{}, or {}",
-                                            furthest_error.expected, error.expected
+                                            "{prev_expected}, or {expected}",
+                                            prev_expected = furthest_error.expected,
+                                            expected = error.expected
                                         )
                                     }
                                 }
@@ -7148,8 +7165,9 @@ impl Language {
                                         furthest_error = error
                                     } else if furthest_error.position == error.position {
                                         furthest_error.expected = format!(
-                                            "{}, or {}",
-                                            furthest_error.expected, error.expected
+                                            "{prev_expected}, or {expected}",
+                                            prev_expected = furthest_error.expected,
+                                            expected = error.expected
                                         )
                                     }
                                 }
@@ -7505,8 +7523,9 @@ impl Language {
                                         furthest_error = error
                                     } else if furthest_error.position == error.position {
                                         furthest_error.expected = format!(
-                                            "{}, or {}",
-                                            furthest_error.expected, error.expected
+                                            "{prev_expected}, or {expected}",
+                                            prev_expected = furthest_error.expected,
+                                            expected = error.expected
                                         )
                                     }
                                 }
@@ -7885,8 +7904,9 @@ impl Language {
                                     furthest_error = error
                                 } else if furthest_error.position == error.position {
                                     furthest_error.expected = format!(
-                                        "{}, or {}",
-                                        furthest_error.expected, error.expected
+                                        "{prev_expected}, or {expected}",
+                                        prev_expected = furthest_error.expected,
+                                        expected = error.expected
                                     )
                                 }
                             }
@@ -7929,8 +7949,9 @@ impl Language {
                                     furthest_error = error
                                 } else if furthest_error.position == error.position {
                                     furthest_error.expected = format!(
-                                        "{}, or {}",
-                                        furthest_error.expected, error.expected
+                                        "{prev_expected}, or {expected}",
+                                        prev_expected = furthest_error.expected,
+                                        expected = error.expected
                                     )
                                 }
                             }
@@ -8008,8 +8029,9 @@ impl Language {
                                     furthest_error = error
                                 } else if furthest_error.position == error.position {
                                     furthest_error.expected = format!(
-                                        "{}, or {}",
-                                        furthest_error.expected, error.expected
+                                        "{prev_expected}, or {expected}",
+                                        prev_expected = furthest_error.expected,
+                                        expected = error.expected
                                     )
                                 }
                             }
@@ -8137,8 +8159,9 @@ impl Language {
                                     furthest_error = error
                                 } else if furthest_error.position == error.position {
                                     furthest_error.expected = format!(
-                                        "{}, or {}",
-                                        furthest_error.expected, error.expected
+                                        "{prev_expected}, or {expected}",
+                                        prev_expected = furthest_error.expected,
+                                        expected = error.expected
                                     )
                                 }
                             }
@@ -8181,8 +8204,9 @@ impl Language {
                                     furthest_error = error
                                 } else if furthest_error.position == error.position {
                                     furthest_error.expected = format!(
-                                        "{}, or {}",
-                                        furthest_error.expected, error.expected
+                                        "{prev_expected}, or {expected}",
+                                        prev_expected = furthest_error.expected,
+                                        expected = error.expected
                                     )
                                 }
                             }
@@ -8225,8 +8249,9 @@ impl Language {
                                     furthest_error = error
                                 } else if furthest_error.position == error.position {
                                     furthest_error.expected = format!(
-                                        "{}, or {}",
-                                        furthest_error.expected, error.expected
+                                        "{prev_expected}, or {expected}",
+                                        prev_expected = furthest_error.expected,
+                                        expected = error.expected
                                     )
                                 }
                             }
@@ -8269,8 +8294,9 @@ impl Language {
                                     furthest_error = error
                                 } else if furthest_error.position == error.position {
                                     furthest_error.expected = format!(
-                                        "{}, or {}",
-                                        furthest_error.expected, error.expected
+                                        "{prev_expected}, or {expected}",
+                                        prev_expected = furthest_error.expected,
+                                        expected = error.expected
                                     )
                                 }
                             }
@@ -8376,8 +8402,9 @@ impl Language {
                                     furthest_error = error
                                 } else if furthest_error.position == error.position {
                                     furthest_error.expected = format!(
-                                        "{}, or {}",
-                                        furthest_error.expected, error.expected
+                                        "{prev_expected}, or {expected}",
+                                        prev_expected = furthest_error.expected,
+                                        expected = error.expected
                                     )
                                 }
                             }
@@ -8455,8 +8482,9 @@ impl Language {
                                     furthest_error = error
                                 } else if furthest_error.position == error.position {
                                     furthest_error.expected = format!(
-                                        "{}, or {}",
-                                        furthest_error.expected, error.expected
+                                        "{prev_expected}, or {expected}",
+                                        prev_expected = furthest_error.expected,
+                                        expected = error.expected
                                     )
                                 }
                             }
@@ -8559,8 +8587,9 @@ impl Language {
                                     furthest_error = error
                                 } else if furthest_error.position == error.position {
                                     furthest_error.expected = format!(
-                                        "{}, or {}",
-                                        furthest_error.expected, error.expected
+                                        "{prev_expected}, or {expected}",
+                                        prev_expected = furthest_error.expected,
+                                        expected = error.expected
                                     )
                                 }
                             }
@@ -8603,8 +8632,9 @@ impl Language {
                                     furthest_error = error
                                 } else if furthest_error.position == error.position {
                                     furthest_error.expected = format!(
-                                        "{}, or {}",
-                                        furthest_error.expected, error.expected
+                                        "{prev_expected}, or {expected}",
+                                        prev_expected = furthest_error.expected,
+                                        expected = error.expected
                                     )
                                 }
                             }

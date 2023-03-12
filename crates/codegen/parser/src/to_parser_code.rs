@@ -13,19 +13,20 @@ impl<'context> CombinatorNode<'context> {
              */
             Self::Reference { tree } => match tree.production.as_ref() {
                 Production::Scanner { name, .. } => {
-                    let kind = format_ident!("{}", name);
-                    let function_name = format_ident!("scan_{}", name.to_snake_case());
+                    let kind = format_ident!("{name}");
+                    let function_name = format_ident!("scan_{name}", name = name.to_snake_case());
                     let scanner = quote! { self.#function_name(stream) };
                     let error_message = name;
                     scanner_code_to_parser_code(scanner, kind, &error_message, !is_trivia)
                 }
                 Production::TriviaParser { name, .. } => {
-                    let function_name = format_ident!("parse_{}", name.to_snake_case());
+                    let function_name = format_ident!("parse_{name}", name = name.to_snake_case());
                     quote! { self.#function_name(stream) }
                 }
                 Production::Parser { name, .. } | Production::PrecedenceParser { name, .. } => {
                     if !is_trivia {
-                        let function_name = format_ident!("parse_{}", name.to_snake_case());
+                        let function_name =
+                            format_ident!("parse_{name}", name = name.to_snake_case());
                         quote! { self.#function_name(stream) }
                     } else {
                         unreachable!(
@@ -44,7 +45,7 @@ impl<'context> CombinatorNode<'context> {
                     .enumerate()
                     .map(|(index, element)| {
                         (
-                            format_ident!("result_{}", index),
+                            format_ident!("result_{index}"),
                             element.to_parser_code(is_trivia, code),
                         )
                     })
@@ -389,7 +390,7 @@ impl<'context> CombinatorNode<'context> {
                                         if furthest_error.position < error.position {
                                             furthest_error = error
                                         } else if furthest_error.position == error.position {
-                                            furthest_error.expected = format!("{}, or {}", furthest_error.expected, error.expected)
+                                            furthest_error.expected = format!("{prev_expected}, or {expected}", prev_expected = furthest_error.expected, expected = error.expected)
                                         },
                                         ok => break ok,
                                     }
@@ -453,8 +454,10 @@ impl<'context> CombinatorNode<'context> {
                     primary_expressions
                         .iter()
                         .map(|tree| {
-                            let function_name =
-                                format_ident!("parse_{}", tree.production.name().to_snake_case());
+                            let function_name = format_ident!(
+                                "parse_{name}",
+                                name = tree.production.name().to_snake_case()
+                            );
                             quote! { self.#function_name(stream) }
                         })
                         .collect::<Vec<_>>(),
@@ -590,8 +593,8 @@ fn scanner_production_to_parser_code(
     is_trivia: bool,
 ) -> TokenStream {
     if let Production::Scanner { name, .. } = open.production.as_ref() {
-        let kind = format_ident!("{}", name);
-        let function_name = format_ident!("scan_{}", name.to_snake_case());
+        let kind = format_ident!("{name}");
+        let function_name = format_ident!("scan_{name}", name = name.to_snake_case());
         let scanner = quote! { self.#function_name(stream) };
         let error_message = name;
         scanner_code_to_parser_code(scanner, kind, &error_message, !is_trivia)

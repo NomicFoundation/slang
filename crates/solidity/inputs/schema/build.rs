@@ -24,8 +24,8 @@ fn main() -> Result<()> {
         std::fs::write(&output_path, &buffer)?;
 
         println!(
-            "cargo:rustc-env=SLANG_SOLIDITY_INPUT_SCHEMA_BIN={}",
-            output_path.to_str().unwrap()
+            "cargo:rustc-env=SLANG_SOLIDITY_INPUT_SCHEMA_BIN={path}",
+            path = output_path.to_str().unwrap()
         );
 
         return Ok(());

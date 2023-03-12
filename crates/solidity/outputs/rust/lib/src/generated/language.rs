@@ -29,23 +29,35 @@ impl ParseError {
         if DEBUG_ERROR_MERGING {
             if self.position < other.position {
                 self.expected = format!(
-                    "O={}\nNOT {}@[{}]",
-                    other.expected, self.position, self.expected
+                    "O={other_expected}\nNOT {position}@[{expected}]",
+                    other_expected = other.expected,
+                    position = self.position,
+                    expected = self.expected
                 );
                 self.position = other.position;
             } else if self.position == other.position {
-                self.expected = format!("{}, or {}", other.expected, self.expected);
+                self.expected = format!(
+                    "{other_expected}, or {expected}",
+                    other_expected = other.expected,
+                    expected = self.expected
+                );
             } else {
                 self.expected = format!(
-                    "S={}\nNOT {}@[{}]",
-                    self.expected, other.position, other.expected
+                    "S={expected}\nNOT {other_position}@[{other_expected}]",
+                    expected = self.expected,
+                    other_position = other.position,
+                    other_expected = other.expected
                 );
             }
         } else {
             if self.position < other.position {
                 *self = other;
             } else if self.position == other.position {
-                self.expected = format!("{}, or {}", other.expected, self.expected);
+                self.expected = format!(
+                    "{other_expected}, or {expected}",
+                    other_expected = other.expected,
+                    expected = self.expected
+                );
             }
         }
     }
@@ -133,9 +145,13 @@ pub(crate) fn render_error_report(
     let kind = ReportKind::Error;
     let color = if with_color { Color::Red } else { Color::Unset };
     let message = if DEBUG_ERROR_MERGING {
-        format!("{}: Expected {}", error.position, error.expected)
+        format!(
+            "{position}: Expected {expected}",
+            position = error.position,
+            expected = error.expected
+        )
     } else {
-        format!("Expected {}", error.expected)
+        format!("Expected {expected}", expected = error.expected)
     };
     let source_start = error.position;
     let source_end = error.position;

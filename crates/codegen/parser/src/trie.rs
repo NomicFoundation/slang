@@ -126,7 +126,7 @@ pub fn from_scanner(tree: &CombinatorTree, scanner: ScannerRef) -> Option<Termin
                 match tree.context.get_tree_by_name(name).production.as_ref() {
                     Production::Scanner { name, version_map } => {
                         version_map.get_for_version(&tree.context.version).expect(
-                            &format!("Validation should have ensured: no version of {} exists for version {}", name, tree.context.version)
+                            &format!("Validation should have ensured: no version of {name} exists for version {version}", version = tree.context.version)
                         ).clone()
                     }
                     Production::TriviaParser { .. }
@@ -163,12 +163,11 @@ fn test_prefix_trie() {
 
     let mut buffer = String::new();
     for (key, value) in trie.iter() {
-        write!(&mut buffer, "{}={},", key, value).unwrap();
+        write!(&mut buffer, "{key}={value},").unwrap();
     }
 
     assert!(
         buffer == r#"a=1,afghb=2,afghc=3,b=4,"#,
-        "trace = {:?}",
-        buffer
+        "trace = {buffer:?}"
     );
 }

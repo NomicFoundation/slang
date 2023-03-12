@@ -76,11 +76,11 @@ struct ErrorDescriptor {
 impl std::fmt::Display for ErrorDescriptor {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         if std::env::var("VSCODE_PROBLEM_MATCHER").is_ok() {
-            writeln!(f, "{}", self.to_problem_matcher())?;
+            writeln!(f, "{matcher}", matcher = self.to_problem_matcher())?;
             writeln!(f, "")?;
         }
 
-        writeln!(f, "{}", self.to_ariadne_report())?;
+        writeln!(f, "{report}", report = self.to_ariadne_report())?;
 
         return Ok(());
     }
