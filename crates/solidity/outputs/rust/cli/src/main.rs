@@ -46,7 +46,7 @@ fn main() -> Result<()> {
             let json = serde_json::to_string_pretty(&root_node).context("Failed to write json")?;
 
             if json_path == "-" {
-                println!("{}", json);
+                println!("{json}");
             } else {
                 let json_path = &PathBuf::from(json_path).canonicalize()?;
                 fs::write(json_path, json)
@@ -58,7 +58,7 @@ fn main() -> Result<()> {
             let yaml = serde_yaml::to_string(&root_node).context("Failed to write yaml")?;
 
             if yaml_path == "-" {
-                println!("{}", yaml);
+                println!("{yaml}");
             } else {
                 let yaml_path = &PathBuf::from(yaml_path).canonicalize()?;
                 fs::write(&yaml_path, yaml)
@@ -70,7 +70,7 @@ fn main() -> Result<()> {
             let sexpr = serde_lexpr::to_string(&root_node).context("Failed to write sexpr")?;
 
             if sexpr_path == "-" {
-                println!("{}", sexpr);
+                println!("{sexpr}");
             } else {
                 let sexpr_path = &PathBuf::from(sexpr_path).canonicalize()?;
                 fs::write(sexpr_path, sexpr)

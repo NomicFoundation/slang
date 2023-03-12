@@ -174,7 +174,7 @@ impl CharSet {
                 match tree.context.get_tree_by_name(name).production.as_ref() {
                     Production::Scanner { name, version_map } => {
                         version_map.get_for_version(&tree.context.version).expect(
-                            &format!("Validation should have ensured: no version of {} exists for version {}", name, tree.context.version)
+                            &format!("Validation should have ensured: no version of {name} exists for version {version}", version = tree.context.version)
                         ).clone()
                     }
                     Production::TriviaParser { .. }

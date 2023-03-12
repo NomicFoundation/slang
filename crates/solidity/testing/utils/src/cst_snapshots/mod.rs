@@ -80,7 +80,7 @@ fn write_errors<W: Write>(
         return Ok(());
     }
 
-    writeln!(w, "Errors: # {} total", errors.len())?;
+    writeln!(w, "Errors: # {count} total", count = errors.len())?;
 
     for error in errors {
         writeln!(w, "  - >")?;

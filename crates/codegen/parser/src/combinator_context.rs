@@ -45,6 +45,6 @@ impl<'context> CombinatorContext<'context> {
         self.trees_by_name
             .borrow()
             .get(name)
-            .expect(&format!("Production {} not found", name))
+            .expect(&format!("Production {name} not found"))
     }
 }

@@ -82,7 +82,7 @@ fn format_string_literal(value: &str) -> String {
         .chars()
         .map(|c| {
             if c == '\'' || c == '\\' {
-                format!("\\{}", c)
+                format!("\\{c}")
             } else if c.is_ascii_graphic() || c == '¬' || c == '…' || c == '«' || c == '»' {
                 c.to_string()
             } else {
@@ -91,5 +91,5 @@ fn format_string_literal(value: &str) -> String {
         })
         .collect();
 
-    return format!("{}{}{}", delimiter, formatted, delimiter);
+    return format!("{delimiter}{formatted}{delimiter}");
 }

@@ -34,7 +34,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
             let snapshot_path = test_dir.join(format!("generated/{version}.yml"));
 
             let production_kind = ProductionKind::from_str(parser_name)
-                .expect(format!("No such parser: {}", parser_name).as_str());
+                .expect(format!("No such parser: {parser_name}").as_str());
             let output = Language::new(version)?.parse(production_kind, &source);
 
             if let Some(last_output) = &last_output {

@@ -37,13 +37,13 @@ impl<T: Write> EBNFWriter for CodeCommentEBNFWriter<'_, T> {
     }
 
     fn write_token(&mut self, _kind: TokenKind, value: &str) {
-        write!(self.w, "{}", value).unwrap();
+        write!(self.w, "{value}").unwrap();
     }
 }
 
 pub fn production_display_name(productions: &HashMap<String, ProductionRef>, name: &str) -> String {
     if productions.contains_key(name) && matches!(*productions[name], Production::Scanner { .. }) {
-        format!("«{}»", name)
+        format!("«{name}»")
     } else {
         name.to_string()
     }

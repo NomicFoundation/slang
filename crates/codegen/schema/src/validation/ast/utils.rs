@@ -5,8 +5,8 @@ impl cst::Node {
         match self {
             Self::Object { fields, .. } => {
                 return fields.get(key).expect(&format!(
-                    "Key '{key}' not found in object at {:?}",
-                    self.range()
+                    "Key '{key}' not found in object at {range:?}",
+                    range = self.range()
                 ));
             }
             _ => panic!("Unexpected node: {self:?}"),

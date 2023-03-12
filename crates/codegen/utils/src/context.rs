@@ -163,11 +163,17 @@ impl CodegenContext {
         }
 
         for input_dir in &self.input_dirs {
-            println!("cargo:rerun-if-changed={}", input_dir.to_str().unwrap());
+            println!(
+                "cargo:rerun-if-changed={dir}",
+                dir = input_dir.to_str().unwrap()
+            );
         }
 
         for generated_dir in &self.generated_dirs {
-            println!("cargo:rerun-if-changed={}", generated_dir.to_str().unwrap());
+            println!(
+                "cargo:rerun-if-changed={dir}",
+                dir = generated_dir.to_str().unwrap()
+            );
         }
     }
 }

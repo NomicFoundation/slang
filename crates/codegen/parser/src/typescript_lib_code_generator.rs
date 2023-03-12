@@ -116,7 +116,7 @@ impl CodeGenerator {
                                         version,
                                     }}
                                 }} else {{
-                                    panic!(\"Invalid {language_name} language version: {{}}\", version);
+                                    panic!(\"Invalid {language_name} language version: {{version}}\");
                                 }}
                             }}
 

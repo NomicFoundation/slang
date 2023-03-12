@@ -83,7 +83,7 @@ impl PrivateGrammarParserGeneratorExtensions for Grammar {
         if generated_code.has_errors() {
             eprintln!("Errors:");
             for error in generated_code.get_errors() {
-                eprintln!("  {}", error);
+                eprintln!("  {error}");
             }
         }
 

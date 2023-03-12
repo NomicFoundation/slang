@@ -18,7 +18,8 @@ impl<'context> CombinatorNode<'context> {
              */
             Self::Reference { tree } => match tree.production.as_ref() {
                 Production::Scanner { name, .. } => {
-                    let scanner_function_name = format_ident!("scan_{}", name.to_snake_case());
+                    let scanner_function_name =
+                        format_ident!("scan_{name}", name = name.to_snake_case());
                     quote! { self.#scanner_function_name(stream) }
                 }
                 Production::TriviaParser { .. }

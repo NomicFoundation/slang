@@ -72,7 +72,7 @@ impl<'context> CombinatorTree<'context> {
         match self.production.as_ref() {
             Production::Scanner { name, .. } => {
                 if self.first_set().includes_epsilon {
-                    unreachable!("Validation should have discovered that token production {} produces epsilon", name);
+                    unreachable!("Validation should have discovered that token production {name} produces epsilon");
                 }
                 code.add_token_kind(name.clone());
                 let root_node = self.root_node.get().unwrap();
