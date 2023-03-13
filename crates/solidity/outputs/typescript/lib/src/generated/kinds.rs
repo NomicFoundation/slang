@@ -3,9 +3,8 @@
 use napi::bindgen_prelude::*;
 use napi_derive::napi;
 use serde::Serialize;
-
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Serialize)]
 #[napi]
+#[derive(Debug, PartialEq, Eq, Serialize)]
 pub enum TokenKind {
     AbicoderKeyword,
     AbstractKeyword,
@@ -176,9 +175,8 @@ pub enum TokenKind {
     YulIdentifier,
     YulKeyword,
 }
-
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Serialize)]
 #[napi]
+#[derive(Debug, PartialEq, Eq, Serialize)]
 pub enum RuleKind {
     ABICoderPragma,
     AddSubExpression,
@@ -317,9 +315,8 @@ pub enum RuleKind {
     _SEQUENCE,
     _TERMINATEDBY,
 }
-
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Serialize)]
 #[napi]
+#[derive(Debug, PartialEq, Eq, Serialize)]
 pub enum ProductionKind {
     ABICoderPragma,
     AbicoderKeyword,

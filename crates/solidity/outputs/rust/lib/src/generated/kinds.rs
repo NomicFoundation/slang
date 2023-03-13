@@ -2,7 +2,6 @@
 
 use serde::Serialize;
 use strum_macros::*;
-
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize)]
 pub enum TokenKind {
     AbicoderKeyword,
@@ -174,7 +173,6 @@ pub enum TokenKind {
     YulIdentifier,
     YulKeyword,
 }
-
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize)]
 pub enum RuleKind {
     ABICoderPragma,
@@ -314,7 +312,6 @@ pub enum RuleKind {
     _SEQUENCE,
     _TERMINATEDBY,
 }
-
 #[derive(
     Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, EnumString, AsRefStr, Display,
 )]
