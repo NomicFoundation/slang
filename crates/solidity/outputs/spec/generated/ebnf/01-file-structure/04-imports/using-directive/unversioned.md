@@ -1,0 +1,7 @@
+<!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
+
+<!-- markdownlint-disable first-line-h1 -->
+
+```{ .ebnf .slang-ebnf #UsingDirective }
+UsingDirective = «UsingKeyword» (IdentifierPath | «OpenBrace» IdentifierPath {«Comma» IdentifierPath} «CloseBrace») «ForKeyword» («Star» | TypeName) [«GlobalKeyword»] «Semicolon»;
+```

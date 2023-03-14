@@ -1,9 +1,9 @@
-use std::cell::Cell;
+use std::{cell::Cell, fmt::Write};
 
-use codegen_ebnf::ebnf_writer::EBNFWritable;
+use codegen_ebnf::EbnfSerializer;
 use codegen_schema::types::production::{Production, ProductionRef};
 
-use crate::{code_comment_ebnf_writer::CodeCommentEBNFWriter, first_set::FirstSet};
+use crate::first_set::FirstSet;
 
 use super::{
     code_generator::CodeGenerator, combinator_context::CombinatorContext,
@@ -38,14 +38,14 @@ impl<'context> CombinatorTree<'context> {
             self.root_node.set(match self.production.as_ref() {
                 Production::Scanner { version_map, .. } => version_map
                     .get_for_version(version)
-                    .map(|scanner| CombinatorNode::from_scanner(self, &scanner)),
+                    .map(|scanner| CombinatorNode::from_scanner(self, scanner)),
                 Production::TriviaParser { version_map, .. }
                 | Production::Parser { version_map, .. } => version_map
                     .get_for_version(version)
-                    .map(|parser| CombinatorNode::from_parser(self, &parser)),
+                    .map(|parser| CombinatorNode::from_parser(self, parser)),
                 Production::PrecedenceParser { version_map, .. } => version_map
                     .get_for_version(version)
-                    .map(|parser| CombinatorNode::from_precedence_parser(self, &parser)),
+                    .map(|parser| CombinatorNode::from_precedence_parser(self, parser)),
             });
         }
     }
@@ -54,20 +54,14 @@ impl<'context> CombinatorTree<'context> {
         let first_version = self.context.grammar.versions.first().unwrap();
         let version = &self.context.version;
         let matches_version = match self.production.versions() {
-            Some(versions) => versions.contains(version),
+            Some(versions) => versions.contains(&version),
             None => version == first_version,
         };
         if !matches_version {
             return;
         }
 
-        let mut comment: Vec<u8> = Vec::new();
-        let mut writer = CodeCommentEBNFWriter {
-            w: &mut comment,
-            grammar: self.context.grammar,
-        };
-        self.production.write_ebnf("", &mut writer);
-        let comment = String::from_utf8(comment).unwrap();
+        let comment = &self.generate_comment();
 
         match self.production.as_ref() {
             Production::Scanner { name, .. } => {
@@ -90,5 +84,24 @@ impl<'context> CombinatorTree<'context> {
                 code.add_parser(name.clone(), version, comment, parser);
             }
         }
+    }
+
+    fn generate_comment(&self) -> String {
+        let mut comment = String::new();
+
+        if self.production.versions().is_some() {
+            writeln!(comment, "(* v{version} *)", version = self.context.version).unwrap();
+        }
+
+        let ebnf = EbnfSerializer::serialize_version(
+            self.context.grammar,
+            &self.production,
+            &self.context.version,
+        )
+        .unwrap();
+
+        writeln!(comment, "{ebnf}").unwrap();
+
+        return comment.lines().map(|line| format!("// {line}\n")).collect();
     }
 }

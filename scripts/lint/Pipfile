@@ -4,4 +4,4 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-yamllint = "==1.28.0"
+yamllint = "==1.29.0"

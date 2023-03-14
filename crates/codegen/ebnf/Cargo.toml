@@ -6,3 +6,4 @@ edition.workspace = true
 
 [dependencies]
 codegen_schema = { workspace = true }
+semver = { workspace = true }

@@ -190,7 +190,7 @@ impl Language {
             Pass { node, .. } => Some(node),
         }
     }
-    // ABICoderPragma = «AbicoderKeyword» «Identifier» ;
+    // ABICoderPragma = «AbicoderKeyword» «Identifier»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_abi_coder_pragma(&self, stream: &mut Stream) -> ParseResult {
@@ -273,7 +273,7 @@ impl Language {
         }
     }
 
-    // AddressType = «AddressKeyword» [ «PayableKeyword» ] ;
+    // AddressType = «AddressKeyword» [«PayableKeyword»];
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_address_type(&self, stream: &mut Stream) -> ParseResult {
@@ -368,7 +368,7 @@ impl Language {
         }
     }
 
-    // ArgumentList = «OpenParen» [ PositionalArgumentList | NamedArgumentList ] «CloseParen» ;
+    // ArgumentList = «OpenParen» [PositionalArgumentList | NamedArgumentList] «CloseParen»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_argument_list(&self, stream: &mut Stream) -> ParseResult {
@@ -480,7 +480,7 @@ impl Language {
         }
     }
 
-    // ArrayLiteral = «OpenBracket» Expression«Comma» { «Comma» Expression } «CloseBracket» ;
+    // ArrayLiteral = «OpenBracket» Expression {«Comma» Expression} «CloseBracket»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_array_literal(&self, stream: &mut Stream) -> ParseResult {
@@ -611,7 +611,7 @@ impl Language {
         }
     }
 
-    // AssemblyFlags = «OpenParen» «DoubleQuotedAsciiStringLiteral» { «Comma» «DoubleQuotedAsciiStringLiteral» } «CloseParen» ;
+    // AssemblyFlags = «OpenParen» «DoubleQuotedAsciiStringLiteral» {«Comma» «DoubleQuotedAsciiStringLiteral»} «CloseParen»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_assembly_flags(&self, stream: &mut Stream) -> ParseResult {
@@ -850,7 +850,7 @@ impl Language {
         }
     }
 
-    // AssemblyStatement = «AssemblyKeyword» [ «Evmasm» ] [ AssemblyFlags ] YulBlock ;
+    // AssemblyStatement = «AssemblyKeyword» [«Evmasm»] [AssemblyFlags] YulBlock;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_assembly_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -982,7 +982,7 @@ impl Language {
         }
     }
 
-    // Block = «OpenBrace» { Statement | UncheckedBlock } «CloseBrace» ;
+    // Block = «OpenBrace» {Statement | UncheckedBlock} «CloseBrace»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_block(&self, stream: &mut Stream) -> ParseResult {
@@ -1097,7 +1097,7 @@ impl Language {
         }
     }
 
-    // BooleanLiteral = «TrueKeyword» | «FalseKeyword» ;
+    // BooleanLiteral = «TrueKeyword» | «FalseKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_boolean_literal(&self, stream: &mut Stream) -> ParseResult {
@@ -1167,7 +1167,7 @@ impl Language {
         }
     }
 
-    // BreakStatement = «BreakKeyword» «Semicolon» ;
+    // BreakStatement = «BreakKeyword» «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_break_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -1246,7 +1246,7 @@ impl Language {
         }
     }
 
-    // CatchClause = «CatchKeyword» [ [ «Identifier» ] ParameterList ] Block ;
+    // CatchClause = «CatchKeyword» [[«Identifier»] ParameterList] Block;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_catch_clause(&self, stream: &mut Stream) -> ParseResult {
@@ -1394,7 +1394,7 @@ impl Language {
         }
     }
 
-    // ConstantDefinition = TypeName «ConstantKeyword» «Identifier» «Equal» Expression «Semicolon» ;
+    // ConstantDefinition = TypeName «ConstantKeyword» «Identifier» «Equal» Expression «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_constant_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -1582,7 +1582,7 @@ impl Language {
         }
     }
 
-    // ConstructorAttribute = ModifierInvocation | «InternalKeyword» | «PayableKeyword» | «PublicKeyword» ;
+    // ConstructorAttribute = ModifierInvocation | «InternalKeyword» | «PayableKeyword» | «PublicKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_constructor_attribute(&self, stream: &mut Stream) -> ParseResult {
@@ -1682,7 +1682,8 @@ impl Language {
         }
     }
 
-    // (* v0.4.22 *) ConstructorDefinition = «ConstructorKeyword» ParameterList { ConstructorAttribute } Block ;
+    // (* v0.4.22 *)
+    // ConstructorDefinition = «ConstructorKeyword» ParameterList {ConstructorAttribute} Block;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_constructor_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -1785,7 +1786,7 @@ impl Language {
         }
     }
 
-    // ContinueStatement = «ContinueKeyword» «Semicolon» ;
+    // ContinueStatement = «ContinueKeyword» «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_continue_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -1864,9 +1865,12 @@ impl Language {
         }
     }
 
-    // (* v0.4.11 *) ContractBodyElement = UsingDirective | FunctionDefinition | UnnamedFunctionDefinition | ModifierDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | EventDefinition | ErrorDefinition | StateVariableDeclaration ;
-    // (* v0.4.22 *) ContractBodyElement = UsingDirective | ConstructorDefinition | FunctionDefinition | UnnamedFunctionDefinition | ModifierDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | EventDefinition | ErrorDefinition | StateVariableDeclaration ;
-    // (* v0.6.0 *) ContractBodyElement = UsingDirective | ConstructorDefinition | FunctionDefinition | FallbackFunctionDefinition | ReceiveFunctionDefinition | ModifierDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | EventDefinition | ErrorDefinition | StateVariableDeclaration ;
+    // (* v0.4.11 *)
+    // ContractBodyElement = UsingDirective | FunctionDefinition | UnnamedFunctionDefinition | ModifierDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | EventDefinition | ErrorDefinition | StateVariableDeclaration;
+    // (* v0.4.22 *)
+    // ContractBodyElement = UsingDirective | ConstructorDefinition | FunctionDefinition | UnnamedFunctionDefinition | ModifierDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | EventDefinition | ErrorDefinition | StateVariableDeclaration;
+    // (* v0.6.0 *)
+    // ContractBodyElement = UsingDirective | ConstructorDefinition | FunctionDefinition | FallbackFunctionDefinition | ReceiveFunctionDefinition | ModifierDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | EventDefinition | ErrorDefinition | StateVariableDeclaration;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_contract_body_element(&self, stream: &mut Stream) -> ParseResult {
@@ -2065,7 +2069,7 @@ impl Language {
         }
     }
 
-    // ContractDefinition = [ «AbstractKeyword» ] «ContractKeyword» «Identifier» [ InheritanceSpecifierList ] «OpenBrace» { ContractBodyElement } «CloseBrace» ;
+    // ContractDefinition = [«AbstractKeyword»] «ContractKeyword» «Identifier» [InheritanceSpecifierList] «OpenBrace» {ContractBodyElement} «CloseBrace»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_contract_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -2314,7 +2318,7 @@ impl Language {
         }
     }
 
-    // DataLocation = «MemoryKeyword» | «StorageKeyword» | «CalldataKeyword» ;
+    // DataLocation = «MemoryKeyword» | «StorageKeyword» | «CalldataKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_data_location(&self, stream: &mut Stream) -> ParseResult {
@@ -2409,7 +2413,7 @@ impl Language {
         }
     }
 
-    // Definition = ContractDefinition | InterfaceDefinition | LibraryDefinition | FunctionDefinition | ConstantDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | ErrorDefinition ;
+    // Definition = ContractDefinition | InterfaceDefinition | LibraryDefinition | FunctionDefinition | ConstantDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | ErrorDefinition;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -2474,7 +2478,7 @@ impl Language {
         }
     }
 
-    // DeleteStatement = «DeleteKeyword» Expression «Semicolon» ;
+    // DeleteStatement = «DeleteKeyword» Expression «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_delete_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -2583,7 +2587,7 @@ impl Language {
         }
     }
 
-    // Directive = PragmaDirective | ImportDirective | UsingDirective ;
+    // Directive = PragmaDirective | ImportDirective | UsingDirective;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_directive(&self, stream: &mut Stream) -> ParseResult {
@@ -2618,7 +2622,7 @@ impl Language {
         }
     }
 
-    // DoWhileStatement = «DoKeyword» Statement «WhileKeyword» «OpenParen» Expression «CloseParen» «Semicolon» ;
+    // DoWhileStatement = «DoKeyword» Statement «WhileKeyword» «OpenParen» Expression «CloseParen» «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_do_while_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -2843,7 +2847,7 @@ impl Language {
         }
     }
 
-    // ElementaryType = «BoolKeyword» | «StringKeyword» | AddressType | PayableType | «FixedBytesType» | «SignedIntegerType» | «UnsignedIntegerType» | «SignedFixedType» | «UnsignedFixedType» ;
+    // ElementaryType = «BoolKeyword» | «StringKeyword» | AddressType | PayableType | «FixedBytesType» | «SignedIntegerType» | «UnsignedIntegerType» | «SignedFixedType» | «UnsignedFixedType»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_elementary_type(&self, stream: &mut Stream) -> ParseResult {
@@ -3048,7 +3052,7 @@ impl Language {
         }
     }
 
-    // EmitStatement = «EmitKeyword» IdentifierPath ArgumentList «Semicolon» ;
+    // EmitStatement = «EmitKeyword» IdentifierPath ArgumentList «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_emit_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -3172,7 +3176,7 @@ impl Language {
         }
     }
 
-    // EndOfFileTrivia = 1…{ «Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment» } ;
+    // EndOfFileTrivia = 1…{«Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment»};
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_end_of_file_trivia(&self, stream: &mut Stream) -> ParseResult {
@@ -3302,7 +3306,7 @@ impl Language {
         }
     }
 
-    // EnumDefinition = «EnumKeyword» «Identifier» «OpenBrace» [ «Identifier»«Comma» { «Comma» «Identifier» } ] «CloseBrace» ;
+    // EnumDefinition = «EnumKeyword» «Identifier» «OpenBrace» [«Identifier» {«Comma» «Identifier»}] «CloseBrace»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_enum_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -3547,7 +3551,7 @@ impl Language {
         }
     }
 
-    // ErrorDefinition = «ErrorKeyword» «Identifier» «OpenParen» [ ErrorParameter«Comma» { «Comma» ErrorParameter } ] «CloseParen» «Semicolon» ;
+    // ErrorDefinition = «ErrorKeyword» «Identifier» «OpenParen» [ErrorParameter {«Comma» ErrorParameter}] «CloseParen» «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_error_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -3823,7 +3827,7 @@ impl Language {
         }
     }
 
-    // ErrorParameter = TypeName [ «Identifier» ] ;
+    // ErrorParameter = TypeName [«Identifier»];
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_error_parameter(&self, stream: &mut Stream) -> ParseResult {
@@ -3898,7 +3902,7 @@ impl Language {
         }
     }
 
-    // EventDefinition = «EventKeyword» «Identifier» «OpenParen» [ EventParameter«Comma» { «Comma» EventParameter } ] «CloseParen» [ «AnonymousKeyword» ] «Semicolon» ;
+    // EventDefinition = «EventKeyword» «Identifier» «OpenParen» [EventParameter {«Comma» EventParameter}] «CloseParen» [«AnonymousKeyword»] «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_event_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -4218,7 +4222,7 @@ impl Language {
         }
     }
 
-    // EventParameter = TypeName [ «IndexedKeyword» ] [ «Identifier» ] ;
+    // EventParameter = TypeName [«IndexedKeyword»] [«Identifier»];
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_event_parameter(&self, stream: &mut Stream) -> ParseResult {
@@ -4336,7 +4340,7 @@ impl Language {
         }
     }
 
-    // ExperimentalPragma = «ExperimentalKeyword» «Identifier» ;
+    // ExperimentalPragma = «ExperimentalKeyword» «Identifier»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_experimental_pragma(&self, stream: &mut Stream) -> ParseResult {
@@ -4419,44 +4423,46 @@ impl Language {
         }
     }
 
-    // (* v0.4.11 *) Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnaryPostfixExpression | UnaryPrefixExpression | FunctionCallExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
-    // AssignmentExpression = Expression ( «Equal» | «BarEqual» | «CaretEqual» | «AmpersandEqual» | «LessThanLessThanEqual» | «GreaterThanGreaterThanEqual» | «GreaterThanGreaterThanGreaterThanEqual» | «PlusEqual» | «MinusEqual» | «StarEqual» | «SlashEqual» | «PercentEqual» ) Expression ;
-    // ConditionalExpression = Expression ( «QuestionMark» Expression «Colon» Expression ) ;
-    // OrExpression = Expression ( «BarBar» ) Expression ;
-    // AndExpression = Expression ( «AmpersandAmpersand» ) Expression ;
-    // EqualityComparisonExpression = Expression ( «EqualEqual» | «BangEqual» ) Expression ;
-    // OrderComparisonExpression = Expression ( «LessThan» | «GreaterThan» | «LessThanEqual» | «GreaterThanEqual» ) Expression ;
-    // BitOrExpression = Expression ( «Bar» ) Expression ;
-    // BitXOrExpression = Expression ( «Caret» ) Expression ;
-    // BitAndExpression = Expression ( «Ampersand» ) Expression ;
-    // ShiftExpression = Expression ( «LessThanLessThan» | «GreaterThanGreaterThan» | «GreaterThanGreaterThanGreaterThan» ) Expression ;
-    // AddSubExpression = Expression ( «Plus» | «Minus» ) Expression ;
-    // MulDivModExpression = Expression ( «Star» | «Slash» | «Percent» ) Expression ;
-    // ExponentiationExpression = Expression ( «StarStar» ) Expression ;
-    // UnaryPostfixExpression = Expression ( «PlusPlus» | «MinusMinus» ) ;
-    // UnaryPrefixExpression = ( «PlusPlus» | «MinusMinus» | «Tilde» | «Bang» | «Minus» ) Expression ;
-    // FunctionCallExpression = Expression ( [ NamedArgumentList ] ArgumentList ) ;
-    // MemberAccessExpression = Expression ( «Period» ( «Identifier» | «AddressKeyword» ) ) ;
-    // IndexAccessExpression = Expression ( «OpenBracket» Expression [ «Colon» [ Expression ] ] | «Colon» [ Expression ] «CloseBracket» ) ;
-    // (* v0.6.0 *) Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnaryPostfixExpression | UnaryPrefixExpression | FunctionCallExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression ;
-    // AssignmentExpression = Expression ( «Equal» | «BarEqual» | «CaretEqual» | «AmpersandEqual» | «LessThanLessThanEqual» | «GreaterThanGreaterThanEqual» | «GreaterThanGreaterThanGreaterThanEqual» | «PlusEqual» | «MinusEqual» | «StarEqual» | «SlashEqual» | «PercentEqual» ) Expression ;
-    // ConditionalExpression = Expression ( «QuestionMark» Expression «Colon» Expression ) ;
-    // OrExpression = Expression ( «BarBar» ) Expression ;
-    // AndExpression = Expression ( «AmpersandAmpersand» ) Expression ;
-    // EqualityComparisonExpression = Expression ( «EqualEqual» | «BangEqual» ) Expression ;
-    // OrderComparisonExpression = Expression ( «LessThan» | «GreaterThan» | «LessThanEqual» | «GreaterThanEqual» ) Expression ;
-    // BitOrExpression = Expression ( «Bar» ) Expression ;
-    // BitXOrExpression = Expression ( «Caret» ) Expression ;
-    // BitAndExpression = Expression ( «Ampersand» ) Expression ;
-    // ShiftExpression = Expression ( «LessThanLessThan» | «GreaterThanGreaterThan» | «GreaterThanGreaterThanGreaterThan» ) Expression ;
-    // AddSubExpression = Expression ( «Plus» | «Minus» ) Expression ;
-    // MulDivModExpression = Expression ( «Star» | «Slash» | «Percent» ) Expression ;
-    // ExponentiationExpression = Expression ( «StarStar» ) Expression ;
-    // UnaryPostfixExpression = Expression ( «PlusPlus» | «MinusMinus» ) ;
-    // UnaryPrefixExpression = ( «PlusPlus» | «MinusMinus» | «Tilde» | «Bang» | «Minus» ) Expression ;
-    // FunctionCallExpression = Expression ( [ NamedArgumentList ] ArgumentList ) ;
-    // MemberAccessExpression = Expression ( «Period» ( «Identifier» | «AddressKeyword» ) ) ;
-    // IndexAccessExpression = Expression ( «OpenBracket» Expression [ «Colon» [ Expression ] ] | «Colon» [ Expression ] «CloseBracket» ) ;
+    // (* v0.4.11 *)
+    // Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnaryPostfixExpression | UnaryPrefixExpression | FunctionCallExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression;
+    // AssignmentExpression = Expression («Equal» | «BarEqual» | «CaretEqual» | «AmpersandEqual» | «LessThanLessThanEqual» | «GreaterThanGreaterThanEqual» | «GreaterThanGreaterThanGreaterThanEqual» | «PlusEqual» | «MinusEqual» | «StarEqual» | «SlashEqual» | «PercentEqual») Expression;
+    // ConditionalExpression = Expression («QuestionMark» Expression «Colon» Expression);
+    // OrExpression = Expression («BarBar») Expression;
+    // AndExpression = Expression («AmpersandAmpersand») Expression;
+    // EqualityComparisonExpression = Expression («EqualEqual» | «BangEqual») Expression;
+    // OrderComparisonExpression = Expression («LessThan» | «GreaterThan» | «LessThanEqual» | «GreaterThanEqual») Expression;
+    // BitOrExpression = Expression («Bar») Expression;
+    // BitXOrExpression = Expression («Caret») Expression;
+    // BitAndExpression = Expression («Ampersand») Expression;
+    // ShiftExpression = Expression («LessThanLessThan» | «GreaterThanGreaterThan» | «GreaterThanGreaterThanGreaterThan») Expression;
+    // AddSubExpression = Expression («Plus» | «Minus») Expression;
+    // MulDivModExpression = Expression («Star» | «Slash» | «Percent») Expression;
+    // ExponentiationExpression = Expression («StarStar») Expression;
+    // UnaryPostfixExpression = Expression («PlusPlus» | «MinusMinus»);
+    // UnaryPrefixExpression = («PlusPlus» | «MinusMinus» | «Tilde» | «Bang» | «Minus») Expression;
+    // FunctionCallExpression = Expression ([NamedArgumentList] ArgumentList);
+    // MemberAccessExpression = Expression («Period» («Identifier» | «AddressKeyword»));
+    // IndexAccessExpression = Expression («OpenBracket» Expression [«Colon» [Expression]] | «Colon» [Expression] «CloseBracket»);
+    // (* v0.6.0 *)
+    // Expression = AssignmentExpression | ConditionalExpression | OrExpression | AndExpression | EqualityComparisonExpression | OrderComparisonExpression | BitOrExpression | BitXOrExpression | BitAndExpression | ShiftExpression | AddSubExpression | MulDivModExpression | ExponentiationExpression | UnaryPostfixExpression | UnaryPrefixExpression | FunctionCallExpression | MemberAccessExpression | IndexAccessExpression | PrimaryExpression;
+    // AssignmentExpression = Expression («Equal» | «BarEqual» | «CaretEqual» | «AmpersandEqual» | «LessThanLessThanEqual» | «GreaterThanGreaterThanEqual» | «GreaterThanGreaterThanGreaterThanEqual» | «PlusEqual» | «MinusEqual» | «StarEqual» | «SlashEqual» | «PercentEqual») Expression;
+    // ConditionalExpression = Expression («QuestionMark» Expression «Colon» Expression);
+    // OrExpression = Expression («BarBar») Expression;
+    // AndExpression = Expression («AmpersandAmpersand») Expression;
+    // EqualityComparisonExpression = Expression («EqualEqual» | «BangEqual») Expression;
+    // OrderComparisonExpression = Expression («LessThan» | «GreaterThan» | «LessThanEqual» | «GreaterThanEqual») Expression;
+    // BitOrExpression = Expression («Bar») Expression;
+    // BitXOrExpression = Expression («Caret») Expression;
+    // BitAndExpression = Expression («Ampersand») Expression;
+    // ShiftExpression = Expression («LessThanLessThan» | «GreaterThanGreaterThan» | «GreaterThanGreaterThanGreaterThan») Expression;
+    // AddSubExpression = Expression («Plus» | «Minus») Expression;
+    // MulDivModExpression = Expression («Star» | «Slash» | «Percent») Expression;
+    // ExponentiationExpression = Expression («StarStar») Expression;
+    // UnaryPostfixExpression = Expression («PlusPlus» | «MinusMinus»);
+    // UnaryPrefixExpression = («PlusPlus» | «MinusMinus» | «Tilde» | «Bang» | «Minus») Expression;
+    // FunctionCallExpression = Expression ([NamedArgumentList] ArgumentList);
+    // MemberAccessExpression = Expression («Period» («Identifier» | «AddressKeyword»));
+    // IndexAccessExpression = Expression («OpenBracket» Expression [«Colon» [Expression]] | «Colon» [Expression] «CloseBracket»);
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_expression(&self, stream: &mut Stream) -> ParseResult {
@@ -8743,7 +8749,7 @@ impl Language {
         }
     }
 
-    // ExpressionStatement = Expression «Semicolon» ;
+    // ExpressionStatement = Expression «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_expression_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -8802,7 +8808,7 @@ impl Language {
         }
     }
 
-    // FallbackFunctionAttribute = ModifierInvocation | OverrideSpecifier | «ExternalKeyword» | «PayableKeyword» | «PureKeyword» | «ViewKeyword» | «VirtualKeyword» ;
+    // FallbackFunctionAttribute = ModifierInvocation | OverrideSpecifier | «ExternalKeyword» | «PayableKeyword» | «PureKeyword» | «ViewKeyword» | «VirtualKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_fallback_function_attribute(&self, stream: &mut Stream) -> ParseResult {
@@ -8957,7 +8963,8 @@ impl Language {
         }
     }
 
-    // (* v0.6.0 *) FallbackFunctionDefinition = «FallbackKeyword» ParameterList { FallbackFunctionAttribute } [ «ReturnsKeyword» ParameterList ] ( «Semicolon» | Block ) ;
+    // (* v0.6.0 *)
+    // FallbackFunctionDefinition = «FallbackKeyword» ParameterList {FallbackFunctionAttribute} [«ReturnsKeyword» ParameterList] («Semicolon» | Block);
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_fallback_function_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -9168,7 +9175,7 @@ impl Language {
         }
     }
 
-    // ForStatement = «ForKeyword» «OpenParen» ( SimpleStatement | «Semicolon» ) ( ExpressionStatement | «Semicolon» ) [ Expression ] «CloseParen» Statement ;
+    // ForStatement = «ForKeyword» «OpenParen» (SimpleStatement | «Semicolon») (ExpressionStatement | «Semicolon») [Expression] «CloseParen» Statement;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_for_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -9442,7 +9449,7 @@ impl Language {
         }
     }
 
-    // FunctionAttribute = ModifierInvocation | OverrideSpecifier | «ExternalKeyword» | «InternalKeyword» | «PayableKeyword» | «PrivateKeyword» | «PublicKeyword» | «PureKeyword» | «ViewKeyword» | «VirtualKeyword» ;
+    // FunctionAttribute = ModifierInvocation | OverrideSpecifier | «ExternalKeyword» | «InternalKeyword» | «PayableKeyword» | «PrivateKeyword» | «PublicKeyword» | «PureKeyword» | «ViewKeyword» | «VirtualKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_function_attribute(&self, stream: &mut Stream) -> ParseResult {
@@ -9672,7 +9679,7 @@ impl Language {
         }
     }
 
-    // FunctionDefinition = «FunctionKeyword» ( «Identifier» | «FallbackKeyword» | «ReceiveKeyword» ) ParameterList { FunctionAttribute } [ «ReturnsKeyword» ParameterList ] ( «Semicolon» | Block ) ;
+    // FunctionDefinition = «FunctionKeyword» («Identifier» | «FallbackKeyword» | «ReceiveKeyword») ParameterList {FunctionAttribute} [«ReturnsKeyword» ParameterList] («Semicolon» | Block);
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_function_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -9974,7 +9981,7 @@ impl Language {
         }
     }
 
-    // FunctionType = «FunctionKeyword» ParameterList { «InternalKeyword» | «ExternalKeyword» | «PrivateKeyword» | «PublicKeyword» | «PureKeyword» | «ViewKeyword» | «PayableKeyword» } [ «ReturnsKeyword» ParameterList ] ;
+    // FunctionType = «FunctionKeyword» ParameterList {«InternalKeyword» | «ExternalKeyword» | «PrivateKeyword» | «PublicKeyword» | «PureKeyword» | «ViewKeyword» | «PayableKeyword»} [«ReturnsKeyword» ParameterList];
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_function_type(&self, stream: &mut Stream) -> ParseResult {
@@ -10319,7 +10326,7 @@ impl Language {
         }
     }
 
-    // IdentifierPath = «Identifier»«Period» { «Period» «Identifier» } ;
+    // IdentifierPath = «Identifier» {«Period» «Identifier»};
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_identifier_path(&self, stream: &mut Stream) -> ParseResult {
@@ -10395,7 +10402,7 @@ impl Language {
         }
     }
 
-    // IfStatement = «IfKeyword» «OpenParen» Expression «CloseParen» Statement [ «ElseKeyword» Statement ] ;
+    // IfStatement = «IfKeyword» «OpenParen» Expression «CloseParen» Statement [«ElseKeyword» Statement];
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_if_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -10613,7 +10620,7 @@ impl Language {
         }
     }
 
-    // ImportDirective = «ImportKeyword» ( SimpleImportDirective | StarImportDirective | SelectingImportDirective ) «Semicolon» ;
+    // ImportDirective = «ImportKeyword» (SimpleImportDirective | StarImportDirective | SelectingImportDirective) «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_import_directive(&self, stream: &mut Stream) -> ParseResult {
@@ -10742,7 +10749,7 @@ impl Language {
         }
     }
 
-    // ImportPath = «AsciiStringLiteral» ;
+    // ImportPath = «AsciiStringLiteral»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_import_path(&self, stream: &mut Stream) -> ParseResult {
@@ -10777,7 +10784,7 @@ impl Language {
         }
     }
 
-    // InheritanceSpecifier = IdentifierPath [ ArgumentList ] ;
+    // InheritanceSpecifier = IdentifierPath [ArgumentList];
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_inheritance_specifier(&self, stream: &mut Stream) -> ParseResult {
@@ -10832,7 +10839,7 @@ impl Language {
         }
     }
 
-    // InheritanceSpecifierList = «IsKeyword» InheritanceSpecifier«Comma» { «Comma» InheritanceSpecifier } ;
+    // InheritanceSpecifierList = «IsKeyword» InheritanceSpecifier {«Comma» InheritanceSpecifier};
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_inheritance_specifier_list(&self, stream: &mut Stream) -> ParseResult {
@@ -10936,7 +10943,7 @@ impl Language {
         }
     }
 
-    // InterfaceDefinition = «InterfaceKeyword» «Identifier» [ InheritanceSpecifierList ] «OpenBrace» { ContractBodyElement } «CloseBrace» ;
+    // InterfaceDefinition = «InterfaceKeyword» «Identifier» [InheritanceSpecifierList] «OpenBrace» {ContractBodyElement} «CloseBrace»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_interface_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -11142,7 +11149,7 @@ impl Language {
         }
     }
 
-    // LeadingTrivia = 1…{ «Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment» } ;
+    // LeadingTrivia = 1…{«Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment»};
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_leading_trivia(&self, stream: &mut Stream) -> ParseResult {
@@ -11272,7 +11279,7 @@ impl Language {
         }
     }
 
-    // LibraryDefinition = «LibraryKeyword» «Identifier» «OpenBrace» { ContractBodyElement } «CloseBrace» ;
+    // LibraryDefinition = «LibraryKeyword» «Identifier» «OpenBrace» {ContractBodyElement} «CloseBrace»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_library_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -11452,8 +11459,10 @@ impl Language {
         }
     }
 
-    // (* v0.4.11 *) MappingKeyType = ( ElementaryType | IdentifierPath ) ;
-    // (* v0.8.18 *) MappingKeyType = ( ElementaryType | IdentifierPath ) [ «Identifier» ] ;
+    // (* v0.4.11 *)
+    // MappingKeyType = (ElementaryType | IdentifierPath);
+    // (* v0.8.18 *)
+    // MappingKeyType = (ElementaryType | IdentifierPath) [«Identifier»];
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_mapping_key_type(&self, stream: &mut Stream) -> ParseResult {
@@ -11577,7 +11586,7 @@ impl Language {
         }
     }
 
-    // MappingType = «MappingKeyword» «OpenParen» MappingKeyType «EqualGreaterThan» MappingValueType «CloseParen» ;
+    // MappingType = «MappingKeyword» «OpenParen» MappingKeyType «EqualGreaterThan» MappingValueType «CloseParen»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_mapping_type(&self, stream: &mut Stream) -> ParseResult {
@@ -11776,8 +11785,10 @@ impl Language {
         }
     }
 
-    // (* v0.4.11 *) MappingValueType = TypeName ;
-    // (* v0.8.18 *) MappingValueType = TypeName [ «Identifier» ] ;
+    // (* v0.4.11 *)
+    // MappingValueType = TypeName;
+    // (* v0.8.18 *)
+    // MappingValueType = TypeName [«Identifier»];
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_mapping_value_type(&self, stream: &mut Stream) -> ParseResult {
@@ -11871,7 +11882,7 @@ impl Language {
         }
     }
 
-    // ModifierAttribute = OverrideSpecifier | «VirtualKeyword» ;
+    // ModifierAttribute = OverrideSpecifier | «VirtualKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_modifier_attribute(&self, stream: &mut Stream) -> ParseResult {
@@ -11921,7 +11932,7 @@ impl Language {
         }
     }
 
-    // ModifierDefinition = «ModifierKeyword» «Identifier» [ ParameterList ] { ModifierAttribute } ( «Semicolon» | Block ) ;
+    // ModifierDefinition = «ModifierKeyword» «Identifier» [ParameterList] {ModifierAttribute} («Semicolon» | Block);
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_modifier_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -12102,7 +12113,7 @@ impl Language {
         }
     }
 
-    // ModifierInvocation = IdentifierPath [ ArgumentList ] ;
+    // ModifierInvocation = IdentifierPath [ArgumentList];
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_modifier_invocation(&self, stream: &mut Stream) -> ParseResult {
@@ -12157,7 +12168,7 @@ impl Language {
         }
     }
 
-    // NamedArgument = «Identifier» «Colon» Expression ;
+    // NamedArgument = «Identifier» «Colon» Expression;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_named_argument(&self, stream: &mut Stream) -> ParseResult {
@@ -12251,7 +12262,7 @@ impl Language {
         }
     }
 
-    // NamedArgumentList = «OpenBrace» [ NamedArgument«Comma» { «Comma» NamedArgument } ] «CloseBrace» ;
+    // NamedArgumentList = «OpenBrace» [NamedArgument {«Comma» NamedArgument}] «CloseBrace»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_named_argument_list(&self, stream: &mut Stream) -> ParseResult {
@@ -12394,7 +12405,7 @@ impl Language {
         }
     }
 
-    // NewExpression = «NewKeyword» TypeName ;
+    // NewExpression = «NewKeyword» TypeName;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_new_expression(&self, stream: &mut Stream) -> ParseResult {
@@ -12457,7 +12468,7 @@ impl Language {
         }
     }
 
-    // NumberUnit = «DaysKeyword» | «EtherKeyword» | «FinneyKeyword» | «GweiKeyword» | «HoursKeyword» | «MinutesKeyword» | «SecondsKeyword» | «SzaboKeyword» | «WeeksKeyword» | «WeiKeyword» | «YearsKeyword» ;
+    // NumberUnit = «DaysKeyword» | «EtherKeyword» | «FinneyKeyword» | «GweiKeyword» | «HoursKeyword» | «MinutesKeyword» | «SecondsKeyword» | «SzaboKeyword» | «WeeksKeyword» | «WeiKeyword» | «YearsKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_number_unit(&self, stream: &mut Stream) -> ParseResult {
@@ -12752,7 +12763,7 @@ impl Language {
         }
     }
 
-    // NumericLiteral = ( «HexLiteral» | «DecimalLiteral» ) [ NumberUnit ] ;
+    // NumericLiteral = («HexLiteral» | «DecimalLiteral») [NumberUnit];
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_numeric_literal(&self, stream: &mut Stream) -> ParseResult {
@@ -12862,7 +12873,7 @@ impl Language {
         }
     }
 
-    // OverrideSpecifier = «OverrideKeyword» [ «OpenParen» IdentifierPath«Comma» { «Comma» IdentifierPath } «CloseParen» ] ;
+    // OverrideSpecifier = «OverrideKeyword» [«OpenParen» IdentifierPath {«Comma» IdentifierPath} «CloseParen»];
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_override_specifier(&self, stream: &mut Stream) -> ParseResult {
@@ -13055,7 +13066,7 @@ impl Language {
         }
     }
 
-    // ParameterDeclaration = TypeName [ DataLocation ] [ «Identifier» ] ;
+    // ParameterDeclaration = TypeName [DataLocation] [«Identifier»];
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_parameter_declaration(&self, stream: &mut Stream) -> ParseResult {
@@ -13153,7 +13164,7 @@ impl Language {
         }
     }
 
-    // ParameterList = «OpenParen» [ ParameterDeclaration«Comma» { «Comma» ParameterDeclaration } ] «CloseParen» ;
+    // ParameterList = «OpenParen» [ParameterDeclaration {«Comma» ParameterDeclaration}] «CloseParen»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_parameter_list(&self, stream: &mut Stream) -> ParseResult {
@@ -13296,7 +13307,7 @@ impl Language {
         }
     }
 
-    // PayableType = «PayableKeyword» ;
+    // PayableType = «PayableKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_payable_type(&self, stream: &mut Stream) -> ParseResult {
@@ -13331,7 +13342,7 @@ impl Language {
         }
     }
 
-    // PositionalArgumentList = Expression«Comma» { «Comma» Expression } ;
+    // PositionalArgumentList = Expression {«Comma» Expression};
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_positional_argument_list(&self, stream: &mut Stream) -> ParseResult {
@@ -13387,7 +13398,7 @@ impl Language {
         }
     }
 
-    // PragmaDirective = «PragmaKeyword» ( VersionPragma | ABICoderPragma | ExperimentalPragma ) «Semicolon» ;
+    // PragmaDirective = «PragmaKeyword» (VersionPragma | ABICoderPragma | ExperimentalPragma) «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_pragma_directive(&self, stream: &mut Stream) -> ParseResult {
@@ -13516,7 +13527,7 @@ impl Language {
         }
     }
 
-    // PrimaryExpression = «Identifier» | TupleExpression | ArrayLiteral | StringExpression | NumericLiteral | BooleanLiteral | NewExpression | TypeExpression | ElementaryType ;
+    // PrimaryExpression = «Identifier» | TupleExpression | ArrayLiteral | StringExpression | NumericLiteral | BooleanLiteral | NewExpression | TypeExpression | ElementaryType;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_primary_expression(&self, stream: &mut Stream) -> ParseResult {
@@ -13601,7 +13612,7 @@ impl Language {
         }
     }
 
-    // ReceiveFunctionAttribute = ModifierInvocation | OverrideSpecifier | «ExternalKeyword» | «PayableKeyword» | «VirtualKeyword» ;
+    // ReceiveFunctionAttribute = ModifierInvocation | OverrideSpecifier | «ExternalKeyword» | «PayableKeyword» | «VirtualKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_receive_function_attribute(&self, stream: &mut Stream) -> ParseResult {
@@ -13706,7 +13717,8 @@ impl Language {
         }
     }
 
-    // (* v0.6.0 *) ReceiveFunctionDefinition = «ReceiveKeyword» ParameterList { ReceiveFunctionAttribute } ( «Semicolon» | Block ) ;
+    // (* v0.6.0 *)
+    // ReceiveFunctionDefinition = «ReceiveKeyword» ParameterList {ReceiveFunctionAttribute} («Semicolon» | Block);
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_receive_function_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -13844,7 +13856,7 @@ impl Language {
         }
     }
 
-    // ReturnStatement = «ReturnKeyword» [ Expression ] «Semicolon» ;
+    // ReturnStatement = «ReturnKeyword» [Expression] «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_return_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -13965,7 +13977,7 @@ impl Language {
         }
     }
 
-    // RevertStatement = «RevertKeyword» [ IdentifierPath ] ArgumentList «Semicolon» ;
+    // RevertStatement = «RevertKeyword» [IdentifierPath] ArgumentList «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_revert_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -14101,7 +14113,7 @@ impl Language {
         }
     }
 
-    // SelectedImport = «Identifier» [ «AsKeyword» «Identifier» ] ;
+    // SelectedImport = «Identifier» [«AsKeyword» «Identifier»];
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_selected_import(&self, stream: &mut Stream) -> ParseResult {
@@ -14246,7 +14258,7 @@ impl Language {
         }
     }
 
-    // SelectingImportDirective = «OpenBrace» SelectedImport«Comma» { «Comma» SelectedImport } «CloseBrace» «FromKeyword» ImportPath ;
+    // SelectingImportDirective = «OpenBrace» SelectedImport {«Comma» SelectedImport} «CloseBrace» «FromKeyword» ImportPath;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_selecting_import_directive(&self, stream: &mut Stream) -> ParseResult {
@@ -14437,7 +14449,7 @@ impl Language {
         }
     }
 
-    // SimpleImportDirective = ImportPath { «AsKeyword» «Identifier» } ;
+    // SimpleImportDirective = ImportPath {«AsKeyword» «Identifier»};
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_simple_import_directive(&self, stream: &mut Stream) -> ParseResult {
@@ -14568,7 +14580,7 @@ impl Language {
         }
     }
 
-    // SimpleStatement = TupleDeconstructionStatement | VariableDeclarationStatement | ExpressionStatement ;
+    // SimpleStatement = TupleDeconstructionStatement | VariableDeclarationStatement | ExpressionStatement;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_simple_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -14603,7 +14615,7 @@ impl Language {
         }
     }
 
-    // SourceUnit = 1…{ Directive | Definition } [ EndOfFileTrivia ] ;
+    // SourceUnit = 1…{Directive | Definition} [EndOfFileTrivia];
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_source_unit(&self, stream: &mut Stream) -> ParseResult {
@@ -14691,7 +14703,7 @@ impl Language {
         }
     }
 
-    // StarImportDirective = «Star» «AsKeyword» «Identifier» «FromKeyword» ImportPath ;
+    // StarImportDirective = «Star» «AsKeyword» «Identifier» «FromKeyword» ImportPath;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_star_import_directive(&self, stream: &mut Stream) -> ParseResult {
@@ -14850,7 +14862,7 @@ impl Language {
         }
     }
 
-    // StateVariableAttribute = OverrideSpecifier | «ConstantKeyword» | «ImmutableKeyword» | «InternalKeyword» | «PrivateKeyword» | «PublicKeyword» ;
+    // StateVariableAttribute = OverrideSpecifier | «ConstantKeyword» | «ImmutableKeyword» | «InternalKeyword» | «PrivateKeyword» | «PublicKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_state_variable_attribute(&self, stream: &mut Stream) -> ParseResult {
@@ -15000,7 +15012,7 @@ impl Language {
         }
     }
 
-    // StateVariableDeclaration = TypeName { StateVariableAttribute } «Identifier» [ «Equal» Expression ] «Semicolon» ;
+    // StateVariableDeclaration = TypeName {StateVariableAttribute} «Identifier» [«Equal» Expression] «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_state_variable_declaration(&self, stream: &mut Stream) -> ParseResult {
@@ -15216,7 +15228,7 @@ impl Language {
         }
     }
 
-    // Statement = Block | SimpleStatement | IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | TryStatement | ReturnStatement | EmitStatement | RevertStatement | DeleteStatement | AssemblyStatement ;
+    // Statement = Block | SimpleStatement | IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | TryStatement | ReturnStatement | EmitStatement | RevertStatement | DeleteStatement | AssemblyStatement;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -15306,7 +15318,7 @@ impl Language {
         }
     }
 
-    // StringExpression = 1…{ «HexStringLiteral» } | 1…{ «AsciiStringLiteral» } | 1…{ «UnicodeStringLiteral» } ;
+    // StringExpression = 1…{«HexStringLiteral»} | 1…{«AsciiStringLiteral»} | 1…{«UnicodeStringLiteral»};
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_string_expression(&self, stream: &mut Stream) -> ParseResult {
@@ -15455,7 +15467,7 @@ impl Language {
         }
     }
 
-    // StructDefinition = «StructKeyword» «Identifier» «OpenBrace» 1…{ StructMember } «CloseBrace» ;
+    // StructDefinition = «StructKeyword» «Identifier» «OpenBrace» 1…{StructMember} «CloseBrace»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_struct_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -15638,7 +15650,7 @@ impl Language {
         }
     }
 
-    // StructMember = TypeName «Identifier» «Semicolon» ;
+    // StructMember = TypeName «Identifier» «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_struct_member(&self, stream: &mut Stream) -> ParseResult {
@@ -15747,7 +15759,7 @@ impl Language {
         }
     }
 
-    // TrailingTrivia = [ «Whitespace» ] [ «SingleLineComment» ] «EndOfLine» ;
+    // TrailingTrivia = [«Whitespace»] [«SingleLineComment»] «EndOfLine»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_trailing_trivia(&self, stream: &mut Stream) -> ParseResult {
@@ -15879,7 +15891,7 @@ impl Language {
         }
     }
 
-    // TryStatement = «TryKeyword» Expression [ «ReturnsKeyword» ParameterList ] Block 1…{ CatchClause } ;
+    // TryStatement = «TryKeyword» Expression [«ReturnsKeyword» ParameterList] Block 1…{CatchClause};
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_try_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -16058,7 +16070,7 @@ impl Language {
         }
     }
 
-    // TupleDeconstructionStatement = «OpenParen» [ [ TypeName [ DataLocation ] «Identifier» | [ DataLocation ] «Identifier» ]«Comma» { «Comma» [ TypeName [ DataLocation ] «Identifier» | [ DataLocation ] «Identifier» ] } ] «CloseParen» «Equal» Expression «Semicolon» ;
+    // TupleDeconstructionStatement = «OpenParen» [[TypeName [DataLocation] «Identifier» | [DataLocation] «Identifier»] {«Comma» [TypeName [DataLocation] «Identifier» | [DataLocation] «Identifier»]}] «CloseParen» «Equal» Expression «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_tuple_deconstruction_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -16544,7 +16556,7 @@ impl Language {
         }
     }
 
-    // TupleExpression = «OpenParen» [ Expression ]«Comma» { «Comma» [ Expression ] } «CloseParen» ;
+    // TupleExpression = «OpenParen» [Expression] {«Comma» [Expression]} «CloseParen»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_tuple_expression(&self, stream: &mut Stream) -> ParseResult {
@@ -16687,7 +16699,7 @@ impl Language {
         }
     }
 
-    // TypeExpression = «TypeKeyword» «OpenParen» TypeName «CloseParen» ;
+    // TypeExpression = «TypeKeyword» «OpenParen» TypeName «CloseParen»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_type_expression(&self, stream: &mut Stream) -> ParseResult {
@@ -16818,7 +16830,7 @@ impl Language {
         }
     }
 
-    // TypeName = ( ElementaryType | FunctionType | MappingType | IdentifierPath ) { «OpenBracket» [ Expression ] «CloseBracket» } ;
+    // TypeName = (ElementaryType | FunctionType | MappingType | IdentifierPath) {«OpenBracket» [Expression] «CloseBracket»};
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_type_name(&self, stream: &mut Stream) -> ParseResult {
@@ -16991,7 +17003,7 @@ impl Language {
         }
     }
 
-    // UncheckedBlock = «UncheckedKeyword» Block ;
+    // UncheckedBlock = «UncheckedKeyword» Block;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_unchecked_block(&self, stream: &mut Stream) -> ParseResult {
@@ -17054,7 +17066,7 @@ impl Language {
         }
     }
 
-    // UnnamedFunctionDefinition = «FunctionKeyword» ParameterList { FallbackFunctionAttribute } ( «Semicolon» | Block ) ;
+    // UnnamedFunctionDefinition = «FunctionKeyword» ParameterList {FallbackFunctionAttribute} («Semicolon» | Block);
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_unnamed_function_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -17192,7 +17204,7 @@ impl Language {
         }
     }
 
-    // UserDefinedValueTypeDefinition = «TypeKeyword» «Identifier» «IsKeyword» ElementaryType «Semicolon» ;
+    // UserDefinedValueTypeDefinition = «TypeKeyword» «Identifier» «IsKeyword» ElementaryType «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_user_defined_value_type_definition(
@@ -17371,7 +17383,7 @@ impl Language {
         }
     }
 
-    // UsingDirective = «UsingKeyword» ( IdentifierPath | «OpenBrace» IdentifierPath«Comma» { «Comma» IdentifierPath } «CloseBrace» ) «ForKeyword» ( «Star» | TypeName ) [ «GlobalKeyword» ] «Semicolon» ;
+    // UsingDirective = «UsingKeyword» (IdentifierPath | «OpenBrace» IdentifierPath {«Comma» IdentifierPath} «CloseBrace») «ForKeyword» («Star» | TypeName) [«GlobalKeyword»] «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_using_directive(&self, stream: &mut Stream) -> ParseResult {
@@ -17741,7 +17753,7 @@ impl Language {
         }
     }
 
-    // VariableDeclarationStatement = TypeName [ DataLocation ] «Identifier» [ «Equal» Expression ] «Semicolon» ;
+    // VariableDeclarationStatement = TypeName [DataLocation] «Identifier» [«Equal» Expression] «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_variable_declaration_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -17954,7 +17966,7 @@ impl Language {
         }
     }
 
-    // VersionPragma = «SolidityKeyword» 1…{ VersionPragmaSpecifier } ;
+    // VersionPragma = «SolidityKeyword» 1…{VersionPragmaSpecifier};
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_version_pragma(&self, stream: &mut Stream) -> ParseResult {
@@ -18035,7 +18047,7 @@ impl Language {
         }
     }
 
-    // VersionPragmaSpecifier = [ «VersionPragmaOperator» ] «VersionPragmaValue»«Period» { «Period» «VersionPragmaValue» } ;
+    // VersionPragmaSpecifier = [«VersionPragmaOperator»] «VersionPragmaValue» {«Period» «VersionPragmaValue»};
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_version_pragma_specifier(&self, stream: &mut Stream) -> ParseResult {
@@ -18171,7 +18183,7 @@ impl Language {
         }
     }
 
-    // WhileStatement = «WhileKeyword» «OpenParen» Expression «CloseParen» Statement ;
+    // WhileStatement = «WhileKeyword» «OpenParen» Expression «CloseParen» Statement;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_while_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -18313,7 +18325,7 @@ impl Language {
         }
     }
 
-    // YulAssignmentStatement = YulIdentifierPath«Comma» { «Comma» YulIdentifierPath } «ColonEqual» YulExpression ;
+    // YulAssignmentStatement = YulIdentifierPath {«Comma» YulIdentifierPath} «ColonEqual» YulExpression;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_assignment_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -18428,7 +18440,7 @@ impl Language {
         }
     }
 
-    // YulBlock = «OpenBrace» { YulStatement } «CloseBrace» ;
+    // YulBlock = «OpenBrace» {YulStatement} «CloseBrace»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_block(&self, stream: &mut Stream) -> ParseResult {
@@ -18528,7 +18540,7 @@ impl Language {
         }
     }
 
-    // YulBreakStatement = «BreakKeyword» ;
+    // YulBreakStatement = «BreakKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_break_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -18563,7 +18575,7 @@ impl Language {
         }
     }
 
-    // YulContinueStatement = «ContinueKeyword» ;
+    // YulContinueStatement = «ContinueKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_continue_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -18598,7 +18610,7 @@ impl Language {
         }
     }
 
-    // YulExpression = YulFunctionCall | YulLiteral ;
+    // YulExpression = YulFunctionCall | YulLiteral;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_expression(&self, stream: &mut Stream) -> ParseResult {
@@ -18628,7 +18640,7 @@ impl Language {
         }
     }
 
-    // YulForStatement = «ForKeyword» YulBlock YulExpression YulBlock YulBlock ;
+    // YulForStatement = «ForKeyword» YulBlock YulExpression YulBlock YulBlock;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_for_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -18727,7 +18739,7 @@ impl Language {
         }
     }
 
-    // YulFunctionCall = YulIdentifierPath [ «OpenParen» [ YulExpression«Comma» { «Comma» YulExpression } ] «CloseParen» ] ;
+    // YulFunctionCall = YulIdentifierPath [«OpenParen» [YulExpression {«Comma» YulExpression}] «CloseParen»];
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_function_call(&self, stream: &mut Stream) -> ParseResult {
@@ -18914,7 +18926,7 @@ impl Language {
         }
     }
 
-    // YulFunctionDefinition = «FunctionKeyword» «YulIdentifier» «OpenParen» [ «YulIdentifier»«Comma» { «Comma» «YulIdentifier» } ] «CloseParen» [ «MinusGreaterThan» «YulIdentifier»«Comma» { «Comma» «YulIdentifier» } ] YulBlock ;
+    // YulFunctionDefinition = «FunctionKeyword» «YulIdentifier» «OpenParen» [«YulIdentifier» {«Comma» «YulIdentifier»}] «CloseParen» [«MinusGreaterThan» «YulIdentifier» {«Comma» «YulIdentifier»}] YulBlock;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_function_definition(&self, stream: &mut Stream) -> ParseResult {
@@ -19312,7 +19324,7 @@ impl Language {
         }
     }
 
-    // YulIdentifierPath = «YulIdentifier»«Period» { «Period» «YulIdentifier» } ;
+    // YulIdentifierPath = «YulIdentifier» {«Period» «YulIdentifier»};
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_identifier_path(&self, stream: &mut Stream) -> ParseResult {
@@ -19388,7 +19400,7 @@ impl Language {
         }
     }
 
-    // YulIfStatement = «IfKeyword» YulExpression YulBlock ;
+    // YulIfStatement = «IfKeyword» YulExpression YulBlock;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_if_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -19462,7 +19474,7 @@ impl Language {
         }
     }
 
-    // YulLeaveStatement = «LeaveKeyword» ;
+    // YulLeaveStatement = «LeaveKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_leave_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -19497,7 +19509,7 @@ impl Language {
         }
     }
 
-    // YulLiteral = BooleanLiteral | «YulHexLiteral» | «YulDecimalLiteral» | «HexStringLiteral» | «AsciiStringLiteral» ;
+    // YulLiteral = BooleanLiteral | «YulHexLiteral» | «YulDecimalLiteral» | «HexStringLiteral» | «AsciiStringLiteral»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_literal(&self, stream: &mut Stream) -> ParseResult {
@@ -19622,7 +19634,7 @@ impl Language {
         }
     }
 
-    // YulStatement = YulBlock | YulVariableDeclaration | YulFunctionDefinition | YulAssignmentStatement | YulFunctionCall | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement ;
+    // YulStatement = YulBlock | YulVariableDeclaration | YulFunctionDefinition | YulAssignmentStatement | YulFunctionCall | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -19697,7 +19709,7 @@ impl Language {
         }
     }
 
-    // YulSwitchStatement = «SwitchKeyword» YulExpression 1…{ ( «CaseKeyword» YulLiteral | «DefaultKeyword» ) YulBlock } ;
+    // YulSwitchStatement = «SwitchKeyword» YulExpression 1…{(«CaseKeyword» YulLiteral | «DefaultKeyword») YulBlock};
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_switch_statement(&self, stream: &mut Stream) -> ParseResult {
@@ -19913,7 +19925,7 @@ impl Language {
         }
     }
 
-    // YulVariableDeclaration = «LetKeyword» YulIdentifierPath«Comma» { «Comma» YulIdentifierPath } [ «ColonEqual» YulExpression ] ;
+    // YulVariableDeclaration = «LetKeyword» YulIdentifierPath {«Comma» YulIdentifierPath} [«ColonEqual» YulExpression];
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_yul_variable_declaration(&self, stream: &mut Stream) -> ParseResult {

@@ -2,19 +2,16 @@
   "$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/v5.19.2/cspell.schema.json",
   "language": "en-US",
   "files": ["**/*.md"],
+  "ignorePaths": ["**/generated/**"],
   "ignoreWords": [
+    // Alphabetically sorted list of "allowed" words to ignore:
     "abicoder",
     "codegen",
     "devcontainer",
-    "Doxygen",
-    "ebnf",
-    "evmasm",
+    "doxygen",
     "inheritdoc",
-    "IPFS",
-    "mkdocs",
-    "NatSpec",
+    "ipfs",
     "struct",
-    "paren",
     "structs",
     "ufixed"
   ]
