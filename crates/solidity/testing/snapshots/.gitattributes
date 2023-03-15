@@ -1,0 +1,2 @@
+# Force reveal genearated testing snapshots during GitHub PR code reviews:
+**/generated/** linguist-generated=false

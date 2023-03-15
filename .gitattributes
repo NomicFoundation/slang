@@ -3,4 +3,3 @@
 
 # Generated files
 **/generated/** linguist-generated=true
-**/generated/** merge=slang-generated-files-merge-driver
