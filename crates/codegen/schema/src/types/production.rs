@@ -67,33 +67,25 @@ impl Production {
             },
         }
     }
-
-    pub fn get_exact_version<'a>(
-        versions: impl DoubleEndedIterator<Item = &'a Version>,
-        version: &Version,
-    ) -> Option<&'a Version> {
-        // TODO: Temporary workaround until when productions can be deleted in later versions:
-        // https://github.com/NomicFoundation/slang/issues/182
-        return versions.rev().find(|v| *v <= version);
-    }
 }
 
 #[derive(Deserialize, Serialize, JsonSchema, Clone, Debug)]
 #[serde(deny_unknown_fields, rename_all = "camelCase")]
 pub enum VersionMap<T> {
     Unversioned(Rc<T>),
-    Versioned(IndexMap<Version, Rc<T>>),
+    Versioned(IndexMap<Version, Option<Rc<T>>>),
 }
 
 impl<T> VersionMap<T> {
     #[allow(dead_code)]
-    pub fn get_for_version(&self, version: &Version) -> Option<&Rc<T>> {
+    pub fn get_for_version(&self, version: &Version) -> Option<Rc<T>> {
         match self {
-            VersionMap::Unversioned(t) => Some(t),
-            VersionMap::Versioned(versions) => {
-                Production::get_exact_version(versions.keys(), version)
-                    .and_then(|version| versions.get(version))
-            }
+            VersionMap::Unversioned(t) => Some(t.clone()),
+            VersionMap::Versioned(versions) => versions
+                .keys()
+                .rev()
+                .find(|v| *v <= version)
+                .and_then(|v| versions.get(v).unwrap().clone()),
         }
     }
 }

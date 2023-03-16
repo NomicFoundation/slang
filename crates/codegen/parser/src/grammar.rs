@@ -46,7 +46,7 @@ impl PrivateGrammarParserGeneratorExtensions for Grammar {
     fn create_code_generator(&self) -> CodeGenerator {
         let version_breaks = self.collect_version_breaks();
 
-        let mut generated_code = CodeGenerator::default();
+        let mut generated_code = CodeGenerator::new(self);
 
         for version in version_breaks {
             let context = CombinatorContext::new(self, version.clone());

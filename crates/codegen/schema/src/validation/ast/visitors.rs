@@ -154,7 +154,9 @@ impl Receiver for ProductionRef {
                     }
                     VersionMap::Versioned(versions) => {
                         for scanner in versions.values() {
-                            scanner.receive(visitor, reporter);
+                            if let Some(scanner) = scanner {
+                                scanner.receive(visitor, reporter)
+                            };
                         }
                     }
                 },
@@ -172,7 +174,9 @@ impl Receiver for ProductionRef {
                     }
                     VersionMap::Versioned(versions) => {
                         for parser in versions.values() {
-                            parser.receive(visitor, reporter);
+                            if let Some(parser) = parser {
+                                parser.receive(visitor, reporter)
+                            };
                         }
                     }
                 },
@@ -186,7 +190,9 @@ impl Receiver for ProductionRef {
                     }
                     VersionMap::Versioned(versions) => {
                         for parser in versions.values() {
-                            parser.receive(visitor, reporter);
+                            if let Some(parser) = parser {
+                                parser.receive(visitor, reporter)
+                            };
                         }
                     }
                 },

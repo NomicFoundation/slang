@@ -38,14 +38,14 @@ impl<'context> CombinatorTree<'context> {
             self.root_node.set(match self.production.as_ref() {
                 Production::Scanner { version_map, .. } => version_map
                     .get_for_version(version)
-                    .map(|scanner| CombinatorNode::from_scanner(self, scanner)),
+                    .map(|scanner| CombinatorNode::from_scanner(self, &scanner)),
                 Production::TriviaParser { version_map, .. }
                 | Production::Parser { version_map, .. } => version_map
                     .get_for_version(version)
-                    .map(|parser| CombinatorNode::from_parser(self, parser)),
+                    .map(|parser| CombinatorNode::from_parser(self, &parser)),
                 Production::PrecedenceParser { version_map, .. } => version_map
                     .get_for_version(version)
-                    .map(|parser| CombinatorNode::from_precedence_parser(self, parser)),
+                    .map(|parser| CombinatorNode::from_precedence_parser(self, &parser)),
             });
         }
     }
@@ -61,27 +61,37 @@ impl<'context> CombinatorTree<'context> {
             return;
         }
 
-        let comment = &self.generate_comment();
+        let comment = self.generate_comment();
 
         match self.production.as_ref() {
             Production::Scanner { name, .. } => {
                 if self.first_set().includes_epsilon {
-                    unreachable!("Validation should have discovered that token production {name} produces epsilon");
+                    unreachable!(
+                        "Validation should have discovered that scanner {name} can be empty"
+                    );
                 }
                 code.add_token_kind(name.clone());
-                let root_node = self.root_node.get().unwrap();
-                let scanner = root_node.to_scanner_code(code);
-                code.add_scanner(name.clone(), version, comment, scanner);
+                let definition = self
+                    .root_node
+                    .get()
+                    .map(|node| (comment, node.to_scanner_code(code)));
+                code.add_scanner(name.clone(), version, definition);
             }
             Production::TriviaParser { name, .. } => {
                 code.add_rule_kind(name.clone());
-                let parser = self.root_node.get().unwrap().to_parser_code(true, code);
-                code.add_parser(name.clone(), version, comment, parser);
+                let definition = self
+                    .root_node
+                    .get()
+                    .map(|node| (comment, node.to_parser_code(true, code)));
+                code.add_parser(name.clone(), version, definition);
             }
             Production::Parser { name, .. } | Production::PrecedenceParser { name, .. } => {
                 code.add_rule_kind(name.clone());
-                let parser = self.root_node.get().unwrap().to_parser_code(false, code);
-                code.add_parser(name.clone(), version, comment, parser);
+                let definition = self
+                    .root_node
+                    .get()
+                    .map(|node| (comment, node.to_parser_code(false, code)));
+                code.add_parser(name.clone(), version, definition);
             }
         }
     }
@@ -93,14 +103,13 @@ impl<'context> CombinatorTree<'context> {
             writeln!(comment, "(* v{version} *)", version = self.context.version).unwrap();
         }
 
-        let ebnf = EbnfSerializer::serialize_version(
+        if let Some(ebnf) = EbnfSerializer::serialize_version(
             self.context.grammar,
             &self.production,
             &self.context.version,
-        )
-        .unwrap();
-
-        writeln!(comment, "{ebnf}").unwrap();
+        ) {
+            writeln!(comment, "{ebnf}").unwrap();
+        }
 
         return comment.lines().map(|line| format!("// {line}\n")).collect();
     }

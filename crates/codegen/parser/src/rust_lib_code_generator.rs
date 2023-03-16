@@ -56,7 +56,7 @@ impl CodeGenerator {
                 {language_boilerplate_common}
 
                 pub struct Language {{
-                    version: Version,
+                    pub(crate) version: Version,
                     {version_flag_declarations}
                 }}
 
@@ -83,12 +83,19 @@ impl CodeGenerator {
                         &self.version
                     }}
 
-                    pub fn parse(&self, kind: ProductionKind, input: &str) -> ParserOutput {{
-                        {trampolines}
-                        match kind {{
+                    pub fn parse(&self, production_kind: ProductionKind, input: &str) -> ParserOutput {{
+                        let output = match production_kind {{
                             {scanner_invocations},
                             {parser_invocations},
-                        }}
+                        }};
+                        
+                        output.unwrap_or_else(|| {{
+                            let message = format!(\"ProductionKind {{production_kind}} is not valid in this version of {grammar_title}.\");
+                            ParserOutput {{
+                                parse_tree: None,
+                                errors: vec![ParseError::new(0, message)]
+                            }}
+                        }})
                     }}
                 }}
                 ",
@@ -106,28 +113,6 @@ impl CodeGenerator {
                     quote! { static VERSIONS: &'static [&'static str] = &[ #(#versions),* ]; }
                 },
                 version_flag_initializers = self.version_flag_initializers(),
-                trampolines = quote! {
-                    fn call_scanner<F>(language: &Language, input: &str, scanner: F, kind: TokenKind, error_message: &str) -> ParserOutput
-                        where F: Fn(&Language, &mut Stream) -> bool
-                    {
-                        let mut stream = Stream::new(input);
-                        if scanner(language, &mut stream) && stream.peek().is_none() {
-                            ParserOutput { parse_tree: Some(cst::Node::token(kind, Range { start: 0, end: stream.position() }, None, None)), errors: vec![] }
-                        } else {
-                            ParserOutput { parse_tree: None, errors: vec![ParseError::new(stream.position(), error_message)] }
-                        }
-                    }
-                    fn call_parser<F>(language: &Language, input: &str, parser: F) -> ParserOutput
-                        where F: Fn(&Language, &mut Stream) -> ParseResult
-                    {
-                        let mut stream = Stream::new(input);
-                        match parser(language, &mut stream) {
-                            ParseResult::Pass{ node, .. } if stream.peek().is_none() => ParserOutput { parse_tree: Some(node), errors: vec![] },
-                            ParseResult::Pass{ .. } => ParserOutput { parse_tree: None, errors: vec![ParseError::new(stream.position(), "end of input")] },
-                            ParseResult::Fail{ error } => ParserOutput { parse_tree: None, errors: vec![error] }
-                        }
-                    }
-                },
                 scanner_invocations = self.scanner_invocations(),
                 parser_invocations = self.parser_invocations(),
             );
