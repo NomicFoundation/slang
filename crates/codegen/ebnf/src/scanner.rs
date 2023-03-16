@@ -1,67 +1,53 @@
 use codegen_schema::types::scanner::{ScannerDefinition, ScannerRef};
 
-use super::ebnf_writer::{EBNFWritable, EBNFWriter};
+use crate::{nodes::EbnfNode, serialization::GenerateEbnf};
 
-impl<T: EBNFWriter> EBNFWritable<T> for ScannerRef {
-    fn write_ebnf(&self, name: &str, writer: &mut T) {
-        writer.write_global_definition(name);
-        writer.write_operator(" = ");
-        self.definition.write_ebnf("", writer);
-        writer.write_operator(" ;");
+impl GenerateEbnf for ScannerRef {
+    fn generate_ebnf(&self) -> EbnfNode {
+        return self.definition.generate_ebnf();
     }
 }
 
-impl<T: EBNFWriter> EBNFWritable<T> for ScannerDefinition {
-    fn write_ebnf(&self, _name: &str, writer: &mut T) {
-        match self {
-            ScannerDefinition::Choice(sub_exprs) => {
-                let mut first = true;
-                for sub_expr in sub_exprs {
-                    if first {
-                        first = false;
-                    } else {
-                        writer.write_operator(" | ");
-                    }
-                    write_nested(writer, self, &sub_expr.definition);
-                }
+impl GenerateEbnf for ScannerDefinition {
+    fn generate_ebnf(&self) -> EbnfNode {
+        match &self {
+            ScannerDefinition::Choice(choices) => {
+                return EbnfNode::alternatives(
+                    choices
+                        .iter()
+                        .map(|choice| generate_nested(self, &choice.definition))
+                        .collect(),
+                );
             }
 
             ScannerDefinition::Difference {
                 minuend,
                 subtrahend,
             } => {
-                write_nested(writer, self, &minuend.definition);
-                writer.write_operator(" - ");
-                write_nested(writer, self, &subtrahend.definition);
+                return EbnfNode::difference(
+                    generate_nested(self, &minuend.definition),
+                    generate_nested(self, &subtrahend.definition),
+                );
             }
 
             ScannerDefinition::Not(sub_expr) => {
-                writer.write_operator("¬");
-                write_nested(writer, self, &sub_expr.definition);
+                return EbnfNode::not(generate_nested(self, &sub_expr.definition));
             }
 
             ScannerDefinition::OneOrMore(expr) => {
-                writer.write_constant("1");
-                writer.write_operator("…");
-                writer.write_operator("{ ");
-                expr.definition.write_ebnf("", writer);
-                writer.write_operator(" }");
+                return EbnfNode::one_or_more(expr.generate_ebnf());
             }
 
             ScannerDefinition::Optional(expr) => {
-                writer.write_operator("[ ");
-                expr.definition.write_ebnf("", writer);
-                writer.write_operator(" ]");
+                return EbnfNode::optional(expr.generate_ebnf());
             }
 
             ScannerDefinition::Range { from, to } => {
-                writer.write_string(&from.to_string());
-                writer.write_operator("…");
-                writer.write_string(&to.to_string());
+                return EbnfNode::range(*from, *to);
             }
 
             ScannerDefinition::Reference(name) => {
-                writer.write_global_reference(name);
+                return EbnfNode::reference(name.to_owned());
             }
 
             ScannerDefinition::Repeat {
@@ -69,54 +55,41 @@ impl<T: EBNFWriter> EBNFWritable<T> for ScannerDefinition {
                 max,
                 expression,
             } => {
-                writer.write_constant(&min.to_string());
-                writer.write_operator("…");
-                writer.write_constant(&max.to_string());
-                writer.write_operator("{ ");
-                expression.definition.write_ebnf("", writer);
-                writer.write_operator(" }");
+                return EbnfNode::repeat(*min, *max, expression.generate_ebnf());
             }
 
-            ScannerDefinition::Sequence(sub_exprs) => {
-                let mut first = true;
-                for sub_expr in sub_exprs {
-                    if first {
-                        first = false;
-                    } else {
-                        writer.write_operator(" ");
-                    }
-                    write_nested(writer, self, &sub_expr.definition);
-                }
+            ScannerDefinition::Sequence(elements) => {
+                return EbnfNode::sequence(
+                    elements
+                        .iter()
+                        .map(|element| generate_nested(self, &element.definition))
+                        .collect(),
+                );
             }
 
             ScannerDefinition::Terminal(string) => {
-                writer.write_string(string);
+                return EbnfNode::terminal(string.to_owned());
             }
 
             ScannerDefinition::TrailingContext { expression, .. } => {
-                write_nested(writer, self, &expression.definition);
+                return expression.generate_ebnf();
             }
 
             ScannerDefinition::ZeroOrMore(expr) => {
-                writer.write_operator("{ ");
-                expr.definition.write_ebnf("", writer);
-                writer.write_operator(" }");
+                return EbnfNode::zero_or_more(expr.generate_ebnf());
             }
-        }
+        };
     }
 }
 
-fn write_nested<W: EBNFWriter>(
-    writer: &mut W,
+fn generate_nested(
     parent_definition: &ScannerDefinition,
     scanner_definition: &ScannerDefinition,
-) {
+) -> EbnfNode {
     if precedence(parent_definition) < precedence(scanner_definition) {
-        writer.write_operator("( ");
-        scanner_definition.write_ebnf("", writer);
-        writer.write_operator(" )");
+        return EbnfNode::parenthesis(scanner_definition.generate_ebnf());
     } else {
-        scanner_definition.write_ebnf("", writer);
+        return scanner_definition.generate_ebnf();
     }
 }
 

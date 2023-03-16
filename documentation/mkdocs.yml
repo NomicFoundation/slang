@@ -19,10 +19,12 @@ markdown_extensions:
   - "admonition"
   - "attr_list"
   - "def_list"
+  - "pymdownx.caret"
   - "pymdownx.details"
   - "pymdownx.highlight":
       anchor_linenums: true
   - "pymdownx.inlinehilite"
+  - "pymdownx.mark"
   - "pymdownx.snippets":
       base_path: !ENV "REPO_ROOT"
       check_paths: true
@@ -31,8 +33,6 @@ markdown_extensions:
       alternate_style: true
   - "pymdownx.tasklist":
       custom_checkbox: true
-  - "pymdownx.caret"
-  - "pymdownx.mark"
   - "pymdownx.tilde"
   - "tables"
 
@@ -55,6 +55,8 @@ plugins:
 theme:
   name: "material"
   features:
+    - "content.code.copy"
+    - "content.tabs.link"
     - "navigation.expand"
     - "navigation.sections"
     - "navigation.tabs"
@@ -66,12 +68,12 @@ theme:
     text: "Nunito"
     code: "Roboto Mono"
   palette:
-    - scheme: "override-dark"
+    - scheme: "slate"
       media: "(prefers-color-scheme: dark)"
       toggle:
         icon: "material/brightness-7"
         name: "Switch to light mode"
-    - scheme: "override-light"
+    - scheme: "default"
       media: "(prefers-color-scheme: light)"
       toggle:
         icon: "material/brightness-4"

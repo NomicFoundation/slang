@@ -1,29 +1,23 @@
 use codegen_schema::types::parser::{ParserDefinition, ParserRef};
 
-use crate::ebnf_writer::{EBNFWritable, EBNFWriter};
+use crate::{nodes::EbnfNode, serialization::GenerateEbnf};
 
-impl<T: EBNFWriter> EBNFWritable<T> for ParserRef {
-    fn write_ebnf(&self, name: &str, writer: &mut T) {
-        writer.write_global_definition(name);
-        writer.write_operator(" = ");
-        self.definition.write_ebnf("", writer);
-        writer.write_operator(" ;");
+impl GenerateEbnf for ParserRef {
+    fn generate_ebnf(&self) -> EbnfNode {
+        return self.definition.generate_ebnf();
     }
 }
 
-impl<T: EBNFWriter> EBNFWritable<T> for ParserDefinition {
-    fn write_ebnf(&self, _name: &str, w: &mut T) {
-        match self {
+impl GenerateEbnf for ParserDefinition {
+    fn generate_ebnf(&self) -> EbnfNode {
+        match &self {
             ParserDefinition::Choice(sub_exprs) => {
-                let mut first = true;
-                for sub_expr in sub_exprs {
-                    if first {
-                        first = false;
-                    } else {
-                        w.write_operator(" | ");
-                    }
-                    write_nested(w, self, &sub_expr.definition);
-                }
+                return EbnfNode::alternatives(
+                    sub_exprs
+                        .iter()
+                        .map(|choice| generate_nested(self, &choice.definition))
+                        .collect(),
+                );
             }
 
             ParserDefinition::DelimitedBy {
@@ -31,96 +25,80 @@ impl<T: EBNFWriter> EBNFWritable<T> for ParserDefinition {
                 expression,
                 close,
             } => {
-                w.write_global_reference(&open.reference);
-                w.write_operator(" ");
-                write_nested(w, &expression.definition, &expression.definition);
-                w.write_operator(" ");
-                w.write_global_reference(&close.reference);
+                return EbnfNode::sequence(vec![
+                    EbnfNode::reference(open.reference.to_owned()),
+                    expression.definition.generate_ebnf(),
+                    EbnfNode::reference(close.reference.to_owned()),
+                ]);
             }
 
             ParserDefinition::OneOrMore(expr) => {
-                w.write_constant("1");
-                w.write_operator("…");
-                w.write_operator("{ ");
-                expr.definition.write_ebnf("", w);
-                w.write_operator(" }");
+                return EbnfNode::one_or_more(expr.generate_ebnf());
             }
 
             ParserDefinition::Optional(expr) => {
-                w.write_operator("[ ");
-                expr.definition.write_ebnf("", w);
-                w.write_operator(" ]");
+                return EbnfNode::optional(expr.generate_ebnf());
             }
 
-            ParserDefinition::Reference(name) => w.write_global_reference(name),
+            ParserDefinition::Reference(name) => {
+                return EbnfNode::reference(name.to_owned());
+            }
 
             ParserDefinition::Repeat {
                 min,
                 max,
                 expression,
             } => {
-                w.write_constant(&min.to_string());
-                w.write_operator("…");
-                w.write_constant(&max.to_string());
-                w.write_operator("{ ");
-                expression.definition.write_ebnf("", w);
-                w.write_operator(" }");
+                return EbnfNode::repeat(*min, *max, expression.generate_ebnf());
             }
 
             ParserDefinition::SeparatedBy {
                 expression,
                 separator,
             } => {
-                write_nested(w, &expression.definition, &expression.definition);
-                w.write_global_reference(&separator.reference);
-                w.write_operator(" { ");
-                w.write_global_reference(&separator.reference);
-                w.write_operator(" ");
-                write_nested(w, &expression.definition, &expression.definition);
-                w.write_operator(" }");
+                return EbnfNode::sequence(vec![
+                    expression.definition.generate_ebnf(),
+                    EbnfNode::zero_or_more(EbnfNode::sequence(vec![
+                        EbnfNode::reference(separator.reference.to_owned()),
+                        expression.definition.generate_ebnf(),
+                    ])),
+                ]);
             }
 
-            ParserDefinition::Sequence(sub_exprs) => {
-                let mut first = true;
-                for sub_expr in sub_exprs {
-                    if first {
-                        first = false;
-                    } else {
-                        w.write_operator(" ");
-                    }
-                    write_nested(w, self, &sub_expr.definition);
-                }
+            ParserDefinition::Sequence(elements) => {
+                return EbnfNode::sequence(
+                    elements
+                        .iter()
+                        .map(|element| generate_nested(self, &element.definition))
+                        .collect(),
+                );
             }
 
             ParserDefinition::TerminatedBy {
                 expression,
                 terminator,
             } => {
-                write_nested(w, &expression.definition, &expression.definition);
-                w.write_operator(" ");
-                w.write_global_reference(&terminator.reference);
+                return EbnfNode::sequence(vec![
+                    expression.definition.generate_ebnf(),
+                    EbnfNode::reference(terminator.reference.to_owned()),
+                ]);
             }
 
             ParserDefinition::ZeroOrMore(expr) => {
-                w.write_operator("{ ");
-                expr.definition.write_ebnf("", w);
-                w.write_operator(" }");
+                return EbnfNode::zero_or_more(expr.generate_ebnf());
             }
         }
     }
 }
 
-fn write_nested<W: EBNFWriter>(
-    writer: &mut W,
+fn generate_nested(
     parent_definition: &ParserDefinition,
     parser_definition: &ParserDefinition,
-) {
+) -> EbnfNode {
     if precedence(parent_definition) < precedence(parser_definition) {
-        writer.write_operator("( ");
-        parser_definition.write_ebnf("", writer);
-        writer.write_operator(" )");
+        return EbnfNode::parenthesis(parser_definition.generate_ebnf());
     } else {
-        parser_definition.write_ebnf("", writer);
+        return parser_definition.generate_ebnf();
     }
 }
 

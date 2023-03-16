@@ -2,5 +2,5 @@
 
 <!-- markdownlint-disable first-line-h1 -->
 
-- [Grammar](./grammar/index.md)
+- [Grammar](./grammar/)
 - [Reference](./reference/)

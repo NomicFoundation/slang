@@ -16,8 +16,8 @@ pub struct VersionedFunctionBody {
 }
 
 impl VersionedFunctionBody {
-    fn insert(&mut self, comment: String, version: &Version, body: TokenStream) {
-        self.comment = comment;
+    fn insert(&mut self, comment: &str, version: &Version, body: TokenStream) {
+        self.comment.push_str(comment);
         self.versions.insert(version.clone(), body);
     }
 
@@ -65,7 +65,7 @@ impl CodeGenerator {
         &mut self,
         name: String,
         version: &Version,
-        comment: String,
+        comment: &str,
         body: TokenStream,
     ) {
         self.scanners
@@ -85,7 +85,7 @@ impl CodeGenerator {
         &mut self,
         name: String,
         version: &Version,
-        comment: String,
+        comment: &str,
         body: TokenStream,
     ) {
         self.parsers

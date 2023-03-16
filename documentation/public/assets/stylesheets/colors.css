@@ -1,41 +1,61 @@
 /*
- * Define light/dark theme:
+ * Light Theme:
  */
 
-[data-md-color-scheme="override-light"] {
+[data-md-color-scheme="default"] {
   --md-default-fg-color: #111111;
   --md-default-bg-color: #eeeeee;
 
   --md-code-fg-color: var(--md-default-fg-color);
   --md-code-bg-color: #cacaca;
+  --md-code-hl-color: #aba8a8;
 }
 
-[data-md-color-scheme="override-dark"] {
+/*
+ * Dark Theme:
+ */
+
+[data-md-color-scheme="slate"] {
   --md-default-fg-color: #a4acc4;
   --md-default-bg-color: #10121b;
 
   --md-code-fg-color: var(--md-default-fg-color);
   --md-code-bg-color: #2a2e3e;
-}
-
-:root {
-  --md-primary-fg-color: #0056b1;
-  --md-accent-fg-color: #003f83;
   --md-code-hl-color: #4287ff26;
-
-  --md-default-fg-color--light: hsl(from var(--md-default-fg-color) h s calc(l + 5%));
-  --md-default-fg-color--lighter: hsl(from var(--md-default-fg-color) h s calc(l + 10%));
-  --md-default-fg-color--lightest: hsl(from var(--md-default-fg-color) h s calc(l + 15%));
-
-  --md-default-bg-color--light: hsl(from var(--md-default-bg-color) h s calc(l + 5%));
-  --md-default-bg-color--lighter: hsl(from var(--md-default-bg-color) h s calc(l + 10%));
-  --md-default-bg-color--lightest: hsl(from var(--md-default-bg-color) h s calc(l + 15%));
 }
 
 /*
- * Smooth scrolling for anchor links:
+ * Both Themes:
  */
 
-html {
-  scroll-behavior: smooth;
+:root > * {
+  --md-primary-fg-color: #0056b1;
+  --md-accent-fg-color: #004895;
+
+  --md-default-fg-color--light: var(--md-default-fg-color);
+  --md-default-fg-color--lighter: var(--md-default-fg-color);
+  --md-default-fg-color--lightest: var(--md-default-fg-color);
+
+  --md-default-bg-color--light: var(--md-default-fg-color);
+  --md-default-bg-color--lighter: var(--md-default-fg-color);
+  --md-default-bg-color--lightest: var(--md-default-fg-color);
+}
+
+/*
+ * Syntax Highlighting:
+ */
+
+:root > * {
+  --md-code-hl-number-color: #d52a2a;
+  --md-code-hl-special-color: #db1457;
+  --md-code-hl-function-color: #a846b9;
+  --md-code-hl-constant-color: #6e59d9;
+  --md-code-hl-keyword-color: #3f6ec6;
+  --md-code-hl-string-color: #875d4c;
+  --md-code-hl-name-color: var(--md-default-fg-color);
+  --md-code-hl-operator-color: var(--md-default-fg-color);
+  --md-code-hl-punctuation-color: var(--md-default-fg-color);
+  --md-code-hl-comment-color: var(--md-default-fg-color);
+  --md-code-hl-generic-color: var(--md-default-fg-color);
+  --md-code-hl-variable-color: var(--md-default-fg-color);
 }

@@ -1,63 +1,71 @@
-/*
- * Smooth scrolling for anchor links
+// @ts-check
+
+window.addEventListener("load", prepareGrammar);
+window.addEventListener("hashchange", prepareGrammar);
+
+function prepareGrammar() {
+  const blocks = collectBlocks();
+  createLinks(blocks);
+  highlightSelected(blocks);
+}
+
+/**
+ * @returns {Map<string, Element>}
  */
+function collectBlocks() {
+  const blocks = /** @type Map<string, Element> */ (new Map());
+  for (const block of document.querySelectorAll("div .slang-ebnf")) {
+    const id = block.getAttribute("id");
+    if (!id) {
+      continue;
+    }
 
-window.addEventListener("load", grammarNavigation);
-window.addEventListener("hashchange", grammarNavigation);
-
-function grammarNavigation() {
-  fixGrammarLinks();
-
-  if (!location.hash) {
-    return;
+    blocks.set(id, block);
   }
 
-  const codeElement = document.getElementById(location.hash.replace("#", ""));
-  if (!codeElement) {
-    return;
-  }
-
-  // TODO(OmarTawfik):
-  // Broken by https://github.com/NomicFoundation/slang/pull/332
-  // Will fix in https://github.com/NomicFoundation/slang/issues/76
-  //
-  // highlightSection(codeElement);
-
-  scrollToElement(codeElement);
+  return blocks;
 }
 
-function highlightSection(codeElement) {
-  const sections = document.getElementsByTagName("code");
-  const styles = getComputedStyle(document.documentElement);
+/**
+ * @param blocks {Map<string, Element>}
+ */
+function createLinks(blocks) {
+  for (const [_, block] of blocks) {
+    const spans = block.querySelectorAll("span[class='k']");
+    for (const span of spans) {
+      const id = span.textContent?.trim();
+      if (id && blocks.has(id) && !span.hasAttribute("linked")) {
+        span.setAttribute("linked", "");
 
-  for (let i = 0; i < sections.length; i++) {
-    sections.item(i).style.background = styles.getPropertyValue("--md-code-bg-color");
+        const anchor = document.createElement("a");
+        anchor.setAttribute("href", `#${id}`);
+        anchor.appendChild(span.cloneNode(true));
+
+        span.replaceWith(anchor);
+      }
+    }
   }
-
-  codeElement.style.background = styles.getPropertyValue("--md-code-hl-color");
 }
 
-function scrollToElement(codeElement) {
-  const fromPosition = document.documentElement.scrollTop;
-  const toPosition = codeElement.getBoundingClientRect().top;
-  const windowCenter = window.innerHeight / 2;
+/**
+ * @param blocks {Map<string, Element>}
+ */
+function highlightSelected(blocks) {
+  function setBackground(block, color) {
+    const code = block.querySelector("code");
+    if (!code) {
+      return;
+    }
 
-  window.scrollTo({
-    top: fromPosition + toPosition - windowCenter,
-  });
-}
-
-function fixGrammarLinks() {
-  if (document.title !== "Grammar - Slang") {
-    // TODO(OmarTawfik): hack to fix navigation on grammar page.
-    // To be fixed in: https://github.com/NomicFoundation/slang/issues/343
-    return;
+    code.style.background = color;
   }
 
-  const links = document.getElementsByClassName("slang-global-ebnf-link");
+  for (const [_, block] of blocks) {
+    setBackground(block, "var(--md-code-bg-color)");
+  }
 
-  for (let i = 0; i < links.length; i++) {
-    const link = links.item(i).getAttributeNode("href");
-    link.value = link.value.replace(/^.*#/, "./#");
+  const selected = blocks.get(location.hash.replace("#", ""));
+  if (selected) {
+    setBackground(selected, "var(--md-code-hl-color)");
   }
 }

@@ -169,7 +169,7 @@ macro_rules! scan_not_followed_by {
 }
 
 impl Language {
-    // «AbicoderKeyword» = "abicoder" ;
+    // «AbicoderKeyword» = "abicoder";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_abicoder_keyword(&self, stream: &mut Stream) -> bool {
@@ -186,7 +186,7 @@ impl Language {
         }
     }
 
-    // «AbstractKeyword» = "abstract" ;
+    // «AbstractKeyword» = "abstract";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_abstract_keyword(&self, stream: &mut Stream) -> bool {
@@ -203,7 +203,7 @@ impl Language {
         }
     }
 
-    // «AddressKeyword» = "address" ;
+    // «AddressKeyword» = "address";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_address_keyword(&self, stream: &mut Stream) -> bool {
@@ -220,7 +220,7 @@ impl Language {
         }
     }
 
-    // «Ampersand» = '&' ;
+    // «Ampersand» = '&';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_ampersand(&self, stream: &mut Stream) -> bool {
@@ -233,7 +233,7 @@ impl Language {
         }
     }
 
-    // «AmpersandAmpersand» = "&&" ;
+    // «AmpersandAmpersand» = "&&";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_ampersand_ampersand(&self, stream: &mut Stream) -> bool {
@@ -242,7 +242,7 @@ impl Language {
         }
     }
 
-    // «AmpersandEqual» = "&=" ;
+    // «AmpersandEqual» = "&=";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_ampersand_equal(&self, stream: &mut Stream) -> bool {
@@ -251,7 +251,7 @@ impl Language {
         }
     }
 
-    // «AnonymousKeyword» = "anonymous" ;
+    // «AnonymousKeyword» = "anonymous";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_anonymous_keyword(&self, stream: &mut Stream) -> bool {
@@ -268,7 +268,7 @@ impl Language {
         }
     }
 
-    // «AsKeyword» = "as" ;
+    // «AsKeyword» = "as";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_as_keyword(&self, stream: &mut Stream) -> bool {
@@ -285,7 +285,7 @@ impl Language {
         }
     }
 
-    // «AsciiEscape» = 'n' | 'r' | 't' | "\'" | '"' | '\\' | '\u{a}' | '\u{d}' ;
+    // «AsciiEscape» = 'n' | 'r' | 't' | "\'" | '"' | '\\' | '\u{a}' | '\u{d}';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_ascii_escape(&self, stream: &mut Stream) -> bool {
@@ -301,7 +301,7 @@ impl Language {
         }
     }
 
-    // «AsciiStringLiteral» = «SingleQuotedAsciiStringLiteral» | «DoubleQuotedAsciiStringLiteral» ;
+    // «AsciiStringLiteral» = «SingleQuotedAsciiStringLiteral» | «DoubleQuotedAsciiStringLiteral»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_ascii_string_literal(&self, stream: &mut Stream) -> bool {
@@ -314,7 +314,7 @@ impl Language {
         }
     }
 
-    // «AssemblyKeyword» = "assembly" ;
+    // «AssemblyKeyword» = "assembly";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_assembly_keyword(&self, stream: &mut Stream) -> bool {
@@ -331,7 +331,7 @@ impl Language {
         }
     }
 
-    // «Bang» = '!' ;
+    // «Bang» = '!';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_bang(&self, stream: &mut Stream) -> bool {
@@ -340,7 +340,7 @@ impl Language {
         }
     }
 
-    // «BangEqual» = "!=" ;
+    // «BangEqual» = "!=";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_bang_equal(&self, stream: &mut Stream) -> bool {
@@ -349,7 +349,7 @@ impl Language {
         }
     }
 
-    // «Bar» = '|' ;
+    // «Bar» = '|';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_bar(&self, stream: &mut Stream) -> bool {
@@ -362,7 +362,7 @@ impl Language {
         }
     }
 
-    // «BarBar» = "||" ;
+    // «BarBar» = "||";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_bar_bar(&self, stream: &mut Stream) -> bool {
@@ -371,7 +371,7 @@ impl Language {
         }
     }
 
-    // «BarEqual» = "|=" ;
+    // «BarEqual» = "|=";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_bar_equal(&self, stream: &mut Stream) -> bool {
@@ -380,7 +380,7 @@ impl Language {
         }
     }
 
-    // «BoolKeyword» = "bool" ;
+    // «BoolKeyword» = "bool";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_bool_keyword(&self, stream: &mut Stream) -> bool {
@@ -397,7 +397,7 @@ impl Language {
         }
     }
 
-    // «BreakKeyword» = "break" ;
+    // «BreakKeyword» = "break";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_break_keyword(&self, stream: &mut Stream) -> bool {
@@ -414,7 +414,7 @@ impl Language {
         }
     }
 
-    // «CalldataKeyword» = "calldata" ;
+    // «CalldataKeyword» = "calldata";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_calldata_keyword(&self, stream: &mut Stream) -> bool {
@@ -431,7 +431,7 @@ impl Language {
         }
     }
 
-    // «Caret» = '^' ;
+    // «Caret» = '^';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_caret(&self, stream: &mut Stream) -> bool {
@@ -440,7 +440,7 @@ impl Language {
         }
     }
 
-    // «CaretEqual» = "^=" ;
+    // «CaretEqual» = "^=";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_caret_equal(&self, stream: &mut Stream) -> bool {
@@ -449,7 +449,7 @@ impl Language {
         }
     }
 
-    // «CaseKeyword» = "case" ;
+    // «CaseKeyword» = "case";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_case_keyword(&self, stream: &mut Stream) -> bool {
@@ -466,7 +466,7 @@ impl Language {
         }
     }
 
-    // «CatchKeyword» = "catch" ;
+    // «CatchKeyword» = "catch";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_catch_keyword(&self, stream: &mut Stream) -> bool {
@@ -483,7 +483,7 @@ impl Language {
         }
     }
 
-    // «CloseBrace» = '}' ;
+    // «CloseBrace» = '}';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_close_brace(&self, stream: &mut Stream) -> bool {
@@ -492,7 +492,7 @@ impl Language {
         }
     }
 
-    // «CloseBracket» = ']' ;
+    // «CloseBracket» = ']';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_close_bracket(&self, stream: &mut Stream) -> bool {
@@ -501,7 +501,7 @@ impl Language {
         }
     }
 
-    // «CloseParen» = ')' ;
+    // «CloseParen» = ')';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_close_paren(&self, stream: &mut Stream) -> bool {
@@ -510,7 +510,7 @@ impl Language {
         }
     }
 
-    // «Colon» = ':' ;
+    // «Colon» = ':';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_colon(&self, stream: &mut Stream) -> bool {
@@ -519,7 +519,7 @@ impl Language {
         }
     }
 
-    // «ColonEqual» = ":=" ;
+    // «ColonEqual» = ":=";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_colon_equal(&self, stream: &mut Stream) -> bool {
@@ -528,7 +528,7 @@ impl Language {
         }
     }
 
-    // «Comma» = ',' ;
+    // «Comma» = ',';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_comma(&self, stream: &mut Stream) -> bool {
@@ -537,7 +537,7 @@ impl Language {
         }
     }
 
-    // «ConstantKeyword» = "constant" ;
+    // «ConstantKeyword» = "constant";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_constant_keyword(&self, stream: &mut Stream) -> bool {
@@ -554,7 +554,7 @@ impl Language {
         }
     }
 
-    // «ConstructorKeyword» = "constructor" ;
+    // «ConstructorKeyword» = "constructor";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_constructor_keyword(&self, stream: &mut Stream) -> bool {
@@ -571,7 +571,7 @@ impl Language {
         }
     }
 
-    // «ContinueKeyword» = "continue" ;
+    // «ContinueKeyword» = "continue";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_continue_keyword(&self, stream: &mut Stream) -> bool {
@@ -588,7 +588,7 @@ impl Language {
         }
     }
 
-    // «ContractKeyword» = "contract" ;
+    // «ContractKeyword» = "contract";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_contract_keyword(&self, stream: &mut Stream) -> bool {
@@ -605,7 +605,7 @@ impl Language {
         }
     }
 
-    // «DaysKeyword» = "days" ;
+    // «DaysKeyword» = "days";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_days_keyword(&self, stream: &mut Stream) -> bool {
@@ -622,7 +622,7 @@ impl Language {
         }
     }
 
-    // «DecimalExponent» = ( 'e' | 'E' ) [ '-' ] «DecimalNumber» ;
+    // «DecimalExponent» = ('e' | 'E') ['-'] «DecimalNumber»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_decimal_exponent(&self, stream: &mut Stream) -> bool {
@@ -635,7 +635,7 @@ impl Language {
         }
     }
 
-    // «DecimalLiteral» = ( «DecimalNumber» [ '.' «DecimalNumber» ] | '.' «DecimalNumber» ) [ «DecimalExponent» ] ;
+    // «DecimalLiteral» = («DecimalNumber» ['.' «DecimalNumber»] | '.' «DecimalNumber») [«DecimalExponent»];
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_decimal_literal(&self, stream: &mut Stream) -> bool {
@@ -660,7 +660,7 @@ impl Language {
         }
     }
 
-    // «DecimalNumber» = 1…{ '0'…'9' } { '_' 1…{ '0'…'9' } } ;
+    // «DecimalNumber» = 1…{'0'…'9'} {'_' 1…{'0'…'9'}};
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_decimal_number(&self, stream: &mut Stream) -> bool {
@@ -681,7 +681,7 @@ impl Language {
         }
     }
 
-    // «DefaultKeyword» = "default" ;
+    // «DefaultKeyword» = "default";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_default_keyword(&self, stream: &mut Stream) -> bool {
@@ -698,7 +698,7 @@ impl Language {
         }
     }
 
-    // «DeleteKeyword» = "delete" ;
+    // «DeleteKeyword» = "delete";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_delete_keyword(&self, stream: &mut Stream) -> bool {
@@ -715,7 +715,7 @@ impl Language {
         }
     }
 
-    // «DoKeyword» = "do" ;
+    // «DoKeyword» = "do";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_do_keyword(&self, stream: &mut Stream) -> bool {
@@ -732,7 +732,7 @@ impl Language {
         }
     }
 
-    // «DoubleQuotedAsciiStringLiteral» = '"' { «EscapeSequence» | '\u{20}'…'~' - ( '"' | '\\' ) } '"' ;
+    // «DoubleQuotedAsciiStringLiteral» = '"' {«EscapeSequence» | '\u{20}'…'~' - ('"' | '\\')} '"';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_double_quoted_ascii_string_literal(&self, stream: &mut Stream) -> bool {
@@ -754,7 +754,7 @@ impl Language {
         }
     }
 
-    // «DoubleQuotedUnicodeStringLiteral» = 'unicode"' { «EscapeSequence» | ¬( '"' | '\\' | '\u{a}' | '\u{d}' ) } '"' ;
+    // «DoubleQuotedUnicodeStringLiteral» = 'unicode"' {«EscapeSequence» | ¬('"' | '\\' | '\u{a}' | '\u{d}')} '"';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_double_quoted_unicode_string_literal(&self, stream: &mut Stream) -> bool {
@@ -777,7 +777,7 @@ impl Language {
         }
     }
 
-    // «ElseKeyword» = "else" ;
+    // «ElseKeyword» = "else";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_else_keyword(&self, stream: &mut Stream) -> bool {
@@ -794,7 +794,7 @@ impl Language {
         }
     }
 
-    // «EmitKeyword» = "emit" ;
+    // «EmitKeyword» = "emit";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_emit_keyword(&self, stream: &mut Stream) -> bool {
@@ -811,7 +811,7 @@ impl Language {
         }
     }
 
-    // «EndOfLine» = [ '\u{d}' ] '\u{a}' ;
+    // «EndOfLine» = ['\u{d}'] '\u{a}';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_end_of_line(&self, stream: &mut Stream) -> bool {
@@ -823,7 +823,7 @@ impl Language {
         }
     }
 
-    // «EnumKeyword» = "enum" ;
+    // «EnumKeyword» = "enum";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_enum_keyword(&self, stream: &mut Stream) -> bool {
@@ -840,7 +840,7 @@ impl Language {
         }
     }
 
-    // «Equal» = '=' ;
+    // «Equal» = '=';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_equal(&self, stream: &mut Stream) -> bool {
@@ -853,7 +853,7 @@ impl Language {
         }
     }
 
-    // «EqualEqual» = "==" ;
+    // «EqualEqual» = "==";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_equal_equal(&self, stream: &mut Stream) -> bool {
@@ -862,7 +862,7 @@ impl Language {
         }
     }
 
-    // «EqualGreaterThan» = "=>" ;
+    // «EqualGreaterThan» = "=>";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_equal_greater_than(&self, stream: &mut Stream) -> bool {
@@ -871,7 +871,7 @@ impl Language {
         }
     }
 
-    // «ErrorKeyword» = "error" ;
+    // «ErrorKeyword» = "error";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_error_keyword(&self, stream: &mut Stream) -> bool {
@@ -888,7 +888,7 @@ impl Language {
         }
     }
 
-    // «EscapeSequence» = '\\' ( «AsciiEscape» | «HexByteEscape» | «UnicodeEscape» ) ;
+    // «EscapeSequence» = '\\' («AsciiEscape» | «HexByteEscape» | «UnicodeEscape»);
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_escape_sequence(&self, stream: &mut Stream) -> bool {
@@ -905,7 +905,7 @@ impl Language {
         }
     }
 
-    // «EtherKeyword» = "ether" ;
+    // «EtherKeyword» = "ether";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_ether_keyword(&self, stream: &mut Stream) -> bool {
@@ -922,7 +922,7 @@ impl Language {
         }
     }
 
-    // «EventKeyword» = "event" ;
+    // «EventKeyword» = "event";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_event_keyword(&self, stream: &mut Stream) -> bool {
@@ -939,7 +939,7 @@ impl Language {
         }
     }
 
-    // «Evmasm» = '"evmasm"' ;
+    // «Evmasm» = '"evmasm"';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_evmasm(&self, stream: &mut Stream) -> bool {
@@ -948,7 +948,7 @@ impl Language {
         }
     }
 
-    // «ExperimentalKeyword» = "experimental" ;
+    // «ExperimentalKeyword» = "experimental";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_experimental_keyword(&self, stream: &mut Stream) -> bool {
@@ -965,7 +965,7 @@ impl Language {
         }
     }
 
-    // «ExternalKeyword» = "external" ;
+    // «ExternalKeyword» = "external";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_external_keyword(&self, stream: &mut Stream) -> bool {
@@ -982,7 +982,7 @@ impl Language {
         }
     }
 
-    // «FallbackKeyword» = "fallback" ;
+    // «FallbackKeyword» = "fallback";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_fallback_keyword(&self, stream: &mut Stream) -> bool {
@@ -999,7 +999,7 @@ impl Language {
         }
     }
 
-    // «FalseKeyword» = "false" ;
+    // «FalseKeyword» = "false";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_false_keyword(&self, stream: &mut Stream) -> bool {
@@ -1016,7 +1016,7 @@ impl Language {
         }
     }
 
-    // «FinneyKeyword» = "finney" ;
+    // «FinneyKeyword» = "finney";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_finney_keyword(&self, stream: &mut Stream) -> bool {
@@ -1033,7 +1033,7 @@ impl Language {
         }
     }
 
-    // «FixedBytesType» = "bytes" ( '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19" | "20" | "21" | "22" | "23" | "24" | "25" | "26" | "27" | "28" | "29" | "30" | "31" | "32" ) ;
+    // «FixedBytesType» = "bytes" ('1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | "10" | "11" | "12" | "13" | "14" | "15" | "16" | "17" | "18" | "19" | "20" | "21" | "22" | "23" | "24" | "25" | "26" | "27" | "28" | "29" | "30" | "31" | "32");
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_fixed_bytes_type(&self, stream: &mut Stream) -> bool {
@@ -1067,7 +1067,7 @@ impl Language {
         }
     }
 
-    // «ForKeyword» = "for" ;
+    // «ForKeyword» = "for";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_for_keyword(&self, stream: &mut Stream) -> bool {
@@ -1084,7 +1084,7 @@ impl Language {
         }
     }
 
-    // «FromKeyword» = "from" ;
+    // «FromKeyword» = "from";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_from_keyword(&self, stream: &mut Stream) -> bool {
@@ -1101,7 +1101,7 @@ impl Language {
         }
     }
 
-    // «FunctionKeyword» = "function" ;
+    // «FunctionKeyword» = "function";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_function_keyword(&self, stream: &mut Stream) -> bool {
@@ -1118,7 +1118,7 @@ impl Language {
         }
     }
 
-    // «GlobalKeyword» = "global" ;
+    // «GlobalKeyword» = "global";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_global_keyword(&self, stream: &mut Stream) -> bool {
@@ -1135,7 +1135,7 @@ impl Language {
         }
     }
 
-    // «GreaterThan» = '>' ;
+    // «GreaterThan» = '>';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_greater_than(&self, stream: &mut Stream) -> bool {
@@ -1148,7 +1148,7 @@ impl Language {
         }
     }
 
-    // «GreaterThanEqual» = ">=" ;
+    // «GreaterThanEqual» = ">=";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_greater_than_equal(&self, stream: &mut Stream) -> bool {
@@ -1157,7 +1157,7 @@ impl Language {
         }
     }
 
-    // «GreaterThanGreaterThan» = ">>" ;
+    // «GreaterThanGreaterThan» = ">>";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_greater_than_greater_than(&self, stream: &mut Stream) -> bool {
@@ -1170,7 +1170,7 @@ impl Language {
         }
     }
 
-    // «GreaterThanGreaterThanEqual» = ">>=" ;
+    // «GreaterThanGreaterThanEqual» = ">>=";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_greater_than_greater_than_equal(&self, stream: &mut Stream) -> bool {
@@ -1179,7 +1179,7 @@ impl Language {
         }
     }
 
-    // «GreaterThanGreaterThanGreaterThan» = ">>>" ;
+    // «GreaterThanGreaterThanGreaterThan» = ">>>";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_greater_than_greater_than_greater_than(&self, stream: &mut Stream) -> bool {
@@ -1192,7 +1192,7 @@ impl Language {
         }
     }
 
-    // «GreaterThanGreaterThanGreaterThanEqual» = ">>>=" ;
+    // «GreaterThanGreaterThanGreaterThanEqual» = ">>>=";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_greater_than_greater_than_greater_than_equal(
@@ -1204,7 +1204,7 @@ impl Language {
         }
     }
 
-    // «GweiKeyword» = "gwei" ;
+    // «GweiKeyword» = "gwei";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_gwei_keyword(&self, stream: &mut Stream) -> bool {
@@ -1221,7 +1221,7 @@ impl Language {
         }
     }
 
-    // «HexByteEscape» = 'x' 2…2{ «HexCharacter» } ;
+    // «HexByteEscape» = 'x' 2…2{«HexCharacter»};
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_hex_byte_escape(&self, stream: &mut Stream) -> bool {
@@ -1240,7 +1240,7 @@ impl Language {
         }
     }
 
-    // «HexCharacter» = '0'…'9' | 'a'…'f' | 'A'…'F' ;
+    // «HexCharacter» = '0'…'9' | 'a'…'f' | 'A'…'F';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_hex_character(&self, stream: &mut Stream) -> bool {
@@ -1251,7 +1251,7 @@ impl Language {
         }
     }
 
-    // «HexLiteral» = "0x" 1…{ «HexCharacter» } { '_' 1…{ «HexCharacter» } } ;
+    // «HexLiteral» = "0x" 1…{«HexCharacter»} {'_' 1…{«HexCharacter»}};
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_hex_literal(&self, stream: &mut Stream) -> bool {
@@ -1280,7 +1280,7 @@ impl Language {
         }
     }
 
-    // «HexStringLiteral» = "hex" ( '"' [ «PossiblySeparatedPairsOfHexDigits» ] '"' | "\'" [ «PossiblySeparatedPairsOfHexDigits» ] "\'" ) ;
+    // «HexStringLiteral» = "hex" ('"' [«PossiblySeparatedPairsOfHexDigits»] '"' | "\'" [«PossiblySeparatedPairsOfHexDigits»] "\'");
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_hex_string_literal(&self, stream: &mut Stream) -> bool {
@@ -1310,7 +1310,7 @@ impl Language {
         }
     }
 
-    // «HoursKeyword» = "hours" ;
+    // «HoursKeyword» = "hours";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_hours_keyword(&self, stream: &mut Stream) -> bool {
@@ -1327,7 +1327,7 @@ impl Language {
         }
     }
 
-    // «Identifier» = «RawIdentifier» - «Keyword» ;
+    // «Identifier» = «RawIdentifier» - «Keyword»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_identifier(&self, stream: &mut Stream) -> bool {
@@ -1340,7 +1340,7 @@ impl Language {
         }
     }
 
-    // «IdentifierPart» = «IdentifierStart» | '0'…'9' ;
+    // «IdentifierPart» = «IdentifierStart» | '0'…'9';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_identifier_part(&self, stream: &mut Stream) -> bool {
@@ -1353,7 +1353,7 @@ impl Language {
         }
     }
 
-    // «IdentifierStart» = '_' | '$' | 'a'…'z' | 'A'…'Z' ;
+    // «IdentifierStart» = '_' | '$' | 'a'…'z' | 'A'…'Z';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_identifier_start(&self, stream: &mut Stream) -> bool {
@@ -1365,7 +1365,7 @@ impl Language {
         }
     }
 
-    // «IfKeyword» = "if" ;
+    // «IfKeyword» = "if";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_if_keyword(&self, stream: &mut Stream) -> bool {
@@ -1382,7 +1382,7 @@ impl Language {
         }
     }
 
-    // «ImmutableKeyword» = "immutable" ;
+    // «ImmutableKeyword» = "immutable";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_immutable_keyword(&self, stream: &mut Stream) -> bool {
@@ -1399,7 +1399,7 @@ impl Language {
         }
     }
 
-    // «ImportKeyword» = "import" ;
+    // «ImportKeyword» = "import";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_import_keyword(&self, stream: &mut Stream) -> bool {
@@ -1416,7 +1416,7 @@ impl Language {
         }
     }
 
-    // «IndexedKeyword» = "indexed" ;
+    // «IndexedKeyword» = "indexed";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_indexed_keyword(&self, stream: &mut Stream) -> bool {
@@ -1433,7 +1433,7 @@ impl Language {
         }
     }
 
-    // «InterfaceKeyword» = "interface" ;
+    // «InterfaceKeyword» = "interface";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_interface_keyword(&self, stream: &mut Stream) -> bool {
@@ -1450,7 +1450,7 @@ impl Language {
         }
     }
 
-    // «InternalKeyword» = "internal" ;
+    // «InternalKeyword» = "internal";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_internal_keyword(&self, stream: &mut Stream) -> bool {
@@ -1467,7 +1467,7 @@ impl Language {
         }
     }
 
-    // «IsKeyword» = "is" ;
+    // «IsKeyword» = "is";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_is_keyword(&self, stream: &mut Stream) -> bool {
@@ -1484,7 +1484,7 @@ impl Language {
         }
     }
 
-    // «Keyword» = "true" | "false" | «FixedBytesType» | «ReservedKeyword» | «SignedIntegerType» | «UnsignedIntegerType» | "days" | "ether" | "finney" | "gwei" | "hours" | "minutes" | "seconds" | "szabo" | "weeks" | "wei" | "years" | "abstract" | "address" | "anonymous" | "as" | "assembly" | "bool" | "break" | "calldata" | "catch" | "constant" | "constructor" | "continue" | "contract" | "delete" | "do" | "else" | "emit" | "enum" | "event" | "external" | "fallback" | "false" | "fixed" | "for" | "function" | "hex" | "if" | "immutable" | "import" | "indexed" | "interface" | "internal" | "is" | "library" | "mapping" | "memory" | "modifier" | "new" | "override" | "payable" | "pragma" | "private" | "public" | "pure" | "receive" | "return" | "returns" | "storage" | "string" | "struct" | "true" | "try" | "type" | "ufixed" | "unchecked" | "using" | "view" | "virtual" | "while" ;
+    // «Keyword» = "true" | "false" | «FixedBytesType» | «ReservedKeyword» | «SignedIntegerType» | «UnsignedIntegerType» | "days" | "ether" | "finney" | "gwei" | "hours" | "minutes" | "seconds" | "szabo" | "weeks" | "wei" | "years" | "abstract" | "address" | "anonymous" | "as" | "assembly" | "bool" | "break" | "calldata" | "catch" | "constant" | "constructor" | "continue" | "contract" | "delete" | "do" | "else" | "emit" | "enum" | "event" | "external" | "fallback" | "false" | "fixed" | "for" | "function" | "hex" | "if" | "immutable" | "import" | "indexed" | "interface" | "internal" | "is" | "library" | "mapping" | "memory" | "modifier" | "new" | "override" | "payable" | "pragma" | "private" | "public" | "pure" | "receive" | "return" | "returns" | "storage" | "string" | "struct" | "true" | "try" | "type" | "ufixed" | "unchecked" | "using" | "view" | "virtual" | "while";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_keyword(&self, stream: &mut Stream) -> bool {
@@ -1755,7 +1755,7 @@ impl Language {
         }
     }
 
-    // «LeaveKeyword» = "leave" ;
+    // «LeaveKeyword» = "leave";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_leave_keyword(&self, stream: &mut Stream) -> bool {
@@ -1772,7 +1772,7 @@ impl Language {
         }
     }
 
-    // «LessThan» = '<' ;
+    // «LessThan» = '<';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_less_than(&self, stream: &mut Stream) -> bool {
@@ -1785,7 +1785,7 @@ impl Language {
         }
     }
 
-    // «LessThanEqual» = "<=" ;
+    // «LessThanEqual» = "<=";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_less_than_equal(&self, stream: &mut Stream) -> bool {
@@ -1794,7 +1794,7 @@ impl Language {
         }
     }
 
-    // «LessThanLessThan» = "<<" ;
+    // «LessThanLessThan» = "<<";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_less_than_less_than(&self, stream: &mut Stream) -> bool {
@@ -1807,7 +1807,7 @@ impl Language {
         }
     }
 
-    // «LessThanLessThanEqual» = "<<=" ;
+    // «LessThanLessThanEqual» = "<<=";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_less_than_less_than_equal(&self, stream: &mut Stream) -> bool {
@@ -1816,7 +1816,7 @@ impl Language {
         }
     }
 
-    // «LetKeyword» = "let" ;
+    // «LetKeyword» = "let";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_let_keyword(&self, stream: &mut Stream) -> bool {
@@ -1833,7 +1833,7 @@ impl Language {
         }
     }
 
-    // «LibraryKeyword» = "library" ;
+    // «LibraryKeyword» = "library";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_library_keyword(&self, stream: &mut Stream) -> bool {
@@ -1850,7 +1850,7 @@ impl Language {
         }
     }
 
-    // «MappingKeyword» = "mapping" ;
+    // «MappingKeyword» = "mapping";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_mapping_keyword(&self, stream: &mut Stream) -> bool {
@@ -1867,7 +1867,7 @@ impl Language {
         }
     }
 
-    // «MemoryKeyword» = "memory" ;
+    // «MemoryKeyword» = "memory";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_memory_keyword(&self, stream: &mut Stream) -> bool {
@@ -1884,7 +1884,7 @@ impl Language {
         }
     }
 
-    // «Minus» = '-' ;
+    // «Minus» = '-';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_minus(&self, stream: &mut Stream) -> bool {
@@ -1897,7 +1897,7 @@ impl Language {
         }
     }
 
-    // «MinusEqual» = "-=" ;
+    // «MinusEqual» = "-=";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_minus_equal(&self, stream: &mut Stream) -> bool {
@@ -1906,7 +1906,7 @@ impl Language {
         }
     }
 
-    // «MinusGreaterThan» = "->" ;
+    // «MinusGreaterThan» = "->";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_minus_greater_than(&self, stream: &mut Stream) -> bool {
@@ -1915,7 +1915,7 @@ impl Language {
         }
     }
 
-    // «MinusMinus» = "--" ;
+    // «MinusMinus» = "--";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_minus_minus(&self, stream: &mut Stream) -> bool {
@@ -1924,7 +1924,7 @@ impl Language {
         }
     }
 
-    // «MinutesKeyword» = "minutes" ;
+    // «MinutesKeyword» = "minutes";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_minutes_keyword(&self, stream: &mut Stream) -> bool {
@@ -1941,7 +1941,7 @@ impl Language {
         }
     }
 
-    // «ModifierKeyword» = "modifier" ;
+    // «ModifierKeyword» = "modifier";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_modifier_keyword(&self, stream: &mut Stream) -> bool {
@@ -1958,7 +1958,7 @@ impl Language {
         }
     }
 
-    // «MultilineComment» = "/*" { ¬'*' | '*' ¬'/' } "*/" ;
+    // «MultilineComment» = "/*" {¬'*' | '*' ¬'/'} "*/";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_multiline_comment(&self, stream: &mut Stream) -> bool {
@@ -1981,7 +1981,7 @@ impl Language {
         }
     }
 
-    // «NewKeyword» = "new" ;
+    // «NewKeyword» = "new";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_new_keyword(&self, stream: &mut Stream) -> bool {
@@ -1998,7 +1998,7 @@ impl Language {
         }
     }
 
-    // «OpenBrace» = '{' ;
+    // «OpenBrace» = '{';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_open_brace(&self, stream: &mut Stream) -> bool {
@@ -2007,7 +2007,7 @@ impl Language {
         }
     }
 
-    // «OpenBracket» = '[' ;
+    // «OpenBracket» = '[';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_open_bracket(&self, stream: &mut Stream) -> bool {
@@ -2016,7 +2016,7 @@ impl Language {
         }
     }
 
-    // «OpenParen» = '(' ;
+    // «OpenParen» = '(';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_open_paren(&self, stream: &mut Stream) -> bool {
@@ -2025,7 +2025,7 @@ impl Language {
         }
     }
 
-    // «OverrideKeyword» = "override" ;
+    // «OverrideKeyword» = "override";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_override_keyword(&self, stream: &mut Stream) -> bool {
@@ -2042,7 +2042,7 @@ impl Language {
         }
     }
 
-    // «PayableKeyword» = "payable" ;
+    // «PayableKeyword» = "payable";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_payable_keyword(&self, stream: &mut Stream) -> bool {
@@ -2059,7 +2059,7 @@ impl Language {
         }
     }
 
-    // «Percent» = '%' ;
+    // «Percent» = '%';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_percent(&self, stream: &mut Stream) -> bool {
@@ -2068,7 +2068,7 @@ impl Language {
         }
     }
 
-    // «PercentEqual» = "%=" ;
+    // «PercentEqual» = "%=";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_percent_equal(&self, stream: &mut Stream) -> bool {
@@ -2077,7 +2077,7 @@ impl Language {
         }
     }
 
-    // «Period» = '.' ;
+    // «Period» = '.';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_period(&self, stream: &mut Stream) -> bool {
@@ -2086,7 +2086,7 @@ impl Language {
         }
     }
 
-    // «Plus» = '+' ;
+    // «Plus» = '+';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_plus(&self, stream: &mut Stream) -> bool {
@@ -2099,7 +2099,7 @@ impl Language {
         }
     }
 
-    // «PlusEqual» = "+=" ;
+    // «PlusEqual» = "+=";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_plus_equal(&self, stream: &mut Stream) -> bool {
@@ -2108,7 +2108,7 @@ impl Language {
         }
     }
 
-    // «PlusPlus» = "++" ;
+    // «PlusPlus» = "++";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_plus_plus(&self, stream: &mut Stream) -> bool {
@@ -2117,7 +2117,7 @@ impl Language {
         }
     }
 
-    // «PossiblySeparatedPairsOfHexDigits» = 2…2{ «HexCharacter» } { [ '_' ] 2…2{ «HexCharacter» } } ;
+    // «PossiblySeparatedPairsOfHexDigits» = 2…2{«HexCharacter»} {['_'] 2…2{«HexCharacter»}};
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_possibly_separated_pairs_of_hex_digits(&self, stream: &mut Stream) -> bool {
@@ -2149,7 +2149,7 @@ impl Language {
         }
     }
 
-    // «PragmaKeyword» = "pragma" ;
+    // «PragmaKeyword» = "pragma";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_pragma_keyword(&self, stream: &mut Stream) -> bool {
@@ -2166,7 +2166,7 @@ impl Language {
         }
     }
 
-    // «PrivateKeyword» = "private" ;
+    // «PrivateKeyword» = "private";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_private_keyword(&self, stream: &mut Stream) -> bool {
@@ -2183,7 +2183,7 @@ impl Language {
         }
     }
 
-    // «PublicKeyword» = "public" ;
+    // «PublicKeyword» = "public";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_public_keyword(&self, stream: &mut Stream) -> bool {
@@ -2200,7 +2200,7 @@ impl Language {
         }
     }
 
-    // «PureKeyword» = "pure" ;
+    // «PureKeyword» = "pure";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_pure_keyword(&self, stream: &mut Stream) -> bool {
@@ -2217,7 +2217,7 @@ impl Language {
         }
     }
 
-    // «QuestionMark» = '?' ;
+    // «QuestionMark» = '?';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_question_mark(&self, stream: &mut Stream) -> bool {
@@ -2226,7 +2226,7 @@ impl Language {
         }
     }
 
-    // «RawIdentifier» = «IdentifierStart» { «IdentifierPart» } ;
+    // «RawIdentifier» = «IdentifierStart» {«IdentifierPart»};
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_raw_identifier(&self, stream: &mut Stream) -> bool {
@@ -2248,7 +2248,7 @@ impl Language {
         }
     }
 
-    // «ReceiveKeyword» = "receive" ;
+    // «ReceiveKeyword» = "receive";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_receive_keyword(&self, stream: &mut Stream) -> bool {
@@ -2265,7 +2265,7 @@ impl Language {
         }
     }
 
-    // «ReservedKeyword» = "after" | "alias" | "apply" | "auto" | "byte" | "case" | "copyof" | "default" | "define" | "final" | "implements" | "in" | "inline" | "let" | "macro" | "match" | "mutable" | "null" | "of" | "partial" | "promise" | "reference" | "relocatable" | "sealed" | "sizeof" | "static" | "supports" | "switch" | "typedef" | "typeof" | "var" ;
+    // «ReservedKeyword» = "after" | "alias" | "apply" | "auto" | "byte" | "case" | "copyof" | "default" | "define" | "final" | "implements" | "in" | "inline" | "let" | "macro" | "match" | "mutable" | "null" | "of" | "partial" | "promise" | "reference" | "relocatable" | "sealed" | "sizeof" | "static" | "supports" | "switch" | "typedef" | "typeof" | "var";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_reserved_keyword(&self, stream: &mut Stream) -> bool {
@@ -2345,7 +2345,7 @@ impl Language {
         }
     }
 
-    // «ReturnKeyword» = "return" ;
+    // «ReturnKeyword» = "return";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_return_keyword(&self, stream: &mut Stream) -> bool {
@@ -2362,7 +2362,7 @@ impl Language {
         }
     }
 
-    // «ReturnsKeyword» = "returns" ;
+    // «ReturnsKeyword» = "returns";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_returns_keyword(&self, stream: &mut Stream) -> bool {
@@ -2379,7 +2379,7 @@ impl Language {
         }
     }
 
-    // «RevertKeyword» = "revert" ;
+    // «RevertKeyword» = "revert";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_revert_keyword(&self, stream: &mut Stream) -> bool {
@@ -2396,7 +2396,7 @@ impl Language {
         }
     }
 
-    // «SecondsKeyword» = "seconds" ;
+    // «SecondsKeyword» = "seconds";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_seconds_keyword(&self, stream: &mut Stream) -> bool {
@@ -2413,7 +2413,7 @@ impl Language {
         }
     }
 
-    // «Semicolon» = ';' ;
+    // «Semicolon» = ';';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_semicolon(&self, stream: &mut Stream) -> bool {
@@ -2422,7 +2422,7 @@ impl Language {
         }
     }
 
-    // «SignedFixedType» = "fixed" [ 1…{ '0'…'9' } 'x' 1…{ '0'…'9' } ] ;
+    // «SignedFixedType» = "fixed" [1…{'0'…'9'} 'x' 1…{'0'…'9'}];
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_signed_fixed_type(&self, stream: &mut Stream) -> bool {
@@ -2455,7 +2455,7 @@ impl Language {
         }
     }
 
-    // «SignedIntegerType» = "int" [ '8' | "16" | "24" | "32" | "40" | "48" | "56" | "64" | "72" | "80" | "88" | "96" | "104" | "112" | "120" | "128" | "136" | "144" | "152" | "160" | "168" | "176" | "184" | "192" | "200" | "208" | "216" | "224" | "232" | "240" | "248" | "256" ] ;
+    // «SignedIntegerType» = "int" ['8' | "16" | "24" | "32" | "40" | "48" | "56" | "64" | "72" | "80" | "88" | "96" | "104" | "112" | "120" | "128" | "136" | "144" | "152" | "160" | "168" | "176" | "184" | "192" | "200" | "208" | "216" | "224" | "232" | "240" | "248" | "256"];
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_signed_integer_type(&self, stream: &mut Stream) -> bool {
@@ -2509,7 +2509,7 @@ impl Language {
         }
     }
 
-    // «SingleLineComment» = "//" { ¬( '\u{d}' | '\u{a}' ) } ;
+    // «SingleLineComment» = "//" {¬('\u{d}' | '\u{a}')};
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_single_line_comment(&self, stream: &mut Stream) -> bool {
@@ -2521,7 +2521,7 @@ impl Language {
         }
     }
 
-    // «SingleQuotedAsciiStringLiteral» = "\'" { «EscapeSequence» | '\u{20}'…'~' - ( "\'" | '\\' ) } "\'" ;
+    // «SingleQuotedAsciiStringLiteral» = "\'" {«EscapeSequence» | '\u{20}'…'~' - ("\'" | '\\')} "\'";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_single_quoted_ascii_string_literal(&self, stream: &mut Stream) -> bool {
@@ -2543,7 +2543,7 @@ impl Language {
         }
     }
 
-    // «SingleQuotedUnicodeStringLiteral» = "unicode\'" { «EscapeSequence» | ¬( "\'" | '\\' | '\u{a}' | '\u{d}' ) } "\'" ;
+    // «SingleQuotedUnicodeStringLiteral» = "unicode\'" {«EscapeSequence» | ¬("\'" | '\\' | '\u{a}' | '\u{d}')} "\'";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_single_quoted_unicode_string_literal(&self, stream: &mut Stream) -> bool {
@@ -2566,7 +2566,7 @@ impl Language {
         }
     }
 
-    // «Slash» = '/' ;
+    // «Slash» = '/';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_slash(&self, stream: &mut Stream) -> bool {
@@ -2575,7 +2575,7 @@ impl Language {
         }
     }
 
-    // «SlashEqual» = "/=" ;
+    // «SlashEqual» = "/=";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_slash_equal(&self, stream: &mut Stream) -> bool {
@@ -2584,7 +2584,7 @@ impl Language {
         }
     }
 
-    // «SolidityKeyword» = "solidity" ;
+    // «SolidityKeyword» = "solidity";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_solidity_keyword(&self, stream: &mut Stream) -> bool {
@@ -2601,7 +2601,7 @@ impl Language {
         }
     }
 
-    // «Star» = '*' ;
+    // «Star» = '*';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_star(&self, stream: &mut Stream) -> bool {
@@ -2614,7 +2614,7 @@ impl Language {
         }
     }
 
-    // «StarEqual» = "*=" ;
+    // «StarEqual» = "*=";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_star_equal(&self, stream: &mut Stream) -> bool {
@@ -2623,7 +2623,7 @@ impl Language {
         }
     }
 
-    // «StarStar» = "**" ;
+    // «StarStar» = "**";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_star_star(&self, stream: &mut Stream) -> bool {
@@ -2632,7 +2632,7 @@ impl Language {
         }
     }
 
-    // «StorageKeyword» = "storage" ;
+    // «StorageKeyword» = "storage";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_storage_keyword(&self, stream: &mut Stream) -> bool {
@@ -2649,7 +2649,7 @@ impl Language {
         }
     }
 
-    // «StringKeyword» = "string" ;
+    // «StringKeyword» = "string";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_string_keyword(&self, stream: &mut Stream) -> bool {
@@ -2666,7 +2666,7 @@ impl Language {
         }
     }
 
-    // «StructKeyword» = "struct" ;
+    // «StructKeyword» = "struct";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_struct_keyword(&self, stream: &mut Stream) -> bool {
@@ -2683,7 +2683,7 @@ impl Language {
         }
     }
 
-    // «SwitchKeyword» = "switch" ;
+    // «SwitchKeyword» = "switch";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_switch_keyword(&self, stream: &mut Stream) -> bool {
@@ -2700,7 +2700,7 @@ impl Language {
         }
     }
 
-    // «SzaboKeyword» = "szabo" ;
+    // «SzaboKeyword» = "szabo";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_szabo_keyword(&self, stream: &mut Stream) -> bool {
@@ -2717,7 +2717,7 @@ impl Language {
         }
     }
 
-    // «Tilde» = '~' ;
+    // «Tilde» = '~';
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_tilde(&self, stream: &mut Stream) -> bool {
@@ -2726,7 +2726,7 @@ impl Language {
         }
     }
 
-    // «TrueKeyword» = "true" ;
+    // «TrueKeyword» = "true";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_true_keyword(&self, stream: &mut Stream) -> bool {
@@ -2743,7 +2743,7 @@ impl Language {
         }
     }
 
-    // «TryKeyword» = "try" ;
+    // «TryKeyword» = "try";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_try_keyword(&self, stream: &mut Stream) -> bool {
@@ -2760,7 +2760,7 @@ impl Language {
         }
     }
 
-    // «TypeKeyword» = "type" ;
+    // «TypeKeyword» = "type";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_type_keyword(&self, stream: &mut Stream) -> bool {
@@ -2777,7 +2777,7 @@ impl Language {
         }
     }
 
-    // «UncheckedKeyword» = "unchecked" ;
+    // «UncheckedKeyword» = "unchecked";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_unchecked_keyword(&self, stream: &mut Stream) -> bool {
@@ -2794,7 +2794,7 @@ impl Language {
         }
     }
 
-    // «UnicodeEscape» = 'u' 4…4{ «HexCharacter» } ;
+    // «UnicodeEscape» = 'u' 4…4{«HexCharacter»};
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_unicode_escape(&self, stream: &mut Stream) -> bool {
@@ -2813,7 +2813,7 @@ impl Language {
         }
     }
 
-    // «UnicodeStringLiteral» = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral» ;
+    // «UnicodeStringLiteral» = «SingleQuotedUnicodeStringLiteral» | «DoubleQuotedUnicodeStringLiteral»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_unicode_string_literal(&self, stream: &mut Stream) -> bool {
@@ -2826,7 +2826,7 @@ impl Language {
         }
     }
 
-    // «UnsignedFixedType» = 'u' «SignedFixedType» ;
+    // «UnsignedFixedType» = 'u' «SignedFixedType»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_unsigned_fixed_type(&self, stream: &mut Stream) -> bool {
@@ -2838,7 +2838,7 @@ impl Language {
         }
     }
 
-    // «UnsignedIntegerType» = 'u' «SignedIntegerType» ;
+    // «UnsignedIntegerType» = 'u' «SignedIntegerType»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_unsigned_integer_type(&self, stream: &mut Stream) -> bool {
@@ -2850,7 +2850,7 @@ impl Language {
         }
     }
 
-    // «UsingKeyword» = "using" ;
+    // «UsingKeyword» = "using";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_using_keyword(&self, stream: &mut Stream) -> bool {
@@ -2867,7 +2867,7 @@ impl Language {
         }
     }
 
-    // «VersionPragmaOperator» = '^' | '~' | '=' | '<' | '>' | "<=" | ">=" ;
+    // «VersionPragmaOperator» = '^' | '~' | '=' | '<' | '>' | "<=" | ">=";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_version_pragma_operator(&self, stream: &mut Stream) -> bool {
@@ -2881,7 +2881,7 @@ impl Language {
         }
     }
 
-    // «VersionPragmaValue» = 1…{ '0'…'9' | 'x' | 'X' | '*' } ;
+    // «VersionPragmaValue» = 1…{'0'…'9' | 'x' | 'X' | '*'};
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_version_pragma_value(&self, stream: &mut Stream) -> bool {
@@ -2896,7 +2896,7 @@ impl Language {
         }
     }
 
-    // «ViewKeyword» = "view" ;
+    // «ViewKeyword» = "view";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_view_keyword(&self, stream: &mut Stream) -> bool {
@@ -2913,7 +2913,7 @@ impl Language {
         }
     }
 
-    // «VirtualKeyword» = "virtual" ;
+    // «VirtualKeyword» = "virtual";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_virtual_keyword(&self, stream: &mut Stream) -> bool {
@@ -2930,7 +2930,7 @@ impl Language {
         }
     }
 
-    // «WeeksKeyword» = "weeks" ;
+    // «WeeksKeyword» = "weeks";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_weeks_keyword(&self, stream: &mut Stream) -> bool {
@@ -2947,7 +2947,7 @@ impl Language {
         }
     }
 
-    // «WeiKeyword» = "wei" ;
+    // «WeiKeyword» = "wei";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_wei_keyword(&self, stream: &mut Stream) -> bool {
@@ -2964,7 +2964,7 @@ impl Language {
         }
     }
 
-    // «WhileKeyword» = "while" ;
+    // «WhileKeyword» = "while";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_while_keyword(&self, stream: &mut Stream) -> bool {
@@ -2981,7 +2981,7 @@ impl Language {
         }
     }
 
-    // «Whitespace» = 1…{ '\u{20}' | '\u{9}' } ;
+    // «Whitespace» = 1…{'\u{20}' | '\u{9}'};
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_whitespace(&self, stream: &mut Stream) -> bool {
@@ -2990,7 +2990,7 @@ impl Language {
         }
     }
 
-    // «YearsKeyword» = "years" ;
+    // «YearsKeyword» = "years";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_years_keyword(&self, stream: &mut Stream) -> bool {
@@ -3007,7 +3007,7 @@ impl Language {
         }
     }
 
-    // «YulDecimalLiteral» = '0' | '1'…'9' { '0'…'9' } ;
+    // «YulDecimalLiteral» = '0' | '1'…'9' {'0'…'9'};
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_yul_decimal_literal(&self, stream: &mut Stream) -> bool {
@@ -3023,7 +3023,7 @@ impl Language {
         }
     }
 
-    // «YulHexLiteral» = "0x" 1…{ «HexCharacter» } ;
+    // «YulHexLiteral» = "0x" 1…{«HexCharacter»};
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_yul_hex_literal(&self, stream: &mut Stream) -> bool {
@@ -3040,7 +3040,7 @@ impl Language {
         }
     }
 
-    // «YulIdentifier» = «RawIdentifier» - «YulKeyword» ;
+    // «YulIdentifier» = «RawIdentifier» - «YulKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_yul_identifier(&self, stream: &mut Stream) -> bool {
@@ -3076,7 +3076,7 @@ impl Language {
         }
     }
 
-    // «YulKeyword» = "false" | "true" | "break" | "case" | "continue" | "default" | "for" | "function" | "hex" | "if" | "leave" | "let" | "switch" ;
+    // «YulKeyword» = "false" | "true" | "break" | "case" | "continue" | "default" | "for" | "function" | "hex" | "if" | "leave" | "let" | "switch";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_yul_keyword(&self, stream: &mut Stream) -> bool {

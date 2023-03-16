@@ -1,5 +1,7 @@
 mod grammar;
-mod public;
+mod markdown;
+mod navigation;
+mod pages;
 mod snippets;
 
 use std::path::PathBuf;
@@ -8,7 +10,7 @@ use anyhow::Result;
 use codegen_schema::types::grammar::Grammar;
 use codegen_utils::context::CodegenContext;
 
-use crate::{public::PublicPages, snippets::Snippets};
+use crate::{pages::PublicPages, snippets::Snippets};
 
 pub trait GrammarSpecGeneratorExtensions {
     fn generate_spec(&self, codegen: &mut CodegenContext, output_dir: &PathBuf) -> Result<()>;
