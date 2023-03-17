@@ -4,8 +4,8 @@ use crate::{types, yaml::cst};
 
 use super::{
     node::Node,
-    parser::ParserDefinition,
-    production::{ConcreteAbstractPair, Reference},
+    parser::{Parser, ParserDefinition, ParserRef},
+    production::ConcreteAbstractPair,
 };
 
 pub type PrecedenceParserRef = Rc<PrecedenceParser>;
@@ -30,7 +30,7 @@ impl ConcreteAbstractPair for PrecedenceParser {
 
 pub struct PrecedenceParserDefinition {
     pub operators: Vec<Node<OperatorDefinition>>,
-    pub primary_expressions: Vec<Node<Reference>>,
+    pub primary_expression: ParserRef,
 }
 
 impl PrecedenceParserDefinition {
@@ -43,12 +43,10 @@ impl PrecedenceParserDefinition {
                 let cst_node = cst_node.field("operators");
                 cst_node.zip(value.operators, OperatorDefinition::new)
             },
-            primary_expressions: {
-                let cst_node = cst_node.field("primaryExpressions");
-                cst_node
-                    .value
-                    .zip(value.primary_expressions, Reference::new)
-            },
+            primary_expression: Parser::new(
+                &cst_node.value_of_field("primaryExpression"),
+                value.primary_expression,
+            ),
         };
     }
 }

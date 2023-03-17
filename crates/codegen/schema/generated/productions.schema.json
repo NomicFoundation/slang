@@ -507,7 +507,7 @@
     },
     "PrecedenceParser": {
       "type": "object",
-      "required": ["operators", "primaryExpressions"],
+      "required": ["operators", "primaryExpression"],
       "properties": {
         "name": {
           "default": null,
@@ -520,12 +520,13 @@
             "$ref": "#/definitions/OperatorDefinition"
           }
         },
-        "primaryExpressions": {
-          "title": "Primary Expression References",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Reference"
-          }
+        "primaryExpression": {
+          "title": "Primary Expression",
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Parser"
+            }
+          ]
         }
       }
     },

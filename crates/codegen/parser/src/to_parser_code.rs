@@ -305,7 +305,7 @@ impl<'context> CombinatorNode<'context> {
              * Precedence parsing
              */
             Self::PrecedenceExpressionRule {
-                primary_expressions,
+                primary_expression,
                 operators,
                 ..
             } => {
@@ -450,29 +450,15 @@ impl<'context> CombinatorNode<'context> {
                     }
                 });
 
-                let primary_expressions = maybe_choice(
-                    primary_expressions
-                        .iter()
-                        .map(|tree| {
-                            let function_name = format_ident!(
-                                "parse_{name}",
-                                name = tree.production.name().to_snake_case()
-                            );
-                            quote! { self.#function_name(stream) }
-                        })
-                        .collect::<Vec<_>>(),
-                )
-                .map(|primary_expressions| {
+                let primary_expression = {
+                    let primary_expression = primary_expression.to_parser_code(is_trivia, code);
                     quote! {
-                        match #primary_expressions {
+                        match #primary_expression {
                             Fail{ error } => break Some(error),
                             Pass{ node, .. } => elements.push(Pratt::Node(node)),
                         }
                     }
-                })
-                .expect(
-                    "Validation should have ensured that we have at least one primary expression",
-                );
+                };
 
                 quote! {
                     {
@@ -488,7 +474,7 @@ impl<'context> CombinatorNode<'context> {
                         let mut elements = Vec::new();
                         if let Some(error) = loop {
                             #prefix_operators
-                            #primary_expressions
+                            #primary_expression
                             #postfix_operators
                             #binary_operators
                         } {

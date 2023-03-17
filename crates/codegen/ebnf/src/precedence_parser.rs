@@ -30,9 +30,12 @@ impl GenerateEbnf for PrecedenceParserRef {
             alternatives.push(EbnfNode::statement(operator.name.to_owned(), operator_body));
         }
 
-        for primary_expression in &self.definition.primary_expressions {
-            alternatives.push(EbnfNode::reference(primary_expression.reference.to_owned()));
-        }
+        alternatives.push(
+            self.definition
+                .primary_expression
+                .definition
+                .generate_ebnf(),
+        );
 
         return EbnfNode::alternatives(alternatives);
     }
