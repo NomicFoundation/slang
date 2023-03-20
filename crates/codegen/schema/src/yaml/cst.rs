@@ -29,7 +29,7 @@ pub struct NodeField {
 }
 
 impl Node {
-    pub fn range<'a>(&'a self) -> &'a Range {
+    pub fn range(&self) -> &Range {
         return match self {
             Node::Value { range, .. } | Node::Array { range, .. } | Node::Object { range, .. } => {
                 range
@@ -37,7 +37,7 @@ impl Node {
         };
     }
 
-    pub fn pinpoint<'a>(&'a self, position: &Position) -> Option<&'a Node> {
+    pub fn pinpoint<'a>(&self, position: &Position) -> Option<&Node> {
         if !position.inside(&self.range()) {
             return None;
         }

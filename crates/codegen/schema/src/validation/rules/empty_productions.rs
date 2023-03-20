@@ -1,13 +1,8 @@
 use codegen_utils::errors::CodegenErrors;
 
-use crate::validation::{
-    ast::{
-        parser::{ParserDefinition, ParserRef},
-        precedence_parser::PrecedenceParserRef,
-        scanner::{ScannerDefinition, ScannerRef},
-        visitors::{Reporter, Visitor, VisitorExtensions, VisitorResponse},
-    },
-    Model,
+use crate::{
+    validation::model::Model,
+    visitor::{Visitor, VisitorResponse},
 };
 
 pub fn check(model: &Model, errors: &mut CodegenErrors) {

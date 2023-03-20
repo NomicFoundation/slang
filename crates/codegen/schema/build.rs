@@ -5,17 +5,16 @@ use anyhow::Result;
 use codegen_utils::context::CodegenContext;
 use schemars::{schema_for, JsonSchema};
 use serde_json::Value;
-
-use crate::types::manifest::{ManifestFile, ProductionsFile};
+use types::{manifest::Manifest, production::ProductionRef};
 
 fn main() -> Result<()> {
     return CodegenContext::with_context(|codegen| {
-        write_schema_file::<ManifestFile>(
+        write_schema_file::<Manifest>(
             codegen,
             "crates/codegen/schema/generated/manifest.schema.json",
         )?;
 
-        write_schema_file::<ProductionsFile>(
+        write_schema_file::<Vec<ProductionRef>>(
             codegen,
             "crates/codegen/schema/generated/productions.schema.json",
         )?;
@@ -24,11 +23,11 @@ fn main() -> Result<()> {
     });
 }
 
-fn write_schema_file<TSchema: JsonSchema>(
+fn write_schema_file<S: JsonSchema>(
     codegen: &mut CodegenContext,
     relative_path: &str,
 ) -> Result<()> {
-    let schema = schema_for!(TSchema);
+    let schema = schema_for!(S);
 
     let schema_json = {
         // The serde validation is our source of truth, and would run strict validation.

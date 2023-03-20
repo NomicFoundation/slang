@@ -1,98 +1,82 @@
 use std::collections::HashSet;
 
-use codegen_utils::errors::CodegenErrors;
 use semver::Version;
 
 use crate::{
-    validation::{
-        ast::{
-            files::ManifestFile,
-            node::Node,
-            production::ProductionRef,
-            visitors::{Reporter, Visitor, VisitorExtensions, VisitorResponse},
-        },
-        Model,
-    },
+    types::manifest::Manifest,
+    types::production::ProductionRef,
+    validation::Model,
+    visitor::{Visitor, VisitorResponse},
     yaml::cst,
 };
 
-pub fn check(model: &Model, errors: &mut CodegenErrors) {
-    let mut visitor = VersionsChecker::new(model);
+use super::Reporter;
 
-    visitor.visit(model, errors);
+pub fn check(model: &Model, reporter: Reporter) {
+    let mut visitor = VersionsChecker::new(model, reporter);
+    visitor.visit(model);
 }
 
-struct VersionsChecker<'v> {
-    manifest_versions: HashSet<&'v Version>,
+struct VersionsChecker<'r> {
+    manifest_versions: HashSet<Version>,
+    reporter: Reporter<'r>,
 }
 
-impl<'v> VersionsChecker<'v> {
-    fn new(model: &'v Model) -> Self {
+impl<'r> VersionsChecker<'r> {
+    fn new(model: &Model, reporter: Reporter) -> Self {
         let manifest_versions = model
             .manifest_file
             .ast
             .value
             .versions
             .iter()
-            .map(|version| &version.value)
+            .map(|version| version.value.clone())
             .collect();
 
-        return Self { manifest_versions };
+        return Self {
+            manifest_versions,
+            reporter,
+        };
     }
 }
 
 impl Visitor for VersionsChecker<'_> {
-    fn visit_manifest(
-        &mut self,
-        manifest_file: &ManifestFile,
-        reporter: &mut Reporter,
-    ) -> VisitorResponse {
-        let manifest = &manifest_file.ast.value;
-
+    fn visit_manifest(&mut self, manifest: &Manifest) -> VisitorResponse {
         self.check_order(
             &manifest.title.cst_node,
             &manifest.versions.iter().collect(),
-            reporter,
         );
 
         return VisitorResponse::StepOut;
     }
 
-    fn visit_production(
-        &mut self,
-        production: &ProductionRef,
-        reporter: &mut Reporter,
-    ) -> VisitorResponse {
+    fn visit_production(&mut self, production: &ProductionRef) -> VisitorResponse {
         if let Some(versions) = production.versions() {
             for version in &versions {
                 let Node { cst_node, value } = version;
                 if !self.manifest_versions.contains(value) {
-                    reporter.report(cst_node, Errors::Unknown(value.to_owned()));
+                    self.reporter
+                        .report(cst_node, Errors::Unknown(value.to_owned()));
                 }
             }
-            self.check_order(&production.version_map_cst_node(), &versions, reporter);
+            self.check_order(&production.version_map_cst_node(), &versions);
         }
 
         return VisitorResponse::StepOut;
     }
 }
 
-impl<'v> VersionsChecker<'v> {
-    fn check_order(
-        &self,
-        parent_node: &cst::NodeRef,
-        versions: &Vec<&Node<Version>>,
-        reporter: &mut Reporter,
-    ) {
+impl VersionsChecker<'_> {
+    fn check_order(&self, parent_node: &cst::NodeRef, versions: &Vec<&Node<Version>>) {
         if versions.is_empty() {
-            reporter.report(&parent_node, Errors::Empty);
+            self.reporter.report(&parent_node, Errors::Empty);
             return;
         }
 
         for window in versions.windows(2) {
             if let [current, next] = window {
                 if current.value >= next.value {
-                    reporter.report(&next.cst_node, Errors::NotSorted);
+                    self.reporter.report(&next.cst_node, Errors::NotSorted);
                     break;
                 }
             } else {

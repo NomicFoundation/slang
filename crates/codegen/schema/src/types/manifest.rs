@@ -2,12 +2,6 @@ use schemars::JsonSchema;
 use semver::Version;
 use serde::{Deserialize, Serialize};
 
-use super::production::ProductionRef;
-
-pub type ManifestFile = Manifest;
-
-pub type ProductionsFile = Vec<ProductionRef>;
-
 #[derive(Deserialize, Serialize, JsonSchema, Clone, Debug)]
 #[serde(deny_unknown_fields, rename_all = "camelCase")]
 pub struct Manifest {
