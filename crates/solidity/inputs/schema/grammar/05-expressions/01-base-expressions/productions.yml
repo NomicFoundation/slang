@@ -23,7 +23,7 @@
 
         - name: "ConditionalExpression"
           model: "UnaryPostfix"
-          sequence: # This subsequence forms the correct CST for the postfix expression parser
+          sequence:
             - reference: "QuestionMark"
             - reference: "Expression"
             - reference: "Colon"
@@ -161,7 +161,7 @@
 
         - name: "ConditionalExpression"
           model: "UnaryPostfix"
-          sequence: # This subsequence forms the correct CST for the postfix expression parser
+          sequence:
             - reference: "QuestionMark"
             - reference: "Expression"
             - reference: "Colon"
