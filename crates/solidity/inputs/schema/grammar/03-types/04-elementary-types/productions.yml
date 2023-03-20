@@ -30,8 +30,6 @@
 - name: "FixedBytesType"
   kind: "Scanner"
   unversioned:
-    # Without this lookahead, for inputs like "bytes321", it will parse "bytes32" successfully, passing on the remaining "1".
-    # With it, it will fail to parse "bytes321" at all, since the lookahead will not succeed at "1".
     trailingContext:
       expression:
         sequence:
@@ -75,8 +73,6 @@
 - name: "SignedIntegerType"
   kind: "Scanner"
   unversioned:
-    # Without this lookahead, for inputs like "int81", it will parse "int8" successfully, passing on the remaining "1".
-    # With it, it will fail to parse "int81" at all, since the lookahead will not succeed at "1".
     trailingContext:
       expression:
         sequence:
