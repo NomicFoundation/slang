@@ -3,5 +3,5 @@
 <!-- markdownlint-disable first-line-h1 -->
 
 ```{ .ebnf .slang-ebnf #VersionPragmaSpecifier }
-VersionPragmaSpecifier = [«VersionPragmaOperator»] «VersionPragmaValue» {«Period» «VersionPragmaValue»};
+VersionPragmaSpecifier = [VersionPragmaOperator] «VersionPragmaValue» {«Period» «VersionPragmaValue»};
 ```

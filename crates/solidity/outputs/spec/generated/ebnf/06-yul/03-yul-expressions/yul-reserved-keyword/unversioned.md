@@ -2,6 +2,6 @@
 
 <!-- markdownlint-disable first-line-h1 -->
 
-```{ .ebnf .slang-ebnf #YulIdentifier }
-«YulIdentifier» = «RawIdentifier» - («YulKeyword» | «YulReservedKeyword»);
+```{ .ebnf .slang-ebnf #YulReservedKeyword }
+«YulReservedKeyword» = "hex";
 ```

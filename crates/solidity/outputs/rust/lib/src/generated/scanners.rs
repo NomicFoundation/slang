@@ -1327,7 +1327,7 @@ impl Language {
         }
     }
 
-    // «Identifier» = «RawIdentifier» - «Keyword»;
+    // «Identifier» = «RawIdentifier» - («Keyword» | «ReservedKeyword» | «FixedBytesType» | «SignedFixedType» | «UnsignedFixedType» | «SignedIntegerType» | «UnsignedIntegerType»);
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_identifier(&self, stream: &mut Stream) -> bool {
@@ -1335,7 +1335,79 @@ impl Language {
             scan_difference!(
                 stream,
                 self.scan_raw_identifier(stream),
-                self.scan_keyword(stream)
+                scan_choice!(
+                    stream,
+                    self.scan_keyword(stream),
+                    scan_trie!(
+                        stream,
+                        'a' + scan_trie!(
+                            stream,
+                            'f' + scan_chars!(stream, 't', 'e', 'r'),
+                            'l' + scan_chars!(stream, 'i', 'a', 's'),
+                            'p' + scan_chars!(stream, 'p', 'l', 'y'),
+                            'u' + scan_chars!(stream, 't', 'o')
+                        ),
+                        'b' + scan_chars!(stream, 'y', 't', 'e'),
+                        'c' + scan_chars!(stream, 'o', 'p', 'y', 'o', 'f'),
+                        'd' + scan_chars!(stream, 'e', 'f', 'i', 'n', 'e'),
+                        'f' + scan_chars!(stream, 'i', 'n', 'a', 'l'),
+                        'h' + scan_chars!(stream, 'e', 'x'),
+                        'i' + scan_trie!(
+                            stream,
+                            'm' + scan_chars!(stream, 'p', 'l', 'e', 'm', 'e', 'n', 't', 's'),
+                            'n' + scan_trie!(
+                                stream,
+                                EMPTY,
+                                'l' + scan_chars!(stream, 'i', 'n', 'e')
+                            )
+                        ),
+                        'm' + scan_trie!(
+                            stream,
+                            'a' + scan_trie!(
+                                stream,
+                                'c' + scan_chars!(stream, 'r', 'o'),
+                                't' + scan_chars!(stream, 'c', 'h')
+                            ),
+                            'u' + scan_chars!(stream, 't', 'a', 'b', 'l', 'e')
+                        ),
+                        'n' + scan_chars!(stream, 'u', 'l', 'l'),
+                        'o' + scan_chars!(stream, 'f'),
+                        'p' + scan_trie!(
+                            stream,
+                            'a' + scan_chars!(stream, 'r', 't', 'i', 'a', 'l'),
+                            'r' + scan_chars!(stream, 'o', 'm', 'i', 's', 'e')
+                        ),
+                        'r' + scan_sequence!(
+                            scan_chars!(stream, 'e'),
+                            scan_trie!(
+                                stream,
+                                'f' + scan_chars!(stream, 'e', 'r', 'e', 'n', 'c', 'e'),
+                                'l' + scan_chars!(stream, 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e')
+                            )
+                        ),
+                        's' + scan_trie!(
+                            stream,
+                            'e' + scan_chars!(stream, 'a', 'l', 'e', 'd'),
+                            'i' + scan_chars!(stream, 'z', 'e', 'o', 'f'),
+                            't' + scan_chars!(stream, 'a', 't', 'i', 'c'),
+                            'u' + scan_chars!(stream, 'p', 'p', 'o', 'r', 't', 's')
+                        ),
+                        't' + scan_sequence!(
+                            scan_chars!(stream, 'y', 'p', 'e'),
+                            scan_trie!(
+                                stream,
+                                'd' + scan_chars!(stream, 'e', 'f'),
+                                'o' + scan_chars!(stream, 'f')
+                            )
+                        ),
+                        'v' + scan_chars!(stream, 'a', 'r')
+                    ),
+                    self.scan_fixed_bytes_type(stream),
+                    self.scan_signed_fixed_type(stream),
+                    self.scan_unsigned_fixed_type(stream),
+                    self.scan_signed_integer_type(stream),
+                    self.scan_unsigned_integer_type(stream)
+                )
             )
         }
     }
@@ -1484,273 +1556,84 @@ impl Language {
         }
     }
 
-    // «Keyword» = "true" | "false" | «FixedBytesType» | «ReservedKeyword» | «SignedIntegerType» | «UnsignedIntegerType» | "days" | "ether" | "finney" | "gwei" | "hours" | "minutes" | "seconds" | "szabo" | "weeks" | "wei" | "years" | "abstract" | "address" | "anonymous" | "as" | "assembly" | "bool" | "break" | "calldata" | "catch" | "constant" | "constructor" | "continue" | "contract" | "delete" | "do" | "else" | "emit" | "enum" | "event" | "external" | "fallback" | "false" | "fixed" | "for" | "function" | "hex" | "if" | "immutable" | "import" | "indexed" | "interface" | "internal" | "is" | "library" | "mapping" | "memory" | "modifier" | "new" | "override" | "payable" | "pragma" | "private" | "public" | "pure" | "receive" | "return" | "returns" | "storage" | "string" | "struct" | "true" | "try" | "type" | "ufixed" | "unchecked" | "using" | "view" | "virtual" | "while";
+    // «Keyword» = «AbstractKeyword» | «AddressKeyword» | «AnonymousKeyword» | «AsKeyword» | «AssemblyKeyword» | «BoolKeyword» | «BreakKeyword» | «CalldataKeyword» | «CaseKeyword» | «CatchKeyword» | «ConstantKeyword» | «ConstructorKeyword» | «ContinueKeyword» | «ContractKeyword» | «DaysKeyword» | «DefaultKeyword» | «DeleteKeyword» | «DoKeyword» | «ElseKeyword» | «EmitKeyword» | «EnumKeyword» | «EtherKeyword» | «EventKeyword» | «ExternalKeyword» | «FallbackKeyword» | «FalseKeyword» | «FinneyKeyword» | «ForKeyword» | «FunctionKeyword» | «GweiKeyword» | «HoursKeyword» | «IfKeyword» | «ImmutableKeyword» | «ImportKeyword» | «IndexedKeyword» | «InterfaceKeyword» | «InternalKeyword» | «IsKeyword» | «LetKeyword» | «LibraryKeyword» | «MappingKeyword» | «MemoryKeyword» | «MinutesKeyword» | «ModifierKeyword» | «NewKeyword» | «OverrideKeyword» | «PayableKeyword» | «PragmaKeyword» | «PrivateKeyword» | «PublicKeyword» | «PureKeyword» | «ReceiveKeyword» | «ReturnKeyword» | «ReturnsKeyword» | «SecondsKeyword» | «StorageKeyword» | «StringKeyword» | «StructKeyword» | «SwitchKeyword» | «SzaboKeyword» | «TrueKeyword» | «TryKeyword» | «TypeKeyword» | «UncheckedKeyword» | «UsingKeyword» | «ViewKeyword» | «VirtualKeyword» | «WeeksKeyword» | «WeiKeyword» | «WhileKeyword» | «YearsKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_keyword(&self, stream: &mut Stream) -> bool {
         {
             scan_choice!(
                 stream,
-                scan_trie!(
-                    stream,
-                    'f' + scan_chars!(stream, 'a', 'l', 's', 'e'),
-                    't' + scan_chars!(stream, 'r', 'u', 'e')
-                ),
-                self.scan_fixed_bytes_type(stream),
-                scan_trie!(
-                    stream,
-                    'a' + scan_trie!(
-                        stream,
-                        'f' + scan_chars!(stream, 't', 'e', 'r'),
-                        'l' + scan_chars!(stream, 'i', 'a', 's'),
-                        'p' + scan_chars!(stream, 'p', 'l', 'y'),
-                        'u' + scan_chars!(stream, 't', 'o')
-                    ),
-                    'b' + scan_chars!(stream, 'y', 't', 'e'),
-                    'c' + scan_trie!(
-                        stream,
-                        'a' + scan_chars!(stream, 's', 'e'),
-                        'o' + scan_chars!(stream, 'p', 'y', 'o', 'f')
-                    ),
-                    'd' + scan_sequence!(
-                        scan_chars!(stream, 'e', 'f'),
-                        scan_trie!(
-                            stream,
-                            'a' + scan_chars!(stream, 'u', 'l', 't'),
-                            'i' + scan_chars!(stream, 'n', 'e')
-                        )
-                    ),
-                    'f' + scan_chars!(stream, 'i', 'n', 'a', 'l'),
-                    'i' + scan_trie!(
-                        stream,
-                        'm' + scan_chars!(stream, 'p', 'l', 'e', 'm', 'e', 'n', 't', 's'),
-                        'n' + scan_trie!(stream, EMPTY, 'l' + scan_chars!(stream, 'i', 'n', 'e'))
-                    ),
-                    'l' + scan_chars!(stream, 'e', 't'),
-                    'm' + scan_trie!(
-                        stream,
-                        'a' + scan_trie!(
-                            stream,
-                            'c' + scan_chars!(stream, 'r', 'o'),
-                            't' + scan_chars!(stream, 'c', 'h')
-                        ),
-                        'u' + scan_chars!(stream, 't', 'a', 'b', 'l', 'e')
-                    ),
-                    'n' + scan_chars!(stream, 'u', 'l', 'l'),
-                    'o' + scan_chars!(stream, 'f'),
-                    'p' + scan_trie!(
-                        stream,
-                        'a' + scan_chars!(stream, 'r', 't', 'i', 'a', 'l'),
-                        'r' + scan_chars!(stream, 'o', 'm', 'i', 's', 'e')
-                    ),
-                    'r' + scan_sequence!(
-                        scan_chars!(stream, 'e'),
-                        scan_trie!(
-                            stream,
-                            'f' + scan_chars!(stream, 'e', 'r', 'e', 'n', 'c', 'e'),
-                            'l' + scan_chars!(stream, 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e')
-                        )
-                    ),
-                    's' + scan_trie!(
-                        stream,
-                        'e' + scan_chars!(stream, 'a', 'l', 'e', 'd'),
-                        'i' + scan_chars!(stream, 'z', 'e', 'o', 'f'),
-                        't' + scan_chars!(stream, 'a', 't', 'i', 'c'),
-                        'u' + scan_chars!(stream, 'p', 'p', 'o', 'r', 't', 's'),
-                        'w' + scan_chars!(stream, 'i', 't', 'c', 'h')
-                    ),
-                    't' + scan_sequence!(
-                        scan_chars!(stream, 'y', 'p', 'e'),
-                        scan_trie!(
-                            stream,
-                            'd' + scan_chars!(stream, 'e', 'f'),
-                            'o' + scan_chars!(stream, 'f')
-                        )
-                    ),
-                    'v' + scan_chars!(stream, 'a', 'r')
-                ),
-                self.scan_signed_integer_type(stream),
-                self.scan_unsigned_integer_type(stream),
-                scan_trie!(
-                    stream,
-                    'a' + scan_trie!(
-                        stream,
-                        'b' + scan_chars!(stream, 's', 't', 'r', 'a', 'c', 't'),
-                        'd' + scan_chars!(stream, 'd', 'r', 'e', 's', 's'),
-                        'n' + scan_chars!(stream, 'o', 'n', 'y', 'm', 'o', 'u', 's'),
-                        's' + scan_trie!(
-                            stream,
-                            EMPTY,
-                            's' + scan_chars!(stream, 'e', 'm', 'b', 'l', 'y')
-                        )
-                    ),
-                    'b' + scan_trie!(
-                        stream,
-                        'o' + scan_chars!(stream, 'o', 'l'),
-                        'r' + scan_chars!(stream, 'e', 'a', 'k')
-                    ),
-                    'c' + scan_trie!(
-                        stream,
-                        'a' + scan_trie!(
-                            stream,
-                            'l' + scan_chars!(stream, 'l', 'd', 'a', 't', 'a'),
-                            't' + scan_chars!(stream, 'c', 'h')
-                        ),
-                        'o' + scan_sequence!(
-                            scan_chars!(stream, 'n'),
-                            scan_trie!(
-                                stream,
-                                's' + scan_sequence!(
-                                    scan_chars!(stream, 't'),
-                                    scan_trie!(
-                                        stream,
-                                        'a' + scan_chars!(stream, 'n', 't'),
-                                        'r' + scan_chars!(stream, 'u', 'c', 't', 'o', 'r')
-                                    )
-                                ),
-                                't' + scan_trie!(
-                                    stream,
-                                    'i' + scan_chars!(stream, 'n', 'u', 'e'),
-                                    'r' + scan_chars!(stream, 'a', 'c', 't')
-                                )
-                            )
-                        )
-                    ),
-                    'd' + scan_trie!(
-                        stream,
-                        ['o'],
-                        'a' + scan_chars!(stream, 'y', 's'),
-                        'e' + scan_chars!(stream, 'l', 'e', 't', 'e')
-                    ),
-                    'e' + scan_trie!(
-                        stream,
-                        'l' + scan_chars!(stream, 's', 'e'),
-                        'm' + scan_chars!(stream, 'i', 't'),
-                        'n' + scan_chars!(stream, 'u', 'm'),
-                        't' + scan_chars!(stream, 'h', 'e', 'r'),
-                        'v' + scan_chars!(stream, 'e', 'n', 't'),
-                        'x' + scan_chars!(stream, 't', 'e', 'r', 'n', 'a', 'l')
-                    ),
-                    'f' + scan_trie!(
-                        stream,
-                        'a' + scan_sequence!(
-                            scan_chars!(stream, 'l'),
-                            scan_trie!(
-                                stream,
-                                'l' + scan_chars!(stream, 'b', 'a', 'c', 'k'),
-                                's' + scan_chars!(stream, 'e')
-                            )
-                        ),
-                        'i' + scan_trie!(
-                            stream,
-                            'n' + scan_chars!(stream, 'n', 'e', 'y'),
-                            'x' + scan_chars!(stream, 'e', 'd')
-                        ),
-                        'o' + scan_chars!(stream, 'r'),
-                        'u' + scan_chars!(stream, 'n', 'c', 't', 'i', 'o', 'n')
-                    ),
-                    'g' + scan_chars!(stream, 'w', 'e', 'i'),
-                    'h' + scan_trie!(
-                        stream,
-                        'e' + scan_chars!(stream, 'x'),
-                        'o' + scan_chars!(stream, 'u', 'r', 's')
-                    ),
-                    'i' + scan_trie!(
-                        stream,
-                        ['f' | 's'],
-                        'm' + scan_trie!(
-                            stream,
-                            'm' + scan_chars!(stream, 'u', 't', 'a', 'b', 'l', 'e'),
-                            'p' + scan_chars!(stream, 'o', 'r', 't')
-                        ),
-                        'n' + scan_trie!(
-                            stream,
-                            'd' + scan_chars!(stream, 'e', 'x', 'e', 'd'),
-                            't' + scan_sequence!(
-                                scan_chars!(stream, 'e', 'r'),
-                                scan_trie!(
-                                    stream,
-                                    'f' + scan_chars!(stream, 'a', 'c', 'e'),
-                                    'n' + scan_chars!(stream, 'a', 'l')
-                                )
-                            )
-                        )
-                    ),
-                    'l' + scan_chars!(stream, 'i', 'b', 'r', 'a', 'r', 'y'),
-                    'm' + scan_trie!(
-                        stream,
-                        'a' + scan_chars!(stream, 'p', 'p', 'i', 'n', 'g'),
-                        'e' + scan_chars!(stream, 'm', 'o', 'r', 'y'),
-                        'i' + scan_chars!(stream, 'n', 'u', 't', 'e', 's'),
-                        'o' + scan_chars!(stream, 'd', 'i', 'f', 'i', 'e', 'r')
-                    ),
-                    'n' + scan_chars!(stream, 'e', 'w'),
-                    'o' + scan_chars!(stream, 'v', 'e', 'r', 'r', 'i', 'd', 'e'),
-                    'p' + scan_trie!(
-                        stream,
-                        'a' + scan_chars!(stream, 'y', 'a', 'b', 'l', 'e'),
-                        'r' + scan_trie!(
-                            stream,
-                            'a' + scan_chars!(stream, 'g', 'm', 'a'),
-                            'i' + scan_chars!(stream, 'v', 'a', 't', 'e')
-                        ),
-                        'u' + scan_trie!(
-                            stream,
-                            'b' + scan_chars!(stream, 'l', 'i', 'c'),
-                            'r' + scan_chars!(stream, 'e')
-                        )
-                    ),
-                    'r' + scan_sequence!(
-                        scan_chars!(stream, 'e'),
-                        scan_trie!(
-                            stream,
-                            'c' + scan_chars!(stream, 'e', 'i', 'v', 'e'),
-                            't' + scan_sequence!(
-                                scan_chars!(stream, 'u', 'r', 'n'),
-                                scan_trie!(stream, EMPTY, ['s'])
-                            )
-                        )
-                    ),
-                    's' + scan_trie!(
-                        stream,
-                        'e' + scan_chars!(stream, 'c', 'o', 'n', 'd', 's'),
-                        't' + scan_trie!(
-                            stream,
-                            'o' + scan_chars!(stream, 'r', 'a', 'g', 'e'),
-                            'r' + scan_trie!(
-                                stream,
-                                'i' + scan_chars!(stream, 'n', 'g'),
-                                'u' + scan_chars!(stream, 'c', 't')
-                            )
-                        ),
-                        'z' + scan_chars!(stream, 'a', 'b', 'o')
-                    ),
-                    't' + scan_trie!(
-                        stream,
-                        'r' + scan_trie!(stream, ['y'], 'u' + scan_chars!(stream, 'e')),
-                        'y' + scan_chars!(stream, 'p', 'e')
-                    ),
-                    'u' + scan_trie!(
-                        stream,
-                        'f' + scan_chars!(stream, 'i', 'x', 'e', 'd'),
-                        'n' + scan_chars!(stream, 'c', 'h', 'e', 'c', 'k', 'e', 'd'),
-                        's' + scan_chars!(stream, 'i', 'n', 'g')
-                    ),
-                    'v' + scan_sequence!(
-                        scan_chars!(stream, 'i'),
-                        scan_trie!(
-                            stream,
-                            'e' + scan_chars!(stream, 'w'),
-                            'r' + scan_chars!(stream, 't', 'u', 'a', 'l')
-                        )
-                    ),
-                    'w' + scan_trie!(
-                        stream,
-                        'e' + scan_trie!(stream, ['i'], 'e' + scan_chars!(stream, 'k', 's')),
-                        'h' + scan_chars!(stream, 'i', 'l', 'e')
-                    ),
-                    'y' + scan_chars!(stream, 'e', 'a', 'r', 's')
-                )
+                self.scan_abstract_keyword(stream),
+                self.scan_address_keyword(stream),
+                self.scan_anonymous_keyword(stream),
+                self.scan_as_keyword(stream),
+                self.scan_assembly_keyword(stream),
+                self.scan_bool_keyword(stream),
+                self.scan_break_keyword(stream),
+                self.scan_calldata_keyword(stream),
+                self.scan_case_keyword(stream),
+                self.scan_catch_keyword(stream),
+                self.scan_constant_keyword(stream),
+                self.scan_constructor_keyword(stream),
+                self.scan_continue_keyword(stream),
+                self.scan_contract_keyword(stream),
+                self.scan_days_keyword(stream),
+                self.scan_default_keyword(stream),
+                self.scan_delete_keyword(stream),
+                self.scan_do_keyword(stream),
+                self.scan_else_keyword(stream),
+                self.scan_emit_keyword(stream),
+                self.scan_enum_keyword(stream),
+                self.scan_ether_keyword(stream),
+                self.scan_event_keyword(stream),
+                self.scan_external_keyword(stream),
+                self.scan_fallback_keyword(stream),
+                self.scan_false_keyword(stream),
+                self.scan_finney_keyword(stream),
+                self.scan_for_keyword(stream),
+                self.scan_function_keyword(stream),
+                self.scan_gwei_keyword(stream),
+                self.scan_hours_keyword(stream),
+                self.scan_if_keyword(stream),
+                self.scan_immutable_keyword(stream),
+                self.scan_import_keyword(stream),
+                self.scan_indexed_keyword(stream),
+                self.scan_interface_keyword(stream),
+                self.scan_internal_keyword(stream),
+                self.scan_is_keyword(stream),
+                self.scan_let_keyword(stream),
+                self.scan_library_keyword(stream),
+                self.scan_mapping_keyword(stream),
+                self.scan_memory_keyword(stream),
+                self.scan_minutes_keyword(stream),
+                self.scan_modifier_keyword(stream),
+                self.scan_new_keyword(stream),
+                self.scan_override_keyword(stream),
+                self.scan_payable_keyword(stream),
+                self.scan_pragma_keyword(stream),
+                self.scan_private_keyword(stream),
+                self.scan_public_keyword(stream),
+                self.scan_pure_keyword(stream),
+                self.scan_receive_keyword(stream),
+                self.scan_return_keyword(stream),
+                self.scan_returns_keyword(stream),
+                self.scan_seconds_keyword(stream),
+                self.scan_storage_keyword(stream),
+                self.scan_string_keyword(stream),
+                self.scan_struct_keyword(stream),
+                self.scan_switch_keyword(stream),
+                self.scan_szabo_keyword(stream),
+                self.scan_true_keyword(stream),
+                self.scan_try_keyword(stream),
+                self.scan_type_keyword(stream),
+                self.scan_unchecked_keyword(stream),
+                self.scan_using_keyword(stream),
+                self.scan_view_keyword(stream),
+                self.scan_virtual_keyword(stream),
+                self.scan_weeks_keyword(stream),
+                self.scan_wei_keyword(stream),
+                self.scan_while_keyword(stream),
+                self.scan_years_keyword(stream)
             )
         }
     }
@@ -2265,7 +2148,7 @@ impl Language {
         }
     }
 
-    // «ReservedKeyword» = "after" | "alias" | "apply" | "auto" | "byte" | "case" | "copyof" | "default" | "define" | "final" | "implements" | "in" | "inline" | "let" | "macro" | "match" | "mutable" | "null" | "of" | "partial" | "promise" | "reference" | "relocatable" | "sealed" | "sizeof" | "static" | "supports" | "switch" | "typedef" | "typeof" | "var";
+    // «ReservedKeyword» = "after" | "alias" | "apply" | "auto" | "byte" | "copyof" | "define" | "final" | "hex" | "implements" | "in" | "inline" | "macro" | "match" | "mutable" | "null" | "of" | "partial" | "promise" | "reference" | "relocatable" | "sealed" | "sizeof" | "static" | "supports" | "typedef" | "typeof" | "var";
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_reserved_keyword(&self, stream: &mut Stream) -> bool {
@@ -2280,26 +2163,15 @@ impl Language {
                     'u' + scan_chars!(stream, 't', 'o')
                 ),
                 'b' + scan_chars!(stream, 'y', 't', 'e'),
-                'c' + scan_trie!(
-                    stream,
-                    'a' + scan_chars!(stream, 's', 'e'),
-                    'o' + scan_chars!(stream, 'p', 'y', 'o', 'f')
-                ),
-                'd' + scan_sequence!(
-                    scan_chars!(stream, 'e', 'f'),
-                    scan_trie!(
-                        stream,
-                        'a' + scan_chars!(stream, 'u', 'l', 't'),
-                        'i' + scan_chars!(stream, 'n', 'e')
-                    )
-                ),
+                'c' + scan_chars!(stream, 'o', 'p', 'y', 'o', 'f'),
+                'd' + scan_chars!(stream, 'e', 'f', 'i', 'n', 'e'),
                 'f' + scan_chars!(stream, 'i', 'n', 'a', 'l'),
+                'h' + scan_chars!(stream, 'e', 'x'),
                 'i' + scan_trie!(
                     stream,
                     'm' + scan_chars!(stream, 'p', 'l', 'e', 'm', 'e', 'n', 't', 's'),
                     'n' + scan_trie!(stream, EMPTY, 'l' + scan_chars!(stream, 'i', 'n', 'e'))
                 ),
-                'l' + scan_chars!(stream, 'e', 't'),
                 'm' + scan_trie!(
                     stream,
                     'a' + scan_trie!(
@@ -2329,8 +2201,7 @@ impl Language {
                     'e' + scan_chars!(stream, 'a', 'l', 'e', 'd'),
                     'i' + scan_chars!(stream, 'z', 'e', 'o', 'f'),
                     't' + scan_chars!(stream, 'a', 't', 'i', 'c'),
-                    'u' + scan_chars!(stream, 'p', 'p', 'o', 'r', 't', 's'),
-                    'w' + scan_chars!(stream, 'i', 't', 'c', 'h')
+                    'u' + scan_chars!(stream, 'p', 'p', 'o', 'r', 't', 's')
                 ),
                 't' + scan_sequence!(
                     scan_chars!(stream, 'y', 'p', 'e'),
@@ -2867,20 +2738,6 @@ impl Language {
         }
     }
 
-    // «VersionPragmaOperator» = '^' | '~' | '=' | '<' | '>' | "<=" | ">=";
-
-    #[allow(unused_assignments, unused_parens)]
-    pub(crate) fn scan_version_pragma_operator(&self, stream: &mut Stream) -> bool {
-        {
-            scan_trie!(
-                stream,
-                ['=' | '^' | '~'],
-                '<' + scan_trie!(stream, EMPTY, ['=']),
-                '>' + scan_trie!(stream, EMPTY, ['='])
-            )
-        }
-    }
-
     // «VersionPragmaValue» = 1…{'0'…'9' | 'x' | 'X' | '*'};
 
     #[allow(unused_assignments, unused_parens)]
@@ -3040,7 +2897,7 @@ impl Language {
         }
     }
 
-    // «YulIdentifier» = «RawIdentifier» - «YulKeyword»;
+    // «YulIdentifier» = «RawIdentifier» - («YulKeyword» | «YulReservedKeyword»);
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_yul_identifier(&self, stream: &mut Stream) -> bool {
@@ -3048,63 +2905,44 @@ impl Language {
             scan_difference!(
                 stream,
                 self.scan_raw_identifier(stream),
-                scan_trie!(
+                scan_choice!(
                     stream,
-                    'b' + scan_chars!(stream, 'r', 'e', 'a', 'k'),
-                    'c' + scan_trie!(
-                        stream,
-                        'a' + scan_chars!(stream, 's', 'e'),
-                        'o' + scan_chars!(stream, 'n', 't', 'i', 'n', 'u', 'e')
-                    ),
-                    'd' + scan_chars!(stream, 'e', 'f', 'a', 'u', 'l', 't'),
-                    'f' + scan_trie!(
-                        stream,
-                        'a' + scan_chars!(stream, 'l', 's', 'e'),
-                        'o' + scan_chars!(stream, 'r'),
-                        'u' + scan_chars!(stream, 'n', 'c', 't', 'i', 'o', 'n')
-                    ),
-                    'h' + scan_chars!(stream, 'e', 'x'),
-                    'i' + scan_chars!(stream, 'f'),
-                    'l' + scan_sequence!(
-                        scan_chars!(stream, 'e'),
-                        scan_trie!(stream, ['t'], 'a' + scan_chars!(stream, 'v', 'e'))
-                    ),
-                    's' + scan_chars!(stream, 'w', 'i', 't', 'c', 'h'),
-                    't' + scan_chars!(stream, 'r', 'u', 'e')
+                    self.scan_yul_keyword(stream),
+                    scan_chars!(stream, 'h', 'e', 'x')
                 )
             )
         }
     }
 
-    // «YulKeyword» = "false" | "true" | "break" | "case" | "continue" | "default" | "for" | "function" | "hex" | "if" | "leave" | "let" | "switch";
+    // «YulKeyword» = «BreakKeyword» | «CaseKeyword» | «ContinueKeyword» | «DefaultKeyword» | «FalseKeyword» | «ForKeyword» | «FunctionKeyword» | «IfKeyword» | «LeaveKeyword» | «LetKeyword» | «SwitchKeyword» | «TrueKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn scan_yul_keyword(&self, stream: &mut Stream) -> bool {
         {
-            scan_trie!(
+            scan_choice!(
                 stream,
-                'b' + scan_chars!(stream, 'r', 'e', 'a', 'k'),
-                'c' + scan_trie!(
-                    stream,
-                    'a' + scan_chars!(stream, 's', 'e'),
-                    'o' + scan_chars!(stream, 'n', 't', 'i', 'n', 'u', 'e')
-                ),
-                'd' + scan_chars!(stream, 'e', 'f', 'a', 'u', 'l', 't'),
-                'f' + scan_trie!(
-                    stream,
-                    'a' + scan_chars!(stream, 'l', 's', 'e'),
-                    'o' + scan_chars!(stream, 'r'),
-                    'u' + scan_chars!(stream, 'n', 'c', 't', 'i', 'o', 'n')
-                ),
-                'h' + scan_chars!(stream, 'e', 'x'),
-                'i' + scan_chars!(stream, 'f'),
-                'l' + scan_sequence!(
-                    scan_chars!(stream, 'e'),
-                    scan_trie!(stream, ['t'], 'a' + scan_chars!(stream, 'v', 'e'))
-                ),
-                's' + scan_chars!(stream, 'w', 'i', 't', 'c', 'h'),
-                't' + scan_chars!(stream, 'r', 'u', 'e')
+                self.scan_break_keyword(stream),
+                self.scan_case_keyword(stream),
+                self.scan_continue_keyword(stream),
+                self.scan_default_keyword(stream),
+                self.scan_false_keyword(stream),
+                self.scan_for_keyword(stream),
+                self.scan_function_keyword(stream),
+                self.scan_if_keyword(stream),
+                self.scan_leave_keyword(stream),
+                self.scan_let_keyword(stream),
+                self.scan_switch_keyword(stream),
+                self.scan_true_keyword(stream)
             )
+        }
+    }
+
+    // «YulReservedKeyword» = "hex";
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn scan_yul_reserved_keyword(&self, stream: &mut Stream) -> bool {
+        {
+            scan_chars!(stream, 'h', 'e', 'x')
         }
     }
 }

@@ -18047,7 +18047,202 @@ impl Language {
         }
     }
 
-    // VersionPragmaSpecifier = [«VersionPragmaOperator»] «VersionPragmaValue» {«Period» «VersionPragmaValue»};
+    // VersionPragmaOperator = «Caret» | «Tilde» | «Equal» | «LessThan» | «GreaterThan» | «LessThanEqual» | «GreaterThanEqual»;
+
+    #[allow(unused_assignments, unused_parens)]
+    pub(crate) fn parse_version_pragma_operator(&self, stream: &mut Stream) -> ParseResult {
+        match {
+            loop {
+                let start_position = stream.position();
+                let mut furthest_error;
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_caret(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::Caret,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "Caret"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error = error,
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_tilde(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::Tilde,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "Tilde"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_equal(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::Equal,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "Equal"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_less_than(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::LessThan,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "LessThan"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_greater_than(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::GreaterThan,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "GreaterThan"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_less_than_equal(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::LessThanEqual,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "LessThanEqual"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                stream.set_position(start_position);
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_greater_than_equal(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::GreaterThanEqual,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "GreaterThanEqual"),
+                        }
+                    }
+                } {
+                    Fail { error } => furthest_error.merge_with(error),
+                    pass => break pass,
+                }
+                break Fail {
+                    error: furthest_error,
+                };
+            }
+        } {
+            Pass { node, error } => Pass {
+                node: cst::Node::top_level_rule(RuleKind::VersionPragmaOperator, node),
+                error,
+            },
+            fail => fail,
+        }
+    }
+
+    // VersionPragmaSpecifier = [VersionPragmaOperator] «VersionPragmaValue» {«Period» «VersionPragmaValue»};
 
     #[allow(unused_assignments, unused_parens)]
     pub(crate) fn parse_version_pragma_specifier(&self, stream: &mut Stream) -> ParseResult {
@@ -18056,27 +18251,7 @@ impl Language {
                 let mut furthest_error = None;
                 let result_0 = match {
                     let start_position = stream.position();
-                    match {
-                        let leading_trivia = self.optional_leading_trivia(stream);
-                        let start = stream.position();
-                        if self.scan_version_pragma_operator(stream) {
-                            let end = stream.position();
-                            let trailing_trivia = self.optional_trailing_trivia(stream);
-                            Pass {
-                                node: cst::Node::token(
-                                    TokenKind::VersionPragmaOperator,
-                                    Range { start, end },
-                                    leading_trivia,
-                                    trailing_trivia,
-                                ),
-                                error: None,
-                            }
-                        } else {
-                            Fail {
-                                error: ParseError::new(start, "VersionPragmaOperator"),
-                            }
-                        }
-                    } {
+                    match self.parse_version_pragma_operator(stream) {
                         Fail { error } => {
                             stream.set_position(start_position);
                             Pass {

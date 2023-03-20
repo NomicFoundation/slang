@@ -3,5 +3,5 @@
 <!-- markdownlint-disable first-line-h1 -->
 
 ```{ .ebnf .slang-ebnf #ReservedKeyword }
-«ReservedKeyword» = "after" | "alias" | "apply" | "auto" | "byte" | "case" | "copyof" | "default" | "define" | "final" | "implements" | "in" | "inline" | "let" | "macro" | "match" | "mutable" | "null" | "of" | "partial" | "promise" | "reference" | "relocatable" | "sealed" | "sizeof" | "static" | "supports" | "switch" | "typedef" | "typeof" | "var";
+«ReservedKeyword» = "after" | "alias" | "apply" | "auto" | "byte" | "copyof" | "define" | "final" | "hex" | "implements" | "in" | "inline" | "macro" | "match" | "mutable" | "null" | "of" | "partial" | "promise" | "reference" | "relocatable" | "sealed" | "sizeof" | "static" | "supports" | "typedef" | "typeof" | "var";
 ```
