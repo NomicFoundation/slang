@@ -41,7 +41,7 @@ pub enum CombinatorNode<'context> {
     PrecedenceExpressionRule {
         tree: &'context CombinatorTree<'context>,
         operators: Vec<PrecedenceRuleOperator<'context>>,
-        primary_expressions: Vec<&'context CombinatorTree<'context>>,
+        primary_expression: &'context CombinatorNode<'context>,
     },
     Reference {
         tree: &'context CombinatorTree<'context>,
@@ -223,12 +223,7 @@ impl<'context> CombinatorNode<'context> {
         tree: &'context CombinatorTree<'context>,
         parser: &PrecedenceParserRef,
     ) -> &'context CombinatorNode<'context> {
-        let primary_expressions: Vec<&CombinatorTree> = parser
-            .definition
-            .primary_expressions
-            .iter()
-            .map(|r| tree.context.get_tree_by_name(&r.reference))
-            .collect();
+        let primary_expression = Self::from_parser(tree, &parser.definition.primary_expression);
         let operators: Vec<PrecedenceRuleOperator> = parser
             .definition
             .operators
@@ -244,7 +239,7 @@ impl<'context> CombinatorNode<'context> {
         return tree.context.alloc_node(Self::PrecedenceExpressionRule {
             tree,
             operators,
-            primary_expressions,
+            primary_expression,
         });
     }
 
@@ -344,17 +339,15 @@ impl<'context> CombinatorNode<'context> {
 
             Self::PrecedenceExpressionRule {
                 operators,
-                primary_expressions,
+                primary_expression,
                 ..
-            } => primary_expressions.iter().fold(
-                operators
-                    .iter()
-                    .filter(|op| op.model == OperatorModel::UnaryPrefix)
-                    .fold(FirstSet::new(), |accum, expr| {
-                        accum.union_with(expr.operator.first_set())
-                    }),
-                |accum, expr| accum.union_with(expr.root_node.get().unwrap().first_set()),
-            ),
+            } => operators
+                .iter()
+                .filter(|op| op.model == OperatorModel::UnaryPrefix)
+                .fold(FirstSet::new(), |accum, expr| {
+                    accum.union_with(expr.operator.first_set())
+                })
+                .union_with(primary_expression.first_set()),
 
             Self::Optional { expr }
             | Self::ZeroOrMore { expr, .. }

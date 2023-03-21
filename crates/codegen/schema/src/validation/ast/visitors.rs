@@ -280,6 +280,9 @@ impl Receiver for PrecedenceParserRef {
             for operator in &self.definition.operators {
                 operator.value.receive(visitor, reporter);
             }
+            self.definition
+                .primary_expression
+                .receive(visitor, reporter);
         }
     }
 }

@@ -7,7 +7,6 @@ use crate::{
         ast::{
             node::Node,
             parser::ParserDefinition,
-            precedence_parser::PrecedenceParserRef,
             scanner::ScannerDefinition,
             visitors::{Reporter, Visitor, VisitorExtensions, VisitorResponse},
         },
@@ -84,22 +83,6 @@ impl Visitor for ReferencesCollector<'_> {
             }
             _ => {}
         }
-        return VisitorResponse::StepIn;
-    }
-
-    fn visit_precedence_parser(
-        &mut self,
-        parser: &PrecedenceParserRef,
-        reporter: &mut Reporter,
-    ) -> VisitorResponse {
-        parser
-            .definition
-            .primary_expressions
-            .iter()
-            .for_each(|expression| {
-                let Node { cst_node, value } = &expression.value.reference;
-                self.check_is_scanner_or_parser_reference(cst_node, value, reporter);
-            });
         return VisitorResponse::StepIn;
     }
 }

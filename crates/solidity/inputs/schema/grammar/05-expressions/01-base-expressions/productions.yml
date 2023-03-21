@@ -138,8 +138,8 @@
             close:
               reference: "CloseBracket"
 
-      primaryExpressions:
-        - reference: "PrimaryExpression"
+      primaryExpression:
+        reference: "PrimaryExpression"
 
     0.6.0:
       operators:
@@ -276,5 +276,5 @@
             close:
               reference: "CloseBracket"
 
-      primaryExpressions:
-        - reference: "PrimaryExpression"
+      primaryExpression:
+        reference: "PrimaryExpression"

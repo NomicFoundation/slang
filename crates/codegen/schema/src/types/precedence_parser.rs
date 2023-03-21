@@ -1,7 +1,7 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use super::{parser::ParserDefinition, production::Reference};
+use super::parser::{ParserDefinition, ParserRef};
 
 #[allow(dead_code)]
 pub type PrecedenceParserRef = std::rc::Rc<PrecedenceParser>;
@@ -21,8 +21,8 @@ pub struct PrecedenceParserDefinition {
     #[schemars(title = "Operator Definitions")]
     pub operators: Vec<OperatorDefinition>,
 
-    #[schemars(title = "Primary Expression References")]
-    pub primary_expressions: Vec<Reference>,
+    #[schemars(title = "Primary Expression")]
+    pub primary_expression: ParserRef,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize, JsonSchema, PartialEq, Eq, Hash)]
