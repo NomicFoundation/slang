@@ -37,6 +37,8 @@ mod NumericLiteral;
 #[allow(non_snake_case)]
 mod ReceiveFunctionDefinition;
 #[allow(non_snake_case)]
+mod ReservedKeyword;
+#[allow(non_snake_case)]
 mod SignedIntegerType;
 #[allow(non_snake_case)]
 mod SingleLineComment;

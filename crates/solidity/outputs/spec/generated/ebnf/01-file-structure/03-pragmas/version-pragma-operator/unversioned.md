@@ -3,5 +3,5 @@
 <!-- markdownlint-disable first-line-h1 -->
 
 ```{ .ebnf .slang-ebnf #VersionPragmaOperator }
-«VersionPragmaOperator» = '^' | '~' | '=' | '<' | '>' | "<=" | ">=";
+VersionPragmaOperator = «Caret» | «Tilde» | «Equal» | «LessThan» | «GreaterThan» | «LessThanEqual» | «GreaterThanEqual»;
 ```

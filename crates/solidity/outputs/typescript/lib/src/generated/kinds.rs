@@ -161,7 +161,6 @@ pub enum TokenKind {
     UnsignedFixedType,
     UnsignedIntegerType,
     UsingKeyword,
-    VersionPragmaOperator,
     VersionPragmaValue,
     ViewKeyword,
     VirtualKeyword,
@@ -174,6 +173,7 @@ pub enum TokenKind {
     YulHexLiteral,
     YulIdentifier,
     YulKeyword,
+    YulReservedKeyword,
 }
 #[napi]
 #[derive(Debug, PartialEq, Eq, Serialize)]
@@ -291,6 +291,7 @@ pub enum RuleKind {
     UsingDirective,
     VariableDeclarationStatement,
     VersionPragma,
+    VersionPragmaOperator,
     VersionPragmaSpecifier,
     WhileStatement,
     YulAssignmentStatement,
@@ -593,6 +594,7 @@ pub enum ProductionKind {
     YulKeyword,
     YulLeaveStatement,
     YulLiteral,
+    YulReservedKeyword,
     YulStatement,
     YulSwitchStatement,
     YulVariableDeclaration,

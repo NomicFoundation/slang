@@ -35,16 +35,16 @@
             reference: "VersionPragmaValue"
 
 - name: "VersionPragmaOperator"
-  kind: "Scanner"
+  kind: "Parser"
   unversioned:
     choice:
-      - terminal: "^"
-      - terminal: "~"
-      - terminal: "="
-      - terminal: "<"
-      - terminal: ">"
-      - terminal: "<="
-      - terminal: ">="
+      - reference: "Caret"
+      - reference: "Tilde"
+      - reference: "Equal"
+      - reference: "LessThan"
+      - reference: "GreaterThan"
+      - reference: "LessThanEqual"
+      - reference: "GreaterThanEqual"
 
 - name: "VersionPragmaValue"
   kind: "Scanner"

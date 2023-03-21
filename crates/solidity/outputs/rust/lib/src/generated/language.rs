@@ -1321,13 +1321,6 @@ impl Language {
                 TokenKind::UsingKeyword,
                 "UsingKeyword",
             ),
-            ProductionKind::VersionPragmaOperator => call_scanner(
-                self,
-                input,
-                Language::scan_version_pragma_operator,
-                TokenKind::VersionPragmaOperator,
-                "VersionPragmaOperator",
-            ),
             ProductionKind::VersionPragmaValue => call_scanner(
                 self,
                 input,
@@ -1411,6 +1404,13 @@ impl Language {
                 Language::scan_yul_keyword,
                 TokenKind::YulKeyword,
                 "YulKeyword",
+            ),
+            ProductionKind::YulReservedKeyword => call_scanner(
+                self,
+                input,
+                Language::scan_yul_reserved_keyword,
+                TokenKind::YulReservedKeyword,
+                "YulReservedKeyword",
             ),
             ProductionKind::ABICoderPragma => {
                 call_parser(self, input, Language::parse_abi_coder_pragma)
@@ -1650,6 +1650,9 @@ impl Language {
             }
             ProductionKind::VersionPragma => {
                 call_parser(self, input, Language::parse_version_pragma)
+            }
+            ProductionKind::VersionPragmaOperator => {
+                call_parser(self, input, Language::parse_version_pragma_operator)
             }
             ProductionKind::VersionPragmaSpecifier => {
                 call_parser(self, input, Language::parse_version_pragma_specifier)

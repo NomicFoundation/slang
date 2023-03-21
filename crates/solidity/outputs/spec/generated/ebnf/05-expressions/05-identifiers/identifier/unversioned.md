@@ -3,5 +3,5 @@
 <!-- markdownlint-disable first-line-h1 -->
 
 ```{ .ebnf .slang-ebnf #Identifier }
-«Identifier» = «RawIdentifier» - «Keyword»;
+«Identifier» = «RawIdentifier» - («Keyword» | «ReservedKeyword» | «FixedBytesType» | «SignedFixedType» | «UnsignedFixedType» | «SignedIntegerType» | «UnsignedIntegerType»);
 ```

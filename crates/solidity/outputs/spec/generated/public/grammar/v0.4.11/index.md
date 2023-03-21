@@ -387,6 +387,7 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/03-yul-expressions/yul-identifier-path/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/03-yul-expressions/yul-identifier/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/03-yul-expressions/yul-keyword/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/03-yul-expressions/yul-reserved-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/03-yul-expressions/yul-literal/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/03-yul-expressions/yul-hex-literal/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/06-yul/03-yul-expressions/yul-decimal-literal/unversioned.md"

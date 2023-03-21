@@ -44,25 +44,32 @@
       minuend:
         reference: "RawIdentifier"
       subtrahend:
-        reference: "YulKeyword"
+        choice:
+          - reference: "YulKeyword"
+          - reference: "YulReservedKeyword"
 
 - name: "YulKeyword"
   kind: "Scanner"
   unversioned:
     choice:
-      - terminal: "false"
-      - terminal: "true"
-      - terminal: "break"
-      - terminal: "case"
-      - terminal: "continue"
-      - terminal: "default"
-      - terminal: "for"
-      - terminal: "function"
+      - reference: "BreakKeyword"
+      - reference: "CaseKeyword"
+      - reference: "ContinueKeyword"
+      - reference: "DefaultKeyword"
+      - reference: "FalseKeyword"
+      - reference: "ForKeyword"
+      - reference: "FunctionKeyword"
+      - reference: "IfKeyword"
+      - reference: "LeaveKeyword"
+      - reference: "LetKeyword"
+      - reference: "SwitchKeyword"
+      - reference: "TrueKeyword"
+
+- name: "YulReservedKeyword"
+  kind: "Scanner"
+  unversioned:
+    choice:
       - terminal: "hex"
-      - terminal: "if"
-      - terminal: "leave"
-      - terminal: "let"
-      - terminal: "switch"
 
 - name: "YulLiteral"
   kind: "Parser"

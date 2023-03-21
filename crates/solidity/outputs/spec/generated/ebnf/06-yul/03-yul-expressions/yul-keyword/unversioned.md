@@ -3,5 +3,5 @@
 <!-- markdownlint-disable first-line-h1 -->
 
 ```{ .ebnf .slang-ebnf #YulKeyword }
-«YulKeyword» = "false" | "true" | "break" | "case" | "continue" | "default" | "for" | "function" | "hex" | "if" | "leave" | "let" | "switch";
+«YulKeyword» = «BreakKeyword» | «CaseKeyword» | «ContinueKeyword» | «DefaultKeyword» | «FalseKeyword» | «ForKeyword» | «FunctionKeyword» | «IfKeyword» | «LeaveKeyword» | «LetKeyword» | «SwitchKeyword» | «TrueKeyword»;
 ```
