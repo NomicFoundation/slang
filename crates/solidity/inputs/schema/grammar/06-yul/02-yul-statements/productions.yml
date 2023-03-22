@@ -17,18 +17,18 @@
   unversioned:
     choice:
       - reference: "YulBlock"
-      - reference: "YulVariableDeclaration"
       - reference: "YulFunctionDefinition"
+      - reference: "YulDeclarationStatement"
       - reference: "YulAssignmentStatement"
-      - reference: "YulFunctionCall"
       - reference: "YulIfStatement"
       - reference: "YulForStatement"
       - reference: "YulSwitchStatement"
       - reference: "YulLeaveStatement"
       - reference: "YulBreakStatement"
       - reference: "YulContinueStatement"
+      - reference: "YulExpression"
 
-- name: "YulVariableDeclaration"
+- name: "YulDeclarationStatement"
   kind: "Parser"
   unversioned:
     sequence:

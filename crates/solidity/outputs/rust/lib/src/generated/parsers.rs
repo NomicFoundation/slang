@@ -18998,25 +18998,456 @@ impl Language {
         }
     }
 
-    // YulExpression = YulFunctionCall | YulLiteral;
+    // YulDeclarationStatement = «LetKeyword» YulIdentifierPath {«Comma» YulIdentifierPath} [«ColonEqual» YulExpression];
+
+    #[allow(unused_assignments, unused_parens)]
+    fn parse_yul_declaration_statement_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+        loop {
+            let mut furthest_error = None;
+            let result_0 = match {
+                let leading_trivia = self.optional_leading_trivia(stream);
+                let start = stream.position();
+                if self.scan_let_keyword(stream) {
+                    let end = stream.position();
+                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                    Pass {
+                        node: cst::Node::token(
+                            TokenKind::LetKeyword,
+                            Range { start, end },
+                            leading_trivia,
+                            trailing_trivia,
+                        ),
+                        error: None,
+                    }
+                } else {
+                    Fail {
+                        error: ParseError::new(start, "LetKeyword"),
+                    }
+                }
+            } {
+                Pass { node, error } => {
+                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
+                    node
+                }
+                Fail { error } => {
+                    break Fail {
+                        error: error.maybe_merge_with(furthest_error),
+                    }
+                }
+            };
+            let result_1 = match {
+                let mut result = Vec::new();
+                loop {
+                    match self.parse_yul_identifier_path(stream) {
+                        err @ Fail { .. } => break err,
+                        Pass { node, .. } => {
+                            result.push(node);
+                            let save = stream.position();
+                            match {
+                                let leading_trivia = self.optional_leading_trivia(stream);
+                                let start = stream.position();
+                                if self.scan_comma(stream) {
+                                    let end = stream.position();
+                                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                                    Pass {
+                                        node: cst::Node::token(
+                                            TokenKind::Comma,
+                                            Range { start, end },
+                                            leading_trivia,
+                                            trailing_trivia,
+                                        ),
+                                        error: None,
+                                    }
+                                } else {
+                                    Fail {
+                                        error: ParseError::new(start, "Comma"),
+                                    }
+                                }
+                            } {
+                                Fail { error } => {
+                                    stream.set_position(save);
+                                    break Pass {
+                                        node: cst::Node::rule(RuleKind::_SEPARATEDBY, result),
+                                        error: Some(error),
+                                    };
+                                }
+                                Pass { node, .. } => result.push(node),
+                            }
+                        }
+                    }
+                }
+            } {
+                Pass { node, error } => {
+                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
+                    node
+                }
+                Fail { error } => {
+                    break Fail {
+                        error: error.maybe_merge_with(furthest_error),
+                    }
+                }
+            };
+            let result_2 = match {
+                let start_position = stream.position();
+                match loop {
+                    let mut furthest_error = None;
+                    let result_0 = match {
+                        let leading_trivia = self.optional_leading_trivia(stream);
+                        let start = stream.position();
+                        if self.scan_colon_equal(stream) {
+                            let end = stream.position();
+                            let trailing_trivia = self.optional_trailing_trivia(stream);
+                            Pass {
+                                node: cst::Node::token(
+                                    TokenKind::ColonEqual,
+                                    Range { start, end },
+                                    leading_trivia,
+                                    trailing_trivia,
+                                ),
+                                error: None,
+                            }
+                        } else {
+                            Fail {
+                                error: ParseError::new(start, "ColonEqual"),
+                            }
+                        }
+                    } {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    let result_1 = match self.parse_yul_expression(stream) {
+                        Pass { node, error } => {
+                            furthest_error =
+                                error.map(|error| error.maybe_merge_with(furthest_error));
+                            node
+                        }
+                        Fail { error } => {
+                            break Fail {
+                                error: error.maybe_merge_with(furthest_error),
+                            }
+                        }
+                    };
+                    break Pass {
+                        node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
+                        error: furthest_error,
+                    };
+                } {
+                    Fail { error } => {
+                        stream.set_position(start_position);
+                        Pass {
+                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            error: Some(error),
+                        }
+                    }
+                    pass => pass,
+                }
+            } {
+                Pass { node, error } => {
+                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
+                    node
+                }
+                Fail { error } => {
+                    break Fail {
+                        error: error.maybe_merge_with(furthest_error),
+                    }
+                }
+            };
+            break Pass {
+                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
+                error: furthest_error,
+            };
+        }
+    }
+
+    #[inline]
+    pub(crate) fn parse_yul_declaration_statement(&self, stream: &mut Stream) -> ParseResult {
+        match self.parse_yul_declaration_statement_0_4_11(stream) {
+            Pass { node, error } => Pass {
+                node: cst::Node::top_level_rule(RuleKind::YulDeclarationStatement, node),
+                error,
+            },
+            fail => fail,
+        }
+    }
+
+    // YulExpression = YulFunctionCallExpression | YulLiteral | YulIdentifierPath;
+    // YulFunctionCallExpression = YulExpression («OpenParen» [YulExpression {«Comma» YulExpression}] «CloseParen»);
 
     #[allow(unused_assignments, unused_parens)]
     fn parse_yul_expression_0_4_11(&self, stream: &mut Stream) -> ParseResult {
-        loop {
-            let start_position = stream.position();
-            let mut furthest_error;
-            match self.parse_yul_function_call(stream) {
-                Fail { error } => furthest_error = error,
-                pass => break pass,
+        {
+            enum Pratt {
+                Operator {
+                    kind: RuleKind,
+                    node: Rc<cst::Node>,
+                    left_binding_power: u8,
+                    right_binding_power: u8,
+                },
+                Node(Rc<cst::Node>),
             }
-            stream.set_position(start_position);
-            match self.parse_yul_literal(stream) {
-                Fail { error } => furthest_error.merge_with(error),
-                pass => break pass,
+            let mut elements = Vec::new();
+            if let Some(error) = loop {
+                match loop {
+                    let start_position = stream.position();
+                    let mut furthest_error;
+                    match self.parse_yul_literal(stream) {
+                        Fail { error } => furthest_error = error,
+                        pass => break pass,
+                    }
+                    stream.set_position(start_position);
+                    match self.parse_yul_identifier_path(stream) {
+                        Fail { error } => furthest_error.merge_with(error),
+                        pass => break pass,
+                    }
+                    break Fail {
+                        error: furthest_error,
+                    };
+                } {
+                    Fail { error } => break Some(error),
+                    Pass { node, .. } => elements.push(Pratt::Node(node)),
+                }
+                loop {
+                    let start_position = stream.position();
+                    match match {
+                        match {
+                            let leading_trivia = self.optional_leading_trivia(stream);
+                            let start = stream.position();
+                            if self.scan_open_paren(stream) {
+                                let end = stream.position();
+                                let trailing_trivia = self.optional_trailing_trivia(stream);
+                                Pass {
+                                    node: cst::Node::token(
+                                        TokenKind::OpenParen,
+                                        Range { start, end },
+                                        leading_trivia,
+                                        trailing_trivia,
+                                    ),
+                                    error: None,
+                                }
+                            } else {
+                                Fail {
+                                    error: ParseError::new(start, "OpenParen"),
+                                }
+                            }
+                        } {
+                            err @ Fail { .. } => err,
+                            Pass {
+                                node: open_node, ..
+                            } => {
+                                match {
+                                    let start_position = stream.position();
+                                    match {
+                                        let mut result = Vec::new();
+                                        loop {
+                                            match self.parse_yul_expression(stream) {
+                                                err @ Fail { .. } => break err,
+                                                Pass { node, .. } => {
+                                                    result.push(node);
+                                                    let save = stream.position();
+                                                    match {
+                                                        let leading_trivia =
+                                                            self.optional_leading_trivia(stream);
+                                                        let start = stream.position();
+                                                        if self.scan_comma(stream) {
+                                                            let end = stream.position();
+                                                            let trailing_trivia = self
+                                                                .optional_trailing_trivia(stream);
+                                                            Pass {
+                                                                node: cst::Node::token(
+                                                                    TokenKind::Comma,
+                                                                    Range { start, end },
+                                                                    leading_trivia,
+                                                                    trailing_trivia,
+                                                                ),
+                                                                error: None,
+                                                            }
+                                                        } else {
+                                                            Fail {
+                                                                error: ParseError::new(
+                                                                    start, "Comma",
+                                                                ),
+                                                            }
+                                                        }
+                                                    } {
+                                                        Fail { error } => {
+                                                            stream.set_position(save);
+                                                            break Pass {
+                                                                node: cst::Node::rule(
+                                                                    RuleKind::_SEPARATEDBY,
+                                                                    result,
+                                                                ),
+                                                                error: Some(error),
+                                                            };
+                                                        }
+                                                        Pass { node, .. } => result.push(node),
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    } {
+                                        Fail { error } => {
+                                            stream.set_position(start_position);
+                                            Pass {
+                                                node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                                                error: Some(error),
+                                            }
+                                        }
+                                        pass => pass,
+                                    }
+                                } {
+                                    err @ Fail { .. } => err,
+                                    Pass {
+                                        node: expr_node,
+                                        error: expr_error,
+                                    } => {
+                                        match {
+                                            let leading_trivia =
+                                                self.optional_leading_trivia(stream);
+                                            let start = stream.position();
+                                            if self.scan_close_paren(stream) {
+                                                let end = stream.position();
+                                                let trailing_trivia =
+                                                    self.optional_trailing_trivia(stream);
+                                                Pass {
+                                                    node: cst::Node::token(
+                                                        TokenKind::CloseParen,
+                                                        Range { start, end },
+                                                        leading_trivia,
+                                                        trailing_trivia,
+                                                    ),
+                                                    error: None,
+                                                }
+                                            } else {
+                                                Fail {
+                                                    error: ParseError::new(start, "CloseParen"),
+                                                }
+                                            }
+                                        } {
+                                            Fail { error } => Fail {
+                                                error: error.maybe_merge_with(expr_error),
+                                            },
+                                            Pass {
+                                                node: close_node, ..
+                                            } => Pass {
+                                                node: cst::Node::rule(
+                                                    RuleKind::_DELIMITEDBY,
+                                                    vec![open_node, expr_node, close_node],
+                                                ),
+                                                error: None,
+                                            },
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } {
+                        Pass { node, .. } => Ok(Pratt::Operator {
+                            node,
+                            kind: RuleKind::YulFunctionCallExpression,
+                            left_binding_power: 1u8,
+                            right_binding_power: 255,
+                        }),
+                        Fail { error } => Err(error),
+                    } {
+                        Err(_) => {
+                            stream.set_position(start_position);
+                            break;
+                        }
+                        Ok(operator) => elements.push(operator),
+                    }
+                }
+                break None;
+            } {
+                Fail { error }
+            } else {
+                let mut i = 0;
+                while elements.len() > 1 {
+                    if let Pratt::Operator {
+                        right_binding_power,
+                        left_binding_power,
+                        ..
+                    } = &elements[i]
+                    {
+                        let next_left_binding_power = if elements.len() == i + 1 {
+                            0
+                        } else if let Pratt::Operator {
+                            left_binding_power, ..
+                        } = &elements[i + 1]
+                        {
+                            *left_binding_power
+                        } else if elements.len() == i + 2 {
+                            0
+                        } else if let Pratt::Operator {
+                            left_binding_power, ..
+                        } = &elements[i + 2]
+                        {
+                            *left_binding_power
+                        } else {
+                            0
+                        };
+                        if *right_binding_power <= next_left_binding_power {
+                            i += 1;
+                            continue;
+                        }
+                        if *right_binding_power == 255 {
+                            let left = elements.remove(i - 1);
+                            let op = elements.remove(i - 1);
+                            if let (Pratt::Node(left), Pratt::Operator { node: op, kind, .. }) =
+                                (left, op)
+                            {
+                                let node = cst::Node::rule(kind, vec![left, op]);
+                                elements.insert(i - 1, Pratt::Node(node));
+                                i = i.saturating_sub(2);
+                            } else {
+                                unreachable!()
+                            }
+                        } else if *left_binding_power == 255 {
+                            let op = elements.remove(i);
+                            let right = elements.remove(i);
+                            if let (Pratt::Operator { node: op, kind, .. }, Pratt::Node(right)) =
+                                (op, right)
+                            {
+                                let node = cst::Node::rule(kind, vec![op, right]);
+                                elements.insert(i, Pratt::Node(node));
+                                i = i.saturating_sub(1);
+                            } else {
+                                unreachable!()
+                            }
+                        } else {
+                            let left = elements.remove(i - 1);
+                            let op = elements.remove(i - 1);
+                            let right = elements.remove(i - 1);
+                            if let (
+                                Pratt::Node(left),
+                                Pratt::Operator { node: op, kind, .. },
+                                Pratt::Node(right),
+                            ) = (left, op, right)
+                            {
+                                let node = cst::Node::rule(kind, vec![left, op, right]);
+                                elements.insert(i - 1, Pratt::Node(node));
+                                i = i.saturating_sub(2);
+                            } else {
+                                unreachable!()
+                            }
+                        }
+                    } else {
+                        i += 1;
+                    }
+                }
+                if let Pratt::Node(node) = elements.pop().unwrap() {
+                    Pass { node, error: None }
+                } else {
+                    unreachable!()
+                }
             }
-            break Fail {
-                error: furthest_error,
-            };
         }
     }
 
@@ -19127,193 +19558,6 @@ impl Language {
         match self.parse_yul_for_statement_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::YulForStatement, node),
-                error,
-            },
-            fail => fail,
-        }
-    }
-
-    // YulFunctionCall = YulIdentifierPath [«OpenParen» [YulExpression {«Comma» YulExpression}] «CloseParen»];
-
-    #[allow(unused_assignments, unused_parens)]
-    fn parse_yul_function_call_0_4_11(&self, stream: &mut Stream) -> ParseResult {
-        loop {
-            let mut furthest_error = None;
-            let result_0 = match self.parse_yul_identifier_path(stream) {
-                Pass { node, error } => {
-                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
-                }
-                Fail { error } => {
-                    break Fail {
-                        error: error.maybe_merge_with(furthest_error),
-                    }
-                }
-            };
-            let result_1 = match {
-                let start_position = stream.position();
-                match {
-                    match {
-                        let leading_trivia = self.optional_leading_trivia(stream);
-                        let start = stream.position();
-                        if self.scan_open_paren(stream) {
-                            let end = stream.position();
-                            let trailing_trivia = self.optional_trailing_trivia(stream);
-                            Pass {
-                                node: cst::Node::token(
-                                    TokenKind::OpenParen,
-                                    Range { start, end },
-                                    leading_trivia,
-                                    trailing_trivia,
-                                ),
-                                error: None,
-                            }
-                        } else {
-                            Fail {
-                                error: ParseError::new(start, "OpenParen"),
-                            }
-                        }
-                    } {
-                        err @ Fail { .. } => err,
-                        Pass {
-                            node: open_node, ..
-                        } => {
-                            match {
-                                let start_position = stream.position();
-                                match {
-                                    let mut result = Vec::new();
-                                    loop {
-                                        match self.parse_yul_expression(stream) {
-                                            err @ Fail { .. } => break err,
-                                            Pass { node, .. } => {
-                                                result.push(node);
-                                                let save = stream.position();
-                                                match {
-                                                    let leading_trivia =
-                                                        self.optional_leading_trivia(stream);
-                                                    let start = stream.position();
-                                                    if self.scan_comma(stream) {
-                                                        let end = stream.position();
-                                                        let trailing_trivia =
-                                                            self.optional_trailing_trivia(stream);
-                                                        Pass {
-                                                            node: cst::Node::token(
-                                                                TokenKind::Comma,
-                                                                Range { start, end },
-                                                                leading_trivia,
-                                                                trailing_trivia,
-                                                            ),
-                                                            error: None,
-                                                        }
-                                                    } else {
-                                                        Fail {
-                                                            error: ParseError::new(start, "Comma"),
-                                                        }
-                                                    }
-                                                } {
-                                                    Fail { error } => {
-                                                        stream.set_position(save);
-                                                        break Pass {
-                                                            node: cst::Node::rule(
-                                                                RuleKind::_SEPARATEDBY,
-                                                                result,
-                                                            ),
-                                                            error: Some(error),
-                                                        };
-                                                    }
-                                                    Pass { node, .. } => result.push(node),
-                                                }
-                                            }
-                                        }
-                                    }
-                                } {
-                                    Fail { error } => {
-                                        stream.set_position(start_position);
-                                        Pass {
-                                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
-                                            error: Some(error),
-                                        }
-                                    }
-                                    pass => pass,
-                                }
-                            } {
-                                err @ Fail { .. } => err,
-                                Pass {
-                                    node: expr_node,
-                                    error: expr_error,
-                                } => {
-                                    match {
-                                        let leading_trivia = self.optional_leading_trivia(stream);
-                                        let start = stream.position();
-                                        if self.scan_close_paren(stream) {
-                                            let end = stream.position();
-                                            let trailing_trivia =
-                                                self.optional_trailing_trivia(stream);
-                                            Pass {
-                                                node: cst::Node::token(
-                                                    TokenKind::CloseParen,
-                                                    Range { start, end },
-                                                    leading_trivia,
-                                                    trailing_trivia,
-                                                ),
-                                                error: None,
-                                            }
-                                        } else {
-                                            Fail {
-                                                error: ParseError::new(start, "CloseParen"),
-                                            }
-                                        }
-                                    } {
-                                        Fail { error } => Fail {
-                                            error: error.maybe_merge_with(expr_error),
-                                        },
-                                        Pass {
-                                            node: close_node, ..
-                                        } => Pass {
-                                            node: cst::Node::rule(
-                                                RuleKind::_DELIMITEDBY,
-                                                vec![open_node, expr_node, close_node],
-                                            ),
-                                            error: None,
-                                        },
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } {
-                    Fail { error } => {
-                        stream.set_position(start_position);
-                        Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
-                            error: Some(error),
-                        }
-                    }
-                    pass => pass,
-                }
-            } {
-                Pass { node, error } => {
-                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
-                }
-                Fail { error } => {
-                    break Fail {
-                        error: error.maybe_merge_with(furthest_error),
-                    }
-                }
-            };
-            break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
-                error: furthest_error,
-            };
-        }
-    }
-
-    #[inline]
-    pub(crate) fn parse_yul_function_call(&self, stream: &mut Stream) -> ParseResult {
-        match self.parse_yul_function_call_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::YulFunctionCall, node),
                 error,
             },
             fail => fail,
@@ -20037,7 +20281,7 @@ impl Language {
         }
     }
 
-    // YulStatement = YulBlock | YulVariableDeclaration | YulFunctionDefinition | YulAssignmentStatement | YulFunctionCall | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement;
+    // YulStatement = YulBlock | YulFunctionDefinition | YulDeclarationStatement | YulAssignmentStatement | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement | YulExpression;
 
     #[allow(unused_assignments, unused_parens)]
     fn parse_yul_statement_0_4_11(&self, stream: &mut Stream) -> ParseResult {
@@ -20049,22 +20293,17 @@ impl Language {
                 pass => break pass,
             }
             stream.set_position(start_position);
-            match self.parse_yul_variable_declaration(stream) {
-                Fail { error } => furthest_error.merge_with(error),
-                pass => break pass,
-            }
-            stream.set_position(start_position);
             match self.parse_yul_function_definition(stream) {
                 Fail { error } => furthest_error.merge_with(error),
                 pass => break pass,
             }
             stream.set_position(start_position);
-            match self.parse_yul_assignment_statement(stream) {
+            match self.parse_yul_declaration_statement(stream) {
                 Fail { error } => furthest_error.merge_with(error),
                 pass => break pass,
             }
             stream.set_position(start_position);
-            match self.parse_yul_function_call(stream) {
+            match self.parse_yul_assignment_statement(stream) {
                 Fail { error } => furthest_error.merge_with(error),
                 pass => break pass,
             }
@@ -20095,6 +20334,11 @@ impl Language {
             }
             stream.set_position(start_position);
             match self.parse_yul_continue_statement(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_yul_expression(stream) {
                 Fail { error } => furthest_error.merge_with(error),
                 pass => break pass,
             }
@@ -20322,186 +20566,6 @@ impl Language {
         match self.parse_yul_switch_statement_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::YulSwitchStatement, node),
-                error,
-            },
-            fail => fail,
-        }
-    }
-
-    // YulVariableDeclaration = «LetKeyword» YulIdentifierPath {«Comma» YulIdentifierPath} [«ColonEqual» YulExpression];
-
-    #[allow(unused_assignments, unused_parens)]
-    fn parse_yul_variable_declaration_0_4_11(&self, stream: &mut Stream) -> ParseResult {
-        loop {
-            let mut furthest_error = None;
-            let result_0 = match {
-                let leading_trivia = self.optional_leading_trivia(stream);
-                let start = stream.position();
-                if self.scan_let_keyword(stream) {
-                    let end = stream.position();
-                    let trailing_trivia = self.optional_trailing_trivia(stream);
-                    Pass {
-                        node: cst::Node::token(
-                            TokenKind::LetKeyword,
-                            Range { start, end },
-                            leading_trivia,
-                            trailing_trivia,
-                        ),
-                        error: None,
-                    }
-                } else {
-                    Fail {
-                        error: ParseError::new(start, "LetKeyword"),
-                    }
-                }
-            } {
-                Pass { node, error } => {
-                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
-                }
-                Fail { error } => {
-                    break Fail {
-                        error: error.maybe_merge_with(furthest_error),
-                    }
-                }
-            };
-            let result_1 = match {
-                let mut result = Vec::new();
-                loop {
-                    match self.parse_yul_identifier_path(stream) {
-                        err @ Fail { .. } => break err,
-                        Pass { node, .. } => {
-                            result.push(node);
-                            let save = stream.position();
-                            match {
-                                let leading_trivia = self.optional_leading_trivia(stream);
-                                let start = stream.position();
-                                if self.scan_comma(stream) {
-                                    let end = stream.position();
-                                    let trailing_trivia = self.optional_trailing_trivia(stream);
-                                    Pass {
-                                        node: cst::Node::token(
-                                            TokenKind::Comma,
-                                            Range { start, end },
-                                            leading_trivia,
-                                            trailing_trivia,
-                                        ),
-                                        error: None,
-                                    }
-                                } else {
-                                    Fail {
-                                        error: ParseError::new(start, "Comma"),
-                                    }
-                                }
-                            } {
-                                Fail { error } => {
-                                    stream.set_position(save);
-                                    break Pass {
-                                        node: cst::Node::rule(RuleKind::_SEPARATEDBY, result),
-                                        error: Some(error),
-                                    };
-                                }
-                                Pass { node, .. } => result.push(node),
-                            }
-                        }
-                    }
-                }
-            } {
-                Pass { node, error } => {
-                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
-                }
-                Fail { error } => {
-                    break Fail {
-                        error: error.maybe_merge_with(furthest_error),
-                    }
-                }
-            };
-            let result_2 = match {
-                let start_position = stream.position();
-                match loop {
-                    let mut furthest_error = None;
-                    let result_0 = match {
-                        let leading_trivia = self.optional_leading_trivia(stream);
-                        let start = stream.position();
-                        if self.scan_colon_equal(stream) {
-                            let end = stream.position();
-                            let trailing_trivia = self.optional_trailing_trivia(stream);
-                            Pass {
-                                node: cst::Node::token(
-                                    TokenKind::ColonEqual,
-                                    Range { start, end },
-                                    leading_trivia,
-                                    trailing_trivia,
-                                ),
-                                error: None,
-                            }
-                        } else {
-                            Fail {
-                                error: ParseError::new(start, "ColonEqual"),
-                            }
-                        }
-                    } {
-                        Pass { node, error } => {
-                            furthest_error =
-                                error.map(|error| error.maybe_merge_with(furthest_error));
-                            node
-                        }
-                        Fail { error } => {
-                            break Fail {
-                                error: error.maybe_merge_with(furthest_error),
-                            }
-                        }
-                    };
-                    let result_1 = match self.parse_yul_expression(stream) {
-                        Pass { node, error } => {
-                            furthest_error =
-                                error.map(|error| error.maybe_merge_with(furthest_error));
-                            node
-                        }
-                        Fail { error } => {
-                            break Fail {
-                                error: error.maybe_merge_with(furthest_error),
-                            }
-                        }
-                    };
-                    break Pass {
-                        node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
-                        error: furthest_error,
-                    };
-                } {
-                    Fail { error } => {
-                        stream.set_position(start_position);
-                        Pass {
-                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
-                            error: Some(error),
-                        }
-                    }
-                    pass => pass,
-                }
-            } {
-                Pass { node, error } => {
-                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
-                }
-                Fail { error } => {
-                    break Fail {
-                        error: error.maybe_merge_with(furthest_error),
-                    }
-                }
-            };
-            break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1, result_2]),
-                error: furthest_error,
-            };
-        }
-    }
-
-    #[inline]
-    pub(crate) fn parse_yul_variable_declaration(&self, stream: &mut Stream) -> ParseResult {
-        match self.parse_yul_variable_declaration_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::YulVariableDeclaration, node),
                 error,
             },
             fail => fail,

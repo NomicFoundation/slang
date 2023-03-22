@@ -1,32 +1,28 @@
 # yaml-language-server: $schema=../../../../../../../codegen/schema/generated/productions.schema.json
 
 - name: "YulExpression"
-  kind: "Parser"
+  kind: "PrecedenceParser"
   unversioned:
-    choice:
-      - reference: "YulFunctionCall"
-      - reference: "YulLiteral"
+    operators:
+      - name: "YulFunctionCallExpression"
+        model: "UnaryPostfix"
+        delimitedBy:
+          open:
+            reference: "OpenParen"
+          expression:
+            optional:
+              separatedBy:
+                separator:
+                  reference: "Comma"
+                expression:
+                  reference: "YulExpression"
+          close:
+            reference: "CloseParen"
 
-- name: "YulFunctionCall"
-  kind: "Parser"
-  unversioned:
-    sequence:
-      - reference: "YulIdentifierPath"
-      # TODO: temporary hack until precedence is implemented properly here.
-      # `YulIdentifierPath` should be promoted to a `YulExpression` choice, and the `optional` removed from here.
-      - optional:
-          delimitedBy:
-            open:
-              reference: "OpenParen"
-            expression:
-              optional:
-                separatedBy:
-                  separator:
-                    reference: "Comma"
-                  expression:
-                    reference: "YulExpression"
-            close:
-              reference: "CloseParen"
+    primaryExpression:
+      choice:
+        - reference: "YulLiteral"
+        - reference: "YulIdentifierPath"
 
 - name: "YulIdentifierPath"
   kind: "Parser"
