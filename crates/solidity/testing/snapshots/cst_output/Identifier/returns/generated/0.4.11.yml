@@ -5,7 +5,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected Identifier
+    Error: Expected Identifier.
        ╭─[crates/solidity/testing/snapshots/cst_output/Identifier/returns/input.sol:1:8]
        │
      1 │ returns

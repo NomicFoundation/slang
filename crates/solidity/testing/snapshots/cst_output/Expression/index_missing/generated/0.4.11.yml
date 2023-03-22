@@ -5,7 +5,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected end of input
+    Error: Expected end of input.
        ╭─[crates/solidity/testing/snapshots/cst_output/Expression/index_missing/input.sol:1:4]
        │
      1 │ arr[]

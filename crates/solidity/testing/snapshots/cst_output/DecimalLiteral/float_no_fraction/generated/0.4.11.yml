@@ -5,7 +5,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected DecimalLiteral
+    Error: Expected DecimalLiteral.
        ╭─[crates/solidity/testing/snapshots/cst_output/DecimalLiteral/float_no_fraction/input.sol:1:2]
        │
      1 │ 1.
