@@ -4,7 +4,7 @@ use anyhow::Result;
 use codegen_ebnf::EbnfSerializer;
 use codegen_schema::types::{
     grammar::Grammar,
-    production::{Production, ProductionRef},
+    production::{Production, ProductionRef, VersionMap},
 };
 use codegen_utils::context::CodegenContext;
 use inflector::Inflector;
@@ -34,9 +34,10 @@ impl<'context> Snippets<'context> {
             };
 
             for version in versions {
-                let snippet_path = self.get_snippet_path(production, &version).unwrap();
-                let snippet = self.get_snippet(production, &version).unwrap();
-                codegen.write_file(&snippet_path, &snippet)?;
+                if let Some(snippet_path) = self.get_snippet_path(production, &version) {
+                    let snippet = self.get_snippet(production, &version).unwrap_or_default();
+                    codegen.write_file(&snippet_path, &snippet)?
+                };
             }
         }
 
@@ -51,21 +52,42 @@ impl<'context> Snippets<'context> {
         let production_name = &production.name();
         let (section, topic) = self.grammar.locate_production(production_name);
 
-        let file_name = match production.versions() {
-            None => "unversioned".to_owned(),
-            Some(versions) => {
-                Production::get_exact_version(versions.into_iter(), &version)?.to_string()
-            }
+        let file_name = match production.as_ref() {
+            Production::Scanner { version_map, .. } => match version_map {
+                VersionMap::Unversioned(_) => Some("unversioned".to_owned()),
+                VersionMap::Versioned(versions) => versions
+                    .keys()
+                    .rev()
+                    .find(|v| *v <= version)
+                    .and_then(|v| versions.get(v).unwrap().as_ref().map(|_| v.to_string())),
+            },
+            Production::TriviaParser { version_map, .. }
+            | Production::Parser { version_map, .. } => match version_map {
+                VersionMap::Unversioned(_) => Some("unversioned".to_owned()),
+                VersionMap::Versioned(versions) => versions
+                    .keys()
+                    .rev()
+                    .find(|v| *v <= version)
+                    .and_then(|v| versions.get(v).unwrap().as_ref().map(|_| v.to_string())),
+            },
+            Production::PrecedenceParser { version_map, .. } => match version_map {
+                VersionMap::Unversioned(_) => Some("unversioned".to_owned()),
+                VersionMap::Versioned(versions) => versions
+                    .keys()
+                    .rev()
+                    .find(|v| *v <= version)
+                    .and_then(|v| versions.get(v).unwrap().as_ref().map(|_| v.to_string())),
+            },
         };
 
-        return Some(
+        return file_name.map(|file_name| {
             self.output_dir
                 .join("ebnf")
                 .join(&section.path)
                 .join(&topic.path)
                 .join(production_name.to_kebab_case())
-                .join(format!("{file_name}.md")),
-        );
+                .join(format!("{file_name}.md"))
+        });
     }
 
     fn get_snippet(&self, production: &ProductionRef, version: &Version) -> Option<String> {

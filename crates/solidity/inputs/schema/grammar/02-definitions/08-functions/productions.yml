@@ -148,17 +148,17 @@
 
 - name: "UnnamedFunctionDefinition"
   kind: "Parser"
-  unversioned:
-    # TODO: Deprecate and remove this production in `v0.6.0`, and add tests.
-    # Blocked on https://github.com/NomicFoundation/slang/issues/182
-    sequence:
-      - reference: "FunctionKeyword"
-      - reference: "ParameterList"
-      - zeroOrMore:
-          reference: "FallbackFunctionAttribute"
-      - choice:
-          - reference: "Semicolon"
-          - reference: "Block"
+  versioned:
+    0.4.11:
+      sequence:
+        - reference: "FunctionKeyword"
+        - reference: "ParameterList"
+        - zeroOrMore:
+            reference: "FallbackFunctionAttribute"
+        - choice:
+            - reference: "Semicolon"
+            - reference: "Block"
+    0.6.0: null
 
 - name: "FallbackFunctionDefinition"
   kind: "Parser"

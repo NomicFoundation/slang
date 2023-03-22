@@ -1,0 +1,16 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ receive () {}                                                                    │ 0..13
+
+Errors: []
+
+Tree:
+  - ReceiveFunctionDefinition (Rule): # 0..13 "receive () {}"
+      - ReceiveKeyword (Token): "receive" # 0..7
+      - ParameterList (Rule): # 7..10 " ()"
+          - OpenParen (Token): "(" # 8..9
+          - CloseParen (Token): ")" # 9..10
+      - Block (Rule): # 10..13 " {}"
+          - OpenBrace (Token): "{" # 11..12
+          - CloseBrace (Token): "}" # 12..13

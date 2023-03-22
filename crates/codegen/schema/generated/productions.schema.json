@@ -27,7 +27,14 @@
                 "versioned": {
                   "type": "object",
                   "additionalProperties": {
-                    "$ref": "#/definitions/Scanner"
+                    "anyOf": [
+                      {
+                        "$ref": "#/definitions/Scanner"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
                   }
                 }
               }
@@ -63,7 +70,14 @@
                 "versioned": {
                   "type": "object",
                   "additionalProperties": {
-                    "$ref": "#/definitions/Parser"
+                    "anyOf": [
+                      {
+                        "$ref": "#/definitions/Parser"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
                   }
                 }
               }
@@ -99,7 +113,14 @@
                 "versioned": {
                   "type": "object",
                   "additionalProperties": {
-                    "$ref": "#/definitions/Parser"
+                    "anyOf": [
+                      {
+                        "$ref": "#/definitions/Parser"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
                   }
                 }
               }
@@ -135,7 +156,14 @@
                 "versioned": {
                   "type": "object",
                   "additionalProperties": {
-                    "$ref": "#/definitions/PrecedenceParser"
+                    "anyOf": [
+                      {
+                        "$ref": "#/definitions/PrecedenceParser"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
                   }
                 }
               }

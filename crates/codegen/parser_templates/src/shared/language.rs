@@ -176,3 +176,117 @@ pub(crate) fn render_error_report(
         .trim()
         .to_string();
 }
+
+#[allow(dead_code)]
+fn call_scanner<L, F>(
+    language: &L,
+    input: &str,
+    scanner: F,
+    kind: TokenKind,
+    error_message: &str,
+) -> Option<ParserOutput>
+where
+    F: Fn(&L, &mut Stream) -> bool,
+{
+    let mut stream = Stream::new(input);
+    Some(
+        if scanner(language, &mut stream) && stream.peek().is_none() {
+            ParserOutput {
+                parse_tree: Some(cst::Node::token(
+                    kind,
+                    Range {
+                        start: 0,
+                        end: stream.position(),
+                    },
+                    None,
+                    None,
+                )),
+                errors: vec![],
+            }
+        } else {
+            ParserOutput {
+                parse_tree: None,
+                errors: vec![ParseError::new(stream.position(), error_message)],
+            }
+        },
+    )
+}
+
+#[allow(dead_code)]
+fn try_call_scanner<L, F>(
+    language: &L,
+    input: &str,
+    scanner: F,
+    kind: TokenKind,
+    error_message: &str,
+) -> Option<ParserOutput>
+where
+    F: Fn(&L, &mut Stream) -> Option<bool>,
+{
+    let mut stream = Stream::new(input);
+    scanner(language, &mut stream).map(|result| {
+        if result && stream.peek().is_none() {
+            ParserOutput {
+                parse_tree: Some(cst::Node::token(
+                    kind,
+                    Range {
+                        start: 0,
+                        end: stream.position(),
+                    },
+                    None,
+                    None,
+                )),
+                errors: vec![],
+            }
+        } else {
+            ParserOutput {
+                parse_tree: None,
+                errors: vec![ParseError::new(stream.position(), error_message)],
+            }
+        }
+    })
+}
+
+#[allow(dead_code)]
+fn call_parser<L, F>(language: &L, input: &str, parser: F) -> Option<ParserOutput>
+where
+    F: Fn(&L, &mut Stream) -> ParseResult,
+{
+    let mut stream = Stream::new(input);
+    Some(match parser(language, &mut stream) {
+        ParseResult::Pass { node, .. } if stream.peek().is_none() => ParserOutput {
+            parse_tree: Some(node),
+            errors: vec![],
+        },
+        ParseResult::Pass { .. } => ParserOutput {
+            parse_tree: None,
+            errors: vec![ParseError::new(stream.position(), "end of input")],
+        },
+        ParseResult::Fail { error } => ParserOutput {
+            parse_tree: None,
+            errors: vec![error],
+        },
+    })
+}
+
+#[allow(dead_code)]
+fn try_call_parser<L, F>(language: &L, input: &str, parser: F) -> Option<ParserOutput>
+where
+    F: Fn(&L, &mut Stream) -> Option<ParseResult>,
+{
+    let mut stream = Stream::new(input);
+    parser(language, &mut stream).map(|result| match result {
+        ParseResult::Pass { node, .. } if stream.peek().is_none() => ParserOutput {
+            parse_tree: Some(node),
+            errors: vec![],
+        },
+        ParseResult::Pass { .. } => ParserOutput {
+            parse_tree: None,
+            errors: vec![ParseError::new(stream.position(), "end of input")],
+        },
+        ParseResult::Fail { error } => ParserOutput {
+            parse_tree: None,
+            errors: vec![error],
+        },
+    })
+}

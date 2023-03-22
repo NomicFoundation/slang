@@ -179,13 +179,124 @@ pub(crate) fn render_error_report(
         .to_string();
 }
 
+#[allow(dead_code)]
+fn call_scanner<L, F>(
+    language: &L,
+    input: &str,
+    scanner: F,
+    kind: TokenKind,
+    error_message: &str,
+) -> Option<ParserOutput>
+where
+    F: Fn(&L, &mut Stream) -> bool,
+{
+    let mut stream = Stream::new(input);
+    Some(
+        if scanner(language, &mut stream) && stream.peek().is_none() {
+            ParserOutput {
+                parse_tree: Some(cst::Node::token(
+                    kind,
+                    Range {
+                        start: 0,
+                        end: stream.position(),
+                    },
+                    None,
+                    None,
+                )),
+                errors: vec![],
+            }
+        } else {
+            ParserOutput {
+                parse_tree: None,
+                errors: vec![ParseError::new(stream.position(), error_message)],
+            }
+        },
+    )
+}
+
+#[allow(dead_code)]
+fn try_call_scanner<L, F>(
+    language: &L,
+    input: &str,
+    scanner: F,
+    kind: TokenKind,
+    error_message: &str,
+) -> Option<ParserOutput>
+where
+    F: Fn(&L, &mut Stream) -> Option<bool>,
+{
+    let mut stream = Stream::new(input);
+    scanner(language, &mut stream).map(|result| {
+        if result && stream.peek().is_none() {
+            ParserOutput {
+                parse_tree: Some(cst::Node::token(
+                    kind,
+                    Range {
+                        start: 0,
+                        end: stream.position(),
+                    },
+                    None,
+                    None,
+                )),
+                errors: vec![],
+            }
+        } else {
+            ParserOutput {
+                parse_tree: None,
+                errors: vec![ParseError::new(stream.position(), error_message)],
+            }
+        }
+    })
+}
+
+#[allow(dead_code)]
+fn call_parser<L, F>(language: &L, input: &str, parser: F) -> Option<ParserOutput>
+where
+    F: Fn(&L, &mut Stream) -> ParseResult,
+{
+    let mut stream = Stream::new(input);
+    Some(match parser(language, &mut stream) {
+        ParseResult::Pass { node, .. } if stream.peek().is_none() => ParserOutput {
+            parse_tree: Some(node),
+            errors: vec![],
+        },
+        ParseResult::Pass { .. } => ParserOutput {
+            parse_tree: None,
+            errors: vec![ParseError::new(stream.position(), "end of input")],
+        },
+        ParseResult::Fail { error } => ParserOutput {
+            parse_tree: None,
+            errors: vec![error],
+        },
+    })
+}
+
+#[allow(dead_code)]
+fn try_call_parser<L, F>(language: &L, input: &str, parser: F) -> Option<ParserOutput>
+where
+    F: Fn(&L, &mut Stream) -> Option<ParseResult>,
+{
+    let mut stream = Stream::new(input);
+    parser(language, &mut stream).map(|result| match result {
+        ParseResult::Pass { node, .. } if stream.peek().is_none() => ParserOutput {
+            parse_tree: Some(node),
+            errors: vec![],
+        },
+        ParseResult::Pass { .. } => ParserOutput {
+            parse_tree: None,
+            errors: vec![ParseError::new(stream.position(), "end of input")],
+        },
+        ParseResult::Fail { error } => ParserOutput {
+            parse_tree: None,
+            errors: vec![error],
+        },
+    })
+}
+
 pub struct Language {
-    version: Version,
-    #[allow(dead_code)]
+    pub(crate) version: Version,
     pub(crate) version_is_equal_to_or_greater_than_0_4_22: bool,
-    #[allow(dead_code)]
     pub(crate) version_is_equal_to_or_greater_than_0_6_0: bool,
-    #[allow(dead_code)]
     pub(crate) version_is_equal_to_or_greater_than_0_8_18: bool,
 }
 
@@ -227,59 +338,8 @@ impl Language {
         &self.version
     }
 
-    pub fn parse(&self, kind: ProductionKind, input: &str) -> ParserOutput {
-        fn call_scanner<F>(
-            language: &Language,
-            input: &str,
-            scanner: F,
-            kind: TokenKind,
-            error_message: &str,
-        ) -> ParserOutput
-        where
-            F: Fn(&Language, &mut Stream) -> bool,
-        {
-            let mut stream = Stream::new(input);
-            if scanner(language, &mut stream) && stream.peek().is_none() {
-                ParserOutput {
-                    parse_tree: Some(cst::Node::token(
-                        kind,
-                        Range {
-                            start: 0,
-                            end: stream.position(),
-                        },
-                        None,
-                        None,
-                    )),
-                    errors: vec![],
-                }
-            } else {
-                ParserOutput {
-                    parse_tree: None,
-                    errors: vec![ParseError::new(stream.position(), error_message)],
-                }
-            }
-        }
-        fn call_parser<F>(language: &Language, input: &str, parser: F) -> ParserOutput
-        where
-            F: Fn(&Language, &mut Stream) -> ParseResult,
-        {
-            let mut stream = Stream::new(input);
-            match parser(language, &mut stream) {
-                ParseResult::Pass { node, .. } if stream.peek().is_none() => ParserOutput {
-                    parse_tree: Some(node),
-                    errors: vec![],
-                },
-                ParseResult::Pass { .. } => ParserOutput {
-                    parse_tree: None,
-                    errors: vec![ParseError::new(stream.position(), "end of input")],
-                },
-                ParseResult::Fail { error } => ParserOutput {
-                    parse_tree: None,
-                    errors: vec![error],
-                },
-            }
-        }
-        match kind {
+    pub fn parse(&self, production_kind: ProductionKind, input: &str) -> ParserOutput {
+        let output = match production_kind {
             ProductionKind::AbicoderKeyword => call_scanner(
                 self,
                 input,
@@ -1439,7 +1499,7 @@ impl Language {
                 call_parser(self, input, Language::parse_constructor_attribute)
             }
             ProductionKind::ConstructorDefinition => {
-                call_parser(self, input, Language::parse_constructor_definition)
+                try_call_parser(self, input, Language::maybe_parse_constructor_definition)
             }
             ProductionKind::ContinueStatement => {
                 call_parser(self, input, Language::parse_continue_statement)
@@ -1493,9 +1553,11 @@ impl Language {
             ProductionKind::FallbackFunctionAttribute => {
                 call_parser(self, input, Language::parse_fallback_function_attribute)
             }
-            ProductionKind::FallbackFunctionDefinition => {
-                call_parser(self, input, Language::parse_fallback_function_definition)
-            }
+            ProductionKind::FallbackFunctionDefinition => try_call_parser(
+                self,
+                input,
+                Language::maybe_parse_fallback_function_definition,
+            ),
             ProductionKind::ForStatement => call_parser(self, input, Language::parse_for_statement),
             ProductionKind::FunctionAttribute => {
                 call_parser(self, input, Language::parse_function_attribute)
@@ -1578,9 +1640,11 @@ impl Language {
             ProductionKind::ReceiveFunctionAttribute => {
                 call_parser(self, input, Language::parse_receive_function_attribute)
             }
-            ProductionKind::ReceiveFunctionDefinition => {
-                call_parser(self, input, Language::parse_receive_function_definition)
-            }
+            ProductionKind::ReceiveFunctionDefinition => try_call_parser(
+                self,
+                input,
+                Language::maybe_parse_receive_function_definition,
+            ),
             ProductionKind::ReturnStatement => {
                 call_parser(self, input, Language::parse_return_statement)
             }
@@ -1634,9 +1698,11 @@ impl Language {
             ProductionKind::UncheckedBlock => {
                 call_parser(self, input, Language::parse_unchecked_block)
             }
-            ProductionKind::UnnamedFunctionDefinition => {
-                call_parser(self, input, Language::parse_unnamed_function_definition)
-            }
+            ProductionKind::UnnamedFunctionDefinition => try_call_parser(
+                self,
+                input,
+                Language::maybe_parse_unnamed_function_definition,
+            ),
             ProductionKind::UserDefinedValueTypeDefinition => call_parser(
                 self,
                 input,
@@ -1699,6 +1765,16 @@ impl Language {
             ProductionKind::YulVariableDeclaration => {
                 call_parser(self, input, Language::parse_yul_variable_declaration)
             }
-        }
+        };
+
+        output.unwrap_or_else(|| {
+            let message = format!(
+                "ProductionKind {production_kind} is not valid in this version of Solidity."
+            );
+            ParserOutput {
+                parse_tree: None,
+                errors: vec![ParseError::new(0, message)],
+            }
+        })
     }
 }

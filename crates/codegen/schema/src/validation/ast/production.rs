@@ -109,7 +109,7 @@ pub trait ConcreteAbstractPair {
 
 pub enum VersionMap<T: ConcreteAbstractPair> {
     Unversioned(Rc<T>),
-    Versioned(IndexMap<Node<Version>, Rc<T>>),
+    Versioned(IndexMap<Node<Version>, Option<Rc<T>>>),
 }
 
 impl<T: ConcreteAbstractPair> VersionMap<T> {
@@ -134,7 +134,7 @@ impl<T: ConcreteAbstractPair> VersionMap<T> {
                             let field = cst_node.field(&version.to_string());
                             (
                                 Node::new(&field.key, version),
-                                T::new(&field.value, expression),
+                                expression.map(|expression| T::new(&field.value, expression)),
                             )
                         })
                         .collect(),

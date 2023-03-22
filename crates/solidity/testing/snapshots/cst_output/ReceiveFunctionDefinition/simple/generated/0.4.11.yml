@@ -1,22 +1,16 @@
 # This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 Source: >
-  1  │ receive () {                                                                     │ 0..12
-  2  │     // TODO: should have failed in earlier versions                              │ 13..64
-  3  │     // https://github.com/NomicFoundation/slang/issues/359                       │ 65..123
-  4  │ }                                                                                │ 124..125
+  1  │ receive () {}                                                                    │ 0..13
 
-Errors: []
+Errors: # 1 total
+  - >
+    Error: Expected ProductionKind ReceiveFunctionDefinition is not valid in this version of Solidity.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ReceiveFunctionDefinition/simple/input.sol:1:1]
+       │
+     1 │ receive () {}
+       · │ 
+       · ╰─ Error occurred here.
+    ───╯
 
-Tree:
-  - ReceiveFunctionDefinition (Rule): # 0..125 "receive () {\n    // TODO: should have failed in ea..."
-      - ReceiveKeyword (Token): "receive" # 0..7
-      - ParameterList (Rule): # 7..10 " ()"
-          - OpenParen (Token): "(" # 8..9
-          - CloseParen (Token): ")" # 9..10
-      - Block (Rule): # 10..125 " {\n    // TODO: should have failed in earlier vers..."
-          - OpenBrace (Token): "{" # 11..12
-          - CloseBrace (Token): # 13..125 "    // TODO: should have failed in earlier version..."
-              - SingleLineComment (Trivia): "// TODO: should have failed in earlier versions" # 17..64
-              - SingleLineComment (Trivia): "// https://github.com/NomicFoundation/slang/issues..." # 69..123
-              - Contents: "}" # 124..125
+Tree: null
