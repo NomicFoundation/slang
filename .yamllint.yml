@@ -27,4 +27,5 @@ rules:
     allow-quoted-quotes: true
     quote-type: "double"
     required: true
-  truthy: "enable"
+  truthy:
+    check-keys: false
