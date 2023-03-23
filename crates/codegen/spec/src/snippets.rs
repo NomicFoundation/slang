@@ -3,14 +3,14 @@ use std::path::PathBuf;
 use anyhow::Result;
 use codegen_ebnf::EbnfSerializer;
 use codegen_schema::types::{
-    grammar::Grammar,
+    grammar::{Grammar, GrammarSection, GrammarTopic},
     production::{Production, ProductionRef, VersionMap},
 };
 use codegen_utils::context::CodegenContext;
 use inflector::Inflector;
 use semver::Version;
 
-use crate::{grammar::GrammarSpecPrivateExtensions, markdown::MarkdownWriter};
+use crate::markdown::MarkdownWriter;
 
 pub struct Snippets<'context> {
     grammar: &'context Grammar,
@@ -50,7 +50,7 @@ impl<'context> Snippets<'context> {
         version: &Version,
     ) -> Option<PathBuf> {
         let production_name = &production.name();
-        let (section, topic) = self.grammar.locate_production(production_name);
+        let (section, topic) = self.locate_production(production_name);
 
         let file_name = match production.as_ref() {
             Production::Scanner { version_map, .. } => match version_map {
@@ -104,5 +104,17 @@ impl<'context> Snippets<'context> {
         snippet.write_code_block(language, class, id, contents);
 
         return Some(snippet.to_string());
+    }
+
+    fn locate_production(&self, name: &str) -> (&GrammarSection, &GrammarTopic) {
+        for section in &self.grammar.sections {
+            for topic in &section.topics {
+                if topic.productions.contains_key(name) {
+                    return (section, topic);
+                }
+            }
+        }
+
+        unreachable!("Cannot locate production '{name}'.");
     }
 }
