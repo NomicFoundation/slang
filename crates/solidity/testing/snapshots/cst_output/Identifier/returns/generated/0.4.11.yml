@@ -9,8 +9,8 @@ Errors: # 1 total
        ╭─[crates/solidity/testing/snapshots/cst_output/Identifier/returns/input.sol:1:8]
        │
      1 │ returns
-       ·        │ 
-       ·        ╰─ Error occurred here.
+       │        │ 
+       │        ╰─ Error occurred here.
     ───╯
 
 Tree: null

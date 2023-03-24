@@ -9,8 +9,8 @@ Errors: # 1 total
        ╭─[crates/solidity/testing/snapshots/cst_output/HexStringLiteral/invalid_separator_after_single_char/input.sol:1:4]
        │
      1 │ hex"1_2"
-       ·    │ 
-       ·    ╰─ Error occurred here.
+       │    │ 
+       │    ╰─ Error occurred here.
     ───╯
 
 Tree: null
