@@ -40,8 +40,12 @@ impl MarkdownWriter {
         writeln!(self.w, "```").unwrap();
     }
 
-    pub fn write_line(&mut self, value: &str) {
-        writeln!(self.w, "{value}").unwrap();
+    pub fn write_text(&mut self, text: &str) {
+        writeln!(self.w, "{text}").unwrap();
+    }
+
+    pub fn write_list_link(&mut self, title: &str, path: &str) {
+        writeln!(self.w, "- [{title}]({path})").unwrap();
     }
 
     pub fn write_newline(&mut self) {
