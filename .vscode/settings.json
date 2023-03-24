@@ -14,5 +14,8 @@
     "**/node_modules/": true,
     "**/target/": true
   },
+  "triggerTaskOnSave.tasks": {
+    "Validate Solidity Grammar": ["crates/solidity/inputs/schema/grammar/**/*.yml"]
+  },
   "yaml.validate": false // Disable LSP validation for YAML files, as it is handled by our own cargo tasks
 }
