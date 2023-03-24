@@ -90,7 +90,7 @@ impl CodeGenerator {
                         }};
                         
                         output.unwrap_or_else(|| {{
-                            let message = format!(\"ProductionKind {{production_kind}} is not valid in this version of {grammar_title}.\");
+                            let message = format!(\"ProductionKind {{production_kind}} is not valid in this version of {grammar_title}\");
                             ParserOutput {{
                                 parse_tree: None,
                                 errors: vec![ParseError::new(0, message)]

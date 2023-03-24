@@ -386,12 +386,7 @@ impl<'context> CombinatorNode<'context> {
                                 #(
                                     stream.set_position(start_position);
                                     match { #elements } {
-                                        Err(error) =>
-                                        if furthest_error.position < error.position {
-                                            furthest_error = error
-                                        } else if furthest_error.position == error.position {
-                                            furthest_error.expected = format!("{prev_expected}, or {expected}", prev_expected = furthest_error.expected, expected = error.expected)
-                                        },
+                                        Err(error) => furthest_error.merge_with(error),
                                         ok => break ok,
                                     }
                                 )*

@@ -4,7 +4,7 @@ Source: ""
 
 Errors: # 1 total
   - >
-    Error: Expected ErrorKeyword, or TypeKeyword, or EnumKeyword, or StructKeyword, or Identifier, or MappingKeyword, or FunctionKeyword, or UnsignedFixedType, or SignedFixedType, or UnsignedIntegerType, or SignedIntegerType, or FixedBytesType, or PayableKeyword, or AddressKeyword, or StringKeyword, or BoolKeyword, or FunctionKeyword, or LibraryKeyword, or InterfaceKeyword, or AbstractKeyword, or ContractKeyword, or UsingKeyword, or ImportKeyword, or PragmaKeyword
+    Error: Expected AbstractKeyword or AddressKeyword or BoolKeyword or ContractKeyword or EnumKeyword or ErrorKeyword or FixedBytesType or FunctionKeyword or Identifier or ImportKeyword or InterfaceKeyword or LibraryKeyword or MappingKeyword or PayableKeyword or PragmaKeyword or SignedFixedType or SignedIntegerType or StringKeyword or StructKeyword or TypeKeyword or UnsignedFixedType or UnsignedIntegerType or UsingKeyword.
        ─[crates/solidity/testing/snapshots/cst_output/SourceUnit/empty_file/input.sol:0:0]
 
 Tree: null

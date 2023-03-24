@@ -5,7 +5,7 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected HexStringLiteral
+    Error: Expected HexStringLiteral.
        ╭─[crates/solidity/testing/snapshots/cst_output/HexStringLiteral/invalid_consecutive_separators/input.sol:1:4]
        │
      1 │ hex"12__34"
