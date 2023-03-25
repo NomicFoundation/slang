@@ -182,6 +182,7 @@ pub enum RuleKind {
     ArgumentList,
     Arguments,
     ArrayLiteral,
+    ArrayTypeName,
     AssemblyFlags,
     AssemblyStatement,
     AssignmentExpression,

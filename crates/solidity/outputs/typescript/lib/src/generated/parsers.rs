@@ -16704,53 +16704,55 @@ impl Language {
         }
     }
 
-    // TypeName = (ElementaryType | FunctionType | MappingType | IdentifierPath) {«OpenBracket» [Expression] «CloseBracket»};
+    // TypeName = ArrayTypeName | FunctionType | MappingType | ElementaryType | IdentifierPath;
+    // ArrayTypeName = TypeName («OpenBracket» [Expression] «CloseBracket»);
 
     #[allow(unused_assignments, unused_parens)]
     fn parse_type_name_0_4_11(&self, stream: &mut Stream) -> ParseResult {
-        loop {
-            let mut furthest_error = None;
-            let result_0 = match loop {
-                let start_position = stream.position();
-                let mut furthest_error;
-                match self.parse_elementary_type(stream) {
-                    Fail { error } => furthest_error = error,
-                    pass => break pass,
-                }
-                stream.set_position(start_position);
-                match self.parse_function_type(stream) {
-                    Fail { error } => furthest_error.merge_with(error),
-                    pass => break pass,
-                }
-                stream.set_position(start_position);
-                match self.parse_mapping_type(stream) {
-                    Fail { error } => furthest_error.merge_with(error),
-                    pass => break pass,
-                }
-                stream.set_position(start_position);
-                match self.parse_identifier_path(stream) {
-                    Fail { error } => furthest_error.merge_with(error),
-                    pass => break pass,
-                }
-                break Fail {
-                    error: furthest_error,
-                };
-            } {
-                Pass { node, error } => {
-                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
-                }
-                Fail { error } => {
-                    break Fail {
-                        error: error.maybe_merge_with(furthest_error),
+        {
+            enum Pratt {
+                Operator {
+                    kind: RuleKind,
+                    node: Rc<cst::Node>,
+                    left_binding_power: u8,
+                    right_binding_power: u8,
+                },
+                Node(Rc<cst::Node>),
+            }
+            let mut elements = Vec::new();
+            if let Some(error) = loop {
+                match loop {
+                    let start_position = stream.position();
+                    let mut furthest_error;
+                    match self.parse_function_type(stream) {
+                        Fail { error } => furthest_error = error,
+                        pass => break pass,
                     }
+                    stream.set_position(start_position);
+                    match self.parse_mapping_type(stream) {
+                        Fail { error } => furthest_error.merge_with(error),
+                        pass => break pass,
+                    }
+                    stream.set_position(start_position);
+                    match self.parse_elementary_type(stream) {
+                        Fail { error } => furthest_error.merge_with(error),
+                        pass => break pass,
+                    }
+                    stream.set_position(start_position);
+                    match self.parse_identifier_path(stream) {
+                        Fail { error } => furthest_error.merge_with(error),
+                        pass => break pass,
+                    }
+                    break Fail {
+                        error: furthest_error,
+                    };
+                } {
+                    Fail { error } => break Some(error),
+                    Pass { node, .. } => elements.push(Pratt::Node(node)),
                 }
-            };
-            let result_1 = match {
-                let mut result = Vec::new();
                 loop {
                     let start_position = stream.position();
-                    match {
+                    match match {
                         match {
                             let leading_trivia = self.optional_leading_trivia(stream);
                             let start = stream.position();
@@ -16835,31 +16837,105 @@ impl Language {
                             }
                         }
                     } {
-                        Fail { error } => {
+                        Pass { node, .. } => Ok(Pratt::Operator {
+                            node,
+                            kind: RuleKind::ArrayTypeName,
+                            left_binding_power: 1u8,
+                            right_binding_power: 255,
+                        }),
+                        Fail { error } => Err(error),
+                    } {
+                        Err(_) => {
                             stream.set_position(start_position);
-                            break Pass {
-                                node: cst::Node::rule(RuleKind::_REPEATED, result),
-                                error: Some(error),
-                            };
+                            break;
                         }
-                        Pass { node, .. } => result.push(node),
+                        Ok(operator) => elements.push(operator),
                     }
                 }
+                break None;
             } {
-                Pass { node, error } => {
-                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
-                    node
-                }
-                Fail { error } => {
-                    break Fail {
-                        error: error.maybe_merge_with(furthest_error),
+                Fail { error }
+            } else {
+                let mut i = 0;
+                while elements.len() > 1 {
+                    if let Pratt::Operator {
+                        right_binding_power,
+                        left_binding_power,
+                        ..
+                    } = &elements[i]
+                    {
+                        let next_left_binding_power = if elements.len() == i + 1 {
+                            0
+                        } else if let Pratt::Operator {
+                            left_binding_power, ..
+                        } = &elements[i + 1]
+                        {
+                            *left_binding_power
+                        } else if elements.len() == i + 2 {
+                            0
+                        } else if let Pratt::Operator {
+                            left_binding_power, ..
+                        } = &elements[i + 2]
+                        {
+                            *left_binding_power
+                        } else {
+                            0
+                        };
+                        if *right_binding_power <= next_left_binding_power {
+                            i += 1;
+                            continue;
+                        }
+                        if *right_binding_power == 255 {
+                            let left = elements.remove(i - 1);
+                            let op = elements.remove(i - 1);
+                            if let (Pratt::Node(left), Pratt::Operator { node: op, kind, .. }) =
+                                (left, op)
+                            {
+                                let node = cst::Node::rule(kind, vec![left, op]);
+                                elements.insert(i - 1, Pratt::Node(node));
+                                i = i.saturating_sub(2);
+                            } else {
+                                unreachable!()
+                            }
+                        } else if *left_binding_power == 255 {
+                            let op = elements.remove(i);
+                            let right = elements.remove(i);
+                            if let (Pratt::Operator { node: op, kind, .. }, Pratt::Node(right)) =
+                                (op, right)
+                            {
+                                let node = cst::Node::rule(kind, vec![op, right]);
+                                elements.insert(i, Pratt::Node(node));
+                                i = i.saturating_sub(1);
+                            } else {
+                                unreachable!()
+                            }
+                        } else {
+                            let left = elements.remove(i - 1);
+                            let op = elements.remove(i - 1);
+                            let right = elements.remove(i - 1);
+                            if let (
+                                Pratt::Node(left),
+                                Pratt::Operator { node: op, kind, .. },
+                                Pratt::Node(right),
+                            ) = (left, op, right)
+                            {
+                                let node = cst::Node::rule(kind, vec![left, op, right]);
+                                elements.insert(i - 1, Pratt::Node(node));
+                                i = i.saturating_sub(2);
+                            } else {
+                                unreachable!()
+                            }
+                        }
+                    } else {
+                        i += 1;
                     }
                 }
-            };
-            break Pass {
-                node: cst::Node::rule(RuleKind::_SEQUENCE, vec![result_0, result_1]),
-                error: furthest_error,
-            };
+                if let Pratt::Node(node) = elements.pop().unwrap() {
+                    Pass { node, error: None }
+                } else {
+                    unreachable!()
+                }
+            }
         }
     }
 

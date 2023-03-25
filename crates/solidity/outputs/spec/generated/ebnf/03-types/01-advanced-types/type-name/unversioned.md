@@ -3,5 +3,6 @@
 <!-- markdownlint-disable first-line-h1 -->
 
 ```{ .ebnf .slang-ebnf #TypeName }
-TypeName = (ElementaryType | FunctionType | MappingType | IdentifierPath) {«OpenBracket» [Expression] «CloseBracket»};
+TypeName = ArrayTypeName | FunctionType | MappingType | ElementaryType | IdentifierPath;
+ArrayTypeName = TypeName («OpenBracket» [Expression] «CloseBracket»);
 ```

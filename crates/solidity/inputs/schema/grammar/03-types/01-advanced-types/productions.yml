@@ -1,20 +1,23 @@
 # yaml-language-server: $schema=../../../../../../../codegen/schema/generated/productions.schema.json
 
 - name: "TypeName"
-  kind: "Parser"
+  kind: "PrecedenceParser"
   unversioned:
-    sequence:
-      - choice:
-          - reference: "ElementaryType"
-          - reference: "FunctionType"
-          - reference: "MappingType"
-          - reference: "IdentifierPath"
-      - zeroOrMore:
-          delimitedBy:
-            open:
-              reference: "OpenBracket"
-            expression:
-              optional:
-                reference: "Expression"
-            close:
-              reference: "CloseBracket"
+    operators:
+      - name: "ArrayTypeName"
+        model: "UnaryPostfix"
+        delimitedBy:
+          open:
+            reference: "OpenBracket"
+          expression:
+            optional:
+              reference: "Expression"
+          close:
+            reference: "CloseBracket"
+
+    primaryExpression:
+      choice:
+        - reference: "FunctionType"
+        - reference: "MappingType"
+        - reference: "ElementaryType"
+        - reference: "IdentifierPath"

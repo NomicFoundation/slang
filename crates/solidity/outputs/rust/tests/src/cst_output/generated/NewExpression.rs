@@ -9,6 +9,11 @@ fn array_1d() -> Result<()> {
 }
 
 #[test]
+fn array_1d_expression() -> Result<()> {
+    return run("NewExpression", "array_1d_expression");
+}
+
+#[test]
 fn array_2d() -> Result<()> {
     return run("NewExpression", "array_2d");
 }

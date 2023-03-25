@@ -1,0 +1,21 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ new Foo[10]                                                                      │ 0..11
+
+Errors: []
+
+Tree:
+  - NewExpression (Rule): # 0..11 "new Foo[10]"
+      - NewKeyword (Token): "new" # 0..3
+      - TypeName (Rule): # 3..11 " Foo[10]"
+          - ArrayTypeName (Rule): # 3..11 " Foo[10]"
+              - IdentifierPath (Rule): # 3..7 " Foo"
+                  - _SEPARATEDBY (Rule): # 3..7 " Foo"
+                      - Identifier (Token): "Foo" # 4..7
+              - OpenBracket (Token): "[" # 7..8
+              - Expression (Rule): # 8..10 "10"
+                  - PrimaryExpression (Rule): # 8..10 "10"
+                      - NumericLiteral (Rule): # 8..10 "10"
+                          - DecimalLiteral (Token): "10" # 8..10
+              - CloseBracket (Token): "]" # 10..11
