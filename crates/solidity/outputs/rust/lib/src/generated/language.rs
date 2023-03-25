@@ -1742,14 +1742,14 @@ impl Language {
             ProductionKind::YulContinueStatement => {
                 call_parser(self, input, Language::parse_yul_continue_statement)
             }
+            ProductionKind::YulDeclarationStatement => {
+                call_parser(self, input, Language::parse_yul_declaration_statement)
+            }
             ProductionKind::YulExpression => {
                 call_parser(self, input, Language::parse_yul_expression)
             }
             ProductionKind::YulForStatement => {
                 call_parser(self, input, Language::parse_yul_for_statement)
-            }
-            ProductionKind::YulFunctionCall => {
-                call_parser(self, input, Language::parse_yul_function_call)
             }
             ProductionKind::YulFunctionDefinition => {
                 call_parser(self, input, Language::parse_yul_function_definition)
@@ -1767,9 +1767,6 @@ impl Language {
             ProductionKind::YulStatement => call_parser(self, input, Language::parse_yul_statement),
             ProductionKind::YulSwitchStatement => {
                 call_parser(self, input, Language::parse_yul_switch_statement)
-            }
-            ProductionKind::YulVariableDeclaration => {
-                call_parser(self, input, Language::parse_yul_variable_declaration)
             }
         };
 

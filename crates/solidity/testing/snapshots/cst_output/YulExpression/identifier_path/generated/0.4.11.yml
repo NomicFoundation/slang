@@ -7,9 +7,8 @@ Errors: []
 
 Tree:
   - YulExpression (Rule): # 0..7 "foo.bar"
-      - YulFunctionCall (Rule): # 0..7 "foo.bar"
-          - YulIdentifierPath (Rule): # 0..7 "foo.bar"
-              - _SEPARATEDBY (Rule): # 0..7 "foo.bar"
-                  - YulIdentifier (Token): "foo" # 0..3
-                  - Period (Token): "." # 3..4
-                  - YulIdentifier (Token): "bar" # 4..7
+      - YulIdentifierPath (Rule): # 0..7 "foo.bar"
+          - _SEPARATEDBY (Rule): # 0..7 "foo.bar"
+              - YulIdentifier (Token): "foo" # 0..3
+              - Period (Token): "." # 3..4
+              - YulIdentifier (Token): "bar" # 4..7
