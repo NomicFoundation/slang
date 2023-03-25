@@ -3,5 +3,6 @@
 <!-- markdownlint-disable first-line-h1 -->
 
 ```{ .ebnf .slang-ebnf #YulExpression }
-YulExpression = YulFunctionCall | YulLiteral;
+YulExpression = YulFunctionCallExpression | YulLiteral | YulIdentifierPath;
+YulFunctionCallExpression = YulExpression («OpenParen» [YulExpression {«Comma» YulExpression}] «CloseParen»);
 ```
