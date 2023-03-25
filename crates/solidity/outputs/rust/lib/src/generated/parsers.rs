@@ -4869,17 +4869,7 @@ impl Language {
                                 Fail { error } => Err(error),
                             }
                         } {
-                            Err(error) => {
-                                if furthest_error.position < error.position {
-                                    furthest_error = error
-                                } else if furthest_error.position == error.position {
-                                    furthest_error.expected = format!(
-                                        "{prev_expected}, or {expected}",
-                                        prev_expected = furthest_error.expected,
-                                        expected = error.expected
-                                    )
-                                }
-                            }
+                            Err(error) => furthest_error.merge_with(error),
                             ok => break ok,
                         }
                         stream.set_position(start_position);
@@ -4939,17 +4929,7 @@ impl Language {
                                 Fail { error } => Err(error),
                             }
                         } {
-                            Err(error) => {
-                                if furthest_error.position < error.position {
-                                    furthest_error = error
-                                } else if furthest_error.position == error.position {
-                                    furthest_error.expected = format!(
-                                        "{prev_expected}, or {expected}",
-                                        prev_expected = furthest_error.expected,
-                                        expected = error.expected
-                                    )
-                                }
-                            }
+                            Err(error) => furthest_error.merge_with(error),
                             ok => break ok,
                         }
                         stream.set_position(start_position);
@@ -5074,17 +5054,7 @@ impl Language {
                                 Fail { error } => Err(error),
                             }
                         } {
-                            Err(error) => {
-                                if furthest_error.position < error.position {
-                                    furthest_error = error
-                                } else if furthest_error.position == error.position {
-                                    furthest_error.expected = format!(
-                                        "{prev_expected}, or {expected}",
-                                        prev_expected = furthest_error.expected,
-                                        expected = error.expected
-                                    )
-                                }
-                            }
+                            Err(error) => furthest_error.merge_with(error),
                             ok => break ok,
                         }
                         stream.set_position(start_position);
@@ -5403,17 +5373,7 @@ impl Language {
                                 Fail { error } => Err(error),
                             }
                         } {
-                            Err(error) => {
-                                if furthest_error.position < error.position {
-                                    furthest_error = error
-                                } else if furthest_error.position == error.position {
-                                    furthest_error.expected = format!(
-                                        "{prev_expected}, or {expected}",
-                                        prev_expected = furthest_error.expected,
-                                        expected = error.expected
-                                    )
-                                }
-                            }
+                            Err(error) => furthest_error.merge_with(error),
                             ok => break ok,
                         }
                         break Err(furthest_error);
@@ -5781,17 +5741,7 @@ impl Language {
                             Fail { error } => Err(error),
                         }
                     } {
-                        Err(error) => {
-                            if furthest_error.position < error.position {
-                                furthest_error = error
-                            } else if furthest_error.position == error.position {
-                                furthest_error.expected = format!(
-                                    "{prev_expected}, or {expected}",
-                                    prev_expected = furthest_error.expected,
-                                    expected = error.expected
-                                )
-                            }
-                        }
+                        Err(error) => furthest_error.merge_with(error),
                         ok => break ok,
                     }
                     stream.set_position(start_position);
@@ -5826,17 +5776,7 @@ impl Language {
                             Fail { error } => Err(error),
                         }
                     } {
-                        Err(error) => {
-                            if furthest_error.position < error.position {
-                                furthest_error = error
-                            } else if furthest_error.position == error.position {
-                                furthest_error.expected = format!(
-                                    "{prev_expected}, or {expected}",
-                                    prev_expected = furthest_error.expected,
-                                    expected = error.expected
-                                )
-                            }
-                        }
+                        Err(error) => furthest_error.merge_with(error),
                         ok => break ok,
                     }
                     stream.set_position(start_position);
@@ -5906,17 +5846,7 @@ impl Language {
                             Fail { error } => Err(error),
                         }
                     } {
-                        Err(error) => {
-                            if furthest_error.position < error.position {
-                                furthest_error = error
-                            } else if furthest_error.position == error.position {
-                                furthest_error.expected = format!(
-                                    "{prev_expected}, or {expected}",
-                                    prev_expected = furthest_error.expected,
-                                    expected = error.expected
-                                )
-                            }
-                        }
+                        Err(error) => furthest_error.merge_with(error),
                         ok => break ok,
                     }
                     stream.set_position(start_position);
@@ -6036,17 +5966,7 @@ impl Language {
                             Fail { error } => Err(error),
                         }
                     } {
-                        Err(error) => {
-                            if furthest_error.position < error.position {
-                                furthest_error = error
-                            } else if furthest_error.position == error.position {
-                                furthest_error.expected = format!(
-                                    "{prev_expected}, or {expected}",
-                                    prev_expected = furthest_error.expected,
-                                    expected = error.expected
-                                )
-                            }
-                        }
+                        Err(error) => furthest_error.merge_with(error),
                         ok => break ok,
                     }
                     stream.set_position(start_position);
@@ -6081,17 +6001,7 @@ impl Language {
                             Fail { error } => Err(error),
                         }
                     } {
-                        Err(error) => {
-                            if furthest_error.position < error.position {
-                                furthest_error = error
-                            } else if furthest_error.position == error.position {
-                                furthest_error.expected = format!(
-                                    "{prev_expected}, or {expected}",
-                                    prev_expected = furthest_error.expected,
-                                    expected = error.expected
-                                )
-                            }
-                        }
+                        Err(error) => furthest_error.merge_with(error),
                         ok => break ok,
                     }
                     stream.set_position(start_position);
@@ -6126,17 +6036,7 @@ impl Language {
                             Fail { error } => Err(error),
                         }
                     } {
-                        Err(error) => {
-                            if furthest_error.position < error.position {
-                                furthest_error = error
-                            } else if furthest_error.position == error.position {
-                                furthest_error.expected = format!(
-                                    "{prev_expected}, or {expected}",
-                                    prev_expected = furthest_error.expected,
-                                    expected = error.expected
-                                )
-                            }
-                        }
+                        Err(error) => furthest_error.merge_with(error),
                         ok => break ok,
                     }
                     stream.set_position(start_position);
@@ -6171,17 +6071,7 @@ impl Language {
                             Fail { error } => Err(error),
                         }
                     } {
-                        Err(error) => {
-                            if furthest_error.position < error.position {
-                                furthest_error = error
-                            } else if furthest_error.position == error.position {
-                                furthest_error.expected = format!(
-                                    "{prev_expected}, or {expected}",
-                                    prev_expected = furthest_error.expected,
-                                    expected = error.expected
-                                )
-                            }
-                        }
+                        Err(error) => furthest_error.merge_with(error),
                         ok => break ok,
                     }
                     stream.set_position(start_position);
@@ -6279,17 +6169,7 @@ impl Language {
                             Fail { error } => Err(error),
                         }
                     } {
-                        Err(error) => {
-                            if furthest_error.position < error.position {
-                                furthest_error = error
-                            } else if furthest_error.position == error.position {
-                                furthest_error.expected = format!(
-                                    "{prev_expected}, or {expected}",
-                                    prev_expected = furthest_error.expected,
-                                    expected = error.expected
-                                )
-                            }
-                        }
+                        Err(error) => furthest_error.merge_with(error),
                         ok => break ok,
                     }
                     stream.set_position(start_position);
@@ -6359,17 +6239,7 @@ impl Language {
                             Fail { error } => Err(error),
                         }
                     } {
-                        Err(error) => {
-                            if furthest_error.position < error.position {
-                                furthest_error = error
-                            } else if furthest_error.position == error.position {
-                                furthest_error.expected = format!(
-                                    "{prev_expected}, or {expected}",
-                                    prev_expected = furthest_error.expected,
-                                    expected = error.expected
-                                )
-                            }
-                        }
+                        Err(error) => furthest_error.merge_with(error),
                         ok => break ok,
                     }
                     stream.set_position(start_position);
@@ -6464,17 +6334,7 @@ impl Language {
                             Fail { error } => Err(error),
                         }
                     } {
-                        Err(error) => {
-                            if furthest_error.position < error.position {
-                                furthest_error = error
-                            } else if furthest_error.position == error.position {
-                                furthest_error.expected = format!(
-                                    "{prev_expected}, or {expected}",
-                                    prev_expected = furthest_error.expected,
-                                    expected = error.expected
-                                )
-                            }
-                        }
+                        Err(error) => furthest_error.merge_with(error),
                         ok => break ok,
                     }
                     stream.set_position(start_position);
@@ -6509,17 +6369,7 @@ impl Language {
                             Fail { error } => Err(error),
                         }
                     } {
-                        Err(error) => {
-                            if furthest_error.position < error.position {
-                                furthest_error = error
-                            } else if furthest_error.position == error.position {
-                                furthest_error.expected = format!(
-                                    "{prev_expected}, or {expected}",
-                                    prev_expected = furthest_error.expected,
-                                    expected = error.expected
-                                )
-                            }
-                        }
+                        Err(error) => furthest_error.merge_with(error),
                         ok => break ok,
                     }
                     break Err(furthest_error);
@@ -6984,17 +6834,7 @@ impl Language {
                                 Fail { error } => Err(error),
                             }
                         } {
-                            Err(error) => {
-                                if furthest_error.position < error.position {
-                                    furthest_error = error
-                                } else if furthest_error.position == error.position {
-                                    furthest_error.expected = format!(
-                                        "{prev_expected}, or {expected}",
-                                        prev_expected = furthest_error.expected,
-                                        expected = error.expected
-                                    )
-                                }
-                            }
+                            Err(error) => furthest_error.merge_with(error),
                             ok => break ok,
                         }
                         stream.set_position(start_position);
@@ -7054,17 +6894,7 @@ impl Language {
                                 Fail { error } => Err(error),
                             }
                         } {
-                            Err(error) => {
-                                if furthest_error.position < error.position {
-                                    furthest_error = error
-                                } else if furthest_error.position == error.position {
-                                    furthest_error.expected = format!(
-                                        "{prev_expected}, or {expected}",
-                                        prev_expected = furthest_error.expected,
-                                        expected = error.expected
-                                    )
-                                }
-                            }
+                            Err(error) => furthest_error.merge_with(error),
                             ok => break ok,
                         }
                         stream.set_position(start_position);
@@ -7189,17 +7019,7 @@ impl Language {
                                 Fail { error } => Err(error),
                             }
                         } {
-                            Err(error) => {
-                                if furthest_error.position < error.position {
-                                    furthest_error = error
-                                } else if furthest_error.position == error.position {
-                                    furthest_error.expected = format!(
-                                        "{prev_expected}, or {expected}",
-                                        prev_expected = furthest_error.expected,
-                                        expected = error.expected
-                                    )
-                                }
-                            }
+                            Err(error) => furthest_error.merge_with(error),
                             ok => break ok,
                         }
                         stream.set_position(start_position);
@@ -7518,17 +7338,7 @@ impl Language {
                                 Fail { error } => Err(error),
                             }
                         } {
-                            Err(error) => {
-                                if furthest_error.position < error.position {
-                                    furthest_error = error
-                                } else if furthest_error.position == error.position {
-                                    furthest_error.expected = format!(
-                                        "{prev_expected}, or {expected}",
-                                        prev_expected = furthest_error.expected,
-                                        expected = error.expected
-                                    )
-                                }
-                            }
+                            Err(error) => furthest_error.merge_with(error),
                             ok => break ok,
                         }
                         break Err(furthest_error);
@@ -7896,17 +7706,7 @@ impl Language {
                             Fail { error } => Err(error),
                         }
                     } {
-                        Err(error) => {
-                            if furthest_error.position < error.position {
-                                furthest_error = error
-                            } else if furthest_error.position == error.position {
-                                furthest_error.expected = format!(
-                                    "{prev_expected}, or {expected}",
-                                    prev_expected = furthest_error.expected,
-                                    expected = error.expected
-                                )
-                            }
-                        }
+                        Err(error) => furthest_error.merge_with(error),
                         ok => break ok,
                     }
                     stream.set_position(start_position);
@@ -7941,17 +7741,7 @@ impl Language {
                             Fail { error } => Err(error),
                         }
                     } {
-                        Err(error) => {
-                            if furthest_error.position < error.position {
-                                furthest_error = error
-                            } else if furthest_error.position == error.position {
-                                furthest_error.expected = format!(
-                                    "{prev_expected}, or {expected}",
-                                    prev_expected = furthest_error.expected,
-                                    expected = error.expected
-                                )
-                            }
-                        }
+                        Err(error) => furthest_error.merge_with(error),
                         ok => break ok,
                     }
                     stream.set_position(start_position);
@@ -8021,17 +7811,7 @@ impl Language {
                             Fail { error } => Err(error),
                         }
                     } {
-                        Err(error) => {
-                            if furthest_error.position < error.position {
-                                furthest_error = error
-                            } else if furthest_error.position == error.position {
-                                furthest_error.expected = format!(
-                                    "{prev_expected}, or {expected}",
-                                    prev_expected = furthest_error.expected,
-                                    expected = error.expected
-                                )
-                            }
-                        }
+                        Err(error) => furthest_error.merge_with(error),
                         ok => break ok,
                     }
                     stream.set_position(start_position);
@@ -8151,17 +7931,7 @@ impl Language {
                             Fail { error } => Err(error),
                         }
                     } {
-                        Err(error) => {
-                            if furthest_error.position < error.position {
-                                furthest_error = error
-                            } else if furthest_error.position == error.position {
-                                furthest_error.expected = format!(
-                                    "{prev_expected}, or {expected}",
-                                    prev_expected = furthest_error.expected,
-                                    expected = error.expected
-                                )
-                            }
-                        }
+                        Err(error) => furthest_error.merge_with(error),
                         ok => break ok,
                     }
                     stream.set_position(start_position);
@@ -8196,17 +7966,7 @@ impl Language {
                             Fail { error } => Err(error),
                         }
                     } {
-                        Err(error) => {
-                            if furthest_error.position < error.position {
-                                furthest_error = error
-                            } else if furthest_error.position == error.position {
-                                furthest_error.expected = format!(
-                                    "{prev_expected}, or {expected}",
-                                    prev_expected = furthest_error.expected,
-                                    expected = error.expected
-                                )
-                            }
-                        }
+                        Err(error) => furthest_error.merge_with(error),
                         ok => break ok,
                     }
                     stream.set_position(start_position);
@@ -8241,17 +8001,7 @@ impl Language {
                             Fail { error } => Err(error),
                         }
                     } {
-                        Err(error) => {
-                            if furthest_error.position < error.position {
-                                furthest_error = error
-                            } else if furthest_error.position == error.position {
-                                furthest_error.expected = format!(
-                                    "{prev_expected}, or {expected}",
-                                    prev_expected = furthest_error.expected,
-                                    expected = error.expected
-                                )
-                            }
-                        }
+                        Err(error) => furthest_error.merge_with(error),
                         ok => break ok,
                     }
                     stream.set_position(start_position);
@@ -8286,17 +8036,7 @@ impl Language {
                             Fail { error } => Err(error),
                         }
                     } {
-                        Err(error) => {
-                            if furthest_error.position < error.position {
-                                furthest_error = error
-                            } else if furthest_error.position == error.position {
-                                furthest_error.expected = format!(
-                                    "{prev_expected}, or {expected}",
-                                    prev_expected = furthest_error.expected,
-                                    expected = error.expected
-                                )
-                            }
-                        }
+                        Err(error) => furthest_error.merge_with(error),
                         ok => break ok,
                     }
                     stream.set_position(start_position);
@@ -8394,17 +8134,7 @@ impl Language {
                             Fail { error } => Err(error),
                         }
                     } {
-                        Err(error) => {
-                            if furthest_error.position < error.position {
-                                furthest_error = error
-                            } else if furthest_error.position == error.position {
-                                furthest_error.expected = format!(
-                                    "{prev_expected}, or {expected}",
-                                    prev_expected = furthest_error.expected,
-                                    expected = error.expected
-                                )
-                            }
-                        }
+                        Err(error) => furthest_error.merge_with(error),
                         ok => break ok,
                     }
                     stream.set_position(start_position);
@@ -8474,17 +8204,7 @@ impl Language {
                             Fail { error } => Err(error),
                         }
                     } {
-                        Err(error) => {
-                            if furthest_error.position < error.position {
-                                furthest_error = error
-                            } else if furthest_error.position == error.position {
-                                furthest_error.expected = format!(
-                                    "{prev_expected}, or {expected}",
-                                    prev_expected = furthest_error.expected,
-                                    expected = error.expected
-                                )
-                            }
-                        }
+                        Err(error) => furthest_error.merge_with(error),
                         ok => break ok,
                     }
                     stream.set_position(start_position);
@@ -8579,17 +8299,7 @@ impl Language {
                             Fail { error } => Err(error),
                         }
                     } {
-                        Err(error) => {
-                            if furthest_error.position < error.position {
-                                furthest_error = error
-                            } else if furthest_error.position == error.position {
-                                furthest_error.expected = format!(
-                                    "{prev_expected}, or {expected}",
-                                    prev_expected = furthest_error.expected,
-                                    expected = error.expected
-                                )
-                            }
-                        }
+                        Err(error) => furthest_error.merge_with(error),
                         ok => break ok,
                     }
                     stream.set_position(start_position);
@@ -8624,17 +8334,7 @@ impl Language {
                             Fail { error } => Err(error),
                         }
                     } {
-                        Err(error) => {
-                            if furthest_error.position < error.position {
-                                furthest_error = error
-                            } else if furthest_error.position == error.position {
-                                furthest_error.expected = format!(
-                                    "{prev_expected}, or {expected}",
-                                    prev_expected = furthest_error.expected,
-                                    expected = error.expected
-                                )
-                            }
-                        }
+                        Err(error) => furthest_error.merge_with(error),
                         ok => break ok,
                     }
                     break Err(furthest_error);

@@ -1,64 +1,57 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-pub use std::ops::Range;
-pub use std::rc::Rc;
+pub use std::{collections::BTreeSet, ops::Range, rc::Rc};
 
 #[allow(deprecated, unused_imports)]
 use semver::Version;
 
-pub use super::cst;
-pub use super::kinds::*;
-pub use super::parser_output::ParserOutput;
+pub use super::{cst, kinds::*, parser_output::ParserOutput};
 
 const DEBUG_ERROR_MERGING: bool = false;
 
 #[derive(PartialEq)]
 pub struct ParseError {
-    pub position: usize,
-    pub expected: String,
+    position: usize,
+    expected: BTreeSet<String>,
 }
 
 impl ParseError {
     pub fn new<T: Into<String>>(position: usize, expected: T) -> Self {
         Self {
             position,
-            expected: expected.into(),
+            expected: BTreeSet::from([expected.into()]),
         }
     }
 
     pub fn merge_with(&mut self, other: Self) {
         if DEBUG_ERROR_MERGING {
             if self.position < other.position {
-                self.expected = format!(
+                self.expected = BTreeSet::from([format!(
                     "O={other_expected}\nNOT {position}@[{expected}]",
-                    other_expected = other.expected,
+                    other_expected = other.expected.iter().next().unwrap(),
                     position = self.position,
-                    expected = self.expected
-                );
+                    expected = self.expected.iter().next().unwrap(),
+                )]);
                 self.position = other.position;
             } else if self.position == other.position {
-                self.expected = format!(
+                self.expected = BTreeSet::from([format!(
                     "{other_expected}, or {expected}",
-                    other_expected = other.expected,
-                    expected = self.expected
-                );
+                    other_expected = other.expected.iter().next().unwrap(),
+                    expected = self.expected.iter().next().unwrap(),
+                )]);
             } else {
-                self.expected = format!(
+                self.expected = BTreeSet::from([format!(
                     "S={expected}\nNOT {other_position}@[{other_expected}]",
-                    expected = self.expected,
+                    expected = self.expected.iter().next().unwrap(),
                     other_position = other.position,
-                    other_expected = other.expected
-                );
+                    other_expected = other.expected.iter().next().unwrap(),
+                )]);
             }
         } else {
             if self.position < other.position {
                 *self = other;
             } else if self.position == other.position {
-                self.expected = format!(
-                    "{other_expected}, or {expected}",
-                    other_expected = other.expected,
-                    expected = self.expected
-                );
+                self.expected.extend(other.expected);
             }
         }
     }
@@ -135,44 +128,57 @@ impl<'s> Stream<'s> {
     }
 }
 
-use ariadne::{Color, Config, Label, Report, ReportKind, Source};
-
 pub(crate) fn render_error_report(
     error: &ParseError,
     source_id: &str,
     source: &str,
     with_color: bool,
 ) -> String {
+    use ariadne::{Color, Config, Label, Report, ReportKind, Source};
+
     let kind = ReportKind::Error;
     let color = if with_color { Color::Red } else { Color::Unset };
-    let message = if DEBUG_ERROR_MERGING {
-        format!(
-            "{position}: Expected {expected}",
-            position = error.position,
-            expected = error.expected
-        )
-    } else {
-        format!("Expected {expected}", expected = error.expected)
-    };
     let source_start = error.position;
     let source_end = error.position;
+
+    let message = {
+        let message = format!(
+            "Expected {expectations}.",
+            expectations = error
+                .expected
+                .iter()
+                .cloned()
+                .collect::<Vec<String>>()
+                .join(" or ")
+        );
+
+        if DEBUG_ERROR_MERGING {
+            format!("{position}: {message}", position = error.position)
+        } else {
+            message
+        }
+    };
+
     if source.is_empty() {
         return format!("{kind}: {message}\n   ─[{source_id}:{source_start}:{source_end}]");
     }
-    let label = "Error occurred here.".to_string();
+
     let mut builder = Report::build(kind, source_id, source_start)
         .with_config(Config::default().with_color(with_color))
         .with_message(message);
+
     builder.add_label(
         Label::new((source_id, source_start..source_end))
             .with_color(color)
-            .with_message(label),
+            .with_message("Error occurred here.".to_string()),
     );
+
     let mut result = vec![];
     builder
         .finish()
         .write((source_id, Source::from(&source)), &mut result)
         .expect("Failed to write report");
+
     return String::from_utf8(result)
         .expect("Failed to convert report to utf8")
         .trim()

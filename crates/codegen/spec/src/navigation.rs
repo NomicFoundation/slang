@@ -31,12 +31,7 @@ impl NavigationEntry {
 
                 for child in children {
                     child.write_files(codegen, &current_dir)?;
-
-                    nav_page.write_line(&format!(
-                        "- [{title}]({child_path})",
-                        title = child.title(),
-                        child_path = child.nav_path()
-                    ));
+                    nav_page.write_list_link(child.title(), &child.nav_path());
                 }
 
                 codegen.write_file(&current_dir.join("NAV.md"), &nav_page.to_string())?;

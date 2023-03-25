@@ -5,12 +5,12 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected FixedBytesType
+    Error: Expected FixedBytesType.
        ╭─[crates/solidity/testing/snapshots/cst_output/FixedBytesType/no_length/input.sol:1:6]
        │
      1 │ bytes
-       ·      │ 
-       ·      ╰─ Error occurred here.
+       │      │ 
+       │      ╰─ Error occurred here.
     ───╯
 
 Tree: null

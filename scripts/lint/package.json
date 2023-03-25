@@ -1,10 +1,10 @@
 {
   "private": true,
   "dependencies": {
-    "cspell": "5.19.2",
-    "markdown-link-check": "3.10.3",
-    "markdownlint-cli": "0.31.1",
-    "prettier": "2.6.0",
-    "prettier-plugin-sh": "0.8.1"
+    "cspell": "6.30.2",
+    "markdown-link-check": "3.11.0",
+    "markdownlint-cli": "0.33.0",
+    "prettier": "2.8.6",
+    "prettier-plugin-sh": "0.12.8"
   }
 }

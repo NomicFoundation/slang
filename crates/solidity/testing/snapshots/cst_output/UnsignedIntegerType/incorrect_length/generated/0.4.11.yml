@@ -5,12 +5,12 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected UnsignedIntegerType
+    Error: Expected UnsignedIntegerType.
        ╭─[crates/solidity/testing/snapshots/cst_output/UnsignedIntegerType/incorrect_length/input.sol:1:7]
        │
      1 │ uint320
-       ·       │ 
-       ·       ╰─ Error occurred here.
+       │       │ 
+       │       ╰─ Error occurred here.
     ───╯
 
 Tree: null

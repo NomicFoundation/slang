@@ -26,6 +26,7 @@
         // Formatting/Linting
         "DavidAnson.vscode-markdownlint",
         "esbenp.prettier-vscode",
+        "Gruntfuggly.triggertaskonsave",
         "streetsidesoftware.code-spell-checker",
         "timonwong.shellcheck"
       ]

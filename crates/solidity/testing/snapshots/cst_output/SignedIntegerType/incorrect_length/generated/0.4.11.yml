@@ -5,12 +5,12 @@ Source: >
 
 Errors: # 1 total
   - >
-    Error: Expected SignedIntegerType
+    Error: Expected SignedIntegerType.
        ╭─[crates/solidity/testing/snapshots/cst_output/SignedIntegerType/incorrect_length/input.sol:1:6]
        │
      1 │ int320
-       ·      │ 
-       ·      ╰─ Error occurred here.
+       │      │ 
+       │      ╰─ Error occurred here.
     ───╯
 
 Tree: null

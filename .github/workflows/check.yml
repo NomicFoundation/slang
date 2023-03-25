@@ -1,6 +1,6 @@
 name: "check"
 
-on: # yamllint disable-line rule:truthy
+on:
   workflow_dispatch: {} # manual triggers from GitHub UI
   push: {} # all branches
 
@@ -9,15 +9,15 @@ jobs:
     runs-on: "ubuntu-22.04"
     steps:
       - name: "Clone repository"
-        uses: "actions/checkout@v3.1.0"
+        uses: "actions/checkout@v3.4.0"
       - name: "Restore hermit cache"
-        uses: "actions/cache@v3.0.9"
+        uses: "actions/cache@v3.3.1"
         with:
           path: ".hermit/"
           key: "hermit-cache-${{ hashFiles('**/Cargo.lock', '**/package-lock.json', '**/Pipfile.lock') }}"
           restore-keys: "hermit-cache-"
       - name: "Restore build cache"
-        uses: "actions/cache@v3.0.9"
+        uses: "actions/cache@v3.3.1"
         with:
           path: "target/"
           key: "build-cache-${{ hashFiles('**/Cargo.lock', '**/package-lock.json', '**/Pipfile.lock') }}"
