@@ -12,7 +12,7 @@ codegen_utils = { workspace = true }
 indicatif = { workspace = true }
 rayon = { workspace = true }
 semver = { workspace = true }
-solidity_rust_lib = { workspace = true }
+slang_solidity = { workspace = true }
 solidity_schema = { workspace = true }
 solidity_testing_utils = { workspace = true }
 url = { workspace = true }

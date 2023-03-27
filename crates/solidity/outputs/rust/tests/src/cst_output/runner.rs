@@ -3,7 +3,7 @@ use std::str::FromStr;
 use anyhow::Result;
 use codegen_utils::context::CodegenContext;
 use semver::Version;
-use solidity_rust_lib::generated::{
+use slang_solidity::generated::{
     kinds::ProductionKind,
     language::{Language, ParserOutput},
 };

@@ -2,6 +2,8 @@
   "editor.formatOnSave": true,
   "editor.rulers": [120],
   "files.eol": "\n",
+  "rust-analyzer.check.allTargets": true,
+  "rust-analyzer.check.features": "all",
   "rust-analyzer.server.extraEnv": {
     "CARGO": "${workspaceFolder}/bin/cargo",
     "RUSTC": "${workspaceFolder}/bin/rustc",

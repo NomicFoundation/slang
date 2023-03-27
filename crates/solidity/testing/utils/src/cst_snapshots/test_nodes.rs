@@ -1,7 +1,7 @@
 use std::{ops::Range, rc::Rc};
 
 use anyhow::Result;
-use solidity_rust_lib::generated::{
+use slang_solidity::generated::{
     cst,
     kinds::{RuleKind, TokenKind},
 };

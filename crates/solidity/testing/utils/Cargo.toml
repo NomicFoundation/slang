@@ -8,4 +8,4 @@ publish = false
 [dependencies]
 anyhow = { workspace = true }
 semver = { workspace = true }
-solidity_rust_lib = { workspace = true }
+slang_solidity = { workspace = true }

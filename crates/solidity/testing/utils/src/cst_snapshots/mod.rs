@@ -3,7 +3,7 @@ mod test_nodes;
 use std::{self, cmp::max, fmt::Write};
 
 use anyhow::Result;
-use solidity_rust_lib::generated::language::ParserOutput;
+use slang_solidity::generated::language::ParserOutput;
 
 use crate::cst_snapshots::test_nodes::TestNode;
 

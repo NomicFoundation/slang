@@ -5,7 +5,7 @@ use std::{collections::BTreeSet, ops::Range, rc::Rc};
 
 use anyhow::{Context, Error, Result};
 use semver::{Comparator, Version};
-use solidity_rust_lib::generated::{
+use slang_solidity::generated::{
     cst::{self, Node},
     cst_visitor::{Visitable, Visitor, VisitorEntryResponse},
     kinds::RuleKind,
