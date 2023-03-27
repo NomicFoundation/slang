@@ -7,8 +7,6 @@ mod _supress_binary_dependencies_ {
     use anyhow as _;
     use clap as _;
     use serde_json as _;
-    use serde_lexpr as _;
-    use serde_yaml as _;
     #[cfg(test)]
     use solidity_rust_build as _;
     use thiserror as _;
