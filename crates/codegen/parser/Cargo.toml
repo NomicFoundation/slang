@@ -3,6 +3,7 @@ name = "codegen_parser"
 version.workspace = true
 rust-version.workspace = true
 edition.workspace = true
+publish = false
 
 [dependencies]
 codegen_ebnf = { workspace = true }

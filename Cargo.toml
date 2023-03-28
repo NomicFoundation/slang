@@ -21,6 +21,7 @@ members = [
 version = "0.0.0"
 rust-version = "1.64.0" # Keep this version in sync with the hermit binary at "REPO_ROOT/bin/.rust-VERSION.pkg"
 edition = "2021"
+publish = false
 
 [workspace.dependencies]
 anyhow = { version = "1.0.70", features = ["backtrace", "std"] }

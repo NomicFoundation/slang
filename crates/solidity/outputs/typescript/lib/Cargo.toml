@@ -3,6 +3,7 @@ name = "solidity_typescript_lib"
 version.workspace = true
 rust-version.workspace = true
 edition.workspace = true
+publish = false
 
 [lib]
 crate-type = ["cdylib"]

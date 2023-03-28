@@ -3,6 +3,7 @@ name = "codegen_utils"
 version.workspace = true
 rust-version.workspace = true
 edition.workspace = true
+publish = false
 
 [dependencies]
 anyhow = { workspace = true }
