@@ -11,7 +11,7 @@ impl Grammar {
 
         for production in self.productions.values() {
             if let Some(versions) = production.versions() {
-                version_breaks.extend(versions.into_iter().cloned());
+                version_breaks.extend(versions.into_iter());
             }
         }
 

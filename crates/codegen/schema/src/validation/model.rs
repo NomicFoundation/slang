@@ -31,7 +31,7 @@ pub struct Model {
 
 impl Model {
     pub fn new(
-        manifest_file: &yaml::files::File<Manifest>,
+        manifest_file: yaml::files::File<Manifest>,
         codegen: &mut CodegenContext,
     ) -> CodegenResult<Self> {
         let model = Self {
@@ -44,12 +44,12 @@ impl Model {
 
         let grammar_dir = &manifest_file.path.parent().unwrap();
 
-        for section in &manifest_file.ast.value.sections {
-            let section_path = grammar_dir.join(&section.path.value);
+        for section in &manifest_file.value.sections {
+            let section_path = grammar_dir.join(&section.path);
 
             if section_path.exists() {
                 for topic in &section.topics {
-                    let topic_path = section_path.join(&topic.path.value);
+                    let topic_path = section_path.join(&topic.path);
 
                     if topic_path.exists() {
                         for path in [
@@ -85,7 +85,7 @@ impl Model {
             return Err(errors);
         }
 
-        for section in &manifest_file.ast.value.sections {
+        for section in &manifest_file.value.sections {
             let mut topics = Vec::<GrammarTopic>::new();
 
             for topic in &section.topics {
@@ -126,13 +126,18 @@ impl Model {
             return Err(errors);
         }
 
-        rules::versions::check(self, &mut errors);
+        let versions_validator = rules::versions::Validator::new(&mut errors);
+        model.visit(&mut versions_validator);
 
-        rules::empty_productions::check(self, &mut errors);
+        let empty_productions_validator = rules::empty_productions::Validator::new(&mut errors);
+        model.visit(&mut empty_productions_validator);
 
-        let definitions = rules::definitions::collect(self, &mut errors);
+        let definitions_validator = rules::definitions::Validator::new(&mut errors);
+        model.visit(&mut definitions_validator);
 
-        rules::references::check(self, &definitions, &mut errors);
+        let references_validator =
+            rules::references::Validator::new(&mut errors, &definitions_validator);
+        model.visit(&mut references_validator);
 
         if errors.len() > 0 {
             return Err(errors);

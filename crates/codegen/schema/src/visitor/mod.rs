@@ -1,8 +1,6 @@
 use std::path::PathBuf;
 
-use crate::yaml::cst::NodeRef;
-
-use super::yaml::files::File;
+use crate::{validation::model::Model, yaml::cst::NodeRef};
 
 use super::types::{
     manifest::Manifest,
@@ -19,24 +17,11 @@ pub enum VisitorResponse {
 }
 
 pub trait Visitor {
-    fn visit_manifest_file(&mut self, _manifest_file: &File<Manifest>) -> VisitorResponse {
-        return VisitorResponse::StepIn;
-    }
-
     fn visit_manifest(
         &mut self,
-        _manifest: &Manifest,
+        manifest: &Manifest,
         path: &PathBuf,
         node: &NodeRef,
-    ) -> VisitorResponse {
-        return VisitorResponse::StepIn;
-    }
-
-    fn visit_productions_file(
-        &mut self,
-        _productions_file: &File<Vec<ProductionRef>>,
-        manifest_path: &PathBuf,
-        manifest_node: &NodeRef,
     ) -> VisitorResponse {
         return VisitorResponse::StepIn;
     }
@@ -105,41 +90,15 @@ pub trait Visitor {
     }
 }
 
-impl File<Manifest> {
-    fn visit<V: Visitor>(&self, visitor: &mut V) {
-        if visitor.visit_manifest_file(self) == VisitorResponse::StepIn {
-            self.value.visit(visitor, &self.path, &self.cst_node);
-        }
-    }
+impl Model {
+    pub fn visit<V: Visitor>(&self, visitor: &mut V) {}
 }
 
-impl Manifest {
-    fn visit<V: Visitor>(&self, visitor: &mut V, path: &PathBuf, node: &NodeRef) {
-        if visitor.visit_manifest(self, path, node) == VisitorResponse::StepIn {
-            for section in self.sections {
-                for topic in section.topics {
-                    for production in topic.productions {
-                        production.visit(visitor, &topic.path, &topic.cst_node);
-                    }
-                }
-            }
-        }
-    }
+pub trait Visitable {
+    fn visit<V: Visitor>(&self, visitor: &mut V, path: &PathBuf, node: &NodeRef);
 }
 
-impl File<Vec<ProductionRef>> {
-    fn visit<V: Visitor>(&self, visitor: &mut V, manifest_path: &PathBuf, manifest_node: &NodeRef) {
-        if visitor.visit_productions_file(self, manifest_path, manifest_node)
-            == VisitorResponse::StepIn
-        {
-            for production in &self.value {
-                production.visit(visitor);
-            }
-        }
-    }
-}
-
-impl ProductionRef {
+impl Visitable for ProductionRef {
     fn visit<V: Visitor>(&self, visitor: &mut V, path: &PathBuf, node: &NodeRef) {
         if visitor.visit_production(self, path, node) == VisitorResponse::StepIn {
             match self.as_ref() {
@@ -148,11 +107,13 @@ impl ProductionRef {
                     ..
                 } => match versioning {
                     VersionMap::Unversioned(scanner) => {
-                        scanner.visit(visitor);
+                        scanner.visit(visitor, path, node);
                     }
                     VersionMap::Versioned(versions) => {
                         for scanner in versions.values() {
-                            scanner.visit(visitor)
+                            if let Some(scanner) = scanner {
+                                scanner.visit(visitor, path, node)
+                            }
                         }
                     }
                 },
@@ -166,11 +127,13 @@ impl ProductionRef {
                     ..
                 } => match versioning {
                     VersionMap::Unversioned(parser) => {
-                        parser.visit(visitor);
+                        parser.visit(visitor, path, node);
                     }
                     VersionMap::Versioned(versions) => {
                         for parser in versions.values() {
-                            parser.visit(visitor)
+                            if let Some(parser) = parser {
+                                parser.visit(visitor, path, node)
+                            }
                         }
                     }
                 },
@@ -180,11 +143,13 @@ impl ProductionRef {
                     ..
                 } => match versioning {
                     VersionMap::Unversioned(parser) => {
-                        parser.visit(visitor);
+                        parser.visit(visitor, path, node);
                     }
                     VersionMap::Versioned(versions) => {
                         for parser in versions.values() {
-                            parser.visit(visitor)
+                            if let Some(parser) = parser {
+                                parser.visit(visitor, path, node)
+                            }
                         }
                     }
                 },
@@ -193,22 +158,22 @@ impl ProductionRef {
     }
 }
 
-impl ScannerRef {
+impl Visitable for ScannerRef {
     fn visit<V: Visitor>(&self, visitor: &mut V, path: &PathBuf, node: &NodeRef) {
         if visitor.visit_scanner(self, path, node) == VisitorResponse::StepIn {
-            self.definition.visit(visitor);
+            self.definition.visit(visitor, path, node);
         }
     }
 }
 
-impl ScannerDefinition {
+impl Visitable for ScannerDefinition {
     fn visit<V: Visitor>(&self, visitor: &mut V, path: &PathBuf, node: &NodeRef) {
         if visitor.visit_scanner_definition(self, path, node) == VisitorResponse::StepIn {
             match &self {
                 ScannerDefinition::Choice(expressions)
                 | ScannerDefinition::Sequence(expressions) => {
                     for expression in expressions {
-                        expression.visit(visitor);
+                        expression.visit(visitor, path, node);
                     }
                 }
                 ScannerDefinition::Repeat { expression, .. }
@@ -216,21 +181,21 @@ impl ScannerDefinition {
                 | ScannerDefinition::OneOrMore(expression)
                 | ScannerDefinition::Optional(expression)
                 | ScannerDefinition::ZeroOrMore(expression) => {
-                    expression.visit(visitor);
+                    expression.visit(visitor, path, node);
                 }
                 ScannerDefinition::TrailingContext {
                     expression,
                     not_followed_by,
                 } => {
-                    expression.visit(visitor);
-                    not_followed_by.visit(visitor);
+                    expression.visit(visitor, path, node);
+                    not_followed_by.visit(visitor, path, node);
                 }
                 ScannerDefinition::Difference {
                     minuend,
                     subtrahend,
                 } => {
-                    minuend.visit(visitor);
-                    subtrahend.visit(visitor);
+                    minuend.visit(visitor, path, node);
+                    subtrahend.visit(visitor, path, node);
                 }
                 ScannerDefinition::Range { .. }
                 | ScannerDefinition::Reference(_)
@@ -240,21 +205,21 @@ impl ScannerDefinition {
     }
 }
 
-impl ParserRef {
+impl Visitable for ParserRef {
     fn visit<V: Visitor>(&self, visitor: &mut V, path: &PathBuf, node: &NodeRef) {
         if visitor.visit_parser(self, path, node) == VisitorResponse::StepIn {
-            self.definition.visit(visitor);
+            self.definition.visit(visitor, path, node);
         }
     }
 }
 
-impl ParserDefinition {
+impl Visitable for ParserDefinition {
     fn visit<V: Visitor>(&self, visitor: &mut V, path: &PathBuf, node: &NodeRef) {
         if visitor.visit_parser_definition(self, path, node) == VisitorResponse::StepIn {
             match &self {
                 ParserDefinition::Choice(expressions) | ParserDefinition::Sequence(expressions) => {
                     for expression in expressions {
-                        expression.visit(visitor);
+                        expression.visit(visitor, path, node);
                     }
                 }
                 ParserDefinition::DelimitedBy { expression, .. }
@@ -264,7 +229,7 @@ impl ParserDefinition {
                 | ParserDefinition::OneOrMore(expression)
                 | ParserDefinition::Optional(expression)
                 | ParserDefinition::ZeroOrMore(expression) => {
-                    expression.visit(visitor);
+                    expression.visit(visitor, path, node);
                 }
                 ParserDefinition::Reference(_) => {}
             };
@@ -272,20 +237,23 @@ impl ParserDefinition {
     }
 }
 
-impl PrecedenceParserRef {
+impl Visitable for PrecedenceParserRef {
     fn visit<V: Visitor>(&self, visitor: &mut V, path: &PathBuf, node: &NodeRef) {
         if visitor.visit_precedence_parser(self, path, node) == VisitorResponse::StepIn {
             for operator in &self.definition.operators {
-                operator.visit(visitor);
+                operator.visit(visitor, path, node);
             }
+            self.definition
+                .primary_expression
+                .visit(visitor, path, node);
         }
     }
 }
 
-impl OperatorDefinition {
+impl Visitable for OperatorDefinition {
     fn visit<V: Visitor>(&self, visitor: &mut V, path: &PathBuf, node: &NodeRef) {
         if visitor.visit_operator_definition(self, path, node) == VisitorResponse::StepIn {
-            self.definition.visit(visitor)
+            self.definition.visit(visitor, path, node)
         }
     }
 }

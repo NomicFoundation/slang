@@ -47,23 +47,23 @@ impl Production {
     }
 
     #[allow(dead_code)]
-    pub fn versions(&self) -> Option<Vec<&Version>> {
+    pub fn versions(&self) -> Option<Vec<Version>> {
         match self {
             Production::Scanner { version_map, .. } => match version_map {
                 VersionMap::Unversioned(_) => None,
-                VersionMap::Versioned(ref map) => Some(map.keys().collect()),
+                VersionMap::Versioned(ref map) => Some(map.keys().cloned().collect()),
             },
             Production::TriviaParser { version_map, .. } => match version_map {
                 VersionMap::Unversioned(_) => None,
-                VersionMap::Versioned(ref map) => Some(map.keys().collect()),
+                VersionMap::Versioned(ref map) => Some(map.keys().cloned().collect()),
             },
             Production::Parser { version_map, .. } => match version_map {
                 VersionMap::Unversioned(_) => None,
-                VersionMap::Versioned(ref map) => Some(map.keys().collect()),
+                VersionMap::Versioned(ref map) => Some(map.keys().cloned().collect()),
             },
             Production::PrecedenceParser { version_map, .. } => match version_map {
                 VersionMap::Unversioned(_) => None,
-                VersionMap::Versioned(ref map) => Some(map.keys().collect()),
+                VersionMap::Versioned(ref map) => Some(map.keys().cloned().collect()),
             },
         }
     }

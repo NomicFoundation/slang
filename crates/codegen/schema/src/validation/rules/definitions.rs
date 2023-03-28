@@ -1,188 +1,143 @@
-use std::collections::{HashMap, HashSet};
+use std::{
+    collections::{HashMap, HashSet},
+    path::PathBuf,
+};
 
 use codegen_utils::errors::CodegenErrors;
 
 use crate::{
-    validation::{
-        ast::{
-            files::{PathBufRef, ProductionsFile},
-            node::Node,
-            parser::ParserRef,
-            production::{Production, ProductionRef},
-            visitors::{Reporter, Visitor, VisitorExtensions, VisitorResponse},
-        },
-        Model,
-    },
-    yaml::cst,
+    types::parser::ParserRef,
+    types::production::Production,
+    types::production::ProductionRef,
+    visitor::{Visitor, VisitorResponse},
+    yaml::cst::NodeRef,
 };
 
-pub struct Definitions {
+pub struct Definition<T> {
+    pub value: T,
+    pub path: PathBuf,
+    pub cst_node: NodeRef,
+}
+
+pub struct Validator<'ce> {
+    errors: &'ce mut CodegenErrors,
     pub required: HashSet<String>,
     pub top_level_scanners: HashMap<String, Definition<ProductionRef>>,
     pub top_level_parsers: HashMap<String, Definition<ProductionRef>>,
     pub internal_named_parsers: HashMap<String, Definition<ParserRef>>,
 }
 
-pub struct Definition<T> {
-    pub path: PathBufRef,
-    pub cst_node: cst::NodeRef,
-    pub value: T,
-}
-
-pub fn collect(model: &Model, errors: &mut CodegenErrors) -> Definitions {
-    let mut collector = DefinitionCollector::new();
-
-    collector.visit(model, errors);
-    collector.check_required(model, errors);
-
-    return collector.definitions;
-}
-
-struct DefinitionCollector {
-    current_file_path: Option<PathBufRef>,
-    definitions: Definitions,
-}
-
-impl DefinitionCollector {
-    fn new() -> Self {
+impl<'ce> Validator<'ce> {
+    pub fn new(errors: &'ce mut CodegenErrors) -> Self {
         return Self {
-            current_file_path: None,
-            definitions: Definitions {
-                required: HashSet::new(),
-                top_level_scanners: HashMap::new(),
-                top_level_parsers: HashMap::new(),
-                internal_named_parsers: HashMap::new(),
-            },
+            errors,
+            required: HashSet::new(),
+            top_level_scanners: HashMap::new(),
+            top_level_parsers: HashMap::new(),
+            internal_named_parsers: HashMap::new(),
         };
     }
 }
 
-impl Visitor for DefinitionCollector {
-    fn visit_productions_file(
-        &mut self,
-        productions_file: &ProductionsFile,
-        _reporter: &mut Reporter,
-    ) -> VisitorResponse {
-        self.current_file_path = Some(productions_file.path.to_owned());
+impl Visitor for Validator<'_> {
+    // fn exit_manifest(&mut self, manifest: &Manifest
+    //     path: &PathBuf,
+    //     node: &NodeRef) {
 
-        return VisitorResponse::StepIn;
-    }
+    //     for name in ["LeadingTrivia", "TrailingTrivia"] {
+    //         self.definitions.required.insert(name.to_owned());
+
+    //         if !self.definitions.top_level_parsers.contains_key(name) {
+    //             errors.push(
+    //                 &model.manifest_file.path,
+    //                 manifest.title.cst_node.range(),
+    //                 Errors::MissingRequiredParser(name.to_owned()),
+    //             );
+    //         }
+    //     }
+
+    //     {
+    //         let Node { cst_node, value } = &manifest.root_production;
+    //         self.definitions.required.insert(value.to_owned());
+
+    //         if !self.definitions.top_level_parsers.contains_key(value) {
+    //             errors.push(
+    //                 &model.manifest_file.path,
+    //                 cst_node.range(),
+    //                 Errors::MissingRootProduction(value.to_owned()),
+    //             );
+    //         }
+    //     }
+    // }
 
     fn visit_production(
         &mut self,
         production: &ProductionRef,
-        reporter: &mut Reporter,
+        path: &PathBuf,
+        node: &NodeRef,
     ) -> VisitorResponse {
-        if self.check_uniqueness(production.name_node(), reporter) {
+        if self.check_uniqueness(production.name(), path, &node.value_of_field("name")) {
             let definition = Definition {
-                path: self.current_file_path.as_ref().unwrap().to_owned(),
-                cst_node: production.name_node().cst_node.to_owned(),
-                value: production.to_owned(),
+                value: production.clone(),
+                path: path.clone(),
+                cst_node: node.clone(),
             };
 
             match production.as_ref() {
-                Production::Scanner { name, .. } => self
-                    .definitions
-                    .top_level_scanners
-                    .insert(name.value.to_owned(), definition),
+                Production::Scanner { name, .. } => {
+                    self.top_level_scanners.insert(name.clone(), definition)
+                }
                 Production::TriviaParser { name, .. }
                 | Production::Parser { name, .. }
-                | Production::PrecedenceParser { name, .. } => self
-                    .definitions
-                    .top_level_parsers
-                    .insert(name.value.to_owned(), definition),
+                | Production::PrecedenceParser { name, .. } => {
+                    self.top_level_parsers.insert(name.clone(), definition)
+                }
             };
         }
 
         return VisitorResponse::StepIn;
     }
 
-    fn visit_parser(&mut self, parser: &ParserRef, reporter: &mut Reporter) -> VisitorResponse {
+    fn visit_parser(
+        &mut self,
+        parser: &ParserRef,
+        path: &PathBuf,
+        node: &NodeRef,
+    ) -> VisitorResponse {
         let name = match &parser.name {
             Some(name) => name,
             None => return VisitorResponse::StepIn,
         };
 
-        if self.check_uniqueness(&name, reporter) {
+        if self.check_uniqueness(name, path, &node.value_of_field("name")) {
             let definition = Definition {
-                path: self.current_file_path.as_ref().unwrap().to_owned(),
-                cst_node: name.cst_node.to_owned(),
-                value: parser.to_owned(),
+                value: parser.clone(),
+                path: path.clone(),
+                cst_node: node.clone(),
             };
 
-            self.definitions
-                .internal_named_parsers
-                .insert(name.value.to_owned(), definition);
+            self.internal_named_parsers.insert(name.clone(), definition);
         }
 
         return VisitorResponse::StepIn;
     }
 }
 
-impl DefinitionCollector {
-    fn check_uniqueness(&self, name: &Node<String>, reporter: &mut Reporter) -> bool {
-        if self.definitions.top_level_parsers.contains_key(&name.value) {
-            reporter.report(
-                &name.cst_node,
-                Errors::DuplicateProduction(name.value.to_owned()),
-            );
-            return false;
-        }
-
-        if self
-            .definitions
-            .top_level_scanners
-            .contains_key(&name.value)
+impl Validator<'_> {
+    fn check_uniqueness(&self, name: &String, path: &PathBuf, node: &NodeRef) -> bool {
+        if self.top_level_parsers.contains_key(name)
+            || self.top_level_scanners.contains_key(name)
+            || self.internal_named_parsers.contains_key(name)
         {
-            reporter.report(
-                &name.cst_node,
-                Errors::DuplicateProduction(name.value.to_owned()),
-            );
-            return false;
-        }
-
-        if self
-            .definitions
-            .internal_named_parsers
-            .contains_key(&name.value)
-        {
-            reporter.report(
-                &name.cst_node,
-                Errors::DuplicateProduction(name.value.to_owned()),
+            self.errors.push(
+                path,
+                node.range(),
+                Errors::DuplicateProduction(name.clone()),
             );
             return false;
         }
 
         return true;
-    }
-
-    fn check_required(&mut self, model: &Model, errors: &mut CodegenErrors) {
-        let manifest = &model.manifest_file.ast.value;
-
-        for name in ["LeadingTrivia", "TrailingTrivia"] {
-            self.definitions.required.insert(name.to_owned());
-
-            if !self.definitions.top_level_parsers.contains_key(name) {
-                errors.push(
-                    &model.manifest_file.path,
-                    manifest.title.cst_node.range(),
-                    Errors::MissingRequiredParser(name.to_owned()),
-                );
-            }
-        }
-
-        {
-            let Node { cst_node, value } = &manifest.root_production;
-            self.definitions.required.insert(value.to_owned());
-
-            if !self.definitions.top_level_parsers.contains_key(value) {
-                errors.push(
-                    &model.manifest_file.path,
-                    cst_node.range(),
-                    Errors::MissingRootProduction(value.to_owned()),
-                );
-            }
-        }
     }
 }
 

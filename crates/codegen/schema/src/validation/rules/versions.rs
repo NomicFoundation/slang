@@ -1,82 +1,77 @@
-use std::collections::HashSet;
+use std::{collections::HashSet, path::PathBuf};
 
+use codegen_utils::errors::CodegenErrors;
 use semver::Version;
 
 use crate::{
     types::manifest::Manifest,
     types::production::ProductionRef,
-    validation::Model,
     visitor::{Visitor, VisitorResponse},
-    yaml::cst,
+    yaml::cst::NodeRef,
 };
 
-use super::Reporter;
-
-pub fn check(model: &Model, reporter: Reporter) {
-    let mut visitor = VersionsChecker::new(model, reporter);
-    visitor.visit(model);
-}
-
-struct VersionsChecker<'r> {
+pub struct Validator<'ce> {
+    errors: &'ce CodegenErrors,
     manifest_versions: HashSet<Version>,
-    reporter: Reporter<'r>,
 }
 
-impl<'r> VersionsChecker<'r> {
-    fn new(model: &Model, reporter: Reporter) -> Self {
-        let manifest_versions = model
-            .manifest_file
-            .ast
-            .value
-            .versions
-            .iter()
-            .map(|version| version.value.clone())
-            .collect();
-
+impl<'ce> Validator<'ce> {
+    pub fn new(errors: &'ce mut CodegenErrors) -> Self {
         return Self {
-            manifest_versions,
-            reporter,
+            errors,
+            manifest_versions: Default::default(),
         };
     }
 }
 
-impl Visitor for VersionsChecker<'_> {
-    fn visit_manifest(&mut self, manifest: &Manifest) -> VisitorResponse {
-        self.check_order(
-            &manifest.title.cst_node,
-            &manifest.versions.iter().collect(),
-        );
+impl Visitor for Validator<'_> {
+    fn visit_manifest(
+        &mut self,
+        manifest: &Manifest,
+        path: &PathBuf,
+        node: &NodeRef,
+    ) -> VisitorResponse {
+        self.manifest_versions.extend(manifest.versions.clone());
+        self.check_order(path, node, &manifest.versions);
 
         return VisitorResponse::StepOut;
     }
 
-    fn visit_production(&mut self, production: &ProductionRef) -> VisitorResponse {
+    fn visit_production(
+        &mut self,
+        production: &ProductionRef,
+        path: &PathBuf,
+        node: &NodeRef,
+    ) -> VisitorResponse {
         if let Some(versions) = production.versions() {
-            for version in &versions {
-                let Node { cst_node, value } = version;
-                if !self.manifest_versions.contains(value) {
-                    self.reporter
-                        .report(cst_node, Errors::Unknown(value.to_owned()));
+            let node = node.value_of_field("versioned");
+            for version in versions.iter() {
+                if !self.manifest_versions.contains(version) {
+                    self.errors.push(
+                        path,
+                        node.key_of_field(&version.to_string()).range(),
+                        Errors::Unknown(version.clone()),
+                    );
                 }
             }
-            self.check_order(&production.version_map_cst_node(), &versions);
+            self.check_order(path, &node, &versions);
         }
 
         return VisitorResponse::StepOut;
     }
 }
 
-impl VersionsChecker<'_> {
-    fn check_order(&self, parent_node: &cst::NodeRef, versions: &Vec<&Node<Version>>) {
+impl Validator<'_> {
+    fn check_order(&self, path: &PathBuf, node: &NodeRef, versions: &Vec<Version>) {
         if versions.is_empty() {
-            self.reporter.report(&parent_node, Errors::Empty);
+            self.errors.push(path, node.range(), Errors::Empty);
             return;
         }
 
         for window in versions.windows(2) {
             if let [current, next] = window {
-                if current.value >= next.value {
-                    self.reporter.report(&next.cst_node, Errors::NotSorted);
+                if current >= next {
+                    self.errors.push(path, node.range(), Errors::NotSorted);
                     break;
                 }
             } else {
@@ -88,9 +83,9 @@ impl VersionsChecker<'_> {
 
 #[derive(thiserror::Error, Debug)]
 enum Errors {
-    #[error("Must define at least one version.")]
+    #[error("At least one version is required.")]
     Empty,
-    #[error("Versions must be sorted with no duplicates (strictly increasing).")]
+    #[error("Versions must occur in strictly increasing order.")]
     NotSorted,
     #[error("Version '{0}' does not exist in the manifest.")]
     Unknown(Version),

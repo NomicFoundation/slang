@@ -61,3 +61,31 @@ pub enum ParserDefinition {
     #[schemars(title = "ZeroOrMore Expression")]
     ZeroOrMore(ParserRef),
 }
+
+impl ParserDefinition {
+    pub fn produces_epsilon(&self) -> bool {
+        match self {
+            Self::TerminatedBy { .. } // TODO: check if the expression && referenced expression both produce epsilon
+            | Self::DelimitedBy {..} // TODO: check if the referenced delimiters && expression all produce epsilon
+            | Self::Reference(_) => false, // TODO: check if the referenced expression produces epsilon
+
+            Self::Optional(_)
+            | Self::ZeroOrMore(_)
+            | Self::Repeat { min: 0, .. } => true,
+
+            Self::SeparatedBy { expression, .. } 
+            | Self::Repeat { expression, .. } // min > 0
+            | Self::OneOrMore(expression) => {
+                expression.definition.produces_epsilon()
+            }
+
+            Self::Choice(expressions) => {
+                expressions.iter().any(|e| e.definition.produces_epsilon())
+            }
+
+            Self::Sequence(expressions) => {
+                expressions.iter().all(|e| e.definition.produces_epsilon())
+            }
+        }
+    }
+}

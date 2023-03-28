@@ -29,6 +29,44 @@ pub struct NodeField {
 }
 
 impl Node {
+    pub fn value_at_index(&self, index: usize) -> NodeRef {
+        return match self {
+            Node::Value { .. } | Node::Object { .. } => {
+                panic!("Cannot get indexed element from a value or object node")
+            }
+            Node::Array { items, .. } => items
+                .get(index)
+                .cloned()
+                .expect(&format!("Array does not have element at index {}", index)),
+        };
+    }
+
+    pub fn value_of_field(&self, key: &str) -> NodeRef {
+        return match self {
+            Node::Value { .. } | Node::Array { .. } => {
+                panic!("Cannot get key of field from a value or array node")
+            }
+
+            Node::Object { fields, .. } => fields
+                .get(key)
+                .map(|field| field.value.clone())
+                .expect(&format!("Object does not have field {}", key)),
+        };
+    }
+
+    pub fn key_of_field(&self, key: &str) -> NodeRef {
+        return match self {
+            Node::Value { .. } | Node::Array { .. } => {
+                panic!("Cannot get key of field from a value or array node")
+            }
+
+            Node::Object { fields, .. } => fields
+                .get(key)
+                .map(|field| field.key.clone())
+                .expect(&format!("Object does not have field {}", key)),
+        };
+    }
+
     pub fn range(&self) -> &Range {
         return match self {
             Node::Value { range, .. } | Node::Array { range, .. } | Node::Object { range, .. } => {

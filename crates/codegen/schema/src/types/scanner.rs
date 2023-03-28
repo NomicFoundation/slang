@@ -60,3 +60,36 @@ pub enum ScannerDefinition {
     #[schemars(title = "ZeroOrMore Expression")]
     ZeroOrMore(ScannerRef),
 }
+
+impl ScannerDefinition {
+    pub fn produces_epsilon(&self) -> bool {
+        match self{
+            Self::Not(_)
+            | Self::Range { .. }
+            | Self::Reference(_) // TODO: check if the referenced expression produces epsilon
+            | Self::Terminal(_) => false,
+
+            Self::Optional(_)
+            | Self::ZeroOrMore(_)
+            | Self::Repeat { min: 0, .. } => true,
+
+            Self::Repeat { expression, .. } // min > 0
+            | Self::OneOrMore(expression)
+            | Self::Difference {
+                minuend: expression,
+                ..
+            }
+            | Self::TrailingContext { expression, .. } => {
+                expression.definition.produces_epsilon()
+            }
+
+            Self::Choice(expressions) => {
+                expressions.iter().any(|e| e.definition.produces_epsilon())
+            }
+
+            Self::Sequence(expressions) => {
+                expressions.iter().all(|e| e.definition.produces_epsilon())
+            }
+        }
+    }
+}

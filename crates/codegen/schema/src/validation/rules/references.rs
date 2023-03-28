@@ -1,35 +1,30 @@
-use std::collections::HashSet;
+use std::{collections::HashSet, path::PathBuf};
 
 use codegen_utils::errors::CodegenErrors;
 
 use crate::{
-    validation::{
-        ast::{
-            node::Node,
-            parser::ParserDefinition,
-            scanner::ScannerDefinition,
-            visitors::{Reporter, Visitor, VisitorExtensions, VisitorResponse},
-        },
-        Model,
-    },
-    yaml::cst,
+    types::parser::ParserDefinition,
+    types::scanner::ScannerDefinition,
+    validation::model::Model,
+    visitor::{Visitor, VisitorResponse},
+    yaml::cst::{self, NodeRef},
 };
 
 use super::definitions::Definitions;
 
 pub fn check(model: &Model, definitions: &Definitions, errors: &mut CodegenErrors) {
-    let mut collector = ReferencesCollector::new(definitions);
+    let mut collector = Validator::new(definitions);
 
     collector.visit(model, errors);
     collector.check_unused(errors);
 }
 
-struct ReferencesCollector<'v> {
+struct Validator<'v> {
     definitions: &'v Definitions,
     references: HashSet<String>,
 }
 
-impl<'v> ReferencesCollector<'v> {
+impl<'v> Validator<'v> {
     fn new(definitions: &'v Definitions) -> Self {
         return Self {
             definitions,
@@ -38,11 +33,12 @@ impl<'v> ReferencesCollector<'v> {
     }
 }
 
-impl Visitor for ReferencesCollector<'_> {
+impl Visitor for Validator<'_> {
     fn visit_scanner_definition(
         &mut self,
         scanner: &ScannerDefinition,
-        reporter: &mut Reporter,
+        path: &PathBuf,
+        node: &NodeRef,
     ) -> VisitorResponse {
         if let ScannerDefinition::Reference(reference) = scanner {
             let Node { cst_node, value } = reference;
@@ -56,7 +52,8 @@ impl Visitor for ReferencesCollector<'_> {
     fn visit_parser_definition(
         &mut self,
         definition: &ParserDefinition,
-        reporter: &mut Reporter,
+        path: &PathBuf,
+        node: &NodeRef,
     ) -> VisitorResponse {
         match definition {
             ParserDefinition::Reference(reference) => {
@@ -87,7 +84,7 @@ impl Visitor for ReferencesCollector<'_> {
     }
 }
 
-impl<'v> ReferencesCollector<'v> {
+impl<'v> Validator<'v> {
     fn check_unused(&self, errors: &mut CodegenErrors) {
         for (name, production) in &self.definitions.top_level_parsers {
             if self.definitions.required.contains(name) {
