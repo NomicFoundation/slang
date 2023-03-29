@@ -1,6 +1,6 @@
 use anyhow::{bail, Context, Result};
 use semver::Version;
-use solidity_rust_lib::generated::{kinds::ProductionKind, language::Language};
+use slang_solidity::generated::{kinds::ProductionKind, language::Language};
 
 use crate::compatible_versions::filter_compatible_versions;
 

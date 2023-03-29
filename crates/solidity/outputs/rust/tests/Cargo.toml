@@ -16,5 +16,5 @@ solidity_schema = { workspace = true }
 anyhow = { workspace = true }
 codegen_utils = { workspace = true }
 semver = { workspace = true }
-solidity_rust_lib = { workspace = true }
+slang_solidity = { workspace = true }
 solidity_testing_utils = { workspace = true }

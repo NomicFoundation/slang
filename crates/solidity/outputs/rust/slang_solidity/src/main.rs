@@ -3,7 +3,20 @@ use std::{fs, path::PathBuf};
 use anyhow::{Context, Result};
 use clap::Parser as ClapParser;
 use semver::Version;
-use solidity_rust_lib::generated::{kinds::ProductionKind, language::Language};
+use slang_solidity::generated::{kinds::ProductionKind, language::Language};
+
+mod _supress_library_dependencies_ {
+    // Below are dependencies used by the library `lib.rs`, but not here.
+    // However, we need to add a fake usage below to supress Cargo warnings about unused dependencies.
+    // This is a known issue, and we should remove this hack once there is a better solution from Cargo.
+    use ariadne as _;
+    use serde as _;
+    #[cfg(test)]
+    use solidity_rust_build as _;
+    use strum as _;
+    use strum_macros as _;
+    use thiserror as _;
+}
 
 #[derive(ClapParser, Debug)]
 struct ProgramArgs {
