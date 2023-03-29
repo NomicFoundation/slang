@@ -3,6 +3,7 @@ name = "codegen_schema"
 version.workspace = true
 rust-version.workspace = true
 edition.workspace = true
+publish = false
 
 [build-dependencies]
 anyhow = { workspace = true }
