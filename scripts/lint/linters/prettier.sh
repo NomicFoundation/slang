@@ -5,6 +5,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/../_common.sh"
 
 (
   printf "\n\n🧪 prettier 🧪\n\n\n"
+
   cd "$REPO_ROOT"
 
   if [[ "${CI:-}" ]]; then
