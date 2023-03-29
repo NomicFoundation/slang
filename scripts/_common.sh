@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-# Import common utilities, after Hermit is activated:
+# Import common utilities, before Hermit is activated:
 source "$(dirname "${BASH_SOURCE[0]}")/_utils.sh"
 
 # Activate the Hermit environment:

@@ -7,5 +7,8 @@ BASH_FILES=$(_list_source_files '**/*.sh')
 
 (
   printf "\n\n🧪 shellcheck 🧪\n\n\n"
+
+  echo "$BASH_FILES"
+
   echo "$BASH_FILES" | xargs shellcheck
 )

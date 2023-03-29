@@ -23,6 +23,22 @@ function _print_hermit_env() {
 }
 
 #
+# GitHub Actions Output Group:
+#
+function _group_output() {
+  if [[ ! "${GITHUB_ACTIONS:-}" ]]; then
+    "$@"
+    return 0
+  fi
+
+  echo "::group::$(basename "$1")"
+  echo ""
+  "$@"
+  echo ""
+  echo "::endgroup::"
+}
+
+#
 # Searches the repository for all files matching the passed globs:
 # - Globs should be relative to "$REPO_ROOT".
 # - Results are canonicalized (converted to full paths).
