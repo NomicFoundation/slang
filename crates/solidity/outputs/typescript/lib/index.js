@@ -1,3 +1,5 @@
+// @ts-nocheck generated file:
+
 const { existsSync, readFileSync } = require('fs')
 const { join } = require('path')
 

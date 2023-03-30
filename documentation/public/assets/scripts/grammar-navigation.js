@@ -1,5 +1,3 @@
-// @ts-check
-
 window.addEventListener("load", prepareGrammar);
 window.addEventListener("hashchange", prepareGrammar);
 
@@ -9,9 +7,6 @@ function prepareGrammar() {
   highlightSelected(blocks);
 }
 
-/**
- * @returns {Map<string, Element>}
- */
 function collectBlocks() {
   const blocks = /** @type Map<string, Element> */ (new Map());
   for (const block of document.querySelectorAll("div .slang-ebnf")) {
@@ -26,10 +21,7 @@ function collectBlocks() {
   return blocks;
 }
 
-/**
- * @param blocks {Map<string, Element>}
- */
-function createLinks(blocks) {
+function createLinks(/** @type Map<string, Element> */ blocks) {
   for (const [_, block] of blocks) {
     const spans = block.querySelectorAll("span[class='k']");
     for (const span of spans) {
@@ -47,11 +39,8 @@ function createLinks(blocks) {
   }
 }
 
-/**
- * @param blocks {Map<string, Element>}
- */
-function highlightSelected(blocks) {
-  function setBackground(block, color) {
+function highlightSelected(/** @type Map<string, Element> */ blocks) {
+  function setBackground(/** @type Element */ block, /** @type string */ color) {
     const code = block.querySelector("code");
     if (!code) {
       return;
