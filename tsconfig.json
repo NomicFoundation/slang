@@ -1,0 +1,55 @@
+{
+  "include": [
+    /* All JavaScript Files */
+    "**/**.js",
+    "**/**.jsx",
+    "**/**.ts",
+    "**/**.tsx"
+  ],
+
+  "exclude": [
+    /* Packages and Dependencies */
+    ".hermit/",
+    "node_modules/",
+
+    /* Generated Artifacts */
+    "target/"
+  ],
+
+  "compilerOptions": {
+    /* Language and Environment */
+    "target": "ES2016",
+    "lib": ["DOM", "DOM.Iterable"],
+
+    /* Modules */
+    "moduleResolution": "node",
+
+    /* JavaScript Support */
+    "allowJs": true,
+    "checkJs": true,
+
+    /* Emit */
+    "noEmit": true,
+
+    /* Type Checking */
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "useUnknownInCatchVariables": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false
+  }
+}

@@ -12,6 +12,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/_common.sh"
   _group_output "$REPO_ROOT/scripts/lint/linters/markdownlint.sh"
   _group_output "$REPO_ROOT/scripts/lint/linters/prettier.sh"
   _group_output "$REPO_ROOT/scripts/lint/linters/shellcheck.sh"
+  _group_output "$REPO_ROOT/scripts/lint/linters/tsc.sh"
   _group_output "$REPO_ROOT/scripts/lint/linters/yamllint.sh"
 
   printf "\n\n✅ Linting Success ✅\n\n\n"
