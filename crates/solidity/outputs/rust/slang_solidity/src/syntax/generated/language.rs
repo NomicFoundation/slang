@@ -5,7 +5,7 @@ pub use std::{collections::BTreeSet, ops::Range, rc::Rc};
 #[allow(deprecated, unused_imports)]
 use semver::Version;
 
-pub use super::{cst, kinds::*, parser_output::ParserOutput};
+pub use super::{cst, kinds::*, parser_output::ParseOutput};
 
 const DEBUG_ERROR_MERGING: bool = false;
 
@@ -64,7 +64,7 @@ impl ParseError {
     }
 }
 
-pub enum ParseResult {
+pub enum ParserResult {
     Pass {
         node: Rc<cst::Node>,
         error: Option<ParseError>,
@@ -89,10 +89,6 @@ impl<'s> Stream<'s> {
             undo_position: 0,
             has_undo: false,
         }
-    }
-
-    pub fn source(&self) -> &'s str {
-        self.source
     }
 
     pub fn position(&self) -> usize {
@@ -192,14 +188,14 @@ fn call_scanner<L, F>(
     scanner: F,
     kind: TokenKind,
     error_message: &str,
-) -> Option<ParserOutput>
+) -> Option<ParseOutput>
 where
     F: Fn(&L, &mut Stream) -> bool,
 {
     let mut stream = Stream::new(input);
     Some(
         if scanner(language, &mut stream) && stream.peek().is_none() {
-            ParserOutput {
+            ParseOutput {
                 parse_tree: Some(cst::Node::token(
                     kind,
                     Range {
@@ -212,7 +208,7 @@ where
                 errors: vec![],
             }
         } else {
-            ParserOutput {
+            ParseOutput {
                 parse_tree: None,
                 errors: vec![ParseError::new(stream.position(), error_message)],
             }
@@ -227,14 +223,14 @@ fn try_call_scanner<L, F>(
     scanner: F,
     kind: TokenKind,
     error_message: &str,
-) -> Option<ParserOutput>
+) -> Option<ParseOutput>
 where
     F: Fn(&L, &mut Stream) -> Option<bool>,
 {
     let mut stream = Stream::new(input);
     scanner(language, &mut stream).map(|result| {
         if result && stream.peek().is_none() {
-            ParserOutput {
+            ParseOutput {
                 parse_tree: Some(cst::Node::token(
                     kind,
                     Range {
@@ -247,7 +243,7 @@ where
                 errors: vec![],
             }
         } else {
-            ParserOutput {
+            ParseOutput {
                 parse_tree: None,
                 errors: vec![ParseError::new(stream.position(), error_message)],
             }
@@ -256,21 +252,21 @@ where
 }
 
 #[allow(dead_code)]
-fn call_parser<L, F>(language: &L, input: &str, parser: F) -> Option<ParserOutput>
+fn call_parser<L, F>(language: &L, input: &str, parser: F) -> Option<ParseOutput>
 where
-    F: Fn(&L, &mut Stream) -> ParseResult,
+    F: Fn(&L, &mut Stream) -> ParserResult,
 {
     let mut stream = Stream::new(input);
     Some(match parser(language, &mut stream) {
-        ParseResult::Pass { node, .. } if stream.peek().is_none() => ParserOutput {
+        ParserResult::Pass { node, .. } if stream.peek().is_none() => ParseOutput {
             parse_tree: Some(node),
             errors: vec![],
         },
-        ParseResult::Pass { .. } => ParserOutput {
+        ParserResult::Pass { .. } => ParseOutput {
             parse_tree: None,
             errors: vec![ParseError::new(stream.position(), "end of input")],
         },
-        ParseResult::Fail { error } => ParserOutput {
+        ParserResult::Fail { error } => ParseOutput {
             parse_tree: None,
             errors: vec![error],
         },
@@ -278,21 +274,21 @@ where
 }
 
 #[allow(dead_code)]
-fn try_call_parser<L, F>(language: &L, input: &str, parser: F) -> Option<ParserOutput>
+fn try_call_parser<L, F>(language: &L, input: &str, parser: F) -> Option<ParseOutput>
 where
-    F: Fn(&L, &mut Stream) -> Option<ParseResult>,
+    F: Fn(&L, &mut Stream) -> Option<ParserResult>,
 {
     let mut stream = Stream::new(input);
     parser(language, &mut stream).map(|result| match result {
-        ParseResult::Pass { node, .. } if stream.peek().is_none() => ParserOutput {
+        ParserResult::Pass { node, .. } if stream.peek().is_none() => ParseOutput {
             parse_tree: Some(node),
             errors: vec![],
         },
-        ParseResult::Pass { .. } => ParserOutput {
+        ParserResult::Pass { .. } => ParseOutput {
             parse_tree: None,
             errors: vec![ParseError::new(stream.position(), "end of input")],
         },
-        ParseResult::Fail { error } => ParserOutput {
+        ParserResult::Fail { error } => ParseOutput {
             parse_tree: None,
             errors: vec![error],
         },
@@ -344,7 +340,7 @@ impl Language {
         &self.version
     }
 
-    pub fn parse(&self, production_kind: ProductionKind, input: &str) -> ParserOutput {
+    pub fn parse(&self, production_kind: ProductionKind, input: &str) -> ParseOutput {
         let output = match production_kind {
             ProductionKind::AbicoderKeyword => call_scanner(
                 self,
@@ -1774,7 +1770,7 @@ impl Language {
             let message = format!(
                 "ProductionKind {production_kind} is not valid in this version of Solidity"
             );
-            ParserOutput {
+            ParseOutput {
                 parse_tree: None,
                 errors: vec![ParseError::new(0, message)],
             }

@@ -1,6 +1,6 @@
 use anyhow::{bail, Context, Result};
 use semver::Version;
-use slang_solidity::generated::{kinds::ProductionKind, language::Language};
+use slang_solidity::syntax::parser::{Language, ProductionKind};
 
 use crate::compatible_versions::filter_compatible_versions;
 

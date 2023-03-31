@@ -5,15 +5,14 @@ use std::{collections::BTreeSet, ops::Range, rc::Rc};
 
 use anyhow::{Context, Error, Result};
 use semver::{Comparator, Version};
-use slang_solidity::generated::{
-    cst::{self, Node},
-    cst_visitor::{Visitable, Visitor, VisitorEntryResponse},
-    kinds::RuleKind,
+use slang_solidity::syntax::{
+    nodes::{Node, RuleKind},
+    visitors::{Visitable, Visitor, VisitorEntryResponse},
 };
 
 pub fn filter_compatible_versions<'a>(
     versions: &'a Vec<Version>,
-    parse_tree: &Rc<cst::Node>,
+    parse_tree: &Rc<Node>,
     source: &str,
 ) -> Result<BTreeSet<&'a Version>> {
     let mut collector = VersionSpecifierCollector {
@@ -21,7 +20,7 @@ pub fn filter_compatible_versions<'a>(
         comparators: vec![],
     };
 
-    parse_tree.visit(&mut collector)?;
+    parse_tree.accept_visitor(&mut collector)?;
 
     let compatible_versions = versions
         .iter()

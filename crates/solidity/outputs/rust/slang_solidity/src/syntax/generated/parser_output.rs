@@ -8,12 +8,12 @@ use super::{
 };
 
 #[derive(PartialEq)]
-pub struct ParserOutput {
+pub struct ParseOutput {
     pub(crate) parse_tree: Option<Rc<cst::Node>>,
     pub(crate) errors: Vec<ParseError>,
 }
 
-impl ParserOutput {
+impl ParseOutput {
     pub fn parse_tree(&self) -> Option<Rc<cst::Node>> {
         self.parse_tree.clone()
     }

@@ -1,8 +1,8 @@
 [workspace]
 members = [
     "crates/codegen/ebnf",
-    "crates/codegen/parser",
-    "crates/codegen/parser_templates",
+    "crates/codegen/syntax",
+    "crates/codegen/syntax_templates",
     "crates/codegen/schema",
     "crates/codegen/spec",
     "crates/codegen/testing",
@@ -29,7 +29,7 @@ ariadne = { version = "0.2.0" }
 bson = { version = "2.6.1" }
 clap = { version = "4.1.13", features = ["derive"] }
 codegen_ebnf = { path = "crates/codegen/ebnf" }
-codegen_parser = { path = "crates/codegen/parser" }
+codegen_syntax = { path = "crates/codegen/syntax" }
 codegen_schema = { path = "crates/codegen/schema" }
 codegen_spec = { path = "crates/codegen/spec" }
 codegen_testing = { path = "crates/codegen/testing" }

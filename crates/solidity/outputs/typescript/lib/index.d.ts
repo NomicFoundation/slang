@@ -768,9 +768,9 @@ export class Language {
   getParser(kind: ProductionKind): Parser
 }
 export class Parser {
-  parse(input: string): ParserOutput
+  parse(input: string): ParseOutput
 }
-export class ParserOutput {
+export class ParseOutput {
   parseTree(): RuleNode | TokenNode | null
   errorCount(): bigint
   errorsAsStrings(sourceId: string, source: string, withColour: boolean): Array<string>

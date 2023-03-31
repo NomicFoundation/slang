@@ -1,6 +1,6 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
-use super::language::ParseResult::*;
+use super::language::ParserResult::*;
 use super::language::*;
 
 #[allow(unused_macros)]
@@ -193,7 +193,7 @@ impl Language {
     // ABICoderPragma = «AbicoderKeyword» «Identifier»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_abi_coder_pragma_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_abi_coder_pragma_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -266,7 +266,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_abi_coder_pragma(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_abi_coder_pragma(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_abi_coder_pragma_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::ABICoderPragma, node),
@@ -279,7 +279,7 @@ impl Language {
     // AddressType = «AddressKeyword» [«PayableKeyword»];
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_address_type_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_address_type_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -364,7 +364,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_address_type(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_address_type(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_address_type_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::AddressType, node),
@@ -377,7 +377,7 @@ impl Language {
     // ArgumentList = «OpenParen» [PositionalArgumentList | NamedArgumentList] «CloseParen»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_argument_list_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_argument_list_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match {
                 let leading_trivia = self.optional_leading_trivia(stream);
@@ -479,7 +479,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_argument_list(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_argument_list(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_argument_list_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::ArgumentList, node),
@@ -492,7 +492,7 @@ impl Language {
     // ArrayLiteral = «OpenBracket» Expression {«Comma» Expression} «CloseBracket»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_array_literal_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_array_literal_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match {
                 let leading_trivia = self.optional_leading_trivia(stream);
@@ -612,7 +612,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_array_literal(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_array_literal(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_array_literal_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::ArrayLiteral, node),
@@ -625,7 +625,7 @@ impl Language {
     // AssemblyFlags = «OpenParen» «DoubleQuotedAsciiStringLiteral» {«Comma» «DoubleQuotedAsciiStringLiteral»} «CloseParen»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_assembly_flags_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_assembly_flags_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match {
                 let leading_trivia = self.optional_leading_trivia(stream);
@@ -845,7 +845,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_assembly_flags(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_assembly_flags(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_assembly_flags_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::AssemblyFlags, node),
@@ -858,7 +858,7 @@ impl Language {
     // AssemblyStatement = «AssemblyKeyword» [«Evmasm»] [AssemblyFlags] YulBlock;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_assembly_statement_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_assembly_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -980,7 +980,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_assembly_statement(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_assembly_statement(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_assembly_statement_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::AssemblyStatement, node),
@@ -993,7 +993,7 @@ impl Language {
     // Block = «OpenBrace» {Statement | UncheckedBlock} «CloseBrace»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_block_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_block_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match {
                 let leading_trivia = self.optional_leading_trivia(stream);
@@ -1098,7 +1098,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_block(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_block(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_block_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::Block, node),
@@ -1111,7 +1111,7 @@ impl Language {
     // BooleanLiteral = «TrueKeyword» | «FalseKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_boolean_literal_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_boolean_literal_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
             let mut furthest_error;
@@ -1171,7 +1171,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_boolean_literal(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_boolean_literal(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_boolean_literal_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::BooleanLiteral, node),
@@ -1184,7 +1184,7 @@ impl Language {
     // BreakStatement = «BreakKeyword» «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_break_statement_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_break_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match {
                 let leading_trivia = self.optional_leading_trivia(stream);
@@ -1253,7 +1253,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_break_statement(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_break_statement(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_break_statement_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::BreakStatement, node),
@@ -1266,7 +1266,7 @@ impl Language {
     // CatchClause = «CatchKeyword» [[«Identifier»] ParameterList] Block;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_catch_clause_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_catch_clause_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -1404,7 +1404,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_catch_clause(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_catch_clause(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_catch_clause_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::CatchClause, node),
@@ -1417,7 +1417,7 @@ impl Language {
     // ConstantDefinition = TypeName «ConstantKeyword» «Identifier» «Equal» Expression «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_constant_definition_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_constant_definition_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
                 let mut furthest_error = None;
@@ -1590,7 +1590,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_constant_definition(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_constant_definition(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_constant_definition_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::ConstantDefinition, node),
@@ -1603,7 +1603,7 @@ impl Language {
     // ConstructorAttribute = ModifierInvocation | «InternalKeyword» | «PayableKeyword» | «PublicKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_constructor_attribute_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_constructor_attribute_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
             let mut furthest_error;
@@ -1693,7 +1693,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_constructor_attribute(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_constructor_attribute(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_constructor_attribute_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::ConstructorAttribute, node),
@@ -1707,7 +1707,7 @@ impl Language {
     // ConstructorDefinition = «ConstructorKeyword» ParameterList {ConstructorAttribute} Block;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_constructor_definition_0_4_22(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_constructor_definition_0_4_22(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -1799,7 +1799,7 @@ impl Language {
         }
     }
 
-    fn dispatch_parse_constructor_definition(&self, stream: &mut Stream) -> Option<ParseResult> {
+    fn dispatch_parse_constructor_definition(&self, stream: &mut Stream) -> Option<ParserResult> {
         if self.version_is_equal_to_or_greater_than_0_4_22 {
             Some(self.parse_constructor_definition_0_4_22(stream))
         } else {
@@ -1810,7 +1810,7 @@ impl Language {
     pub(crate) fn maybe_parse_constructor_definition(
         &self,
         stream: &mut Stream,
-    ) -> Option<ParseResult> {
+    ) -> Option<ParserResult> {
         self.dispatch_parse_constructor_definition(stream)
             .map(|body| match body {
                 Pass { node, error } => Pass {
@@ -1822,7 +1822,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_constructor_definition(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_constructor_definition(&self, stream: &mut Stream) -> ParserResult {
         self.maybe_parse_constructor_definition(stream)
             .expect("Validation should have checked that references are valid between versions")
     }
@@ -1830,7 +1830,7 @@ impl Language {
     // ContinueStatement = «ContinueKeyword» «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_continue_statement_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_continue_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match {
                 let leading_trivia = self.optional_leading_trivia(stream);
@@ -1899,7 +1899,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_continue_statement(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_continue_statement(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_continue_statement_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::ContinueStatement, node),
@@ -1913,7 +1913,7 @@ impl Language {
     // ContractBodyElement = UsingDirective | FunctionDefinition | UnnamedFunctionDefinition | ModifierDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | EventDefinition | ErrorDefinition | StateVariableDeclaration;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_contract_body_element_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_contract_body_element_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
             let mut furthest_error;
@@ -1976,7 +1976,7 @@ impl Language {
     // ContractBodyElement = UsingDirective | ConstructorDefinition | FunctionDefinition | UnnamedFunctionDefinition | ModifierDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | EventDefinition | ErrorDefinition | StateVariableDeclaration;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_contract_body_element_0_4_22(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_contract_body_element_0_4_22(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
             let mut furthest_error;
@@ -2044,7 +2044,7 @@ impl Language {
     // ContractBodyElement = UsingDirective | ConstructorDefinition | FunctionDefinition | FallbackFunctionDefinition | ReceiveFunctionDefinition | ModifierDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | EventDefinition | ErrorDefinition | StateVariableDeclaration;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_contract_body_element_0_6_0(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_contract_body_element_0_6_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
             let mut furthest_error;
@@ -2113,7 +2113,7 @@ impl Language {
         }
     }
 
-    fn dispatch_parse_contract_body_element(&self, stream: &mut Stream) -> ParseResult {
+    fn dispatch_parse_contract_body_element(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_equal_to_or_greater_than_0_6_0 {
             self.parse_contract_body_element_0_6_0(stream)
         } else if self.version_is_equal_to_or_greater_than_0_4_22 {
@@ -2124,7 +2124,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_contract_body_element(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_contract_body_element(&self, stream: &mut Stream) -> ParserResult {
         match self.dispatch_parse_contract_body_element(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::ContractBodyElement, node),
@@ -2137,7 +2137,7 @@ impl Language {
     // ContractDefinition = [«AbstractKeyword»] «ContractKeyword» «Identifier» [InheritanceSpecifierList] «OpenBrace» {ContractBodyElement} «CloseBrace»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_contract_definition_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_contract_definition_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -2375,7 +2375,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_contract_definition(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_contract_definition(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_contract_definition_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::ContractDefinition, node),
@@ -2388,7 +2388,7 @@ impl Language {
     // DataLocation = «MemoryKeyword» | «StorageKeyword» | «CalldataKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_data_location_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_data_location_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
             let mut furthest_error;
@@ -2473,7 +2473,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_data_location(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_data_location(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_data_location_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::DataLocation, node),
@@ -2486,7 +2486,7 @@ impl Language {
     // Definition = ContractDefinition | InterfaceDefinition | LibraryDefinition | FunctionDefinition | ConstantDefinition | StructDefinition | EnumDefinition | UserDefinedValueTypeDefinition | ErrorDefinition;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_definition_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_definition_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
             let mut furthest_error;
@@ -2541,7 +2541,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_definition(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_definition(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_definition_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::Definition, node),
@@ -2554,7 +2554,7 @@ impl Language {
     // DeleteStatement = «DeleteKeyword» Expression «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_delete_statement_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_delete_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
                 let mut furthest_error = None;
@@ -2651,7 +2651,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_delete_statement(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_delete_statement(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_delete_statement_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::DeleteStatement, node),
@@ -2664,7 +2664,7 @@ impl Language {
     // Directive = PragmaDirective | ImportDirective | UsingDirective;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_directive_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_directive_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
             let mut furthest_error;
@@ -2689,7 +2689,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_directive(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_directive(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_directive_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::Directive, node),
@@ -2702,7 +2702,7 @@ impl Language {
     // DoWhileStatement = «DoKeyword» Statement «WhileKeyword» «OpenParen» Expression «CloseParen» «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_do_while_statement_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_do_while_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
                 let mut furthest_error = None;
@@ -2912,7 +2912,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_do_while_statement(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_do_while_statement(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_do_while_statement_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::DoWhileStatement, node),
@@ -2925,7 +2925,7 @@ impl Language {
     // ElementaryType = «BoolKeyword» | «StringKeyword» | AddressType | PayableType | «FixedBytesType» | «SignedIntegerType» | «UnsignedIntegerType» | «SignedFixedType» | «UnsignedFixedType»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_elementary_type_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_elementary_type_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
             let mut furthest_error;
@@ -3120,7 +3120,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_elementary_type(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_elementary_type(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_elementary_type_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::ElementaryType, node),
@@ -3133,7 +3133,7 @@ impl Language {
     // EmitStatement = «EmitKeyword» IdentifierPath ArgumentList «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_emit_statement_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_emit_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
                 let mut furthest_error = None;
@@ -3241,7 +3241,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_emit_statement(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_emit_statement(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_emit_statement_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::EmitStatement, node),
@@ -3254,7 +3254,7 @@ impl Language {
     // EndOfFileTrivia = 1…{«Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment»};
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_end_of_file_trivia_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_end_of_file_trivia_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut result = Vec::new();
             loop {
@@ -3374,7 +3374,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_end_of_file_trivia(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_end_of_file_trivia(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_end_of_file_trivia_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::EndOfFileTrivia, node),
@@ -3387,7 +3387,7 @@ impl Language {
     // EnumDefinition = «EnumKeyword» «Identifier» «OpenBrace» [«Identifier» {«Comma» «Identifier»}] «CloseBrace»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_enum_definition_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_enum_definition_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -3620,7 +3620,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_enum_definition(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_enum_definition(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_enum_definition_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::EnumDefinition, node),
@@ -3633,7 +3633,7 @@ impl Language {
     // ErrorDefinition = «ErrorKeyword» «Identifier» «OpenParen» [ErrorParameter {«Comma» ErrorParameter}] «CloseParen» «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_error_definition_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_error_definition_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
                 let mut furthest_error = None;
@@ -3890,7 +3890,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_error_definition(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_error_definition(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_error_definition_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::ErrorDefinition, node),
@@ -3903,7 +3903,7 @@ impl Language {
     // ErrorParameter = TypeName [«Identifier»];
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_error_parameter_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_error_parameter_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match self.parse_type_name(stream) {
@@ -3968,7 +3968,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_error_parameter(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_error_parameter(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_error_parameter_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::ErrorParameter, node),
@@ -3981,7 +3981,7 @@ impl Language {
     // EventDefinition = «EventKeyword» «Identifier» «OpenParen» [EventParameter {«Comma» EventParameter}] «CloseParen» [«AnonymousKeyword»] «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_event_definition_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_event_definition_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
                 let mut furthest_error = None;
@@ -4284,7 +4284,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_event_definition(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_event_definition(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_event_definition_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::EventDefinition, node),
@@ -4297,7 +4297,7 @@ impl Language {
     // EventParameter = TypeName [«IndexedKeyword»] [«Identifier»];
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_event_parameter_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_event_parameter_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match self.parse_type_name(stream) {
@@ -4405,7 +4405,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_event_parameter(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_event_parameter(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_event_parameter_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::EventParameter, node),
@@ -4418,7 +4418,7 @@ impl Language {
     // ExperimentalPragma = «ExperimentalKeyword» «Identifier»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_experimental_pragma_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_experimental_pragma_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -4491,7 +4491,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_experimental_pragma(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_experimental_pragma(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_experimental_pragma_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::ExperimentalPragma, node),
@@ -4523,7 +4523,7 @@ impl Language {
     // IndexAccessExpression = Expression («OpenBracket» Expression [«Colon» [Expression]] | «Colon» [Expression] «CloseBracket»);
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_expression_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_expression_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             enum Pratt {
                 Operator {
@@ -6488,7 +6488,7 @@ impl Language {
     // IndexAccessExpression = Expression («OpenBracket» Expression [«Colon» [Expression]] | «Colon» [Expression] «CloseBracket»);
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_expression_0_6_0(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_expression_0_6_0(&self, stream: &mut Stream) -> ParserResult {
         {
             enum Pratt {
                 Operator {
@@ -8431,7 +8431,7 @@ impl Language {
         }
     }
 
-    fn dispatch_parse_expression(&self, stream: &mut Stream) -> ParseResult {
+    fn dispatch_parse_expression(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_equal_to_or_greater_than_0_6_0 {
             self.parse_expression_0_6_0(stream)
         } else {
@@ -8440,7 +8440,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_expression(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_expression(&self, stream: &mut Stream) -> ParserResult {
         match self.dispatch_parse_expression(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::Expression, node),
@@ -8453,7 +8453,7 @@ impl Language {
     // ExpressionStatement = Expression «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_expression_statement_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_expression_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match self.parse_expression(stream) {
                 err @ Fail { .. } => err,
@@ -8502,7 +8502,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_expression_statement(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_expression_statement(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_expression_statement_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::ExpressionStatement, node),
@@ -8515,7 +8515,7 @@ impl Language {
     // FallbackFunctionAttribute = ModifierInvocation | OverrideSpecifier | «ExternalKeyword» | «PayableKeyword» | «PureKeyword» | «ViewKeyword» | «VirtualKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_fallback_function_attribute_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_fallback_function_attribute_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
             let mut furthest_error;
@@ -8660,7 +8660,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_fallback_function_attribute(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_fallback_function_attribute(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_fallback_function_attribute_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::FallbackFunctionAttribute, node),
@@ -8674,7 +8674,7 @@ impl Language {
     // FallbackFunctionDefinition = «FallbackKeyword» ParameterList {FallbackFunctionAttribute} [«ReturnsKeyword» ParameterList] («Semicolon» | Block);
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_fallback_function_definition_0_6_0(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_fallback_function_definition_0_6_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -8877,7 +8877,7 @@ impl Language {
     fn dispatch_parse_fallback_function_definition(
         &self,
         stream: &mut Stream,
-    ) -> Option<ParseResult> {
+    ) -> Option<ParserResult> {
         if self.version_is_equal_to_or_greater_than_0_6_0 {
             Some(self.parse_fallback_function_definition_0_6_0(stream))
         } else {
@@ -8888,7 +8888,7 @@ impl Language {
     pub(crate) fn maybe_parse_fallback_function_definition(
         &self,
         stream: &mut Stream,
-    ) -> Option<ParseResult> {
+    ) -> Option<ParserResult> {
         self.dispatch_parse_fallback_function_definition(stream)
             .map(|body| match body {
                 Pass { node, error } => Pass {
@@ -8900,7 +8900,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_fallback_function_definition(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_fallback_function_definition(&self, stream: &mut Stream) -> ParserResult {
         self.maybe_parse_fallback_function_definition(stream)
             .expect("Validation should have checked that references are valid between versions")
     }
@@ -8908,7 +8908,7 @@ impl Language {
     // ForStatement = «ForKeyword» «OpenParen» (SimpleStatement | «Semicolon») (ExpressionStatement | «Semicolon») [Expression] «CloseParen» Statement;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_for_statement_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_for_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -9169,7 +9169,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_for_statement(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_for_statement(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_for_statement_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::ForStatement, node),
@@ -9182,7 +9182,7 @@ impl Language {
     // FunctionAttribute = ModifierInvocation | OverrideSpecifier | «ExternalKeyword» | «InternalKeyword» | «PayableKeyword» | «PrivateKeyword» | «PublicKeyword» | «PureKeyword» | «ViewKeyword» | «VirtualKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_function_attribute_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_function_attribute_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
             let mut furthest_error;
@@ -9402,7 +9402,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_function_attribute(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_function_attribute(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_function_attribute_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::FunctionAttribute, node),
@@ -9415,7 +9415,7 @@ impl Language {
     // FunctionDefinition = «FunctionKeyword» («Identifier» | «FallbackKeyword» | «ReceiveKeyword») ParameterList {FunctionAttribute} [«ReturnsKeyword» ParameterList] («Semicolon» | Block);
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_function_definition_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_function_definition_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -9707,7 +9707,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_function_definition(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_function_definition(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_function_definition_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::FunctionDefinition, node),
@@ -9720,7 +9720,7 @@ impl Language {
     // FunctionType = «FunctionKeyword» ParameterList {«InternalKeyword» | «ExternalKeyword» | «PrivateKeyword» | «PublicKeyword» | «PureKeyword» | «ViewKeyword» | «PayableKeyword»} [«ReturnsKeyword» ParameterList];
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_function_type_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_function_type_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -10055,7 +10055,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_function_type(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_function_type(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_function_type_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::FunctionType, node),
@@ -10068,7 +10068,7 @@ impl Language {
     // IdentifierPath = «Identifier» {«Period» «Identifier»};
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_identifier_path_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_identifier_path_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut result = Vec::new();
             loop {
@@ -10134,7 +10134,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_identifier_path(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_identifier_path(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_identifier_path_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::IdentifierPath, node),
@@ -10147,7 +10147,7 @@ impl Language {
     // IfStatement = «IfKeyword» «OpenParen» Expression «CloseParen» Statement [«ElseKeyword» Statement];
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_if_statement_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_if_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -10355,7 +10355,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_if_statement(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_if_statement(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_if_statement_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::IfStatement, node),
@@ -10368,7 +10368,7 @@ impl Language {
     // ImportDirective = «ImportKeyword» (SimpleImportDirective | StarImportDirective | SelectingImportDirective) «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_import_directive_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_import_directive_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
                 let mut furthest_error = None;
@@ -10485,7 +10485,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_import_directive(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_import_directive(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_import_directive_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::ImportDirective, node),
@@ -10498,7 +10498,7 @@ impl Language {
     // ImportPath = «AsciiStringLiteral»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_import_path_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_import_path_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             let leading_trivia = self.optional_leading_trivia(stream);
             let start = stream.position();
@@ -10523,7 +10523,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_import_path(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_import_path(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_import_path_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::ImportPath, node),
@@ -10536,7 +10536,7 @@ impl Language {
     // InheritanceSpecifier = IdentifierPath [ArgumentList];
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_inheritance_specifier_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_inheritance_specifier_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match self.parse_identifier_path(stream) {
@@ -10581,7 +10581,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_inheritance_specifier(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_inheritance_specifier(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_inheritance_specifier_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::InheritanceSpecifier, node),
@@ -10594,7 +10594,7 @@ impl Language {
     // InheritanceSpecifierList = «IsKeyword» InheritanceSpecifier {«Comma» InheritanceSpecifier};
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_inheritance_specifier_list_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_inheritance_specifier_list_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -10688,7 +10688,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_inheritance_specifier_list(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_inheritance_specifier_list(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_inheritance_specifier_list_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::InheritanceSpecifierList, node),
@@ -10701,7 +10701,7 @@ impl Language {
     // InterfaceDefinition = «InterfaceKeyword» «Identifier» [InheritanceSpecifierList] «OpenBrace» {ContractBodyElement} «CloseBrace»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_interface_definition_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_interface_definition_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -10896,7 +10896,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_interface_definition(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_interface_definition(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_interface_definition_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::InterfaceDefinition, node),
@@ -10909,7 +10909,7 @@ impl Language {
     // LeadingTrivia = 1…{«Whitespace» | «EndOfLine» | «MultilineComment» | «SingleLineComment»};
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_leading_trivia_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_leading_trivia_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut result = Vec::new();
             loop {
@@ -11029,7 +11029,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_leading_trivia(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_leading_trivia(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_leading_trivia_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::LeadingTrivia, node),
@@ -11042,7 +11042,7 @@ impl Language {
     // LibraryDefinition = «LibraryKeyword» «Identifier» «OpenBrace» {ContractBodyElement} «CloseBrace»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_library_definition_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_library_definition_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -11211,7 +11211,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_library_definition(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_library_definition(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_library_definition_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::LibraryDefinition, node),
@@ -11225,7 +11225,7 @@ impl Language {
     // MappingKeyType = (ElementaryType | IdentifierPath);
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_mapping_key_type_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_mapping_key_type_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match loop {
@@ -11265,7 +11265,7 @@ impl Language {
     // MappingKeyType = (ElementaryType | IdentifierPath) [«Identifier»];
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_mapping_key_type_0_8_18(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_mapping_key_type_0_8_18(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match loop {
@@ -11344,7 +11344,7 @@ impl Language {
         }
     }
 
-    fn dispatch_parse_mapping_key_type(&self, stream: &mut Stream) -> ParseResult {
+    fn dispatch_parse_mapping_key_type(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_equal_to_or_greater_than_0_8_18 {
             self.parse_mapping_key_type_0_8_18(stream)
         } else {
@@ -11353,7 +11353,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_mapping_key_type(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_mapping_key_type(&self, stream: &mut Stream) -> ParserResult {
         match self.dispatch_parse_mapping_key_type(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::MappingKeyType, node),
@@ -11366,7 +11366,7 @@ impl Language {
     // MappingType = «MappingKeyword» «OpenParen» MappingKeyType «EqualGreaterThan» MappingValueType «CloseParen»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_mapping_type_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_mapping_type_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -11554,7 +11554,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_mapping_type(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_mapping_type(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_mapping_type_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::MappingType, node),
@@ -11568,7 +11568,7 @@ impl Language {
     // MappingValueType = TypeName;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_mapping_value_type_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_mapping_value_type_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match self.parse_type_name(stream) {
@@ -11593,7 +11593,7 @@ impl Language {
     // MappingValueType = TypeName [«Identifier»];
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_mapping_value_type_0_8_18(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_mapping_value_type_0_8_18(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match self.parse_type_name(stream) {
@@ -11657,7 +11657,7 @@ impl Language {
         }
     }
 
-    fn dispatch_parse_mapping_value_type(&self, stream: &mut Stream) -> ParseResult {
+    fn dispatch_parse_mapping_value_type(&self, stream: &mut Stream) -> ParserResult {
         if self.version_is_equal_to_or_greater_than_0_8_18 {
             self.parse_mapping_value_type_0_8_18(stream)
         } else {
@@ -11666,7 +11666,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_mapping_value_type(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_mapping_value_type(&self, stream: &mut Stream) -> ParserResult {
         match self.dispatch_parse_mapping_value_type(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::MappingValueType, node),
@@ -11679,7 +11679,7 @@ impl Language {
     // ModifierAttribute = OverrideSpecifier | «VirtualKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_modifier_attribute_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_modifier_attribute_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
             let mut furthest_error;
@@ -11719,7 +11719,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_modifier_attribute(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_modifier_attribute(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_modifier_attribute_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::ModifierAttribute, node),
@@ -11732,7 +11732,7 @@ impl Language {
     // ModifierDefinition = «ModifierKeyword» «Identifier» [ParameterList] {ModifierAttribute} («Semicolon» | Block);
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_modifier_definition_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_modifier_definition_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -11903,7 +11903,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_modifier_definition(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_modifier_definition(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_modifier_definition_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::ModifierDefinition, node),
@@ -11916,7 +11916,7 @@ impl Language {
     // ModifierInvocation = IdentifierPath [ArgumentList];
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_modifier_invocation_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_modifier_invocation_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match self.parse_identifier_path(stream) {
@@ -11961,7 +11961,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_modifier_invocation(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_modifier_invocation(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_modifier_invocation_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::ModifierInvocation, node),
@@ -11974,7 +11974,7 @@ impl Language {
     // NamedArgument = «Identifier» «Colon» Expression;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_named_argument_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_named_argument_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -12058,7 +12058,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_named_argument(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_named_argument(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_named_argument_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::NamedArgument, node),
@@ -12071,7 +12071,7 @@ impl Language {
     // NamedArgumentList = «OpenBrace» [NamedArgument {«Comma» NamedArgument}] «CloseBrace»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_named_argument_list_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_named_argument_list_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match {
                 let leading_trivia = self.optional_leading_trivia(stream);
@@ -12204,7 +12204,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_named_argument_list(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_named_argument_list(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_named_argument_list_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::NamedArgumentList, node),
@@ -12217,7 +12217,7 @@ impl Language {
     // NewExpression = «NewKeyword» TypeName;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_new_expression_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_new_expression_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -12270,7 +12270,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_new_expression(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_new_expression(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_new_expression_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::NewExpression, node),
@@ -12283,7 +12283,7 @@ impl Language {
     // NumberUnit = «DaysKeyword» | «EtherKeyword» | «FinneyKeyword» | «GweiKeyword» | «HoursKeyword» | «MinutesKeyword» | «SecondsKeyword» | «SzaboKeyword» | «WeeksKeyword» | «WeiKeyword» | «YearsKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_number_unit_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_number_unit_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
             let mut furthest_error;
@@ -12568,7 +12568,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_number_unit(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_number_unit(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_number_unit_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::NumberUnit, node),
@@ -12581,7 +12581,7 @@ impl Language {
     // NumericLiteral = («HexLiteral» | «DecimalLiteral») [NumberUnit];
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_numeric_literal_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_numeric_literal_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match loop {
@@ -12681,7 +12681,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_numeric_literal(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_numeric_literal(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_numeric_literal_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::NumericLiteral, node),
@@ -12694,7 +12694,7 @@ impl Language {
     // OverrideSpecifier = «OverrideKeyword» [«OpenParen» IdentifierPath {«Comma» IdentifierPath} «CloseParen»];
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_override_specifier_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_override_specifier_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -12876,7 +12876,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_override_specifier(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_override_specifier(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_override_specifier_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::OverrideSpecifier, node),
@@ -12889,7 +12889,7 @@ impl Language {
     // ParameterDeclaration = TypeName [DataLocation] [«Identifier»];
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_parameter_declaration_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_parameter_declaration_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match self.parse_type_name(stream) {
@@ -12977,7 +12977,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_parameter_declaration(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_parameter_declaration(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_parameter_declaration_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::ParameterDeclaration, node),
@@ -12990,7 +12990,7 @@ impl Language {
     // ParameterList = «OpenParen» [ParameterDeclaration {«Comma» ParameterDeclaration}] «CloseParen»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_parameter_list_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_parameter_list_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match {
                 let leading_trivia = self.optional_leading_trivia(stream);
@@ -13123,7 +13123,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_parameter_list(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_parameter_list(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_parameter_list_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::ParameterList, node),
@@ -13136,7 +13136,7 @@ impl Language {
     // PayableType = «PayableKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_payable_type_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_payable_type_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             let leading_trivia = self.optional_leading_trivia(stream);
             let start = stream.position();
@@ -13161,7 +13161,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_payable_type(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_payable_type(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_payable_type_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::PayableType, node),
@@ -13174,7 +13174,7 @@ impl Language {
     // PositionalArgumentList = Expression {«Comma» Expression};
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_positional_argument_list_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_positional_argument_list_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut result = Vec::new();
             loop {
@@ -13220,7 +13220,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_positional_argument_list(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_positional_argument_list(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_positional_argument_list_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::PositionalArgumentList, node),
@@ -13233,7 +13233,7 @@ impl Language {
     // PragmaDirective = «PragmaKeyword» (VersionPragma | ABICoderPragma | ExperimentalPragma) «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_pragma_directive_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_pragma_directive_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
                 let mut furthest_error = None;
@@ -13350,7 +13350,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_pragma_directive(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_pragma_directive(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_pragma_directive_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::PragmaDirective, node),
@@ -13363,7 +13363,7 @@ impl Language {
     // PrimaryExpression = «Identifier» | TupleExpression | ArrayLiteral | StringExpression | NumericLiteral | BooleanLiteral | NewExpression | TypeExpression | ElementaryType;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_primary_expression_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_primary_expression_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
             let mut furthest_error;
@@ -13438,7 +13438,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_primary_expression(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_primary_expression(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_primary_expression_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::PrimaryExpression, node),
@@ -13451,7 +13451,7 @@ impl Language {
     // ReceiveFunctionAttribute = ModifierInvocation | OverrideSpecifier | «ExternalKeyword» | «PayableKeyword» | «VirtualKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_receive_function_attribute_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_receive_function_attribute_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
             let mut furthest_error;
@@ -13546,7 +13546,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_receive_function_attribute(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_receive_function_attribute(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_receive_function_attribute_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::ReceiveFunctionAttribute, node),
@@ -13560,7 +13560,7 @@ impl Language {
     // ReceiveFunctionDefinition = «ReceiveKeyword» ParameterList {ReceiveFunctionAttribute} («Semicolon» | Block);
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_receive_function_definition_0_6_0(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_receive_function_definition_0_6_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -13690,7 +13690,7 @@ impl Language {
     fn dispatch_parse_receive_function_definition(
         &self,
         stream: &mut Stream,
-    ) -> Option<ParseResult> {
+    ) -> Option<ParserResult> {
         if self.version_is_equal_to_or_greater_than_0_6_0 {
             Some(self.parse_receive_function_definition_0_6_0(stream))
         } else {
@@ -13701,7 +13701,7 @@ impl Language {
     pub(crate) fn maybe_parse_receive_function_definition(
         &self,
         stream: &mut Stream,
-    ) -> Option<ParseResult> {
+    ) -> Option<ParserResult> {
         self.dispatch_parse_receive_function_definition(stream)
             .map(|body| match body {
                 Pass { node, error } => Pass {
@@ -13713,7 +13713,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_receive_function_definition(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_receive_function_definition(&self, stream: &mut Stream) -> ParserResult {
         self.maybe_parse_receive_function_definition(stream)
             .expect("Validation should have checked that references are valid between versions")
     }
@@ -13721,7 +13721,7 @@ impl Language {
     // ReturnStatement = «ReturnKeyword» [Expression] «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_return_statement_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_return_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
                 let mut furthest_error = None;
@@ -13830,7 +13830,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_return_statement(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_return_statement(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_return_statement_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::ReturnStatement, node),
@@ -13843,7 +13843,7 @@ impl Language {
     // RevertStatement = «RevertKeyword» [IdentifierPath] ArgumentList «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_revert_statement_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_revert_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
                 let mut furthest_error = None;
@@ -13963,7 +13963,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_revert_statement(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_revert_statement(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_revert_statement_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::RevertStatement, node),
@@ -13976,7 +13976,7 @@ impl Language {
     // SelectedImport = «Identifier» [«AsKeyword» «Identifier»];
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_selected_import_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_selected_import_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -14111,7 +14111,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_selected_import(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_selected_import(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_selected_import_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::SelectedImport, node),
@@ -14124,7 +14124,7 @@ impl Language {
     // SelectingImportDirective = «OpenBrace» SelectedImport {«Comma» SelectedImport} «CloseBrace» «FromKeyword» ImportPath;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_selecting_import_directive_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_selecting_import_directive_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -14304,7 +14304,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_selecting_import_directive(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_selecting_import_directive(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_selecting_import_directive_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::SelectingImportDirective, node),
@@ -14317,7 +14317,7 @@ impl Language {
     // SimpleImportDirective = ImportPath {«AsKeyword» «Identifier»};
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_simple_import_directive_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_simple_import_directive_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match self.parse_import_path(stream) {
@@ -14435,7 +14435,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_simple_import_directive(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_simple_import_directive(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_simple_import_directive_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::SimpleImportDirective, node),
@@ -14448,7 +14448,7 @@ impl Language {
     // SimpleStatement = TupleDeconstructionStatement | VariableDeclarationStatement | ExpressionStatement;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_simple_statement_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_simple_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
             let mut furthest_error;
@@ -14473,7 +14473,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_simple_statement(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_simple_statement(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_simple_statement_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::SimpleStatement, node),
@@ -14486,7 +14486,7 @@ impl Language {
     // SourceUnit = 1…{Directive | Definition} [EndOfFileTrivia];
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_source_unit_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_source_unit_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -14564,7 +14564,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_source_unit(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_source_unit(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_source_unit_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::SourceUnit, node),
@@ -14577,7 +14577,7 @@ impl Language {
     // StarImportDirective = «Star» «AsKeyword» «Identifier» «FromKeyword» ImportPath;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_star_import_directive_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_star_import_directive_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -14726,7 +14726,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_star_import_directive(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_star_import_directive(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_star_import_directive_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::StarImportDirective, node),
@@ -14739,7 +14739,7 @@ impl Language {
     // StateVariableAttribute = OverrideSpecifier | «ConstantKeyword» | «ImmutableKeyword» | «InternalKeyword» | «PrivateKeyword» | «PublicKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_state_variable_attribute_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_state_variable_attribute_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
             let mut furthest_error;
@@ -14879,7 +14879,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_state_variable_attribute(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_state_variable_attribute(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_state_variable_attribute_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::StateVariableAttribute, node),
@@ -14892,7 +14892,7 @@ impl Language {
     // StateVariableDeclaration = TypeName {StateVariableAttribute} «Identifier» [«Equal» Expression] «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_state_variable_declaration_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_state_variable_declaration_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
                 let mut furthest_error = None;
@@ -15091,7 +15091,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_state_variable_declaration(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_state_variable_declaration(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_state_variable_declaration_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::StateVariableDeclaration, node),
@@ -15104,7 +15104,7 @@ impl Language {
     // Statement = Block | SimpleStatement | IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | TryStatement | ReturnStatement | EmitStatement | RevertStatement | DeleteStatement | AssemblyStatement;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_statement_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
             let mut furthest_error;
@@ -15184,7 +15184,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_statement(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_statement(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_statement_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::Statement, node),
@@ -15197,7 +15197,7 @@ impl Language {
     // StringExpression = 1…{«HexStringLiteral»} | 1…{«AsciiStringLiteral»} | 1…{«UnicodeStringLiteral»};
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_string_expression_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_string_expression_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
             let mut furthest_error;
@@ -15336,7 +15336,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_string_expression(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_string_expression(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_string_expression_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::StringExpression, node),
@@ -15349,7 +15349,7 @@ impl Language {
     // StructDefinition = «StructKeyword» «Identifier» «OpenBrace» 1…{StructMember} «CloseBrace»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_struct_definition_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_struct_definition_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -15521,7 +15521,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_struct_definition(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_struct_definition(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_struct_definition_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::StructDefinition, node),
@@ -15534,7 +15534,7 @@ impl Language {
     // StructMember = TypeName «Identifier» «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_struct_member_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_struct_member_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
                 let mut furthest_error = None;
@@ -15631,7 +15631,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_struct_member(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_struct_member(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_struct_member_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::StructMember, node),
@@ -15644,7 +15644,7 @@ impl Language {
     // TrailingTrivia = [«Whitespace»] [«SingleLineComment»] «EndOfLine»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_trailing_trivia_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_trailing_trivia_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -15766,7 +15766,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_trailing_trivia(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_trailing_trivia(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_trailing_trivia_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::TrailingTrivia, node),
@@ -15779,7 +15779,7 @@ impl Language {
     // TryStatement = «TryKeyword» Expression [«ReturnsKeyword» ParameterList] Block 1…{CatchClause};
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_try_statement_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_try_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -15948,7 +15948,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_try_statement(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_try_statement(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_try_statement_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::TryStatement, node),
@@ -15961,7 +15961,7 @@ impl Language {
     // TupleDeconstructionStatement = «OpenParen» [[TypeName [DataLocation] «Identifier» | [DataLocation] «Identifier»] {«Comma» [TypeName [DataLocation] «Identifier» | [DataLocation] «Identifier»]}] «CloseParen» «Equal» Expression «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_tuple_deconstruction_statement_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_tuple_deconstruction_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
                 let mut furthest_error = None;
@@ -16415,7 +16415,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_tuple_deconstruction_statement(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_tuple_deconstruction_statement(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_tuple_deconstruction_statement_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::TupleDeconstructionStatement, node),
@@ -16428,7 +16428,7 @@ impl Language {
     // TupleExpression = «OpenParen» [Expression] {«Comma» [Expression]} «CloseParen»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_tuple_expression_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_tuple_expression_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match {
                 let leading_trivia = self.optional_leading_trivia(stream);
@@ -16560,7 +16560,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_tuple_expression(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_tuple_expression(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_tuple_expression_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::TupleExpression, node),
@@ -16573,7 +16573,7 @@ impl Language {
     // TypeExpression = «TypeKeyword» «OpenParen» TypeName «CloseParen»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_type_expression_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_type_expression_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -16694,7 +16694,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_type_expression(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_type_expression(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_type_expression_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::TypeExpression, node),
@@ -16708,7 +16708,7 @@ impl Language {
     // ArrayTypeName = TypeName («OpenBracket» [Expression] «CloseBracket»);
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_type_name_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_type_name_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             enum Pratt {
                 Operator {
@@ -16940,7 +16940,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_type_name(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_type_name(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_type_name_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::TypeName, node),
@@ -16953,7 +16953,7 @@ impl Language {
     // UncheckedBlock = «UncheckedKeyword» Block;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_unchecked_block_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_unchecked_block_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -17006,7 +17006,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_unchecked_block(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_unchecked_block(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_unchecked_block_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::UncheckedBlock, node),
@@ -17020,7 +17020,7 @@ impl Language {
     // UnnamedFunctionDefinition = «FunctionKeyword» ParameterList {FallbackFunctionAttribute} («Semicolon» | Block);
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_unnamed_function_definition_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_unnamed_function_definition_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -17150,7 +17150,7 @@ impl Language {
     fn dispatch_parse_unnamed_function_definition(
         &self,
         stream: &mut Stream,
-    ) -> Option<ParseResult> {
+    ) -> Option<ParserResult> {
         if self.version_is_equal_to_or_greater_than_0_6_0 {
             None
         } else {
@@ -17161,7 +17161,7 @@ impl Language {
     pub(crate) fn maybe_parse_unnamed_function_definition(
         &self,
         stream: &mut Stream,
-    ) -> Option<ParseResult> {
+    ) -> Option<ParserResult> {
         self.dispatch_parse_unnamed_function_definition(stream)
             .map(|body| match body {
                 Pass { node, error } => Pass {
@@ -17173,7 +17173,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_unnamed_function_definition(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_unnamed_function_definition(&self, stream: &mut Stream) -> ParserResult {
         self.maybe_parse_unnamed_function_definition(stream)
             .expect("Validation should have checked that references are valid between versions")
     }
@@ -17181,7 +17181,7 @@ impl Language {
     // UserDefinedValueTypeDefinition = «TypeKeyword» «Identifier» «IsKeyword» ElementaryType «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_user_defined_value_type_definition_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_user_defined_value_type_definition_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
                 let mut furthest_error = None;
@@ -17346,7 +17346,7 @@ impl Language {
     pub(crate) fn parse_user_defined_value_type_definition(
         &self,
         stream: &mut Stream,
-    ) -> ParseResult {
+    ) -> ParserResult {
         match self.parse_user_defined_value_type_definition_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::UserDefinedValueTypeDefinition, node),
@@ -17359,7 +17359,7 @@ impl Language {
     // UsingDirective = «UsingKeyword» (IdentifierPath | «OpenBrace» IdentifierPath {«Comma» IdentifierPath} «CloseBrace») «ForKeyword» («Star» | TypeName) [«GlobalKeyword»] «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_using_directive_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_using_directive_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
                 let mut furthest_error = None;
@@ -17712,7 +17712,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_using_directive(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_using_directive(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_using_directive_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::UsingDirective, node),
@@ -17725,7 +17725,7 @@ impl Language {
     // VariableDeclarationStatement = TypeName [DataLocation] «Identifier» [«Equal» Expression] «Semicolon»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_variable_declaration_statement_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_variable_declaration_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match loop {
                 let mut furthest_error = None;
@@ -17921,7 +17921,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_variable_declaration_statement(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_variable_declaration_statement(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_variable_declaration_statement_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::VariableDeclarationStatement, node),
@@ -17934,7 +17934,7 @@ impl Language {
     // VersionPragma = «SolidityKeyword» 1…{VersionPragmaSpecifier};
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_version_pragma_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_version_pragma_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -18005,7 +18005,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_version_pragma(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_version_pragma(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_version_pragma_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::VersionPragma, node),
@@ -18018,7 +18018,7 @@ impl Language {
     // VersionPragmaOperator = «Caret» | «Tilde» | «Equal» | «LessThan» | «GreaterThan» | «LessThanEqual» | «GreaterThanEqual»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_version_pragma_operator_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_version_pragma_operator_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
             let mut furthest_error;
@@ -18203,7 +18203,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_version_pragma_operator(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_version_pragma_operator(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_version_pragma_operator_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::VersionPragmaOperator, node),
@@ -18216,7 +18216,7 @@ impl Language {
     // VersionPragmaSpecifier = [VersionPragmaOperator] «VersionPragmaValue» {«Period» «VersionPragmaValue»};
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_version_pragma_specifier_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_version_pragma_specifier_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -18322,7 +18322,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_version_pragma_specifier(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_version_pragma_specifier(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_version_pragma_specifier_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::VersionPragmaSpecifier, node),
@@ -18335,7 +18335,7 @@ impl Language {
     // WhileStatement = «WhileKeyword» «OpenParen» Expression «CloseParen» Statement;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_while_statement_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_while_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -18467,7 +18467,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_while_statement(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_while_statement(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_while_statement_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::WhileStatement, node),
@@ -18480,7 +18480,7 @@ impl Language {
     // YulAssignmentStatement = YulIdentifierPath {«Comma» YulIdentifierPath} «ColonEqual» YulExpression;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_yul_assignment_statement_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_yul_assignment_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -18585,7 +18585,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_yul_assignment_statement(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_yul_assignment_statement(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_yul_assignment_statement_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::YulAssignmentStatement, node),
@@ -18598,7 +18598,7 @@ impl Language {
     // YulBlock = «OpenBrace» {YulStatement} «CloseBrace»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_yul_block_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_yul_block_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             match {
                 let leading_trivia = self.optional_leading_trivia(stream);
@@ -18688,7 +18688,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_yul_block(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_yul_block(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_yul_block_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::YulBlock, node),
@@ -18701,7 +18701,7 @@ impl Language {
     // YulBreakStatement = «BreakKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_yul_break_statement_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_yul_break_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             let leading_trivia = self.optional_leading_trivia(stream);
             let start = stream.position();
@@ -18726,7 +18726,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_yul_break_statement(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_yul_break_statement(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_yul_break_statement_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::YulBreakStatement, node),
@@ -18739,7 +18739,7 @@ impl Language {
     // YulContinueStatement = «ContinueKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_yul_continue_statement_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_yul_continue_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             let leading_trivia = self.optional_leading_trivia(stream);
             let start = stream.position();
@@ -18764,7 +18764,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_yul_continue_statement(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_yul_continue_statement(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_yul_continue_statement_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::YulContinueStatement, node),
@@ -18777,7 +18777,7 @@ impl Language {
     // YulDeclarationStatement = «LetKeyword» YulIdentifierPath {«Comma» YulIdentifierPath} [«ColonEqual» YulExpression];
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_yul_declaration_statement_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_yul_declaration_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -18944,7 +18944,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_yul_declaration_statement(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_yul_declaration_statement(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_yul_declaration_statement_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::YulDeclarationStatement, node),
@@ -18958,7 +18958,7 @@ impl Language {
     // YulFunctionCallExpression = YulExpression («OpenParen» [YulExpression {«Comma» YulExpression}] «CloseParen»);
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_yul_expression_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_yul_expression_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             enum Pratt {
                 Operator {
@@ -19228,7 +19228,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_yul_expression(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_yul_expression(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_yul_expression_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::YulExpression, node),
@@ -19241,7 +19241,7 @@ impl Language {
     // YulForStatement = «ForKeyword» YulBlock YulExpression YulBlock YulBlock;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_yul_for_statement_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_yul_for_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -19330,7 +19330,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_yul_for_statement(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_yul_for_statement(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_yul_for_statement_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::YulForStatement, node),
@@ -19343,7 +19343,7 @@ impl Language {
     // YulFunctionDefinition = «FunctionKeyword» «YulIdentifier» «OpenParen» [«YulIdentifier» {«Comma» «YulIdentifier»}] «CloseParen» [«MinusGreaterThan» «YulIdentifier» {«Comma» «YulIdentifier»}] YulBlock;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_yul_function_definition_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_yul_function_definition_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -19725,7 +19725,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_yul_function_definition(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_yul_function_definition(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_yul_function_definition_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::YulFunctionDefinition, node),
@@ -19738,7 +19738,7 @@ impl Language {
     // YulIdentifierPath = «YulIdentifier» {«Period» «YulIdentifier»};
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_yul_identifier_path_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_yul_identifier_path_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             let mut result = Vec::new();
             loop {
@@ -19804,7 +19804,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_yul_identifier_path(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_yul_identifier_path(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_yul_identifier_path_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::YulIdentifierPath, node),
@@ -19817,7 +19817,7 @@ impl Language {
     // YulIfStatement = «IfKeyword» YulExpression YulBlock;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_yul_if_statement_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_yul_if_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -19881,7 +19881,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_yul_if_statement(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_yul_if_statement(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_yul_if_statement_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::YulIfStatement, node),
@@ -19894,7 +19894,7 @@ impl Language {
     // YulLeaveStatement = «LeaveKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_yul_leave_statement_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_yul_leave_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         {
             let leading_trivia = self.optional_leading_trivia(stream);
             let start = stream.position();
@@ -19919,7 +19919,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_yul_leave_statement(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_yul_leave_statement(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_yul_leave_statement_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::YulLeaveStatement, node),
@@ -19932,7 +19932,7 @@ impl Language {
     // YulLiteral = BooleanLiteral | «YulHexLiteral» | «YulDecimalLiteral» | «HexStringLiteral» | «AsciiStringLiteral»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_yul_literal_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_yul_literal_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
             let mut furthest_error;
@@ -20047,7 +20047,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_yul_literal(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_yul_literal(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_yul_literal_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::YulLiteral, node),
@@ -20060,7 +20060,7 @@ impl Language {
     // YulStatement = YulBlock | YulFunctionDefinition | YulDeclarationStatement | YulAssignmentStatement | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement | YulExpression;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_yul_statement_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_yul_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
             let mut furthest_error;
@@ -20125,7 +20125,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_yul_statement(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_yul_statement(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_yul_statement_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::YulStatement, node),
@@ -20138,7 +20138,7 @@ impl Language {
     // YulSwitchStatement = «SwitchKeyword» YulExpression 1…{(«CaseKeyword» YulLiteral | «DefaultKeyword») YulBlock};
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_yul_switch_statement_0_4_11(&self, stream: &mut Stream) -> ParseResult {
+    fn parse_yul_switch_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -20338,7 +20338,7 @@ impl Language {
     }
 
     #[inline]
-    pub(crate) fn parse_yul_switch_statement(&self, stream: &mut Stream) -> ParseResult {
+    pub(crate) fn parse_yul_switch_statement(&self, stream: &mut Stream) -> ParserResult {
         match self.parse_yul_switch_statement_0_4_11(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::YulSwitchStatement, node),

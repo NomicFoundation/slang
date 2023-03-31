@@ -7,7 +7,7 @@ publish = false
 
 [build-dependencies]
 anyhow = { workspace = true }
-codegen_parser = { workspace = true }
+codegen_syntax = { workspace = true }
 codegen_schema = { workspace = true }
 codegen_utils = { workspace = true }
 solidity_schema = { workspace = true }

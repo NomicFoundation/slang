@@ -3,11 +3,8 @@ use std::str::FromStr;
 use anyhow::Result;
 use codegen_utils::context::CodegenContext;
 use semver::Version;
-use slang_solidity::generated::{
-    kinds::ProductionKind,
-    language::{Language, ParserOutput},
-};
-use solidity_testing_utils::cst_snapshots::ParserOutputTestSnapshotExtensions;
+use slang_solidity::syntax::parser::{Language, ParseOutput, ProductionKind};
+use solidity_testing_utils::cst_snapshots::ParseOutputTestSnapshotExtensions;
 
 use crate::cst_output::generated::VERSION_BREAKS;
 
@@ -27,7 +24,7 @@ pub fn run(parser_name: &str, test_name: &str) -> Result<()> {
 
         let source = &std::fs::read_to_string(&input_path)?;
 
-        let mut last_output: Option<ParserOutput> = None;
+        let mut last_output: Option<ParseOutput> = None;
 
         for version in VERSION_BREAKS {
             let version = Version::parse(version)?;
