@@ -10,7 +10,7 @@ use anyhow::Result;
 use codegen_schema::types::grammar::Grammar;
 use rayon::prelude::{IntoParallelRefIterator, ParallelIterator};
 use semver::Version;
-use slang_solidity::generated::{kinds::ProductionKind, language::Language};
+use slang_solidity::syntax::parser::{Language, ProductionKind};
 use solidity_schema::SolidityGrammarExtensions;
 use solidity_testing_utils::compatible_versions::filter_compatible_versions;
 

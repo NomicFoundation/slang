@@ -285,11 +285,11 @@ impl CodeGenerator {
             .map(|(name, parser)| {
                 let kind = format_ident!("{name}");
                 let internal_function_name = format_ident!("parse_{name}", name = name.to_snake_case());
-                let (functions, dispatch_function_name) = parser.to_function_body(&internal_function_name, quote! {ParseResult});
+                let (functions, dispatch_function_name) = parser.to_function_body(&internal_function_name, quote! {ParserResult});
                 if parser.is_defined_for_all_versions() {
                     let internal_function = quote! {
                         #[inline]
-                        pub(crate) fn #internal_function_name(&self, stream: &mut Stream) -> ParseResult {
+                        pub(crate) fn #internal_function_name(&self, stream: &mut Stream) -> ParserResult {
                             match self.#dispatch_function_name(stream) {
                                 Pass{ node, error } => Pass{ node: cst::Node::top_level_rule(RuleKind::#kind, node), error },
                                 fail => fail
@@ -300,7 +300,7 @@ impl CodeGenerator {
                 } else {
                     let external_function_name = format_ident!("maybe_parse_{name}", name = name.to_snake_case());
                     let external_function = quote! {
-                        pub(crate) fn #external_function_name(&self, stream: &mut Stream) -> Option<ParseResult> {
+                        pub(crate) fn #external_function_name(&self, stream: &mut Stream) -> Option<ParserResult> {
                             self.#dispatch_function_name(stream).map(|body|
                                 match body {
                                     Pass{ node, error } => Pass{ node: cst::Node::top_level_rule(RuleKind::#kind, node), error },
@@ -311,7 +311,7 @@ impl CodeGenerator {
                     };
                     let internal_function = quote! {
                         #[inline]
-                        pub(crate) fn #internal_function_name(&self, stream: &mut Stream) -> ParseResult {
+                        pub(crate) fn #internal_function_name(&self, stream: &mut Stream) -> ParserResult {
                             self.#external_function_name(stream).expect("Validation should have checked that references are valid between versions")
                         }
                     };
@@ -377,14 +377,14 @@ impl CodeGenerator {
         codegen.track_input_dir(
             &codegen
                 .repo_root
-                .join("crates/codegen/parser_templates/src"),
+                .join("crates/codegen/syntax_templates/src"),
         );
 
         codegen
             .copy_file(
                 &codegen
                     .repo_root
-                    .join("crates/codegen/parser_templates/src/shared/cst.rs"),
+                    .join("crates/codegen/syntax_templates/src/shared/cst.rs"),
                 &output_dir.join("cst.rs"),
             )
             .unwrap();
@@ -393,7 +393,7 @@ impl CodeGenerator {
             .read_file(
                 &codegen
                     .repo_root
-                    .join("crates/codegen/parser_templates/src/shared/macros.rs"),
+                    .join("crates/codegen/syntax_templates/src/shared/macros.rs"),
             )
             .unwrap();
 
@@ -422,7 +422,7 @@ impl CodeGenerator {
             let content = format!(
                 "
                 use super::language::*;
-                use super::language::ParseResult::*;
+                use super::language::ParserResult::*;
 
                 {scanning_macros}
                     

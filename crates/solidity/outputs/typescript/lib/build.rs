@@ -1,8 +1,8 @@
 extern crate napi_build;
 
 use anyhow::Result;
-use codegen_parser::GrammarParserGeneratorExtensions;
 use codegen_schema::types::grammar::Grammar;
+use codegen_syntax::GrammarParserGeneratorExtensions;
 use codegen_utils::context::CodegenContext;
 use solidity_schema::SolidityGrammarExtensions;
 

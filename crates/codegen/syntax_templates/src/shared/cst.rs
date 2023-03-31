@@ -51,7 +51,8 @@ impl Node {
         }
     }
 
-    pub fn rule(kind: RuleKind, children: Vec<Rc<Self>>) -> Rc<Self> {
+    #[allow(dead_code)]
+    pub(crate) fn rule(kind: RuleKind, children: Vec<Rc<Self>>) -> Rc<Self> {
         let mut flattened_children: Vec<Rc<Self>> = Vec::new();
         for child in children.into_iter() {
             match child.as_ref() {
@@ -97,7 +98,8 @@ impl Node {
         });
     }
 
-    pub fn token(
+    #[allow(dead_code)]
+    pub(crate) fn token(
         kind: TokenKind,
         range: Range<usize>,
         leading_trivia: Option<Rc<Self>>,
@@ -117,7 +119,8 @@ impl Node {
         })
     }
 
-    pub fn top_level_rule(kind: RuleKind, node: Rc<Self>) -> Rc<Self> {
+    #[allow(dead_code)]
+    pub(crate) fn top_level_rule(kind: RuleKind, node: Rc<Self>) -> Rc<Self> {
         match node.as_ref() {
             Self::Rule {
                 kind: RuleKind::_SEQUENCE,

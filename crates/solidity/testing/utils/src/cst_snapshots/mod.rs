@@ -3,15 +3,15 @@ mod test_nodes;
 use std::{self, cmp::max, fmt::Write};
 
 use anyhow::Result;
-use slang_solidity::generated::language::ParserOutput;
+use slang_solidity::syntax::parser::ParseOutput;
 
 use crate::cst_snapshots::test_nodes::TestNode;
 
-pub trait ParserOutputTestSnapshotExtensions {
+pub trait ParseOutputTestSnapshotExtensions {
     fn to_test_snapshot(&self, source_id: &str, source: &str) -> Result<String>;
 }
 
-impl ParserOutputTestSnapshotExtensions for ParserOutput {
+impl ParseOutputTestSnapshotExtensions for ParseOutput {
     fn to_test_snapshot(&self, source_id: &str, source: &str) -> Result<String> {
         let mut w = String::new();
 
@@ -69,7 +69,7 @@ fn write_source<W: Write>(w: &mut W, source: &str) -> Result<()> {
 
 fn write_errors<W: Write>(
     w: &mut W,
-    output: &ParserOutput,
+    output: &ParseOutput,
     source_id: &str,
     source: &str,
 ) -> Result<()> {
@@ -92,7 +92,7 @@ fn write_errors<W: Write>(
     return Ok(());
 }
 
-fn write_tree<W: Write>(w: &mut W, output: &ParserOutput, source: &str) -> Result<()> {
+fn write_tree<W: Write>(w: &mut W, output: &ParseOutput, source: &str) -> Result<()> {
     let root_node = if let Some(parse_tree) = output.parse_tree() {
         TestNode::from_cst(&parse_tree)
     } else {

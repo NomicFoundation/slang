@@ -1,5 +1,5 @@
 [package]
-name = "codegen_parser_templates"
+name = "codegen_syntax_templates"
 version.workspace = true
 rust-version.workspace = true
 edition.workspace = true

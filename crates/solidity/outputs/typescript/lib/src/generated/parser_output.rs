@@ -10,13 +10,13 @@ use super::{
 use napi::bindgen_prelude::*;
 
 #[napi]
-pub struct ParserOutput {
+pub struct ParseOutput {
     pub(crate) parse_tree: Option<Rc<cst::Node>>,
     pub(crate) errors: Vec<ParseError>,
 }
 
 #[napi]
-impl ParserOutput {
+impl ParseOutput {
     #[napi(ts_return_type = "RuleNode | null")]
     pub fn parse_tree(&self, env: Env) -> Option<napi::JsObject> {
         self.parse_tree.clone().map(|n| n.to_js(&env))

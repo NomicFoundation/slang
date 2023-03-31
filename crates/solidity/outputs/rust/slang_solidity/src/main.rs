@@ -3,12 +3,13 @@ use std::{fs, path::PathBuf};
 use anyhow::Result;
 use clap::{Parser as ClapParser, Subcommand};
 use semver::Version;
-use slang_solidity::generated::{kinds::ProductionKind, language::Language};
+use slang_solidity::syntax::parser::{Language, ProductionKind};
 
 mod _supress_library_dependencies_ {
     // Below are dependencies used by the library `lib.rs`, but not here.
     // However, we need to add a fake usage below to supress Cargo warnings about unused dependencies.
     // This is a known issue, and we should remove this hack once there is a better solution from Cargo.
+    // https://github.com/rust-lang/cargo/issues/1982
     use ariadne as _;
     use serde as _;
     #[cfg(test)]

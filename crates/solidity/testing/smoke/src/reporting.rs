@@ -6,7 +6,7 @@ use std::{
 use anyhow::Result;
 use indicatif::ProgressBar;
 use semver::Version;
-use slang_solidity::generated::language::ParserOutput;
+use slang_solidity::syntax::parser::ParseOutput;
 
 pub struct Reporter {
     progress_bar: ProgressBar,
@@ -56,7 +56,7 @@ impl Reporter {
         source_id: &str,
         source: &str,
         version: &Version,
-        output: &ParserOutput,
+        output: &ParseOutput,
     ) {
         self.total_tests.fetch_add(1, Ordering::Relaxed);
 

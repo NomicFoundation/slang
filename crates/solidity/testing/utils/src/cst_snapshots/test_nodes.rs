@@ -1,10 +1,7 @@
 use std::{ops::Range, rc::Rc};
 
 use anyhow::Result;
-use slang_solidity::generated::{
-    cst,
-    kinds::{RuleKind, TokenKind},
-};
+use slang_solidity::syntax::nodes::{Node, RuleKind, TokenKind};
 
 #[derive(Debug)]
 pub enum TestNodeKind {
@@ -21,9 +18,9 @@ pub struct TestNode {
 }
 
 impl TestNode {
-    pub fn from_cst(node: &Rc<cst::Node>) -> Self {
+    pub fn from_cst(node: &Rc<Node>) -> Self {
         return match node.as_ref() {
-            cst::Node::Rule {
+            Node::Rule {
                 kind,
                 range,
                 children,
@@ -40,7 +37,7 @@ impl TestNode {
                     children,
                 }
             }
-            cst::Node::Token {
+            Node::Token {
                 kind,
                 range,
                 trivia,
@@ -52,17 +49,17 @@ impl TestNode {
         token_kind: &TokenKind,
         token_range: &Range<usize>,
         node_range: Range<usize>,
-        token_trivia: &Vec<Rc<cst::Node>>,
+        token_trivia: &Vec<Rc<Node>>,
     ) -> Self {
         let mut leading = vec![];
         let mut trailing = vec![];
 
         for trivium in token_trivia {
             match trivium.as_ref() {
-                cst::Node::Token { .. } => {
+                Node::Token { .. } => {
                     unreachable!("Trivium should always be a Rule: {trivium:?}")
                 }
-                cst::Node::Rule {
+                Node::Rule {
                     kind: trivium_kind,
                     children: trivium_children,
                     ..
@@ -109,18 +106,18 @@ impl TestNode {
         };
     }
 
-    fn collect_trivia(node: &Rc<cst::Node>, collection: &mut Vec<Self>) {
+    fn collect_trivia(node: &Rc<Node>, collection: &mut Vec<Self>) {
         if Self::is_whitespace(node) {
             return;
         }
 
         match node.as_ref() {
-            cst::Node::Rule { children, .. } => {
+            Node::Rule { children, .. } => {
                 for child in children {
                     Self::collect_trivia(child, collection);
                 }
             }
-            cst::Node::Token {
+            Node::Token {
                 kind,
                 trivia,
                 range,
@@ -146,9 +143,9 @@ impl TestNode {
         };
     }
 
-    fn is_whitespace(token: &Rc<cst::Node>) -> bool {
+    fn is_whitespace(token: &Rc<Node>) -> bool {
         return match token.as_ref() {
-            cst::Node::Token { kind, .. } => match kind {
+            Node::Token { kind, .. } => match kind {
                 TokenKind::Whitespace | TokenKind::EndOfLine => true,
                 _ => false,
             },

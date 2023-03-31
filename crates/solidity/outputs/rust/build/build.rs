@@ -1,6 +1,6 @@
 use anyhow::Result;
-use codegen_parser::GrammarParserGeneratorExtensions;
 use codegen_schema::types::grammar::Grammar;
+use codegen_syntax::GrammarParserGeneratorExtensions;
 use codegen_utils::context::CodegenContext;
 use solidity_schema::SolidityGrammarExtensions;
 
@@ -10,7 +10,7 @@ fn main() -> Result<()> {
 
         let output_dir = codegen
             .repo_root
-            .join("crates/solidity/outputs/rust/slang_solidity/src/generated");
+            .join("crates/solidity/outputs/rust/slang_solidity/src/syntax/generated");
 
         grammar.generate_rust_lib_sources(codegen, &output_dir);
         return Ok(());

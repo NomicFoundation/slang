@@ -7,7 +7,7 @@ use codegen_utils::context::CodegenContext;
 use super::code_generator::CodeGenerator;
 
 impl CodeGenerator {
-    pub fn write_rust_lib_sources(
+    pub fn write_typescript_lib_sources(
         &self,
         grammar: &Grammar,
         codegen: &mut CodegenContext,
@@ -19,7 +19,7 @@ impl CodeGenerator {
             let content = quote! {
                pub mod kinds;
                pub mod cst;
-               pub mod cst_visitor;
+               pub mod cst_types;
                pub mod language;
                pub mod parser_output;
                mod scanners;
@@ -35,8 +35,8 @@ impl CodeGenerator {
             .copy_file(
                 &codegen
                     .repo_root
-                    .join("crates/codegen/parser_templates/src/rust/cst_visitor.rs"),
-                &output_dir.join("cst_visitor.rs"),
+                    .join("crates/codegen/syntax_templates/src/typescript/cst_types.rs"),
+                &output_dir.join("cst_types.rs"),
             )
             .unwrap();
 
@@ -44,7 +44,7 @@ impl CodeGenerator {
             .copy_file(
                 &codegen
                     .repo_root
-                    .join("crates/codegen/parser_templates/src/rust/parser_output.rs"),
+                    .join("crates/codegen/syntax_templates/src/typescript/parser_output.rs"),
                 &output_dir.join("parser_output.rs"),
             )
             .unwrap();
@@ -55,47 +55,40 @@ impl CodeGenerator {
                 "
                 {language_boilerplate_common}
 
+                #[napi]
                 pub struct Language {{
                     pub(crate) version: Version,
                     {version_flag_declarations}
                 }}
 
-                #[derive(thiserror::Error, Debug)]
-                pub enum Error {{
-                    #[error(\"Invalid {grammar_title} language version '{{0}}'.\")]
-                    InvalidLanguageVersion(Version),
-                }}
-
+                #[napi]
                 impl Language {{
-                    pub fn new(version: Version) -> Result<Self, Error> {{
+                    #[napi(constructor)]
+                    pub fn new(version: String) -> Self {{
                         {versions_array}
+                        let version = Version::parse(&version).unwrap();
                         if VERSIONS.contains(&version.to_string().as_str()) {{
-                            Ok(Self {{
+                            Self {{
                                 {version_flag_initializers},
                                 version,
-                            }})
+                            }}
                         }} else {{
-                            Err(Error::InvalidLanguageVersion(version))
+                            panic!(\"Invalid {grammar_title} language version: {{version}}\");
                         }}
                     }}
 
-                    pub fn version(&self) -> &Version {{
-                        &self.version
+                    #[napi]
+                    pub fn version(&self) -> String {{
+                        self.version.to_string()
                     }}
 
-                    pub fn parse(&self, production_kind: ProductionKind, input: &str) -> ParserOutput {{
-                        let output = match production_kind {{
+                    #[napi]
+                    pub fn parse(&self, production_kind: ProductionKind, input: String) -> ParseOutput {{
+                        let input = input.as_str();
+                        match production_kind {{
                             {scanner_invocations},
                             {parser_invocations},
-                        }};
-                        
-                        output.unwrap_or_else(|| {{
-                            let message = format!(\"ProductionKind {{production_kind}} is not valid in this version of {grammar_title}\");
-                            ParserOutput {{
-                                parse_tree: None,
-                                errors: vec![ParseError::new(0, message)]
-                            }}
-                        }})
+                        }}.expect(&format!(\"Production {{production_kind:?}} is not valid in this version of {grammar_title}\"))
                     }}
                 }}
                 ",
@@ -103,16 +96,16 @@ impl CodeGenerator {
                     .read_file(
                         &codegen
                             .repo_root
-                            .join("crates/codegen/parser_templates/src/shared/language.rs"),
+                            .join("crates/codegen/syntax_templates/src/shared/language.rs"),
                     )
                     .unwrap(),
                 version_flag_declarations = self.version_flag_declarations(),
-                grammar_title = &grammar.title,
                 versions_array = {
                     let versions = grammar.versions.iter().map(|v| v.to_string());
                     quote! { static VERSIONS: &'static [&'static str] = &[ #(#versions),* ]; }
                 },
                 version_flag_initializers = self.version_flag_initializers(),
+                grammar_title = &grammar.title,
                 scanner_invocations = self.scanner_invocations(),
                 parser_invocations = self.parser_invocations(),
             );
@@ -130,15 +123,19 @@ impl CodeGenerator {
                 let production_kinds = self.production_kinds();
                 quote! {
                     use serde::Serialize;
-                    use strum_macros::*;
+                    use napi::bindgen_prelude::*;
+                    use napi_derive::napi;
 
-                    #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize)]
+                    #[napi]
+                    #[derive(Debug, PartialEq, Eq, Serialize)]
                     #token_kinds
 
-                    #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize)]
+                    #[napi]
+                    #[derive(Debug, PartialEq, Eq, Serialize)]
                     #rule_kinds
 
-                    #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Serialize, EnumString, AsRefStr, Display)]
+                    #[napi]
+                    #[derive(Debug, PartialEq, Eq, Serialize)]
                     #production_kinds
                 }
             };
