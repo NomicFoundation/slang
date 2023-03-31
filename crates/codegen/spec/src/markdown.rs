@@ -17,10 +17,6 @@ impl MarkdownWriter {
         writeln!(self.w, "{prefix} {value}", prefix = "#".repeat(level)).unwrap();
     }
 
-    pub fn write_comment(&mut self, value: &str) {
-        writeln!(self.w, "<!-- {value} -->").unwrap();
-    }
-
     pub fn write_snippet(&mut self, repo_root: &PathBuf, snippet_path: &PathBuf) {
         writeln!(
             self.w,

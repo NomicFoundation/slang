@@ -1,7 +1,5 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
-<!-- markdownlint-disable first-line-h1 -->
-
 - [1.1. License Specifiers](./01-license-specifiers/index.md)
 - [1.2. Source Unit](./02-source-unit/index.md)
 - [1.3. Pragmas](./03-pragmas/index.md)
