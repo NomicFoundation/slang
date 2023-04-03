@@ -113,7 +113,7 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/true-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/try-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/type-keyword/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/unchecked-keyword/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/unchecked-keyword/0.8.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/using-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/view-keyword/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/01-file-structure/07-keywords/virtual-keyword/unversioned.md"
@@ -220,6 +220,7 @@
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/argument-list/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/positional-argument-list/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/named-argument-list/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/function-call-options/0.8.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/named-argument/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/constructor-definition/0.4.22.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/02-definitions/08-functions/constructor-attribute/unversioned.md"
@@ -266,7 +267,7 @@
 
 ### 3.4. Elementary Types
 
---8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/04-elementary-types/elementary-type/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/04-elementary-types/elementary-type/0.8.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/04-elementary-types/address-type/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/04-elementary-types/payable-type/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/03-types/04-elementary-types/fixed-bytes-type/unversioned.md"
@@ -279,8 +280,8 @@
 
 ### 4.1. Blocks
 
---8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/01-blocks/block/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/01-blocks/unchecked-block/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/01-blocks/block/0.8.0.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/01-blocks/unchecked-block/0.8.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/01-blocks/statement/0.6.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/01-blocks/simple-statement/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/04-statements/01-blocks/expression-statement/unversioned.md"
@@ -354,8 +355,8 @@
 
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-identifiers/identifier-path/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-identifiers/identifier/unversioned.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-identifiers/keyword/0.6.0.md"
---8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-identifiers/reserved-keyword/unversioned.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-identifiers/keyword/0.8.0.md"
+--8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-identifiers/reserved-keyword/0.8.0.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-identifiers/raw-identifier/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-identifiers/identifier-start/unversioned.md"
 --8<-- "crates/solidity/outputs/spec/generated/ebnf/05-expressions/05-identifiers/identifier-part/unversioned.md"

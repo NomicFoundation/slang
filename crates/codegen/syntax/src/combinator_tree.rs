@@ -65,16 +65,15 @@ impl<'context> CombinatorTree<'context> {
 
         match self.production.as_ref() {
             Production::Scanner { name, .. } => {
-                if self.first_set().includes_epsilon {
-                    unreachable!(
-                        "Validation should have discovered that scanner {name} can be empty"
-                    );
-                }
-                code.add_token_kind(name.clone());
-                let definition = self
-                    .root_node
-                    .get()
-                    .map(|node| (comment, node.to_scanner_code(code)));
+                let definition = self.root_node.get().map(|node| {
+                    if node.first_set().includes_epsilon {
+                        unreachable!(
+                            "Validation should have discovered that scanner {name} can be empty"
+                        );
+                    }
+                    code.add_token_kind(name.clone());
+                    (comment, node.to_scanner_code(code))
+                });
                 code.add_scanner(name.clone(), version, definition);
             }
             Production::TriviaParser { name, .. } => {

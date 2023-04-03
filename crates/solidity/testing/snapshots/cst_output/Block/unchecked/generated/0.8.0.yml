@@ -1,0 +1,30 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ { unchecked { x = 1; } }                                                         │ 0..24
+
+Errors: []
+
+Tree:
+  - Block (Rule): # 0..24 "{ unchecked { x = 1; } }"
+      - OpenBrace (Token): "{" # 0..1
+      - _REPEATED (Rule): # 1..22 " unchecked { x = 1; }"
+          - UncheckedBlock (Rule): # 1..22 " unchecked { x = 1; }"
+              - UncheckedKeyword (Token): "unchecked" # 2..11
+              - Block (Rule): # 11..22 " { x = 1; }"
+                  - OpenBrace (Token): "{" # 12..13
+                  - _REPEATED (Rule): # 14..20 "x = 1;"
+                      - Statement (Rule): # 14..20 "x = 1;"
+                          - SimpleStatement (Rule): # 14..20 "x = 1;"
+                              - ExpressionStatement (Rule): # 14..20 "x = 1;"
+                                  - Expression (Rule): # 14..19 "x = 1"
+                                      - AssignmentExpression (Rule): # 14..19 "x = 1"
+                                          - PrimaryExpression (Rule): # 14..15 "x"
+                                              - Identifier (Token): "x" # 14..15
+                                          - Equal (Token): "=" # 16..17
+                                          - PrimaryExpression (Rule): # 17..19 " 1"
+                                              - NumericLiteral (Rule): # 17..19 " 1"
+                                                  - DecimalLiteral (Token): "1" # 18..19
+                                  - Semicolon (Token): ";" # 19..20
+                  - CloseBrace (Token): "}" # 21..22
+      - CloseBrace (Token): "}" # 23..24

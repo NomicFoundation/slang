@@ -639,12 +639,13 @@
 
 - name: "UncheckedKeyword"
   kind: "Scanner"
-  unversioned:
-    trailingContext:
-      expression:
-        terminal: "unchecked"
-      notFollowedBy:
-        reference: "IdentifierPart"
+  versioned:
+    0.8.0:
+      trailingContext:
+        expression:
+          terminal: "unchecked"
+        notFollowedBy:
+          reference: "IdentifierPart"
 
 - name: "UsingKeyword"
   kind: "Scanner"

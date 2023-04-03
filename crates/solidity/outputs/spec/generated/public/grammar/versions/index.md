@@ -2,11 +2,13 @@
 
 # Versions
 
-This specification compiles information from 73 publicly released versions of Solidity. Among which, 4 versions had syntax-related changes:
+This specification compiles information from 73 publicly released versions of Solidity. Among which, 6 versions had syntax-related changes:
 
 - [v0.4.11](../v0.4.11/)
 - [v0.4.22](../v0.4.22/)
+- [v0.5.0](../v0.5.0/)
 - [v0.6.0](../v0.6.0/)
+- [v0.8.0](../v0.8.0/)
 - [v0.8.18](../v0.8.18/)
 
 Here is the full list of supported versions:
