@@ -1263,10 +1263,11 @@ impl Language {
         }
     }
 
+    // (* v0.6.0 *)
     // CatchClause = «CatchKeyword» [[«Identifier»] ParameterList] Block;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_catch_clause_0_4_11(&self, stream: &mut Stream) -> ParserResult {
+    fn parse_catch_clause_0_6_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -1403,15 +1404,29 @@ impl Language {
         }
     }
 
+    fn dispatch_parse_catch_clause(&self, stream: &mut Stream) -> Option<ParserResult> {
+        if self.version_is_equal_to_or_greater_than_0_6_0 {
+            Some(self.parse_catch_clause_0_6_0(stream))
+        } else {
+            None
+        }
+    }
+
+    pub(crate) fn maybe_parse_catch_clause(&self, stream: &mut Stream) -> Option<ParserResult> {
+        self.dispatch_parse_catch_clause(stream)
+            .map(|body| match body {
+                Pass { node, error } => Pass {
+                    node: cst::Node::top_level_rule(RuleKind::CatchClause, node),
+                    error,
+                },
+                fail => fail,
+            })
+    }
+
     #[inline]
     pub(crate) fn parse_catch_clause(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_catch_clause_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::CatchClause, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.maybe_parse_catch_clause(stream)
+            .expect("Validation should have checked that references are valid between versions")
     }
 
     // ConstantDefinition = TypeName «ConstantKeyword» «Identifier» «Equal» Expression «Semicolon»;
@@ -2134,10 +2149,209 @@ impl Language {
         }
     }
 
-    // ContractDefinition = [«AbstractKeyword»] «ContractKeyword» «Identifier» [InheritanceSpecifierList] «OpenBrace» {ContractBodyElement} «CloseBrace»;
+    // (* v0.4.11 *)
+    // ContractDefinition = «ContractKeyword» «Identifier» [InheritanceSpecifierList] «OpenBrace» {ContractBodyElement} «CloseBrace»;
 
     #[allow(unused_assignments, unused_parens)]
     fn parse_contract_definition_0_4_11(&self, stream: &mut Stream) -> ParserResult {
+        loop {
+            let mut furthest_error = None;
+            let result_0 = match {
+                let leading_trivia = self.optional_leading_trivia(stream);
+                let start = stream.position();
+                if self.scan_contract_keyword(stream) {
+                    let end = stream.position();
+                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                    Pass {
+                        node: cst::Node::token(
+                            TokenKind::ContractKeyword,
+                            Range { start, end },
+                            leading_trivia,
+                            trailing_trivia,
+                        ),
+                        error: None,
+                    }
+                } else {
+                    Fail {
+                        error: ParseError::new(start, "ContractKeyword"),
+                    }
+                }
+            } {
+                Pass { node, error } => {
+                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
+                    node
+                }
+                Fail { error } => {
+                    break Fail {
+                        error: error.maybe_merge_with(furthest_error),
+                    }
+                }
+            };
+            let result_1 = match {
+                let leading_trivia = self.optional_leading_trivia(stream);
+                let start = stream.position();
+                if self.scan_identifier(stream) {
+                    let end = stream.position();
+                    let trailing_trivia = self.optional_trailing_trivia(stream);
+                    Pass {
+                        node: cst::Node::token(
+                            TokenKind::Identifier,
+                            Range { start, end },
+                            leading_trivia,
+                            trailing_trivia,
+                        ),
+                        error: None,
+                    }
+                } else {
+                    Fail {
+                        error: ParseError::new(start, "Identifier"),
+                    }
+                }
+            } {
+                Pass { node, error } => {
+                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
+                    node
+                }
+                Fail { error } => {
+                    break Fail {
+                        error: error.maybe_merge_with(furthest_error),
+                    }
+                }
+            };
+            let result_2 = match {
+                let start_position = stream.position();
+                match self.parse_inheritance_specifier_list(stream) {
+                    Fail { error } => {
+                        stream.set_position(start_position);
+                        Pass {
+                            node: cst::Node::rule(RuleKind::_OPTIONAL, vec![]),
+                            error: Some(error),
+                        }
+                    }
+                    pass => pass,
+                }
+            } {
+                Pass { node, error } => {
+                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
+                    node
+                }
+                Fail { error } => {
+                    break Fail {
+                        error: error.maybe_merge_with(furthest_error),
+                    }
+                }
+            };
+            let result_3 = match {
+                match {
+                    let leading_trivia = self.optional_leading_trivia(stream);
+                    let start = stream.position();
+                    if self.scan_open_brace(stream) {
+                        let end = stream.position();
+                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                        Pass {
+                            node: cst::Node::token(
+                                TokenKind::OpenBrace,
+                                Range { start, end },
+                                leading_trivia,
+                                trailing_trivia,
+                            ),
+                            error: None,
+                        }
+                    } else {
+                        Fail {
+                            error: ParseError::new(start, "OpenBrace"),
+                        }
+                    }
+                } {
+                    err @ Fail { .. } => err,
+                    Pass {
+                        node: open_node, ..
+                    } => {
+                        match {
+                            let mut result = Vec::new();
+                            loop {
+                                let start_position = stream.position();
+                                match self.parse_contract_body_element(stream) {
+                                    Fail { error } => {
+                                        stream.set_position(start_position);
+                                        break Pass {
+                                            node: cst::Node::rule(RuleKind::_REPEATED, result),
+                                            error: Some(error),
+                                        };
+                                    }
+                                    Pass { node, .. } => result.push(node),
+                                }
+                            }
+                        } {
+                            err @ Fail { .. } => err,
+                            Pass {
+                                node: expr_node,
+                                error: expr_error,
+                            } => {
+                                match {
+                                    let leading_trivia = self.optional_leading_trivia(stream);
+                                    let start = stream.position();
+                                    if self.scan_close_brace(stream) {
+                                        let end = stream.position();
+                                        let trailing_trivia = self.optional_trailing_trivia(stream);
+                                        Pass {
+                                            node: cst::Node::token(
+                                                TokenKind::CloseBrace,
+                                                Range { start, end },
+                                                leading_trivia,
+                                                trailing_trivia,
+                                            ),
+                                            error: None,
+                                        }
+                                    } else {
+                                        Fail {
+                                            error: ParseError::new(start, "CloseBrace"),
+                                        }
+                                    }
+                                } {
+                                    Fail { error } => Fail {
+                                        error: error.maybe_merge_with(expr_error),
+                                    },
+                                    Pass {
+                                        node: close_node, ..
+                                    } => Pass {
+                                        node: cst::Node::rule(
+                                            RuleKind::_DELIMITEDBY,
+                                            vec![open_node, expr_node, close_node],
+                                        ),
+                                        error: None,
+                                    },
+                                }
+                            }
+                        }
+                    }
+                }
+            } {
+                Pass { node, error } => {
+                    furthest_error = error.map(|error| error.maybe_merge_with(furthest_error));
+                    node
+                }
+                Fail { error } => {
+                    break Fail {
+                        error: error.maybe_merge_with(furthest_error),
+                    }
+                }
+            };
+            break Pass {
+                node: cst::Node::rule(
+                    RuleKind::_SEQUENCE,
+                    vec![result_0, result_1, result_2, result_3],
+                ),
+                error: furthest_error,
+            };
+        }
+    }
+
+    // (* v0.6.0 *)
+    // ContractDefinition = [«AbstractKeyword»] «ContractKeyword» «Identifier» [InheritanceSpecifierList] «OpenBrace» {ContractBodyElement} «CloseBrace»;
+
+    #[allow(unused_assignments, unused_parens)]
+    fn parse_contract_definition_0_6_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -2374,9 +2588,17 @@ impl Language {
         }
     }
 
+    fn dispatch_parse_contract_definition(&self, stream: &mut Stream) -> ParserResult {
+        if self.version_is_equal_to_or_greater_than_0_6_0 {
+            self.parse_contract_definition_0_6_0(stream)
+        } else {
+            self.parse_contract_definition_0_4_11(stream)
+        }
+    }
+
     #[inline]
     pub(crate) fn parse_contract_definition(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_contract_definition_0_4_11(stream) {
+        match self.dispatch_parse_contract_definition(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::ContractDefinition, node),
                 error,
@@ -15101,10 +15323,89 @@ impl Language {
         }
     }
 
-    // Statement = Block | SimpleStatement | IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | TryStatement | ReturnStatement | EmitStatement | RevertStatement | DeleteStatement | AssemblyStatement;
+    // (* v0.4.11 *)
+    // Statement = Block | SimpleStatement | IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | ReturnStatement | EmitStatement | RevertStatement | DeleteStatement | AssemblyStatement;
 
     #[allow(unused_assignments, unused_parens)]
     fn parse_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
+        loop {
+            let start_position = stream.position();
+            let mut furthest_error;
+            match self.parse_block(stream) {
+                Fail { error } => furthest_error = error,
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_simple_statement(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_if_statement(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_for_statement(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_while_statement(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_do_while_statement(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_continue_statement(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_break_statement(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_return_statement(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_emit_statement(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_revert_statement(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_delete_statement(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_assembly_statement(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            break Fail {
+                error: furthest_error,
+            };
+        }
+    }
+
+    // (* v0.6.0 *)
+    // Statement = Block | SimpleStatement | IfStatement | ForStatement | WhileStatement | DoWhileStatement | ContinueStatement | BreakStatement | TryStatement | ReturnStatement | EmitStatement | RevertStatement | DeleteStatement | AssemblyStatement;
+
+    #[allow(unused_assignments, unused_parens)]
+    fn parse_statement_0_6_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
             let mut furthest_error;
@@ -15183,9 +15484,17 @@ impl Language {
         }
     }
 
+    fn dispatch_parse_statement(&self, stream: &mut Stream) -> ParserResult {
+        if self.version_is_equal_to_or_greater_than_0_6_0 {
+            self.parse_statement_0_6_0(stream)
+        } else {
+            self.parse_statement_0_4_11(stream)
+        }
+    }
+
     #[inline]
     pub(crate) fn parse_statement(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_statement_0_4_11(stream) {
+        match self.dispatch_parse_statement(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::Statement, node),
                 error,
@@ -15776,10 +16085,11 @@ impl Language {
         }
     }
 
+    // (* v0.6.0 *)
     // TryStatement = «TryKeyword» Expression [«ReturnsKeyword» ParameterList] Block 1…{CatchClause};
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_try_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
+    fn parse_try_statement_0_6_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let mut furthest_error = None;
             let result_0 = match {
@@ -15947,15 +16257,29 @@ impl Language {
         }
     }
 
+    fn dispatch_parse_try_statement(&self, stream: &mut Stream) -> Option<ParserResult> {
+        if self.version_is_equal_to_or_greater_than_0_6_0 {
+            Some(self.parse_try_statement_0_6_0(stream))
+        } else {
+            None
+        }
+    }
+
+    pub(crate) fn maybe_parse_try_statement(&self, stream: &mut Stream) -> Option<ParserResult> {
+        self.dispatch_parse_try_statement(stream)
+            .map(|body| match body {
+                Pass { node, error } => Pass {
+                    node: cst::Node::top_level_rule(RuleKind::TryStatement, node),
+                    error,
+                },
+                fail => fail,
+            })
+    }
+
     #[inline]
     pub(crate) fn parse_try_statement(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_try_statement_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::TryStatement, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.maybe_parse_try_statement(stream)
+            .expect("Validation should have checked that references are valid between versions")
     }
 
     // TupleDeconstructionStatement = «OpenParen» [[TypeName [DataLocation] «Identifier» | [DataLocation] «Identifier»] {«Comma» [TypeName [DataLocation] «Identifier» | [DataLocation] «Identifier»]}] «CloseParen» «Equal» Expression «Semicolon»;
@@ -19891,10 +20215,11 @@ impl Language {
         }
     }
 
+    // (* v0.6.0 *)
     // YulLeaveStatement = «LeaveKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
-    fn parse_yul_leave_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
+    fn parse_yul_leave_statement_0_6_0(&self, stream: &mut Stream) -> ParserResult {
         {
             let leading_trivia = self.optional_leading_trivia(stream);
             let start = stream.position();
@@ -19918,15 +20243,32 @@ impl Language {
         }
     }
 
+    fn dispatch_parse_yul_leave_statement(&self, stream: &mut Stream) -> Option<ParserResult> {
+        if self.version_is_equal_to_or_greater_than_0_6_0 {
+            Some(self.parse_yul_leave_statement_0_6_0(stream))
+        } else {
+            None
+        }
+    }
+
+    pub(crate) fn maybe_parse_yul_leave_statement(
+        &self,
+        stream: &mut Stream,
+    ) -> Option<ParserResult> {
+        self.dispatch_parse_yul_leave_statement(stream)
+            .map(|body| match body {
+                Pass { node, error } => Pass {
+                    node: cst::Node::top_level_rule(RuleKind::YulLeaveStatement, node),
+                    error,
+                },
+                fail => fail,
+            })
+    }
+
     #[inline]
     pub(crate) fn parse_yul_leave_statement(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_yul_leave_statement_0_4_11(stream) {
-            Pass { node, error } => Pass {
-                node: cst::Node::top_level_rule(RuleKind::YulLeaveStatement, node),
-                error,
-            },
-            fail => fail,
-        }
+        self.maybe_parse_yul_leave_statement(stream)
+            .expect("Validation should have checked that references are valid between versions")
     }
 
     // YulLiteral = BooleanLiteral | «YulHexLiteral» | «YulDecimalLiteral» | «HexStringLiteral» | «AsciiStringLiteral»;
@@ -20057,10 +20399,74 @@ impl Language {
         }
     }
 
-    // YulStatement = YulBlock | YulFunctionDefinition | YulDeclarationStatement | YulAssignmentStatement | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement | YulExpression;
+    // (* v0.4.11 *)
+    // YulStatement = YulBlock | YulFunctionDefinition | YulDeclarationStatement | YulAssignmentStatement | YulIfStatement | YulForStatement | YulSwitchStatement | YulBreakStatement | YulContinueStatement | YulExpression;
 
     #[allow(unused_assignments, unused_parens)]
     fn parse_yul_statement_0_4_11(&self, stream: &mut Stream) -> ParserResult {
+        loop {
+            let start_position = stream.position();
+            let mut furthest_error;
+            match self.parse_yul_block(stream) {
+                Fail { error } => furthest_error = error,
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_yul_function_definition(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_yul_declaration_statement(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_yul_assignment_statement(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_yul_if_statement(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_yul_for_statement(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_yul_switch_statement(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_yul_break_statement(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_yul_continue_statement(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            stream.set_position(start_position);
+            match self.parse_yul_expression(stream) {
+                Fail { error } => furthest_error.merge_with(error),
+                pass => break pass,
+            }
+            break Fail {
+                error: furthest_error,
+            };
+        }
+    }
+
+    // (* v0.6.0 *)
+    // YulStatement = YulBlock | YulFunctionDefinition | YulDeclarationStatement | YulAssignmentStatement | YulIfStatement | YulForStatement | YulSwitchStatement | YulLeaveStatement | YulBreakStatement | YulContinueStatement | YulExpression;
+
+    #[allow(unused_assignments, unused_parens)]
+    fn parse_yul_statement_0_6_0(&self, stream: &mut Stream) -> ParserResult {
         loop {
             let start_position = stream.position();
             let mut furthest_error;
@@ -20124,9 +20530,17 @@ impl Language {
         }
     }
 
+    fn dispatch_parse_yul_statement(&self, stream: &mut Stream) -> ParserResult {
+        if self.version_is_equal_to_or_greater_than_0_6_0 {
+            self.parse_yul_statement_0_6_0(stream)
+        } else {
+            self.parse_yul_statement_0_4_11(stream)
+        }
+    }
+
     #[inline]
     pub(crate) fn parse_yul_statement(&self, stream: &mut Stream) -> ParserResult {
-        match self.parse_yul_statement_0_4_11(stream) {
+        match self.dispatch_parse_yul_statement(stream) {
             Pass { node, error } => Pass {
                 node: cst::Node::top_level_rule(RuleKind::YulStatement, node),
                 error,

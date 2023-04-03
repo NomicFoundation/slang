@@ -1,0 +1,10 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: ""
+
+Errors: # 1 total
+  - >
+    Error: Expected AbstractKeyword or AddressKeyword or BoolKeyword or ContractKeyword or EnumKeyword or ErrorKeyword or FixedBytesType or FunctionKeyword or Identifier or ImportKeyword or InterfaceKeyword or LibraryKeyword or MappingKeyword or PayableKeyword or PragmaKeyword or SignedFixedType or SignedIntegerType or StringKeyword or StructKeyword or TypeKeyword or UnsignedFixedType or UnsignedIntegerType or UsingKeyword.
+       ─[crates/solidity/testing/snapshots/cst_output/SourceUnit/empty_file/input.sol:0:0]
+
+Tree: null

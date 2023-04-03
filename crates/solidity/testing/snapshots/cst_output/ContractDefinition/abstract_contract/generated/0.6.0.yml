@@ -1,0 +1,14 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ abstract contract Sample {}                                                      │ 0..27
+
+Errors: []
+
+Tree:
+  - ContractDefinition (Rule): # 0..28 "abstract contract Sample {}\n"
+      - AbstractKeyword (Token): "abstract" # 0..8
+      - ContractKeyword (Token): "contract" # 9..17
+      - Identifier (Token): "Sample" # 18..24
+      - OpenBrace (Token): "{" # 25..26
+      - CloseBrace (Token): "}" # 26..27

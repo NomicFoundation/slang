@@ -1,0 +1,13 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ leave                                                                            │ 0..5
+
+Errors: []
+
+Tree:
+  - YulStatement (Rule): # 0..5 "leave"
+      - YulExpression (Rule): # 0..5 "leave"
+          - YulIdentifierPath (Rule): # 0..5 "leave"
+              - _SEPARATEDBY (Rule): # 0..5 "leave"
+                  - YulIdentifier (Token): "leave" # 0..5

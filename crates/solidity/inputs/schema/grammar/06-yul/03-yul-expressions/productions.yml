@@ -46,20 +46,35 @@
 
 - name: "YulKeyword"
   kind: "Scanner"
-  unversioned:
-    choice:
-      - reference: "BreakKeyword"
-      - reference: "CaseKeyword"
-      - reference: "ContinueKeyword"
-      - reference: "DefaultKeyword"
-      - reference: "FalseKeyword"
-      - reference: "ForKeyword"
-      - reference: "FunctionKeyword"
-      - reference: "IfKeyword"
-      - reference: "LeaveKeyword"
-      - reference: "LetKeyword"
-      - reference: "SwitchKeyword"
-      - reference: "TrueKeyword"
+  versioned:
+    0.4.11:
+      choice:
+        - reference: "BreakKeyword"
+        - reference: "CaseKeyword"
+        - reference: "ContinueKeyword"
+        - reference: "DefaultKeyword"
+        - reference: "FalseKeyword"
+        - reference: "ForKeyword"
+        - reference: "FunctionKeyword"
+        - reference: "IfKeyword"
+        - reference: "LetKeyword"
+        - reference: "SwitchKeyword"
+        - reference: "TrueKeyword"
+    0.6.0:
+      # added "LeaveKeyword"
+      choice:
+        - reference: "BreakKeyword"
+        - reference: "CaseKeyword"
+        - reference: "ContinueKeyword"
+        - reference: "DefaultKeyword"
+        - reference: "FalseKeyword"
+        - reference: "ForKeyword"
+        - reference: "FunctionKeyword"
+        - reference: "IfKeyword"
+        - reference: "LeaveKeyword"
+        - reference: "LetKeyword"
+        - reference: "SwitchKeyword"
+        - reference: "TrueKeyword"
 
 - name: "YulReservedKeyword"
   kind: "Scanner"

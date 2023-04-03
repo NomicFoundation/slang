@@ -14,19 +14,33 @@
 
 - name: "YulStatement"
   kind: "Parser"
-  unversioned:
-    choice:
-      - reference: "YulBlock"
-      - reference: "YulFunctionDefinition"
-      - reference: "YulDeclarationStatement"
-      - reference: "YulAssignmentStatement"
-      - reference: "YulIfStatement"
-      - reference: "YulForStatement"
-      - reference: "YulSwitchStatement"
-      - reference: "YulLeaveStatement"
-      - reference: "YulBreakStatement"
-      - reference: "YulContinueStatement"
-      - reference: "YulExpression"
+  versioned:
+    0.4.11:
+      choice:
+        - reference: "YulBlock"
+        - reference: "YulFunctionDefinition"
+        - reference: "YulDeclarationStatement"
+        - reference: "YulAssignmentStatement"
+        - reference: "YulIfStatement"
+        - reference: "YulForStatement"
+        - reference: "YulSwitchStatement"
+        - reference: "YulBreakStatement"
+        - reference: "YulContinueStatement"
+        - reference: "YulExpression"
+    0.6.0:
+      # added "YuiLeaveStatement"
+      choice:
+        - reference: "YulBlock"
+        - reference: "YulFunctionDefinition"
+        - reference: "YulDeclarationStatement"
+        - reference: "YulAssignmentStatement"
+        - reference: "YulIfStatement"
+        - reference: "YulForStatement"
+        - reference: "YulSwitchStatement"
+        - reference: "YulLeaveStatement"
+        - reference: "YulBreakStatement"
+        - reference: "YulContinueStatement"
+        - reference: "YulExpression"
 
 - name: "YulDeclarationStatement"
   kind: "Parser"
@@ -95,8 +109,9 @@
 
 - name: "YulLeaveStatement"
   kind: "Parser"
-  unversioned:
-    reference: "LeaveKeyword"
+  versioned:
+    0.6.0:
+      reference: "LeaveKeyword"
 
 - name: "YulBreakStatement"
   kind: "Parser"

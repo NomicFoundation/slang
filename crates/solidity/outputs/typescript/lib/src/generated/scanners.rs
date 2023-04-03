@@ -1804,10 +1804,89 @@ impl Language {
         self.scan_is_keyword_0_4_11(stream)
     }
 
-    // «Keyword» = «AbstractKeyword» | «AddressKeyword» | «AnonymousKeyword» | «AsKeyword» | «AssemblyKeyword» | «BoolKeyword» | «BreakKeyword» | «CalldataKeyword» | «CaseKeyword» | «CatchKeyword» | «ConstantKeyword» | «ConstructorKeyword» | «ContinueKeyword» | «ContractKeyword» | «DaysKeyword» | «DefaultKeyword» | «DeleteKeyword» | «DoKeyword» | «ElseKeyword» | «EmitKeyword» | «EnumKeyword» | «EtherKeyword» | «EventKeyword» | «ExternalKeyword» | «FallbackKeyword» | «FalseKeyword» | «FinneyKeyword» | «ForKeyword» | «FunctionKeyword» | «GweiKeyword» | «HoursKeyword» | «IfKeyword» | «ImmutableKeyword» | «ImportKeyword» | «IndexedKeyword» | «InterfaceKeyword» | «InternalKeyword» | «IsKeyword» | «LetKeyword» | «LibraryKeyword» | «MappingKeyword» | «MemoryKeyword» | «MinutesKeyword» | «ModifierKeyword» | «NewKeyword» | «OverrideKeyword» | «PayableKeyword» | «PragmaKeyword» | «PrivateKeyword» | «PublicKeyword» | «PureKeyword» | «ReceiveKeyword» | «ReturnKeyword» | «ReturnsKeyword» | «SecondsKeyword» | «StorageKeyword» | «StringKeyword» | «StructKeyword» | «SwitchKeyword» | «SzaboKeyword» | «TrueKeyword» | «TryKeyword» | «TypeKeyword» | «UncheckedKeyword» | «UsingKeyword» | «ViewKeyword» | «VirtualKeyword» | «WeeksKeyword» | «WeiKeyword» | «WhileKeyword» | «YearsKeyword»;
+    // (* v0.4.11 *)
+    // «Keyword» = «AddressKeyword» | «AnonymousKeyword» | «AsKeyword» | «AssemblyKeyword» | «BoolKeyword» | «BreakKeyword» | «CalldataKeyword» | «CaseKeyword» | «ConstantKeyword» | «ConstructorKeyword» | «ContinueKeyword» | «ContractKeyword» | «DaysKeyword» | «DefaultKeyword» | «DeleteKeyword» | «DoKeyword» | «ElseKeyword» | «EmitKeyword» | «EnumKeyword» | «EtherKeyword» | «EventKeyword» | «ExternalKeyword» | «FallbackKeyword» | «FalseKeyword» | «FinneyKeyword» | «ForKeyword» | «FunctionKeyword» | «GweiKeyword» | «HoursKeyword» | «IfKeyword» | «ImmutableKeyword» | «ImportKeyword» | «IndexedKeyword» | «InterfaceKeyword» | «InternalKeyword» | «IsKeyword» | «LetKeyword» | «LibraryKeyword» | «MappingKeyword» | «MemoryKeyword» | «MinutesKeyword» | «ModifierKeyword» | «NewKeyword» | «OverrideKeyword» | «PayableKeyword» | «PragmaKeyword» | «PrivateKeyword» | «PublicKeyword» | «PureKeyword» | «ReceiveKeyword» | «ReturnKeyword» | «ReturnsKeyword» | «SecondsKeyword» | «StorageKeyword» | «StringKeyword» | «StructKeyword» | «SwitchKeyword» | «SzaboKeyword» | «TrueKeyword» | «TypeKeyword» | «UncheckedKeyword» | «UsingKeyword» | «ViewKeyword» | «VirtualKeyword» | «WeeksKeyword» | «WeiKeyword» | «WhileKeyword» | «YearsKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
+        scan_choice!(
+            stream,
+            self.scan_address_keyword(stream),
+            self.scan_anonymous_keyword(stream),
+            self.scan_as_keyword(stream),
+            self.scan_assembly_keyword(stream),
+            self.scan_bool_keyword(stream),
+            self.scan_break_keyword(stream),
+            self.scan_calldata_keyword(stream),
+            self.scan_case_keyword(stream),
+            self.scan_constant_keyword(stream),
+            self.scan_constructor_keyword(stream),
+            self.scan_continue_keyword(stream),
+            self.scan_contract_keyword(stream),
+            self.scan_days_keyword(stream),
+            self.scan_default_keyword(stream),
+            self.scan_delete_keyword(stream),
+            self.scan_do_keyword(stream),
+            self.scan_else_keyword(stream),
+            self.scan_emit_keyword(stream),
+            self.scan_enum_keyword(stream),
+            self.scan_ether_keyword(stream),
+            self.scan_event_keyword(stream),
+            self.scan_external_keyword(stream),
+            self.scan_fallback_keyword(stream),
+            self.scan_false_keyword(stream),
+            self.scan_finney_keyword(stream),
+            self.scan_for_keyword(stream),
+            self.scan_function_keyword(stream),
+            self.scan_gwei_keyword(stream),
+            self.scan_hours_keyword(stream),
+            self.scan_if_keyword(stream),
+            self.scan_immutable_keyword(stream),
+            self.scan_import_keyword(stream),
+            self.scan_indexed_keyword(stream),
+            self.scan_interface_keyword(stream),
+            self.scan_internal_keyword(stream),
+            self.scan_is_keyword(stream),
+            self.scan_let_keyword(stream),
+            self.scan_library_keyword(stream),
+            self.scan_mapping_keyword(stream),
+            self.scan_memory_keyword(stream),
+            self.scan_minutes_keyword(stream),
+            self.scan_modifier_keyword(stream),
+            self.scan_new_keyword(stream),
+            self.scan_override_keyword(stream),
+            self.scan_payable_keyword(stream),
+            self.scan_pragma_keyword(stream),
+            self.scan_private_keyword(stream),
+            self.scan_public_keyword(stream),
+            self.scan_pure_keyword(stream),
+            self.scan_receive_keyword(stream),
+            self.scan_return_keyword(stream),
+            self.scan_returns_keyword(stream),
+            self.scan_seconds_keyword(stream),
+            self.scan_storage_keyword(stream),
+            self.scan_string_keyword(stream),
+            self.scan_struct_keyword(stream),
+            self.scan_switch_keyword(stream),
+            self.scan_szabo_keyword(stream),
+            self.scan_true_keyword(stream),
+            self.scan_type_keyword(stream),
+            self.scan_unchecked_keyword(stream),
+            self.scan_using_keyword(stream),
+            self.scan_view_keyword(stream),
+            self.scan_virtual_keyword(stream),
+            self.scan_weeks_keyword(stream),
+            self.scan_wei_keyword(stream),
+            self.scan_while_keyword(stream),
+            self.scan_years_keyword(stream)
+        )
+    }
+
+    // (* v0.6.0 *)
+    // «Keyword» = «AbstractKeyword» | «AddressKeyword» | «AnonymousKeyword» | «AsKeyword» | «AssemblyKeyword» | «BoolKeyword» | «BreakKeyword» | «CalldataKeyword» | «CaseKeyword» | «CatchKeyword» | «ConstantKeyword» | «ConstructorKeyword» | «ContinueKeyword» | «ContractKeyword» | «DaysKeyword» | «DefaultKeyword» | «DeleteKeyword» | «DoKeyword» | «ElseKeyword» | «EmitKeyword» | «EnumKeyword» | «EtherKeyword» | «EventKeyword» | «ExternalKeyword» | «FallbackKeyword» | «FalseKeyword» | «FinneyKeyword» | «ForKeyword» | «FunctionKeyword» | «GweiKeyword» | «HoursKeyword» | «IfKeyword» | «ImmutableKeyword» | «ImportKeyword» | «IndexedKeyword» | «InterfaceKeyword» | «InternalKeyword» | «IsKeyword» | «LetKeyword» | «LibraryKeyword» | «MappingKeyword» | «MemoryKeyword» | «MinutesKeyword» | «ModifierKeyword» | «NewKeyword» | «OverrideKeyword» | «PayableKeyword» | «PragmaKeyword» | «PrivateKeyword» | «PublicKeyword» | «PureKeyword» | «ReceiveKeyword» | «ReturnKeyword» | «ReturnsKeyword» | «SecondsKeyword» | «StorageKeyword» | «StringKeyword» | «StructKeyword» | «SwitchKeyword» | «SzaboKeyword» | «TrueKeyword» | «TryKeyword» | «TypeKeyword» | «UncheckedKeyword» | «UsingKeyword» | «ViewKeyword» | «VirtualKeyword» | «WeeksKeyword» | «WeiKeyword» | «WhileKeyword» | «YearsKeyword»;
+
+    #[allow(unused_assignments, unused_parens)]
+    fn scan_keyword_0_6_0(&self, stream: &mut Stream) -> bool {
         scan_choice!(
             stream,
             self.scan_abstract_keyword(stream),
@@ -1884,9 +1963,17 @@ impl Language {
         )
     }
 
+    fn dispatch_scan_keyword(&self, stream: &mut Stream) -> bool {
+        if self.version_is_equal_to_or_greater_than_0_6_0 {
+            self.scan_keyword_0_6_0(stream)
+        } else {
+            self.scan_keyword_0_4_11(stream)
+        }
+    }
+
     #[inline]
     pub(crate) fn scan_keyword(&self, stream: &mut Stream) -> bool {
-        self.scan_keyword_0_4_11(stream)
+        self.dispatch_scan_keyword(stream)
     }
 
     // «LeaveKeyword» = "leave";
@@ -3399,10 +3486,32 @@ impl Language {
         self.scan_yul_identifier_0_4_11(stream)
     }
 
-    // «YulKeyword» = «BreakKeyword» | «CaseKeyword» | «ContinueKeyword» | «DefaultKeyword» | «FalseKeyword» | «ForKeyword» | «FunctionKeyword» | «IfKeyword» | «LeaveKeyword» | «LetKeyword» | «SwitchKeyword» | «TrueKeyword»;
+    // (* v0.4.11 *)
+    // «YulKeyword» = «BreakKeyword» | «CaseKeyword» | «ContinueKeyword» | «DefaultKeyword» | «FalseKeyword» | «ForKeyword» | «FunctionKeyword» | «IfKeyword» | «LetKeyword» | «SwitchKeyword» | «TrueKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_yul_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
+        scan_choice!(
+            stream,
+            self.scan_break_keyword(stream),
+            self.scan_case_keyword(stream),
+            self.scan_continue_keyword(stream),
+            self.scan_default_keyword(stream),
+            self.scan_false_keyword(stream),
+            self.scan_for_keyword(stream),
+            self.scan_function_keyword(stream),
+            self.scan_if_keyword(stream),
+            self.scan_let_keyword(stream),
+            self.scan_switch_keyword(stream),
+            self.scan_true_keyword(stream)
+        )
+    }
+
+    // (* v0.6.0 *)
+    // «YulKeyword» = «BreakKeyword» | «CaseKeyword» | «ContinueKeyword» | «DefaultKeyword» | «FalseKeyword» | «ForKeyword» | «FunctionKeyword» | «IfKeyword» | «LeaveKeyword» | «LetKeyword» | «SwitchKeyword» | «TrueKeyword»;
+
+    #[allow(unused_assignments, unused_parens)]
+    fn scan_yul_keyword_0_6_0(&self, stream: &mut Stream) -> bool {
         scan_choice!(
             stream,
             self.scan_break_keyword(stream),
@@ -3420,9 +3529,17 @@ impl Language {
         )
     }
 
+    fn dispatch_scan_yul_keyword(&self, stream: &mut Stream) -> bool {
+        if self.version_is_equal_to_or_greater_than_0_6_0 {
+            self.scan_yul_keyword_0_6_0(stream)
+        } else {
+            self.scan_yul_keyword_0_4_11(stream)
+        }
+    }
+
     #[inline]
     pub(crate) fn scan_yul_keyword(&self, stream: &mut Stream) -> bool {
-        self.scan_yul_keyword_0_4_11(stream)
+        self.dispatch_scan_yul_keyword(stream)
     }
 
     // «YulReservedKeyword» = "hex";

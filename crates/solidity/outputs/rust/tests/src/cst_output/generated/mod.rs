@@ -45,6 +45,8 @@ mod SingleLineComment;
 #[allow(non_snake_case)]
 mod SourceUnit;
 #[allow(non_snake_case)]
+mod Statement;
+#[allow(non_snake_case)]
 mod StringExpression;
 #[allow(non_snake_case)]
 mod TupleDeconstructionStatement;
@@ -56,5 +58,7 @@ mod UnsignedIntegerType;
 mod VersionPragma;
 #[allow(non_snake_case)]
 mod YulExpression;
+#[allow(non_snake_case)]
+mod YulStatement;
 
 pub const VERSION_BREAKS: [&str; 4] = ["0.4.11", "0.4.22", "0.6.0", "0.8.18"];

@@ -4,6 +4,11 @@ use crate::cst_output::runner::run;
 use anyhow::Result;
 
 #[test]
+fn abstract_contract() -> Result<()> {
+    return run("ContractDefinition", "abstract_contract");
+}
+
+#[test]
 fn empty_contract() -> Result<()> {
     return run("ContractDefinition", "empty_contract");
 }

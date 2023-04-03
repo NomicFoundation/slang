@@ -1493,7 +1493,9 @@ impl Language {
             ProductionKind::BreakStatement => {
                 call_parser(self, input, Language::parse_break_statement)
             }
-            ProductionKind::CatchClause => call_parser(self, input, Language::parse_catch_clause),
+            ProductionKind::CatchClause => {
+                try_call_parser(self, input, Language::maybe_parse_catch_clause)
+            }
             ProductionKind::ConstantDefinition => {
                 call_parser(self, input, Language::parse_constant_definition)
             }
@@ -1686,7 +1688,9 @@ impl Language {
             ProductionKind::TrailingTrivia => {
                 call_parser(self, input, Language::parse_trailing_trivia)
             }
-            ProductionKind::TryStatement => call_parser(self, input, Language::parse_try_statement),
+            ProductionKind::TryStatement => {
+                try_call_parser(self, input, Language::maybe_parse_try_statement)
+            }
             ProductionKind::TupleDeconstructionStatement => {
                 call_parser(self, input, Language::parse_tuple_deconstruction_statement)
             }
@@ -1757,7 +1761,7 @@ impl Language {
                 call_parser(self, input, Language::parse_yul_if_statement)
             }
             ProductionKind::YulLeaveStatement => {
-                call_parser(self, input, Language::parse_yul_leave_statement)
+                try_call_parser(self, input, Language::maybe_parse_yul_leave_statement)
             }
             ProductionKind::YulLiteral => call_parser(self, input, Language::parse_yul_literal),
             ProductionKind::YulStatement => call_parser(self, input, Language::parse_yul_statement),
