@@ -78,3 +78,18 @@ jobs:
       - name: "Deploy to GitHub Pages"
         id: "deployment"
         uses: "actions/deploy-pages@v2.0.0"
+
+      #
+      # Run Changesets:
+      #
+
+      - name: "Analyze Changesets"
+        uses: "changesets/action@v1.4.1"
+        with:
+          title: "Bump Slang Version"
+          commit: "Bump Slang Version"
+          version: "scripts/release/version.sh"
+          publish: "scripts/release/publish.sh"
+          createGithubReleases: true
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
