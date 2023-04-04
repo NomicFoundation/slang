@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-source "$(dirname "${BASH_SOURCE[0]}")/../_common.sh"
+source "$(dirname "${BASH_SOURCE[0]}")/../../_common.sh"
 
 # If running in GitHub CI, mark the repository as a safe directory in git:
 # See https://github.com/actions/checkout/issues/766
