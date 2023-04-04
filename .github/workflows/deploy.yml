@@ -1,41 +1,80 @@
 name: "deploy"
 
 on:
-  workflow_dispatch: {} # manual triggers from GitHub UI
-  push:
-    branches:
-      - "main"
+  # Run using manual triggers from GitHub UI:
+  # https://docs.github.com/en/actions/managing-workflow-runs/manually-running-a-workflow
+  workflow_dispatch: {}
+  # Run when invoked from other workflows:
+  # https://docs.github.com/en/actions/using-workflows/reusing-workflows
+  workflow_call: {}
 
 concurrency:
-  group: "pages"
+  group: "deploy"
   cancel-in-progress: true
 
 jobs:
-  github-pages:
+  deploy:
     runs-on: "ubuntu-latest"
+
+    if: "${{ github.ref_name == 'main' }}"
+
     permissions:
       id-token: "write"
       pages: "write"
+
     environment:
       name: "github-pages"
       url: "${{ steps.deployment.outputs.page_url }}"
+
     steps:
+      #
+      # Prepare:
+      #
+
       - name: "Clone repository"
         uses: "actions/checkout@v3.4.0"
-      - name: "Configure GitHub Pages"
-        uses: "actions/configure-pages@v3.0.5"
+
+      - name: "Restore hermit cache"
+        uses: "actions/cache@v3.3.1"
+        with:
+          path: ".hermit/"
+          key: "hermit-cache-${{ hashFiles('**/Cargo.lock', '**/package-lock.json', '**/Pipfile.lock') }}"
+          fail-on-cache-miss: true
+
+      - name: "Restore build cache"
+        uses: "actions/cache@v3.3.1"
+        with:
+          path: "target/"
+          key: "build-cache-${{ hashFiles('**/Cargo.lock', '**/package-lock.json', '**/Pipfile.lock') }}"
+          fail-on-cache-miss: true
+
+      - name: "Build devcontainer"
+        uses: "./.devcontainer"
+        with:
+          entrypoint: "echo"
+
       - name: "Install Dependencies"
         uses: "./.devcontainer"
         with:
-          entrypoint: "scripts/setup/pipenv.sh"
+          entrypoint: "scripts/setup/all.sh"
+
+      #
+      # Deploy Documentation:
+      #
+
       - name: "Build documentation"
         uses: "./.devcontainer"
         with:
           entrypoint: "scripts/documentation/build.sh"
+
+      - name: "Configure GitHub Pages"
+        uses: "actions/configure-pages@v3.0.5"
+
       - name: "Upload artifacts"
         uses: "actions/upload-pages-artifact@v1.0.7"
         with:
           path: "target/documentation"
+
       - name: "Deploy to GitHub Pages"
         id: "deployment"
         uses: "actions/deploy-pages@v2.0.0"

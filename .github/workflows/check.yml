@@ -1,54 +1,88 @@
 name: "check"
 
 on:
-  workflow_dispatch: {} # manual triggers from GitHub UI
-  push: {} # all branches
+  # Run using manual triggers from GitHub UI:
+  # https://docs.github.com/en/actions/managing-workflow-runs/manually-running-a-workflow
+  workflow_dispatch: {}
+  # Run on every push to any branch:
+  push: {}
 
 jobs:
   check:
     runs-on: "ubuntu-22.04"
     steps:
+      #
+      # Prepare:
+      #
+
       - name: "Clone repository"
         uses: "actions/checkout@v3.4.0"
+
       - name: "Restore hermit cache"
         uses: "actions/cache@v3.3.1"
         with:
           path: ".hermit/"
           key: "hermit-cache-${{ hashFiles('**/Cargo.lock', '**/package-lock.json', '**/Pipfile.lock') }}"
           restore-keys: "hermit-cache-"
+
       - name: "Restore build cache"
         uses: "actions/cache@v3.3.1"
         with:
           path: "target/"
           key: "build-cache-${{ hashFiles('**/Cargo.lock', '**/package-lock.json', '**/Pipfile.lock') }}"
           restore-keys: "build-cache-"
+
       - name: "Build devcontainer"
         uses: "./.devcontainer"
         with:
-          entrypoint: "echo" # empty entrypoint for timing
+          entrypoint: "echo"
+
       - name: "Install Dependencies"
         uses: "./.devcontainer"
         with:
           entrypoint: "scripts/setup/all.sh"
+
+      #
+      # Check:
+      # Run and report issues, even if other steps failed.
+      #
+
       - name: "Cargo check"
-        if: "success() || failure()" # run and report issues, even if previous steps failed
+        if: "success() || failure()"
         uses: "./.devcontainer"
         with:
           entrypoint: "scripts/cargo/check.sh"
+
       - name: "Cargo test"
-        if: "success() || failure()" # run and report issues, even if previous steps failed
+        if: "success() || failure()"
         uses: "./.devcontainer"
         with:
           entrypoint: "scripts/cargo/test.sh"
+
       - name: "Run linters"
-        if: "success() || failure()" # run and report issues, even if previous steps failed
+        if: "success() || failure()"
         uses: "./.devcontainer"
         with:
           entrypoint: "scripts/lint/all.sh"
+
       - name: "Build documentation"
-        if: "success() || failure()" # run and report issues, even if previous steps failed
+        if: "success() || failure()"
         uses: "./.devcontainer"
         with:
           entrypoint: "scripts/documentation/build.sh"
-      - name: "Repossess cached files" # as they are modified by devcontainer (root) user
+
+      #
+      # Clean Up:
+      #
+
+      - name: "Repossess cached files from devcontainer (root) user"
         run: "sudo chown -R $USER:$USER $GITHUB_WORKSPACE"
+
+  #
+  # If checks succeed:
+  #
+
+  trigger-deploy:
+    needs: "check"
+    if: "${{ github.ref_name == 'main' }}"
+    uses: "./.github/workflows/deploy.yml"

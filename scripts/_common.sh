@@ -6,3 +6,8 @@ source "$(dirname "${BASH_SOURCE[0]}")/_utils.sh"
 
 # Activate the Hermit environment:
 eval "$(_print_hermit_env)"
+
+# Strict checks for CI
+if [[ "${CI:-}" ]]; then
+  RUSTFLAGS="${RUSTFLAGS:-} --deny warnings"
+fi

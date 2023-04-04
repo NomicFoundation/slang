@@ -4,8 +4,7 @@ set -euo pipefail
 source "$(dirname "${BASH_SOURCE[0]}")/../_common.sh"
 
 (
-  cargo run \
-    --manifest-path "$REPO_ROOT/Cargo.toml" \
-    --bin "$(basename "$0")" \
+  cargo run --offline \
+    --manifest-path "$REPO_ROOT/crates/solidity/testing/smoke/Cargo.toml" \
     -- "$@"
 )
