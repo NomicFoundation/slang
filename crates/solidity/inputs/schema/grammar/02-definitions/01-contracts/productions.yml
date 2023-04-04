@@ -2,22 +2,38 @@
 
 - name: "ContractDefinition"
   kind: "Parser"
-  unversioned:
-    sequence:
-      - optional:
-          reference: "AbstractKeyword"
-      - reference: "ContractKeyword"
-      - reference: "Identifier"
-      - optional:
-          reference: "InheritanceSpecifierList"
-      - delimitedBy:
-          open:
-            reference: "OpenBrace"
-          expression:
-            zeroOrMore:
-              reference: "ContractBodyElement"
-          close:
-            reference: "CloseBrace"
+  versioned:
+    0.4.11:
+      sequence:
+        - reference: "ContractKeyword"
+        - reference: "Identifier"
+        - optional:
+            reference: "InheritanceSpecifierList"
+        - delimitedBy:
+            open:
+              reference: "OpenBrace"
+            expression:
+              zeroOrMore:
+                reference: "ContractBodyElement"
+            close:
+              reference: "CloseBrace"
+    0.6.0:
+      # added: "AbstractKeyword"
+      sequence:
+        - optional:
+            reference: "AbstractKeyword"
+        - reference: "ContractKeyword"
+        - reference: "Identifier"
+        - optional:
+            reference: "InheritanceSpecifierList"
+        - delimitedBy:
+            open:
+              reference: "OpenBrace"
+            expression:
+              zeroOrMore:
+                reference: "ContractBodyElement"
+            close:
+              reference: "CloseBrace"
 
 - name: "InheritanceSpecifierList"
   kind: "Parser"
