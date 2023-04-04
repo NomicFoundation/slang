@@ -2,6 +2,7 @@
   "private": true,
   "workspaces": [
     "crates/solidity/outputs/typescript/lib",
-    "scripts/lint"
+    "scripts/lint",
+    "scripts/release"
   ]
 }

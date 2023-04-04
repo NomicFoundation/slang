@@ -1,9 +1,8 @@
 {
-  "name": "solidity_typescript_lib",
+  "name": "slang-solidity",
   "version": "0.0.0",
   "description": "Template project for writing node package with napi-rs",
   "main": "index.js",
-  "repository": "git@github.com:napi-rs/package-template.git",
   "types": "index.d.ts",
   "napi": {
     "name": "solidity_typescript_lib",

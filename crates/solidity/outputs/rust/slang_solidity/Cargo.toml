@@ -9,12 +9,13 @@ description = "A modular set of compiler APIs empowering the next generation of 
 homepage = "https://nomicfoundation.github.io/slang/"
 repository = "https://github.com/NomicFoundation/slang/"
 authors = [
-  # TODO: add <email_address>
-  "Nomic Foundation",
+  "Nomic Foundation <packages@nomic.foundation>",
+  "Antony Blakey <antony@nomic.foundation>",
+  "Omar Tawfik <omar@nomic.foundation>",
 ]
 
-readme = "../../../../../README.md"
-license-file = "../../../../../LICENSE"
+readme = "README.md"
+license-file = "LICENSE"
 keywords = ["code-analysis", "parser", "sol", "solidity", "yul"]
 categories = [
   "compilers",
