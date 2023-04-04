@@ -19,8 +19,10 @@ jobs:
     if: "${{ github.ref_name == 'main' }}"
 
     permissions:
+      contents: "write"
       id-token: "write"
       pages: "write"
+      pull-requests: "write"
 
     environment:
       name: "github-pages"
@@ -78,3 +80,25 @@ jobs:
       - name: "Deploy to GitHub Pages"
         id: "deployment"
         uses: "actions/deploy-pages@v2.0.0"
+
+      #
+      # Clean Up:
+      #
+
+      - name: "Repossess cached files from devcontainer (root) user"
+        run: "sudo chown -R $USER:$USER $GITHUB_WORKSPACE"
+
+      #
+      # Run Changesets:
+      #
+
+      - name: "Run Changesets"
+        uses: "changesets/action@v1.4.1"
+        with:
+          title: "Bump Slang Version"
+          commit: "Bump Slang Version"
+          version: "scripts/release/version.sh"
+          publish: "scripts/release/publish.sh"
+          createGithubReleases: true
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"

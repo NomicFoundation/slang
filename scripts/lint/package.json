@@ -1,4 +1,5 @@
 {
+  "name": "scripts_lint",
   "private": true,
   "devDependencies": {
     "@types/node": "18.15.11"
