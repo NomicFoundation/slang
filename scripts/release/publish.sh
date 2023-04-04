@@ -6,11 +6,9 @@ source "$(dirname "${BASH_SOURCE[0]}")/../_common.sh"
 (
   printf "\n\n🚀 Publishing To Cargo 🚀\n\n\n"
 
-  # TODO: Make sure to pass `CARGO_REGISTRY_TOKEN` when you disable dry-run:
   _group_output \
     cargo publish \
     --all-features \
-    --dry-run \
     --package "slang_solidity"
 
   printf "\n\n✅ Published to Cargo Successfully ✅\n\n\n"
