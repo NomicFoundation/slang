@@ -31,7 +31,7 @@ function _group_output() {
     return 0
   fi
 
-  echo "::group::$(basename "$1")"
+  echo "::group::$*"
   echo ""
   "$@"
   echo ""

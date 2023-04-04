@@ -13,18 +13,20 @@ TYPESCRIPT_DIR="$REPO_ROOT/crates/solidity/outputs/typescript/lib"
   # 1) Consume/delete the changeset files currently in "$REPO_ROOT/.changeset"
   # 2) Populate the CHANGELOG.md for the typescript package.
   # 3) Bump the version in its package.json accourdingly.
-  changeset version
-  npm install --package-lock-only
+  _group_output changeset version
+  _group_output npm install --package-lock-only
 
   printf "\n\n✅ TypeScript Success ✅\n\n\n"
 )
+
+NEW_VERSION=$(jq --raw-output ".version" "$TYPESCRIPT_DIR/package.json")
 
 (
   printf "\n\n📜 Porting changes to Rust 📜\n\n\n"
 
   # Since changeset doesn't handle Cargo packages, we need to copy the changes over manually.
-  newVersion=$(jq --raw-output ".version" "$TYPESCRIPT_DIR/package.json")
-  cargo set-version --workspace "$newVersion"
+  _group_output cargo install cargo-edit
+  _group_output cargo set-version "$NEW_VERSION" --workspace
 
   printf "\n\n✅ Rust Success ✅\n\n\n"
 )

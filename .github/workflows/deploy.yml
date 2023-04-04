@@ -16,11 +16,13 @@ jobs:
   deploy:
     runs-on: "ubuntu-latest"
 
-    if: "${{ github.ref_name == 'main' }}"
+    if: "${{ github.ref_name == 'OmarTawfik/test-publish' }}"
 
     permissions:
+      contents: "write"
       id-token: "write"
       pages: "write"
+      pull-requests: "write"
 
     environment:
       name: "github-pages"
@@ -39,14 +41,14 @@ jobs:
         with:
           path: ".hermit/"
           key: "hermit-cache-${{ hashFiles('**/Cargo.lock', '**/package-lock.json', '**/Pipfile.lock') }}"
-          fail-on-cache-miss: true
+          restore-keys: "hermit-cache-"
 
       - name: "Restore build cache"
         uses: "actions/cache@v3.3.1"
         with:
           path: "target/"
           key: "build-cache-${{ hashFiles('**/Cargo.lock', '**/package-lock.json', '**/Pipfile.lock') }}"
-          fail-on-cache-miss: true
+          restore-keys: "hermit-cache-"
 
       - name: "Build devcontainer"
         uses: "./.devcontainer"
@@ -78,6 +80,13 @@ jobs:
       - name: "Deploy to GitHub Pages"
         id: "deployment"
         uses: "actions/deploy-pages@v2.0.0"
+
+      #
+      # Clean Up:
+      #
+
+      - name: "Repossess cached files from devcontainer (root) user"
+        run: "sudo chown -R $USER:$USER $GITHUB_WORKSPACE"
 
       #
       # Run Changesets:
