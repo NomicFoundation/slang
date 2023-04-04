@@ -26,9 +26,6 @@ impl NavigationEntry {
             NavigationEntry::Directory { children, .. } => {
                 let mut nav_page = MarkdownWriter::new();
 
-                nav_page.write_comment("markdownlint-disable first-line-h1");
-                nav_page.write_newline();
-
                 for child in children {
                     child.write_files(codegen, &current_dir)?;
                     nav_page.write_list_link(child.title(), &child.nav_path());

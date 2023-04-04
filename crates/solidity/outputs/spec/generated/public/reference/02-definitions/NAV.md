@@ -1,7 +1,5 @@
 <!-- This file is generated automatically by infrastructure scripts. Please don't edit by hand. -->
 
-<!-- markdownlint-disable first-line-h1 -->
-
 - [2.1. Contracts](./01-contracts/index.md)
 - [2.2. Interfaces](./02-interfaces/index.md)
 - [2.3. Libraries](./03-libraries/index.md)

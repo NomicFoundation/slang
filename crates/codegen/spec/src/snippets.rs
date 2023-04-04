@@ -93,9 +93,6 @@ impl<'context> Snippets<'context> {
     fn get_snippet(&self, production: &ProductionRef, version: &Version) -> Option<String> {
         let mut snippet = MarkdownWriter::new();
 
-        snippet.write_comment("markdownlint-disable first-line-h1");
-        snippet.write_newline();
-
         let language = "ebnf"; // https://pygments.org/languages/
         let class = "slang-ebnf"; // used to select code blocks via JS during runtime
         let id = production.name(); // used for navigation (generarating URL hashes)
