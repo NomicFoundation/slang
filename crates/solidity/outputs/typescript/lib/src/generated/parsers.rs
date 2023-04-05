@@ -14705,7 +14705,7 @@ impl Language {
         }
     }
 
-    // SourceUnit = 1…{Directive | Definition} [EndOfFileTrivia];
+    // SourceUnit = {Directive | Definition} [EndOfFileTrivia];
 
     #[allow(unused_assignments, unused_parens)]
     fn parse_source_unit_0_4_11(&self, stream: &mut Stream) -> ParserResult {
@@ -14732,9 +14732,6 @@ impl Language {
                         };
                     } {
                         Fail { error } => {
-                            if result.is_empty() {
-                                break Fail { error };
-                            }
                             stream.set_position(start_position);
                             break Pass {
                                 node: cst::Node::rule(RuleKind::_REPEATED, result),

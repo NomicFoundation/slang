@@ -4,7 +4,7 @@
   kind: "Parser"
   unversioned:
     sequence:
-      - oneOrMore:
+      - zeroOrMore:
           choice:
             - reference: "Directive"
             - reference: "Definition"
