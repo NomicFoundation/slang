@@ -1,6 +1,6 @@
 {
   "name": "slang-solidity",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Template project for writing node package with napi-rs",
   "main": "index.js",
   "types": "index.d.ts",
