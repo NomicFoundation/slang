@@ -1,0 +1,1 @@
+{ unchecked { x = 1; } }

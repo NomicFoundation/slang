@@ -2,24 +2,35 @@
 
 - name: "Block"
   kind: "Parser"
-  unversioned:
-    delimitedBy:
-      open:
-        reference: "OpenBrace"
-      expression:
-        zeroOrMore:
-          choice:
-            - reference: "Statement"
-            - reference: "UncheckedBlock"
-      close:
-        reference: "CloseBrace"
+  versioned:
+    0.4.11:
+      delimitedBy:
+        open:
+          reference: "OpenBrace"
+        expression:
+          zeroOrMore:
+            reference: "Statement"
+        close:
+          reference: "CloseBrace"
+    0.8.0:
+      delimitedBy:
+        open:
+          reference: "OpenBrace"
+        expression:
+          zeroOrMore:
+            choice:
+              - reference: "Statement"
+              - reference: "UncheckedBlock"
+        close:
+          reference: "CloseBrace"
 
 - name: "UncheckedBlock"
   kind: "Parser"
-  unversioned:
-    sequence:
-      - reference: "UncheckedKeyword"
-      - reference: "Block"
+  versioned:
+    0.8.0:
+      sequence:
+        - reference: "UncheckedKeyword"
+        - reference: "Block"
 
 - name: "Statement"
   kind: "Parser"

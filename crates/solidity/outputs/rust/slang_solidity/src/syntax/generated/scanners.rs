@@ -468,6 +468,41 @@ impl Language {
         self.scan_break_keyword_0_4_11(stream)
     }
 
+    // (* v0.4.11 *)
+    // «ByteType» = "byte";
+
+    #[allow(unused_assignments, unused_parens)]
+    fn scan_byte_type_0_4_11(&self, stream: &mut Stream) -> bool {
+        scan_not_followed_by!(
+            stream,
+            scan_chars!(stream, 'b', 'y', 't', 'e'),
+            scan_predicate!(stream, |c| c == '$'
+                || ('0' <= c && c <= '9')
+                || ('A' <= c && c <= 'Z')
+                || c == '_'
+                || ('a' <= c && c <= 'z'))
+        )
+    }
+
+    fn dispatch_scan_byte_type(&self, stream: &mut Stream) -> Option<bool> {
+        if self.version_is_equal_to_or_greater_than_0_8_0 {
+            None
+        } else {
+            Some(self.scan_byte_type_0_4_11(stream))
+        }
+    }
+
+    #[inline]
+    pub(crate) fn maybe_scan_byte_type(&self, stream: &mut Stream) -> Option<bool> {
+        self.dispatch_scan_byte_type(stream)
+    }
+
+    #[inline]
+    pub(crate) fn scan_byte_type(&self, stream: &mut Stream) -> bool {
+        self.dispatch_scan_byte_type(stream)
+            .expect("Validation should have checked that references are valid between versions")
+    }
+
     // «CalldataKeyword» = "calldata";
 
     #[allow(unused_assignments, unused_parens)]
@@ -1559,66 +1594,7 @@ impl Language {
             scan_choice!(
                 stream,
                 self.scan_keyword(stream),
-                scan_trie!(
-                    stream,
-                    'a' + scan_trie!(
-                        stream,
-                        'f' + scan_chars!(stream, 't', 'e', 'r'),
-                        'l' + scan_chars!(stream, 'i', 'a', 's'),
-                        'p' + scan_chars!(stream, 'p', 'l', 'y'),
-                        'u' + scan_chars!(stream, 't', 'o')
-                    ),
-                    'b' + scan_chars!(stream, 'y', 't', 'e'),
-                    'c' + scan_chars!(stream, 'o', 'p', 'y', 'o', 'f'),
-                    'd' + scan_chars!(stream, 'e', 'f', 'i', 'n', 'e'),
-                    'f' + scan_chars!(stream, 'i', 'n', 'a', 'l'),
-                    'h' + scan_chars!(stream, 'e', 'x'),
-                    'i' + scan_trie!(
-                        stream,
-                        'm' + scan_chars!(stream, 'p', 'l', 'e', 'm', 'e', 'n', 't', 's'),
-                        'n' + scan_trie!(stream, EMPTY, 'l' + scan_chars!(stream, 'i', 'n', 'e'))
-                    ),
-                    'm' + scan_trie!(
-                        stream,
-                        'a' + scan_trie!(
-                            stream,
-                            'c' + scan_chars!(stream, 'r', 'o'),
-                            't' + scan_chars!(stream, 'c', 'h')
-                        ),
-                        'u' + scan_chars!(stream, 't', 'a', 'b', 'l', 'e')
-                    ),
-                    'n' + scan_chars!(stream, 'u', 'l', 'l'),
-                    'o' + scan_chars!(stream, 'f'),
-                    'p' + scan_trie!(
-                        stream,
-                        'a' + scan_chars!(stream, 'r', 't', 'i', 'a', 'l'),
-                        'r' + scan_chars!(stream, 'o', 'm', 'i', 's', 'e')
-                    ),
-                    'r' + scan_sequence!(
-                        scan_chars!(stream, 'e'),
-                        scan_trie!(
-                            stream,
-                            'f' + scan_chars!(stream, 'e', 'r', 'e', 'n', 'c', 'e'),
-                            'l' + scan_chars!(stream, 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e')
-                        )
-                    ),
-                    's' + scan_trie!(
-                        stream,
-                        'e' + scan_chars!(stream, 'a', 'l', 'e', 'd'),
-                        'i' + scan_chars!(stream, 'z', 'e', 'o', 'f'),
-                        't' + scan_chars!(stream, 'a', 't', 'i', 'c'),
-                        'u' + scan_chars!(stream, 'p', 'p', 'o', 'r', 't', 's')
-                    ),
-                    't' + scan_sequence!(
-                        scan_chars!(stream, 'y', 'p', 'e'),
-                        scan_trie!(
-                            stream,
-                            'd' + scan_chars!(stream, 'e', 'f'),
-                            'o' + scan_chars!(stream, 'f')
-                        )
-                    ),
-                    'v' + scan_chars!(stream, 'a', 'r')
-                ),
+                self.scan_reserved_keyword(stream),
                 self.scan_fixed_bytes_type(stream),
                 self.scan_signed_fixed_type(stream),
                 self.scan_unsigned_fixed_type(stream),
@@ -1805,7 +1781,7 @@ impl Language {
     }
 
     // (* v0.4.11 *)
-    // «Keyword» = «AddressKeyword» | «AnonymousKeyword» | «AsKeyword» | «AssemblyKeyword» | «BoolKeyword» | «BreakKeyword» | «CalldataKeyword» | «CaseKeyword» | «ConstantKeyword» | «ConstructorKeyword» | «ContinueKeyword» | «ContractKeyword» | «DaysKeyword» | «DefaultKeyword» | «DeleteKeyword» | «DoKeyword» | «ElseKeyword» | «EmitKeyword» | «EnumKeyword» | «EtherKeyword» | «EventKeyword» | «ExternalKeyword» | «FallbackKeyword» | «FalseKeyword» | «FinneyKeyword» | «ForKeyword» | «FunctionKeyword» | «GweiKeyword» | «HoursKeyword» | «IfKeyword» | «ImmutableKeyword» | «ImportKeyword» | «IndexedKeyword» | «InterfaceKeyword» | «InternalKeyword» | «IsKeyword» | «LetKeyword» | «LibraryKeyword» | «MappingKeyword» | «MemoryKeyword» | «MinutesKeyword» | «ModifierKeyword» | «NewKeyword» | «OverrideKeyword» | «PayableKeyword» | «PragmaKeyword» | «PrivateKeyword» | «PublicKeyword» | «PureKeyword» | «ReceiveKeyword» | «ReturnKeyword» | «ReturnsKeyword» | «SecondsKeyword» | «StorageKeyword» | «StringKeyword» | «StructKeyword» | «SwitchKeyword» | «SzaboKeyword» | «TrueKeyword» | «TypeKeyword» | «UncheckedKeyword» | «UsingKeyword» | «ViewKeyword» | «VirtualKeyword» | «WeeksKeyword» | «WeiKeyword» | «WhileKeyword» | «YearsKeyword»;
+    // «Keyword» = «AddressKeyword» | «AnonymousKeyword» | «AsKeyword» | «AssemblyKeyword» | «BoolKeyword» | «BreakKeyword» | «CalldataKeyword» | «CaseKeyword» | «ConstantKeyword» | «ConstructorKeyword» | «ContinueKeyword» | «ContractKeyword» | «DaysKeyword» | «DefaultKeyword» | «DeleteKeyword» | «DoKeyword» | «ElseKeyword» | «EmitKeyword» | «EnumKeyword» | «EtherKeyword» | «EventKeyword» | «ExternalKeyword» | «FallbackKeyword» | «FalseKeyword» | «FinneyKeyword» | «ForKeyword» | «FunctionKeyword» | «GweiKeyword» | «HoursKeyword» | «IfKeyword» | «ImmutableKeyword» | «ImportKeyword» | «IndexedKeyword» | «InterfaceKeyword» | «InternalKeyword» | «IsKeyword» | «LetKeyword» | «LibraryKeyword» | «MappingKeyword» | «MemoryKeyword» | «MinutesKeyword» | «ModifierKeyword» | «NewKeyword» | «OverrideKeyword» | «PayableKeyword» | «PragmaKeyword» | «PrivateKeyword» | «PublicKeyword» | «PureKeyword» | «ReceiveKeyword» | «ReturnKeyword» | «ReturnsKeyword» | «SecondsKeyword» | «StorageKeyword» | «StringKeyword» | «StructKeyword» | «SwitchKeyword» | «SzaboKeyword» | «TrueKeyword» | «TypeKeyword» | «UsingKeyword» | «ViewKeyword» | «VirtualKeyword» | «WeeksKeyword» | «WeiKeyword» | «WhileKeyword» | «YearsKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
@@ -1871,7 +1847,6 @@ impl Language {
             self.scan_szabo_keyword(stream),
             self.scan_true_keyword(stream),
             self.scan_type_keyword(stream),
-            self.scan_unchecked_keyword(stream),
             self.scan_using_keyword(stream),
             self.scan_view_keyword(stream),
             self.scan_virtual_keyword(stream),
@@ -1883,10 +1858,90 @@ impl Language {
     }
 
     // (* v0.6.0 *)
-    // «Keyword» = «AbstractKeyword» | «AddressKeyword» | «AnonymousKeyword» | «AsKeyword» | «AssemblyKeyword» | «BoolKeyword» | «BreakKeyword» | «CalldataKeyword» | «CaseKeyword» | «CatchKeyword» | «ConstantKeyword» | «ConstructorKeyword» | «ContinueKeyword» | «ContractKeyword» | «DaysKeyword» | «DefaultKeyword» | «DeleteKeyword» | «DoKeyword» | «ElseKeyword» | «EmitKeyword» | «EnumKeyword» | «EtherKeyword» | «EventKeyword» | «ExternalKeyword» | «FallbackKeyword» | «FalseKeyword» | «FinneyKeyword» | «ForKeyword» | «FunctionKeyword» | «GweiKeyword» | «HoursKeyword» | «IfKeyword» | «ImmutableKeyword» | «ImportKeyword» | «IndexedKeyword» | «InterfaceKeyword» | «InternalKeyword» | «IsKeyword» | «LetKeyword» | «LibraryKeyword» | «MappingKeyword» | «MemoryKeyword» | «MinutesKeyword» | «ModifierKeyword» | «NewKeyword» | «OverrideKeyword» | «PayableKeyword» | «PragmaKeyword» | «PrivateKeyword» | «PublicKeyword» | «PureKeyword» | «ReceiveKeyword» | «ReturnKeyword» | «ReturnsKeyword» | «SecondsKeyword» | «StorageKeyword» | «StringKeyword» | «StructKeyword» | «SwitchKeyword» | «SzaboKeyword» | «TrueKeyword» | «TryKeyword» | «TypeKeyword» | «UncheckedKeyword» | «UsingKeyword» | «ViewKeyword» | «VirtualKeyword» | «WeeksKeyword» | «WeiKeyword» | «WhileKeyword» | «YearsKeyword»;
+    // «Keyword» = «AbstractKeyword» | «AddressKeyword» | «AnonymousKeyword» | «AsKeyword» | «AssemblyKeyword» | «BoolKeyword» | «BreakKeyword» | «CalldataKeyword» | «CaseKeyword» | «CatchKeyword» | «ConstantKeyword» | «ConstructorKeyword» | «ContinueKeyword» | «ContractKeyword» | «DaysKeyword» | «DefaultKeyword» | «DeleteKeyword» | «DoKeyword» | «ElseKeyword» | «EmitKeyword» | «EnumKeyword» | «EtherKeyword» | «EventKeyword» | «ExternalKeyword» | «FallbackKeyword» | «FalseKeyword» | «FinneyKeyword» | «ForKeyword» | «FunctionKeyword» | «GweiKeyword» | «HoursKeyword» | «IfKeyword» | «ImmutableKeyword» | «ImportKeyword» | «IndexedKeyword» | «InterfaceKeyword» | «InternalKeyword» | «IsKeyword» | «LetKeyword» | «LibraryKeyword» | «MappingKeyword» | «MemoryKeyword» | «MinutesKeyword» | «ModifierKeyword» | «NewKeyword» | «OverrideKeyword» | «PayableKeyword» | «PragmaKeyword» | «PrivateKeyword» | «PublicKeyword» | «PureKeyword» | «ReceiveKeyword» | «ReturnKeyword» | «ReturnsKeyword» | «SecondsKeyword» | «StorageKeyword» | «StringKeyword» | «StructKeyword» | «SwitchKeyword» | «SzaboKeyword» | «TrueKeyword» | «TryKeyword» | «TypeKeyword» | «UsingKeyword» | «ViewKeyword» | «VirtualKeyword» | «WeeksKeyword» | «WeiKeyword» | «WhileKeyword» | «YearsKeyword»;
 
     #[allow(unused_assignments, unused_parens)]
     fn scan_keyword_0_6_0(&self, stream: &mut Stream) -> bool {
+        scan_choice!(
+            stream,
+            self.scan_abstract_keyword(stream),
+            self.scan_address_keyword(stream),
+            self.scan_anonymous_keyword(stream),
+            self.scan_as_keyword(stream),
+            self.scan_assembly_keyword(stream),
+            self.scan_bool_keyword(stream),
+            self.scan_break_keyword(stream),
+            self.scan_calldata_keyword(stream),
+            self.scan_case_keyword(stream),
+            self.scan_catch_keyword(stream),
+            self.scan_constant_keyword(stream),
+            self.scan_constructor_keyword(stream),
+            self.scan_continue_keyword(stream),
+            self.scan_contract_keyword(stream),
+            self.scan_days_keyword(stream),
+            self.scan_default_keyword(stream),
+            self.scan_delete_keyword(stream),
+            self.scan_do_keyword(stream),
+            self.scan_else_keyword(stream),
+            self.scan_emit_keyword(stream),
+            self.scan_enum_keyword(stream),
+            self.scan_ether_keyword(stream),
+            self.scan_event_keyword(stream),
+            self.scan_external_keyword(stream),
+            self.scan_fallback_keyword(stream),
+            self.scan_false_keyword(stream),
+            self.scan_finney_keyword(stream),
+            self.scan_for_keyword(stream),
+            self.scan_function_keyword(stream),
+            self.scan_gwei_keyword(stream),
+            self.scan_hours_keyword(stream),
+            self.scan_if_keyword(stream),
+            self.scan_immutable_keyword(stream),
+            self.scan_import_keyword(stream),
+            self.scan_indexed_keyword(stream),
+            self.scan_interface_keyword(stream),
+            self.scan_internal_keyword(stream),
+            self.scan_is_keyword(stream),
+            self.scan_let_keyword(stream),
+            self.scan_library_keyword(stream),
+            self.scan_mapping_keyword(stream),
+            self.scan_memory_keyword(stream),
+            self.scan_minutes_keyword(stream),
+            self.scan_modifier_keyword(stream),
+            self.scan_new_keyword(stream),
+            self.scan_override_keyword(stream),
+            self.scan_payable_keyword(stream),
+            self.scan_pragma_keyword(stream),
+            self.scan_private_keyword(stream),
+            self.scan_public_keyword(stream),
+            self.scan_pure_keyword(stream),
+            self.scan_receive_keyword(stream),
+            self.scan_return_keyword(stream),
+            self.scan_returns_keyword(stream),
+            self.scan_seconds_keyword(stream),
+            self.scan_storage_keyword(stream),
+            self.scan_string_keyword(stream),
+            self.scan_struct_keyword(stream),
+            self.scan_switch_keyword(stream),
+            self.scan_szabo_keyword(stream),
+            self.scan_true_keyword(stream),
+            self.scan_try_keyword(stream),
+            self.scan_type_keyword(stream),
+            self.scan_using_keyword(stream),
+            self.scan_view_keyword(stream),
+            self.scan_virtual_keyword(stream),
+            self.scan_weeks_keyword(stream),
+            self.scan_wei_keyword(stream),
+            self.scan_while_keyword(stream),
+            self.scan_years_keyword(stream)
+        )
+    }
+
+    // (* v0.8.0 *)
+    // «Keyword» = «AbstractKeyword» | «AddressKeyword» | «AnonymousKeyword» | «AsKeyword» | «AssemblyKeyword» | «BoolKeyword» | «BreakKeyword» | «CalldataKeyword» | «CaseKeyword» | «CatchKeyword» | «ConstantKeyword» | «ConstructorKeyword» | «ContinueKeyword» | «ContractKeyword» | «DaysKeyword» | «DefaultKeyword» | «DeleteKeyword» | «DoKeyword» | «ElseKeyword» | «EmitKeyword» | «EnumKeyword» | «EtherKeyword» | «EventKeyword» | «ExternalKeyword» | «FallbackKeyword» | «FalseKeyword» | «FinneyKeyword» | «ForKeyword» | «FunctionKeyword» | «GweiKeyword» | «HoursKeyword» | «IfKeyword» | «ImmutableKeyword» | «ImportKeyword» | «IndexedKeyword» | «InterfaceKeyword» | «InternalKeyword» | «IsKeyword» | «LetKeyword» | «LibraryKeyword» | «MappingKeyword» | «MemoryKeyword» | «MinutesKeyword» | «ModifierKeyword» | «NewKeyword» | «OverrideKeyword» | «PayableKeyword» | «PragmaKeyword» | «PrivateKeyword» | «PublicKeyword» | «PureKeyword» | «ReceiveKeyword» | «ReturnKeyword» | «ReturnsKeyword» | «SecondsKeyword» | «StorageKeyword» | «StringKeyword» | «StructKeyword» | «SwitchKeyword» | «SzaboKeyword» | «TrueKeyword» | «TryKeyword» | «TypeKeyword» | «UncheckedKeyword» | «UsingKeyword» | «ViewKeyword» | «VirtualKeyword» | «WeeksKeyword» | «WeiKeyword» | «WhileKeyword» | «YearsKeyword»;
+
+    #[allow(unused_assignments, unused_parens)]
+    fn scan_keyword_0_8_0(&self, stream: &mut Stream) -> bool {
         scan_choice!(
             stream,
             self.scan_abstract_keyword(stream),
@@ -1964,7 +2019,9 @@ impl Language {
     }
 
     fn dispatch_scan_keyword(&self, stream: &mut Stream) -> bool {
-        if self.version_is_equal_to_or_greater_than_0_6_0 {
+        if self.version_is_equal_to_or_greater_than_0_8_0 {
+            self.scan_keyword_0_8_0(stream)
+        } else if self.version_is_equal_to_or_greater_than_0_6_0 {
             self.scan_keyword_0_6_0(stream)
         } else {
             self.scan_keyword_0_4_11(stream)
@@ -2594,6 +2651,7 @@ impl Language {
         self.scan_receive_keyword_0_4_11(stream)
     }
 
+    // (* v0.4.11 *)
     // «ReservedKeyword» = "after" | "alias" | "apply" | "auto" | "byte" | "copyof" | "define" | "final" | "hex" | "implements" | "in" | "inline" | "macro" | "match" | "mutable" | "null" | "of" | "partial" | "promise" | "reference" | "relocatable" | "sealed" | "sizeof" | "static" | "supports" | "typedef" | "typeof" | "var";
 
     #[allow(unused_assignments, unused_parens)]
@@ -2660,9 +2718,155 @@ impl Language {
         )
     }
 
+    // (* v0.5.0 *)
+    // «ReservedKeyword» = "after" | "alias" | "apply" | "auto" | "byte" | "copyof" | "define" | "final" | "hex" | "implements" | "in" | "inline" | "macro" | "match" | "mutable" | "null" | "of" | "partial" | "promise" | "reference" | "relocatable" | "sealed" | "sizeof" | "static" | "supports" | "typedef" | "typeof" | "unchecked" | "var";
+
+    #[allow(unused_assignments, unused_parens)]
+    fn scan_reserved_keyword_0_5_0(&self, stream: &mut Stream) -> bool {
+        scan_trie!(
+            stream,
+            'a' + scan_trie!(
+                stream,
+                'f' + scan_chars!(stream, 't', 'e', 'r'),
+                'l' + scan_chars!(stream, 'i', 'a', 's'),
+                'p' + scan_chars!(stream, 'p', 'l', 'y'),
+                'u' + scan_chars!(stream, 't', 'o')
+            ),
+            'b' + scan_chars!(stream, 'y', 't', 'e'),
+            'c' + scan_chars!(stream, 'o', 'p', 'y', 'o', 'f'),
+            'd' + scan_chars!(stream, 'e', 'f', 'i', 'n', 'e'),
+            'f' + scan_chars!(stream, 'i', 'n', 'a', 'l'),
+            'h' + scan_chars!(stream, 'e', 'x'),
+            'i' + scan_trie!(
+                stream,
+                'm' + scan_chars!(stream, 'p', 'l', 'e', 'm', 'e', 'n', 't', 's'),
+                'n' + scan_trie!(stream, EMPTY, 'l' + scan_chars!(stream, 'i', 'n', 'e'))
+            ),
+            'm' + scan_trie!(
+                stream,
+                'a' + scan_trie!(
+                    stream,
+                    'c' + scan_chars!(stream, 'r', 'o'),
+                    't' + scan_chars!(stream, 'c', 'h')
+                ),
+                'u' + scan_chars!(stream, 't', 'a', 'b', 'l', 'e')
+            ),
+            'n' + scan_chars!(stream, 'u', 'l', 'l'),
+            'o' + scan_chars!(stream, 'f'),
+            'p' + scan_trie!(
+                stream,
+                'a' + scan_chars!(stream, 'r', 't', 'i', 'a', 'l'),
+                'r' + scan_chars!(stream, 'o', 'm', 'i', 's', 'e')
+            ),
+            'r' + scan_sequence!(
+                scan_chars!(stream, 'e'),
+                scan_trie!(
+                    stream,
+                    'f' + scan_chars!(stream, 'e', 'r', 'e', 'n', 'c', 'e'),
+                    'l' + scan_chars!(stream, 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e')
+                )
+            ),
+            's' + scan_trie!(
+                stream,
+                'e' + scan_chars!(stream, 'a', 'l', 'e', 'd'),
+                'i' + scan_chars!(stream, 'z', 'e', 'o', 'f'),
+                't' + scan_chars!(stream, 'a', 't', 'i', 'c'),
+                'u' + scan_chars!(stream, 'p', 'p', 'o', 'r', 't', 's')
+            ),
+            't' + scan_sequence!(
+                scan_chars!(stream, 'y', 'p', 'e'),
+                scan_trie!(
+                    stream,
+                    'd' + scan_chars!(stream, 'e', 'f'),
+                    'o' + scan_chars!(stream, 'f')
+                )
+            ),
+            'u' + scan_chars!(stream, 'n', 'c', 'h', 'e', 'c', 'k', 'e', 'd'),
+            'v' + scan_chars!(stream, 'a', 'r')
+        )
+    }
+
+    // (* v0.8.0 *)
+    // «ReservedKeyword» = "after" | "alias" | "apply" | "auto" | "byte" | "copyof" | "define" | "final" | "hex" | "implements" | "in" | "inline" | "macro" | "match" | "mutable" | "null" | "of" | "partial" | "promise" | "reference" | "relocatable" | "sealed" | "sizeof" | "static" | "supports" | "typedef" | "typeof" | "unchecked" | "var";
+
+    #[allow(unused_assignments, unused_parens)]
+    fn scan_reserved_keyword_0_8_0(&self, stream: &mut Stream) -> bool {
+        scan_trie!(
+            stream,
+            'a' + scan_trie!(
+                stream,
+                'f' + scan_chars!(stream, 't', 'e', 'r'),
+                'l' + scan_chars!(stream, 'i', 'a', 's'),
+                'p' + scan_chars!(stream, 'p', 'l', 'y'),
+                'u' + scan_chars!(stream, 't', 'o')
+            ),
+            'b' + scan_chars!(stream, 'y', 't', 'e'),
+            'c' + scan_chars!(stream, 'o', 'p', 'y', 'o', 'f'),
+            'd' + scan_chars!(stream, 'e', 'f', 'i', 'n', 'e'),
+            'f' + scan_chars!(stream, 'i', 'n', 'a', 'l'),
+            'h' + scan_chars!(stream, 'e', 'x'),
+            'i' + scan_trie!(
+                stream,
+                'm' + scan_chars!(stream, 'p', 'l', 'e', 'm', 'e', 'n', 't', 's'),
+                'n' + scan_trie!(stream, EMPTY, 'l' + scan_chars!(stream, 'i', 'n', 'e'))
+            ),
+            'm' + scan_trie!(
+                stream,
+                'a' + scan_trie!(
+                    stream,
+                    'c' + scan_chars!(stream, 'r', 'o'),
+                    't' + scan_chars!(stream, 'c', 'h')
+                ),
+                'u' + scan_chars!(stream, 't', 'a', 'b', 'l', 'e')
+            ),
+            'n' + scan_chars!(stream, 'u', 'l', 'l'),
+            'o' + scan_chars!(stream, 'f'),
+            'p' + scan_trie!(
+                stream,
+                'a' + scan_chars!(stream, 'r', 't', 'i', 'a', 'l'),
+                'r' + scan_chars!(stream, 'o', 'm', 'i', 's', 'e')
+            ),
+            'r' + scan_sequence!(
+                scan_chars!(stream, 'e'),
+                scan_trie!(
+                    stream,
+                    'f' + scan_chars!(stream, 'e', 'r', 'e', 'n', 'c', 'e'),
+                    'l' + scan_chars!(stream, 'o', 'c', 'a', 't', 'a', 'b', 'l', 'e')
+                )
+            ),
+            's' + scan_trie!(
+                stream,
+                'e' + scan_chars!(stream, 'a', 'l', 'e', 'd'),
+                'i' + scan_chars!(stream, 'z', 'e', 'o', 'f'),
+                't' + scan_chars!(stream, 'a', 't', 'i', 'c'),
+                'u' + scan_chars!(stream, 'p', 'p', 'o', 'r', 't', 's')
+            ),
+            't' + scan_sequence!(
+                scan_chars!(stream, 'y', 'p', 'e'),
+                scan_trie!(
+                    stream,
+                    'd' + scan_chars!(stream, 'e', 'f'),
+                    'o' + scan_chars!(stream, 'f')
+                )
+            ),
+            'u' + scan_chars!(stream, 'n', 'c', 'h', 'e', 'c', 'k', 'e', 'd'),
+            'v' + scan_chars!(stream, 'a', 'r')
+        )
+    }
+
+    fn dispatch_scan_reserved_keyword(&self, stream: &mut Stream) -> bool {
+        if self.version_is_equal_to_or_greater_than_0_8_0 {
+            self.scan_reserved_keyword_0_8_0(stream)
+        } else if self.version_is_equal_to_or_greater_than_0_5_0 {
+            self.scan_reserved_keyword_0_5_0(stream)
+        } else {
+            self.scan_reserved_keyword_0_4_11(stream)
+        }
+    }
+
     #[inline]
     pub(crate) fn scan_reserved_keyword(&self, stream: &mut Stream) -> bool {
-        self.scan_reserved_keyword_0_4_11(stream)
+        self.dispatch_scan_reserved_keyword(stream)
     }
 
     // «ReturnKeyword» = "return";
@@ -3169,10 +3373,11 @@ impl Language {
         self.scan_type_keyword_0_4_11(stream)
     }
 
+    // (* v0.8.0 *)
     // «UncheckedKeyword» = "unchecked";
 
     #[allow(unused_assignments, unused_parens)]
-    fn scan_unchecked_keyword_0_4_11(&self, stream: &mut Stream) -> bool {
+    fn scan_unchecked_keyword_0_8_0(&self, stream: &mut Stream) -> bool {
         scan_not_followed_by!(
             stream,
             scan_chars!(stream, 'u', 'n', 'c', 'h', 'e', 'c', 'k', 'e', 'd'),
@@ -3184,9 +3389,23 @@ impl Language {
         )
     }
 
+    fn dispatch_scan_unchecked_keyword(&self, stream: &mut Stream) -> Option<bool> {
+        if self.version_is_equal_to_or_greater_than_0_8_0 {
+            Some(self.scan_unchecked_keyword_0_8_0(stream))
+        } else {
+            None
+        }
+    }
+
+    #[inline]
+    pub(crate) fn maybe_scan_unchecked_keyword(&self, stream: &mut Stream) -> Option<bool> {
+        self.dispatch_scan_unchecked_keyword(stream)
+    }
+
     #[inline]
     pub(crate) fn scan_unchecked_keyword(&self, stream: &mut Stream) -> bool {
-        self.scan_unchecked_keyword_0_4_11(stream)
+        self.dispatch_scan_unchecked_keyword(stream)
+            .expect("Validation should have checked that references are valid between versions")
     }
 
     // «UnicodeEscape» = 'u' 4…4{«HexCharacter»};

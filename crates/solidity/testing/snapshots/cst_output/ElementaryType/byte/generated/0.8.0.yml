@@ -1,0 +1,16 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ byte                                                                             │ 0..4
+
+Errors: # 1 total
+  - >
+    Error: Expected AddressKeyword or BoolKeyword or FixedBytesType or PayableKeyword or SignedFixedType or SignedIntegerType or StringKeyword or UnsignedFixedType or UnsignedIntegerType.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ElementaryType/byte/input.sol:1:1]
+       │
+     1 │ byte
+       │ │ 
+       │ ╰─ Error occurred here.
+    ───╯
+
+Tree: null

@@ -299,7 +299,9 @@ where
 pub struct Language {
     pub(crate) version: Version,
     pub(crate) version_is_equal_to_or_greater_than_0_4_22: bool,
+    pub(crate) version_is_equal_to_or_greater_than_0_5_0: bool,
     pub(crate) version_is_equal_to_or_greater_than_0_6_0: bool,
+    pub(crate) version_is_equal_to_or_greater_than_0_8_0: bool,
     pub(crate) version_is_equal_to_or_greater_than_0_8_18: bool,
 }
 
@@ -323,7 +325,11 @@ impl Language {
             Self {
                 version_is_equal_to_or_greater_than_0_4_22: Version::parse("0.4.22").unwrap()
                     <= version,
+                version_is_equal_to_or_greater_than_0_5_0: Version::parse("0.5.0").unwrap()
+                    <= version,
                 version_is_equal_to_or_greater_than_0_6_0: Version::parse("0.6.0").unwrap()
+                    <= version,
+                version_is_equal_to_or_greater_than_0_8_0: Version::parse("0.8.0").unwrap()
                     <= version,
                 version_is_equal_to_or_greater_than_0_8_18: Version::parse("0.8.18").unwrap()
                     <= version,
@@ -460,6 +466,13 @@ impl Language {
                 Language::scan_break_keyword,
                 TokenKind::BreakKeyword,
                 "BreakKeyword",
+            ),
+            ProductionKind::ByteType => try_call_scanner(
+                self,
+                input,
+                Language::maybe_scan_byte_type,
+                TokenKind::ByteType,
+                "ByteType",
             ),
             ProductionKind::CalldataKeyword => call_scanner(
                 self,
@@ -1342,10 +1355,10 @@ impl Language {
                 TokenKind::TypeKeyword,
                 "TypeKeyword",
             ),
-            ProductionKind::UncheckedKeyword => call_scanner(
+            ProductionKind::UncheckedKeyword => try_call_scanner(
                 self,
                 input,
-                Language::scan_unchecked_keyword,
+                Language::maybe_scan_unchecked_keyword,
                 TokenKind::UncheckedKeyword,
                 "UncheckedKeyword",
             ),
@@ -1567,6 +1580,9 @@ impl Language {
             ProductionKind::FunctionAttribute => {
                 call_parser(self, input, Language::parse_function_attribute)
             }
+            ProductionKind::FunctionCallOptions => {
+                call_parser(self, input, Language::parse_function_call_options)
+            }
             ProductionKind::FunctionDefinition => {
                 call_parser(self, input, Language::parse_function_definition)
             }
@@ -1703,7 +1719,7 @@ impl Language {
             }
             ProductionKind::TypeName => call_parser(self, input, Language::parse_type_name),
             ProductionKind::UncheckedBlock => {
-                call_parser(self, input, Language::parse_unchecked_block)
+                try_call_parser(self, input, Language::maybe_parse_unchecked_block)
             }
             ProductionKind::UnnamedFunctionDefinition => try_call_parser(
                 self,

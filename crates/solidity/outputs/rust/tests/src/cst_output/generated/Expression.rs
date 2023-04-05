@@ -67,6 +67,16 @@ fn function_call_member_access() -> Result<()> {
 }
 
 #[test]
+fn function_call_options() -> Result<()> {
+    return run("Expression", "function_call_options");
+}
+
+#[test]
+fn function_call_options_split() -> Result<()> {
+    return run("Expression", "function_call_options_split");
+}
+
+#[test]
 fn identifier_call() -> Result<()> {
     return run("Expression", "identifier_call");
 }

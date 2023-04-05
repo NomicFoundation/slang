@@ -118,6 +118,37 @@
       close:
         reference: "CloseBrace"
 
+- name: "FunctionCallOptions"
+  kind: "Parser"
+  versioned:
+    0.4.11:
+      oneOrMore:
+        delimitedBy:
+          open:
+            reference: "OpenBrace"
+          expression:
+            optional:
+              separatedBy:
+                separator:
+                  reference: "Comma"
+                expression:
+                  reference: "NamedArgument"
+          close:
+            reference: "CloseBrace"
+    0.8.0:
+      delimitedBy:
+        open:
+          reference: "OpenBrace"
+        expression:
+          optional:
+            separatedBy:
+              separator:
+                reference: "Comma"
+              expression:
+                reference: "NamedArgument"
+        close:
+          reference: "CloseBrace"
+
 - name: "NamedArgument"
   kind: "Parser"
   unversioned:

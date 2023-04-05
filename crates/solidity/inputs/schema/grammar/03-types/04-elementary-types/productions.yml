@@ -2,17 +2,31 @@
 
 - name: "ElementaryType"
   kind: "Parser"
-  unversioned:
-    choice:
-      - reference: "BoolKeyword"
-      - reference: "StringKeyword"
-      - reference: "AddressType"
-      - reference: "PayableType"
-      - reference: "FixedBytesType"
-      - reference: "SignedIntegerType"
-      - reference: "UnsignedIntegerType"
-      - reference: "SignedFixedType"
-      - reference: "UnsignedFixedType"
+  versioned:
+    0.4.11:
+      choice:
+        - reference: "BoolKeyword"
+        - reference: "StringKeyword"
+        - reference: "AddressType"
+        - reference: "PayableType"
+        - reference: "ByteType"
+        - reference: "FixedBytesType"
+        - reference: "SignedIntegerType"
+        - reference: "UnsignedIntegerType"
+        - reference: "SignedFixedType"
+        - reference: "UnsignedFixedType"
+    0.8.0:
+      # removed: ByteType
+      choice:
+        - reference: "BoolKeyword"
+        - reference: "StringKeyword"
+        - reference: "AddressType"
+        - reference: "PayableType"
+        - reference: "FixedBytesType"
+        - reference: "SignedIntegerType"
+        - reference: "UnsignedIntegerType"
+        - reference: "SignedFixedType"
+        - reference: "UnsignedFixedType"
 
 - name: "AddressType"
   kind: "Parser"
@@ -26,6 +40,17 @@
   kind: "Parser"
   unversioned:
     reference: "PayableKeyword"
+
+- name: "ByteType"
+  kind: "Scanner"
+  versioned:
+    0.4.11:
+      trailingContext:
+        expression:
+          terminal: "byte"
+        notFollowedBy:
+          reference: "IdentifierPart"
+    0.8.0: null
 
 - name: "FixedBytesType"
   kind: "Scanner"

@@ -1,5 +1,5 @@
 use codegen_schema::types::{
-    production::Production,
+    production::{Production, VersionMap},
     scanner::{ScannerDefinition, ScannerRef},
 };
 
@@ -113,22 +113,20 @@ pub fn from_scanner(tree: &CombinatorTree, scanner: ScannerRef) -> Option<Termin
             }),
 
             ScannerDefinition::Terminal(string) => {
-                trie.insert(
-                    &string,
-                        None
-                );
+                trie.insert(&string, None);
                 true
             }
 
-            ScannerDefinition::Reference(name) => collect_terminals(
-                trie,
-                tree,
+            ScannerDefinition::Reference(name) => {
                 match tree.context.get_tree_by_name(name).production.as_ref() {
-                    Production::Scanner { name, version_map } => {
-                        version_map.get_for_version(&tree.context.version).expect(
-                            &format!("Validation should have ensured: no version of {name} exists for version {version}", version = tree.context.version)
-                        ).clone()
-                    }
+                    Production::Scanner {
+                        version_map: VersionMap::Versioned(_),
+                        ..
+                    } => false,
+                    Production::Scanner {
+                        version_map: VersionMap::Unversioned(scanner),
+                        ..
+                    } => collect_terminals(trie, tree, scanner.clone()),
                     Production::TriviaParser { .. }
                     | Production::Parser { .. }
                     | Production::PrecedenceParser { .. } => {
@@ -136,8 +134,8 @@ pub fn from_scanner(tree: &CombinatorTree, scanner: ScannerRef) -> Option<Termin
                             "Validation should have ensured: scanners can only reference scanners"
                         )
                     }
-                },
-            ),
+                }
+            }
 
             _ => false,
         }

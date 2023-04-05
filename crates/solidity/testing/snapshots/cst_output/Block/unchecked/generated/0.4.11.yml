@@ -1,0 +1,16 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ { unchecked { x = 1; } }                                                         │ 0..24
+
+Errors: # 1 total
+  - >
+    Error: Expected CalldataKeyword or Identifier or MemoryKeyword or Semicolon or StorageKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/Block/unchecked/input.sol:1:13]
+       │
+     1 │ { unchecked { x = 1; } }
+       │             │ 
+       │             ╰─ Error occurred here.
+    ───╯
+
+Tree: null

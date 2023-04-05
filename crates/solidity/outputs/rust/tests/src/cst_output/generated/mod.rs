@@ -1,6 +1,8 @@
 // This file is generated automatically by infrastructure scripts. Please don't edit by hand.
 
 #[allow(non_snake_case)]
+mod Block;
+#[allow(non_snake_case)]
 mod ConstructorDefinition;
 #[allow(non_snake_case)]
 mod ContractDefinition;
@@ -8,6 +10,8 @@ mod ContractDefinition;
 mod DecimalLiteral;
 #[allow(non_snake_case)]
 mod DeleteStatement;
+#[allow(non_snake_case)]
+mod ElementaryType;
 #[allow(non_snake_case)]
 mod EnumDefinition;
 #[allow(non_snake_case)]
@@ -61,4 +65,4 @@ mod YulExpression;
 #[allow(non_snake_case)]
 mod YulStatement;
 
-pub const VERSION_BREAKS: [&str; 4] = ["0.4.11", "0.4.22", "0.6.0", "0.8.18"];
+pub const VERSION_BREAKS: [&str; 6] = ["0.4.11", "0.4.22", "0.5.0", "0.6.0", "0.8.0", "0.8.18"];
