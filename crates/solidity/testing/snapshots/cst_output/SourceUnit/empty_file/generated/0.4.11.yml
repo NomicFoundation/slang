@@ -2,9 +2,7 @@
 
 Source: ""
 
-Errors: # 1 total
-  - >
-    Error: Expected AddressKeyword or BoolKeyword or ContractKeyword or EnumKeyword or ErrorKeyword or FixedBytesType or FunctionKeyword or Identifier or ImportKeyword or InterfaceKeyword or LibraryKeyword or MappingKeyword or PayableKeyword or PragmaKeyword or SignedFixedType or SignedIntegerType or StringKeyword or StructKeyword or TypeKeyword or UnsignedFixedType or UnsignedIntegerType or UsingKeyword.
-       ─[crates/solidity/testing/snapshots/cst_output/SourceUnit/empty_file/input.sol:0:0]
+Errors: []
 
-Tree: null
+Tree:
+  - SourceUnit (Rule): "" # 0..0

@@ -11,20 +11,36 @@ use crate::validation::{
 };
 
 pub fn check(model: &Model, errors: &mut CodegenErrors) {
-    let mut visitor = EmptyProductionsVisitor::new();
+    let mut visitor = EmptyProductionsVisitor::new(model);
 
     visitor.visit(model, errors);
 }
 
-struct EmptyProductionsVisitor {}
+struct EmptyProductionsVisitor<'a> {
+    model: &'a Model,
+}
 
-impl EmptyProductionsVisitor {
-    fn new() -> Self {
-        return Self {};
+impl<'a> EmptyProductionsVisitor<'a> {
+    fn new(model: &'a Model) -> Self {
+        return Self { model };
     }
 }
 
-impl Visitor for EmptyProductionsVisitor {
+impl Visitor for EmptyProductionsVisitor<'_> {
+    fn visit_production(
+        &mut self,
+        production: &crate::validation::ast::production::ProductionRef,
+        _reporter: &mut Reporter,
+    ) -> VisitorResponse {
+        let root_production = &self.model.manifest_file.ast.value.root_production.value;
+        if root_production == &production.name_node().value {
+            // Allowed to be empty.
+            return VisitorResponse::StepOut;
+        }
+
+        return VisitorResponse::StepIn;
+    }
+
     fn visit_scanner(&mut self, scanner: &ScannerRef, reporter: &mut Reporter) -> VisitorResponse {
         if let Some(cst_node) = find_empty_scanner_node(scanner) {
             reporter.report(cst_node, Errors::PossibleEmptyScanner);
