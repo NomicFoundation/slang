@@ -101,4 +101,5 @@ jobs:
           publish: "scripts/release/publish.sh"
           createGithubReleases: true
         env:
+          CARGO_REGISTRY_TOKEN: "${{ secrets.CARGO_REGISTRY_TOKEN }}"
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
