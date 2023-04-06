@@ -19,11 +19,20 @@
 
 - name: "StateVariableAttribute"
   kind: "Parser"
-  unversioned:
-    choice:
-      - reference: "OverrideSpecifier"
-      - reference: "ConstantKeyword"
-      - reference: "ImmutableKeyword"
-      - reference: "InternalKeyword"
-      - reference: "PrivateKeyword"
-      - reference: "PublicKeyword"
+  versioned:
+    0.4.11:
+      choice:
+        - reference: "OverrideSpecifier"
+        - reference: "ConstantKeyword"
+        - reference: "InternalKeyword"
+        - reference: "PrivateKeyword"
+        - reference: "PublicKeyword"
+    0.6.5:
+      # added: ImmutableKeyword
+      choice:
+        - reference: "OverrideSpecifier"
+        - reference: "ConstantKeyword"
+        - reference: "ImmutableKeyword"
+        - reference: "InternalKeyword"
+        - reference: "PrivateKeyword"
+        - reference: "PublicKeyword"

@@ -2,30 +2,43 @@
 
 - name: "PrimaryExpression"
   kind: "Parser"
-  unversioned:
-    choice:
-      - reference: "Identifier"
-      - reference: "TupleExpression"
-      - reference: "ArrayLiteral"
-      - reference: "StringExpression"
-      - reference: "NumericLiteral"
-      - reference: "BooleanLiteral"
-      - reference: "NewExpression"
-      - reference: "TypeExpression"
-      - reference: "ElementaryType"
+  versioned:
+    0.4.11:
+      choice:
+        - reference: "Identifier"
+        - reference: "TupleExpression"
+        - reference: "ArrayLiteral"
+        - reference: "StringExpression"
+        - reference: "NumericLiteral"
+        - reference: "BooleanLiteral"
+        - reference: "NewExpression"
+        - reference: "ElementaryType"
+    0.5.3:
+      # added: TypeExpression
+      choice:
+        - reference: "Identifier"
+        - reference: "TupleExpression"
+        - reference: "ArrayLiteral"
+        - reference: "StringExpression"
+        - reference: "NumericLiteral"
+        - reference: "BooleanLiteral"
+        - reference: "NewExpression"
+        - reference: "TypeExpression"
+        - reference: "ElementaryType"
 
 - name: "TypeExpression"
   kind: "Parser"
-  unversioned:
-    sequence:
-      - reference: "TypeKeyword"
-      - delimitedBy:
-          open:
-            reference: "OpenParen"
-          expression:
-            reference: "TypeName"
-          close:
-            reference: "CloseParen"
+  versioned:
+    0.5.3:
+      sequence:
+        - reference: "TypeKeyword"
+        - delimitedBy:
+            open:
+              reference: "OpenParen"
+            expression:
+              reference: "TypeName"
+            close:
+              reference: "CloseParen"
 
 - name: "NewExpression"
   kind: "Parser"

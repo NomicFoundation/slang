@@ -160,3 +160,8 @@ fn prefix_decrement() -> Result<()> {
 fn prefix_minus() -> Result<()> {
     return run("Expression", "prefix_minus");
 }
+
+#[test]
+fn prefix_plus() -> Result<()> {
+    return run("Expression", "prefix_plus");
+}

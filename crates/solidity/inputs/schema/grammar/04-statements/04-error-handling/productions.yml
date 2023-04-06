@@ -40,3 +40,14 @@
           - reference: "ArgumentList"
       terminator:
         reference: "Semicolon"
+
+- name: "ThrowStatement"
+  kind: "Parser"
+  versioned:
+    0.4.11:
+      terminatedBy:
+        expression:
+          reference: "ThrowKeyword"
+        terminator:
+          reference: "Semicolon"
+    0.5.0: null

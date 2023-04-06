@@ -2,43 +2,79 @@
 
 - name: "NumericLiteral"
   kind: "Parser"
-  unversioned:
-    sequence:
-      - choice:
-          - reference: "HexLiteral"
-          - reference: "DecimalLiteral"
-      - optional:
-          reference: "NumberUnit"
+  versioned:
+    0.4.11:
+      sequence:
+        - choice:
+            - reference: "HexLiteral"
+            - reference: "DecimalLiteral"
+        - optional:
+            reference: "NumberUnit"
+    0.5.0:
+      sequence:
+        - reference: "DecimalLiteral"
+        - optional:
+            reference: "NumberUnit"
 
 - name: "HexLiteral"
   kind: "Scanner"
-  unversioned:
-    sequence:
-      - terminal: "0x"
-      - oneOrMore:
-          reference: "HexCharacter"
-      - zeroOrMore:
-          sequence:
-            - terminal: "_"
-            - oneOrMore:
-                reference: "HexCharacter"
+  versioned:
+    0.4.11:
+      sequence:
+        - terminal: "0"
+        - choice:
+            - terminal: "x"
+            - terminal: "X"
+        - oneOrMore:
+            reference: "HexCharacter"
+        - zeroOrMore:
+            sequence:
+              - terminal: "_"
+              - oneOrMore:
+                  reference: "HexCharacter"
+    0.5.0:
+      sequence:
+        - terminal: "0x"
+        - oneOrMore:
+            reference: "HexCharacter"
+        - zeroOrMore:
+            sequence:
+              - terminal: "_"
+              - oneOrMore:
+                  reference: "HexCharacter"
 
 - name: "DecimalLiteral"
   kind: "Scanner"
-  unversioned:
-    sequence:
-      - choice:
-          - sequence:
-              - reference: "DecimalNumber"
-              - optional:
-                  sequence:
-                    - terminal: "."
-                    - reference: "DecimalNumber"
-          - sequence:
-              - terminal: "."
-              - reference: "DecimalNumber"
-      - optional:
-          reference: "DecimalExponent"
+  versioned:
+    0.4.11:
+      sequence:
+        - choice:
+            - sequence:
+                - reference: "DecimalNumber"
+                - optional:
+                    sequence:
+                      - terminal: "."
+                      - optional:
+                          reference: "DecimalNumber"
+            - sequence:
+                - terminal: "."
+                - reference: "DecimalNumber"
+        - optional:
+            reference: "DecimalExponent"
+    0.5.0:
+      sequence:
+        - choice:
+            - sequence:
+                - reference: "DecimalNumber"
+                - optional:
+                    sequence:
+                      - terminal: "."
+                      - reference: "DecimalNumber"
+            - sequence:
+                - terminal: "."
+                - reference: "DecimalNumber"
+        - optional:
+            reference: "DecimalExponent"
 
 - name: "DecimalNumber"
   kind: "Scanner"
@@ -69,16 +105,53 @@
 
 - name: "NumberUnit"
   kind: "Parser"
-  unversioned:
-    choice:
-      - reference: "DaysKeyword"
-      - reference: "EtherKeyword"
-      - reference: "FinneyKeyword"
-      - reference: "GweiKeyword"
-      - reference: "HoursKeyword"
-      - reference: "MinutesKeyword"
-      - reference: "SecondsKeyword"
-      - reference: "SzaboKeyword"
-      - reference: "WeeksKeyword"
-      - reference: "WeiKeyword"
-      - reference: "YearsKeyword"
+  versioned:
+    0.4.11:
+      choice:
+        - reference: "DaysKeyword"
+        - reference: "EtherKeyword"
+        - reference: "FinneyKeyword"
+        - reference: "HoursKeyword"
+        - reference: "MinutesKeyword"
+        - reference: "SecondsKeyword"
+        - reference: "SzaboKeyword"
+        - reference: "WeeksKeyword"
+        - reference: "WeiKeyword"
+        - reference: "YearsKeyword"
+    0.5.0:
+      # removed: YearsKeyword
+      choice:
+        - reference: "DaysKeyword"
+        - reference: "EtherKeyword"
+        - reference: "FinneyKeyword"
+        - reference: "HoursKeyword"
+        - reference: "MinutesKeyword"
+        - reference: "SecondsKeyword"
+        - reference: "SzaboKeyword"
+        - reference: "WeeksKeyword"
+        - reference: "WeiKeyword"
+    0.6.11:
+      # added: GweiKeyword
+      choice:
+        - reference: "DaysKeyword"
+        - reference: "EtherKeyword"
+        - reference: "FinneyKeyword"
+        - reference: "GweiKeyword"
+        - reference: "HoursKeyword"
+        - reference: "MinutesKeyword"
+        - reference: "SecondsKeyword"
+        - reference: "SzaboKeyword"
+        - reference: "WeeksKeyword"
+        - reference: "WeiKeyword"
+    0.7.0:
+      # removed: SzaboKeyword
+      # removed: FinneyKeyword
+      choice:
+        - reference: "DaysKeyword"
+        - reference: "EtherKeyword"
+        - reference: "GweiKeyword"
+        - reference: "HoursKeyword"
+        - reference: "MinutesKeyword"
+        - reference: "SecondsKeyword"
+        - reference: "WeeksKeyword"
+        - reference: "WeiKeyword"

@@ -1,0 +1,16 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ fallback                                                                         │ 0..8
+
+Errors: # 1 total
+  - >
+    Error: Expected Identifier.
+       ╭─[crates/solidity/testing/snapshots/cst_output/Identifier/keyword_fallback/input.sol:1:9]
+       │
+     1 │ fallback
+       │         │ 
+       │         ╰─ Error occurred here.
+    ───╯
+
+Tree: null

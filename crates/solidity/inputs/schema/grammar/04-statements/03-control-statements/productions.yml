@@ -105,15 +105,16 @@
 
 - name: "EmitStatement"
   kind: "Parser"
-  unversioned:
-    terminatedBy:
-      expression:
-        sequence:
-          - reference: "EmitKeyword"
-          - reference: "IdentifierPath"
-          - reference: "ArgumentList"
-      terminator:
-        reference: "Semicolon"
+  versioned:
+    0.4.21:
+      terminatedBy:
+        expression:
+          sequence:
+            - reference: "EmitKeyword"
+            - reference: "IdentifierPath"
+            - reference: "ArgumentList"
+        terminator:
+          reference: "Semicolon"
 
 - name: "DeleteStatement"
   kind: "Parser"

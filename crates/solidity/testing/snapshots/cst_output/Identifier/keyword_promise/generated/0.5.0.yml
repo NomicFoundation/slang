@@ -1,0 +1,16 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ promise                                                                          │ 0..7
+
+Errors: # 1 total
+  - >
+    Error: Expected Identifier.
+       ╭─[crates/solidity/testing/snapshots/cst_output/Identifier/keyword_promise/input.sol:1:8]
+       │
+     1 │ promise
+       │        │ 
+       │        ╰─ Error occurred here.
+    ───╯
+
+Tree: null

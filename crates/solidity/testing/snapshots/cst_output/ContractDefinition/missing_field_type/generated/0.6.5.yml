@@ -1,0 +1,18 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ contract Test {                                                                  │ 0..15
+  2  │   field;                                                                         │ 16..24
+  3  │ }                                                                                │ 25..26
+
+Errors: # 1 total
+  - >
+    Error: Expected ConstantKeyword or Identifier or ImmutableKeyword or InternalKeyword or OverrideKeyword or PrivateKeyword or PublicKeyword.
+       ╭─[crates/solidity/testing/snapshots/cst_output/ContractDefinition/missing_field_type/input.sol:2:8]
+       │
+     2 │   field;
+       │        │ 
+       │        ╰─ Error occurred here.
+    ───╯
+
+Tree: null
