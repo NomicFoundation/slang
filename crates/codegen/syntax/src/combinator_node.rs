@@ -102,7 +102,7 @@ impl<'context> CombinatorNode<'context> {
 
         tree.context.alloc_node(match &scanner.definition {
             ScannerDefinition::Choice(exprs) => {
-                // Terminals in choices are merged, and represented as a trie
+                // (unversioned) terminals in choices are merged, and represented as a trie
 
                 enum TN<'c> {
                     Trie(trie::TerminalTrie),

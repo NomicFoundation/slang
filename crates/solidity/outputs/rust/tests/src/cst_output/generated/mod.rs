@@ -21,6 +21,8 @@ mod FallbackFunctionDefinition;
 #[allow(non_snake_case)]
 mod FixedBytesType;
 #[allow(non_snake_case)]
+mod FunctionDefinition;
+#[allow(non_snake_case)]
 mod HexLiteral;
 #[allow(non_snake_case)]
 mod HexStringLiteral;
@@ -28,8 +30,6 @@ mod HexStringLiteral;
 mod Identifier;
 #[allow(non_snake_case)]
 mod InterfaceDefinition;
-#[allow(non_snake_case)]
-mod Keyword;
 #[allow(non_snake_case)]
 mod MappingType;
 #[allow(non_snake_case)]
@@ -40,8 +40,6 @@ mod NewExpression;
 mod NumericLiteral;
 #[allow(non_snake_case)]
 mod ReceiveFunctionDefinition;
-#[allow(non_snake_case)]
-mod ReservedKeyword;
 #[allow(non_snake_case)]
 mod SignedIntegerType;
 #[allow(non_snake_case)]
@@ -65,4 +63,7 @@ mod YulExpression;
 #[allow(non_snake_case)]
 mod YulStatement;
 
-pub const VERSION_BREAKS: [&str; 6] = ["0.4.11", "0.4.22", "0.5.0", "0.6.0", "0.8.0", "0.8.18"];
+pub const VERSION_BREAKS: [&str; 13] = [
+    "0.4.11", "0.4.21", "0.4.22", "0.5.0", "0.5.3", "0.6.0", "0.6.4", "0.6.5", "0.6.11", "0.7.0",
+    "0.8.0", "0.8.8", "0.8.18",
+];

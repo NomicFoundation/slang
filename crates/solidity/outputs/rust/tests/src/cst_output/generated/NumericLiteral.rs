@@ -22,3 +22,18 @@ fn ether_unit() -> Result<()> {
 fn hex_no_unit() -> Result<()> {
     return run("NumericLiteral", "hex_no_unit");
 }
+
+#[test]
+fn hex_unit() -> Result<()> {
+    return run("NumericLiteral", "hex_unit");
+}
+
+#[test]
+fn hex_uppercase_prefix() -> Result<()> {
+    return run("NumericLiteral", "hex_uppercase_prefix");
+}
+
+#[test]
+fn years_unit() -> Result<()> {
+    return run("NumericLiteral", "years_unit");
+}

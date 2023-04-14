@@ -1,0 +1,16 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ partial                                                                          │ 0..7
+
+Errors: # 1 total
+  - >
+    Error: Expected Identifier.
+       ╭─[crates/solidity/testing/snapshots/cst_output/Identifier/keyword_partial/input.sol:1:8]
+       │
+     1 │ partial
+       │        │ 
+       │        ╰─ Error occurred here.
+    ───╯
+
+Tree: null

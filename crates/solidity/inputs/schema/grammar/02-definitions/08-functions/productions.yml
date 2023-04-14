@@ -22,18 +22,44 @@
 
 - name: "FunctionAttribute"
   kind: "Parser"
-  unversioned:
-    choice:
-      - reference: "ModifierInvocation"
-      - reference: "OverrideSpecifier"
-      - reference: "ExternalKeyword"
-      - reference: "InternalKeyword"
-      - reference: "PayableKeyword"
-      - reference: "PrivateKeyword"
-      - reference: "PublicKeyword"
-      - reference: "PureKeyword"
-      - reference: "ViewKeyword"
-      - reference: "VirtualKeyword"
+  versioned:
+    0.4.11:
+      choice:
+        - reference: "ConstantKeyword"
+        - reference: "ExternalKeyword"
+        - reference: "InternalKeyword"
+        - reference: "ModifierInvocation"
+        - reference: "OverrideSpecifier"
+        - reference: "PayableKeyword"
+        - reference: "PrivateKeyword"
+        - reference: "PublicKeyword"
+        - reference: "PureKeyword"
+        - reference: "ViewKeyword"
+    0.5.0:
+      # removed: ConstantKeyword
+      choice:
+        - reference: "ExternalKeyword"
+        - reference: "InternalKeyword"
+        - reference: "ModifierInvocation"
+        - reference: "OverrideSpecifier"
+        - reference: "PayableKeyword"
+        - reference: "PrivateKeyword"
+        - reference: "PublicKeyword"
+        - reference: "PureKeyword"
+        - reference: "ViewKeyword"
+    0.6.0:
+      # added: VirtualKeyword
+      choice:
+        - reference: "ExternalKeyword"
+        - reference: "InternalKeyword"
+        - reference: "ModifierInvocation"
+        - reference: "OverrideSpecifier"
+        - reference: "PayableKeyword"
+        - reference: "PrivateKeyword"
+        - reference: "PublicKeyword"
+        - reference: "PureKeyword"
+        - reference: "ViewKeyword"
+        - reference: "VirtualKeyword"
 
 - name: "OverrideSpecifier"
   kind: "Parser"
@@ -170,12 +196,13 @@
 
 - name: "ConstructorAttribute"
   kind: "Parser"
-  unversioned:
-    choice:
-      - reference: "ModifierInvocation"
-      - reference: "InternalKeyword"
-      - reference: "PayableKeyword"
-      - reference: "PublicKeyword"
+  versioned:
+    0.4.22:
+      choice:
+        - reference: "ModifierInvocation"
+        - reference: "InternalKeyword"
+        - reference: "PayableKeyword"
+        - reference: "PublicKeyword"
 
 - name: "UnnamedFunctionDefinition"
   kind: "Parser"
@@ -185,10 +212,23 @@
         - reference: "FunctionKeyword"
         - reference: "ParameterList"
         - zeroOrMore:
-            reference: "FallbackFunctionAttribute"
+            reference: "UnnamedFunctionAttribute"
         - choice:
             - reference: "Semicolon"
             - reference: "Block"
+    0.6.0: null
+
+- name: "UnnamedFunctionAttribute"
+  kind: "Parser"
+  versioned:
+    0.4.11:
+      choice:
+        - reference: "ModifierInvocation"
+        - reference: "OverrideSpecifier"
+        - reference: "ExternalKeyword"
+        - reference: "PayableKeyword"
+        - reference: "PureKeyword"
+        - reference: "ViewKeyword"
     0.6.0: null
 
 - name: "FallbackFunctionDefinition"
@@ -210,15 +250,16 @@
 
 - name: "FallbackFunctionAttribute"
   kind: "Parser"
-  unversioned:
-    choice:
-      - reference: "ModifierInvocation"
-      - reference: "OverrideSpecifier"
-      - reference: "ExternalKeyword"
-      - reference: "PayableKeyword"
-      - reference: "PureKeyword"
-      - reference: "ViewKeyword"
-      - reference: "VirtualKeyword"
+  versioned:
+    0.6.0:
+      choice:
+        - reference: "ModifierInvocation"
+        - reference: "OverrideSpecifier"
+        - reference: "ExternalKeyword"
+        - reference: "PayableKeyword"
+        - reference: "PureKeyword"
+        - reference: "ViewKeyword"
+        - reference: "VirtualKeyword"
 
 - name: "ReceiveFunctionDefinition"
   kind: "Parser"
@@ -235,10 +276,11 @@
 
 - name: "ReceiveFunctionAttribute"
   kind: "Parser"
-  unversioned:
-    choice:
-      - reference: "ModifierInvocation"
-      - reference: "OverrideSpecifier"
-      - reference: "ExternalKeyword"
-      - reference: "PayableKeyword"
-      - reference: "VirtualKeyword"
+  versioned:
+    0.6.0:
+      choice:
+        - reference: "ModifierInvocation"
+        - reference: "OverrideSpecifier"
+        - reference: "ExternalKeyword"
+        - reference: "PayableKeyword"
+        - reference: "VirtualKeyword"

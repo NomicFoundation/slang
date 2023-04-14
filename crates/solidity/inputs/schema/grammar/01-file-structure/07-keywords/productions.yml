@@ -9,12 +9,13 @@
 
 - name: "AbstractKeyword"
   kind: "Scanner"
-  unversioned:
-    trailingContext:
-      expression:
-        terminal: "abstract"
-      notFollowedBy:
-        reference: "IdentifierPart"
+  versioned:
+    0.6.0:
+      trailingContext:
+        expression:
+          terminal: "abstract"
+        notFollowedBy:
+          reference: "IdentifierPart"
 
 - name: "AddressKeyword"
   kind: "Scanner"
@@ -72,12 +73,13 @@
 
 - name: "CalldataKeyword"
   kind: "Scanner"
-  unversioned:
-    trailingContext:
-      expression:
-        terminal: "calldata"
-      notFollowedBy:
-        reference: "IdentifierPart"
+  versioned:
+    0.5.0:
+      trailingContext:
+        expression:
+          terminal: "calldata"
+        notFollowedBy:
+          reference: "IdentifierPart"
 
 - name: "CaseKeyword"
   kind: "Scanner"
@@ -90,12 +92,13 @@
 
 - name: "CatchKeyword"
   kind: "Scanner"
-  unversioned:
-    trailingContext:
-      expression:
-        terminal: "catch"
-      notFollowedBy:
-        reference: "IdentifierPart"
+  versioned:
+    0.6.0:
+      trailingContext:
+        expression:
+          terminal: "catch"
+        notFollowedBy:
+          reference: "IdentifierPart"
 
 - name: "ConstantKeyword"
   kind: "Scanner"
@@ -108,12 +111,13 @@
 
 - name: "ConstructorKeyword"
   kind: "Scanner"
-  unversioned:
-    trailingContext:
-      expression:
-        terminal: "constructor"
-      notFollowedBy:
-        reference: "IdentifierPart"
+  versioned:
+    0.4.22:
+      trailingContext:
+        expression:
+          terminal: "constructor"
+        notFollowedBy:
+          reference: "IdentifierPart"
 
 - name: "ContinueKeyword"
   kind: "Scanner"
@@ -180,12 +184,13 @@
 
 - name: "EmitKeyword"
   kind: "Scanner"
-  unversioned:
-    trailingContext:
-      expression:
-        terminal: "emit"
-      notFollowedBy:
-        reference: "IdentifierPart"
+  versioned:
+    0.4.21:
+      trailingContext:
+        expression:
+          terminal: "emit"
+        notFollowedBy:
+          reference: "IdentifierPart"
 
 - name: "EnumKeyword"
   kind: "Scanner"
@@ -243,12 +248,13 @@
 
 - name: "FallbackKeyword"
   kind: "Scanner"
-  unversioned:
-    trailingContext:
-      expression:
-        terminal: "fallback"
-      notFollowedBy:
-        reference: "IdentifierPart"
+  versioned:
+    0.6.0:
+      trailingContext:
+        expression:
+          terminal: "fallback"
+        notFollowedBy:
+          reference: "IdentifierPart"
 
 - name: "FalseKeyword"
   kind: "Scanner"
@@ -261,12 +267,14 @@
 
 - name: "FinneyKeyword"
   kind: "Scanner"
-  unversioned:
-    trailingContext:
-      expression:
-        terminal: "finney"
-      notFollowedBy:
-        reference: "IdentifierPart"
+  versioned:
+    0.4.11:
+      trailingContext:
+        expression:
+          terminal: "finney"
+        notFollowedBy:
+          reference: "IdentifierPart"
+    0.7.0: null
 
 - name: "ForKeyword"
   kind: "Scanner"
@@ -306,12 +314,13 @@
 
 - name: "GweiKeyword"
   kind: "Scanner"
-  unversioned:
-    trailingContext:
-      expression:
-        terminal: "gwei"
-      notFollowedBy:
-        reference: "IdentifierPart"
+  versioned:
+    0.6.11:
+      trailingContext:
+        expression:
+          terminal: "gwei"
+        notFollowedBy:
+          reference: "IdentifierPart"
 
 - name: "HoursKeyword"
   kind: "Scanner"
@@ -333,12 +342,13 @@
 
 - name: "ImmutableKeyword"
   kind: "Scanner"
-  unversioned:
-    trailingContext:
-      expression:
-        terminal: "immutable"
-      notFollowedBy:
-        reference: "IdentifierPart"
+  versioned:
+    0.6.4:
+      trailingContext:
+        expression:
+          terminal: "immutable"
+        notFollowedBy:
+          reference: "IdentifierPart"
 
 - name: "ImportKeyword"
   kind: "Scanner"
@@ -513,12 +523,13 @@
 
 - name: "ReceiveKeyword"
   kind: "Scanner"
-  unversioned:
-    trailingContext:
-      expression:
-        terminal: "receive"
-      notFollowedBy:
-        reference: "IdentifierPart"
+  versioned:
+    0.6.0:
+      trailingContext:
+        expression:
+          terminal: "receive"
+        notFollowedBy:
+          reference: "IdentifierPart"
 
 - name: "ReturnKeyword"
   kind: "Scanner"
@@ -603,10 +614,21 @@
 
 - name: "SzaboKeyword"
   kind: "Scanner"
+  versioned:
+    0.4.11:
+      trailingContext:
+        expression:
+          terminal: "szabo"
+        notFollowedBy:
+          reference: "IdentifierPart"
+    0.7.0: null
+
+- name: "ThrowKeyword"
+  kind: "Scanner"
   unversioned:
     trailingContext:
       expression:
-        terminal: "szabo"
+        terminal: "throw"
       notFollowedBy:
         reference: "IdentifierPart"
 
@@ -621,21 +643,23 @@
 
 - name: "TryKeyword"
   kind: "Scanner"
-  unversioned:
-    trailingContext:
-      expression:
-        terminal: "try"
-      notFollowedBy:
-        reference: "IdentifierPart"
+  versioned:
+    0.6.0:
+      trailingContext:
+        expression:
+          terminal: "try"
+        notFollowedBy:
+          reference: "IdentifierPart"
 
 - name: "TypeKeyword"
   kind: "Scanner"
-  unversioned:
-    trailingContext:
-      expression:
-        terminal: "type"
-      notFollowedBy:
-        reference: "IdentifierPart"
+  versioned:
+    0.5.3:
+      trailingContext:
+        expression:
+          terminal: "type"
+        notFollowedBy:
+          reference: "IdentifierPart"
 
 - name: "UncheckedKeyword"
   kind: "Scanner"
@@ -667,12 +691,13 @@
 
 - name: "VirtualKeyword"
   kind: "Scanner"
-  unversioned:
-    trailingContext:
-      expression:
-        terminal: "virtual"
-      notFollowedBy:
-        reference: "IdentifierPart"
+  versioned:
+    0.6.0:
+      trailingContext:
+        expression:
+          terminal: "virtual"
+        notFollowedBy:
+          reference: "IdentifierPart"
 
 - name: "WeeksKeyword"
   kind: "Scanner"

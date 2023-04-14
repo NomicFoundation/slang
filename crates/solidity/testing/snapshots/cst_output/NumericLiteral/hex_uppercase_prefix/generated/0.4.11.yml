@@ -1,0 +1,10 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 0X123456789                                                                      │ 0..11
+
+Errors: []
+
+Tree:
+  - NumericLiteral (Rule): # 0..11 "0X123456789"
+      - HexLiteral (Token): "0X123456789" # 0..11

@@ -1,0 +1,20 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ function a() constant {}                                                         │ 0..24
+
+Errors: []
+
+Tree:
+  - FunctionDefinition (Rule): # 0..24 "function a() constant {}"
+      - FunctionKeyword (Token): "function" # 0..8
+      - Identifier (Token): "a" # 9..10
+      - ParameterList (Rule): # 10..12 "()"
+          - OpenParen (Token): "(" # 10..11
+          - CloseParen (Token): ")" # 11..12
+      - _REPEATED (Rule): # 13..21 "constant"
+          - FunctionAttribute (Rule): # 13..21 "constant"
+              - ConstantKeyword (Token): "constant" # 13..21
+      - Block (Rule): # 21..24 " {}"
+          - OpenBrace (Token): "{" # 22..23
+          - CloseBrace (Token): "}" # 23..24

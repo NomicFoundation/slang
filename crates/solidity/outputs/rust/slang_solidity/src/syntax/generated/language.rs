@@ -297,11 +297,18 @@ where
 
 pub struct Language {
     pub(crate) version: Version,
+    pub(crate) version_is_equal_to_or_greater_than_0_4_21: bool,
     pub(crate) version_is_equal_to_or_greater_than_0_4_22: bool,
     pub(crate) version_is_equal_to_or_greater_than_0_5_0: bool,
+    pub(crate) version_is_equal_to_or_greater_than_0_5_3: bool,
     pub(crate) version_is_equal_to_or_greater_than_0_6_0: bool,
+    pub(crate) version_is_equal_to_or_greater_than_0_6_11: bool,
+    pub(crate) version_is_equal_to_or_greater_than_0_6_4: bool,
+    pub(crate) version_is_equal_to_or_greater_than_0_6_5: bool,
+    pub(crate) version_is_equal_to_or_greater_than_0_7_0: bool,
     pub(crate) version_is_equal_to_or_greater_than_0_8_0: bool,
     pub(crate) version_is_equal_to_or_greater_than_0_8_18: bool,
+    pub(crate) version_is_equal_to_or_greater_than_0_8_8: bool,
 }
 
 #[derive(thiserror::Error, Debug)]
@@ -325,15 +332,29 @@ impl Language {
         ];
         if VERSIONS.contains(&version.to_string().as_str()) {
             Ok(Self {
+                version_is_equal_to_or_greater_than_0_4_21: Version::parse("0.4.21").unwrap()
+                    <= version,
                 version_is_equal_to_or_greater_than_0_4_22: Version::parse("0.4.22").unwrap()
                     <= version,
                 version_is_equal_to_or_greater_than_0_5_0: Version::parse("0.5.0").unwrap()
                     <= version,
+                version_is_equal_to_or_greater_than_0_5_3: Version::parse("0.5.3").unwrap()
+                    <= version,
                 version_is_equal_to_or_greater_than_0_6_0: Version::parse("0.6.0").unwrap()
+                    <= version,
+                version_is_equal_to_or_greater_than_0_6_11: Version::parse("0.6.11").unwrap()
+                    <= version,
+                version_is_equal_to_or_greater_than_0_6_4: Version::parse("0.6.4").unwrap()
+                    <= version,
+                version_is_equal_to_or_greater_than_0_6_5: Version::parse("0.6.5").unwrap()
+                    <= version,
+                version_is_equal_to_or_greater_than_0_7_0: Version::parse("0.7.0").unwrap()
                     <= version,
                 version_is_equal_to_or_greater_than_0_8_0: Version::parse("0.8.0").unwrap()
                     <= version,
                 version_is_equal_to_or_greater_than_0_8_18: Version::parse("0.8.18").unwrap()
+                    <= version,
+                version_is_equal_to_or_greater_than_0_8_8: Version::parse("0.8.8").unwrap()
                     <= version,
                 version,
             })
@@ -355,10 +376,10 @@ impl Language {
                 TokenKind::AbicoderKeyword,
                 "AbicoderKeyword",
             ),
-            ProductionKind::AbstractKeyword => call_scanner(
+            ProductionKind::AbstractKeyword => try_call_scanner(
                 self,
                 input,
-                Language::scan_abstract_keyword,
+                Language::maybe_scan_abstract_keyword,
                 TokenKind::AbstractKeyword,
                 "AbstractKeyword",
             ),
@@ -473,10 +494,10 @@ impl Language {
                 TokenKind::ByteType,
                 "ByteType",
             ),
-            ProductionKind::CalldataKeyword => call_scanner(
+            ProductionKind::CalldataKeyword => try_call_scanner(
                 self,
                 input,
-                Language::scan_calldata_keyword,
+                Language::maybe_scan_calldata_keyword,
                 TokenKind::CalldataKeyword,
                 "CalldataKeyword",
             ),
@@ -497,10 +518,10 @@ impl Language {
                 TokenKind::CaseKeyword,
                 "CaseKeyword",
             ),
-            ProductionKind::CatchKeyword => call_scanner(
+            ProductionKind::CatchKeyword => try_call_scanner(
                 self,
                 input,
-                Language::scan_catch_keyword,
+                Language::maybe_scan_catch_keyword,
                 TokenKind::CatchKeyword,
                 "CatchKeyword",
             ),
@@ -545,10 +566,10 @@ impl Language {
                 TokenKind::ConstantKeyword,
                 "ConstantKeyword",
             ),
-            ProductionKind::ConstructorKeyword => call_scanner(
+            ProductionKind::ConstructorKeyword => try_call_scanner(
                 self,
                 input,
-                Language::scan_constructor_keyword,
+                Language::maybe_scan_constructor_keyword,
                 TokenKind::ConstructorKeyword,
                 "ConstructorKeyword",
             ),
@@ -636,10 +657,10 @@ impl Language {
                 TokenKind::ElseKeyword,
                 "ElseKeyword",
             ),
-            ProductionKind::EmitKeyword => call_scanner(
+            ProductionKind::EmitKeyword => try_call_scanner(
                 self,
                 input,
-                Language::scan_emit_keyword,
+                Language::maybe_scan_emit_keyword,
                 TokenKind::EmitKeyword,
                 "EmitKeyword",
             ),
@@ -723,10 +744,10 @@ impl Language {
                 TokenKind::ExternalKeyword,
                 "ExternalKeyword",
             ),
-            ProductionKind::FallbackKeyword => call_scanner(
+            ProductionKind::FallbackKeyword => try_call_scanner(
                 self,
                 input,
-                Language::scan_fallback_keyword,
+                Language::maybe_scan_fallback_keyword,
                 TokenKind::FallbackKeyword,
                 "FallbackKeyword",
             ),
@@ -737,10 +758,10 @@ impl Language {
                 TokenKind::FalseKeyword,
                 "FalseKeyword",
             ),
-            ProductionKind::FinneyKeyword => call_scanner(
+            ProductionKind::FinneyKeyword => try_call_scanner(
                 self,
                 input,
-                Language::scan_finney_keyword,
+                Language::maybe_scan_finney_keyword,
                 TokenKind::FinneyKeyword,
                 "FinneyKeyword",
             ),
@@ -821,10 +842,10 @@ impl Language {
                 TokenKind::GreaterThanGreaterThanGreaterThanEqual,
                 "GreaterThanGreaterThanGreaterThanEqual",
             ),
-            ProductionKind::GweiKeyword => call_scanner(
+            ProductionKind::GweiKeyword => try_call_scanner(
                 self,
                 input,
-                Language::scan_gwei_keyword,
+                Language::maybe_scan_gwei_keyword,
                 TokenKind::GweiKeyword,
                 "GweiKeyword",
             ),
@@ -891,10 +912,10 @@ impl Language {
                 TokenKind::IfKeyword,
                 "IfKeyword",
             ),
-            ProductionKind::ImmutableKeyword => call_scanner(
+            ProductionKind::ImmutableKeyword => try_call_scanner(
                 self,
                 input,
-                Language::scan_immutable_keyword,
+                Language::maybe_scan_immutable_keyword,
                 TokenKind::ImmutableKeyword,
                 "ImmutableKeyword",
             ),
@@ -932,13 +953,6 @@ impl Language {
                 Language::scan_is_keyword,
                 TokenKind::IsKeyword,
                 "IsKeyword",
-            ),
-            ProductionKind::Keyword => call_scanner(
-                self,
-                input,
-                Language::scan_keyword,
-                TokenKind::Keyword,
-                "Keyword",
             ),
             ProductionKind::LeaveKeyword => call_scanner(
                 self,
@@ -1054,6 +1068,20 @@ impl Language {
                 Language::scan_new_keyword,
                 TokenKind::NewKeyword,
                 "NewKeyword",
+            ),
+            ProductionKind::NotAnIdentifierInAnyVersion => call_scanner(
+                self,
+                input,
+                Language::scan_not_an_identifier_in_any_version,
+                TokenKind::NotAnIdentifierInAnyVersion,
+                "NotAnIdentifierInAnyVersion",
+            ),
+            ProductionKind::NotAnIdentifierInSomeVersions => call_scanner(
+                self,
+                input,
+                Language::scan_not_an_identifier_in_some_versions,
+                TokenKind::NotAnIdentifierInSomeVersions,
+                "NotAnIdentifierInSomeVersions",
             ),
             ProductionKind::OpenBrace => call_scanner(
                 self,
@@ -1177,19 +1205,12 @@ impl Language {
                 TokenKind::RawIdentifier,
                 "RawIdentifier",
             ),
-            ProductionKind::ReceiveKeyword => call_scanner(
+            ProductionKind::ReceiveKeyword => try_call_scanner(
                 self,
                 input,
-                Language::scan_receive_keyword,
+                Language::maybe_scan_receive_keyword,
                 TokenKind::ReceiveKeyword,
                 "ReceiveKeyword",
-            ),
-            ProductionKind::ReservedKeyword => call_scanner(
-                self,
-                input,
-                Language::scan_reserved_keyword,
-                TokenKind::ReservedKeyword,
-                "ReservedKeyword",
             ),
             ProductionKind::ReturnKeyword => call_scanner(
                 self,
@@ -1323,12 +1344,19 @@ impl Language {
                 TokenKind::SwitchKeyword,
                 "SwitchKeyword",
             ),
-            ProductionKind::SzaboKeyword => call_scanner(
+            ProductionKind::SzaboKeyword => try_call_scanner(
                 self,
                 input,
-                Language::scan_szabo_keyword,
+                Language::maybe_scan_szabo_keyword,
                 TokenKind::SzaboKeyword,
                 "SzaboKeyword",
+            ),
+            ProductionKind::ThrowKeyword => call_scanner(
+                self,
+                input,
+                Language::scan_throw_keyword,
+                TokenKind::ThrowKeyword,
+                "ThrowKeyword",
             ),
             ProductionKind::Tilde => {
                 call_scanner(self, input, Language::scan_tilde, TokenKind::Tilde, "Tilde")
@@ -1340,17 +1368,17 @@ impl Language {
                 TokenKind::TrueKeyword,
                 "TrueKeyword",
             ),
-            ProductionKind::TryKeyword => call_scanner(
+            ProductionKind::TryKeyword => try_call_scanner(
                 self,
                 input,
-                Language::scan_try_keyword,
+                Language::maybe_scan_try_keyword,
                 TokenKind::TryKeyword,
                 "TryKeyword",
             ),
-            ProductionKind::TypeKeyword => call_scanner(
+            ProductionKind::TypeKeyword => try_call_scanner(
                 self,
                 input,
-                Language::scan_type_keyword,
+                Language::maybe_scan_type_keyword,
                 TokenKind::TypeKeyword,
                 "TypeKeyword",
             ),
@@ -1410,10 +1438,10 @@ impl Language {
                 TokenKind::ViewKeyword,
                 "ViewKeyword",
             ),
-            ProductionKind::VirtualKeyword => call_scanner(
+            ProductionKind::VirtualKeyword => try_call_scanner(
                 self,
                 input,
-                Language::scan_virtual_keyword,
+                Language::maybe_scan_virtual_keyword,
                 TokenKind::VirtualKeyword,
                 "VirtualKeyword",
             ),
@@ -1513,7 +1541,7 @@ impl Language {
                 call_parser(self, input, Language::parse_constant_definition)
             }
             ProductionKind::ConstructorAttribute => {
-                call_parser(self, input, Language::parse_constructor_attribute)
+                try_call_parser(self, input, Language::maybe_parse_constructor_attribute)
             }
             ProductionKind::ConstructorDefinition => {
                 try_call_parser(self, input, Language::maybe_parse_constructor_definition)
@@ -1540,7 +1568,7 @@ impl Language {
                 call_parser(self, input, Language::parse_elementary_type)
             }
             ProductionKind::EmitStatement => {
-                call_parser(self, input, Language::parse_emit_statement)
+                try_call_parser(self, input, Language::maybe_parse_emit_statement)
             }
             ProductionKind::EndOfFileTrivia => {
                 call_parser(self, input, Language::parse_end_of_file_trivia)
@@ -1567,9 +1595,11 @@ impl Language {
             ProductionKind::ExpressionStatement => {
                 call_parser(self, input, Language::parse_expression_statement)
             }
-            ProductionKind::FallbackFunctionAttribute => {
-                call_parser(self, input, Language::parse_fallback_function_attribute)
-            }
+            ProductionKind::FallbackFunctionAttribute => try_call_parser(
+                self,
+                input,
+                Language::maybe_parse_fallback_function_attribute,
+            ),
             ProductionKind::FallbackFunctionDefinition => try_call_parser(
                 self,
                 input,
@@ -1657,9 +1687,11 @@ impl Language {
             ProductionKind::PrimaryExpression => {
                 call_parser(self, input, Language::parse_primary_expression)
             }
-            ProductionKind::ReceiveFunctionAttribute => {
-                call_parser(self, input, Language::parse_receive_function_attribute)
-            }
+            ProductionKind::ReceiveFunctionAttribute => try_call_parser(
+                self,
+                input,
+                Language::maybe_parse_receive_function_attribute,
+            ),
             ProductionKind::ReceiveFunctionDefinition => try_call_parser(
                 self,
                 input,
@@ -1701,6 +1733,9 @@ impl Language {
                 call_parser(self, input, Language::parse_struct_definition)
             }
             ProductionKind::StructMember => call_parser(self, input, Language::parse_struct_member),
+            ProductionKind::ThrowStatement => {
+                try_call_parser(self, input, Language::maybe_parse_throw_statement)
+            }
             ProductionKind::TrailingTrivia => {
                 call_parser(self, input, Language::parse_trailing_trivia)
             }
@@ -1714,21 +1749,26 @@ impl Language {
                 call_parser(self, input, Language::parse_tuple_expression)
             }
             ProductionKind::TypeExpression => {
-                call_parser(self, input, Language::parse_type_expression)
+                try_call_parser(self, input, Language::maybe_parse_type_expression)
             }
             ProductionKind::TypeName => call_parser(self, input, Language::parse_type_name),
             ProductionKind::UncheckedBlock => {
                 try_call_parser(self, input, Language::maybe_parse_unchecked_block)
             }
+            ProductionKind::UnnamedFunctionAttribute => try_call_parser(
+                self,
+                input,
+                Language::maybe_parse_unnamed_function_attribute,
+            ),
             ProductionKind::UnnamedFunctionDefinition => try_call_parser(
                 self,
                 input,
                 Language::maybe_parse_unnamed_function_definition,
             ),
-            ProductionKind::UserDefinedValueTypeDefinition => call_parser(
+            ProductionKind::UserDefinedValueTypeDefinition => try_call_parser(
                 self,
                 input,
-                Language::parse_user_defined_value_type_definition,
+                Language::maybe_parse_user_defined_value_type_definition,
             ),
             ProductionKind::UsingDirective => {
                 call_parser(self, input, Language::parse_using_directive)

@@ -16,10 +16,13 @@
 
 - name: "ModifierAttribute"
   kind: "Parser"
-  unversioned:
-    choice:
-      - reference: "OverrideSpecifier"
-      - reference: "VirtualKeyword"
+  versioned:
+    0.4.11:
+      reference: "OverrideSpecifier"
+    0.6.0:
+      choice:
+        - reference: "OverrideSpecifier"
+        - reference: "VirtualKeyword"
 
 - name: "ModifierInvocation"
   kind: "Parser"

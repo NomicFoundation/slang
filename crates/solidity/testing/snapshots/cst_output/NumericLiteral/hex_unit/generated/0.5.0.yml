@@ -1,0 +1,16 @@
+# This file is generated automatically by infrastructure scripts. Please don't edit by hand.
+
+Source: >
+  1  │ 0x1 gwei                                                                         │ 0..8
+
+Errors: # 1 total
+  - >
+    Error: Expected end of input.
+       ╭─[crates/solidity/testing/snapshots/cst_output/NumericLiteral/hex_unit/input.sol:1:2]
+       │
+     1 │ 0x1 gwei
+       │  │ 
+       │  ╰─ Error occurred here.
+    ───╯
+
+Tree: null

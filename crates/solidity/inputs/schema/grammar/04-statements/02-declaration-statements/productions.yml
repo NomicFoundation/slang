@@ -52,8 +52,13 @@
 
 - name: "DataLocation"
   kind: "Parser"
-  unversioned:
-    choice:
-      - reference: "MemoryKeyword"
-      - reference: "StorageKeyword"
-      - reference: "CalldataKeyword"
+  versioned:
+    0.4.11:
+      choice:
+        - reference: "MemoryKeyword"
+        - reference: "StorageKeyword"
+    0.5.0:
+      choice:
+        - reference: "MemoryKeyword"
+        - reference: "StorageKeyword"
+        - reference: "CalldataKeyword"

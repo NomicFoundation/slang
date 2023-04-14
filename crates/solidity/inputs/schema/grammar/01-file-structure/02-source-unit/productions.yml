@@ -21,14 +21,26 @@
 
 - name: "Definition"
   kind: "Parser"
-  unversioned:
-    choice:
-      - reference: "ContractDefinition"
-      - reference: "InterfaceDefinition"
-      - reference: "LibraryDefinition"
-      - reference: "FunctionDefinition"
-      - reference: "ConstantDefinition"
-      - reference: "StructDefinition"
-      - reference: "EnumDefinition"
-      - reference: "UserDefinedValueTypeDefinition"
-      - reference: "ErrorDefinition"
+  versioned:
+    0.4.11:
+      choice:
+        - reference: "ConstantDefinition"
+        - reference: "ContractDefinition"
+        - reference: "EnumDefinition"
+        - reference: "ErrorDefinition"
+        - reference: "FunctionDefinition"
+        - reference: "InterfaceDefinition"
+        - reference: "LibraryDefinition"
+        - reference: "StructDefinition"
+    0.8.8:
+      # added: UserDefinedValueTypeDefinition
+      choice:
+        - reference: "ConstantDefinition"
+        - reference: "ContractDefinition"
+        - reference: "EnumDefinition"
+        - reference: "ErrorDefinition"
+        - reference: "FunctionDefinition"
+        - reference: "InterfaceDefinition"
+        - reference: "LibraryDefinition"
+        - reference: "StructDefinition"
+        - reference: "UserDefinedValueTypeDefinition"
