@@ -46,16 +46,16 @@
  */
 
 :root > * {
+  --md-code-hl-comment-color: #4c8432;
+  --md-code-hl-constant-color: #6e59d9;
+  --md-code-hl-function-color: #a846b9;
+  --md-code-hl-keyword-color: #3f6ec6;
   --md-code-hl-number-color: #d52a2a;
   --md-code-hl-special-color: #db1457;
-  --md-code-hl-function-color: #a846b9;
-  --md-code-hl-constant-color: #6e59d9;
-  --md-code-hl-keyword-color: #3f6ec6;
   --md-code-hl-string-color: #875d4c;
+  --md-code-hl-generic-color: var(--md-default-fg-color);
   --md-code-hl-name-color: var(--md-default-fg-color);
   --md-code-hl-operator-color: var(--md-default-fg-color);
   --md-code-hl-punctuation-color: var(--md-default-fg-color);
-  --md-code-hl-comment-color: var(--md-default-fg-color);
-  --md-code-hl-generic-color: var(--md-default-fg-color);
   --md-code-hl-variable-color: var(--md-default-fg-color);
 }

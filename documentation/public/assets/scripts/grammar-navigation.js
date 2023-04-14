@@ -26,15 +26,30 @@ function createLinks(/** @type Map<string, Element> */ blocks) {
     const spans = block.querySelectorAll("span[class='k']");
     for (const span of spans) {
       const id = span.textContent?.trim();
-      if (id && blocks.has(id) && !span.hasAttribute("linked")) {
-        span.setAttribute("linked", "");
-
-        const anchor = document.createElement("a");
-        anchor.setAttribute("href", `#${id}`);
-        anchor.appendChild(span.cloneNode(true));
-
-        span.replaceWith(anchor);
+      if (!id || !blocks.has(id) || span.hasAttribute("checked")) {
+        continue;
       }
+
+      span.setAttribute("checked", "");
+
+      const anchor = document.createElement("a");
+      anchor.setAttribute("href", `#${id}`);
+
+      if (span.previousSibling?.textContent === "«") {
+        /** @type Element */ (span.previousSibling).classList.replace("err", "k");
+        anchor.appendChild(span.previousSibling.cloneNode(true));
+        span.previousSibling.remove();
+      }
+
+      anchor.appendChild(span.cloneNode(true));
+
+      if (span.nextSibling?.textContent === "»") {
+        /** @type Element */ (span.nextSibling).classList.replace("err", "k");
+        anchor.appendChild(span.nextSibling.cloneNode(true));
+        span.nextSibling.remove();
+      }
+
+      span.replaceWith(anchor);
     }
   }
 }

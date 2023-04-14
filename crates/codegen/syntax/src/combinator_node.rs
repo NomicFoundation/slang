@@ -149,7 +149,7 @@ impl<'context> CombinatorNode<'context> {
                 if let Some(filter) = CharSet::from_scanner(tree, scanner.clone()) {
                     Self::CharacterFilter { name: None, filter }
                 } else {
-                    unimplemented!("¬ is only supported on characters or sets thereof")
+                    unimplemented!("'Not' is only supported on characters or sets thereof")
                 }
             }
 
